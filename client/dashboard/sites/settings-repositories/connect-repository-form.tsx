@@ -1,23 +1,24 @@
 import {
+	githubInstallationsQuery,
+	githubRepositoriesQuery,
+	githubRepositoryBranchesQuery,
+	githubRepositoryChecksQuery,
+} from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import {
 	Button,
 	SelectControl,
 	ToggleControl,
+	ComboboxControl,
+	TextControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	Modal,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCreateCodeDeployment } from './use-create-code-deployment';
-import type { Site } from '@automattic/api-core';
-
-interface Repository {
-	id: number;
-	name: string;
-	owner: string;
-	default_branch?: string;
-}
+import type { Site, GitHubInstallation, GitHubRepository } from '@automattic/api-core';
 
 interface ConnectRepositoryFormProps {
 	site: Site;
@@ -25,66 +26,183 @@ interface ConnectRepositoryFormProps {
 	onCancel: () => void;
 }
 
+const INSTALL_APP_URL = 'https://github.com/apps/wordpress-com/installations/new';
+
 export const ConnectRepositoryForm = ( {
 	site,
 	onConnected,
 	onCancel,
 }: ConnectRepositoryFormProps ) => {
-	const [ selectedRepository, setSelectedRepository ] = useState< Repository | null >( null );
-	const [ isRepositoryModalOpen, setIsRepositoryModalOpen ] = useState( false );
-	const [ branch, setBranch ] = useState( 'main' );
+	const [ selectedInstallationId, setSelectedInstallationId ] = useState< number | '' >( '' );
+	const [ selectedRepositoryId, setSelectedRepositoryId ] = useState< number | '' >( '' );
+	const [ branch, setBranch ] = useState( '' );
 	const [ targetDir, setTargetDir ] = useState( '/' );
 	const [ isAutomated, setIsAutomated ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const [ isTargetDirDirty, setIsTargetDirDirty ] = useState( false );
 
-	// Mock repositories for now - in real implementation, this would come from GitHub API
-	const mockRepositories: Repository[] = [
-		{ id: 1, name: 'my-wordpress-theme', owner: 'myuser', default_branch: 'main' },
-		{ id: 2, name: 'custom-plugin', owner: 'myuser', default_branch: 'master' },
-		{ id: 3, name: 'site-config', owner: 'myorg', default_branch: 'main' },
-	];
+	const {
+		data: installations = [],
+		isLoading: isLoadingInstallations,
+		error: installationsError,
+		refetch: refetchInstallations,
+	} = useQuery( githubInstallationsQuery() );
 
-	const branchOptions = useMemo( () => {
-		// In real implementation, this would fetch from GitHub API
-		if ( selectedRepository?.default_branch ) {
-			return [
-				{ label: selectedRepository.default_branch, value: selectedRepository.default_branch },
-				{ label: 'develop', value: 'develop' },
-				{ label: 'staging', value: 'staging' },
-			];
+	useEffect( () => {
+		if ( installations.length === 0 ) {
+			setSelectedInstallationId( '' );
+			return;
 		}
-		return [
-			{ label: 'main', value: 'main' },
-			{ label: 'master', value: 'master' },
-			{ label: 'develop', value: 'develop' },
-		];
+
+		if ( selectedInstallationId === '' ) {
+			setSelectedInstallationId( installations[ 0 ].external_id );
+			return;
+		}
+
+		const stillExists = installations.some(
+			( installation ) => installation.external_id === selectedInstallationId
+		);
+
+		if ( ! stillExists ) {
+			setSelectedInstallationId( installations[ 0 ].external_id );
+		}
+	}, [ installations, selectedInstallationId ] );
+
+	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
+		if ( selectedInstallationId === '' ) {
+			return undefined;
+		}
+
+		return installations.find(
+			( installation ) => installation.external_id === selectedInstallationId
+		);
+	}, [ installations, selectedInstallationId ] );
+
+	const { data: repositories = [], isLoading: isLoadingRepositories } = useQuery( {
+		...githubRepositoriesQuery( selectedInstallation?.external_id ?? 0 ),
+		enabled: !! selectedInstallation,
+	} );
+
+	useEffect( () => {
+		setSelectedRepositoryId( '' );
+		setBranch( '' );
+		setTargetDir( '/' );
+		setIsTargetDirDirty( false );
+	}, [ selectedInstallationId ] );
+
+	useEffect( () => {
+		if ( selectedRepositoryId === '' ) {
+			setIsTargetDirDirty( false );
+			setTargetDir( '/' );
+			return;
+		}
+
+		const stillExists = repositories.some(
+			( repository ) => repository.id === selectedRepositoryId
+		);
+
+		if ( ! stillExists ) {
+			setSelectedRepositoryId( '' );
+			setIsTargetDirDirty( false );
+			setTargetDir( '/' );
+		}
+	}, [ repositories, selectedRepositoryId ] );
+
+	const selectedRepository: GitHubRepository | undefined = useMemo( () => {
+		if ( selectedRepositoryId === '' ) {
+			return undefined;
+		}
+
+		return repositories.find( ( repository ) => repository.id === selectedRepositoryId );
+	}, [ repositories, selectedRepositoryId ] );
+
+	useEffect( () => {
+		if ( selectedRepository?.default_branch ) {
+			setBranch( selectedRepository.default_branch );
+			return;
+		}
+
+		if ( ! selectedRepository ) {
+			setBranch( '' );
+		}
 	}, [ selectedRepository ] );
 
-	const targetDirOptions = [
-		{ label: __( 'Root directory (/)' ), value: '/' },
-		{ label: __( 'wp-content' ), value: '/wp-content' },
-		{ label: __( 'wp-content/themes' ), value: '/wp-content/themes' },
-		{ label: __( 'wp-content/plugins' ), value: '/wp-content/plugins' },
-	];
+	const { data: remoteBranches = [], isLoading: isLoadingBranches } = useQuery( {
+		...githubRepositoryBranchesQuery(
+			selectedInstallation?.external_id ?? 0,
+			selectedRepository?.owner ?? '',
+			selectedRepository?.name ?? ''
+		),
+		enabled: !! selectedInstallation && !! selectedRepository,
+	} );
+
+	const { data: repositoryChecks } = useQuery( {
+		...githubRepositoryChecksQuery(
+			selectedInstallation?.external_id ?? 0,
+			selectedRepository?.owner ?? '',
+			selectedRepository?.name ?? '',
+			branch
+		),
+		enabled: !! selectedInstallation && !! selectedRepository && !! branch,
+	} );
+
+	useEffect( () => {
+		if ( ! repositoryChecks?.suggested_directory ) {
+			return;
+		}
+
+		if ( isTargetDirDirty ) {
+			return;
+		}
+
+		setTargetDir( repositoryChecks.suggested_directory );
+	}, [ repositoryChecks?.suggested_directory, isTargetDirDirty ] );
+
+	const branchOptions = useMemo( () => {
+		const names = new Set< string >();
+		if ( selectedRepository?.default_branch ) {
+			names.add( selectedRepository.default_branch );
+		}
+		remoteBranches.forEach( ( branchName ) => names.add( branchName ) );
+		if ( branch ) {
+			names.add( branch );
+		}
+		return Array.from( names ).map( ( name ) => ( {
+			label: name,
+			value: name,
+		} ) );
+	}, [ remoteBranches, selectedRepository?.default_branch, branch ] );
+
+	const branchSelectOptions = branchOptions.length
+		? branchOptions
+		: [ { label: __( 'Select a branch' ), value: '' } ];
 
 	const { createDeployment } = useCreateCodeDeployment( site.ID, {
 		onSuccess: () => {
 			onConnected();
 		},
 		onError: () => {
-			// Error handling would be implemented with proper notices
 			setIsSubmitting( false );
 		},
 	} );
 
-	useEffect( () => {
-		if ( selectedRepository?.default_branch && selectedRepository.default_branch !== branch ) {
-			setBranch( selectedRepository.default_branch );
+	const handleAddGithubAccount = useCallback( () => {
+		const popup = window.open( INSTALL_APP_URL, '_blank', 'noopener' );
+
+		if ( ! popup ) {
+			return;
 		}
-	}, [ selectedRepository, branch ] );
+
+		const handleFocus = () => {
+			refetchInstallations();
+			window.removeEventListener( 'focus', handleFocus );
+		};
+
+		window.addEventListener( 'focus', handleFocus );
+	}, [ refetchInstallations ] );
 
 	const handleSubmit = async () => {
-		if ( ! selectedRepository ) {
+		if ( ! selectedRepository || ! selectedInstallation || ! branch || ! targetDir ) {
 			return;
 		}
 
@@ -95,7 +213,7 @@ export const ConnectRepositoryForm = ( {
 				externalRepositoryId: selectedRepository.id,
 				branchName: branch,
 				targetDir,
-				installationId: 12345, // This would come from GitHub app installation
+				installationId: selectedInstallation.external_id,
 				isAutomated,
 			} );
 		} catch ( error ) {
@@ -103,98 +221,174 @@ export const ConnectRepositoryForm = ( {
 		}
 	};
 
-	const handleRepositorySelect = ( repository: Repository ) => {
-		setSelectedRepository( repository );
-		setIsRepositoryModalOpen( false );
-	};
+	const installationOptions = useMemo( () => {
+		return [
+			{ label: __( 'Select an account' ), value: '' },
+			...installations.map( ( installation ) => ( {
+				label: installation.account_name,
+				value: installation.external_id.toString(),
+			} ) ),
+		];
+	}, [ installations ] );
 
-	const isFormValid = selectedRepository && branch && targetDir;
+	const repositoryOptions = useMemo( () => {
+		return repositories.map( ( repo ) => ( {
+			label: `${ repo.owner }/${ repo.name }`,
+			value: repo.id.toString(),
+		} ) );
+	}, [ repositories ] );
+
+	const installationHelpText = useMemo( () => {
+		if ( isLoadingInstallations ) {
+			return __( 'Loading GitHub accounts…' );
+		}
+
+		if ( installationsError ) {
+			return __( 'We could not load your GitHub accounts. Try again after installing the app.' );
+		}
+
+		if ( installations.length === 0 ) {
+			return __( 'Add a GitHub account to select a repository.' );
+		}
+
+		return undefined;
+	}, [ installations, installationsError, isLoadingInstallations ] );
+
+	const repositoryHelpText = useMemo( () => {
+		if ( ! selectedInstallation ) {
+			return __( 'Select a GitHub account first.' );
+		}
+
+		if ( isLoadingRepositories ) {
+			return __( 'Loading repositories…' );
+		}
+
+		if ( repositories.length === 0 ) {
+			return __( 'No repositories available for this account.' );
+		}
+
+		return undefined;
+	}, [ isLoadingRepositories, repositories, selectedInstallation ] );
+
+	const isFormValid = !! ( selectedRepository && selectedInstallation && branch && targetDir );
 
 	return (
-		<>
-			<VStack spacing={ 4 }>
-				<VStack spacing={ 2 }>
-					<Text weight="600">{ __( 'Repository' ) }</Text>
-					<HStack>
-						{ selectedRepository ? (
-							<Text>
-								{ selectedRepository.owner }/{ selectedRepository.name }
-							</Text>
-						) : (
-							<Text variant="muted">{ __( 'No repository selected' ) }</Text>
-						) }
-						<Button variant="secondary" onClick={ () => setIsRepositoryModalOpen( true ) }>
-							{ selectedRepository ? __( 'Change Repository' ) : __( 'Select Repository' ) }
-						</Button>
-					</HStack>
-				</VStack>
-
-				<SelectControl
-					label={ __( 'Deployment Branch' ) }
-					value={ branch }
-					options={ branchOptions }
-					onChange={ setBranch }
-					help={ __( 'Select the branch to deploy from this repository.' ) }
-				/>
-
-				<SelectControl
-					label={ __( 'Target Directory' ) }
-					value={ targetDir }
-					options={ targetDirOptions }
-					onChange={ setTargetDir }
-					help={ __( 'Choose where to deploy the repository contents on your site.' ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Automated Deployments' ) }
-					checked={ isAutomated }
-					onChange={ setIsAutomated }
-					help={ __( 'Automatically deploy when changes are pushed to the selected branch.' ) }
-				/>
-
-				<HStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onCancel }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						variant="primary"
-						onClick={ handleSubmit }
-						isBusy={ isSubmitting }
-						disabled={ ! isFormValid || isSubmitting }
-						__next40pxDefaultSize
-					>
-						{ __( 'Connect Repository' ) }
-					</Button>
-				</HStack>
+		<VStack spacing={ 6 }>
+			<VStack spacing={ 1 }>
+				<Text weight="600">{ __( 'Configure repository connection' ) }</Text>
+				<Text variant="muted">
+					{ __( 'Select a repository and choose where you’d like your files to deploy.' ) }
+				</Text>
 			</VStack>
 
-			{ isRepositoryModalOpen && (
-				<Modal
-					title={ __( 'Select Repository' ) }
-					onRequestClose={ () => setIsRepositoryModalOpen( false ) }
+			<VStack spacing={ 2 }>
+				<HStack justify="space-between" alignment="center">
+					<Text weight="600" size="12" style={ { textTransform: 'uppercase' } }>
+						{ __( 'GitHub account' ) }
+					</Text>
+					<Button variant="link" onClick={ handleAddGithubAccount }>
+						{ __( 'Add GitHub account' ) }
+					</Button>
+				</HStack>
+				<SelectControl
+					__next40pxDefaultSize
+					aria-label={ __( 'GitHub account' ) }
+					value={ selectedInstallationId === '' ? '' : selectedInstallationId.toString() }
+					onChange={ ( value ) => {
+						if ( ! value ) {
+							setSelectedInstallationId( '' );
+							return;
+						}
+
+						const numericValue = Number( value );
+						setSelectedInstallationId( Number.isNaN( numericValue ) ? '' : numericValue );
+					} }
+					options={ installationOptions }
+					disabled={ isLoadingInstallations }
+					help={ installationHelpText }
+				/>
+			</VStack>
+
+			<VStack spacing={ 2 }>
+				<Text weight="600" size="12" style={ { textTransform: 'uppercase' } }>
+					{ __( 'Repository' ) }
+				</Text>
+				<ComboboxControl
+					__next40pxDefaultSize
+					allowReset
+					aria-label={ __( 'Repository' ) }
+					value={ selectedRepositoryId === '' ? '' : selectedRepositoryId.toString() }
+					onChange={ ( value ) => {
+						if ( ! value ) {
+							setSelectedRepositoryId( '' );
+							return;
+						}
+
+						const numericValue = Number( value );
+						setSelectedRepositoryId( Number.isNaN( numericValue ) ? '' : numericValue );
+					} }
+					options={ repositoryOptions }
+					disabled={ ! selectedInstallation || isLoadingRepositories }
+					placeholder={ __( 'Select a repository' ) }
+					help={ repositoryHelpText }
+				/>
+			</VStack>
+
+			<SelectControl
+				label={ __( 'Deployment Branch' ) }
+				value={ branch }
+				options={ branchSelectOptions }
+				onChange={ ( value ) => setBranch( value ? String( value ) : '' ) }
+				disabled={ ! selectedRepository || isLoadingBranches }
+				help={
+					isLoadingBranches
+						? __( 'Loading branches…' )
+						: __( 'Select the branch to deploy from this repository.' )
+				}
+				__next40pxDefaultSize
+			/>
+
+			<TextControl
+				label={ __( 'Destination Directory' ) }
+				value={ targetDir }
+				onChange={ ( value ) => {
+					const trimmedValue = value.trim();
+					let normalisedValue = '/';
+					if ( trimmedValue ) {
+						if ( trimmedValue.startsWith( '/' ) ) {
+							normalisedValue = trimmedValue;
+						} else {
+							normalisedValue = `/${ trimmedValue }`;
+						}
+					}
+					setTargetDir( normalisedValue );
+					setIsTargetDirDirty( true );
+				} }
+				placeholder={ __( 'Paste a path to the destination directory' ) }
+				help={ __( 'This path is relative to the server root.' ) }
+				__next40pxDefaultSize
+			/>
+
+			<ToggleControl
+				label={ __( 'Automated Deployments' ) }
+				checked={ isAutomated }
+				onChange={ setIsAutomated }
+			/>
+
+			<HStack justify="flex-end">
+				<Button variant="tertiary" onClick={ onCancel }>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					variant="primary"
+					onClick={ handleSubmit }
+					isBusy={ isSubmitting }
+					disabled={ ! isFormValid || isSubmitting }
+					__next40pxDefaultSize
 				>
-					<VStack spacing={ 4 }>
-						<Text>{ __( 'Choose a repository to connect to this site.' ) }</Text>
-						<VStack spacing={ 2 }>
-							{ mockRepositories.map( ( repo ) => (
-								<Button
-									key={ repo.id }
-									variant="secondary"
-									onClick={ () => handleRepositorySelect( repo ) }
-									style={ { justifyContent: 'flex-start', textAlign: 'left' } }
-								>
-									{ repo.owner }/{ repo.name }
-								</Button>
-							) ) }
-						</VStack>
-						<Text variant="muted" size="13">
-							{ __(
-								'To connect a different repository, you may need to install the WordPress.com GitHub app first.'
-							) }
-						</Text>
-					</VStack>
-				</Modal>
-			) }
-		</>
+					{ __( 'Connect Repository' ) }
+				</Button>
+			</HStack>
+		</VStack>
 	);
 };
