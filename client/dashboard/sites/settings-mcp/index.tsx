@@ -146,7 +146,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	);
 
 	// Type descriptions
-	const typeDescriptions = {
+	const typeDescriptions: Record< string, string > = {
 		tool: __(
 			'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
 		),
@@ -196,37 +196,40 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 
 				{ hasTools && anyToolsEnabled && (
 					<>
-						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-							<div key={ type } style={ { marginTop: '24px' } }>
-								<Text as="h1">{ __( 'Site-level MCP Tools' ) }</Text>
-								<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
-									{ typeDescriptions[ type ] }
-								</Text>
-								<Card>
-									<CardBody>
-										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
-												<VStack key={ category } spacing={ 4 }>
-													<Text as="h3" style={ { textTransform: 'capitalize' } }>
-														{ category }
-													</Text>
-													{ categoryTools.map( ( [ toolId, tool ] ) => (
-														<VStack key={ toolId } spacing={ 3 }>
-															<ToggleControl
-																checked={ tool.enabled }
-																onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-																label={ tool.title }
-																help={ tool.description }
-															/>
-														</VStack>
-													) ) }
-												</VStack>
-											) ) }
-										</VStack>
-									</CardBody>
-								</Card>
-							</div>
-						) ) }
+						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => {
+							const typeKey = type as 'tool' | 'resource' | 'prompt';
+							return (
+								<div key={ type } style={ { marginTop: '24px' } }>
+									<Text as="h1">{ __( 'Site-level MCP Tools' ) }</Text>
+									<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
+										{ typeDescriptions[ typeKey ] }
+									</Text>
+									<Card>
+										<CardBody>
+											<VStack spacing={ 6 }>
+												{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
+													<VStack key={ category } spacing={ 4 }>
+														<Text as="h3" style={ { textTransform: 'capitalize' } }>
+															{ category }
+														</Text>
+														{ categoryTools.map( ( [ toolId, tool ] ) => (
+															<VStack key={ toolId } spacing={ 3 }>
+																<ToggleControl
+																	checked={ tool.enabled }
+																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+																	label={ tool.title }
+																	help={ tool.description }
+																/>
+															</VStack>
+														) ) }
+													</VStack>
+												) ) }
+											</VStack>
+										</CardBody>
+									</Card>
+								</div>
+							);
+						} ) }
 					</>
 				) }
 
