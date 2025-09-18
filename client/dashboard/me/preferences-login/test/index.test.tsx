@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -13,6 +13,9 @@ import type { DeepPartial } from 'utility-types';
 
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
+
+const API_BASE = 'https://public-api.wordpress.com';
+const mockPrimarySiteId = 123;
 
 if ( typeof CSS === 'undefined' ) {
 	global.CSS = {} as unknown as typeof CSS;
@@ -44,7 +47,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 const mockSites: DeepPartial< Site >[] = [
 	{
-		ID: 123,
+		ID: mockPrimarySiteId,
 		name: 'Test Site 1',
 		URL: 'https://testsite1.com',
 		site_migration: {
@@ -61,12 +64,27 @@ const mockSites: DeepPartial< Site >[] = [
 	},
 ];
 
+function mockUpdateUserSettingsSuccess() {
+	return nock( API_BASE )
+		.post( '/rest/v1.1/me/settings', { primary_site_ID: mockPrimarySiteId } )
+		.reply( 200, {} );
+}
+
+function matchesLoginPreferencesPayload( body: {
+	calypso_preferences?: Record< string, unknown >;
+} ) {
+	const preferences = body?.calypso_preferences;
+	return Boolean(
+		preferences && 'sites-landing-page' in preferences && 'reader-landing-page' in preferences
+	);
+}
+
 function renderPreferencesLogin() {
-	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
-		primary_site_ID: 123,
+	nock( API_BASE ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+		primary_site_ID: mockPrimarySiteId,
 	} );
 
-	nock( 'https://public-api.wordpress.com' )
+	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
 		.reply( 200, {
@@ -82,10 +100,7 @@ function renderPreferencesLogin() {
 			},
 		} );
 
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.2/me/sites' )
-		.query( true )
-		.reply( 200, { sites: mockSites } );
+	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: mockSites } );
 
 	return render( <PreferencesLogin /> );
 }
@@ -129,7 +144,7 @@ test( 'save button becomes enabled when form is modified', async () => {
 	);
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
-	await user.click( sitesRadio );
+	await act( async () => await user.click( sitesRadio ) );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 	await waitFor(
@@ -151,25 +166,18 @@ test( 'saves preferences successfully', async () => {
 		{ timeout: 5000 }
 	);
 
-	// Mock the multiple preferences API calls that will be made
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
-		} )
-		.reply( 200, {} );
-
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
-		} )
+	// Mock the save API requests that will be made
+	mockUpdateUserSettingsSuccess();
+	nock( API_BASE )
+		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
-	await user.click( sitesRadio );
+	await act( async () => await user.click( sitesRadio ) );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-	await user.click( saveButton );
 
+	await act( async () => await user.click( saveButton ) );
 	await waitFor(
 		() => {
 			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
@@ -192,17 +200,10 @@ test( 'handles save error gracefully', async () => {
 		{ timeout: 5000 }
 	);
 
-	// Mock both preferences API calls - both will return errors
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
-		} )
-		.reply( 500, { error: 'Server error' } );
-
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
-		} )
+	// Mock the save API requests, forcing the preferences update to error
+	mockUpdateUserSettingsSuccess();
+	nock( API_BASE )
+		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 500, { error: 'Server error' } );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
@@ -224,11 +225,11 @@ test( 'handles save error gracefully', async () => {
 
 test( 'hides primary site selector when user has no sites', async () => {
 	nock.cleanAll();
-	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+	nock( API_BASE ).get( '/rest/v1.1/me/settings' ).reply( 200, {
 		primary_site_ID: null,
 	} );
 
-	nock( 'https://public-api.wordpress.com' )
+	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
 		.reply( 200, {
@@ -244,10 +245,7 @@ test( 'hides primary site selector when user has no sites', async () => {
 			},
 		} );
 
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.2/me/sites' )
-		.query( true )
-		.reply( 200, { sites: [] } );
+	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: [] } );
 
 	render( <PreferencesLogin /> );
 
@@ -274,28 +272,26 @@ test( 'disables save button while saving', async () => {
 		{ timeout: 5000 }
 	);
 
-	// Mock both preferences API calls with delay
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
-		} )
-		.delay( 100 )
-		.reply( 200, {} );
-
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
-		} )
+	// Mock the save requests with a delayed preferences response
+	mockUpdateUserSettingsSuccess();
+	nock( API_BASE )
+		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.delay( 100 )
 		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
-	await user.click( sitesRadio );
+	await act( async () => await user.click( sitesRadio ) );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-	await user.click( saveButton );
 
-	expect( saveButton ).toBeDisabled();
+	await act( async () => await user.click( saveButton ) );
+
+	await waitFor(
+		() => {
+			expect( saveButton ).toBeDisabled();
+		},
+		{ timeout: 5000 }
+	);
 
 	await waitFor(
 		() => {
