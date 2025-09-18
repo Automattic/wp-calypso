@@ -194,14 +194,13 @@ export default function WPCOMBusinessAT( {
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
 
-	const onActivationResolved = content.onActivationResolved;
 	useEffect( () => {
 		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
 			setIsRewindActivating( false );
 			// Notify product-specific callback when activation settles
-			onActivationResolved?.();
+			content.onActivationResolved?.();
 		}
-	}, [ isRewindActivating, rewindAtomicDeactivated, onActivationResolved ] );
+	}, [ isRewindActivating, rewindAtomicDeactivated, content.onActivationResolved ] );
 
 	// Check if features are loaded
 	const featuresNotLoaded = useSelector(
