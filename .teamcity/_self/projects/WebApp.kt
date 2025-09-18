@@ -24,7 +24,7 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
-	buildType(e2ePRChecks)
+	buildType(e2ePRChecks())
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
@@ -917,7 +917,7 @@ fun e2ePRChecks() : BuildType {
 		templates(CalypsoE2ETestsBuildTemplate)
 		id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
 		uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
-		name = "E2E Tests PR (Playwright Test)"
+		name = "E2E Tests (Playwright Test)"
 		description = "Runs Calypso e2e tests on pull requests using Playwright Test runner with build matrix"
 
 		features {
@@ -959,7 +959,7 @@ fun e2ePRChecks() : BuildType {
 
 		params {
 			text("TEST_GROUP", "@calypso-pr")
-			text("DOCKER_IMAGE_BUILD_NUMBER", buildNumber)
+			text("DOCKER_IMAGE_BUILD_NUMBER", "$buildNumber")
 		}
 
 		steps {
