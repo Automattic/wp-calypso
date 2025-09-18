@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
-import { useState, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { SectionHeader } from '../../components/section-header';
@@ -32,25 +32,11 @@ export default function PreferencesLogin() {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const [ init, setInit ] = useState( false );
-
 	// Initialize form data with default values
 	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
-		primarySiteId: undefined,
-		defaultLandingPage: 'primary-site-dashboard',
+		primarySiteId: loginPreferences.primarySiteId,
+		defaultLandingPage: loginPreferences.defaultLandingPage || 'primary-site-dashboard',
 	} ) );
-
-	// initialize the form
-	useEffect( () => {
-		if ( loginPreferences && ! init ) {
-			const data = {
-				primarySiteId: loginPreferences.primarySiteId,
-				defaultLandingPage: loginPreferences.defaultLandingPage || 'primary-site-dashboard',
-			};
-			setFormData( data );
-			setInit( true );
-		}
-	}, [ loginPreferences, init ] );
 
 	// Update preferences using combined hook
 	const updatePreferences = useUpdateLoginPreferences();

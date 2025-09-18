@@ -5,7 +5,7 @@ import {
 	userPreferenceMutation,
 	sitesQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 
 export type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
@@ -19,16 +19,20 @@ const READER_AS_LANDING_PAGE_PREFERENCE = 'reader-landing-page';
 
 export function useLoginPreferences() {
 	// Fetch user settings for primary_site_ID
-	const userSettingsResult = useQuery( userSettingsQuery() );
+	const userSettingsResult = useSuspenseQuery( userSettingsQuery() );
 
 	// Fetch user's sites
-	const sitesResult = useQuery(
+	const sitesResult = useSuspenseQuery(
 		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
 	// Fetch preferences for landing page settings
-	const sitesLandingResult = useQuery( userPreferenceQuery( SITES_AS_LANDING_PAGE_PREFERENCE ) );
-	const readerLandingResult = useQuery( userPreferenceQuery( READER_AS_LANDING_PAGE_PREFERENCE ) );
+	const sitesLandingResult = useSuspenseQuery(
+		userPreferenceQuery( SITES_AS_LANDING_PAGE_PREFERENCE )
+	);
+	const readerLandingResult = useSuspenseQuery(
+		userPreferenceQuery( READER_AS_LANDING_PAGE_PREFERENCE )
+	);
 
 	// Validate primary_site_ID exists in user's current sites
 	const rawPrimarySiteId = userSettingsResult.data?.primary_site_ID;
