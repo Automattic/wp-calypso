@@ -27,6 +27,7 @@ import {
 	checkDomainTransferPermissions,
 	checkDomainContactInfoPermissions,
 	checkDomainDnsRecordsPermissions,
+	checkDomainContactVerificationPermissions,
 } from '../../utils/domain-permissions';
 import { rootRoute } from './root';
 
@@ -67,6 +68,7 @@ export const domainRoute = createRoute( {
 		const isTransferSubRoute = location.pathname.includes( '/transfer' );
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
 		const isDnsSubRoute = location.pathname.includes( '/dns' );
+		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
 
 		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
@@ -84,6 +86,10 @@ export const domainRoute = createRoute( {
 
 		if ( isDnsSubRoute ) {
 			checkDomainDnsRecordsPermissions( domain );
+		}
+
+		if ( isContactVerificationSubRoute ) {
+			checkDomainContactVerificationPermissions( domain );
 		}
 
 		return domain;
@@ -290,6 +296,30 @@ export const domainContactInfoRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainContactVerificationRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Contact verification' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'contact-verification',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-contact-verification' ).then( ( d ) =>
+		createLazyRoute( 'domain-contact-verification' )( {
 			component: d.default,
 		} )
 	)
@@ -522,6 +552,7 @@ export const createDomainsRoutes = () => {
 			domainDnsAddRoute,
 			domainDnsEditRoute,
 			domainConnectionSetupRoute,
+			domainContactVerificationRoute,
 			domainForwardingsRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
