@@ -49,38 +49,39 @@ export function DisconnectRepositoryModal( {
 	}
 
 	return (
-		<VStack spacing={ 4 }>
-			<Text>
-				{ createInterpolateElement(
-					sprintf(
-						/* translators: name of repository in the format repository-owner/repository-name */
-						__( 'You are about to disconnect your repository <a>%(repositoryName)s</a>' ),
-						{ repositoryName: deployment.repository_name }
-					),
-					{
-						a: (
-							<ExternalLink
-								children={ null }
-								href={ `https://github.com/${ deployment.repository_name }` }
-							/>
+		<VStack spacing={ 6 }>
+			<VStack spacing={ 4 }>
+				<Text>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: name of repository in the format repository-owner/repository-name */
+							__( 'You are about to disconnect your repository <a>%(repositoryName)s</a>' ),
+							{ repositoryName: deployment.repository_name }
 						),
-					}
-				) }
-			</Text>
+						{
+							a: (
+								<ExternalLink
+									children={ null }
+									href={ `https://github.com/${ deployment.repository_name }` }
+								/>
+							),
+						}
+					) }
+				</Text>
 
-			<Text>
-				{ __(
-					'By default, the existing files will remain on the associated WordPress.com site, but you have the option to remove them. Note that removing the files won’t affect your repository.'
-				) }
-			</Text>
+				<Text>
+					{ __(
+						'By default, the existing files will remain on the associated WordPress.com site, but you have the option to remove them. Note that removing the files won’t affect your repository.'
+					) }
+				</Text>
 
-			<ToggleControl
-				__nextHasNoMarginBottom
-				label={ __( 'Remove associated files from my WordPress.com site' ) }
-				checked={ removeFilesChecked }
-				onChange={ () => setRemoveFilesChecked( ( value ) => ! value ) }
-			/>
-
+				<ToggleControl
+					__nextHasNoMarginBottom
+					label={ __( 'Remove associated files from my WordPress.com site' ) }
+					checked={ removeFilesChecked }
+					onChange={ () => setRemoveFilesChecked( ( value ) => ! value ) }
+				/>
+			</VStack>
 			<HStack alignment="right">
 				<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
 					{ __( 'Cancel' ) }
