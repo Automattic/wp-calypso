@@ -107,14 +107,14 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( isDomainForGravatarFlow( flowName ) ) {
+				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo />;
 			},
 			BeforeFullCartItems: () => {
-				if ( isDomainForGravatarFlow( flowName ) ) {
+				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
 					return null;
 				}
 
