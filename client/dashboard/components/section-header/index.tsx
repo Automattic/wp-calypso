@@ -3,6 +3,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import { ButtonStack } from '../button-stack';
 import type { SectionHeaderProps } from './types';
@@ -25,6 +26,9 @@ export const SectionHeader = ( {
 	level = 2,
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const Stack = isMobileViewport ? VStack : HStack;
+
 	return (
 		<VStack className={ clsx( 'dashboard-section-header', `is-level-${ level }`, className ) }>
 			{ prefix && <div className="dashboard-section-header__prefix">{ prefix }</div> }
@@ -36,20 +40,24 @@ export const SectionHeader = ( {
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
-				<HStack justify="space-between" alignment="center" spacing={ 3 }>
+				<Stack
+					justify="space-between"
+					alignment={ isMobileViewport ? 'flex-start' : 'center' }
+					spacing={ 3 }
+				>
 					<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
 						{ title }
 					</HeadingTag>
 					{ /* The wrapper is always needed for view transitions. */ }
 					<ButtonStack
-						justify="flex-end"
+						justify={ isMobileViewport ? 'flex-start' : 'center' }
 						expanded={ false }
 						alignment="center"
 						className="dashboard-section-header__actions"
 					>
 						{ actions }
 					</ButtonStack>
-				</HStack>
+				</Stack>
 			</HStack>
 			{ description && (
 				<Text variant="muted" className="dashboard-section-header__description">
