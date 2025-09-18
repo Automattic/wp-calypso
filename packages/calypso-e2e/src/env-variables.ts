@@ -184,27 +184,29 @@ class EnvVariables implements SupportedEnvVariables {
 		}
 		return value as JetpackTarget;
 	}
+	/**
+	 * Helper to get and validate a URL environment variable.
+	 */
+	private getValidatedUrlEnvVar( envVarName: keyof SupportedEnvVariables ): string {
+		const value = process.env[ envVarName as string ];
+		const defaultValue = this._defaultEnvVariables[ envVarName ];
+		const url = value ?? defaultValue;
+
+		try {
+			// eslint-disable-next-line no-new
+			new URL( url as string );
+		} catch ( error ) {
+			throw new Error( `Invalid ${ envVarName } value: ${ url }.\nYou must provide a valid URL.` );
+		}
+		return url as string;
+	}
 
 	/**
 	 * Returns the A8C for Agencies URL.
 	 * @example 'https://agencies.automattic.com'
 	 */
 	get A8C_FOR_AGENCIES_URL(): string {
-		const value = process.env.A8C_FOR_AGENCIES_URL;
-		if ( ! value ) {
-			return this._defaultEnvVariables.A8C_FOR_AGENCIES_URL;
-		}
-
-		try {
-			// Disabling eslint because this constructor is really the simplest way to validate a URL.
-			// eslint-disable-next-line no-new
-			new URL( value );
-		} catch ( error ) {
-			throw new Error(
-				`Invalid A8C_FOR_AGENCIES_URL value: ${ value }.\nYou must provide a valid URL.`
-			);
-		}
-		return value;
+		return this.getValidatedUrlEnvVar( 'A8C_FOR_AGENCIES_URL' );
 	}
 
 	/**
@@ -212,21 +214,7 @@ class EnvVariables implements SupportedEnvVariables {
 	 * @example 'http://localhost:3000'
 	 */
 	get CALYPSO_BASE_URL(): string {
-		const value = process.env.CALYPSO_BASE_URL;
-		if ( ! value ) {
-			return this._defaultEnvVariables.CALYPSO_BASE_URL;
-		}
-
-		try {
-			// Disabling eslint because this constructor is really the simplest way to validate a URL.
-			// eslint-disable-next-line no-new
-			new URL( value );
-		} catch ( error ) {
-			throw new Error(
-				`Invalid CALYPSO_BASE_URL value: ${ value }.\nYou must provide a valid URL.`
-			);
-		}
-		return value;
+		return this.getValidatedUrlEnvVar( 'CALYPSO_BASE_URL' );
 	}
 
 	/**
@@ -234,19 +222,7 @@ class EnvVariables implements SupportedEnvVariables {
 	 * @example 'https://wordpress.com'
 	 */
 	get WPCOM_BASE_URL(): string {
-		const value = process.env.WPCOM_BASE_URL;
-		if ( ! value ) {
-			return this._defaultEnvVariables.WPCOM_BASE_URL;
-		}
-
-		try {
-			// Disabling eslint because this constructor is really the simplest way to validate a URL.
-			// eslint-disable-next-line no-new
-			new URL( value );
-		} catch ( error ) {
-			throw new Error( `Invalid WPCOM_BASE_URL value: ${ value }.\nYou must provide a valid URL.` );
-		}
-		return value;
+		return this.getValidatedUrlEnvVar( 'WPCOM_BASE_URL' );
 	}
 
 	get BROWSER_NAME(): string {
