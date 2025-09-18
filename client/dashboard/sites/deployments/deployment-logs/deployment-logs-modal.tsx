@@ -77,7 +77,7 @@ export function DeploymentLogsModal( {
 							<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
 						) }
 
-						<div style={ { width: 'auto', flexShrink: 0, maxWidth: '33vw' } }>
+						<div style={ { width: 'auto', flexShrink: 0, maxWidth: '50%' } }>
 							<BranchDisplay branchName={ deployment.branch_name } />
 						</div>
 
