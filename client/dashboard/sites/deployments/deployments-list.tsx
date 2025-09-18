@@ -6,6 +6,7 @@ import {
 import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
@@ -112,6 +113,17 @@ export function DeploymentsList() {
 		<>
 			<DataViewsCard>
 				<DataViews
+					actions={ [
+						{
+							id: 'open-logs',
+							label: __( 'Open logs' ),
+							isPrimary: true,
+							icon: <Icon icon={ seen } />,
+							callback: ( items ) => {
+								setDeploymentForModal( items[ 0 ] );
+							},
+						},
+					] }
 					data={ filteredData }
 					fields={ fields }
 					view={ view }
