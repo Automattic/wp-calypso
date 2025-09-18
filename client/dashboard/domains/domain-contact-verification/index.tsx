@@ -22,6 +22,8 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { findRegistrantWhois } from '../../utils/domain';
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 export default function DomainContactVerification() {
 	const { domainName } = domainRoute.useParams();
 	const [ selectedFiles, setSelectedFiles ] = useState< FileList | null >( null );
@@ -48,6 +50,14 @@ export default function DomainContactVerification() {
 
 		if ( files.length > 3 ) {
 			createErrorNotice( __( 'You can only upload up to three documents.' ), { type: 'snackbar' } );
+			setSelectedFiles( null );
+			return;
+		}
+
+		const oversizedFiles = [ ...files ].filter( ( file: File ) => file.size > MAX_FILE_SIZE );
+		if ( oversizedFiles.length > 0 ) {
+			createErrorNotice( __( 'Files must be under 5MB each.' ), { type: 'snackbar' } );
+			setSelectedFiles( null );
 			return;
 		}
 
