@@ -20,38 +20,39 @@ export default function PluginsList() {
 	const [ view, setView ] = useState( defaultView );
 	const data = useMemo( () => mapApiPluginsToDataViewPlugins( sitesPlugins ), [ sitesPlugins ] );
 
-	const pluginSlugs = useMemo( () => data?.map( ( plugin ) => plugin.slug ), [ data ] );
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplace } = useQuery(
-		marketplaceSearchQuery( pluginSlugs )
-	);
-	const isLoading = isLoadingPlugins || isLoadingMarketplace;
+	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data, view, fields );
+	}, [ data, view ] );
 
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplace } = useQuery(
+		marketplaceSearchQuery( {
+			perPage: Number( view.perPage ),
+			slugs: filteredPlugins.map( ( plugin ) => plugin.slug ),
+		} )
+	);
+	const plugins = ( marketplacePlugins?.data.results || [] ).flat();
 	const iconsBySlug = useMemo( () => {
-		return marketplacePlugins?.data.results.reduce( ( acc, result ) => {
+		return plugins.reduce( ( acc, result ) => {
 			acc.set( result.fields.slug, result.fields.plugin.icons );
 			return acc;
 		}, new Map< string, PluginListRow[ 'icons' ] >() );
-	}, [ marketplacePlugins ] );
+	}, [ plugins ] );
 
-	const dataWithIcons = useMemo( () => {
-		return data.map( ( plugin ) => {
+	const filteredPluginsWithIcons = useMemo( () => {
+		return filteredPlugins.map( ( plugin ) => {
 			return {
 				...plugin,
 				icons: iconsBySlug?.get( plugin.slug ) || null,
 			};
 		} );
-	}, [ data, iconsBySlug ] );
-
-	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( dataWithIcons, view, fields );
-	}, [ dataWithIcons, view ] );
+	}, [ filteredPlugins, iconsBySlug ] );
 
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Manage plugins' ) } /> }>
 			<DataViewsCard>
 				<DataViews
-					isLoading={ isLoading }
-					data={ filteredPlugins ?? [] }
+					isLoading={ isLoadingPlugins || isLoadingMarketplace }
+					data={ filteredPluginsWithIcons ?? [] }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
