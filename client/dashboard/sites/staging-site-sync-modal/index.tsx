@@ -417,77 +417,92 @@ function StagingSiteSyncModalInner( {
 				</HStack>
 				{ /* File selection and database controls */ }
 				<VStack spacing={ 5 }>
-					<HStack spacing={ 2 } justify="space-between" alignment="center">
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ __( 'Files and folders' ) }
-							disabled={ shouldDisableGranularSync }
-							checked={ shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked' }
-							indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
-							onChange={ onFilesFoldersCheckboxChange }
-						/>
-						<SelectControl
-							value={ isFileBrowserVisible ? 'true' : 'false' }
-							variant="minimal"
-							disabled={ shouldDisableGranularSync }
-							options={ [
-								{ label: __( 'All files and folders' ), value: 'false' },
-								{ label: __( 'Specific files and folders' ), value: 'true' },
-							] }
-							onChange={ handleExpanderChange }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							aria-label={ __( 'Select files and folders to sync' ) }
-						/>
-					</HStack>
+					<VStack spacing={ 0 }>
+						<HStack
+							spacing={ 2 }
+							justify="space-between"
+							alignment="center"
+							style={ { padding: '8px 0' } }
+						>
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Files and folders' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={
+									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+								}
+								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+								onChange={ onFilesFoldersCheckboxChange }
+							/>
+							<SelectControl
+								value={ isFileBrowserVisible ? 'true' : 'false' }
+								variant="minimal"
+								disabled={ shouldDisableGranularSync }
+								options={ [
+									{ label: __( 'All files and folders' ), value: 'false' },
+									{ label: __( 'Specific files and folders' ), value: 'true' },
+								] }
+								onChange={ handleExpanderChange }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								aria-label={ __( 'Select files and folders to sync' ) }
+							/>
+						</HStack>
 
-					<div hidden={ ! isFileBrowserVisible }>
-						<VStack spacing={ 0 }>
-							<CardDivider />
-							{ displayBackupDate && (
-								<HStack alignment="left" spacing={ 1 }>
-									<Text variant="muted" style={ { marginInlineStart: '14px', marginTop: '10px' } }>
-										{ createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
-											date: <span>{ displayBackupDate }</span>,
-										} ) }{ ' ' }
-										<ExternalLink
-											href={ `/backup/${ querySiteSlug as string }` }
-											children={ __( 'Create new backup' ) }
-										/>
-									</Text>
+						<div hidden={ ! isFileBrowserVisible }>
+							<VStack spacing={ 0 }>
+								<CardDivider />
+								{ displayBackupDate && (
+									<HStack alignment="left" spacing={ 1 }>
+										<Text
+											variant="muted"
+											style={ { marginInlineStart: '14px', marginTop: '10px' } }
+										>
+											{ createInterpolateElement(
+												__( 'Content from the latest backup: <date />.' ),
+												{
+													date: <span>{ displayBackupDate }</span>,
+												}
+											) }{ ' ' }
+											<ExternalLink
+												href={ `/backup/${ querySiteSlug as string }` }
+												children={ __( 'Create new backup' ) }
+											/>
+										</Text>
+									</HStack>
+								) }
+								<HStack style={ { marginInlineStart: '14px' } }>
+									<FileBrowser
+										rewindId={ ( rewindId as number ) ?? 0 }
+										siteId={ querySiteId }
+										siteSlug={ querySiteSlug as string }
+										fileBrowserConfig={ {
+											...fileBrowserConfig,
+											showHeader: false,
+										} }
+									/>
 								</HStack>
-							) }
-							<HStack style={ { marginInlineStart: '14px' } }>
-								<FileBrowser
-									rewindId={ ( rewindId as number ) ?? 0 }
-									siteId={ querySiteId }
-									siteSlug={ querySiteSlug as string }
-									fileBrowserConfig={ {
-										...fileBrowserConfig,
-										showHeader: false,
-									} }
-								/>
-							</HStack>
-						</VStack>
-					</div>
-
-					<HStack
-						alignment="left"
-						spacing={ 2 }
-						style={ {
-							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							padding: '16px 0',
-						} }
-					>
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ __( 'Database' ) }
-							disabled={ shouldDisableGranularSync }
-							checked={ hasWarning }
-							onChange={ handleDatabaseCheckboxChange }
-						/>
-					</HStack>
+							</VStack>
+						</div>
+						<HStack
+							alignment="left"
+							spacing={ 2 }
+							style={ {
+								borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+								borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+								padding: '16px 0',
+								marginTop: isFileBrowserVisible ? '20px' : '0',
+							} }
+						>
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Database' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={ hasWarning }
+								onChange={ handleDatabaseCheckboxChange }
+							/>
+						</HStack>
+					</VStack>
 
 					{ showDomainConfirmation && (
 						<InputControl
