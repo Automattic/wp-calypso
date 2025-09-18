@@ -91,9 +91,39 @@ export const useFields = ( {
 				label: __( 'Expires/Renews on' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) =>
-					item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '',
-				render: ( { field, item } ) => {
+				elements: [
+					{ value: 'next-7-days', label: __( 'Next 7 days' ) },
+					{ value: 'next-30-days', label: __( 'Next 30 days' ) },
+					{ value: 'next-90-days', label: __( 'Next 90 days' ) },
+					{ value: 'expired', label: __( 'Expired' ) },
+				],
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				getValue: ( { item }: { item: DomainSummary } ) => {
+					if ( ! item.expiry ) {
+						return '';
+					}
+
+					const expiryDate = new Date( item.expiry );
+					const now = new Date();
+					const diffInDays = Math.ceil(
+						( expiryDate.getTime() - now.getTime() ) / ( 1000 * 60 * 60 * 24 )
+					);
+
+					if ( diffInDays < 0 ) {
+						return 'expired';
+					} else if ( diffInDays <= 7 ) {
+						return 'next-7-days';
+					} else if ( diffInDays <= 30 ) {
+						return 'next-30-days';
+					} else if ( diffInDays <= 90 ) {
+						return 'next-90-days';
+					}
+
+					return 'later';
+				},
+				render: ( { item } ) => {
 					// Site Overview does not show the Status column, so we use this column for error messages.
 					if (
 						site &&
@@ -107,7 +137,7 @@ export const useFields = ( {
 					return (
 						<DomainExpiryField
 							domain={ item }
-							value={ field.getValue( { item } ) }
+							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
 							isCompact={ !! site }
 						/>
 					);
