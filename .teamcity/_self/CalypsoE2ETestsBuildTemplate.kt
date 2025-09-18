@@ -62,6 +62,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			id = "determine_calypso_url"
 			scriptContent = """
 				echo "Determining Calypso URL"
+				FINAL_URL=""
 
 				# Check if both DOCKER_IMAGE_BUILD_NUMBER and CALYPSO_BASE_URL are set
 				if [[ -n "%DOCKER_IMAGE_BUILD_NUMBER%" && -n "%CALYPSO_BASE_URL%" ]]; then
@@ -73,25 +74,26 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				if [[ -n "%DOCKER_IMAGE_BUILD_NUMBER%" ]]; then
 					echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
 					chmod +x ./bin/get-calypso-live-url.sh
-					CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
+					FINAL_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
 					if [[ ${'$'}? -ne 0 ]]; then
-						# Command failed. CALYPSO_BASE_URL contains stderr
-						echo ${'$'}CALYPSO_BASE_URL
+						# Command failed. script result contains stderr
+						echo ${'$'}FINAL_URL
 						exit 1
 					fi
 				elif [[ -n "%CALYPSO_BASE_URL%" ]]; then
 					# CALYPSO_BASE_URL is already set, use it directly
 					echo "Using provided CALYPSO_BASE_URL: %CALYPSO_BASE_URL%"
+					FINAL_URL="%CALYPSO_BASE_URL%"
 				else
 					echo "ERROR: Neither DOCKER_IMAGE_BUILD_NUMBER nor CALYPSO_BASE_URL is set. Please set one of them."
 					exit 1
 				fi
 
-				# Set the CALYPSO_BASE_URL as a TeamCity parameter for other steps to use
-				echo "CALYPSO_BASE_URL: ${'$'}CALYPSO_BASE_URL"
-				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}CALYPSO_BASE_URL']"
-				"""
-				dockerImage = "%docker_image_e2e%"
+				# Set the CALYPSO_BASE_URL parameter for other steps to use
+				echo "CALYPSO_BASE_URL: ${'$'}FINAL_URL"
+				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}FINAL_URL']"
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
 		}
 
 		bashNodeScript {
