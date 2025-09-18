@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 
@@ -13,6 +14,16 @@ const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFe
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
 
 	if ( hasSiteTrialEnded( site ) ) {
 		return (

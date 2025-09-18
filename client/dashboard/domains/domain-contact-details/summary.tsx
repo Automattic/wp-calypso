@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Domain } from '@automattic/api-core';
@@ -9,6 +10,10 @@ export default function DomainContactDetailsSettingsSummary( { domain }: { domai
 		badges.push( { text: __( 'Privacy protection on' ), intent: 'success' as const } );
 	} else {
 		badges.push( { text: __( 'Privacy protection off' ), intent: undefined } );
+	}
+
+	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
+		return null;
 	}
 
 	return (

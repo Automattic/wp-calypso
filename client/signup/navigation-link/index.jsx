@@ -76,6 +76,10 @@ export class NavigationLink extends Component {
 	}
 
 	getBackUrl() {
+		if ( this.props.goToPreviousStep ) {
+			return;
+		}
+
 		if ( this.props.direction !== 'back' ) {
 			return;
 		}

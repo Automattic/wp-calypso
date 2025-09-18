@@ -7,6 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import { getOdieIdFromInteraction } from '@automattic/odie-client/src/utils';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -80,20 +81,17 @@ export const HelpCenterContactForm = () => {
 	const userWithNoSites = userSites?.sites.length === 0;
 	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
-	const { currentSupportInteraction, subject, message, userDeclaredSiteUrl } = useSelect(
-		( select ) => {
-			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-			return {
-				currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
-				subject: helpCenterSelect.getSubject(),
-				message: helpCenterSelect.getMessage(),
-				userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
-			};
-		},
-		[]
-	);
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			subject: helpCenterSelect.getSubject(),
+			message: helpCenterSelect.getMessage(),
+			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
+		};
+	}, [] );
 
-	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+	const odieId = getOdieIdFromInteraction( currentSupportInteraction ?? undefined );
 
 	const { resetStore, setUserDeclaredSite, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );

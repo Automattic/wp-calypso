@@ -54,7 +54,7 @@ const DomainsStep: Step< {
 		  }
 		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
-	const [ , shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( flow );
+	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -369,12 +369,7 @@ const DomainsStep: Step< {
 };
 
 const StyleWrappedDomainsStep: typeof DomainsStep = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flow );
-
-	if ( isLoading ) {
-		// TODO: Add a loading state to indicate that the experiment is loading.
-		return null;
-	}
+	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
 
 	return (
 		<>

@@ -1,8 +1,10 @@
 @import "variables";
 
-.help-center__container-footer {
+.components-card-footer.help-center__container-footer {
 	height: auto;
-	padding: 16px;
+	display: block;
+	position: relative;
+	padding: 0;
 
 	// hide when empty
 	&:empty {
@@ -10,35 +12,8 @@
 	}
 
 	.button.help-center-contact-page__button {
-		align-items: center;
-		background-color: transparent;
-		border: 1px solid var(--studio-gray-10);
-		color: var(--studio-gray-100);
-		display: flex;
-		justify-content: center;
-		line-height: 1;
-		margin-bottom: 0;
-		padding: 5px;
-		text-wrap: balance;
-		width: 100%;
-
-		&:hover {
-			color: var(--studio-gray-100);
-			border-color: var(--color-neutral-20);
-			box-shadow: none;
-			outline: none;
-		}
-
-		&:focus {
-			border-color: transparent;
-			box-shadow: none;
-			outline: $help-center-blue solid 2px;
-		}
-
-		svg {
-			margin-right: 10px;
-			vertical-align: middle;
-			fill: var(--studio-gray-100);
-		}
+		margin: 16px;
+		width: calc(100% - 32px);
+		border-radius: 8px;
 	}
 }

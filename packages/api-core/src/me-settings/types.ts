@@ -1,3 +1,18 @@
+export type McpAbility = {
+	name: string;
+	title: string;
+	description: string;
+	category: string;
+	type: string;
+	enabled: boolean;
+};
+
+export type McpAbilities = {
+	account?: Record< string, McpAbility >;
+	site?: Record< string, McpAbility >; // Default values for all sites
+	sites?: Record< string, Record< string, number > >; // Custom overrides per site (0/1 values only)
+};
+
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
@@ -16,6 +31,7 @@ export interface UserSettings {
 	i18n_empathy_mode?: boolean;
 	use_fallback_for_incomplete_languages?: boolean;
 	enable_translator?: boolean;
+	subscription_delivery_email_blocked?: boolean;
 	two_step_app_enabled: boolean;
 	two_step_backup_codes_printed: boolean;
 	two_step_enabled: boolean;
@@ -25,4 +41,13 @@ export interface UserSettings {
 	two_step_sms_country: string;
 	two_step_sms_enabled: boolean;
 	two_step_sms_phone_number: string;
+
+	// Subscription settings
+	subscription_delivery_email_default: string;
+	subscription_delivery_mail_option: string;
+	subscription_delivery_day: number;
+	subscription_delivery_hour: number;
+	subscription_delivery_jabber_default: boolean;
+	p2_disable_autofollow_on_comment: boolean;
+	mcp_abilities?: McpAbilities;
 }

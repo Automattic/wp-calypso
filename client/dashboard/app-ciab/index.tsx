@@ -3,6 +3,7 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
+	name: 'CIAB',
 	basePath: '/ciab',
 	mainRoute: '/sites',
 	Logo,

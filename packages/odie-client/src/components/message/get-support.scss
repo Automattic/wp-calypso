@@ -3,14 +3,43 @@
 	.odie__transfer-chat {
 		display: flex;
 		width: 100%;
-		padding-bottom: 16px;
 		flex-direction: column;
-		gap: 16px;
+		justify-content: stretch;
+		border: 1px solid var( --studio-gray-5 );
+		border-radius: 16px;
+		margin-top: 16px;
 
-		.odie__transfer-chat--button-container {
+		button {
 			display: flex;
-			gap: 4px;
-			flex-direction: column;
+			justify-content: space-between;
+			padding: 16px;
+			text-decoration: none;
+			color: var( --studio-gray-100 );
+			font-size: 0.875rem;
+			font-weight: normal;
+			align-items: center;
+			transition: background-color 0.3s ease;
+			line-height: 1.4;
+			width: 100%;
+			min-width: 0;
+			box-sizing: border-box;
+			border-bottom: 1px solid var( --studio-gray-5 );
+
+			&:first-of-type {
+				border-radius: 16px 16px 0 0;
+			}
+
+			&:last-of-type {
+				border-radius: 0 0 16px 16px;
+				border-bottom: none;
+			}
+
+			&:hover {
+				background: color-mix( in srgb, #fff 98%, var( --wp-admin-theme-color, #3858e9 ) );
+				color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+				fill: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+				cursor: pointer;
+			}
 
 			.odie__transfer-chat--wait-time {
 				font-size: 0.75rem;
@@ -18,42 +47,9 @@
 				align-content: center;
 			}
 		}
-
-		button {
-			border-radius: 2px;
-			border: 1px solid var( --studio-gray-10 );
-			background: var( --studio-white );
-			display: flex;
-			min-height: 40px;
-			padding: 8px 14px;
-			justify-content: center;
-			align-items: center;
-			gap: 4px;
-			color: var( --studio-gray-70 );
-
-			&:disabled {
-				pointer-events: none;
-				color: var( --studio-gray-30 );
-				border-color: var( --studio-gray-30 );
-			}
-
-			&:hover {
-				border: 1px solid var( --studio-gray-20 );
-				cursor: pointer;
-			}
-
-			&:focus,
-			&:active {
-				outline: none;
-			}
-		}
 	}
 
 	.help-center__notice.cookie-warning {
 		margin-top: 16px;
 	}
-}
-
-.help-center__container-chat .chatbox-messages .odie__transfer-chat {
-	width: calc(100% - 46px);
 }
