@@ -1,6 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, siteScanQuery } from '@automattic/api-queries';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
@@ -14,51 +14,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
-import { Callout } from '../../components/callout';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { hasHostingFeature } from '../../utils/site-features';
-// @TODO: replace with Scan callout illustration
-import illustrationUrl from '../backups/backups-callout-illustration.svg';
-
-export function SiteScanCallout( {
-	siteSlug,
-	titleAs = 'h1',
-}: {
-	siteSlug: string;
-	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-} ) {
-	return (
-		<Callout
-			icon={ shield }
-			title={ __( 'Scan for security threats' ) }
-			titleAs={ titleAs }
-			image={ illustrationUrl }
-			description={
-				<>
-					<Text as="p" variant="muted">
-						{ /* @TODO: update copy when the design is ready and add translation */ }
-						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for many issues.
-					</Text>
-					<Text as="p" variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-					</Text>
-				</>
-			}
-			actions={
-				<UpsellCTAButton
-					text={ __( 'Upgrade plan' ) }
-					tracksId="scan"
-					variant="primary"
-					href={ `/checkout/${ siteSlug }/business` }
-				/>
-			}
-		/>
-	);
-}
+import { useTimeSince } from '../../components/time-since';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { ActiveThreatsDataViews } from '../scan-active';
+import { ScanHistoryDataViews } from '../scan-history';
+import illustrationUrl from './scan-callout-illustration.svg';
+import './style.scss';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -70,6 +33,22 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const router = useRouter();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
+
+	const lastScanTime = scan?.most_recent?.timestamp;
+	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
+
+	const getPageDescription = () => {
+		if ( lastScanTime && lastScanRelativeTime ) {
+			return sprintf(
+				/* translators: %s: relative time since last scan */
+				__( 'Latest automated scan ran %s.' ),
+				lastScanRelativeTime
+			);
+		}
+
+		return null;
+	};
 
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
 		if ( tab === 'active' ) {
@@ -82,13 +61,13 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	return (
 		<PageLayout
 			header={
-				// @TODO: Add translation and relative time
 				<PageHeader
 					title={ __( 'Scan' ) }
-					description="Latest automated scan run X hours ago"
+					description={ getPageDescription() }
 					actions={
 						<ButtonStack>
 							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
 									/* translators: %d: number of threats */
@@ -104,39 +83,42 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				/>
 			}
 		>
-			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.SCAN ) }
-				callout={ <SiteScanCallout siteSlug={ site.slug } /> }
-				main={
-					<Card>
-						<CardHeader style={ { paddingBottom: '0' } }>
-							<TabPanel
-								activeClass="is-active"
-								tabs={ SCAN_TABS }
-								onSelect={ ( tabName ) => {
-									if ( tabName === 'active' || tabName === 'history' ) {
-										handleTabChange( tabName );
-									}
-								} }
-								initialTabName={ scanTab }
-							>
-								{ () => null }
-							</TabPanel>
-						</CardHeader>
-						<CardBody>
-							{ scanTab === 'active' ? (
-								<Text as="p" variant="muted">
-									{ __( 'No active threats found. Your site is secure.' ) }
-								</Text>
-							) : (
-								<Text as="p" variant="muted">
-									{ __( 'So far, there are no archived threats on your site.' ) }
-								</Text>
-							) }
-						</CardBody>
-					</Card>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.SCAN }
+				tracksFeatureId="scan"
+				asOverlay
+				upsellIcon={ shield }
+				upsellTitle={ __( 'Scan for security threats' ) }
+				upsellImage={ illustrationUrl }
+				upsellDescription={
+					<Text as="p" variant="muted">
+						Automated daily scans check for malware and security vulnerabilities, with automated
+						fixes for most issues.
+					</Text>
 				}
-			/>
+			>
+				<Card>
+					<CardHeader style={ { paddingBottom: '0' } }>
+						<TabPanel
+							activeClass="is-active"
+							tabs={ SCAN_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === 'active' || tabName === 'history' ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ scanTab }
+						>
+							{ () => null }
+						</TabPanel>
+					</CardHeader>
+					<CardBody>
+						{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
+						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
+					</CardBody>
+				</Card>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

@@ -22,6 +22,7 @@ export default function SecurityTwoStepAuthEmptyState( {
 				title={ __( 'Set up using an app' ) }
 				description={ __( 'Use an app to generate two-step authentication codes.' ) }
 				decoration={ <Icon icon={ mobile } /> }
+				badges={ [ { text: __( 'Recommended' ), intent: 'success' } ] }
 			/>
 			<RouterLinkSummaryButton
 				to="/me/security/two-step-auth/sms"
