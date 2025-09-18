@@ -86,16 +86,6 @@ const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps
 		</VStack>
 	);
 };
-
-interface StagingSiteSyncModalProps {
-	onClose: () => void;
-	syncType: 'pull' | 'push';
-	environment: 'production' | 'staging';
-	productionSiteId: number;
-	stagingSiteId: number;
-	onSyncStart: () => void;
-}
-
 interface EnvironmentConfig {
 	title: string;
 	description: string;
