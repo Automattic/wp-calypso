@@ -122,6 +122,7 @@
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/universal-header": false,
+		"plugins/universal-header": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,

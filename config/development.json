@@ -189,6 +189,7 @@
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
 		"themes/universal-header": true,
+		"plugins/universal-header": true,
 		"titan/iframe-control-panel": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
