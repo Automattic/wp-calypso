@@ -86,7 +86,6 @@ function ScheduledUpdatesNew() {
 			setValidationError(
 				siteList ? `${ baseError }\n${ __( 'Sites:' ) } ${ siteList }` : baseError
 			);
-			window.scrollTo( { top: 0, behavior: 'smooth' } );
 			return;
 		}
 
@@ -149,7 +148,6 @@ function ScheduledUpdatesNew() {
 				setValidationError(
 					( error as { message?: string } )?.message || __( 'Failed to create schedule.' )
 				);
-				window.scrollTo( { top: 0, behavior: 'smooth' } );
 			},
 		} );
 	}, [
@@ -179,13 +177,6 @@ function ScheduledUpdatesNew() {
 				/>
 			}
 		>
-			{ validationError && (
-				<Notice status="error" isDismissible={ false }>
-					{ validationError.split( '\n' ).map( ( line, idx ) => (
-						<div key={ idx }>{ line }</div>
-					) ) }
-				</Notice>
-			) }
 			<Card>
 				<CardBody>
 					<VStack spacing={ 6 }>
@@ -216,6 +207,13 @@ function ScheduledUpdatesNew() {
 								setTime( next.time );
 							} }
 						/>
+						{ validationError && (
+							<Notice status="error" isDismissible={ false }>
+								{ validationError.split( '\n' ).map( ( line, idx ) => (
+									<div key={ idx }>{ line }</div>
+								) ) }
+							</Notice>
+						) }
 						<HStack justify="start">
 							<Button
 								variant="primary"
