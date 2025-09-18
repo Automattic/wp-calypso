@@ -49,6 +49,8 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "ai-site-builder-spec-flow" */ './flows/ai-site-builder-spec/ai-site-builder-spec'
 		),
+	'plan-upgrade': () =>
+		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 };
 
 /**
