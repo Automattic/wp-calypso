@@ -56,8 +56,8 @@ function AutoRenewButton( {
 	isAutoRenewing,
 	isUpdating,
 }: {
-	disableAutoRenew: any;
-	enableAutoRenew: any;
+	disableAutoRenew: () => void;
+	enableAutoRenew: () => void;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
 	subscription: MembershipSubscription;
@@ -86,7 +86,7 @@ function StopSubscriptionButton( {
 	isProduct,
 	subscription,
 }: {
-	stopSubscription: any;
+	stopSubscription: () => void;
 	isProduct: boolean;
 	subscription: MembershipSubscription;
 } ) {
@@ -164,8 +164,8 @@ export default function MonetizeSubscription() {
 	const isProduct = !! subscription && ! isRenewable;
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
-
 	const navigate = useNavigate();
+
 	useEffect( () => {
 		if ( stoppingStatusError || disableAutoRenewError || enableAutoRenewError ) {
 			// run is-error notice to contact support
@@ -206,6 +206,9 @@ export default function MonetizeSubscription() {
 		isProduct,
 		enableAutoRenewError,
 		disableAutoRenewError,
+		navigate,
+		createErrorNotice,
+		createSuccessNotice,
 	] );
 
 	return (

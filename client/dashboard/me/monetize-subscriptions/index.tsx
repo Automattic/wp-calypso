@@ -52,10 +52,10 @@ function MonetizeSubscriptions() {
 	} );
 
 	const membershipsDataFields = useMembershipsFieldDefinitions();
-	const navigate = useNavigate();
 	const { data: monetizeSubscriptions, isLoading: isLoadingMemberships } = useQuery(
 		monetizeSubscriptionsQuery()
 	);
+	const navigate = useNavigate();
 
 	const actions = useMemo(
 		() => [
@@ -76,7 +76,7 @@ function MonetizeSubscriptions() {
 				},
 			},
 		],
-		[]
+		[ navigate ]
 	);
 
 	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
