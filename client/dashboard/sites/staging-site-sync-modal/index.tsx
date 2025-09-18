@@ -281,7 +281,7 @@ function StagingSiteSyncModalInner( {
 	} else {
 		lastKnownBackupAttempt = undefined;
 	}
-	const rewindId = lastKnownBackupAttempt?.rewindId as number | undefined;
+	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const locale = useLocale();
 	const displayBackupDate = lastKnownBackupAttempt
@@ -446,7 +446,7 @@ function StagingSiteSyncModalInner( {
 								) }
 								<HStack style={ { marginInlineStart: '14px' } }>
 									<FileBrowser
-										rewindId={ ( rewindId as number ) ?? 0 }
+										rewindId={ rewindId ?? 0 }
 										siteId={ querySiteId }
 										siteSlug={ querySiteSlug as string }
 										fileBrowserConfig={ {
