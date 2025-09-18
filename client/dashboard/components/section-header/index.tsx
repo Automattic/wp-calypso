@@ -28,7 +28,6 @@ export const SectionHeader = ( {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const Stack = isMobileViewport ? VStack : HStack;
-
 	return (
 		<VStack className={ clsx( 'dashboard-section-header', `is-level-${ level }`, className ) }>
 			{ prefix && <div className="dashboard-section-header__prefix">{ prefix }</div> }
