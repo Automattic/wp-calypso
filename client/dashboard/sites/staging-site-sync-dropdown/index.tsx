@@ -17,6 +17,7 @@ import {
 import StagingSiteSyncModal from '../staging-site-sync-modal';
 import type { StagingSiteSyncDirection } from '@automattic/api-core';
 
+// We are currently loading the StagingSiteSyncModalV1 back into the interim dashboard. Once these changes are live for users, we can remove this along with the old modal.
 const StagingSiteSyncModalV1 = lazy(
 	() =>
 		import(
@@ -97,6 +98,7 @@ export default function StagingSiteSyncDropdown( {
 				/>
 			);
 		}
+
 		return (
 			<Suspense fallback={ null }>
 				<StagingSiteSyncModalV1
