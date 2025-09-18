@@ -1,7 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { useResetSupportInteraction } from './use-reset-support-interaction';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
@@ -9,7 +8,6 @@ import { useResetSupportInteraction } from './use-reset-support-interaction';
 export const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute, setNewMessagingChat } =
 		useDispatch( 'automattic/help-center' );
-	const resetSupportInteraction = useResetSupportInteraction();
 	const queryParams = new URLSearchParams( window.location.search );
 
 	const actionHooks = [
@@ -49,7 +47,6 @@ export const useActionHooks = () => {
 				return queryParams.get( 'help-center' ) === 'wapuu';
 			},
 			async action() {
-				await resetSupportInteraction();
 				setNavigateToRoute( '/odie' );
 				setShowHelpCenter( true );
 			},

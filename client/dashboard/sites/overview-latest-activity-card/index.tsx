@@ -45,9 +45,14 @@ const fields: Field< ActivityLogEntry >[] = [
 ];
 
 function getActivityLogUrl( site: Site ) {
-	return isSelfHostedJetpackConnected( site )
-		? `https://cloud.jetpack.com/activity-log/${ site.slug }`
-		: `/v2/sites/${ site.slug }/logs/activity`;
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return `https://cloud.jetpack.com/activity-log/${ site.slug }`;
+	}
+
+	if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
+		return `/sites/${ site.slug }/logs/activity`; // no need for the /v2 prefix since it's handled by the RouterLinkSummaryButton in the SummaryButtonCardFooter
+	}
+	return `/activity-log/${ site.slug }`;
 }
 
 export default function LatestActivityCard( {

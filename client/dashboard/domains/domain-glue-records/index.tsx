@@ -136,24 +136,23 @@ function DomainGlueRecords() {
 			}
 		>
 			<DataViewsCard>
-				{ glueRecordsData?.length === 0 && ! isLoading ? (
-					<div style={ { padding: '20px', textAlign: 'center' } }>
-						{ __( 'No glue records found for this domain.' ) }
-					</div>
-				) : (
-					<DataViews< DomainGlueRecord >
-						data={ filteredData || [] }
-						fields={ fields }
-						onChangeView={ ( view: View ) => setView( view as GlueRecordsView ) }
-						view={ view }
-						actions={ actions }
-						search
-						paginationInfo={ paginationInfo }
-						getItemId={ ( item: DomainGlueRecord ) => item.nameserver }
-						isLoading={ isLoading }
-						defaultLayouts={ DEFAULT_LAYOUTS }
-					/>
-				) }
+				<DataViews< DomainGlueRecord >
+					data={ filteredData || [] }
+					fields={ fields }
+					onChangeView={ ( view: View ) => setView( view as GlueRecordsView ) }
+					view={ view }
+					actions={ actions }
+					search
+					paginationInfo={ paginationInfo }
+					getItemId={ ( item: DomainGlueRecord ) => item.nameserver }
+					isLoading={ isLoading }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+					empty={
+						view.search
+							? __( 'No glue records found.' )
+							: __( 'No glue records found for this domain.' )
+					}
+				/>
 			</DataViewsCard>
 		</PageLayout>
 	);

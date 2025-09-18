@@ -1,9 +1,4 @@
 .domains-search-v2__mini-cart,
 .domains-search-v2__full-cart {
 	z-index: z-index( 'root', '.drawer' );
-
-	.choose-domain-later__btn,
-	.choose-domain-later__btn:hover {
-		color: var( --studio-gray-900 );
-	}
 }
