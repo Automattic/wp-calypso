@@ -917,6 +917,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	params {
 		text("TEST_GROUP", "@calypso-pr")
         param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "true")
 	}
 
 	features {

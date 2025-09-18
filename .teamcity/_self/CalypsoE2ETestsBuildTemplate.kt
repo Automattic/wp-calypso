@@ -25,6 +25,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		text("TEST_GROUP", "")
 		text("CALYPSO_BASE_URL", "")
 		text("DOCKER_IMAGE_BUILD_NUMBER", "")
+		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "false")
 	}
 
   	features {
@@ -87,16 +88,23 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 
 				# Set the CALYPSO_BASE_URL as a TeamCity parameter for other steps to use
+				echo "CALYPSO_BASE_URL: ${'$'}CALYPSO_BASE_URL"
 				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}CALYPSO_BASE_URL']"
-				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				"""
 				dockerImage = "%docker_image_e2e%"
 		}
 
 		bashNodeScript {
-			name = "Run e2e tests"
-			id = "run_tests"
-			scriptContent = """					
+			name = "Determine test group"
+			id = "determine_test_group"
+			scriptContent = """
+				// todo pseudocode:
+				// Check if IGNORE_TEST_GROUP_FOR_E2E_CHANGES param is "true"
+				// If true, run the code that checks for changes in test/e2e or packages/calypso-e2e files
+				// if changes are detected set the TEST_GROUP to empty string
+				// if no changes are detected leave the TEST_GROUP as is
+				// Don't use GREP_FLAG here, use a different variable name to avoid confusion
+
 				# Check if test/e2e or packages/calypso-e2e files have been changed
 				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
 				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
@@ -106,6 +114,19 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
 					GREP_FLAG="--grep=@calypso-pr"
 				fi
+				"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run e2e tests"
+			id = "run_tests"
+			scriptContent = """
+
+				// todo pseudocode:
+				// Check TEST_GROUP param
+				// If set, set the GREP_FLAG to --grep=TEST_GROUP
+				// If not set, set the GREP_FLAG to empty string
 
 				cd test/e2e
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
