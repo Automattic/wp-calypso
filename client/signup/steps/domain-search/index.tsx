@@ -1,6 +1,6 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { isDomainForGravatarFlow, isFreeFlow } from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isEcommerceFlow, isFreeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -95,6 +95,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 				forceRegularPrice: isMonthlyOrFreeFlow( flowName ),
 			},
 			allowedTlds,
+			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
 			allowsUsingOwnDomain:
 				! isDomainForGravatarFlow( flowName ) &&
