@@ -210,7 +210,6 @@ function StagingSiteSyncModalInner( {
 		onClose();
 	}, [ onClose ] );
 
-	// File browser integration (no Redux)
 	const { fileBrowserState } = useFileBrowserContext();
 	const browserCheckList = fileBrowserState.getCheckList();
 
