@@ -1,62 +1,102 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
 @import "variables";
 
 @mixin help-center-link {
-	> ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		text-align: left;
-	}
+    > ul {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+        border: 1px solid var(--studio-gray-5);
+        border-radius: 8px;
+        margin: 0 0 16px;
+        overflow: hidden;
+    }
 
-	.help-center-link__item {
-		margin: 0 0 16px;
-		line-height: 1.3;
+    .help-center-link__item {
+        
+        border-bottom: 1px solid var(--studio-gray-5);
+        display: block;
+        line-height: 1.3;
+        margin-bottom: 0;
 
-		.help-center-link__cell {
-			width: 100%;
+        &:first-child {
+            a:focus, button:focus {
+                border-radius: 8px 8px 0 0;
+            }
+        }
 
-			a,
-			button {
-				display: flex;
-				text-decoration: none;
-				color: var(--studio-gray-100);
-				font-size: $font-body-small;
-				border-radius: 2px;
-				font-weight: normal;
-				align-items: center;
-				transition: background-color 0.3s ease;
-				line-height: 1.4;
+        &:last-child {
+            border-bottom: 0;
 
-				> svg:first-child {
-					margin-right: 15px;
-					fill: $help-center-blue;
-					padding: 8px;
-					display: block;
-					background: var(--studio-gray-0);
-				}
+            a:focus, button:focus {
+                border-radius: 0 0 8px 8px;
+            }
+        }
 
-				> svg:last-child {
-					fill: var(--studio-gray-20);
-				}
+        .help-center-link__cell {
+            display: block;
+            width: 100%;
 
-				span {
-					display: block;
-					flex-grow: 1;
-				}
+            &:hover {
+                a, button {
+                    background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, $help-center-blue));
+                    color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+                    cursor: pointer;
+                }
 
-				&:hover {
-					color: var(--studio-gray-100);
-					cursor: pointer;
-					background: var(--color-neutral-0);
-				}
+                svg {
+                    fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+                }
+            }
 
-				&:focus {
-					color: var(--studio-gray-100);
-					outline: $help-center-blue solid 2px;
-					outline-offset: 2px;
-				}
-			}
-		}
-	}
+            a,
+button {
+                all: unset;
+                padding-top: 16px;
+                padding-bottom: 16px;
+                display: flex;
+                text-decoration: none;
+                color: var(--studio-gray-100);
+                font-size: $font-body-small;
+                border-radius: 2px;
+                font-weight: normal;
+                align-items: center;
+                transition: background-color 0.3s ease;
+                line-height: 1.4;
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+
+                svg {
+                    flex-shrink: 0;
+                }
+
+                > svg:first-child {
+                    margin-right: 10px;
+                    fill: $gray-700;
+                    padding-left: 24px;
+                    display: block;
+                }
+
+                > svg:last-child {
+                    fill: var($gray-700);
+                    padding-right: 24px;
+                }
+
+                span {
+                    flex: 1 1 auto;
+                    min-width: 0;
+                    text-align: left;
+                }
+
+                &:focus {
+                    color: var(--studio-gray-100);
+                    outline: $help-center-blue solid 2px;
+                    outline-offset: -2px;
+                }
+            }
+        }
+    }
 }
+

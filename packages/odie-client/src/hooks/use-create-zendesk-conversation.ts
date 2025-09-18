@@ -1,11 +1,9 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
@@ -17,7 +15,7 @@ export const useCreateZendeskConversation = (): ( ( {
 	interactionId?: string;
 	createdFrom?: string;
 	isFromError?: boolean;
-} ) => Promise< void > ) => {
+} ) => Promise< string > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -28,12 +26,7 @@ export const useCreateZendeskConversation = (): ( ( {
 		trackEvent,
 		sectionName,
 	} = useOdieAssistantContext();
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
@@ -69,7 +62,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			chat.status === 'transfer' ||
 			chat.provider === 'zendesk'
 		) {
-			return;
+			return chat.conversationId || '';
 		}
 
 		setChat( ( prevChat ) => ( {
@@ -138,12 +131,17 @@ export const useCreateZendeskConversation = (): ( ( {
 			} );
 		}
 
+		// We need to load the conversation to get typing events. Load simply means "focus on"..
+		Smooch.loadConversation( conversation.id );
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
 			conversationId: conversation.id,
 			provider: 'zendesk',
 			status: 'loaded',
 		} ) );
+
+		return conversation.id;
 	};
 
 	return createConversation;

@@ -1,10 +1,20 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ActivityLog } from '../site-activity-log/types';
+import type { ActivityLogResponse } from '../site-activity-log/types';
 
 export async function fetchSiteBackupActivityLog(
 	siteId: number,
-	{ number, aggregate = false }: { number: number; aggregate?: boolean }
-): Promise< ActivityLog > {
+	{
+		number,
+		aggregate = false,
+		after,
+		before,
+	}: {
+		number: number;
+		aggregate?: boolean;
+		after?: string;
+		before?: string;
+	}
+): Promise< ActivityLogResponse > {
 	return wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/activity/rewindable`,
@@ -13,6 +23,8 @@ export async function fetchSiteBackupActivityLog(
 		{
 			number,
 			aggregate,
+			after,
+			before,
 		}
 	);
 }

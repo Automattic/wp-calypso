@@ -152,7 +152,7 @@ export default function DomainConnectionSetup() {
 	const StepsComponent = currentStep.component;
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain Connection Setup' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain connection setup' ) } /> }>
 			{ currentStep.prev && (
 				<HStack>
 					<Button icon={ isRTL() ? chevronRight : chevronLeft } onClick={ goBack }>
