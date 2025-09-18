@@ -13,7 +13,6 @@ import NotificationDuration from '../notification-duration';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = ( property: string ) => property === 'jetpack/pro-dashboard-monitor-paid-tier';
 	return config;
 } );
 
