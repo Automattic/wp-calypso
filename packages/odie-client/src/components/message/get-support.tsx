@@ -1,12 +1,12 @@
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { chevronRight } from '@wordpress/icons';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
-import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
+import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 
 import './get-support.scss';
 
@@ -21,7 +21,7 @@ interface GetSupportProps {
 interface ButtonConfig {
 	className?: string;
 	disabled?: boolean;
-	text: string;
+	text: string | React.ReactNode;
 	action: () => Promise< void >;
 	waitTimeText?: string;
 	hideButton?: boolean;
@@ -36,8 +36,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const createZendeskConversation = useCreateZendeskConversation();
-	const resetSupportInteraction = useResetSupportInteraction();
-	const location = useLocation();
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
@@ -47,13 +48,11 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		forceEmailSupport: contextForceEmailSupport,
 	} = useOdieAssistantContext();
 
-	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
+	const mostRecentSupportInteractionId = getMostRecentOpenLiveInteraction();
 
 	const { data: supportInteraction } = useGetSupportInteractionById(
-		mostRecentSupportInteractionId?.toString() ?? null
+		mostRecentSupportInteractionId || null
 	);
-
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
@@ -69,19 +68,26 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					text: __( 'Email support', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
-						navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' );
+						params.set( 'mode', 'EMAIL' );
+						params.set( 'wapuuFlow', 'true' );
+						const url = '/contact-form?' + params.toString();
+						navigate( url );
 					},
 				} );
 			} else {
 				if ( supportInteraction ) {
 					buttons.push( {
-						text: __( 'Continue your open conversation', __i18n_text_domain__ ),
+						text: (
+							<>
+								{ __( 'Yes, please take me to that chat', __i18n_text_domain__ ) }
+								<Icon icon={ chevronRight } />
+							</>
+						),
 						action: async () => {
+							const params = new URLSearchParams( search );
+							params.set( 'id', supportInteraction.uuid );
 							trackEvent( 'chat_open_previous_conversation' );
-							setCurrentSupportInteraction( supportInteraction );
-							if ( ! location?.pathname?.includes( '/odie' ) ) {
-								navigate( '/odie' );
-							}
+							navigate( '/odie?' + params.toString() );
 						},
 					} );
 				}
@@ -90,24 +96,22 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					buttons.push( {
 						text: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
+							const params = new URLSearchParams( search );
 							onClickAdditionalEvent?.( 'chat-ai' );
-							navigate( '/odie' );
+							navigate( '/odie?' + params.toString() );
 						},
 					} );
 				} else if ( canConnectToZendesk || contextCanConnectToZendesk ) {
 					buttons.push( {
-						text: __( 'Chat with support', __i18n_text_domain__ ),
+						text: __( 'No thanks, let’s keep it here', __i18n_text_domain__ ),
 						action: async () => {
 							onClickAdditionalEvent?.( 'chat' );
-							resetSupportInteraction().then( ( interaction ) => {
-								if ( isChatLoaded ) {
-									createZendeskConversation( {
-										avoidTransfer: true,
-										interactionId: interaction?.uuid,
-										createdFrom: 'chat_support_button',
-									} );
-								}
-							} );
+							if ( isChatLoaded ) {
+								createZendeskConversation( {
+									avoidTransfer: true,
+									createdFrom: 'chat_support_button',
+								} );
+							}
 						},
 					} );
 				}
@@ -120,8 +124,11 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 			{
 				text: __( 'Ask in our forums', __i18n_text_domain__ ),
 				action: async () => {
+					const params = new URLSearchParams( search );
+					params.set( 'mode', 'FORUM' );
+					const url = '/contact-form?' + params.toString();
 					onClickAdditionalEvent?.( 'forum' );
-					navigate( '/contact-form?mode=FORUM' );
+					navigate( url );
 				},
 			},
 		];
@@ -140,14 +147,14 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	return (
 		<div className="odie__transfer-chat">
 			{ buttonConfig.map( ( button, index ) => (
-				<div className="odie__transfer-chat--button-container" key={ index }>
+				<React.Fragment key={ index }>
 					<button onClick={ ( e ) => handleClick( e, button ) } disabled={ button.disabled }>
 						{ button.text }
 					</button>
 					{ button.waitTimeText && (
 						<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
 					) }
-				</div>
+				</React.Fragment>
 			) ) }
 		</div>
 	);

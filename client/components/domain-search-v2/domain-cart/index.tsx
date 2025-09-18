@@ -3,9 +3,9 @@ import {
 	DomainsFullCart,
 	DomainsFullCartItems,
 	DomainsFullCartItem,
+	DomainsFullCartSkipButton,
 } from '@automattic/domain-search';
 import {
-	__experimentalVStack as VStack,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalView as View,
 	__experimentalSpacer as Spacer,
@@ -14,7 +14,6 @@ import { ComponentProps } from 'react';
 import { useDomainSearch } from '../__legacy/domain-search';
 import { useFocusedCartAction } from '../__legacy/use-focused-cart-action';
 import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
-import { ChooseDomainLater } from './choose-domain-later';
 import { HundredYearPromo } from './hundred-year-promo';
 
 import './style.scss';
@@ -69,26 +68,24 @@ export const DomainCartV2 = ( { showFreeDomainPromo = false, onSkip }: Props ) =
 				totalItems={ totalItems }
 				totalPrice={ totalPrice }
 			>
-				<VStack spacing={ 6 }>
-					{ showFreeDomainPromo && <FreeDomainForAYearPromo textOnly /> }
-					<DomainsFullCartItems>
-						{ cart.items.map( ( item ) => (
-							<Item key={ item.uuid } domain={ item } />
-						) ) }
-					</DomainsFullCartItems>
-					{ onSkip && (
-						<div>
-							<ChooseDomainLater onSkip={ onSkip } />
-						</div>
-					) }
-					{ hasDomainInCartEligibleFor100YearDomainUpgrade && (
-						<View>
-							<Spacer marginTop={ 4 }>
-								<HundredYearPromo />
-							</Spacer>
-						</View>
-					) }
-				</VStack>
+				{ showFreeDomainPromo && <FreeDomainForAYearPromo textOnly /> }
+				<DomainsFullCartItems>
+					{ cart.items.map( ( item ) => (
+						<Item key={ item.uuid } domain={ item } />
+					) ) }
+				</DomainsFullCartItems>
+				{ onSkip && (
+					<div>
+						<DomainsFullCartSkipButton onSkip={ onSkip } />
+					</div>
+				) }
+				{ hasDomainInCartEligibleFor100YearDomainUpgrade && (
+					<View>
+						<Spacer marginTop={ 4 }>
+							<HundredYearPromo />
+						</Spacer>
+					</View>
+				) }
 			</DomainsFullCart>
 		</>
 	);

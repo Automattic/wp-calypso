@@ -41,6 +41,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/agenttic-ui": "^0.1.12",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
@@ -53,6 +54,7 @@
 		"autosize": "^6.0.1",
 		"clsx": "^2.1.1",
 		"dompurify": "^3.2.6",
+		"framer-motion": "^12.23.12",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-intersection-observer": "^9.4.3",

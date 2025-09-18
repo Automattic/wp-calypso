@@ -29,6 +29,7 @@ export interface Threat {
 	first_detected: string;
 	severity: number;
 	fixer?: ThreatFixer | null;
+	fixed_on?: string;
 	status: 'current' | 'fixed' | 'ignored';
 	fixable?: ThreatFixer | boolean;
 	extension?: ThreatExtension;
@@ -48,6 +49,11 @@ export interface SiteScan {
 	state: 'unavailable' | 'idle' | 'scanning' | 'provisioning';
 	threats: Threat[];
 	has_cloud: boolean;
+	current: {
+		is_initial: boolean;
+		timestamp: string;
+		progress: number;
+	};
 	most_recent: {
 		is_initial: boolean;
 		timestamp: string;
@@ -56,4 +62,13 @@ export interface SiteScan {
 		error: boolean;
 	};
 	reason?: string;
+}
+
+export interface SiteScanHistory {
+	threats: Threat[];
+	lifetime_stats: {
+		scans: number;
+		threats_found: number;
+		threats_resolved: number;
+	};
 }
