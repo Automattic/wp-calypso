@@ -13,7 +13,7 @@ export const marketplaceSearchQuery = ( {
 		queryFn: () =>
 			fetchMarketplaceSearch( {
 				category: 'all',
-				groupId: 'wporg',
+				groupId: 'marketplace',
 				pageSize: perPage,
 				slugs,
 			} ),
