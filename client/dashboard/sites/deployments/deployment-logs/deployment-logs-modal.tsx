@@ -4,6 +4,7 @@ import {
 	Button,
 	ExternalLink,
 	Modal,
+	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -47,44 +48,59 @@ export function DeploymentLogsModal( {
 
 	const { commit_message, commit_sha, author } = deployment.metadata;
 	const shortSha = commit_sha?.substring( 0, 7 ) || '';
-
+	const [ , repositoryName ] = deployment.repository_name.split( '/' );
 	return (
 		<Modal
-			title={ `${ shortSha } ${ commit_message }` }
 			onRequestClose={ onRequestClose }
 			shouldCloseOnClickOutside
 			shouldCloseOnEsc
 			size="large"
+			__experimentalHideHeader
 		>
 			<VStack spacing={ 4 }>
-				<HStack spacing={ 3 } alignment="left">
-					{ deployment.is_active_deployment && (
-						<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
-					) }
+				<VStack spacing={ 1 }>
+					<Heading upperCase size={ 11 } weight={ 500 } style={ { color: '#757575' } }>
+						{ repositoryName }
+					</Heading>
 
-					<div style={ { width: 'auto', flexShrink: 0, maxWidth: '33vw' } }>
-						<BranchDisplay branchName={ deployment.branch_name } />
-					</div>
-
-					<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
-						<img
-							src={ author.avatar_url }
-							alt={ author.name }
-							width={ 16 }
-							height={ 16 }
-							style={ { borderRadius: '50%' } }
-						/>
-						<Text size="small" style={ { color: '#3b3b3b' } }>
-							{ author.name }
+					<HStack spacing={ 1 } alignment="left">
+						<Text size={ 15 } weight={ 700 } style={ { flexShrink: 0 } }>
+							{ shortSha }
+						</Text>
+						<Text size={ 15 } truncate numberOfLines={ 1 } weight={ 500 }>
+							{ commit_message }
 						</Text>
 					</HStack>
 
-					<DeploymentLogsStatus
-						status={ deployment.status }
-						startedOn={ deployment.started_on }
-						completedOn={ deployment.completed_on }
-					/>
-				</HStack>
+					<HStack spacing={ 3 } alignment="left">
+						{ deployment.is_active_deployment && (
+							<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
+						) }
+
+						<div style={ { width: 'auto', flexShrink: 0, maxWidth: '33vw' } }>
+							<BranchDisplay branchName={ deployment.branch_name } />
+						</div>
+
+						<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
+							<img
+								src={ author.avatar_url }
+								alt={ author.name }
+								width={ 16 }
+								height={ 16 }
+								style={ { borderRadius: '50%' } }
+							/>
+							<Text size="small" style={ { color: '#3b3b3b' } }>
+								{ author.name }
+							</Text>
+						</HStack>
+
+						<DeploymentLogsStatus
+							status={ deployment.status }
+							startedOn={ deployment.started_on }
+							completedOn={ deployment.completed_on }
+						/>
+					</HStack>
+				</VStack>
 
 				{ isError && <Text>{ __( 'Failed to load deployment logs. Please try again.' ) }</Text> }
 				{ ! isLoading &&
