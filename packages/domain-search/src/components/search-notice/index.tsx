@@ -1,4 +1,4 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
@@ -10,6 +10,53 @@ const AVAILABLE_DOMAIN_STATUSES = [
 	DomainAvailabilityStatus.UNKNOWN,
 	DomainAvailabilityStatus.MAPPED_SAME_SITE_REGISTRABLE,
 ];
+
+/**
+ * Determines whether the availability notice should be hidden for a given domain availability
+ *
+ * @param availability - Domain availability returned from the availability endpoint
+ * @returns True if the availability notice should be hidden, false otherwise.
+ */
+const shouldHideAvailabilityNotice = (
+	availability: DomainAvailability,
+	includeOwnedDomainInSuggestions: boolean
+): boolean => {
+	if ( AVAILABLE_DOMAIN_STATUSES.includes( availability.status ) ) {
+		return true;
+	}
+
+	if (
+		includeOwnedDomainInSuggestions &&
+		availability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER
+	) {
+		return true;
+	}
+
+	if (
+		availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
+		availability.is_supported_premium_domain
+	) {
+		return true;
+	}
+
+	// We don't want to show the availability notice for *.wpcomstaging.com subdomains and other managed subdomains,
+	// such as *.tech.blog, *.water.blog, etc.
+	if (
+		[
+			DomainAvailabilityStatus.WPCOM_STAGING_DOMAIN,
+			DomainAvailabilityStatus.DOTBLOG_SUBDOMAIN,
+		].includes( availability.status )
+	) {
+		return true;
+	}
+
+	// *.wordpress.com and *.wp.com subdomains have `mappable = restricted`
+	if ( availability.mappable === DomainAvailabilityStatus.RESTRICTED ) {
+		return true;
+	}
+
+	return false;
+};
 
 export const SearchNotice = () => {
 	const {
@@ -25,37 +72,10 @@ export const SearchNotice = () => {
 	);
 
 	const notice = useMemo( () => {
-		if ( ! availability || AVAILABLE_DOMAIN_STATUSES.includes( availability.status ) ) {
-			return null;
-		}
-
 		if (
-			includeOwnedDomainInSuggestions &&
-			availability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER
+			! availability ||
+			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
 		) {
-			return null;
-		}
-
-		if (
-			availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
-			availability.is_supported_premium_domain
-		) {
-			return null;
-		}
-
-		// We don't want to show the availability notice for *.wpcomstaging.com subdomains and other managed subdomains,
-		// such as *.tech.blog, *.water.blog, etc.
-		if (
-			[
-				DomainAvailabilityStatus.WPCOM_STAGING_DOMAIN,
-				DomainAvailabilityStatus.DOTBLOG_SUBDOMAIN,
-			].includes( availability.status )
-		) {
-			return null;
-		}
-
-		// *.wordpress.com and *.wp.com subdomains have `mappable = restricted`, and we don't want to show the availability notice for them
-		if ( availability.mappable === DomainAvailabilityStatus.RESTRICTED ) {
 			return null;
 		}
 
