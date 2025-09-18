@@ -46,6 +46,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		skippable: false,
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
+		allowsUsingOwnDomain: true,
+		allowedTlds: [],
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
