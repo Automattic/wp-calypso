@@ -41,23 +41,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		mergeTrunk( skipIfConflict = true )
 
     	bashNodeScript {
-			name = "Validate parameters"
-			scriptContent = """
-				echo "Validating required parameters..."
-				echo "VIEWPORT=%VIEWPORT%"
-
-				if [ -z "%TEST_GROUP%" ]; then
-					echo "WARNING: TEST_GROUP is empty"
-				else
-					echo "TEST_GROUP is set to: %TEST_GROUP%"
-				fi
-
-				echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-    	bashNodeScript {
 			name = "Prepare environment"
       		id = "prepare_e2e_environment"
 			scriptContent = """
@@ -72,46 +55,65 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
+
 		bashNodeScript {
 			name = "Determine Calypso URL"
 			id = "determine_calypso_url"
 			scriptContent = """
-				echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
-				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
-				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_BASE_URL contains stderr
-					echo ${'$'}CALYPSO_BASE_URL
+				echo "Determining Calypso URL"
+
+				# Check if both DOCKER_IMAGE_BUILD_NUMBER and CALYPSO_BASE_URL are set
+				if [[ -n "%DOCKER_IMAGE_BUILD_NUMBER%" && -n "%CALYPSO_BASE_URL%" ]]; then
+					echo "ERROR: Both DOCKER_IMAGE_BUILD_NUMBER and CALYPSO_BASE_URL are set. Please set only one of them."
+					exit 1
+				fi
+
+				# If DOCKER_IMAGE_BUILD_NUMBER is set, use it to get the Calypso URL
+				if [[ -n "%DOCKER_IMAGE_BUILD_NUMBER%" ]]; then
+					echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
+					chmod +x ./bin/get-calypso-live-url.sh
+					CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
+					if [[ ${'$'}? -ne 0 ]]; then
+						# Command failed. CALYPSO_BASE_URL contains stderr
+						echo ${'$'}CALYPSO_BASE_URL
+						exit 1
+					fi
+				elif [[ -n "%CALYPSO_BASE_URL%" ]]; then
+					# CALYPSO_BASE_URL is already set, use it directly
+					echo "Using provided CALYPSO_BASE_URL: %CALYPSO_BASE_URL%"
+				else
+					echo "ERROR: Neither DOCKER_IMAGE_BUILD_NUMBER nor CALYPSO_BASE_URL is set. Please set one of them."
 					exit 1
 				fi
 
 				# Set the CALYPSO_BASE_URL as a TeamCity parameter for other steps to use
 				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}CALYPSO_BASE_URL']"
-				echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
+				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				"""
 				dockerImage = "%docker_image_e2e%"
 		}
-		bashNodeScript {
-				name = "Run e2e tests"
-				id = "run_tests"
-				scriptContent = """					
-					# Check if test/e2e or packages/calypso-e2e files have been changed
-					CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
-					if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
-						echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
-						GREP_FLAG=""
-					else
-						echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
-						GREP_FLAG="--grep=@calypso-pr"
-					fi
 
-					cd test/e2e
-					echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
-					echo "Running Playwright tests for project: %VIEWPORT%"
-					yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
+		bashNodeScript {
+			name = "Run e2e tests"
+			id = "run_tests"
+			scriptContent = """					
+				# Check if test/e2e or packages/calypso-e2e files have been changed
+				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
+					echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
+					GREP_FLAG=""
+				else
+					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
+					GREP_FLAG="--grep=@calypso-pr"
+				fi
+
+				cd test/e2e
+				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
+				echo "Running Playwright tests for project: %VIEWPORT%"
+				yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
 				"""
-				dockerImage = "%docker_image_e2e%"
-		} 	
+			dockerImage = "%docker_image_e2e%"
+		}
   }
 
   artifactRules = """
