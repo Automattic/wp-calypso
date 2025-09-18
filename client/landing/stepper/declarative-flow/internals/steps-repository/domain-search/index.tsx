@@ -31,8 +31,12 @@ type UseMyDomain = {
 type StepSubmission = {
 	navigateToUseMyDomain?: never;
 	siteUrl?: string;
-	domainItem: MinimalRequestCartProduct;
-	domainCart: MinimalRequestCartProduct[];
+	suggestion?: {
+		domain_name: string;
+		is_free: boolean;
+	};
+	domainItem?: MinimalRequestCartProduct;
+	domainCart?: MinimalRequestCartProduct[];
 	signupDomainOrigin?: string;
 };
 
@@ -56,7 +60,7 @@ const DomainSearchStep: StepType< {
 			oneTimePrice: isHundredYearDomainFlow( flow ),
 		},
 		includeDotBlogSubdomain: isNewsletterFlow( flow ),
-		skippable: isNewsletterFlow( flow ),
+		skippable: isNewsletterFlow( flow ) || isOnboardingFlow( flow ),
 		allowedTlds,
 	};
 
@@ -92,10 +96,25 @@ const DomainSearchStep: StepType< {
 								lastQuery: domainName,
 							} );
 						},
-						onContinue: ( items ) => {
+						onContinue: ( domainCart ) => {
+							const domainItem = domainCart[ 0 ];
+
 							navigation.submit( {
-								domainCart: items,
-								domainItem: items[ 0 ],
+								siteUrl: domainItem.meta,
+								domainItem,
+								domainCart,
+								suggestion: {
+									domain_name: domainItem.meta,
+									is_free: false,
+								},
+							} );
+						},
+						onSkip: ( suggestion ) => {
+							navigation.submit( {
+								siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
+								domainItem: undefined,
+								domainCart: [],
+								suggestion,
 							} );
 						},
 					} }

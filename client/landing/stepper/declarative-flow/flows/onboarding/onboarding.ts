@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -51,7 +52,7 @@ const withLocale = ( url: string, locale: string ) => {
 
 function initialize() {
 	const steps = [
-		STEPS.UNIFIED_DOMAINS,
+		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
@@ -156,48 +157,51 @@ const onboarding: FlowV2< typeof initialize > = {
 						throw new Error( 'No provided dependencies found' );
 					}
 
-					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
-					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
-						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
-							?.lastQuery;
+						const lastQueryParam =
+							// eslint-disable-next-line no-nested-ternary
+							'lastQuery' in providedDependencies
+								? providedDependencies.lastQuery
+								: 'domainForm' in providedDependencies
+								? providedDependencies.domainForm?.lastQuery
+								: undefined;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
 							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
 						}
 
-						setUseMyDomainTracksEventProps( {
-							site_url: providedDependencies.siteUrl,
-							signup_domain_origin: signupDomainOrigin,
-							domain_item: providedDependencies.domainItem,
-						} );
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
 					return navigate( 'plans' );
-				case 'use-my-domain':
+				case 'use-my-domain': {
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+					let newUseMyDomainTracksEventProps = useMyDomainTracksEventProps;
 					if (
 						providedDependencies &&
 						'mode' in providedDependencies &&
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						setUseMyDomainTracksEventProps( {
+						newUseMyDomainTracksEventProps = {
 							...useMyDomainTracksEventProps,
 							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 							site_url: providedDependencies.domain,
-						} );
+						};
+
+						setUseMyDomainTracksEventProps( newUseMyDomainTracksEventProps );
 						const destination = addQueryArgs( '/use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
@@ -217,6 +221,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					} );
 
 					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
