@@ -7,8 +7,8 @@ import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
-import { SeverityBadge } from '../../scan/severity-badge';
-import { getThreatIcon, getThreatMessage } from '../../scan/utils';
+import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
+import { getThreatIcon, getThreatMessage, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -33,8 +33,9 @@ export function getFields(): Field< Threat >[] {
 				{ value: 'High', label: __( 'High' ) },
 				{ value: 'Low', label: __( 'Low' ) },
 			],
-			getValue: ( { item } ) => item.severity,
+			getValue: ( { item } ) => getSeverityLabel( item.severity ),
 			render: ( { item } ) => <SeverityBadge severity={ item.severity } />,
+			sort: sortSeverity,
 		},
 		{
 			id: 'threat',

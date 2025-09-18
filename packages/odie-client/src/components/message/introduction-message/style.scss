@@ -1,0 +1,26 @@
+.odie-introduction-message-content__conversation_feedback {
+	flex: 2;
+}
+
+.odie-introduction-big-sky-logo {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	box-sizing: content-box;
+	color: #3858e9;
+	height: 120px;
+	padding-top: 159px;
+}
+
+.odie-introduction-message-content {
+	padding: 0 16px;
+	box-sizing: border-box;
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	justify-content: end;
+}
+.odie-chatbox-message-introduction {
+	height: 100%;
+	align-items: flex-end;
+}

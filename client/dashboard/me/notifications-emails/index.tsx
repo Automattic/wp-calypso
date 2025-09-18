@@ -3,6 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { PauseAllEmails } from './pause-all-emails';
 import { SubscriptionSettings } from './subscription-settings';
 
 export default function NotificationsEmails() {
@@ -22,6 +23,7 @@ export default function NotificationsEmails() {
 			}
 		>
 			<VStack spacing={ 4 }>
+				<PauseAllEmails />
 				<SubscriptionSettings />
 			</VStack>
 		</PageLayout>
