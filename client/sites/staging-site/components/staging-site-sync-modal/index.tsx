@@ -271,8 +271,7 @@ function SyncModal( {
 		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
 		: null;
 
-	//const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;]
-	const shouldDisableGranularSync = true;
+	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 
