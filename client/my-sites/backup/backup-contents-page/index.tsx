@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, __experimentalSpacer as Spacer } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect } from 'react';
@@ -100,7 +100,9 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
 						{ fileBrowserState.getCheckList().totalItems === 0 && (
-							<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
+							<Spacer marginBottom={ 2 }>
+								<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
+							</Spacer>
 						) }
 					</div>
 					<div className="backup-contents-page__body">

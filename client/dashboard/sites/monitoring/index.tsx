@@ -11,56 +11,15 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { chartBar } from '@wordpress/icons';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
-import { Callout } from '../../components/callout';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { hasHostingFeature } from '../../utils/site-features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import MonitoringCard from '../monitoring-card';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
-import illustrationUrl from './monitoring-callout-illustration.svg';
+import { getMonitoringCalloutProps } from './monitoring-callout';
 import type { Site } from '@automattic/api-core';
-
-export function SiteMonitoringCallout( {
-	siteSlug,
-	titleAs = 'h1',
-}: {
-	siteSlug: string;
-	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-} ) {
-	return (
-		<Callout
-			icon={ chartBar }
-			title={ __( 'Monitor server stats' ) }
-			titleAs={ titleAs }
-			image={ illustrationUrl }
-			description={
-				<>
-					<Text as="p" variant="muted">
-						{ __(
-							'Track how your server responds to traffic, identify performance bottlenecks, and investigate error spikes to keep your site running smoothly.'
-						) }
-					</Text>
-					<Text as="p" variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-					</Text>
-				</>
-			}
-			actions={
-				<UpsellCTAButton
-					text={ __( 'Upgrade plan' ) }
-					tracksId="monitoring"
-					variant="primary"
-					href={ `/checkout/${ siteSlug }/business` }
-				/>
-			}
-		/>
-	);
-}
 
 const hoursMap: Record< string, number > = {
 	'6-hours': 6,
@@ -196,11 +155,14 @@ function SiteMonitoring() {
 				</HStack>
 			}
 		>
-			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.MONITOR ) }
-				callout={ <SiteMonitoringCallout siteSlug={ site.slug } /> }
-				main={ <SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } /> }
-			/>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.MONITOR }
+				asOverlay
+				{ ...getMonitoringCalloutProps() }
+			>
+				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

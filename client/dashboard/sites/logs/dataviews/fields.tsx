@@ -1,12 +1,15 @@
-import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog, SiteActivityLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Icon } from '@wordpress/icons';
 import { useLocale } from '../../../app/locale';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
+import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -49,7 +52,7 @@ export function useFields( {
 	logType,
 	timezoneString,
 	gmtOffset,
-}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] {
+}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] | Field< SiteActivityLog >[] {
 	const locale = useLocale();
 
 	let dateTimeLabel = __( 'Date & time' );
@@ -65,13 +68,18 @@ export function useFields( {
 	}
 
 	return useMemo( () => {
-		const formatCell = ( value?: string | number ) => {
+		const formatDateCell = ( value?: string | number, formatAsUTC?: boolean ) => {
 			if ( ! value ) {
 				return '';
 			}
+			const dateFormat = 'M j, Y \\a\\t g:i A';
 			const date = typeof value === 'number' ? new Date( value * 1000 ) : new Date( value );
+			if ( formatAsUTC ) {
+				return dateI18n( dateFormat, date, 'UTC' );
+			}
+
 			return timezoneString
-				? dateI18n( 'M j, Y \\a\\t g:i A', date, timezoneString )
+				? dateI18n( dateFormat, date, timezoneString )
 				: formatDateWithOffset( date, gmtOffset as number, locale, {
 						dateStyle: 'medium',
 						timeStyle: 'short',
@@ -89,7 +97,7 @@ export function useFields( {
 					getValue: ( { item } ) => item.timestamp,
 					render: ( { item } ) => {
 						const value = item.timestamp;
-						return <span>{ formatCell( value ) }</span>;
+						return <span>{ formatDateCell( value ) }</span>;
 					},
 					filterBy: { operators: [] },
 				},
@@ -156,6 +164,67 @@ export function useFields( {
 			] satisfies Field< PHPLog >[];
 		}
 
+		if ( logType === LogType.ACTIVITY ) {
+			return [
+				{
+					id: 'published',
+					type: 'datetime',
+					label: dateTimeLabel,
+					enableHiding: false,
+					enableSorting: true,
+					getValue: ( { item } ) => item.published,
+					render: ( { item } ) => {
+						const value = item.published;
+						return <span>{ formatDateCell( value ) }</span>;
+					},
+					filterBy: { operators: [] },
+				},
+				{
+					id: 'published_utc',
+					type: 'datetime',
+					label: __( 'Date & Time (UTC)' ),
+					enableHiding: true,
+					enableSorting: true,
+					getValue: ( { item } ) => item.published,
+					render: ( { item } ) => {
+						const value = item.published;
+						return <span>{ formatDateCell( value, true ) }</span>;
+					},
+					filterBy: { operators: [] },
+				},
+				{
+					id: 'event',
+					type: 'text',
+					label: __( 'Event' ),
+					enableSorting: false,
+					getValue: ( { item } ) => `${ item.summary }: ${ item.content.text }`,
+					render: ( { item } ) => (
+						<HStack spacing="2" alignment="left" className="site-activity-logs__event">
+							{ item.gridicon && (
+								<Icon
+									className="site-activity-logs__event-icon"
+									icon={ gridiconToWordPressIcon( item.gridicon ) }
+									size={ 24 }
+								/>
+							) }
+							<strong>{ item.summary }</strong>
+							<span>{ item.content.text }</span>
+						</HStack>
+					),
+					filterBy: { operators: [] },
+				},
+				{
+					id: 'actor',
+					type: 'text',
+					label: __( 'User' ),
+					enableSorting: false,
+					getValue: ( { item } ) => item.actor?.name || __( 'Unknown' ),
+					render: ( { item } ) => <span>{ item.actor?.name || __( 'Unknown' ) }</span>,
+					filterBy: { operators: [] },
+				},
+			] satisfies Field< SiteActivityLog >[];
+		}
+
 		// server (web) logs
 		return [
 			{
@@ -167,7 +236,7 @@ export function useFields( {
 				getValue: ( { item } ) => item.date ?? item.timestamp,
 				render: ( { item } ) => {
 					const value = item.date ?? item.timestamp;
-					return <span>{ formatCell( value ) }</span>;
+					return <span>{ formatDateCell( value ) }</span>;
 				},
 				filterBy: { operators: [] },
 			},

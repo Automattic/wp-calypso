@@ -13,6 +13,7 @@ import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { getSelectedSiteId } from './state/ui/selectors';
@@ -89,8 +90,13 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
+	const hostingDashboardOptIn = hasHostingDashboardOptIn( getState() );
 
 	if ( useSitesAsLandingPage ) {
+		if ( hostingDashboardOptIn ) {
+			// Use absolute URL to force a hard reload.
+			return window.location.origin + '/v2/sites';
+		}
 		return '/sites';
 	}
 

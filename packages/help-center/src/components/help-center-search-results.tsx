@@ -16,23 +16,22 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
-	Icon,
-	page as pageIcon,
 	arrowRight,
 	chevronRight,
+	code,
 	external as externalIcon,
+	Icon,
+	page as pageIcon,
 } from '@wordpress/icons';
-import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
-import HelpCenterRecentConversations from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -61,7 +60,6 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 	const { result, type, index, onLinkClickHandler, externalLinks } = props;
 	const { link, title, icon } = result;
 	const { sectionName } = useHelpCenterContext();
-	const isRtl = useRtl();
 
 	const wpAdminSections = [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName );
 	const external = wpAdminSections || ( externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION );
@@ -78,11 +76,7 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		return <Icon icon={ pageIcon } />;
 	};
 
-	const DeveloperResourceIndicator = () => {
-		return (
-			<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
-		);
-	};
+	const DeveloperResourceIndicator = () => <Icon icon={ code } />;
 
 	return (
 		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
@@ -125,10 +119,6 @@ interface SearchResultsSectionProps {
 	results: SearchResult[];
 	condition: boolean;
 }
-
-const noop = () => {
-	return;
-};
 
 function debounceSpeak( {
 	message = '',
@@ -182,7 +172,6 @@ interface HelpSearchResultsProps {
 		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
 		result: SearchResult
 	) => void;
-	onAdminSectionSelect?: ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	searchQuery: string;
 	placeholderLines: number;
 	openAdminInNewTab: boolean;
@@ -193,7 +182,6 @@ interface HelpSearchResultsProps {
 function HelpSearchResults( {
 	externalLinks = false,
 	onSelect,
-	onAdminSectionSelect = noop,
 	searchQuery = '',
 	placeholderLines,
 	openAdminInNewTab = false,
@@ -235,16 +223,6 @@ function HelpSearchResults( {
 	const hasAPIResults = searchResults.length > 0;
 
 	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
-
-	const handleShowMore = () => {
-		recordTracksEvent( 'calypso_help_center_search_results_show_more', {
-			search_term: searchQuery,
-			location,
-			section: sectionName,
-			visible_results: visibleResults,
-		} );
-		setVisibleResults( visibleResults + MAX_VISIBLE_RESULTS );
-	};
 
 	useEffect( () => {
 		// Cancel all queued speak messages.
@@ -308,8 +286,6 @@ function HelpSearchResults( {
 			} else {
 				openAdminInNewTab ? window.open( link, '_blank' ) : window.open( link, '_self' );
 			}
-
-			onAdminSectionSelect( event );
 			return;
 		}
 
@@ -365,11 +341,6 @@ function HelpSearchResults( {
 						/>
 					) ) }
 				</ul>
-				{ results.length > visibleResults && (
-					<Button variant="secondary" onClick={ handleShowMore } className="show-more-button">
-						{ __( 'Show more', __i18n_text_domain__ ) }
-					</Button>
-				) }
 			</Fragment>
 		) : null;
 	};
@@ -379,13 +350,13 @@ function HelpSearchResults( {
 			type: SUPPORT_TYPE_API_HELP,
 			title: searchQuery
 				? __( 'Search Results', __i18n_text_domain__ )
-				: __( 'Recommended Resources', __i18n_text_domain__ ),
+				: __( 'Recommended guides', __i18n_text_domain__ ),
 			results: searchResults,
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
 			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-			title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
+			title: ! searchQuery.length ? __( 'Recommended guides', __i18n_text_domain__ ) : '',
 			results: contextualResults.slice( 0, 6 ),
 			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 		},
@@ -403,7 +374,6 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
-			{ ! searchQuery && <HelpCenterRecentConversations /> }
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<div className="help-center-search-results__empty-results">
@@ -430,7 +400,6 @@ function HelpSearchResults( {
 HelpSearchResults.propTypes = {
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
-	onAdminSectionSelect: PropTypes.func,
 };
 
 export default HelpSearchResults;

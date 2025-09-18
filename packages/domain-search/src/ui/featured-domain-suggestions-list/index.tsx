@@ -19,7 +19,7 @@ export const FeaturedDomainSuggestionsList = ( {
 	const Element = activeQuery === 'large' ? HStack : VStack;
 
 	return (
-		<Element ref={ ref } spacing={ 4 }>
+		<Element ref={ ref } spacing={ 4 } role="list">
 			{ children }
 		</Element>
 	);

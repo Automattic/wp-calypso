@@ -497,11 +497,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 }
 
 const StyleWrappedDomainSearch = ( props: DomainSearchProps ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( 'domains/add' );
-
-	if ( isLoading ) {
-		return null;
-	}
+	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
 
 	return (
 		<>

@@ -21,10 +21,6 @@ export const useAutoScroll = (
 			return;
 		}
 
-		if ( chat.status === 'dislike' ) {
-			return;
-		}
-
 		setIsScrolling( true );
 
 		if ( debounceTimeoutIdRef.current ) {
@@ -40,9 +36,7 @@ export const useAutoScroll = (
 		debounceTimeoutIdRef.current = setTimeout( () => {
 			debounceTimeoutRef.current = 0;
 			requestAnimationFrame( () => {
-				const messages = messagesContainerRef.current?.querySelectorAll(
-					'[data-is-message="true"],.odie-chatbox__action-message'
-				);
+				const messages = messagesContainerRef.current?.querySelectorAll( '.odie-chatbox-message' );
 				let lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
 
 				if ( hasOdieReplied ) {

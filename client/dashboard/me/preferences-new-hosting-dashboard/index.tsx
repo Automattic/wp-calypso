@@ -12,6 +12,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import FlashMessage from '../../components/flash-message';
 import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
@@ -65,6 +66,7 @@ const fields: Field< OptInFormData >[] = [
 
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
@@ -78,6 +80,11 @@ export default function PreferencesLanguageForm() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+
+		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle', {
+			enabled: formData.enabled,
+		} );
+
 		saveOptInPreference(
 			{
 				value: formData.enabled ? 'opt-in' : 'opt-out',

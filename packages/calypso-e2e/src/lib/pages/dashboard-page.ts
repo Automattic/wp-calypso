@@ -86,20 +86,13 @@ export class DashboardPage {
 
 	/**
 	 * Checks if the current page is a 404 error page.
+	 * Note: you should poll for the visibility of the 404 heading as it may not be immediately visible.
 	 *
 	 * @returns Promise that resolves to true if the page is a 404 error page.
+	 * @example
+	 * await expect.poll( async () => await pageDashboard.is404Page() ).toBe( true );
 	 */
 	async is404Page(): Promise< boolean > {
-		await this.page.getByRole( 'heading', { name: '/not found/i' } );
-		return true;
-
-		// // Look for typical 404 page elements
-		// const notFoundHeading = this.page.getByRole( 'heading', { name: /not found|404/i } );
-		// const notFoundText = this.page.getByText(
-		// 	/page (does not exist|not found|couldn't be found)/i
-		// );
-
-		// // Check if either indicator is visible
-		// return ( await notFoundHeading.isVisible() ) || ( await notFoundText.isVisible() );
+		return this.page.getByRole( 'heading', { name: '404 Not Found' } ).isVisible();
 	}
 }
