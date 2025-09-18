@@ -79,6 +79,17 @@ export const SearchNotice = () => {
 			return null;
 		}
 
+		// For odmains that are transferrable (i.e. registered elsewhere and can be transferred to us), we want to show
+		// only the "Already yours? Bring it over" notice instead of the availability notice
+		if (
+			[
+				DomainAvailabilityStatus.TRANSFERRABLE,
+				DomainAvailabilityStatus.TRANSFERRABLE_PREMIUM,
+			].includes( availability.status )
+		) {
+			return null;
+		}
+
 		let finalAvailability = availability;
 
 		const isDomainMapped = DomainAvailabilityStatus.MAPPED === availability.mappable;
