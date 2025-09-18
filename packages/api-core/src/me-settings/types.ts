@@ -1,3 +1,18 @@
+export type McpAbility = {
+	name: string;
+	title: string;
+	description: string;
+	category: string;
+	type: string;
+	enabled: boolean;
+};
+
+export type McpAbilities = {
+	account?: Record< string, McpAbility >;
+	site?: Record< string, McpAbility >; // Default values for all sites
+	sites?: Record< string, Record< string, number > >; // Custom overrides per site (0/1 values only)
+};
+
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
@@ -34,5 +49,5 @@ export interface UserSettings {
 	subscription_delivery_hour: number;
 	subscription_delivery_jabber_default: boolean;
 	p2_disable_autofollow_on_comment: boolean;
-	mcp_abilities?: any;
+	mcp_abilities?: McpAbilities;
 }

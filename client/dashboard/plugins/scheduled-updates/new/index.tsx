@@ -1,4 +1,4 @@
-import { siteScheduledUpdatesBatchCreateMutation } from '@automattic/api-queries';
+import { updateSchedulesBatchCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -32,7 +32,7 @@ function ScheduledUpdatesNew() {
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
 		[ selectedSiteIds ]
 	);
-	const createMutation = useMutation( siteScheduledUpdatesBatchCreateMutation( siteIdsAsNumbers ) );
+	const createMutation = useMutation( updateSchedulesBatchCreateMutation( siteIdsAsNumbers ) );
 
 	const handleCreate = useCallback( () => {
 		if ( ! isValid ) {
