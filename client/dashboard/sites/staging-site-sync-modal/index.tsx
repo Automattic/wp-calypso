@@ -90,7 +90,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			staging: {
 				title: __( 'Pull from Production' ),
 				description: __(
-					'Pulling will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+					'Pulling will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 				syncFrom: 'production',
 				syncTo: 'staging',
@@ -98,7 +98,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			production: {
 				title: __( 'Pull from Staging' ),
 				description: __(
-					'Pulling will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+					'Pulling will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 				syncFrom: 'staging',
 				syncTo: 'production',
@@ -112,7 +112,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		staging: {
 			title: __( 'Push to Production' ),
 			description: __(
-				'Pushing will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+				'Pushing will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
 			syncFrom: 'staging',
 			syncTo: 'production',
@@ -120,7 +120,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		production: {
 			title: __( 'Push to Staging' ),
 			description: __(
-				'Pushing will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+				'Pushing will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
 			syncFrom: 'production',
 			syncTo: 'staging',
