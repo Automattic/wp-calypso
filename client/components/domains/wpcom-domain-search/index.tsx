@@ -1,7 +1,7 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { ResponseCartProduct, ShoppingCartProvider } from '@automattic/shopping-cart';
+import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
-import { shoppingCartManagerClient } from 'calypso/dashboard/app/shopping-cart';
+import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 
 type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | 'events' > & {
@@ -10,6 +10,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	events?: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
 		onContinue?: ( items: ResponseCartProduct[] ) => void;
 	};
+	isFirstDomainFreeForFirstYear?: boolean;
 };
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
@@ -28,9 +29,11 @@ const setInitialQuery = ( query: string ) => {
 
 const DomainSearchWithCart = ( {
 	currentSiteId,
+	currentSiteUrl,
 	flowName,
 	initialQuery: externalInitialQuery,
 	config: externalConfig,
+	isFirstDomainFreeForFirstYear,
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
@@ -38,21 +41,25 @@ const DomainSearchWithCart = ( {
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
+		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
 	} );
 
 	const initialQuery = useMemo( () => {
-		return externalInitialQuery ?? getInitialQuery();
-	}, [ externalInitialQuery ] );
+		return externalInitialQuery || currentSiteUrl || getInitialQuery();
+	}, [ externalInitialQuery, currentSiteUrl ] );
+
+	const cartItemsLength = cart.items.length;
 
 	const config = useMemo( () => {
 		return {
 			...externalConfig,
 			priceRules: {
 				...externalConfig?.priceRules,
-				freeForFirstYear: isNextDomainFree,
+				freeForFirstYear:
+					( cartItemsLength === 0 && isFirstDomainFreeForFirstYear ) || isNextDomainFree,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree ] );
+	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
 
 	const events = useMemo( () => {
 		return {
@@ -69,6 +76,7 @@ const DomainSearchWithCart = ( {
 	return (
 		<DomainSearch
 			{ ...props }
+			currentSiteUrl={ currentSiteUrl }
 			config={ config }
 			cart={ cart }
 			events={ events }
@@ -79,8 +87,8 @@ const DomainSearchWithCart = ( {
 
 export const WPCOMDomainSearch = ( props: DomainSearchProps ) => {
 	return (
-		<ShoppingCartProvider managerClient={ shoppingCartManagerClient }>
+		<WPCOMDomainSearchCartProvider>
 			<DomainSearchWithCart { ...props } />
-		</ShoppingCartProvider>
+		</WPCOMDomainSearchCartProvider>
 	);
 };

@@ -52,7 +52,7 @@ const Featured = ( {
 		[ activeQuery, matchReasons, isSingleFeaturedSuggestion, currentWidth ]
 	);
 
-	const title = (
+	const domainName = (
 		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>
 			{ domain }
 			<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
@@ -70,13 +70,15 @@ const Featured = ( {
 	return (
 		<DomainSuggestionContainerContext.Provider value={ contextValue }>
 			<FeaturedSkeleton
+				role="listitem"
+				title={ `${ domain }.${ tld }` }
 				ref={ containerRef }
 				activeQuery={ activeQuery }
 				className={ clsx( 'domain-suggestion-featured', {
 					'domain-suggestion-featured--highlighted': isHighlighted,
 				} ) }
 				badges={ badgesElement }
-				title={ title }
+				domainName={ domainName }
 				matchReasonsList={ matchReasonsList }
 				price={ price }
 				cta={ cta }

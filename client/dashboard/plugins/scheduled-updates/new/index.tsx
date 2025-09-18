@@ -1,3 +1,5 @@
+import { siteScheduledUpdatesBatchCreateMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
@@ -6,21 +8,48 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
-import FrequencySelection, { type Weekday } from './components/frequency-selection';
+import FrequencySelection, { type Frequency, type Weekday } from './components/frequency-selection';
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
+import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY } from './constants';
+import { prepareTimestamp } from './helpers';
+
+const BLOCK_CREATE = true;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
-	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( 'daily' );
-	const [ weekday, setWeekday ] = useState< Weekday >( 'Monday' );
-	const [ time, setTime ] = useState( '04:00' );
-	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0;
+	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
+	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
+	const [ time, setTime ] = useState( DEFAULT_TIME );
+	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
+
+	const siteIdsAsNumbers = useMemo(
+		() => selectedSiteIds.map( ( id ) => Number( id ) ),
+		[ selectedSiteIds ]
+	);
+	const createMutation = useMutation( siteScheduledUpdatesBatchCreateMutation( siteIdsAsNumbers ) );
+
+	const handleCreate = useCallback( () => {
+		if ( ! isValid ) {
+			return;
+		}
+
+		const timestamp = prepareTimestamp( frequency, weekday, time );
+		const body = {
+			plugins: selectedPluginSlugs,
+			schedule: {
+				timestamp,
+				interval: frequency,
+			},
+		};
+
+		createMutation.mutate( body );
+	}, [ isValid, frequency, weekday, time, selectedPluginSlugs, createMutation ] );
 
 	return (
 		<PageLayout
@@ -65,7 +94,12 @@ function ScheduledUpdatesNew() {
 							} }
 						/>
 						<HStack justify="start">
-							<Button variant="primary" disabled={ ! isValid } __next40pxDefaultSize>
+							<Button
+								variant="primary"
+								disabled={ ! isValid }
+								onClick={ handleCreate }
+								__next40pxDefaultSize
+							>
 								{ __( 'Create schedule' ) }
 							</Button>
 						</HStack>

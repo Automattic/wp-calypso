@@ -1,8 +1,8 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import illustrationUrl from '../deployment-list/deployments-callout-illustration.svg';
-import ghIconUrl from '../deployment-list/gh-icon.svg';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import illustrationUrl from './deployments-callout-illustration.svg';
+import ghIconUrl from './gh-icon.svg';
 import type { Site } from '@automattic/api-core';
 
 export function getDeploymentsCalloutProps() {
