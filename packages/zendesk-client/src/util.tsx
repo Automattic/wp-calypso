@@ -13,7 +13,6 @@ const PRODUCTION_ENVIRONMENTS = [
 ];
 
 export const isTestModeEnvironment = () => {
-	return false;
 	const currentEnvironment = config( 'env_id' ) as string;
 
 	// During SU sessions, we want to always target prod. See HAL-154.
