@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useScanState } from '../../app/hooks/site-scan-state';
+import { useScanState } from './use-scan-state';
 import type { Site } from '@automattic/api-core';
 
 interface ScanNowButtonProps {
