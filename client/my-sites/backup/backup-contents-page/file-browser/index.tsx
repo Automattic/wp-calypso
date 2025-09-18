@@ -21,8 +21,6 @@ export interface FileBrowserConfig {
 	showSeparateExpandButton?: boolean;
 	siteId?: number;
 	showHeader?: boolean;
-	inheritNodeColor?: boolean;
-	nodesIndentInlineStart?: number;
 }
 
 interface FileBrowserProps {
