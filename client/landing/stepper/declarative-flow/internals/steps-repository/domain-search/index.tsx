@@ -12,6 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -119,6 +120,13 @@ const DomainSearchStep: StepType< {
 		};
 	}, [ submit ] );
 
+	const slots = useMemo( () => {
+		return {
+			BeforeResults: () => <FreeDomainForAYearPromo />,
+			BeforeFullCartItems: () => <FreeDomainForAYearPromo textOnly />,
+		};
+	}, [] );
+
 	const domainSearchElement = (
 		<WPCOMDomainSearch
 			className={ className }
@@ -133,6 +141,7 @@ const DomainSearchStep: StepType< {
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isNewHostedSiteCreationFlow( flow )
 			}
+			slots={ slots }
 		/>
 	);
 

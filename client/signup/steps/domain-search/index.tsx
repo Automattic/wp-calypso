@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -103,6 +104,25 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 
+	const slots = useMemo( () => {
+		return {
+			BeforeResults: () => {
+				if ( isDomainForGravatarFlow( flowName ) ) {
+					return null;
+				}
+
+				return <FreeDomainForAYearPromo />;
+			},
+			BeforeFullCartItems: () => {
+				if ( isDomainForGravatarFlow( flowName ) ) {
+					return null;
+				}
+
+				return <FreeDomainForAYearPromo textOnly />;
+			},
+		};
+	}, [ flowName ] );
+
 	return (
 		<StepWrapper
 			{ ...props }
@@ -118,6 +138,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					events={ events }
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ isDomainOnlyFlow }
+					slots={ slots }
 				/>
 			}
 		/>
