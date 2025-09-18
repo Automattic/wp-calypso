@@ -290,7 +290,8 @@ function StagingSiteSyncModalInner( {
 		  )
 		: null;
 
-	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+	//const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+	const shouldDisableGranularSync = true;
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 
 	const handleConfirm = () => {
@@ -360,11 +361,14 @@ function StagingSiteSyncModalInner( {
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
+	const isGranularMode = isFileBrowserVisible && ! shouldDisableGranularSync;
+
+	const noGranularSelection =
+		isGranularMode && browserCheckList.totalItems > 0 && browserCheckList.includeList.length === 0;
+
 	const isSubmitDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		( browserCheckList.totalItems === 0 &&
-			browserCheckList.includeList.length === 0 &&
-			!! lastKnownBackupAttempt ) ||
+		noGranularSelection ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
 
