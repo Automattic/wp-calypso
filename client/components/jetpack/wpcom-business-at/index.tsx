@@ -74,6 +74,8 @@ export interface AtomicContentSwitch {
 		content: string;
 	};
 	getProductUrl: ( siteSlug: string ) => string;
+	/** Optional hook for product-specific activation handling */
+	onActivationResolved?: () => void;
 }
 
 const vaultpressContent: AtomicContentSwitch = {
@@ -100,7 +102,7 @@ function BlockingHoldNotice( {
 	suppressInstallNotice = false,
 }: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
-	if ( ! holds ) {
+	if ( ! holds || suppressInstallNotice ) {
 		return null;
 	}
 
@@ -113,18 +115,10 @@ function BlockingHoldNotice( {
 		)
 	);
 
-	// Minimal change: always suppress the transient "Installation in progress" notice
-	// by filtering out TRANSFER_ALREADY_EXISTS from the holds passed to the notice.
-	const filteredHolds = holds.filter( ( h: string ) => h !== 'TRANSFER_ALREADY_EXISTS' );
-
-	const holdsForNotice = suppressInstallNotice
-		? filteredHolds.filter( ( h: string ) => h !== 'TRANSFER_ALREADY_EXISTS' )
-		: filteredHolds;
-
 	return (
 		<HardBlockingNotice
 			translate={ translate }
-			holds={ holdsForNotice }
+			holds={ holds }
 			blockingMessages={ blockingMessages }
 		/>
 	);
@@ -196,6 +190,14 @@ export default function WPCOMBusinessAT( {
 
 	const rewindAtomicDeactivated =
 		isAtomic && ( rewindState as { state?: string } | undefined )?.state === 'unavailable';
+
+	useEffect( () => {
+		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
+			setIsRewindActivating( false );
+			// Notify product-specific callback when activation settles
+			content.onActivationResolved?.();
+		}
+	}, [ isRewindActivating, rewindAtomicDeactivated, content ] );
 
 	// Check if features are loaded
 	const featuresNotLoaded = useSelector(
@@ -311,11 +313,7 @@ export default function WPCOMBusinessAT( {
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
-						loading={
-							automatedTransferStatus === START ||
-							( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
-							isRewindActivating
-						}
+						loading={ automatedTransferStatus === START || isRewindActivating }
 						onClick={ () => {
 							if ( rewindAtomicDeactivated ) {
 								setIsRewindActivating( true );
