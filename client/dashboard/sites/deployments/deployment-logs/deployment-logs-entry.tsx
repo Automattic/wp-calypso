@@ -1,3 +1,4 @@
+import { deploymentRunLogDetailQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -8,8 +9,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { deploymentRunLogDetailQuery, LogEntry } from './deployment-logs-queries';
-import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
+import type { DeploymentRunWithDeploymentInfo, LogEntry } from '@automattic/api-core';
+
 export const DeploymentLogsEntry = ( {
 	entry,
 	deployment,

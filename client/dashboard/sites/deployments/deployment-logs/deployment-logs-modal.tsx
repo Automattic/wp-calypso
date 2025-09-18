@@ -1,3 +1,4 @@
+import { deploymentRunLogsQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -15,7 +16,6 @@ import { useLocale } from '../../../app/locale';
 import { formatDate } from '../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentLogsEntry } from './deployment-logs-entry';
-import { deploymentRunLogsQuery } from './deployment-logs-queries';
 import { DeploymentLogsStatus } from './deployment-logs-status';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 

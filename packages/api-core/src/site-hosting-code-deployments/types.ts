@@ -60,3 +60,21 @@ export interface DeploymentRunWithDeploymentInfo extends DeploymentRun {
 	is_automated: boolean;
 	is_active_deployment: boolean;
 }
+
+export interface LogEntry {
+	message: string;
+	level: string;
+	timestamp: string;
+	context?: {
+		command: {
+			command_identifier: string;
+			exit_code: number;
+		};
+	};
+}
+
+export interface LogEntryDetail {
+	exit_code: number;
+	stdout: Array< string >;
+	stderr: Array< string >;
+}
