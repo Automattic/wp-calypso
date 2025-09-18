@@ -1,5 +1,5 @@
 /**
- * Scheduled Updates types
+ * Update Schedules types
  *
  * These mirror the shapes used by the legacy client data layer so we can
  * port behavior without regressions while adopting api-core/api-queries.
@@ -13,7 +13,7 @@ export type LastRunStatus =
 	| 'failure-and-rollback-fail'
 	| null;
 
-export type ScheduledUpdate = {
+export type UpdateSchedule = {
 	id: string;
 	hook?: string;
 	interval: number;
@@ -26,13 +26,9 @@ export type ScheduledUpdate = {
 	active: boolean;
 };
 
-export type SiteScheduledUpdatesResponse = Record< string, Omit< ScheduledUpdate, 'id' > >;
+export type SiteUpdateSchedulesResponse = Record< string, Omit< UpdateSchedule, 'id' > >;
 
-export type MultisiteScheduledUpdatesResponse = {
-	sites: { [ site_id: string ]: SiteScheduledUpdatesResponse };
-};
-
-export type CreateScheduledUpdateBody = {
+export type CreateSiteUpdateScheduleBody = {
 	plugins: string[];
 	schedule: {
 		interval: 'daily' | 'weekly';
@@ -47,4 +43,4 @@ export type CreateScheduledUpdateBody = {
 	health_check_paths?: string[];
 };
 
-export type EditScheduledUpdateBody = CreateScheduledUpdateBody;
+export type EditSiteUpdateScheduleBody = CreateSiteUpdateScheduleBody;

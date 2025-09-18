@@ -1,10 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { CreateScheduledUpdateBody, EditScheduledUpdateBody } from './types';
+import type { CreateSiteUpdateScheduleBody, EditSiteUpdateScheduleBody } from './types';
 
 // Single-site create
-export async function createSiteScheduledUpdate(
+export async function createSiteUpdateSchedule(
 	siteId: number,
-	body: CreateScheduledUpdateBody
+	body: CreateSiteUpdateScheduleBody
 ): Promise< unknown > {
 	return await wpcom.req.post( {
 		path: `/sites/${ siteId }/update-schedules`,
@@ -14,10 +14,10 @@ export async function createSiteScheduledUpdate(
 }
 
 // Single-site edit
-export async function editSiteScheduledUpdate(
+export async function editSiteUpdateSchedule(
 	siteId: number,
 	scheduleId: string,
-	body: EditScheduledUpdateBody
+	body: EditSiteUpdateScheduleBody
 ): Promise< unknown > {
 	return await wpcom.req.put( {
 		path: `/sites/${ siteId }/update-schedules/${ scheduleId }`,
@@ -27,7 +27,7 @@ export async function editSiteScheduledUpdate(
 }
 
 // Single-site delete
-export async function deleteSiteScheduledUpdate(
+export async function deleteSiteUpdateSchedule(
 	siteId: number,
 	scheduleId: string
 ): Promise< unknown > {
