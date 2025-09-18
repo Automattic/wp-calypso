@@ -1,4 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -11,7 +13,6 @@ import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
-
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
 export const useFields = ( {
@@ -21,6 +22,27 @@ export const useFields = ( {
 	site?: Site;
 	showPrimaryDomainBadge?: boolean;
 } = {} ) => {
+	const { data: domains } = useQuery( domainsQuery() );
+
+	const siteElements = useMemo(
+		() =>
+			Object.values(
+				domains
+					?.filter(
+						( domain ) =>
+							! domain.is_domain_only_site && domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION
+					)
+					.reduce(
+						( acc, domain ) => ( {
+							...acc,
+							[ domain.blog_id ]: { value: domain.blog_id.toString(), label: domain.blog_name },
+						} ),
+						{} as Record< number, { value: string; label: string } >
+					) ?? {}
+			),
+		[ domains ]
+	);
+
 	const fields: Field< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -72,12 +94,12 @@ export const useFields = ( {
 				label: __( 'Site' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => {
-					return item.blog_name ?? '';
+				elements: siteElements,
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
 				},
-				render: ( { field, item } ) => (
-					<DomainSiteField domain={ item } value={ field.getValue( { item } ) } />
-				),
+				getValue: ( { item }: { item: DomainSummary } ) => item.blog_id.toString(),
+				render: ( { item } ) => <DomainSiteField domain={ item } value={ item.blog_name ?? '' } />,
 			},
 			{
 				id: 'ssl_status',
@@ -162,7 +184,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge ]
+		[ site, showPrimaryDomainBadge, siteElements ]
 	);
 
 	return fields;
