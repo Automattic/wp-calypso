@@ -252,7 +252,7 @@ function StagingSiteSyncModalInner( {
 		}
 	}, [ fileBrowserState, sqlNode ] );
 
-	const handleExpanderChange = useCallback(
+	const handleFileSelectionModeChange = useCallback(
 		( value: string ) => {
 			const isExpanded = value === 'true';
 			setIsFileBrowserVisible( isExpanded );
@@ -408,7 +408,7 @@ function StagingSiteSyncModalInner( {
 									{ label: __( 'All files and folders' ), value: 'false' },
 									{ label: __( 'Specific files and folders' ), value: 'true' },
 								] }
-								onChange={ handleExpanderChange }
+								onChange={ handleFileSelectionModeChange }
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
 								aria-label={ __( 'Select files and folders to sync' ) }
