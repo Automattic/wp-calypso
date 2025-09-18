@@ -1277,18 +1277,25 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 	)
 }
 
-object AuthenticationE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Authentication",
-	buildUuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
-	buildName = "Authentication E2E Tests",
-	buildDescription = "Runs a suite of Authentication E2E tests.",
-	concurrentBuilds = 1,
-	testGroup = "authentication",
-	buildParams = {
-		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
-		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
+object AuthenticationE2ETests : BuildType(
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Calypso_E2E_Authentication"),
+	uuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
+	name = "Authentication E2E Tests",
+	description = "Runs the authentication group E2E tests",
+
+	params {
+		text("TEST_GROUP", "@authentication")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+	}
+
+	features {
+		matrix {
+			param("VIEWPORT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile")
+			))
+		}
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -1303,8 +1310,9 @@ object AuthenticationE2ETests : E2EBuildType(
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
-	},
-	buildTriggers = {
+	}
+
+	triggers = {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/6"
