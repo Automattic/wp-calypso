@@ -3,6 +3,7 @@ import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
@@ -71,6 +72,8 @@ export default function ContactList( {
 
 	const showSMSCounter = type === 'sms' && items.length > 0 && !! settings;
 
+	const isA4AEnvironment = isA8CForAgencies();
+
 	return (
 		<>
 			{ type === 'sms' && ! items.length && (
@@ -112,7 +115,7 @@ export default function ContactList( {
 				{ showAddButton && restriction === 'upgrade_required' && type === 'email' && (
 					<div className="contact-list__upgrade-message">
 						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
-						<UpgradeLink isInline />
+						{ ! isA4AEnvironment && <UpgradeLink isInline /> }
 					</div>
 				) }
 				{ showSMSCounter && <SMSCounter settings={ settings } /> }

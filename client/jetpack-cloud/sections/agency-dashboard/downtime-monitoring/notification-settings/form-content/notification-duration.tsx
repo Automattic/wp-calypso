@@ -1,6 +1,7 @@
 import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import useNotificationDurations from '../../../sites-overview/hooks/use-notification-durations';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import UpgradeLink from '../../upgrade-link';
@@ -23,6 +24,8 @@ export default function NotificationDuration( {
 	const translate = useTranslate();
 
 	const durations = useNotificationDurations();
+
+	const isA4AEnvironment = isA8CForAgencies();
 
 	return (
 		<div className="notification-settings__content-block">
@@ -55,7 +58,9 @@ export default function NotificationDuration( {
 						{ duration.isPaid && (
 							<>
 								<FeatureRestrictionBadge restriction={ restriction } />
-								{ restriction === 'upgrade_required' && <UpgradeLink isInline /> }
+								{ restriction === 'upgrade_required' && ! isA4AEnvironment && (
+									<UpgradeLink isInline />
+								) }
 							</>
 						) }
 					</SelectDropdown.Item>
