@@ -15,7 +15,6 @@ export interface FileBrowserConfig {
 	excludeTypes?: string[];
 	expandDirectoriesOnClick?: boolean;
 	alwaysInclude?: string[];
-	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
 	showBackupTime?: boolean;
 	showSeparateExpandButton?: boolean;
@@ -79,7 +78,6 @@ function FileBrowser( {
 			{ ( fileBrowserConfig?.showHeader ?? true ) && (
 				<FileBrowserHeader
 					rewindId={ rewindId }
-					showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
 					siteId={ siteId }
 					siteSlug={ siteSlug }
 					hasCredentials={ hasCredentials }
