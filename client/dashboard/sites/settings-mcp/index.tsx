@@ -1,10 +1,10 @@
 import {
 	isAutomatticianQuery,
 	siteBySlugQuery,
-	siteSettingsQuery,
-	siteSettingsMutation,
+	userSettingsQuery,
+	userSettingsMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	Button,
@@ -18,105 +18,79 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { SiteMcpAbilities, SiteSettings } from '@automattic/api-core';
+import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
+import type { SiteMcpAbilities } from '@automattic/api-core';
 
-export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
+function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
-	const mutation = useMutation( siteSettingsMutation( site.ID ) );
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	// Use the standard userSettingsMutation (now supports mcp_abilities)
+	const saveMcpMutation = useMutation( userSettingsMutation() );
 
-	// Get tools from the site settings data
-	const availableTools: [ string, SiteMcpAbilities[ string ] ][] = Object.entries(
-		siteSettings?.mcp_abilities || {}
-	);
+	// Get tools from user settings using the new nested structure
+	const availableTools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {
+		const abilities = getSiteMcpAbilities( userSettings, site.ID );
+		return Object.entries( abilities );
+	}, [ userSettings, site.ID ] );
+
 	const hasTools = availableTools.length > 0;
 
-	const [ formData, setFormData ] = useState< SiteMcpAbilities >(
-		siteSettings?.mcp_abilities ?? {}
+	const [ formData, setFormData ] = useState< SiteMcpAbilities >( () =>
+		getSiteMcpAbilities( userSettings, site.ID )
 	);
 
 	// Calculate if any tools are enabled in form data (for master toggle state)
 	const anyToolsEnabled = hasTools && Object.values( formData ).some( ( tool ) => tool.enabled );
 
-	// Auto-disable master toggle if all tools are disabled
-	useEffect( () => {
-		const enabledToolsCount = Object.values( formData ).filter( ( tool ) => tool.enabled ).length;
+	const handleSubmit = useCallback(
+		( e: React.FormEvent ) => {
+			e.preventDefault();
 
-		// If we have tools but none are enabled, and the master toggle is on,
-		// we need to turn off all tools (which will turn off the master toggle)
-		if ( hasTools && enabledToolsCount === 0 && anyToolsEnabled ) {
-			const disabledTools: SiteMcpAbilities = {};
-			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ toolId, tool ] ) => {
-				disabledTools[ toolId ] = {
-					...tool,
-					enabled: false,
-				};
-			} );
-			setFormData( disabledTools );
-		}
-	}, [ formData, hasTools, anyToolsEnabled, siteSettings?.mcp_abilities ] );
+			try {
+				// Create optimized API payload using the new structure
+				const apiData = createSiteSpecificApiPayload( userSettings, site.ID, formData );
 
-	// Gate access to Automatticians only and only if there are tools to configure
-	if ( ! isAutomattician ) {
-		return null;
-	}
-
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-
-		// Convert the tools object to a simple key-value array with enabled status
-		const toolsArray: Record< string, number > = {};
-		Object.entries( formData ).forEach( ( [ toolId, tool ] ) => {
-			toolsArray[ toolId ] = tool.enabled ? 1 : 0;
-		} );
-
-		// Create mutation data with the proper type for the API
-		// Note: We use double type assertion (as unknown as Partial<SiteSettings>) because
-		// the API expects simplified mcp_abilities (Record<string, number>) but the TypeScript
-		// type defines full objects (SiteMcpAbilities). The mutation logic handles the transformation.
-		const mutationData = { mcp_abilities: toolsArray } as unknown as Partial< SiteSettings >;
-
-		mutation.mutate( mutationData, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'MCP tools saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
-			},
-		} );
-	};
-
-	const handleMasterToggle = ( enabled: boolean ) => {
-		setFormData( () => {
-			if ( enabled ) {
-				// When enabling MCP, auto-enable all available tools
-				const autoEnabledTools: SiteMcpAbilities = {};
-				Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ toolId, tool ] ) => {
-					autoEnabledTools[ toolId ] = {
-						...tool,
-						enabled: true, // Auto-enable all tools
-					};
+				// Save using custom mutation (bypasses saveableKeys filtering)
+				saveMcpMutation.mutate( apiData as any, {
+					onSuccess: () => {
+						createSuccessNotice( __( 'MCP tools saved.' ), { type: 'snackbar' } );
+					},
+					onError: () => {
+						createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
+					},
 				} );
-				return autoEnabledTools;
+			} catch ( error ) {
+				createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
 			}
-			// When disabling MCP, disable all tools
-			const disabledTools: SiteMcpAbilities = {};
-			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ toolId, tool ] ) => {
-				disabledTools[ toolId ] = {
+		},
+		[ formData, userSettings, site.ID, saveMcpMutation, createSuccessNotice, createErrorNotice ]
+	);
+
+	const handleMasterToggle = useCallback(
+		( enabled: boolean ) => {
+			// Get the complete list of available tools from userSettings
+			const currentAbilities = getSiteMcpAbilities( userSettings, site.ID );
+			const updatedTools: SiteMcpAbilities = {};
+
+			// Update all available tools to the same enabled state
+			Object.entries( currentAbilities ).forEach( ( [ toolId, tool ] ) => {
+				updatedTools[ toolId ] = {
 					...tool,
-					enabled: false,
+					enabled,
 				};
 			} );
-			return disabledTools;
-		} );
-	};
 
-	const handleToolChange = ( toolId: string, enabled: boolean ) => {
+			setFormData( updatedTools );
+		},
+		[ userSettings, site.ID ]
+	);
+
+	const handleToolChange = useCallback( ( toolId: string, enabled: boolean ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
 			[ toolId ]: {
@@ -124,18 +98,23 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 				enabled,
 			},
 		} ) );
-	};
+	}, [] );
 
-	// Get tools from the site settings data, but use form data for current state
-	const tools: [ string, SiteMcpAbilities[ string ] ][] = availableTools.map(
-		( [ toolId, tool ] ) => [
+	// Get tools from user settings, but use form data for current state
+	const tools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {
+		return availableTools.map( ( [ toolId, tool ] ) => [
 			toolId,
 			{
 				...tool,
 				enabled: formData[ toolId ]?.enabled ?? tool.enabled,
 			},
-		]
-	);
+		] );
+	}, [ availableTools, formData ] );
+
+	// Gate access to Automatticians only and only if there are tools to configure
+	if ( ! isAutomattician ) {
+		return null;
+	}
 
 	// Group tools by type first, then by category
 	const groupedByType: Record<
@@ -244,7 +223,6 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 																checked={ tool.enabled }
 																onChange={ ( checked ) => handleToolChange( toolId, checked ) }
 																label={ tool.title }
-																disabled={ ! anyToolsEnabled }
 																help={ tool.description }
 															/>
 														</VStack>
@@ -264,10 +242,10 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 						<Button
 							variant="primary"
 							type="submit"
-							isBusy={ mutation.isPending }
-							disabled={ mutation.isPending }
+							isBusy={ saveMcpMutation.isPending }
+							disabled={ saveMcpMutation.isPending }
 						>
-							{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP tools' ) }
+							{ saveMcpMutation.isPending ? __( 'Saving…' ) : __( 'Save MCP tools' ) }
 						</Button>
 					</div>
 				) }
@@ -300,3 +278,5 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		</PageLayout>
 	);
 }
+
+export default SettingsMcpComponent;

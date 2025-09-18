@@ -1,6 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, siteScanQuery } from '@automattic/api-queries';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
@@ -16,9 +16,13 @@ import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { useTimeSince } from '../../components/time-since';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { ActiveThreatsDataViews } from '../scan-active';
+import { ScanHistoryDataViews } from '../scan-history';
 import illustrationUrl from './scan-callout-illustration.svg';
+import { ScanNowButton } from './scan-now-button';
+
 import './style.scss';
 
 const SCAN_TABS = [
@@ -31,6 +35,22 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const router = useRouter();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
+
+	const lastScanTime = scan?.most_recent?.timestamp;
+	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
+
+	const getPageDescription = () => {
+		if ( lastScanTime && lastScanRelativeTime ) {
+			return sprintf(
+				/* translators: %s: relative time since last scan */
+				__( 'Latest scan ran %s.' ),
+				lastScanRelativeTime
+			);
+		}
+
+		return null;
+	};
 
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
 		if ( tab === 'active' ) {
@@ -43,13 +63,12 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	return (
 		<PageLayout
 			header={
-				// @TODO: Add translation and relative time
 				<PageHeader
 					title={ __( 'Scan' ) }
-					description="Latest automated scan run X hours ago"
+					description={ getPageDescription() }
 					actions={
 						<ButtonStack>
-							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							<ScanNowButton site={ site } />
 							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
@@ -98,11 +117,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					</CardHeader>
 					<CardBody>
 						{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
-						{ scanTab === 'history' && (
-							<Text as="p" variant="muted">
-								{ __( 'So far, there are no archived threats on your site.' ) }
-							</Text>
-						) }
+						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
 					</CardBody>
 				</Card>
 			</HostingFeatureGatedWithCallout>

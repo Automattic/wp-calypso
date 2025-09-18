@@ -14,4 +14,3 @@ export { useProductsCustomOptions } from './use-products-custom-options';
 export { useFlowCustomOptions } from './use-flow-custom-options';
 export { useFlowZendeskUserFields } from './use-flow-zendesk-user-fields';
 export { useGetHistoryChats } from './use-get-history-chats';
-export { useLastSupportInteraction } from './use-last-support-interaction';

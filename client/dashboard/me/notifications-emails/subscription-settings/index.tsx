@@ -12,9 +12,10 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNotice } from '../../../app/hooks/use-notice';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
 const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
@@ -31,7 +32,7 @@ export const SubscriptionSettings = () => {
 	const { data: rawSettings } = useSuspenseQuery( userSettingsQuery() );
 	const originalSettings = getSettings( rawSettings );
 	const [ dataState, setDataState ] = useState< SettingsData >( originalSettings );
-	const { createSuccessNotice, createErrorNotice } = useNotice();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const {
 		mutate: saveSettings,

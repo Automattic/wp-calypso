@@ -1,10 +1,8 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
 import { useCallback, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
+import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import { useCreateZendeskConversation } from '../../hooks';
 import { interactionHasZendeskEvent } from '../../utils';
 
@@ -13,13 +11,9 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 	const navigate = useNavigate();
+	const { search } = useLocation();
 
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 
 	const handleClick = useCallback( () => {
 		const hasZendeskConversationAlreadyStarted =
@@ -45,9 +39,13 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 			}
 			createZendeskConversation( { createdFrom: 'direct_escalation' } );
 		} else {
-			navigate( '/contact-form?mode=FORUM' );
+			const params = new URLSearchParams( search );
+			params.set( 'mode', 'FORUM' );
+			const url = '/contact-form?' + params.toString();
+			navigate( url );
 		}
 	}, [
+		search,
 		trackEvent,
 		messageId,
 		isUserEligibleForPaidSupport,
