@@ -96,7 +96,6 @@ export function DeploymentsList() {
 	const fields = useDeploymentFields( {
 		repositoryOptions,
 		userNameOptions,
-		onOpenLogs: setDeploymentForModal,
 	} );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,

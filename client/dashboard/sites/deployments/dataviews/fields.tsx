@@ -4,7 +4,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
-	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -17,13 +16,11 @@ import type { Field } from '@wordpress/dataviews';
 interface FilterOptions {
 	repositoryOptions: { value: string; label: string }[];
 	userNameOptions: { value: string; label: string }[];
-	onOpenLogs: ( deployment: DeploymentRunWithDeploymentInfo ) => void;
 }
 
 export function useDeploymentFields( {
 	repositoryOptions = [],
 	userNameOptions = [],
-	onOpenLogs,
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
 	return useMemo(
 		() => [
@@ -142,18 +139,7 @@ export function useDeploymentFields( {
 					return item.created_on;
 				},
 				render: ( { item } ) => {
-					return (
-						<Button
-							variant="link"
-							onClick={ () => onOpenLogs( item ) }
-							style={ {
-								color: '#757575',
-								textDecoration: 'none',
-							} }
-						>
-							<TimeSince timestamp={ item.created_on } />
-						</Button>
-					);
+					return <TimeSince timestamp={ item.created_on } />;
 				},
 			},
 			{
@@ -173,6 +159,6 @@ export function useDeploymentFields( {
 				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[ repositoryOptions, userNameOptions, onOpenLogs ]
+		[ repositoryOptions, userNameOptions ]
 	);
 }
