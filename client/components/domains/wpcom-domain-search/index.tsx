@@ -1,7 +1,7 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { ResponseCartProduct, ShoppingCartProvider } from '@automattic/shopping-cart';
+import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
-import { shoppingCartManagerClient } from 'calypso/dashboard/app/shopping-cart';
+import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 
 type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | 'events' > & {
@@ -87,8 +87,8 @@ const DomainSearchWithCart = ( {
 
 export const WPCOMDomainSearch = ( props: DomainSearchProps ) => {
 	return (
-		<ShoppingCartProvider managerClient={ shoppingCartManagerClient }>
+		<WPCOMDomainSearchCartProvider>
 			<DomainSearchWithCart { ...props } />
-		</ShoppingCartProvider>
+		</WPCOMDomainSearchCartProvider>
 	);
 };

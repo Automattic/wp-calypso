@@ -20,8 +20,13 @@ import {
 	redirect,
 	lazyRouteComponent,
 } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
 import { StepName } from '../../domains/domain-connection-setup/types';
+import {
+	checkDomainNameServersPermissions,
+	checkDomainTransferPermissions,
+	checkDomainContactInfoPermissions,
+	checkDomainDnsRecordsPermissions,
+} from '../../utils/domain-permissions';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -58,14 +63,26 @@ export const domainRoute = createRoute( {
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
+		const isTransferSubRoute = location.pathname.includes( '/transfer' );
+		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
+		const isDnsSubRoute = location.pathname.includes( '/dns' );
 
-		// If navigating to name-servers sub-route and user doesn't have permission,
+		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
-		if ( isNameServersSubRoute && ! domain.can_manage_name_servers ) {
-			throw new Error(
-				domain.cannot_manage_name_servers_reason ||
-					__( 'You do not have permission to manage name servers.' )
-			);
+		if ( isNameServersSubRoute ) {
+			checkDomainNameServersPermissions( domain );
+		}
+
+		if ( isTransferSubRoute ) {
+			checkDomainTransferPermissions( domain );
+		}
+
+		if ( isContactInfoSubRoute ) {
+			checkDomainContactInfoPermissions( domain );
+		}
+
+		if ( isDnsSubRoute ) {
+			checkDomainDnsRecordsPermissions( domain );
 		}
 
 		return domain;

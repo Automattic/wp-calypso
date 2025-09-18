@@ -78,7 +78,7 @@ const DomainSearchStep: StepType< {
 				heading={ <Step.Heading text={ text } subText={ subText } /> }
 			>
 				<WPCOMDomainSearch
-					className="step-container-v2-domain-search"
+					className="domain-search--step-container-v2"
 					currentSiteId={ site?.ID }
 					currentSiteUrl={ currentSiteUrl }
 					flowName={ flow }

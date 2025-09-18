@@ -309,8 +309,6 @@ export default function TransferDomainToAnyUser() {
 		);
 	};
 
-	// TO DO: render notices if the domain is not transferable
-
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer to another user' ) } /> }>
 			<Card>
