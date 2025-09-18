@@ -14,7 +14,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { pluginsScheduledUpdatesRoute } from '../../../app/router/plugins';
+import {
+	pluginsScheduledUpdatesNewRoute,
+	pluginsScheduledUpdatesRoute,
+} from '../../../app/router/plugins';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
@@ -36,7 +39,7 @@ function ScheduledUpdatesNew() {
 	const [ time, setTime ] = useState( DEFAULT_TIME );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 
-	const navigate = useNavigate( { from: pluginsScheduledUpdatesRoute.fullPath } );
+	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
