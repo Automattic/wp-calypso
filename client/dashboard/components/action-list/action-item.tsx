@@ -9,15 +9,15 @@ import type { ActionItemProps } from './types';
 import './action-item.scss';
 
 function UnforwardedActionItem(
-	{ title, description, decoration, actions }: ActionItemProps,
+	{ title, description, decoration, actions, style }: ActionItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	return (
-		<VStack className="action-item" ref={ ref } as="span">
+		<VStack className="action-item" style={ style } ref={ ref } as="span">
 			<HStack spacing={ 3 } justify="flex-start" alignment="center" as="span">
 				{ !! decoration && <span className="action-item__decoration">{ decoration }</span> }
 				<HStack as="span">
-					<VStack spacing={ 1 } as="span">
+					<VStack spacing={ 0 } as="span">
 						<Text weight={ 500 } lineHeight="20px">
 							{ title }
 						</Text>

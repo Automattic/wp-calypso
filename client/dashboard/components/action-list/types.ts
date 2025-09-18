@@ -19,6 +19,10 @@ export interface ActionItemProps {
 	 * Renders a button that invokes the related action.
 	 */
 	actions: React.ReactNode;
+	/**
+	 * Inline styles to apply to the action item.
+	 */
+	style?: React.CSSProperties;
 }
 
 export interface ActionListProps {

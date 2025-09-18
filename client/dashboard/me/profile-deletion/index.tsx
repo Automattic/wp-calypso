@@ -46,8 +46,9 @@ export default function AccountDeletionSection() {
 	return (
 		<>
 			<Card>
-				<CardBody style={ { paddingTop: '0px', paddingBottom: '0px' } }>
+				<CardBody>
 					<ActionItem
+						style={ { paddingTop: '0px', paddingBottom: '0px' } }
 						actions={
 							<Button
 								isBusy={ isFetchingPurchases }
