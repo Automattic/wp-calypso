@@ -128,6 +128,7 @@ export default function MonitoringPerformanceCard( {
 				.toString()
 				.padStart( 2, '0' ) }`;
 		},
+		numTicks: null,
 	};
 
 	const getLegendIcon = ( key: string, isTooltip = false ) => {
