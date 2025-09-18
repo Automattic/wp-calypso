@@ -20,7 +20,7 @@ function getActorPresentation( actor: ActivityActorType ) {
 			}
 			if ( name === 'Jetpack' || name === 'Jetpack Boost' ) {
 				return {
-					iconEl: <JetpackLogo className="jetpack-actor-icon" size={ ICON_SIZE } />,
+					iconEl: <JetpackLogo size={ ICON_SIZE } />,
 					label: name,
 				};
 			}
