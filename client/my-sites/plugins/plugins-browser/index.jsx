@@ -109,7 +109,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
-	const shouldUseLoggedOutView = isEnabled( 'plugins/universal-header' );
+	const shouldUseLoggedInView = isEnabled( 'plugins/universal-header' ) ? siteId : isLoggedIn;
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -153,7 +153,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
 			wideLayout
-			isLoggedOut={ shouldUseLoggedOutView || ! isLoggedIn }
+			isLoggedOut={ ! shouldUseLoggedInView }
 		>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
@@ -182,7 +182,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				{ ! shouldUseLoggedOutView && isLoggedIn ? (
+				{ shouldUseLoggedInView ? (
 					<>
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
