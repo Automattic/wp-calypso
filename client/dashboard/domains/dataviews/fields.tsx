@@ -10,7 +10,7 @@ import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
-import type { Field } from '@wordpress/dataviews';
+import type { Field, Operator } from '@wordpress/dataviews';
 
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
@@ -118,10 +118,17 @@ export const useFields = ( {
 				label: __( 'Status' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => item.domain_status?.status ?? '',
-				render: ( { field, item } ) => {
-					const value = field.getValue( { item } );
-					return value || <IneligibleIndicator />;
+				elements: [
+					{ value: 'success', label: __( 'Active' ) },
+					{ value: 'neutral', label: __( 'Parked' ) },
+					{ value: 'error', label: __( 'Expiring soon' ) },
+				],
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				getValue: ( { item } ) => item.domain_status?.status_type,
+				render: ( { item } ) => {
+					return item.domain_status?.status || <IneligibleIndicator />;
 				},
 			},
 		],
