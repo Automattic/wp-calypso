@@ -478,7 +478,6 @@ function StagingSiteSyncModalInner( {
 							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							padding: '16px 0',
-							marginTop: '8px',
 						} }
 					>
 						<CheckboxControl
