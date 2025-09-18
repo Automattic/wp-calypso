@@ -24,7 +24,7 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
-	buildType(PlaywrightTestPRMatrix))
+	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
