@@ -8,7 +8,6 @@ Environment Variables control much of the runtime configuration for E2E tests.
 
 | Name                  | Description                                                                                                     | Default                                           |
 | --------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| A8C_FOR_AGENCIES_URL  | The base URL for the Automattic For Agencies Website.                                                           | https://agencies.automattic.com                   |
 | ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).                                                        | ./results/                                        |
 | AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use.                                             | simpleSitePersonalPlanUser,atomicUser,defaultUser |
 | CALYPSO_BASE_URL      | The base URL to use for Calypso                                                                                 | <http://calypso.localhost:3000>                   |
