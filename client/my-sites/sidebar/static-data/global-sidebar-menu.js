@@ -69,7 +69,8 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			navigationLabel: translate( 'Plugins' ),
 			type: 'menu-item',
 			url: '/plugins',
-			forceChevronIcon: true,
+			forceChevronIcon: ! isEnabled( 'plugins/universal-header' ),
+			forceExternalLink: isEnabled( 'plugins/universal-header' ),
 		},
 	];
 }
