@@ -23,7 +23,8 @@
 	"scripts": {
 		"clean": "rm -rf dist",
 		"teamcity:build-app": "yarn run build",
-		"build": "NODE_ENV=production yarn dev",
+		"code-comment": "The find command below is a terrible hack to quickly fix DOTCOM-14617",
+		"build": "NODE_ENV=production yarn dev && find dist -maxdepth 1 -type f ! -name '*.min.js' -name '*.js' -delete",
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
