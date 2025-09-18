@@ -2,6 +2,7 @@ import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core
 import page from '@automattic/calypso-router';
 import { isDomainForGravatarFlow, isEcommerceFlow, isFreeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -124,13 +125,31 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 		};
 	}, [ flowName ] );
 
+	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
+
+	const headerText = useMemo( () => {
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			return __( 'Choose a domain' );
+		}
+
+		return __( 'Claim your space on the web' );
+	}, [ flowName ] );
+
+	const subHeaderText = useMemo( () => {
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			return __( 'Enter some descriptive keywords to get started.' );
+		}
+
+		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
+	}, [ flowName ] );
+
 	return (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
 			hideSkip
-			headerText="Domain Search"
-			subHeaderText="Domain Search"
+			headerText={ headerText }
+			subHeaderText={ subHeaderText }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"
@@ -138,7 +157,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					initialQuery={ queryObject.new }
 					events={ events }
 					config={ config }
-					flowAllowsMultipleDomainsInCart={ isDomainOnlyFlow }
+					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
 				/>
 			}
