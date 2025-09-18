@@ -14,7 +14,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { SectionHeader } from '../../components/section-header';
-import { LandingPage, useLoginPreferences } from './query';
+import { useLoginPreferences } from './query';
 import PreferencesLoginSiteDropdown from './site-dropdown';
 import type { UserLoginPreferencesMutationProps } from '@automattic/api-queries';
 
