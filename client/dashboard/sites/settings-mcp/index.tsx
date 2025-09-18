@@ -18,7 +18,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, createElement } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
@@ -146,7 +146,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	);
 
 	// Type descriptions
-	const typeDescriptions: Record< string, string > = {
+	const typeDescriptions = {
 		tool: __(
 			'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
 		),
@@ -156,13 +156,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 		prompt: __(
 			'Prompts help AI assistants understand context and provide better responses to your queries.'
 		),
-	};
-
-	// Type display names
-	const typeDisplayNames: Record< string, string > = {
-		tool: __( 'Tools' ),
-		resource: __( 'Resources' ),
-		prompt: __( 'Prompts' ),
 	};
 
 	const renderContent = () => {
@@ -205,7 +198,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 					<>
 						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 							<div key={ type } style={ { marginTop: '24px' } }>
-								<Text as="h1">{ typeDisplayNames[ type ] }</Text>
+								<Text as="h1">{ __( 'Site-level MCP Tools' ) }</Text>
 								<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
 									{ typeDescriptions[ type ] }
 								</Text>
@@ -234,6 +227,24 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 								</Card>
 							</div>
 						) ) }
+					</>
+				) }
+
+				{ anyToolsEnabled && (
+					<>
+						<div style={ { marginTop: '24px' } }>
+							<Text as="h1">{ __( 'Account-level MCP Tools' ) }</Text>
+							<Text as="p" variant="muted" style={ { margin: 0 } }>
+								{ createInterpolateElement(
+									__(
+										'Account-level MCP tools are available across all your sites, <a>manage account MCP settings</a>.'
+									),
+									{
+										a: createElement( 'a', { href: '/me/mcp', target: '_blank' } ),
+									}
+								) }
+							</Text>
+						</div>
 					</>
 				) }
 

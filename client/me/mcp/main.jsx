@@ -9,8 +9,9 @@ import {
 	CardHeader,
 	ToggleControl,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createElement } from 'react';
 import { connect, useDispatch as useReduxDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormButton from 'calypso/components/forms/form-button';
@@ -156,11 +157,16 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 		return (
 			<form onSubmit={ handleSubmit }>
-				<SectionHeader label={ translate( 'MCP Access Control' ) } />
+				<SectionHeader label={ translate( 'Account-level MCP tools' ) } />
 				<Card style={ { borderRadius: '0' } }>
 					<CardBody>
 						{ hasTools ? (
-							<VStack spacing={ 2 }>
+							<VStack spacing={ 3 }>
+								<Text as="p" variant="muted">
+									{ translate(
+										'These tools are available across all your sites. You can enable or disable them here to control access globally.'
+									) }
+								</Text>
 								<div
 									style={ {
 										display: 'flex',
@@ -228,6 +234,36 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 								</Card>
 							</div>
 						) ) }
+					</>
+				) }
+
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<div style={ { marginTop: '24px' } }>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<Text as="h4" style={ { margin: 0 } }>
+											{ translate( 'Site-specific MCP settings' ) }
+										</Text>
+										<Text as="p" variant="muted" style={ { margin: 0 } }>
+											{ createInterpolateElement(
+												translate(
+													'Account-level MCP tools are available on all your sites. You can manage site-specific MCP access and overrides in <a>individual site settings</a>.'
+												),
+												{
+													a: createElement( 'a', {
+														href: '/sites',
+														target: '_blank',
+														style: { textDecoration: 'underline' },
+													} ),
+												}
+											) }
+										</Text>
+									</VStack>
+								</CardBody>
+							</Card>
+						</div>
 					</>
 				) }
 
