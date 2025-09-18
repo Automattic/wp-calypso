@@ -81,10 +81,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ),
 			allowedTlds,
-			allowsUsingOwnDomain:
-				! isDomainFlow( flow ) &&
-				! isAIBuilderFlow( flow ) &&
-				! isNewHostedSiteCreationFlow( flow ),
+			allowsUsingOwnDomain: ! isAIBuilderFlow( flow ) && ! isNewHostedSiteCreationFlow( flow ),
 		};
 	}, [ flow, tldQuery ] );
 
