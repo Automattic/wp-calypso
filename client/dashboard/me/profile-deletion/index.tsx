@@ -1,14 +1,14 @@
 import { closeAccountMutation, userPurchasesQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, Card, CardBody, Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
-import ActionItem from '../../components/action-list/action-item';
+import { ActionList } from '../../components/action-list';
 import AccountDeletionConfirmModal from './account-deletion-modal';
 
 export default function AccountDeletionSection() {
@@ -45,27 +45,25 @@ export default function AccountDeletionSection() {
 
 	return (
 		<>
-			<Card>
-				<CardBody>
-					<ActionItem
-						actions={
-							<Button
-								isBusy={ isFetchingPurchases }
-								disabled={ mutation.isPending || isFetchingPurchases }
-								onClick={ handleDeleteClick }
-								isDestructive
-								variant="secondary"
-								size="compact"
-							>
-								{ __( 'Delete account' ) }
-							</Button>
-						}
-						decoration={ <Icon icon={ trash } size={ 24 } /> }
-						description={ __( 'Delete all of your sites and close your account completely.' ) }
-						title={ __( 'Delete your account permanently' ) }
-					/>
-				</CardBody>
-			</Card>
+			<ActionList>
+				<ActionList.ActionItem
+					actions={
+						<Button
+							isBusy={ isFetchingPurchases }
+							disabled={ mutation.isPending || isFetchingPurchases }
+							onClick={ handleDeleteClick }
+							isDestructive
+							variant="secondary"
+							size="compact"
+						>
+							{ __( 'Delete account' ) }
+						</Button>
+					}
+					decoration={ <Icon icon={ trash } size={ 24 } /> }
+					description={ __( 'Delete all of your sites and close your account completely.' ) }
+					title={ __( 'Delete your account permanently' ) }
+				/>
+			</ActionList>
 
 			{ showConfirmModal && (
 				<AccountDeletionConfirmModal
