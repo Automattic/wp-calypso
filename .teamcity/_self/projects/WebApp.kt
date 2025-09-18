@@ -1277,7 +1277,7 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 	)
 }
 
-object AuthenticationE2ETests : BuildType(
+object AuthenticationE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Calypso_E2E_Authentication"),
 	uuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
@@ -1322,7 +1322,7 @@ object AuthenticationE2ETests : BuildType(
 			withPendingChangesOnly = true
 		}
 	}
-)
+})
 
 object QuarantinedE2ETests: E2EBuildType(
 	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
