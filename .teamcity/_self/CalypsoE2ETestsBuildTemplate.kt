@@ -23,7 +23,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.CI", "true")
 		param("VIEWPORT", "desktop")
 		text("TEST_GROUP", "")
-		text("env.CALYPSO_BASE_URL", "")
+		text("CALYPSO_BASE_URL", "")
+		text("DOCKER_IMAGE_BUILD_NUMBER", "")
 	}
 
   	features {
@@ -50,6 +51,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				else
 					echo "TEST_GROUP is set to: %TEST_GROUP%"
 				fi
+
+				echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -68,7 +71,39 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}    	
+		}
+		// bashNodeScript {
+		// 		name = "Run e2e tests"
+		// 		id = "run_tests"
+		// 		scriptContent = """
+		// 			echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
+		// 			chmod +x ./bin/get-calypso-live-url.sh
+		// 			CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+		// 			if [[ ${'$'}? -ne 0 ]]; then
+		// 				// Command failed. CALYPSO_BASE_URL contains stderr
+		// 				echo ${'$'}CALYPSO_BASE_URL
+		// 				exit 1
+		// 			fi
+					
+		// 			export CALYPSO_BASE_URL
+		// 			echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
+
+		// 			# Check if test/e2e or packages/calypso-e2e files have been changed
+		// 			CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+		// 			if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
+		// 				echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
+		// 				GREP_FLAG=""
+		// 			else
+		// 				echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
+		// 				GREP_FLAG="--grep=@calypso-pr"
+		// 			fi
+
+		// 			cd test/e2e
+		// 			echo "Running Playwright tests for project: %VIEWPORT%"
+		// 			yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
+		// 		"""
+		// 		dockerImage = "%docker_image_e2e%"
+		// } 	
   }
 
   artifactRules = """

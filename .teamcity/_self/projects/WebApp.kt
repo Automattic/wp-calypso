@@ -24,7 +24,7 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
-	buildType(PlaywrightTestPRMatrix)
+	buildType(e2ePRChecks)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
@@ -905,6 +905,94 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 			}
 		}
 	)
+}
+
+fun e2ePRChecks() : BuildType {
+
+	// Get Calypso URL using build number
+	val buildNumber = BuildDockerImage.depParamRefs.buildNumber
+	println("Docker image build number: $buildNumber")
+
+	return BuildType({
+		templates(CalypsoE2ETestsBuildTemplate)
+		id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
+		uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
+		name = "E2E Tests PR (Playwright Test)"
+		description = "Runs Calypso e2e tests on pull requests using Playwright Test runner with build matrix"
+
+		features {
+			matrix {
+				param("VIEWPORT", listOf(
+					value("desktop", label = "Desktop"),
+					value("mobile", label = "Mobile")
+				))
+			}
+			pullRequests {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				provider = github {
+					authType = token {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+				}
+			}
+		}
+
+		triggers {
+			vcs {
+				branchFilter = """
+					+:*
+					-:pull*
+					-:trunk
+				""".trimIndent()
+				triggerRules = """
+					-:**.md
+				""".trimIndent()
+			}
+		}
+
+		dependencies {
+			snapshot(BuildDockerImage) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
+			}
+		}
+
+		params {
+			text("TEST_GROUP", "@calypso-pr")
+			text("DOCKER_IMAGE_BUILD_NUMBER", buildNumber)
+		}
+
+		steps {
+			bashNodeScript {
+				name = "Upload report and send Slack notification"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				conditions {
+					matches("teamcity.build.branch", ".*e2e.*")
+					equals("teamcity.build.step.status.run_e2e_tests", "failure")
+				}
+				scriptContent = """
+					ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%VIEWPORT%"
+					export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
+					
+					# Need to use -C to avoid creation of an unnecessary top level directory.
+					tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
+
+					aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+					aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+					aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
+
+					# Send custom Slack notification
+					REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
+					echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{REPORT_URL}/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
+				""".trimIndent()
+				conditions {
+					matches("teamcity.build.branch", ".*e2e.*")
+				}
+				dockerImage = "%docker_image_e2e%"
+			}
+		}
+	})
 }
 
 object PlaywrightTestPRMatrix : BuildType({
