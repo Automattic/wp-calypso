@@ -133,6 +133,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 				cd test/e2e
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
+				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
 				echo "Running Playwright tests for project: %VIEWPORT%"
 				yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
 				"""
