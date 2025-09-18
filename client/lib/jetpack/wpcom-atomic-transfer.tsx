@@ -7,6 +7,8 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Context } from './types';
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import type { AppState } from 'calypso/types';
 import type { ComponentType, ReactNode } from 'react';
 
 type GateProps = {
@@ -17,8 +19,10 @@ type GateProps = {
 
 const AtomicATGate = ( { UpsellComponent, content, children }: GateProps ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number | undefined;
-	const rewind = useSelector( ( state ) => getRewindState( state, siteId ) );
-	const isUnavailable = ( rewind as { state?: string } | undefined )?.state === 'unavailable';
+	const rewind = useSelector( ( state: AppState ) =>
+		getRewindState( state, siteId )
+	) as RewindState;
+	const isUnavailable = rewind?.state === 'unavailable';
 
 	if ( isUnavailable ) {
 		return <BusinessATSwitch UpsellComponent={ UpsellComponent } content={ content } />;

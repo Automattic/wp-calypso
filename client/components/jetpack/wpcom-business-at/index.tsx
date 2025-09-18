@@ -46,6 +46,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 import 'calypso/blocks/eligibility-warnings/style.scss';
@@ -151,7 +153,9 @@ export default function WPCOMBusinessAT( {
 }: { content?: AtomicContentSwitch } = {} ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
-	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const rewindState = useSelector( ( state: AppState ) =>
+		getRewindState( state, siteId )
+	) as RewindState;
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
@@ -185,19 +189,19 @@ export default function WPCOMBusinessAT( {
 	}, [ dispatch, siteId ] );
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
 
-	const rewindAtomicDeactivated =
-		isAtomic && ( rewindState as { state?: string } | undefined )?.state === 'unavailable';
+	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
 
+	const onActivationResolved = content.onActivationResolved;
 	useEffect( () => {
 		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
 			setIsRewindActivating( false );
 			// Notify product-specific callback when activation settles
-			content.onActivationResolved?.();
+			onActivationResolved?.();
 		}
-	}, [ isRewindActivating, rewindAtomicDeactivated, content ] );
+	}, [ isRewindActivating, rewindAtomicDeactivated, onActivationResolved ] );
 
 	// Check if features are loaded
 	const featuresNotLoaded = useSelector(
