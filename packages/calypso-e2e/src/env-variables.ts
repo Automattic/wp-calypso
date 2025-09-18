@@ -8,6 +8,7 @@ import { TestAccountName } from '.';
 
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
+		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
 		ALLURE_RESULTS_PATH: '',
 		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 		ATOMIC_VARIATION: 'default',
@@ -182,6 +183,28 @@ class EnvVariables implements SupportedEnvVariables {
 			);
 		}
 		return value as JetpackTarget;
+	}
+
+	/**
+	 * Returns the A8C for Agencies URL.
+	 * @example 'https://agencies.automattic.com'
+	 */
+	get A8C_FOR_AGENCIES_URL(): string {
+		const value = process.env.A8C_FOR_AGENCIES_URL;
+		if ( ! value ) {
+			return this._defaultEnvVariables.A8C_FOR_AGENCIES_URL;
+		}
+
+		try {
+			// Disabling eslint because this constructor is really the simplest way to validate a URL.
+			// eslint-disable-next-line no-new
+			new URL( value );
+		} catch ( error ) {
+			throw new Error(
+				`Invalid A8C_FOR_AGENCIES_URL value: ${ value }.\nYou must provide a valid URL.`
+			);
+		}
+		return value;
 	}
 
 	/**
