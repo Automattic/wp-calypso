@@ -133,6 +133,9 @@ const DomainSearchStep: StepType< {
 			initialQuery={ initialQuery }
 			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
 			events={ events }
+			flowAllowsMultipleDomainsInCart={
+				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isNewHostedSiteCreationFlow( flow )
+			}
 		/>
 	);
 

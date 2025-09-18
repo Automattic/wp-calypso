@@ -108,6 +108,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					initialQuery={ queryObject.new }
 					events={ events }
 					config={ config }
+					flowAllowsMultipleDomainsInCart={ isDomainOnlyFlow }
 				/>
 			}
 		/>

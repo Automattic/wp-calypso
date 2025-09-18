@@ -64,6 +64,7 @@ export default function DomainSearch() {
 			flowName={ FLOW_NAME }
 			config={ config }
 			events={ events }
+			flowAllowsMultipleDomainsInCart
 		/>
 	);
 }
