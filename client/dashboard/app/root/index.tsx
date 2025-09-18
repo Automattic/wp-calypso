@@ -18,7 +18,7 @@ const WebpackBuildMonitor = lazy(
 		)
 );
 
-const SLOW_THRESHOLD_MS = 300;
+const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {

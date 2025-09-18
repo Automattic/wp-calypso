@@ -15089,7 +15089,7 @@ __metadata:
     fast-deep-equal: "npm:^3.1.3"
     fast-json-stable-stringify: "npm:^2.1.0"
     filesize: "npm:^6.0.1"
-    flag-icon-css: "npm:^3.4.5"
+    flag-icons: "npm:^7.5.0"
     fuse.js: "npm:^3.6.1"
     get-video-id: "npm:^3.1.4"
     hash.js: "npm:^1.1.7"
@@ -20477,12 +20477,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flag-icon-css@npm:^3.4.5":
-  version: 3.4.5
-  resolution: "flag-icon-css@npm:3.4.5"
-  dependencies:
-    opencollective-postinstall: "npm:2.0.2"
-  checksum: 24182f347f855cf0c4211c7d8c0d89ac7293f85e619bf511543d65082e7971ca0fd34e9d7dafdef1455eff59d466b27be6b8ab380cb87d93cc653bfd1ae2544c
+"flag-icons@npm:^7.5.0":
+  version: 7.5.0
+  resolution: "flag-icons@npm:7.5.0"
+  checksum: c81e20c1751833882c95633349ba7e76e74d7d86c317e4ac2bac86589325430a3181913453fa3824edabaa1a84469f7ae4fd50c388027079048a5c3be438874a
   languageName: node
   linkType: hard
 
@@ -28069,15 +28067,6 @@ __metadata:
     is-docker: "npm:^2.1.1"
     is-wsl: "npm:^2.2.0"
   checksum: bb6b3a58401dacdb0aad14360626faf3fb7fba4b77816b373495988b724fb48941cad80c1b65d62bb31a17609b2cd91c41a181602caea597ca80dfbcc27e84c9
-  languageName: node
-  linkType: hard
-
-"opencollective-postinstall@npm:2.0.2":
-  version: 2.0.2
-  resolution: "opencollective-postinstall@npm:2.0.2"
-  bin:
-    opencollective-postinstall: index.js
-  checksum: d12cb4c79428ac47752628e56be0840f0ff7d106acb89103cad0dedd9f8b1f532833e987a7a82f06b42e35577b81ebc9a6cbf8ee780833bf542b5182496d7885
   languageName: node
   linkType: hard
 

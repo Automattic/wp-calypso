@@ -1,10 +1,8 @@
-import { domainForwardingDeleteMutation, domainForwardingQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { domainForwardingQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import {
 	domainRoute,
@@ -15,6 +13,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import DomainForwardingDeleteModal from './delete-modal';
 import type { DomainForwarding } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -48,8 +47,6 @@ function DomainForwardings() {
 
 	const { domainName } = domainRoute.useParams();
 	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
-	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const actions: Action< DomainForwarding >[] = useMemo(
 		() => [
@@ -67,24 +64,16 @@ function DomainForwardings() {
 			{
 				id: 'delete',
 				label: __( 'Delete' ),
-				callback: ( items ) => {
-					const item = items[ 0 ];
-					deleteMutation.mutate( item.domain_redirect_id, {
-						onSuccess: () => {
-							createSuccessNotice( __( 'Domain forwarding rule was deleted successfully.' ), {
-								type: 'snackbar',
-							} );
-						},
-						onError: () => {
-							createErrorNotice( __( 'Failed to delete domain forwarding rule.' ), {
-								type: 'snackbar',
-							} );
-						},
-					} );
-				},
+				RenderModal: ( { items, closeModal } ) => (
+					<DomainForwardingDeleteModal
+						domainName={ domainName }
+						domainForwarding={ items[ 0 ] }
+						onClose={ closeModal }
+					/>
+				),
 			},
 		],
-		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, router ]
+		[ domainName, router ]
 	);
 
 	const fields: Field< DomainForwarding >[] = useMemo(

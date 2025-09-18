@@ -34,6 +34,7 @@ export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
+export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 
 export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
@@ -141,6 +142,10 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 
 export const isAIBuilderFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
+};
+
+export const isAIBuilderSpecFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_SPEC_FLOW ].includes( flowName ) );
 };
 
 export const isPlaygroundFlow = ( flowName: string | null ) => {

@@ -88,7 +88,7 @@ const DomainSearchSkipSuggestion = ( {
 					label={ sprintf( __( 'Skip purchase and continue with %(domain)s' ), { domain } ) }
 					onClick={ onSkip }
 					disabled={ disabled }
-					isBusy={ isBusy }
+					isBusy={ isBusy && ! disabled }
 					__next40pxDefaultSize
 				>
 					{ __( 'Skip purchase' ) }
