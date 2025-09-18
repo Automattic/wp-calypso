@@ -456,7 +456,11 @@ function StagingSiteSyncModalInner( {
 									<HStack alignment="left" spacing={ 1 }>
 										<Text
 											variant="muted"
-											style={ { marginInlineStart: '14px', marginTop: '10px' } }
+											style={ {
+												marginInlineStart: '14px',
+												marginTop: '10px',
+												marginBottom: '2px',
+											} }
 										>
 											{ createInterpolateElement(
 												__( 'Content from the latest backup: <date />.' ),
@@ -491,7 +495,7 @@ function StagingSiteSyncModalInner( {
 								borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
 								borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 								padding: '16px 0',
-								marginTop: isFileBrowserVisible ? '20px' : '0',
+								marginTop: isFileBrowserVisible ? '16px' : '0',
 							} }
 						>
 							<CheckboxControl
