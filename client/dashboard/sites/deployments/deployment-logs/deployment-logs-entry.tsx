@@ -81,7 +81,7 @@ export const DeploymentLogsEntry = ( {
 	return (
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
-				<Text style={ { color: '#FBFBFB' } }>
+				<Text style={ { color: '#FBFBFB' } } as="code">
 					<Text style={ { color: '#B3AFAE' } }> { entry.timestamp } </Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
 					{ hasDetail && (
@@ -98,7 +98,11 @@ export const DeploymentLogsEntry = ( {
 						</Button>
 					) }
 				</Text>
-				{ detailExpanded && <Text style={ { color: '#FBFBFB' } }> { getDetail() }</Text> }
+				{ detailExpanded && (
+					<Text style={ { color: '#FBFBFB' } } as="code">
+						{ getDetail() }
+					</Text>
+				) }
 			</VStack>
 		</HStack>
 	);
