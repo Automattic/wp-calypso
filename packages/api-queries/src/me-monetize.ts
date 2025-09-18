@@ -27,25 +27,30 @@ export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 		},
 	} );
 
-const UpdateSubscriptionCache = ( data: MembershipSubscription ) => {
-	queryClient.setQueryData( monetizeSubscriptionsQuery().queryKey, ( oldList ) => [
-		...( oldList ?? [] ),
-		data,
-	] );
-	queryClient.invalidateQueries( {
-		queryKey: [ monetizeSubscriptionQuery( data.ID ).queryKey ],
-	} );
-};
+const UpdateSubscriptionCache =
+	( subscriptionId: string ) => ( data: { subscription: MembershipSubscription } ) => {
+		queryClient.invalidateQueries( {
+			queryKey: [ monetizeSubscriptionQuery( subscriptionId ).queryKey ],
+		} );
+
+		queryClient.setQueryData(
+			monetizeSubscriptionsQuery().queryKey,
+			( oldList ) =>
+				oldList?.map( ( s ) =>
+					s.ID === subscriptionId ? { ...s, renew_interval: data.subscription.renew_interval } : s
+				) ?? []
+		);
+	};
 
 export const monetizeSubscriptionDisableAutoRenew = ( subscriptionId: string ) =>
 	mutationOptions( {
 		mutationFn: () => requestAutoRenewDisable( subscriptionId ),
-		onSuccess: UpdateSubscriptionCache,
+		onSuccess: UpdateSubscriptionCache( subscriptionId ),
 	} );
 export const monetizeSubscriptionResumeAutoRenew = ( subscriptionId: string ) =>
 	mutationOptions( {
 		mutationFn: () => requestAutoRenewResume( subscriptionId ),
-		onSuccess: UpdateSubscriptionCache,
+		onSuccess: UpdateSubscriptionCache( subscriptionId ),
 	} );
 
 export const monetizeSubscriptionStop = ( subscriptionId: string ) =>

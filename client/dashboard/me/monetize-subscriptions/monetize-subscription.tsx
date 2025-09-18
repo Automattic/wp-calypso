@@ -129,20 +129,20 @@ export default function MonetizeSubscription() {
 	const {
 		mutate: stopSubscription,
 		isError: stoppingStatusError,
-		isLoading: isStopping,
+		isPending: isStoppingSubscription,
 		isSuccess: stoppingStatusSuccess,
 	} = useMutation( monetizeSubscriptionStop( subscriptionId ) );
 
 	const {
 		mutate: disableAutoRenew,
 		isError: disableAutoRenewError,
-		isLoading: isDisablingAutoRenew,
+		isPending: isDisablingAutoRenew,
 	} = useMutation( monetizeSubscriptionDisableAutoRenew( subscriptionId ) );
 
 	const {
 		mutate: enableAutoRenew,
 		isError: enableAutoRenewError,
-		isLoading: isEnablingAutoRenew,
+		isPending: isEnablingAutoRenew,
 	} = useMutation( monetizeSubscriptionResumeAutoRenew( subscriptionId ) );
 
 	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
@@ -204,7 +204,7 @@ export default function MonetizeSubscription() {
 				/>
 			}
 		>
-			{ isStopping && (
+			{ isStoppingSubscription && (
 				<Notice status="info">
 					{ isProduct ? __( 'Removing this product' ) : __( 'Stopping this subscription' ) }
 				</Notice>
