@@ -80,7 +80,7 @@ export interface ActivityGenerator {
 
 export type ActivityActor = {
 	// Typically 'Person'; can also be 'Application' or 'Happiness Engineer'
-	type: 'Person' | 'Application' | 'Happiness Engineer';
+	type: 'Person' | 'Application' | 'Happiness Engineer' | 'Multiple';
 	name: string;
 	// Present for Person actors
 	external_user_id?: number | string | null;
