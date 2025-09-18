@@ -1,6 +1,10 @@
 .dashboard-monitoring-card {
 	flex-grow: 1;
 
+	&.dashboard-monitoring-card--row-layout {
+		flex-basis: 0;
+	}
+
 	.components-card__body {
 		padding: 0;
 	}

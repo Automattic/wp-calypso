@@ -1,12 +1,11 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
-import { PieChart, SeriesData } from '@automattic/charts';
+import { PieChart } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-import type { DataPointDate } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -26,7 +25,6 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 	const { data: requestMethodsData, isPending: isLoading } = useQuery(
 		siteMetricsQuery( siteId, { start, end, metric: 'requests_persec', dimension: 'http_verb' } )
 	);
-	console.log( 'lol0', requestMethodsData );
 
 	const formatData = ( requestMethodsData ) => {
 		if ( ! requestMethodsData?.data?.periods ) {
@@ -46,9 +44,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 			}
 		} );
 
-		console.log( 'lol1', methodsMap );
 		const sum = Object.values( methodsMap ).reduce( ( acc, curr ) => acc + curr, 0 );
-		console.log( 'lol1.5', sum );
 
 		return Object.entries( methodsMap ).map( ( [ method, value ] ) => ( {
 			label: method.toUpperCase(),
@@ -72,8 +68,6 @@ export default function MonitoringRequestMethodsCard( {
 } ) {
 	const { data, isLoading } = useSiteRequestMethodsData( site.ID, timeRange );
 
-	console.log( 'lol', data, isLoading );
-
 	return (
 		<MonitoringCard
 			title={ __( 'HTTP request methods' ) }
@@ -81,6 +75,7 @@ export default function MonitoringRequestMethodsCard( {
 			onDownloadClick={ () => {} }
 			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
+			className="dashboard-monitoring-card--row-layout"
 		>
 			<PieChart
 				thickness={ 0.3 }

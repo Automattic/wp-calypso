@@ -72,6 +72,7 @@ function SiteMonitoringBody( {
 					description={ __( 'Percentage of dynamic versus static responses.' ) }
 					onDownloadClick={ () => {} }
 					onAnchorClick={ () => {} }
+					className="dashboard-monitoring-card--row-layout"
 				>
 					[Response types graph]
 				</MonitoringCard>

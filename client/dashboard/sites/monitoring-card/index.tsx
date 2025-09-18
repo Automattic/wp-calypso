@@ -25,6 +25,8 @@ export interface MonitoringCardProps {
 	onAnchorClick?: () => void;
 	tracksId?: string;
 	children?: ReactNode;
+	cardLabel?: string;
+	className?: string;
 }
 
 export default function MonitoringCard( {
@@ -35,6 +37,8 @@ export default function MonitoringCard( {
 	onAnchorClick,
 	tracksId,
 	children,
+	cardLabel,
+	className,
 }: MonitoringCardProps ) {
 	const renderDescription = () => {
 		if ( isLoading ) {
@@ -100,7 +104,7 @@ export default function MonitoringCard( {
 	);
 
 	return (
-		<Card className="dashboard-monitoring-card">
+		<Card className={ [ 'dashboard-monitoring-card', className ].join( ' ' ).trim() }>
 			<CardBody>
 				{ tracksId && (
 					<ComponentViewTracker
