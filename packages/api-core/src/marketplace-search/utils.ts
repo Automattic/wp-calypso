@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { RETURNABLE_FIELDS, SORT_QUERY_MAP } from './constants';
 import { Category, SearchParams } from './types';
 
@@ -782,7 +782,7 @@ export function generateApiQueryString( {
 		group_id: string;
 		category?: string;
 		from?: number;
-		lang: string;
+		lang?: string;
 		track_total_hits: boolean;
 	} = {
 		fields: [ ...RETURNABLE_FIELDS ],
