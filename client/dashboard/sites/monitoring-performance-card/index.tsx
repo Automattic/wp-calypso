@@ -111,6 +111,13 @@ export default function MonitoringPerformanceCard( {
 		},
 	];
 
+	let numTicks: undefined | number;
+	if ( timeRange > 72 ) {
+		numTicks = timeRange / 24;
+	} else if ( timeRange > 24 ) {
+		numTicks = timeRange / 12;
+	}
+
 	const xAxisOptions = {
 		tickFormat: ( date: string ) => {
 			const d = new Date( date );
@@ -128,7 +135,7 @@ export default function MonitoringPerformanceCard( {
 				.toString()
 				.padStart( 2, '0' ) }`;
 		},
-		numTicks: null,
+		numTicks: numTicks,
 	};
 
 	const getLegendIcon = ( key: string, isTooltip = false ) => {
@@ -161,12 +168,6 @@ export default function MonitoringPerformanceCard( {
 
 		return null;
 	};
-
-	if ( timeRange > 72 ) {
-		xAxisOptions.numTicks = timeRange / 24;
-	} else if ( timeRange > 24 ) {
-		xAxisOptions.numTicks = timeRange / 12;
-	}
 
 	return (
 		<MonitoringCard
