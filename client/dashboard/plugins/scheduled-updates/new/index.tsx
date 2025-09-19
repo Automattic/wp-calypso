@@ -55,20 +55,21 @@ function ScheduledUpdatesNew() {
 		siteJetpackMonitorSettingsCreateMutation()
 	);
 
-	const { error: collisionsError, collidingSiteIds } = useTimeSlotCollisionsFromMultisite(
-		siteIdsAsNumbers,
-		frequency,
-		weekday,
-		time
-	);
+	const {
+		error: collisionsError,
+		collidingSiteIds,
+		isLoading: isCollisionsLoading,
+	} = useTimeSlotCollisionsFromMultisite( siteIdsAsNumbers, frequency, weekday, time );
 
 	const handleCreate = useCallback( () => {
 		setValidationError( '' );
 
-		if ( ! isValid ) {
+		if ( ! isValid || isCollisionsLoading ) {
 			return;
 		}
 
+		// show error if there are collisions
+		// along with the list of sites that have collisions, if less than all selected sites
 		if ( collisionsError ) {
 			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
 			const shouldListSites =
@@ -87,12 +88,11 @@ function ScheduledUpdatesNew() {
 				message = `${ collisionsError }\n${ sitesLine }`;
 			}
 			setValidationError( message );
-
+			setIsSubmitting( false );
 			return;
 		}
 
 		setIsSubmitting( true );
-
 		const timestamp = prepareTimestamp( frequency, weekday, time );
 		const body = {
 			plugins: selectedPluginSlugs,
@@ -154,7 +154,6 @@ function ScheduledUpdatesNew() {
 			},
 		} );
 	}, [
-		isValid,
 		frequency,
 		weekday,
 		time,
@@ -167,6 +166,8 @@ function ScheduledUpdatesNew() {
 		collidingSiteIds,
 		collisionsError,
 		siteIdsAsNumbers.length,
+		isCollisionsLoading,
+		isValid,
 	] );
 
 	return (
@@ -221,7 +222,7 @@ function ScheduledUpdatesNew() {
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={ ! isValid || isSubmitting }
+								disabled={ ! isValid || isSubmitting || isCollisionsLoading }
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>
