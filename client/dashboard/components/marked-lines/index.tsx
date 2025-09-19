@@ -1,7 +1,12 @@
 import clsx from 'clsx';
-import { Fragment } from 'react';
-
 import './style.scss';
+
+type MarkRange = [ number, number ];
+
+interface MarkedLinesContext {
+	marks: Record< string, MarkRange[] >;
+	[ lineNumber: string ]: string | Record< string, MarkRange[] >;
+}
 
 /**
  * Surrounds a text string in a <mark>
@@ -9,10 +14,10 @@ import './style.scss';
  * @example
  * mark( 'be kind' ) =>
  *   <mark key="be kind" className="marked-lines__mark">be kind</mark>
- * @param {string} text the string to mark
- * @returns {import('react').Element} React <mark> Element
+ * @param text the string to mark
+ * @returns JSX.Element
  */
-const mark = ( text ) => (
+const mark = ( text: string ) => (
 	<mark key={ text } className="marked-lines__mark">
 		{ text }
 	</mark>
@@ -25,13 +30,16 @@ const mark = ( text ) => (
  * const marks = [ [ 2, 4 ], [ 5, 9 ] ]
  * const content = '->^^-_____<--'
  * markup( marks, content ) === [ '->', <mark>{ '^^' }</mark>, '-', <mark>{ '_____' }</mark>, '<--' ]
- * @param {Array<Array<number>>} marks spanning indices of text to mark, values in UCS-2 code units
- * @param {string} content the plaintext content to mark
- * @returns {Array|string} list of output text nodes and mark elements or plain string output
+ * @param marks spanning indices of text to mark, values in UCS-2 code units
+ * @param content the plaintext content to mark
+ * @returns list of output text nodes and mark elements or plain string output
  */
-const markup = ( marks, content ) => {
+const markup = ( marks: MarkRange[], content: string ): ( string | JSX.Element )[] => {
 	const [ finalOutput, finalLast ] = marks.reduce(
-		( [ output, lastIndex ], [ markStart, markEnd ] ) => {
+		(
+			[ output, lastIndex ]: [ ( string | JSX.Element )[], number ],
+			[ markStart, markEnd ]: MarkRange
+		) => {
 			// slice of input text specified by current mark ranges
 			const slice = content.slice( markStart, markEnd );
 
@@ -50,7 +58,7 @@ const markup = ( marks, content ) => {
 	return finalLast < content.length ? [ ...finalOutput, content.slice( finalLast ) ] : finalOutput;
 };
 
-const MarkedLines = ( { context } ) => {
+const MarkedLines = ( { context }: { context: MarkedLinesContext } ) => {
 	const { marks, ...lines } = context;
 
 	return (
@@ -74,9 +82,10 @@ const MarkedLines = ( { context } ) => {
 			<div className="marked-lines__lines">
 				{ Object.entries( lines ).map( ( [ lineNumber, content ] ) => {
 					const hasMarks = marks.hasOwnProperty( lineNumber );
+					let displayContent = content as string;
 
-					if ( content === '' ) {
-						content = ' ';
+					if ( displayContent === '' ) {
+						displayContent = ' ';
 					}
 
 					return (
@@ -86,7 +95,7 @@ const MarkedLines = ( { context } ) => {
 								'marked-lines__marked-line': hasMarks,
 							} ) }
 						>
-							<Fragment>{ hasMarks ? markup( marks[ lineNumber ], content ) : content }</Fragment>
+							{ hasMarks ? markup( marks[ lineNumber ], displayContent ) : displayContent }
 						</div>
 					);
 				} ) }
