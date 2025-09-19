@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import MarkedLines from '../../../../components/marked-lines';
+import MarkedLines from 'calypso/components/marked-lines';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 
 export function ThreatDescription( { threat }: { threat: Threat } ) {
