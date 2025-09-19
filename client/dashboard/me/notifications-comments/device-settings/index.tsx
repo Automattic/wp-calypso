@@ -85,7 +85,7 @@ export const DevicesSettings = () => {
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
 						<Text weight="bold">{ __( 'Devices' ) }</Text>
-						{ isMutating && <Spinner style={ { margin: 0 } } /> }
+						{ hasDevices && isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					{ hasDevices && (
 						<>

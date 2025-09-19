@@ -2,7 +2,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { DevicesSettings } from './devices';
+import { DevicesSettings } from './device-settings';
 import { EmailSettings } from './email-settings';
 import { WebSettings } from './web-settings';
 
