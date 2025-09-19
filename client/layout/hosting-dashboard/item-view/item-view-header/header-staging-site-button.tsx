@@ -160,7 +160,8 @@ export default function HeaderStagingSiteButton( {
 		! isStagingSite &&
 		! isLoadingStagingSites &&
 		( stagingSites.length === 0 || ( isCreatingStagingSite && ! isCreatedStagingSite ) ) &&
-		hasStagingSitesFeature;
+		hasStagingSitesFeature &&
+		! isA4ADevSite;
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -180,8 +181,6 @@ export default function HeaderStagingSiteButton( {
 	let disabledReason: string | undefined;
 	if ( ! hasCompletedLoading ) {
 		disabledReason = __( 'Loading…' );
-	} else if ( isA4ADevSite ) {
-		disabledReason = __( 'Staging sites are not available for development sites.' );
 	} else if ( isErrorValidQuota ) {
 		disabledReason = __(
 			'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'

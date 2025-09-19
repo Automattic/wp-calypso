@@ -229,12 +229,17 @@ const DotcomPreviewPane = ( {
 		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
 	);
 
+	const isA4ADevSite = site?.is_a4a_dev_site || false;
+
 	const isProduction =
 		siteWithStagingIds.is_wpcom_atomic && ! siteWithStagingIds.is_wpcom_staging_site;
 	const hasNoStagingSites = ! siteWithStagingIds.options?.wpcom_staging_blog_ids?.length;
 
 	const shouldShowProductionBadge =
-		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished ) && hasStagingSitesFeature;
+		isProduction &&
+		( hasNoStagingSites || ! isStagingStatusFinished ) &&
+		hasStagingSitesFeature &&
+		! isA4ADevSite;
 
 	return (
 		<ItemView
