@@ -1,4 +1,3 @@
-import { HostingUpdateScheduleFrequency } from '@automattic/api-core';
 import type { Site } from '@automattic/api-core';
 export type Weekday =
 	| 'Monday'
@@ -24,6 +23,6 @@ export interface ScheduledUpdateRow {
 	lastUpdate: number | null;
 	nextUpdate: number;
 	active: boolean;
-	schedule: HostingUpdateScheduleFrequency;
+	schedule: 'daily' | 'weekly';
 	scheduleId: string;
 }
