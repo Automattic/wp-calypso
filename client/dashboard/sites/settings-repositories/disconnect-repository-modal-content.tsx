@@ -3,7 +3,6 @@ import { codeDeploymentDeleteMutation, codeDeploymentsQuery } from '@automattic/
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	Button,
 	__experimentalText as Text,
 	ExternalLink,
