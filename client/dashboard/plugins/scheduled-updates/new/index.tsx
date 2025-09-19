@@ -173,7 +173,7 @@ function ScheduledUpdatesNew() {
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={ ! isValid || isSubmitting || createBatch.isPending }
+								disabled={ ! isValid || isSubmitting }
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>
