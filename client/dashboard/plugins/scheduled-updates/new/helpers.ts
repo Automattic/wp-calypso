@@ -1,5 +1,5 @@
-import type { Frequency, Weekday } from './components/frequency-selection';
-import type { HostingUpdateSchedulesResponse } from '@automattic/api-core';
+import { __ } from '@wordpress/i18n';
+import type { TimeSlot, Frequency, Weekday } from '../types';
 
 export function prepareTimestamp(
 	frequency: Frequency,
@@ -38,57 +38,34 @@ export function prepareTimestamp(
 	return event.getTime() / 1000;
 }
 
-export type TimeSlot = { frequency: Frequency; timestamp: number };
-
-export function hasTimeSlotCollision( proposed: TimeSlot, existing: TimeSlot[] = [] ): boolean {
+export function getTimeSlotCollisionError( proposed: TimeSlot, existing: TimeSlot[] = [] ): string {
 	const newDate = new Date( proposed.timestamp * 1000 );
-	// Future check (legacy parity)
+
 	if ( newDate < new Date() ) {
-		return true;
+		return __( 'Please choose a time in the future for this schedule.' );
 	}
 
 	for ( const slot of existing ) {
 		const existingDate = new Date( slot.timestamp * 1000 );
 
-		// If either side is daily, same hour collides (legacy parity)
 		if (
 			( proposed.frequency === 'daily' || slot.frequency === 'daily' ) &&
 			existingDate.getHours() === newDate.getHours()
 		) {
-			return true;
+			return __( 'Please choose another time, as this slot is already scheduled.' );
 		}
 
-		// Weekly-only collision: same weekday and same hour (legacy parity)
 		if (
 			proposed.frequency === 'weekly' &&
 			slot.frequency === 'weekly' &&
 			newDate.getDay() === existingDate.getDay() &&
 			newDate.getHours() === existingDate.getHours()
 		) {
-			return true;
+			return __( 'Please choose another time, as this slot is already scheduled.' );
 		}
 	}
-	return false;
-}
 
-// Build per-site time slots from the multisite aggregated response
-export function getTimeSlotsBySiteFromMultisite(
-	data: HostingUpdateSchedulesResponse
-): Record< number, TimeSlot[] > {
-	const result: Record< number, TimeSlot[] > = {};
-	const sites = data?.sites;
-	if ( ! sites ) {
-		return result;
-	}
-	Object.entries( sites ).forEach( ( [ siteIdStr, schedulesMap ] ) => {
-		const siteId = Number( siteIdStr );
-		const slots: TimeSlot[] = [];
-		Object.values( schedulesMap || {} ).forEach( ( sched ) => {
-			slots.push( { frequency: sched.schedule, timestamp: sched.timestamp } );
-		} );
-		result[ siteId ] = slots;
-	} );
-	return result;
+	return '';
 }
 
 /**

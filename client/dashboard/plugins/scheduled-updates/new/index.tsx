@@ -1,9 +1,8 @@
 import {
 	updateSchedulesBatchCreateMutation,
 	siteJetpackMonitorSettingsCreateMutation,
-	hostingUpdateSchedulesQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
@@ -24,16 +23,13 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { useEligibleSites } from '../hooks/use-eligible-sites';
-import FrequencySelection, { type Frequency, type Weekday } from './components/frequency-selection';
+import FrequencySelection from './components/frequency-selection';
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
-import {
-	getTimeSlotsBySiteFromMultisite,
-	hasTimeSlotCollision,
-	prepareTimestamp,
-	runWithConcurrency,
-} from './helpers';
+import { prepareTimestamp, runWithConcurrency } from './helpers';
+import { useTimeSlotCollisionsFromMultisite } from './hooks/use-time-slot-collisions';
+import type { Frequency, Weekday } from '../types';
 import type { Site } from '@automattic/api-core';
 
 const BLOCK_CREATE = false;
@@ -58,38 +54,40 @@ function ScheduledUpdatesNew() {
 	const { mutateAsync: createMonitorForSite } = useMutation(
 		siteJetpackMonitorSettingsCreateMutation()
 	);
-	const { data: hostingSchedules } = useQuery( hostingUpdateSchedulesQuery() );
+
+	const { error: collisionsError, collidingSiteIds } = useTimeSlotCollisionsFromMultisite(
+		siteIdsAsNumbers,
+		frequency,
+		weekday,
+		time
+	);
 
 	const handleCreate = useCallback( () => {
 		setValidationError( '' );
+
 		if ( ! isValid ) {
 			return;
 		}
 
 		const timestamp = prepareTimestamp( frequency, weekday, time );
 
-		// Pre-flight multi-site collision check
-		const slotsBySite = hostingSchedules ? getTimeSlotsBySiteFromMultisite( hostingSchedules ) : {};
-		const collidingSiteIds = siteIdsAsNumbers.filter( ( siteId ) =>
-			hasTimeSlotCollision( { frequency, timestamp }, slotsBySite[ siteId ] || [] )
-		);
-		if ( collidingSiteIds.length > 0 || new Date( timestamp * 1000 ) < new Date() ) {
-			// Build error string (legacy parity) + add sites on a new line
-			const baseError =
-				new Date( timestamp * 1000 ) < new Date()
-					? __( 'Please choose a time in the future for this schedule.' )
-					: __( 'Please choose another time, as this slot is already scheduled.' );
+		if ( collisionsError ) {
 			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
-			const siteList = collidingSiteIds
-				.map( ( id ) => siteMap.get( id )?.slug || String( id ) )
-				.join( ', ' );
+			const shouldListSites =
+				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIdsAsNumbers.length;
+			const siteList = shouldListSites
+				? collidingSiteIds.map( ( id ) => siteMap.get( id )?.slug || String( id ) ).join( ', ' )
+				: '';
 			setValidationError(
-				siteList ? `${ baseError }\n${ __( 'Sites:' ) } ${ siteList }` : baseError
+				shouldListSites
+					? `${ collisionsError }\n${ __( 'Sites:' ) } ${ siteList }`
+					: collisionsError
 			);
 			return;
 		}
 
 		setIsSubmitting( true );
+
 		const body = {
 			plugins: selectedPluginSlugs,
 			schedule: {
@@ -140,7 +138,6 @@ function ScheduledUpdatesNew() {
 
 				await runWithConcurrency( monitorTasks, 4 );
 				setIsSubmitting( false );
-				// Navigate back to the schedules list
 				navigate( { to: pluginsScheduledUpdatesRoute.to } );
 			},
 			onError: ( error ) => {
@@ -161,8 +158,9 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
-		hostingSchedules,
-		siteIdsAsNumbers,
+		collidingSiteIds,
+		collisionsError,
+		siteIdsAsNumbers.length,
 	] );
 
 	return (

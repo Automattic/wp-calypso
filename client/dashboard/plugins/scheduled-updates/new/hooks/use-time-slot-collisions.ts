@@ -1,43 +1,64 @@
-import { siteUpdateSchedulesQuery } from '@automattic/api-queries';
-import { useQueries } from '@tanstack/react-query';
-import { hasTimeSlotCollision, type TimeSlot } from '../helpers';
-import type { Frequency } from '../components/frequency-selection';
+import { hostingUpdateSchedulesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { prepareTimestamp, getTimeSlotCollisionError } from '../helpers';
+import type { TimeSlot, Frequency, Weekday } from '../../types';
+import type { HostingUpdateSchedulesResponse } from '@automattic/api-core';
 
-export function useTimeSlotCollisionCheck(
+/**
+ * Build per-site time slots from the multisite aggregated response
+ */
+function getTimeSlotsBySiteFromMultisite(
+	data: HostingUpdateSchedulesResponse
+): Record< number, TimeSlot[] > {
+	const result: Record< number, TimeSlot[] > = {};
+	const sites = data?.sites;
+
+	if ( ! sites ) {
+		return result;
+	}
+
+	Object.entries( sites ).forEach( ( [ siteIdStr, schedulesMap ] ) => {
+		const siteId = Number( siteIdStr );
+		const slots: TimeSlot[] = [];
+		Object.values( schedulesMap || {} ).forEach( ( sched ) => {
+			slots.push( { frequency: sched.schedule, timestamp: sched.timestamp } );
+		} );
+		result[ siteId ] = slots;
+	} );
+
+	return result;
+}
+
+/**
+ * Given a list of site IDs, frequency, and timestamp,
+ * return an error message if there is a collision,
+ * along with the sites that have a collision, if any.
+ * Uses `getTimeSlotCollisionError` to check for collisions.
+ */
+export function useTimeSlotCollisionsFromMultisite(
 	siteIds: number[],
 	frequency: Frequency,
-	timestamp: number
-): { loading: boolean; error: string; sitesWithCollisions: number[] } {
-	const queries = useQueries( {
-		queries: siteIds.map( ( siteId ) => siteUpdateSchedulesQuery( siteId ) ),
-	} );
+	weekday: Weekday,
+	time: string
+): { isLoading: boolean; error: string; collidingSiteIds: number[] } {
+	const { data, isLoading } = useQuery( hostingUpdateSchedulesQuery() );
 
-	const loading = queries.some( ( query ) => query.isLoading );
-	if ( loading ) {
-		return { loading: true, error: '', sitesWithCollisions: [] };
+	if ( isLoading ) {
+		return { isLoading: true, error: '', collidingSiteIds: [] };
 	}
 
-	const schedulesBySite: Record< number, TimeSlot[] > = {};
-	queries.forEach( ( query, idx ) => {
-		const siteId = siteIds[ idx ];
-		const data = ( query.data as Array< { schedule: Frequency; timestamp: number } > ) || [];
-		schedulesBySite[ siteId ] = data.map( ( { schedule, timestamp } ) => ( {
-			frequency: schedule,
-			timestamp,
-		} ) );
-	} );
-
+	const timestamp = prepareTimestamp( frequency, weekday, time );
 	const proposed: TimeSlot = { frequency, timestamp };
-	const sitesWithCollisions = siteIds.filter( ( siteId ) =>
-		hasTimeSlotCollision( proposed, schedulesBySite[ siteId ] || [] )
-	);
+	const bySite = data ? getTimeSlotsBySiteFromMultisite( data ) : {};
 
-	let error = '';
-	if ( new Date( timestamp * 1000 ) < new Date() ) {
-		error = 'Please choose a time in the future for this schedule.';
-	} else if ( sitesWithCollisions.length > 0 ) {
-		error = 'Please choose another time, as this slot is already scheduled.';
-	}
+	let firstError = '';
+	const collidingSiteIds: number[] = siteIds.filter( ( id ) => {
+		const error = getTimeSlotCollisionError( proposed, bySite[ id ] || [] );
+		if ( error && ! firstError ) {
+			firstError = error;
+		}
+		return !! error;
+	} );
 
-	return { loading: false, error, sitesWithCollisions };
+	return { isLoading: false, error: firstError, collidingSiteIds };
 }
