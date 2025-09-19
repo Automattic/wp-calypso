@@ -109,7 +109,7 @@ export function SiteIconLink( { site }: { site: Site } ) {
 			disabled={ site.is_deleted }
 			style={ { textDecoration: 'none' } }
 		>
-			<SiteIcon site={ site } />
+			<SiteIcon site={ site } size={ 32 } />
 		</Link>
 	);
 }

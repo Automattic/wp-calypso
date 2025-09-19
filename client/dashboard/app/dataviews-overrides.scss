@@ -27,3 +27,7 @@ a.dataviews-url-field {
 		text-decoration: none;
 	}
 }
+
+.dataviews-column-primary__media::after {
+	box-shadow: none;
+}
