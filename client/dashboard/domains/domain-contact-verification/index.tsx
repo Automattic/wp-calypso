@@ -1,6 +1,5 @@
 import { domainWhoisQuery, domainContactVerificationMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -9,7 +8,6 @@ import {
 	CardBody,
 	FormFileUpload,
 	Button,
-	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -17,8 +15,10 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainContactInfoRoute, domainRoute } from '../../app/router/domains';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { findRegistrantWhois } from '../../utils/domain';
 
@@ -35,7 +35,6 @@ export default function DomainContactVerification() {
 		domainContactVerificationMutation( domainName )
 	);
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const router = useRouter();
 
 	if ( ! registrantWhoisData ) {
 		return null;
@@ -104,7 +103,7 @@ export default function DomainContactVerification() {
 
 	const renderSubmittedMessage = () => {
 		return (
-			<Notice status="success">
+			<Notice variant="success">
 				{ __(
 					'Thank you for submitting your documents for contact verification! If your domain was suspended, it may take up to a week for it to be unsuspended. Our support team will contact you via email if further actions are needed.'
 				) }
@@ -114,7 +113,7 @@ export default function DomainContactVerification() {
 
 	const renderErrorMessage = () => {
 		return (
-			<Notice status="error">
+			<Notice variant="error">
 				{ __(
 					'An error occurred when uploading your files. Please try submitting them again. If the error persists, please contact our support team.'
 				) }
@@ -132,14 +131,10 @@ export default function DomainContactVerification() {
 						),
 						{
 							link: (
-								<Button
+								<RouterLinkButton
 									variant="link"
-									onClick={ () =>
-										router.navigate( {
-											to: domainContactInfoRoute.fullPath,
-											params: { domainName },
-										} )
-									}
+									to={ domainContactInfoRoute.fullPath }
+									params={ { domainName } }
 								/>
 							),
 						}
@@ -188,6 +183,8 @@ export default function DomainContactVerification() {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact Verification' ) } /> }>
+			{ submitted && renderSubmittedMessage() }
+			{ error && renderErrorMessage() }
 			<Card>
 				<CardBody>
 					<VStack spacing={ 3 }>
@@ -216,7 +213,7 @@ export default function DomainContactVerification() {
 						{ renderSelectedFileList() }
 						<HStack>
 							<Button
-								variant="secondary"
+								variant="primary"
 								__next40pxDefaultSize
 								disabled={ ! selectedFiles || selectedFiles.length === 0 || isSubmitting }
 								isBusy={ isSubmitting }
@@ -225,8 +222,6 @@ export default function DomainContactVerification() {
 								{ __( 'Submit' ) }
 							</Button>
 						</HStack>
-						{ submitted && renderSubmittedMessage() }
-						{ error && renderErrorMessage() }
 					</VStack>
 				</CardBody>
 			</Card>
