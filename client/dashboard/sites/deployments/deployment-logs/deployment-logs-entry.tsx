@@ -9,6 +9,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { useLocale } from '../../../app/locale';
+import { formatDate } from '../../../utils/datetime';
 import type { DeploymentRunWithDeploymentInfo, LogEntry } from '@automattic/api-core';
 
 export const DeploymentLogsEntry = ( {
@@ -20,6 +22,8 @@ export const DeploymentLogsEntry = ( {
 	deployment: DeploymentRunWithDeploymentInfo;
 	siteId: number;
 } ) => {
+	const locale = useLocale();
+
 	const [ detailExpanded, setDetailExpanded ] = useState( false );
 	const toggleExpandDetail = () => setDetailExpanded( ( v ) => ! v );
 
@@ -83,7 +87,9 @@ export const DeploymentLogsEntry = ( {
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
 				<Text style={ { color: '#FBFBFB' } } as="code">
-					<Text style={ { color: '#B3AFAE' } }> { entry.timestamp } </Text>{ ' ' }
+					<Text style={ { color: '#B3AFAE' } }>
+						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
+					</Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
 					{ hasDetail && (
 						<Button
