@@ -16,27 +16,55 @@ function getActorPresentation( actor: ActivityActorType ) {
 	switch ( type ) {
 		case 'Application': {
 			if ( name === 'WordPress' ) {
-				return { icon: <WordPressLogo size={ ICON_SIZE } />, label: name };
+				return {
+					icon: (
+						<WordPressLogo
+							className="site-activity-logs__actor-icon-wordpress"
+							size={ ICON_SIZE }
+						/>
+					),
+					label: name,
+				};
 			}
 			if ( name === 'Jetpack' || name === 'Jetpack Boost' ) {
 				return {
-					icon: <JetpackLogo size={ ICON_SIZE } />,
+					icon: (
+						<JetpackLogo className="site-activity-logs__actor-icon-jetpack" size={ ICON_SIZE } />
+					),
 					label: name,
 				};
 			}
 			if ( name === 'Server' ) {
 				return {
-					icon: <Icon className="server-actor-icon" icon={ globe } size={ ICON_SIZE } />,
+					icon: (
+						<Icon
+							className="site-activity-logs__actor-icon-server"
+							icon={ globe }
+							size={ ICON_SIZE }
+						/>
+					),
 					label: __( 'Server' ),
 				};
 			}
 			break;
 		}
 		case 'Multiple': {
-			return { icon: <Icon icon={ people } size={ ICON_SIZE } />, label: __( 'Multiple users' ) };
+			return {
+				icon: (
+					<Icon
+						className="site-activity-logs__actor-icon-people"
+						icon={ people }
+						size={ ICON_SIZE }
+					/>
+				),
+				label: __( 'Multiple users' ),
+			};
 		}
 		case 'Happiness Engineer': {
-			return { icon: <JetpackLogo size={ ICON_SIZE } />, label: __( 'Happiness Engineer' ) };
+			return {
+				icon: <JetpackLogo className="site-activity-logs__actor-icon-jetpack" size={ ICON_SIZE } />,
+				label: __( 'Happiness Engineer' ),
+			};
 		}
 	}
 
@@ -45,7 +73,7 @@ function getActorPresentation( actor: ActivityActorType ) {
 		return {
 			icon: (
 				<img
-					className="site-activity-logs__actor-avatar"
+					className="site-activity-logs__actor-icon-avatar"
 					src={ icon.url }
 					alt={ actorName }
 					width={ ICON_SIZE }
@@ -57,7 +85,13 @@ function getActorPresentation( actor: ActivityActorType ) {
 	}
 
 	return {
-		icon: <Icon className="default-actor-icon" icon={ commentAuthorAvatar } size={ ICON_SIZE } />,
+		icon: (
+			<Icon
+				className="site-activity-logs__actor-icon-default"
+				icon={ commentAuthorAvatar }
+				size={ ICON_SIZE }
+			/>
+		),
 		label: actorName,
 	};
 }
@@ -67,7 +101,7 @@ export function ActivityActor( { actor }: { actor: ActivityActorType } ) {
 
 	return (
 		<HStack spacing="2" alignment="left" className="site-activity-logs__actor">
-			<div className="site-activity-logs__actor-icon">{ icon }</div>
+			{ icon }
 			<span>{ label }</span>
 		</HStack>
 	);
