@@ -18,7 +18,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, createElement } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
@@ -148,7 +148,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	// Type descriptions
 	const typeDescriptions: Record< string, string > = {
 		tool: __(
-			'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
+			'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
 		),
 		resource: __(
 			'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
@@ -156,13 +156,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 		prompt: __(
 			'Prompts help AI assistants understand context and provide better responses to your queries.'
 		),
-	};
-
-	// Type display names
-	const typeDisplayNames: Record< string, string > = {
-		tool: __( 'Tools' ),
-		resource: __( 'Resources' ),
-		prompt: __( 'Prompts' ),
 	};
 
 	const renderContent = () => {
@@ -203,37 +196,58 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 
 				{ hasTools && anyToolsEnabled && (
 					<>
-						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-							<div key={ type } style={ { marginTop: '24px' } }>
-								<Text as="h1">{ typeDisplayNames[ type ] }</Text>
-								<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
-									{ typeDescriptions[ type ] }
-								</Text>
-								<Card>
-									<CardBody>
-										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
-												<VStack key={ category } spacing={ 4 }>
-													<Text as="h3" style={ { textTransform: 'capitalize' } }>
-														{ category }
-													</Text>
-													{ categoryTools.map( ( [ toolId, tool ] ) => (
-														<VStack key={ toolId } spacing={ 3 }>
-															<ToggleControl
-																checked={ tool.enabled }
-																onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-																label={ tool.title }
-																help={ tool.description }
-															/>
-														</VStack>
-													) ) }
-												</VStack>
-											) ) }
-										</VStack>
-									</CardBody>
-								</Card>
-							</div>
-						) ) }
+						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => {
+							const typeKey = type as 'tool' | 'resource' | 'prompt';
+							return (
+								<div key={ type } style={ { marginTop: '24px' } }>
+									<Text as="h1">{ __( 'Site-level MCP Tools' ) }</Text>
+									<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
+										{ typeDescriptions[ typeKey ] }
+									</Text>
+									<Card>
+										<CardBody>
+											<VStack spacing={ 6 }>
+												{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
+													<VStack key={ category } spacing={ 4 }>
+														<Text as="h3" style={ { textTransform: 'capitalize' } }>
+															{ category }
+														</Text>
+														{ categoryTools.map( ( [ toolId, tool ] ) => (
+															<VStack key={ toolId } spacing={ 3 }>
+																<ToggleControl
+																	checked={ tool.enabled }
+																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+																	label={ tool.title }
+																	help={ tool.description }
+																/>
+															</VStack>
+														) ) }
+													</VStack>
+												) ) }
+											</VStack>
+										</CardBody>
+									</Card>
+								</div>
+							);
+						} ) }
+					</>
+				) }
+
+				{ anyToolsEnabled && (
+					<>
+						<div style={ { marginTop: '24px' } }>
+							<Text as="h1">{ __( 'Account-level MCP Tools' ) }</Text>
+							<Text as="p" variant="muted" style={ { margin: 0 } }>
+								{ createInterpolateElement(
+									__(
+										'Account-level MCP tools are available across all your sites, <a>manage account MCP settings</a>.'
+									),
+									{
+										a: createElement( 'a', { href: '/me/mcp', target: '_blank' } ),
+									}
+								) }
+							</Text>
+						</div>
 					</>
 				) }
 

@@ -15,11 +15,11 @@ export interface FileBrowserConfig {
 	excludeTypes?: string[];
 	expandDirectoriesOnClick?: boolean;
 	alwaysInclude?: string[];
-	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
 	showBackupTime?: boolean;
 	showSeparateExpandButton?: boolean;
 	siteId?: number;
+	showHeader?: boolean;
 }
 
 interface FileBrowserProps {
@@ -75,17 +75,18 @@ function FileBrowser( {
 
 	return (
 		<div>
-			<FileBrowserHeader
-				rewindId={ rewindId }
-				showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
-				siteId={ siteId }
-				siteSlug={ siteSlug }
-				hasCredentials={ hasCredentials }
-				isRestoreEnabled={ isRestoreEnabled }
-				onTrackEvent={ onTrackEvent }
-				onRequestGranularDownload={ onRequestGranularDownload }
-				onRequestGranularRestore={ onRequestGranularRestore }
-			/>
+			{ ( fileBrowserConfig?.showHeader ?? true ) && (
+				<FileBrowserHeader
+					rewindId={ rewindId }
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					hasCredentials={ hasCredentials }
+					isRestoreEnabled={ isRestoreEnabled }
+					onTrackEvent={ onTrackEvent }
+					onRequestGranularDownload={ onRequestGranularDownload }
+					onRequestGranularRestore={ onRequestGranularRestore }
+				/>
+			) }
 			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text
