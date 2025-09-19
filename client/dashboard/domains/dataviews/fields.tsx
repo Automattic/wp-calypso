@@ -24,24 +24,23 @@ export const useFields = ( {
 } = {} ) => {
 	const { data: domains } = useQuery( domainsQuery() );
 
-	const siteElements = useMemo(
-		() =>
-			Object.values(
-				domains
-					?.filter(
-						( domain ) =>
-							! domain.is_domain_only_site && domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION
-					)
-					.reduce(
-						( acc, domain ) => ( {
-							...acc,
-							[ domain.blog_id ]: { value: domain.blog_id.toString(), label: domain.blog_name },
-						} ),
-						{} as Record< number, { value: string; label: string } >
-					) ?? {}
-			),
-		[ domains ]
-	);
+	const siteElements = useMemo( () => {
+		if ( ! domains ) {
+			return [];
+		}
+		const siteMap = new Map< number, { value: string; label: string } >();
+
+		for ( const domain of domains ) {
+			if ( ! domain.is_domain_only_site && domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION ) {
+				siteMap.set( domain.blog_id, {
+					value: domain.blog_id.toString(),
+					label: domain.blog_name,
+				} );
+			}
+		}
+
+		return Array.from( siteMap.values() );
+	}, [ domains ] );
 
 	const fields: Field< DomainSummary >[] = useMemo(
 		() => [
