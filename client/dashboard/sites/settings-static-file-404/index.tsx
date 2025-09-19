@@ -58,8 +58,8 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 		...siteStaticFile404SettingMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: __( 'Settings saved.' ),
-				error: __( 'Failed to save settings.' ),
+				success: __( 'Nonexistent assets settings saved.' ),
+				error: __( 'Failed to save nonexistent asset settings.' ),
 			},
 		},
 	} );

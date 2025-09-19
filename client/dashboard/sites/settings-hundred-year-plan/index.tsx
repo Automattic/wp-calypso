@@ -51,8 +51,8 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 		...siteSettingsMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: __( 'Settings saved.' ),
-				error: __( 'Failed to save settings.' ),
+				success: __( 'Legacy settings saved.' ),
+				error: __( 'Failed to save legacy settings.' ),
 			},
 		},
 	} );

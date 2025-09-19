@@ -63,7 +63,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 			createMutation.mutate( undefined );
 		} else {
 			links.forEach( ( { code } ) => {
-				deleteMutation.mutate( code, {} );
+				deleteMutation.mutate( code );
 			} );
 		}
 	};

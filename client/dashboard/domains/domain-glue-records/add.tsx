@@ -16,8 +16,8 @@ export default function AddDomainGlueRecords() {
 		...domainGlueRecordCreateMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Glue record created successfully.' ),
-				error: __( 'Failed to create glue record.' ),
+				success: __( 'Glue record saved.' ),
+				error: __( 'Failed to save glue record.' ),
 			},
 		},
 	} );

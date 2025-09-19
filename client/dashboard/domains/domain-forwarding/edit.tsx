@@ -24,8 +24,8 @@ export default function EditDomainForwarding() {
 		...domainForwardingSaveMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Domain forwarding rule updated successfully.' ),
-				error: __( 'Failed to update domain forwarding rule.' ),
+				success: __( 'Domain forwarding rule saved.' ),
+				error: __( 'Failed to save domain forwarding rule.' ),
 			},
 		},
 	} );

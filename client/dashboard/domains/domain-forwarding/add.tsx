@@ -18,8 +18,8 @@ export default function AddDomainForwarding() {
 		...domainForwardingSaveMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Domain forwarding rule created successfully.' ),
-				error: __( 'Failed to create domain forwarding rule.' ),
+				success: __( 'Domain forwarding rule saved.' ),
+				error: __( 'Failed to save domain forwarding rule.' ),
 			},
 		},
 	} );

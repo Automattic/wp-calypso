@@ -48,8 +48,8 @@ export default function SshKeyForm( {
 		...createSshKeyMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'SSH key added.' ),
-				error: __( 'Failed to add SSH key.' ),
+				success: __( 'SSH key saved.' ),
+				error: __( 'Failed to save SSH key.' ),
 			},
 		},
 	} );
@@ -57,8 +57,8 @@ export default function SshKeyForm( {
 		...updateSshKeyMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'SSH key updated.' ),
-				error: __( 'Failed to update SSH key.' ),
+				success: __( 'SSH key saved.' ),
+				error: __( 'Failed to save SSH key.' ),
 			},
 		},
 	} );

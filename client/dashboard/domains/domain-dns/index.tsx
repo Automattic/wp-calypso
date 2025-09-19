@@ -66,8 +66,8 @@ export default function DomainDns() {
 		...domainDnsEmailMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'The default email DNS records were successfully fixed!' ),
-				error: __( 'There was a problem when restoring default email DNS records' ),
+				success: __( 'Default email DNS records restored.' ),
+				error: __( 'Failed to restore default email DNS records.' ),
 			},
 		},
 	} );

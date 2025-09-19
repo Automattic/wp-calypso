@@ -31,7 +31,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		...provisionSslCertificateMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'New certificate requested.' ),
+				success: __( 'New SSL certificate requested.' ),
 				error: __( 'Failed to provision SSL certificate.' ),
 			},
 		},

@@ -34,8 +34,8 @@ export default function DnsImportDialog( {
 		...domainDnsMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'DNS records imported successfully!' ),
-				error: __( 'Failed to import DNS records.' ),
+				success: __( 'DNS records saved.' ),
+				error: __( 'Failed to save DNS records.' ),
 			},
 		},
 	} );

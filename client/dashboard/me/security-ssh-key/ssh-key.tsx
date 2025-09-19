@@ -35,8 +35,8 @@ export default function SshKey( {
 		...deleteSshKeyMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'SSH key removed.' ),
-				error: __( 'Failed to remove SSH key.' ),
+				success: __( 'SSH key deleted.' ),
+				error: __( 'Failed to delete SSH key.' ),
 			},
 		},
 	} );

@@ -17,8 +17,8 @@ export default function EditDomainGlueRecords() {
 		...domainGlueRecordUpdateMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Glue record updated successfully.' ),
-				error: __( 'Failed to update glue record.' ),
+				success: __( 'Glue record saved.' ),
+				error: __( 'Failed to save glue record.' ),
 			},
 		},
 	} );

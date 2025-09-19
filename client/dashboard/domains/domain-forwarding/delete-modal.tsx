@@ -25,7 +25,7 @@ const DomainForwardingDeleteModal = ( {
 		...domainForwardingDeleteMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Domain forwarding rule was deleted successfully.' ),
+				success: __( 'Domain forwarding rule deleted.' ),
 				error: __( 'Failed to delete domain forwarding rule.' ),
 			},
 		},

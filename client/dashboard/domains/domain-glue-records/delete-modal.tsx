@@ -25,7 +25,7 @@ const DomainGlueRecordDeleteModal = ( {
 		...domainGlueRecordDeleteMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Glue record was deleted successfully.' ),
+				success: __( 'Glue record deleted.' ),
 				error: __( 'Failed to delete glue record.' ),
 			},
 		},

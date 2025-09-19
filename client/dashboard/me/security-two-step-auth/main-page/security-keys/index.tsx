@@ -43,8 +43,8 @@ const SecurityKeysList = ( {
 		...deleteTwoStepAuthSecurityKeyMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'Security key removed.' ),
-				error: __( 'Failed to remove security key.' ),
+				success: __( 'Security key deleted.' ),
+				error: __( 'Failed to delete security key.' ),
 			},
 		},
 	} );

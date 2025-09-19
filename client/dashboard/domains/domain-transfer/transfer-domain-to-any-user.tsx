@@ -60,8 +60,8 @@ export default function TransferDomainToAnyUser() {
 			...deleteDomainTransferRequestMutation( domainName, domain.site_slug ),
 			meta: {
 				snackbar: {
-					success: __( 'Your domain transfer has been cancelled.' ),
-					error: __( 'The domain transfer cannot be cancelled at this time.' ),
+					success: __( 'Domain transfer cancelled.' ),
+					error: __( 'Failed to cancel domain transfer.' ),
 				},
 			},
 		} );
@@ -71,7 +71,7 @@ export default function TransferDomainToAnyUser() {
 			meta: {
 				snackbar: {
 					success: __( 'A domain transfer request has been emailed to the recipient’s address.' ),
-					error: __( 'An error occurred while initiating the domain transfer.' ),
+					error: __( 'Failed to initiate domain transfer.' ),
 				},
 			},
 		} );

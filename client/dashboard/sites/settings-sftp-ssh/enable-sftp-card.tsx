@@ -29,10 +29,8 @@ export default function EnableSftpCard( {
 		...siteSftpUsersCreateMutation( siteId ),
 		meta: {
 			snackbar: {
-				success: __( 'Credentials have been successfully created.' ),
-				error: __(
-					'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
-				),
+				success: __( 'SFTP/SSH credentials saved.' ),
+				error: __( 'Failed to save SFTP/SSH credentials. Please refresh the page and try again.' ),
 			},
 		},
 	} );

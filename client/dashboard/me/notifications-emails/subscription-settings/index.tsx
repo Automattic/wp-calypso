@@ -35,8 +35,8 @@ export const SubscriptionSettings = () => {
 		...userSettingsMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'Settings saved successfully.' ),
-				error: __( 'Failed to save settings.' ),
+				success: __( 'Subscription settings saved.' ),
+				error: __( 'Failed to save subsription settings.' ),
 			},
 		},
 	} );
