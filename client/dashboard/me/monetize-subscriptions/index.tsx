@@ -7,6 +7,7 @@ import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataview
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
+import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -93,6 +94,12 @@ function MonetizeSubscriptions() {
 			header={ <PageHeader title={ getMonetizeSubscriptionsPageTitle() } /> }
 		>
 			<div ref={ ref }>
+				{ /* Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed */ }
+				<FlashMessage
+					param="showSuccessRemoved"
+					value="true"
+					message={ __( 'This item has been removed.' ) }
+				/>
 				<DataViewsCard>
 					<DataViews
 						data={ adjustedMonetizeSubscriptions }

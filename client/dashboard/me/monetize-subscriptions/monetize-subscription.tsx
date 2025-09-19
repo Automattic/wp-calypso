@@ -166,7 +166,6 @@ export default function MonetizeSubscription() {
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 	const navigate = useNavigate();
-
 	useEffect( () => {
 		if ( stoppingStatusError || disableAutoRenewError || enableAutoRenewError ) {
 			// run is-error notice to contact support
@@ -195,10 +194,13 @@ export default function MonetizeSubscription() {
 				} );
 			}
 		} else if ( stoppingStatusSuccess ) {
-			// redirect back to Purchases list
-			createSuccessNotice( __( 'This item has been removed.' ), { displayOnNextPage: true } );
+			// Redirect back to Monetize subscription list
+			// Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed
 			navigate( {
 				to: getMonetizeSubscriptionsUrl(),
+				search: {
+					showSuccessRemoved: true,
+				},
 			} );
 		}
 	}, [
