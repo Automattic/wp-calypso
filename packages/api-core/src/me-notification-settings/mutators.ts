@@ -1,5 +1,16 @@
+import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { WpcomNotificationSettings } from './types';
+import type { UserNotificationSettings, WpcomNotificationSettings } from './types';
+
+export async function updateUserNotificationSettings( {
+	data,
+	applyAll,
+}: {
+	data: Partial< UserNotificationSettings >;
+	applyAll?: boolean;
+} ): Promise< Partial< UserNotificationSettings > > {
+	return await wpcom.req.post( addQueryArgs( '/me/notifications/settings', { applyAll } ), data );
+}
 
 export async function updateWpcomNotificationSettings(
 	data: Partial< WpcomNotificationSettings >
