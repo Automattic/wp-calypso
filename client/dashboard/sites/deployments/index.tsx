@@ -1,6 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -15,10 +15,10 @@ import { TriggerDeploymentModal } from './trigger-deployment_modal';
 
 function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
-		codeDeploymentsQuery( site?.ID )
+		codeDeploymentsQuery( site.ID )
 	);
 
 	if ( ! site ) {
