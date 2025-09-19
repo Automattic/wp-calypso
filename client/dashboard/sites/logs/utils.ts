@@ -94,9 +94,9 @@ export function getInitialDateRangeFromSearch( search: string ): DateRange | nul
 }
 
 export const LOG_TABS = [
+	{ name: 'activity', title: __( 'Activity' ) },
 	{ name: 'php', title: __( 'PHP errors' ) },
 	{ name: 'server', title: __( 'Web server' ) },
-	{ name: 'activity', title: __( 'Activity' ) },
 ];
 
 export function formatDateCell( {
