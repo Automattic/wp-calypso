@@ -1,4 +1,4 @@
-export interface MembershipSubscription {
+export interface MonetizeSubscription {
 	ID: string;
 	currency: string;
 	end_date: string | null;
@@ -13,9 +13,9 @@ export interface MembershipSubscription {
 	title: string;
 }
 
-export interface MembershipSubscriptionsSite {
+export interface MonetizeSubscriptionsSite {
 	id: string;
 	name: string;
 	domain: string;
-	subscriptions: MembershipSubscription[];
+	subscriptions: MonetizeSubscription[];
 }

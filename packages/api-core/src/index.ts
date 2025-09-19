@@ -46,7 +46,7 @@ export * from './me-two-step';
 export * from './me-username';
 export * from './me-notification-devices';
 export * from './meta-sms-country-codes';
-export * from './monetize';
+export * from './me-monetize';
 export * from './notification-devices';
 export * from './p2';
 export * from './plugins';

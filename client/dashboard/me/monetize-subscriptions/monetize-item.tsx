@@ -1,4 +1,4 @@
-import { MembershipSubscription } from '@automattic/api-core';
+import { MonetizeSubscription } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
@@ -7,7 +7,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { formatDate } from 'date-fns';
 import SiteIcon from '../../sites/site-icon';
 
-export const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const MonetizeSubscriptionTerms = ( {
+	subscription,
+}: {
+	subscription: MonetizeSubscription;
+} ) => {
 	if ( subscription.end_date === null ) {
 		return <>{ __( 'Never expires' ) }</>;
 	}
@@ -28,16 +32,15 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 	);
 };
 
-export const MembershipSiteLink = ( {
+export const MonetizeSiteLink = ({
 	subscription,
 }: {
-	subscription: MembershipSubscription;
+	subscription: MonetizeSubscription;
 } ) => {
 	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (
 		<button
-			className="membership-item__site-name purchase-item__link"
 			onClick={ ( event ) => {
 				event.stopPropagation();
 				event.preventDefault();
@@ -55,19 +58,27 @@ export const MembershipSiteLink = ( {
 	);
 };
 
-export const MembershipType = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const MonetizeSubscriptionType = ( {
+	subscription,
+}: {
+	subscription: MonetizeSubscription;
+} ) => {
 	if ( subscription.end_date === null ) {
-		return createInterpolateElement( __( 'Purchased from <MembershipSiteLink/>' ), {
-			MembershipSiteLink: <MembershipSiteLink subscription={ subscription } />,
+		return createInterpolateElement( __( 'Purchased from <MonetizeSiteLink/>' ), {
+			MonetizeSiteLink: <MonetizeSiteLink subscription={ subscription } />,
 		} );
 	}
 
-	return createInterpolateElement( __( 'Subscription to <MembershipSiteLink/>' ), {
-		MembershipSiteLink: <MembershipSiteLink subscription={ subscription } />,
+	return createInterpolateElement( __( 'Subscription to <MonetizeSiteLink/>' ), {
+		MonetizeSiteLink: <MonetizeSiteLink subscription={ subscription } />,
 	} );
 };
 
-export const MembershipIcon = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const MonetizeSubscriptionIcon = ( {
+	subscription,
+}: {
+	subscription: MonetizeSubscription;
+} ) => {
 	const siteId = subscription.site_id;
 
 	const { data: site, isError: isError } = useQuery( siteByIdQuery( parseInt( siteId ) ) );

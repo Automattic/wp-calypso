@@ -32,9 +32,9 @@ import {
 	getMonetizeSubscriptionsUrl,
 	getMonetizeSubscriptionsPageTitle,
 } from '../../me/monetize-subscriptions/urls';
-import type { MembershipSubscription } from '@automattic/api-core';
+import type { MonetizeSubscription } from '@automattic/api-core';
 
-function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
+function MonetizeSiteHeader( { name, domain }: { name: string; domain: string } ) {
 	return (
 		<CardHeader>
 			<HStack spacing={ 5 } alignment="left">
@@ -61,7 +61,7 @@ function AutoRenewButton( {
 	enableAutoRenew: () => void;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
-	subscription: MembershipSubscription;
+	subscription: MonetizeSubscription;
 } ) {
 	const title = isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' );
 	return (
@@ -89,7 +89,7 @@ function StopSubscriptionButton( {
 }: {
 	stopSubscription: () => void;
 	isProduct: boolean;
-	subscription: MembershipSubscription;
+	subscription: MonetizeSubscription;
 } ) {
 	const title = isProduct
 		? // eslint-disable-next-line @wordpress/i18n-translator-comments
@@ -230,7 +230,7 @@ export default function MonetizeSubscription() {
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
 				<Card>
-					<MembershipSiteHeader name={ subscription.site_title } domain={ subscription.site_url } />
+					<MonetizeSiteHeader name={ subscription.site_title } domain={ subscription.site_url } />
 
 					<CardHeader>
 						<HStack alignment="center">

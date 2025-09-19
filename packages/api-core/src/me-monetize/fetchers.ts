@@ -1,7 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
-import { MembershipSubscription } from './types';
+import { MonetizeSubscription } from './types';
 
-export async function fetchMonetizeSubscriptions(): Promise< MembershipSubscription[] > {
+export async function fetchMonetizeSubscriptions(): Promise< MonetizeSubscription[] > {
 	const data = await wpcom.req.get( {
 		path: '/me/memberships/subscriptions',
 		apiVersion: '1.1',

@@ -1,17 +1,21 @@
-import { MembershipSubscription } from '@automattic/api-core';
+import { MonetizeSubscription } from '@automattic/api-core';
 import { Fields } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { MembershipIcon, MembershipTerms, MembershipType } from './membership-item';
+import {
+	MonetizeSubscriptionIcon,
+	MonetizeSubscriptionTerms,
+	MonetizeSubscriptionType,
+} from './monetize-item';
 
-export function useMembershipsFieldDefinitions() {
+export function useMonetizeFieldDefinitions() {
 	return useMemo( () => {
-		return getMembershipsFieldDefinitions();
+		return getMonetizeFieldDefinitions();
 	}, [] );
 }
 
-export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription > {
-	const getPurchaseUrl = ( item: MembershipSubscription ) => {
+export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
+	const getPurchaseUrl = ( item: MonetizeSubscription ) => {
 		const subscriptionId = item.ID;
 		if ( ! subscriptionId ) {
 			// eslint-disable-next-line no-console
@@ -30,14 +34,14 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 			enableSorting: false,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
 			// Render the site icon
-			render: ( { item }: { item: MembershipSubscription } ) => {
+			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
 					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
-						<MembershipIcon subscription={ item } />
+						<MonetizeSubscriptionIcon subscription={ item } />
 					</a>
 				);
 			},
@@ -50,10 +54,10 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
-			render: ( { item }: { item: MembershipSubscription } ) => {
+			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
 					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
 						{ item.title }
@@ -69,11 +73,11 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
-			render: ( { item }: { item: MembershipSubscription } ) => {
-				return <MembershipType subscription={ item } />;
+			render: ( { item }: { item: MonetizeSubscription } ) => {
+				return <MonetizeSubscriptionType subscription={ item } />;
 			},
 		},
 		{
@@ -84,11 +88,11 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 			enableSorting: false,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.end_date ?? '';
 			},
-			render: ( { item }: { item: MembershipSubscription } ) => {
-				return <MembershipTerms subscription={ item } />;
+			render: ( { item }: { item: MonetizeSubscription } ) => {
+				return <MonetizeSubscriptionTerms subscription={ item } />;
 			},
 		},
 	];

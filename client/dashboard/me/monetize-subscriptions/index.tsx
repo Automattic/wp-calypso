@@ -1,4 +1,4 @@
-import { MembershipSubscription } from '@automattic/api-core';
+import { MonetizeSubscription } from '@automattic/api-core';
 import { monetizeSubscriptionsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -10,15 +10,15 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
-import { useMembershipsFieldDefinitions } from './dataviews';
+import { useMonetizeFieldDefinitions } from './dataviews';
 import { getMonetizeSubscriptionsPageTitle, getMonetizeSubscriptionUrl } from './urls';
 
 const defaultPerPage = 10;
 
-const membershipsDesktopFields = [ 'status' ];
-const membershipsMobileFields: string[] = [];
+const monetizeDesktopFields = [ 'status' ];
+const monetizeMobileFields: string[] = [];
 
-const membershipDataView: View = {
+const monetizeDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: defaultPerPage,
@@ -28,7 +28,7 @@ const membershipDataView: View = {
 	showMedia: true,
 	descriptionField: 'description',
 	showDescription: true,
-	fields: membershipsDesktopFields,
+	fields: monetizeDesktopFields,
 	sort: {
 		field: 'product',
 		direction: 'desc',
@@ -37,22 +37,22 @@ const membershipDataView: View = {
 };
 
 function MonetizeSubscriptions() {
-	const [ currentView, setView ] = useState( membershipDataView );
+	const [ currentView, setView ] = useState( monetizeDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
 		if ( firstEntry ) {
 			adjustDataViewFieldsForWidth( {
 				width: firstEntry.contentRect.width,
 				setView,
-				wideFields: membershipsDesktopFields,
-				desktopFields: membershipsDesktopFields,
-				mobileFields: membershipsMobileFields,
+				wideFields: monetizeDesktopFields,
+				desktopFields: monetizeDesktopFields,
+				mobileFields: monetizeMobileFields,
 			} );
 		}
 	} );
 
-	const membershipsDataFields = useMembershipsFieldDefinitions();
-	const { data: monetizeSubscriptions, isLoading: isLoadingMemberships } = useQuery(
+	const monetizeDataFields = useMonetizeFieldDefinitions();
+	const { data: monetizeSubscriptions, isLoading: isLoadingMonetize } = useQuery(
 		monetizeSubscriptionsQuery()
 	);
 	const navigate = useNavigate();
@@ -62,8 +62,8 @@ function MonetizeSubscriptions() {
 			{
 				id: 'manage-purchase',
 				label: __( 'Manage purchase' ),
-				isEligible: ( item: MembershipSubscription ) => Boolean( item.ID ),
-				callback: ( items: MembershipSubscription[] ) => {
+				isEligible: ( item: MonetizeSubscription ) => Boolean( item.ID ),
+				callback: ( items: MonetizeSubscription[] ) => {
 					const subscriptionId = items[ 0 ].ID;
 					if ( ! subscriptionId ) {
 						// eslint-disable-next-line no-console
@@ -79,11 +79,11 @@ function MonetizeSubscriptions() {
 		[ navigate ]
 	);
 
-	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( monetizeSubscriptions ?? [], currentView, membershipsDataFields );
-	}, [ monetizeSubscriptions, currentView, membershipsDataFields ] );
+	const { data: adjustedMonetizeSubscriptions, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( monetizeSubscriptions ?? [], currentView, monetizeDataFields );
+	}, [ monetizeSubscriptions, currentView, monetizeDataFields ] );
 
-	const getItemId = ( item: MembershipSubscription ) => {
+	const getItemId = ( item: MonetizeSubscription ) => {
 		return item.ID;
 	};
 
@@ -95,9 +95,9 @@ function MonetizeSubscriptions() {
 			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews
-						data={ adjustedMemberships }
-						isLoading={ isLoadingMemberships }
-						fields={ membershipsDataFields }
+						data={ adjustedMonetizeSubscriptions }
+						isLoading={ isLoadingMonetize }
+						fields={ monetizeDataFields }
 						view={ currentView }
 						onChangeView={ setView }
 						defaultLayouts={ { table: {} } }
