@@ -1,5 +1,6 @@
 import {
 	isAIBuilderFlow,
+	isCopySiteFlow,
 	isDomainFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
@@ -12,6 +13,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -47,20 +49,9 @@ type StepSubmission = {
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
-	const getSharedWrapperProps = () => {
-		return {
-			className: shouldUseStepContainerV2( flow ) ? 'step-container-v2--domain-search' : '',
-			headerText: __( 'Claim your space on the web' ),
-			headerSubText: __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' ),
-		};
-	};
-
-	const { className, headerText, headerSubText } = getSharedWrapperProps();
-
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
-	const currentSiteUrl = site?.URL ? new URL( site.URL ).host : siteSlug ?? undefined;
 	const tldQuery = useQuery().get( 'tld' );
 
 	const config = useMemo( () => {
@@ -82,10 +73,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ),
 			allowedTlds,
-			allowsUsingOwnDomain:
-				! isDomainFlow( flow ) &&
-				! isAIBuilderFlow( flow ) &&
-				! isNewHostedSiteCreationFlow( flow ),
+			allowsUsingOwnDomain: ! isAIBuilderFlow( flow ) && ! isNewHostedSiteCreationFlow( flow ),
 		};
 	}, [ flow, tldQuery ] );
 
@@ -123,16 +111,55 @@ const DomainSearchStep: StepType< {
 		};
 	}, [ submit ] );
 
+	const slots = useMemo( () => {
+		return {
+			BeforeResults: () => <FreeDomainForAYearPromo />,
+			BeforeFullCartItems: () => <FreeDomainForAYearPromo textOnly />,
+		};
+	}, [] );
+
+	const headerText = useMemo( () => {
+		if ( isNewsletterFlow( flow ) ) {
+			return __( 'Your domain. Your identity.' );
+		}
+
+		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return __( 'Find the perfect domain' );
+		}
+
+		return __( 'Claim your space on the web' );
+	}, [ flow ] );
+
+	const subHeaderText = useMemo( () => {
+		if ( isNewsletterFlow( flow ) ) {
+			return __( 'Make your newsletter stand out with a custom domain.' );
+		}
+
+		if ( isCopySiteFlow( flow ) ) {
+			return __( 'Make your copied site unique with a custom domain all of its own.' );
+		}
+		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return __( 'Secure your 100-Year domain and start building your legacy.' );
+		}
+
+		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
+	}, [ flow ] );
+
 	const domainSearchElement = (
 		<WPCOMDomainSearch
-			className={ className }
+			className={ shouldUseStepContainerV2( flow ) ? 'domain-search--step-container-v2' : '' }
 			currentSiteId={ site?.ID }
-			currentSiteUrl={ currentSiteUrl }
+			// eslint-disable-next-line no-nested-ternary
+			currentSiteUrl={ site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined }
 			flowName={ flow }
 			config={ config }
 			initialQuery={ initialQuery }
 			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
 			events={ events }
+			flowAllowsMultipleDomainsInCart={
+				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isNewHostedSiteCreationFlow( flow )
+			}
+			slots={ slots }
 		/>
 	);
 
@@ -148,7 +175,7 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ headerSubText } /> }
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>
@@ -160,10 +187,8 @@ const DomainSearchStep: StepType< {
 			stepName="domain-search"
 			isWideLayout
 			flowName={ flow }
-			goBack={ () => {} }
-			goNext={ () => {} }
 			formattedHeader={
-				<FormattedHeader headerText={ headerText } subHeaderText={ headerSubText } />
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 			}
 			stepContent={ domainSearchElement }
 			recordTracksEvent={ recordTracksEvent }

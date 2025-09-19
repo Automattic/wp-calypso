@@ -11,6 +11,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 		onContinue?: ( items: ResponseCartProduct[] ) => void;
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
+	flowAllowsMultipleDomainsInCart: boolean;
 };
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
@@ -34,14 +35,18 @@ const DomainSearchWithCart = ( {
 	initialQuery: externalInitialQuery,
 	config: externalConfig,
 	isFirstDomainFreeForFirstYear,
+	flowAllowsMultipleDomainsInCart,
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
+	const { onContinue } = props.events ?? {};
 
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
 		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
+		flowAllowsMultipleDomainsInCart,
+		onContinue,
 	} );
 
 	const initialQuery = useMemo( () => {

@@ -10,6 +10,7 @@ import {
 	smsCountryCodesQuery,
 	twoStepAuthAppSetupQuery,
 	sshKeysQuery,
+	connectedApplicationsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -406,6 +407,7 @@ export const securityConnectedAppsRoute = createRoute( {
 	} ),
 	getParentRoute: () => securityRoute,
 	path: '/connected-apps',
+	loader: () => queryClient.ensureQueryData( connectedApplicationsQuery() ),
 } ).lazy( () =>
 	import( '../../me/security-connected-apps' ).then( ( d ) =>
 		createLazyRoute( 'security-connected-apps' )( {

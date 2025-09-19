@@ -62,8 +62,10 @@ export default function DomainSearch() {
 			currentSiteId={ selectedSite?.ID }
 			currentSiteUrl={ selectedSite?.URL }
 			flowName={ FLOW_NAME }
+			initialQuery={ queryArguments?.suggestion.toString() ?? '' }
 			config={ config }
 			events={ events }
+			flowAllowsMultipleDomainsInCart
 		/>
 	);
 }

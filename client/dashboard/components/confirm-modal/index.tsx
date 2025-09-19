@@ -1,11 +1,7 @@
-import {
-	Modal,
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useRef } from 'react';
+import { Text } from '../../components/text';
 import { ButtonStack } from '../button-stack';
 import type { ButtonProps } from '@wordpress/components/build-types/button/types';
 

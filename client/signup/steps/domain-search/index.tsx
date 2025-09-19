@@ -1,10 +1,13 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { isDomainForGravatarFlow, isFreeFlow } from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isEcommerceFlow, isFreeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -27,6 +30,15 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 	const events = useMemo( () => {
 		return {
 			onExternalDomainClick( initialQuery?: string ) {
+				if ( isDomainOnlyFlow ) {
+					return page(
+						addQueryArgs( '/setup/domain-transfer/intro', {
+							new: initialQuery,
+							search: 'yes',
+						} )
+					);
+				}
+
 				page(
 					getStepUrl( flowName, stepName, USE_MY_DOMAIN_SECTION_NAME, locale, {
 						step: useMyDomainInputMode.domainInput,
@@ -68,7 +80,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 				goToNextStep();
 			},
 		};
-	}, [ flowName, stepName, submitSignupStep, goToNextStep, locale ] );
+	}, [ flowName, stepName, submitSignupStep, goToNextStep, locale, isDomainOnlyFlow ] );
 
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
@@ -85,22 +97,59 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 				forceRegularPrice: isMonthlyOrFreeFlow( flowName ),
 			},
 			allowedTlds,
+			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
 			allowsUsingOwnDomain:
 				! isDomainForGravatarFlow( flowName ) &&
-				! isDomainOnlyFlow &&
 				! isOnboardingWithEmailFlow &&
 				! isFreeFlow( flowName ),
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+
+	const slots = useMemo( () => {
+		return {
+			BeforeResults: () => {
+				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
+					return null;
+				}
+
+				return <FreeDomainForAYearPromo />;
+			},
+			BeforeFullCartItems: () => {
+				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
+					return null;
+				}
+
+				return <FreeDomainForAYearPromo textOnly />;
+			},
+		};
+	}, [ flowName ] );
+
+	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
+
+	const headerText = useMemo( () => {
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			return __( 'Choose a domain' );
+		}
+
+		return __( 'Claim your space on the web' );
+	}, [ flowName ] );
+
+	const subHeaderText = useMemo( () => {
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			return __( 'Enter some descriptive keywords to get started.' );
+		}
+
+		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
+	}, [ flowName ] );
 
 	return (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
 			hideSkip
-			headerText="Domain Search"
-			subHeaderText="Domain Search"
+			headerText={ headerText }
+			subHeaderText={ subHeaderText }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"
@@ -108,6 +157,8 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					initialQuery={ queryObject.new }
 					events={ events }
 					config={ config }
+					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
+					slots={ slots }
 				/>
 			}
 		/>

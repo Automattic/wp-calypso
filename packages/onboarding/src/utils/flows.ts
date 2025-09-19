@@ -14,6 +14,8 @@ export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
+export const ECOMMERCE_FLOW = 'ecommerce';
+export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
 
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
@@ -74,6 +76,10 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 
 export const isEntrepreneurFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ENTREPRENEUR_FLOW ].includes( flowName ) );
+};
+
+export const isEcommerceFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ ECOMMERCE_FLOW, ECOMMERCE_MONTHLY_FLOW ].includes( flowName ) );
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
