@@ -14,10 +14,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import DomainForwardingDeleteModal from './delete-modal';
-import type { DomainForwarding } from '@automattic/api-core';
+import type { DomainForwarding as DomainForwardingType } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
-function getForwardingId( forwarding: DomainForwarding ) {
+function getForwardingId( forwarding: DomainForwardingType ) {
 	return `${ forwarding.domain_redirect_id }-${ forwarding.domain }`;
 }
 
@@ -48,7 +48,7 @@ function DomainForwarding() {
 	const { domainName } = domainRoute.useParams();
 	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
 
-	const actions: Action< DomainForwarding >[] = useMemo(
+	const actions: Action< DomainForwardingType >[] = useMemo(
 		() => [
 			{
 				id: 'edit',
@@ -76,7 +76,7 @@ function DomainForwarding() {
 		[ domainName, router ]
 	);
 
-	const fields: Field< DomainForwarding >[] = useMemo(
+	const fields: Field< DomainForwardingType >[] = useMemo(
 		() => [
 			{
 				id: 'source',
@@ -163,7 +163,7 @@ function DomainForwarding() {
 			}
 		>
 			<DataViewsCard>
-				<DataViews< DomainForwarding >
+				<DataViews< DomainForwardingType >
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
