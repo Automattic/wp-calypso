@@ -1,4 +1,4 @@
-import { Email } from '@automattic/api-core';
+import { Email, SiteDomain } from '@automattic/api-core';
 import { emailsQuery, siteBySlugQuery, siteDomainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -109,7 +109,7 @@ function SiteEmails() {
 	const { data: site, isLoading: isSiteLoading } = useQuery( siteBySlugQuery( siteSlug ) );
 
 	// Wait for site to load to know ID
-	const { isLoading: isDomainsLoading } = useQuery(
+	const { data: domains, isLoading: isDomainsLoading } = useQuery(
 		! isSiteLoading && site && site.ID
 			? siteDomainsQuery( site.ID )
 			: { queryKey: [ 'noop' ], queryFn: async () => [] }
@@ -118,7 +118,7 @@ function SiteEmails() {
 	const { data: allEmails, isLoading: isEmailsLoading } = useQuery( emailsQuery() );
 
 	// Filter emails to those belonging to this site by either siteId or matching one of the site's domains
-	const siteDomainNames = new Set( ( domains ?? [] ).map( ( d: any ) => d.domain ) );
+	const siteDomainNames = new Set( ( domains ?? [] ).map( ( d: SiteDomain ) => d.domain ) );
 	const emails = ( allEmails ?? [] ).filter( ( e ) => {
 		const siteIdMatch = e.siteId && Number( e.siteId ) === site?.ID;
 		const domainMatch = e.domainName && siteDomainNames.has( e.domainName );
