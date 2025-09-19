@@ -1,4 +1,5 @@
 import { SectionHeader } from '../section-header';
+import { SubNavigation } from './sub-navigation';
 import type { PageHeaderProps } from './types';
 
 /**
@@ -13,3 +14,5 @@ import type { PageHeaderProps } from './types';
 export const PageHeader = ( props: PageHeaderProps ) => {
 	return <SectionHeader { ...props } level={ 1 } className="dashboard-page-header" />;
 };
+
+PageHeader.SubNavigation = SubNavigation;

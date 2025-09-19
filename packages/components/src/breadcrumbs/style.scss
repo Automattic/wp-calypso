@@ -13,6 +13,7 @@
 	.a8c-components-breadcrumbs__item-wrapper {
 		display: inline-flex;
 		flex-shrink: 0;
+		align-items: center;
 
 		&.is-current {
 			.breadcrumb__item {
