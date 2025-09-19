@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
-import { useBackupState } from '../../app/hooks/site-backup-state';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
 import { getFields } from './dataviews/fields';
+import { useBackupState } from './use-backup-state';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 

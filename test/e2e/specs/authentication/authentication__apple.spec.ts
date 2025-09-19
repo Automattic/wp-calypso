@@ -1,10 +1,11 @@
-import { tags, test, expect } from '../../lib/pw-base';
+import { DataHelper } from '@automattic/calypso-e2e';
+import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => {
 	test.describe.configure( { mode: 'serial' } ); // Since both tests use the same Apple ID, they should not be run at the same time
 	test.skip(
-		!! process.env.CI,
-		'These tests are problematic on CI since they rely on Apple ID MFA which has a rate limit'
+		DataHelper.isCalypsoProduction() === false,
+		'Skipping unless running on WordPress.com as Apple authentication requires prod callbacks'
 	);
 
 	let code: string;

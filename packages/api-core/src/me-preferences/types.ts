@@ -14,8 +14,22 @@ export interface HostingDashboardOptIn {
 	updated_at: string; // ISO date string
 }
 
+export interface LandingPagePreference {
+	updatedAt: number;
+}
+
+export interface SitesLandingPage extends LandingPagePreference {
+	useSitesAsLandingPage: boolean;
+}
+
+export interface ReaderLandingPage extends LandingPagePreference {
+	useReaderAsLandingPage: boolean;
+}
+
 export interface UserPreferences {
 	'sites-view'?: SitesViewPreferences;
+	'sites-landing-page'?: SitesLandingPage;
+	'reader-landing-page'?: ReaderLandingPage;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
