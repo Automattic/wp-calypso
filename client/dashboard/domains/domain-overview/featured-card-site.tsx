@@ -33,7 +33,9 @@ export default function FeaturedCardSite( { domain }: Props ) {
 					: `/sites/${ site.slug }`
 			}
 			icon={ <SiteIcon site={ site } /> }
-			description={ shouldShowAddAttachSite ? __( 'Attach to an existing site' ) : domain.domain }
+			description={
+				shouldShowAddAttachSite ? __( 'Attach to an existing site' ) : domain.site_slug
+			}
 			bottom={
 				shouldShowAddAttachSite && (
 					<ButtonStack>
