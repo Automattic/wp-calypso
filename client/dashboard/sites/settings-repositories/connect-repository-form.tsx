@@ -344,7 +344,7 @@ export const ConnectRepositoryForm = ( {
 
 			<VStack spacing={ 2 }>
 				<HStack justify="space-between" alignment="center">
-					<Text weight={ 600 } size="12" style={ { textTransform: 'uppercase' } }>
+					<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
 						{ __( 'GitHub account' ) }
 					</Text>
 					<Button variant="link" onClick={ handleAddGithubAccount }>
@@ -371,7 +371,7 @@ export const ConnectRepositoryForm = ( {
 			</VStack>
 
 			<VStack spacing={ 2 }>
-				<Text weight={ 600 } size="12" style={ { textTransform: 'uppercase' } }>
+				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
 					{ __( 'Repository' ) }
 				</Text>
 				<ComboboxControl
@@ -389,7 +389,6 @@ export const ConnectRepositoryForm = ( {
 						setSelectedRepositoryId( Number.isNaN( numericValue ) ? '' : numericValue );
 					} }
 					options={ repositoryOptions }
-					disabled={ ! selectedInstallation || isLoadingRepositories }
 					placeholder={ __( 'Select a repository' ) }
 					help={ repositoryHelpText }
 				/>
