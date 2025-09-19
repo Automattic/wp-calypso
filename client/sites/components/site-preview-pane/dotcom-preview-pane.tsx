@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
@@ -10,6 +11,7 @@ import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-featur
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -223,12 +225,16 @@ const DotcomPreviewPane = ( {
 		selectedFeatureId: selectedSiteFeature,
 	} );
 
+	const hasStagingSitesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
+	);
+
 	const isProduction =
 		siteWithStagingIds.is_wpcom_atomic && ! siteWithStagingIds.is_wpcom_staging_site;
 	const hasNoStagingSites = ! siteWithStagingIds.options?.wpcom_staging_blog_ids?.length;
 
 	const shouldShowProductionBadge =
-		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished );
+		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished ) && hasStagingSitesFeature;
 
 	return (
 		<ItemView
