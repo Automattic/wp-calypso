@@ -80,7 +80,7 @@ function ScheduledUpdatesNew() {
 			let message = collisionsError;
 			if ( shouldListSites ) {
 				const sitesLine = sprintf(
-					/* translators: %s is a comma-separated list of site slugs with time collisions. */
+					/* translators: %s is a comma-separated list of site slugs. */
 					__( 'Sites: %s' ),
 					siteList
 				);
