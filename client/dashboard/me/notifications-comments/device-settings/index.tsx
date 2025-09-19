@@ -84,7 +84,7 @@ export const DevicesSettings = () => {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
-						<Text weight={ 600 }>{ __( 'Devices' ) }</Text>
+						<Text weight={ 500 }>{ __( 'Devices' ) }</Text>
 						{ hasDevices && isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					{ hasDevices && (
