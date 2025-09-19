@@ -20,6 +20,7 @@ import {
 	redirect,
 	lazyRouteComponent,
 } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { StepName } from '../../domains/domain-connection-setup/types';
 import {
 	checkDomainNameServersPermissions,
