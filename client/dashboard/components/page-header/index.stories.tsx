@@ -1,4 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
+import {
+	RouterProvider,
+	createMemoryHistory,
+	createRouter,
+	createRootRoute,
+} from '@tanstack/react-router';
 import { Button, Icon, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { help, wordpress, moreVertical } from '@wordpress/icons';
 import { PageHeader } from './index';
@@ -10,6 +16,17 @@ const meta = {
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
+	decorators: [
+		( Story ) => (
+			<RouterProvider
+				router={ createRouter( {
+					basepath: '/',
+					routeTree: createRootRoute( { component: Story } ),
+					history: createMemoryHistory(),
+				} ) }
+			/>
+		),
+	],
 } satisfies Meta< typeof PageHeader >;
 
 export default meta;
@@ -91,6 +108,62 @@ export const FullExample: Story = {
 					) }
 				</DropdownMenu>
 			</>
+		),
+	},
+};
+
+export const WithSubNavigation: Story = {
+	args: {
+		title: 'DNS records',
+		description: 'List of DNS records',
+		prefix: (
+			<PageHeader.SubNavigation
+				items={ [
+					{
+						label: 'Overview',
+						href: '/overview',
+					},
+					{
+						label: 'DNS records',
+						href: '/overview/dns-records',
+					},
+				] }
+			/>
+		),
+		actions: (
+			<Button variant="primary" __next40pxDefaultSize>
+				Save Changes
+			</Button>
+		),
+	},
+};
+
+export const WithSubNavigationBreadcrumbs: Story = {
+	args: {
+		title: 'Add new DNS record',
+		description: 'Add a new DNS record to your domain name',
+		prefix: (
+			<PageHeader.SubNavigation
+				items={ [
+					{
+						label: 'Overview',
+						href: '/overview',
+					},
+					{
+						label: 'DNS Records',
+						href: '/overview/dns-records',
+					},
+					{
+						label: 'Add new DNS record',
+						href: '/overview/dns-records/add-new-dns-record',
+					},
+				] }
+			/>
+		),
+		actions: (
+			<Button variant="primary" __next40pxDefaultSize>
+				Save Changes
+			</Button>
 		),
 	},
 };
