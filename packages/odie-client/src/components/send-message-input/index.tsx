@@ -33,7 +33,7 @@ export const OdieSendMessageButton = () => {
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
 		false;
-	const { sendMessage, abort } = useSendChatMessage();
+	const { sendMessage } = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
@@ -193,7 +193,6 @@ export const OdieSendMessageButton = () => {
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
 						disabled={ isDisabled }
-						onStop={ abort }
 						notice={ notice }
 						placeholder={ textAreaPlaceholder }
 						isProcessing={ isProcessing }

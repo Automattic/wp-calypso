@@ -60,11 +60,11 @@ const fileBrowserConfig: FileBrowserConfig = {
 	restrictedPaths: [ 'wp-content' ],
 	excludeTypes: [ 'wordpress' ],
 	alwaysInclude: [ 'wp-config.php' ],
-	showHeaderButtons: false,
 	showFileCard: false,
 	showBackupTime: true,
 	showSeparateExpandButton: true,
 	expandDirectoriesOnClick: false,
+	showHeader: false,
 };
 
 const DirectionArrow = () => {

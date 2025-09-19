@@ -11,9 +11,9 @@ import {
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { ComponentProps } from 'react';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useDomainSearch } from '../__legacy/domain-search';
 import { useFocusedCartAction } from '../__legacy/use-focused-cart-action';
-import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
 import { HundredYearPromo } from './hundred-year-promo';
 
 import './style.scss';
