@@ -41,6 +41,7 @@ export function IgnoreThreatModal( {
 				createSuccessNotice( __( 'Threat ignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
+				closeModal?.();
 				createErrorNotice( __( 'Failed to ignore threat. Please try again.' ), {
 					type: 'snackbar',
 				} );

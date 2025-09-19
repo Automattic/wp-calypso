@@ -40,6 +40,7 @@ export function UnignoreThreatModal( {
 				createSuccessNotice( __( 'Threat unignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
+				closeModal?.();
 				createErrorNotice( __( 'Failed to unignore threat. Please try again.' ), {
 					type: 'snackbar',
 				} );
