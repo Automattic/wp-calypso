@@ -61,6 +61,10 @@ export interface DeploymentRunWithDeploymentInfo extends DeploymentRun {
 	is_active_deployment: boolean;
 }
 
+export interface CodeDeploymentDeleteResponse {
+	message: string;
+}
+
 export interface LogEntry {
 	message: string;
 	level: string;

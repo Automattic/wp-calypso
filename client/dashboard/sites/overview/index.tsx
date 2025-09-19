@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { chartBar, wordpress } from '@wordpress/icons';
+import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -17,7 +17,6 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
-import OverviewCard from '../overview-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
 import LatestActivityCard from '../overview-latest-activity-card';
@@ -28,6 +27,7 @@ import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
+import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
@@ -88,6 +88,8 @@ function SiteOverview( {
 		isSmallViewport,
 	} );
 
+	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+
 	return (
 		<PageLayout
 			header={
@@ -128,16 +130,8 @@ function SiteOverview( {
 							if ( site.is_a4a_dev_site ) {
 								return <AgencySiteShareCard site={ site } />;
 							}
-							if ( isSelfHostedJetpackConnected( site ) ) {
-								return (
-									<OverviewCard
-										title="TBA"
-										icon={ chartBar }
-										heading="TBA"
-										description="TBA"
-										disabled
-									/>
-								);
+							if ( isSelfHostedJetpackConnectedSite ) {
+								return <SubscribersCard site={ site } />;
 							}
 							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
 								return <MigrateSiteCard site={ site } />;
@@ -160,10 +154,12 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					<VStack spacing={ spacing } justify="start">
-						<DomainsCard site={ site } isCompact={ isSmallViewport } />
-						<DIFMUpsellCard site={ site } />
-					</VStack>
+					{ ! isSelfHostedJetpackConnectedSite && (
+						<VStack spacing={ spacing } justify="start">
+							<DomainsCard site={ site } isCompact={ isSmallViewport } />
+							<DIFMUpsellCard site={ site } />
+						</VStack>
+					) }
 				</HStack>
 			</VStack>
 		</PageLayout>
