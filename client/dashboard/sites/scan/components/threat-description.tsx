@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import MarkedLines from '../../../../components/marked-lines';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 
 export function ThreatDescription( { threat }: { threat: Threat } ) {
@@ -185,6 +186,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 			) }
 			{ renderFilename() }
 			{ renderDatabaseRows() }
+			{ threat.context && <MarkedLines context={ threat.context } /> }
 			{ threat.status !== 'fixed' && (
 				<Text size="large" weight={ 500 }>
 					{ renderFixTitle() }
