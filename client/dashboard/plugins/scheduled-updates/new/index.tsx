@@ -29,7 +29,7 @@ import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL }
 import { prepareTimestamp, runWithConcurrency } from './helpers';
 import type { Site } from '@automattic/api-core';
 
-const BLOCK_CREATE = true;
+const BLOCK_CREATE = false;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
@@ -37,6 +37,7 @@ function ScheduledUpdatesNew() {
 	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
 	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
 	const [ time, setTime ] = useState( DEFAULT_TIME );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
@@ -56,6 +57,7 @@ function ScheduledUpdatesNew() {
 		}
 
 		const timestamp = prepareTimestamp( frequency, weekday, time );
+		setIsSubmitting( true );
 		const body = {
 			plugins: selectedPluginSlugs,
 			schedule: {
@@ -105,8 +107,12 @@ function ScheduledUpdatesNew() {
 					} );
 
 				await runWithConcurrency( monitorTasks, 4 );
+				setIsSubmitting( false );
 				// Navigate back to the schedules list
 				navigate( { to: pluginsScheduledUpdatesRoute.to } );
+			},
+			onError: () => {
+				setIsSubmitting( false );
 			},
 		} );
 	}, [
@@ -167,7 +173,7 @@ function ScheduledUpdatesNew() {
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={ ! isValid }
+								disabled={ ! isValid || isSubmitting || createBatch.isPending }
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>
