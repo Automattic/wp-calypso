@@ -44,7 +44,7 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domains/ui-redesign": false,
+		"domains/ui-redesign": true,
 		"domain-search-rewrite": false,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,

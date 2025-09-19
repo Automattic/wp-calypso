@@ -45,6 +45,9 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		vendor: 'variation2_front',
 		skippable: false,
 		deemphasizedTlds: [],
+		includeDotBlogSubdomain: false,
+		allowsUsingOwnDomain: true,
+		allowedTlds: [],
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -107,21 +110,30 @@ export const useDomainSearchContextValue = (
 	}, [ config ] );
 
 	return useMemo( () => {
+		const allowedTlds = normalizedConfig.allowedTlds?.length
+			? normalizedConfig.allowedTlds
+			: undefined;
+
 		return {
 			...DEFAULT_CONTEXT_VALUE,
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query, params = {} ) => ( {
+				domainSuggestions: ( query ) => ( {
 					...domainSuggestionsQuery( query, {
-						...params,
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
+						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
+						exact_sld_matches_only: filter.exactSldMatchesOnly,
 					} ),
 					enabled: false,
 				} ),
 				freeSuggestion: ( query ) => ( {
-					...freeSuggestionQuery( query ),
+					...freeSuggestionQuery( query, {
+						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain
+							? query.includes( '.blog' )
+							: false,
+					} ),
 					enabled: normalizedConfig.skippable,
 				} ),
 				domainAvailability: ( domainName ) => ( {
@@ -130,6 +142,13 @@ export const useDomainSearchContextValue = (
 				} ),
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
+					select: ( data ) => {
+						if ( allowedTlds ) {
+							return data.filter( ( tld ) => allowedTlds.includes( tld ) );
+						}
+
+						return data;
+					},
 					enabled: false,
 				} ),
 			},

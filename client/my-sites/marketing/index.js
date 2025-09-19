@@ -13,6 +13,8 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
+	jetpackSocial,
+	activitypub,
 } from './controller';
 
 export default function () {
@@ -26,6 +28,7 @@ export default function () {
 
 	const paths = [
 		'/marketing',
+		'/marketing/activitypub',
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
 		'/marketing/tools',
@@ -42,6 +45,7 @@ export default function () {
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
 
 	page( '/marketing/:domain', redirectMarketingTools );
+	page( '/marketing/activitypub/:domain', siteSelection, activitypub );
 	page( '/marketing/business-tools/:domain', redirectMarketingBusinessTools );
 
 	page(
@@ -49,6 +53,16 @@ export default function () {
 		siteSelection,
 		navigation,
 		connections,
+		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/jetpack-social/:domain',
+		siteSelection,
+		navigation,
+		jetpackSocial,
 		layout,
 		makeLayout,
 		clientRender

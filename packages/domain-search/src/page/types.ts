@@ -47,6 +47,9 @@ export interface DomainSearchConfig {
 	skippable: boolean;
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
+	includeDotBlogSubdomain: boolean;
+	allowsUsingOwnDomain: boolean;
+	allowedTlds: string[];
 }
 
 export interface DomainSearchProps {

@@ -1,6 +1,4 @@
 import { Card, FormLabel } from '@automattic/components';
-import { Badge } from '@automattic/ui';
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
@@ -77,14 +75,7 @@ export default function HostingDashboardOptInForm() {
 
 	return (
 		<>
-			<SectionHeader
-				label={
-					<HStack justify="flex-start">
-						<div>{ translate( 'Try the new Hosting Dashboard' ) }</div>
-						<Badge intent="info">{ translate( 'New feature' ) }</Badge>
-					</HStack>
-				}
-			/>
+			<SectionHeader label={ translate( 'Try the new Hosting Dashboard' ) } />
 			<Card className="account__settings">
 				<form onSubmit={ handleSubmit }>
 					<p className="account__hosting-dashboard-description">

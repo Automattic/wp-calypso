@@ -1,17 +1,18 @@
 import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
-import { Button } from '@wordpress/components';
+import {
+	Card,
+	Button,
+	CardBody,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
-import {
-	onPreparingDownloadError,
-	onProcessingDownloadError,
-	onRetrievingFileInfoError,
-} from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -42,8 +43,7 @@ function FileInfoCard( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
-	const dispatch = useDispatch();
-	const { fileBrowserState, locale } = useFileBrowserContext();
+	const { fileBrowserState, locale, notices } = useFileBrowserContext();
 	const { setNodeCheckState } = fileBrowserState;
 
 	const {
@@ -60,8 +60,8 @@ function FileInfoCard( {
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
-		dispatch( onPreparingDownloadError() );
-	}, [ dispatch ] );
+		notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
+	}, [ notices ] );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
 		siteId,
@@ -80,8 +80,8 @@ function FileInfoCard( {
 
 	const handleDownloadError = useCallback( () => {
 		setIsProcessingDownload( false );
-		dispatch( onProcessingDownloadError() );
-	}, [ dispatch ] );
+		notices.showError( __( 'There was an error processing your download. Please try again.' ) );
+	}, [ notices ] );
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
@@ -171,12 +171,12 @@ function FileInfoCard( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			dispatch( onPreparingDownloadError() );
+			notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
 			return;
 		}
 
 		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
-	}, [ dispatch, fileInfo, item.period, prepareDownload, siteId ] );
+	}, [ notices, fileInfo, item.period, prepareDownload, siteId ] );
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
@@ -232,9 +232,11 @@ function FileInfoCard( {
 	// Dispatch an error notice if the file info could not be retrieved
 	useEffect( () => {
 		if ( isError ) {
-			dispatch( onRetrievingFileInfoError() );
+			notices.showError(
+				__( 'There was an error retrieving your file information. Please try again.' )
+			);
 		}
-	}, [ dispatch, isError ] );
+	}, [ notices, isError ] );
 
 	const showActions =
 		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
@@ -298,84 +300,80 @@ function FileInfoCard( {
 		return downloadFileButton;
 	};
 
-	return (
-		<div className="file-card">
-			<div className="file-card__details">
-				{ item.type === 'table' && (
-					<div className="file-card__detail">
-						<span className="file-card__label">
-							{
-								/* translators: This refers to database table rows. */
-								__( 'Rows:' )
-							}{ ' ' }
-						</span>
-						<span className="file-card__value">{ item.rowCount }</span>
-					</div>
-				) }
-
-				<div className="file-card__detail-group">
-					{ modifiedTime && (
-						<div className="file-card__detail">
-							<span className="file-card__label">
-								{
-									/* translators: This refers to the date when the file was modified. */
-									__( 'Modified:' )
-								}{ ' ' }
-							</span>
-							<span className="file-card__value">{ modifiedTime }</span>
-						</div>
-					) }
-
-					{ size && (
-						<div className="file-card__detail">
-							<span className="file-card__label">
-								{
-									/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
-									__( 'Size:' )
-								}{ ' ' }
-							</span>
-							<span className="file-card__value">
-								{ size.unitAmount } { size.unit }
-							</span>
-						</div>
-					) }
-				</div>
-
-				{ fileInfo?.hash && (
-					<div className="file-card__detail">
-						<span className="file-card__label">
-							{
-								/* translators: This refers to a unique identifier or checksum. */
-								__( 'Hash:' )
-							}{ ' ' }
-						</span>
-						<span className="file-card__value">{ fileInfo.hash }</span>
-					</div>
-				) }
+	const FileDetail = ( { label, value }: { label: string; value: string | number } ) => {
+		return (
+			<div className="file-card__detail">
+				<Text weight={ 700 }>{ label } </Text>
+				<Text>{ value }</Text>
 			</div>
+		);
+	};
 
-			{ showActions && (
-				<>
-					<div className="file-card__actions">
-						{ renderDownloadButton() }
-						{ item.type !== 'wordpress' && (
-							<Button
-								className="file-card__action"
-								onClick={ restoreFile }
-								disabled={ ! isRestoreEnabled }
-								variant="secondary"
-							>
-								{ __( 'Restore' ) }
-							</Button>
+	return (
+		<Card isRounded={ false } variant="secondary" isBorderless>
+			<CardBody>
+				<VStack>
+					<VStack spacing={ 0 }>
+						{ item.type === 'table' && (
+							<FileDetail
+								label={
+									/* translators: This refers to database table rows. */
+									__( 'Rows:' )
+								}
+								value={ item.rowCount ?? 0 }
+							/>
 						) }
-					</div>
-				</>
-			) }
 
-			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-				<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
-			) }
-		</div>
+						<HStack justify="space-between">
+							{ modifiedTime && (
+								<FileDetail
+									label={
+										/* translators: This refers to the date when the file was modified. */
+										__( 'Modified:' )
+									}
+									value={ modifiedTime }
+								/>
+							) }
+
+							{ size && (
+								<FileDetail
+									label={
+										/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+										__( 'Size:' )
+									}
+									value={ `${ size.unitAmount } ${ size.unit }` }
+								/>
+							) }
+						</HStack>
+
+						{ fileInfo?.hash && (
+							<FileDetail
+								label={
+									/* translators: This refers to a unique identifier or checksum. */
+									__( 'Hash:' )
+								}
+								value={ fileInfo.hash }
+							/>
+						) }
+					</VStack>
+
+					{ showActions && (
+						<HStack justify="flex-start" spacing={ 4 }>
+							{ renderDownloadButton() }
+							{ item.type !== 'wordpress' && (
+								<Button disabled={ ! isRestoreEnabled } onClick={ restoreFile } variant="secondary">
+									{ __( 'Restore' ) }
+								</Button>
+							) }
+						</HStack>
+					) }
+
+					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
+						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 

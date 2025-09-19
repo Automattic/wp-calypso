@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/variables";
-@import "@automattic/typography/styles/variables";
-@import "components/variables";
+@import '@wordpress/base-styles/variables';
+@import '@automattic/typography/styles/variables';
+@import 'components/variables';
 
 /**
  * Help Center GENERAL Styles
@@ -14,25 +14,18 @@
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
-	animation: 0.25s ease-out 0s 1 normal none running slideIn;
+	animation: slideIn 0.2s ease-out forwards;
+	transform-origin: bottom;
 	position: fixed;
 
 	/**
 	 * Generic Stylings
 	 */
 	font-size: $font-body-small;
-	font-family:
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		Oxygen-Sans,
-		Ubuntu,
-		Cantarell,
-		"Helvetica Neue",
-		sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		'Helvetica Neue', sans-serif;
 	font-weight: inherit;
-	color: var(--studio-gray-100);
+	color: var( --studio-gray-100 );
 
 	button.button-primary,
 	button.button-secondary {
@@ -49,29 +42,22 @@
 		flex-direction: column;
 	}
 
-	button,
-	a {
-		&:focus {
-			box-shadow: none;
-			outline: var(--color-link, --studio-blue-30) solid 2px;
-		}
-
-		&:hover {
-			color: var(--color-link-dark, --studio-blue-70);
-			border-color: inherit;
-		}
-		// Remove the default focus outline on the Recent Conversations nav tabs
-		&.section-nav-tab__link:focus {
-			box-shadow: none;
-			outline: none;
+	.help-center__container-content {
+		button,
+		a {
+			// Remove the default focus outline on the Recent Conversations nav tabs
+			&.section-nav-tab__link:focus {
+				box-shadow: none;
+				outline: none;
+			}
 		}
 	}
 
 	.help-center__section-title {
 		font-size: $font-body-small;
 		font-weight: 500;
-		color: var(--studio-gray-100);
-		margin: 32px 0 1em;
+		color: var( --studio-gray-100 );
+		margin: 8px 0 8px 0;
 	}
 
 	/**
@@ -95,16 +81,15 @@
 	}
 
 	&.is-minimized {
+		animation: none;
 		.help-center__container-header {
+			padding: 8px 16px;
 			cursor: pointer;
+			height: $head-foot-height;
 		}
 
 		.help-center__container-content {
 			display: none;
-		}
-
-		.help-center-header__text {
-			cursor: pointer;
 		}
 	}
 
@@ -115,15 +100,29 @@
 		width: 410px;
 		height: 80vh;
 		max-height: 800px;
-		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
-		border-radius: 2px;
+		border-radius: 16px;
+		right: 50px;
+		bottom: 50px;
+
+		&:not( .react-draggable-dragging ) {
+			transition: all 0.2s ease-in-out;
+		}
+
+		.help-center__container-content {
+			visibility: visible;
+		}
 
 		&.is-minimized {
-			min-height: $head-foot-height;
-			max-height: $head-foot-height;
-			top: unset;
-			right: 50px;
-			bottom: calc(#{$header-height} + 16px);
+			height: $head-foot-height;
+			bottom: 0;
+
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+
+			.help-center__container-content {
+				// It's much faster to transition the help center when it's most populated child is invisible.
+				visibility: hidden;
+			}
 		}
 	}
 
@@ -135,22 +134,19 @@
 		left: 0;
 		right: 0;
 		/* If the masterbar is there, don't cover it, if not, go to the top. */
-		top: var(--masterbar-height, 0);
-		max-height: calc(100% - 45px);
-		height: calc(100% - var(--masterbar-height, 0));
+		top: var( --masterbar-height, 0 );
+		max-height: calc( 100% - 45px );
+		height: calc( 100% - var( --masterbar-height, 0 ) );
 		animation: 0.25s ease-out 0s 1 normal none running fadeIn;
 
-		.help-center__container-footer {
-			margin-bottom: 0;
-		}
-
 		&.is-minimized {
+			animation: none;
 			min-height: $head-foot-height;
 			max-height: $head-foot-height;
-			top: calc(100vh - #{$head-foot-height});
+			top: calc( 100vh - #{$head-foot-height} );
 
-			@supports (height: 100dvh) {
-				top: calc(100dvh - #{$head-foot-height});
+			@supports ( height: 100dvh ) {
+				top: calc( 100dvh - #{$head-foot-height} );
 			}
 		}
 	}
@@ -171,19 +167,19 @@
 	@keyframes slideIn {
 		0% {
 			opacity: 0;
-			transform: scale(0);
+			bottom: 30px;
 		}
 
 		100% {
 			opacity: 1;
-			transform: scale(1);
+			bottom: 50px;
 		}
 	}
 
 	// Text highlight color
 	::selection {
-		background: rgba($help-center-blue, 0.7);
-		color: var(--color-text);
+		background: rgba( $help-center-blue, 0.7 );
+		color: var( --color-text );
 	}
 }
 
@@ -192,7 +188,7 @@
  * Fixes broken popover component on frontend.
  */
 .popover.help-center {
-	z-index: $help-center-z-index +1;
+	z-index: $help-center-z-index + 1;
 
 	.popover__arrow {
 		z-index: 1;
@@ -208,7 +204,7 @@
 			&:hover,
 			&:focus {
 				svg {
-					fill: var(--color-text-inverted);
+					fill: var( --color-text-inverted );
 				}
 			}
 		}

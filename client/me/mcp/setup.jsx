@@ -23,6 +23,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { hasEnabledAccountTools } from './utils';
 
 function McpSetupComponent( { path, userSettings } ) {
 	const translate = useTranslate();
@@ -131,10 +132,8 @@ function McpSetupComponent( { path, userSettings } ) {
 		}
 	};
 
-	// Check if any tools are enabled
-	const hasEnabledTools =
-		userSettings?.mcp_abilities &&
-		Object.values( userSettings.mcp_abilities ).some( ( tool ) => tool.enabled );
+	// Check if any account-level tools are enabled using the new nested structure
+	const hasEnabledTools = hasEnabledAccountTools( userSettings );
 
 	if ( ! isAutomattician ) {
 		return null;
@@ -192,17 +191,17 @@ function McpSetupComponent( { path, userSettings } ) {
 							) }
 						</Text>
 						<VStack spacing={ 2 }>
-							<Text as="li">
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ translate(
 									'Running a bridge server using the WordPress.com-specific MCP package'
 								) }
 							</Text>
-							<Text as="li">
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ translate(
 									'Handling OAuth 2.1 authentication to securely connect to your WordPress.com account'
 								) }
 							</Text>
-							<Text as="li">
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ translate(
 									"Providing real-time access to your account's content and management features"
 								) }
@@ -275,7 +274,7 @@ function McpSetupComponent( { path, userSettings } ) {
 							</VStack>
 						</VStack>
 						<VStack spacing={ 3 }>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									translate(
 										'<code>%s</code> is a unique identifier for this WordPress.com account connection'
@@ -298,7 +297,7 @@ function McpSetupComponent( { path, userSettings } ) {
 									}
 								) }
 							</Text>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									translate(
 										'<code>%s</code> is the official WordPress.com MCP server package'

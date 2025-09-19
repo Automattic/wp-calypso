@@ -54,6 +54,7 @@ function UseMyDomain( props ) {
 		stepLocation,
 		registerNowAction,
 		hideHeader,
+		render,
 	} = props;
 
 	const { __ } = useI18n();
@@ -471,6 +472,10 @@ function UseMyDomain( props ) {
 		}
 	}, [ stepLocation, updateMode, isStepper ] );
 
+	if ( render ) {
+		return render( { onGoBack, headerText, content: renderContent() } );
+	}
+
 	return (
 		<>
 			{ renderHeader() }
@@ -497,6 +502,7 @@ UseMyDomain.propTypes = {
 	stepLocation: PropTypes.object,
 	registerNowAction: PropTypes.func,
 	hideHeader: PropTypes.bool,
+	render: PropTypes.func,
 };
 
 export default connect( ( state ) => ( {

@@ -1,8 +1,9 @@
-import { isAutomatticianQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { isAutomatticianQuery, userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { SVG, Path } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { getSiteMcpAbilities } from './utils';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -16,7 +17,7 @@ const McpIcon = ( { style }: { style?: React.CSSProperties } ) => (
 );
 
 export default function McpSettingsSummary( { site, density }: { site: Site; density?: Density } ) {
-	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	// Gate access to Automatticians only
@@ -24,14 +25,17 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 		return null;
 	}
 
-	if ( ! siteSettings?.mcp_abilities ) {
+	// Get MCP abilities from user settings using the new nested structure
+	const mcpAbilities = getSiteMcpAbilities( userSettings, site.ID );
+
+	if ( ! mcpAbilities || Object.keys( mcpAbilities ).length === 0 ) {
 		return null;
 	}
 
 	let badgeText: string;
 	let badgeIntent: 'success' | 'info' | undefined;
 
-	const enabledTools = Object.entries( siteSettings.mcp_abilities )
+	const enabledTools = Object.entries( mcpAbilities )
 		.filter( ( [ , tool ] ) => tool.enabled )
 		.map( ( [ toolId ] ) => toolId );
 

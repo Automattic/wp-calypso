@@ -7,19 +7,14 @@ import {
 	smsCountryCodesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalConfirmDialog as ConfirmDialog,
-	Button,
-	Card,
-	CardBody,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
 import PhoneNumberInput from '../../components/phone-number-input';
 import { SectionHeader } from '../../components/section-header';
@@ -118,7 +113,6 @@ export default function RecoverySMS() {
 	};
 
 	const handleRemove = () => {
-		setIsRemoveDialogOpen( false );
 		removeSMS( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery SMS number was removed successfully.' ), {
@@ -130,6 +124,9 @@ export default function RecoverySMS() {
 				createErrorNotice( error.message || __( 'Failed to remove recovery SMS number.' ), {
 					type: 'snackbar',
 				} );
+			},
+			onSettled: () => {
+				setIsRemoveDialogOpen( false );
 			},
 		} );
 	};
@@ -257,14 +254,18 @@ export default function RecoverySMS() {
 					</VStack>
 				</CardBody>
 			</Card>
-			<ConfirmDialog
+			<ConfirmModal
 				isOpen={ isRemoveDialogOpen }
-				confirmButtonText={ __( 'Remove SMS number' ) }
+				confirmButtonProps={ {
+					label: __( 'Remove SMS number' ),
+					isBusy: isRemoveSMSPending,
+					disabled: isRemoveSMSPending,
+				} }
 				onCancel={ () => setIsRemoveDialogOpen( false ) }
 				onConfirm={ handleRemove }
 			>
 				{ __( 'Are you sure you want to remove this SMS number?' ) }
-			</ConfirmDialog>
+			</ConfirmModal>
 		</>
 	);
 }

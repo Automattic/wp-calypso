@@ -14,11 +14,13 @@ export interface SitePlan {
 
 export interface SiteCapabilities {
 	manage_options: boolean;
+	update_plugins: boolean;
 }
 
 export interface SiteOptions {
 	admin_url: string;
 	created_at?: string;
+	is_domain_only?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_summer_special_2025?: boolean;
 	is_wpforteams_site?: boolean;

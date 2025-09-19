@@ -1,0 +1,9 @@
+@import '@wordpress/base-styles/colors';
+
+.site-scan-threats__type-icon {
+	background-color: $gray-100;
+	border-radius: $radius-small;
+	fill: $gray-700;
+	flex-shrink: 0;
+	padding: 4px;
+}
