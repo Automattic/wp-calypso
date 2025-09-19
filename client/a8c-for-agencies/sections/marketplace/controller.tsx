@@ -1,12 +1,17 @@
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
+import { useEffect } from 'react';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useSelector } from 'calypso/state';
+import {
+	getActiveAgency,
+	getUserBillingType,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
@@ -103,18 +108,41 @@ export const marketplaceReferPremiumPlanContext: Callback = ( context, next ) =>
 	next();
 };
 
+/**
+ * Component that serves the appropriate checkout version based on user's billing type.
+ * Redirects billingdragon users to checkout/v2, others get the standard checkout.
+ */
+const A4ACheckoutVersioned = ( { referralBlogId }: { referralBlogId: number | undefined } ) => {
+	const userBillingType = useSelector( getUserBillingType );
+	const isBillingTypeBD = userBillingType === 'billingdragon';
+
+	useEffect( () => {
+		if ( isBillingTypeBD ) {
+			// Redirect to v2 with the same query parameters
+			page.redirect( `/client/checkout/v2${ queryParams }` );
+		}
+	}, [ isBillingTypeBD, queryParams ] );
+
+	// If not billingdragon, render the normal checkout
+	return (
+		<Checkout
+			referralBlogId={ referralBlogId }
+			defaultMarketplaceType={ referralBlogId ? MARKETPLACE_TYPE_REFERRAL : undefined }
+		/>
+	);
+};
+
 export const checkoutContext: Callback = ( context, next ) => {
 	const { referral_blog_id } = context.query;
 	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
+
+	// const queryParams = context.querystring ? `?${ context.querystring }` : '';
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
-			<Checkout
-				referralBlogId={ referralBlogId }
-				defaultMarketplaceType={ referralBlogId ? MARKETPLACE_TYPE_REFERRAL : undefined }
-			/>
+			<A4ACheckoutVersioned referralBlogId={ referralBlogId } />
 		</>
 	);
 	next();
