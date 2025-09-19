@@ -174,7 +174,7 @@ export default function TransferDomainToAnyUser() {
 								isBusy={ isUpdatingDomainTransferRequest }
 								disabled={ isSaveDisabled || isUpdatingDomainTransferRequest }
 							>
-								{ __( 'Transfer Domain' ) }
+								{ __( 'Transfer domain' ) }
 							</Button>
 						</HStack>
 					</VStack>
@@ -216,7 +216,7 @@ export default function TransferDomainToAnyUser() {
 							onClick={ onConfirm }
 							disabled={ isUpdatingDomainTransferRequest }
 						>
-							{ __( 'Confirm Transfer' ) }
+							{ __( 'Confirm transfer' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -246,7 +246,7 @@ export default function TransferDomainToAnyUser() {
 							onClick={ () => setIsCancelDialogOpen( false ) }
 							disabled={ isDeletingDomainTransferRequest }
 						>
-							{ __( 'Keep Transfer' ) }
+							{ __( 'Keep transfer' ) }
 						</Button>
 						<Button
 							__next40pxDefaultSize
@@ -256,7 +256,7 @@ export default function TransferDomainToAnyUser() {
 							onClick={ onConfirmCancel }
 							disabled={ isDeletingDomainTransferRequest }
 						>
-							{ __( 'Cancel Transfer' ) }
+							{ __( 'Cancel transfer' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -301,7 +301,7 @@ export default function TransferDomainToAnyUser() {
 						disabled={ isDeletingDomainTransferRequest }
 						onClick={ handleCancelTransfer }
 					>
-						{ __( 'Cancel Transfer' ) }
+						{ __( 'Cancel transfer' ) }
 					</Button>
 				</HStack>
 			</VStack>

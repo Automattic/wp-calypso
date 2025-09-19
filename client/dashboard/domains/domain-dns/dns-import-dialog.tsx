@@ -179,7 +179,7 @@ export default function DnsImportDialog( {
 						onClick={ handleConfirm }
 						disabled={ numberOfSelectedRecords === 0 || updateDnsMutation.isPending }
 					>
-						{ __( 'Import Selected Records' ) }
+						{ __( 'Import selected records' ) }
 					</Button>
 				</ButtonStack>
 			</VStack>
