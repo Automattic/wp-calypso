@@ -27,3 +27,11 @@ a.dataviews-url-field {
 		text-decoration: none;
 	}
 }
+
+.dataviews-view-table tbody td {
+	vertical-align: middle;
+}
+
+.dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper {
+	min-height: unset;
+}
