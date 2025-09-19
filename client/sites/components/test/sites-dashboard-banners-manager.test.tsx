@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -62,7 +63,8 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( queryByText( 'Stuck on your migration?' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders A8C for Agencies banner when sitesCount is 5 or more', () => {
+	it( 'renders A8C for Agencies banner when locale is non-English and sitesCount is 5 or more', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
 		const sitesStatuses = [];
 
 		const { getByText } = render(
@@ -77,7 +79,8 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( Banner ).toHaveBeenCalled();
 	} );
 
-	it( 'does not render A8C for Agencies banner when sitesCount is less than 5', () => {
+	it( 'does not render A8C for Agencies banner when locale is non-English and sitesCount is less than 5', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
 		const sitesStatuses = [];
 
 		const { queryByText } = render(
