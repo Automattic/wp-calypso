@@ -9,7 +9,7 @@ import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainRoute, domainForwardingsRoute } from '../../app/router/domains';
+import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainForwardingForm from './form';
@@ -57,7 +57,7 @@ export default function EditDomainForwarding() {
 					type: 'snackbar',
 				} );
 				router.navigate( {
-					to: domainForwardingsRoute.fullPath,
+					to: domainForwardingRoute.fullPath,
 					params: { domainName },
 				} );
 			},

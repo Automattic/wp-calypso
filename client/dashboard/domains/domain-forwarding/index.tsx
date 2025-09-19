@@ -42,7 +42,7 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
-function DomainForwardings() {
+function DomainForwarding() {
 	const router = useRouter();
 
 	const { domainName } = domainRoute.useParams();
@@ -180,4 +180,4 @@ function DomainForwardings() {
 	);
 }
 
-export default DomainForwardings;
+export default DomainForwarding;
