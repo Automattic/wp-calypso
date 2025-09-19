@@ -12,7 +12,7 @@ import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
-import { DeploymentLogsModal } from './deployment-logs/deployment-logs-modal';
+import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
 import type {
 	DeploymentRun,
 	DeploymentRunWithDeploymentInfo,
@@ -24,8 +24,6 @@ export function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const [ deploymentForModal, setDeploymentForModal ] =
-		useState< DeploymentRunWithDeploymentInfo | null >( null );
 	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
 		codeDeploymentsQuery( site.ID )
 	);
@@ -106,9 +104,7 @@ export function DeploymentsList() {
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );
-	const deploymentStatusRefreshed =
-		deploymentRuns.find( ( deployment ) => deployment.id === deploymentForModal?.id )?.status ||
-		'unknown';
+
 	return (
 		<>
 			<DataViewsCard>
@@ -119,9 +115,17 @@ export function DeploymentsList() {
 							label: __( 'Open logs' ),
 							isPrimary: true,
 							icon: <Icon icon={ seen } />,
-							callback: ( items ) => {
-								setDeploymentForModal( items[ 0 ] );
-							},
+							RenderModal: ( { items, closeModal } ) => (
+								<DeploymentLogsModalContent
+									onRequestClose={ () => {
+										closeModal?.();
+									} }
+									deployment={ items[ 0 ] }
+									siteId={ site.ID }
+								/>
+							),
+							hideModalHeader: true,
+							modalSize: 'large',
 						},
 					] }
 					data={ filteredData }
@@ -135,17 +139,6 @@ export function DeploymentsList() {
 					empty={ emptyTitle }
 				/>
 			</DataViewsCard>
-
-			{ deploymentForModal && (
-				<DeploymentLogsModal
-					onRequestClose={ () => setDeploymentForModal( null ) }
-					deployment={ {
-						...deploymentForModal,
-						status: deploymentStatusRefreshed,
-					} }
-					siteId={ site.ID }
-				/>
-			) }
 		</>
 	);
 }
