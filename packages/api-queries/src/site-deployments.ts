@@ -1,7 +1,7 @@
 import {
 	fetchCodeDeployments,
 	fetchCodeDeploymentRuns,
-	createCodeDeploymentRun,
+	createCodeDeployment,
 	deleteCodeDeployment,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
@@ -19,10 +19,10 @@ export const codeDeploymentRunsQuery = ( siteId: number, deploymentId: number ) 
 		queryFn: () => fetchCodeDeploymentRuns( siteId, deploymentId ),
 	} );
 
-export const createCodeDeploymentRunMutation = () =>
+export const codeDeploymentCreateMutation = () =>
 	mutationOptions( {
 		mutationFn: async ( { siteId, deploymentId }: { siteId: number; deploymentId: number } ) =>
-			createCodeDeploymentRun( siteId, deploymentId ),
+			createCodeDeployment( siteId, deploymentId ),
 		onSuccess: ( ...args ) => {
 			const [ , variables ] = args;
 

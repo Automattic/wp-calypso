@@ -1,7 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { DeploymentRun, CodeDeploymentDeleteResponse } from './types';
 
-export async function createCodeDeploymentRun(
+export async function createCodeDeployment(
 	siteId: number,
 	deploymentId: number
 ): Promise< DeploymentRun > {
