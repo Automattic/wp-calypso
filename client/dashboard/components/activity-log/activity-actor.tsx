@@ -16,34 +16,34 @@ function getActorPresentation( actor: ActivityActorType ) {
 	switch ( type ) {
 		case 'Application': {
 			if ( name === 'WordPress' ) {
-				return { iconEl: <WordPressLogo size={ ICON_SIZE } />, label: name };
+				return { icon: <WordPressLogo size={ ICON_SIZE } />, label: name };
 			}
 			if ( name === 'Jetpack' || name === 'Jetpack Boost' ) {
 				return {
-					iconEl: <JetpackLogo size={ ICON_SIZE } />,
+					icon: <JetpackLogo size={ ICON_SIZE } />,
 					label: name,
 				};
 			}
 			if ( name === 'Server' ) {
 				return {
-					iconEl: <Icon className="server-actor-icon" icon={ globe } size={ ICON_SIZE } />,
+					icon: <Icon className="server-actor-icon" icon={ globe } size={ ICON_SIZE } />,
 					label: __( 'Server' ),
 				};
 			}
 			break;
 		}
 		case 'Multiple': {
-			return { iconEl: <Icon icon={ people } size={ ICON_SIZE } />, label: __( 'Multiple users' ) };
+			return { icon: <Icon icon={ people } size={ ICON_SIZE } />, label: __( 'Multiple users' ) };
 		}
 		case 'Happiness Engineer': {
-			return { iconEl: <JetpackLogo size={ ICON_SIZE } />, label: __( 'Happiness Engineer' ) };
+			return { icon: <JetpackLogo size={ ICON_SIZE } />, label: __( 'Happiness Engineer' ) };
 		}
 	}
 
 	// Default: avatar image if present; otherwise generic user icon
 	if ( icon?.url ) {
 		return {
-			iconEl: (
+			icon: (
 				<img
 					className="site-activity-logs__actor-icon"
 					src={ icon.url }
@@ -58,17 +58,17 @@ function getActorPresentation( actor: ActivityActorType ) {
 	}
 
 	return {
-		iconEl: <Icon className="default-actor-icon" icon={ commentAuthorAvatar } size={ ICON_SIZE } />,
+		icon: <Icon className="default-actor-icon" icon={ commentAuthorAvatar } size={ ICON_SIZE } />,
 		label: name || unknown,
 	};
 }
 
 export function ActivityActor( { actor }: { actor: ActivityActorType } ) {
-	const { iconEl, label } = getActorPresentation( actor );
+	const { icon, label } = getActorPresentation( actor );
 
 	return (
 		<HStack spacing="2" alignment="left" className="site-activity-logs__actor">
-			<div className="site-activity-logs__actor-icon">{ iconEl }</div>
+			<div className="site-activity-logs__actor-icon">{ icon }</div>
 			<span>{ label }</span>
 		</HStack>
 	);
