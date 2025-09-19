@@ -18,11 +18,12 @@ import {
 	Notice,
 	CardBody,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, globe, chevronRight, chevronLeft } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
-import { useNotice } from '../../app/hooks/use-notice';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { PageHeader } from '../../components/page-header';
@@ -138,7 +139,7 @@ export default function MonetizeSubscription() {
 
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
-	const { createSuccessNotice, createErrorNotice } = useNotice();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const {
 		mutate: stopSubscription,
