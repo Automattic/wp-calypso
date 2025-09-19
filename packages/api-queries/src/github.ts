@@ -77,7 +77,6 @@ export const githubRepositoryChecksQuery = (
 	} );
 
 export const githubWorkflowChecksQuery = (
-	installationId: number,
 	repositoryOwner: string,
 	repositoryName: string,
 	repositoryBranch: string,
@@ -86,8 +85,6 @@ export const githubWorkflowChecksQuery = (
 	queryOptions( {
 		queryKey: [
 			'github',
-			'installation',
-			installationId,
 			'repository',
 			repositoryOwner,
 			repositoryName,
@@ -99,7 +96,6 @@ export const githubWorkflowChecksQuery = (
 		],
 		queryFn: () =>
 			fetchGithubWorkflowChecks(
-				installationId,
 				repositoryOwner,
 				repositoryName,
 				repositoryBranch,

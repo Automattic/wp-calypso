@@ -58,7 +58,6 @@ export async function fetchGithubRepositoryChecks(
 }
 
 export async function fetchGithubWorkflowChecks(
-	installationId: number,
 	repositoryOwner: string,
 	repositoryName: string,
 	repositoryBranch: string,
@@ -66,7 +65,6 @@ export async function fetchGithubWorkflowChecks(
 ): Promise< GitHubWorkflowValidation > {
 	return wpcom.req.get( {
 		path: addQueryArgs( '/hosting/github/workflows/checks', {
-			installation_id: installationId,
 			repository_owner: repositoryOwner,
 			repository_name: repositoryName,
 			branch_name: repositoryBranch,

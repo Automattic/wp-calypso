@@ -82,18 +82,19 @@ export const WorkflowValidationList = ( {
 		}
 
 		const workflowUrl = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflowFile }`;
-		const isSuccess = result.conclusion === 'success';
-		const message = isSuccess
-			? __( 'Your workflow <link> is good to go!' )
-			: __( 'Please edit <link> and fix the problems we found.' );
+		const message =
+			result.conclusion === 'success'
+				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
+						filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
+				  } )
+				: createInterpolateElement(
+						__( 'Please edit <filename /> and fix the problems we found.' ),
+						{
+							filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
+						}
+				  );
 
-		return (
-			<Text>
-				{ createInterpolateElement( message, {
-					link: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
-				} ) }
-			</Text>
-		);
+		return <Text>{ message }</Text>;
 	};
 
 	return (

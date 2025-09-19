@@ -3,7 +3,6 @@ import {
 	githubRepositoriesQuery,
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
-	githubWorkflowChecksQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -13,23 +12,15 @@ import {
 	ComboboxControl,
 	TextControl,
 	RadioControl,
-	ExternalLink,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
 import { useCreateCodeDeployment } from './use-create-code-deployment';
-import { useWorkflowValidations } from './use-workflow-validations';
-import { WorkflowValidationList } from './workflow-validation-list';
-import type {
-	Site,
-	GitHubInstallation,
-	GitHubRepository,
-	GitHubWorkflowValidation,
-} from '@automattic/api-core';
+import type { Site, GitHubInstallation, GitHubRepository } from '@automattic/api-core';
 
 interface ConnectRepositoryFormProps {
 	site: Site;
@@ -101,14 +92,13 @@ export const ConnectRepositoryForm = ( {
 		setBranch( '' );
 		setTargetDir( '/' );
 		setIsTargetDirDirty( false );
-		setWorkflowPath( deploymentMode === 'advanced' ? 'wpcom.yml' : undefined );
-	}, [ selectedInstallationId, deploymentMode ] );
+		setWorkflowPath( '.github/workflows/wpcom.yml' );
+	}, [ selectedInstallationId ] );
 
 	useEffect( () => {
 		if ( selectedRepositoryId === '' ) {
 			setIsTargetDirDirty( false );
 			setTargetDir( '/' );
-			setWorkflowPath( deploymentMode === 'advanced' ? 'wpcom.yml' : undefined );
 			return;
 		}
 
@@ -120,9 +110,8 @@ export const ConnectRepositoryForm = ( {
 			setSelectedRepositoryId( '' );
 			setIsTargetDirDirty( false );
 			setTargetDir( '/' );
-			setWorkflowPath( deploymentMode === 'advanced' ? 'wpcom.yml' : undefined );
 		}
-	}, [ repositories, selectedRepositoryId, deploymentMode ] );
+	}, [ repositories, selectedRepositoryId ] );
 
 	const selectedRepository: GitHubRepository | undefined = useMemo( () => {
 		if ( selectedRepositoryId === '' ) {
@@ -131,14 +120,6 @@ export const ConnectRepositoryForm = ( {
 
 		return repositories.find( ( repository ) => repository.id === selectedRepositoryId );
 	}, [ repositories, selectedRepositoryId ] );
-
-	useEffect( () => {
-		if ( deploymentMode === 'advanced' ) {
-			setWorkflowPath( ( current ) => current ?? 'wpcom.yml' );
-		} else {
-			setWorkflowPath( undefined );
-		}
-	}, [ deploymentMode ] );
 
 	useEffect( () => {
 		if ( selectedRepository?.default_branch ) {
@@ -170,26 +151,7 @@ export const ConnectRepositoryForm = ( {
 		enabled: !! selectedInstallation && !! selectedRepository && !! branch,
 	} );
 
-	const workflowValidations = useWorkflowValidations( branch );
-
-	const {
-		data: workflowChecks,
-		isFetching: isFetchingWorkflowChecks,
-		refetch: refetchWorkflowChecks,
-	} = useQuery(
-		githubWorkflowChecksQuery(
-			selectedInstallation?.external_id ?? 0,
-			selectedRepository?.owner ?? '',
-			selectedRepository?.name ?? '',
-			branch,
-			workflowPath ?? ''
-		)
-	);
-
 	const isAdvancedSelected = deploymentMode === 'advanced';
-	const canVerifyWorkflow = Boolean(
-		isAdvancedSelected && workflowPath && selectedInstallation && selectedRepository && branch
-	);
 
 	useEffect( () => {
 		if ( ! repositoryChecks?.suggested_directory ) {
@@ -260,7 +222,7 @@ export const ConnectRepositoryForm = ( {
 				targetDir,
 				installationId: selectedInstallation.external_id,
 				isAutomated,
-				workflowPath: isAdvancedSelected ? workflowPath : undefined,
+				workflowPath,
 			} );
 		} catch ( error ) {
 			setIsSubmitting( false );
@@ -324,14 +286,6 @@ export const ConnectRepositoryForm = ( {
 		targetDir &&
 		isAdvancedValid
 	);
-
-	const handleVerifyWorkflow = () => {
-		if ( ! canVerifyWorkflow ) {
-			return;
-		}
-
-		void refetchWorkflowChecks();
-	};
 
 	return (
 		<VStack spacing={ 6 }>
@@ -454,39 +408,14 @@ export const ConnectRepositoryForm = ( {
 			</VStack>
 
 			{ isAdvancedSelected && (
-				<VStack spacing={ 3 }>
-					<TextControl
-						label={ __( 'Deployment workflow' ) }
-						value={ workflowPath ?? '' }
-						onChange={ ( value ) => {
-							const trimmedValue = value.trim();
-							setWorkflowPath( trimmedValue ? trimmedValue : undefined );
-						} }
-						disabled={ ! selectedRepository }
-						placeholder="wpcom.yml"
-						help={ createInterpolateElement(
-							__(
-								'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
-							),
-							{
-								a: (
-									<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/" />
-								),
-							}
-						) }
-						__next40pxDefaultSize
-					/>
-					<WorkflowValidationList
-						validations={ workflowValidations }
-						result={ workflowChecks as GitHubWorkflowValidation | undefined }
-						isLoading={ isFetchingWorkflowChecks }
-						onVerify={ handleVerifyWorkflow }
-						canVerify={ canVerifyWorkflow }
-						repository={ selectedRepository }
-						branchName={ branch }
-						workflowPath={ workflowPath }
-					/>
-				</VStack>
+				<AdvancedWorkflowValidation
+					selectedInstallationId={ selectedInstallation?.external_id ?? 0 }
+					repository={ selectedRepository }
+					branchName={ branch }
+					workflowPath={ workflowPath }
+					onWorkflowPathChange={ setWorkflowPath }
+					disabled={ ! selectedRepository }
+				/>
 			) }
 
 			<HStack justify="flex-end">
