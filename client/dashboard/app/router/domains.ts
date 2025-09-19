@@ -553,7 +553,6 @@ export const createDomainsRoutes = () => {
 			domainDnsEditRoute,
 			domainConnectionSetupRoute,
 			domainForwardingRoute,
-			domainForwardingsRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
 			domainContactInfoRoute,
