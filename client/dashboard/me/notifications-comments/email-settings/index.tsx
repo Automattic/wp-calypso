@@ -66,7 +66,7 @@ export const EmailSettings = () => {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
-						<Text weight="bold">{ __( 'Email' ) }</Text>
+						<Text weight={ 600 }>{ __( 'Email' ) }</Text>
 						{ isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					<SettingsPanel options={ options } onChange={ handleChange } disabled={ isMutating } />

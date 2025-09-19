@@ -74,7 +74,7 @@ export const WebSettings = () => {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
-						<Text weight="bold">{ __( 'Web' ) }</Text>
+						<Text weight={ 600 }>{ __( 'Web' ) }</Text>
 						{ isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					<SettingsPanel options={ options } onChange={ handleChange } disabled={ isMutating } />
