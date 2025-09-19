@@ -14,6 +14,7 @@ import { Notice } from '../../../components/notice';
 import { ThreatsDetailCard } from '../../scan/components/threats-detail-card';
 import { CODEABLE_JETPACK_SCAN_URL } from '../../scan/constants';
 import type { Threat } from '@automattic/api-core';
+import { ThreatDescription } from '../../scan/components/threat-description';
 
 export function getActions(): Action< Threat >[] {
 	return [
@@ -35,9 +36,7 @@ export function getActions(): Action< Threat >[] {
 					<VStack spacing={ 4 }>
 						<Text variant="muted">{ description }</Text>
 						<ThreatsDetailCard threats={ items } />
-
-						{ /* @TODO: render the proper threat description here */ }
-
+						<ThreatDescription threat={ items[ 0 ] } />
 						<ButtonStack justify="flex-end">
 							<Button variant="tertiary" onClick={ closeModal }>
 								{ __( 'Cancel' ) }
@@ -61,9 +60,7 @@ export function getActions(): Action< Threat >[] {
 				<VStack spacing={ 4 }>
 					<Text variant="muted">{ __( 'Jetpack will be ignoring the following threat:' ) }</Text>
 					<ThreatsDetailCard threats={ items } />
-
-					{ /* @TODO: render the proper threat description here */ }
-
+					<ThreatDescription threat={ items[ 0 ] } />
 					<Notice variant="error">
 						{ createInterpolateElement(
 							__(
