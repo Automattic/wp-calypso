@@ -34,6 +34,7 @@ export const ignoreThreatMutation = ( siteId: number ) =>
 		mutationFn: ( threatId: number ) => ignoreThreat( siteId, threatId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
+			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
 		},
 	} );
 
@@ -42,6 +43,7 @@ export const unignoreThreatMutation = ( siteId: number ) =>
 		mutationFn: ( threatId: number ) => unignoreThreat( siteId, threatId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
+			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
 		},
 	} );
 
@@ -50,5 +52,6 @@ export const fixThreatMutation = ( siteId: number ) =>
 		mutationFn: ( threatId: number ) => fixThreat( siteId, threatId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
+			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
 		},
 	} );
