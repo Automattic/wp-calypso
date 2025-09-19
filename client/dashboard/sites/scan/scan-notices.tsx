@@ -42,8 +42,7 @@ export function ScanNotices( { status, threatCount }: ScanNoticesProps ) {
 						'Please check to see if your site is down – if it’s not, try again. If it is, or if the scan process is still having problems, <external>check our help guide</external> or contact our support team.'
 					),
 					{
-						// @ts-expect-error children prop is injected by createInterpolateElement
-						external: <ExternalLink href="https://jetpack.com/support/scan/" />,
+						external: <ExternalLink href="https://jetpack.com/support/scan/" children={ null } />,
 					}
 				) }
 			</Notice>
