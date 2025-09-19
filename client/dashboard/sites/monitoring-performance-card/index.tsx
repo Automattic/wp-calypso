@@ -1,6 +1,7 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
@@ -111,11 +112,20 @@ export default function MonitoringPerformanceCard( {
 		},
 	];
 
+	const lessThanMediumViewport = useViewportMatch( 'medium', '<' );
+
 	let numTicks: undefined | number;
-	if ( timeRange > 72 ) {
-		numTicks = timeRange / 24;
-	} else if ( timeRange > 24 ) {
-		numTicks = timeRange / 12;
+	switch ( timeRange ) {
+		case 168:
+			numTicks = lessThanMediumViewport ? 3 : 7;
+			break;
+		case 72:
+			numTicks = lessThanMediumViewport ? 3 : 6;
+			break;
+		case 24:
+		case 6:
+			numTicks = lessThanMediumViewport ? 4 : 12;
+			break;
 	}
 
 	const xAxisOptions = {
@@ -126,7 +136,7 @@ export default function MonitoringPerformanceCard( {
 				return `${ d.getHours() }:${ d.getMinutes().toString().padStart( 2, '0' ) }`;
 			}
 
-			if ( timeRange > 72 ) {
+			if ( timeRange > 72 || ( timeRange > 24 && lessThanMediumViewport ) ) {
 				return `${ d.toLocaleDateString() }`;
 			}
 
