@@ -1,89 +1,34 @@
 import { PLAN_PERSONAL, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/sites/marketing/style.scss';
 
 export const Sharing = ( {
 	contentComponent,
 	pathname,
-	showConnections,
 	siteId,
 	isJetpack,
 	isP2Hub,
 	isVip,
-	siteSlug,
 	translate,
 } ) => {
-	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
-		isAdminInterfaceWPAdmin( state, siteId )
-	);
-
-	const pathSuffix = siteSlug ? '/' + siteSlug : '';
-	let filters = [];
-
-	filters.push( {
-		id: 'marketing-tools',
-		route: '/marketing/tools' + pathSuffix,
-		title: translate( 'Marketing Tools' ),
-	} );
-
-	// Include Connections link if all sites are selected. Otherwise,
-	// verify that the required Jetpack module is active
-	const connectionsFilter = {
-		id: 'sharing-connections',
-		route: '/marketing/jetpack-social' + pathSuffix,
-		title: translate( 'Connections' ),
-		description: translate(
-			'Connect your site to social networks and other services. {{learnMoreLink/}}',
-			{
-				components: {
-					learnMoreLink: (
-						<InlineSupportLink key="publicize" supportContext="publicize" showIcon={ false } />
-					),
-				},
-			}
-		),
-	};
-	if ( showConnections ) {
-		filters.push( connectionsFilter );
-	}
-
 	let titleHeader = translate( 'Marketing and Integrations' );
 
-	if ( adminInterfaceIsWPAdmin ) {
-		titleHeader = translate( 'Marketing' );
-	}
-
 	if ( isP2Hub ) {
-		// For p2 hub sites show only connections tab.
-		filters = [ connectionsFilter ];
 		titleHeader = translate( 'Integrations' );
 	}
 
-	const selected = find( filters, { route: pathname } );
-	const isFirstFilterSelected = filters[ 0 ]?.route === pathname;
-
-	const showFilters =
-		filters.length > 0 &&
-		! pathname.startsWith( '/marketing/sharing-buttons' ) &&
-		! pathname.startsWith( '/marketing/connections' );
+	const showNoAdsUpsell = pathname.startsWith( '/marketing/tools' );
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -93,30 +38,11 @@ export const Sharing = ( {
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ titleHeader }
-				subtitle={
-					selected?.description ??
-					translate(
-						'Explore tools to build your audience, market your site, and engage your visitors.'
-					)
-				}
+				subtitle={ translate(
+					'Explore tools to build your audience, market your site, and engage your visitors.'
+				) }
 			/>
-			{ showFilters && (
-				<SectionNav selectedText={ selected?.title ?? '' }>
-					<NavTabs>
-						{ filters.map( ( { id, route, isExternalLink, title } ) => (
-							<NavItem
-								key={ id }
-								path={ route }
-								isExternalLink={ isExternalLink }
-								selected={ pathname === route }
-							>
-								{ title }
-							</NavItem>
-						) ) }
-					</NavTabs>
-				</SectionNav>
-			) }
-			{ isFirstFilterSelected && ! isVip && ! isJetpack && (
+			{ showNoAdsUpsell && ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					plan={ PLAN_PERSONAL }
@@ -136,28 +62,21 @@ export const Sharing = ( {
 };
 
 Sharing.propTypes = {
-	canManageOptions: PropTypes.bool,
 	contentComponent: PropTypes.node,
-	isVipSite: PropTypes.bool,
-	path: PropTypes.string,
-	showConnections: PropTypes.bool,
+	isVip: PropTypes.bool,
+	pathname: PropTypes.string,
 	siteId: PropTypes.number,
-	siteSlug: PropTypes.string,
 	translate: PropTypes.func,
 };
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
-	const userId = getCurrentUserId( state );
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
-		// Temporary "Marketing > Connections" menu for existing users that shows a callout informing that the screen has moved to "Jetpack > Social".
-		showConnections: !! siteId && userId < 271300000,
 		isVip: isVipSite( state, siteId ),
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
 		isJetpack: isJetpack,
 	};
 } )( localize( Sharing ) );
