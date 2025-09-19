@@ -11,7 +11,6 @@ import Banner from 'calypso/components/banner';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
-// Mock dependencies
 jest.mock( '@automattic/i18n-utils', () => ( {
 	useIsEnglishLocale: jest.fn(),
 } ) );
@@ -68,8 +67,7 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( queryByText( 'Stuck on your migration?' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders A8C for Agencies banner when locale is non-English and sitesCount is 5 or more', () => {
-		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
+	it( 'renders A8C for Agencies banner when sitesCount is 5 or more', () => {
 		const sitesStatuses = [];
 
 		const { getByText } = render(
@@ -84,8 +82,7 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( Banner ).toHaveBeenCalled();
 	} );
 
-	it( 'does not render A8C for Agencies banner when locale is non-English and sitesCount is less than 5', () => {
-		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
+	it( 'does not render A8C for Agencies banner when sitesCount is less than 5', () => {
 		const sitesStatuses = [];
 
 		const { queryByText } = render(
@@ -125,5 +122,33 @@ describe( 'SitesDashboardBannersManager', () => {
 			</Provider>
 		);
 		expect( queryByText( 'Choose which sites you’d like to restore' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders survey banner when locale is English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
+
+		const { getByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ [] } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect(
+			getByText( 'Got a minute? Share your feedback in our short survey.' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'does not render survey banner when locale is non-English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
+
+		const { queryByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ [] } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect(
+			queryByText( 'Got a minute? Share your feedback in our short survey.' )
+		).not.toBeInTheDocument();
 	} );
 } );
