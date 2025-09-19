@@ -122,6 +122,11 @@ export function ChatInput( {
 	};
 
 	const renderSubmitButton = () => {
+		// If there is no onStop callback, don't show the button.
+		if ( isProcessing && ! onStop ) {
+			return null;
+		}
+
 		const handleClick = () => {
 			if ( isProcessing && onStop ) {
 				onStop();
