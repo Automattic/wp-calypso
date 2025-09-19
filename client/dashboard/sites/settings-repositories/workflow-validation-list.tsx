@@ -13,13 +13,14 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
+import { useState } from 'react';
+import { CodeHighlighter } from '../../components/code-highlighter';
 import type { WorkflowValidationDefinition } from './use-workflow-validations';
 import type {
 	GitHubWorkflowValidation,
 	GitHubWorkflowValidationItem,
 	GitHubRepository,
 } from '@automattic/api-core';
-
 interface WorkflowValidationListProps {
 	validations: Record< string, WorkflowValidationDefinition >;
 	result?: GitHubWorkflowValidation;
@@ -37,26 +38,9 @@ const getStatusIcon = ( status: GitHubWorkflowValidationItem[ 'status' ] | 'load
 	}
 
 	const isSuccess = status === 'success';
-	const background = isSuccess
-		? 'var(--wp-admin-theme-color, #008a20)'
-		: 'var(--wp--preset--color--alert-red, #d63638)';
+	const fill = isSuccess ? '#008a20' : '#d63638';
 
-	return (
-		<span
-			style={ {
-				display: 'inline-flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				width: 24,
-				height: 24,
-				borderRadius: '50%',
-				background,
-				color: '#fff',
-			} }
-		>
-			<Icon icon={ isSuccess ? check : closeSmall } size={ 14 } />
-		</span>
-	);
+	return <Icon icon={ isSuccess ? check : closeSmall } style={ { fill } } size={ 20 } />;
 };
 
 export const WorkflowValidationList = ( {
@@ -70,6 +54,19 @@ export const WorkflowValidationList = ( {
 	workflowPath,
 }: WorkflowValidationListProps ) => {
 	const items = result?.checked_items ?? [];
+	const [ expandedCards, setExpandedCards ] = useState< Set< string > >( new Set() );
+
+	const toggleCard = ( validationName: string ) => {
+		setExpandedCards( ( prev ) => {
+			const newSet = new Set( prev );
+			if ( newSet.has( validationName ) ) {
+				newSet.delete( validationName );
+			} else {
+				newSet.add( validationName );
+			}
+			return newSet;
+		} );
+	};
 
 	const summaryMessage = () => {
 		if ( ! result || ! repository || ! branchName ) {
@@ -100,7 +97,7 @@ export const WorkflowValidationList = ( {
 	return (
 		<VStack spacing={ 3 }>
 			<HStack justify="space-between" alignment="center">
-				<Text weight="600">{ __( 'Workflow check' ) }</Text>
+				<Text weight={ 600 }>{ __( 'Workflow check' ) }</Text>
 				<Button
 					variant="secondary"
 					onClick={ onVerify }
@@ -126,34 +123,28 @@ export const WorkflowValidationList = ( {
 					return null;
 				}
 
+				const isExpanded = expandedCards.has( item.validation_name );
+
 				return (
-					<Card
-						key={ item.validation_name }
-						style={
-							isLoading || item.status !== 'error'
-								? undefined
-								: { border: '1px solid var(--wp--preset--color--alert-red, #d63638)' }
-						}
-					>
-						<CardBody>
-							<VStack spacing={ 2 }>
-								<HStack spacing={ 2 } alignment="center">
+					<Card key={ item.validation_name }>
+						<CardBody style={ { padding: '16px' } }>
+							<HStack
+								spacing={ 2 }
+								style={ { cursor: 'pointer' } }
+								onClick={ () => toggleCard( item.validation_name ) }
+							>
+								<HStack spacing={ 2 } justify="flex-start" alignment="center">
 									{ getStatusIcon( isLoading ? 'loading' : item.status ) }
-									<Text weight="600">{ validation.label }</Text>
+									<Text weight={ 500 }>{ validation.label }</Text>
 								</HStack>
-								<Text>{ validation.description }</Text>
-								<pre
-									style={ {
-										background: 'var(--wp--preset--color--neutral-0, #f6f7f7)',
-										padding: '12px',
-										borderRadius: '4px',
-										overflowX: 'auto',
-										margin: 0,
-									} }
-								>
-									{ validation.content }
-								</pre>
-							</VStack>
+							</HStack>
+
+							{ isExpanded && (
+								<VStack spacing={ 2 } style={ { marginTop: '12px' } }>
+									<Text>{ validation.description }</Text>
+									<CodeHighlighter content={ validation.content } />
+								</VStack>
+							) }
 						</CardBody>
 					</Card>
 				);
