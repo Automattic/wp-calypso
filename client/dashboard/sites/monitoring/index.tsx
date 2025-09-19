@@ -18,8 +18,8 @@ import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import MonitoringCard from '../monitoring-card';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
-import { getMonitoringCalloutProps } from './monitoring-callout';
 import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
+import { getMonitoringCalloutProps } from './monitoring-callout';
 import type { Site } from '@automattic/api-core';
 
 const hoursMap: Record< string, number > = {
