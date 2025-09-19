@@ -14,7 +14,7 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
-import { DisconnectRepositoryModal } from './disconnect-repository-modal';
+import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
 import type { RenderModalProps, View } from '@wordpress/dataviews';
 
 function RepositoriesList() {
@@ -32,7 +32,9 @@ function RepositoriesList() {
 			id: 'delete',
 			label: __( 'Disconnect repository' ),
 			RenderModal: ( { items, closeModal }: RenderModalProps< CodeDeploymentData > ) => {
-				return <DisconnectRepositoryModal deployment={ items[ 0 ] } onClose={ closeModal } />;
+				return (
+					<DisconnectRepositoryModalContent deployment={ items[ 0 ] } onClose={ closeModal } />
+				);
 			},
 		},
 	];

@@ -5,20 +5,23 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	Button,
-	ToggleControl,
 	__experimentalText as Text,
 	ExternalLink,
+	ToggleControl,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
+import type { Field } from '@wordpress/dataviews';
 
 interface DisconnectRepositoryModalProps {
 	deployment: CodeDeploymentData;
 	onClose?: () => void;
 }
 
-export function DisconnectRepositoryModal( {
+export function DisconnectRepositoryModalContent( {
 	deployment,
 	onClose,
 }: DisconnectRepositoryModalProps ) {
@@ -44,6 +47,37 @@ export function DisconnectRepositoryModal( {
 		} );
 	};
 
+	const handleRemoveFilesChange = ( { enabled }: { enabled?: boolean } ) => {
+		setRemoveFilesChecked( !! enabled );
+	};
+
+	const fields: Field< { enabled: boolean } >[] = [
+		{
+			id: 'enabled',
+			label: __( 'Remove associated files from my WordPress.com site' ),
+			Edit: ( { field, onChange, data } ) => {
+				const { id, label, getValue } = field;
+
+				return (
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ label }
+						checked={ getValue( { item: data } ) }
+						disabled={ isDisconnecting }
+						onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
+					/>
+				);
+			},
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'enabled' ],
+	};
+
+	const data = { enabled: removeFilesChecked };
+
 	if ( ! deployment ) {
 		return null;
 	}
@@ -53,17 +87,13 @@ export function DisconnectRepositoryModal( {
 			<VStack spacing={ 4 }>
 				<Text>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: name of repository in the format repository-owner/repository-name */
-							__( 'You are about to disconnect your repository <a>%(repositoryName)s</a>' ),
-							{ repositoryName: deployment.repository_name }
-						),
+						/* translators: name of repository in the format repository-owner/repository-name */
+						__( 'You are about to disconnect your repository <repositoryName />' ),
 						{
-							a: (
-								<ExternalLink
-									children={ null }
-									href={ `https://github.com/${ deployment.repository_name }` }
-								/>
+							repositoryName: (
+								<ExternalLink href={ `https://github.com/${ deployment.repository_name }` }>
+									{ deployment.repository_name }
+								</ExternalLink>
 							),
 						}
 					) }
@@ -75,14 +105,14 @@ export function DisconnectRepositoryModal( {
 					) }
 				</Text>
 
-				<ToggleControl
-					__nextHasNoMarginBottom
-					label={ __( 'Remove associated files from my WordPress.com site' ) }
-					checked={ removeFilesChecked }
-					onChange={ () => setRemoveFilesChecked( ( value ) => ! value ) }
+				<DataForm< { enabled: boolean } >
+					data={ data }
+					fields={ fields }
+					form={ form }
+					onChange={ handleRemoveFilesChange }
 				/>
 			</VStack>
-			<HStack alignment="right">
+			<ButtonStack alignment="right">
 				<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
 					{ __( 'Cancel' ) }
 				</Button>
@@ -95,7 +125,7 @@ export function DisconnectRepositoryModal( {
 				>
 					{ __( 'Disconnect repository' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</VStack>
 	);
 }
