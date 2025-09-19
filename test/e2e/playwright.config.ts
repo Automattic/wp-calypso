@@ -24,7 +24,7 @@ export default defineConfig( {
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
-	retries: process.env.CI ? 2 : 0,
+	retries: process.env.CI ? 2 : 1,
 	/* Workers should use what is available locally, and half on CI*/
 	workers: process.env.CI ? '50%' : '100%',
 	/* Global timeout for each test */
