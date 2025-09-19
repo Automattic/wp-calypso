@@ -11,6 +11,11 @@ import Banner from 'calypso/components/banner';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
+// Mock dependencies
+jest.mock( '@automattic/i18n-utils', () => ( {
+	useIsEnglishLocale: jest.fn(),
+} ) );
+
 // Mock the Banner component
 jest.mock( 'calypso/components/banner', () => {
 	return jest.fn( ( { title } ) => <div>{ title }</div> );
