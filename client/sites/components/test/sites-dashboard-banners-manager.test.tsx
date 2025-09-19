@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -9,6 +10,12 @@ import configureStore from 'redux-mock-store';
 import Banner from 'calypso/components/banner';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
+
+// Mock dependencies
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useIsEnglishLocale: jest.fn(),
+} ) );
 
 // Mock the Banner component
 jest.mock( 'calypso/components/banner', () => {
@@ -62,7 +69,8 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( queryByText( 'Stuck on your migration?' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders A8C for Agencies banner when sitesCount is 5 or more', () => {
+	it( 'renders A8C for Agencies banner when sitesCoount is 5 or more and locale is non-English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
 		const sitesStatuses = [];
 
 		const { getByText } = render(
@@ -77,7 +85,8 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( Banner ).toHaveBeenCalled();
 	} );
 
-	it( 'does not render A8C for Agencies banner when sitesCount is less than 5', () => {
+	it( 'does not render A8C for Agencies banner when sitesCount is less than 5 and locale is non-English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
 		const sitesStatuses = [];
 
 		const { queryByText } = render(
@@ -117,5 +126,31 @@ describe( 'SitesDashboardBannersManager', () => {
 			</Provider>
 		);
 		expect( queryByText( 'Choose which sites you’d like to restore' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders survey banner when locale is English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
+		const sitesStatuses = [];
+
+		const { getByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect( getByText( 'Got a minute?' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render survey banner when locale is non-English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
+		const sitesStatuses = [];
+
+		const { queryByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect( queryByText( 'Got a minute?' ) ).not.toBeInTheDocument();
 	} );
 } );
