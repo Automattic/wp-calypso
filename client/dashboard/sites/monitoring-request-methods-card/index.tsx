@@ -5,7 +5,7 @@ import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
-import type { Site } from '@automattic/api-core';
+import type { Site, SiteHostingMetrics } from '@automattic/api-core';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -28,12 +28,14 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 		siteMetricsQuery( siteId, { start, end, metric: 'requests_persec', dimension: 'http_verb' } )
 	);
 
-	const formatData = ( requestMethodsData ): DataPointPercentage[] => {
+	const formatData = ( requestMethodsData: SiteHostingMetrics ): DataPointPercentage[] => {
 		if ( ! requestMethodsData?.data?.periods ) {
 			return [];
 		}
 
-		const methodsMap = {};
+		const methodsMap: {
+			[ key: string ]: number;
+		} = {};
 
 		requestMethodsData.data.periods.forEach( ( period: PeriodData ) => {
 			if ( typeof period?.dimension === 'object' ) {
@@ -46,29 +48,34 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 			}
 		} );
 
-		const sum = Object.values( methodsMap ).reduce( ( acc, curr ) => acc + curr, 0 );
+		const sum: number = Object.values( methodsMap ).reduce(
+			( acc: number, curr: number ): number => acc + curr,
+			0
+		);
 		const chartColorsCopy = [ ...chartColors ];
 
-		return Object.entries( methodsMap ).map( ( [ method, value ] ) => ( {
-			label: method.toUpperCase(),
-			value: Math.round( value * 100 ) / 100,
-			percentage: Math.round( ( value * 100 ) / sum ),
-			valueDisplay: Math.round( ( value * 100 ) / sum ).toString() + '%',
-			color: chartColorsCopy.shift() || '#000000',
-		} ) );
+		return Object.entries( methodsMap ).map(
+			( [ method, value ]: [ string, number ] ): DataPointPercentage => ( {
+				label: method.toUpperCase(),
+				value: Math.round( value * 100 ) / 100,
+				percentage: Math.round( ( value * 100 ) / sum ),
+				valueDisplay: Math.round( ( value * 100 ) / sum ).toString() + '%',
+				color: chartColorsCopy.shift() || '#000000',
+			} )
+		);
 	};
 
 	return {
-		data: formatData( requestMethodsData ),
+		data: requestMethodsData ? formatData( requestMethodsData ) : [],
 		isLoading,
 	};
 }
 
-function mapDataForLegend( item: DataPointPercentage ) {
+function mapDataForLegend( value: object ) {
 	return {
-		label: item.label,
-		value: item.valueDisplay,
-		color: item.color,
+		label: value.label,
+		value: value.valueDisplay,
+		color: value.color,
 	};
 }
 
@@ -82,7 +89,9 @@ export default function MonitoringRequestMethodsCard( {
 	const { data, isLoading } = useSiteRequestMethodsData( site.ID, timeRange );
 
 	// Prevent labels from showing up in the pie chart.
-	const dataNoLabel = data.map( ( item ) => ( { ...item, label: '' } ) );
+	const dataNoLabel = data.map(
+		( value: object ): DataPointPercentage => ( { ...value, label: '' } )
+	);
 
 	return (
 		<MonitoringCard
