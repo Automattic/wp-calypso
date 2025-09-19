@@ -1,7 +1,8 @@
 .site-activity-logs__actor-icon {
     border-radius: 50%;
-    width: 24px;
+    overflow: hidden;
     height: 24px;
+    width: 24px;
 
     &:has( .server-actor-icon, .default-actor-icon ) {
         background-color: $gray-300;
