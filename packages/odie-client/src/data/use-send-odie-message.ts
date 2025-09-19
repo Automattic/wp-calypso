@@ -1,18 +1,18 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
+	getExistingConversationMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
 
@@ -44,20 +44,13 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  * If the chat_id is not set, it will create a new chat and send a message to the chat.
  * @returns useMutation return object.
  */
-export const useSendOdieMessage = () => {
-	const { currentSupportInteraction, odieId } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		const currentSupportInteraction = store.getCurrentSupportInteraction();
-		const odieId = getOdieIdFromInteraction( currentSupportInteraction );
-
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-			odieId,
-		};
-	}, [] );
+export const useSendOdieMessage = ( signal: AbortSignal ) => {
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const newConversation = useCreateZendeskConversation();
+
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
@@ -89,6 +82,11 @@ export const useSendOdieMessage = () => {
 		forceEmailSupport,
 	} = useOdieAssistantContext();
 
+	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
+		( message ) =>
+			message.internal_message_id === getExistingConversationMessage().internal_message_id
+	);
+
 	/*
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
@@ -103,6 +101,8 @@ export const useSendOdieMessage = () => {
 		props?: Partial< Chat >;
 		isFromError: boolean;
 	} ) => {
+		const warnAboutExistingConversation = getMostRecentOpenLiveInteraction();
+
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {
@@ -110,6 +110,15 @@ export const useSendOdieMessage = () => {
 						...prevChat,
 						...props,
 						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
+						status: 'loaded',
+					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
+					return;
+				} else if ( warnAboutExistingConversation && ! hasBeenWarnedAboutExistingConversation ) {
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
 						status: 'loaded',
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );
@@ -145,19 +154,21 @@ export const useSendOdieMessage = () => {
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const path = window.location.pathname + window.location.search;
 			return canAccessWpcomApis()
-				? await wpcomRequest( {
+				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
 						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
+						signal,
 						body: {
 							message: message.content,
 							...( version && { version } ),
 							context: { selectedSiteId, path },
 						},
 				  } )
-				: await apiFetch( {
+				: apiFetch< ReturnedChat >( {
 						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
+						signal,
 						data: {
 							message: message.content,
 							...( version && { version } ),
@@ -221,9 +232,14 @@ export const useSendOdieMessage = () => {
 			} );
 		},
 		onSettled: () => {
+			setChatStatus( 'loaded' );
 			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
 		},
 		onError: ( error ) => {
+			if ( error instanceof Event && error.type === 'abort' ) {
+				return;
+			}
+
 			const isRateLimitError = error.message.includes( '429' );
 
 			if ( isRateLimitError ) {

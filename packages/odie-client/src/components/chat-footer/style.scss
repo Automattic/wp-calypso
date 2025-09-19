@@ -1,0 +1,13 @@
+.agenttic--chat-footer-container {
+    background-color: var(--color-background);
+    /* stylelint-disable-next-line */
+    border-radius: calc( var(--radius-lg) + 1px); /* Accounts for the 1px shadow */
+    box-shadow: var(--shadow-sm);
+    color: var(--color-foreground);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    position: relative;
+    z-index: 10;
+}

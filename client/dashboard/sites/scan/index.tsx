@@ -21,6 +21,8 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { ActiveThreatsDataViews } from '../scan-active';
 import { ScanHistoryDataViews } from '../scan-history';
 import illustrationUrl from './scan-callout-illustration.svg';
+import { ScanNowButton } from './scan-now-button';
+
 import './style.scss';
 
 const SCAN_TABS = [
@@ -42,7 +44,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		if ( lastScanTime && lastScanRelativeTime ) {
 			return sprintf(
 				/* translators: %s: relative time since last scan */
-				__( 'Latest automated scan ran %s.' ),
+				__( 'Latest scan ran %s.' ),
 				lastScanRelativeTime
 			);
 		}
@@ -66,7 +68,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					description={ getPageDescription() }
 					actions={
 						<ButtonStack>
-							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							<ScanNowButton site={ site } />
 							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
