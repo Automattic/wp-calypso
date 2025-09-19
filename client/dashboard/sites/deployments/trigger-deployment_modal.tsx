@@ -1,5 +1,5 @@
-import { codeDeploymentRunsQueryKeys } from '@automattic/api-queries';
-import { useQueryClient } from '@tanstack/react-query';
+import { createCodeDeploymentRunMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -14,7 +14,6 @@ import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { CodeDeploymentData } from '../../../sites/deployments/deployments/use-code-deployments-query';
-import { useCreateCodeDeploymentRun } from '../../../sites/deployments/deployments/use-create-code-deployment-run';
 
 interface TriggerDeploymentModalProps {
 	onClose: () => void;
@@ -58,7 +57,6 @@ function DeploymentSelectControl( { data, field, onChange }: DeploymentSelectCon
 }
 
 export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploymentModalProps ) {
-	const queryClient = useQueryClient();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
 		selectedDeploymentId: '',
@@ -76,10 +74,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 		);
 	}, [ deploymentFormData.selectedDeploymentId, deployments ] );
 
-	const { triggerManualDeployment } = useCreateCodeDeploymentRun(
-		selectedDeployment?.blog_id || 0,
-		selectedDeployment?.id || 0
-	);
+	const codeDeploymentRun = useMutation( createCodeDeploymentRunMutation() );
 
 	const fields = [
 		{
@@ -100,17 +95,18 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 			return;
 		}
 
-		triggerManualDeployment();
-
-		setTimeout( () => {
-			createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
-
-			queryClient.invalidateQueries( {
-				queryKey: codeDeploymentRunsQueryKeys( selectedDeployment.blog_id, selectedDeployment.id ),
-			} );
-		}, 1000 );
-
-		onClose();
+		codeDeploymentRun.mutate(
+			{
+				siteId: selectedDeployment.blog_id,
+				deploymentId: selectedDeployment.id,
+			},
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
+					onClose();
+				},
+			}
+		);
 	};
 
 	return (
@@ -139,7 +135,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 						<Button
 							variant="primary"
 							type="submit"
-							disabled={ ! selectedDeployment }
+							disabled={ ! selectedDeployment || codeDeploymentRun.isPending }
 							__next40pxDefaultSize
 						>
 							{ __( 'Deploy to production' ) }
