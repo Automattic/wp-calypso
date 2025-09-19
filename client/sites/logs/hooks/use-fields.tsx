@@ -43,13 +43,14 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
 
 	const getFormattedDate = useMemo(
-		() => ( value: string ) => {
-			const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
-			const formattedDate = moment( value )
-				.utcOffset( siteGmtOffset * 60 )
-				.format( dateFormat );
-			return <span>{ formattedDate }</span>;
-		},
+		() =>
+			function FormattedDate( value: string ) {
+				const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
+				const formattedDate = moment( value )
+					.utcOffset( siteGmtOffset * 60 )
+					.format( dateFormat );
+				return <span>{ formattedDate }</span>;
+			},
 		[ locale, siteGmtOffset ]
 	);
 
@@ -63,6 +64,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					label: translate( 'Date & time (%(siteGsmOffsetDisplay)s)', {
 						args: { siteGsmOffsetDisplay },
 					} ),
+					filterBy: false,
 					render: ( { item }: { item: PHPLog } ) => getFormattedDate( item.timestamp ),
 					enableHiding: false,
 				},
@@ -84,6 +86,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'message',
 					type: 'text',
 					label: translate( 'Message' ),
+					filterBy: false,
 					render: ( { item }: { item: PHPLog } ) => {
 						return <span className="site-logs-table__message">{ item.message }</span>;
 					},
@@ -93,12 +96,14 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'kind',
 					type: 'text',
 					label: translate( 'Group' ),
+					filterBy: false,
 					enableSorting: false,
 				},
 				{
 					id: 'name',
 					type: 'text',
 					label: translate( 'Source' ),
+					filterBy: false,
 					render: ( { item }: { item: PHPLog } ) => {
 						return <span className="site-logs-table__name">{ item.name }</span>;
 					},
@@ -108,6 +113,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'file',
 					type: 'text',
 					label: translate( 'File' ),
+					filterBy: false,
 					render: ( { item }: { item: PHPLog } ) => {
 						return <span className="site-logs-table__file">{ item.file }</span>;
 					},
@@ -117,6 +123,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'line',
 					type: 'integer',
 					label: translate( 'Line' ),
+					filterBy: false,
 					render: ( { item }: { item: PHPLog } ) => formatNumber( item.line ),
 					enableSorting: false,
 				},
@@ -131,6 +138,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				label: translate( 'Date & time (%(siteGsmOffsetDisplay)s)', {
 					args: { siteGsmOffsetDisplay },
 				} ),
+				filterBy: false,
 				render: ( { item }: { item: ServerLog } ) => getFormattedDate( item.date ),
 				enableHiding: false,
 			},
@@ -162,6 +170,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'request_url',
 				type: 'text',
 				label: translate( 'Request URL' ),
+				filterBy: false,
 				render: ( { item }: { item: ServerLog } ) => {
 					return <span className="site-logs-table__request-url">{ item.request_url }</span>;
 				},
@@ -171,6 +180,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'body_bytes_sent',
 				type: 'integer',
 				label: translate( 'Body bytes sent' ),
+				filterBy: false,
 				render: ( { item }: { item: ServerLog } ) => formatNumber( item.body_bytes_sent ),
 				enableSorting: false,
 			},
@@ -187,11 +197,18 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					operators: [ 'isAny' as Operator ],
 				},
 			},
-			{ id: 'http_host', type: 'text', label: translate( 'HTTP Host' ), enableSorting: false },
+			{
+				id: 'http_host',
+				type: 'text',
+				label: translate( 'HTTP Host' ),
+				filterBy: false,
+				enableSorting: false,
+			},
 			{
 				id: 'http_referer',
 				type: 'text',
 				label: translate( 'HTTP Referrer' ),
+				filterBy: false,
 				render: ( { item }: { item: ServerLog } ) => {
 					return <span className="site-logs-table__http-referer">{ item.http_referer }</span>;
 				},
@@ -201,24 +218,28 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'http2',
 				type: 'text',
 				label: translate( 'HTTP/2' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
 				id: 'http_user_agent',
 				type: 'text',
 				label: translate( 'User Agent' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
 				id: 'http_version',
 				type: 'text',
 				label: translate( 'HTTP Version' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
 				id: 'http_x_forwarded_for',
 				type: 'text',
 				label: translate( 'X-Forwarded-For' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
@@ -238,31 +259,42 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'request_completion',
 				type: 'text',
 				label: translate( 'Request Completion' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
 				id: 'request_time',
 				type: 'text',
 				label: translate( 'Request Time' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
 				id: 'scheme',
 				type: 'text',
 				label: translate( 'Scheme' ),
+				filterBy: false,
 				enableSorting: false,
 			},
-			{ id: 'timestamp', type: 'integer', label: translate( 'Timestamp' ), enableSorting: false },
+			{
+				id: 'timestamp',
+				type: 'integer',
+				label: translate( 'Timestamp' ),
+				filterBy: false,
+				enableSorting: false,
+			},
 			{
 				id: 'type',
 				type: 'text',
 				label: translate( 'Type' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 			{
 				id: 'user_ip',
 				type: 'text',
 				label: translate( 'User IP' ),
+				filterBy: false,
 				enableSorting: false,
 			},
 		] as Field< PHPLog | ServerLog >[];
