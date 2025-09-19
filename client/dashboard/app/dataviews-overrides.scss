@@ -32,6 +32,7 @@ a.dataviews-url-field {
 	vertical-align: middle;
 }
 
-.dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper {
+// Remove the min-height because if there is a subtitle, it gets pushed down and visually looks off-grid.
+.dataviews-view-table tbody .dataviews-title-field {
 	min-height: unset;
 }
