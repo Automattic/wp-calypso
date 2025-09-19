@@ -39,7 +39,7 @@ const fields = [
 			}
 
 			return (
-				<HStack spacing={ 2 } justify="flex-start">
+				<HStack spacing={ 4 } justify="flex-start">
 					<div className="email-icon-wrapper">{ iconEl }</div>
 					{ item.type === 'mailbox' ? (
 						<ExternalLink href={ `https://mail.${ item.domainName }` }>
