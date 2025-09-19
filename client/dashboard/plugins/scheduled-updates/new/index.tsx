@@ -12,7 +12,7 @@ import {
 	__experimentalHStack as HStack,
 	Notice,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import {
@@ -55,8 +55,12 @@ function ScheduledUpdatesNew() {
 		siteJetpackMonitorSettingsCreateMutation()
 	);
 
-	const { error: timeSlotCollisionsError, collidingSiteIds: timeSlotCollisionsSiteIds } =
-		useTimeSlotCollisionsFromMultisite( siteIdsAsNumbers, frequency, weekday, time );
+	const { error: collisionsError, collidingSiteIds } = useTimeSlotCollisionsFromMultisite(
+		siteIdsAsNumbers,
+		frequency,
+		weekday,
+		time
+	);
 
 	const handleCreate = useCallback( () => {
 		setValidationError( '' );
@@ -65,22 +69,24 @@ function ScheduledUpdatesNew() {
 			return;
 		}
 
-		if ( timeSlotCollisionsError ) {
+		if ( collisionsError ) {
 			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
 			const shouldListSites =
-				timeSlotCollisionsSiteIds.length > 0 &&
-				timeSlotCollisionsSiteIds.length < siteIdsAsNumbers.length;
+				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIdsAsNumbers.length;
 			const siteList = shouldListSites
-				? timeSlotCollisionsSiteIds
-						.map( ( id ) => siteMap.get( id )?.slug || String( id ) )
-						.join( ', ' )
+				? collidingSiteIds.map( ( id ) => siteMap.get( id )?.slug || String( id ) ).join( ', ' )
 				: '';
 
-			setValidationError(
-				shouldListSites
-					? `${ timeSlotCollisionsError }\n${ __( 'Sites:' ) } ${ siteList }`
-					: timeSlotCollisionsError
-			);
+			let message = collisionsError;
+			if ( shouldListSites ) {
+				const sitesLine = sprintf(
+					/* translators: %s is a comma-separated list of site slugs with time collisions. */
+					__( 'Sites: %s' ),
+					siteList
+				);
+				message = `${ collisionsError }\n${ sitesLine }`;
+			}
+			setValidationError( message );
 
 			return;
 		}
@@ -158,8 +164,8 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
-		timeSlotCollisionsSiteIds,
-		timeSlotCollisionsError,
+		collidingSiteIds,
+		collisionsError,
 		siteIdsAsNumbers.length,
 	] );
 
