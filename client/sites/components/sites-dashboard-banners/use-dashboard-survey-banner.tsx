@@ -7,7 +7,7 @@ import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
 
 export function useDashboardSurveyBanner() {
-	const id = 'dashboard-survey-banner';
+	const id = 'dashboard-survey';
 	const isEnglishLocale = useIsEnglishLocale();
 	const isDashboardSurveyBannerDismissed = useSelector( isCardDismissed( id ) );
 

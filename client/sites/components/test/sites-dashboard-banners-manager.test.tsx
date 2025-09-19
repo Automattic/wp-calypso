@@ -19,7 +19,12 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 
 // Mock the Banner component
 jest.mock( 'calypso/components/banner', () => {
-	return jest.fn( ( { title } ) => <div>{ title }</div> );
+	return jest.fn( ( { title, description } ) => (
+		<div>
+			{ title }
+			{ description && <div>{ description }</div> }
+		</div>
+	) );
 } );
 
 const mockStore = configureStore();
@@ -100,6 +105,36 @@ describe( 'SitesDashboardBannersManager', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it( 'renders survey banner when locale is English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
+		const sitesStatuses = [];
+
+		const { getByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect(
+			getByText( 'Got a minute? Share your feedback in our short survey.' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'does not render survey banner when locale is non-English', () => {
+		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
+		const sitesStatuses = [];
+
+		const { queryByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect(
+			queryByText( 'Got a minute? Share your feedback in our short survey.' )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'renders restore sites banner when ?restored=true param exists', () => {
 		// Setup URLSearchParams mock
 		const urlSearchParamsGetSpy = jest.spyOn( URLSearchParams.prototype, 'get' );
@@ -126,31 +161,5 @@ describe( 'SitesDashboardBannersManager', () => {
 			</Provider>
 		);
 		expect( queryByText( 'Choose which sites you’d like to restore' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'renders survey banner when locale is English', () => {
-		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
-		const sitesStatuses = [];
-
-		const { getByText } = render(
-			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 0 } />
-			</Provider>
-		);
-
-		expect( getByText( 'Got a minute?' ) ).toBeInTheDocument();
-	} );
-
-	it( 'does not render survey banner when locale is non-English', () => {
-		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
-		const sitesStatuses = [];
-
-		const { queryByText } = render(
-			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 0 } />
-			</Provider>
-		);
-
-		expect( queryByText( 'Got a minute?' ) ).not.toBeInTheDocument();
 	} );
 } );
