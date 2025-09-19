@@ -1,10 +1,10 @@
 import {
 	__experimentalSpacer as Spacer,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Text } from '../../components/text';
 import scanScanningIllustration from './scan-scanning-illustration.svg';
 import type { ScanState } from './use-scan-state';
 
