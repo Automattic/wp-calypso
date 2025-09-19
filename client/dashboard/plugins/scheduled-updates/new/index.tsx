@@ -55,12 +55,8 @@ function ScheduledUpdatesNew() {
 		siteJetpackMonitorSettingsCreateMutation()
 	);
 
-	const { error: collisionsError, collidingSiteIds } = useTimeSlotCollisionsFromMultisite(
-		siteIdsAsNumbers,
-		frequency,
-		weekday,
-		time
-	);
+	const { error: timeSlotCollisionsError, collidingSiteIds: timeSlotCollisionsSiteIds } =
+		useTimeSlotCollisionsFromMultisite( siteIdsAsNumbers, frequency, weekday, time );
 
 	const handleCreate = useCallback( () => {
 		setValidationError( '' );
@@ -69,25 +65,29 @@ function ScheduledUpdatesNew() {
 			return;
 		}
 
-		const timestamp = prepareTimestamp( frequency, weekday, time );
-
-		if ( collisionsError ) {
+		if ( timeSlotCollisionsError ) {
 			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
 			const shouldListSites =
-				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIdsAsNumbers.length;
+				timeSlotCollisionsSiteIds.length > 0 &&
+				timeSlotCollisionsSiteIds.length < siteIdsAsNumbers.length;
 			const siteList = shouldListSites
-				? collidingSiteIds.map( ( id ) => siteMap.get( id )?.slug || String( id ) ).join( ', ' )
+				? timeSlotCollisionsSiteIds
+						.map( ( id ) => siteMap.get( id )?.slug || String( id ) )
+						.join( ', ' )
 				: '';
+
 			setValidationError(
 				shouldListSites
-					? `${ collisionsError }\n${ __( 'Sites:' ) } ${ siteList }`
-					: collisionsError
+					? `${ timeSlotCollisionsError }\n${ __( 'Sites:' ) } ${ siteList }`
+					: timeSlotCollisionsError
 			);
+
 			return;
 		}
 
 		setIsSubmitting( true );
 
+		const timestamp = prepareTimestamp( frequency, weekday, time );
 		const body = {
 			plugins: selectedPluginSlugs,
 			schedule: {
@@ -158,8 +158,8 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
-		collidingSiteIds,
-		collisionsError,
+		timeSlotCollisionsSiteIds,
+		timeSlotCollisionsError,
 		siteIdsAsNumbers.length,
 	] );
 
