@@ -1,5 +1,6 @@
 import {
 	isAIBuilderFlow,
+	isCopySiteFlow,
 	isDomainFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
@@ -48,16 +49,6 @@ type StepSubmission = {
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
-	const getSharedWrapperProps = () => {
-		return {
-			className: shouldUseStepContainerV2( flow ) ? 'step-container-v2--domain-search' : '',
-			headerText: __( 'Claim your space on the web' ),
-			headerSubText: __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' ),
-		};
-	};
-
-	const { className, headerText, headerSubText } = getSharedWrapperProps();
-
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
@@ -127,9 +118,36 @@ const DomainSearchStep: StepType< {
 		};
 	}, [] );
 
+	const headerText = useMemo( () => {
+		if ( isNewsletterFlow( flow ) ) {
+			return __( 'Your domain. Your identity.' );
+		}
+
+		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return __( 'Find the perfect domain' );
+		}
+
+		return __( 'Claim your space on the web' );
+	}, [ flow ] );
+
+	const subHeaderText = useMemo( () => {
+		if ( isNewsletterFlow( flow ) ) {
+			return __( 'Make your newsletter stand out with a custom domain.' );
+		}
+
+		if ( isCopySiteFlow( flow ) ) {
+			return __( 'Make your copied site unique with a custom domain all of its own.' );
+		}
+		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return __( 'Secure your 100-Year domain and start building your legacy.' );
+		}
+
+		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
+	}, [ flow ] );
+
 	const domainSearchElement = (
 		<WPCOMDomainSearch
-			className={ className }
+			className={ shouldUseStepContainerV2( flow ) ? 'domain-search--step-container-v2' : '' }
 			currentSiteId={ site?.ID }
 			// eslint-disable-next-line no-nested-ternary
 			currentSiteUrl={ site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined }
@@ -157,7 +175,7 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ headerSubText } /> }
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>
@@ -169,10 +187,8 @@ const DomainSearchStep: StepType< {
 			stepName="domain-search"
 			isWideLayout
 			flowName={ flow }
-			goBack={ () => {} }
-			goNext={ () => {} }
 			formattedHeader={
-				<FormattedHeader headerText={ headerText } subHeaderText={ headerSubText } />
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 			}
 			stepContent={ domainSearchElement }
 			recordTracksEvent={ recordTracksEvent }
