@@ -138,6 +138,17 @@ export function getCalypsoURL(
 
 	return url.toString();
 }
+
+/**
+ * Returns whether the current Calypso environment is production
+ * (i.e. https://wordpress.com).
+ *
+ * @returns {boolean} True if the current Calypso environment is production; false otherwise.
+ */
+export function isCalypsoProduction(): boolean {
+	return envVariables.CALYPSO_BASE_URL === 'https://wordpress.com';
+}
+
 /**
  * Constructs a locale-specific path segment based on the provided locale.
  * If the locale is 'en' (English), returns an empty string (no path segment).
