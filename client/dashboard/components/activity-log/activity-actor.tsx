@@ -63,7 +63,7 @@ function getActorPresentation( actor: ActivityActorType ) {
 	};
 }
 
-export function ActivityActor( actor: ActivityActorType ) {
+export function ActivityActor( { actor }: { actor: ActivityActorType } ) {
 	const { iconEl, label } = getActorPresentation( actor );
 
 	return (

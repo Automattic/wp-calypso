@@ -196,7 +196,7 @@ export function useFields( {
 					label: __( 'User' ),
 					enableSorting: false,
 					getValue: ( { item } ) => item.actor?.name || __( 'Unknown' ),
-					render: ( { item } ) => <ActivityActor { ...item.actor } />,
+					render: ( { item } ) => <ActivityActor actor={ item.actor } />,
 					filterBy: { operators: [] },
 				},
 			] satisfies Field< SiteActivityLog >[];
