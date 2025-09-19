@@ -1,3 +1,1 @@
-import { ActivityActor } from './activity-actor';
-
-export { ActivityActor };
+export { ActivityActor } from './activity-actor';
