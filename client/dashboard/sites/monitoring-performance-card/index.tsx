@@ -192,10 +192,6 @@ export default function MonitoringPerformanceCard( {
 				className="dashboard-monitoring-card__line-chart"
 				data={ data }
 				withGradientFill
-				legendAlignmentVertical="top"
-				legendOrientation="horizontal"
-				legendShape="line"
-				legendAlignmentHorizontal="left"
 				height={ 450 }
 				maxWidth={ 1400 }
 				showLegend
