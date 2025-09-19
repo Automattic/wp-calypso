@@ -1,4 +1,5 @@
 import { siteByIdQuery, hasValidQuotaQuery } from '@automattic/api-queries';
+import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button, Spinner } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -16,6 +17,7 @@ import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/a
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -148,12 +150,17 @@ export default function HeaderStagingSiteButton( {
 		}
 	);
 
+	const hasStagingSitesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES )
+	);
+
 	const showAddStagingButton =
 		! hideEnvDataInHeader &&
 		isAtomic &&
 		! isStagingSite &&
 		! isLoadingStagingSites &&
-		( stagingSites.length === 0 || ( isCreatingStagingSite && ! isCreatedStagingSite ) );
+		( stagingSites.length === 0 || ( isCreatingStagingSite && ! isCreatedStagingSite ) ) &&
+		hasStagingSitesFeature;
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
