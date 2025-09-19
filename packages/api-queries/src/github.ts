@@ -3,6 +3,7 @@ import {
 	fetchGithubRepositories,
 	fetchGithubRepositoryBranches,
 	fetchGithubRepositoryChecks,
+	fetchGithubWorkflowChecks,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -69,6 +70,40 @@ export const githubRepositoryChecksQuery = (
 				repositoryOwner,
 				repositoryName,
 				repositoryBranch
+			),
+		meta: {
+			persist: false,
+		},
+	} );
+
+export const githubWorkflowChecksQuery = (
+	installationId: number,
+	repositoryOwner: string,
+	repositoryName: string,
+	repositoryBranch: string,
+	workflowFilename: string
+) =>
+	queryOptions( {
+		queryKey: [
+			'github',
+			'installation',
+			installationId,
+			'repository',
+			repositoryOwner,
+			repositoryName,
+			'branch',
+			repositoryBranch,
+			'workflow',
+			workflowFilename,
+			'checks',
+		],
+		queryFn: () =>
+			fetchGithubWorkflowChecks(
+				installationId,
+				repositoryOwner,
+				repositoryName,
+				repositoryBranch,
+				workflowFilename
 			),
 		meta: {
 			persist: false,

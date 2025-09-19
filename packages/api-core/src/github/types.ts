@@ -21,3 +21,17 @@ export interface GitHubRepositoryChecks {
 	suggested_directory: string;
 	protected_paths: string[];
 }
+
+export type GitHubWorkflowStatus = 'loading' | 'success' | 'error';
+
+export interface GitHubWorkflowValidationItem {
+	validation_name: string;
+	status: GitHubWorkflowStatus;
+}
+
+export interface GitHubWorkflowValidation {
+	conclusion: GitHubWorkflowStatus;
+	file_name: string;
+	workflow_path: string;
+	checked_items: GitHubWorkflowValidationItem[];
+}
