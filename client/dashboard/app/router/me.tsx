@@ -16,6 +16,7 @@ import {
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
+import { getMonetizeSubscriptionsPageTitle } from '../../me/monetize-subscriptions/urls';
 import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -206,6 +207,13 @@ export const paymentMethodsRoute = createRoute( {
 );
 
 export const monetizeSubscriptionsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: getMonetizeSubscriptionsPageTitle(),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'billing/monetize-subscriptions',
 } ).lazy( () =>
@@ -217,6 +225,13 @@ export const monetizeSubscriptionsRoute = createRoute( {
 );
 
 export const monetizeSubscriptionRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: getMonetizeSubscriptionsPageTitle(),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'billing/monetize-subscriptions/$subscriptionId',
 } ).lazy( () =>
