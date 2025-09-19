@@ -120,18 +120,14 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 					{ ! threat.rows && (
 						<Text>
 							{ __(
-								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
-									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
-									'the offending code, theme, or plugin from your site.'
+								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ensure that WordPress, your theme, and all of your plugins are up to date, and remove the offending code, theme, or plugin from your site.'
 							) }
 						</Text>
 					) }
 					{ threat.rows && (
 						<Text>
 							{ __(
-								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
-									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit ' +
-									'the offending post from your site.'
+								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit the offending post from your site.'
 							) }
 						</Text>
 					) }
@@ -139,9 +135,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 						<Text>
 							{ createInterpolateElement(
 								__(
-									'If you need more help to resolve this threat, we recommend <codeable />, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
-										'They have identified a select group of security experts to help with these projects. ' +
-										'Pricing ranges from $70–120/hour, and you can get a free estimate with no obligation to hire.'
+									'If you need more help to resolve this threat, we recommend <codeable />, a trusted freelancer marketplace of highly vetted WordPress experts. They have identified a select group of security experts to help with these projects. Pricing ranges from $70–120/hour, and you can get a free estimate with no obligation to hire.'
 								),
 								{
 									codeable: (
