@@ -29,7 +29,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 
 		return (
 			<>
-				<Text>
+				<Text variant="muted">
 					{
 						/* translators: filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`" */
 						__( 'Threat found in file:' )
@@ -115,21 +115,21 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 			return (
 				<>
 					{ ! threat.rows && (
-						<Text>
+						<Text variant="muted">
 							{ __(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ensure that WordPress, your theme, and all of your plugins are up to date, and remove the offending code, theme, or plugin from your site.'
 							) }
 						</Text>
 					) }
 					{ threat.rows && (
-						<Text>
+						<Text variant="muted">
 							{ __(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit the offending post from your site.'
 							) }
 						</Text>
 					) }
 					{ 'current' === threat.status && (
-						<Text>
+						<Text variant="muted">
 							{ createInterpolateElement(
 								__(
 									'If you need more help to resolve this threat, we recommend <codeable />, a trusted freelancer marketplace of highly vetted WordPress experts. They have identified a select group of security experts to help with these projects. Pricing ranges from $70–120/hour, and you can get a free estimate with no obligation to hire.'
@@ -148,12 +148,12 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 
 		return (
 			<>
-				<Text>
+				<Text variant="muted">
 					{ __(
 						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
 					) }
 				</Text>
-				<Text>{ getThreatFix() }</Text>
+				<Text variant="muted">{ getThreatFix() }</Text>
 			</>
 		);
 	};
@@ -163,7 +163,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 			<Text size="large" weight={ 500 }>
 				{ __( 'What did Jetpack find?' ) }
 			</Text>
-			<Text>{ threat.description }</Text>
+			<Text variant="muted">{ threat.description }</Text>
 			{ threat.payload_description && <Text>{ threat.payload_description }</Text> }
 			{ threat.source && (
 				<ExternalLink href={ threat.source }>
