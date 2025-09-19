@@ -45,10 +45,9 @@ function getActorPresentation( actor: ActivityActorType ) {
 		return {
 			icon: (
 				<img
-					className="site-activity-logs__actor-icon"
+					className="site-activity-logs__actor-avatar"
 					src={ icon.url }
 					alt={ name || unknown }
-					style={ { borderRadius: '50%' } }
 					width={ ICON_SIZE }
 					height={ ICON_SIZE }
 				/>
