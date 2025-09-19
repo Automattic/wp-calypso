@@ -275,12 +275,8 @@ function StagingSiteSyncModalInner( {
 		{}
 	) as { data: BackupActivity[] | undefined; isLoading: boolean };
 	const { data: backupData, isLoading: isLoadingBackupAttempt } = activityQuery;
-	let lastKnownBackupAttempt: BackupActivity | undefined;
-	if ( Array.isArray( backupData ) && backupData.length > 0 ) {
-		lastKnownBackupAttempt = backupData.slice( 0, 1 ).shift();
-	} else {
-		lastKnownBackupAttempt = undefined;
-	}
+
+	const lastKnownBackupAttempt: BackupActivity | undefined = backupData?.[ 0 ];
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const locale = useLocale();
