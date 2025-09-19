@@ -44,6 +44,7 @@ const fileBrowserConfig: FileBrowserConfig = {
 	showBackupTime: false,
 	showSeparateExpandButton: true,
 	expandDirectoriesOnClick: false,
+	showHeader: false,
 };
 
 type BackupActivity = { rewindId: number; activityTs: number };
@@ -438,10 +439,7 @@ function StagingSiteSyncModalInner( {
 										rewindId={ rewindId ?? 0 }
 										siteId={ querySiteId }
 										siteSlug={ querySiteSlug as string }
-										fileBrowserConfig={ {
-											...fileBrowserConfig,
-											showHeader: false,
-										} }
+										fileBrowserConfig={ fileBrowserConfig }
 									/>
 								</HStack>
 							</VStack>
