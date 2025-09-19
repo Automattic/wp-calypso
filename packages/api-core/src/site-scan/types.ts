@@ -1,5 +1,5 @@
 export interface ThreatFixer {
-	fixer: 'update' | 'delete';
+	fixer: 'update' | 'delete' | 'replace' | 'edit' | 'rollback';
 	target?: string;
 	file?: string;
 	extensionStatus?: 'active' | 'inactive';
@@ -31,7 +31,7 @@ export interface Threat {
 	fixer?: ThreatFixer | null;
 	fixed_on?: string;
 	status: 'current' | 'fixed' | 'ignored';
-	fixable?: ThreatFixer | boolean;
+	fixable?: ThreatFixer;
 	extension?: ThreatExtension;
 	source?: string;
 	filename?: string;

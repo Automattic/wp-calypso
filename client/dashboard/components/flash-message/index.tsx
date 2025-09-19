@@ -2,7 +2,7 @@ import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 
-interface FlasshMessageProps {
+interface FlashMessageProps {
 	key?: string;
 	value: string;
 	message: string;
@@ -18,7 +18,7 @@ export default function FlashMessage( {
 	value,
 	message,
 	type = 'success',
-}: FlasshMessageProps ) {
+}: FlashMessageProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {

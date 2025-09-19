@@ -26,6 +26,10 @@
 		"test:pw:mobile": "yarn playwright test --project=pixel",
 		"test:pw:desktop": "yarn playwright test --project=chrome",
 		"test:pw": "yarn playwright test --project=pixel --project=chrome",
+		"test:pw:calypso-pr": "yarn playwright test --project=chrome --grep @calypso-pr",
+		"test:pw:calypso-release": "yarn playwright test --project=chrome --grep @calypso-release",
+		"test:pw:authentication": "yarn playwright test --project=chrome --grep @authentication",
+		"test:pw:a8c-for-agencies": "yarn playwright test --project=chrome --grep @a8c-for-agencies",
 		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n"
 	},
 	"devDependencies": {

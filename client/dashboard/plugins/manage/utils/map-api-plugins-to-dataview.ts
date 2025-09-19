@@ -62,6 +62,7 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 		( [ id, { name, slug, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
 			id,
 			name,
+			icons: null,
 			slug,
 			sitesCount: count,
 			hasUpdate: mapCountToQuantifier( updateCount, count ),

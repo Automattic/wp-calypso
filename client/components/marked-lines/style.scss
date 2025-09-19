@@ -1,7 +1,8 @@
+@import '@wordpress/base-styles/colors';
 
 .marked-lines {
 	padding: 0;
-	background-color: var(--color-neutral-0);
+	background-color: #f5f5f5;
 	font-family: $monospace;
 	display: flex;
 	flex-direction: row;
@@ -9,7 +10,7 @@
 }
 
 .marked-lines__marked-line {
-	background-color: color-mix(in srgb, var(--color-error) 20%, transparent);
+	background-color: color-mix(in srgb, $alert-red 20%, transparent);
 }
 
 .marked-lines__line-numbers {
@@ -20,11 +21,11 @@
 
 .marked-lines__line-number {
 	padding: 0 4px;
-	background-color: var(--color-neutral-10);
-	color: var(--color-text-subtle);
+	background-color: $gray-100;
+	color: $gray-700;
 
 	&.marked-lines__marked-line {
-		background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+		background-color: color-mix(in srgb, $alert-red 15%, transparent);
 	}
 }
 
@@ -40,8 +41,8 @@
 }
 
 .marked-lines__mark {
-	background-color: var(--color-error);
-	color: var(--color-text-inverted);
+	background-color: $alert-red;
+	color: #fff;
 	border-radius: 2px;
 	padding: 2px 4px;
 }
