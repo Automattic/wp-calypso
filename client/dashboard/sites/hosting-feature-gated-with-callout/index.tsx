@@ -39,13 +39,13 @@ export default function HostingFeatureGatedWithCallout( {
 				);
 
 				if ( asOverlay ) {
-					return <CalloutOverlay callout={ callout } />;
+					return <CalloutOverlay callout={ callout } main={ props.children } />;
 				}
 
 				return callout;
 			} }
 			renderActivationComponent={ ( { onClick } ) => (
-				<ActivationCallout asOverlay={ asOverlay } onClick={ onClick } />
+				<ActivationCallout asOverlay={ asOverlay } main={ props.children } onClick={ onClick } />
 			) }
 		/>
 	);

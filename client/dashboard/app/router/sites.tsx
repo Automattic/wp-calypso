@@ -198,6 +198,35 @@ export const siteDeploymentsRoute = createRoute( {
 	)
 );
 
+export const siteDeploymentsListRoute = createRoute( {
+	getParentRoute: () => siteDeploymentsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../sites/deployments-list' ).then( ( d ) =>
+		createLazyRoute( 'site-deployments-list' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteDeploymentsRepositoriesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Repositories' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteDeploymentsRoute,
+	path: '/repositories',
+} ).lazy( () =>
+	import( '../../sites/deployments-repositories' ).then( ( d ) =>
+		createLazyRoute( 'site-deployments-repositories' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteMonitoringRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -920,24 +949,6 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
-export const siteSettingsRepositoriesRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Repositories' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/repositories',
-} ).lazy( () =>
-	import( '../../sites/settings-repositories' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1070,7 +1081,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
-		siteSettingsRepositoriesRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -1086,7 +1096,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	];
 
 	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute );
+		siteRoutes.push(
+			siteDeploymentsRoute.addChildren( [
+				siteDeploymentsListRoute,
+				siteDeploymentsRepositoriesRoute,
+			] )
+		);
 	}
 
 	if ( config.supports.sites.performance ) {

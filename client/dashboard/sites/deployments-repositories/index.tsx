@@ -3,15 +3,17 @@ import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState } from 'react';
-import { siteRoute } from '../../app/router/sites';
+import { siteRoute, siteDeploymentsListRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import ghIconUrl from '../deployments/gh-icon.svg';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
@@ -70,9 +72,18 @@ function SiteRepositories() {
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
 					title={ __( 'Repositories' ) }
 					description={ __( 'Connect repositories to your WordPress site.' ) }
+					prefix={
+						<RouterLinkButton
+							className="dashboard-page-header__back-button"
+							icon={ isRTL() ? chevronRight : chevronLeft }
+							to={ siteDeploymentsListRoute.fullPath }
+						>
+							{ __( 'Deployments' ) }
+						</RouterLinkButton>
+					}
 					actions={
 						<Button variant="primary" __next40pxDefaultSize>
 							{ __( 'Connect repository' ) }
