@@ -29,7 +29,7 @@ import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL }
 import { prepareTimestamp, runWithConcurrency } from './helpers';
 import type { Site } from '@automattic/api-core';
 
-const BLOCK_CREATE = false;
+const BLOCK_CREATE = true;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
