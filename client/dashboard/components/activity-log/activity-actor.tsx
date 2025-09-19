@@ -10,7 +10,7 @@ const ICON_SIZE = 24;
 
 function getActorPresentation( actor: ActivityActorType ) {
 	const { type, name, icon } = actor;
-	const unknown = __( 'Unknown' );
+	const actorName = name || __( 'Unknown' );
 
 	// Map known application/brand actors (v1 parity)
 	switch ( type ) {
@@ -47,18 +47,18 @@ function getActorPresentation( actor: ActivityActorType ) {
 				<img
 					className="site-activity-logs__actor-avatar"
 					src={ icon.url }
-					alt={ name || unknown }
+					alt={ actorName }
 					width={ ICON_SIZE }
 					height={ ICON_SIZE }
 				/>
 			),
-			label: name || unknown,
+			label: actorName,
 		};
 	}
 
 	return {
 		icon: <Icon className="default-actor-icon" icon={ commentAuthorAvatar } size={ ICON_SIZE } />,
-		label: name || unknown,
+		label: actorName,
 	};
 }
 
