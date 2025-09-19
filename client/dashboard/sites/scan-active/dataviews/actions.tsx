@@ -11,10 +11,10 @@ import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
+import { ThreatDescription } from '../../scan/components/threat-description';
 import { ThreatsDetailCard } from '../../scan/components/threats-detail-card';
 import { CODEABLE_JETPACK_SCAN_URL } from '../../scan/constants';
 import type { Threat } from '@automattic/api-core';
-import { ThreatDescription } from '../../scan/components/threat-description';
 
 export function getActions(): Action< Threat >[] {
 	return [
