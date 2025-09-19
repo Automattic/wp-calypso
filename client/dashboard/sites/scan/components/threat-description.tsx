@@ -1,12 +1,9 @@
 import { Threat } from '@automattic/api-core';
-import {
-	ExternalLink,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import MarkedLines from 'calypso/components/marked-lines';
+import { Text } from '../../../components/text';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 
 export function ThreatDescription( { threat }: { threat: Threat } ) {
