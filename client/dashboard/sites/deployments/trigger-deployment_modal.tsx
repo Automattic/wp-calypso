@@ -1,4 +1,4 @@
-import { codeDeploymentCreateMutation } from '@automattic/api-queries';
+import { createCodeDeploymentRunMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -74,7 +74,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 		);
 	}, [ deploymentFormData.selectedDeploymentId, deployments ] );
 
-	const codeDeploymentCreate = useMutation( codeDeploymentCreateMutation() );
+	const codeDeploymentRun = useMutation( createCodeDeploymentRunMutation() );
 
 	const fields = [
 		{
@@ -95,7 +95,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 			return;
 		}
 
-		codeDeploymentCreate.mutate(
+		codeDeploymentRun.mutate(
 			{
 				siteId: selectedDeployment.blog_id,
 				deploymentId: selectedDeployment.id,
@@ -135,7 +135,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 						<Button
 							variant="primary"
 							type="submit"
-							disabled={ ! selectedDeployment || codeDeploymentCreate.isPending }
+							disabled={ ! selectedDeployment || codeDeploymentRun.isPending }
 							__next40pxDefaultSize
 						>
 							{ __( 'Deploy to production' ) }
