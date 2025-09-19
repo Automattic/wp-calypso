@@ -101,6 +101,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 				<Text as="p">
 					{ createInterpolateElement(
 						__(
+							/* translators: <owner/> is the domain owner */
 							'The domain transfer failed to complete. Please contact the domain owner, <owner/>, to restart it.'
 						),
 						{
