@@ -1,6 +1,7 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/components/src/styles/typography';
 @import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
 @import '@wordpress/base-styles/mixins';
 
 $blueberry-color: #3858e9;
@@ -233,6 +234,12 @@ $blueberry-color: #3858e9;
 				button {
 					height: 24px;
 					width: 24px;
+				}
+			}
+
+			.foldable-card__secondary {
+				@media (max-width: #{ ($break-mobile) }) {
+					flex: 1 1;
 				}
 			}
 

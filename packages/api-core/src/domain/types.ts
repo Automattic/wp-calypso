@@ -39,6 +39,8 @@ export interface Domain extends DomainSummary {
 	is_subdomain: boolean;
 	is_pending_icann_verification: boolean;
 	move_to_new_site_pending: boolean;
+	nominet_pending_contact_verification_request: boolean;
+	nominet_domain_suspended: boolean;
 	owner: string;
 	is_pending_registration: boolean;
 	is_pending_registration_at_registry: boolean;
