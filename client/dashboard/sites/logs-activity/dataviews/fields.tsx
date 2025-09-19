@@ -8,8 +8,6 @@ import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
 import type { SiteActivityLog } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-import './style.scss';
-
 type UseActivityFieldsArgs =
 	| { timezoneString: string; gmtOffset?: number }
 	| { timezoneString?: undefined; gmtOffset: number };

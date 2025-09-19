@@ -2,7 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import type { SiteActivityLog } from '@automattic/api-core';
-
+import './activity-event.scss';
 type ActivityEventProps = {
 	summary: SiteActivityLog[ 'summary' ];
 	content?: SiteActivityLog[ 'content' ];
