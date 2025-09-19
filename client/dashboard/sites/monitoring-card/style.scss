@@ -3,6 +3,7 @@
 
 	&.dashboard-monitoring-card--row-layout {
 		flex-basis: 0;
+		min-width: 250px;
 	}
 
 	.components-card__body {
@@ -23,4 +24,8 @@
 	.visx-legend-label > span {
 		margin-inline-start: 5px;
 	}
+}
+
+.dashboard-monitoring-card__donut-chart {
+	height: 300px;
 }

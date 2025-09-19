@@ -53,6 +53,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 			label: method.toUpperCase(),
 			value: Math.round( value * 100 ) / 100,
 			percentage: Math.round( ( value * 100 ) / sum ),
+			valueDisplay: Math.round( ( value * 100 ) / sum ).toString() + '%',
 			color: chartColorsCopy.shift() || '#000000',
 		} ) );
 	};
@@ -66,7 +67,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 function mapDataForLegend( item: DataPointPercentage ) {
 	return {
 		label: item.label,
-		value: item.percentage + '%',
+		value: item.valueDisplay,
 		color: item.color,
 	};
 }
@@ -79,6 +80,9 @@ export default function MonitoringRequestMethodsCard( {
 	timeRange: number;
 } ) {
 	const { data, isLoading } = useSiteRequestMethodsData( site.ID, timeRange );
+
+	// Prevent labels from showing up in the pie chart.
+	const dataNoLabel = data.map( ( item ) => ( { ...item, label: '' } ) );
 
 	return (
 		<MonitoringCard
@@ -95,7 +99,7 @@ export default function MonitoringRequestMethodsCard( {
 				thickness={ 0.3 }
 				gapScale={ 0.02 }
 				className="dashboard-monitoring-card__donut-chart"
-				data={ data }
+				data={ dataNoLabel }
 			/>
 		</MonitoringCard>
 	);
