@@ -1,8 +1,9 @@
 import { Domain, DomainSubtype } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 import OverviewCard from '../../sites/overview-card';
 import SiteIcon from '../../sites/site-icon';
 
@@ -35,7 +36,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 			description={ shouldShowAddAttachSite ? __( 'Attach to an existing site' ) : domain.domain }
 			bottom={
 				shouldShowAddAttachSite && (
-					<HStack>
+					<ButtonStack>
 						<Button
 							size="compact"
 							variant="primary"
@@ -43,7 +44,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 						>
 							{ __( 'Add a new site' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				)
 			}
 		/>
