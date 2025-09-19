@@ -8,10 +8,10 @@ import type { ScanStatusType } from './use-scan-state';
 
 interface ScanNoticesProps {
 	status: ScanStatusType;
-	threats: number;
+	threatCount: number;
 }
 
-export function ScanNotices( { status, threats }: ScanNoticesProps ) {
+export function ScanNotices( { status, threatCount }: ScanNoticesProps ) {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	const handleDismiss = () => {
@@ -79,7 +79,7 @@ export function ScanNotices( { status, threats }: ScanNoticesProps ) {
 	if ( status === 'error' ) {
 		return <NoticeError />;
 	} else if ( status === 'success' ) {
-		return threats > 0 ? <NoticeWarning /> : <NoticeSuccess />;
+		return threatCount > 0 ? <NoticeWarning /> : <NoticeSuccess />;
 	}
 
 	return null;

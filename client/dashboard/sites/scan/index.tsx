@@ -98,7 +98,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					}
 				/>
 			}
-			notices={ <ScanNotices status={ status } threats={ threatCount } /> }
+			notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
