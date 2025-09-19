@@ -245,9 +245,8 @@ export default function WPCOMBusinessAT( {
 				}
 			)
 		);
-		// Reload the page, whatever siteSlug is
-		page( content.getProductUrl( siteSlug ) );
-	}, [ automatedTransferStatus, isJetpack ] );
+		content.onActivationResolved?.();
+	}, [ automatedTransferStatus, isJetpack, content.onActivationResolved ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
@@ -316,7 +315,11 @@ export default function WPCOMBusinessAT( {
 					<SpinnerButton
 						text={ content.primaryPromo.promoCTA.text }
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
-						loading={ automatedTransferStatus === START || isRewindActivating }
+						loading={
+							automatedTransferStatus === START ||
+							( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
+							isRewindActivating
+						}
 						onClick={ () => {
 							if ( rewindAtomicDeactivated ) {
 								setIsRewindActivating( true );
