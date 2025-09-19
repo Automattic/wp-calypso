@@ -20,12 +20,18 @@ interface DisconnectRepositoryModalProps {
 	onClose?: () => void;
 }
 
+type DisconnectRepositoryFormData = {
+	removeFiles?: boolean;
+};
+
 export function DisconnectRepositoryModalContent( {
 	deployment,
 	onClose,
 }: DisconnectRepositoryModalProps ) {
 	const queryClient = useQueryClient();
-	const [ removeFilesChecked, setRemoveFilesChecked ] = useState( false );
+	const [ formData, setFormData ] = useState< DisconnectRepositoryFormData >( {
+		removeFiles: false,
+	} );
 
 	const { mutate: deleteDeployment, isPending: isDisconnecting } = useMutation( {
 		...codeDeploymentDeleteMutation( deployment?.blog_id, deployment?.id ),
@@ -38,7 +44,7 @@ export function DisconnectRepositoryModalContent( {
 	} );
 
 	const handleDisconnect = () => {
-		deleteDeployment( removeFilesChecked, {
+		deleteDeployment( !! formData.removeFiles, {
 			onSuccess: async () => {
 				await queryClient.invalidateQueries( codeDeploymentsQuery( deployment.blog_id ) );
 				onClose?.();
@@ -46,13 +52,9 @@ export function DisconnectRepositoryModalContent( {
 		} );
 	};
 
-	const handleRemoveFilesChange = ( { enabled }: { enabled?: boolean } ) => {
-		setRemoveFilesChecked( !! enabled );
-	};
-
-	const fields: Field< { enabled: boolean } >[] = [
+	const fields: Field< DisconnectRepositoryFormData >[] = [
 		{
-			id: 'enabled',
+			id: 'removeFiles',
 			label: __( 'Remove associated files from my WordPress.com site' ),
 			Edit: ( { field, onChange, data } ) => {
 				const { id, label, getValue } = field;
@@ -72,10 +74,8 @@ export function DisconnectRepositoryModalContent( {
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'enabled' ],
+		fields: [ 'removeFiles' ],
 	};
-
-	const data = { enabled: removeFilesChecked };
 
 	if ( ! deployment ) {
 		return null;
@@ -104,11 +104,13 @@ export function DisconnectRepositoryModalContent( {
 					) }
 				</Text>
 
-				<DataForm< { enabled: boolean } >
-					data={ data }
+				<DataForm< DisconnectRepositoryFormData >
+					data={ formData }
 					fields={ fields }
 					form={ form }
-					onChange={ handleRemoveFilesChange }
+					onChange={ ( edits: Partial< DisconnectRepositoryFormData > ) => {
+						setFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
 				/>
 			</VStack>
 			<ButtonStack alignment="right">
