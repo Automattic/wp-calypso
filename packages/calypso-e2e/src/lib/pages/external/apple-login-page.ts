@@ -9,10 +9,6 @@ const selectors = {
 	emailInput: 'input[id="account_name_text_field"]',
 	passwordInput: 'input[id="password_text_field"]',
 	otpInput: 'input.form-security-code-input', // Matches OTP input fields
-
-	// Button
-	continueButton: 'button[aria-label="Continue"][aria-disabled="false"]',
-	submitFormButton: 'button[aria-label="Sign In"][aria-disabled="false"]',
 };
 
 /**
@@ -74,7 +70,7 @@ export class AppleLoginPage {
 		await locator.fill( email );
 
 		// Wait for the button to no longer be marked "disabled".
-		const buttonLocator = this.page.locator( selectors.continueButton );
+		const buttonLocator = this.page.getByRole( 'button', { name: 'Continue', disabled: false } );
 		await buttonLocator.waitFor();
 	}
 
@@ -88,7 +84,7 @@ export class AppleLoginPage {
 		await locator.type( password );
 
 		// Wait for the button to no longer be marked "disabled".
-		const buttonLocator = this.page.locator( selectors.submitFormButton );
+		const buttonLocator = this.page.getByRole( 'button', { name: 'Sign In', disabled: false } );
 		await buttonLocator.waitFor();
 	}
 

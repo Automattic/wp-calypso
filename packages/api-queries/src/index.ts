@@ -17,6 +17,7 @@ export * from './domains';
 export * from './emails';
 export * from './geo';
 export * from './hosting-update-schedules';
+export * from './marketplace-search';
 export * from './me-a8c';
 export * from './me-account';
 export * from './me-account-recovery';

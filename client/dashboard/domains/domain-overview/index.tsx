@@ -14,6 +14,7 @@ import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl } from '../../utils/domain';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
+import IcannSuspensionNotice from './icann-suspension-notice';
 import DomainOverviewSettings from './settings';
 
 export default function DomainOverview() {
@@ -80,6 +81,9 @@ export default function DomainOverview() {
 				/>
 			}
 		>
+			{ domain.is_pending_icann_verification && (
+				<IcannSuspensionNotice domainName={ domain.domain } />
+			) }
 			<FeaturedCards />
 			<DomainOverviewSettings domain={ domain } />
 			<Actions />
