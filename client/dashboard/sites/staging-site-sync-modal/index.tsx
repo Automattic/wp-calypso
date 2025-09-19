@@ -415,18 +415,11 @@ function StagingSiteSyncModalInner( {
 						</HStack>
 
 						<div hidden={ ! isFileBrowserVisible }>
-							<VStack spacing={ 0 }>
+							<VStack spacing={ 2 }>
 								<CardDivider />
 								{ displayBackupDate && (
-									<HStack alignment="left" spacing={ 1 }>
-										<Text
-											variant="muted"
-											style={ {
-												marginInlineStart: '14px',
-												marginTop: '10px',
-												marginBottom: '2px',
-											} }
-										>
+									<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
+										<Text variant="muted">
 											{ createInterpolateElement(
 												__( 'Content from the latest backup: <date />.' ),
 												{
