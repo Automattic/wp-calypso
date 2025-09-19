@@ -4,7 +4,6 @@ import {
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -29,6 +28,7 @@ import {
 	FileBrowserProvider,
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
