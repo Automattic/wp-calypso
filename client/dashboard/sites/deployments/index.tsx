@@ -1,10 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useCodeDeploymentsQuery } from '../../../sites/deployments/deployments/use-code-deployments-query';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -18,8 +17,8 @@ function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
-	const { data: deployments = [], isLoading: isLoadingDeployments } = useCodeDeploymentsQuery(
-		site?.ID
+	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
+		codeDeploymentsQuery( site?.ID )
 	);
 
 	if ( ! site ) {
