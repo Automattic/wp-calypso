@@ -5,13 +5,14 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainRoute } from '../../app/router/domains';
+import { domainRoute, domainOverviewRoute, domainNameServersRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getDomainSiteSlug } from '../../utils/domain';
@@ -52,8 +53,37 @@ export default function NameServers() {
 		[ updateNameServers, createSuccessNotice, createErrorNotice ]
 	);
 
+	const router = useRouter();
+
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Name servers' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={
+						<PageHeader.SubNavigation
+							items={ [
+								{
+									label: __( 'Overview' ),
+									href: router.buildLocation( {
+										to: domainOverviewRoute.fullPath,
+										params: { domainName },
+									} ).href,
+								},
+								{
+									label: __( 'Name servers' ),
+									href: router.buildLocation( {
+										to: domainNameServersRoute.fullPath,
+										params: { domainName },
+									} ).href,
+								},
+							] }
+						/>
+					}
+					title={ __( 'Name servers' ) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<NameServersForm
