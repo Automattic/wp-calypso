@@ -134,7 +134,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 		);
 	};
 
-	const errorLevel = last_transfer_error || DomainTransferStatus.CANCELLED === transfer_status;
+	const errorLevel = !! last_transfer_error || DomainTransferStatus.CANCELLED === transfer_status;
 	return (
 		<Notice variant={ errorLevel ? 'error' : 'info' }>
 			<VStack spacing={ 4 }>
