@@ -1,6 +1,6 @@
 import {
 	fetchMonetizeSubscriptions,
-	MembershipSubscription,
+	MonetizeSubscription,
 	requestAutoRenewDisable,
 	requestAutoRenewResume,
 	requestSubscriptionStop,
@@ -28,7 +28,7 @@ export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 	} );
 
 const UpdateSubscriptionCache =
-	( subscriptionId: string ) => ( data: { subscription: MembershipSubscription } ) => {
+	( subscriptionId: string ) => ( data: { subscription: MonetizeSubscription } ) => {
 		queryClient.invalidateQueries( {
 			queryKey: [ monetizeSubscriptionQuery( subscriptionId ).queryKey ],
 		} );
