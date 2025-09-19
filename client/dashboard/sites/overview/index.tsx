@@ -88,6 +88,8 @@ function SiteOverview( {
 		isSmallViewport,
 	} );
 
+	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+
 	return (
 		<PageLayout
 			header={
@@ -128,7 +130,7 @@ function SiteOverview( {
 							if ( site.is_a4a_dev_site ) {
 								return <AgencySiteShareCard site={ site } />;
 							}
-							if ( isSelfHostedJetpackConnected( site ) ) {
+							if ( isSelfHostedJetpackConnectedSite ) {
 								return <SubscribersCard site={ site } />;
 							}
 							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
@@ -152,10 +154,12 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					<VStack spacing={ spacing } justify="start">
-						<DomainsCard site={ site } isCompact={ isSmallViewport } />
-						<DIFMUpsellCard site={ site } />
-					</VStack>
+					{ ! isSelfHostedJetpackConnectedSite && (
+						<VStack spacing={ spacing } justify="start">
+							<DomainsCard site={ site } isCompact={ isSmallViewport } />
+							<DIFMUpsellCard site={ site } />
+						</VStack>
+					) }
 				</HStack>
 			</VStack>
 		</PageLayout>
