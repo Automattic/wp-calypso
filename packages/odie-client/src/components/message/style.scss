@@ -236,6 +236,12 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.foldable-card__secondary {
+				@media (max-width: #{ ($break-mobile) }) {
+					flex: 1 1;
+				}
+			}
+
 			.foldable-card__content {
 				margin-top: 12px;
 				border: none;
