@@ -2,10 +2,8 @@ import { type DnsTemplateVariables } from '@automattic/api-core';
 import { domainDnsApplyTemplateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
@@ -44,9 +42,16 @@ export default function EmailSetupForm( {
 }: EmailSetupFormProps ) {
 	const { domainName } = domainRoute.useParams();
 	const [ formData, setFormData ] = useState< EmailSetupFormData >( defaultFormData );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const mutation = useMutation( domainDnsApplyTemplateMutation( domainName ) );
+	const mutation = useMutation( {
+		...domainDnsApplyTemplateMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Email setup completed successfully.' ),
+				error: __( 'Failed to complete email setup.' ),
+			},
+		},
+	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -65,16 +70,6 @@ export default function EmailSetupForm( {
 				variables,
 			},
 			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Email setup completed successfully.' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to complete email setup.' ), {
-						type: 'snackbar',
-					} );
-				},
 				onSettled: () => {
 					setFormData( defaultFormData );
 				},
