@@ -9,6 +9,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
+import { ThreatDescription } from '../../scan/components/threat-description';
 import { ThreatsDetailCard } from '../../scan/components/threats-detail-card';
 import { CODEABLE_JETPACK_SCAN_URL } from '../../scan/constants';
 import type { Threat } from '@automattic/api-core';
@@ -25,9 +26,7 @@ export function getActions(): Action< Threat >[] {
 				<VStack spacing={ 4 }>
 					<Text variant="muted">{ __( 'Jetpack will be unignoring the following threat:' ) }</Text>
 					<ThreatsDetailCard threats={ items } />
-
-					{ /* @TODO: render the proper threat description here */ }
-
+					{ items.length === 1 && <ThreatDescription threat={ items[ 0 ] } /> }
 					<Notice variant="warning">
 						{ createInterpolateElement(
 							__(
@@ -59,8 +58,7 @@ export function getActions(): Action< Threat >[] {
 			RenderModal: ( { items } ) => (
 				<VStack spacing={ 4 }>
 					<ThreatsDetailCard threats={ items } />
-
-					{ /* @TODO: render the proper threat description here */ }
+					<ThreatDescription threat={ items[ 0 ] } />
 				</VStack>
 			),
 		},

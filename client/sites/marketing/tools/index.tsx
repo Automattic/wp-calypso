@@ -15,6 +15,7 @@ import { useSelector } from 'calypso/state';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingToolsFeature from './feature';
@@ -32,6 +33,7 @@ export default function MarketingTools() {
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 	const items = [
 		{ key: '', text: translate( 'All' ) },
 		{ key: 'new', text: translate( 'New tools' ) },
@@ -52,7 +54,8 @@ export default function MarketingTools() {
 		translate,
 		localizeUrl,
 		activityPubStatus,
-		isPrivate
+		isPrivate,
+		isSimple
 	);
 
 	const marketingFeaturesFiltered = useMemo( () => {
