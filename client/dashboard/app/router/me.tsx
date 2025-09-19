@@ -2,7 +2,6 @@ import { fetchTwoStep } from '@automattic/api-core';
 import {
 	userSettingsQuery,
 	userPurchasesQuery,
-	rawUserPreferencesQuery,
 	purchaseQuery,
 	sitesQuery,
 	queryClient,
@@ -10,6 +9,7 @@ import {
 	smsCountryCodesQuery,
 	twoStepAuthAppSetupQuery,
 	sshKeysQuery,
+	userLoginPreferencesQuery,
 	connectedApplicationsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
@@ -78,7 +78,15 @@ const preferencesRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'preferences',
-	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( userLoginPreferencesQuery() ),
+			queryClient.ensureQueryData(
+				sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+			),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/preferences' ).then( ( d ) =>
 		createLazyRoute( 'preferences' )( {

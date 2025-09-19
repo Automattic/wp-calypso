@@ -341,6 +341,7 @@ function FileBrowserNode( {
 				aria-label={ sprintf( __( 'Expand contents of %s' ), item.name ) }
 				aria-expanded={ isOpen }
 				size="compact"
+				style={ { color: 'inherit' } }
 			/>
 		);
 	};
@@ -371,6 +372,7 @@ function FileBrowserNode( {
 						variant="tertiary"
 						tabIndex={ showSeparateExpandButton && ! showFileCard ? -1 : 0 }
 						size="compact"
+						style={ { color: 'inherit' } }
 					>
 						<FileTypeIcon type={ item.type } /> { label }
 					</Button>
