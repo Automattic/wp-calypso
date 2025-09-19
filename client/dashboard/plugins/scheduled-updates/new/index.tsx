@@ -2,7 +2,6 @@ import {
 	updateSchedulesBatchCreateMutation,
 	siteJetpackMonitorSettingsCreateMutation,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -14,6 +13,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import {
 	pluginsScheduledUpdatesNewRoute,
 	pluginsScheduledUpdatesRoute,
@@ -38,7 +38,7 @@ function ScheduledUpdatesNew() {
 	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
 	const [ time, setTime ] = useState( DEFAULT_TIME );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
-
+	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const siteIdsAsNumbers = useMemo(
@@ -119,6 +119,7 @@ function ScheduledUpdatesNew() {
 		eligibleSites,
 		createMonitorForSite,
 		navigate,
+		recordTracksEvent,
 	] );
 
 	return (
