@@ -13,6 +13,10 @@ import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-resto
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useFileBrowserContext } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import {
+	FileBrowserCheckListInfo,
+	FileBrowserNodeType,
+} from 'calypso/my-sites/backup/backup-contents-page/file-browser/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindGranularRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -22,10 +26,6 @@ import {
 } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-import {
-	BackupBrowserItemType,
-	BackupBrowserCheckListInfo,
-} from 'calypso/state/rewind/browser/types';
 import {
 	useEnqueuePreflightCheck,
 	usePreflightStatusQuery,
@@ -83,7 +83,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const [ showAllThemes, setShowAllThemes ] = useState( false );
 	const [ showPlugins, setShowPlugins ] = useState( true );
 	const [ showAllPlugins, setShowAllPlugins ] = useState( false );
-	const expandClick = ( type: BackupBrowserItemType, toggleAll: boolean ) => {
+	const expandClick = ( type: FileBrowserNodeType, toggleAll: boolean ) => {
 		if ( toggleAll ) {
 			switch ( type ) {
 				case 'file':
@@ -132,7 +132,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 		}
 	};
-	const renderExpandIcon = ( type: BackupBrowserItemType ) => {
+	const renderExpandIcon = ( type: FileBrowserNodeType ) => {
 		switch ( type ) {
 			case 'table':
 				return <Icon icon={ showTables ? chevronDown : chevronRight } />;
@@ -288,7 +288,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const goBackUrl = backupContentsPath( siteSlug as string, rewindId );
 
-	const showAllType = ( type: BackupBrowserItemType ): boolean => {
+	const showAllType = ( type: FileBrowserNodeType ): boolean => {
 		switch ( type ) {
 			case 'file':
 				return showAllFiles;
@@ -298,10 +298,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				return showAllPlugins;
 			case 'table':
 				return showAllTables;
+			default:
+				return false;
 		}
 	};
 
-	const showType = ( type: BackupBrowserItemType ): boolean => {
+	const showType = ( type: FileBrowserNodeType ): boolean => {
 		switch ( type ) {
 			case 'file':
 				return showFiles;
@@ -311,10 +313,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				return showPlugins;
 			case 'table':
 				return showTables;
+			default:
+				return false;
 		}
 	};
 
-	const getTypeLabel = ( type: BackupBrowserItemType, allSelected: boolean ) => {
+	const getTypeLabel = ( type: FileBrowserNodeType, allSelected: boolean ) => {
 		switch ( type ) {
 			case 'file':
 				return translate( 'Files and directories that will be restored' );
@@ -333,7 +337,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		}
 	};
 
-	const renderSection = ( type: BackupBrowserItemType ) => {
+	const renderSection = ( type: FileBrowserNodeType ) => {
 		// Trim the list down to only the specified type
 		// For files, exclude the directories for the other types
 		const items = browserSelectedList.filter( ( item ) => {
@@ -377,8 +381,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 			return null;
 		}
-		let displayItems: BackupBrowserCheckListInfo[] = [];
-		let extendedItems: BackupBrowserCheckListInfo[] = [];
+		let displayItems: FileBrowserCheckListInfo[] = [];
+		let extendedItems: FileBrowserCheckListInfo[] = [];
 		if ( items.length > fileDisplayLimit ) {
 			displayItems = items.slice( 0, fileDisplayLimit );
 			extendedItems = items.slice( fileDisplayLimit );
