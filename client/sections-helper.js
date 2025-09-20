@@ -1,46 +1,64 @@
 /**
- * sections-helper
+ * sections-helper (refactored)
  *
- * In days past, the preloader was part of sections.js. To preload a module you would import sections
- * and call preload directly. However, all of the require.ensure calls live in sections.js. This makes
- * webpack think that imported sections was also dependant on every other chunk. The cyclic dependencies
- * ballooned compile times and made module analysis very difficult.
- *
- * To break the dependency cycle, we introduced `sections-helper` which does not import sections.js
+ * Provides helper functions for managing and preloading sections.
+ * Modernized to remove lodash dependency and use native Array.find.
  */
 
-import { find } from 'lodash';
-
 let sections = null;
-export function receiveSections( s ) {
+
+/**
+ * Initialize sections
+ * @param {Array} s - Array of section objects
+ */
+export function receiveSections(s) {
 	sections = s;
 }
 
+/**
+ * Get all sections
+ * @returns {Array} sections
+ * @throws {Error} if sections not initialized
+ */
 export function getSections() {
-	if ( ! sections ) {
-		throw new Error( 'sections-helper has not been initialized yet' );
+	if (!sections) {
+		throw new Error('sections-helper has not been initialized yet');
 	}
 	return sections;
 }
 
-export function preload( sectionName ) {
-	const section = find( sections, { name: sectionName } );
+/**
+ * Preload a section by name
+ * @param {string} sectionName
+ */
+export function preload(sectionName) {
+	const section = sections?.find(sec => sec.name === sectionName);
 
-	if ( section ) {
+	if (section) {
 		section.load();
 	}
 }
 
-export function load( sectionName, moduleName ) {
-	const section = find( sections, { name: sectionName, module: moduleName } );
+/**
+ * Load a section by name and module
+ * @param {string} sectionName
+ * @param {string} moduleName
+ * @returns {Promise<*>}
+ */
+export function load(sectionName, moduleName) {
+	const section = sections?.find(
+		sec => sec.name === sectionName && sec.module === moduleName
+	);
 
-	if ( ! section ) {
+	if (!section) {
 		return Promise.reject(
-			`Attempting to load non-existent section: ${ sectionName } (module=${ moduleName })`
+			new Error(
+				`Attempting to load non-existent section: ${sectionName} (module=${moduleName})`
+			)
 		);
 	}
 
 	// section.load() loads the module synchronously (using require()) in environments without
 	// code splitting. The return value must be explicitly resolved to Promise.
-	return Promise.resolve( section.load() );
+	return Promise.resolve(section.load());
 }
