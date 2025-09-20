@@ -34,7 +34,7 @@ const DomainForwardingDeleteModal = ( {
 					type: 'snackbar',
 				} );
 
-				recordTracksEvent( 'calypso_dashboard_domain_forwardings_delete_record', {
+				recordTracksEvent( 'calypso_dashboard_domain_forwarding_delete_record', {
 					domain: domainName,
 					fqdn: domainForwarding.fqdn,
 					target_host: domainForwarding.target_host,
@@ -47,7 +47,7 @@ const DomainForwardingDeleteModal = ( {
 					type: 'snackbar',
 				} );
 
-				recordTracksEvent( 'calypso_dashboard_domain_forwardings_delete_record_failure', {
+				recordTracksEvent( 'calypso_dashboard_domain_forwarding_delete_record_failure', {
 					domain: domainName,
 					fqdn: domainForwarding.fqdn,
 					target_host: domainForwarding.target_host,

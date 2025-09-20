@@ -248,6 +248,7 @@ export const test = base.extend< {
 } );
 
 export const tags = {
+	A8C_FOR_AGENCIES: '@a8c-for-agencies',
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
