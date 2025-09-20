@@ -82,10 +82,11 @@ describe( 'NavigationLink', () => {
 
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( getStepUrl ).not.toHaveBeenCalled();
+		const { goToPreviousStep, ...actualProps } = props;
 
 		const { rerender } = render(
 			// We're mocking a logged-out user to ensure locale is being considered
-			<NavigationLink { ...props } userLoggedIn={ false } direction="back" />
+			<NavigationLink { ...actualProps } userLoggedIn={ false } direction="back" />
 		);
 
 		// It should call getStepUrl()
@@ -107,7 +108,12 @@ describe( 'NavigationLink', () => {
 		] );
 
 		rerender(
-			<NavigationLink { ...props } userLoggedIn={ false } direction="back" stepName="test:step1" />
+			<NavigationLink
+				{ ...actualProps }
+				userLoggedIn={ false }
+				direction="back"
+				stepName="test:step1"
+			/>
 		);
 		expect( getStepUrl ).toHaveBeenCalled();
 		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en', undefined );
@@ -115,7 +121,7 @@ describe( 'NavigationLink', () => {
 		// The href should be backUrl when exist.
 		rerender(
 			<NavigationLink
-				{ ...props }
+				{ ...actualProps }
 				userLoggedIn={ false }
 				direction="back"
 				backUrl="test:back-url"

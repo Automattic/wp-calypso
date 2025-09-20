@@ -22,10 +22,24 @@ import {
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { StepName } from '../../domains/domain-connection-setup/types';
+import {
+	checkDomainNameServersPermissions,
+	checkDomainTransferPermissions,
+	checkDomainContactInfoPermissions,
+	checkDomainDnsRecordsPermissions,
+	checkDomainContactVerificationPermissions,
+} from '../../utils/domain-permissions';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
 export const domainsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domains' ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
 	loader: () => queryClient.ensureQueryData( domainsQuery() ),
@@ -39,19 +53,43 @@ export const domainsRoute = createRoute( {
 
 // Domain management root route
 export const domainRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: params.domainName,
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
+		const isTransferSubRoute = location.pathname.includes( '/transfer' );
+		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
+		const isDnsSubRoute = location.pathname.includes( '/dns' );
+		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
 
-		// If navigating to name-servers sub-route and user doesn't have permission,
+		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
-		if ( isNameServersSubRoute && ! domain.can_manage_name_servers ) {
-			throw new Error(
-				domain.cannot_manage_name_servers_reason ||
-					__( 'You do not have permission to manage name servers.' )
-			);
+		if ( isNameServersSubRoute ) {
+			checkDomainNameServersPermissions( domain );
+		}
+
+		if ( isTransferSubRoute ) {
+			checkDomainTransferPermissions( domain );
+		}
+
+		if ( isContactInfoSubRoute ) {
+			checkDomainContactInfoPermissions( domain );
+		}
+
+		if ( isDnsSubRoute ) {
+			checkDomainDnsRecordsPermissions( domain );
+		}
+
+		if ( isContactVerificationSubRoute ) {
+			checkDomainContactVerificationPermissions( domain );
 		}
 
 		return domain;
@@ -65,6 +103,13 @@ export const domainRoute = createRoute( {
 );
 
 export const domainOverviewRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Overview' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
@@ -86,6 +131,13 @@ export const domainOverviewRoute = createRoute( {
 
 // Domain DNS routes
 export const domainDnsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'DNS records' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'dns',
 	loader: ( { params: { domainName } } ) =>
@@ -99,6 +151,13 @@ export const domainDnsRoute = createRoute( {
 );
 
 export const domainDnsAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add a new DNS record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'dns/add',
 } ).lazy( () =>
@@ -110,6 +169,13 @@ export const domainDnsAddRoute = createRoute( {
 );
 
 export const domainDnsEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit DNS record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
 	beforeLoad: async ( { params: { domainName }, search } ) => {
@@ -138,10 +204,17 @@ export const domainDnsEditRoute = createRoute( {
 	)
 );
 
-// Domain forwardings routes
-export const domainForwardingsRoute = createRoute( {
+// Domain forwarding routes
+export const domainForwardingRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain forwarding' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings',
+	path: 'forwarding',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -149,16 +222,23 @@ export const domainForwardingsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings' )( {
+	import( '../../domains/domain-forwarding' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding' )( {
 			component: d.default,
 		} )
 	)
 );
 
 export const domainForwardingAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add domain forwarding' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings/add',
+	path: 'forwarding/add',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -166,16 +246,23 @@ export const domainForwardingAddRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings/add' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings-add' )( {
+	import( '../../domains/domain-forwarding/add' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding-add' )( {
 			component: d.default,
 		} )
 	)
 );
 
 export const domainForwardingEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit domain forwarding' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings/edit/$forwardingId',
+	path: 'forwarding/edit/$forwardingId',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -183,14 +270,21 @@ export const domainForwardingEditRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings/edit' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings-edit' )( {
+	import( '../../domains/domain-forwarding/edit' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding-edit' )( {
 			component: d.default,
 		} )
 	)
 );
 
 export const domainContactInfoRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Contact details' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
 	loader: async ( { params: { domainName } } ) => {
@@ -207,7 +301,38 @@ export const domainContactInfoRoute = createRoute( {
 	)
 );
 
+export const domainContactVerificationRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Contact verification' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'contact-verification',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-contact-verification' ).then( ( d ) =>
+		createLazyRoute( 'domain-contact-verification' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const domainNameServersRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Name servers' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
 	loader: ( { params: { domainName } } ) =>
@@ -217,6 +342,13 @@ export const domainNameServersRoute = createRoute( {
 } );
 
 export const domainGlueRecordsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Glue records' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
@@ -230,6 +362,13 @@ export const domainGlueRecordsRoute = createRoute( {
 );
 
 export const domainGlueRecordsAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add glue record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/add',
 } ).lazy( () =>
@@ -241,6 +380,13 @@ export const domainGlueRecordsAddRoute = createRoute( {
 );
 
 export const domainGlueRecordsEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit glue record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/edit/$nameServer',
 	beforeLoad: async ( { params: { domainName, nameServer } } ) => {
@@ -266,6 +412,13 @@ export const domainGlueRecordsEditRoute = createRoute( {
 );
 
 export const domainSecurityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Security' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'security',
 	loader: ( { params: { domainName } } ) => {
@@ -280,6 +433,13 @@ export const domainSecurityRoute = createRoute( {
 );
 
 export const domainTransferRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
 } ).lazy( () =>
@@ -291,6 +451,13 @@ export const domainTransferRoute = createRoute( {
 );
 
 export const domainTransferToAnyUserRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer to another user' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer/any-user',
 	loader: async ( { params: { domainName } } ) => {
@@ -306,6 +473,13 @@ export const domainTransferToAnyUserRoute = createRoute( {
 );
 
 export const domainTransferToOtherUserRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer to another user' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer/other-user',
 	loader: async ( { params: { domainName } } ) => {
@@ -321,6 +495,13 @@ export const domainTransferToOtherUserRoute = createRoute( {
 );
 
 export const domainTransferToOtherSiteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Attach to another site' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer/other-site',
 	loader: async ( { params: { domainName } } ) => {
@@ -335,6 +516,13 @@ export const domainTransferToOtherSiteRoute = createRoute( {
 );
 
 export const domainConnectionSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain connection setup' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'domain-connection-setup',
 	loader: async ( { params: { domainName } } ) => {
@@ -364,10 +552,11 @@ export const createDomainsRoutes = () => {
 			domainDnsAddRoute,
 			domainDnsEditRoute,
 			domainConnectionSetupRoute,
-			domainForwardingsRoute,
+			domainForwardingRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
 			domainContactInfoRoute,
+			domainContactVerificationRoute,
 			domainNameServersRoute,
 			domainGlueRecordsRoute,
 			domainGlueRecordsAddRoute,

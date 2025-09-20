@@ -18,7 +18,8 @@ export const getMarketingFeaturesData = (
 	translate: ( text: string, options?: any ) => string,
 	localizeUrl: ( url: string ) => string,
 	activityPubStatus: any,
-	isPrivate: boolean | null
+	isPrivate: boolean | null,
+	isSimple: boolean | null
 ): MarketingToolsFeatureData[] => {
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 	const currentDate = new Date();
@@ -107,7 +108,7 @@ export const getMarketingFeaturesData = (
 		} );
 	}
 
-	if ( ! activityPubStatus?.isEnabled ) {
+	if ( isSimple && ! isPrivate && ! activityPubStatus?.isEnabled ) {
 		result.splice( 3, 0, {
 			title: translate( 'Share your blog with a new audience' ),
 			description: translate(

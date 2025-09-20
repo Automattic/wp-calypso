@@ -72,6 +72,7 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -92,7 +93,6 @@ import { DomainSearch } from '../__legacy/domain-search';
 import { DomainCartV2 } from '../domain-cart';
 import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
-import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
 
 import './style.scss';
 

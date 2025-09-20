@@ -16,8 +16,17 @@ import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import illustrationUrl from '../backups/backups-callout-illustration.svg';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout'; // @TODO: replace with Scan callout illustration
+import { useTimeSince } from '../../components/time-since';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { ActiveThreatsDataViews } from '../scan-active';
+import { ScanHistoryDataViews } from '../scan-history';
+import illustrationUrl from './scan-callout-illustration.svg';
+import { ScanNotices } from './scan-notices';
+import { ScanNowButton } from './scan-now-button';
+import { ScanStatus } from './status';
+import { useScanState } from './use-scan-state';
+
+import './style.scss';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -30,6 +39,25 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
+	const scanState = useScanState( site.ID );
+	const { scan, status } = scanState;
+
+	const lastScanTime = scan?.most_recent?.timestamp;
+	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
+	const threatCount = scan?.threats.length || 0;
+
+	const getPageDescription = () => {
+		if ( lastScanTime && lastScanRelativeTime ) {
+			return sprintf(
+				/* translators: %s: relative time since last scan */
+				__( 'Latest scan ran %s.' ),
+				lastScanRelativeTime
+			);
+		}
+
+		return null;
+	};
+
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
 		if ( tab === 'active' ) {
 			router.navigate( { to: `/sites/${ siteSlug }/scan/active` } );
@@ -38,16 +66,24 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		}
 	};
 
+	const renderActiveTab = () => {
+		const showStatus = status === 'enqueued' || status === 'running';
+		if ( showStatus ) {
+			return <ScanStatus scanState={ scanState } />;
+		}
+		return <ActiveThreatsDataViews site={ site } />;
+	};
+
 	return (
 		<PageLayout
 			header={
-				// @TODO: Add translation and relative time
 				<PageHeader
 					title={ __( 'Scan' ) }
-					description="Latest automated scan run X hours ago"
+					description={ getPageDescription() }
 					actions={
 						<ButtonStack>
-							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							<ScanNowButton site={ site } scanState={ scanState } />
+							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
 									/* translators: %d: number of threats */
@@ -62,6 +98,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					}
 				/>
 			}
+			notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
@@ -73,9 +110,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				upsellImage={ illustrationUrl }
 				upsellDescription={
 					<Text as="p" variant="muted">
-						{ /* @TODO: update copy when the design is ready and add translation */ }
 						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for many issues.
+						fixes for most issues.
 					</Text>
 				}
 			>
@@ -95,15 +131,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						</TabPanel>
 					</CardHeader>
 					<CardBody>
-						{ scanTab === 'active' ? (
-							<Text as="p" variant="muted">
-								{ __( 'No active threats found. Your site is secure.' ) }
-							</Text>
-						) : (
-							<Text as="p" variant="muted">
-								{ __( 'So far, there are no archived threats on your site.' ) }
-							</Text>
-						) }
+						{ scanTab === 'active' && renderActiveTab() }
+						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
 					</CardBody>
 				</Card>
 			</HostingFeatureGatedWithCallout>

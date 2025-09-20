@@ -26,7 +26,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useHelpCenter } from '../../app/help-center';
-import { production, staging } from '../../components/icons';
+import Environment from '../../components/environment';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
 	isAtomicTransferInProgress,
@@ -36,32 +36,12 @@ import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
-type EnvironmentType = 'production' | 'staging';
-
-const Environment = ( { env }: { env: EnvironmentType } ) => {
-	if ( env === 'staging' ) {
-		return (
-			<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
-				<Icon icon={ staging } />
-				<span>{ __( 'Staging' ) }</span>
-			</HStack>
-		);
-	}
-
-	return (
-		<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
-			<Icon icon={ production } />
-			<span>{ __( 'Production' ) }</span>
-		</HStack>
-	);
-};
-
 const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	if ( site.is_wpcom_staging_site ) {
-		return <Environment env="staging" />;
+		return <Environment environmentType="staging" />;
 	}
 
-	return <Environment env="production" />;
+	return <Environment environmentType="production" />;
 };
 
 const StagingSiteActionButton = ( {
@@ -133,12 +113,12 @@ const EnvironmentSwitcherDropdown = ( {
 			<MenuGroup>
 				{ productionSite && canManageSite( productionSite ) && (
 					<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
-						<Environment env="production" />
+						<Environment environmentType="production" />
 					</RouterLinkMenuItem>
 				) }
 				{ showStagingSite && (
 					<RouterLinkMenuItem to={ `/sites/${ stagingSite.slug }` } onClick={ onClose }>
-						<Environment env="staging" />
+						<Environment environmentType="staging" />
 					</RouterLinkMenuItem>
 				) }
 				{ showActionButton && (

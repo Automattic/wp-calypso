@@ -57,6 +57,7 @@ export interface WooPaymentsData {
 				};
 			};
 		};
+		commission_eligible_sites?: Array< number >;
 	};
 	status: string;
 }

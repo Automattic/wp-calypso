@@ -144,4 +144,24 @@ export class RewrittenDomainSearchComponent {
 		// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
 		await Promise.all( [ continueButton.dispatchEvent( 'click' ), this.page.waitForNavigation() ] );
 	}
+
+	/**
+	 * Skips the domain search screen.
+	 */
+	async skipPurchase(): Promise< string > {
+		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
+
+		await button.waitFor();
+
+		let domain = await button.getAttribute( 'aria-label' );
+		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
+
+		if ( ! domain ) {
+			throw new Error( 'No domain found for skip purchase button' );
+		}
+
+		await button.click();
+
+		return domain;
+	}
 }

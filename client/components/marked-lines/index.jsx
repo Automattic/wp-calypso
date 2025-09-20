@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { map } from 'lodash';
 import { Fragment } from 'react';
 
 import './style.scss';
@@ -57,7 +56,7 @@ const MarkedLines = ( { context } ) => {
 	return (
 		<div className="marked-lines">
 			<div className="marked-lines__line-numbers">
-				{ map( lines, ( content, lineNumber ) => {
+				{ Object.keys( lines ).map( ( lineNumber ) => {
 					const hasMarks = marks.hasOwnProperty( lineNumber );
 
 					return (
@@ -73,7 +72,7 @@ const MarkedLines = ( { context } ) => {
 				} ) }
 			</div>
 			<div className="marked-lines__lines">
-				{ map( lines, ( content, lineNumber ) => {
+				{ Object.entries( lines ).map( ( [ lineNumber, content ] ) => {
 					const hasMarks = marks.hasOwnProperty( lineNumber );
 
 					if ( content === '' ) {

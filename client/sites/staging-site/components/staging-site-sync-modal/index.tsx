@@ -27,11 +27,10 @@ import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
+import { EnvironmentType } from 'calypso/dashboard/components/environment';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
-import SiteEnvironmentBadge, {
-	EnvironmentType,
-} from 'calypso/dashboard/components/site-environment-badge';
+import SiteEnvironmentBadge from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import {
 	FileBrowserProvider,
@@ -61,11 +60,11 @@ const fileBrowserConfig: FileBrowserConfig = {
 	restrictedPaths: [ 'wp-content' ],
 	excludeTypes: [ 'wordpress' ],
 	alwaysInclude: [ 'wp-config.php' ],
-	showHeaderButtons: false,
 	showFileCard: false,
 	showBackupTime: true,
 	showSeparateExpandButton: true,
 	expandDirectoriesOnClick: false,
+	showHeader: false,
 };
 
 const DirectionArrow = () => {

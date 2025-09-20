@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/variables';
 @import "@automattic/typography/styles/variables";
 @import "variables";
 
@@ -5,33 +6,41 @@
  * Help Center Header
  */
 .help-center .help-center__container {
-	&.is-desktop .help-center__container-header {
-		cursor: move;
+	.components-card__header {
+		padding: 9px 16px;
+
+		&.is-minimized {
+			padding: 16px;
+		}
+		.components-spinner {
+			margin: 0 8px;
+		}
+	}
+
+	&.is-minimized {
+		.help-center__container-header {
+			.help-center-header__text {
+				flex: unset;
+				cursor: pointer;
+			}
+		}
 	}
 
 	.help-center__container-header {
-		height: $head-foot-height;
-		padding: 16px;
+		border-bottom: 1px solid $gray-100;
+		border-radius: 16px;
+		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
 
 		&.has-unread {
 			background: $help-center-blue;
 			color: var(--studio-white);
-			border-radius: 0;
+			fill: var(--studio-white);
+			border: none;
 
 			button {
 				color: var(--studio-white);
 			}
-
-			.help-center-header__text > svg {
-				fill: var(--studio-white);
-			}
-		}
-
-		>div {
-			display: flex;
-			align-items: center;
-			justify-content: start;
-			gap: 0;
 		}
 
 		.help-center-header__maximize,
@@ -42,27 +51,16 @@
 			}
 		}
 
-		// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
-		// We can remove this when the bug is fixed AND the package is updated.
-		.help-center-header__minimize svg {
-			transform: scale(0.7, 1);
-			transform-origin: center;
-		}
-
 		.help-center-header__text {
-			font-size: $root-font-size;
-			font-weight: 500;
 			display: flex;
 			align-items: center;
+			gap: 4px;
+			font-size: $root-font-size;
+			font-weight: 500;
 			flex: 1;
-			gap: 2px;
-			margin: 0 0 0 4px;
+			cursor: move;
 
-			svg:not(.help-center__drag-icon) {
-				cursor: pointer;
-			}
-
-			:focus{
+			:focus {
 				outline: none;
 			}
 
@@ -76,19 +74,14 @@
 			.help-center-header__unread-count {
 				display: inline-block;
 				margin-left: 8px;
-				padding: 2px 8px;
+				box-sizing: border-box;
+				padding: 4px;
+				width: 24px;
+				height: 24px;
 				background: var(--studio-white);
-				border-radius: 45%;
+				border-radius: 50%;
 				font-size: $font-body-extra-small;
 				color: $help-center-blue;
-			}
-		}
-
-		.ellipsis-menu {
-			.ellipsis-menu__toggle {
-				width: 36px;
-				height: 36px;
-				padding: 6px;
 			}
 		}
 	}
@@ -107,6 +100,7 @@
 		svg {
 			fill: var(--wp-components-color-gray-600, #949494);
 		}
+
 		color: var(--wp-components-color-gray-600, #949494);
 	}
 
@@ -126,14 +120,15 @@
 			font-size: 0.875rem;
 		}
 
-		&:not( :disabled ) {
+		&:not( :disabled) {
+
 			&:hover,
 			&:focus {
 				background-color: $help-center-blue;
-				color: var( --studio-white );
+				color: var(--studio-white);
 
 				svg {
-					fill: var( --studio-white );
+					fill: var(--studio-white);
 				}
 			}
 

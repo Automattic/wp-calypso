@@ -13,7 +13,7 @@ import { usePlugin } from './use-plugin';
 
 export default function Plugin() {
 	const { pluginId: pluginSlug } = pluginRoute.useParams();
-	const { isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
+	const { icons, isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
 
 	if ( ! isLoading && ! plugin ) {
 		return (
@@ -33,6 +33,13 @@ export default function Plugin() {
 					</Text>
 
 					<PageHeader
+						decoration={
+							typeof icons === 'string' ? (
+								<img src={ icons } alt={ plugin?.name } />
+							) : (
+								icons?.[ '1x' ] && <img src={ icons[ '1x' ] } alt={ plugin?.name } />
+							)
+						}
 						title={
 							plugin ? (
 								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.

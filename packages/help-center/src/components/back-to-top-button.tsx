@@ -32,14 +32,15 @@ export const BackToTopButton: FC = () => {
 
 	return (
 		<Button
+			variant="tertiary"
 			ref={ elementRef }
 			className={ clsx( 'back-to-top-button__help-center', {
 				'is-visible': isButtonVisible,
 			} ) }
 			onClick={ scrollToTop }
 		>
-			<Icon icon={ arrowUp } size={ 16 } />
 			{ __( 'Back to top', __i18n_text_domain__ ) }
+			<Icon icon={ arrowUp } size={ 24 } />
 		</Button>
 	);
 };
