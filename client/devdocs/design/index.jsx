@@ -112,7 +112,6 @@ import UserItem from 'calypso/components/user/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
 import Wizard from 'calypso/components/wizard/docs/example';
-import MarkedLinesExample from 'calypso/dashboard/components/marked-lines/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 import SitesGridItemExample from 'calypso/sites-dashboard/components/sites-grid-item/docs/example';
@@ -219,7 +218,6 @@ export default class DesignAssets extends Component {
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
 					<ProductLogoExample />
-					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<NavigationHeader readmeFilePath="navigation-header" />
 					<Notices readmeFilePath="notice" />
