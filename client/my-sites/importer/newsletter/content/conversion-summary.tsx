@@ -21,7 +21,7 @@ interface PostErrorsType {
 interface ConversionSummaryProps {
 	siteId: number;
 	importerEngine: string;
-	fromSite: string;
+	originSite: string;
 	importerStatus: {
 		importerId: string;
 		customData?: {
@@ -213,7 +213,7 @@ const ConversionSummary = ( {
 	siteId,
 	importerStatus,
 	importerEngine,
-	fromSite,
+	originSite,
 }: ConversionSummaryProps ) => {
 	const dispatch = useDispatch();
 	const { resetPaidNewsletter } = useResetMutation();
@@ -223,7 +223,7 @@ const ConversionSummary = ( {
 	};
 
 	const handleBack = () => {
-		resetPaidNewsletter( siteId, importerEngine, 'content', fromSite );
+		resetPaidNewsletter( siteId, importerEngine, 'content', originSite );
 		dispatch( cancelImport( siteId, importerStatus.importerId ) );
 	};
 

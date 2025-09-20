@@ -28,13 +28,13 @@ export default function SelectNewsletterForm( {
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
 	const { setOriginSite, isPending } = useSetOriginSiteMutation();
 
-	const handleAction = ( fromSite: string ) => {
-		if ( ! isValidUrl( fromSite ) ) {
+	const handleAction = ( originSite: string ) => {
+		if ( ! isValidUrl( originSite ) ) {
 			setIsUrlInvalid( true );
 			return;
 		}
 
-		const { hostname, pathname } = parseUrl( fromSite );
+		const { hostname, pathname } = parseUrl( originSite );
 		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
 		const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/content`;
 

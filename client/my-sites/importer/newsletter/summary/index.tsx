@@ -21,7 +21,7 @@ interface SummaryProps {
 	selectedSite: SiteDetails;
 	steps: Steps;
 	resetImporter: () => void;
-	fromSite: string;
+	originSite: string;
 	showConfetti: boolean;
 	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
 }
@@ -49,7 +49,7 @@ export default function Summary( {
 	steps,
 	selectedSite,
 	resetImporter,
-	fromSite,
+	originSite,
 	showConfetti,
 	shouldShownConfetti,
 }: SummaryProps ) {
@@ -184,7 +184,7 @@ export default function Summary( {
 											// @ts-expect-error Used in translate components doesn't need children.
 											<ExternalLink
 												href={ `https://${ normalizeFromSite(
-													fromSite
+													originSite
 												) }/publish/settings?search=Pause%20subscription` }
 											/>
 										),
@@ -200,7 +200,7 @@ export default function Summary( {
 											// @ts-expect-error Used in translate components doesn't need children.
 											<ExternalLink
 												href={ `https://${ normalizeFromSite(
-													fromSite
+													originSite
 												) }/publish/settings?search=Pause%20subscription` }
 											/>
 										),

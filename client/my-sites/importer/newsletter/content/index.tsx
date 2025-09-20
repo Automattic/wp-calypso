@@ -156,7 +156,7 @@ export default function Content( {
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 			{ ! isImporting( importerState ) && (
-				<ExportDataGuide fromSite={ originSite } selectedSiteUrl={ selectedSite.URL } />
+				<ExportDataGuide originSite={ originSite } selectedSiteUrl={ selectedSite.URL } />
 			) }
 			{ importerStatus && (
 				<Card { ...cardProps }>

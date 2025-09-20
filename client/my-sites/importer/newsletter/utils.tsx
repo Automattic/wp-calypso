@@ -23,7 +23,6 @@ function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 export function getStepsProgress(
 	engine: string,
 	selectedSiteSlug: string,
-	fromSite: string,
 	paidNewsletterData?: PaidNewsletterData
 ) {
 	const summaryStatus = getImporterStatus( paidNewsletterData?.steps );
@@ -98,14 +97,14 @@ export function getImporterStatus( steps?: Steps ): StepStatus {
 	return 'initial';
 }
 
-export function normalizeFromSite( fromSite: string ) {
-	if ( ! fromSite ) {
+export function normalizeFromSite( originSite: string ) {
+	if ( ! originSite ) {
 		return '';
 	}
-	const result = fromSite.match( /\/@(?<slug>\w+)$/ );
+	const result = originSite.match( /\/@(?<slug>\w+)$/ );
 	if ( result?.groups?.slug ) {
 		return result.groups.slug + '.substack.com';
 	}
 
-	return fromSite;
+	return originSite;
 }

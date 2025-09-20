@@ -112,12 +112,7 @@ export default function NewsletterImporter( {
 		isError: isUrlError,
 	} = useAnalyzeUrlQuery( originSite );
 
-	const stepsProgress = getStepsProgress(
-		engine,
-		selectedSite?.slug || '',
-		originSite,
-		paidNewsletterData
-	);
+	const stepsProgress = getStepsProgress( engine, selectedSite?.slug || '', paidNewsletterData );
 	const nextStepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`;
 
 	// Helps only show the confetti once even if you navigate between the different steps.
@@ -192,7 +187,7 @@ export default function NewsletterImporter( {
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
 							resetImporter={ resetImporter }
-							fromSite={ originSite }
+							originSite={ originSite }
 							showConfetti={ showConfetti }
 							shouldShownConfetti={ setShowConfetti }
 						/>
