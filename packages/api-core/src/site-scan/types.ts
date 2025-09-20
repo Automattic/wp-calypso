@@ -75,3 +75,9 @@ export interface SiteScanHistory {
 		threats_resolved: number;
 	};
 }
+
+export interface ThreatActionOptions {
+	ignore?: boolean;
+	unignore?: boolean;
+	fix?: boolean;
+}
