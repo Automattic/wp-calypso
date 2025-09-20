@@ -38,7 +38,13 @@ const isImporting = ( importerState: ImporterState | undefined ) => {
 	return (
 		importerState &&
 		(
-			[ appStates.IMPORT_FAILURE, appStates.IMPORTING, appStates.MAP_AUTHORS ] as ImporterState[]
+			[
+				appStates.IMPORT_FAILURE,
+				appStates.IMPORTING,
+				appStates.MAP_AUTHORS,
+				appStates.IMPORT_SUCCESS,
+				appStates.UPLOAD_SUCCESS,
+			] as ImporterState[]
 		 ).includes( importerState )
 	);
 };
@@ -48,11 +54,9 @@ const isUploading = ( importerState: ImporterState | undefined ) => {
 		importerState &&
 		(
 			[
-				appStates.IMPORT_SUCCESS,
 				appStates.UPLOAD_PROCESSING,
 				appStates.READY_FOR_UPLOAD,
 				appStates.UPLOAD_FAILURE,
-				appStates.UPLOAD_SUCCESS,
 				appStates.UPLOADING,
 			] as ImporterState[]
 		 ).includes( importerState )
