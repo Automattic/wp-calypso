@@ -4,8 +4,8 @@ import './style.scss';
 type MarkRange = [ number, number ];
 
 interface MarkedLinesContext {
-	marks: Record< string, MarkRange[] >;
-	[ lineNumber: string ]: string | Record< string, MarkRange[] >;
+	marks?: Record< string, MarkRange[] >;
+	[ lineNumber: string ]: string | Record< string, MarkRange[] > | undefined;
 }
 
 interface MarkedLinesProps {
@@ -68,7 +68,7 @@ function markup( marks: MarkRange[], content: string ): ( string | JSX.Element )
 }
 
 export function MarkedLines( { context }: MarkedLinesProps ) {
-	const { marks, ...lines } = context;
+	const { marks = {}, ...lines } = context;
 
 	return (
 		<div className="marked-lines">

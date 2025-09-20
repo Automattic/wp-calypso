@@ -50,3 +50,14 @@ export const Default: Story = {
 		},
 	},
 };
+
+export const NoMarks: Story = {
+	args: {
+		context: {
+			10: 'function simple() {',
+			11: '  return true;',
+			12: '}',
+			marks: {},
+		},
+	},
+};
