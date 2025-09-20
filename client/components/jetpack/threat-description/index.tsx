@@ -14,7 +14,10 @@ export interface Props {
 	type?: string | ReactNode;
 	source?: string;
 	fix?: string | ReactNode;
-	context?: Record< string, unknown >;
+	context?: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 	diff?: string;
 	rows?: Record< string, unknown >;
 	table?: string;

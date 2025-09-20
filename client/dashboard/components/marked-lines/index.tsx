@@ -1,18 +1,14 @@
 import clsx from 'clsx';
 import './style.scss';
 
-type MarkRange = [ number, number ];
-
-interface MarkedLinesContext {
-	marks?: Record< string, MarkRange[] >;
-	[ lineNumber: string ]: string | Record< string, MarkRange[] > | undefined;
-}
-
 interface MarkedLinesProps {
 	/**
 	 * Provides the line content and mark ranges
 	 */
-	context: MarkedLinesContext;
+	context: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 }
 
 /**
@@ -43,11 +39,11 @@ function mark( text: string ) {
  * @param content the plaintext content to mark
  * @returns list of output text nodes and mark elements or plain string output
  */
-function markup( marks: MarkRange[], content: string ): ( string | JSX.Element )[] {
+function markup( marks: [ number, number ][], content: string ): ( string | JSX.Element )[] {
 	const [ finalOutput, finalLast ] = marks.reduce(
 		(
 			[ output, lastIndex ]: [ ( string | JSX.Element )[], number ],
-			[ markStart, markEnd ]: MarkRange
+			[ markStart, markEnd ]: [ number, number ]
 		) => {
 			// slice of input text specified by current mark ranges
 			const slice = content.slice( markStart, markEnd );
