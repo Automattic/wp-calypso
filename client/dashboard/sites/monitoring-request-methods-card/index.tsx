@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
-import type { PeriodData, TimeRange } from '../monitoring/types';
+import type { LegendData, PeriodData, TimeRange } from '../monitoring/types';
 import type { Site, SiteHostingMetrics } from '@automattic/api-core';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
@@ -71,12 +71,12 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 	};
 }
 
-function mapDataForLegend( value: object ) {
-	return {
+function mapDataForLegend( data: object[] ): LegendData[] {
+	return data.map( ( value ) => ( {
 		label: value.label,
-		value: value.valueDisplay,
-		color: value.color,
-	};
+		value: value?.valueDisplay || '',
+		color: value?.color || '',
+	} ) );
 }
 
 export default function MonitoringRequestMethodsCard( {
@@ -90,7 +90,13 @@ export default function MonitoringRequestMethodsCard( {
 
 	// Prevent labels from showing up in the pie chart.
 	const dataNoLabel = data.map(
-		( value: object ): DataPointPercentage => ( { ...value, label: '' } )
+		( value: object ): DataPointPercentage => ( {
+			label: '',
+			value: value?.value || 0,
+			percentage: value?.percentage || 0,
+			color: value?.color || '',
+			valueDisplay: value?.valueDisplay || value?.percentage || '',
+		} )
 	);
 
 	return (
@@ -102,7 +108,7 @@ export default function MonitoringRequestMethodsCard( {
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
-			<Legend chartId="request-methods-chart" items={ data.map( mapDataForLegend ) } />
+			<Legend chartId="request-methods-chart" items={ mapDataForLegend( data ) } />
 			<PieChart
 				chartId="request-methods-chart"
 				thickness={ 0.3 }
