@@ -8,6 +8,13 @@ interface MarkedLinesContext {
 	[ lineNumber: string ]: string | Record< string, MarkRange[] >;
 }
 
+interface MarkedLinesProps {
+	/**
+	 * Provides the line content and mark ranges
+	 */
+	context: MarkedLinesContext;
+}
+
 /**
  * Surrounds a text string in a <mark>
  * Just a small helper function
@@ -17,11 +24,13 @@ interface MarkedLinesContext {
  * @param text the string to mark
  * @returns JSX.Element
  */
-const mark = ( text: string ) => (
-	<mark key={ text } className="marked-lines__mark">
-		{ text }
-	</mark>
-);
+function mark( text: string ) {
+	return (
+		<mark key={ text } className="marked-lines__mark">
+			{ text }
+		</mark>
+	);
+}
 
 /**
  * Translates marked-file context input
@@ -34,7 +43,7 @@ const mark = ( text: string ) => (
  * @param content the plaintext content to mark
  * @returns list of output text nodes and mark elements or plain string output
  */
-const markup = ( marks: MarkRange[], content: string ): ( string | JSX.Element )[] => {
+function markup( marks: MarkRange[], content: string ): ( string | JSX.Element )[] {
 	const [ finalOutput, finalLast ] = marks.reduce(
 		(
 			[ output, lastIndex ]: [ ( string | JSX.Element )[], number ],
@@ -56,9 +65,9 @@ const markup = ( marks: MarkRange[], content: string ): ( string | JSX.Element )
 
 	// we may also have text after the last mark
 	return finalLast < content.length ? [ ...finalOutput, content.slice( finalLast ) ] : finalOutput;
-};
+}
 
-const MarkedLines = ( { context }: { context: MarkedLinesContext } ) => {
+export function MarkedLines( { context }: MarkedLinesProps ) {
 	const { marks, ...lines } = context;
 
 	return (
@@ -102,6 +111,6 @@ const MarkedLines = ( { context }: { context: MarkedLinesContext } ) => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default MarkedLines;
