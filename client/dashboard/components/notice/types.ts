@@ -34,6 +34,11 @@ export interface NoticeProps {
 	density?: NoticeDensity;
 
 	/**
+	 * Custom icon to use instead of the default one for each variant.
+	 */
+	icon?: React.ReactNode;
+
+	/**
 	 * An optional action to close the component.
 	 */
 	onClose?: () => void;
