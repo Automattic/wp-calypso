@@ -12,6 +12,7 @@ import {
 	domainTransferRequestQuery,
 	domainWhoisQuery,
 	domainConnectionSetupInfoQuery,
+	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -42,7 +43,11 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () => queryClient.ensureQueryData( domainsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
