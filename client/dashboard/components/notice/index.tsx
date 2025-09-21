@@ -47,7 +47,17 @@ const icons: { [ key in NoticeVariant ]: IconType } = {
  * ```
  */
 function UnforwardedNotice(
-	{ variant = 'info', title, children, actions, density = 'low', onClose, icon }: NoticeProps,
+	{
+		variant = 'info',
+		title,
+		children,
+		actions,
+		density = 'low',
+		onClose,
+		icon,
+		role,
+		'aria-live': ariaLive,
+	}: NoticeProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	const hasLowDensity = density === 'low';
@@ -56,6 +66,8 @@ function UnforwardedNotice(
 		<Card
 			className={ clsx( 'dashboard-notice', `is-${ variant }`, `has-density-${ density }` ) }
 			ref={ ref }
+			role={ role }
+			aria-live={ ariaLive }
 		>
 			<CardBody className="dashboard-notice__body">
 				<HStack spacing={ hasLowDensity ? 2 : 1 } justify="flex-start" alignment="flex-start">
