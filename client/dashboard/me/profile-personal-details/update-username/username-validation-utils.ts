@@ -1,20 +1,9 @@
+import { debounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import wpcom from 'calypso/lib/wp';
 
 const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
 const USERNAME_MIN_LENGTH = 4;
-
-// Simple debounce function to replace lodash
-function debounceFunction< T extends ( ...args: any[] ) => any >(
-	func: T,
-	delay: number
-): ( ...args: Parameters< T > ) => void {
-	let timeoutId: NodeJS.Timeout;
-	return ( ...args: Parameters< T > ) => {
-		clearTimeout( timeoutId );
-		timeoutId = setTimeout( () => func( ...args ), delay );
-	};
-}
 
 export interface ValidationResult {
 	success?: boolean;
@@ -24,11 +13,12 @@ export interface ValidationResult {
 	validatedUsername?: string;
 }
 
-export function createUsernameValidator(
+async function validateUsername(
+	username: string,
 	currentUsername: string,
 	setValidationResult: ( result: ValidationResult | null ) => void
 ) {
-	return debounceFunction( async ( username: string ) => {
+	try {
 		if ( username === currentUsername ) {
 			setValidationResult( null );
 			return;
@@ -50,17 +40,20 @@ export function createUsernameValidator(
 			return;
 		}
 
-		try {
-			const { success, allowed_actions } = await wpcom.req.get(
-				`/me/username/validate/${ username }`
-			);
+		const { success, allowed_actions } = await wpcom.req.get(
+			`/me/username/validate/${ username }`
+		);
 
-			setValidationResult( { success, allowed_actions, validatedUsername: username } );
-		} catch ( error: any ) {
-			setValidationResult( error );
-		}
-	}, 600 );
+		setValidationResult( { success, allowed_actions, validatedUsername: username } );
+	} catch ( error: any ) {
+		setValidationResult( error );
+	}
 }
+
+export const validateUsernameDebounced = debounce(
+	validateUsername as ( ...args: unknown[] ) => unknown,
+	600
+) as typeof validateUsername;
 
 export function isUsernameValid( validationResult: ValidationResult | null ): boolean {
 	return !! (

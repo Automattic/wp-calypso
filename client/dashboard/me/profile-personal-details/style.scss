@@ -1,0 +1,11 @@
+// Validation styles for username fields
+.has-error {
+	.components-input-control__input {
+		border-color: #cc1818;
+
+		&:focus {
+			border-color: #cc1818;
+			box-shadow: 0 0 0 1px #cc1818;
+		}
+	}
+}

@@ -3,7 +3,6 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { FormInputValidation } from '@automattic/components';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -16,14 +15,13 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import UsernameUpdateForm from './update-username';
+import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
-	createUsernameValidator,
+	validateUsernameDebounced,
 	isUsernameValid,
 	getUsernameValidationMessage,
 	submitUsernameChange,
@@ -31,6 +29,7 @@ import {
 } from './update-username/username-validation-utils';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
+import './style.scss';
 
 interface PersonalDetailsSectionProps {
 	profile: UserSettings;
@@ -76,11 +75,6 @@ export default function PersonalDetailsSection( {
 		}
 	}, [] );
 
-	const validateUsername = useMemo(
-		() => createUsernameValidator( currentUsername, setValidationResult ),
-		[ currentUsername ]
-	);
-
 	const cancelUsernameChange = useCallback( () => {
 		setEdits( ( current ) => {
 			const { user_login, ...rest } = current;
@@ -122,7 +116,7 @@ export default function PersonalDetailsSection( {
 			const lowerCaseValue = ( partial.user_login || '' ).toLowerCase();
 			if ( lowerCaseValue !== currentUsername ) {
 				setUsernameAction( 'none' );
-				validateUsername( lowerCaseValue );
+				validateUsernameDebounced( lowerCaseValue, currentUsername, setValidationResult );
 			} else {
 				cancelUsernameChange();
 			}
@@ -156,6 +150,7 @@ export default function PersonalDetailsSection( {
 
 	const isSaving = mutation.isPending || isSubmittingUsername;
 
+	// Display help text based on certain conditions
 	const getUsernameHelpText = useCallback( () => {
 		if ( hasUsernameChange ) {
 			return null;
@@ -182,26 +177,6 @@ export default function PersonalDetailsSection( {
 		return null;
 	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
 
-	const renderUsernameValidation = useCallback( () => {
-		if ( ! hasUsernameChange ) {
-			return null;
-		}
-
-		const isValid = isUsernameValid( validationResult );
-		const message = getUsernameValidationMessage( validationResult );
-
-		if ( ! isValid && message === null ) {
-			return null;
-		}
-
-		return (
-			<FormInputValidation
-				isError={ ! isValid }
-				text={ isValid ? __( 'Nice username!' ) : message || '' }
-			/>
-		);
-	}, [ hasUsernameChange, validationResult ] );
-
 	const fields: Field< UserSettings >[] = [
 		{
 			id: 'first_name',
@@ -217,42 +192,56 @@ export default function PersonalDetailsSection( {
 			id: 'user_login',
 			label: __( 'Username' ),
 			type: 'text',
-			Edit: ( { data, field, onChange, hideLabelFromVision } ) => (
-				// TODO: Replace with ValidatedTextControl
-				<InputControl
-					__next40pxDefaultSize
-					label={ field.label }
-					value={ data.user_login || '' }
-					onChange={ ( value ) => onChange( { user_login: value } ) }
-					disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
-					hideLabelFromVision={ hideLabelFromVision }
-					autoCapitalize="off"
-					autoComplete="off"
-					autoCorrect="off"
-				/>
-			),
+			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
+				const hasError =
+					hasUsernameChange && validationResult && ! isUsernameValid( validationResult );
+				const helpText = getUsernameHelpText();
+				const validationMessage = hasUsernameChange
+					? getUsernameValidationMessage( validationResult )
+					: null;
+
+				return (
+					<VStack spacing={ 1 }>
+						{ /* TODO: Use ValidatedTextControl instead */ }
+						<InputControl
+							__next40pxDefaultSize
+							label={ field.label }
+							value={ data.user_login || '' }
+							onChange={ ( value ) => onChange( { user_login: value } ) }
+							disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
+							hideLabelFromVision={ hideLabelFromVision }
+							autoCapitalize="off"
+							autoComplete="off"
+							autoCorrect="off"
+							className={ hasError ? 'has-error' : '' }
+							help={
+								helpText ||
+								( hasUsernameChange && isUsernameValid( validationResult )
+									? __( 'Nice username!' )
+									: validationMessage )
+							}
+						/>
+					</VStack>
+				);
+			},
 		},
 		{
 			id: 'username_confirmation',
 			label: '',
 			type: 'text',
 			Edit: () => (
-				<VStack spacing={ 2 }>
-					{ getUsernameHelpText() }
-					{ renderUsernameValidation() }
-					<UsernameUpdateForm
-						hasUsernameChange={ hasUsernameChange }
-						userLoginConfirm={ userLoginConfirm }
-						usernameToConfirm={ edits.user_login }
-						validationResult={ validationResult }
-						isSubmittingUsername={ isSubmittingUsername }
-						usernameAction={ usernameAction }
-						onConfirmChange={ setUserLoginConfirm }
-						onActionChange={ setUsernameAction }
-						onShowConfirmModal={ () => setShowConfirmModal( true ) }
-						onCancel={ cancelUsernameChange }
-					/>
-				</VStack>
+				<UsernameUpdateForm
+					hasUsernameChange={ hasUsernameChange }
+					userLoginConfirm={ userLoginConfirm }
+					usernameToConfirm={ edits.user_login }
+					validationResult={ validationResult }
+					isSubmittingUsername={ isSubmittingUsername }
+					usernameAction={ usernameAction }
+					onConfirmChange={ setUserLoginConfirm }
+					onActionChange={ setUsernameAction }
+					onShowConfirmModal={ () => setShowConfirmModal( true ) }
+					onCancel={ cancelUsernameChange }
+				/>
 			),
 		},
 		{

@@ -1,6 +1,6 @@
-import { FormInputValidation, FormLabel } from '@automattic/components';
 import {
 	Button,
+	RadioControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
@@ -55,58 +55,57 @@ export default function UsernameUpdateForm( {
 
 	const usernameMatch = userLoginConfirm === usernameToConfirm && userLoginConfirm.length > 0;
 	const message = getUsernameValidationMessage( validationResult );
-	const isError = ! usernameMatch || message;
+	const hasValidationError = message && usernameMatch;
+	const hasConfirmError = userLoginConfirm.length > 0 && ! usernameMatch;
+	const isError = hasConfirmError || hasValidationError;
 
-	let confirmMessage = __( 'Please re-enter your new username to confirm it.' );
-	if ( usernameMatch ) {
-		confirmMessage = message ? message : __( 'Thanks for confirming your new username!' );
+	let helpText = '';
+	if ( userLoginConfirm.length === 0 ) {
+		helpText = __( 'Please re-enter your new username to confirm it.' );
+	} else if ( hasConfirmError ) {
+		helpText = __( 'Usernames do not match.' );
+	} else if ( hasValidationError ) {
+		helpText = message || '';
+	} else if ( usernameMatch ) {
+		helpText = __( 'Thanks for confirming your new username!' );
+	}
+
+	let inputClassName = '';
+	if ( isError ) {
+		inputClassName = 'has-error';
 	}
 
 	const actions = getAllowedActions( validationResult );
 
 	return (
-		<>
-			<div style={ { marginTop: '0.5rem' } }>
-				<InputControl
-					__next40pxDefaultSize
-					label={ __( 'Confirm new username' ) }
-					id="username_confirm"
-					name="username_confirm"
-					value={ userLoginConfirm }
-					onChange={ ( value ) => onConfirmChange( value || '' ) }
-					autoCapitalize="off"
-					autoComplete="off"
-					autoCorrect="off"
-				/>
-				<FormInputValidation isError={ !! isError } text={ confirmMessage } />
-			</div>
+		<VStack spacing={ 3 }>
+			<InputControl
+				__next40pxDefaultSize
+				label={ __( 'Confirm new username' ) }
+				id="username_confirm"
+				name="username_confirm"
+				value={ userLoginConfirm }
+				onChange={ ( value ) => onConfirmChange( value || '' ) }
+				autoCapitalize="off"
+				autoComplete="off"
+				autoCorrect="off"
+				className={ inputClassName }
+				help={ helpText }
+			/>
 
 			{ Object.keys( actions ).length > 1 && (
-				<div className="profile-personal-details__blog-actions" style={ { marginTop: '0.75rem' } }>
-					<FormLabel>{ __( 'Would you like a matching blog address too?' ) }</FormLabel>
-					<VStack spacing={ 1 } style={ { marginTop: '0.5rem' } }>
-						{ Object.entries( actions ).map( ( [ key, message ] ) => (
-							<label
-								key={ key }
-								className="profile-personal-details__blog-action"
-								style={ { display: 'flex', alignItems: 'center' } }
-							>
-								<input
-									type="radio"
-									name="usernameAction"
-									value={ key }
-									checked={ key === usernameAction }
-									onChange={ ( e ) => onActionChange( e.target.value ) }
-									style={ { marginRight: '0.5rem' } }
-								/>
-								<span>{ message }</span>
-							</label>
-						) ) }
-					</VStack>
-				</div>
+				<RadioControl
+					label={ __( 'Would you like a matching blog address too?' ) }
+					selected={ usernameAction }
+					options={ Object.entries( actions ).map( ( [ value, label ] ) => ( {
+						value,
+						label,
+					} ) ) }
+					onChange={ ( value ) => onActionChange( value || 'none' ) }
+				/>
 			) }
 
-			<HStack justify="flex-start" style={ { marginTop: '1rem' } }>
+			<HStack justify="flex-start">
 				<Button variant="primary" onClick={ onShowConfirmModal } disabled={ isSaveDisabled }>
 					{ __( 'Change username' ) }
 				</Button>
@@ -114,6 +113,6 @@ export default function UsernameUpdateForm( {
 					{ __( 'Cancel' ) }
 				</Button>
 			</HStack>
-		</>
+		</VStack>
 	);
 }
