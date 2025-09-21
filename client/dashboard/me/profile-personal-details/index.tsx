@@ -9,7 +9,6 @@ import {
 	Card,
 	CardBody,
 	CheckboxControl,
-	Notice,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
@@ -19,6 +18,8 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
+import { Notice } from '../../components/notice';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
@@ -85,18 +86,18 @@ export default function PersonalDetailsSection( {
 		// Prohibit A12s from changing their username
 		if ( isAutomattician ) {
 			return (
-				<span className="account-profile-personal-details__username-help">
+				<Text className="account-profile-personal-details__username-help">
 					{ __( 'Automatticians cannot change their username.' ) }
-				</span>
+				</Text>
 			);
 		}
 
 		// New users can't change their username until they've verified their email
 		if ( ! isEmailVerified ) {
 			return (
-				<span className="account-profile-personal-details__username-help">
+				<Text className="account-profile-personal-details__username-help">
 					{ __( 'Username can be changed once your email address is verified.' ) }
-				</span>
+				</Text>
 			);
 		}
 
@@ -273,11 +274,15 @@ export default function PersonalDetailsSection( {
 
 	return (
 		<>
-			<form onSubmit={ handleSubmit }>
+			<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<SectionHeader level={ 3 } title={ __( 'Personal details' ) } />
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'Personal details' ) }
+								headingId="personal-details-heading"
+							/>
 
 							{ /* First & last name */ }
 							<DataForm< UserSettings >
@@ -291,13 +296,19 @@ export default function PersonalDetailsSection( {
 							<VStack spacing={ 1 }>
 								<InputControl
 									__next40pxDefaultSize
+									id="username-input"
 									label={ __( 'Username' ) }
 									value={ data.user_login || '' }
 									onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
 									disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
 									autoCapitalize="off"
-									autoComplete="off"
+									autoComplete="username"
 									autoCorrect="off"
+									aria-invalid={
+										hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
+											? 'true'
+											: 'false'
+									}
 									className={ ( () => {
 										if ( ! hasUsernameChange ) {
 											return '';
@@ -331,10 +342,13 @@ export default function PersonalDetailsSection( {
 							{ /* Email address */ }
 							<InputControl
 								__next40pxDefaultSize
+								id="email-input"
 								type="email"
 								label={ __( 'Email address' ) }
 								value={ data.user_email || '' }
 								onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
+								autoComplete="email"
+								aria-describedby="email-help"
 							/>
 
 							{ /* Developer checkbox */ }
@@ -347,16 +361,17 @@ export default function PersonalDetailsSection( {
 
 							{ usernameChangeSuccess && (
 								<Notice
-									status="success"
-									isDismissible
-									onDismiss={ () => setUsernameChangeSuccess( false ) }
+									variant="success"
+									onClose={ () => setUsernameChangeSuccess( false ) }
+									role="status"
+									aria-live="polite"
 								>
 									{ __( 'Username changed successfully!' ) }
 								</Notice>
 							) }
 
 							{ mutation.error && (
-								<Notice status="error" isDismissible={ false }>
+								<Notice variant="error" role="alert" aria-live="assertive">
 									{ ( mutation.error as Error ).message }
 								</Notice>
 							) }

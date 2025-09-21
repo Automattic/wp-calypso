@@ -100,6 +100,8 @@ export default function UsernameUpdateForm( {
 				autoCapitalize="off"
 				autoComplete="off"
 				autoCorrect="off"
+				aria-invalid={ isError ? 'true' : 'false' }
+				aria-describedby="username-confirm-help"
 				className={ ( () => {
 					if ( isError ) {
 						return 'has-error';
