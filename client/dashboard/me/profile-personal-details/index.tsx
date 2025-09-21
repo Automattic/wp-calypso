@@ -17,9 +17,9 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import { Notice } from '../../components/notice';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
