@@ -15,7 +15,7 @@ function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 }
 
 type SiteRequestMethodsData = {
-	data: object[];
+	data: DataPointPercentage[];
 	isLoading: boolean;
 };
 
@@ -71,7 +71,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 	};
 }
 
-function mapDataForLegend( data: object[] ): LegendData[] {
+function mapDataForLegend( data: DataPointPercentage[] ): LegendData[] {
 	return data.map( ( value ) => ( {
 		label: value.label,
 		value: value?.valueDisplay || '',
@@ -90,12 +90,12 @@ export default function MonitoringRequestMethodsCard( {
 
 	// Prevent labels from showing up in the pie chart.
 	const dataNoLabel = data.map(
-		( value: object ): DataPointPercentage => ( {
+		( value: DataPointPercentage ): DataPointPercentage => ( {
 			label: '',
 			value: value?.value || 0,
 			percentage: value?.percentage || 0,
 			color: value?.color || '',
-			valueDisplay: value?.valueDisplay || value?.percentage || '',
+			valueDisplay: value?.valueDisplay || value?.percentage.toString() || '',
 		} )
 	);
 
