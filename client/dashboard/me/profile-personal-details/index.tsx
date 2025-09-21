@@ -3,7 +3,7 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { FormInputValidation, Dialog, FormLabel } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -19,32 +19,18 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useCallback, useEffect } from 'react';
-import wpcom from 'calypso/lib/wp';
 import { SectionHeader } from '../../components/section-header';
+import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
+import UsernameUpdateForm from './update-username';
+import {
+	createUsernameValidator,
+	isUsernameValid,
+	getUsernameValidationMessage,
+	submitUsernameChange,
+	type ValidationResult,
+} from './update-username/username-validation-utils';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
-
-const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
-const USERNAME_MIN_LENGTH = 4;
-
-function debounceFunction< T extends ( ...args: any[] ) => any >(
-	func: T,
-	delay: number
-): ( ...args: Parameters< T > ) => void {
-	let timeoutId: NodeJS.Timeout;
-	return ( ...args: Parameters< T > ) => {
-		clearTimeout( timeoutId );
-		timeoutId = setTimeout( () => func( ...args ), delay );
-	};
-}
-
-interface ValidationResult {
-	success?: boolean;
-	error?: string;
-	message?: string;
-	allowed_actions?: Record< string, string >;
-	validatedUsername?: string;
-}
 
 interface PersonalDetailsSectionProps {
 	profile: UserSettings;
@@ -57,7 +43,7 @@ export default function PersonalDetailsSection( {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
-	const [ showConfirmDialog, setShowConfirmDialog ] = useState( false );
+	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
@@ -71,7 +57,7 @@ export default function PersonalDetailsSection( {
 	const isEmailVerified = userSettings?.email_verified ?? true;
 	const canChangeUsername = userSettings?.user_login_can_be_changed ?? true;
 
-	const hasUsernameChange = edits.user_login && edits.user_login !== currentUsername;
+	const hasUsernameChange = !! ( edits.user_login && edits.user_login !== currentUsername );
 
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
@@ -90,39 +76,8 @@ export default function PersonalDetailsSection( {
 		}
 	}, [] );
 
-	const validateUsername = useCallback(
-		debounceFunction( async ( username: string ) => {
-			if ( username === currentUsername ) {
-				setValidationResult( null );
-				return;
-			}
-
-			if ( username.length < USERNAME_MIN_LENGTH ) {
-				setValidationResult( {
-					error: 'invalid_input',
-					message: __( 'Usernames must be at least 4 characters.' ),
-				} );
-				return;
-			}
-
-			if ( ! ALLOWED_USERNAME_CHARACTERS_REGEX.test( username ) ) {
-				setValidationResult( {
-					error: 'invalid_input',
-					message: __( 'Usernames can only contain lowercase letters (a-z) and numbers.' ),
-				} );
-				return;
-			}
-
-			try {
-				const { success, allowed_actions } = await wpcom.req.get(
-					`/me/username/validate/${ username }`
-				);
-
-				setValidationResult( { success, allowed_actions, validatedUsername: username } );
-			} catch ( error: any ) {
-				setValidationResult( error );
-			}
-		}, 600 ),
+	const validateUsername = useMemo(
+		() => createUsernameValidator( currentUsername, setValidationResult ),
 		[ currentUsername ]
 	);
 
@@ -136,37 +91,19 @@ export default function PersonalDetailsSection( {
 		setUsernameAction( 'none' );
 	}, [] );
 
-	const isUsernameValid = () => {
-		return validationResult && 'success' in validationResult && validationResult.success === true;
-	};
-
-	const getUsernameValidationFailureMessage = () => {
-		if ( ! validationResult ) {
-			return null;
-		}
-		return validationResult.message ?? null;
-	};
-
-	const getAllowedActions = () => {
-		if ( ! validationResult ) {
-			return {};
-		}
-		return validationResult.allowed_actions ?? {};
-	};
-
 	const submitUsernameForm = async () => {
 		const username = edits.user_login;
-		if ( ! username || ! isUsernameValid() ) {
+		if ( ! username || ! isUsernameValid( validationResult ) ) {
 			return;
 		}
 
 		const action = usernameAction || 'none';
 
 		setIsSubmittingUsername( true );
-		setShowConfirmDialog( false );
+		setShowConfirmModal( false );
 
 		try {
-			await wpcom.req.post( '/me/username', { username, action } );
+			await submitUsernameChange( username, action );
 
 			// Reload the page to refresh cookies and user object
 			const currentUrl = new URL( window.location.href );
@@ -219,13 +156,39 @@ export default function PersonalDetailsSection( {
 
 	const isSaving = mutation.isPending || isSubmittingUsername;
 
+	const getUsernameHelpText = useCallback( () => {
+		if ( hasUsernameChange ) {
+			return null;
+		}
+
+		// Prohibit A12s from changing their username
+		if ( isAutomattician ) {
+			return (
+				<span className="account-profile-personal-details__username-help">
+					{ __( 'Automatticians cannot change their username.' ) }
+				</span>
+			);
+		}
+
+		// New users can't change their username until they've verified their email
+		if ( ! isEmailVerified ) {
+			return (
+				<span className="account-profile-personal-details__username-help">
+					{ __( 'Username can be changed once your email address is verified.' ) }
+				</span>
+			);
+		}
+
+		return null;
+	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
+
 	const renderUsernameValidation = useCallback( () => {
 		if ( ! hasUsernameChange ) {
 			return null;
 		}
 
-		const isValid = isUsernameValid();
-		const message = getUsernameValidationFailureMessage();
+		const isValid = isUsernameValid( validationResult );
+		const message = getUsernameValidationMessage( validationResult );
 
 		if ( ! isValid && message === null ) {
 			return null;
@@ -238,123 +201,6 @@ export default function PersonalDetailsSection( {
 			/>
 		);
 	}, [ hasUsernameChange, validationResult ] );
-
-	const renderUsernameDescription = useCallback( () => {
-		if ( hasUsernameChange ) {
-			return null;
-		}
-
-		if ( isAutomattician ) {
-			return (
-				<span className="account-profile-personal-details__username-help">
-					{ __( 'Automatticians cannot change their username.' ) }
-				</span>
-			);
-		}
-
-		if ( ! isEmailVerified ) {
-			return (
-				<span className="account-profile-personal-details__username-help">
-					{ __( 'Username can be changed once your email address is verified.' ) }
-				</span>
-			);
-		}
-
-		return null;
-	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
-
-	const renderBlogActions = useCallback( () => {
-		const actions = getAllowedActions();
-
-		if ( Object.keys( actions ).length <= 1 ) {
-			return null;
-		}
-
-		return (
-			<div className="profile-personal-details__blog-actions" style={ { marginTop: '0.75rem' } }>
-				<FormLabel>{ __( 'Would you like a matching blog address too?' ) }</FormLabel>
-				<VStack spacing={ 1 } style={ { marginTop: '0.5rem' } }>
-					{ Object.entries( actions ).map( ( [ key, message ] ) => (
-						<label
-							key={ key }
-							className="profile-personal-details__blog-action"
-							style={ { display: 'flex', alignItems: 'center' } }
-						>
-							<input
-								type="radio"
-								name="usernameAction"
-								value={ key }
-								checked={ key === usernameAction }
-								onChange={ ( e ) => setUsernameAction( e.target.value ) }
-								style={ { marginRight: '0.5rem' } }
-							/>
-							<span>{ message }</span>
-						</label>
-					) ) }
-				</VStack>
-			</div>
-		);
-	}, [ validationResult, usernameAction ] );
-
-	const renderUsernameConfirmation = useCallback( () => {
-		if ( ! hasUsernameChange ) {
-			return null;
-		}
-
-		const isSaveDisabled =
-			userLoginConfirm !== edits.user_login || ! isUsernameValid() || isSubmittingUsername;
-
-		const usernameMatch = userLoginConfirm === edits.user_login && userLoginConfirm.length > 0;
-		const message = getUsernameValidationFailureMessage();
-		const isError = ! usernameMatch || message;
-
-		let confirmMessage = __( 'Please re-enter your new username to confirm it.' );
-		if ( usernameMatch ) {
-			confirmMessage = message ? message : __( 'Thanks for confirming your new username!' );
-		}
-
-		return (
-			<>
-				<div style={ { marginTop: '0.5rem' } }>
-					<InputControl
-						__next40pxDefaultSize
-						label={ __( 'Confirm new username' ) }
-						id="username_confirm"
-						name="username_confirm"
-						value={ userLoginConfirm }
-						onChange={ ( value ) => setUserLoginConfirm( value || '' ) }
-						autoCapitalize="off"
-						autoComplete="off"
-						autoCorrect="off"
-					/>
-					<FormInputValidation isError={ !! isError } text={ confirmMessage } />
-				</div>
-
-				{ renderBlogActions() }
-
-				<HStack justify="flex-start" style={ { marginTop: '1rem' } }>
-					<Button
-						variant="primary"
-						onClick={ () => setShowConfirmDialog( true ) }
-						disabled={ isSaveDisabled }
-					>
-						{ __( 'Change username' ) }
-					</Button>
-					<Button variant="secondary" onClick={ cancelUsernameChange }>
-						{ __( 'Cancel' ) }
-					</Button>
-				</HStack>
-			</>
-		);
-	}, [
-		hasUsernameChange,
-		userLoginConfirm,
-		edits.user_login,
-		validationResult,
-		isSubmittingUsername,
-		renderBlogActions,
-		cancelUsernameChange,
-	] );
 
 	const fields: Field< UserSettings >[] = [
 		{
@@ -372,6 +218,7 @@ export default function PersonalDetailsSection( {
 			label: __( 'Username' ),
 			type: 'text',
 			Edit: ( { data, field, onChange, hideLabelFromVision } ) => (
+				// TODO: Replace with ValidatedTextControl
 				<InputControl
 					__next40pxDefaultSize
 					label={ field.label }
@@ -386,15 +233,26 @@ export default function PersonalDetailsSection( {
 			),
 		},
 		{
-			id: 'username_validation',
+			id: 'username_confirmation',
 			label: '',
 			type: 'text',
 			Edit: () => (
-				<div>
-					{ renderUsernameDescription() }
+				<VStack spacing={ 2 }>
+					{ getUsernameHelpText() }
 					{ renderUsernameValidation() }
-					{ renderUsernameConfirmation() }
-				</div>
+					<UsernameUpdateForm
+						hasUsernameChange={ hasUsernameChange }
+						userLoginConfirm={ userLoginConfirm }
+						usernameToConfirm={ edits.user_login }
+						validationResult={ validationResult }
+						isSubmittingUsername={ isSubmittingUsername }
+						usernameAction={ usernameAction }
+						onConfirmChange={ setUserLoginConfirm }
+						onActionChange={ setUsernameAction }
+						onShowConfirmModal={ () => setShowConfirmModal( true ) }
+						onCancel={ cancelUsernameChange }
+					/>
+				</VStack>
 			),
 		},
 		{
@@ -440,50 +298,21 @@ export default function PersonalDetailsSection( {
 			'first_name',
 			'last_name',
 			'user_login',
-			'username_validation',
+			'username_confirmation',
 			'user_email',
 			'is_dev_account',
 		],
 	};
 
-	const renderConfirmationDialog = () => {
-		return (
-			<Dialog
-				isVisible={ showConfirmDialog }
-				onClose={ () => setShowConfirmDialog( false ) }
-				buttons={ [
-					{
-						action: 'cancel',
-						label: __( 'Cancel' ),
-						onClick: () => setShowConfirmDialog( false ),
-					},
-					{
-						action: 'confirm',
-						label: __( 'Change username' ),
-						isPrimary: true,
-						additionalClassNames: 'is-scary',
-						onClick: submitUsernameForm,
-					},
-				] }
-			>
-				<VStack spacing={ 4 }>
-					<FormLabel>{ __( 'Confirm username change' ) }</FormLabel>
-					<p>
-						{ __(
-							'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
-								'Once changed, you will not be able to revert it.'
-						)
-							.replace( '{{strong}}', '' )
-							.replace( '{{/strong}}', '' )
-							.replace( '%(username)s', currentUsername ) }{ ' ' }
-						{ __(
-							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
-						) }
-					</p>
-				</VStack>
-			</Dialog>
-		);
-	};
+	const renderConfirmationModal = () => (
+		<UsernameUpdateConfirmationModal
+			isVisible={ showConfirmModal }
+			currentUsername={ currentUsername }
+			currentUserDisplayName={ userSettings?.display_name || '' }
+			onConfirm={ submitUsernameForm }
+			onCancel={ () => setShowConfirmModal( false ) }
+		/>
+	);
 
 	return (
 		<>
@@ -533,7 +362,7 @@ export default function PersonalDetailsSection( {
 				</Card>
 			</form>
 
-			{ renderConfirmationDialog() }
+			{ renderConfirmationModal() }
 		</>
 	);
 }
