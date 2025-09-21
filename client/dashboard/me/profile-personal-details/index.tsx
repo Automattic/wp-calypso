@@ -16,6 +16,7 @@ import {
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import UsernameUpdateForm from './update-username';
@@ -113,10 +114,25 @@ export default function PersonalDetailsSection( {
 		}
 
 		if ( isUsernameValid( validationResult ) ) {
-			return __( 'Nice username!' );
+			return (
+				<>
+					<Icon icon={ check } size={ 16 } />
+					{ __( 'Nice username!' ) }
+				</>
+			);
 		}
 
-		return getUsernameValidationMessage( validationResult );
+		const errorMessage = getUsernameValidationMessage( validationResult );
+		if ( errorMessage ) {
+			return (
+				<>
+					<Icon icon={ info } size={ 16 } />
+					{ errorMessage }
+				</>
+			);
+		}
+
+		return null;
 	};
 
 	// Update username field event handlers
@@ -282,11 +298,18 @@ export default function PersonalDetailsSection( {
 									autoCapitalize="off"
 									autoComplete="off"
 									autoCorrect="off"
-									className={
-										hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
-											? 'has-error'
-											: ''
-									}
+									className={ ( () => {
+										if ( ! hasUsernameChange ) {
+											return '';
+										}
+										if ( validationResult && ! isUsernameValid( validationResult ) ) {
+											return 'has-error';
+										}
+										if ( isUsernameValid( validationResult ) ) {
+											return 'has-success';
+										}
+										return '';
+									} )() }
 									help={ getUsernameHelpText() }
 								/>
 							</VStack>

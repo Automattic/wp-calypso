@@ -6,6 +6,7 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Icon, info, check } from '@wordpress/icons';
 import {
 	isUsernameValid,
 	getUsernameValidationMessage,
@@ -59,20 +60,30 @@ export default function UsernameUpdateForm( {
 	const hasConfirmError = userLoginConfirm.length > 0 && ! usernameMatch;
 	const isError = hasConfirmError || hasValidationError;
 
-	let helpText = '';
+	let helpText = null;
 	if ( userLoginConfirm.length === 0 ) {
 		helpText = __( 'Please re-enter your new username to confirm it.' );
 	} else if ( hasConfirmError ) {
-		helpText = __( 'Usernames do not match.' );
+		helpText = (
+			<>
+				<Icon icon={ info } size={ 16 } />
+				{ __( 'Usernames do not match.' ) }
+			</>
+		);
 	} else if ( hasValidationError ) {
-		helpText = message || '';
+		helpText = message ? (
+			<>
+				<Icon icon={ info } size={ 16 } />
+				{ message }
+			</>
+		) : null;
 	} else if ( usernameMatch ) {
-		helpText = __( 'Thanks for confirming your new username!' );
-	}
-
-	let inputClassName = '';
-	if ( isError ) {
-		inputClassName = 'has-error';
+		helpText = (
+			<>
+				<Icon icon={ check } size={ 16 } />
+				{ __( 'Thanks for confirming your new username!' ) }
+			</>
+		);
 	}
 
 	const actions = getAllowedActions( validationResult );
@@ -89,7 +100,15 @@ export default function UsernameUpdateForm( {
 				autoCapitalize="off"
 				autoComplete="off"
 				autoCorrect="off"
-				className={ inputClassName }
+				className={ ( () => {
+					if ( isError ) {
+						return 'has-error';
+					}
+					if ( usernameMatch && ! hasValidationError ) {
+						return 'has-success';
+					}
+					return '';
+				} )() }
 				help={ helpText }
 			/>
 

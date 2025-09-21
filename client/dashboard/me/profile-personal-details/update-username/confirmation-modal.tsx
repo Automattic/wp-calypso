@@ -1,4 +1,3 @@
-import { FormLabel } from '@automattic/components';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalVStack as VStack,
@@ -8,7 +7,6 @@ import { __ } from '@wordpress/i18n';
 interface UsernameUpdateConfirmationModalProps {
 	isVisible: boolean;
 	currentUsername: string;
-	currentUserDisplayName: string;
 	onConfirm: () => void;
 	onCancel: () => void;
 }
@@ -16,7 +14,6 @@ interface UsernameUpdateConfirmationModalProps {
 export default function UsernameUpdateConfirmationModal( {
 	isVisible,
 	currentUsername,
-	currentUserDisplayName,
 	onConfirm,
 	onCancel,
 }: UsernameUpdateConfirmationModalProps ) {
@@ -27,27 +24,21 @@ export default function UsernameUpdateConfirmationModal( {
 	return (
 		<ConfirmDialog onConfirm={ onConfirm } onCancel={ onCancel }>
 			<VStack spacing={ 4 }>
-				<FormLabel>{ __( 'Confirm username change' ) }</FormLabel>
+				<h3>{ __( 'Confirm username change' ) }</h3>
 				<p>
-					{ __(
-						'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
-							'Once changed, you will not be able to revert it.'
-					)
-						.replace( '{{strong}}', '' )
-						.replace( '{{/strong}}', '' )
-						.replace( '%(username)s', currentUsername ) }{ ' ' }
+					{
+						/* translators: %(username)s is the current username that will be changed */
+						__(
+							'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
+								'Once changed, you will not be able to revert it.'
+						)
+							.replace( '{{strong}}', '' )
+							.replace( '{{/strong}}', '' )
+							.replace( '%(username)s', currentUsername )
+					}{ ' ' }
 					{ __(
 						'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
 					) }
-				</p>
-				<p>
-					{ __(
-						'If you just want to change your display name, {{strong}}%(displayName)s{{/strong}}, ' +
-							'you can do so under My Profile.'
-					)
-						.replace( '{{strong}}', '' )
-						.replace( '{{/strong}}', '' )
-						.replace( '%(displayName)s', currentUserDisplayName ) }
 				</p>
 			</VStack>
 		</ConfirmDialog>
