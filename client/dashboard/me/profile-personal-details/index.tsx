@@ -75,6 +75,51 @@ export default function PersonalDetailsSection( {
 		}
 	}, [] );
 
+	// Conditional help text for username field
+	const getUsernameConditionalText = useCallback( () => {
+		if ( hasUsernameChange ) {
+			return null;
+		}
+
+		// Prohibit A12s from changing their username
+		if ( isAutomattician ) {
+			return (
+				<span className="account-profile-personal-details__username-help">
+					{ __( 'Automatticians cannot change their username.' ) }
+				</span>
+			);
+		}
+
+		// New users can't change their username until they've verified their email
+		if ( ! isEmailVerified ) {
+			return (
+				<span className="account-profile-personal-details__username-help">
+					{ __( 'Username can be changed once your email address is verified.' ) }
+				</span>
+			);
+		}
+
+		return null;
+	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
+
+	const getUsernameHelpText = () => {
+		const helpText = getUsernameConditionalText();
+		if ( helpText ) {
+			return helpText;
+		}
+
+		if ( ! hasUsernameChange ) {
+			return null;
+		}
+
+		if ( isUsernameValid( validationResult ) ) {
+			return __( 'Nice username!' );
+		}
+
+		return getUsernameValidationMessage( validationResult );
+	};
+
+	// Update username field event handlers
 	const cancelUsernameChange = useCallback( () => {
 		setEdits( ( current ) => {
 			const { user_login, ...rest } = current;
@@ -109,6 +154,7 @@ export default function PersonalDetailsSection( {
 		}
 	};
 
+	// General form event handlers
 	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
 
@@ -150,34 +196,8 @@ export default function PersonalDetailsSection( {
 
 	const isSaving = mutation.isPending || isSubmittingUsername;
 
-	// Display help text based on certain conditions
-	const getUsernameHelpText = useCallback( () => {
-		if ( hasUsernameChange ) {
-			return null;
-		}
-
-		// Prohibit A12s from changing their username
-		if ( isAutomattician ) {
-			return (
-				<span className="account-profile-personal-details__username-help">
-					{ __( 'Automatticians cannot change their username.' ) }
-				</span>
-			);
-		}
-
-		// New users can't change their username until they've verified their email
-		if ( ! isEmailVerified ) {
-			return (
-				<span className="account-profile-personal-details__username-help">
-					{ __( 'Username can be changed once your email address is verified.' ) }
-				</span>
-			);
-		}
-
-		return null;
-	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
-
-	const fields: Field< UserSettings >[] = [
+	// DataForm fields
+	const nameFields: Field< UserSettings >[] = [
 		{
 			id: 'first_name',
 			label: __( 'First name' ),
@@ -188,116 +208,48 @@ export default function PersonalDetailsSection( {
 			label: __( 'Last name' ),
 			type: 'text',
 		},
-		{
-			id: 'user_login',
-			label: __( 'Username' ),
-			type: 'text',
-			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
-				const hasError =
-					hasUsernameChange && validationResult && ! isUsernameValid( validationResult );
-				const helpText = getUsernameHelpText();
-				const validationMessage = hasUsernameChange
-					? getUsernameValidationMessage( validationResult )
-					: null;
-
-				return (
-					<VStack spacing={ 1 }>
-						{ /* TODO: Use ValidatedTextControl instead */ }
-						<InputControl
-							__next40pxDefaultSize
-							label={ field.label }
-							value={ data.user_login || '' }
-							onChange={ ( value ) => onChange( { user_login: value } ) }
-							disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
-							hideLabelFromVision={ hideLabelFromVision }
-							autoCapitalize="off"
-							autoComplete="off"
-							autoCorrect="off"
-							className={ hasError ? 'has-error' : '' }
-							help={
-								helpText ||
-								( hasUsernameChange && isUsernameValid( validationResult )
-									? __( 'Nice username!' )
-									: validationMessage )
-							}
-						/>
-					</VStack>
-				);
-			},
-		},
-		{
-			id: 'username_confirmation',
-			label: '',
-			type: 'text',
-			Edit: () => (
-				<UsernameUpdateForm
-					hasUsernameChange={ hasUsernameChange }
-					userLoginConfirm={ userLoginConfirm }
-					usernameToConfirm={ edits.user_login }
-					validationResult={ validationResult }
-					isSubmittingUsername={ isSubmittingUsername }
-					usernameAction={ usernameAction }
-					onConfirmChange={ setUserLoginConfirm }
-					onActionChange={ setUsernameAction }
-					onShowConfirmModal={ () => setShowConfirmModal( true ) }
-					onCancel={ cancelUsernameChange }
-				/>
-			),
-		},
-		{
-			id: 'user_email',
-			label: __( 'Email address' ),
-			type: 'email',
-			Edit: ( { field, data, onChange, hideLabelFromVision } ) => (
-				<InputControl
-					__next40pxDefaultSize
-					type="email"
-					label={ hideLabelFromVision ? '' : field.label }
-					value={ data.user_email || '' }
-					onChange={ ( value ) => onChange( { user_email: value } ) }
-				/>
-			),
-		},
-		{
-			id: 'is_dev_account',
-			label: __( 'I am a developer' ),
-			type: 'boolean',
-			description: __( 'Opt in to previews of new developer-focused features.' ),
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { id, getValue, description } = field;
-				return (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						label={ hideLabelFromVision ? '' : field.label }
-						help={ description }
-						checked={ getValue( { item: data } ) }
-						onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
-					/>
-				);
-			},
-		},
 	];
 
-	const form: Form = {
+	const devAccountField: Field< UserSettings > = {
+		id: 'is_dev_account',
+		label: __( 'I am a developer' ),
+		type: 'boolean',
+		description: __( 'Opt in to previews of new developer-focused features.' ),
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { id, getValue, description } = field;
+			return (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					label={ hideLabelFromVision ? '' : field.label }
+					help={ description }
+					checked={ getValue( { item: data } ) }
+					onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
+				/>
+			);
+		},
+	};
+
+	const nameForm: Form = {
 		layout: {
 			type: 'regular' as const,
 			labelPosition: 'top' as const,
 		},
-		fields: [
-			'first_name',
-			'last_name',
-			'user_login',
-			'username_confirmation',
-			'user_email',
-			'is_dev_account',
-		],
+		fields: [ 'first_name', 'last_name' ],
 	};
 
+	const devForm: Form = {
+		layout: {
+			type: 'regular' as const,
+			labelPosition: 'top' as const,
+		},
+		fields: [ 'is_dev_account' ],
+	};
+
+	// Confirmation modal to update username
 	const renderConfirmationModal = () => (
 		<UsernameUpdateConfirmationModal
 			isVisible={ showConfirmModal }
 			currentUsername={ currentUsername }
-			currentUserDisplayName={ userSettings?.display_name || '' }
 			onConfirm={ submitUsernameForm }
 			onCancel={ () => setShowConfirmModal( false ) }
 		/>
@@ -311,10 +263,62 @@ export default function PersonalDetailsSection( {
 						<VStack spacing={ 4 }>
 							<SectionHeader level={ 3 } title={ __( 'Personal details' ) } />
 
+							{ /* First & last name */ }
 							<DataForm< UserSettings >
 								data={ data }
-								fields={ fields }
-								form={ form }
+								fields={ nameFields }
+								form={ nameForm }
+								onChange={ handleFieldChange }
+							/>
+
+							{ /* Username - rendered separately to avoid focus issues on DataForm custom Edit */ }
+							<VStack spacing={ 1 }>
+								<InputControl
+									__next40pxDefaultSize
+									label={ __( 'Username' ) }
+									value={ data.user_login || '' }
+									onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
+									disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
+									autoCapitalize="off"
+									autoComplete="off"
+									autoCorrect="off"
+									className={
+										hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
+											? 'has-error'
+											: ''
+									}
+									help={ getUsernameHelpText() }
+								/>
+							</VStack>
+
+							{ /* Update username form */ }
+							<UsernameUpdateForm
+								hasUsernameChange={ hasUsernameChange }
+								userLoginConfirm={ userLoginConfirm }
+								usernameToConfirm={ edits.user_login }
+								validationResult={ validationResult }
+								isSubmittingUsername={ isSubmittingUsername }
+								usernameAction={ usernameAction }
+								onConfirmChange={ setUserLoginConfirm }
+								onActionChange={ setUsernameAction }
+								onShowConfirmModal={ () => setShowConfirmModal( true ) }
+								onCancel={ cancelUsernameChange }
+							/>
+
+							{ /* Email address */ }
+							<InputControl
+								__next40pxDefaultSize
+								type="email"
+								label={ __( 'Email address' ) }
+								value={ data.user_email || '' }
+								onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
+							/>
+
+							{ /* Developer checkbox */ }
+							<DataForm< UserSettings >
+								data={ data }
+								fields={ [ devAccountField ] }
+								form={ devForm }
 								onChange={ handleFieldChange }
 							/>
 
