@@ -317,14 +317,15 @@ async function continueTask(
 /**
  * Continue an existing task with additional input (streaming)
  *
- * @param taskId          - The task ID to continue
- * @param message         - The message to send to continue the task
- * @param requestConfig   - Request configuration
- * @param toolProvider    - Tool provider for message enhancement
- * @param contextProvider - Context provider for message enhancement
- * @param sessionId       - Session identifier
- * @param abortSignal     - Optional abort signal
- * @param requestOptions  - Optional additional request options
+ * @param taskId               - The task ID to continue
+ * @param message              - The message to send to continue the task
+ * @param requestConfig        - Request configuration
+ * @param toolProvider         - Tool provider for message enhancement
+ * @param contextProvider      - Context provider for message enhancement
+ * @param sessionId            - Session identifier
+ * @param abortSignal          - Optional abort signal
+ * @param requestOptions       - Optional additional request options
+ * @param newConversationParts
  * @return AsyncIterable of task updates
  */
 async function continueTaskStreamed(
@@ -335,7 +336,8 @@ async function continueTaskStreamed(
 	contextProvider?: any,
 	sessionId?: string,
 	abortSignal?: AbortSignal,
-	requestOptions?: RequestOptions
+	requestOptions?: RequestOptions,
+	newConversationParts: Message[] = []
 ): Promise< AsyncIterable< TaskUpdate > > {
 	const continueParams = {
 		message,
@@ -371,7 +373,7 @@ async function continueTaskStreamed(
 		requestConfig,
 		sessionId,
 		true, // withHistory
-		[], // newConversationParts - empty for continueTask
+		newConversationParts, // preserve conversation parts across continuation
 		abortSignal,
 		options // Pass through the same request options
 	);
@@ -597,7 +599,8 @@ async function* processAgentResponseStream(
 						contextProvider,
 						sessionId,
 						abortSignal,
-						requestOptions
+						requestOptions,
+						newConversationParts
 					);
 
 					// Get the final result from the stream
@@ -713,7 +716,8 @@ async function* processAgentResponseStream(
 										contextProvider,
 										sessionId,
 										abortSignal,
-										requestOptions
+										requestOptions,
+										newConversationParts
 									);
 
 								// Get the final result from the stream
