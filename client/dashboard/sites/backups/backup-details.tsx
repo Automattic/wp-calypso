@@ -13,7 +13,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
-import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';

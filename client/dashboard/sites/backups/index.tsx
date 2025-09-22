@@ -13,7 +13,7 @@ import { __, isRTL } from '@wordpress/i18n';
 import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { FileBrowserProvider } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
