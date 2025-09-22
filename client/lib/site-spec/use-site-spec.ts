@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';
-import { getSiteSpecConfig, isSiteSpecEnabled } from './utils';
+import { getDefaultSiteSpecConfig, isSiteSpecEnabled, SiteSpecConfig } from './utils';
 
 declare global {
 	interface Window {
@@ -33,6 +33,7 @@ type UseSiteSpecOptions = {
 	container?: string | HTMLElement;
 	onMessage?: ( message: unknown ) => void;
 	onError?: ( error: unknown ) => void;
+	siteSpecConfig?: SiteSpecConfig;
 };
 
 /**
@@ -40,7 +41,7 @@ type UseSiteSpecOptions = {
  * Cleans up global loader state on unmount.
  */
 export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
-	const { container = '#site-spec-container', onMessage, onError } = options;
+	const { container = '#site-spec-container', onMessage, onError, siteSpecConfig } = options;
 
 	useEffect( () => {
 		// SSR/Non-browser guard
@@ -71,9 +72,11 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 					return;
 				}
 
+				const config = siteSpecConfig || getDefaultSiteSpecConfig();
+
 				window.SiteSpec.init( {
 					container: containerEl,
-					...getSiteSpecConfig(),
+					...config,
 					onMessage,
 					onError,
 				} );

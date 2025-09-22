@@ -11,11 +11,9 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -34,8 +32,15 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		...siteWordPressVersionQuery( site.ID ),
 		enabled: canView,
 	} );
-	const mutation = useMutation( siteWordPressVersionMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteWordPressVersionMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'WordPress version saved.' ),
+				error: __( 'Failed to save WordPress version.' ),
+			},
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
@@ -63,16 +68,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData.version, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'WordPress version saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save WordPress version.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( formData.version );
 	};
 
 	const renderForm = () => {

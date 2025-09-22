@@ -50,6 +50,7 @@ export interface DomainSearchConfig {
 	includeDotBlogSubdomain: boolean;
 	allowsUsingOwnDomain: boolean;
 	allowedTlds: string[];
+	includeOwnedDomainInSuggestions: boolean;
 }
 
 export interface DomainSearchProps {
