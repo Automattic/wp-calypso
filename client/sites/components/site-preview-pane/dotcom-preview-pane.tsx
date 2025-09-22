@@ -67,6 +67,11 @@ const DotcomPreviewPane = ( {
 	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
 	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
+	const isA4ADevSite = !! site?.is_a4a_dev_site;
+
+	const hasStagingSitesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
+	);
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -110,7 +115,7 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Staging Site' ),
 				// We don't have the callout for the staging site tab since we'll retire the tab.
-				enabled: isActiveAtomicSite,
+				enabled: hasStagingSitesFeature && ! isA4ADevSite,
 				featureIds: [ STAGING_SITE ],
 			},
 			{
@@ -168,6 +173,8 @@ const DotcomPreviewPane = ( {
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
 		isHostingFeaturesCalloutEnabled,
+		hasStagingSitesFeature,
+		isA4ADevSite,
 	] );
 
 	const itemData: ItemData = {
@@ -224,12 +231,6 @@ const DotcomPreviewPane = ( {
 		features,
 		selectedFeatureId: selectedSiteFeature,
 	} );
-
-	const hasStagingSitesFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
-	);
-
-	const isA4ADevSite = site?.is_a4a_dev_site || false;
 
 	const isProduction =
 		siteWithStagingIds.is_wpcom_atomic && ! siteWithStagingIds.is_wpcom_staging_site;
