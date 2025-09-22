@@ -6,11 +6,13 @@ import {
 import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
+import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
 import type {
 	DeploymentRun,
 	DeploymentRunWithDeploymentInfo,
@@ -22,7 +24,6 @@ export function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-
 	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
 		codeDeploymentsQuery( site.ID )
 	);
@@ -91,7 +92,10 @@ export function DeploymentsList() {
 			} ) );
 	}, [ deploymentRuns ] );
 
-	const fields = useDeploymentFields( { repositoryOptions, userNameOptions } );
+	const fields = useDeploymentFields( {
+		repositoryOptions,
+		userNameOptions,
+	} );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
 		view,
@@ -102,18 +106,39 @@ export function DeploymentsList() {
 	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );
 
 	return (
-		<DataViewsCard>
-			<DataViews
-				data={ filteredData }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				isLoading={ isLoading }
-				defaultLayouts={ DEFAULT_LAYOUTS }
-				paginationInfo={ paginationInfo }
-				getItemId={ ( item ) => item.id.toString() }
-				empty={ emptyTitle }
-			/>
-		</DataViewsCard>
+		<>
+			<DataViewsCard>
+				<DataViews
+					actions={ [
+						{
+							id: 'open-logs',
+							label: __( 'Open logs' ),
+							isPrimary: true,
+							icon: <Icon icon={ seen } />,
+							RenderModal: ( { items, closeModal } ) => (
+								<DeploymentLogsModalContent
+									onRequestClose={ () => {
+										closeModal?.();
+									} }
+									deployment={ items[ 0 ] }
+									siteId={ site.ID }
+								/>
+							),
+							hideModalHeader: true,
+							modalSize: 'large',
+						},
+					] }
+					data={ filteredData }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					isLoading={ isLoading }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+					paginationInfo={ paginationInfo }
+					getItemId={ ( item ) => item.id.toString() }
+					empty={ emptyTitle }
+				/>
+			</DataViewsCard>
+		</>
 	);
 }

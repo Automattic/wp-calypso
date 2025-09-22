@@ -1,4 +1,4 @@
-import { pluginsQuery } from '@automattic/api-queries';
+import { marketplaceSearchQuery, pluginsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -12,21 +12,47 @@ import { mapApiPluginsToDataViewPlugins } from './utils';
 import { defaultView } from './views';
 import type { PluginListRow } from './types';
 
+import './style.scss';
+
 export default function PluginsList() {
-	const { data: sitesPlugins, isLoading } = useQuery( pluginsQuery() );
+	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
 	const actions = getActions();
 	const [ view, setView ] = useState( defaultView );
 	const data = useMemo( () => mapApiPluginsToDataViewPlugins( sitesPlugins ), [ sitesPlugins ] );
+
 	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data, view, fields );
 	}, [ data, view ] );
+
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplace } = useQuery(
+		marketplaceSearchQuery( {
+			perPage: Number( view.perPage ),
+			slugs: filteredPlugins.map( ( plugin ) => plugin.slug ),
+		} )
+	);
+	const plugins = ( marketplacePlugins?.data.results || [] ).flat();
+	const iconsBySlug = useMemo( () => {
+		return plugins.reduce( ( acc, result ) => {
+			acc.set( result.fields.slug, result.fields.plugin.icons );
+			return acc;
+		}, new Map< string, PluginListRow[ 'icons' ] >() );
+	}, [ plugins ] );
+
+	const filteredPluginsWithIcons = useMemo( () => {
+		return filteredPlugins.map( ( plugin ) => {
+			return {
+				...plugin,
+				icons: iconsBySlug?.get( plugin.slug ) || null,
+			};
+		} );
+	}, [ filteredPlugins, iconsBySlug ] );
 
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Manage plugins' ) } /> }>
 			<DataViewsCard>
 				<DataViews
-					isLoading={ isLoading }
-					data={ filteredPlugins ?? [] }
+					isLoading={ isLoadingPlugins || isLoadingMarketplace }
+					data={ filteredPluginsWithIcons ?? [] }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
