@@ -1,0 +1,13 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.site-activity-logs__event-icon {
+	fill: $gray-700;
+	background-color: $gray-100;
+	border-radius: $radius-small;
+	padding: 4px;
+}
+
+.site-activity-logs__event {
+	color: $gray-900;
+}
