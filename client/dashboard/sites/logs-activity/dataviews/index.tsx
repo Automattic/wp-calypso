@@ -2,6 +2,7 @@ import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-cor
 import { siteActivityLogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, View, Field } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
@@ -66,6 +67,7 @@ function SiteActivityLogsDataViews( {
 			search={ false }
 			defaultLayouts={ { table: {} } }
 			onChangeView={ onChangeView }
+			empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
 		/>
 	);
 }
