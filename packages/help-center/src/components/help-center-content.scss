@@ -6,10 +6,28 @@
 		padding: 0;
 
 		.help-center__container-content-wrapper {
-			height: auto;
+			height: 100%;
 
 			> * {
 				box-sizing: border-box;
+			}
+		}
+	}
+
+	// Only show the blender when the footer is present.
+	&:has( .help-center__container-footer ) {
+		.help-center__container-content {
+			&::after {
+				$height: 80;
+				content: '';
+				height: #{$height}px;
+				margin-top: -79px;
+				z-index: 1;
+				background: linear-gradient( to bottom, transparent, #fff );
+				position: absolute;
+				width: 100%;
+				pointer-events: none;
+				opacity: calc( var( --scroll-progress, $height ) / $height );
 			}
 		}
 	}

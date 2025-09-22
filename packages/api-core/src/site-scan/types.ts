@@ -1,5 +1,5 @@
 export interface ThreatFixer {
-	fixer: 'update' | 'delete';
+	fixer: 'update' | 'delete' | 'replace' | 'edit' | 'rollback';
 	target?: string;
 	file?: string;
 	extensionStatus?: 'active' | 'inactive';
@@ -31,7 +31,7 @@ export interface Threat {
 	fixer?: ThreatFixer | null;
 	fixed_on?: string;
 	status: 'current' | 'fixed' | 'ignored';
-	fixable?: ThreatFixer | boolean;
+	fixable?: ThreatFixer;
 	extension?: ThreatExtension;
 	source?: string;
 	filename?: string;
@@ -49,6 +49,11 @@ export interface SiteScan {
 	state: 'unavailable' | 'idle' | 'scanning' | 'provisioning';
 	threats: Threat[];
 	has_cloud: boolean;
+	current: {
+		is_initial: boolean;
+		timestamp: string;
+		progress: number;
+	};
 	most_recent: {
 		is_initial: boolean;
 		timestamp: string;
@@ -66,4 +71,10 @@ export interface SiteScanHistory {
 		threats_found: number;
 		threats_resolved: number;
 	};
+}
+
+export interface ThreatActionOptions {
+	ignore?: boolean;
+	unignore?: boolean;
+	fix?: boolean;
 }

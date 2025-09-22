@@ -12,6 +12,7 @@ import {
 	domainTransferRequestQuery,
 	domainWhoisQuery,
 	domainConnectionSetupInfoQuery,
+	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -22,6 +23,13 @@ import {
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { StepName } from '../../domains/domain-connection-setup/types';
+import {
+	checkDomainNameServersPermissions,
+	checkDomainTransferPermissions,
+	checkDomainContactInfoPermissions,
+	checkDomainDnsRecordsPermissions,
+	checkDomainContactVerificationPermissions,
+} from '../../utils/domain-permissions';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -35,7 +43,11 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () => queryClient.ensureQueryData( domainsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -58,14 +70,31 @@ export const domainRoute = createRoute( {
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
+		const isTransferSubRoute = location.pathname.includes( '/transfer' );
+		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
+		const isDnsSubRoute = location.pathname.includes( '/dns' );
+		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
 
-		// If navigating to name-servers sub-route and user doesn't have permission,
+		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
-		if ( isNameServersSubRoute && ! domain.can_manage_name_servers ) {
-			throw new Error(
-				domain.cannot_manage_name_servers_reason ||
-					__( 'You do not have permission to manage name servers.' )
-			);
+		if ( isNameServersSubRoute ) {
+			checkDomainNameServersPermissions( domain );
+		}
+
+		if ( isTransferSubRoute ) {
+			checkDomainTransferPermissions( domain );
+		}
+
+		if ( isContactInfoSubRoute ) {
+			checkDomainContactInfoPermissions( domain );
+		}
+
+		if ( isDnsSubRoute ) {
+			checkDomainDnsRecordsPermissions( domain );
+		}
+
+		if ( isContactVerificationSubRoute ) {
+			checkDomainContactVerificationPermissions( domain );
 		}
 
 		return domain;
@@ -180,8 +209,8 @@ export const domainDnsEditRoute = createRoute( {
 	)
 );
 
-// Domain forwardings routes
-export const domainForwardingsRoute = createRoute( {
+// Domain forwarding routes
+export const domainForwardingRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -190,7 +219,7 @@ export const domainForwardingsRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings',
+	path: 'forwarding',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -198,8 +227,8 @@ export const domainForwardingsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings' )( {
+	import( '../../domains/domain-forwarding' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding' )( {
 			component: d.default,
 		} )
 	)
@@ -214,7 +243,7 @@ export const domainForwardingAddRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings/add',
+	path: 'forwarding/add',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -222,8 +251,8 @@ export const domainForwardingAddRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings/add' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings-add' )( {
+	import( '../../domains/domain-forwarding/add' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding-add' )( {
 			component: d.default,
 		} )
 	)
@@ -238,7 +267,7 @@ export const domainForwardingEditRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings/edit/$forwardingId',
+	path: 'forwarding/edit/$forwardingId',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -246,8 +275,8 @@ export const domainForwardingEditRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings/edit' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings-edit' )( {
+	import( '../../domains/domain-forwarding/edit' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding-edit' )( {
 			component: d.default,
 		} )
 	)
@@ -272,6 +301,30 @@ export const domainContactInfoRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainContactVerificationRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Contact verification' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'contact-verification',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-contact-verification' ).then( ( d ) =>
+		createLazyRoute( 'domain-contact-verification' )( {
 			component: d.default,
 		} )
 	)
@@ -504,10 +557,11 @@ export const createDomainsRoutes = () => {
 			domainDnsAddRoute,
 			domainDnsEditRoute,
 			domainConnectionSetupRoute,
-			domainForwardingsRoute,
+			domainForwardingRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
 			domainContactInfoRoute,
+			domainContactVerificationRoute,
 			domainNameServersRoute,
 			domainGlueRecordsRoute,
 			domainGlueRecordsAddRoute,

@@ -5,6 +5,7 @@ import {
 	DomainsFullCart,
 	DomainsFullCartItem,
 	DomainsFullCartItems,
+	DomainsFullCartSkipButton,
 	DomainsMiniCart,
 } from '../../ui';
 import type { SelectedDomain } from '../../page/types';
@@ -43,7 +44,8 @@ const CartItem = ( { item }: { item: SelectedDomain } ) => {
 };
 
 export const Cart = () => {
-	const { cart, isFullCartOpen, closeFullCart, events, openFullCart, slots } = useDomainSearch();
+	const { cart, isFullCartOpen, closeFullCart, config, events, openFullCart, slots } =
+		useDomainSearch();
 
 	const totalItems = cart.items.length;
 	const totalPrice = cart.total;
@@ -74,6 +76,11 @@ export const Cart = () => {
 						<CartItem key={ item.uuid } item={ item } />
 					) ) }
 				</DomainsFullCartItems>
+				{ config.skippable && (
+					<div>
+						<DomainsFullCartSkipButton onSkip={ () => events.onSkip() } />
+					</div>
+				) }
 			</DomainsFullCart>
 		</>
 	);

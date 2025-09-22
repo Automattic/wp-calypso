@@ -25,6 +25,10 @@ module.exports = {
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
+							// Allowed: calypso/components/marked-lines
+							'!calypso/components',
+							'calypso/components/*',
+							'!calypso/components/marked-lines',
 							// Allowed: calypso/my-sites/backup/backup-contents-page/file-browser (TESTING)
 							'!calypso/my-sites',
 							'calypso/my-sites/*',

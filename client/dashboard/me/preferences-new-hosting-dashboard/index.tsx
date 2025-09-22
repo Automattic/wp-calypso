@@ -117,7 +117,7 @@ export default function PreferencesLanguageForm() {
 		<Card>
 			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
 			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 6 } alignment="flex-start">
+				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }

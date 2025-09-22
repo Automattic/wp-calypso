@@ -14,9 +14,7 @@ const SupportDocLink = ( { title, onLinkClickHandler }: SearchResultItemProps ) 
 		<div className="odie-support-doc-link__container">
 			<div className="odie-support-doc-link__link">
 				<a href={ anchor } onClick={ onLinkClickHandler }>
-					<div className="icon-background">
-						<Icon icon={ page } />
-					</div>
+					<Icon icon={ page } />
 					<span>{ decodeEntities( title ) }</span>
 					<Icon width={ 20 } height={ 20 } icon={ chevronRight } />
 				</a>

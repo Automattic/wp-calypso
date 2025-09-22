@@ -2,9 +2,9 @@ import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useBackupState } from '../../app/hooks/site-backup-state';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
+import { useBackupState } from './use-backup-state';
 import type { Site } from '@automattic/api-core';
 
 /**
