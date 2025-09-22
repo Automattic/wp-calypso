@@ -229,7 +229,7 @@ export class ImportingPane extends PureComponent {
 			site,
 			invalidateCardData,
 			importerEngine,
-			originSite,
+			fromSite,
 		} = this.props;
 		const { customData } = importerStatus;
 
@@ -262,7 +262,7 @@ export class ImportingPane extends PureComponent {
 						siteId={ siteId }
 						importerStatus={ importerStatus }
 						importerEngine={ importerEngine }
-						originSite={ originSite }
+						fromSite={ fromSite }
 					/>
 				) }
 				{ this.isMapping() && (

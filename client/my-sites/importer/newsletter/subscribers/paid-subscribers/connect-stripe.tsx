@@ -15,19 +15,15 @@ import SuccessNotice from './success-notice';
 /**
  * Update the connect URL with the from_site and engine parameters.
  * @param connectUrl
- * @param originSite
+ * @param fromSite
  * @returns string
  */
-function updateConnectUrl(
-	connectUrl: string,
-	originSite: QueryArgParsed,
-	engine: string
-): string {
+function updateConnectUrl( connectUrl: string, fromSite: QueryArgParsed, engine: string ): string {
 	let stateQueryString = getQueryArg( connectUrl, 'state' ) as string | string[];
 	stateQueryString = Array.isArray( stateQueryString ) ? stateQueryString[ 0 ] : stateQueryString;
 
 	const decodedState = JSON.parse( atob( stateQueryString ) );
-	decodedState.from_site = originSite;
+	decodedState.from_site = fromSite;
 	decodedState.engine = engine;
 
 	return addQueryArgs( connectUrl, { state: btoa( JSON.stringify( decodedState ) ) } );
@@ -35,7 +31,7 @@ function updateConnectUrl(
 
 export default function ConnectStripe( {
 	cardData,
-	originSite,
+	fromSite,
 	engine,
 	selectedSite,
 	siteSlug,
@@ -45,7 +41,7 @@ export default function ConnectStripe( {
 		return null;
 	}
 
-	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', originSite, engine );
+	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
 	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
 
 	return (

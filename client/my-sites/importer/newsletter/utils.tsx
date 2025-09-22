@@ -97,14 +97,14 @@ export function getImporterStatus( steps?: Steps ): StepStatus {
 	return 'initial';
 }
 
-export function normalizeFromSite( originSite: string ) {
-	if ( ! originSite ) {
+export function normalizeFromSite( fromSite: string ) {
+	if ( ! fromSite ) {
 		return '';
 	}
-	const result = originSite.match( /\/@(?<slug>\w+)$/ );
+	const result = fromSite.match( /\/@(?<slug>\w+)$/ );
 	if ( result?.groups?.slug ) {
 		return result.groups.slug + '.substack.com';
 	}
 
-	return originSite;
+	return fromSite;
 }

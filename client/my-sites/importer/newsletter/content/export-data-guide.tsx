@@ -7,13 +7,13 @@ import exportSubstackDataImg from 'calypso/assets/images/importer/export-substac
 import { normalizeFromSite } from '../utils';
 
 export default function ExportDataGuide( {
-	originSite,
+	fromSite,
 	selectedSiteUrl,
 }: {
-	originSite: string;
+	fromSite: string;
 	selectedSiteUrl: string;
 } ) {
-	const normalizedFromSite = normalizeFromSite( originSite );
+	const normalizedFromSite = normalizeFromSite( fromSite );
 
 	const baseUrl = normalizedFromSite.startsWith( 'http' )
 		? normalizedFromSite

@@ -14,7 +14,7 @@ import SubscriberUploadForm from './upload-form';
 
 export default function StepInitial( {
 	selectedSite,
-	originSite,
+	fromSite,
 	siteSlug,
 	skipNextStep,
 	cardData,
@@ -73,7 +73,7 @@ export default function StepInitial( {
 			</p>
 
 			<Button
-				href={ `https://${ normalizeFromSite( originSite ) }/publish/subscribers` }
+				href={ `https://${ normalizeFromSite( fromSite ) }/publish/subscribers` }
 				target="_blank"
 				rel="noreferrer noopener"
 				icon={ external }

@@ -45,7 +45,7 @@ export class UploadingPane extends PureComponent {
 			invalidDescription: PropTypes.string,
 			validate: PropTypes.func,
 		} ),
-		originSite: PropTypes.string,
+		fromSite: PropTypes.string,
 		acceptedFileTypes: PropTypes.array,
 		nextStepUrl: PropTypes.string,
 		skipNextStep: PropTypes.func,
@@ -139,8 +139,8 @@ export class UploadingPane extends PureComponent {
 
 	initiateFromUploadButton = () => {
 		let url = this.state.urlInput;
-		if ( this.props.optionalUrl && this.props.originSite ) {
-			url = this.props.originSite;
+		if ( this.props.optionalUrl && this.props.fromSite ) {
+			url = this.props.fromSite;
 		}
 		this.startUpload( this.state.fileToBeUploaded, url );
 	};

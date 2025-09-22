@@ -50,7 +50,7 @@ function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 
 export default function NewsletterImporter( {
 	siteSlug,
-	engine,
+	engine = 'substack',
 	step = 'reset',
 }: NewsletterImporterProps ) {
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
@@ -68,7 +68,7 @@ export default function NewsletterImporter( {
 		autoFetchData
 	);
 	const { content, subscribers } = paidNewsletterData?.steps || {};
-	const originSite = paidNewsletterData?.import_url || '';
+	const fromSite = paidNewsletterData?.import_url || '';
 
 	useEffect( () => {
 		if ( content?.status === 'importing' || subscribers?.status === 'importing' ) {
@@ -110,7 +110,7 @@ export default function NewsletterImporter( {
 		data: urlData,
 		isFetching: isUrlFetching,
 		isError: isUrlError,
-	} = useAnalyzeUrlQuery( originSite );
+	} = useAnalyzeUrlQuery( fromSite );
 
 	const stepsProgress = getStepsProgress( engine, selectedSite?.slug || '', paidNewsletterData );
 	const nextStepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`;
@@ -138,10 +138,10 @@ export default function NewsletterImporter( {
 			<LogoChain logos={ logoChainLogos } />
 			<FormattedHeader headerText={ getTitle( engine, urlData ) } />
 
-			{ ( ! originSite || isResetPaidNewsletterPending ) && (
+			{ ( ! fromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
 					siteId={ selectedSite?.ID ?? 0 }
-					value={ originSite }
+					value={ fromSite }
 					siteSlug={ siteSlug }
 					engine={ engine }
 					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
@@ -149,18 +149,18 @@ export default function NewsletterImporter( {
 				/>
 			) }
 
-			{ originSite && ! isResetPaidNewsletterPending && (
+			{ fromSite && ! isResetPaidNewsletterPending && (
 				<StepProgress steps={ stepsProgress } currentStep={ currentStepNumber } />
 			) }
 
-			{ selectedSite && originSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
+			{ selectedSite && fromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
 				<>
 					{ step === 'content' && (
 						<Content
 							nextStepUrl={ nextStepUrl }
 							engine={ engine }
 							selectedSite={ selectedSite }
-							originSite={ originSite }
+							fromSite={ fromSite }
 							siteSlug={ siteSlug }
 							skipNextStep={ () => {
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
@@ -172,7 +172,7 @@ export default function NewsletterImporter( {
 							siteSlug={ siteSlug }
 							nextStepUrl={ nextStepUrl }
 							selectedSite={ selectedSite }
-							originSite={ originSite }
+							fromSite={ fromSite }
 							skipNextStep={ () => {
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
 							} }
@@ -187,7 +187,7 @@ export default function NewsletterImporter( {
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
 							resetImporter={ resetImporter }
-							originSite={ originSite }
+							fromSite={ fromSite }
 							showConfetti={ showConfetti }
 							shouldShownConfetti={ setShowConfetti }
 						/>
