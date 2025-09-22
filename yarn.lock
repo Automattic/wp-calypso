@@ -1257,6 +1257,7 @@ __metadata:
   resolution: "@automattic/domain-search@workspace:packages/domain-search"
   dependencies:
     "@automattic/api-core": "workspace:^"
+    "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"

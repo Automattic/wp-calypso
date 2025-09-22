@@ -12,7 +12,13 @@ const AVAILABLE_DOMAIN_STATUSES = [
 ];
 
 export const SearchNotice = () => {
-	const { query, queries, events, currentSiteUrl } = useDomainSearch();
+	const {
+		query,
+		queries,
+		events,
+		currentSiteUrl,
+		config: { includeOwnedDomainInSuggestions },
+	} = useDomainSearch();
 	const { error: suggestionError } = useQuery( queries.domainSuggestions( query ) );
 	const { data: availability, error: availabilityError } = useQuery(
 		queries.domainAvailability( query )
@@ -20,6 +26,13 @@ export const SearchNotice = () => {
 
 	const notice = useMemo( () => {
 		if ( ! availability || AVAILABLE_DOMAIN_STATUSES.includes( availability.status ) ) {
+			return null;
+		}
+
+		if (
+			includeOwnedDomainInSuggestions &&
+			availability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER
+		) {
 			return null;
 		}
 
@@ -47,7 +60,7 @@ export const SearchNotice = () => {
 		}
 
 		return getAvailabilityNotice( query, finalAvailability, events, currentSiteUrl );
-	}, [ query, availability, events, currentSiteUrl ] );
+	}, [ query, availability, events, currentSiteUrl, includeOwnedDomainInSuggestions ] );
 
 	const errorMessage = suggestionError?.message ?? availabilityError?.message;
 
