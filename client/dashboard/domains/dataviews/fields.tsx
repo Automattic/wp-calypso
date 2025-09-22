@@ -1,4 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -10,8 +12,7 @@ import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
-import type { Field } from '@wordpress/dataviews';
-
+import type { Field, Operator } from '@wordpress/dataviews';
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
 export const useFields = ( {
@@ -21,6 +22,26 @@ export const useFields = ( {
 	site?: Site;
 	showPrimaryDomainBadge?: boolean;
 } = {} ) => {
+	const { data: domains } = useQuery( domainsQuery() );
+
+	const siteElements = useMemo( () => {
+		if ( ! domains ) {
+			return [];
+		}
+		const siteMap = new Map< number, { value: string; label: string } >();
+
+		for ( const domain of domains ) {
+			if ( ! domain.is_domain_only_site && domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION ) {
+				siteMap.set( domain.blog_id, {
+					value: domain.blog_id.toString(),
+					label: domain.blog_name,
+				} );
+			}
+		}
+
+		return Array.from( siteMap.values() );
+	}, [ domains ] );
+
 	const fields: Field< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -72,12 +93,12 @@ export const useFields = ( {
 				label: __( 'Site' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => {
-					return item.blog_name ?? '';
+				elements: siteElements,
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
 				},
-				render: ( { field, item } ) => (
-					<DomainSiteField domain={ item } value={ field.getValue( { item } ) } />
-				),
+				getValue: ( { item }: { item: DomainSummary } ) => item.blog_id.toString(),
+				render: ( { item } ) => <DomainSiteField domain={ item } value={ item.blog_name ?? '' } />,
 			},
 			{
 				id: 'ssl_status',
@@ -91,9 +112,39 @@ export const useFields = ( {
 				label: __( 'Expires/Renews on' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) =>
-					item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '',
-				render: ( { field, item } ) => {
+				elements: [
+					{ value: 'next-7-days', label: __( 'Next 7 days' ) },
+					{ value: 'next-30-days', label: __( 'Next 30 days' ) },
+					{ value: 'next-90-days', label: __( 'Next 90 days' ) },
+					{ value: 'expired', label: __( 'Expired' ) },
+				],
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				getValue: ( { item }: { item: DomainSummary } ) => {
+					if ( ! item.expiry ) {
+						return '';
+					}
+
+					const expiryDate = new Date( item.expiry );
+					const now = new Date();
+					const diffInDays = Math.ceil(
+						( expiryDate.getTime() - now.getTime() ) / ( 1000 * 60 * 60 * 24 )
+					);
+
+					if ( diffInDays < 0 ) {
+						return 'expired';
+					} else if ( diffInDays <= 7 ) {
+						return 'next-7-days';
+					} else if ( diffInDays <= 30 ) {
+						return 'next-30-days';
+					} else if ( diffInDays <= 90 ) {
+						return 'next-90-days';
+					}
+
+					return 'later';
+				},
+				render: ( { item } ) => {
 					// Site Overview does not show the Status column, so we use this column for error messages.
 					if (
 						site &&
@@ -107,7 +158,7 @@ export const useFields = ( {
 					return (
 						<DomainExpiryField
 							domain={ item }
-							value={ field.getValue( { item } ) }
+							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
 							isCompact={ !! site }
 						/>
 					);
@@ -118,14 +169,21 @@ export const useFields = ( {
 				label: __( 'Status' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => item.domain_status?.status ?? '',
-				render: ( { field, item } ) => {
-					const value = field.getValue( { item } );
-					return value || <IneligibleIndicator />;
+				elements: [
+					{ value: 'success', label: __( 'Active' ) },
+					{ value: 'neutral', label: __( 'Parked' ) },
+					{ value: 'error', label: __( 'Expiring soon' ) },
+				],
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				getValue: ( { item } ) => item.domain_status?.status_type,
+				render: ( { item } ) => {
+					return item.domain_status?.status || <IneligibleIndicator />;
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge ]
+		[ site, showPrimaryDomainBadge, siteElements ]
 	);
 
 	return fields;

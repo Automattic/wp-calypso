@@ -32,6 +32,7 @@ import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
+import { Notice } from '../../components/notice';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
 
 // File browser config used for granular selection
@@ -449,7 +450,9 @@ function StagingSiteSyncModalInner( {
 							spacing={ 2 }
 							style={ {
 								borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-								borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+								borderBottom: hasWarning
+									? 'none'
+									: '1px solid var(--wp-components-color-gray-300, #ddd)',
 								padding: '16px 0',
 								marginTop: isFileBrowserVisible ? '16px' : '0',
 							} }
@@ -462,6 +465,15 @@ function StagingSiteSyncModalInner( {
 								onChange={ handleDatabaseCheckboxChange }
 							/>
 						</HStack>
+						{ hasWarning && (
+							<VStack style={ { marginTop: '20px' } }>
+								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
+									{ __(
+										'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+									) }
+								</Notice>
+							</VStack>
+						) }
 					</VStack>
 
 					{ showDomainConfirmation && (

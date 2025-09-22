@@ -1,0 +1,82 @@
+import { ignoreThreatMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
+import {
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	ExternalLink,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { ButtonStack } from '../../../components/button-stack';
+import { Notice } from '../../../components/notice';
+import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
+import { ThreatDescription } from './threat-description';
+import { ThreatsDetailCard } from './threats-detail-card';
+import type { Threat } from '@automattic/api-core';
+import type { RenderModalProps } from '@wordpress/dataviews';
+
+interface IgnoreThreatModalProps extends RenderModalProps< Threat > {
+	siteId: number;
+}
+
+export function IgnoreThreatModal( {
+	items,
+	closeModal,
+	onActionPerformed,
+	siteId,
+}: IgnoreThreatModalProps ) {
+	const threat = items[ 0 ];
+
+	const ignoreThreat = useMutation( ignoreThreatMutation( siteId ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const handleIgnoreThreat = () => {
+		ignoreThreat.mutate( threat.id, {
+			onSuccess: () => {
+				closeModal?.();
+				onActionPerformed?.( [ threat ] );
+				createSuccessNotice( __( 'Threat ignored.' ), { type: 'snackbar' } );
+			},
+			onError: () => {
+				closeModal?.();
+				createErrorNotice( __( 'Failed to ignore threat. Please try again.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
+	};
+
+	return (
+		<VStack spacing={ 4 }>
+			<Text variant="muted">{ __( 'Jetpack will be ignoring the following threat:' ) }</Text>
+			<ThreatsDetailCard threats={ [ threat ] } />
+			<ThreatDescription threat={ threat } />
+			<Notice variant="error">
+				{ createInterpolateElement(
+					__(
+						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with <codeable />.'
+					),
+					{
+						codeable: <ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>,
+					}
+				) }
+			</Notice>
+			<ButtonStack justify="flex-end">
+				<Button variant="tertiary" onClick={ closeModal }>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					variant="primary"
+					onClick={ handleIgnoreThreat }
+					isBusy={ ignoreThreat.isPending }
+					disabled={ ignoreThreat.isPending }
+				>
+					{ __( 'Ignore threat' ) }
+				</Button>
+			</ButtonStack>
+		</VStack>
+	);
+}
