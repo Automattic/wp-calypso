@@ -178,6 +178,7 @@ function StagingSiteSyncModalInner( {
 	} );
 	const productionSiteSlug = productionSite?.slug;
 	const productionSiteTitle = productionSite?.name;
+	const productionHasWoo = !! productionSite?.options?.woocommerce_is_active;
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
@@ -185,8 +186,10 @@ function StagingSiteSyncModalInner( {
 	} );
 	const stagingSiteSlug = stagingSite?.slug;
 	const stagingSiteTitle = stagingSite?.name;
+	const stagingHasWoo = !! stagingSite?.options?.woocommerce_is_active;
 
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+	const sourceHasWoo = sourceEnvironment === 'staging' ? stagingHasWoo : productionHasWoo;
 
 	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
 	const targetSiteTitle =
@@ -290,6 +293,8 @@ function StagingSiteSyncModalInner( {
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+	const showWooCommerceWarning =
+		sourceHasWoo && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -468,9 +473,30 @@ function StagingSiteSyncModalInner( {
 						{ hasWarning && (
 							<VStack style={ { marginTop: '20px' } }>
 								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
-									{ __(
-										'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
-									) }
+									<VStack spacing={ 2 }>
+										<Text as="p">
+											{ __(
+												'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+											) }
+										</Text>
+										{ showWooCommerceWarning && (
+											<Text as="p">
+												{ createInterpolateElement(
+													__(
+														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+													),
+													{
+														a: (
+															<ExternalLink
+																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+																children={ null }
+															/>
+														),
+													}
+												) }
+											</Text>
+										) }
+									</VStack>
 								</Notice>
 							</VStack>
 						) }
