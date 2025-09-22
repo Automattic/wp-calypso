@@ -11,10 +11,8 @@ import {
 	__experimentalHStack as HStack,
 	Spinner,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { Text } from '../../../components/text';
 
@@ -27,14 +25,15 @@ export const WebSettings = () => {
 	} );
 
 	const settings = data?.other.timeline;
-	const { mutate: updateSettings, isSuccess } = useMutation( userNotificationsSettingsMutation() );
-	const { createSuccessNotice } = useDispatch( noticesStore );
-
-	useEffect( () => {
-		if ( isSuccess ) {
-			createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
-		}
-	}, [ createSuccessNotice, isSuccess ] );
+	const { mutate: updateSettings } = useMutation( {
+		...userNotificationsSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Settings saved successfully.' ),
+				error: __( 'There was a problem saving your changes. Please, try again.' ),
+			},
+		},
+	} );
 
 	const isMutating =
 		useIsMutating( {

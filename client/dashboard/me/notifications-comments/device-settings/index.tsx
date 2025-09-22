@@ -6,23 +6,28 @@ import {
 import { useSuspenseQuery, useMutation, useIsMutating } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	SelectControl,
 	CardBody,
 	Card,
-	__experimentalHStack as HStack,
 	Spinner,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { Text } from '../../../components/text';
 
 export const DevicesSettings = () => {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
-	const { mutate: updateSettings, isSuccess } = useMutation( userNotificationsSettingsMutation() );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { mutate: updateSettings } = useMutation( {
+		...userNotificationsSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Settings saved successfully.' ),
+				error: __( 'There was a problem saving your changes. Please, try again.' ),
+			},
+		},
+	} );
 	//Currently, the update settings endpoint is taking a very long time to update the settings,
 	//so we are using the useIsMutating hook to check if the mutation is in progress on by any component and block the UI to prevent
 	//race conditions.
@@ -40,12 +45,6 @@ export const DevicesSettings = () => {
 	const settings = data.other.devices.find(
 		( device ) => device.device_id.toString() === selectedDeviceId
 	);
-
-	useEffect( () => {
-		if ( isSuccess ) {
-			createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
-		}
-	}, [ createSuccessNotice, isSuccess ] );
 
 	const handleChange = ( updated: SettingsOption ) => {
 		const updatedDevices = data?.other?.devices?.map( ( device ) => {
