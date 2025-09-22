@@ -56,6 +56,7 @@ const WP_CONTENT_PATH = '/wp-content';
 const SQL_PATH = '/sql';
 
 const fileBrowserConfig: FileBrowserConfig = {
+	applyFiltering: true,
 	restrictedTypes: [ 'plugin', 'theme' ],
 	restrictedPaths: [ 'wp-content' ],
 	excludeTypes: [ 'wordpress' ],
