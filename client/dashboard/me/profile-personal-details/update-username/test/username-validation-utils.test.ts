@@ -14,12 +14,25 @@ import {
 	type ValidationResult,
 } from '../username-validation-utils';
 
+type ValidateUsernameFn = (
+	username: string,
+	currentUsername: string,
+	setValidationResult: ( result: ValidationResult | null ) => void
+) => Promise< void >;
+type MockedValidateUsernameFn = jest.MockedFunction< ValidateUsernameFn > & {
+	_originalFn: ValidateUsernameFn;
+	cancel: jest.MockedFunction< () => void >;
+	flush: jest.MockedFunction< () => void >;
+	pending: jest.MockedFunction< () => boolean >;
+};
+
 // Mock dependencies
 jest.mock( '@wordpress/compose', () => {
-	const mockFn = jest.fn() as any;
+	const mockFn = jest.fn() as unknown as MockedValidateUsernameFn;
 	mockFn.cancel = jest.fn();
 	mockFn.flush = jest.fn();
 	mockFn.pending = jest.fn();
+	mockFn._originalFn = jest.fn();
 
 	return {
 		debounce: jest.fn( ( fn ) => {
@@ -68,7 +81,8 @@ describe( 'Username Validation Utils', () => {
 			} );
 
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
+			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
+				._originalFn;
 
 			await actualValidationFn( 'newusername', 'oldusername', setValidationResult );
 
@@ -85,7 +99,8 @@ describe( 'Username Validation Utils', () => {
 			mockValidateUsername.mockRejectedValue( apiError );
 
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
+			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
+				._originalFn;
 
 			await actualValidationFn( 'takenusername', 'oldusername', setValidationResult );
 
@@ -94,7 +109,8 @@ describe( 'Username Validation Utils', () => {
 
 		it( 'skips validation when username matches current username', async () => {
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
+			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
+				._originalFn;
 
 			await actualValidationFn( 'sameusername', 'sameusername', setValidationResult );
 
@@ -104,7 +120,8 @@ describe( 'Username Validation Utils', () => {
 
 		it( 'validates minimum length requirement', async () => {
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
+			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
+				._originalFn;
 
 			await actualValidationFn( 'ab', 'oldusername', setValidationResult );
 
@@ -117,7 +134,8 @@ describe( 'Username Validation Utils', () => {
 
 		it( 'validates allowed characters', async () => {
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
+			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
+				._originalFn;
 
 			await actualValidationFn( 'user@name', 'oldusername', setValidationResult );
 

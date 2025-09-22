@@ -41,8 +41,8 @@ async function validateUsernameInternal(
 		const result = await validateUsername( username );
 
 		setValidationResult( { ...result, validatedUsername: username } );
-	} catch ( error: any ) {
-		setValidationResult( error );
+	} catch ( error: unknown ) {
+		setValidationResult( error as ValidationResult );
 	}
 }
 

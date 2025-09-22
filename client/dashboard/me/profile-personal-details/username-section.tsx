@@ -218,8 +218,8 @@ export default function UsernameSection( {
 								currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
 								window.location.href = currentUrl.toString();
 							},
-							onError: ( error: any ) => {
-								setValidationResult( error );
+							onError: ( error: unknown ) => {
+								setValidationResult( error as ValidationResult );
 							},
 						}
 					);

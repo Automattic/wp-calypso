@@ -63,7 +63,7 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 	const { userSettingsQuery, isAutomatticianQuery } = require( '@automattic/api-queries' );
 
 	userSettingsQuery.mockReturnValue( {
-		queryKey: [ 'me', 'settings' ],
+		queryKey: [ 'me', 'settings', userData ],
 		queryFn: () => Promise.resolve( userData ),
 	} );
 
