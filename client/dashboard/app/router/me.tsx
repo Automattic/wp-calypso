@@ -10,9 +10,11 @@ import {
 	smsCountryCodesQuery,
 	twoStepAuthAppSetupQuery,
 	sshKeysQuery,
+	userNotificationsSettingsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
 import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -519,6 +521,11 @@ export const notificationsCommentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/comments',
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+			queryClient.ensureQueryData( userNotificationsDevicesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../me/notifications-comments' ).then( ( d ) =>
 		createLazyRoute( 'notifications-comments' )( {
@@ -537,6 +544,7 @@ export const notificationsExtrasRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/extras',
+	loader: () => queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {
