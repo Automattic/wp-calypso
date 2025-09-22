@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
 import { CodeHighlighter } from '../../components/code-highlighter';
+import { SectionHeader } from '../../components/section-header';
 import type { WorkflowValidationDefinition } from './use-workflow-validations';
 import type {
 	GitHubWorkflowValidation,
@@ -96,17 +97,19 @@ export const WorkflowValidationList = ( {
 
 	return (
 		<VStack spacing={ 3 }>
-			<HStack justify="space-between" alignment="center">
-				<Text weight={ 600 }>{ __( 'Workflow check' ) }</Text>
-				<Button
-					variant="secondary"
-					onClick={ onVerify }
-					disabled={ isLoading || ! canVerify }
-					isBusy={ isLoading }
-				>
-					{ __( 'Verify workflow' ) }
-				</Button>
-			</HStack>
+			<SectionHeader
+				title={ __( 'Workflow check' ) }
+				actions={
+					<Button
+						variant="secondary"
+						onClick={ onVerify }
+						disabled={ isLoading || ! canVerify }
+						isBusy={ isLoading }
+					>
+						{ __( 'Verify workflow' ) }
+					</Button>
+				}
+			/>
 
 			{ summaryMessage() }
 

@@ -18,6 +18,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
 import { useCreateCodeDeployment } from './use-create-code-deployment';
 import type { Site, GitHubInstallation, GitHubRepository } from '@automattic/api-core';
@@ -289,12 +290,12 @@ export const ConnectRepositoryForm = ( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<VStack spacing={ 1 }>
-				<Text weight={ 600 }>{ __( 'Configure repository connection' ) }</Text>
-				<Text variant="muted">
-					{ __( 'Select a repository and choose where you’d like your files to deploy.' ) }
-				</Text>
-			</VStack>
+			<SectionHeader
+				title={ __( 'Configure repository connection' ) }
+				description={ __(
+					"Select a repository and choose where you'd like your files to deploy."
+				) }
+			/>
 
 			<VStack spacing={ 2 }>
 				<HStack justify="space-between" alignment="center">
@@ -390,12 +391,12 @@ export const ConnectRepositoryForm = ( {
 			/>
 
 			<VStack spacing={ 2 }>
-				<Text weight={ 600 }>{ __( 'Pick your deployment mode' ) }</Text>
-				<Text variant="muted">
-					{ __(
+				<SectionHeader
+					title={ __( 'Pick your deployment mode' ) }
+					description={ __(
 						'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
 					) }
-				</Text>
+				/>
 				<RadioControl
 					selected={ deploymentMode }
 					onChange={ ( value ) => setDeploymentMode( value as 'simple' | 'advanced' ) }
