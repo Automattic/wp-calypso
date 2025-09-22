@@ -191,17 +191,17 @@ function McpSetupComponent( { path, userSettings } ) {
 							) }
 						</Text>
 						<VStack spacing={ 2 }>
-							<Text as="li">
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ translate(
 									'Running a bridge server using the WordPress.com-specific MCP package'
 								) }
 							</Text>
-							<Text as="li">
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ translate(
 									'Handling OAuth 2.1 authentication to securely connect to your WordPress.com account'
 								) }
 							</Text>
-							<Text as="li">
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ translate(
 									"Providing real-time access to your account's content and management features"
 								) }
@@ -274,7 +274,7 @@ function McpSetupComponent( { path, userSettings } ) {
 							</VStack>
 						</VStack>
 						<VStack spacing={ 3 }>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									translate(
 										'<code>%s</code> is a unique identifier for this WordPress.com account connection'
@@ -297,7 +297,7 @@ function McpSetupComponent( { path, userSettings } ) {
 									}
 								) }
 							</Text>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									translate(
 										'<code>%s</code> is the official WordPress.com MCP server package'

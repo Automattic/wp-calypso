@@ -6,7 +6,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
@@ -61,6 +61,11 @@ export const BlockedZendeskNotice: React.FC = () => {
 
 export const EmailFallbackNotice: React.FC = () => {
 	const navigate = useNavigate();
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	params.set( 'mode', 'EMAIL' );
+	params.set( 'wapuuFlow', 'true' );
+	const url = '/contact-form?' + params.toString();
 	return (
 		<div className="help-center__notice">
 			<p>
@@ -81,7 +86,7 @@ export const EmailFallbackNotice: React.FC = () => {
 							<Button
 								variant="link"
 								className="help-center__notice-link"
-								onClick={ () => navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' ) }
+								onClick={ () => navigate( url ) }
 							/>
 						),
 						guides: (

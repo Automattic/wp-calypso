@@ -18,6 +18,7 @@ import { useMemo, useState, createInterpolateElement } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import FlashMessage from '../../components/flash-message';
+import { SectionHeader } from '../../components/section-header';
 import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
 import ThanksToCommunityTranslator from './thanks-to-community-translator';
 import type { UserSettings } from '@automattic/api-core';
@@ -101,7 +102,6 @@ export default function PreferencesLanguageForm() {
 		fields: [
 			{
 				id: 'interfaceLanguage',
-				label: __( 'Language' ),
 				children: [
 					'language',
 					'use_fallback_for_incomplete_languages',
@@ -120,6 +120,8 @@ export default function PreferencesLanguageForm() {
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<ComboboxControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 						value={ field.getValue( { item: data } ) ?? '' }
 						label={ __( 'Interface language' ) }
 						onChange={ ( newValue ) => {
@@ -130,7 +132,6 @@ export default function PreferencesLanguageForm() {
 						placeholder={ __( 'Select a language' ) }
 						options={ field.elements || [] }
 						allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
-						__next40pxDefaultSize
 						help={
 							<>
 								{ __(
@@ -167,6 +168,7 @@ export default function PreferencesLanguageForm() {
 					! data.language || data.language === '' || !! isDefaultLocale( data.language );
 				return (
 					<CheckboxControl
+						__nextHasNoMarginBottom
 						checked={ isEmpathyModeFieldDisabled ? false : field.getValue( { item: data } ) }
 						label={ field.label }
 						disabled={ isEmpathyModeFieldDisabled }
@@ -187,6 +189,7 @@ export default function PreferencesLanguageForm() {
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<CheckboxControl
+						__nextHasNoMarginBottom
 						checked={ field.getValue( { item: data } ) }
 						label={ field.label }
 						onChange={ ( newValue ) => {
@@ -215,7 +218,8 @@ export default function PreferencesLanguageForm() {
 			<FlashMessage value="language" message={ __( 'Language setting saved.' ) } />
 			<Card>
 				<CardBody>
-					<VStack spacing={ 6 } className="dasboard-preferences__vstack">
+					<VStack spacing={ 3 } className="dasboard-preferences__vstack">
+						<SectionHeader level={ 3 } title={ __( 'Language' ) } />
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ languageFields }

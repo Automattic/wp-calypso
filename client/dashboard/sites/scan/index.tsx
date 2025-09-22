@@ -1,6 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery, siteScanQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
@@ -21,6 +21,11 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { ActiveThreatsDataViews } from '../scan-active';
 import { ScanHistoryDataViews } from '../scan-history';
 import illustrationUrl from './scan-callout-illustration.svg';
+import { ScanNotices } from './scan-notices';
+import { ScanNowButton } from './scan-now-button';
+import { ScanStatus } from './status';
+import { useScanState } from './use-scan-state';
+
 import './style.scss';
 
 const SCAN_TABS = [
@@ -33,16 +38,19 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const router = useRouter();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
+
+	const scanState = useScanState( site.ID );
+	const { scan, status } = scanState;
 
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
+	const threatCount = scan?.threats.length || 0;
 
 	const getPageDescription = () => {
 		if ( lastScanTime && lastScanRelativeTime ) {
 			return sprintf(
 				/* translators: %s: relative time since last scan */
-				__( 'Latest automated scan ran %s.' ),
+				__( 'Latest scan ran %s.' ),
 				lastScanRelativeTime
 			);
 		}
@@ -58,6 +66,14 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		}
 	};
 
+	const renderActiveTab = () => {
+		const showStatus = status === 'enqueued' || status === 'running';
+		if ( showStatus ) {
+			return <ScanStatus scanState={ scanState } />;
+		}
+		return <ActiveThreatsDataViews site={ site } />;
+	};
+
 	return (
 		<PageLayout
 			header={
@@ -66,7 +82,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					description={ getPageDescription() }
 					actions={
 						<ButtonStack>
-							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							<ScanNowButton site={ site } scanState={ scanState } />
 							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
@@ -82,6 +98,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					}
 				/>
 			}
+			notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
@@ -114,7 +131,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						</TabPanel>
 					</CardHeader>
 					<CardBody>
-						{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
+						{ scanTab === 'active' && renderActiveTab() }
 						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
 					</CardBody>
 				</Card>

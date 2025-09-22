@@ -1,6 +1,18 @@
 /**
  * Get account-level MCP abilities from user settings
  * This is for the /me/mcp route which manages account-level settings
+ * @typedef {Object} McpAbility
+ * @property {string} name
+ * @property {string} title
+ * @property {string} description
+ * @property {string} category
+ * @property {string} type
+ * @property {boolean} enabled
+ */
+/**
+ * Get account-level MCP abilities from user settings
+ * @param {Object} userSettings - The user settings object
+ * @returns {Record<string, McpAbility>} An object containing account-level MCP abilities
  */
 export function getAccountMcpAbilities( userSettings ) {
 	const mcpData = userSettings?.mcp_abilities;
@@ -27,6 +39,9 @@ export function getAccountMcpAbilities( userSettings ) {
 /**
  * Create API payload for account-level MCP abilities updates
  * This creates the new nested structure for account-level settings
+ * @param {Object} userSettings - The user settings object
+ * @param {Record<string, McpAbility>} abilities - The abilities object from form data
+ * @returns {Object} The API payload with mcp_abilities.account structure
  */
 export function createAccountApiPayload( userSettings, abilities ) {
 	// Convert abilities to the format expected by the API (1/0 instead of boolean)
@@ -48,6 +63,8 @@ export function createAccountApiPayload( userSettings, abilities ) {
 
 /**
  * Check if any account-level tools are enabled
+ * @param {Object} userSettings - The user settings object
+ * @returns {boolean} True if any account-level tools are enabled
  */
 export function hasEnabledAccountTools( userSettings ) {
 	const abilities = getAccountMcpAbilities( userSettings );

@@ -39,10 +39,12 @@ export interface DomainSummary {
 	domain: string;
 	domain_status?: {
 		status: string;
+		status_type: 'success' | 'neutral' | 'error';
 	};
 	expired: boolean;
 	expiry: string | false;
 	has_registration: boolean;
+	is_domain_only_site: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
 	is_pending_whois_update: boolean;

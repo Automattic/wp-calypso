@@ -25,7 +25,7 @@ export function ScanHistoryDataViews( { site }: { site: Site } ) {
 	const threats = scanHistory?.threats || [];
 
 	const fields = getFields();
-	const actions = getActions();
+	const actions = getActions( site.ID );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
 	const NoArchivedThreatsFound = () => {
