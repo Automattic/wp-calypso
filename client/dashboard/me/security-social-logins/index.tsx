@@ -62,7 +62,7 @@ const SocialLoginItem = ( {
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of the social login */
-						__( 'Social login %s connected.' ),
+						__( '%s login connected.' ),
 						service
 					),
 					{
@@ -84,7 +84,7 @@ const SocialLoginItem = ( {
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of the social login */
-						__( 'Social login %s disconnected.' ),
+						__( '%s login disconnected.' ),
 						service
 					),
 					{
