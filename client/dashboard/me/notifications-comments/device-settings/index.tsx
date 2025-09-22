@@ -48,16 +48,20 @@ export const DevicesSettings = () => {
 	}, [ createSuccessNotice, isSuccess ] );
 
 	const handleChange = ( updated: SettingsOption ) => {
+		const updatedDevices = data?.other?.devices?.map( ( device ) => {
+			if ( device.device_id.toString() === selectedDeviceId ) {
+				return {
+					...device,
+					[ updated.id ]: updated.value,
+				};
+			}
+			return device;
+		} );
+
 		updateSettings( {
 			data: {
-				...data,
 				other: {
-					...data.other,
-					devices: data.other.devices.map( ( device ) =>
-						device.device_id.toString() === selectedDeviceId
-							? { ...device, ...{ [ updated.id ]: updated.value } }
-							: device
-					),
+					devices: updatedDevices,
 				},
 			},
 		} );

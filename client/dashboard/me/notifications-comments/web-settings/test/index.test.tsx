@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { UserNotificationSettings } from '@automattic/api-core';
+import { InputUserNotificationSettings, UserNotificationSettings } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -39,9 +39,9 @@ const mockGetSettingsApiAndReply = ( data: Partial< UserNotificationSettings > )
 		.reply( 200, data );
 };
 
-const mockUpdateSettingsApiAndReply = ( data: Partial< UserNotificationSettings > ) => {
+const mockUpdateSettingsApiAndReply = ( data: InputUserNotificationSettings ) => {
 	return nock( 'https://public-api.wordpress.com:443' )
-		.post( '/rest/v1.1/me/notifications/settings?', data as any )
+		.post( '/rest/v1.1/me/notifications/settings?', data )
 		.once()
 		.reply( 200, data );
 };
@@ -98,11 +98,6 @@ describe( 'WebSettings', () => {
 			other: {
 				timeline: {
 					comment_like: true,
-					comment_reply: false,
-				},
-				devices: [],
-				email: {
-					comment_like: false,
 					comment_reply: false,
 				},
 			},

@@ -1,3 +1,4 @@
+import { InputUserNotificationSettings } from '@automattic/api-core';
 import {
 	userNotificationsSettingsMutation,
 	userNotificationsSettingsQuery,
@@ -42,15 +43,12 @@ export const WebSettings = () => {
 
 	const handleChange = ( updated: SettingsOption ) => {
 		const updatedSettings = {
-			data: {
-				...data,
-				other: {
-					...data?.other,
-					timeline: { ...settings, [ updated.id ]: updated.value },
-				},
+			other: {
+				timeline: { [ updated.id ]: updated.value },
 			},
-		};
-		updateSettings( updatedSettings );
+		} as InputUserNotificationSettings;
+
+		updateSettings( { data: updatedSettings } );
 	};
 
 	const options = useMemo(

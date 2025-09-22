@@ -37,10 +37,8 @@ export const EmailSettings = () => {
 	const handleChange = ( updated: SettingsOption ) => {
 		updateSettings( {
 			data: {
-				...data,
 				other: {
-					...data.other,
-					email: { ...settings, [ updated.id ]: updated.value },
+					email: { [ updated.id ]: updated.value },
 				},
 			},
 		} );

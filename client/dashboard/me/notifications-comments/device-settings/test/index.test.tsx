@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { UserNotificationDevice, UserNotificationSettings } from '@automattic/api-core';
+import {
+	InputUserNotificationSettings,
+	UserNotificationDevice,
+	UserNotificationSettings,
+} from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -39,9 +43,9 @@ const mockGetSettingsApiAndReply = ( data: Partial< UserNotificationSettings > )
 		.reply( 200, data );
 };
 
-const mockUpdateSettingsApiAndReply = ( data: Partial< UserNotificationSettings > ) => {
+const mockUpdateSettingsApiAndReply = ( data: InputUserNotificationSettings ) => {
 	return nock( 'https://public-api.wordpress.com:443' )
-		.post( '/rest/v1.1/me/notifications/settings?', data as any )
+		.post( '/rest/v1.1/me/notifications/settings?', data )
 		.once()
 		.reply( 200, data );
 };
@@ -267,7 +271,7 @@ describe( 'DevicesSettings', () => {
 			},
 		} );
 
-		const savedSettings = mockUpdateSettingsApiAndReply( {
+		const savedSettingsApi = mockUpdateSettingsApiAndReply( {
 			other: {
 				devices: [
 					{
@@ -276,14 +280,6 @@ describe( 'DevicesSettings', () => {
 						comment_reply: false,
 					},
 				],
-				timeline: {
-					comment_like: false,
-					comment_reply: false,
-				},
-				email: {
-					comment_like: false,
-					comment_reply: false,
-				},
 			},
 		} );
 
@@ -291,11 +287,17 @@ describe( 'DevicesSettings', () => {
 			wrapper: Wrapper,
 		} );
 
+		// Starts unchecked
+		expect(
+			await screen.findByRole( 'checkbox', { name: 'Likes on my comments' } )
+		).not.toBeChecked();
+
 		await userEvent.click(
 			await screen.findByRole( 'checkbox', { name: 'Likes on my comments' } )
 		);
-		await waitFor( () => {
-			expect( savedSettings.isDone() ).toBe( true );
+
+		await waitFor( async () => {
+			expect( savedSettingsApi.isDone() ).toBe( true );
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );

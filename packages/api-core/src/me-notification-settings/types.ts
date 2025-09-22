@@ -64,3 +64,13 @@ export interface UserNotificationSettings {
 	other: OtherNotificationSettings;
 	wpcom: WpcomNotificationSettings;
 }
+
+export type InputUserNotificationSettings = RecursivePartial< UserNotificationSettings >;
+
+type RecursivePartial< T > = {
+	[ P in keyof T ]?: T[ P ] extends ( infer U )[]
+		? RecursivePartial< U >[]
+		: T[ P ] extends object | undefined
+		? RecursivePartial< T[ P ] >
+		: T[ P ];
+};
