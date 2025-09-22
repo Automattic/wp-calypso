@@ -122,7 +122,7 @@ describe( 'SiteSpec Utils', () => {
 	} );
 
 	describe( 'getDefaultSiteSpecConfig', () => {
-		it( 'should return configuration object with all values', () => {
+		it( 'should return configuration object with all values including tracking', () => {
 			mockConfig.mockReturnValueOnce( {
 				agent_url: 'https://api.example.com/agent',
 				agent_id: 'test-agent-id',
@@ -135,6 +135,11 @@ describe( 'SiteSpec Utils', () => {
 				agentUrl: 'https://api.example.com/agent',
 				agentId: 'test-agent-id',
 				buildSiteUrl: 'https://example.com/build?spec_id=',
+				tracking: {
+					enabled: true,
+					prefix: 'jetpack_calypso',
+					getOverrides: expect.any( Function ),
+				},
 			} );
 		} );
 
@@ -154,6 +159,29 @@ describe( 'SiteSpec Utils', () => {
 
 			expect( result ).toEqual( {
 				agentId: 'test-agent-id',
+				tracking: {
+					enabled: true,
+					prefix: 'jetpack_calypso',
+					getOverrides: expect.any( Function ),
+				},
+			} );
+		} );
+
+		it( 'should always include tracking configuration with correct values', () => {
+			mockConfig.mockReturnValueOnce( {} );
+
+			const result = getDefaultSiteSpecConfig();
+
+			expect( result.tracking ).toEqual( {
+				enabled: true,
+				prefix: 'jetpack_calypso',
+				getOverrides: expect.any( Function ),
+			} );
+
+			// Test that getOverrides function returns expected values
+			const overrides = result.tracking?.getOverrides?.( 'test-event' );
+			expect( overrides ).toEqual( {
+				client: 'calypso',
 			} );
 		} );
 	} );
