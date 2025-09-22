@@ -23,7 +23,7 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields();
-	const actions = getActions();
+	const actions = getActions( site.ID );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );

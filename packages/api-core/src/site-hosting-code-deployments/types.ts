@@ -64,3 +64,21 @@ export interface DeploymentRunWithDeploymentInfo extends DeploymentRun {
 export interface CodeDeploymentDeleteResponse {
 	message: string;
 }
+
+export interface LogEntry {
+	message: string;
+	level: string;
+	timestamp: string;
+	context?: {
+		command: {
+			command_identifier: string;
+			exit_code: number;
+		};
+	};
+}
+
+export interface LogEntryDetail {
+	exit_code: number;
+	stdout: Array< string >;
+	stderr: Array< string >;
+}

@@ -17,13 +17,9 @@ type SimpleFilter = {
 };
 
 export function getAllowedFields( logType: LogType ): ReadonlyArray< string > {
-	if ( logType === LogType.PHP ) {
-		return [ 'severity' ];
-	}
-	if ( logType === LogType.ACTIVITY ) {
-		return [];
-	}
-	return [ 'cached', 'renderer', 'request_type', 'status' ];
+	return logType === LogType.PHP
+		? [ 'severity' ]
+		: [ 'cached', 'renderer', 'request_type', 'status' ];
 }
 
 export function getInitialFiltersFromSearch( logType: LogType, search: string ): Filter[] {

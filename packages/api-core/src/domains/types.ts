@@ -39,6 +39,7 @@ export interface DomainSummary {
 	domain: string;
 	domain_status?: {
 		status: string;
+		status_type: 'success' | 'neutral' | 'error';
 	};
 	expired: boolean;
 	expiry: string | false;

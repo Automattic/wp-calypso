@@ -38,51 +38,37 @@ export default function SshKeyForm( {
 	setIsEditing?: ( isEditing: boolean ) => void;
 	username: string;
 } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< SshKeyFormData >( {
 		key: '',
 	} );
 
-	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation(
-		createSshKeyMutation()
-	);
-	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation(
-		updateSshKeyMutation()
-	);
+	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation( {
+		...createSshKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'SSH key saved.' ),
+				error: __( 'Failed to save SSH key.' ),
+			},
+		},
+	} );
+	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation( {
+		...updateSshKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'SSH key saved.' ),
+				error: __( 'Failed to save SSH key.' ),
+			},
+		},
+	} );
 
 	const handleUpdateSshKey = () => {
-		updateSshKey( formData.key, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'SSH key updated.' ), {
-					type: 'snackbar',
-				} );
-				setIsEditing?.( false );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to update SSH key.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		updateSshKey( formData.key );
 	};
 
 	const handleCreateSshKey = () => {
-		createSshKey(
-			{ key: formData.key, name: 'default' },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'SSH key added.' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to add SSH key.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
-		);
+		createSshKey( { key: formData.key, name: 'default' } );
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
