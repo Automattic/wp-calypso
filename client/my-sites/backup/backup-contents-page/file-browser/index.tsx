@@ -37,14 +37,6 @@ interface FileBrowserProps {
 	// Tracks analytics callback
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 
-	// Granular download action callback
-	onRequestGranularDownload?: (
-		siteId: number,
-		rewindId: number,
-		includePaths: string,
-		excludePaths: string
-	) => void;
-
 	// Granular restore action callback
 	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
 }
@@ -58,7 +50,6 @@ function FileBrowser( {
 	isRestoreEnabled,
 	displayBackupDate,
 	onTrackEvent,
-	onRequestGranularDownload,
 	onRequestGranularRestore = () => {},
 }: FileBrowserProps ) {
 	// This is the path of the node that is clicked

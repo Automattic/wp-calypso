@@ -155,7 +155,6 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							hasCredentials={ hasCredentials }
 							isRestoreEnabled={ isRestoreEnabled }
 							onTrackEvent={ handleTrackEvent }
-							onRequestGranularDownload={ handleRequestGranularDownload }
 							onRequestGranularRestore={ handleRequestGranularRestore }
 						/>
 					</div>
