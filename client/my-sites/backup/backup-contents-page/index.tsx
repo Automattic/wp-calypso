@@ -62,13 +62,11 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		[ dispatch ]
 	);
 
-	const handleRequestGranularDownload = useCallback(
-		( siteId: number, rewindId: number, includePaths: string, excludePaths: string ) => {
-			dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
-			page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
-		},
-		[ dispatch, siteSlug ]
-	);
+	const handleRequestGranularDownload = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_download_multiple_files' ) );
+		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		page.redirect( backupDownloadPath( siteSlug, rewindId.toString() ) );
+	}, [ dispatch, siteId, rewindId, siteSlug, includePaths, excludePaths ] );
 
 	const handleRequestGranularRestore = useCallback( ( siteSlug: string, rewindId: number ) => {
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
@@ -111,14 +109,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 								<ButtonStack justify="flex-start">
 									<Button
 										__next40pxDefaultSize
-										onClick={ () => {
-											dispatch(
-												recordTracksEvent(
-													'calypso_jetpack_backup_browser_download_multiple_files'
-												)
-											);
-											handleRequestGranularDownload( siteId, rewindId, includePaths, excludePaths );
-										} }
+										onClick={ handleRequestGranularDownload }
 										variant="secondary"
 									>
 										{ translate( 'Download selected files' ) }
