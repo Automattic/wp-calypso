@@ -22,7 +22,6 @@ import {
 	domainRegistration,
 	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
-import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { isExternal } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
@@ -70,7 +69,6 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type { Context } from '@automattic/calypso-router';
 import type { SiteDetails } from '@automattic/data-stores';
 
-import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
 const noop = () => {};
@@ -496,19 +494,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 	}
 }
 
-const StyleWrappedDomainSearch = ( props: DomainSearchProps ) => {
-	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
-
-	return (
-		<>
-			<DomainSearch { ...props } />
-			{ ! shouldUseDomainSearchV2 && (
-				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--my-sites' ] } />
-			) }
-		</>
-	);
-};
-
 export default connect(
 	( state: IAppState ) => {
 		const site = getSelectedSite( state );
@@ -553,4 +538,4 @@ export default connect(
 		setDesignType,
 		fetchUsernameSuggestion,
 	}
-)( withCartKey( withShoppingCart( localize( StyleWrappedDomainSearch ) ) ) );
+)( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );
