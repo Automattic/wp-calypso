@@ -56,14 +56,11 @@ export default function () {
 		clientRender
 	);
 
-	// New v2 route for WP.com-based checkout implementation
-	if ( isEnabled( 'a4a-client-checkout-v2' ) ) {
-		page(
-			'/client/checkout/v2',
-			requireClientAccessContext,
-			controller.clientCheckoutV2Context,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/client/checkout/v2',
+		requireClientAccessContext,
+		controller.clientCheckoutV2Context,
+		makeLayout,
+		clientRender
+	);
 }
