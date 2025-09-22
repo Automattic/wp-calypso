@@ -52,7 +52,7 @@ export function maybeInitializeSupportSession( wpcom: {
 } ) {
 	if ( isSupportUserSession() ) {
 		const { user, token } = getStoredSupportUser();
-		debug( 'Booting hosting dashboard with support user', user );
+		debug( 'Booting Hosting Dashboard with support user', user );
 
 		window.sessionStorage.removeItem( STORAGE_KEY );
 
@@ -76,7 +76,7 @@ export function maybeInitializeSupportSession( wpcom: {
 	}
 
 	if ( isSupportNextSession() ) {
-		debug( 'Booting hosting dashboard with support next session' );
+		debug( 'Booting Hosting Dashboard with support next session' );
 		// "Support next" sessions don't need initializing because the
 		// browser extension handles this case.
 	}
