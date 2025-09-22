@@ -9,13 +9,15 @@ import { useActivityFields } from './fields';
 import { useActivityView } from './views';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 
+type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
+	logType: typeof LogType.ACTIVITY;
+	hasFullActivityLogsAccess: boolean;
+};
 function SiteActivityLogsDataViews( {
 	gmtOffset,
 	timezoneString,
 	site,
-}: SiteLogsDataViewsProps & {
-	logType: typeof LogType.ACTIVITY;
-} ) {
+}: SiteLogsDataViewsPropsActivity ) {
 	const [ view, setView ] = useActivityView();
 
 	const activityLogQueryParams: ActivityLogParams = {

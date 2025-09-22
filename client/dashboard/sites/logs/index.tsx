@@ -70,7 +70,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
 		}
 	};
-	const hasActivityLog =
+	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
 	return (
@@ -138,8 +138,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 										gmtOffset={ gmtOffset }
 										timezoneString={ timezoneString }
 										site={ site }
+										hasFullActivityLogsAccess={ hasActivityLogAccess }
 									/>
-									{ ! hasActivityLog && (
+									{ ! hasActivityLogAccess && (
 										<HStack alignment="center" expanded className="site-logs__callout is-activity">
 											<div className="site-logs__callout-content is-activity">
 												<ActivityLogsCallout siteSlug={ site.slug } />
