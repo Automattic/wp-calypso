@@ -6,10 +6,9 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { sitesRoute } from '../app/router/sites';
@@ -19,10 +18,10 @@ import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getActions } from './actions';
-import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
+import { useAppContextForSitesList } from './use-app-context-for-sites-list';
 import {
 	getView,
 	mergeViews,
@@ -88,7 +87,8 @@ export default function Sites() {
 	const actions = getActions( router );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const { newSiteButtonProps, newSiteButtonText, newSiteModalComponent, pageTitle } =
+		useAppContextForSitesList( 'sites-dashboard' );
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.type === 'list' ) {
@@ -133,22 +133,14 @@ export default function Sites() {
 
 	return (
 		<>
-			{ isModalOpen && (
-				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" />
-				</Modal>
-			) }
+			{ newSiteModalComponent }
 			<PageLayout
 				header={
 					<PageHeader
-						title={ __( 'Sites' ) }
+						title={ pageTitle }
 						actions={
-							<Button
-								variant="primary"
-								onClick={ () => setIsModalOpen( true ) }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add new site' ) }
+							<Button variant="primary" { ...newSiteButtonProps } __next40pxDefaultSize>
+								{ newSiteButtonText }
 							</Button>
 						}
 					/>
@@ -194,12 +186,8 @@ export default function Sites() {
 												{ __( 'Clear search' ) }
 											</Button>
 										) }
-										<Button
-											__next40pxDefaultSize
-											variant="primary"
-											onClick={ () => setIsModalOpen( true ) }
-										>
-											{ __( 'Add new site' ) }
+										<Button variant="primary" { ...newSiteButtonProps } __next40pxDefaultSize>
+											{ newSiteButtonText }
 										</Button>
 									</>
 								}
