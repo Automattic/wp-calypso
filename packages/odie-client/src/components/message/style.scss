@@ -235,6 +235,7 @@ $blueberry-color: #3858e9;
 
 			.foldable-card__summary,
 			.foldable-card__summary-expanded {
+				color: var(--studio-gray-80);
 				margin-right: 24px;
 			}
 
@@ -273,7 +274,7 @@ $blueberry-color: #3858e9;
 		}
 
 		.disclaimer {
-			color: var( --studio-gray-20 );
+			color: var( --studio-gray-60 );
 			font-size: $font-body-extra-small;
 			text-align: start;
 			margin-top: 8px;
