@@ -138,7 +138,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 										gmtOffset={ gmtOffset }
 										timezoneString={ timezoneString }
 										site={ site }
-										hasFullActivityLogsAccess={ hasActivityLogAccess }
+										hasActivityLogsAccess={ hasActivityLogAccess }
 									/>
 									{ ! hasActivityLogAccess && (
 										<HStack alignment="center" expanded className="site-logs__callout is-activity">

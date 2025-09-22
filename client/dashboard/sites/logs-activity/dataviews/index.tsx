@@ -11,7 +11,7 @@ import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 
 type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
-	hasFullActivityLogsAccess: boolean;
+	hasActivityLogsAccess: boolean;
 };
 function SiteActivityLogsDataViews( {
 	gmtOffset,
