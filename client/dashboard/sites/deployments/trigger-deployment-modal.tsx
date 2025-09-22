@@ -38,7 +38,7 @@ export interface DeploymentSelectControlProps {
 function DeploymentSelectControl( { data, field, onChange }: DeploymentSelectControlProps ) {
 	const { id, label, elements, getValue } = field;
 
-	const options = [ { label: __( 'Select a repository' ), value: '' }, ...elements ];
+	const options = [ { label: __( 'Select a repository' ), value: '' }, ...( elements ?? [] ) ];
 
 	return (
 		<SelectControl
