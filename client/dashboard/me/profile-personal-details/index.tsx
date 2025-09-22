@@ -68,11 +68,14 @@ export default function PersonalDetailsSection( {
 	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		if ( Object.keys( edits ).length === 0 ) {
+		// Exclude username changes from main form submission
+		const { user_login, ...submissionEdits } = edits;
+
+		if ( Object.keys( submissionEdits ).length === 0 ) {
 			return;
 		}
 
-		mutation.mutate( edits, {
+		mutation.mutate( submissionEdits, {
 			onSuccess: () => {
 				setEdits( {} );
 				createSuccessNotice( __( 'Settings saved successfully.' ), {
@@ -103,6 +106,10 @@ export default function PersonalDetailsSection( {
 	}, [] );
 
 	const isDirty = Object.keys( edits ).some( ( key ) => {
+		// Exclude username changes from main form dirty check since they need special handling
+		if ( key === 'user_login' ) {
+			return false;
+		}
 		return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
 	} );
 
