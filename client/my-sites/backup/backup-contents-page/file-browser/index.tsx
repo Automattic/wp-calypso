@@ -75,18 +75,8 @@ function FileBrowser( {
 
 	return (
 		<div>
-			{ ( fileBrowserConfig?.showHeader ?? true ) && (
-				<FileBrowserHeader
-					rewindId={ rewindId }
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					hasCredentials={ hasCredentials }
-					isRestoreEnabled={ isRestoreEnabled }
-					onTrackEvent={ onTrackEvent }
-					onRequestGranularDownload={ onRequestGranularDownload }
-					onRequestGranularRestore={ onRequestGranularRestore }
-				/>
-			) }
+			{ ( fileBrowserConfig?.showHeader ?? true ) && <FileBrowserHeader /> }
+			{ /* @TODO: remove this block once the new Staging Sync Modal is live */ }
 			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text
