@@ -6,9 +6,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Text } from '../../components/text';
 import UsernameUpdateForm from './update-username';
+import { announceToScreenReader } from './update-username/accessibility-utils';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
 	validateUsernameDebounced,
@@ -47,8 +48,22 @@ export default function UsernameSection( {
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
 
 	const usernameMutation = useMutation( usernameChangeMutation() );
+	const confirmFormRef = useRef< HTMLDivElement >( null );
+	const [ hasAnnouncedForm, setHasAnnouncedForm ] = useState( false );
 
 	const hasUsernameChange = !! ( value && value !== currentUsername );
+
+	// Accessibility: Announce when update user form appears
+	useEffect( () => {
+		if ( hasUsernameChange && ! hasAnnouncedForm ) {
+			announceToScreenReader(
+				__( 'Username confirmation form is now available. Please confirm your new username below.' )
+			);
+			setHasAnnouncedForm( true );
+		} else if ( ! hasUsernameChange ) {
+			setHasAnnouncedForm( false );
+		}
+	}, [ hasUsernameChange, hasAnnouncedForm ] );
 
 	// Input field helper text
 	const getHelpText = useCallback( () => {
@@ -159,18 +174,27 @@ export default function UsernameSection( {
 			</VStack>
 
 			{ /* Update username form */ }
-			<UsernameUpdateForm
-				hasUsernameChange={ hasUsernameChange }
-				userLoginConfirm={ userLoginConfirm }
-				usernameToConfirm={ value }
-				validationResult={ validationResult }
-				usernameAction={ usernameAction }
-				onConfirmChange={ setUserLoginConfirm }
-				onActionChange={ setUsernameAction }
-				onShowConfirmModal={ () => setShowConfirmModal( true ) }
-				onCancel={ cancelUsernameChange }
-				onValidationChange={ setValidationResult }
-			/>
+			<VStack
+				ref={ confirmFormRef }
+				role="region"
+				aria-label={ __( 'Username confirmation' ) }
+				aria-live="polite"
+				style={ hasUsernameChange ? {} : { display: 'none' } }
+				spacing={ 0 }
+			>
+				<UsernameUpdateForm
+					hasUsernameChange={ hasUsernameChange }
+					userLoginConfirm={ userLoginConfirm }
+					usernameToConfirm={ value }
+					validationResult={ validationResult }
+					usernameAction={ usernameAction }
+					onConfirmChange={ setUserLoginConfirm }
+					onActionChange={ setUsernameAction }
+					onShowConfirmModal={ () => setShowConfirmModal( true ) }
+					onCancel={ cancelUsernameChange }
+					onValidationChange={ setValidationResult }
+				/>
+			</VStack>
 
 			{ /* Confirmation modal to update username */ }
 			<UsernameUpdateConfirmationModal

@@ -1,6 +1,5 @@
 import { usernameChangeMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import React from 'react';
 import {
 	Button,
 	RadioControl,
@@ -10,6 +9,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
+import React, { useEffect, useState } from 'react';
+import { announceToScreenReader } from './accessibility-utils';
 import {
 	isUsernameValid,
 	getUsernameValidationMessage,
@@ -49,11 +50,30 @@ export default function UsernameUpdateForm( {
 	onValidationChange,
 }: UsernameUpdateFormProps ) {
 	const usernameMutation = useMutation( usernameChangeMutation() );
+	const [ hasAnnouncedRadioOptions, setHasAnnouncedRadioOptions ] = useState( false );
 
 	const cancelUsernameChange = () => {
 		onValidationChange( null );
 		onCancel();
 	};
+
+	// Accessibility: Announce when blog radio options appear
+	const actions = getAllowedActions( validationResult );
+	const showRadioOptions = Object.keys( actions ).length > 1;
+
+	useEffect( () => {
+		if ( showRadioOptions && ! hasAnnouncedRadioOptions ) {
+			announceToScreenReader(
+				__(
+					'Blog options are now available. You can choose whether to create a matching blog address.'
+				)
+			);
+			setHasAnnouncedRadioOptions( true );
+		} else if ( ! showRadioOptions ) {
+			setHasAnnouncedRadioOptions( false );
+		}
+	}, [ showRadioOptions, hasAnnouncedRadioOptions ] );
+
 	if ( ! hasUsernameChange || ! usernameToConfirm ) {
 		return null;
 	}
@@ -95,10 +115,8 @@ export default function UsernameUpdateForm( {
 		);
 	}
 
-	const actions = getAllowedActions( validationResult );
-
 	return (
-		<VStack spacing={ 3 }>
+		<VStack spacing={ 6 }>
 			<InputControl
 				__next40pxDefaultSize
 				label={ __( 'Confirm new username' ) }
@@ -123,16 +141,18 @@ export default function UsernameUpdateForm( {
 				help={ helpText }
 			/>
 
-			{ Object.keys( actions ).length > 1 && (
-				<RadioControl
-					label={ __( 'Would you like a matching blog address too?' ) }
-					selected={ usernameAction }
-					options={ Object.entries( actions ).map( ( [ value, label ] ) => ( {
-						value,
-						label,
-					} ) ) }
-					onChange={ ( value ) => onActionChange( value || 'none' ) }
-				/>
+			{ showRadioOptions && (
+				<VStack spacing={ 3 }>
+					<RadioControl
+						label={ __( 'Would you like a matching blog address too?' ) }
+						selected={ usernameAction }
+						options={ Object.entries( actions ).map( ( [ value, label ] ) => ( {
+							value,
+							label,
+						} ) ) }
+						onChange={ ( value ) => onActionChange( value || 'none' ) }
+					/>
+				</VStack>
 			) }
 
 			<HStack justify="flex-start">

@@ -13,10 +13,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useDispatch } from '@wordpress/data';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import UsernameSection from './username-section';
