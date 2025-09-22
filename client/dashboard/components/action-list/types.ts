@@ -36,4 +36,8 @@ export interface ActionListProps {
 	 * component.
 	 */
 	children: React.ReactNode;
+	/**
+	 * Whether the action list should have full width border.
+	 */
+	hasFullWidthBorder?: boolean;
 }

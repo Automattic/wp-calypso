@@ -14,4 +14,13 @@
 	.action-list__actions {
 		margin: -$grid-unit-20 0;
 	}
+
+	&.has-full-width-border {
+		.action-list__body {
+			padding-inline: 0;
+		}
+		.action-item {
+			padding-inline: $grid-unit-20;
+		}
+	}
 }
