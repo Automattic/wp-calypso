@@ -519,3 +519,8 @@ body.is-mobile-app-view {
 		}
 	}
 }
+
+// Universal header
+.layout.has-universal-header .lpc-header-nav-wrapper {
+	padding-top: var(--masterbar-height);
+}
