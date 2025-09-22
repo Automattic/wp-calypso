@@ -14,6 +14,11 @@ export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	tracking?: {
+		enabled?: boolean;
+		prefix?: string;
+		getOverrides?: ( eventName: string ) => Record< string, string >;
+	};
 }
 
 // Config key for URL functions
@@ -67,5 +72,12 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
 		agentUrl: siteSpecConfig?.agent_url,
 		agentId: siteSpecConfig?.agent_id,
 		buildSiteUrl: siteSpecConfig?.build_site_url,
+		tracking: {
+			enabled: true,
+			prefix: 'jetpack_calypso',
+			getOverrides: () => ( {
+				client: 'calypso',
+			} ),
+		},
 	};
 }
