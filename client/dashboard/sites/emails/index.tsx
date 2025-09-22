@@ -1,6 +1,6 @@
 import { Email, SiteDomain } from '@automattic/api-core';
 import { emailsQuery, siteBySlugQuery, siteDomainsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	ExternalLink,
@@ -106,7 +106,7 @@ const fields = [
 function SiteEmails() {
 	const navigate = useNavigate();
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site, isLoading: isSiteLoading } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site, isLoading: isSiteLoading } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Wait for site to load to know ID
 	const { data: domains, isLoading: isDomainsLoading } = useQuery(
