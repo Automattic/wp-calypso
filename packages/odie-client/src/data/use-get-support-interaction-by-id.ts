@@ -21,7 +21,16 @@ export const useGetSupportInteractionById = ( interactionId: string | null ) => 
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		enabled: !! interactionId,
-		staleTime: 1000 * 10, // 10 seconds
+		staleTime: 1000 * 10, // 10 seconds,
+		select: ( interaction ) => {
+			const env = isTestMode ? 'staging' : 'production';
+			// getting a support interaction by ID doesn't honor the isTestMode flag, so we need to throw an error if the interaction is in staging and we're not in test mode.
+			// this way to act as if the interaction is not found and create a new one. This is needed for people who have access to both staging and production.
+			if ( interaction?.environment !== env ) {
+				throw new Error( 'Support interaction not found' );
+			}
+			return interaction;
+		},
 	} );
 
 	return query;
