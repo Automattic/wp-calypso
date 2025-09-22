@@ -61,9 +61,9 @@ export default function StagingSiteSyncDropdown( {
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
 	const pullLabel =
-		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
+		environment === 'staging' ? __( 'Pull from Production…' ) : __( 'Pull from Staging…' );
 	const pushLabel =
-		environment === 'staging' ? __( 'Push to Production' ) : __( 'Push to Staging' );
+		environment === 'staging' ? __( 'Push to Production…' ) : __( 'Push to Staging…' );
 
 	const handleOpenModal = ( direction: StagingSiteSyncDirection ): void => {
 		setSyncDirection( direction );

@@ -160,8 +160,8 @@ describe( 'StagingSiteSyncDropdown', () => {
 			await user.click( getDropdownButton() );
 
 			await waitFor( () => {
-				expect( getMenuItem( 'Pull from Staging' ) ).toBeInTheDocument();
-				expect( getMenuItem( 'Push to Staging' ) ).toBeInTheDocument();
+				expect( getMenuItem( 'Pull from Staging…' ) ).toBeInTheDocument();
+				expect( getMenuItem( 'Push to Staging…' ) ).toBeInTheDocument();
 			} );
 		} );
 
@@ -178,8 +178,8 @@ describe( 'StagingSiteSyncDropdown', () => {
 			await user.click( getDropdownButton() );
 
 			await waitFor( () => {
-				expect( getMenuItem( 'Pull from Production' ) ).toBeInTheDocument();
-				expect( getMenuItem( 'Push to Production' ) ).toBeInTheDocument();
+				expect( getMenuItem( 'Pull from Production…' ) ).toBeInTheDocument();
+				expect( getMenuItem( 'Push to Production…' ) ).toBeInTheDocument();
 			} );
 		} );
 	} );
