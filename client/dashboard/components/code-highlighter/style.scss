@@ -1,17 +1,14 @@
-.github-workflow-code-highlighter {
-	font-size: $font-body-small;
+.code-highlighter {
 	height: fit-content;
 	max-height: 30lh;
 	border-radius: 4px;
-	background: transparent !important;
-	position: relative;
 
 	.language-yaml {
-		color: var( --studio-wordpress-blue-60 ) !important;
+		color: #2a46ce !important;
 		text-wrap: pretty;
 	}
 
 	.token.key.atrule {
-		color: var( --studio-green ) !important;
+		color: #008a20 !important;
 	}
 }
