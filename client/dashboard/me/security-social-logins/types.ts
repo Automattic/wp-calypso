@@ -8,5 +8,11 @@ export type SocialLoginButtonProps = {
 	isConnected: boolean;
 	handleDisconnect: () => void;
 	isLoading: boolean;
-	socialServiceResponse?: any;
+};
+
+export type AppleClient = {
+	auth: {
+		init: ( options: { clientId: string; redirectURI: string; state: string } ) => void;
+		signIn: () => void;
+	};
 };
