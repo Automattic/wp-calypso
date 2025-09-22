@@ -53,4 +53,16 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+
+	// Username change related fields
+	email_verified?: boolean;
+	user_login_can_be_changed?: boolean;
+}
+
+export interface UsernameValidationResult {
+	success?: boolean;
+	error?: string;
+	message?: string;
+	allowed_actions?: Record< string, string >;
+	validatedUsername?: string;
 }

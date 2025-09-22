@@ -1,4 +1,4 @@
-import { fetchUserSettings, updateUserSettings } from '@automattic/api-core';
+import { fetchUserSettings, updateUserSettings, submitUsernameChange } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
@@ -20,5 +20,15 @@ export const userSettingsMutation = () =>
 						...newData,
 					}
 			);
+		},
+	} );
+
+export const usernameChangeMutation = () =>
+	mutationOptions( {
+		mutationFn: ( { username, action }: { username: string; action: string } ) =>
+			submitUsernameChange( username, action ),
+		onSuccess: () => {
+			// Invalidate user settings to refetch updated data
+			queryClient.invalidateQueries( { queryKey: [ 'me', 'settings' ] } );
 		},
 	} );

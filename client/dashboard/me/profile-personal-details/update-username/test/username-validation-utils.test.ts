@@ -3,7 +3,10 @@
  */
 
 import { debounce } from '@wordpress/compose';
-import wpcom from 'calypso/lib/wp';
+import {
+	validateUsername,
+	submitUsernameChange as apiSubmitUsernameChange,
+} from '@automattic/api-core';
 import {
 	validateUsernameDebounced,
 	isUsernameValid,
@@ -18,15 +21,16 @@ jest.mock( '@wordpress/compose', () => ( {
 	debounce: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-		post: jest.fn(),
-	},
+jest.mock( '@automattic/api-core', () => ( {
+	validateUsername: jest.fn(),
+	submitUsernameChange: jest.fn(),
 } ) );
 
 const mockDebounce = debounce as jest.MockedFunction< typeof debounce >;
-const mockWpcom = wpcom as jest.Mocked< typeof wpcom >;
+const mockValidateUsername = validateUsername as jest.MockedFunction< typeof validateUsername >;
+const mockApiSubmitUsernameChange = apiSubmitUsernameChange as jest.MockedFunction<
+	typeof apiSubmitUsernameChange
+>;
 
 const createMockDebouncedFn = () => {
 	const mockValidationFn = jest.fn() as any;
@@ -57,7 +61,7 @@ describe( 'Username Validation Utils', () => {
 		it( 'validates username with API call', async () => {
 			createMockDebouncedFn();
 
-			mockWpcom.req.get.mockResolvedValue( {
+			mockValidateUsername.mockResolvedValue( {
 				success: true,
 				allowed_actions: { none: 'Just change username' },
 			} );
@@ -68,7 +72,7 @@ describe( 'Username Validation Utils', () => {
 
 			await actualValidationFn( 'newusername', 'oldusername', setValidationResult );
 
-			expect( mockWpcom.req.get ).toHaveBeenCalledWith( '/me/username/validate/newusername' );
+			expect( mockValidateUsername ).toHaveBeenCalledWith( 'newusername' );
 			expect( setValidationResult ).toHaveBeenCalledWith( {
 				success: true,
 				allowed_actions: { none: 'Just change username' },
@@ -80,7 +84,7 @@ describe( 'Username Validation Utils', () => {
 			createMockDebouncedFn();
 
 			const apiError = { error: 'username_taken', message: 'Username is already taken' };
-			mockWpcom.req.get.mockRejectedValue( apiError );
+			mockValidateUsername.mockRejectedValue( apiError );
 
 			const setValidationResult = jest.fn();
 			const actualValidationFn = mockDebounce.mock.calls[ 0 ][ 0 ] as any;
@@ -98,7 +102,7 @@ describe( 'Username Validation Utils', () => {
 
 			await actualValidationFn( 'sameusername', 'sameusername', setValidationResult );
 
-			expect( mockWpcom.req.get ).not.toHaveBeenCalled();
+			expect( mockValidateUsername ).not.toHaveBeenCalled();
 			expect( setValidationResult ).toHaveBeenCalledWith( null );
 		} );
 
@@ -110,7 +114,7 @@ describe( 'Username Validation Utils', () => {
 
 			await actualValidationFn( 'ab', 'oldusername', setValidationResult );
 
-			expect( mockWpcom.req.get ).not.toHaveBeenCalled();
+			expect( mockValidateUsername ).not.toHaveBeenCalled();
 			expect( setValidationResult ).toHaveBeenCalledWith( {
 				error: 'invalid_input',
 				message: 'Usernames must be at least 4 characters.',
@@ -125,7 +129,7 @@ describe( 'Username Validation Utils', () => {
 
 			await actualValidationFn( 'user@name', 'oldusername', setValidationResult );
 
-			expect( mockWpcom.req.get ).not.toHaveBeenCalled();
+			expect( mockValidateUsername ).not.toHaveBeenCalled();
 			expect( setValidationResult ).toHaveBeenCalledWith( {
 				error: 'invalid_input',
 				message: 'Usernames can only contain lowercase letters (a-z) and numbers.',
@@ -183,19 +187,16 @@ describe( 'Username Validation Utils', () => {
 
 	describe( 'submitUsernameChange', () => {
 		it( 'calls API with correct parameters', async () => {
-			mockWpcom.req.post.mockResolvedValue( { success: true } );
+			mockApiSubmitUsernameChange.mockResolvedValue( { success: true } );
 
 			await submitUsernameChange( 'newusername', 'redirect' );
 
-			expect( mockWpcom.req.post ).toHaveBeenCalledWith( '/me/username', {
-				username: 'newusername',
-				action: 'redirect',
-			} );
+			expect( mockApiSubmitUsernameChange ).toHaveBeenCalledWith( 'newusername', 'redirect' );
 		} );
 
 		it( 'returns API response', async () => {
 			const expectedResponse = { success: true, message: 'Username changed' };
-			mockWpcom.req.post.mockResolvedValue( expectedResponse );
+			mockApiSubmitUsernameChange.mockResolvedValue( expectedResponse );
 
 			const result = await submitUsernameChange( 'newusername', 'none' );
 
@@ -204,7 +205,7 @@ describe( 'Username Validation Utils', () => {
 
 		it( 'propagates API errors', async () => {
 			const apiError = new Error( 'Network error' );
-			mockWpcom.req.post.mockRejectedValue( apiError );
+			mockApiSubmitUsernameChange.mockRejectedValue( apiError );
 
 			await expect( submitUsernameChange( 'newusername', 'none' ) ).rejects.toThrow(
 				'Network error'

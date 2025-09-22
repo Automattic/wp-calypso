@@ -2,6 +2,7 @@ import {
 	isAutomatticianQuery,
 	userSettingsMutation,
 	userSettingsQuery,
+	usernameChangeMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -26,7 +27,6 @@ import {
 	validateUsernameDebounced,
 	isUsernameValid,
 	getUsernameValidationMessage,
-	submitUsernameChange,
 	type ValidationResult,
 } from './update-username/username-validation-utils';
 import type { UserSettings } from '@automattic/api-core';
@@ -49,9 +49,9 @@ export default function PersonalDetailsSection( {
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
 	const [ usernameChangeSuccess, setUsernameChangeSuccess ] = useState( false );
-	const [ isSubmittingUsername, setIsSubmittingUsername ] = useState( false );
 
 	const mutation = useMutation( userSettingsMutation() );
+	const usernameMutation = useMutation( usernameChangeMutation() );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
 
 	const currentUsername = userSettings?.user_login || '';
@@ -155,20 +155,22 @@ export default function PersonalDetailsSection( {
 
 		const action = usernameAction || 'none';
 
-		setIsSubmittingUsername( true );
 		setShowConfirmModal( false );
 
-		try {
-			await submitUsernameChange( username, action );
-
-			// Reload the page to refresh cookies and user object
-			const currentUrl = new URL( window.location.href );
-			currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
-			window.location.href = currentUrl.toString();
-		} catch ( error: any ) {
-			setIsSubmittingUsername( false );
-			setValidationResult( error );
-		}
+		usernameMutation.mutate(
+			{ username, action },
+			{
+				onSuccess: () => {
+					// Reload the page to refresh cookies and user object
+					const currentUrl = new URL( window.location.href );
+					currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
+					window.location.href = currentUrl.toString();
+				},
+				onError: ( error: any ) => {
+					setValidationResult( error );
+				},
+			}
+		);
 	};
 
 	// General form event handlers
@@ -211,7 +213,7 @@ export default function PersonalDetailsSection( {
 			return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
 		} );
 
-	const isSaving = mutation.isPending || isSubmittingUsername;
+	const isSaving = mutation.isPending || usernameMutation.isPending;
 
 	// DataForm fields
 	const nameFields: Field< UserSettings >[] = [
@@ -331,7 +333,7 @@ export default function PersonalDetailsSection( {
 								userLoginConfirm={ userLoginConfirm }
 								usernameToConfirm={ edits.user_login }
 								validationResult={ validationResult }
-								isSubmittingUsername={ isSubmittingUsername }
+								isSubmittingUsername={ usernameMutation.isPending }
 								usernameAction={ usernameAction }
 								onConfirmChange={ setUserLoginConfirm }
 								onActionChange={ setUsernameAction }

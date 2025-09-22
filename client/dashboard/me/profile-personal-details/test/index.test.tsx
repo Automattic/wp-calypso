@@ -19,7 +19,6 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 	validateUsernameDebounced: jest.fn(),
 	isUsernameValid: jest.fn(),
 	getUsernameValidationMessage: jest.fn(),
-	submitUsernameChange: jest.fn(),
 } ) );
 
 const renderWithUserData = ( userData = mockUserSettings ) => {

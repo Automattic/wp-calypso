@@ -1,19 +1,17 @@
 import { debounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import wpcom from 'calypso/lib/wp';
+import {
+	validateUsername,
+	submitUsernameChange as apiSubmitUsernameChange,
+} from '@automattic/api-core';
+import type { UsernameValidationResult } from '@automattic/api-core';
 
 const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
 const USERNAME_MIN_LENGTH = 4;
 
-export interface ValidationResult {
-	success?: boolean;
-	error?: string;
-	message?: string;
-	allowed_actions?: Record< string, string >;
-	validatedUsername?: string;
-}
+export type ValidationResult = UsernameValidationResult;
 
-async function validateUsername(
+async function validateUsernameInternal(
 	username: string,
 	currentUsername: string,
 	setValidationResult: ( result: ValidationResult | null ) => void
@@ -40,20 +38,18 @@ async function validateUsername(
 			return;
 		}
 
-		const { success, allowed_actions } = await wpcom.req.get(
-			`/me/username/validate/${ username }`
-		);
+		const result = await validateUsername( username );
 
-		setValidationResult( { success, allowed_actions, validatedUsername: username } );
+		setValidationResult( { ...result, validatedUsername: username } );
 	} catch ( error: any ) {
 		setValidationResult( error );
 	}
 }
 
 export const validateUsernameDebounced = debounce(
-	validateUsername as ( ...args: unknown[] ) => unknown,
+	validateUsernameInternal as ( ...args: unknown[] ) => unknown,
 	600
-) as typeof validateUsername;
+) as typeof validateUsernameInternal;
 
 export function isUsernameValid( validationResult: ValidationResult | null ): boolean {
 	return !! (
@@ -82,5 +78,5 @@ export function getAllowedActions(
 }
 
 export async function submitUsernameChange( username: string, action: string ) {
-	return wpcom.req.post( '/me/username', { username, action } );
+	return apiSubmitUsernameChange( username, action );
 }
