@@ -105,18 +105,24 @@ export default function MonitoringCard( {
 	return (
 		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
-				{ tracksId && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_monitoring_card_impression"
-						properties={ { feature: tracksId } }
-					/>
-				) }
-				{ topContent }
-				{ ! isLoading && children && (
-					<VStack className="dashboard-monitoring-card__content" spacing={ 2 } justify="flex-start">
-						{ children }
-					</VStack>
-				) }
+				<VStack spacing={ 4 }>
+					{ tracksId && (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_monitoring_card_impression"
+							properties={ { feature: tracksId } }
+						/>
+					) }
+					{ topContent }
+					{ ! isLoading && children && (
+						<VStack
+							className="dashboard-monitoring-card__content"
+							spacing={ 2 }
+							justify="flex-start"
+						>
+							{ children }
+						</VStack>
+					) }
+				</VStack>
 			</CardBody>
 		</Card>
 	);
