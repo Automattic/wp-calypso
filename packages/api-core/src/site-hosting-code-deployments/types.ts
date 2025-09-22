@@ -9,7 +9,7 @@ export type DeploymentRunStatus =
 	| 'dispatched'
 	| 'unknown';
 
-export interface DeploymentRunMetadata {
+interface DeploymentRunMetadata {
 	commit_message: string;
 	commit_sha: string;
 	job_id: number;
@@ -26,7 +26,7 @@ export interface DeploymentRun {
 	code_deployment_id: number;
 	created_on: string;
 	started_on: string;
-	completed_on: string;
+	completed_on: string | null;
 	status: DeploymentRunStatus;
 	failure_code: string | null;
 	triggered_by_user_id: number;
@@ -63,4 +63,22 @@ export interface DeploymentRunWithDeploymentInfo extends DeploymentRun {
 
 export interface CodeDeploymentDeleteResponse {
 	message: string;
+}
+
+export interface LogEntry {
+	message: string;
+	level: string;
+	timestamp: string;
+	context?: {
+		command: {
+			command_identifier: string;
+			exit_code: number;
+		};
+	};
+}
+
+export interface LogEntryDetail {
+	exit_code: number;
+	stdout: Array< string >;
+	stderr: Array< string >;
 }

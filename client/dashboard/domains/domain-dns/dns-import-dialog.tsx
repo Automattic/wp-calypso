@@ -8,9 +8,7 @@ import {
 	CheckboxControl,
 	__experimentalDivider as Divider,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import type { DnsRecord } from '@automattic/api-core';
@@ -31,9 +29,16 @@ export default function DnsImportDialog( {
 	onCancel,
 }: DnsImportDialogProps ) {
 	const [ selectedRecords, setSelectedRecords ] = useState< Set< string > >( new Set() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
+	const updateDnsMutation = useMutation( {
+		...domainDnsMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'DNS records saved.' ),
+				error: __( 'Failed to save DNS records.' ),
+			},
+		},
+	} );
 
 	// Initialize all records as selected when records change
 	useEffect( () => {
@@ -87,15 +92,9 @@ export default function DnsImportDialog( {
 			},
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'DNS records imported successfully!' ), {
-						type: 'snackbar',
-					} );
 					onConfirm();
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to import DNS records.' ), {
-						type: 'snackbar',
-					} );
 					onCancel();
 				},
 			}
@@ -180,7 +179,7 @@ export default function DnsImportDialog( {
 						onClick={ handleConfirm }
 						disabled={ numberOfSelectedRecords === 0 || updateDnsMutation.isPending }
 					>
-						{ __( 'Import Selected Records' ) }
+						{ __( 'Import selected records' ) }
 					</Button>
 				</ButtonStack>
 			</VStack>

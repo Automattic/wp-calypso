@@ -35,13 +35,13 @@ export function ThreatsDetailCard( { threats }: { threats: Threat[] } ) {
 	return (
 		<Card>
 			{ threats.map( ( threat, index ) => (
-				<>
+				<div key={ threat.id }>
 					<CardBody>
-						<ThreatDetail key={ threat.id } threat={ threat } />
+						<ThreatDetail threat={ threat } />
 					</CardBody>
 
 					{ index < threats.length - 1 && <CardDivider /> }
-				</>
+				</div>
 			) ) }
 		</Card>
 	);
