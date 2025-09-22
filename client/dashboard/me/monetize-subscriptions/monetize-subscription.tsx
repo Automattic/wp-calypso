@@ -58,8 +58,8 @@ function AutoRenewButton( {
 	isUpdating,
 	isProduct,
 }: {
-	disableAutoRenew: () => void;
-	enableAutoRenew: () => void;
+	disableAutoRenew: ( data: any, variables: object ) => void;
+	enableAutoRenew: ( data: any, variables: object ) => void;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
 	isProduct: boolean;
@@ -67,6 +67,23 @@ function AutoRenewButton( {
 } ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const title = isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' );
+	const onError = () => {
+		if ( isProduct ) {
+			createErrorNotice( __( 'There was a problem while removing your product.' ), {
+				actions: [
+					{
+						url: CALYPSO_CONTACT,
+						label: __( 'Please contact support' ),
+					},
+				],
+			} );
+		} else {
+			createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
+				url: CALYPSO_CONTACT,
+				label: __( 'Please contact support' ),
+			} );
+		}
+	};
 	return (
 		<ActionList.ActionItem
 			title={ title }
@@ -77,25 +94,9 @@ function AutoRenewButton( {
 					size="compact"
 					disabled={ isUpdating }
 					onClick={ () => {
-						try {
-							isAutoRenewing ? disableAutoRenew() : enableAutoRenew();
-						} catch ( _ ) {
-							if ( isProduct ) {
-								createErrorNotice( __( 'There was a problem while removing your product.' ), {
-									actions: [
-										{
-											url: CALYPSO_CONTACT,
-											label: __( 'Please contact support' ),
-										},
-									],
-								} );
-							} else {
-								createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
-									url: CALYPSO_CONTACT,
-									label: __( 'Please contact support' ),
-								} );
-							}
-						}
+						isAutoRenewing
+							? disableAutoRenew( null, { onError: onError } )
+							: enableAutoRenew( null, { onError: onError } );
 					} }
 				>
 					{ title }
@@ -110,7 +111,7 @@ function StopSubscriptionButton( {
 	isProduct,
 	subscription,
 }: {
-	stopSubscription: () => void;
+	stopSubscription: ( data: any, variables: object ) => void;
 	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
@@ -130,14 +131,14 @@ function StopSubscriptionButton( {
 					variant="secondary"
 					size="compact"
 					onClick={ () => {
-						stopSubscription()
-							.then( () => {
+						stopSubscription( null, {
+							onSuccess: () => {
 								navigate( {
 									to: getMonetizeSubscriptionsUrl(),
 									search: addParamForFlashMessage( {} ),
 								} );
-							} )
-							.catch( () => {
+							},
+							onError: () => {
 								if ( isProduct ) {
 									createErrorNotice( __( 'There was a problem while removing your product.' ), {
 										actions: [
@@ -160,7 +161,8 @@ function StopSubscriptionButton( {
 										}
 									);
 								}
-							} );
+							},
+						} );
 					} }
 				>
 					{ title }

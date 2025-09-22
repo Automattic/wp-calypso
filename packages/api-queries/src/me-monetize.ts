@@ -56,7 +56,11 @@ export const monetizeSubscriptionResumeAutoRenew = ( subscriptionId: string ) =>
 export const monetizeSubscriptionStop = ( subscriptionId: string ) =>
 	mutationOptions( {
 		mutationFn: () => requestSubscriptionStop( subscriptionId ),
-		onSuccess: ( response: { redirect: string } ) => {
+		onSuccess: ( response: { redirect?: string } ) => {
+			queryClient.invalidateQueries( {
+				queryKey: [ monetizeSubscriptionsQuery().queryKey ],
+			} );
+
 			/**
 			 * After the cancellation succeeds, we might need to send the user to the
 			 * Jetpack site which had the subscription so that the user can receive a
@@ -68,8 +72,5 @@ export const monetizeSubscriptionStop = ( subscriptionId: string ) =>
 			if ( response.redirect ) {
 				window.location.assign( response.redirect );
 			}
-			queryClient.invalidateQueries( {
-				queryKey: [ monetizeSubscriptionsQuery().queryKey ],
-			} );
 		},
 	} );
