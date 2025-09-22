@@ -63,15 +63,6 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'calypso/components/domains/register-domain-step/analytics';
-import {
-	getStrippedDomainBase,
-	getTldWeightOverrides,
-	isNumberString,
-	isUnknownSuggestion,
-	isUnsupportedPremiumSuggestion,
-	isMissingVendor,
-	markFeaturedSuggestions,
-} from 'calypso/components/domains/register-domain-step/utility';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -93,6 +84,15 @@ import { DomainSearch } from '../__legacy/domain-search';
 import { DomainCartV2 } from '../domain-cart';
 import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
+import {
+	getStrippedDomainBase,
+	getTldWeightOverrides,
+	isNumberString,
+	isUnknownSuggestion,
+	isUnsupportedPremiumSuggestion,
+	isMissingVendor,
+	markFeaturedSuggestions,
+} from './utility';
 
 import './style.scss';
 
@@ -1496,7 +1496,12 @@ class RegisterDomainStep extends Component {
 		const hasAvailableFQDNSearch = [
 			domainAvailability.AVAILABLE,
 			domainAvailability.AVAILABLE_PREMIUM,
-		].includes( suggestions?.[ 0 ]?.status );
+			this.props.includeOwnedDomainInSuggestions
+				? domainAvailability.REGISTERED_OTHER_SITE_SAME_USER
+				: null,
+		]
+			.filter( Boolean )
+			.includes( suggestions?.[ 0 ]?.status );
 
 		const markedSuggestions = markFeaturedSuggestions(
 			suggestions,
