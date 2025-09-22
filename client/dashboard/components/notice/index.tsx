@@ -5,6 +5,7 @@ import {
 	Card,
 	CardBody,
 	Icon,
+	type IconType,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { info, published, error, closeSmall } from '@wordpress/icons';
@@ -15,7 +16,7 @@ import { caution } from './icons';
 import type { NoticeVariant, NoticeProps } from './types';
 import './style.scss';
 
-const icons: { [ key in NoticeVariant ]: React.ReactNode } = {
+const icons: { [ key in NoticeVariant ]: IconType } = {
 	info,
 	warning: caution,
 	success: published,

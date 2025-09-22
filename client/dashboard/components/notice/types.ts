@@ -1,4 +1,5 @@
 import React from 'react';
+import type { IconType } from '@wordpress/components';
 
 type NoticeDensity = 'low' | 'medium' | 'high';
 
@@ -36,7 +37,7 @@ export interface NoticeProps {
 	/**
 	 * Custom icon to use instead of the default one for each variant.
 	 */
-	icon?: React.ReactNode;
+	icon?: IconType;
 
 	/**
 	 * An optional action to close the component.
