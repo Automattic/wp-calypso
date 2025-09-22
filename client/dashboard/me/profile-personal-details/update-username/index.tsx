@@ -1,3 +1,6 @@
+import { usernameChangeMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
+import React from 'react';
 import {
 	Button,
 	RadioControl,
@@ -19,12 +22,12 @@ interface UsernameUpdateFormProps {
 	userLoginConfirm: string;
 	usernameToConfirm: string | undefined;
 	validationResult: ValidationResult | null;
-	isSubmittingUsername: boolean;
 	usernameAction: string;
 	onConfirmChange: ( value: string ) => void;
 	onActionChange: ( action: string ) => void;
 	onShowConfirmModal: () => void;
 	onCancel: () => void;
+	onValidationChange: ( result: ValidationResult | null ) => void;
 }
 
 /*
@@ -38,13 +41,19 @@ export default function UsernameUpdateForm( {
 	userLoginConfirm,
 	usernameToConfirm,
 	validationResult,
-	isSubmittingUsername,
 	usernameAction,
 	onConfirmChange,
 	onActionChange,
 	onShowConfirmModal,
 	onCancel,
+	onValidationChange,
 }: UsernameUpdateFormProps ) {
+	const usernameMutation = useMutation( usernameChangeMutation() );
+
+	const cancelUsernameChange = () => {
+		onValidationChange( null );
+		onCancel();
+	};
 	if ( ! hasUsernameChange || ! usernameToConfirm ) {
 		return null;
 	}
@@ -52,7 +61,7 @@ export default function UsernameUpdateForm( {
 	const isSaveDisabled =
 		userLoginConfirm !== usernameToConfirm ||
 		! isUsernameValid( validationResult ) ||
-		isSubmittingUsername;
+		usernameMutation.isPending;
 
 	const usernameMatch = userLoginConfirm === usernameToConfirm && userLoginConfirm.length > 0;
 	const message = getUsernameValidationMessage( validationResult );
@@ -130,7 +139,7 @@ export default function UsernameUpdateForm( {
 				<Button variant="primary" onClick={ onShowConfirmModal } disabled={ isSaveDisabled }>
 					{ __( 'Change username' ) }
 				</Button>
-				<Button variant="secondary" onClick={ onCancel }>
+				<Button variant="secondary" onClick={ cancelUsernameChange }>
 					{ __( 'Cancel' ) }
 				</Button>
 			</HStack>

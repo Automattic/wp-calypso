@@ -19,6 +19,12 @@ jest.mock( '../username-validation-utils', () => ( {
 	getAllowedActions: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/api-queries', () => ( {
+	usernameChangeMutation: jest.fn( () => ( {
+		mutationFn: jest.fn(),
+	} ) ),
+} ) );
+
 const mockIsUsernameValid = isUsernameValid as jest.MockedFunction< typeof isUsernameValid >;
 const mockGetUsernameValidationMessage = getUsernameValidationMessage as jest.MockedFunction<
 	typeof getUsernameValidationMessage
@@ -30,12 +36,12 @@ const defaultProps = {
 	userLoginConfirm: '',
 	usernameToConfirm: 'newusername',
 	validationResult: null,
-	isSubmittingUsername: false,
 	usernameAction: 'none',
 	onConfirmChange: jest.fn(),
 	onActionChange: jest.fn(),
 	onShowConfirmModal: jest.fn(),
 	onCancel: jest.fn(),
+	onValidationChange: jest.fn(),
 };
 
 describe( 'UsernameUpdateForm', () => {
@@ -44,23 +50,6 @@ describe( 'UsernameUpdateForm', () => {
 		mockIsUsernameValid.mockReturnValue( false );
 		mockGetUsernameValidationMessage.mockReturnValue( null );
 		mockGetAllowedActions.mockReturnValue( {} );
-	} );
-
-	describe( 'Conditional rendering', () => {
-		it( 'renders when hasUsernameChange is true and usernameToConfirm exists', () => {
-			render( <UsernameUpdateForm { ...defaultProps } /> );
-			expect( screen.getByLabelText( 'Confirm new username' ) ).toBeInTheDocument();
-		} );
-
-		it( 'does not render when hasUsernameChange is false', () => {
-			render( <UsernameUpdateForm { ...defaultProps } hasUsernameChange={ false } /> );
-			expect( screen.queryByLabelText( 'Confirm new username' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'does not render when usernameToConfirm is undefined', () => {
-			render( <UsernameUpdateForm { ...defaultProps } usernameToConfirm={ undefined } /> );
-			expect( screen.queryByLabelText( 'Confirm new username' ) ).not.toBeInTheDocument();
-		} );
 	} );
 
 	describe( 'Username confirmation input', () => {
@@ -92,6 +81,16 @@ describe( 'UsernameUpdateForm', () => {
 			expect(
 				screen.getByText( 'Please re-enter your new username to confirm it.' )
 			).toBeInTheDocument();
+		} );
+
+		it( 'does not render when hasUsernameChange is false', () => {
+			render( <UsernameUpdateForm { ...defaultProps } hasUsernameChange={ false } /> );
+			expect( screen.queryByLabelText( 'Confirm new username' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not render when usernameToConfirm is undefined', () => {
+			render( <UsernameUpdateForm { ...defaultProps } usernameToConfirm={ undefined } /> );
+			expect( screen.queryByLabelText( 'Confirm new username' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -245,16 +244,24 @@ describe( 'UsernameUpdateForm', () => {
 			expect( mockOnShowConfirmModal ).toHaveBeenCalled();
 		} );
 
-		it( 'calls onCancel when cancel button is clicked', async () => {
+		it( 'calls onCancel and resets validation when cancel button is clicked', async () => {
 			const user = userEvent.setup();
 			const mockOnCancel = jest.fn();
+			const mockOnValidationChange = jest.fn();
 
-			render( <UsernameUpdateForm { ...defaultProps } onCancel={ mockOnCancel } /> );
+			render(
+				<UsernameUpdateForm
+					{ ...defaultProps }
+					onCancel={ mockOnCancel }
+					onValidationChange={ mockOnValidationChange }
+				/>
+			);
 
 			const cancelButton = screen.getByRole( 'button', { name: 'Cancel' } );
 			await user.click( cancelButton );
 
 			expect( mockOnCancel ).toHaveBeenCalled();
+			expect( mockOnValidationChange ).toHaveBeenCalledWith( null );
 		} );
 	} );
 

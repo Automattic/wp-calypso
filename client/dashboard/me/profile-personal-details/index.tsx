@@ -2,7 +2,6 @@ import {
 	isAutomatticianQuery,
 	userSettingsMutation,
 	userSettingsQuery,
-	usernameChangeMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -16,19 +15,11 @@ import {
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, check } from '@wordpress/icons';
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { Notice } from '../../components/notice';
+import { store as noticesStore } from '@wordpress/notices';
+import { useDispatch } from '@wordpress/data';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
-import UsernameUpdateForm from './update-username';
-import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
-import {
-	validateUsernameDebounced,
-	isUsernameValid,
-	getUsernameValidationMessage,
-	type ValidationResult,
-} from './update-username/username-validation-utils';
+import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 import './style.scss';
@@ -42,178 +33,80 @@ export default function PersonalDetailsSection( {
 }: PersonalDetailsSectionProps ) {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
-	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
-	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
-	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
-	const [ usernameChangeSuccess, setUsernameChangeSuccess ] = useState( false );
 
 	const mutation = useMutation( userSettingsMutation() );
-	const usernameMutation = useMutation( usernameChangeMutation() );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
 
 	const currentUsername = userSettings?.user_login || '';
 	const isEmailVerified = userSettings?.email_verified ?? true;
 	const canChangeUsername = userSettings?.user_login_can_be_changed ?? true;
 
-	const hasUsernameChange = !! ( edits.user_login && edits.user_login !== currentUsername );
-
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
-			setUsernameChangeSuccess( true );
+			createSuccessNotice( __( 'Username changed successfully!' ), {
+				type: 'snackbar',
+				isDismissible: true,
+				explicitDismiss: true,
+				speak: true, // Announce to screen readers
+				politeness: 'polite',
+			} );
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.delete( 'usernameChangeSuccess' );
 			window.history.replaceState( {}, '', currentUrl.toString() );
-
-			setEdits( ( current ) => {
-				const { user_login, ...rest } = current;
-				return rest;
-			} );
-			setValidationResult( null );
-			setUserLoginConfirm( '' );
 		}
-	}, [] );
+	}, [ createSuccessNotice, createErrorNotice ] );
 
-	// Conditional help text for username field
-	const getUsernameConditionalText = useCallback( () => {
-		if ( hasUsernameChange ) {
-			return null;
-		}
-
-		// Prohibit A12s from changing their username
-		if ( isAutomattician ) {
-			return (
-				<Text className="account-profile-personal-details__username-help">
-					{ __( 'Automatticians cannot change their username.' ) }
-				</Text>
-			);
-		}
-
-		// New users can't change their username until they've verified their email
-		if ( ! isEmailVerified ) {
-			return (
-				<Text className="account-profile-personal-details__username-help">
-					{ __( 'Username can be changed once your email address is verified.' ) }
-				</Text>
-			);
-		}
-
-		return null;
-	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
-
-	const getUsernameHelpText = () => {
-		const helpText = getUsernameConditionalText();
-		if ( helpText ) {
-			return helpText;
-		}
-
-		if ( ! hasUsernameChange ) {
-			return null;
-		}
-
-		if ( isUsernameValid( validationResult ) ) {
-			return (
-				<>
-					<Icon icon={ check } size={ 16 } />
-					{ __( 'Nice username!' ) }
-				</>
-			);
-		}
-
-		const errorMessage = getUsernameValidationMessage( validationResult );
-		if ( errorMessage ) {
-			return (
-				<>
-					<Icon icon={ info } size={ 16 } />
-					{ errorMessage }
-				</>
-			);
-		}
-
-		return null;
-	};
-
-	// Update username field event handlers
-	const cancelUsernameChange = useCallback( () => {
-		setEdits( ( current ) => {
-			const { user_login, ...rest } = current;
-			return rest;
-		} );
-		setValidationResult( null );
-		setUserLoginConfirm( '' );
-		setUsernameAction( 'none' );
-	}, [] );
-
-	const submitUsernameForm = async () => {
-		const username = edits.user_login;
-		if ( ! username || ! isUsernameValid( validationResult ) ) {
-			return;
-		}
-
-		const action = usernameAction || 'none';
-
-		setShowConfirmModal( false );
-
-		usernameMutation.mutate(
-			{ username, action },
-			{
-				onSuccess: () => {
-					// Reload the page to refresh cookies and user object
-					const currentUrl = new URL( window.location.href );
-					currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
-					window.location.href = currentUrl.toString();
-				},
-				onError: ( error: any ) => {
-					setValidationResult( error );
-				},
-			}
-		);
-	};
-
-	// General form event handlers
+	// Form event handlers
 	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
-
-		if ( partial.user_login !== undefined ) {
-			const lowerCaseValue = ( partial.user_login || '' ).toLowerCase();
-			if ( lowerCaseValue !== currentUsername ) {
-				setUsernameAction( 'none' );
-				validateUsernameDebounced( lowerCaseValue, currentUsername, setValidationResult );
-			} else {
-				cancelUsernameChange();
-			}
-		}
 	};
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		const { user_login, ...otherEdits } = edits;
-
-		if ( Object.keys( otherEdits ).length === 0 ) {
+		if ( Object.keys( edits ).length === 0 ) {
 			return;
 		}
 
-		mutation.mutate( otherEdits, {
+		mutation.mutate( edits, {
 			onSuccess: () => {
-				setEdits( ( current ) => {
-					const { user_login } = current;
-					return user_login ? { user_login } : {};
+				setEdits( {} );
+				createSuccessNotice( __( 'Settings saved successfully.' ), {
+					type: 'snackbar',
+					isDismissible: true,
+					explicitDismiss: true,
+					speak: true,
+					politeness: 'polite',
+				} );
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice( error.message || __( 'Failed to save settings.' ), {
+					type: 'snackbar',
+					isDismissible: true,
+					explicitDismiss: true,
+					speak: true,
+					politeness: 'assertive',
 				} );
 			},
 		} );
 	};
 
-	const isDirty = Object.keys( edits )
-		.filter( ( key ) => key !== 'user_login' )
-		.some( ( key ) => {
-			return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
+	const handleUsernameCancel = useCallback( () => {
+		setEdits( ( current ) => {
+			const { user_login, ...rest } = current;
+			return rest;
 		} );
+	}, [] );
 
-	const isSaving = mutation.isPending || usernameMutation.isPending;
+	const isDirty = Object.keys( edits ).some( ( key ) => {
+		return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
+	} );
+
+	const isSaving = mutation.isPending;
 
 	// DataForm fields
 	const nameFields: Field< UserSettings >[] = [
@@ -264,16 +157,6 @@ export default function PersonalDetailsSection( {
 		fields: [ 'is_dev_account' ],
 	};
 
-	// Confirmation modal to update username
-	const renderConfirmationModal = () => (
-		<UsernameUpdateConfirmationModal
-			isVisible={ showConfirmModal }
-			currentUsername={ currentUsername }
-			onConfirm={ submitUsernameForm }
-			onCancel={ () => setShowConfirmModal( false ) }
-		/>
-	);
-
 	return (
 		<>
 			<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
@@ -294,51 +177,15 @@ export default function PersonalDetailsSection( {
 								onChange={ handleFieldChange }
 							/>
 
-							{ /* Username - rendered separately to avoid focus issues on DataForm custom Edit */ }
-							<VStack spacing={ 1 }>
-								<InputControl
-									__next40pxDefaultSize
-									id="username-input"
-									label={ __( 'Username' ) }
-									value={ data.user_login || '' }
-									onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
-									disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
-									autoCapitalize="off"
-									autoComplete="username"
-									autoCorrect="off"
-									aria-invalid={
-										hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
-											? 'true'
-											: 'false'
-									}
-									className={ ( () => {
-										if ( ! hasUsernameChange ) {
-											return '';
-										}
-										if ( validationResult && ! isUsernameValid( validationResult ) ) {
-											return 'has-error';
-										}
-										if ( isUsernameValid( validationResult ) ) {
-											return 'has-success';
-										}
-										return '';
-									} )() }
-									help={ getUsernameHelpText() }
-								/>
-							</VStack>
-
-							{ /* Update username form */ }
-							<UsernameUpdateForm
-								hasUsernameChange={ hasUsernameChange }
-								userLoginConfirm={ userLoginConfirm }
-								usernameToConfirm={ edits.user_login }
-								validationResult={ validationResult }
-								isSubmittingUsername={ usernameMutation.isPending }
-								usernameAction={ usernameAction }
-								onConfirmChange={ setUserLoginConfirm }
-								onActionChange={ setUsernameAction }
-								onShowConfirmModal={ () => setShowConfirmModal( true ) }
-								onCancel={ cancelUsernameChange }
+							{ /* Username */ }
+							<UsernameSection
+								value={ data.user_login || '' }
+								onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
+								currentUsername={ currentUsername }
+								isAutomattician={ isAutomattician }
+								isEmailVerified={ isEmailVerified }
+								canChangeUsername={ canChangeUsername }
+								onCancel={ handleUsernameCancel }
 							/>
 
 							{ /* Email address */ }
@@ -361,41 +208,20 @@ export default function PersonalDetailsSection( {
 								onChange={ handleFieldChange }
 							/>
 
-							{ usernameChangeSuccess && (
-								<Notice
-									variant="success"
-									onClose={ () => setUsernameChangeSuccess( false ) }
-									role="status"
-									aria-live="polite"
+							<HStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isSaving }
+									disabled={ isSaving || ! isDirty }
 								>
-									{ __( 'Username changed successfully!' ) }
-								</Notice>
-							) }
-
-							{ mutation.error && (
-								<Notice variant="error" role="alert" aria-live="assertive">
-									{ ( mutation.error as Error ).message }
-								</Notice>
-							) }
-
-							{ ! hasUsernameChange && (
-								<HStack justify="flex-start">
-									<Button
-										variant="primary"
-										type="submit"
-										isBusy={ isSaving }
-										disabled={ isSaving || ! isDirty }
-									>
-										{ __( 'Save' ) }
-									</Button>
-								</HStack>
-							) }
+									{ __( 'Save' ) }
+								</Button>
+							</HStack>
 						</VStack>
 					</CardBody>
 				</Card>
 			</form>
-
-			{ renderConfirmationModal() }
 		</>
 	);
 }

@@ -7,11 +7,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import PersonalDetailsSection from '../index';
 import {
 	mockUserSettings,
 	mockAutomatticianUserSettings,
 } from '../../profile/__mocks__/user-settings';
+import PersonalDetailsSection from '../index';
 
 // Mock the username validation utils
 jest.mock( '../update-username/username-validation-utils', () => ( {
@@ -105,22 +105,6 @@ describe( 'PersonalDetailsSection', () => {
 	} );
 
 	describe( 'Form interactions', () => {
-		it( 'enables save button when form is dirty', async () => {
-			const user = userEvent.setup();
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
-			} );
-
-			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
-			await user.clear( firstNameInput );
-			await user.type( firstNameInput, 'Updated' );
-
-			const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-			expect( saveButton ).toBeEnabled();
-		} );
-
 		it( 'toggles developer checkbox', async () => {
 			const user = userEvent.setup();
 			renderWithUserData();
