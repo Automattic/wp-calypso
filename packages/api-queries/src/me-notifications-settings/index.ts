@@ -1,12 +1,13 @@
 import {
 	fetchUserNotificationSettings,
+	InputUserNotificationSettings,
 	updateUserNotificationSettings,
 	updateWpcomNotificationSettings,
 	UserNotificationSettings,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import deepmerge from 'deepmerge';
-import { queryClient } from './query-client';
+import { queryClient } from '../query-client';
+import { mergeSettings } from './helper';
 
 export const userNotificationsSettingsQuery = () =>
 	queryOptions( {
@@ -14,24 +15,34 @@ export const userNotificationsSettingsQuery = () =>
 		queryFn: fetchUserNotificationSettings,
 	} );
 
+interface Variables {
+	data: InputUserNotificationSettings;
+	applyAll?: boolean;
+}
+
 export const userNotificationsSettingsMutation = () =>
-	mutationOptions( {
-		mutationFn: updateUserNotificationSettings,
+	mutationOptions< UserNotificationSettings, Error, Variables >( {
+		mutationFn: ( newData: Variables ) =>
+			updateUserNotificationSettings( newData.data, newData.applyAll ),
 		mutationKey: [ 'me', 'notifications', 'settings' ],
 		onMutate: async ( variables ) => {
 			const oldData = queryClient.getQueryData( userNotificationsSettingsQuery().queryKey );
+			if ( ! oldData ) {
+				return;
+			}
 
 			queryClient.setQueryData(
 				userNotificationsSettingsQuery().queryKey,
-				deepmerge( oldData || {}, variables.data ) as UserNotificationSettings
+				mergeSettings( oldData, variables.data )
 			);
+			return { previousSettings: oldData };
 		},
-		onSuccess: async ( newData ) => {
-			const oldData = queryClient.getQueryData( userNotificationsSettingsQuery().queryKey );
-			const updated = { ...deepmerge( oldData ?? {}, newData ) } as UserNotificationSettings;
-			queryClient.setQueryData( userNotificationsSettingsQuery().queryKey, updated );
-
-			return updated;
+		onError: ( _, __, context ) => {
+			const previousSettings = ( context as { previousSettings: UserNotificationSettings } )
+				.previousSettings;
+			if ( previousSettings ) {
+				queryClient.setQueryData( userNotificationsSettingsQuery().queryKey, previousSettings );
+			}
 		},
 	} );
 
