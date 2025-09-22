@@ -1,10 +1,10 @@
-import { PluginItem, Site, SitePlugin, SitePluginsResponse } from '@automattic/api-core';
+import { PluginItem, Site, SitePlugin } from '@automattic/api-core';
 import {
 	pluginsQuery,
 	sitesQuery,
 	marketplacePluginQuery,
 	wpOrgPluginQuery,
-	sitePluginsQuery,
+	sitePluginQuery,
 } from '@automattic/api-queries';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -31,30 +31,23 @@ export const usePlugin = ( pluginSlug: string ) => {
 		wpOrgPluginQuery( pluginSlug, locale )
 	);
 	// Query needed to get the action_links
-	const sitePluginsQueryResults = useQueries( {
-		queries: Object.keys( sitesPlugins?.sites || {} ).map( ( id ) => ( {
-			...sitePluginsQuery( Number( id ) ),
-		} ) ),
+	const sitePluginQueryResults = useQueries( {
+		queries: Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
+			sitePluginQuery( Number( id ), pluginSlug )
+		),
 	} );
-	const isLoadingSitePlugins = sitePluginsQueryResults.some( ( query ) => query.isLoading );
+	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
 
 	const pluginActionLinksBySiteId = Object.keys( sitesPlugins?.sites || {} ).reduce(
 		( acc, siteId ) => {
-			const { queryKey } = sitePluginsQuery( Number( siteId ) );
-			const data: SitePluginsResponse | undefined = queryClient.getQueryData( queryKey );
+			const { queryKey } = sitePluginQuery( Number( siteId ), pluginSlug );
+			const data: SitePlugin | undefined = queryClient.getQueryData( queryKey );
 
-			const actionLinksByPluginSlug = ( data?.plugins || [] ).reduce<
-				Map< string, SitePlugin[ 'action_links' ] >
-			>( ( acc, plugin: SitePlugin ) => {
-				acc.set( plugin.slug, plugin.action_links );
-				return acc;
-			}, new Map< string, SitePlugin[ 'action_links' ] >() );
-
-			acc.set( Number( siteId ), actionLinksByPluginSlug );
+			acc.set( Number( siteId ), data?.action_links );
 
 			return acc;
 		},
-		new Map< number, Map< string, SitePlugin[ 'action_links' ] > >()
+		new Map< number, SitePlugin[ 'action_links' ] >()
 	);
 
 	const pluginBySiteId = useMemo(
@@ -80,9 +73,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 				( acc, site ) => {
 					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
 						const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
-						const actionLinks = pluginActionLinksBySiteId
-							.get( Number( site.ID ) )
-							?.get( pluginSlug );
+						const actionLinks = pluginActionLinksBySiteId.get( Number( site.ID ) );
 
 						acc[ 0 ].push( { ...site, isPluginActive, actionLinks } );
 					} else {
