@@ -32,7 +32,7 @@ import {
 	domainManagementList,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
-import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains';
+import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
