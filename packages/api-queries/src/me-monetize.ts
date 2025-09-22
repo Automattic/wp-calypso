@@ -27,7 +27,7 @@ export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 		},
 	} );
 
-const UpdateSubscriptionCache =
+const updateSubscriptionCache =
 	( subscriptionId: string ) => ( data: { subscription: MonetizeSubscription } ) => {
 		queryClient.invalidateQueries( {
 			queryKey: [ monetizeSubscriptionQuery( subscriptionId ).queryKey ],
@@ -45,12 +45,12 @@ const UpdateSubscriptionCache =
 export const monetizeSubscriptionDisableAutoRenew = ( subscriptionId: string ) =>
 	mutationOptions( {
 		mutationFn: () => requestAutoRenewDisable( subscriptionId ),
-		onSuccess: UpdateSubscriptionCache( subscriptionId ),
+		onSuccess: updateSubscriptionCache( subscriptionId ),
 	} );
 export const monetizeSubscriptionResumeAutoRenew = ( subscriptionId: string ) =>
 	mutationOptions( {
 		mutationFn: () => requestAutoRenewResume( subscriptionId ),
-		onSuccess: UpdateSubscriptionCache( subscriptionId ),
+		onSuccess: updateSubscriptionCache( subscriptionId ),
 	} );
 
 export const monetizeSubscriptionStop = ( subscriptionId: string ) =>
