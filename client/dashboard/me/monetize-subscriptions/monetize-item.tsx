@@ -32,11 +32,7 @@ export const MonetizeSubscriptionTerms = ( {
 	);
 };
 
-export const MonetizeSiteLink = ({
-	subscription,
-}: {
-	subscription: MonetizeSubscription;
-} ) => {
+export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubscription } ) => {
 	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (

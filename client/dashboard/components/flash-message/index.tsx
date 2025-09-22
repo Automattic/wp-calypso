@@ -12,12 +12,9 @@ interface FlashMessageProps {
 const DEFAULT_PARAM_NAME = 'show-flash-message';
 
 export function addParamForFlashMessage(
-	queryParams: any,
+	queryParams: object,
 	overrideDefaultParam: string = DEFAULT_PARAM_NAME
 ): object {
-	if ( typeof queryParams !== 'object' ) {
-		queryParams = {};
-	}
 	queryParams[ overrideDefaultParam ] = true;
 	return queryParams;
 }
