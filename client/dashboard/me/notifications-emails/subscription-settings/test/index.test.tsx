@@ -201,7 +201,7 @@ describe( 'SubscriptionSettings', () => {
 		await waitFor( () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
 		} );
 	} );
 } );

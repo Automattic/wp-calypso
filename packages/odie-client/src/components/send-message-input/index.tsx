@@ -175,7 +175,9 @@ export const OdieSendMessageButton = () => {
 		[ sendMessageHandler, handleImagePaste ]
 	);
 
-	const isDisabled = !! messageSizeNotice || ( isLiveChat && connectionStatus !== 'connected' );
+	const isDisabled =
+		!! messageSizeNotice ||
+		( isLiveChat && [ 'disconnected', 'reconnecting' ].includes( connectionStatus ?? '' ) );
 	// When there is a reason to disable the input, we should not convey a processing state.
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 

@@ -39,11 +39,15 @@ const checkNotPendingWhoisUpdate: DomainCheckFunction = ( domain: Domain ) =>
 const checkCanManageDnsRecords: DomainCheckFunction = ( domain: Domain ) =>
 	!! domain.can_manage_dns_records;
 
+const checkNominetPendingOrSuspended: DomainCheckFunction = ( domain: Domain ) =>
+	domain.nominet_pending_contact_verification_request || domain.nominet_domain_suspended;
+
 export const PermissionCheck = {
 	TRANSFER: 'transfer',
 	NAME_SERVERS: 'name-servers',
 	CONTACT_INFO: 'contact-info',
 	DNS_RECORDS: 'dns-records',
+	CONTACT_VERIFICATION: 'contact-verification',
 } as const;
 
 /**
@@ -153,6 +157,21 @@ const DOMAIN_PERMISSION_CHECKS = {
 			getErrorMessage: () => __( 'Domain is pending contact information update.' ),
 		},
 	],
+	[ PermissionCheck.CONTACT_VERIFICATION ]: [
+		{
+			check: checkCurrentUserIsOwner,
+			getErrorMessage: ( domain: Domain ) =>
+				sprintf(
+					/* translators: domain is the domain name, owner is the owner of the domain */
+					__( '%(domain)s contact verification can be managed only by the user %(owner)s.' ),
+					{ domain: domain.domain, owner: domain.owner }
+				),
+		},
+		{
+			check: checkNominetPendingOrSuspended,
+			getErrorMessage: () => __( 'This domain does not require contact verification.' ),
+		},
+	],
 } as const;
 
 function checkDomainPermissions(
@@ -182,4 +201,8 @@ export function checkDomainContactInfoPermissions( domain: Domain ): void {
 
 export function checkDomainDnsRecordsPermissions( domain: Domain ): void {
 	checkDomainPermissions( domain, PermissionCheck.DNS_RECORDS );
+}
+
+export function checkDomainContactVerificationPermissions( domain: Domain ): void {
+	checkDomainPermissions( domain, PermissionCheck.CONTACT_VERIFICATION );
 }
