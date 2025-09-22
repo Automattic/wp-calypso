@@ -53,6 +53,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
+	const hasSelectedFiles = selectedFiles.length > 0;
 	const actions = backup.rewind_id ? (
 		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
 			<Button
@@ -62,7 +63,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleDownloadClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ selectedFiles.length > 0 ? __( 'Download selected files' ) : __( 'Download backup' ) }
+				{ hasSelectedFiles ? __( 'Download selected files' ) : __( 'Download backup' ) }
 			</Button>
 			<Button
 				variant="primary"
@@ -71,9 +72,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ selectedFiles.length > 0
-					? __( 'Restore selected files' )
-					: __( 'Restore to this point' ) }
+				{ hasSelectedFiles ? __( 'Restore selected files' ) : __( 'Restore to this point' ) }
 			</Button>
 		</ButtonStack>
 	) : null;
@@ -120,13 +119,6 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							siteSlug={ site.slug }
 							isRestoreEnabled
 							onTrackEvent={ recordTracksEvent }
-							fileBrowserConfig={ {
-								applyFiltering: false,
-								showFileCard: true,
-								showBackupTime: false,
-								showSeparateExpandButton: false,
-								expandDirectoriesOnClick: true,
-							} }
 						/>
 					</div>
 				</VStack>
