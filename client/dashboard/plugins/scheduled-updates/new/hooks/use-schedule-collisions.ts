@@ -29,15 +29,18 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: { e
 				return !! err;
 			} );
 
-			// Plugin collisions
+			// Plugin collisions (skip when empty)
 			let pluginError = '';
-			const pluginIds = siteIds.filter( ( id ) => {
-				const err = validatePlugins( plugins, pluginSetsBySite[ id ] || [] );
-				if ( err && ! pluginError ) {
-					pluginError = err;
-				}
-				return !! err;
-			} );
+			const pluginIds =
+				plugins.length === 0
+					? []
+					: siteIds.filter( ( id ) => {
+							const err = validatePlugins( plugins, pluginSetsBySite[ id ] || [] );
+							if ( err && ! pluginError ) {
+								pluginError = err;
+							}
+							return !! err;
+					  } );
 
 			return {
 				isLoading,
