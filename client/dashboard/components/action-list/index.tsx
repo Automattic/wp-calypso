@@ -4,18 +4,22 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 import ActionItem from './action-item';
 import type { ActionListProps } from './types';
 import './style.scss';
 
 function UnforwardedActionList(
-	{ title, description, children }: ActionListProps,
+	{ title, description, children, hasFullWidthBorder }: ActionListProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	return (
-		<Card className="action-list" ref={ ref }>
-			<CardBody>
+		<Card
+			className={ clsx( 'action-list', hasFullWidthBorder && 'has-full-width-border' ) }
+			ref={ ref }
+		>
+			<CardBody className="action-list__body">
 				{ ( title || description ) && (
 					<VStack className="action-list__heading" spacing={ 2 }>
 						{ title && (
