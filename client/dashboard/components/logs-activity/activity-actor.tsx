@@ -3,14 +3,23 @@ import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { commentAuthorAvatar, people, globe } from '@wordpress/icons';
-import type { SiteActivityLog } from '@automattic/api-core';
+import type { ActivityActor } from '@automattic/api-core';
 import './activity-actor.scss';
 
 const ICON_SIZE = 24;
 
-function getActorPresentation( actor: ActivityActorType ) {
-	const { type, name, icon } = actor;
-	const actorName = name || __( 'Unknown' );
+function getActorPresentation( actor?: ActivityActor ) {
+	let actorName = __( 'Unknown' );
+
+	if ( ! actor ) {
+		return {
+			icon: null,
+			label: actorName,
+		};
+	}
+
+	const { name, type, icon } = actor;
+	actorName = name || actorName;
 
 	// Map known application/brand actors (v1 parity)
 	switch ( type ) {
@@ -97,10 +106,10 @@ function getActorPresentation( actor: ActivityActorType ) {
 }
 
 type ActivityActorProps = {
-	actor?: SiteActivityLog[ 'actor' ];
+	actor?: ActivityActor;
 };
 
-export function ActivityActor( { actor }: { actor: ActivityActorProps } ) {
+export function ActivityActor( { actor }: ActivityActorProps ) {
 	const { icon, label } = getActorPresentation( actor );
 
 	return (
