@@ -9,6 +9,10 @@ const AVAILABLE_DOMAIN_STATUSES = [
 	DomainAvailabilityStatus.AVAILABLE,
 	DomainAvailabilityStatus.UNKNOWN,
 	DomainAvailabilityStatus.MAPPED_SAME_SITE_REGISTRABLE,
+	// For odmains that are transferrable (i.e. registered elsewhere and can be transferred to us), we want to show
+	// only the "Already yours? Bring it over" notice instead of the availability notice
+	DomainAvailabilityStatus.TRANSFERRABLE,
+	DomainAvailabilityStatus.TRANSFERRABLE_PREMIUM,
 ];
 
 /**
@@ -75,17 +79,6 @@ export const SearchNotice = () => {
 		if (
 			! availability ||
 			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
-		) {
-			return null;
-		}
-
-		// For odmains that are transferrable (i.e. registered elsewhere and can be transferred to us), we want to show
-		// only the "Already yours? Bring it over" notice instead of the availability notice
-		if (
-			[
-				DomainAvailabilityStatus.TRANSFERRABLE,
-				DomainAvailabilityStatus.TRANSFERRABLE_PREMIUM,
-			].includes( availability.status )
 		) {
 			return null;
 		}
