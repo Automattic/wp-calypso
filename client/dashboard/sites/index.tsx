@@ -153,8 +153,8 @@ export default function Sites() {
 						}
 					/>
 				}
+				notices={ <SitesNotices /> }
 			>
-				<SitesNotices />
 				<DataViewsCard>
 					<DataViews< Site >
 						getItemId={ ( item ) => item.ID.toString() }

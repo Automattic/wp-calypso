@@ -5,10 +5,8 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound, useRouter } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -22,8 +20,15 @@ export default function EditDomainForwarding() {
 	const router = useRouter();
 	const { domainName, forwardingId } = domainRoute.useParams();
 	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
-	const saveMutation = useMutation( domainForwardingSaveMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const saveMutation = useMutation( {
+		...domainForwardingSaveMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Domain forwarding rule saved.' ),
+				error: __( 'Failed to save domain forwarding rule.' ),
+			},
+		},
+	} );
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
 	const forceSubdomainsOnly = domainData?.primary_domain && ! domainData?.is_domain_only_site;
 
@@ -53,16 +58,10 @@ export default function EditDomainForwarding() {
 
 		saveMutation.mutate( submitData, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Domain forwarding rule updated successfully.' ), {
-					type: 'snackbar',
-				} );
 				router.navigate( {
 					to: domainForwardingRoute.fullPath,
 					params: { domainName },
 				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to update domain forwarding rule.' ), { type: 'snackbar' } );
 			},
 		} );
 	};

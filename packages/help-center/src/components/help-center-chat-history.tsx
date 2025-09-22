@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { translationExists } from '@automattic/i18n-utils';
 import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
 import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -6,7 +7,6 @@ import { useChatStatus, useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { EmailFallbackNotice } from './notices';
 import { getLastMessage } from './utils';
-import './help-center-chat-history.scss';
 import type {
 	Conversations,
 	SupportInteraction,
@@ -25,7 +25,7 @@ const Conversations = ( {
 
 	if ( isLoadingInteractions && ! conversations.length ) {
 		return (
-			<div className="help-center-chat-history__no-results">
+			<div className="help-center-chat-history__loading">
 				<Spinner />
 			</div>
 		);
@@ -34,7 +34,9 @@ const Conversations = ( {
 	if ( ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
-				{ __( 'Nothing found…', __i18n_text_domain__ ) }
+				{ translationExists( "No chats yet, but we're ready when you are." )
+					? __( "No chats yet, but we're ready when you are.", __i18n_text_domain__ )
+					: __( 'Nothing found…', __i18n_text_domain__ ) }
 			</div>
 		);
 	}
