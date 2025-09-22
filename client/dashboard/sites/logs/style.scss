@@ -3,27 +3,28 @@
 }
 
 .site-logs {
-	&__callout {
-		position: relative;
-		padding: 70px 0;
+	&__server,
+	&__php {
+		.dashboard-callout {
+			max-width: 889px;
+			margin: 120px auto;
+		}
+	}
+	&__activity {
+		&-callout {
+			position: relative;
 
-		&.is-activity {
 			background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 1.13%, #fff 17.26% );
 			padding: 75px 0 50px;
 			margin-top: -65px;
 			z-index: 2;
-		}
-	}
 
-	&__callout-content {
-		max-width: 889px;
-		flex-basis: 889px;
-		margin: 120px;
-		padding: 50px 0;
-
-		&.is-activity {
-			margin: 70px 0 50px;
-			padding: 0;
+			&-content {
+				max-width: 889px;
+				flex-basis: 889px;
+				padding: 50px 0;
+				margin: 60px 0 40px;
+			}
 		}
 	}
 }

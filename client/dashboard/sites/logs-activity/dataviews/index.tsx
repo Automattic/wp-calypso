@@ -13,16 +13,18 @@ type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 	hasActivityLogsAccess: boolean;
 };
+const ACTIVITY_LOGS_DEFAULT_PAGE_SIZE = 20;
 function SiteActivityLogsDataViews( {
 	gmtOffset,
 	timezoneString,
 	site,
+	hasActivityLogsAccess,
 }: SiteLogsDataViewsPropsActivity ) {
 	const [ view, setView ] = useActivityView();
 
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
-		number: view.perPage || 20,
+		number: view.perPage || ACTIVITY_LOGS_DEFAULT_PAGE_SIZE,
 		page: view.page,
 	};
 
@@ -44,6 +46,9 @@ function SiteActivityLogsDataViews( {
 		totalItems: activityLogData?.totalItems ?? 0,
 		totalPages: activityLogData?.totalPages ?? 0,
 	};
+	if ( ! hasActivityLogsAccess ) {
+		paginationInfo.totalPages = 0; // this will hide the pagination controls in DataViews, an alternative to this approach would be to use Free Form composition, but that would require us to match the UI we have on the other log pages.
+	}
 
 	const fields = useActivityFields(
 		timezoneString ? { gmtOffset, timezoneString } : { gmtOffset }
@@ -66,11 +71,12 @@ function SiteActivityLogsDataViews( {
 			fields={ fields as Field< SiteActivityLog >[] }
 			view={ view }
 			actions={ actions }
+			config={ hasActivityLogsAccess ? undefined : { perPageSizes: [ 20 ] } } // Disable changing perPage if no access
 			search={ false }
 			defaultLayouts={ { table: {} } }
 			onChangeView={ onChangeView }
 			empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
-		/>
+		></DataViews>
 	);
 }
 

@@ -107,28 +107,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						</TabPanel>
 					</CardHeader>
 					<CardBody>
-						<>
+						<div className={ `site-logs__${ logType }` }>
 							{ logType === LogType.PHP || logType === LogType.SERVER ? (
-								<HStack alignment="center" expanded className="site-logs__callout">
-									<HostingFeatureGatedWithCallout
+								<HostingFeatureGatedWithCallout
+									site={ site }
+									feature={ HostingFeatures.LOGS }
+									{ ...getLogsCalloutProps() }
+								>
+									<SiteLogsDataViews
+										logType={ logType }
+										dateRange={ dateRange }
+										dateRangeVersion={ dateRangeVersion }
+										autoRefresh={ autoRefresh }
+										setAutoRefresh={ setAutoRefresh }
+										gmtOffset={ gmtOffset }
+										timezoneString={ timezoneString }
 										site={ site }
-										feature={ HostingFeatures.LOGS }
-										{ ...getLogsCalloutProps() }
-									>
-										<SiteLogsDataViews
-											logType={ logType }
-											dateRange={ dateRange }
-											dateRangeVersion={ dateRangeVersion }
-											autoRefresh={ autoRefresh }
-											setAutoRefresh={ setAutoRefresh }
-											gmtOffset={ gmtOffset }
-											timezoneString={ timezoneString }
-											site={ site }
-										/>
-									</HostingFeatureGatedWithCallout>
-								</HStack>
+									/>
+								</HostingFeatureGatedWithCallout>
 							) : (
-								<div className="site-logs__activity">
+								<>
 									<SiteActivityLogsDataViews
 										logType={ logType }
 										dateRange={ dateRange }
@@ -141,15 +139,15 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 										hasActivityLogsAccess={ hasActivityLogAccess }
 									/>
 									{ ! hasActivityLogAccess && (
-										<HStack alignment="center" expanded className="site-logs__callout is-activity">
-											<div className="site-logs__callout-content is-activity">
+										<HStack alignment="center" expanded className="site-logs__activity-callout">
+											<div className="site-logs__activity-callout-content">
 												<ActivityLogsCallout siteSlug={ site.slug } />
 											</div>
 										</HStack>
 									) }
-								</div>
+								</>
 							) }
-						</>
+						</div>
 					</CardBody>
 				</Card>
 			</>
