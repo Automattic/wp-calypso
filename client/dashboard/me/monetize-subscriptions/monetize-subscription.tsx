@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { MutateFunction, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -23,7 +23,6 @@ import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, globe, chevronRight, chevronLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { formatDate } from 'date-fns';
-import { useEffect } from 'react';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { addParamForFlashMessage } from '../../components/flash-message';
@@ -57,13 +56,16 @@ function AutoRenewButton( {
 	enableAutoRenew,
 	isAutoRenewing,
 	isUpdating,
+	isProduct,
 }: {
 	disableAutoRenew: () => void;
 	enableAutoRenew: () => void;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
+	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const title = isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' );
 	return (
 		<ActionList.ActionItem
@@ -74,7 +76,27 @@ function AutoRenewButton( {
 					variant="secondary"
 					size="compact"
 					disabled={ isUpdating }
-					onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
+					onClick={ () => {
+						try {
+							isAutoRenewing ? disableAutoRenew() : enableAutoRenew();
+						} catch ( _ ) {
+							if ( isProduct ) {
+								createErrorNotice( __( 'There was a problem while removing your product.' ), {
+									actions: [
+										{
+											url: CALYPSO_CONTACT,
+											label: __( 'Please contact support' ),
+										},
+									],
+								} );
+							} else {
+								createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
+									url: CALYPSO_CONTACT,
+									label: __( 'Please contact support' ),
+								} );
+							}
+						}
+					} }
 				>
 					{ title }
 				</Button>
@@ -88,10 +110,11 @@ function StopSubscriptionButton( {
 	isProduct,
 	subscription,
 }: {
-	stopSubscription: MutateFunction;
+	stopSubscription: () => void;
 	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const title = isProduct
 		? // eslint-disable-next-line @wordpress/i18n-translator-comments
@@ -107,12 +130,37 @@ function StopSubscriptionButton( {
 					variant="secondary"
 					size="compact"
 					onClick={ () => {
-						stopSubscription().then( () => {
-							navigate( {
-								to: getMonetizeSubscriptionsUrl(),
-								search: addParamForFlashMessage( {} ),
+						stopSubscription()
+							.then( () => {
+								navigate( {
+									to: getMonetizeSubscriptionsUrl(),
+									search: addParamForFlashMessage( {} ),
+								} );
+							} )
+							.catch( () => {
+								if ( isProduct ) {
+									createErrorNotice( __( 'There was a problem while removing your product.' ), {
+										actions: [
+											{
+												url: CALYPSO_CONTACT,
+												label: __( 'Please contact support' ),
+											},
+										],
+									} );
+								} else {
+									createErrorNotice(
+										__( 'There was a problem while stopping your subscription.' ),
+										{
+											actions: [
+												{
+													url: CALYPSO_CONTACT,
+													label: __( 'Please contact support' ),
+												},
+											],
+										}
+									);
+								}
 							} );
-						} );
 					} }
 				>
 					{ title }
@@ -146,67 +194,23 @@ export default function MonetizeSubscription() {
 
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: stopSubscription, isPending: isStoppingSubscription } = useMutation(
+		monetizeSubscriptionStop( subscriptionId )
+	);
 
-	const {
-		mutate: stopSubscription,
-		isError: stoppingStatusError,
-		isPending: isStoppingSubscription,
-	} = useMutation( monetizeSubscriptionStop( subscriptionId ) );
+	const { mutate: disableAutoRenew, isPending: isDisablingAutoRenew } = useMutation(
+		monetizeSubscriptionDisableAutoRenew( subscriptionId )
+	);
 
-	const {
-		mutate: disableAutoRenew,
-		isError: disableAutoRenewError,
-		isPending: isDisablingAutoRenew,
-	} = useMutation( monetizeSubscriptionDisableAutoRenew( subscriptionId ) );
-
-	const {
-		mutate: enableAutoRenew,
-		isError: enableAutoRenewError,
-		isPending: isEnablingAutoRenew,
-	} = useMutation( monetizeSubscriptionResumeAutoRenew( subscriptionId ) );
+	const { mutate: enableAutoRenew, isPending: isEnablingAutoRenew } = useMutation(
+		monetizeSubscriptionResumeAutoRenew( subscriptionId )
+	);
 
 	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
 	const isAutoRenewing = isRenewable && subscription.renew_interval;
 	const isProduct = !! subscription && ! isRenewable;
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
-	useEffect( () => {
-		if ( stoppingStatusError || disableAutoRenewError || enableAutoRenewError ) {
-			// run is-error notice to contact support
-			if ( isProduct ) {
-				createErrorNotice( __( 'There was a problem while removing your product.' ), {
-					actions: [
-						{
-							url: CALYPSO_CONTACT,
-							label: __( 'Please contact support' ),
-						},
-					],
-				} );
-			} else if ( stoppingStatusError ) {
-				createErrorNotice( __( 'There was a problem while stopping your subscription.' ), {
-					actions: [
-						{
-							url: CALYPSO_CONTACT,
-							label: __( 'Please contact support' ),
-						},
-					],
-				} );
-			} else if ( disableAutoRenewError || enableAutoRenewError ) {
-				createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
-					url: CALYPSO_CONTACT,
-					label: __( 'Please contact support' ),
-				} );
-			}
-		}
-	}, [
-		stoppingStatusError,
-		isProduct,
-		enableAutoRenewError,
-		disableAutoRenewError,
-		createErrorNotice,
-		createSuccessNotice,
-	] );
 
 	return (
 		<PageLayout
@@ -285,6 +289,7 @@ export default function MonetizeSubscription() {
 								isUpdating={ isUpdating }
 								disableAutoRenew={ disableAutoRenew }
 								enableAutoRenew={ enableAutoRenew }
+								isProduct={ isProduct }
 							/>
 						) }
 
