@@ -172,6 +172,18 @@ export default function SecuritySocialLogins() {
 					) }
 				/>
 				<SocialLoginItem
+					service="Google"
+					decoration={ GoogleIcon }
+					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
+						<GoogleLogin
+							isConnected={ isConnected }
+							responseHandler={ responseHandler }
+							handleDisconnect={ handleDisconnect }
+							isLoading={ isLoading }
+						/>
+					) }
+				/>
+				<SocialLoginItem
 					service="GitHub"
 					decoration={ GitHubIcon }
 					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
