@@ -8,10 +8,8 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
@@ -57,8 +55,15 @@ const form = {
 
 export default function BlockListForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
-	const mutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteJetpackSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Blocked IP addresses saved.' ),
+				error: __( 'Failed to save blocked IP addresses.' ),
+			},
+		},
+	} );
 
 	// The WAF module is only supported on self-hosted Jetpack sites, and not supported on VIP
 	const isFirewallModuleSupported =
@@ -76,17 +81,7 @@ export default function BlockListForm( { site }: { site: Site } ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{ ...formData },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Blocked IP addresses saved.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save blocked IP addresses.' ), { type: 'snackbar' } );
-				},
-			}
-		);
+		mutation.mutate( { ...formData } );
 	};
 
 	const isDirty =

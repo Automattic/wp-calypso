@@ -8,7 +8,7 @@ import { check } from '@wordpress/icons';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
-import { getThreatIcon, getThreatMessage, sortSeverity } from '../../scan/utils';
+import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -40,7 +40,7 @@ export function getFields(): Field< Threat >[] {
 		{
 			id: 'threat',
 			label: __( 'Threat' ),
-			getValue: ( { item } ) => getThreatMessage( item ),
+			getValue: ( { item } ) => item.title,
 			render: ( { item } ) => (
 				<HStack spacing={ 2 } justify="flex-start">
 					<Icon
@@ -48,7 +48,7 @@ export function getFields(): Field< Threat >[] {
 						icon={ getThreatIcon( item ) }
 						size={ 24 }
 					/>
-					<Text>{ getThreatMessage( item ) }</Text>
+					<Text>{ item.title }</Text>
 				</HStack>
 			),
 			enableGlobalSearch: true,

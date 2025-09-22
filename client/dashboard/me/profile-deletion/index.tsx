@@ -2,11 +2,9 @@ import { closeAccountMutation, userPurchasesQuery } from '@automattic/api-querie
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
 import AccountDeletionConfirmModal from './account-deletion-modal';
@@ -14,22 +12,23 @@ import AccountDeletionConfirmModal from './account-deletion-modal';
 export default function AccountDeletionSection() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const mutation = useMutation( closeAccountMutation() );
+	const mutation = useMutation( {
+		...closeAccountMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Account deletion initiated.' ),
+				error: __( 'Failed to delete account.' ),
+			},
+		},
+	} );
 	const { data: purchases, isLoading: isFetchingPurchases } = useQuery( userPurchasesQuery() );
 
 	const handleConfirmDelete = () => {
 		mutation.mutate( void 0, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Account deletion initiated.' ), { type: 'snackbar' } );
 				navigate( {
 					to: '/me/account/closed',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to delete account.' ), {
-					type: 'snackbar',
 				} );
 			},
 		} );

@@ -1,10 +1,11 @@
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useIsFetching } from '@tanstack/react-query';
-import { CatchNotFound, Outlet, useRouterState } from '@tanstack/react-router';
+import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
 import { Suspense, lazy, useEffect, useState, useMemo } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
+import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
@@ -24,18 +25,18 @@ const VERY_SLOW_THRESHOLD_MS = 6000;
 function Root() {
 	const { name, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
-	const router = useRouterState();
-	const routeMeta = useRouterState( {
-		select: ( state ) => {
-			return state.matches.map( ( match ) => match.meta! ).filter( Boolean );
-		},
-	} );
+	const router = useRouter();
+	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
+		select: ( state ) => ( {
+			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
+			isNavigating: state.status === 'pending',
 
-	const isNavigating = router.status === 'pending';
-	// A little trick after investigation router state: it will initially be
-	// empty, but remain set after subsequent navigations.
-	// https://tanstack.com/router/latest/docs/framework/react/api/router/RouterStateType#resolvedlocation-property
-	const isInitialLoad = ! router.resolvedLocation;
+			// A little trick after investigation router state: it will initially be
+			// empty, but remain set after subsequent navigations.
+			// https://tanstack.com/router/latest/docs/framework/react/api/router/RouterStateType#resolvedlocation-property
+			isInitialLoad: ! state.resolvedLocation,
+		} ),
+	} );
 
 	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
 	const isSlowNavigation = isNavigating && navigationTime === 'slow';
@@ -46,7 +47,22 @@ function Root() {
 		let verySlowTimeout: NodeJS.Timeout;
 		if ( isNavigating ) {
 			slowTimeout = setTimeout( () => setNavigationTime( 'slow' ), SLOW_THRESHOLD_MS );
-			verySlowTimeout = setTimeout( () => setNavigationTime( 'veryslow' ), VERY_SLOW_THRESHOLD_MS );
+			verySlowTimeout = setTimeout( () => {
+				const leafRouteId = router.state.pendingMatches?.at( -1 )?.routeId;
+				if ( leafRouteId ) {
+					bumpStat(
+						'hd-very-slow-nav',
+						// Tries to make the stats in the backend more readable. It isn't strictly necessary.
+						// Removes leading and trailing slashes, replaces other slashes with dashes, removes $ from router path params.
+						leafRouteId
+							.replace( /^\//g, '' )
+							.replace( /\/$/g, '' )
+							.replace( /\//g, '-' )
+							.replace( /\$/g, '' )
+					);
+				}
+				setNavigationTime( 'veryslow' );
+			}, VERY_SLOW_THRESHOLD_MS );
 		} else {
 			setNavigationTime( 'none' );
 		}
@@ -54,7 +70,7 @@ function Root() {
 			clearTimeout( slowTimeout );
 			clearTimeout( verySlowTimeout );
 		};
-	}, [ isNavigating ] );
+	}, [ isNavigating, router ] );
 
 	const title = useMemo( () => {
 		return routeMeta

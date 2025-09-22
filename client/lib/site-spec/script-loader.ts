@@ -107,6 +107,7 @@ function injectResource( url: string, type: ResourceType ): Promise< void > {
 			const scriptElement = element as HTMLScriptElement;
 			scriptElement.src = url;
 			scriptElement.async = true;
+			scriptElement.type = 'module';
 		} else {
 			const linkElement = element as HTMLLinkElement;
 			linkElement.href = url;

@@ -1,4 +1,4 @@
-import { LogType, PHPLog, ServerLog, SiteActivityLog } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -20,10 +20,7 @@ export function useActions( {
 	isLoading,
 	gmtOffset,
 	timezoneString,
-}: UseLogActionsOptions ):
-	| Action< PHPLog >[]
-	| Action< ServerLog >[]
-	| Action< SiteActivityLog >[] {
+}: UseLogActionsOptions ): Action< PHPLog >[] | Action< ServerLog >[] {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	return useMemo( () => {
@@ -61,27 +58,6 @@ export function useActions( {
 				},
 			};
 			return [ commonDetailsAction, copyMessageAction ];
-		}
-
-		if ( logType === LogType.ACTIVITY ) {
-			const copySummaryAction: Action< SiteActivityLog > = {
-				id: 'copy-summary',
-				label: __( 'Copy activity summary' ),
-				disabled: isLoading,
-				supportsBulk: false,
-				callback: async ( items ) => {
-					const summary = items[ 0 ].summary;
-					try {
-						await navigator.clipboard.writeText( summary );
-						createSuccessNotice( __( 'Copied activity summary.' ), { type: 'snackbar' } );
-					} catch ( e ) {
-						createErrorNotice( __( 'Activity summary could not be copied.' ), {
-							type: 'snackbar',
-						} );
-					}
-				},
-			};
-			return [ copySummaryAction ];
 		}
 
 		// Server log actions

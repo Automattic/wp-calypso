@@ -2,20 +2,20 @@ import { siteScanEnqueueMutation, siteScanQuery } from '@automattic/api-queries'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useScanState } from './use-scan-state';
+import { ScanState } from './use-scan-state';
 import type { Site } from '@automattic/api-core';
 
 interface ScanNowButtonProps {
 	site: Site;
+	scanState: ScanState;
 }
 
-export function ScanNowButton( { site }: ScanNowButtonProps ) {
+export function ScanNowButton( { site, scanState }: ScanNowButtonProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const [ isEnqueued, setIsEnqueued ] = useState( false );
-	const { status } = useScanState( site.ID );
+	const { status, setIsEnqueued } = scanState;
+	const isEnqueued = status === 'enqueued';
 	const isRunning = status === 'running';
 
 	// Enqueue a new scan
@@ -31,13 +31,6 @@ export function ScanNowButton( { site }: ScanNowButtonProps ) {
 		...siteScanQuery( site.ID ),
 		refetchInterval: isRunning || isEnqueued ? 2000 : false,
 	} );
-
-	// Reset enqueued state when scan actually starts
-	useEffect( () => {
-		if ( isRunning && isEnqueued ) {
-			setIsEnqueued( false );
-		}
-	}, [ status, isEnqueued, isRunning ] );
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_scan_scan_now' );
