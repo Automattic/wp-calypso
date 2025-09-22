@@ -19,19 +19,17 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { getQueryArg, getProtocol } from '@wordpress/url';
 import { withViewportMatch } from '@wordpress/viewport';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Children, Component, isValidElement } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
@@ -91,7 +89,6 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import DomainsMiniCart from './domains-mini-cart';
 import {
 	getExternalBackUrl,
 	shouldUseMultipleDomainsInCart,
@@ -670,11 +667,6 @@ class RenderDomainsStepComponent extends Component {
 		].includes( flowName );
 	};
 
-	shouldDisplayDomainOnlyExplainer = () => {
-		const { flowName } = this.props;
-		return [ 'domain' ].includes( flowName );
-	};
-
 	async addDomain( suggestion ) {
 		const {
 			domain_name: domain,
@@ -987,119 +979,6 @@ class RenderDomainsStepComponent extends Component {
 		}
 	};
 
-	freeDomainRemoveClickHandler = () => {
-		return new Promise( ( resolve ) => {
-			this.setState( { wpcomSubdomainSelected: false } );
-			this.props.saveSignupStep( {
-				stepName: this.props.stepName,
-				suggestion: {
-					domain_name: false,
-				},
-			} );
-			resolve();
-		} );
-	};
-
-	getDomainsMiniCart = ( domainsInCart ) => {
-		const cartIsLoading = this.props.shoppingCartManager.isLoading;
-
-		if ( cartIsLoading && domainsInCart.length === 0 ) {
-			return null;
-		}
-
-		return (
-			<DomainsMiniCart
-				isMobile={ ! this.props.isDesktop }
-				domainsInCart={ domainsInCart }
-				domainRemovalQueue={ this.state.domainRemovalQueue }
-				flowName={ this.props.flowName }
-				removeDomainClickHandler={ this.removeDomainClickHandler }
-				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
-				goToNext={ this.goToNext }
-				handleSkip={ this.handleSkip }
-				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-				freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
-			/>
-		);
-	};
-
-	getSideContent = () => {
-		const { flowName } = this.props;
-		const domainsInCart = getDomainsInCart( this.props.cart );
-
-		const additionalDomains = this.state.temporaryCart
-			.map( ( cartDomain ) => {
-				return domainsInCart.find( ( domain ) => domain.meta === cartDomain.meta )
-					? null
-					: cartDomain;
-			} )
-			.filter( Boolean );
-
-		if ( additionalDomains.length > 0 ) {
-			domainsInCart.push( ...additionalDomains );
-		}
-
-		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
-			<div
-				className={ clsx( 'domains__domain-side-content', {
-					'fade-out':
-						shouldUseMultipleDomainsInCart( flowName ) &&
-						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
-				} ) }
-			>
-				<SideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
-			</div>
-		) : null;
-
-		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
-		const shouldShowSkip = this.props.allowSkipWithoutSearch || hasSearchedDomains;
-
-		const content = [
-			shouldUseMultipleDomainsInCart( flowName ) &&
-			( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected )
-				? this.getDomainsMiniCart( domainsInCart )
-				: ! this.shouldHideDomainExplainer() &&
-				  shouldShowSkip && (
-						<div className="domains__domain-side-content domains__free-domain">
-							<SideExplainer
-								onClick={ this.handleDomainExplainerClick }
-								type={
-									this.props.isPlanSelectionAvailableLaterInFlow
-										? 'free-domain-explainer-check-paid-plans'
-										: 'free-domain-explainer'
-								}
-								flowName={ flowName }
-							/>
-						</div>
-				  ),
-			useYourDomain,
-			this.shouldDisplayDomainOnlyExplainer() && (
-				<div className="domains__domain-side-content">
-					<SideExplainer
-						onClick={ this.handleDomainExplainerClick }
-						type="free-domain-only-explainer"
-					/>
-				</div>
-			),
-		];
-
-		const nonEmptyElements = Children.toArray( content ).filter( isValidElement );
-
-		if ( nonEmptyElements.length === 0 ) {
-			return null;
-		}
-
-		return (
-			<div
-				className={ clsx( 'domains__domain-side-content-container', {
-					'is-sticky': !! useYourDomain,
-				} ) }
-			>
-				{ nonEmptyElements }
-			</div>
-		);
-	};
-
 	showSkipButton = () => {
 		const { showSkipButton } = this.props;
 
@@ -1360,9 +1239,8 @@ class RenderDomainsStepComponent extends Component {
 		return this.props.analyticsSection ?? ( this.props.isDomainOnly ? 'domain-first' : 'signup' );
 	}
 
-	getContentColumns() {
+	getContent() {
 		let content;
-		let sideContent;
 
 		if ( 'use-your-domain' === this.props.stepSectionName ) {
 			content = this.useYourDomainForm();
@@ -1383,22 +1261,15 @@ class RenderDomainsStepComponent extends Component {
 			);
 		}
 
-		return [ content, sideContent ];
+		return content;
 	}
 
 	renderContent() {
-		const [ content, sideContent ] = this.getContentColumns();
+		const content = this.getContent();
 
 		return (
 			<div className="domains__step-content domains__step-content-domain-step">
-				{ this.props.isSideContentExperimentLoading ? (
-					<Spinner width="100" />
-				) : (
-					<>
-						{ content }
-						{ sideContent }
-					</>
-				) }
+				{ this.props.isSideContentExperimentLoading ? <Spinner width="100" /> : content }
 			</div>
 		);
 	}
@@ -1578,7 +1449,7 @@ class RenderDomainsStepComponent extends Component {
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
 		if ( this.props.render ) {
-			const [ content, sideContent ] = this.getContentColumns();
+			const content = this.getContent();
 
 			const mainContent = (
 				<>
@@ -1589,12 +1460,11 @@ class RenderDomainsStepComponent extends Component {
 
 			return this.props.render( {
 				mainContent,
-				sideContent,
 			} );
 		}
 
 		if ( this.props.useStepperWrapper && shouldUseStepContainerV2( flowName ) ) {
-			const [ content, sideContent ] = this.getContentColumns();
+			const content = this.getContent();
 
 			const backButton = ( backUrl || goBack ) && (
 				<Step.BackButton
@@ -1628,7 +1498,6 @@ class RenderDomainsStepComponent extends Component {
 					noBottomPadding
 				>
 					{ mainContent }
-					{ sideContent }
 				</Step.TwoColumnLayout>
 			);
 		}

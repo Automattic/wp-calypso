@@ -461,18 +461,11 @@ class DomainSearch extends Component< DomainSearchProps > {
 							designType={ this.props.designType }
 							setDesignType={ this.props.setDesignType }
 							fetchUsernameSuggestion={ this.props.fetchUsernameSuggestion }
-							render={ ( {
-								mainContent,
-								sideContent,
-							}: {
-								mainContent: React.ReactNode;
-								sideContent: React.ReactNode;
-							} ) => {
+							render={ ( { mainContent }: { mainContent: React.ReactNode } ) => {
 								return (
 									<div className="site-domains-add-page">
 										<div className="domains__step-content domains__step-content-domain-step">
 											{ mainContent }
-											{ sideContent }
 										</div>
 									</div>
 								);

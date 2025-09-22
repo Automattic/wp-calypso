@@ -4,7 +4,7 @@ import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
