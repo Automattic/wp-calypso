@@ -473,23 +473,30 @@ function StagingSiteSyncModalInner( {
 						{ hasWarning && (
 							<VStack style={ { marginTop: '20px' } }>
 								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
-									{ __(
-										'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
-									) }
-									{ showWooCommerceWarning &&
-										createInterpolateElement(
-											__(
-												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-											),
-											{
-												a: (
-													<ExternalLink
-														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-														children={ null }
-													/>
-												),
-											}
+									<VStack spacing={ 2 }>
+										<Text as="p">
+											{ __(
+												'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+											) }
+										</Text>
+										{ showWooCommerceWarning && (
+											<Text as="p">
+												{ createInterpolateElement(
+													__(
+														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+													),
+													{
+														a: (
+															<ExternalLink
+																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+																children={ null }
+															/>
+														),
+													}
+												) }
+											</Text>
 										) }
+									</VStack>
 								</Notice>
 							</VStack>
 						) }
