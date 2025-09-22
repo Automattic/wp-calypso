@@ -12,6 +12,7 @@ import {
 	domainTransferRequestQuery,
 	domainWhoisQuery,
 	domainConnectionSetupInfoQuery,
+	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -42,7 +43,11 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () => queryClient.ensureQueryData( domainsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -204,8 +209,8 @@ export const domainDnsEditRoute = createRoute( {
 	)
 );
 
-// Domain forwardings routes
-export const domainForwardingsRoute = createRoute( {
+// Domain forwarding routes
+export const domainForwardingRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -214,7 +219,7 @@ export const domainForwardingsRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings',
+	path: 'forwarding',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -222,8 +227,8 @@ export const domainForwardingsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings' )( {
+	import( '../../domains/domain-forwarding' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding' )( {
 			component: d.default,
 		} )
 	)
@@ -238,7 +243,7 @@ export const domainForwardingAddRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings/add',
+	path: 'forwarding/add',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -246,8 +251,8 @@ export const domainForwardingAddRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings/add' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings-add' )( {
+	import( '../../domains/domain-forwarding/add' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding-add' )( {
 			component: d.default,
 		} )
 	)
@@ -262,7 +267,7 @@ export const domainForwardingEditRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => domainRoute,
-	path: 'forwardings/edit/$forwardingId',
+	path: 'forwarding/edit/$forwardingId',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -270,8 +275,8 @@ export const domainForwardingEditRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-forwardings/edit' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwardings-edit' )( {
+	import( '../../domains/domain-forwarding/edit' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwarding-edit' )( {
 			component: d.default,
 		} )
 	)
@@ -552,11 +557,11 @@ export const createDomainsRoutes = () => {
 			domainDnsAddRoute,
 			domainDnsEditRoute,
 			domainConnectionSetupRoute,
-			domainContactVerificationRoute,
-			domainForwardingsRoute,
+			domainForwardingRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
 			domainContactInfoRoute,
+			domainContactVerificationRoute,
 			domainNameServersRoute,
 			domainGlueRecordsRoute,
 			domainGlueRecordsAddRoute,

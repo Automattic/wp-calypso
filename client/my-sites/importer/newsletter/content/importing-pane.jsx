@@ -14,6 +14,7 @@ import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/ac
 import { appStates } from 'calypso/state/imports/constants';
 import { infoNotice } from 'calypso/state/notices/actions';
 import AuthorMappingPane from './author-mapping-pane';
+import ConversionSummary from './conversion-summary';
 
 const sum = ( a, b ) => a + b;
 
@@ -98,6 +99,8 @@ export class ImportingPane extends PureComponent {
 			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		importerEngine: PropTypes.string.isRequired,
+		fromSite: PropTypes.string.isRequired,
 		sourceType: PropTypes.string.isRequired,
 		nextStepUrl: PropTypes.string.isRequired,
 		invalidateCardData: PropTypes.func,
@@ -155,6 +158,10 @@ export class ImportingPane extends PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
+	isUploadSuccess = () => {
+		return this.isInState( appStates.UPLOAD_SUCCESS );
+	};
+
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
@@ -168,9 +175,9 @@ export class ImportingPane extends PureComponent {
 	};
 
 	renderActionButtons = () => {
-		if ( this.isProcessing() || this.isMapping() ) {
+		if ( this.isProcessing() || this.isMapping() || this.isUploadSuccess() ) {
 			// We either don't want to show buttons while processing
-			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
+			// or, in the case of `isMapping` and `isUploadSuccess`, we let another component
 			// take care of rendering the buttons.
 			return null;
 		}
@@ -222,6 +229,8 @@ export class ImportingPane extends PureComponent {
 			sourceType,
 			site,
 			invalidateCardData,
+			importerEngine,
+			fromSite,
 		} = this.props;
 		const { customData } = importerStatus;
 
@@ -249,6 +258,14 @@ export class ImportingPane extends PureComponent {
 
 		return (
 			<div className="importer__importing-pane">
+				{ this.isUploadSuccess() && (
+					<ConversionSummary
+						siteId={ siteId }
+						importerStatus={ importerStatus }
+						importerEngine={ importerEngine }
+						fromSite={ fromSite }
+					/>
+				) }
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						onMap={ this.handleOnMap }
