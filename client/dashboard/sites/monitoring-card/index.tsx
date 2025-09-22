@@ -11,6 +11,7 @@ import {
 	download as downloadIcon,
 	link as linkIcon,
 } from '@wordpress/icons';
+import clsx from 'clsx';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { TextSkeleton } from '../../components/text-skeleton';
@@ -102,7 +103,7 @@ export default function MonitoringCard( {
 	);
 
 	return (
-		<Card className={ [ 'dashboard-monitoring-card', className ].join( ' ' ).trim() }>
+		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
 				{ tracksId && (
 					<ComponentViewTracker
