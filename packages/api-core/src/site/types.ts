@@ -31,6 +31,7 @@ export interface SiteOptions {
 	software_version: string;
 	updated_at?: string;
 	wordads?: boolean;
+	woocommerce_is_active?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 }

@@ -3,7 +3,7 @@ import { __experimentalText as Text, __experimentalHStack as HStack } from '@wor
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, published, scheduled, error, warning, info } from '@wordpress/icons';
 
-function formatDuration( startedOn: string, completedOn: string | number ) {
+function formatDuration( startedOn: string, completedOn: string | number | null ) {
 	if ( ! startedOn ) {
 		return '-';
 	}
@@ -19,7 +19,7 @@ function formatDuration( startedOn: string, completedOn: string | number ) {
 function getStatusText(
 	status: DeploymentRunStatus,
 	startedOn: string,
-	completedOn: string
+	completedOn: string | null
 ): string {
 	const timeSinceStarted = formatDuration( startedOn, new Date().valueOf() );
 	const duration = formatDuration( startedOn, completedOn );
@@ -92,7 +92,7 @@ const getStatusIcon = (
 interface DeploymentLogsStatusProps {
 	status: DeploymentRunStatus;
 	startedOn: string;
-	completedOn: string;
+	completedOn: string | null;
 }
 
 export function DeploymentLogsStatus( {

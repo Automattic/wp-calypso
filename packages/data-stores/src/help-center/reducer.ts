@@ -25,9 +25,9 @@ const typingConversationStatus: Reducer<
 };
 
 const zendeskConnectionStatus: Reducer<
-	'disconnected' | 'reconnecting' | 'connected',
+	'disconnected' | 'reconnecting' | 'connected' | undefined,
 	HelpCenterAction
-> = ( state = 'connected', action ) => {
+> = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_ZENDESK_CONNECTION_STATUS':
 			return action.connectionStatus;
