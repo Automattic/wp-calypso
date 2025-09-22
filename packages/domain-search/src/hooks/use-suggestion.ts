@@ -1,3 +1,4 @@
+import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../page/context';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -7,6 +8,7 @@ export enum DomainPriceRule {
 	HIDE_PRICE = 'HIDE_PRICE',
 	FREE_FOR_FIRST_YEAR = 'FREE_FOR_FIRST_YEAR',
 	PRICE = 'PRICE',
+	DOMAIN_MOVE_PRICE = 'DOMAIN_MOVE_PRICE',
 }
 
 export interface PriceRulesConfig {
@@ -29,6 +31,10 @@ const getPriceRuleForSuggestion = ( {
 
 	if ( priceRules.oneTimePrice ) {
 		return DomainPriceRule.ONE_TIME_PRICE;
+	}
+
+	if ( isDomainMoveInternal( suggestion ) ) {
+		return DomainPriceRule.DOMAIN_MOVE_PRICE;
 	}
 
 	if ( suggestion.is_premium || priceRules.forceRegularPrice ) {
