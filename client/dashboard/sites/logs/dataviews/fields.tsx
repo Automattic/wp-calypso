@@ -1,14 +1,10 @@
-import { LogType, PHPLog, ServerLog, SiteActivityLog } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
 import { useLocale } from '../../../app/locale';
-import { ActivityActor } from '../../../components/activity-log';
-import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
 import type { Field, Operator, DataViewRenderFieldProps } from '@wordpress/dataviews';
 
@@ -139,67 +135,6 @@ export function useFields( {
 					filterBy: { operators: [] as Operator[] },
 				},
 			] satisfies Field< PHPLog >[];
-		}
-
-		if ( logType === LogType.ACTIVITY ) {
-			return [
-				{
-					id: 'published',
-					type: 'datetime',
-					label: dateTimeLabel,
-					enableHiding: false,
-					enableSorting: true,
-					getValue: ( { item } ) => item.published,
-					render: ( { item } ) => {
-						const value = item.published;
-						return <span>{ formatDateCell( { value, timezoneString, gmtOffset, locale } ) }</span>;
-					},
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'published_utc',
-					type: 'datetime',
-					label: __( 'Date & Time (UTC)' ),
-					enableHiding: true,
-					enableSorting: true,
-					getValue: ( { item } ) => item.published,
-					render: ( { item } ) => {
-						const value = item.published;
-						return <span>{ formatDateCell( { value, timezoneString, gmtOffset, locale, formatAsUTC: true } ) }</span>;
-					},
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'event',
-					type: 'text',
-					label: __( 'Event' ),
-					enableSorting: false,
-					getValue: ( { item } ) => `${ item.summary }: ${ item.content?.text ?? '' }`,
-					render: ( { item } ) => (
-						<HStack spacing="2" alignment="left" className="site-activity-logs__event">
-							{ item.gridicon && (
-								<Icon
-									className="site-activity-logs__event-icon"
-									icon={ gridiconToWordPressIcon( item.gridicon ) }
-									size={ 24 }
-								/>
-							) }
-							<strong>{ item.summary }</strong>
-							{ item.content?.text && <span>{ item.content.text }</span> }
-						</HStack>
-					),
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'actor',
-					type: 'text',
-					label: __( 'User' ),
-					enableSorting: false,
-					getValue: ( { item } ) => item.actor?.name || __( 'Unknown' ),
-					render: ( { item } ) => <ActivityActor actor={ item.actor } />,
-					filterBy: { operators: [] },
-				},
-			] satisfies Field< SiteActivityLog >[];
 		}
 
 		// server (web) logs
