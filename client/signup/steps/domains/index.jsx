@@ -1074,11 +1074,6 @@ class RenderDomainsStepComponent extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				sideContent={
-					! this.props.useStepperWrapper &&
-					! shouldUseStepContainerV2( this.props.flowName ) &&
-					this.getSideContent()
-				}
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					isHostingSignupFlow( this.props.flowName )
@@ -1484,9 +1479,8 @@ class RenderDomainsStepComponent extends Component {
 			);
 
 			return (
-				<Step.TwoColumnLayout
-					firstColumnWidth={ 7 }
-					secondColumnWidth={ 3 }
+				<Step.CenteredColumnLayout
+					columnWidth={ 10 }
 					topBar={
 						<Step.TopBar
 							leftElement={ ! hideBack && backButton }
@@ -1498,7 +1492,7 @@ class RenderDomainsStepComponent extends Component {
 					noBottomPadding
 				>
 					{ mainContent }
-				</Step.TwoColumnLayout>
+				</Step.CenteredColumnLayout>
 			);
 		}
 

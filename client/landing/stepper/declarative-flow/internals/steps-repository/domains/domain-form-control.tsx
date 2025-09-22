@@ -233,19 +233,11 @@ export function DomainFormControl( {
 		);
 	};
 
-	let content;
-	let sideContent;
-	if ( showUseYourDomain ) {
-		content = renderYourDomainForm();
-	} else {
-		content = renderDomainForm();
-	}
-
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }
 			<div className="domains__step-content domains__step-content-domain-step">
-				{ content } { sideContent }
+				{ showUseYourDomain ? renderYourDomainForm() : renderDomainForm() }
 			</div>
 		</>
 	);
