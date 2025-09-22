@@ -9,7 +9,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -31,12 +31,7 @@ const form = {
 
 export interface DeploymentSelectControlProps {
 	data: DeploymentFormData;
-	field: {
-		id: string;
-		label: string;
-		elements: { label: string; value: string }[];
-		getValue: ( { item }: { item: DeploymentFormData } ) => string;
-	};
+	field: NormalizedField< DeploymentFormData >;
 	onChange: ( edits: Partial< DeploymentFormData > ) => void;
 }
 
@@ -77,7 +72,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 	const { mutate: mutateCreateCodeDeploymentRun, isPending: isPendingCreateCodeDeploymentRun } =
 		useMutation( createCodeDeploymentRunMutation() );
 
-	const fields = [
+	const fields: Field< DeploymentFormData >[] = [
 		{
 			Edit: DeploymentSelectControl,
 			id: 'selectedDeploymentId',
