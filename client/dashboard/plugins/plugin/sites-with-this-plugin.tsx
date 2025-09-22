@@ -8,7 +8,7 @@ import {
 	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalText as Text, Button, Icon, ToggleControl } from '@wordpress/components';
+import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
+import FieldActionToggle from './components/field-action-toggle';
 import { SiteWithPluginActivationStatus, usePlugin } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
@@ -77,18 +78,36 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 					const checked = pluginItem?.active ?? false;
 					const isBusy = isActivating || isDeactivating || isFetching;
 					return (
-						<ToggleControl
+						<FieldActionToggle
 							label={ __( 'Active' ) }
 							checked={ checked }
-							onClick={ ( e ) => e.preventDefault() }
-							onChange={ ( next ) => {
-								if ( next ) {
-									activateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								} else {
-									deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								}
-							} }
 							disabled={ isBusy }
+							onToggle={ ( next ) => {
+								if ( next ) {
+									return activateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+								}
+								return deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+							} }
+							successOn={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Activated %s' ),
+								plugin?.name ?? ''
+							) }
+							errorOn={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Failed to activate %s' ),
+								plugin?.name ?? ''
+							) }
+							successOff={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Deactivated %s' ),
+								plugin?.name ?? ''
+							) }
+							errorOff={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Failed to deactivate %s' ),
+								plugin?.name ?? ''
+							) }
 						/>
 					);
 				},
@@ -105,18 +124,36 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 					const checked = pluginItem?.autoupdate ?? false;
 					const isBusy = isEnablingAutoupdate || isDisablingAutoupdate || isFetching;
 					return (
-						<ToggleControl
+						<FieldActionToggle
 							label={ __( 'Autoupdate' ) }
 							checked={ checked }
-							onClick={ ( e ) => e.preventDefault() }
-							onChange={ ( next ) => {
-								if ( next ) {
-									enableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								} else {
-									disableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
-								}
-							} }
 							disabled={ isBusy }
+							onToggle={ ( next ) => {
+								if ( next ) {
+									return enableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+								}
+								return disableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+							} }
+							successOn={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Enabled auto‑updates for %s' ),
+								plugin?.name ?? ''
+							) }
+							errorOn={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Failed to enable auto‑updates for %s' ),
+								plugin?.name ?? ''
+							) }
+							successOff={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Disabled auto‑updates for %s' ),
+								plugin?.name ?? ''
+							) }
+							errorOff={ sprintf(
+								// translators: %s is the name of the plugin.
+								__( 'Failed to disable auto‑updates for %s' ),
+								plugin?.name ?? ''
+							) }
 						/>
 					);
 				},
