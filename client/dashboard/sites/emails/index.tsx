@@ -107,14 +107,7 @@ function SiteEmails() {
 	const navigate = useNavigate();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-
-	// Wait for site to load to know ID
-	const { data: domains, isLoading: isDomainsLoading } = useQuery(
-		site && site.ID
-			? siteDomainsQuery( site.ID )
-			: { queryKey: [ 'noop' ], queryFn: async () => [] }
-	);
-
+	const { data: domains, isLoading: isDomainsLoading } = useQuery( siteDomainsQuery( site.ID ) );
 	const { data: allEmails, isLoading: isEmailsLoading } = useQuery( emailsQuery() );
 
 	// Filter emails to those belonging to this site by either siteId or matching one of the site's domains
