@@ -170,7 +170,7 @@ describe( 'SiteSpec Utils', () => {
 		it( 'should always include tracking configuration with correct values', () => {
 			mockConfig.mockReturnValueOnce( {} );
 
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 
 			expect( result.tracking ).toEqual( {
 				enabled: true,
