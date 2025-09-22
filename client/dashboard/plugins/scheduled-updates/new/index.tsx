@@ -72,7 +72,7 @@ function ScheduledUpdatesNew() {
 			return;
 		}
 
-		const { time: timeResult, plugins: pluginResult } = collisionsChecker.validateNow( {
+		const { time: timeCollisions, plugins: pluginCollisions } = collisionsChecker.validateNow( {
 			siteIds: siteIdsAsNumbers,
 			plugins: selectedPluginSlugs,
 			frequency,
@@ -81,10 +81,10 @@ function ScheduledUpdatesNew() {
 		} );
 
 		// Prefer showing time collision error first if present; otherwise plugin collision
-		const collisionsError = timeResult.error || pluginResult.error;
-		const collidingSiteIds = timeResult.error
-			? timeResult.collidingSiteIds
-			: pluginResult.collidingSiteIds;
+		const collisionsError = timeCollisions.error || pluginCollisions.error;
+		const collidingSiteIds = timeCollisions.error
+			? timeCollisions.collidingSiteIds
+			: pluginCollisions.collidingSiteIds;
 
 		// show error if there are collisions and optionally list colliding sites
 		if ( collisionsError ) {
@@ -183,7 +183,7 @@ function ScheduledUpdatesNew() {
 		siteIdsAsNumbers,
 		isValid,
 		isScheduleCollisionsLoading,
-		collisionsHook,
+		collisionsChecker,
 	] );
 
 	return (
