@@ -93,17 +93,6 @@ export default function MonitoringRequestMethodsCard( {
 } ) {
 	const { data, isLoading } = useSiteRequestMethodsData( site.ID, timeRange );
 
-	// Prevent labels from showing up in the pie chart.
-	const dataNoLabel = data.map(
-		( value: DataPointPercentage ): DataPointPercentage => ( {
-			label: '',
-			value: value?.value || 0,
-			percentage: value?.percentage || 0,
-			color: value?.color || '',
-			valueDisplay: value?.valueDisplay || value?.percentage.toString() || '',
-		} )
-	);
-
 	return (
 		<MonitoringCard
 			title={ __( 'HTTP request methods' ) }
@@ -120,7 +109,8 @@ export default function MonitoringRequestMethodsCard( {
 					thickness={ 0.3 }
 					gapScale={ 0.02 }
 					size={ 300 }
-					data={ dataNoLabel }
+					data={ data }
+					showLabels={ false }
 				/>
 			</HStack>
 		</MonitoringCard>
