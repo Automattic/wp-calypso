@@ -19,6 +19,10 @@ jest.mock( '../username-validation-utils', () => ( {
 	getAllowedActions: jest.fn(),
 } ) );
 
+jest.mock( '../accessibility-utils', () => ( {
+	announceToScreenReader: jest.fn(),
+} ) );
+
 jest.mock( '@automattic/api-queries', () => ( {
 	usernameChangeMutation: jest.fn( () => ( {
 		mutationFn: jest.fn(),
@@ -71,9 +75,9 @@ describe( 'UsernameUpdateForm', () => {
 			await user.type( input, 'test' );
 
 			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 't' );
-			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 'e' );
-			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 's' );
-			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 't' );
+			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 'te' );
+			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 'tes' );
+			expect( mockOnConfirmChange ).toHaveBeenCalledWith( 'test' );
 		} );
 
 		it( 'shows initial help text when input is empty', () => {
@@ -146,7 +150,8 @@ describe( 'UsernameUpdateForm', () => {
 			);
 
 			const input = screen.getByLabelText( 'Confirm new username' );
-			expect( input ).toHaveClass( 'has-error' );
+			const wrapper = input.closest( '.has-error' );
+			expect( wrapper ).toBeInTheDocument();
 			expect( input ).toHaveAttribute( 'aria-invalid', 'true' );
 		} );
 	} );
@@ -270,7 +275,7 @@ describe( 'UsernameUpdateForm', () => {
 			render( <UsernameUpdateForm { ...defaultProps } /> );
 
 			const input = screen.getByLabelText( 'Confirm new username' );
-			expect( input ).toHaveAttribute( 'aria-describedby', 'username-confirm-help' );
+			expect( input ).toHaveAttribute( 'aria-describedby', 'username_confirm__help' );
 		} );
 
 		it( 'sets aria-invalid correctly based on error state', () => {

@@ -42,6 +42,22 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ) ),
 } ) );
 
+// Mock WordPress notices
+const mockCreateSuccessNotice = jest.fn();
+const mockCreateErrorNotice = jest.fn();
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( {
+		createSuccessNotice: mockCreateSuccessNotice,
+		createErrorNotice: mockCreateErrorNotice,
+	} ),
+	combineReducers: jest.fn( ( reducers ) => reducers ),
+	createReduxStore: jest.fn(),
+	register: jest.fn(),
+	createSelector: jest.fn(),
+	useSelect: jest.fn(),
+	dispatch: jest.fn(),
+} ) );
+
 const renderWithUserData = ( userData = mockUserSettings ) => {
 	// Update the mocked query functions to return test data
 	const { userSettingsQuery, isAutomatticianQuery } = require( '@automattic/api-queries' );
@@ -64,6 +80,8 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 describe( 'PersonalDetailsSection', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCreateSuccessNotice.mockClear();
+		mockCreateErrorNotice.mockClear();
 		nock.cleanAll();
 	} );
 
@@ -221,7 +239,16 @@ describe( 'PersonalDetailsSection', () => {
 			renderWithUserData();
 
 			await waitFor( () => {
-				expect( screen.getByText( 'Username changed successfully!' ) ).toBeInTheDocument();
+				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+					'Username changed successfully!',
+					expect.objectContaining( {
+						type: 'snackbar',
+						isDismissible: true,
+						explicitDismiss: true,
+						speak: true,
+						politeness: 'polite',
+					} )
+				);
 			} );
 		} );
 
@@ -271,13 +298,23 @@ describe( 'PersonalDetailsSection', () => {
 				writable: true,
 			} );
 
+			Object.defineProperty( window, 'history', {
+				value: {
+					replaceState: jest.fn(),
+				},
+			} );
+
 			renderWithUserData();
 
 			await waitFor( () => {
-				const notice = screen
-					.getByText( 'Username changed successfully!' )
-					.closest( '[role="status"]' );
-				expect( notice ).toHaveAttribute( 'aria-live', 'polite' );
+				// Verify the notice was created with proper accessibility options
+				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+					'Username changed successfully!',
+					expect.objectContaining( {
+						speak: true,
+						politeness: 'polite',
+					} )
+				);
 			} );
 		} );
 	} );

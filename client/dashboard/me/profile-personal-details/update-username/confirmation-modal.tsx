@@ -29,6 +29,7 @@ export default function UsernameUpdateConfirmationModal( {
 				role="dialog"
 				aria-labelledby="username-change-title"
 				aria-describedby="username-change-description"
+				data-testid="username-change-dialog"
 			>
 				<h3 id="username-change-title">{ __( 'Confirm username change' ) }</h3>
 				<VStack spacing={ 2 } id="username-change-description">

@@ -75,7 +75,8 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 		it( 'has proper dialog role and ARIA attributes', () => {
 			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
 
-			const dialog = screen.getByRole( 'dialog' );
+			const dialog = screen.getByTestId( 'username-change-dialog' );
+			expect( dialog ).toHaveAttribute( 'role', 'dialog' );
 			expect( dialog ).toHaveAttribute( 'aria-labelledby', 'username-change-title' );
 			expect( dialog ).toHaveAttribute( 'aria-describedby', 'username-change-description' );
 		} );
@@ -90,8 +91,10 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 		it( 'focuses on the modal when opened', () => {
 			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
 
-			const dialog = screen.getByRole( 'dialog' );
-			expect( document.body ).toContainElement( dialog );
+			// ConfirmDialog creates multiple dialog elements, check that at least one exists
+			const dialogs = screen.getAllByRole( 'dialog' );
+			expect( dialogs.length ).toBeGreaterThan( 0 );
+			expect( document.body ).toContainElement( dialogs[ 0 ] );
 		} );
 	} );
 } );

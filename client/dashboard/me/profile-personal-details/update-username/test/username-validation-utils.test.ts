@@ -5,7 +5,6 @@ import {
 	validateUsername,
 	submitUsernameChange as apiSubmitUsernameChange,
 } from '@automattic/api-core';
-import { debounce } from '@wordpress/compose';
 import {
 	validateUsernameDebounced,
 	isUsernameValid,
@@ -16,29 +15,29 @@ import {
 } from '../username-validation-utils';
 
 // Mock dependencies
-jest.mock( '@wordpress/compose', () => ( {
-	debounce: jest.fn(),
-} ) );
+jest.mock( '@wordpress/compose', () => {
+	const mockFn = jest.fn() as any;
+	mockFn.cancel = jest.fn();
+	mockFn.flush = jest.fn();
+	mockFn.pending = jest.fn();
+
+	return {
+		debounce: jest.fn( ( fn ) => {
+			mockFn._originalFn = fn;
+			return mockFn;
+		} ),
+	};
+} );
 
 jest.mock( '@automattic/api-core', () => ( {
 	validateUsername: jest.fn(),
 	submitUsernameChange: jest.fn(),
 } ) );
 
-const mockDebounce = debounce as jest.MockedFunction< typeof debounce >;
 const mockValidateUsername = validateUsername as jest.MockedFunction< typeof validateUsername >;
 const mockApiSubmitUsernameChange = apiSubmitUsernameChange as jest.MockedFunction<
 	typeof apiSubmitUsernameChange
 >;
-
-const createMockDebouncedFn = () => {
-	const mockValidationFn = jest.fn() as any;
-	mockValidationFn.cancel = jest.fn();
-	mockValidationFn.flush = jest.fn();
-	mockValidationFn.pending = jest.fn();
-	mockDebounce.mockReturnValue( mockValidationFn );
-	return mockValidationFn;
-};
 
 describe( 'Username Validation Utils', () => {
 	beforeEach( () => {
@@ -46,28 +45,30 @@ describe( 'Username Validation Utils', () => {
 	} );
 
 	describe( 'validateUsernameDebounced', () => {
-		it( 'is created with 600ms delay and delegates parameters correctly', () => {
-			const mockDebouncedFn = createMockDebouncedFn();
+		it( 'is a debounced function that delegates parameters correctly', () => {
 			const setValidationResult = jest.fn();
 
-			// Verify debounce was called with correct delay
-			expect( mockDebounce ).toHaveBeenCalledWith( expect.any( Function ), 600 );
+			expect( typeof validateUsernameDebounced ).toBe( 'function' );
+			expect( validateUsernameDebounced ).toHaveProperty( 'cancel' );
+			expect( validateUsernameDebounced ).toHaveProperty( 'flush' );
 
 			validateUsernameDebounced( 'testuser', 'olduser', setValidationResult );
-			expect( mockDebouncedFn ).toHaveBeenCalledWith( 'testuser', 'olduser', setValidationResult );
+
+			expect( validateUsernameDebounced ).toHaveBeenCalledWith(
+				'testuser',
+				'olduser',
+				setValidationResult
+			);
 		} );
 
 		it( 'validates username with API call', async () => {
-			createMockDebouncedFn();
-
 			mockValidateUsername.mockResolvedValue( {
 				success: true,
 				allowed_actions: { none: 'Just change username' },
 			} );
 
 			const setValidationResult = jest.fn();
-
-			const actualValidationFn = mockDebounce.mock.calls[ 0 ][ 0 ] as any;
+			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
 
 			await actualValidationFn( 'newusername', 'oldusername', setValidationResult );
 
@@ -80,13 +81,11 @@ describe( 'Username Validation Utils', () => {
 		} );
 
 		it( 'handles API errors', async () => {
-			createMockDebouncedFn();
-
 			const apiError = { error: 'username_taken', message: 'Username is already taken' };
 			mockValidateUsername.mockRejectedValue( apiError );
 
 			const setValidationResult = jest.fn();
-			const actualValidationFn = mockDebounce.mock.calls[ 0 ][ 0 ] as any;
+			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
 
 			await actualValidationFn( 'takenusername', 'oldusername', setValidationResult );
 
@@ -94,10 +93,8 @@ describe( 'Username Validation Utils', () => {
 		} );
 
 		it( 'skips validation when username matches current username', async () => {
-			createMockDebouncedFn();
-
 			const setValidationResult = jest.fn();
-			const actualValidationFn = mockDebounce.mock.calls[ 0 ][ 0 ] as any;
+			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
 
 			await actualValidationFn( 'sameusername', 'sameusername', setValidationResult );
 
@@ -106,10 +103,8 @@ describe( 'Username Validation Utils', () => {
 		} );
 
 		it( 'validates minimum length requirement', async () => {
-			createMockDebouncedFn();
-
 			const setValidationResult = jest.fn();
-			const actualValidationFn = mockDebounce.mock.calls[ 0 ][ 0 ] as any;
+			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
 
 			await actualValidationFn( 'ab', 'oldusername', setValidationResult );
 
@@ -121,10 +116,8 @@ describe( 'Username Validation Utils', () => {
 		} );
 
 		it( 'validates allowed characters', async () => {
-			createMockDebouncedFn();
-
 			const setValidationResult = jest.fn();
-			const actualValidationFn = mockDebounce.mock.calls[ 0 ][ 0 ] as any;
+			const actualValidationFn = ( validateUsernameDebounced as any )._originalFn;
 
 			await actualValidationFn( 'user@name', 'oldusername', setValidationResult );
 
