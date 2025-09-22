@@ -52,10 +52,9 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 				( acc: number, curr: number ): number => acc + curr,
 				0
 			);
-			const chartColorsCopy = [ ...chartColors ];
 
 			return Object.entries( methodsMap ).map(
-				( [ method, value ]: [ string, number ] ): DataPointPercentage => {
+				( [ method, value ]: [ string, number ], index ): DataPointPercentage => {
 					const valuePercentage = Math.round( ( value * 100 ) / sum );
 
 					return {
@@ -63,7 +62,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 						value: Math.round( value * 100 ) / 100,
 						percentage: valuePercentage,
 						valueDisplay: valuePercentage.toString() + '%',
-						color: chartColorsCopy.shift() || '#000000',
+						color: chartColors[ index % chartColors.length ],
 					};
 				}
 			);
