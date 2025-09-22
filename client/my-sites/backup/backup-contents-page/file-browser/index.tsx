@@ -10,6 +10,7 @@ import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
 
 export interface FileBrowserConfig {
+	applyFiltering?: boolean;
 	restrictedPaths?: string[];
 	restrictedTypes?: string[];
 	excludeTypes?: string[];
