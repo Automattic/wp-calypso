@@ -2,3 +2,28 @@
 	display: none !important;
 }
 
+.site-logs {
+	&__callout {
+		position: relative;
+		padding: 70px 0;
+
+		&.is-activity {
+			background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 1.13%, #fff 17.26% );
+			padding: 50px 0;
+			margin-top: -70px;
+			z-index: 2;
+		}
+	}
+
+	&__callout-content {
+		max-width: 889px;
+		flex-basis: 889px;
+		margin: 120px;
+		padding: 50px 0;
+
+		&.is-activity {
+			margin: 40px 0 50px;
+			padding: 0;
+		}
+	}
+}

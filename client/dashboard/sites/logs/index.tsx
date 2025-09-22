@@ -2,7 +2,13 @@ import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { TabPanel, Card, CardHeader, CardBody } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	CardHeader,
+	__experimentalHStack as HStack,
+	TabPanel,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
@@ -11,7 +17,9 @@ import { siteRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { ActivityLogsCallout } from '../logs-activity/activity-logs-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
@@ -62,74 +70,88 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
 		}
 	};
-
+	const hasActivityLog =
+		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
+		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.LOGS }
-				asOverlay
-				{ ...getLogsCalloutProps() }
-			>
-				<>
-					{ logType !== LogType.ACTIVITY && (
-						<DateRangePicker
-							start={ dateRange.start }
-							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
-							timezoneString={ timezoneString }
-							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
-						/>
-					) }
-					<Card className="site-logs-card">
-						<CardHeader style={ { paddingBottom: '0' } }>
-							<TabPanel
-								className="site-logs-tabs"
-								activeClass="is-active"
-								tabs={ LOG_TABS }
-								onSelect={ ( tabName ) => {
-									if (
-										tabName === LogType.PHP ||
-										tabName === LogType.SERVER ||
-										tabName === LogType.ACTIVITY
-									) {
-										handleTabChange( tabName );
-									}
-								} }
-								initialTabName={ logType }
-							>
-								{ () => null }
-							</TabPanel>
-						</CardHeader>
-						<CardBody>
+			<>
+				{ logType !== LogType.ACTIVITY && (
+					<DateRangePicker
+						start={ dateRange.start }
+						end={ dateRange.end }
+						gmtOffset={ gmtOffset }
+						timezoneString={ timezoneString }
+						locale={ locale }
+						onChange={ handleDateRangeChangeWrapper }
+					/>
+				) }
+				<Card className="site-logs-card">
+					<CardHeader style={ { paddingBottom: '0' } }>
+						<TabPanel
+							className="site-logs-tabs"
+							activeClass="is-active"
+							tabs={ LOG_TABS }
+							onSelect={ ( tabName ) => {
+								if (
+									tabName === LogType.PHP ||
+									tabName === LogType.SERVER ||
+									tabName === LogType.ACTIVITY
+								) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ logType }
+						>
+							{ () => null }
+						</TabPanel>
+					</CardHeader>
+					<CardBody>
+						<>
 							{ logType === LogType.PHP || logType === LogType.SERVER ? (
-								<SiteLogsDataViews
-									logType={ logType }
-									dateRange={ dateRange }
-									dateRangeVersion={ dateRangeVersion }
-									autoRefresh={ autoRefresh }
-									setAutoRefresh={ setAutoRefresh }
-									gmtOffset={ gmtOffset }
-									timezoneString={ timezoneString }
-									site={ site }
-								/>
+								<HStack alignment="center" expanded className="site-logs__callout">
+									<HostingFeatureGatedWithCallout
+										site={ site }
+										feature={ HostingFeatures.LOGS }
+										{ ...getLogsCalloutProps() }
+									>
+										<SiteLogsDataViews
+											logType={ logType }
+											dateRange={ dateRange }
+											dateRangeVersion={ dateRangeVersion }
+											autoRefresh={ autoRefresh }
+											setAutoRefresh={ setAutoRefresh }
+											gmtOffset={ gmtOffset }
+											timezoneString={ timezoneString }
+											site={ site }
+										/>
+									</HostingFeatureGatedWithCallout>
+								</HStack>
 							) : (
-								<SiteActivityLogsDataViews
-									logType={ logType }
-									dateRange={ dateRange }
-									dateRangeVersion={ dateRangeVersion }
-									autoRefresh={ autoRefresh }
-									setAutoRefresh={ setAutoRefresh }
-									gmtOffset={ gmtOffset }
-									timezoneString={ timezoneString }
-									site={ site }
-								/>
+								<div className="site-logs__activity">
+									<SiteActivityLogsDataViews
+										logType={ logType }
+										dateRange={ dateRange }
+										dateRangeVersion={ dateRangeVersion }
+										autoRefresh={ autoRefresh }
+										setAutoRefresh={ setAutoRefresh }
+										gmtOffset={ gmtOffset }
+										timezoneString={ timezoneString }
+										site={ site }
+									/>
+									{ ! hasActivityLog && (
+										<HStack alignment="center" expanded className="site-logs__callout is-activity">
+											<div className="site-logs__callout-content is-activity">
+												<ActivityLogsCallout siteSlug={ site.slug } />
+											</div>
+										</HStack>
+									) }
+								</div>
 							) }
-						</CardBody>
-					</Card>
-				</>
-			</HostingFeatureGatedWithCallout>
+						</>
+					</CardBody>
+				</Card>
+			</>
 		</PageLayout>
 	);
 }
