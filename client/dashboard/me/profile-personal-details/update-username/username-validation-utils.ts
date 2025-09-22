@@ -1,9 +1,9 @@
-import { debounce } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
 import {
 	validateUsername,
 	submitUsernameChange as apiSubmitUsernameChange,
 } from '@automattic/api-core';
+import { debounce } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 import type { UsernameValidationResult } from '@automattic/api-core';
 
 const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;

@@ -29,4 +29,22 @@ export const mockUserSettings: UserSettings = {
 	subscription_delivery_hour: 12,
 	subscription_delivery_jabber_default: false,
 	p2_disable_autofollow_on_comment: false,
+	email_verified: true,
+	user_login_can_be_changed: true,
+};
+
+export const mockAutomatticianUserSettings: UserSettings = {
+	...mockUserSettings,
+	user_login: 'automattician',
+	user_email: 'automattician@automattic.com',
+};
+
+export const mockUnverifiedEmailUserSettings: UserSettings = {
+	...mockUserSettings,
+	email_verified: false,
+};
+
+export const mockCannotChangeUsernameSettings: UserSettings = {
+	...mockUserSettings,
+	user_login_can_be_changed: false,
 };

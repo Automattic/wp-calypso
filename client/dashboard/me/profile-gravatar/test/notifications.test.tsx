@@ -8,7 +8,7 @@ import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
-import { mockUserSettings } from './__mocks__/user-settings';
+import { mockUserSettings } from '../../profile/__mocks__/user-settings';
 
 // Mock the WordPress data store
 const mockCreateSuccessNotice = jest.fn();

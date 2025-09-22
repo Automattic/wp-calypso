@@ -1,12 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-import { debounce } from '@wordpress/compose';
 import {
 	validateUsername,
 	submitUsernameChange as apiSubmitUsernameChange,
 } from '@automattic/api-core';
+import { debounce } from '@wordpress/compose';
 import {
 	validateUsernameDebounced,
 	isUsernameValid,
