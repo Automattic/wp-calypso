@@ -20,6 +20,11 @@ export type SitePlugin = {
 	slug: string;
 	uninstallable?: boolean;
 	version: string;
+	action_links?: Record< string, string >;
+	file_mod_capabilities: {
+		modify_files: boolean;
+		autoupdate_files: boolean;
+	};
 };
 
 /**
