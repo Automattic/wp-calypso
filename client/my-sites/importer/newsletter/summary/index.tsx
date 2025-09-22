@@ -85,7 +85,7 @@ export default function Summary( {
 			}
 
 			// Reset the importer if it's completed and the Summary page is exited.
-			page.exit( '/import/newsletter/substack/*', ( context, next ) => {
+			page.exit( '/import/newsletter/substack/:site?/summary', ( context, next ) => {
 				resetImporter();
 				next();
 			} );
