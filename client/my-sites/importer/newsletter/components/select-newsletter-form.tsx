@@ -4,12 +4,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
 import { useState } from 'react';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
-import { useSetOriginSiteMutation } from 'calypso/data/paid-newsletter/use-set-origin-site-mutation';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
 interface SelectNewsletterFormProps {
 	value: string;
-	isLoading: boolean;
+	setFromSite: ( fromSite: string ) => void;
 	isError: boolean;
 	siteId: number;
 	engine: string;
@@ -18,15 +17,13 @@ interface SelectNewsletterFormProps {
 
 export default function SelectNewsletterForm( {
 	value,
-	isLoading,
 	isError,
-	siteId,
+	setFromSite,
 	engine,
 	siteSlug,
 }: SelectNewsletterFormProps ) {
 	const { __ } = useI18n();
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
-	const { setOriginSite, isPending } = useSetOriginSiteMutation();
 
 	const handleAction = ( fromSite: string ) => {
 		if ( ! isValidUrl( fromSite ) ) {
@@ -38,17 +35,9 @@ export default function SelectNewsletterForm( {
 		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
 		const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/content`;
 
-		setOriginSite( siteId, engine, 'content', from );
+		setFromSite( from );
 		page( stepUrl );
 	};
-
-	if ( isLoading || isPending ) {
-		return (
-			<Card className="select-newsletter-form">
-				<div className="is-loading" />
-			</Card>
-		);
-	}
 
 	const hasError = isUrlInvalid || isError;
 
