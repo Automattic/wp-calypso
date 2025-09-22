@@ -137,7 +137,7 @@ function Emails() {
 			}
 			notices={
 				<>
-					<OptInWelcome />
+					<OptInWelcome tracksContext="emails" />
 					<Notice status="warning" isDismissible={ false }>
 						{ __( 'This is using fake data for the moment' ) }
 					</Notice>

@@ -50,7 +50,7 @@ function Domains() {
 					}
 				/>
 			}
-			notices={ <OptInWelcome /> }
+			notices={ <OptInWelcome tracksContext="domains" /> }
 		>
 			<DataViewsCard>
 				<DataViews< DomainSummary >

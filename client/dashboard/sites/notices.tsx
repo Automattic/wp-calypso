@@ -37,7 +37,7 @@ export const SitesNotices = () => {
 
 	return (
 		<>
-			<OptInWelcome />
+			<OptInWelcome tracksContext="sites" />
 			{ isRestoringAccount && (
 				<RestoringSitesNotices
 					onClose={ () =>
