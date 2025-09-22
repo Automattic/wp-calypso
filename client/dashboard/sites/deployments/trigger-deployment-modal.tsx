@@ -6,7 +6,6 @@ import {
 	SelectControl,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
@@ -14,6 +13,7 @@ import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { CodeDeploymentData } from '../../../sites/deployments/deployments/use-code-deployments-query';
+import { ButtonStack } from '../../components/button-stack';
 
 interface TriggerDeploymentModalProps {
 	onClose: () => void;
@@ -124,7 +124,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 						} }
 					/>
 
-					<HStack spacing={ 2 } style={ { justifyContent: 'flex-end' } }>
+					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
 							{ __( 'Cancel' ) }
 						</Button>
@@ -136,7 +136,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 						>
 							{ __( 'Deploy to production' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</form>
 		</Modal>
