@@ -1,5 +1,5 @@
-import { siteDomainsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { siteDomainsQuery, siteSettingsMutation } from '@automattic/api-queries';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	Card,
@@ -7,11 +7,9 @@ import {
 	Button,
 	CheckboxControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
@@ -19,7 +17,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
 import type { Site, SiteSettings } from '@automattic/api-core';
-import type { UseMutationResult } from '@tanstack/react-query';
 import type { Field, Form } from '@wordpress/dataviews';
 
 // The raw SiteSettings don't map nicely to the controls in the form. Mapping from SiteSettings to
@@ -119,22 +116,21 @@ const robotForm = {
 	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 
-export function PrivacyForm( {
-	site,
-	settings,
-	mutation,
-}: {
-	site: Site;
-	settings: SiteSettings;
-	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
-} ) {
+export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
 	const { data: domains = [] } = useQuery( siteDomainsQuery( site.ID ) );
+	const mutation = useMutation( {
+		...siteSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Site visibility settings saved.' ),
+				error: __( 'Failed to save site visibility settings.' ),
+			},
+		},
+	} );
 
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
 	const isPrimaryDomainStaging = Boolean( primaryDomain?.is_wpcom_staging_domain );
 	const hasNonWpcomDomain = domains.some( ( domain ) => ! domain.wpcom_domain );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const initialData = fromSiteSettings( settings );
 	const [ formData, setFormData ] = useState( () => ( {
@@ -150,16 +146,7 @@ export function PrivacyForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( toSiteSettings( formData ), {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Site visibility settings saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save site visibility settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( toSiteSettings( formData ) );
 	};
 
 	const handleChange = ( edits: Partial< PrivacyFormData > ) => {

@@ -20,10 +20,7 @@ interface Banners {
 	high: string;
 }
 
-export interface Icons {
-	'1x': string;
-	'2x': string;
-}
+export type Icons = { '1x': string; '2x'?: string } | { '1x': string; svg?: string } | null;
 
 export interface WpOrgPlugin {
 	name: string;

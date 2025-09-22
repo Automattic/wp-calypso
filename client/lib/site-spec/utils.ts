@@ -10,7 +10,7 @@ interface SiteSpecRawConfig {
 }
 
 // Config structure for the client
-interface SiteSpecConfig {
+export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
@@ -56,7 +56,7 @@ export function getSiteSpecUrlByType( type: ResourceType ): string | null {
  * Retrieves the SiteSpec configuration object for initializing the widget.
  * @returns {SiteSpecConfig} Configuration object containing agent settings and build URLs
  */
-export function getSiteSpecConfig(): SiteSpecConfig {
+export function getDefaultSiteSpecConfig(): SiteSpecConfig {
 	const siteSpecConfig = config( 'site_spec' ) as SiteSpecRawConfig | undefined;
 
 	if ( ! siteSpecConfig ) {

@@ -28,5 +28,9 @@ export const getSeverityIntent = ( severity: number ): 'default' | 'error' | 'wa
 export const SeverityBadge = ( { severity }: { severity: number } ) => {
 	const intent = getSeverityIntent( severity );
 	const label = getSeverityLabel( severity );
-	return <Badge intent={ intent }>{ label }</Badge>;
+	return (
+		<Badge intent={ intent } style={ { flexShrink: 0 } }>
+			{ label }
+		</Badge>
+	);
 };

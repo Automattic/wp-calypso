@@ -12,7 +12,7 @@ import {
 	isSiteSpecEnabled,
 	getSiteSpecUrl,
 	getSiteSpecUrlByType,
-	getSiteSpecConfig,
+	getDefaultSiteSpecConfig,
 } from '../utils';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -121,7 +121,7 @@ describe( 'SiteSpec Utils', () => {
 		} );
 	} );
 
-	describe( 'getSiteSpecConfig', () => {
+	describe( 'getDefaultSiteSpecConfig', () => {
 		it( 'should return configuration object with all values', () => {
 			mockConfig.mockReturnValueOnce( {
 				agent_url: 'https://api.example.com/agent',
@@ -129,7 +129,7 @@ describe( 'SiteSpec Utils', () => {
 				build_site_url: 'https://example.com/build?spec_id=',
 			} );
 
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 
 			expect( result ).toEqual( {
 				agentUrl: 'https://api.example.com/agent',
@@ -140,7 +140,7 @@ describe( 'SiteSpec Utils', () => {
 
 		it( 'should return empty object when config is undefined', () => {
 			mockConfig.mockReturnValueOnce( undefined );
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 			expect( result ).toEqual( {} );
 		} );
 
@@ -150,7 +150,7 @@ describe( 'SiteSpec Utils', () => {
 				// Missing agent_url and build_site_url
 			} );
 
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 
 			expect( result ).toEqual( {
 				agentId: 'test-agent-id',

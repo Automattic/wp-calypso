@@ -11,7 +11,6 @@ import { useFileBrowserContext } from './file-browser-context';
 
 interface FileBrowserHeaderProps {
 	rewindId: number;
-	showHeaderButtons?: boolean;
 	siteId: number;
 	siteSlug: string;
 	hasCredentials?: boolean;
@@ -28,7 +27,6 @@ interface FileBrowserHeaderProps {
 
 function FileBrowserHeader( {
 	rewindId,
-	showHeaderButtons = true,
 	siteId,
 	siteSlug,
 	hasCredentials,
@@ -63,7 +61,7 @@ function FileBrowserHeader( {
 
 	return (
 		<VStack className="file-browser-header">
-			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
+			{ browserCheckList.totalItems > 0 && (
 				<ButtonStack justify="flex-start">
 					<Button __next40pxDefaultSize onClick={ onDownloadClick }>
 						{ __( 'Download selected files' ) }

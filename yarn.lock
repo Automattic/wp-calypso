@@ -308,9 +308,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:0.1.12":
-  version: 0.1.12
-  resolution: "@automattic/agenttic-client@npm:0.1.12"
+"@automattic/agenttic-client@npm:0.1.13":
+  version: 0.1.13
+  resolution: "@automattic/agenttic-client@npm:0.1.13"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@types/react": "npm:^18.0.0"
@@ -326,15 +326,15 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: bf369011dcb62e7b3534521aba0bf5f4e720149138bf13cb1f3d2d7903cd88db04eec759e78157367ea8461ab25353a973db9166e48f4ac385e3f5841a5b3121
+  checksum: 0ad77f24843a5caf2591bf8da9733549319bd010ef4eb7d02f42533231ea787a003221ab6d2dcaba99220dcee6ea224d69b8a5fabc7d665f1a39db0cf9b6bec3
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.12, @automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.12
-  resolution: "@automattic/agenttic-ui@npm:0.1.12"
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.13, @automattic/agenttic-ui@npm:^0.1.9":
+  version: 0.1.13
+  resolution: "@automattic/agenttic-ui@npm:0.1.13"
   dependencies:
-    "@automattic/agenttic-client": "npm:0.1.12"
+    "@automattic/agenttic-client": "npm:0.1.13"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
     "@radix-ui/react-slot": "npm:^1.2.3"
     "@visx/xychart": "npm:^3.12.0"
@@ -350,7 +350,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: d51d459343ec37671a57a021a0f2ca095c461fbfafa9020aed9556d7a9b034147e7f4fbd2854bbc54b209fede86ff80d8c91d7c869e186bbfa58932a72cc5b5a
+  checksum: 3a27517c5c1b17638a7735e01ff3c695cd833855a055c2406e75123e9074ae4b0728a202c444530e44a2e5d42956e320c6861504fac7742565ed749a0350b7ac
   languageName: node
   linkType: hard
 
@@ -1861,7 +1861,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.12"
+    "@automattic/agenttic-ui": "npm:^0.1.13"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"

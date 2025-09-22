@@ -14,6 +14,7 @@ export type AtomicVariation =
 	| 'mixed';
 
 export interface SupportedEnvVariables {
+	readonly A8C_FOR_AGENCIES_URL: string;
 	readonly ALLURE_RESULTS_PATH: string;
 	readonly ARTIFACTS_PATH: string;
 	readonly ATOMIC_VARIATION: AtomicVariation;

@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useBackupState } from '../site-backup-state';
+import { useBackupState } from '../use-backup-state';
 
 // Mock lib/wp to return data directly from our test setup
 jest.mock( 'calypso/lib/wp', () => ( {

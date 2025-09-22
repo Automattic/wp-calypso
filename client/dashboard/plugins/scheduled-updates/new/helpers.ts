@@ -36,3 +36,24 @@ export function prepareTimestamp(
 
 	return event.getTime() / 1000;
 }
+
+/**
+ * Limited concurrency runner
+ */
+export const runWithConcurrency = async (
+	tasks: Array< () => Promise< unknown > >,
+	limit: number
+) => {
+	const executing = new Set< Promise< unknown > >();
+
+	for ( const task of tasks ) {
+		const p = task().finally( () => executing.delete( p ) );
+		executing.add( p );
+
+		if ( executing.size >= limit ) {
+			await Promise.race( executing );
+		}
+	}
+
+	await Promise.allSettled( Array.from( executing ) );
+};
