@@ -24,49 +24,53 @@ const chartColors = [ '#3858E9', '#5BA300', '#F57600', '#B51963' ];
 function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteRequestMethodsData {
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
-	const { data: requestMethodsData, isPending: isLoading } = useQuery(
-		siteMetricsQuery( siteId, { start, end, metric: 'requests_persec', dimension: 'http_verb' } )
-	);
-
-	const formatData = ( requestMethodsData: SiteHostingMetrics ): DataPointPercentage[] => {
-		if ( ! requestMethodsData?.data?.periods ) {
-			return [];
-		}
-
-		const methodsMap: {
-			[ key: string ]: number;
-		} = {};
-
-		requestMethodsData.data.periods.forEach( ( period: PeriodData ) => {
-			if ( typeof period?.dimension === 'object' ) {
-				Object.entries( period.dimension ).forEach( ( [ method, value ] ) => {
-					if ( ! methodsMap[ method ] ) {
-						methodsMap[ method ] = 0;
-					}
-					methodsMap[ method ] += value;
-				} );
+	const { data: requestMethodsData, isPending: isLoading } = useQuery( {
+		...siteMetricsQuery( siteId, {
+			start,
+			end,
+			metric: 'requests_persec',
+			dimension: 'http_verb',
+		} ),
+		select: ( requestMethodsData: SiteHostingMetrics ): DataPointPercentage[] => {
+			if ( ! requestMethodsData?.data?.periods ) {
+				return [];
 			}
-		} );
 
-		const sum: number = Object.values( methodsMap ).reduce(
-			( acc: number, curr: number ): number => acc + curr,
-			0
-		);
-		const chartColorsCopy = [ ...chartColors ];
+			const methodsMap: {
+				[ key: string ]: number;
+			} = {};
 
-		return Object.entries( methodsMap ).map(
-			( [ method, value ]: [ string, number ] ): DataPointPercentage => ( {
-				label: method.toUpperCase(),
-				value: Math.round( value * 100 ) / 100,
-				percentage: Math.round( ( value * 100 ) / sum ),
-				valueDisplay: Math.round( ( value * 100 ) / sum ).toString() + '%',
-				color: chartColorsCopy.shift() || '#000000',
-			} )
-		);
-	};
+			requestMethodsData.data.periods.forEach( ( period: PeriodData ) => {
+				if ( typeof period?.dimension === 'object' ) {
+					Object.entries( period.dimension ).forEach( ( [ method, value ] ) => {
+						if ( ! methodsMap[ method ] ) {
+							methodsMap[ method ] = 0;
+						}
+						methodsMap[ method ] += value;
+					} );
+				}
+			} );
+
+			const sum: number = Object.values( methodsMap ).reduce(
+				( acc: number, curr: number ): number => acc + curr,
+				0
+			);
+			const chartColorsCopy = [ ...chartColors ];
+
+			return Object.entries( methodsMap ).map(
+				( [ method, value ]: [ string, number ] ): DataPointPercentage => ( {
+					label: method.toUpperCase(),
+					value: Math.round( value * 100 ) / 100,
+					percentage: Math.round( ( value * 100 ) / sum ),
+					valueDisplay: Math.round( ( value * 100 ) / sum ).toString() + '%',
+					color: chartColorsCopy.shift() || '#000000',
+				} )
+			);
+		},
+	} );
 
 	return {
-		data: requestMethodsData ? formatData( requestMethodsData ) : [],
+		data: requestMethodsData || [],
 		isLoading,
 	};
 }
