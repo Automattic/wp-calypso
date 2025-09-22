@@ -4,17 +4,17 @@ import { queryClient } from './query-client';
 import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
-	'sites-view': {},
-	'sites-landing-page': {
-		useSitesAsLandingPage: false,
-		updatedAt: 0,
-	},
+	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
+	'hosting-dashboard-welcome-notice-dismissed': '',
 	'reader-landing-page': {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
 	},
-	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
-	'hosting-dashboard-tours-sites': '',
+	'sites-landing-page': {
+		useSitesAsLandingPage: false,
+		updatedAt: 0,
+	},
+	'sites-view': {},
 };
 
 // Returns all user preferences, without applying any defaults.
