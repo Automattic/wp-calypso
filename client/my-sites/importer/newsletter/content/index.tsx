@@ -192,6 +192,8 @@ export default function Content( {
 					{ isImporting( importerState ) && (
 						<ImportingPane
 							onContinue={ onContinue }
+							fromSite={ fromSite }
+							importerEngine={ engine }
 							importerStatus={ importerStatus }
 							sourceType={ title }
 							site={ selectedSite }

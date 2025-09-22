@@ -13,6 +13,7 @@ import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutatio
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { SelectNewsletterForm } from 'calypso/my-sites/importer/newsletter/components';
 import LogoChain from 'calypso/my-sites/importer/newsletter/components/logo-chain';
 import Content from 'calypso/my-sites/importer/newsletter/content';
 import Subscribers from 'calypso/my-sites/importer/newsletter/subscribers';
@@ -52,8 +53,10 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 
 	const [ step, setStep ] = useState< StepId >( 'content' );
 
-	const { siteSlug, site, fromSite } = props;
+	const { siteSlug, site, fromSite: fromSiteProp } = props;
 	const selectedSite = site;
+
+	const [ fromSite, setFromSite ] = useState( fromSiteProp );
 
 	const importerStep = useQuery().get( 'importerStep' );
 
@@ -130,7 +133,11 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 	const { skipNextStep } = useSkipNextStepMutation();
 	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
 
-	const { data: urlData } = useAnalyzeUrlQuery( fromSite );
+	const {
+		data: urlData,
+		isFetching: isUrlFetching,
+		isError: isUrlError,
+	} = useAnalyzeUrlQuery( fromSite );
 
 	useEffect( () => {
 		if ( urlData?.platform === importer ) {
@@ -173,6 +180,18 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 
 			{ validFromSite && ! isResetPaidNewsletterPending && (
 				<StepProgress steps={ stepsProgress } currentStep={ currentStepNumber } />
+			) }
+
+			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
+				<SelectNewsletterForm
+					onContinue={ ( fromSiteOnContinue ) => {
+						setStep( 'content' );
+						setFromSite( fromSiteOnContinue );
+					} }
+					value={ fromSite }
+					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
+					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
+				/>
 			) }
 
 			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (

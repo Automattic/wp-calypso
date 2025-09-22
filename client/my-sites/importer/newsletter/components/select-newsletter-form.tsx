@@ -1,23 +1,21 @@
-import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { useState } from 'react';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
-import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
+import { isValidUrl } from 'calypso/lib/importer/url-validation';
 
 interface SelectNewsletterFormProps {
-	redirectUrl: string;
 	value: string;
 	isLoading: boolean;
 	isError: boolean;
+	onContinue: ( fromSite: string ) => void;
 }
 
 export default function SelectNewsletterForm( {
-	redirectUrl,
 	value,
 	isLoading,
+	onContinue = () => {},
 	isError,
 }: SelectNewsletterFormProps ) {
 	const { __ } = useI18n();
@@ -29,10 +27,7 @@ export default function SelectNewsletterForm( {
 			return;
 		}
 
-		const { hostname, pathname } = parseUrl( fromSite );
-		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
-
-		page( addQueryArgs( redirectUrl, { from } ) );
+		onContinue( fromSite );
 	};
 
 	if ( isLoading ) {

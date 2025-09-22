@@ -13,6 +13,7 @@ import {
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { parseUrl } from 'calypso/lib/importer/url-validation';
 import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -179,6 +180,13 @@ export default function NewsletterImporter( {
 		}
 	);
 
+	const redirectFromSite = ( fromSite: string ) => {
+		const { hostname, pathname } = parseUrl( fromSite );
+		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
+
+		page( addQueryArgs( stepUrl, { from } ) );
+	};
+
 	// Helps only show the confetti once even if you navigate between the different steps.
 	const shouldShowConfettiRef = useRef( false );
 	const [ showConfetti, setShowConfetti ] = useState( false );
@@ -198,7 +206,7 @@ export default function NewsletterImporter( {
 
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
-					redirectUrl={ stepUrl }
+					onContinue={ redirectFromSite }
 					value={ fromSite }
 					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
 					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
