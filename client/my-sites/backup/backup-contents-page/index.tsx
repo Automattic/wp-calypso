@@ -72,6 +72,17 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	}, [] );
 
+	const onGranularRestoreClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files', {
+				...( hasCredentials !== undefined && {
+					has_credentials: hasCredentials,
+				} ),
+			} )
+		);
+		handleRequestGranularRestore( siteSlug, rewindId );
+	}, [ dispatch, hasCredentials, handleRequestGranularRestore, siteSlug, rewindId ] );
+
 	return (
 		<>
 			<QuerySiteCredentials siteId={ siteId } />
@@ -116,19 +127,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 									</Button>
 									<Button
 										__next40pxDefaultSize
-										onClick={ () => {
-											dispatch(
-												recordTracksEvent(
-													'calypso_jetpack_backup_browser_restore_multiple_files',
-													{
-														...( hasCredentials !== undefined && {
-															has_credentials: hasCredentials,
-														} ),
-													}
-												)
-											);
-											handleRequestGranularRestore( siteSlug, rewindId );
-										} }
+										onClick={ onGranularRestoreClick }
 										disabled={ ! isRestoreEnabled }
 										variant="primary"
 									>
