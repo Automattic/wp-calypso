@@ -78,10 +78,12 @@ export default function TimeSince( {
 	timestamp,
 	dateStyle,
 	timeStyle,
+	hideTitle = false,
 }: {
 	timestamp: string;
 	dateStyle?: 'full' | 'long' | 'medium' | 'short';
 	timeStyle?: 'full' | 'long' | 'medium' | 'short';
+	hideTitle?: boolean;
 } ) {
 	const locale = useLocale();
 
@@ -92,7 +94,7 @@ export default function TimeSince( {
 	const relativeDate = useRelativeTime( date, locale, formatOptions );
 
 	return (
-		<time dateTime={ timestamp } title={ fullDate }>
+		<time dateTime={ timestamp } title={ hideTitle ? undefined : fullDate }>
 			{ relativeDate }
 		</time>
 	);

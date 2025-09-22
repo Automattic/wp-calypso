@@ -4,12 +4,15 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
+	Tooltip,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useLocale } from '../../../app/locale';
 import TimeSince from '../../../components/time-since';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentStatusBadge, DeploymentStatusValue } from '../deployment-status-badge';
+import { getDeploymentTimeTooltipText } from '../get-deployment-time-tooltip-text';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -22,6 +25,7 @@ export function useDeploymentFields( {
 	repositoryOptions = [],
 	userNameOptions = [],
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
+	const locale = useLocale();
 	return useMemo(
 		() => [
 			{
@@ -138,9 +142,22 @@ export function useDeploymentFields( {
 				getValue: ( { item } ) => {
 					return item.created_on;
 				},
-				render: ( { item } ) => {
-					return <TimeSince timestamp={ item.created_on } />;
-				},
+				render: ( { item } ) => (
+					<div>
+						<Tooltip
+							text={ getDeploymentTimeTooltipText(
+								locale,
+								item.completed_on,
+								item.created_on,
+								item.status
+							) }
+						>
+							<span>
+								<TimeSince timestamp={ item.created_on } hideTitle />
+							</span>
+						</Tooltip>
+					</div>
+				),
 			},
 			{
 				id: 'is_active_deployment',

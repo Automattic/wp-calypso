@@ -472,7 +472,11 @@ function StagingSiteSyncModalInner( {
 						</HStack>
 						{ hasWarning && (
 							<VStack style={ { marginTop: '20px' } }>
-								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
+								<Notice
+									density="medium"
+									variant="warning"
+									title={ __( 'Warning! Database will be overwritten' ) }
+								>
 									<VStack spacing={ 2 }>
 										<Text as="p">
 											{ __(
