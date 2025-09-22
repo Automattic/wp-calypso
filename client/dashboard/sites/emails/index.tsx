@@ -106,11 +106,11 @@ const fields = [
 function SiteEmails() {
 	const navigate = useNavigate();
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site, isLoading: isSiteLoading } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Wait for site to load to know ID
 	const { data: domains, isLoading: isDomainsLoading } = useQuery(
-		! isSiteLoading && site && site.ID
+		site && site.ID
 			? siteDomainsQuery( site.ID )
 			: { queryKey: [ 'noop' ], queryFn: async () => [] }
 	);
