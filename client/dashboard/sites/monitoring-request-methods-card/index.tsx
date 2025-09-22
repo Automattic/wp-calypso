@@ -55,13 +55,17 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 			const chartColorsCopy = [ ...chartColors ];
 
 			return Object.entries( methodsMap ).map(
-				( [ method, value ]: [ string, number ] ): DataPointPercentage => ( {
-					label: method.toUpperCase(),
-					value: Math.round( value * 100 ) / 100,
-					percentage: Math.round( ( value * 100 ) / sum ),
-					valueDisplay: Math.round( ( value * 100 ) / sum ).toString() + '%',
-					color: chartColorsCopy.shift() || '#000000',
-				} )
+				( [ method, value ]: [ string, number ] ): DataPointPercentage => {
+					const valuePercentage = Math.round( ( value * 100 ) / sum );
+
+					return {
+						label: method.toUpperCase(),
+						value: Math.round( value * 100 ) / 100,
+						percentage: valuePercentage,
+						valueDisplay: valuePercentage.toString() + '%',
+						color: chartColorsCopy.shift() || '#000000',
+					};
+				}
 			);
 		},
 	} );
