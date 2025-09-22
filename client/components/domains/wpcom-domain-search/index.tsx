@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch } from '@automattic/domain-search';
 import { useMemo, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
@@ -58,8 +59,14 @@ const DomainSearchWithCart = ( {
 			onContinue: () => {
 				props.events?.onContinue?.( items );
 			},
+			onAddDomainToCart: ( domainName: string ) => {
+				recordTracksEvent( 'domain_added_to_cart', { domain: domainName } );
+				props.events?.onAddDomainToCart?.( domainName );
+			},
 		};
 	}, [ props.events, items ] );
+
+	console.log( 'events', events );
 
 	return (
 		<DomainSearch

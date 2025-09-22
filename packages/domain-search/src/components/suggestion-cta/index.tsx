@@ -34,6 +34,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 	} = useMutation( {
 		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
 			if ( acceptedTrademarkClaim ) {
+				events.onAddDomainToCart( domainName );
 				return cart.onAddItem( suggestion );
 			}
 
@@ -42,6 +43,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			);
 
 			if ( ! availability?.trademark_claims_notice_info ) {
+				events.onAddDomainToCart( domainName );
 				return cart.onAddItem( suggestion );
 			}
 
