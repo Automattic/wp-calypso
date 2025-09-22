@@ -55,7 +55,6 @@ function FileBrowserNode( {
 	const isCurrentNodeClicked = activeNodePath === path;
 	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
 	const showSeparateExpandButton = fileBrowserConfig?.showSeparateExpandButton ?? false;
-	const applyFiltering = !! fileBrowserConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
@@ -210,7 +209,7 @@ function FileBrowserNode( {
 	const filterItems = useCallback(
 		( item: FileBrowserItem ) => {
 			// No filter is needed
-			if ( ! applyFiltering ) {
+			if ( ! fileBrowserConfig?.applyFiltering ) {
 				return true;
 			}
 
@@ -241,7 +240,7 @@ function FileBrowserNode( {
 			return false;
 		},
 		[
-			applyFiltering,
+			fileBrowserConfig?.applyFiltering,
 			fileBrowserConfig?.alwaysInclude,
 			fileBrowserConfig?.excludeTypes,
 			fileBrowserConfig?.restrictedPaths,
