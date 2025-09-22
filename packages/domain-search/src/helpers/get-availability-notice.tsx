@@ -48,6 +48,7 @@ export const getAvailabilityNotice = (
 					},
 				}
 			);
+			severity = 'info';
 			break;
 		case DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER:
 			if ( availabilityData.other_site_domain ) {
@@ -86,6 +87,7 @@ export const getAvailabilityNotice = (
 					}
 				);
 			}
+			severity = 'info';
 			break;
 		case DomainAvailabilityStatus.IN_REDEMPTION:
 			message = translate(
@@ -141,6 +143,7 @@ export const getAvailabilityNotice = (
 						},
 					}
 				);
+				severity = 'info';
 				break;
 			}
 		case DomainAvailabilityStatus.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
@@ -198,6 +201,7 @@ export const getAvailabilityNotice = (
 					},
 				}
 			);
+			severity = 'info';
 			break;
 		case DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE:
 			message = translate(
@@ -217,6 +221,7 @@ export const getAvailabilityNotice = (
 					},
 				}
 			);
+			severity = 'info';
 			break;
 		case DomainAvailabilityStatus.TRANSFER_PENDING_SAME_USER:
 			message = translate(
@@ -229,6 +234,7 @@ export const getAvailabilityNotice = (
 					},
 				}
 			);
+			severity = 'info';
 			break;
 		case DomainAvailabilityStatus.TRANSFER_PENDING:
 			message = translate(
