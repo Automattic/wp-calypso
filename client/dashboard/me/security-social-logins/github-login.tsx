@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import type { SocialLoginButtonProps } from './types';
 import type { ConnectSocialUserArgs } from '@automattic/api-core';
@@ -90,10 +90,14 @@ export default function GitHubLogin( {
 		e.preventDefault();
 		setShowLoading( true );
 
-		const scope = encodeURIComponent( 'read:user,user:email' );
-		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
-			redirectUri ?? ''
-		) }&scope=${ scope }&ux_mode=redirect`;
+		window.location.href = addQueryArgs(
+			'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize',
+			{
+				redirect_uri: stripQueryString( redirectUri ?? '' ),
+				scope: encodeURIComponent( 'read:user,user:email' ),
+				ux_mode: 'redirect',
+			}
+		);
 	};
 
 	return (

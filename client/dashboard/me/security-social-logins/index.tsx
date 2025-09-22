@@ -156,7 +156,7 @@ export default function SecuritySocialLogins() {
 				/>
 			}
 		>
-			<ActionList hasFullWidthBorder>
+			<ActionList>
 				<SocialLoginItem
 					service="GitHub"
 					decoration={ GitHubIcon }
