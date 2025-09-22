@@ -52,6 +52,8 @@ function Root() {
 				if ( leafRouteId ) {
 					bumpStat(
 						'hd-very-slow-nav',
+						// Tries to make the stats in the backend more readable. It isn't strictly necessary.
+						// Removes leading and trailing slashes, replaces other slashes with dashes, removes $ from router path params.
 						leafRouteId
 							.replace( /^\//g, '' )
 							.replace( /\/$/g, '' )
