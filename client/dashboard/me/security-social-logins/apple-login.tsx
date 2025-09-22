@@ -2,11 +2,11 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { getRedirectUri, getSocialServiceResponse } from './utils';
 import type { SocialLoginButtonProps, AppleClient } from './types';
 
-const appleClientUrl =
+const APPLE_CLIENT_URL =
 	'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
 
 // This component supports only Social Login from Apple.
@@ -21,7 +21,7 @@ export default function AppleLogin( {
 	const [ appleClient, setAppleClient ] = useState< AppleClient | null >( null );
 	const [ showLoading, setShowLoading ] = useState( false );
 
-	const socialServiceResponse = getSocialServiceResponse();
+	const socialServiceResponse = useMemo( () => getSocialServiceResponse(), [] );
 
 	const loadAppleClient = useCallback( async () => {
 		if ( appleClient ) {
@@ -33,7 +33,7 @@ export default function AppleLogin( {
 		};
 
 		if ( ! windowObj.AppleID ) {
-			await loadScript( appleClientUrl );
+			await loadScript( APPLE_CLIENT_URL );
 		}
 
 		const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
@@ -41,6 +41,7 @@ export default function AppleLogin( {
 
 		windowObj.AppleID.auth.init( {
 			clientId: config( 'apple_oauth_client_id' ),
+			scope: 'name email',
 			redirectURI: getRedirectUri(),
 			state: JSON.stringify( {
 				oauth2State,

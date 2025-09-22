@@ -12,7 +12,12 @@ export type SocialLoginButtonProps = {
 
 export type AppleClient = {
 	auth: {
-		init: ( options: { clientId: string; redirectURI: string; state: string } ) => void;
+		init: ( options: {
+			clientId: string;
+			redirectURI: string;
+			state: string;
+			scope: string;
+		} ) => void;
 		signIn: () => void;
 	};
 };
