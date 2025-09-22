@@ -11,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -64,7 +65,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { recordUseYourDomainButtonClick } from '../../../components/domains/register-domain-step/analytics';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Context } from '@automattic/calypso-router';
 import type { SiteDetails } from '@automattic/data-stores';

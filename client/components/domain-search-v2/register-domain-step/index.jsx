@@ -47,6 +47,7 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -67,7 +68,6 @@ import { DomainSearch } from '../__legacy/domain-search';
 import { DomainCartV2 } from '../domain-cart';
 import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
-import { FreeDomainForAYearPromo } from '../domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import {
 	recordDomainAvailabilityReceive,
 	recordDomainAddAvailabilityPreCheck,
