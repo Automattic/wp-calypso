@@ -25,12 +25,20 @@ import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
 import type { SiteMcpAbilities } from '@automattic/api-core';
 
 function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	// Use the standard userSettingsMutation (now supports mcp_abilities)
-	const saveMcpMutation = useMutation( userSettingsMutation() );
+	const saveMcpMutation = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'MCP tools saved.' ),
+				error: __( 'Failed to save MCP tools.' ),
+			},
+		},
+	} );
 
 	// Get tools from user settings using the new nested structure
 	const availableTools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {
@@ -56,19 +64,12 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 				const apiData = createSiteSpecificApiPayload( userSettings, site.ID, formData );
 
 				// Save using custom mutation (bypasses saveableKeys filtering)
-				saveMcpMutation.mutate( apiData as any, {
-					onSuccess: () => {
-						createSuccessNotice( __( 'MCP tools saved.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
-					},
-				} );
+				saveMcpMutation.mutate( apiData as any );
 			} catch ( error ) {
 				createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
 			}
 		},
-		[ formData, userSettings, site.ID, saveMcpMutation, createSuccessNotice, createErrorNotice ]
+		[ formData, userSettings, site.ID, saveMcpMutation, createErrorNotice ]
 	);
 
 	const handleMasterToggle = useCallback(

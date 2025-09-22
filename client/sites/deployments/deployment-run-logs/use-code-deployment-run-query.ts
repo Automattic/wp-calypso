@@ -21,7 +21,7 @@ export interface DeploymentRun {
 	code_deployment_id: number;
 	created_on: string;
 	started_on: string;
-	completed_on: string;
+	completed_on: string | null;
 	status: DeploymentRunStatus;
 	failure_code: string | null;
 	triggered_by_user_id: number;

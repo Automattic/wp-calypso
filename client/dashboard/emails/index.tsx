@@ -6,6 +6,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
+import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import type { Email } from '@automattic/api-core';
@@ -135,9 +136,12 @@ function Emails() {
 				/>
 			}
 			notices={
-				<Notice status="warning" isDismissible={ false }>
-					{ __( 'This is using fake data for the moment' ) }
-				</Notice>
+				<>
+					<OptInWelcome tracksContext="emails" />
+					<Notice status="warning" isDismissible={ false }>
+						{ __( 'This is using fake data for the moment' ) }
+					</Notice>
+				</>
 			}
 		>
 			<DataViewsCard>

@@ -125,10 +125,14 @@
 	}
 }
 
-.help-center-chat-history__no-results {
+.help-center-chat-history__loading {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	border-top: solid 1px #c3c4c7;
 	padding-top: 20px;
+}
+
+.help-center-chat-history__no-results {
+	padding: 16px;
 }

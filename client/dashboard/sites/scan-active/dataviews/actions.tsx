@@ -3,19 +3,17 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Icon,
-	ExternalLink,
 } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
 import { ButtonStack } from '../../../components/button-stack';
-import { Notice } from '../../../components/notice';
+import { IgnoreThreatModal } from '../../scan/components/ignore-threat-modal';
+import { ThreatDescription } from '../../scan/components/threat-description';
 import { ThreatsDetailCard } from '../../scan/components/threats-detail-card';
-import { CODEABLE_JETPACK_SCAN_URL } from '../../scan/constants';
 import type { Threat } from '@automattic/api-core';
 
-export function getActions(): Action< Threat >[] {
+export function getActions( siteId: number ): Action< Threat >[] {
 	return [
 		{
 			id: 'fix',
@@ -35,9 +33,7 @@ export function getActions(): Action< Threat >[] {
 					<VStack spacing={ 4 }>
 						<Text variant="muted">{ description }</Text>
 						<ThreatsDetailCard threats={ items } />
-
-						{ /* @TODO: render the proper threat description here */ }
-
+						<ThreatDescription threat={ items[ 0 ] } />
 						<ButtonStack justify="flex-end">
 							<Button variant="tertiary" onClick={ closeModal }>
 								{ __( 'Cancel' ) }
@@ -57,33 +53,13 @@ export function getActions(): Action< Threat >[] {
 			label: __( 'Ignore threat' ),
 			modalHeader: __( 'Ignore threat' ),
 			supportsBulk: false,
-			RenderModal: ( { items, closeModal } ) => (
-				<VStack spacing={ 4 }>
-					<Text variant="muted">{ __( 'Jetpack will be ignoring the following threat:' ) }</Text>
-					<ThreatsDetailCard threats={ items } />
-
-					{ /* @TODO: render the proper threat description here */ }
-
-					<Notice variant="error">
-						{ createInterpolateElement(
-							__(
-								'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with <codeable />.'
-							),
-							{
-								codeable: <ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>,
-							}
-						) }
-					</Notice>
-					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" onClick={ closeModal }>
-							{ __( 'Cancel' ) }
-						</Button>
-						{ /* @TODO: implement the ignore threat action and remove the disabled prop */ }
-						<Button variant="primary" disabled>
-							{ __( 'Ignore threat' ) }
-						</Button>
-					</ButtonStack>
-				</VStack>
+			RenderModal: ( { items, closeModal, onActionPerformed } ) => (
+				<IgnoreThreatModal
+					items={ items }
+					closeModal={ closeModal }
+					onActionPerformed={ onActionPerformed }
+					siteId={ siteId }
+				/>
 			),
 		},
 	];

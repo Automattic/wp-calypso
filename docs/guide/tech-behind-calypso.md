@@ -13,8 +13,8 @@ Calypso is composed of multiple applications that are all built using React. [Re
 As Calypso evolved over time, we tried several approaches to both routing and data layers on top of React. These are some of the libraries commonly used in Calypso:
 
 - [Redux](http://redux.js.org/) – a predictable state container for JavaScript apps. Perfect fit for complex centralized state management. It powers the data layer of most of the calypso sections, but in new calypso applications, we're moving towards lighter approaches.
-- [TanStack Query](https://tanstack.com/query) – a powerful data-fetching library for React. It provides a simple API for fetching, caching, and synchronizing server state in your React applications. It is used as the main data layer of new Calypso sections (like the hosting dashboard) but is also commonly used in other parts of Calypso.
-- [TanStack Router](https://tanstack.com/router) – a powerful routing library for React. It provides a simple API for managing routes and navigation in your React applications. It is used as the main routing layer of new Calypso sections (like the hosting dashboard).
+- [TanStack Query](https://tanstack.com/query) – a powerful data-fetching library for React. It provides a simple API for fetching, caching, and synchronizing server state in your React applications. It is used as the main data layer of new Calypso sections (like the Hosting Dashboard) but is also commonly used in other parts of Calypso.
+- [TanStack Router](https://tanstack.com/router) – a powerful routing library for React. It provides a simple API for managing routes and navigation in your React applications. It is used as the main routing layer of new Calypso sections (like the Hosting Dashboard).
 
 For more Calypso-specific details, see the [Our Approach to Data](../our-approach-to-data.md) document
 
