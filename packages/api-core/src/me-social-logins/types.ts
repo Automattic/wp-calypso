@@ -1,3 +1,7 @@
+export interface GenerateAuthorizationNonce {
+	nonce: string;
+}
+
 export interface SocialUserConfigArgs {
 	client_id: string;
 	client_secret: string;
@@ -18,6 +22,8 @@ export interface ConnectSocialUserArgs {
 
 export interface PostLoginRequestBodyObj {
 	service: 'github' | 'google' | 'apple';
+	redirect_uri?: string;
+	state?: string;
 	auth_code: string;
 	client_id: string;
 	client_secret: string;
