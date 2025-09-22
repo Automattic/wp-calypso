@@ -87,9 +87,7 @@ describe( 'DevicesSettings', () => {
 		} );
 
 		await waitFor( () => {
-			expect(
-				screen.getByText( 'You have no devices to configure notifications for.' )
-			).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: 'No devices found' } ) ).toBeVisible();
 		} );
 	} );
 

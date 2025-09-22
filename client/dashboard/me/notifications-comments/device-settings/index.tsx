@@ -11,12 +11,13 @@ import {
 	CardBody,
 	Card,
 	Spinner,
+	ExternalLink,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { SectionHeader } from '../../../components/section-header';
-import { Text } from '../../../components/text';
 
 export const DevicesSettings = () => {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
@@ -88,37 +89,47 @@ export const DevicesSettings = () => {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
-						<SectionHeader level={ 3 } title={ __( 'Devices' ) } />
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Devices' ) }
+							description={ createInterpolateElement(
+								__(
+									'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
+								),
+								{
+									link: (
+										<ExternalLink href="https://wordpress.org" rel="noopener noreferrer">
+											{ /* Workaround for the fact that the ExternalLink component expects a children prop */ }
+											{ null }
+										</ExternalLink>
+									),
+								}
+							) }
+						/>
+
 						{ hasDevices && isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
-					{ hasDevices && (
-						<>
-							<SelectControl
-								disabled={ isMutating }
-								value={ selectedDeviceId }
-								onChange={ ( value ) => setSelectedDeviceId( value ) }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							>
-								{ devices.map( ( device ) => (
-									<option key={ device.device_id } value={ device.device_id }>
-										{ device.device_name }
-									</option>
-								) ) }
-							</SelectControl>
-							<SettingsPanel
-								options={ options }
-								onChange={ handleChange }
-								disabled={ isMutating }
-							/>
-						</>
-					) }
+					<SelectControl
+						disabled={ isMutating || ! hasDevices }
+						value={ selectedDeviceId }
+						onChange={ ( value ) => setSelectedDeviceId( value ) }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					>
+						{ hasDevices &&
+							devices.map( ( device ) => (
+								<option key={ device.device_id } value={ device.device_id }>
+									{ device.device_name }
+								</option>
+							) ) }
+						{ ! hasDevices && <option value="">{ __( 'No devices found' ) }</option> }
+					</SelectControl>
+					<SettingsPanel
+						options={ options }
+						onChange={ handleChange }
+						disabled={ isMutating || ! hasDevices }
+					/>
 				</VStack>
-				{ ! hasDevices && (
-					<VStack spacing={ 4 } alignment="center" justify="center">
-						<Text>{ __( 'You have no devices to configure notifications for.' ) }</Text>
-					</VStack>
-				) }
 			</CardBody>
 		</Card>
 	);
