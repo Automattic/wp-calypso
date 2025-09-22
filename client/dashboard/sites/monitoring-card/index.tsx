@@ -12,6 +12,7 @@ import {
 	download as downloadIcon,
 	link as linkIcon,
 } from '@wordpress/icons';
+import clsx from 'clsx';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
@@ -106,13 +107,11 @@ export default function MonitoringCard( {
 		</HStack>
 	);
 
-	const contentClassNames = [
+	const contentClassNames = clsx(
 		'dashboard-monitoring-card__content',
-		isLoading ? 'dashboard-monitoring-card__content__is-loading' : '',
-		cardLabel ? `dashboard-monitoring-card__content__${ cardLabel }` : '',
-	]
-		.join( ' ' )
-		.trim();
+		isLoading && 'dashboard-monitoring-card__content__is-loading',
+		cardLabel && `dashboard-monitoring-card__content__${ cardLabel }`
+	);
 
 	return (
 		<Card className="dashboard-monitoring-card">
