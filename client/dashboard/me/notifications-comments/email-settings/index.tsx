@@ -38,7 +38,7 @@ export const EmailSettings = () => {
 		updateSettings( {
 			data: {
 				other: {
-					email: { [ updated.id ]: updated.value },
+					email: { ...settings, [ updated.id ]: updated.value },
 				},
 			},
 		} );

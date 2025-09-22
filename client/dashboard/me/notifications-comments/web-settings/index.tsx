@@ -44,7 +44,7 @@ export const WebSettings = () => {
 	const handleChange = ( updated: SettingsOption ) => {
 		const updatedSettings = {
 			other: {
-				timeline: { [ updated.id ]: updated.value },
+				timeline: { ...settings, [ updated.id ]: updated.value },
 			},
 		} as InputUserNotificationSettings;
 
