@@ -1,6 +1,5 @@
 import {
 	fetchUserSitesPlugins,
-	fetchSitePlugin,
 	fetchSitePlugins,
 	activateSitePlugin,
 	deactivateSitePlugin,
@@ -18,12 +17,6 @@ export const pluginsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'sites-plugins' ],
 		queryFn: () => fetchUserSitesPlugins(),
-	} );
-
-export const sitePluginQuery = ( siteId: number, pluginId: string ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'plugins', pluginId ],
-		queryFn: () => fetchSitePlugin( siteId, pluginId ),
 	} );
 
 export const sitePluginsQuery = ( siteId: number ) =>
