@@ -38,17 +38,14 @@ export const usePlugin = ( pluginSlug: string ) => {
 	} );
 	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
 
-	const pluginActionLinksBySiteId = Object.keys( sitesPlugins?.sites || {} ).reduce(
-		( acc, siteId ) => {
-			const { queryKey } = sitePluginQuery( Number( siteId ), pluginSlug );
-			const data: SitePlugin | undefined = queryClient.getQueryData( queryKey );
+	const actionLinksBySiteId = Object.keys( sitesPlugins?.sites || {} ).reduce( ( acc, siteId ) => {
+		const { queryKey } = sitePluginQuery( Number( siteId ), pluginSlug );
+		const data: SitePlugin | undefined = queryClient.getQueryData( queryKey );
 
-			acc.set( Number( siteId ), data?.action_links );
+		acc.set( Number( siteId ), data?.action_links );
 
-			return acc;
-		},
-		new Map< number, SitePlugin[ 'action_links' ] >()
-	);
+		return acc;
+	}, new Map< number, SitePlugin[ 'action_links' ] >() );
 
 	const pluginBySiteId = useMemo(
 		() =>
@@ -73,7 +70,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 				( acc, site ) => {
 					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
 						const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
-						const actionLinks = pluginActionLinksBySiteId.get( Number( site.ID ) );
+						const actionLinks = actionLinksBySiteId.get( Number( site.ID ) );
 
 						acc[ 0 ].push( { ...site, isPluginActive, actionLinks } );
 					} else {
