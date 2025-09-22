@@ -1,6 +1,6 @@
-import { DeploymentRunStatus } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDate } from '../../utils/datetime';
+import type { DeploymentRunStatus } from '@automattic/api-core';
 
 export const getDeploymentTimeTooltipText = (
 	locale: string,
