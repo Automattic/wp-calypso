@@ -37,7 +37,6 @@ import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents
 
 // File browser config used for granular selection
 const fileBrowserConfig: FileBrowserConfig = {
-	applyFiltering: true,
 	restrictedTypes: [ 'plugin', 'theme' ],
 	restrictedPaths: [ 'wp-content' ],
 	excludeTypes: [ 'wordpress' ],
