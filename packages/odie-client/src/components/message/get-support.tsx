@@ -69,10 +69,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					text: __( 'Email support', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
-						params.set( 'mode', 'EMAIL' );
 						params.set( 'wapuuFlow', 'true' );
-						const url = '/contact-form?' + params.toString();
-						navigate( url );
+						navigate( '/contact-form?' + params.toString() );
 					},
 				} );
 			} else {
