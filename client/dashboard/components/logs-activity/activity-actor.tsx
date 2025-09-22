@@ -2,7 +2,7 @@ import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { commentAuthorAvatar, people, globe } from '@wordpress/icons';
+import { commentAuthorAvatar, globe } from '@wordpress/icons';
 import type { ActivityActor } from '@automattic/api-core';
 import './activity-actor.scss';
 
@@ -56,18 +56,6 @@ function getActorPresentation( actor?: ActivityActor ) {
 				};
 			}
 			break;
-		}
-		case 'Multiple': {
-			return {
-				icon: (
-					<Icon
-						className="site-activity-logs__actor-icon-people"
-						icon={ people }
-						size={ ICON_SIZE }
-					/>
-				),
-				label: __( 'Multiple users' ),
-			};
 		}
 		case 'Happiness Engineer': {
 			return {
