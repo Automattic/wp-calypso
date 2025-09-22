@@ -13,18 +13,15 @@ export default function getMostRecentOpenLiveInteraction() {
 			[] ) as unknown as ZendeskConversation[];
 
 		// They're already sorted by lastUpdatedAt, so we can just find the first one that's open.
-		const latestOpenConversation = conversations.find(
-			( conversation ) =>
-				// having a csat message means the conversation is closed
-				// filter out conversations with less than 2 messages because they are likely to be in a bad state (HE messaged after CSAT).
-				conversation.messages.length > 1 &&
-				conversation.messages.every(
-					( message ) =>
-						message.metadata?.type !== 'csat' &&
-						message.metadata?.type !== 'form' &&
-						! message.metadata?.rated &&
-						Date.now() - conversation.lastUpdatedAt * 1000 < AGE_THRESHOLD
-				)
+		const latestOpenConversation = conversations.find( ( conversation ) =>
+			// having a csat message means the conversation is closed
+			conversation.messages.every(
+				( message ) =>
+					message.metadata?.type !== 'csat' &&
+					message.metadata?.type !== 'form' &&
+					! message.metadata?.rated &&
+					Date.now() - conversation.lastUpdatedAt * 1000 < AGE_THRESHOLD
+			)
 		);
 
 		return latestOpenConversation?.metadata.supportInteractionId;
