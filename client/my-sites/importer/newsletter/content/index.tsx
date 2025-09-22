@@ -74,6 +74,7 @@ export default function Content( {
 	selectedSite,
 	siteSlug,
 	fromSite,
+	onContinue,
 	skipNextStep,
 }: ContentProps ) {
 	const siteTitle = selectedSite.title;
@@ -190,6 +191,7 @@ export default function Content( {
 
 					{ isImporting( importerState ) && (
 						<ImportingPane
+							onContinue={ onContinue }
 							importerStatus={ importerStatus }
 							sourceType={ title }
 							site={ selectedSite }

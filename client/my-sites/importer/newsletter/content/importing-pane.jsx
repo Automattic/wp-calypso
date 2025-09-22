@@ -99,7 +99,7 @@ export class ImportingPane extends PureComponent {
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,
-		nextStepUrl: PropTypes.string.isRequired,
+		nextStepUrl: PropTypes.string,
 		invalidateCardData: PropTypes.func,
 		infoNotice: PropTypes.func,
 		onContinue: PropTypes.func,

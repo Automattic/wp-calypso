@@ -12,6 +12,7 @@ import {
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import LogoChain from 'calypso/my-sites/importer/newsletter/components/logo-chain';
 import Content from 'calypso/my-sites/importer/newsletter/content';
 import Subscribers from 'calypso/my-sites/importer/newsletter/subscribers';
@@ -24,7 +25,7 @@ import { importSite } from 'calypso/state/imports/site-importer/actions';
 import { Importer, ImporterBaseProps } from '../types';
 import { getStepsProgress } from './utils';
 
-import 'calypso/my-sites/importer/newsletter/style.scss';
+import './style.scss';
 
 const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
@@ -53,6 +54,9 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 
 	const { siteSlug, site, fromSite } = props;
 	const selectedSite = site;
+
+	const importerStep = useQuery().get( 'importerStep' );
+
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
@@ -66,6 +70,12 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 			previousFromSite.current = fromSite;
 		}
 	}, [ fromSite ] );
+
+	useEffect( () => {
+		if ( importerStep && stepSlugs.includes( importerStep as StepId ) ) {
+			setStep( importerStep as StepId );
+		}
+	}, [] );
 
 	const { data: paidNewsletterData } = usePaidNewsletterQuery(
 		importer,
@@ -173,6 +183,7 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 							selectedSite={ selectedSite }
 							fromSite={ fromSite }
 							siteSlug={ siteSlug }
+							onContinue={ () => setStep( 'subscribers' ) }
 							skipNextStep={ () => {
 								setStep( 'subscribers' );
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
