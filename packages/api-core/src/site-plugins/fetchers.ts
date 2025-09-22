@@ -9,7 +9,7 @@ export function fetchSitePlugin( site: number, pluginId: string ): Promise< Site
 }
 
 export async function fetchSitePlugins( siteId: number ): Promise< SitePluginsResponse > {
-	return await wpcom.req.get( { path: `/sites/${ siteId }/plugins`, apiVersion: '1.2' } );
+	return await wpcom.req.get( { path: `/sites/${ siteId }/plugins`, apiVersion: '1.1' } );
 }
 
 export async function fetchSiteCorePlugins( siteId: number ): Promise< CorePlugin[] > {
