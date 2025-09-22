@@ -43,16 +43,4 @@ export interface NoticeProps {
 	 * An optional action to close the component.
 	 */
 	onClose?: () => void;
-
-	/**
-	 * ARIA role - tells screen readers what type of content this is.
-	 * Use 'status' for non-critical updates, 'alert' for critical messages.
-	 */
-	role?: 'status' | 'alert';
-
-	/**
-	 * ARIA live region behavior -  tells screen readers how to announce the content.
-	 * 'polite' waits for screen reader to be idle, 'assertive' interrupts immediately.
-	 */
-	'aria-live'?: 'polite' | 'assertive';
 }
