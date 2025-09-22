@@ -15,6 +15,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
+import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 
 export const DevicesSettings = () => {
@@ -87,7 +88,7 @@ export const DevicesSettings = () => {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
-						<Text weight={ 500 }>{ __( 'Devices' ) }</Text>
+						<SectionHeader level={ 3 } title={ __( 'Devices' ) } />
 						{ hasDevices && isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					{ hasDevices && (

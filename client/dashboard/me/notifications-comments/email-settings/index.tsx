@@ -13,7 +13,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
-import { Text } from '../../../components/text';
+import { SectionHeader } from '../../../components/section-header';
 
 export const EmailSettings = () => {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
@@ -63,7 +63,7 @@ export const EmailSettings = () => {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
-						<Text weight={ 500 }>{ __( 'Email' ) }</Text>
+						<SectionHeader level={ 3 } title={ __( 'Email' ) } />
 						{ isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					<SettingsPanel options={ options } onChange={ handleChange } disabled={ isMutating } />
