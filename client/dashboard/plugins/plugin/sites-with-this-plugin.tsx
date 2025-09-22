@@ -104,6 +104,12 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 					const pluginItem = pluginBySiteId.get( item.ID );
 					const checked = pluginItem?.autoupdate ?? false;
 					const isBusy = isEnablingAutoupdate || isDisablingAutoupdate || isFetching;
+
+					// Determine if this plugin is managed on this site; if so, disable interaction
+					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+					// when not allowed, it's either managed or user lacks permission
+					const isManaged = ! autoupdate;
+
 					return (
 						<ToggleControl
 							label={ __( 'Autoupdate' ) }
@@ -116,7 +122,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 									disableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
 								}
 							} }
-							disabled={ isBusy }
+							disabled={ isBusy || isManaged }
 						/>
 					);
 				},
