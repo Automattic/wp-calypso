@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { MutateFunction, useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -88,10 +88,11 @@ function StopSubscriptionButton( {
 	isProduct,
 	subscription,
 }: {
-	stopSubscription: () => void;
+	stopSubscription: MutateFunction;
 	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
+	const navigate = useNavigate();
 	const title = isProduct
 		? // eslint-disable-next-line @wordpress/i18n-translator-comments
 		  sprintf( __( 'Remove %s product' ), subscription.title )
@@ -106,7 +107,12 @@ function StopSubscriptionButton( {
 					variant="secondary"
 					size="compact"
 					onClick={ () => {
-						stopSubscription();
+						stopSubscription().then( () => {
+							navigate( {
+								to: getMonetizeSubscriptionsUrl(),
+								search: addParamForFlashMessage( {} ),
+							} );
+						} );
 					} }
 				>
 					{ title }
@@ -146,7 +152,6 @@ export default function MonetizeSubscription() {
 		mutate: stopSubscription,
 		isError: stoppingStatusError,
 		isPending: isStoppingSubscription,
-		isSuccess: stoppingStatusSuccess,
 	} = useMutation( monetizeSubscriptionStop( subscriptionId ) );
 
 	const {
@@ -166,7 +171,6 @@ export default function MonetizeSubscription() {
 	const isProduct = !! subscription && ! isRenewable;
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
-	const navigate = useNavigate();
 	useEffect( () => {
 		if ( stoppingStatusError || disableAutoRenewError || enableAutoRenewError ) {
 			// run is-error notice to contact support
@@ -194,21 +198,12 @@ export default function MonetizeSubscription() {
 					label: __( 'Please contact support' ),
 				} );
 			}
-		} else if ( stoppingStatusSuccess ) {
-			// Redirect back to Monetize subscription list
-			// Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed
-			navigate( {
-				to: getMonetizeSubscriptionsUrl(),
-				search: addParamForFlashMessage( {} ),
-			} );
 		}
 	}, [
-		stoppingStatusSuccess,
 		stoppingStatusError,
 		isProduct,
 		enableAutoRenewError,
 		disableAutoRenewError,
-		navigate,
 		createErrorNotice,
 		createSuccessNotice,
 	] );
