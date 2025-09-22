@@ -52,7 +52,7 @@ export default function PluginsList() {
 		<PageLayout
 			size="large"
 			header={ <PageHeader title={ __( 'Manage plugins' ) } /> }
-			notices={ <OptInWelcome tacksContext="plugins" /> }
+			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
 			<DataViewsCard>
 				<DataViews
