@@ -103,6 +103,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 			allowedTlds,
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
+			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain:
 				! isDomainForGravatarFlow( flowName ) &&
 				! isOnboardingWithEmailFlow &&
