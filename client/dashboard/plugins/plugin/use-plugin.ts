@@ -1,4 +1,4 @@
-import { PluginItem, Site, SitePlugin } from '@automattic/api-core';
+import { PluginItem, Site, SitePlugin, SitePluginsResponse } from '@automattic/api-core';
 import {
 	pluginsQuery,
 	sitesQuery,
@@ -41,15 +41,14 @@ export const usePlugin = ( pluginSlug: string ) => {
 	const pluginActionLinksBySiteId = Object.keys( sitesPlugins?.sites || {} ).reduce(
 		( acc, siteId ) => {
 			const { queryKey } = sitePluginsQuery( Number( siteId ) );
-			const data = queryClient.getQueryData( queryKey );
+			const data: SitePluginsResponse | undefined = queryClient.getQueryData( queryKey );
 
-			const actionLinksByPluginSlug = ( data?.plugins || [] ).reduce(
-				( acc, plugin: SitePlugin ) => {
-					acc.set( plugin.slug, plugin.action_links );
-					return acc;
-				},
-				new Map< string, SitePlugin[ 'action_links' ] >()
-			);
+			const actionLinksByPluginSlug = ( data?.plugins || [] ).reduce<
+				Map< string, SitePlugin[ 'action_links' ] >
+			>( ( acc, plugin: SitePlugin ) => {
+				acc.set( plugin.slug, plugin.action_links );
+				return acc;
+			}, new Map< string, SitePlugin[ 'action_links' ] >() );
 
 			acc.set( Number( siteId ), actionLinksByPluginSlug );
 
