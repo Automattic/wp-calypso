@@ -29,7 +29,7 @@
 .dashboard-monitoring-card__line-chart {
 	flex-direction: column-reverse !important;
 
-	> [data-testid="legend-horizontal"] {
+	> [role="list"] {
 		margin-bottom: 20px;
 	}
 
