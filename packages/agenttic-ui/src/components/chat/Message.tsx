@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import Markdown from 'streamdown';
+import Markdown from 'react-markdown';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/classNames';

@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import Markdown from 'streamdown';
 import type { Components } from 'react-markdown';
 import type { PluggableList } from 'unified';
 import {
@@ -14,11 +13,13 @@ import {
 	processMarkdownExtensions,
 } from '../markdown-extensions';
 import type { MarkdownExtensions } from '../markdown-extensions/types';
+import { ConditionalMarkdown } from './dynamicMarkdown';
 
 interface CreateMessageRendererOptions {
 	components?: Components;
 	extensions?: MarkdownExtensions;
 	remarkPlugins?: PluggableList;
+	withStreamdown?: boolean;
 }
 
 /**
@@ -29,7 +30,12 @@ interface CreateMessageRendererOptions {
 export function createMessageRenderer(
 	options: CreateMessageRendererOptions = {}
 ): React.ComponentType< { children: string } > {
-	const { components = {}, extensions = {}, remarkPlugins = [] } = options;
+	const {
+		components = {},
+		extensions = {},
+		remarkPlugins = [],
+		withStreamdown = false,
+	} = options;
 
 	// Process extensions to get components and plugins
 	const processed = processMarkdownExtensions( extensions );
@@ -46,12 +52,13 @@ export function createMessageRenderer(
 	// Return a component that renders markdown with all the configuration
 	return function MessageRenderer( { children }: { children: string } ) {
 		return (
-			<Markdown
+			<ConditionalMarkdown
 				components={ finalComponents }
 				remarkPlugins={ finalPlugins }
+				withStreamdown={ withStreamdown }
 			>
 				{ children }
-			</Markdown>
+			</ConditionalMarkdown>
 		);
 	};
 }

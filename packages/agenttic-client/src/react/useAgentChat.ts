@@ -233,6 +233,7 @@ export interface UseAgentChatConfig {
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
+	withStreamdown?: boolean; // Use streamdown library for markdown rendering
 }
 
 // Hook return interface
@@ -754,8 +755,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			createMessageRenderer( {
 				components: state.markdownComponents,
 				extensions: state.markdownExtensions,
+				withStreamdown: config.withStreamdown,
 			} ),
-		[ state.markdownComponents, state.markdownExtensions ]
+		[
+			state.markdownComponents,
+			state.markdownExtensions,
+			config.withStreamdown,
+		]
 	);
 
 	// Create abort function - use setState callback to access current state

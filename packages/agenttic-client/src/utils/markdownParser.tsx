@@ -1,12 +1,11 @@
 /**
  * Markdown Parser Utility
  *
- * Converts markdown text to React components using streamdown
+ * Converts markdown text to React components using streamdown or react-markdown
  * with custom components and extensions support.
  */
 
 import React from 'react';
-import Markdown from 'streamdown';
 import type { Components } from 'react-markdown';
 import type { PluggableList } from 'unified';
 import {
@@ -14,6 +13,7 @@ import {
 	processMarkdownExtensions,
 } from '../markdown-extensions';
 import type { MarkdownExtensions } from '../markdown-extensions/types';
+import { ConditionalMarkdown } from './dynamicMarkdown';
 
 // Use the same Components type as react-markdown for consistency
 export type MarkdownComponents = Components;
@@ -25,10 +25,11 @@ interface ParseMarkdownOptions {
 	components?: MarkdownComponents;
 	extensions?: MarkdownExtensions;
 	remarkPlugins?: PluggableList;
+	withStreamdown?: boolean;
 }
 
 /**
- * Parses markdown text into a React component using streamdown
+ * Parses markdown text into a React component using streamdown (if streaming) or react-markdown
  * @param text    - The markdown text to parse
  * @param options - Custom components and extensions to use
  * @return React element containing the parsed markdown
@@ -37,7 +38,12 @@ export function parseMarkdownToComponent(
 	text: string,
 	options: ParseMarkdownOptions = {}
 ): React.ReactElement {
-	const { components, extensions, remarkPlugins = [] } = options;
+	const {
+		components,
+		extensions,
+		remarkPlugins = [],
+		withStreamdown = false,
+	} = options;
 
 	// Process extensions to get extension-specific components and plugins
 	const processed = processMarkdownExtensions( extensions );
@@ -55,8 +61,12 @@ export function parseMarkdownToComponent(
 	const finalPlugins = [ ...processed.remarkPlugins, ...remarkPlugins ];
 
 	return (
-		<Markdown components={ finalComponents } remarkPlugins={ finalPlugins }>
+		<ConditionalMarkdown
+			components={ finalComponents }
+			remarkPlugins={ finalPlugins }
+			withStreamdown={ withStreamdown }
+		>
 			{ text }
-		</Markdown>
+		</ConditionalMarkdown>
 	);
 }

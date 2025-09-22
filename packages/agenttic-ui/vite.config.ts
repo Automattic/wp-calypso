@@ -17,7 +17,6 @@ export default defineConfig( {
 				'react',
 				'react-dom',
 				'react/jsx-runtime',
-				'streamdown',
 				'@automattic/agenttic-client',
 				'@radix-ui/react-scroll-area',
 				'@radix-ui/react-slot',
