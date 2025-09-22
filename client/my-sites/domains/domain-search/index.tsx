@@ -7,7 +7,11 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useMyDomainInputMode } from '../../../components/domains/connect-domain-step/constants';
 import { useSelector } from '../../../state';
 import getCurrentQueryArguments from '../../../state/selectors/get-current-query-arguments';
-import { domainAddEmailUpsell, domainUseMyDomain } from '../paths';
+import {
+	domainAddEmailUpsell,
+	domainManagementTransferToOtherSite,
+	domainUseMyDomain,
+} from '../paths';
 
 const FLOW_NAME = 'domains';
 
@@ -35,6 +39,9 @@ export default function DomainSearch() {
 
 	const events = useMemo( () => {
 		return {
+			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
+			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {
 					throw new Error( 'Selected site slug is required' );
