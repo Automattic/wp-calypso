@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { starEmpty } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import Notice from '../../components/notice';
+import ComponentViewTracker from '../component-view-tracker';
 
 export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	const { data: isDismissedPersisted } = useSuspenseQuery(
@@ -24,12 +25,25 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 
 	return (
 		<Notice onClose={ () => dismiss( new Date().toISOString() ) } variant="info" icon={ starEmpty }>
+			<ComponentViewTracker
+				eventName="calypso_hosting_dashboard_welcome_banner_impression"
+				properties={ { context: tracksContext } }
+			/>
 			{ createInterpolateElement(
 				__(
 					'Welcome to your new hosting dashboard. Share your feedback anytime by <feedbackLink>clicking here</feedbackLink>. To switch back to the previous version, go to <preferencesLink>Preferences</preferencesLink>.'
 				),
 				{
-					preferencesLink: <Link to="/me/preferences" />,
+					preferencesLink: (
+						<Link
+							to="/me/preferences"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_hosting_dashboard_welcome_banner_preferences_click', {
+									context: tracksContext,
+								} );
+							} }
+						/>
+					),
 					feedbackLink: (
 						<ExternalLink
 							href="https://automattic.survey.fm/new-hosting-dashboard-opt-in-survey"
