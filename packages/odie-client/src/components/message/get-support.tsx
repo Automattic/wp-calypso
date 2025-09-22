@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
@@ -124,11 +125,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 			{
 				text: __( 'Ask in our forums', __i18n_text_domain__ ),
 				action: async () => {
-					const params = new URLSearchParams( search );
-					params.set( 'mode', 'FORUM' );
-					const url = '/contact-form?' + params.toString();
 					onClickAdditionalEvent?.( 'forum' );
-					navigate( url );
+					window.open( localizeUrl( 'https://wordpress.com/forums/?new=1' ), '_blank' );
 				},
 			},
 		];
