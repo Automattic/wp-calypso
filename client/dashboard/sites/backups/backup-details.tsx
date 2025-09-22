@@ -114,6 +114,13 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							siteSlug={ site.slug }
 							isRestoreEnabled
 							onTrackEvent={ recordTracksEvent }
+							fileBrowserConfig={ {
+								applyFiltering: false,
+								showFileCard: true,
+								showBackupTime: false,
+								showSeparateExpandButton: false,
+								expandDirectoriesOnClick: true,
+							} }
 						/>
 					</div>
 				</VStack>
