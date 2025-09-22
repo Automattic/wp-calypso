@@ -5,9 +5,7 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainForwarding } from '@automattic/api-core';
@@ -23,17 +21,20 @@ const DomainForwardingDeleteModal = ( {
 	domainForwarding,
 	onClose,
 }: DomainForwardingDeleteModalProps ) => {
-	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const deleteMutation = useMutation( {
+		...domainForwardingDeleteMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Domain forwarding rule deleted.' ),
+				error: __( 'Failed to delete domain forwarding rule.' ),
+			},
+		},
+	} );
 	const { recordTracksEvent } = useAnalytics();
 
 	const onConfirm = () => {
 		deleteMutation.mutate( domainForwarding.domain_redirect_id, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Domain forwarding rule was deleted successfully.' ), {
-					type: 'snackbar',
-				} );
-
 				recordTracksEvent( 'calypso_dashboard_domain_forwarding_delete_record', {
 					domain: domainName,
 					fqdn: domainForwarding.fqdn,
@@ -43,10 +44,6 @@ const DomainForwardingDeleteModal = ( {
 				onClose?.();
 			},
 			onError: ( error ) => {
-				createErrorNotice( __( 'Failed to delete domain forwarding rule.' ), {
-					type: 'snackbar',
-				} );
-
 				recordTracksEvent( 'calypso_dashboard_domain_forwarding_delete_record_failure', {
 					domain: domainName,
 					fqdn: domainForwarding.fqdn,
