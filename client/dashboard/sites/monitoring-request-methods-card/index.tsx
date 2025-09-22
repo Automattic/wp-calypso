@@ -1,6 +1,7 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { DataPointPercentage, PieChart, Legend } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
@@ -113,13 +114,15 @@ export default function MonitoringRequestMethodsCard( {
 			className="dashboard-monitoring-card--row-layout"
 		>
 			<Legend chartId="request-methods-chart" items={ mapDataForLegend( data ) } />
-			<PieChart
-				chartId="request-methods-chart"
-				thickness={ 0.3 }
-				gapScale={ 0.02 }
-				className="dashboard-monitoring-card__donut-chart"
-				data={ dataNoLabel }
-			/>
+			<HStack alignment="center">
+				<PieChart
+					chartId="request-methods-chart"
+					thickness={ 0.3 }
+					gapScale={ 0.02 }
+					size={ 300 }
+					data={ dataNoLabel }
+				/>
+			</HStack>
 		</MonitoringCard>
 	);
 }
