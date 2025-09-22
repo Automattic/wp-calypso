@@ -14,6 +14,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
+import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
@@ -31,6 +32,9 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
+
+	const { fileBrowserState } = useFileBrowserContext();
+	const selectedFiles = fileBrowserState.getSelectedList();
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const direction = isSmallViewport ? 'column-reverse' : 'row';
@@ -58,7 +62,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleDownloadClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ __( 'Download backup' ) }
+				{ selectedFiles.length > 0 ? __( 'Download selected files' ) : __( 'Download backup' ) }
 			</Button>
 			<Button
 				variant="primary"
@@ -67,7 +71,9 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ __( 'Restore to this point' ) }
+				{ selectedFiles.length > 0
+					? __( 'Restore selected files' )
+					: __( 'Restore to this point' ) }
 			</Button>
 		</ButtonStack>
 	) : null;
