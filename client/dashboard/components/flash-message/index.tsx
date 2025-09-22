@@ -3,18 +3,30 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 
 interface FlashMessageProps {
-	queryParam?: string;
+	overrideDefaultParam?: string;
 	value: string;
 	message: string;
 	type?: 'success' | 'error';
 }
 
+const DEFAULT_PARAM_NAME = 'show-flash-message';
+
+export function addParamForFlashMessage(
+	queryParams: any,
+	overrideDefaultParam: string = DEFAULT_PARAM_NAME
+): object {
+	if ( typeof queryParams !== 'object' ) {
+		queryParams = {};
+	}
+	queryParams[ overrideDefaultParam ] = true;
+	return queryParams;
+}
 /**
  * Allows a snackbar to be shown on page load based on a query parameter.
  * Clears the query parameter when done.
  */
 export default function FlashMessage( {
-	queryParam = 'updated',
+	overrideDefaultParam = DEFAULT_PARAM_NAME,
 	value,
 	message,
 	type = 'success',
@@ -26,7 +38,7 @@ export default function FlashMessage( {
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( queryParam ) === value ) {
+		if ( params.get( overrideDefaultParam ) === value ) {
 			switch ( type ) {
 				case 'error':
 					createErrorNotice( message, { type: 'snackbar' } );
@@ -36,7 +48,7 @@ export default function FlashMessage( {
 					break;
 			}
 
-			params.delete( queryParam );
+			params.delete( overrideDefaultParam );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );

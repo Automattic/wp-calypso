@@ -26,6 +26,7 @@ import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
+import { addParamForFlashMessage } from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {
@@ -198,9 +199,7 @@ export default function MonetizeSubscription() {
 			// Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed
 			navigate( {
 				to: getMonetizeSubscriptionsUrl(),
-				search: {
-					showSuccessRemoved: true,
-				},
+				search: addParamForFlashMessage( {} ),
 			} );
 		}
 	}, [
