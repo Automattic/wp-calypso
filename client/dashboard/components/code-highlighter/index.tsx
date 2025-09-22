@@ -19,12 +19,10 @@ export const CodeHighlighter = ( { content }: CodeHighlighterProps ) => {
 	}, [ content ] );
 
 	return (
-		<>
-			<pre className="github-workflow-code-highlighter">
-				<code ref={ yamlCodeRef } className="language-yaml">
-					{ content }
-				</code>
-			</pre>
-		</>
+		<pre className="github-workflow-code-highlighter">
+			<code ref={ yamlCodeRef } className="language-yaml">
+				{ content }
+			</code>
+		</pre>
 	);
 };
