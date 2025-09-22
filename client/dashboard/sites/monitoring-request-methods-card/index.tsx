@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
-import type { LegendData, PeriodData, TimeRange } from '../monitoring/types';
+import type { LegendData, TimeRange } from '../monitoring/types';
 import type { Site, SiteHostingMetrics } from '@automattic/api-core';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
@@ -36,20 +36,17 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 				return [];
 			}
 
-			const methodsMap: {
-				[ key: string ]: number;
-			} = {};
-
-			requestMethodsData.data.periods.forEach( ( period: PeriodData ) => {
-				if ( typeof period?.dimension === 'object' ) {
-					Object.entries( period.dimension ).forEach( ( [ method, value ] ) => {
-						if ( ! methodsMap[ method ] ) {
-							methodsMap[ method ] = 0;
+			const methodsMap = requestMethodsData.data.periods.reduce< Record< string, number > >(
+				( acc, period ) => {
+					if ( typeof period?.dimension === 'object' ) {
+						for ( const [ method, value ] of Object.entries( period.dimension ) ) {
+							acc[ method ] = ( acc[ method ] ?? 0 ) + value;
 						}
-						methodsMap[ method ] += value;
-					} );
-				}
-			} );
+					}
+					return acc;
+				},
+				{}
+			);
 
 			const sum: number = Object.values( methodsMap ).reduce(
 				( acc: number, curr: number ): number => acc + curr,
