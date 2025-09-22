@@ -69,8 +69,9 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 		);
 	}, [ deploymentFormData.selectedDeploymentId, deployments ] );
 
-	const { mutate: mutateCreateCodeDeploymentRun, isPending: isPendingCreateCodeDeploymentRun } =
-		useMutation( createCodeDeploymentRunMutation() );
+	const { mutate: createCodeDeploymentRun, isPending: isCreatingCodeDeploymentRun } = useMutation(
+		createCodeDeploymentRunMutation()
+	);
 
 	const fields: Field< DeploymentFormData >[] = [
 		{
@@ -91,7 +92,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 			return;
 		}
 
-		mutateCreateCodeDeploymentRun(
+		createCodeDeploymentRun(
 			{
 				siteId: selectedDeployment.blog_id,
 				deploymentId: selectedDeployment.id,
@@ -131,7 +132,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 						<Button
 							variant="primary"
 							type="submit"
-							disabled={ ! selectedDeployment || isPendingCreateCodeDeploymentRun }
+							disabled={ ! selectedDeployment || isCreatingCodeDeploymentRun }
 							__next40pxDefaultSize
 						>
 							{ __( 'Deploy to production' ) }
