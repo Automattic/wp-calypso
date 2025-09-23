@@ -36,7 +36,6 @@ import {
 	LoginPage,
 	MarketingPage,
 	NewSiteResponse,
-	NoticeComponent,
 	PreviewComponent,
 	RestAPIClient,
 	Secrets,
@@ -81,10 +80,6 @@ export const test = base.extend< {
 	 * Component for interacting with the block widget editor.
 	 */
 	componentBlockWidgetEditor: BlockWidgetEditorComponent;
-	/**
-	 * Component for showing notices (e.g. "Settings saved successfully!")
-	 */
-	componentNotice: NoticeComponent;
 	/**
 	 * Component for interacting with the preview functionality.
 	 */
@@ -178,10 +173,6 @@ export const test = base.extend< {
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
-	},
-	componentNotice: async ( { page }, use ) => {
-		const noticeComponent = new NoticeComponent( page );
-		await use( noticeComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );

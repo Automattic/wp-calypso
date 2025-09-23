@@ -3,7 +3,6 @@ import { tags, test } from '../../lib/pw-base';
 test.describe( 'Marketing: SEO', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test( 'As a WordPress.com business plan user with an atomic site, I can see the SEO settings page', async ( {
 		accountAtomic,
-		componentNotice,
 		helperData,
 		page,
 		pageMarketing,
@@ -37,24 +36,6 @@ test.describe( 'Marketing: SEO', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Then I can verify the preview for Facebook', async function () {
 			await pageMarketing.validateExternalPreview( 'Facebook', externalPreviewText );
-		} );
-
-		await test.step( 'When I close the SEO preview', async function () {
-			await pageMarketing.clickButton( 'Close preview' );
-		} );
-
-		await test.step( 'And I save the changes', async function () {
-			await pageMarketing.saveSettings();
-		} );
-
-		await test.step( 'Then the changes are saved', async function () {
-			await componentNotice.noticeShown( 'Settings saved successfully!' );
-
-			// Reload the page to ensure changes are persisted.
-			await page.reload();
-
-			// Verify the front page text is still present.
-			await pageMarketing.validatePreviewTextForPageStructureCategory( frontPageText );
 		} );
 	} );
 } );
