@@ -62,7 +62,10 @@ export default function ExpandableFileSection( {
 	const [ isExpanded, setIsExpanded ] = useState( true );
 
 	// Filter items by type
-	const filteredItems = selectedItems.filter( ( item ) => item.type === type );
+	const filteredItems = selectedItems.filter(
+		( item ) =>
+			item.type === type && ! Object.values( SECTION_PATHS ).some( ( path ) => path === item.path )
+	);
 
 	// Handle empty sections
 	if ( filteredItems.length === 0 ) {
