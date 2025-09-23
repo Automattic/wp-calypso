@@ -1,8 +1,8 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
+import type { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
 
 type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | 'events' > & {
 	currentSiteId?: number;

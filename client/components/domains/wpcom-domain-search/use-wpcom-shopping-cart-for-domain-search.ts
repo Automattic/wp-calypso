@@ -3,7 +3,7 @@ import { DomainSearch } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type CartKey,
-	MinimalRequestCartProduct,
+	type MinimalRequestCartProduct,
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
