@@ -9,6 +9,7 @@ import {
 	Button,
 	ComboboxControl,
 	RadioControl,
+	SelectControl,
 	ToggleControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -16,7 +17,7 @@ import {
 } from '@wordpress/components';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
 import { useCreateCodeDeployment } from './use-create-code-deployment';
@@ -37,8 +38,6 @@ interface FormData {
 	deploymentMode: 'simple' | 'advanced';
 	workflowPath: string | undefined;
 }
-
-const INSTALL_APP_URL = 'https://github.com/apps/wordpress-com/installations/new';
 
 // Custom repository selector component with search functionality
 const RepositorySelector = ( {
@@ -68,6 +67,31 @@ const RepositorySelector = ( {
 			options={ repositoryOptions }
 			placeholder={ __( 'Select a repository' ) }
 		/>
+	);
+};
+
+// Custom GitHub account selector with add button
+const GitHubAccountSelector = ( { field, onChange, data }: DataFormControlProps< FormData > ) => {
+	const { id, getValue } = field;
+
+	return (
+		<VStack spacing={ 2 }>
+			<HStack justify="space-between" alignment="center">
+				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
+					{ __( 'GitHub account' ) }
+				</Text>
+				<Button variant="link">{ __( 'Add GitHub account' ) }</Button>
+			</HStack>
+			<SelectControl
+				__next40pxDefaultSize
+				aria-label={ __( 'GitHub account' ) }
+				value={ getValue?.( { item: data } ) }
+				onChange={ ( value ) => {
+					onChange( { [ id ]: Number( value ) } );
+				} }
+				options={ field.elements || [] }
+			/>
+		</VStack>
 	);
 };
 
@@ -106,9 +130,7 @@ export const ConnectRepositoryForm = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ isTargetDirDirty, setIsTargetDirDirty ] = useState( false );
 
-	const { data: installations, refetch: refetchInstallations } = useSuspenseQuery(
-		githubInstallationsQuery()
-	);
+	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( formData.selectedInstallationId === '' ) {
@@ -206,21 +228,6 @@ export const ConnectRepositoryForm = ( {
 		},
 	} );
 
-	const handleAddGithubAccount = useCallback( () => {
-		const popup = window.open( INSTALL_APP_URL, '_blank', 'noopener' );
-
-		if ( ! popup ) {
-			return;
-		}
-
-		const handleFocus = () => {
-			refetchInstallations();
-			window.removeEventListener( 'focus', handleFocus );
-		};
-
-		window.addEventListener( 'focus', handleFocus );
-	}, [ refetchInstallations ] );
-
 	const handleSubmit = async () => {
 		if (
 			! selectedRepository ||
@@ -299,7 +306,7 @@ export const ConnectRepositoryForm = ( {
 				id: 'selectedInstallationId',
 				label: __( 'GitHub account' ),
 				type: 'text' as const,
-				Edit: 'select',
+				Edit: GitHubAccountSelector,
 				elements: installationOptions,
 				help: installationHelpText,
 			},
@@ -354,17 +361,6 @@ export const ConnectRepositoryForm = ( {
 					"Select a repository and choose where you'd like your files to deploy."
 				) }
 			/>
-
-			<VStack spacing={ 2 }>
-				<HStack justify="space-between" alignment="center">
-					<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
-						{ __( 'GitHub account' ) }
-					</Text>
-					<Button variant="link" onClick={ handleAddGithubAccount }>
-						{ __( 'Add GitHub account' ) }
-					</Button>
-				</HStack>
-			</VStack>
 
 			<DataForm< FormData >
 				data={ formData }
