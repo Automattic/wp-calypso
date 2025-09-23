@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
@@ -13,42 +12,45 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
+import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-const wordpressClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'wordpress',
-	} );
-};
-const jetpackClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'jetpack',
-	} );
-};
-const migrateClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'migrate',
-	} );
-};
-const importClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'import',
-	} );
-};
-const offerClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'offer',
-	} );
-};
-
 function AddNewSite( { context }: AddNewSiteProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const wordpressClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'wordpress',
+		} );
+	};
+	const jetpackClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'jetpack',
+		} );
+	};
+	const migrateClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'migrate',
+		} );
+	};
+	const importClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'import',
+		} );
+	};
+	const offerClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'offer',
+		} );
+	};
+
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
 	const offer = sprintf(
