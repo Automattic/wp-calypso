@@ -121,7 +121,7 @@ export function feedDiscovery( context, next ) {
 	}
 }
 
-export function feedDiscoveryByUrl( context, next ) {
+export function feedLookup( context, next ) {
 	if ( ! context.params[ 0 ] ) {
 		next();
 	}

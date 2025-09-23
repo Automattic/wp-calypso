@@ -13,8 +13,8 @@ import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
 	feedDiscovery,
-	feedDiscoveryByUrl,
 	feedListing,
+	feedLookup,
 	following,
 	readA8C,
 	readFollowingP2,
@@ -108,7 +108,7 @@ export default async function (): Promise< void > {
 			'/reader/feeds/lookup/*',
 			redirectLoggedOutToSignup,
 			sidebar,
-			feedDiscoveryByUrl,
+			feedLookup,
 			feedListing,
 			makeLayout,
 			clientRender
