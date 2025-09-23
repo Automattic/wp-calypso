@@ -70,7 +70,9 @@ export const usePlugin = ( pluginSlug: string ) => {
 				( acc, site ) => {
 					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
 						const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
-						const actionLinks = actionLinksBySiteId.get( Number( site.ID ) );
+						const actionLinks = actionLinksBySiteId.get( Number( site.ID ) ) || {
+							Settings: `${ site.URL }/wp-admin/plugins.php`,
+						};
 
 						acc[ 0 ].push( { ...site, isPluginActive, actionLinks } );
 					} else {
