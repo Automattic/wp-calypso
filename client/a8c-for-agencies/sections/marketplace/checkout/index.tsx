@@ -12,12 +12,7 @@ import withMarketplaceType from '../hoc/with-marketplace-type';
 
 import './style.scss';
 
-interface Props {
-	isClient?: boolean;
-	referralBlogId?: number;
-}
-
-function Checkout( { isClient }: Props ) {
+function Checkout() {
 	const translate = useTranslate();
 
 	const title = translate( 'Checkout' );
@@ -27,10 +22,8 @@ function Checkout( { isClient }: Props ) {
 			className="checkout"
 			title={ title }
 			wide
-			withBorder={ ! isClient }
-			sidebarNavigation={ ! isClient && <MobileSidebarNavigation /> }
+			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			{ isClient ? null : (
 				<LayoutTop>
 					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
@@ -47,7 +40,6 @@ function Checkout( { isClient }: Props ) {
 						/>
 					</LayoutHeader>
 				</LayoutTop>
-			) }
 			<LayoutBody>
 				<div>[ This is the Billing Dragon Checkout Page ]</div>
 			</LayoutBody>
