@@ -13,27 +13,12 @@ import { LogsDownloader } from '../downloader';
 import { buildTimeRangeInSeconds } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
-import { getInitialFiltersFromSearch, getAllowedFields } from './filters';
+import { getInitialFiltersFromSearch, getAllowedFields, filtersSignature } from './filters';
 import { useView, toFilterParams } from './views';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 import './style.scss';
 import type { Dispatch, SetStateAction } from 'react';
-
-function filtersSignature(
-	filters: Filter[] | undefined,
-	allowed: ReadonlyArray< string >
-): string {
-	return allowed
-		.slice()
-		.sort()
-		.map( ( field ) => {
-			const raw = filters?.find( ( filter ) => filter.field === field )?.value;
-			const values = Array.isArray( raw ) ? ( raw as string[] ).slice().sort() : [];
-			return `${ field }:${ values.slice().sort().join( ',' ) }`;
-		} )
-		.join( '|' );
-}
 
 export type SiteLogsDataViewsProps = {
 	dateRange: { start: Date; end: Date };

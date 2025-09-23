@@ -1,6 +1,21 @@
 import { LogType } from '@automattic/api-core';
 import type { Filter } from '@wordpress/dataviews';
 
+export function filtersSignature(
+	filters: Filter[] | undefined,
+	allowed: ReadonlyArray< string >
+): string {
+	return allowed
+		.slice()
+		.sort()
+		.map( ( field ) => {
+			const raw = filters?.find( ( filter ) => filter.field === field )?.value;
+			const values = Array.isArray( raw ) ? ( raw as string[] ).slice().sort() : [];
+			return `${ field }:${ values.slice().sort().join( ',' ) }`;
+		} )
+		.join( '|' );
+}
+
 const SEVERITY_LABELS: Readonly< Record< string, string > > = {
 	user: 'User',
 	warning: 'Warning',
