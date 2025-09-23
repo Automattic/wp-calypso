@@ -21,7 +21,7 @@ export function getActivityLogsCalloutProps() {
 				<br />
 				<Text as="p" variant="muted">
 					{ __(
-						'Upgrade to get complete activity history for the last 30 days, advanced filtering and date range selection.'
+						'With your free plan, you can see your 20 most recent events. Upgrade for 30 days of history, plus filtering and date range controls.'
 					) }
 				</Text>
 			</>
