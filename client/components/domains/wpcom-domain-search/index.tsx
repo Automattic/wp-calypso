@@ -1,5 +1,5 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
+import { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
@@ -12,6 +12,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
 	flowAllowsMultipleDomainsInCart: boolean;
+	onAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 };
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
@@ -36,6 +37,7 @@ const DomainSearchWithCart = ( {
 	config: externalConfig,
 	isFirstDomainFreeForFirstYear,
 	flowAllowsMultipleDomainsInCart,
+	onAddDomainToCart,
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
@@ -47,6 +49,7 @@ const DomainSearchWithCart = ( {
 		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
+		onAddDomainToCart,
 	} );
 
 	const initialQuery = useMemo( () => {

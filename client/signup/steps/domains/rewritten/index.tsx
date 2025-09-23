@@ -5,7 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
@@ -64,6 +64,24 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					},
 					{ domainItem, siteUrl: domainItem.meta, domainCart }
 				);
+
+				if ( isDomainForGravatarFlow( flowName ) ) {
+					submitSignupStep(
+						{
+							stepName: 'site-or-domain',
+							domainItem,
+							designType: 'domain',
+							siteSlug: domainItem.meta,
+							siteUrl: domainItem.meta,
+							isPurchasingItem: true,
+						},
+						{ designType: 'domain', domainItem, siteUrl: domainItem.meta }
+					);
+					submitSignupStep(
+						{ stepName: 'site-picker', wasSkipped: true },
+						{ themeSlugWithRepo: 'pub/twentysixteen' }
+					);
+				}
 
 				goToNextStep();
 			},
@@ -148,6 +166,23 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flowName ] );
 
+	const addGravatarDomainExtra = useCallback(
+		( product: MinimalRequestCartProduct ) => {
+			if ( isDomainForGravatarFlow( flowName ) ) {
+				return {
+					...product,
+					extra: {
+						...product.extra,
+						is_gravatar_domain: true,
+					},
+				};
+			}
+
+			return product;
+		},
+		[ flowName ]
+	);
+
 	return (
 		<StepWrapper
 			{ ...props }
@@ -164,6 +199,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
+					onAddDomainToCart={ addGravatarDomainExtra }
 				/>
 			}
 		/>
