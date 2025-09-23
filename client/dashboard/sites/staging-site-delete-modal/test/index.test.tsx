@@ -12,10 +12,7 @@ const mockMutate = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 const mockCreateSuccessNotice = jest.fn();
 const mockNavigate = jest.fn();
-
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
+const mockRecordTracksEvent = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -51,6 +48,12 @@ jest.mock( '@tanstack/react-query', () => ( {
 		mutate: mockMutate,
 		isPending: false,
 		error: null,
+	} ) ),
+} ) );
+
+jest.mock( '../../../app/analytics', () => ( {
+	useAnalytics: jest.fn( () => ( {
+		recordTracksEvent: mockRecordTracksEvent,
 	} ) ),
 } ) );
 
@@ -155,7 +158,6 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'shows error notice and tracks failure when deletion fails', async () => {
 			const user = userEvent.setup();
 			const { useMutation } = require( '@tanstack/react-query' );
-			const { recordTracksEvent } = require( '@automattic/calypso-analytics' );
 
 			// Mock mutate to simulate calling onError callback with an error
 			const mockMutateWithError = jest.fn( ( _, options ) => {
@@ -178,7 +180,7 @@ describe( 'StagingSiteDeleteModal', () => {
 				type: 'snackbar',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_hosting_configuration_staging_site_delete_failure'
 			);
 		} );
@@ -224,7 +226,6 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'shows success notice, closes modal, and navigates on successful deletion', async () => {
 			const user = userEvent.setup();
 			const { useMutation } = require( '@tanstack/react-query' );
-			const { recordTracksEvent } = require( '@automattic/calypso-analytics' );
 
 			// Mock mutate to simulate calling onSuccess callback
 			const mockMutateWithSuccess = jest.fn( ( _, options ) => {
@@ -256,7 +257,7 @@ describe( 'StagingSiteDeleteModal', () => {
 				params: { siteSlug: 'production-site' },
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_hosting_configuration_staging_site_delete_success'
 			);
 		} );
