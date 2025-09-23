@@ -1,50 +1,35 @@
-import { useTranslate } from 'i18n-calypso';
-import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
-import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import LayoutBody from 'calypso/layout/hosting-dashboard/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/layout/hosting-dashboard/header';
-import withMarketplaceType from '../hoc/with-marketplace-type';
+import { isEnabled } from '@automattic/calypso-config';
+import { useContext } from 'react';
+import ClientCheckoutPlaceholder from '../billing-dragon-checkout/checkout-placeholder';
+import { MarketplaceTypeContext } from '../context';
+import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
+import JetpackStartCheckout from './jetpack-start-checkout';
 
-import './style.scss';
+interface CheckoutProps {
+	referralBlogId?: number;
+	isClient?: boolean;
+}
 
-function Checkout() {
-	const translate = useTranslate();
+function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
-	const title = translate( 'Checkout' );
+	// Always use JetpackStartCheckout for current regular Checkout flow and referrals
+	if ( isReferralMarketplace || ! isEnabled( 'a4a-bd-checkout' ) ) {
+		return <JetpackStartCheckout referralBlogId={ referralBlogId } isClient={ isClient } />;
+	}
 
-	return (
-		<Layout
-			className="checkout"
-			title={ title }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
-				<LayoutTop>
-					<A4AAgencyApprovalNotice />
-					<LayoutHeader>
-						<Breadcrumb
-							items={ [
-								{
-									label: translate( 'Marketplace' ),
-									href: A4A_MARKETPLACE_LINK,
-								},
-								{
-									label: title,
-								},
-							] }
-						/>
-					</LayoutHeader>
-				</LayoutTop>
-			<LayoutBody>
-				<div>[ This is the Billing Dragon Checkout Page ]</div>
-			</LayoutBody>
-		</Layout>
-	);
+	// For regular checkout, check feature flag
+	if ( isEnabled( 'a4a-bd-checkout' ) ) {
+		return (
+			<>
+				<div style={ { color: 'white' } }> This is the Billing Dragon Checkout page</div>
+				<ClientCheckoutPlaceholder />;
+			</>
+		);
+	}
+
+	return <ClientCheckoutPlaceholder />;
 }
 
 export default withMarketplaceType( Checkout );
