@@ -47,11 +47,19 @@
 }
 
 .empty-content__action {
-	margin: 0 0 10px 10px;
+	margin: 0 0 10px 0;
 	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	&:not(:first-child) {
+		margin-inline-start: 10px;
+	}
+
+	&:not(:last-child) {
+		margin-inline-end: 10px;
+	}
 }
 
 .empty-content.is-compact {
