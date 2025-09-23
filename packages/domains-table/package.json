@@ -49,7 +49,7 @@
 		"@automattic/urls": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "^30.2.0",
+		"@wordpress/components": "^30.4.0",
 		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
@@ -72,7 +72,7 @@
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
 		"@wordpress/data": "^10.23.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.4.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
