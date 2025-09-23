@@ -16,7 +16,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -88,33 +88,36 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	);
 
 	const form = {
-		labelPosition: 'top' as const,
+		layout: { type: 'regular' as const },
 		fields: [
 			{
+				id: 'name-row',
 				layout: {
-					type: 'row',
-					alignment: 'start',
+					type: 'row' as const,
+					alignment: 'start' as const,
 				},
 				children: [ 'firstName', 'lastName' ],
-			},
+			} as FormField,
 			'organization',
 			{
+				id: 'contact-row',
 				layout: {
-					type: 'row',
-					alignment: 'start',
+					type: 'row' as const,
+					alignment: 'start' as const,
 				},
 				children: [ 'email', 'phone' ],
-			},
+			} as FormField,
 			'countryCode',
 			'address1',
 			'address2',
 			{
+				id: 'location-row',
 				layout: {
-					type: 'row',
-					alignment: 'start',
+					type: 'row' as const,
+					alignment: 'start' as const,
 				},
 				children: [ 'city', 'state', 'postalCode' ],
-			},
+			} as FormField,
 			'optOutTransferLock',
 		],
 	};
