@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
@@ -76,6 +77,7 @@ export default function MonitoringPerformanceCard( {
 	timeRange: number;
 } ) {
 	const { requestsData, responseTimeData, isLoading } = useSiteMetricsData( site.ID, timeRange );
+	const locale = useLocale();
 
 	const data: SeriesData[] = [
 		{
@@ -203,7 +205,7 @@ export default function MonitoringPerformanceCard( {
 					}
 
 					const dateStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleDateString(
-						'en-US',
+						locale,
 						{
 							weekday: 'short',
 							year: 'numeric',
@@ -212,7 +214,7 @@ export default function MonitoringPerformanceCard( {
 						}
 					);
 					const timeStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleTimeString(
-						'en-US',
+						locale,
 						{
 							hour12: false,
 							timeZoneName: 'short',
