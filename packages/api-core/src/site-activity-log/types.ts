@@ -62,6 +62,16 @@ export interface ActivityLogResponse {
 	totalPages: number;
 }
 
+export interface ActivityLogGroupCountResponse {
+	groups: {
+		[ group: string ]: {
+			name: string;
+			count: number;
+		};
+	};
+	totalItems: number;
+}
+
 // Activity Log: shared primitives
 
 export interface ActivityImage {
@@ -103,7 +113,7 @@ export interface ActivityLogParams {
 	date_range?: string;
 	number?: number;
 	not_group?: string;
-	group?: string;
+	group?: string[];
 	name?: string;
 	text_search?: string;
 }
