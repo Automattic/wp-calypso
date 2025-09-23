@@ -1,0 +1,21 @@
+/*.theme-a8c-for-agencies:has(.client-checkout-v2) {
+	.layout.has-no-masterbar .layout__content {
+		padding: 0;
+		background-color: var(--color-surface);
+	}
+}*/
+
+.client-checkout-v2__top-bar {
+	position: absolute;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	padding: 24px 16px 16px;
+	z-index: 1000;
+
+	@media (max-width: $break-large) {
+		position: relative;
+		justify-content: center;
+	}
+}
