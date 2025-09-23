@@ -9,21 +9,23 @@ interface FlashMessageProps {
 	type?: 'success' | 'error';
 }
 
-const DEFAULT_PARAM_NAME = 'show-flash-message';
+const DEFAULT_PARAM_NAME = 'flash';
 
-export function addParamForFlashMessage(
-	queryParams: object,
-	overrideDefaultParam: string = DEFAULT_PARAM_NAME
-): object {
-	queryParams[ overrideDefaultParam ] = true;
-	return queryParams;
+export function addFlashMessage(
+	url: string,
+	value: string = 'true',
+	overrideDefaultId: string = DEFAULT_PARAM_NAME
+): string {
+	const url_obj = new URL( url );
+	url_obj.searchParams.set( overrideDefaultId, value );
+	return url_obj.toString();
 }
 /**
  * Allows a snackbar to be shown on page load based on a query parameter.
  * Clears the query parameter when done.
  */
 export default function FlashMessage( {
-	overrideDefaultParam = DEFAULT_PARAM_NAME,
+	id = DEFAULT_PARAM_NAME,
 	value,
 	message,
 	type = 'success',
@@ -35,7 +37,7 @@ export default function FlashMessage( {
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( overrideDefaultParam ) === value ) {
+		if ( params.get( id ) === value ) {
 			switch ( type ) {
 				case 'error':
 					createErrorNotice( message, { type: 'snackbar' } );

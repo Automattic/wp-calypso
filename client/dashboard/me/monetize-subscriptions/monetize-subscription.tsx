@@ -25,7 +25,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { formatDate } from 'date-fns';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
-import { addParamForFlashMessage } from '../../components/flash-message';
+import { addFlashMessage } from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {
@@ -134,8 +134,7 @@ function StopSubscriptionButton( {
 						stopSubscription( null, {
 							onSuccess: () => {
 								navigate( {
-									to: getMonetizeSubscriptionsUrl(),
-									search: addParamForFlashMessage( {} ),
+									to: addFlashMessage( getMonetizeSubscriptionsUrl() ),
 								} );
 							},
 							onError: () => {
