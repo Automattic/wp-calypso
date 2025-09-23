@@ -34,7 +34,7 @@
 				border-bottom: none;
 			}
 
-			&:first-of-type:last-of-type {
+			&:only-child {
 				border-radius: 16px;
 			}
 
