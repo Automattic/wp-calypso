@@ -427,6 +427,12 @@ export const siteBackupDownloadRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId/download',
+	validateSearch: ( search ) => {
+		const downloadId = Number( search.downloadId );
+		return {
+			downloadId: downloadId > 0 ? downloadId : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../sites/backup-download' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-download' )( {
