@@ -188,6 +188,7 @@
 		"themes/discovery": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
+		"themes/universal-header": true,
 		"titan/iframe-control-panel": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,

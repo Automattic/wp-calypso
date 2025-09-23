@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -44,7 +45,11 @@ export function upload( context, next ) {
 
 export function renderThemes( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) ) {
+	const selectedSite = getSelectedSiteId( state );
+	const shouldUseLoggedIn = isEnabled( 'themes/universal-header' )
+		? selectedSite
+		: isUserLoggedIn( state );
+	if ( shouldUseLoggedIn ) {
 		return loggedIn( context, next );
 	}
 
