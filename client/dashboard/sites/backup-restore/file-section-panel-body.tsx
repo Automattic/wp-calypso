@@ -44,7 +44,7 @@ const checkIfAllSelected = ( type: SectionType, selectedItems: FileBrowserCheckL
 	} );
 };
 
-export default function ExpandableFileSection( {
+export default function FileSectionPanelBody( {
 	type,
 	selectedItems,
 }: {

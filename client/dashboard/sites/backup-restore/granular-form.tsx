@@ -10,7 +10,7 @@ import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
-import ExpandableFileSection from './expandable-file-section';
+import FileSectionPanelBody from './file-section-panel-body';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
@@ -80,10 +80,10 @@ function SiteBackupGranularRestoreForm( {
 			<VStack spacing={ 4 }>
 				<Text>{ __( 'All the following selected items will be restored:' ) }</Text>
 				<Panel>
-					<ExpandableFileSection type="theme" selectedItems={ browserSelectedList } />
-					<ExpandableFileSection type="plugin" selectedItems={ browserSelectedList } />
-					<ExpandableFileSection type="table" selectedItems={ browserSelectedList } />
-					<ExpandableFileSection type="file" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="theme" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="plugin" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="table" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="file" selectedItems={ browserSelectedList } />
 				</Panel>
 
 				<Notice variant="info" title={ __( 'Important' ) }>
