@@ -35,7 +35,10 @@ export interface Threat {
 	extension?: ThreatExtension;
 	source?: string;
 	filename?: string;
-	context?: Record< string, string | Record< string, unknown > >;
+	context?: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 	version?: string;
 	table?: string;
 	rows?: Record< string, unknown >;
@@ -71,4 +74,10 @@ export interface SiteScanHistory {
 		threats_found: number;
 		threats_resolved: number;
 	};
+}
+
+export interface ThreatActionOptions {
+	ignore?: boolean;
+	unignore?: boolean;
+	fix?: boolean;
 }

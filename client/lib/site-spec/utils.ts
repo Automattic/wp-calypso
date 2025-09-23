@@ -10,10 +10,15 @@ interface SiteSpecRawConfig {
 }
 
 // Config structure for the client
-interface SiteSpecConfig {
+export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	tracking?: {
+		enabled?: boolean;
+		prefix?: string;
+		getOverrides?: ( eventName: string ) => Record< string, string >;
+	};
 }
 
 // Config key for URL functions
@@ -56,7 +61,7 @@ export function getSiteSpecUrlByType( type: ResourceType ): string | null {
  * Retrieves the SiteSpec configuration object for initializing the widget.
  * @returns {SiteSpecConfig} Configuration object containing agent settings and build URLs
  */
-export function getSiteSpecConfig(): SiteSpecConfig {
+export function getDefaultSiteSpecConfig(): SiteSpecConfig {
 	const siteSpecConfig = config( 'site_spec' ) as SiteSpecRawConfig | undefined;
 
 	if ( ! siteSpecConfig ) {
@@ -67,5 +72,12 @@ export function getSiteSpecConfig(): SiteSpecConfig {
 		agentUrl: siteSpecConfig?.agent_url,
 		agentId: siteSpecConfig?.agent_id,
 		buildSiteUrl: siteSpecConfig?.build_site_url,
+		tracking: {
+			enabled: true,
+			prefix: 'jetpack_calypso',
+			getOverrides: () => ( {
+				client: 'calypso',
+			} ),
+		},
 	};
 }

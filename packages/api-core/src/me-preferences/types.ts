@@ -27,10 +27,11 @@ export interface ReaderLandingPage extends LandingPagePreference {
 }
 
 export interface UserPreferences {
-	'sites-view'?: SitesViewPreferences;
-	'sites-landing-page'?: SitesLandingPage;
-	'reader-landing-page'?: ReaderLandingPage;
-	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
+	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
+	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
+	'reader-landing-page'?: ReaderLandingPage;
+	'sites-landing-page'?: SitesLandingPage;
+	'sites-view'?: SitesViewPreferences;
 }

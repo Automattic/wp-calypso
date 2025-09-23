@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
 import { DataViewsCard } from '../components/dataviews-card';
+import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
@@ -49,6 +50,7 @@ function Domains() {
 					}
 				/>
 			}
+			notices={ <OptInWelcome tracksContext="domains" /> }
 		>
 			<DataViewsCard>
 				<DataViews< DomainSummary >

@@ -120,6 +120,8 @@ export default function PreferencesLanguageForm() {
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<ComboboxControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 						value={ field.getValue( { item: data } ) ?? '' }
 						label={ __( 'Interface language' ) }
 						onChange={ ( newValue ) => {
@@ -130,7 +132,6 @@ export default function PreferencesLanguageForm() {
 						placeholder={ __( 'Select a language' ) }
 						options={ field.elements || [] }
 						allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
-						__next40pxDefaultSize
 						help={
 							<>
 								{ __(
@@ -167,6 +168,7 @@ export default function PreferencesLanguageForm() {
 					! data.language || data.language === '' || !! isDefaultLocale( data.language );
 				return (
 					<CheckboxControl
+						__nextHasNoMarginBottom
 						checked={ isEmpathyModeFieldDisabled ? false : field.getValue( { item: data } ) }
 						label={ field.label }
 						disabled={ isEmpathyModeFieldDisabled }
@@ -187,6 +189,7 @@ export default function PreferencesLanguageForm() {
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<CheckboxControl
+						__nextHasNoMarginBottom
 						checked={ field.getValue( { item: data } ) }
 						label={ field.label }
 						onChange={ ( newValue ) => {
