@@ -17,18 +17,6 @@
 		margin: 8px 0;
 	}
 
-	.file-browser-node__item components-button.has-icon.has-text svg {
-		fill: var( --theme-base-color );
-	}
-
-	.file-browser-node__item .components-button.is-tertiary {
-		color: var( --theme-base-color );
-	}
-
-	.file-browser-node .components-button.is-secondary {
-		background: #fff;
-	}
-
 	.file-card__preview-sensitive {
 		background-color: $gray-600;
 		padding: 20px 8px;
