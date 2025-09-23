@@ -76,7 +76,8 @@ function SiteActivityLogsDataViews( {
 			defaultLayouts={ { table: {} } }
 			onChangeView={ onChangeView }
 			empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
-		></DataViews>
+			children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
+		/>
 	);
 }
 
