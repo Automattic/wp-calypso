@@ -10,6 +10,7 @@ export type PluginListRow = {
 	sitesCount: number;
 	isActive: 'all' | 'some' | 'none';
 	hasUpdate: 'all' | 'some' | 'none';
+	areAutoUpdatesAllowed: 'all' | 'some' | 'none';
 	areAutoUpdatesEnabled: 'all' | 'some' | 'none';
 	siteIds: number[]; // list of site IDs where this plugin exists
 };
