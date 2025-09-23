@@ -20,7 +20,7 @@ export const siteActivityLogQuery = ( siteId: number, activityLogQueryParams: Ac
 
 export const siteActivityLogGroupCountsQuery = (
 	siteId: number,
-	activityLogQueryParams: ActivityLogParams
+	activityLogQueryParams: ActivityLogParams = { number: 1000 } // we're getting the count for the latest 1000 items to list the available groups
 ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'activity-log', 'group-counts', activityLogQueryParams ],
