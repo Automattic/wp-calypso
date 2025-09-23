@@ -21,7 +21,7 @@ export default function SiteIcon( {
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	viewType: 'list' | 'table' | 'grid' | 'breadcrumb';
+	viewType: 'list' | 'table' | 'grid' | 'breadcrumb' | 'pickerGrid';
 	disableClick?: boolean;
 } ) {
 	const { adminUrl } = useSiteAdminInterfaceData( site.ID );

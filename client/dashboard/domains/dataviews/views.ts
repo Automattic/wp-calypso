@@ -1,6 +1,6 @@
-import type { ViewTable, ViewList } from '@wordpress/dataviews';
+import type { ViewTable, ViewList, ViewPickerGrid } from '@wordpress/dataviews';
 
-export type DomainsView = ViewTable | ViewList;
+export type DomainsView = ViewTable | ViewList | ViewPickerGrid;
 
 export const DEFAULT_VIEW: Partial< DomainsView > = {
 	filters: [],
