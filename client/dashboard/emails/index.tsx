@@ -1,5 +1,6 @@
-import { emailsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { Email } from '@automattic/api-core';
+import { emailsQuery, sitesQuery, siteDomainsQuery } from '@automattic/api-queries';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -9,7 +10,6 @@ import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import type { Email } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 const fields = [
@@ -55,6 +55,17 @@ const fields = [
 
 function Emails() {
 	const navigate = useNavigate();
+	// Fetch all sites and then fetch domains for each site
+	const { data: sites } = useQuery( sitesQuery() );
+	const siteIds = sites?.map( ( s ) => s.ID ) ?? [];
+	const siteDomainsResults = useQueries( {
+		queries: siteIds.map( ( id ) => siteDomainsQuery( id ) ),
+	} );
+	// Combine domains from all sites into a single flat list
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const domains = siteDomainsResults.flatMap( ( r ) => r.data ?? [] );
+	const isLoading = ! sites || siteDomainsResults.some( ( r ) => r.isLoading );
+
 	const emails = useQuery( emailsQuery() ).data;
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
@@ -147,6 +158,7 @@ function Emails() {
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
+					isLoading={ isLoading }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
@@ -10,6 +11,7 @@ import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-featur
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -65,6 +67,11 @@ const DotcomPreviewPane = ( {
 	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
 	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
+	const isA4ADevSite = !! site?.is_a4a_dev_site;
+
+	const hasStagingSitesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
+	);
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -108,7 +115,7 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Staging Site' ),
 				// We don't have the callout for the staging site tab since we'll retire the tab.
-				enabled: isActiveAtomicSite,
+				enabled: hasStagingSitesFeature && ! isA4ADevSite,
 				featureIds: [ STAGING_SITE ],
 			},
 			{
@@ -166,6 +173,8 @@ const DotcomPreviewPane = ( {
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
 		isHostingFeaturesCalloutEnabled,
+		hasStagingSitesFeature,
+		isA4ADevSite,
 	] );
 
 	const itemData: ItemData = {
@@ -228,7 +237,10 @@ const DotcomPreviewPane = ( {
 	const hasNoStagingSites = ! siteWithStagingIds.options?.wpcom_staging_blog_ids?.length;
 
 	const shouldShowProductionBadge =
-		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished );
+		isProduction &&
+		( hasNoStagingSites || ! isStagingStatusFinished ) &&
+		hasStagingSitesFeature &&
+		! isA4ADevSite;
 
 	return (
 		<ItemView

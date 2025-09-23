@@ -5,7 +5,7 @@ import {
 	sitesQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
@@ -18,7 +18,7 @@ import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { getActions } from './actions';
+import { useActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import noSitesIllustration from './no-sites-illustration.svg';
@@ -57,7 +57,6 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const router = useRouter();
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
@@ -85,7 +84,7 @@ export default function Sites() {
 	} );
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
-	const actions = getActions( router );
+	const actions = useActions();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );

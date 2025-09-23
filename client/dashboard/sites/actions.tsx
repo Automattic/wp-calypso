@@ -1,12 +1,12 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, wordpress } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
+import { useAnalytics } from '../app/analytics';
 import { isP2, isSelfHostedJetpackConnected } from '../utils/site-types';
 import { canManageSite } from './features';
 import type { Site } from '@automattic/api-core';
-import type { AnyRouter } from '@tanstack/react-router';
 import type { Action } from '@wordpress/dataviews';
 
 const SiteLeaveContentInfo = lazy( () => import( './site-leave-modal/content-info' ) );
@@ -14,7 +14,10 @@ const SiteRestoreContentInfo = lazy( () => import( './site-restore-modal/content
 
 const noop = () => undefined;
 
-export function getActions( router: AnyRouter ): Action< Site >[] {
+export function useActions(): Action< Site >[] {
+	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
+
 	return [
 		{
 			id: 'admin',
