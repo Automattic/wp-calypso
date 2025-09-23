@@ -518,6 +518,7 @@ function UnifiedPlansStep( {
 				siteTitle={ siteTitle ?? undefined }
 				signupFlowUserName={ username ?? undefined }
 				siteId={ selectedSite?.ID }
+				domainCartItem={ domainItem }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup
 				isLaunchPage={ isLaunchPage }
