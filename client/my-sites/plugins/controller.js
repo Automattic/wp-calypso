@@ -389,9 +389,14 @@ export function renderPluginsSidebar( context, next ) {
 	}
 
 	if ( ! siteUrl ) {
-		context.secondary = isEnabled( 'plugins/universal-header' ) ? null : (
-			<PluginsSidebar path={ context.path } />
-		);
+		context.secondary =
+			isEnabled( 'plugins/universal-header' ) &&
+			! (
+				context.path.startsWith( '/plugins/manage' ) ||
+				context.path.startsWith( '/plugins/scheduled-updates' )
+			) ? null : (
+				<PluginsSidebar path={ context.path } />
+			);
 	}
 
 	next();

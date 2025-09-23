@@ -436,7 +436,11 @@ export default withCurrentRoute(
 				[ 'themes', 'theme' ].includes( sectionName ) ) ||
 			( config.isEnabled( 'plugins/universal-header' ) &&
 				! siteId &&
-				[ 'plugins' ].includes( sectionName ) );
+				[ 'plugins' ].includes( sectionName ) &&
+				! (
+					currentRoute.startsWith( '/plugins/manage' ) ||
+					currentRoute.startsWith( '/plugins/scheduled-updates' )
+				) );
 
 		return {
 			masterbarIsHidden,

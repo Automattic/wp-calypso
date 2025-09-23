@@ -68,9 +68,8 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'Plugins' ),
 			type: 'menu-item',
-			url: '/plugins',
-			forceChevronIcon: ! isEnabled( 'plugins/universal-header' ),
-			forceExternalLink: isEnabled( 'plugins/universal-header' ),
+			url: isEnabled( 'plugins/universal-header' ) ? '/plugins/manage/sites' : '/plugins',
+			forceChevronIcon: true,
 		},
 	];
 }

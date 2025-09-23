@@ -19,14 +19,21 @@ $studio-blue-15: #e5f4ff;
 }
 
 .is-section-plugins.has-no-sidebar {
-	.masterbar {
+	.lpc-header-nav-wrapper .masterbar {
 		height: 56px;
 		position: relative;
 		background: $studio-blue-15;
 		border-bottom: 1px solid $studio-blue-15;
 	}
+
 	.search-box-header.fixed-top .search-box-header__search {
 		margin-top: -32px;
+	}
+
+	&:has(header.masterbar) {
+		.search-box-header.fixed-top .search-box-header__search {
+			margin-top: 0;
+		}
 	}
 }
 
