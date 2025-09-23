@@ -46,6 +46,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
@@ -68,6 +69,10 @@ module.exports = {
 					},
 				],
 				paths: [
+					{
+						name: '@automattic/calypso-analytics',
+						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
 					{
 						name: '@automattic/components',
 						message:
