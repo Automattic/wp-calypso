@@ -7,15 +7,12 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	SelectControl,
-	ToggleControl,
 	ComboboxControl,
-	TextControl,
-	RadioControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
@@ -29,77 +26,107 @@ interface ConnectRepositoryFormProps {
 	onCancel: () => void;
 }
 
+interface FormData {
+	selectedInstallationId: number | '';
+	selectedRepositoryId: number | '';
+	branch: string;
+	targetDir: string;
+	isAutomated: string;
+	deploymentMode: 'simple' | 'advanced';
+	workflowPath: string | undefined;
+}
+
 const INSTALL_APP_URL = 'https://github.com/apps/wordpress-com/installations/new';
+
+// Custom repository selector component with search functionality
+const RepositorySelector = ( {
+	field,
+	onChange,
+	data,
+	hideLabelFromVision,
+}: DataFormControlProps< FormData > ) => {
+	const { id, getValue } = field;
+	const currentValue = getValue?.( { item: data } );
+
+	// Get repository options from the field elements
+	const repositoryOptions = field.elements || [];
+	return (
+		<ComboboxControl
+			__next40pxDefaultSize
+			allowReset
+			label={ hideLabelFromVision ? '' : field.label }
+			value={ currentValue === '' ? '' : currentValue?.toString() || '' }
+			onChange={ ( value ) => {
+				if ( ! value ) {
+					onChange( { [ id ]: '' } );
+					return;
+				}
+				onChange( { [ id ]: Number( value ) } );
+			} }
+			options={ repositoryOptions }
+			placeholder={ __( 'Select a repository' ) }
+			help={ field.help }
+		/>
+	);
+};
 
 export const ConnectRepositoryForm = ( {
 	site,
 	onConnected,
 	onCancel,
 }: ConnectRepositoryFormProps ) => {
-	const [ selectedRepositoryId, setSelectedRepositoryId ] = useState< number | '' >( '' );
-	const [ branch, setBranch ] = useState( '' );
-	const [ targetDir, setTargetDir ] = useState( '/' );
-	const [ isAutomated, setIsAutomated ] = useState( false );
+	const [ formData, setFormData ] = useState< FormData >( {
+		selectedInstallationId: '',
+		selectedRepositoryId: '',
+		branch: '',
+		targetDir: '/',
+		isAutomated: 'false',
+		deploymentMode: 'simple',
+		workflowPath: '.github/workflows/wpcom.yml',
+	} );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ isTargetDirDirty, setIsTargetDirDirty ] = useState( false );
-	const [ deploymentMode, setDeploymentMode ] = useState< 'simple' | 'advanced' >( 'simple' );
-	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >( undefined );
 
 	const { data: installations, refetch: refetchInstallations } = useSuspenseQuery(
 		githubInstallationsQuery()
 	);
 
-	const [ selectedInstallation, setSelectedInstallation ] = useState<
-		GitHubInstallation | undefined
-	>( installations[ 0 ] );
+	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
+		if ( formData.selectedInstallationId === '' ) {
+			return installations[ 0 ];
+		}
+		return installations.find( ( inst ) => inst.external_id === formData.selectedInstallationId );
+	}, [ installations, formData.selectedInstallationId ] );
 
 	const { data: repositories = [], isLoading: isLoadingRepositories } = useQuery( {
 		...githubRepositoriesQuery( selectedInstallation?.external_id ?? 0 ),
 		enabled: !! selectedInstallation,
 	} );
 
-	useEffect( () => {
-		setSelectedRepositoryId( '' );
-		setBranch( '' );
-		setTargetDir( '/' );
-		setIsTargetDirDirty( false );
-		setWorkflowPath( '.github/workflows/wpcom.yml' );
-	}, [ selectedInstallation ] );
-
-	useEffect( () => {
-		if ( selectedRepositoryId === '' ) {
-			setIsTargetDirDirty( false );
-			setTargetDir( '/' );
-			return;
-		}
-
-		const stillExists = repositories.some(
-			( repository ) => repository.id === selectedRepositoryId
-		);
-
-		if ( ! stillExists ) {
-			setSelectedRepositoryId( '' );
-			setIsTargetDirDirty( false );
-			setTargetDir( '/' );
-		}
-	}, [ repositories, selectedRepositoryId ] );
-
 	const selectedRepository: GitHubRepository | undefined = useMemo( () => {
-		if ( selectedRepositoryId === '' ) {
+		if ( ! repositories || formData.selectedRepositoryId === '' ) {
 			return undefined;
 		}
 
-		return repositories.find( ( repository ) => repository.id === selectedRepositoryId );
-	}, [ repositories, selectedRepositoryId ] );
+		return repositories.find( ( repository ) => repository.id === formData.selectedRepositoryId );
+	}, [ repositories, formData.selectedRepositoryId ] );
 
+	// Set initial installation when installations load
+	useEffect( () => {
+		if ( installations.length > 0 && formData.selectedInstallationId === '' ) {
+			setFormData( ( prev ) => ( {
+				...prev,
+				selectedInstallationId: installations[ 0 ].external_id,
+			} ) );
+		}
+	}, [ installations, formData.selectedInstallationId ] );
+
+	// Set default branch when repository changes
 	useEffect( () => {
 		if ( selectedRepository?.default_branch ) {
-			setBranch( selectedRepository.default_branch );
-			return;
-		}
-
-		if ( ! selectedRepository ) {
-			setBranch( '' );
+			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
+		} else if ( ! selectedRepository ) {
+			setFormData( ( prev ) => ( { ...prev, branch: '' } ) );
 		}
 	}, [ selectedRepository ] );
 
@@ -117,12 +144,12 @@ export const ConnectRepositoryForm = ( {
 			selectedInstallation?.external_id ?? 0,
 			selectedRepository?.owner ?? '',
 			selectedRepository?.name ?? '',
-			branch
+			formData.branch
 		),
-		enabled: !! selectedInstallation && !! selectedRepository && !! branch,
+		enabled: !! selectedInstallation && !! selectedRepository && !! formData.branch,
 	} );
 
-	const isAdvancedSelected = deploymentMode === 'advanced';
+	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	useEffect( () => {
 		if ( ! repositoryChecks?.suggested_directory ) {
@@ -133,7 +160,7 @@ export const ConnectRepositoryForm = ( {
 			return;
 		}
 
-		setTargetDir( repositoryChecks.suggested_directory );
+		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
 	}, [ repositoryChecks?.suggested_directory, isTargetDirDirty ] );
 
 	const branchOptions = useMemo( () => {
@@ -142,18 +169,14 @@ export const ConnectRepositoryForm = ( {
 			names.add( selectedRepository.default_branch );
 		}
 		remoteBranches.forEach( ( branchName ) => names.add( branchName ) );
-		if ( branch ) {
-			names.add( branch );
+		if ( formData.branch ) {
+			names.add( formData.branch );
 		}
 		return Array.from( names ).map( ( name ) => ( {
 			label: name,
 			value: name,
 		} ) );
-	}, [ remoteBranches, selectedRepository?.default_branch, branch ] );
-
-	const branchSelectOptions = branchOptions.length
-		? branchOptions
-		: [ { label: __( 'Select a branch' ), value: '' } ];
+	}, [ remoteBranches, selectedRepository?.default_branch, formData.branch ] );
 
 	const { createDeployment } = useCreateCodeDeployment( site.ID, {
 		onSuccess: () => {
@@ -180,7 +203,12 @@ export const ConnectRepositoryForm = ( {
 	}, [ refetchInstallations ] );
 
 	const handleSubmit = async () => {
-		if ( ! selectedRepository || ! selectedInstallation || ! branch || ! targetDir ) {
+		if (
+			! selectedRepository ||
+			! selectedInstallation ||
+			! formData.branch ||
+			! formData.targetDir
+		) {
 			return;
 		}
 
@@ -189,11 +217,11 @@ export const ConnectRepositoryForm = ( {
 		try {
 			await createDeployment( {
 				externalRepositoryId: selectedRepository.id,
-				branchName: branch,
-				targetDir,
+				branchName: formData.branch,
+				targetDir: formData.targetDir,
 				installationId: selectedInstallation.external_id,
-				isAutomated,
-				workflowPath,
+				isAutomated: formData.isAutomated === 'true',
+				workflowPath: formData.workflowPath || '.github/workflows/wpcom.yml',
 			} );
 		} catch ( error ) {
 			setIsSubmitting( false );
@@ -233,14 +261,86 @@ export const ConnectRepositoryForm = ( {
 		return undefined;
 	}, [ isLoadingRepositories, repositories, selectedInstallation ] );
 
-	const isAdvancedValid = ! isAdvancedSelected || !! workflowPath;
+	const isAdvancedValid = ! isAdvancedSelected || !! formData.workflowPath;
 	const isFormValid = !! (
 		selectedRepository &&
 		selectedInstallation &&
-		branch &&
-		targetDir &&
+		formData.branch &&
+		formData.targetDir &&
 		isAdvancedValid
 	);
+
+	const fields: Field< FormData >[] = useMemo( () => {
+		const branchSelectOptions = branchOptions.length
+			? branchOptions
+			: [ { label: __( 'Select a branch' ), value: '' } ];
+
+		return [
+			{
+				id: 'selectedInstallationId',
+				label: __( 'GitHub account' ),
+				type: 'text' as const,
+				Edit: 'select',
+				elements: installationOptions,
+				help: installationHelpText,
+			},
+			{
+				id: 'selectedRepositoryId',
+				label: __( 'Repository' ),
+				type: 'text' as const,
+				Edit: RepositorySelector,
+				elements: repositoryOptions,
+				help: repositoryHelpText,
+			},
+			{
+				id: 'branch',
+				label: __( 'Deployment Branch' ),
+				type: 'text' as const,
+				Edit: 'select',
+				elements: branchSelectOptions,
+				help: isLoadingBranches
+					? __( 'Loading branches…' )
+					: __( 'Select the branch to deploy from this repository.' ),
+				disabled: () => ! selectedRepository || isLoadingBranches,
+			},
+			{
+				id: 'targetDir',
+				label: __( 'Destination Directory' ),
+				type: 'text' as const,
+				help: __( 'This path is relative to the server root.' ),
+				disabled: () => ! selectedRepository,
+			},
+			{
+				id: 'isAutomated',
+				label: __( 'Automated Deployments' ),
+				type: 'text' as const,
+				Edit: 'radio',
+				elements: [
+					{ label: __( 'Disabled' ), value: 'false' },
+					{ label: __( 'Enabled' ), value: 'true' },
+				],
+			},
+			{
+				id: 'deploymentMode',
+				label: __( 'Deployment Mode' ),
+				type: 'text' as const,
+				Edit: 'radio',
+				elements: [
+					{ label: __( 'Simple' ), value: 'simple' },
+					{ label: __( 'Advanced' ), value: 'advanced' },
+				],
+				disabled: () => ! selectedRepository,
+			},
+		];
+	}, [
+		installationOptions,
+		installationHelpText,
+		repositoryOptions,
+		repositoryHelpText,
+		branchOptions,
+		isLoadingBranches,
+		selectedRepository,
+	] );
 
 	return (
 		<VStack spacing={ 6 }>
@@ -260,117 +360,78 @@ export const ConnectRepositoryForm = ( {
 						{ __( 'Add GitHub account' ) }
 					</Button>
 				</HStack>
-				<SelectControl
-					__next40pxDefaultSize
-					aria-label={ __( 'GitHub account' ) }
-					value={ selectedInstallation ? selectedInstallation.external_id.toString() : '' }
-					onChange={ ( value ) => {
-						if ( ! value ) {
-							setSelectedInstallation( undefined );
-							return;
-						}
-
-						const numericValue = Number( value );
-						const installation = installations.find(
-							( inst ) => inst.external_id === numericValue
-						);
-						setSelectedInstallation( installation );
-					} }
-					options={ installationOptions }
-					help={ installationHelpText }
-				/>
 			</VStack>
 
-			<VStack spacing={ 2 }>
-				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
-					{ __( 'Repository' ) }
-				</Text>
-				<ComboboxControl
-					__next40pxDefaultSize
-					allowReset
-					aria-label={ __( 'Repository' ) }
-					value={ selectedRepositoryId === '' ? '' : selectedRepositoryId.toString() }
-					onChange={ ( value ) => {
-						if ( ! value ) {
-							setSelectedRepositoryId( '' );
-							return;
-						}
+			<DataForm< FormData >
+				data={ formData }
+				fields={ fields }
+				form={ {
+					layout: { type: 'regular' as const },
+					fields: [
+						'selectedInstallationId',
+						'selectedRepositoryId',
+						'branch',
+						'targetDir',
+						'isAutomated',
+						'deploymentMode',
+					],
+				} }
+				onChange={ ( edits: Partial< FormData > ) => {
+					const newFormData = { ...formData, ...edits };
 
-						const numericValue = Number( value );
-						setSelectedRepositoryId( Number.isNaN( numericValue ) ? '' : numericValue );
-					} }
-					options={ repositoryOptions }
-					placeholder={ __( 'Select a repository' ) }
-					help={ repositoryHelpText }
-				/>
-			</VStack>
-
-			<SelectControl
-				label={ __( 'Deployment Branch' ) }
-				value={ branch }
-				options={ branchSelectOptions }
-				onChange={ ( value ) => setBranch( value ? String( value ) : '' ) }
-				disabled={ ! selectedRepository || isLoadingBranches }
-				help={
-					isLoadingBranches
-						? __( 'Loading branches…' )
-						: __( 'Select the branch to deploy from this repository.' )
-				}
-				__next40pxDefaultSize
-			/>
-
-			<TextControl
-				label={ __( 'Destination Directory' ) }
-				value={ targetDir }
-				onChange={ ( value ) => {
-					const trimmedValue = value.trim();
-					let normalisedValue = '/';
-					if ( trimmedValue ) {
-						if ( trimmedValue.startsWith( '/' ) ) {
-							normalisedValue = trimmedValue;
+					// Handle special cases for form field changes
+					if ( 'selectedInstallationId' in edits ) {
+						const installationId = edits.selectedInstallationId;
+						if ( installationId === '' ) {
+							newFormData.selectedInstallationId = installations[ 0 ]?.external_id || '';
 						} else {
-							normalisedValue = `/${ trimmedValue }`;
+							newFormData.selectedInstallationId = Number( installationId );
+						}
+
+						// Reset dependent fields when installation changes
+						newFormData.selectedRepositoryId = '';
+						newFormData.branch = '';
+						newFormData.targetDir = '/';
+						newFormData.workflowPath = '.github/workflows/wpcom.yml';
+						setIsTargetDirDirty( false );
+					}
+
+					if ( 'selectedRepositoryId' in edits ) {
+						const repositoryId = edits.selectedRepositoryId;
+						if ( repositoryId === '' ) {
+							newFormData.selectedRepositoryId = '';
+						} else {
+							newFormData.selectedRepositoryId = Number( repositoryId );
 						}
 					}
-					setTargetDir( normalisedValue );
-					setIsTargetDirDirty( true );
+
+					if ( 'targetDir' in edits ) {
+						const trimmedValue = edits.targetDir?.trim() || '';
+						let normalisedValue = '/';
+						if ( trimmedValue ) {
+							if ( trimmedValue.startsWith( '/' ) ) {
+								normalisedValue = trimmedValue;
+							} else {
+								normalisedValue = `/${ trimmedValue }`;
+							}
+						}
+						newFormData.targetDir = normalisedValue;
+						setIsTargetDirDirty( true );
+					}
+
+					setFormData( newFormData );
 				} }
-				placeholder={ __( 'Paste a path to the destination directory' ) }
-				help={ __( 'This path is relative to the server root.' ) }
-				__next40pxDefaultSize
 			/>
-
-			<ToggleControl
-				label={ __( 'Automated Deployments' ) }
-				checked={ isAutomated }
-				onChange={ setIsAutomated }
-			/>
-
-			<VStack spacing={ 2 }>
-				<SectionHeader
-					title={ __( 'Pick your deployment mode' ) }
-					description={ __(
-						'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
-					) }
-				/>
-				<RadioControl
-					selected={ deploymentMode }
-					onChange={ ( value ) => setDeploymentMode( value as 'simple' | 'advanced' ) }
-					options={ [
-						{ label: __( 'Simple' ), value: 'simple' },
-						{ label: __( 'Advanced' ), value: 'advanced' },
-					] }
-					disabled={ ! selectedRepository }
-				/>
-			</VStack>
 
 			{ isAdvancedSelected && (
 				<AdvancedWorkflowValidation
 					selectedInstallationId={ selectedInstallation?.external_id ?? 0 }
 					repository={ selectedRepository }
-					branchName={ branch }
-					workflowPath={ workflowPath }
-					onWorkflowPathChange={ setWorkflowPath }
+					branchName={ formData.branch }
+					workflowPath={ formData.workflowPath }
+					onWorkflowPathChange={ ( workflowPath ) =>
+						setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
+					}
 					disabled={ ! selectedRepository }
 				/>
 			) }
