@@ -4,7 +4,7 @@ import {
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
 } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	SelectControl,
@@ -36,7 +36,6 @@ export const ConnectRepositoryForm = ( {
 	onConnected,
 	onCancel,
 }: ConnectRepositoryFormProps ) => {
-	const [ selectedInstallationId, setSelectedInstallationId ] = useState< number | '' >( '' );
 	const [ selectedRepositoryId, setSelectedRepositoryId ] = useState< number | '' >( '' );
 	const [ branch, setBranch ] = useState( '' );
 	const [ targetDir, setTargetDir ] = useState( '/' );
@@ -46,32 +45,13 @@ export const ConnectRepositoryForm = ( {
 	const [ deploymentMode, setDeploymentMode ] = useState< 'simple' | 'advanced' >( 'simple' );
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >( undefined );
 
-	const {
-		data: installations = [],
-		isLoading: isLoadingInstallations,
-		error: installationsError,
-		refetch: refetchInstallations,
-	} = useQuery( githubInstallationsQuery() );
+	const { data: installations, refetch: refetchInstallations } = useSuspenseQuery(
+		githubInstallationsQuery()
+	);
 
-	useEffect( () => {
-		if ( installations.length === 0 ) {
-			setSelectedInstallationId( '' );
-			return;
-		}
-
-		if ( selectedInstallationId === '' ) {
-			setSelectedInstallationId( installations[ 0 ].external_id );
-			return;
-		}
-
-		const stillExists = installations.some(
-			( installation ) => installation.external_id === selectedInstallationId
-		);
-
-		if ( ! stillExists ) {
-			setSelectedInstallationId( installations[ 0 ].external_id );
-		}
-	}, [ installations, selectedInstallationId ] );
+	const [ selectedInstallationId, setSelectedInstallationId ] = useState< number | '' >(
+		installations[ 0 ].external_id
+	);
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( selectedInstallationId === '' ) {
@@ -231,13 +211,10 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	const installationOptions = useMemo( () => {
-		return [
-			{ label: __( 'Select an account' ), value: '' },
-			...installations.map( ( installation ) => ( {
-				label: installation.account_name,
-				value: installation.external_id.toString(),
-			} ) ),
-		];
+		return installations.map( ( installation ) => ( {
+			label: installation.account_name,
+			value: installation.external_id.toString(),
+		} ) );
 	}, [ installations ] );
 
 	const repositoryOptions = useMemo( () => {
@@ -247,21 +224,8 @@ export const ConnectRepositoryForm = ( {
 		} ) );
 	}, [ repositories ] );
 
-	const installationHelpText = useMemo( () => {
-		if ( isLoadingInstallations ) {
-			return __( 'Loading GitHub accounts…' );
-		}
-
-		if ( installationsError ) {
-			return __( 'We could not load your GitHub accounts. Try again after installing the app.' );
-		}
-
-		if ( installations.length === 0 ) {
-			return __( 'Add a GitHub account to select a repository.' );
-		}
-
-		return undefined;
-	}, [ installations, installationsError, isLoadingInstallations ] );
+	const installationHelpText =
+		installations.length === 0 ? __( 'Add a GitHub account to select a repository.' ) : undefined;
 
 	const repositoryHelpText = useMemo( () => {
 		if ( ! selectedInstallation ) {
@@ -320,7 +284,6 @@ export const ConnectRepositoryForm = ( {
 						setSelectedInstallationId( Number.isNaN( numericValue ) ? '' : numericValue );
 					} }
 					options={ installationOptions }
-					disabled={ isLoadingInstallations }
 					help={ installationHelpText }
 				/>
 			</VStack>
