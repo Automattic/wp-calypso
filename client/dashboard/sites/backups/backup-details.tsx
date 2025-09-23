@@ -1,3 +1,5 @@
+import { siteGranularBackupDownloadInitiateMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
@@ -13,6 +15,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
+import { useCallback } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
@@ -35,6 +38,11 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 	const { fileBrowserState } = useFileBrowserContext();
 	const { totalItems: selectedFilesCount } = fileBrowserState.getCheckList();
 
+	// Granular backup download mutation
+	const granularDownloadRequest = useMutation(
+		siteGranularBackupDownloadInitiateMutation( site.ID )
+	);
+
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const direction = isSmallViewport ? 'column-reverse' : 'row';
 
@@ -45,12 +53,45 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
-	const handleDownloadClick = () => {
+	const handleDownloadClick = useCallback( () => {
 		router.navigate( {
 			to: siteBackupDownloadRoute.fullPath,
 			params: { siteSlug: site.slug, rewindId: backup.rewind_id },
 		} );
-	};
+	}, [ router, site.slug, backup.rewind_id ] );
+
+	const handleGranularDownloadClick = useCallback( () => {
+		const browserCheckList = fileBrowserState.getCheckList();
+		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+
+		recordTracksEvent( 'calypso_dashboard_backup_granular_download_request' );
+
+		granularDownloadRequest.mutate(
+			{
+				rewindId: backup.rewind_id,
+				includePaths,
+				excludePaths,
+			},
+			{
+				onSuccess: ( downloadId ) => {
+					// Navigate to download page with the downloadId to skip the form
+					router.navigate( {
+						to: siteBackupDownloadRoute.fullPath,
+						params: { siteSlug: site.slug, rewindId: backup.rewind_id },
+						search: { downloadId },
+					} );
+				},
+			}
+		);
+	}, [
+		fileBrowserState,
+		recordTracksEvent,
+		granularDownloadRequest,
+		backup.rewind_id,
+		router,
+		site.slug,
+	] );
 
 	const hasSelectedFiles = selectedFilesCount > 0;
 	const actions = backup.rewind_id ? (
@@ -59,13 +100,10 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				variant="tertiary"
 				size={ isSmallViewport ? 'default' : 'compact' }
 				icon={ download }
-				onClick={ handleDownloadClick }
+				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
 				style={ { justifyContent: 'center' } }
-				// @TODO: remove these props when the granular download feature is available
-				accessibleWhenDisabled={ hasSelectedFiles }
-				disabled={ hasSelectedFiles }
-				label={ hasSelectedFiles ? 'Feature not available yet' : undefined }
-				showTooltip={ hasSelectedFiles }
+				disabled={ granularDownloadRequest.isPending }
+				isBusy={ granularDownloadRequest.isPending }
 			>
 				{ hasSelectedFiles
 					? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
