@@ -124,7 +124,7 @@ export default function MonitoringCard( {
 				) }
 				{ topContent }
 				{ children && (
-					<VStack className={ contentClassNames } spacing={ 2 } justify="flex-start">
+					<VStack className={ contentClassNames } spacing={ 2 } justify="center">
 						{ renderContent() }
 					</VStack>
 				) }

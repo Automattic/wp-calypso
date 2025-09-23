@@ -1,6 +1,7 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -193,68 +194,74 @@ export default function MonitoringPerformanceCard( {
 			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 		>
-			<LineChart
-				className="dashboard-monitoring-card__line-chart"
-				data={ data }
-				withGradientFill
-				height={ 450 }
-				maxWidth={ 1400 }
-				showLegend
-				withLegendGlyph
-				renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
-				renderTooltip={ ( tooltipProps ) => {
-					if ( ! tooltipProps?.tooltipData?.nearestDatum?.datum?.date ) {
-						return null;
-					}
-
-					const dateStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleDateString(
-						locale,
-						{
-							weekday: 'short',
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric',
+			{ isLoading || requestsData || responseTimeData ? (
+				<LineChart
+					className="dashboard-monitoring-card__line-chart"
+					data={ data }
+					withGradientFill
+					height={ 450 }
+					maxWidth={ 1400 }
+					showLegend
+					withLegendGlyph
+					renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
+					renderTooltip={ ( tooltipProps ) => {
+						if ( ! tooltipProps?.tooltipData?.nearestDatum?.datum?.date ) {
+							return null;
 						}
-					);
-					const timeStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleTimeString(
-						locale,
-						{
-							hour12: false,
-							timeZoneName: 'short',
-						}
-					);
-					return (
-						<div className="dashboard-monitoring-card__line-chart--tooltip">
-							<Text isBlock weight="bold" size="larger">
-								{ dateStr }
-							</Text>
-							<Text weight="normal">{ timeStr }</Text>
 
-							<div className="dashboard-monitoring-card__line-chart--tooltip-lines">
-								{ Object.values( tooltipProps.tooltipData.datumByKey ).map( ( series ) => (
-									<div
-										key={ 'tooltip-line-' + series.key }
-										className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
-									>
-										<Text weight="normal">
-											<svg width="8" height="8">
-												{ getLegendIcon( series.key, true ) }
-											</svg>
-											{ series.key }
-										</Text>
-										<Text weight="normal">{ series.datum.value }</Text>
-									</div>
-								) ) }
+						const dateStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleDateString(
+							locale,
+							{
+								weekday: 'short',
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric',
+							}
+						);
+						const timeStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleTimeString(
+							locale,
+							{
+								hour12: false,
+								timeZoneName: 'short',
+							}
+						);
+						return (
+							<div className="dashboard-monitoring-card__line-chart--tooltip">
+								<Text isBlock weight="bold" size="larger">
+									{ dateStr }
+								</Text>
+								<Text weight="normal">{ timeStr }</Text>
+
+								<div className="dashboard-monitoring-card__line-chart--tooltip-lines">
+									{ Object.values( tooltipProps.tooltipData.datumByKey ).map( ( series ) => (
+										<div
+											key={ 'tooltip-line-' + series.key }
+											className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
+										>
+											<Text weight="normal">
+												<svg width="8" height="8">
+													{ getLegendIcon( series.key, true ) }
+												</svg>
+												{ series.key }
+											</Text>
+											<Text weight="normal">{ series.datum.value }</Text>
+										</div>
+									) ) }
+								</div>
 							</div>
-						</div>
-					);
-				} }
-				options={ {
-					axis: {
-						x: xAxisOptions,
-					},
-				} }
-			/>
+						);
+					} }
+					options={ {
+						axis: {
+							x: xAxisOptions,
+						},
+					} }
+				/>
+			) : (
+				<VStack alignment="center">
+					<Text>{ __( 'No data available for this site.' ) }</Text>
+				</VStack>
+			) }
 		</MonitoringCard>
 	);
 }
