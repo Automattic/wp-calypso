@@ -104,7 +104,7 @@ function SiteBackupGranularRestoreForm( {
 						isBusy={ isRestoreMutationPending }
 						disabled={ isRestoreMutationPending }
 					>
-						{ __( 'Restore selected files' ) }
+						{ _n( 'Restore selected file', 'Restore selected files', browserCheckList.totalItems ) }
 					</Button>
 				</ButtonStack>
 			</VStack>
