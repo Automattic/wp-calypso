@@ -17,7 +17,6 @@ import {
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
-	isDomainTransfer,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -126,7 +125,7 @@ export interface PlansFeaturesMainProps {
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
-	domainCartItem?: MinimalRequestCartProduct;
+	isDomainTransfer?: boolean;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
@@ -197,7 +196,7 @@ const PlansFeaturesMain = ( {
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
-	domainCartItem,
+	isDomainTransfer,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectToAddDomainFlow,
@@ -796,7 +795,7 @@ const PlansFeaturesMain = ( {
 					modalType={ resolveModal( lastClickedPlan ) }
 					generatedWPComSubdomain={ resolvedSubdomainName }
 					selectedThemeType={ selectedThemeType }
-					isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
+					isDomainTransfer={ isDomainTransfer || false }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {
