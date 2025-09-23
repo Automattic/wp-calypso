@@ -375,7 +375,11 @@ function StagingSiteSyncModalInner( {
 		pushMutation.isPending;
 
 	return (
-		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
+		<Modal
+			title={ syncConfig[ environment ].title }
+			onRequestClose={ handleClose }
+			style={ { maxWidth: '668px' } }
+		>
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
