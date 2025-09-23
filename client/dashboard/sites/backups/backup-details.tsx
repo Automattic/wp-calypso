@@ -128,6 +128,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 								siteSlug={ site.slug }
 								isRestoreEnabled
 								onTrackEvent={ recordTracksEvent }
+								onRequestGranularRestore={ handleRestoreClick }
 							/>
 						</div>
 					) }
