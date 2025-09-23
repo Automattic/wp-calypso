@@ -1,12 +1,9 @@
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, PanelBody } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { chevronDown, chevronRight } from '@wordpress/icons';
-import { useState } from 'react';
 import { Text } from '../../components/text';
 import type { FileBrowserCheckListInfo } from '../../../my-sites/backup/backup-contents-page/file-browser/types';
 
 type SectionType = 'file' | 'theme' | 'plugin' | 'table';
-
 const SECTION_PATHS = {
 	theme: '/wp-content/themes',
 	plugin: '/wp-content/plugins',
@@ -14,28 +11,23 @@ const SECTION_PATHS = {
 } as const;
 
 const TYPE_LABELS = {
-	file: __( 'Files and directories that will be restored' ),
+	file: {
+		title: __( 'Files and Directories' ),
+		all: __( 'Files and directories that will be restored' ),
+	},
 	theme: {
-		partial: __( 'WordPress Themes' ),
+		title: __( 'WordPress Themes' ),
 		all: __( 'All site themes will be restored' ),
 	},
 	plugin: {
-		partial: __( 'WordPress Plugins' ),
+		title: __( 'WordPress Plugins' ),
 		all: __( 'All site plugins will be restored' ),
 	},
 	table: {
-		partial: __( 'Site Databases' ),
+		title: __( 'Site Databases' ),
 		all: __( 'All site database tables will be restored' ),
 	},
 } as const;
-
-const getTypeLabel = ( type: SectionType, allSelected: boolean ) => {
-	if ( type === 'file' ) {
-		return TYPE_LABELS.file;
-	}
-
-	return allSelected ? TYPE_LABELS[ type ].all : TYPE_LABELS[ type ].partial;
-};
 
 const checkIfAllSelected = ( type: SectionType, selectedItems: FileBrowserCheckListInfo[] ) => {
 	if ( type === 'file' ) {
@@ -59,55 +51,48 @@ export default function ExpandableFileSection( {
 	type: SectionType;
 	selectedItems: FileBrowserCheckListInfo[];
 } ) {
-	const [ isExpanded, setIsExpanded ] = useState( true );
-
-	// Filter items by type
+	// 1. Filter items by type, excluding section root paths (/sql, /wp-content/plugins, /wp-content/themes)
 	const filteredItems = selectedItems.filter(
 		( item ) =>
 			item.type === type && ! Object.values( SECTION_PATHS ).some( ( path ) => path === item.path )
 	);
 
-	// Handle empty sections
-	if ( filteredItems.length === 0 ) {
-		if ( type === 'file' || ! checkIfAllSelected( type, selectedItems ) ) {
-			return null;
-		}
-		return <Text weight={ 500 }>{ getTypeLabel( type, true ) }</Text>;
+	// 2. Hide empty sections unless it's a non-file type with "all items" selected
+	if (
+		filteredItems.length === 0 &&
+		( type === 'file' || ! checkIfAllSelected( type, selectedItems ) )
+	) {
+		return null;
 	}
 
 	const fileDisplayLimit = 10;
 	const displayItems = filteredItems.slice( 0, fileDisplayLimit );
 	const remainingCount = filteredItems.length - fileDisplayLimit;
 
-	return (
-		<div>
-			<Button
-				icon={ isExpanded ? chevronDown : chevronRight }
-				iconPosition="left"
-				onClick={ () => setIsExpanded( ! isExpanded ) }
-				style={ { color: 'inherit', paddingInlineStart: 0, paddingTop: 0 } }
-				variant="tertiary"
-			>
-				<Text weight={ 500 }>{ getTypeLabel( type, false ) }</Text>
-			</Button>
-			{ isExpanded && (
-				<VStack spacing={ 0 }>
-					<ul style={ { paddingInlineStart: '18px', marginTop: 0 } }>
-						{ displayItems.map( ( item ) => (
-							<li key={ item.path }>{ item.path }</li>
-						) ) }
-					</ul>
-					{ remainingCount > 0 && (
-						<Text>
-							{ sprintf(
-								/* translators: %d is the number of additional files */
-								__( 'and %d more files' ),
-								remainingCount
-							) }
-						</Text>
-					) }
-				</VStack>
-			) }
-		</div>
-	);
+	const getPanelContent = () => {
+		if ( checkIfAllSelected( type, selectedItems ) ) {
+			return <Text>{ TYPE_LABELS[ type ].all }</Text>;
+		}
+
+		return (
+			<VStack spacing={ 0 }>
+				<ul style={ { paddingInlineStart: '18px', marginTop: 0 } }>
+					{ displayItems.map( ( item ) => (
+						<li key={ item.path }>{ item.path }</li>
+					) ) }
+				</ul>
+				{ remainingCount > 0 && (
+					<Text>
+						{ sprintf(
+							/* translators: %d is the number of additional files */
+							__( 'and %d more files' ),
+							remainingCount
+						) }
+					</Text>
+				) }
+			</VStack>
+		);
+	};
+
+	return <PanelBody title={ TYPE_LABELS[ type ].title }>{ getPanelContent() }</PanelBody>;
 }

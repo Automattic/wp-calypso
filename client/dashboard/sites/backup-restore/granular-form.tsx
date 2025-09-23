@@ -1,6 +1,6 @@
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
@@ -9,6 +9,7 @@ import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-
 import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
 import ExpandableFileSection from './expandable-file-section';
 
 function SiteBackupGranularRestoreForm( {
@@ -77,12 +78,13 @@ function SiteBackupGranularRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<VStack spacing={ 0 }>
+				<Text>{ __( 'All the following selected items will be restored:' ) }</Text>
+				<Panel>
 					<ExpandableFileSection type="theme" selectedItems={ browserSelectedList } />
 					<ExpandableFileSection type="plugin" selectedItems={ browserSelectedList } />
 					<ExpandableFileSection type="table" selectedItems={ browserSelectedList } />
 					<ExpandableFileSection type="file" selectedItems={ browserSelectedList } />
-				</VStack>
+				</Panel>
 
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
