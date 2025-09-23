@@ -3,7 +3,7 @@ import { useMediaQuery, useInstanceId } from '@wordpress/compose';
 import { useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
-import { parseYmdLocal, formatYmd } from '../../utils/datetime';
+import { parseYmdLocal, formatYmd, formatSiteYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
 import { formatLabel } from './utils';
 import './style.scss';
@@ -34,12 +34,12 @@ export function DateRangePicker( {
 	const mobileLabelId = `presets-label-${ instanceId }-mobile`;
 	const desktopLabelId = `presets-label-${ instanceId }-desktop`;
 
-	const label = formatLabel( start, end, locale, timezoneString, gmtOffset );
+	const label = formatLabel( start, end, locale );
 
 	// Reset internal draft state when key inputs change by remounting the inner component
 	const resetKey = [
-		formatYmd( start, timezoneString, gmtOffset ),
-		formatYmd( end, timezoneString, gmtOffset ),
+		formatSiteYmd( start ),
+		formatSiteYmd( end ),
 		timezoneString ?? '',
 		gmtOffset ?? '',
 	].join( '|' );
@@ -121,8 +121,8 @@ function DateRangePickerInner( {
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
-	const [ fromStr, setFromStr ] = useState( () => formatYmd( start, timezoneString, gmtOffset ) );
-	const [ toStr, setToStr ] = useState( () => formatYmd( end, timezoneString, gmtOffset ) );
+	const [ fromStr, setFromStr ] = useState( () => formatSiteYmd( start ) );
+	const [ toStr, setToStr ] = useState( () => formatSiteYmd( end ) );
 	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
 	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
 
@@ -134,10 +134,7 @@ function DateRangePickerInner( {
 		);
 	}, [ timezoneString, gmtOffset ] );
 
-	const todayStr = useMemo(
-		() => formatYmd( today, timezoneString, gmtOffset ),
-		[ today, timezoneString, gmtOffset ]
-	);
+	const todayStr = useMemo( () => formatSiteYmd( today ), [ today ] );
 
 	return (
 		<DateRangeContent

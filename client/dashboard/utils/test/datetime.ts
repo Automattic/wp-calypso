@@ -1,5 +1,5 @@
 import { dateI18n } from '@wordpress/date';
-import { parseYmdLocal, formatYmd } from '../datetime';
+import { parseYmdLocal, formatYmd, formatSiteYmd } from '../datetime';
 
 describe( 'datetime utils (site-time)', () => {
 	describe( 'parseYmdLocal', () => {
@@ -48,6 +48,26 @@ describe( 'datetime utils (site-time)', () => {
 			const tz = 'Europe/London';
 			const date = new Date( 2025, 2, 30 );
 			expect( formatYmd( date, tz ) ).toBe( dateI18n( 'Y-m-d', date, tz ) );
+		} );
+
+		it( 'respects positive offsets across UTC boundary', () => {
+			expect( formatYmd( new Date( '2025-09-22T00:30:00Z' ), undefined, 14 ) ).toBe( '2025-09-22' );
+			expect( formatYmd( new Date( '2025-09-22T23:30:00Z' ), undefined, 14 ) ).toBe( '2025-09-23' );
+		} );
+
+		it( 'respects negative offsets across UTC boundary', () => {
+			expect( formatYmd( new Date( '2025-09-22T00:30:00Z' ), undefined, -12 ) ).toBe(
+				'2025-09-21'
+			);
+			expect( formatYmd( new Date( '2025-09-22T23:30:00Z' ), undefined, -12 ) ).toBe(
+				'2025-09-22'
+			);
+		} );
+	} );
+
+	describe( 'formatSiteYmd', () => {
+		it( 'formatSiteYmd returns the calendar day as-is (no tz math)', () => {
+			expect( formatSiteYmd( new Date( 2025, 8, 22 ) ) ).toBe( '2025-09-22' );
 		} );
 	} );
 } );
