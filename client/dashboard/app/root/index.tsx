@@ -1,7 +1,7 @@
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState, useMemo } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -9,6 +9,7 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { useRouteTitles } from '../hooks/use-route-titles';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -26,9 +27,9 @@ function Root() {
 	const { name, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
-	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
+	const routeTitles = useRouteTitles();
+	const { isNavigating, isInitialLoad } = useRouterState( {
 		select: ( state ) => ( {
-			routeMeta: state.matches.map( ( match ) => match.meta ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
 
 			// A little trick after investigation router state: it will initially be
@@ -72,17 +73,9 @@ function Root() {
 		};
 	}, [ isNavigating, router ] );
 
-	const title = useMemo( () => {
-		return routeMeta
-			.map( ( metas ) => metas?.find( ( meta ) => meta?.title )?.title )
-			.filter( Boolean )
-			.reverse()
-			.join( ' ‹ ' );
-	}, [ routeMeta ] );
-
 	useEffect( () => {
-		document.title = title ? `${ title } – ${ name }` : name;
-	}, [ name, title ] );
+		document.title = routeTitles.length > 0 ? `${ routeTitles.join( ' ‹ ' ) } – ${ name }` : name;
+	}, [ name, routeTitles ] );
 
 	return (
 		<div className="dashboard-root__layout">

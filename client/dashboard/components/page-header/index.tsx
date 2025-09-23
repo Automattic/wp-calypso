@@ -1,22 +1,6 @@
-import { useRouterState } from '@tanstack/react-router';
-import { useMemo } from 'react';
+import { useRouteTitles } from '../../app/hooks/use-route-titles';
 import { SectionHeader } from '../section-header';
 import type { PageHeaderProps } from './types';
-
-const usePageTitle = () => {
-	const routeMeta = useRouterState( {
-		select: ( state ) => state.matches.map( ( match ) => match.meta ).filter( Boolean ),
-	} );
-
-	const title = useMemo( () => {
-		return routeMeta
-			.map( ( metas ) => metas?.find( ( meta ) => meta?.title )?.title )
-			.reverse()
-			.find( ( value ) => !! value );
-	}, [ routeMeta ] );
-
-	return title;
-};
 
 /**
  * The PageHeader component provides a structured introduction to a page or section,
@@ -28,12 +12,12 @@ const usePageTitle = () => {
  * semantic clarity.
  */
 export const PageHeader = ( { title, ...props }: PageHeaderProps ) => {
-	const defaultPageTitle = usePageTitle();
+	const routeTitles = useRouteTitles();
 
 	return (
 		<SectionHeader
 			{ ...props }
-			title={ title ?? defaultPageTitle }
+			title={ title ?? routeTitles[ 0 ] }
 			level={ 1 }
 			className="dashboard-page-header"
 		/>
