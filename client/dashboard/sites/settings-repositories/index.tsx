@@ -1,4 +1,4 @@
-import { HostingFeatures } from '@automattic/api-core';
+import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
@@ -14,7 +14,8 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
-import type { View } from '@wordpress/dataviews';
+import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
+import type { RenderModalProps, View } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const { siteSlug } = siteRoute.useParams();
@@ -25,6 +26,18 @@ function RepositoriesList() {
 
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
+
+	const actions = [
+		{
+			id: 'delete',
+			label: __( 'Disconnect repository' ),
+			RenderModal: ( { items, closeModal }: RenderModalProps< CodeDeploymentData > ) => {
+				return (
+					<DisconnectRepositoryModalContent deployment={ items[ 0 ] } onClose={ closeModal } />
+				);
+			},
+		},
+	];
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 	const emptyTitle = hasFilterOrSearch
@@ -38,6 +51,7 @@ function RepositoriesList() {
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
+				actions={ actions }
 				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }

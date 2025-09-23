@@ -1,6 +1,5 @@
 import { HostingFeatures, fetchPhpMyAdminToken } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
@@ -15,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -26,6 +26,7 @@ import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
 	const [ isResetPasswordModalOpen, setIsResetPasswordModalOpen ] = useState( false );

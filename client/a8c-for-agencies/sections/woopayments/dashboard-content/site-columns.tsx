@@ -64,17 +64,17 @@ export const WooPaymentsStatusColumn = ( {
 	}
 
 	const getStatusProps = () => {
-		// Check if site exists in woopaymentsData
-		const siteExistsInWooPaymentsData = woopaymentsData?.data?.total?.sites?.[ siteId ];
+		// Check if site is commission eligible.
+		const siteExistsInWooPaymentsData =
+			woopaymentsData?.data?.commission_eligible_sites?.includes( siteId );
 
-		// If site is active but not in woopaymentsData, it's not eligible
+		// If site is active but not commission eligible, show "Not eligible" status.
 		if ( state === 'active' && ! siteExistsInWooPaymentsData ) {
-			// @todo Temporarily disabled until this is fixed: p1757331076213279-slack-C091P0A65U5
-			// return {
-			// 	statusText: translate( 'Not eligible' ),
-			// 	statusType: 'error',
-			// 	showInfoIcon: true,
-			// };
+			return {
+				statusText: translate( 'Not eligible' ),
+				statusType: 'error',
+				showInfoIcon: true,
+			};
 		}
 
 		switch ( state ) {

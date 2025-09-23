@@ -18,7 +18,6 @@ import {
 	chevronUp,
 	Icon,
 	comment,
-	commentContent,
 	bell,
 	backup,
 } from '@wordpress/icons';
@@ -38,32 +37,6 @@ export const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Menu } = unlock( componentsPrivateApis );
 
 import './help-center-header.scss';
-
-const SupportModeTitle = () => {
-	const { __ } = useI18n();
-	const { search } = useLocation();
-	const params = new URLSearchParams( search );
-
-	const mode = params.get( 'mode' );
-	switch ( mode ) {
-		case 'CHAT':
-			return (
-				<>
-					<Icon icon={ commentContent } />
-					{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }
-				</>
-			);
-		case 'EMAIL': {
-			return <>{ __( 'Send us an email', __i18n_text_domain__ ) }</>;
-		}
-		case 'FORUM': {
-			return <>{ __( 'Ask in our community forums', __i18n_text_domain__ ) }</>;
-		}
-		default: {
-			return <>{ __( 'Help Center', __i18n_text_domain__ ) }</>;
-		}
-	}
-};
 
 const MutedBellIcon = () => (
 	<div style={ { position: 'relative', display: 'inline-block' } }>
@@ -174,7 +147,7 @@ const useHeaderText = () => {
 			case '/inline-chat':
 				return __( 'Live Chat', __i18n_text_domain__ );
 			case '/contact-form':
-				return <SupportModeTitle />;
+				return __( 'Send us an email', __i18n_text_domain__ );
 			case '/post':
 			case '/post/':
 				return __( 'Support guide', __i18n_text_domain__ );

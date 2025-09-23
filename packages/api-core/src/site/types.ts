@@ -20,6 +20,7 @@ export interface SiteCapabilities {
 export interface SiteOptions {
 	admin_url: string;
 	created_at?: string;
+	is_domain_only?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_summer_special_2025?: boolean;
 	is_wpforteams_site?: boolean;
@@ -30,6 +31,7 @@ export interface SiteOptions {
 	software_version: string;
 	updated_at?: string;
 	wordads?: boolean;
+	woocommerce_is_active?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 }
