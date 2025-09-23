@@ -1,3 +1,5 @@
+import { userSettingsQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -7,6 +9,9 @@ import DisableTwoStepDialog from './disable-two-step-dialog';
 
 export default function TwoStepAuthActions() {
 	const router = useRouter();
+
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const { two_step_enhanced_security_forced } = userSettings;
 
 	const [ showDisableDialog, setShowDisableDialog ] = useState( false );
 
@@ -33,9 +38,17 @@ export default function TwoStepAuthActions() {
 							onClick={ () => setShowDisableDialog( true ) }
 							variant="secondary"
 							size="compact"
+							disabled={ two_step_enhanced_security_forced }
 						>
 							{ __( 'Disable' ) }
 						</Button>
+					}
+					description={
+						two_step_enhanced_security_forced
+							? __(
+									'Two-step authentication is currently required by your organization. To make changes, please contact your administrator.'
+							  )
+							: undefined
 					}
 				/>
 			</ActionList>
