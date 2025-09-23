@@ -12,11 +12,19 @@ export function getActivityLogsCalloutProps() {
 		upsellTitle: __( 'Track every action with Jetpack Activity' ),
 		upsellImage: illustrationUrl,
 		upsellDescription: (
-			<Text as="p" variant="muted">
-				{ __(
-					'Debug issues faster with insights from a comprehensive audit log of all your admin activities.'
-				) }
-			</Text>
+			<>
+				<Text as="p" variant="muted">
+					{ __(
+						'Debug issues faster with insights from a comprehensive audit log of all your admin activities.'
+					) }
+				</Text>
+				<br />
+				<Text as="p" variant="muted">
+					{ __(
+						'Upgrade to get complete activity history for the last 30 days, advanced filtering and date range selection.'
+					) }
+				</Text>
+			</>
 		),
 	};
 }
