@@ -7,7 +7,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import {
-	getSelectedTabTitle,
 	FIRST_POSTS_TAB,
 	ADD_NEW_TAB,
 	REDDIT_TAB,
@@ -17,16 +16,14 @@ import {
 
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
-	effectiveTabSelection: string;
 	selectedTag?: string;
 }
 
 export default function DiscoverHeaderAndNavigation(
 	props: DiscoverHeaderAndNavigationProps
 ): JSX.Element {
-	const { selectedTab, effectiveTabSelection, selectedTag } = props;
+	const { selectedTab, selectedTag } = props;
 	const currentLocale = useLocale();
-	const tabTitle = getSelectedTabTitle( effectiveTabSelection );
 	const translate = useTranslate();
 
 	function handleTagSelect( tag: string ): void {
@@ -49,10 +46,7 @@ export default function DiscoverHeaderAndNavigation(
 			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
 			break;
 		case RECOMMENDED_TAB:
-			subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-				args: [ tabTitle ],
-				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-			} );
+			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
 			break;
 		case FRESHLY_PRESSED_TAB:
 			subHeaderText = translate( "Our team's favorite blog posts." );
