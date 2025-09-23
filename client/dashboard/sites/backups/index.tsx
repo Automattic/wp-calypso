@@ -1,6 +1,10 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteBackupActivityLogEntriesQuery,
+} from '@automattic/api-queries';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
@@ -10,10 +14,10 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { siteRoute } from '../../app/router/sites';
+import { siteRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -30,6 +34,16 @@ import type { ActivityLogEntry } from '@automattic/api-core';
 export function BackupsListPage() {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
+
+	// Try to get rewindId parameter if we're on the detail route
+	let rewindId: string | undefined;
+	try {
+		const params = siteBackupDetailRoute.useParams();
+		rewindId = params.rewindId;
+	} catch {
+		// Not on detail route, rewindId remains undefined
+	}
+
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const { data: siteSettings } = useSuspenseQuery( {
@@ -47,6 +61,22 @@ export function BackupsListPage() {
 		gmtOffset,
 	} );
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+
+	// Fetch activity log if we have a rewindId to auto-select
+	const { data: activityLog } = useQuery( {
+		...siteBackupActivityLogEntriesQuery( site.ID ),
+		enabled: !! rewindId,
+	} );
+
+	// Auto-select backup based on rewindId parameter
+	useEffect( () => {
+		if ( rewindId && activityLog ) {
+			const targetBackup = activityLog.find( ( item ) => item.rewind_id === rewindId );
+			if ( targetBackup ) {
+				setSelectedBackup( targetBackup );
+			}
+		}
+	}, [ rewindId, activityLog ] );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		handleDateRangeChange( next );
@@ -172,7 +202,7 @@ function SiteBackups() {
 				upsellDescription={
 					<Text as="p" variant="muted">
 						{ __(
-							'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
+							'Protect your site with scheduled and real—time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
 						) }
 					</Text>
 				}

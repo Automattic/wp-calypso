@@ -1,16 +1,24 @@
+import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { backup } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import type { SiteActivityLog } from '@automattic/api-core';
+import { siteBackupDetailRoute } from '../../../app/router/sites';
+import type { SiteActivityLog, Site } from '@automattic/api-core';
+import type { AnyRouter } from '@tanstack/react-router';
 import type { Action } from '@wordpress/dataviews';
 
 type UseActivityActionsOptions = {
 	isLoading: boolean;
+	site: Site;
+	router: AnyRouter;
 };
 
 export function useActivityActions( {
 	isLoading,
+	site,
+	router,
 }: UseActivityActionsOptions ): Action< SiteActivityLog >[] {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -32,6 +40,22 @@ export function useActivityActions( {
 			},
 		};
 
-		return [ copySummaryAction ];
-	}, [ isLoading, createSuccessNotice, createErrorNotice ] );
+		const backupAction: Action< SiteActivityLog > = {
+			id: 'backup',
+			label: __( 'View backup' ),
+			icon: <Icon icon={ backup } />,
+			disabled: isLoading,
+			isPrimary: true,
+			isEligible: ( item ) => item.is_rewindable,
+			callback: async ( items ) => {
+				const [ item ] = items;
+				router.navigate( {
+					to: siteBackupDetailRoute.fullPath,
+					params: { siteSlug: site.slug, rewindId: item.rewind_id },
+				} );
+			},
+		};
+
+		return [ backupAction, copySummaryAction ];
+	}, [ isLoading, createSuccessNotice, createErrorNotice, site, router ] );
 }
