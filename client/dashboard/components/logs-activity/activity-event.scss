@@ -11,3 +11,13 @@
 .site-activity-logs__event {
 	color: $gray-900;
 }
+
+.site-activity-logs__event-body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.site-activity-logs__event-content {
+	color: $gray-700;
+}
