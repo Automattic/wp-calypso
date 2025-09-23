@@ -61,12 +61,9 @@ const DomainSearchWithCart = ( {
 			},
 			onAddDomainToCart: ( domainName: string ) => {
 				recordTracksEvent( 'domain_added_to_cart', { domain: domainName } );
-				props.events?.onAddDomainToCart?.( domainName );
 			},
 		};
 	}, [ props.events, items ] );
-
-	console.log( 'events', events );
 
 	return (
 		<DomainSearch
