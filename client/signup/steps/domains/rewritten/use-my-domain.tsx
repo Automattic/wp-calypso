@@ -4,8 +4,8 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import UseMyDomainForm from 'calypso/components/domains/use-my-domain';
 import { WPCOMDomainSearchCartProvider } from 'calypso/components/domains/wpcom-domain-search/domain-search-cart-provider';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
-import StepWrapper from '../../step-wrapper';
-import { getStepUrl } from '../../utils';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import type { StepProps } from './types';
 
 export const USE_MY_DOMAIN_SECTION_NAME = 'use-your-domain';

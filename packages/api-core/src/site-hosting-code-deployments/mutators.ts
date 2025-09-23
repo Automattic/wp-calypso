@@ -1,5 +1,15 @@
 import { wpcom } from '../wpcom-fetcher';
-import { CodeDeploymentDeleteResponse } from './types';
+import type { DeploymentRun, CodeDeploymentDeleteResponse } from './types';
+
+export async function createCodeDeploymentRun(
+	siteId: number,
+	deploymentId: number
+): Promise< DeploymentRun > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/hosting/code-deployments/${ deploymentId }/runs`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
 
 export async function deleteCodeDeployment(
 	siteId: number,
