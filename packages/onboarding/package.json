@@ -77,7 +77,7 @@
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.4.0",
+		"@wordpress/i18n": "^5.23.0",
 		"react": "^18.3.1"
 	}
 }
