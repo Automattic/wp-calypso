@@ -18,6 +18,7 @@ import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import MonitoringCard from '../monitoring-card';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
+import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
 import MonitoringResponseTypesCard from '../monitoring-response-types-card';
 import { getMonitoringCalloutProps } from './monitoring-callout';
 import type { Site } from '@automattic/api-core';
@@ -65,16 +66,7 @@ function SiteMonitoringBody( {
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
-				<MonitoringCard
-					title={ __( 'HTTP request methods' ) }
-					description={ __( 'Percentage of traffic per HTTP request method.' ) }
-					onDownloadClick={ () => {} }
-					onAnchorClick={ () => {} }
-					className="dashboard-monitoring-card--row-layout"
-				>
-					[HTTP request methods graph]
-				</MonitoringCard>
-
+				<MonitoringRequestMethodsCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 				<MonitoringResponseTypesCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 			</HStack>
 
