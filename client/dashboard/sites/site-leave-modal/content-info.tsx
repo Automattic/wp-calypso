@@ -3,7 +3,6 @@ import {
 	siteCurrentUserQuery,
 	siteUserDeleteMutation,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -17,6 +16,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
@@ -36,6 +36,8 @@ function isSiteOwner( user: User, site: Site ) {
 }
 
 function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	return (
 		<>
 			<VStack spacing={ 0 }>
@@ -64,6 +66,8 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 }
 
 function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	return (
 		<>
 			<VStack spacing={ 0 }>
@@ -93,6 +97,7 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 
 function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
