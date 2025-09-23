@@ -61,6 +61,11 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				icon={ download }
 				onClick={ handleDownloadClick }
 				style={ { justifyContent: 'center' } }
+				// @TODO: remove these props when the granular download feature is available
+				accessibleWhenDisabled={ hasSelectedFiles }
+				disabled={ hasSelectedFiles }
+				label={ hasSelectedFiles ? 'Feature not available yet' : undefined }
+				showTooltip={ hasSelectedFiles }
 			>
 				{ hasSelectedFiles ? __( 'Download selected files' ) : __( 'Download backup' ) }
 			</Button>
