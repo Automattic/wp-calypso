@@ -15,13 +15,14 @@
 	&--activity {
 		&-callout {
 			position: relative;
-
+			pointer-events: none; // ignore pointer events from the callout gradient
 			background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 1.13%, #fff 17.26% );
 			padding: 75px 0 50px;
 			margin-top: -100px;
 			z-index: 2;
 
 			&-content {
+				pointer-events: auto; // don't ignore pointer events from the callout itself
 				max-width: 886px;
 				flex-basis: 886px;
 				padding: 50px 0;
