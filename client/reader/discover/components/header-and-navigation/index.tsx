@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
@@ -46,7 +46,14 @@ export default function DiscoverHeaderAndNavigation(
 			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
 			break;
 		case RECOMMENDED_TAB:
-			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
+			subHeaderText = fixMe( {
+				text: 'Explore popular blogs that inspire, educate, and entertain.',
+				newCopy: translate( 'Explore popular blogs that inspire, educate, and entertain.' ),
+				oldCopy: translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+					args: [ 'popular' ],
+					comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+				} ),
+			} );
 			break;
 		case FRESHLY_PRESSED_TAB:
 			subHeaderText = translate( "Our team's favorite blog posts." );
