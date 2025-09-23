@@ -31,6 +31,11 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	font-family: $font-sf-pro-display;
 }
 
+.stats {
+	--color-link: var(--theme-highlight-color);
+	--color-link-dark: var(--color-accent-dark);
+}
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {
@@ -103,19 +108,6 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	.horizontal-bar-list-item--additional,
 	.stats-card-header__additional {
 		font-weight: 500;
-	}
-}
-
-.stats {
-	a,
-	a:visited  {
-		color: var(--theme-highlight-color);
-	}
-
-	a:hover,
-	a:focus,
-	a:active {
-		color: var(--color-accent-dark);
 	}
 }
 
