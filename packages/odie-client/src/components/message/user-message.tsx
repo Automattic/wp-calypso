@@ -91,17 +91,18 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ ! isRequestingHumanSupport &&
-						! interactionHasZendeskEvent( currentSupportInteraction ) && (
-							<BotMessageActions message={ message } />
-						) }
 					{ ! isRequestingHumanSupport && (
-						<div className="chat-feedback-wrapper">
-							<Sources
-								message={ message }
-								isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
-							/>
-						</div>
+						<>
+							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
+								<BotMessageActions message={ message } />
+							) }
+							<div className="chat-feedback-wrapper">
+								<Sources
+									message={ message }
+									isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+								/>
+							</div>
+						</>
 					) }
 					<div>
 						{ isRequestingHumanSupport && (
