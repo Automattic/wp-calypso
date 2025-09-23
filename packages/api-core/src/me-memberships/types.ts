@@ -19,3 +19,11 @@ export interface MonetizeSubscriptionsSite {
 	domain: string;
 	subscriptions: MonetizeSubscription[];
 }
+
+export interface MonetizeSubscriptionStopResponse {
+	redirect?: string;
+}
+
+export interface MonetizeSubscriptionAutoRenewResponse {
+	subscription: MonetizeSubscription;
+}

@@ -1,6 +1,7 @@
 import {
 	fetchMonetizeSubscriptions,
-	MonetizeSubscription,
+	MonetizeSubscriptionAutoRenewResponse,
+	MonetizeSubscriptionStopResponse,
 	requestAutoRenewDisable,
 	requestAutoRenewResume,
 	requestSubscriptionStop,
@@ -28,7 +29,7 @@ export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 	} );
 
 const updateSubscriptionCache =
-	( subscriptionId: string ) => ( data: { subscription: MonetizeSubscription } ) => {
+	( subscriptionId: string ) => ( data: MonetizeSubscriptionAutoRenewResponse ) => {
 		queryClient.invalidateQueries( {
 			queryKey: [ monetizeSubscriptionQuery( subscriptionId ).queryKey ],
 		} );
@@ -53,10 +54,10 @@ export const monetizeSubscriptionResumeAutoRenew = ( subscriptionId: string ) =>
 		onSuccess: updateSubscriptionCache( subscriptionId ),
 	} );
 
-export const monetizeSubscriptionStop = ( subscriptionId: string ) =>
-	mutationOptions( {
+export const monetizeSubscriptionStop = ( subscriptionId: string ) => {
+	return mutationOptions( {
 		mutationFn: () => requestSubscriptionStop( subscriptionId ),
-		onSuccess: ( response: { redirect?: string } ) => {
+		onSuccess: ( response: MonetizeSubscriptionStopResponse ) => {
 			queryClient.invalidateQueries( {
 				queryKey: [ monetizeSubscriptionsQuery().queryKey ],
 			} );
@@ -74,3 +75,4 @@ export const monetizeSubscriptionStop = ( subscriptionId: string ) =>
 			}
 		},
 	} );
+};
