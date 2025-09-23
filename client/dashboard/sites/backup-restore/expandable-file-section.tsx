@@ -83,16 +83,16 @@ export default function ExpandableFileSection( {
 		<div>
 			<Button
 				icon={ isExpanded ? chevronDown : chevronRight }
-				iconPosition="right"
+				iconPosition="left"
 				onClick={ () => setIsExpanded( ! isExpanded ) }
-				style={ { paddingInlineStart: 0, paddingTop: 0 } }
-				variant="link"
+				style={ { color: 'inherit', paddingInlineStart: 0, paddingTop: 0 } }
+				variant="tertiary"
 			>
 				<Text weight={ 500 }>{ getTypeLabel( type, false ) }</Text>
 			</Button>
 			{ isExpanded && (
 				<VStack spacing={ 0 }>
-					<ul style={ { paddingInlineStart: '18px' } }>
+					<ul style={ { paddingInlineStart: '18px', marginTop: 0 } }>
 						{ displayItems.map( ( item ) => (
 							<li key={ item.path }>{ item.path }</li>
 						) ) }
