@@ -27,6 +27,10 @@
 		color: #fff;
 	}
 
+	.file-card__preview img {
+		max-width: 100%;
+	}
+
 	.file-card__preview pre {
 		--color-surface: #fff;
 		padding: 1.6em;
