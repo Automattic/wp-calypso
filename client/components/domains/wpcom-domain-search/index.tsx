@@ -9,10 +9,10 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	flowName: string;
 	events?: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
 		onContinue?: ( items: ResponseCartProduct[] ) => void;
+		onAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
 	flowAllowsMultipleDomainsInCart: boolean;
-	onAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 };
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
@@ -37,11 +37,10 @@ const DomainSearchWithCart = ( {
 	config: externalConfig,
 	isFirstDomainFreeForFirstYear,
 	flowAllowsMultipleDomainsInCart,
-	onAddDomainToCart,
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
-	const { onContinue } = props.events ?? {};
+	const { onContinue, onAddDomainToCart } = props.events ?? {};
 
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,

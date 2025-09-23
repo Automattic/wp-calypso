@@ -5,7 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
@@ -30,6 +30,19 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 
 	const events = useMemo( () => {
 		return {
+			onAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
+				if ( isDomainForGravatarFlow( flowName ) ) {
+					return {
+						...product,
+						extra: {
+							...product.extra,
+							is_gravatar_domain: true,
+						},
+					};
+				}
+
+				return product;
+			},
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
 			},
@@ -166,23 +179,6 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flowName ] );
 
-	const addGravatarDomainExtra = useCallback(
-		( product: MinimalRequestCartProduct ) => {
-			if ( isDomainForGravatarFlow( flowName ) ) {
-				return {
-					...product,
-					extra: {
-						...product.extra,
-						is_gravatar_domain: true,
-					},
-				};
-			}
-
-			return product;
-		},
-		[ flowName ]
-	);
-
 	return (
 		<StepWrapper
 			{ ...props }
@@ -199,7 +195,6 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					onAddDomainToCart={ addGravatarDomainExtra }
 				/>
 			}
 		/>
