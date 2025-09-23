@@ -6,11 +6,9 @@ import illustrationUrl from './upsell-illustration.svg';
 import type { ReactNode } from 'react';
 
 export default function ActivationCallout( {
-	asOverlay,
 	main,
 	onClick,
 }: {
-	asOverlay?: boolean;
 	main?: ReactNode;
 	onClick: () => void;
 } ) {
@@ -53,7 +51,7 @@ export default function ActivationCallout( {
 		/>
 	);
 
-	if ( asOverlay ) {
+	if ( main ) {
 		return <CalloutOverlay callout={ callout } main={ main } />;
 	}
 
