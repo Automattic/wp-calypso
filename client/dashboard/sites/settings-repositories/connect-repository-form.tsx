@@ -49,19 +49,9 @@ export const ConnectRepositoryForm = ( {
 		githubInstallationsQuery()
 	);
 
-	const [ selectedInstallationId, setSelectedInstallationId ] = useState< number | '' >(
-		installations[ 0 ].external_id
-	);
-
-	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
-		if ( selectedInstallationId === '' ) {
-			return undefined;
-		}
-
-		return installations.find(
-			( installation ) => installation.external_id === selectedInstallationId
-		);
-	}, [ installations, selectedInstallationId ] );
+	const [ selectedInstallation, setSelectedInstallation ] = useState<
+		GitHubInstallation | undefined
+	>( installations[ 0 ] );
 
 	const { data: repositories = [], isLoading: isLoadingRepositories } = useQuery( {
 		...githubRepositoriesQuery( selectedInstallation?.external_id ?? 0 ),
@@ -74,7 +64,7 @@ export const ConnectRepositoryForm = ( {
 		setTargetDir( '/' );
 		setIsTargetDirDirty( false );
 		setWorkflowPath( '.github/workflows/wpcom.yml' );
-	}, [ selectedInstallationId ] );
+	}, [ selectedInstallation ] );
 
 	useEffect( () => {
 		if ( selectedRepositoryId === '' ) {
@@ -273,15 +263,18 @@ export const ConnectRepositoryForm = ( {
 				<SelectControl
 					__next40pxDefaultSize
 					aria-label={ __( 'GitHub account' ) }
-					value={ selectedInstallationId === '' ? '' : selectedInstallationId.toString() }
+					value={ selectedInstallation ? selectedInstallation.external_id.toString() : '' }
 					onChange={ ( value ) => {
 						if ( ! value ) {
-							setSelectedInstallationId( '' );
+							setSelectedInstallation( undefined );
 							return;
 						}
 
 						const numericValue = Number( value );
-						setSelectedInstallationId( Number.isNaN( numericValue ) ? '' : numericValue );
+						const installation = installations.find(
+							( inst ) => inst.external_id === numericValue
+						);
+						setSelectedInstallation( installation );
 					} }
 					options={ installationOptions }
 					help={ installationHelpText }
