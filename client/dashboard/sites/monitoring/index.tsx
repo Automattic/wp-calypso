@@ -70,6 +70,7 @@ function SiteMonitoringBody( {
 					description={ __( 'Percentage of traffic per HTTP request method.' ) }
 					onDownloadClick={ () => {} }
 					onAnchorClick={ () => {} }
+					className="dashboard-monitoring-card--row-layout"
 				>
 					[HTTP request methods graph]
 				</MonitoringCard>
