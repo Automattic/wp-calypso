@@ -12,7 +12,7 @@ const POPOVER_PROPS = {
 };
 
 export const Filter = () => {
-	const { filter, setFilter, query, queries, resetFilter } = useDomainSearch();
+	const { filter, setFilter, query, queries, events } = useDomainSearch();
 	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery( {
 		...queries.availableTlds( query ),
 		enabled: true,
@@ -52,6 +52,7 @@ export const Filter = () => {
 						filter={ filter }
 						onApply={ ( newFilter ) => {
 							setFilter( newFilter );
+							events.onFilterApplied( newFilter );
 							onClose();
 						} }
 					/>

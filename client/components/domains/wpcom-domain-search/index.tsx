@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch } from '@automattic/domain-search';
+import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
+import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
@@ -61,6 +63,14 @@ const DomainSearchWithCart = ( {
 			},
 			onAddDomainToCart: ( domainName: string ) => {
 				recordTracksEvent( 'domain_added_to_cart', { domain: domainName } );
+			},
+			onFilterApplied: ( filter: FilterState ) => {
+				recordTracksEvent( 'calypso_domain_search_filters_submit', {
+					flow_name: flowName,
+					filters_tlds: filter.tlds?.join( ',' ),
+					filters_exact_sld_matches_only: filter.exactSldMatchesOnly,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+				} );
 			},
 		};
 	}, [ props.events, items ] );
