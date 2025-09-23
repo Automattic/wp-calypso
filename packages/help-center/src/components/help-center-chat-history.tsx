@@ -21,8 +21,6 @@ import type {
 const EmptyStateArtWork = () => {
 	return (
 		<svg
-			width="368"
-			height="184"
 			viewBox="0 0 368 184"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
