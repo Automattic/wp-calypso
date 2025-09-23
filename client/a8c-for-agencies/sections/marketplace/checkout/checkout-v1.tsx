@@ -40,7 +40,7 @@ import RequestClientPayment from './request-client-payment';
 import SubmitPaymentInfo from './submit-payment-info';
 import type { ShoppingCartItem } from '../types';
 
-import './style-jps.scss'; // Jetpack Start Checkout styles
+import './style-v1.scss'; // Checkout V1 styles
 
 interface Props {
 	isClient?: boolean;
