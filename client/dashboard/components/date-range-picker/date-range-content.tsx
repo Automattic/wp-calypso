@@ -111,7 +111,9 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	const activePresetId = getActivePresetId( fromDraft, toDraft, today );
 
 	// Site “today” as a site-day Date
-	const siteToday = parseYmdLocal( formatYmd( today, timezoneString, gmtOffset ) )!;
+	const siteToday =
+		parseYmdLocal( formatYmd( today, timezoneString, gmtOffset ) ) ??
+		new Date( today.getFullYear(), today.getMonth(), today.getDate() );
 
 	// Month anchors in site time
 	const siteMonthStart = startOfMonth( siteToday );
