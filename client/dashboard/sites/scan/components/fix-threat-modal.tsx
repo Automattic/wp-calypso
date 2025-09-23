@@ -15,12 +15,7 @@ interface FixThreatModalProps extends RenderModalProps< Threat > {
 	siteId: number;
 }
 
-export function FixThreatModal( {
-	items,
-	closeModal,
-	onActionPerformed,
-	siteId,
-}: FixThreatModalProps ) {
+export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalProps ) {
 	const threat = items[ 0 ];
 
 	const fixThreat = useMutation( fixThreatMutation( siteId ) );
@@ -30,7 +25,6 @@ export function FixThreatModal( {
 		fixThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
-				onActionPerformed?.( [ threat ] );
 				createSuccessNotice( __( 'Threat fixed.' ), { type: 'snackbar' } );
 			},
 			onError: () => {

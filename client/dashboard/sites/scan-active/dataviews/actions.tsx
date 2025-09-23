@@ -15,13 +15,8 @@ export function getActions( siteId: number ): Action< Threat >[] {
 			label: __( 'Fix threat' ),
 			modalHeader: __( 'Fix threat' ),
 			supportsBulk: true,
-			RenderModal: ( { items, closeModal, onActionPerformed } ) => (
-				<FixThreatModal
-					items={ items }
-					closeModal={ closeModal }
-					onActionPerformed={ onActionPerformed }
-					siteId={ siteId }
-				/>
+			RenderModal: ( { items, closeModal } ) => (
+				<FixThreatModal items={ items } closeModal={ closeModal } siteId={ siteId } />
 			),
 			isEligible: ( threat: Threat ) => !! threat.fixable,
 		},
@@ -30,13 +25,8 @@ export function getActions( siteId: number ): Action< Threat >[] {
 			label: __( 'Ignore threat' ),
 			modalHeader: __( 'Ignore threat' ),
 			supportsBulk: false,
-			RenderModal: ( { items, closeModal, onActionPerformed } ) => (
-				<IgnoreThreatModal
-					items={ items }
-					closeModal={ closeModal }
-					onActionPerformed={ onActionPerformed }
-					siteId={ siteId }
-				/>
+			RenderModal: ( { items, closeModal } ) => (
+				<IgnoreThreatModal items={ items } closeModal={ closeModal } siteId={ siteId } />
 			),
 		},
 	];
