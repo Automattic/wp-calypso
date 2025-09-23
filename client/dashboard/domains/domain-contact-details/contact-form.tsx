@@ -88,20 +88,33 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	);
 
 	const form = {
-		type: 'regular' as const,
 		labelPosition: 'top' as const,
 		fields: [
-			'firstName',
-			'lastName',
+			{
+				layout: {
+					type: 'row',
+					alignment: 'start',
+				},
+				children: [ 'firstName', 'lastName' ],
+			},
 			'organization',
-			'email',
-			'phone',
+			{
+				layout: {
+					type: 'row',
+					alignment: 'start',
+				},
+				children: [ 'email', 'phone' ],
+			},
 			'countryCode',
 			'address1',
 			'address2',
-			'city',
-			'state',
-			'postalCode',
+			{
+				layout: {
+					type: 'row',
+					alignment: 'start',
+				},
+				children: [ 'city', 'state', 'postalCode' ],
+			},
 			'optOutTransferLock',
 		],
 	};
