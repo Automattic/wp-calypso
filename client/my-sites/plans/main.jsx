@@ -230,10 +230,8 @@ class PlansComponent extends Component {
 			},
 		} = this.props;
 
-		// Use new /checkout/from-plans path if feature flag is enabled to avoid redirect loop
-		const checkoutPath = isEnabled( 'enforce_interstitial_plans_grid' )
-			? `/checkout/from-plans/${ selectedSite.slug }/${ item.product_slug }/`
-			: `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
+		// Always use /checkout/from-plans path for plan grid flows to indicate user has already selected via plans grid
+		const checkoutPath = `/checkout/from-plans/${ selectedSite.slug }/${ item.product_slug }/`;
 
 		page(
 			discount

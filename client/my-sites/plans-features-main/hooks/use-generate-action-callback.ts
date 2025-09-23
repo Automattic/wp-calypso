@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	PRODUCT_1GB_SPACE,
@@ -7,7 +6,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	getPlanPath,
-	isWpComPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -60,15 +58,8 @@ function useUpgradeHandler( {
 				? getPlanPath( cartItemForPlan.product_slug )
 				: '';
 
-			// Use /checkout/from-plans if feature flag is enabled to avoid redirect loop for WordPress.com plans
-			const shouldUseFromPlansPath =
-				config.isEnabled( 'enforce_interstitial_plans_grid' ) &&
-				cartItemForPlan?.product_slug &&
-				isWpComPlan( cartItemForPlan.product_slug );
-
-			const checkoutBasePath = shouldUseFromPlansPath
-				? `/checkout/from-plans/${ siteSlug }/${ planPath }`
-				: `/checkout/${ siteSlug }/${ planPath }`;
+			// Always use /checkout/from-plans for plan grid flows to indicate user has already selected via plans grid
+			const checkoutBasePath = `/checkout/from-plans/${ siteSlug }/${ planPath }`;
 
 			const checkoutUrl = cartItemForStorageAddOn
 				? `${ checkoutBasePath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`

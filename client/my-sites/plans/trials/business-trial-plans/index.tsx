@@ -1,10 +1,8 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_FREE,
 	PRODUCT_1GB_SPACE,
 	getPlanPath,
 	isBusinessPlan,
-	isWpComPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
@@ -34,21 +32,20 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
 			);
 
-			// Use /checkout/from-plans if feature flag is enabled to avoid redirect loop for WordPress.com plans
-			const shouldUseFromPlansPath =
-				config.isEnabled( 'enforce_interstitial_plans_grid' ) && isWpComPlan( upgradePlanSlug );
-
+			// Use trial checkout URL for business plans (with trial-specific redirect) or /checkout/from-plans for others
 			let checkoutUrl;
 			if ( isBusinessPlan( upgradePlanSlug ) ) {
 				checkoutUrl = getTrialCheckoutUrl( {
 					productSlug: planPath,
 					siteSlug,
 					addOn: cartItemForStorageAddOn,
+					fromPlansGrid: true,
 				} );
-			} else if ( shouldUseFromPlansPath ) {
-				checkoutUrl = `/checkout/from-plans/${ siteSlug }/${ planPath }`;
 			} else {
-				checkoutUrl = `/checkout/${ siteSlug }/${ planPath }`;
+				const checkoutBasePath = `/checkout/from-plans/${ siteSlug }/${ planPath }`;
+				checkoutUrl = cartItemForStorageAddOn
+					? `${ checkoutBasePath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
+					: checkoutBasePath;
 			}
 
 			page( checkoutUrl );

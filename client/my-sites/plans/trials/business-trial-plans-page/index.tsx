@@ -39,6 +39,7 @@ const BusinessTrialPlansPage = ( props: BusinessTrialPlansPageProps ) => {
 		const checkoutUrl = getTrialCheckoutUrl( {
 			productSlug: PLAN_BUSINESS,
 			siteSlug: selectedSite?.slug ?? '',
+			fromPlansGrid: true,
 		} );
 
 		page.redirect( checkoutUrl );

@@ -1,11 +1,9 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	getPlanPath,
 	isWooExpressPlan,
-	isWpComPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
@@ -91,17 +89,16 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
 
-			// Use /checkout/from-plans if feature flag is enabled to avoid redirect loop for WordPress.com plans
-			const shouldUseFromPlansPath =
-				config.isEnabled( 'enforce_interstitial_plans_grid' ) && isWpComPlan( upgradePlanSlug );
-
+			// Use trial checkout URL for WooExpress plans (with trial-specific redirect) or /checkout/from-plans for others
 			let checkoutUrl;
 			if ( isWooExpressPlan( upgradePlanSlug ) ) {
-				checkoutUrl = getTrialCheckoutUrl( { productSlug: planPath, siteSlug } );
-			} else if ( shouldUseFromPlansPath ) {
-				checkoutUrl = `/checkout/from-plans/${ siteSlug }/${ planPath }`;
+				checkoutUrl = getTrialCheckoutUrl( {
+					productSlug: planPath,
+					siteSlug,
+					fromPlansGrid: true,
+				} );
 			} else {
-				checkoutUrl = `/checkout/${ siteSlug }/${ planPath }`;
+				checkoutUrl = `/checkout/from-plans/${ siteSlug }/${ planPath }`;
 			}
 
 			page( checkoutUrl );
