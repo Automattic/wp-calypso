@@ -8,6 +8,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ComboboxControl,
+	ToggleControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -31,7 +32,7 @@ interface FormData {
 	selectedRepositoryId: number | '';
 	branch: string;
 	targetDir: string;
-	isAutomated: string;
+	isAutomated: boolean;
 	deploymentMode: 'simple' | 'advanced';
 	workflowPath: string | undefined;
 }
@@ -65,7 +66,24 @@ const RepositorySelector = ( {
 			} }
 			options={ repositoryOptions }
 			placeholder={ __( 'Select a repository' ) }
-			help={ field.help }
+		/>
+	);
+};
+
+const AutomatedToggle = ( {
+	field,
+	onChange,
+	data,
+	hideLabelFromVision,
+}: DataFormControlProps< FormData > ) => {
+	const { id, getValue } = field;
+	const currentValue = getValue?.( { item: data } );
+
+	return (
+		<ToggleControl
+			label={ hideLabelFromVision ? '' : field.label }
+			checked={ currentValue }
+			onChange={ ( value ) => onChange( { [ id ]: value } ) }
 		/>
 	);
 };
@@ -80,7 +98,7 @@ export const ConnectRepositoryForm = ( {
 		selectedRepositoryId: '',
 		branch: '',
 		targetDir: '/',
-		isAutomated: 'false',
+		isAutomated: false,
 		deploymentMode: 'simple',
 		workflowPath: '.github/workflows/wpcom.yml',
 	} );
@@ -220,7 +238,7 @@ export const ConnectRepositoryForm = ( {
 				branchName: formData.branch,
 				targetDir: formData.targetDir,
 				installationId: selectedInstallation.external_id,
-				isAutomated: formData.isAutomated === 'true',
+				isAutomated: formData.isAutomated,
 				workflowPath: formData.workflowPath || '.github/workflows/wpcom.yml',
 			} );
 		} catch ( error ) {
@@ -314,11 +332,7 @@ export const ConnectRepositoryForm = ( {
 				id: 'isAutomated',
 				label: __( 'Automated Deployments' ),
 				type: 'text' as const,
-				Edit: 'radio',
-				elements: [
-					{ label: __( 'Disabled' ), value: 'false' },
-					{ label: __( 'Enabled' ), value: 'true' },
-				],
+				Edit: AutomatedToggle,
 			},
 			{
 				id: 'deploymentMode',
