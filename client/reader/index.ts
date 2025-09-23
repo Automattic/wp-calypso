@@ -13,6 +13,7 @@ import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
 	feedDiscovery,
+	feedDiscoveryByUrl,
 	feedListing,
 	following,
 	readA8C,
@@ -62,12 +63,7 @@ export default async function (): Promise< void > {
 
 		// Feed stream
 		page(
-			'/reader/feeds/*',
-			( context, next ) => {
-				// Map wildcard to feed_id parameter to maintain compatibility
-				context.params.feed_id = context.params[ 0 ];
-				next();
-			},
+			'/reader/feeds/:feed_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
@@ -104,6 +100,16 @@ export default async function (): Promise< void > {
 			redirectLoggedOutToSignup,
 			sidebar,
 			userProfile,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/reader/feeds/lookup/*',
+			redirectLoggedOutToSignup,
+			sidebar,
+			feedDiscoveryByUrl,
+			feedListing,
 			makeLayout,
 			clientRender
 		);
