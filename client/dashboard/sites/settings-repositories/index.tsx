@@ -29,6 +29,18 @@ function RepositoriesList() {
 
 	const actions = [
 		{
+			id: 'trigger-manual-deployment',
+			label: __( 'Trigger manual deployment' ),
+		},
+		{
+			id: 'configure-connection',
+			label: __( 'Configure connection' ),
+		},
+		{
+			id: 'see-deployment-runs',
+			label: __( 'See deployment runs' ),
+		},
+		{
 			id: 'delete',
 			label: __( 'Disconnect repository' ),
 			RenderModal: ( { items, closeModal }: RenderModalProps< CodeDeploymentData > ) => {
