@@ -64,6 +64,15 @@ const DomainSearchWithCart = ( {
 			onAddDomainToCart: ( domainName: string ) => {
 				recordTracksEvent( 'domain_added_to_cart', { domain: domainName } );
 			},
+			onQueryAvailabilityCheck: ( status: string, domainName: string ) => {
+				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
+					available_status: status,
+					flow_name: flowName,
+					// response_time: responseTimeInMs, // TODO: Not sure how to measure this with Tanstack
+					search_query: domainName,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+				} );
+			},
 			onFilterApplied: ( filter: FilterState ) => {
 				recordTracksEvent( 'calypso_domain_search_filters_submit', {
 					flow_name: flowName,
@@ -73,7 +82,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
-	}, [ props.events, items ] );
+	}, [ props.events, items, flowName ] );
 
 	return (
 		<DomainSearch
