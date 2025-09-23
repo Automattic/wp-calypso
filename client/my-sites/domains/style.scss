@@ -40,15 +40,3 @@
 		}
 	}
 }
-
-.domain-search-legacy--my-sites {
-	.domains__header {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			align-items: center;
-		}
-	}
-}

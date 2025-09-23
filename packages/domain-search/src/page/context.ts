@@ -47,6 +47,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
 		allowsUsingOwnDomain: true,
+		includeOwnedDomainInSuggestions: true,
 		allowedTlds: [],
 		priceRules: {
 			hidePrice: false,
@@ -125,6 +126,7 @@ export const useDomainSearchContextValue = (
 						vendor: normalizedConfig.vendor,
 						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
 						exact_sld_matches_only: filter.exactSldMatchesOnly,
+						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
 					} ),
 					enabled: false,
 				} ),
