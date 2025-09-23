@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useContext } from 'react';
-import ClientCheckoutPlaceholder from '../billing-dragon-checkout/checkout-placeholder';
 import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import CheckoutV1 from './checkout-v1';
@@ -25,7 +24,9 @@ function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
 		return <CheckoutV2 />;
 	}
 
-	return <ClientCheckoutPlaceholder />;
+	// Todo: replace it with a placeholder and error notification.
+	// Fallback, should never happen.
+	return null;
 }
 
 export default withMarketplaceType( Checkout );
