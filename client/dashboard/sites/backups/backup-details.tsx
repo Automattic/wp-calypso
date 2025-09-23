@@ -13,6 +13,9 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
+import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
+import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -23,11 +26,14 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const publishedTimestamp = backup.published || backup.last_published;
 	const formattedTime = useFormattedTime( publishedTimestamp, {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
+	const { fileBrowserState } = useFileBrowserContext();
+	const selectedFiles = fileBrowserState.getSelectedList();
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const direction = isSmallViewport ? 'column-reverse' : 'row';
@@ -46,6 +52,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
+	const hasSelectedFiles = selectedFiles.length > 0;
 	const actions = backup.rewind_id ? (
 		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
 			<Button
@@ -55,7 +62,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleDownloadClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ __( 'Download backup' ) }
+				{ hasSelectedFiles ? __( 'Download selected files' ) : __( 'Download backup' ) }
 			</Button>
 			<Button
 				variant="primary"
@@ -64,7 +71,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ __( 'Restore to this point' ) }
+				{ hasSelectedFiles ? __( 'Restore selected files' ) : __( 'Restore to this point' ) }
 			</Button>
 		</ButtonStack>
 	) : null;
@@ -104,6 +111,17 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							<ImagePreview item={ backup } />
 						) }
 					</Grid>
+					{ !! backup.object?.backup_period && (
+						<div className="backup-details__file-browser">
+							<FileBrowser
+								rewindId={ Number( backup.rewind_id ) }
+								siteId={ site.ID }
+								siteSlug={ site.slug }
+								isRestoreEnabled
+								onTrackEvent={ recordTracksEvent }
+							/>
+						</div>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>
