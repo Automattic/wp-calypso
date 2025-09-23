@@ -39,6 +39,8 @@ export type SiteLogsDataViewsProps = {
 	dateRange: { start: Date; end: Date };
 	autoRefresh: boolean;
 	setAutoRefresh: Dispatch< SetStateAction< boolean > >;
+	autoRefreshDisabledReason?: string | null;
+	onAutoRefreshRequest?: ( isChecked: boolean ) => boolean;
 	dateRangeVersion?: number;
 	gmtOffset: number;
 	timezoneString: string | undefined;
@@ -53,6 +55,7 @@ function SiteLogsDataViews( {
 	timezoneString,
 	autoRefresh,
 	setAutoRefresh,
+	onAutoRefreshRequest,
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
@@ -220,7 +223,9 @@ function SiteLogsDataViews( {
 	};
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
-		setAutoRefresh( isChecked );
+		if ( onAutoRefreshRequest && ! onAutoRefreshRequest( isChecked ) ) {
+			return; // blocked by parent; notice already set
+		}
 		recordTracksEvent( 'calypso_dashboard_site_logs_auto_refresh', { enabled: isChecked } );
 	};
 

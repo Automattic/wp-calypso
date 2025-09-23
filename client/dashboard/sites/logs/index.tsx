@@ -9,6 +9,8 @@ import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
+import { isLast7Days } from '../../components/date-range-picker/utils';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
@@ -25,6 +27,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const router = useRouter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
+	const [ autoRefreshDisabledReason, setAutoRefreshDisabledReason ] = useState< string | null >(
+		null
+	);
 
 	const siteId = site.ID;
 
@@ -47,10 +52,27 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		setAutoRefresh( false );
+		if ( autoRefresh && ! isLast7Days( next, timezoneString, gmtOffset ) ) {
+			setAutoRefresh( false );
+			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
+		} else {
+			// Clear on any other change, including non–last-7 → non–last-7
+			setAutoRefreshDisabledReason( null );
+		}
+
 		handleDateRangeChange( next );
 
 		setDateRangeVersion( ( v ) => v + 1 );
+	};
+
+	const handleAutoRefreshToggle = ( isChecked: boolean ) => {
+		if ( isChecked && ! isLast7Days( dateRange, timezoneString, gmtOffset ) ) {
+			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
+			return false;
+		}
+		setAutoRefresh( isChecked );
+		setAutoRefreshDisabledReason( null );
+		return true;
 	};
 
 	const handleTabChange = ( tab: LogType ) => {
@@ -71,6 +93,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				asOverlay
 				{ ...getLogsCalloutProps() }
 			>
+				{ autoRefreshDisabledReason && (
+					<div style={ { marginBottom: 12 } }>
+						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
+					</div>
+				) }
 				<>
 					{ logType !== LogType.ACTIVITY && (
 						<DateRangePicker
@@ -110,6 +137,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									dateRangeVersion={ dateRangeVersion }
 									autoRefresh={ autoRefresh }
 									setAutoRefresh={ setAutoRefresh }
+									onAutoRefreshRequest={ handleAutoRefreshToggle }
 									gmtOffset={ gmtOffset }
 									timezoneString={ timezoneString }
 									site={ site }
