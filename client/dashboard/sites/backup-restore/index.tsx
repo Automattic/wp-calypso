@@ -39,6 +39,7 @@ function SiteBackupRestore() {
 	const { fileBrowserState } = useFileBrowserContext();
 	const browserSelectedList = fileBrowserState.getSelectedList();
 	const hasSelectedFiles = browserSelectedList.length > 0;
+	const hasSelectedAllFiles = browserSelectedList[ 0 ]?.path === '//';
 
 	const router = useRouter();
 
@@ -77,7 +78,7 @@ function SiteBackupRestore() {
 	const renderStep = () => {
 		switch ( currentStep ) {
 			case 'form':
-				return hasSelectedFiles ? (
+				return hasSelectedFiles && ! hasSelectedAllFiles ? (
 					<SiteBackupGranularRestoreForm
 						siteId={ site.ID }
 						onRestoreInitiate={ handleRestoreInitiate }
