@@ -110,7 +110,6 @@ export default function MonitoringRequestMethodsCard( {
 					gapScale={ 0.02 }
 					size={ 300 }
 					data={ data }
-					showLabels={ false }
 				/>
 			</HStack>
 		</MonitoringCard>
