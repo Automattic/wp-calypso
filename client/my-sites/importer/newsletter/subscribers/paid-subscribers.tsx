@@ -56,7 +56,6 @@ export default function PaidSubscribers( {
 					status={ status }
 					cardData={ cardData }
 					engine={ engine }
-					fromSite={ fromSite }
 					selectedSite={ selectedSite }
 					setAutoFetchData={ setAutoFetchData }
 					siteSlug={ siteSlug }

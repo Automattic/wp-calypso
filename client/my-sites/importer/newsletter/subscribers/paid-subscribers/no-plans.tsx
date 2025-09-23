@@ -17,7 +17,6 @@ type NoPlansProps = {
 	selectedSite: SiteDetails;
 	engine: string;
 	siteSlug: string;
-	fromSite: string;
 	onStartImport: () => void;
 };
 

@@ -7,16 +7,15 @@ import { isValidUrl } from 'calypso/lib/importer/url-validation';
 
 interface SelectNewsletterFormProps {
 	value: string;
-	isLoading: boolean;
+	setFromSite: ( fromSite: string ) => void;
 	isError: boolean;
 	onContinue: ( fromSite: string ) => void;
 }
 
 export default function SelectNewsletterForm( {
 	value,
-	isLoading,
-	onContinue = () => {},
 	isError,
+	onContinue = () => {},
 }: SelectNewsletterFormProps ) {
 	const { __ } = useI18n();
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
@@ -29,14 +28,6 @@ export default function SelectNewsletterForm( {
 
 		onContinue( fromSite );
 	};
-
-	if ( isLoading ) {
-		return (
-			<Card className="select-newsletter-form">
-				<div className="is-loading" />
-			</Card>
-		);
-	}
 
 	const hasError = isUrlInvalid || isError;
 

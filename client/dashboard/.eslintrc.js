@@ -25,10 +25,6 @@ module.exports = {
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
-							// Allowed: calypso/components/marked-lines
-							'!calypso/components',
-							'calypso/components/*',
-							'!calypso/components/marked-lines',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
@@ -73,6 +69,10 @@ module.exports = {
 					},
 				],
 				paths: [
+					{
+						name: '@automattic/calypso-analytics',
+						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
 					{
 						name: '@automattic/components',
 						message:

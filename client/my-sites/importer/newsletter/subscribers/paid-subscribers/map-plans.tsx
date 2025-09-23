@@ -60,7 +60,6 @@ export default function MapPlans( {
 	selectedSite,
 	engine,
 	siteSlug,
-	fromSite,
 	onStartImport,
 }: MapPlansProps ) {
 	const { __ } = useI18n();
@@ -134,7 +133,6 @@ export default function MapPlans( {
 				selectedSite={ selectedSite }
 				engine={ engine }
 				siteSlug={ siteSlug }
-				fromSite={ fromSite }
 				onStartImport={ onStartImport }
 			/>
 		);

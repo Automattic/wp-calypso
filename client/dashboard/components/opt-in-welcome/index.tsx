@@ -31,7 +31,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 			/>
 			{ createInterpolateElement(
 				__(
-					'Welcome to your new hosting dashboard. Share your feedback anytime by <feedbackLink>clicking here</feedbackLink>. To switch back to the previous version, go to <preferencesLink>Preferences</preferencesLink>.'
+					'Welcome to your new Hosting Dashboard. Share your feedback anytime by <feedbackLink>clicking here</feedbackLink>. To switch back to the previous version, go to <preferencesLink>Preferences</preferencesLink>.'
 				),
 				{
 					preferencesLink: (

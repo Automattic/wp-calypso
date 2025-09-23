@@ -4,7 +4,7 @@ import type { DeploymentRunStatus } from '@automattic/api-core';
 
 export const getDeploymentTimeTooltipText = (
 	locale: string,
-	completedOn: string,
+	completedOn: string | null,
 	createdOn: string,
 	status: DeploymentRunStatus
 ): string => {
@@ -33,7 +33,7 @@ export const getDeploymentTimeTooltipText = (
 			return sprintf(
 				/* translators: %s is the date and time the deployment finished. e.g. Finished on Sep 19, 2025, 5:11:17 PM */
 				__( 'Finished on %s' ),
-				formatDateTime( completedOn )
+				completedOn ? formatDateTime( completedOn ) : '-'
 			);
 		default:
 			return formatDateTime( createdOn );
