@@ -88,11 +88,6 @@ body.command-palette-modal-open {
 		margin: 0;
 	}
 
-	.is-section-themes.has-no-sidebar.is-logged-in &,
-	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
-		padding: 79px 32px 32px;
-	}
-
 	.is-section-theme & {
 		.sites.main {
 			padding-top: calc(79px - var(--masterbar-height));
@@ -523,4 +518,9 @@ body.is-mobile-app-view {
 			align-self: center;
 		}
 	}
+}
+
+// Universal header
+.layout.has-universal-header .lpc-header-nav-wrapper {
+	padding-top: var(--masterbar-height);
 }

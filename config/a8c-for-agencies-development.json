@@ -46,7 +46,7 @@
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
-		"a4a-client-checkout-v2": true,
+		"a4a-bd-checkout": true,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true
