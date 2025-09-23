@@ -11,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -22,7 +23,6 @@ import {
 	domainRegistration,
 	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
-import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { isExternal } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
@@ -32,7 +32,7 @@ import {
 	domainManagementList,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
-import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains';
+import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -65,12 +65,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { recordUseYourDomainButtonClick } from '../../../components/domains/register-domain-step/analytics';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Context } from '@automattic/calypso-router';
 import type { SiteDetails } from '@automattic/data-stores';
 
-import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
 const noop = () => {};
@@ -463,18 +461,11 @@ class DomainSearch extends Component< DomainSearchProps > {
 							designType={ this.props.designType }
 							setDesignType={ this.props.setDesignType }
 							fetchUsernameSuggestion={ this.props.fetchUsernameSuggestion }
-							render={ ( {
-								mainContent,
-								sideContent,
-							}: {
-								mainContent: React.ReactNode;
-								sideContent: React.ReactNode;
-							} ) => {
+							render={ ( { mainContent }: { mainContent: React.ReactNode } ) => {
 								return (
 									<div className="site-domains-add-page">
 										<div className="domains__step-content domains__step-content-domain-step">
 											{ mainContent }
-											{ sideContent }
 										</div>
 									</div>
 								);
@@ -495,19 +486,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 		);
 	}
 }
-
-const StyleWrappedDomainSearch = ( props: DomainSearchProps ) => {
-	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
-
-	return (
-		<>
-			<DomainSearch { ...props } />
-			{ ! shouldUseDomainSearchV2 && (
-				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--my-sites' ] } />
-			) }
-		</>
-	);
-};
 
 export default connect(
 	( state: IAppState ) => {
@@ -553,4 +531,4 @@ export default connect(
 		setDesignType,
 		fetchUsernameSuggestion,
 	}
-)( withCartKey( withShoppingCart( localize( StyleWrappedDomainSearch ) ) ) );
+)( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );
