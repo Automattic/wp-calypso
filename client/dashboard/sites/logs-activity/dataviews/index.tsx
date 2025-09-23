@@ -1,14 +1,22 @@
 import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-core';
 import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { DataViews, View, Field, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useEffect } from 'react';
 import { filtersSignature } from '../../logs/dataviews/filters';
+import { syncFiltersSearchParams } from '../../logs/dataviews/url-sync';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
-import { extractActivityLogTypeValues, sanitizeFilters, ALLOWED_FILTER_FIELDS } from './filters';
+import {
+	extractActivityLogTypeValues,
+	sanitizeFilters,
+	ALLOWED_FILTER_FIELDS,
+	getInitialFiltersFromSearch,
+	getInitialSearchTermFromSearch,
+} from './filters';
 import { useActivityView } from './views';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 
@@ -23,7 +31,12 @@ function SiteActivityLogsDataViews( {
 }: SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 } ) {
-	const [ view, setView ] = useActivityView();
+	const router = useRouter();
+	const locationSearch = router.state.location.search;
+	const [ view, setView ] = useActivityView( {
+		initialFilters: sanitizeFilters( getInitialFiltersFromSearch( locationSearch ) ),
+		initialSearch: getInitialSearchTermFromSearch( locationSearch ),
+	} );
 
 	// buildTimeRangeInSeconds applies the proper timezone offset and normalizes to full-day bounds.
 	const { startSec, endSec } = useMemo(
@@ -94,6 +107,7 @@ function SiteActivityLogsDataViews( {
 	const onChangeView = ( next: View ) => {
 		const nextFilters = sanitizeFilters( next.filters as Filter[] | undefined );
 		const nextSearch = next.search?.trim() ?? '';
+		const nextSearchValue = nextSearch.length > 0 ? nextSearch : undefined;
 
 		const currentPage = view.page ?? 1;
 		const requestedPage = next.page ?? currentPage;
@@ -108,10 +122,20 @@ function SiteActivityLogsDataViews( {
 
 		const datasetChanged = perPageChanged || sortChanged || filtersChanged || searchChanged;
 
+		const url = new URL( window.location.href );
+		syncFiltersSearchParams( url.searchParams, ALLOWED_FILTER_FIELDS, nextFilters );
+		if ( nextSearchValue ) {
+			url.searchParams.set( 'search', nextSearchValue );
+		} else {
+			url.searchParams.delete( 'search' );
+		}
+		window.history.replaceState( null, '', url.pathname + url.search );
+
 		setView( {
 			...next,
 			page: datasetChanged ? 1 : requestedPage,
 			filters: nextFilters,
+			search: nextSearchValue,
 		} );
 	};
 

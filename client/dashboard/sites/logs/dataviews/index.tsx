@@ -14,6 +14,7 @@ import { buildTimeRangeInSeconds } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
 import { getInitialFiltersFromSearch, getAllowedFields, filtersSignature } from './filters';
+import { syncFiltersSearchParams } from './url-sync';
 import { useView, toFilterParams } from './views';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -178,18 +179,7 @@ function SiteLogsDataViews( {
 
 		// Sync allowed filters to URL using sourceFilters
 		const url = new URL( window.location.href );
-		const isEmpty = ( value?: string[] ) => ! value || value.length === 0;
-		allowed.forEach( ( field ) => {
-			const value =
-				( sourceFilters.find( ( filter ) => filter.field === field )?.value as
-					| string[]
-					| undefined ) || [];
-			if ( isEmpty( value ) ) {
-				url.searchParams.delete( field );
-			} else {
-				url.searchParams.set( field, value.slice().sort().toString() );
-			}
-		} );
+		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
 		window.history.replaceState( null, '', url.pathname + url.search );
 
 		// Apply view with only allowed filters; reset page/cursors if dataset changed

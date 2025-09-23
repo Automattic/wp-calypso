@@ -1,4 +1,5 @@
 import { LogType } from '@automattic/api-core';
+import { decodeSearchParam } from './url-sync';
 import type { Filter } from '@wordpress/dataviews';
 
 export function filtersSignature(
@@ -41,15 +42,6 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 	const allowed = getAllowedFields( logType );
 	const params = new URLSearchParams( search );
 
-	const decode = ( value: string ): string => {
-		const withSpaces = value.replace( /\+/g, ' ' );
-		try {
-			return decodeURIComponent( withSpaces );
-		} catch {
-			return withSpaces;
-		}
-	};
-
 	const normalizeSeverity = ( values: string[] ): string[] =>
 		Array.from(
 			new Set(
@@ -67,7 +59,7 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 		}
 		let values = raw
 			.split( ',' )
-			.map( ( rawToken ) => decode( rawToken ).trim() )
+			.map( ( rawToken ) => decodeSearchParam( rawToken ).trim() )
 			.filter( Boolean );
 		if ( field === 'severity' ) {
 			values = normalizeSeverity( values );
