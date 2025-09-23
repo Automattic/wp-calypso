@@ -70,6 +70,10 @@ module.exports = {
 				],
 				paths: [
 					{
+						name: '@automattic/calypso-analytics',
+						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
+					{
 						name: '@automattic/components',
 						message:
 							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',

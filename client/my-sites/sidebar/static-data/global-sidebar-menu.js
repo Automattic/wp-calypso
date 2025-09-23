@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { category, Icon, brush, globe } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
@@ -59,6 +60,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			navigationLabel: translate( 'Themes' ),
 			type: 'menu-item',
 			url: '/themes',
+			forceExternalLink: isEnabled( 'themes/universal-header' ),
 		},
 		{
 			icon: <SidebarIconPlugins />,
