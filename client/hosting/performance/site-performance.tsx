@@ -311,7 +311,12 @@ const SitePerformanceContent = () => {
 				/>
 			</div>
 			{ isInitialLoading && isSitePublic ? (
-				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
+				<PerformanceReportLoading
+					isLoadingPages
+					isSavedReport={ false }
+					pageTitle=""
+					onRetestClick={ retestPage }
+				/>
 			) : (
 				<>
 					{ ! isSitePublic ? (
