@@ -14,7 +14,7 @@ export const updateAvailableField: Field< PluginListRow > = {
 	],
 	render: ( { item } ) => {
 		if ( item.areAutoUpdatesAllowed === 'none' ) {
-			return __( 'Auto-managed on this site' );
+			return __( 'Updates auto-managed' );
 		}
 
 		return [ 'some', 'all' ].includes( item.hasUpdate ) ? __( 'Yes' ) : __( 'No' );
