@@ -5,7 +5,13 @@ import type { Field } from '@wordpress/dataviews';
 export const updateAvailableField: Field< PluginListRow > = {
 	id: 'updateAvailable',
 	label: __( 'Update Available' ),
-	getValue: ( { item } ) => ( [ 'some', 'all' ].includes( item.hasUpdate ) ? 1 : 0 ),
+	getValue: ( { item } ) => {
+		if ( item.areAutoUpdatesAllowed === 'none' ) {
+			return 0;
+		}
+
+		return [ 'some', 'all' ].includes( item.hasUpdate ) ? 2 : 1;
+	},
 	enableHiding: false,
 	enableSorting: true,
 	elements: [
