@@ -58,7 +58,11 @@ const SiteDomainDataViews = ( {
 		[ initialView, type ]
 	);
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+		domains,
+		view as View,
+		fields
+	);
 
 	return (
 		<Card>
@@ -100,7 +104,7 @@ const SiteDomainDataViews = ( {
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ handleChangeView }
-					view={ view }
+					view={ view as View }
 					actions={ actions }
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
