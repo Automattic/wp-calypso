@@ -412,7 +412,7 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/reader/feeds/lookup/.*' ],
-		module: 'calypso/reader/full-post',
+		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
