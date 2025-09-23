@@ -62,7 +62,7 @@ const DomainSearchWithCart = ( {
 				props.events?.onContinue?.( items );
 			},
 			onAddDomainToCart: ( domainName: string ) => {
-				recordTracksEvent( 'domain_added_to_cart', { domain: domainName } );
+				recordTracksEvent( 'calypso_domain_search_add_button_click', { domain: domainName } );
 			},
 			onQueryAvailabilityCheck: ( status: string, domainName: string ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
