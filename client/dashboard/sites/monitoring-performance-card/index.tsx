@@ -79,9 +79,12 @@ export default function MonitoringPerformanceCard( {
 	const { requestsData, responseTimeData, isLoading } = useSiteMetricsData( site.ID, timeRange );
 	const locale = useLocale();
 
+	const requestsPerMinuteLabel = __( 'Requests per minute' );
+	const averageResponseTimeLabel = __( 'Average response time (ms)' );
+
 	const data: SeriesData[] = [
 		{
-			label: __( 'Requests per minute' ),
+			label: requestsPerMinuteLabel,
 			data: requestsData || [],
 			options: {
 				gradient: {
@@ -97,7 +100,7 @@ export default function MonitoringPerformanceCard( {
 			},
 		},
 		{
-			label: __( 'Average response time (ms)' ),
+			label: averageResponseTimeLabel,
 			data: responseTimeData || [],
 			options: {
 				gradient: {
@@ -157,7 +160,7 @@ export default function MonitoringPerformanceCard( {
 		}
 
 		switch ( key ) {
-			case 'Requests per minute':
+			case requestsPerMinuteLabel:
 				return (
 					<rect
 						width="6"
@@ -166,7 +169,7 @@ export default function MonitoringPerformanceCard( {
 						fill="#3858E9"
 					/>
 				);
-			case 'Average response time (ms)':
+			case averageResponseTimeLabel:
 				return (
 					<circle
 						cx={ isLegendGlyph || isTooltip ? 4 : 0 }
