@@ -86,7 +86,7 @@ The fifth era of data management in Calypso is the introduction of [TanStack Que
 
 - use TanStack Query for data fetching and manipulation when possible.
 
-- For the new hosting dashboard, use TanStack Query exclusively, and if your data is mandatory for the route to render, preload it as part of the route loader. If your data is optional, use TanStack Query to fetch it in the component.
+- For the new Hosting Dashboard, use TanStack Query exclusively, and if your data is mandatory for the route to render, preload it as part of the route loader. If your data is optional, use TanStack Query to fetch it in the component.
 
 - For all the other parts of Calypso, you can continue using the `client/state` selectors.
 

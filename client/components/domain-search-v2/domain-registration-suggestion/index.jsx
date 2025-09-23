@@ -310,19 +310,31 @@ class DomainRegistrationSuggestion extends Component {
 		} = this.props;
 		const badges = [];
 
-		if ( isFeatured && this.isExactMatch() ) {
+		if (
+			isFeatured &&
+			this.isExactMatch() &&
+			this.getPriceRule() !== DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE
+		) {
 			badges.push(
 				<DomainSuggestionBadge variation="success">
 					{ translate( "It's available!" ) }
 				</DomainSuggestionBadge>
 			);
-		} else if ( isRecommended && isFeatured ) {
+		} else if (
+			isRecommended &&
+			isFeatured &&
+			this.getPriceRule() !== DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE
+		) {
 			badges.push(
 				<DomainSuggestionBadge key="recommended">
 					{ translate( 'Recommended' ) }
 				</DomainSuggestionBadge>
 			);
-		} else if ( isBestAlternative && isFeatured ) {
+		} else if (
+			isBestAlternative &&
+			isFeatured &&
+			this.getPriceRule() !== DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE
+		) {
 			badges.push(
 				<DomainSuggestionBadge key="best-alternative">
 					{ translate( 'Best alternative' ) }
