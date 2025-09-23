@@ -62,7 +62,12 @@ export default async function (): Promise< void > {
 
 		// Feed stream
 		page(
-			'/reader/feeds/:feed_id',
+			'/reader/feeds/*',
+			( context, next ) => {
+				// Map wildcard to feed_id parameter to maintain compatibility
+				context.params.feed_id = context.params[ 0 ];
+				next();
+			},
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
