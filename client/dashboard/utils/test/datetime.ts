@@ -69,5 +69,19 @@ describe( 'datetime utils (site-time)', () => {
 		it( 'formatSiteYmd returns the calendar day as-is (no tz math)', () => {
 			expect( formatSiteYmd( new Date( 2025, 8, 22 ) ) ).toBe( '2025-09-22' );
 		} );
+		it( 'preserves the calendar day regardless of time of day', () => {
+			expect( formatSiteYmd( new Date( 2025, 8, 22, 0, 0 ) ) ).toBe( '2025-09-22' );
+			expect( formatSiteYmd( new Date( 2025, 8, 22, 23, 59 ) ) ).toBe( '2025-09-22' );
+		} );
+
+		it( 'is idempotent with parseYmdLocal', () => {
+			const d = new Date( 2025, 8, 22 );
+			const ymd = formatSiteYmd( d );
+			expect( formatSiteYmd( parseYmdLocal( ymd )! ) ).toBe( ymd );
+		} );
+		it( 'handles month/year boundaries correctly', () => {
+			expect( formatSiteYmd( new Date( 2025, 11, 31 ) ) ).toBe( '2025-12-31' ); // Dec 31
+			expect( formatSiteYmd( new Date( 2026, 0, 1 ) ) ).toBe( '2026-01-01' ); // Jan 1
+		} );
 	} );
 } );
