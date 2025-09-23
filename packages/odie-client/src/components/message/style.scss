@@ -279,7 +279,6 @@ $blueberry-color: #3858e9;
 			text-align: start;
 			margin-top: 8px;
 
-			.odie-button-link,
 			.components-external-link {
 				color: var( --studio-gray-20 );
 			}
@@ -395,27 +394,6 @@ $blueberry-color: #3858e9;
 		text-align: center;
 		margin: 12px;
 	}
-}
-
-.odie-button-link {
-	background: none;
-	border: none;
-	color: var( --color-link );
-	text-decoration: underline;
-	cursor: pointer;
-	padding: 0;
-	font-family: inherit;
-	font-size: inherit;
-}
-
-.odie-button-link:hover,
-.odie-button-link:disabled {
-	text-decoration: none;
-	color: var( --color-link-dark );
-}
-
-.odie-button-link:disabled {
-	cursor: not-allowed;
 }
 
 .odie-chatbox-message p:first-of-type {
