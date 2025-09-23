@@ -17,6 +17,7 @@ import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -81,6 +82,11 @@ const DomainSearchStep: StepType< {
 
 	const events = useMemo( () => {
 		return {
+			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				window.location.assign(
+					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
+				);
+			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				submit( {
 					navigateToUseMyDomain: true,

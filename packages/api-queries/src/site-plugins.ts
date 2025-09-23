@@ -9,6 +9,7 @@ import {
 	installSitePlugin,
 	removeSitePlugin,
 	fetchSiteCorePlugins,
+	fetchSitePlugin,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -17,6 +18,12 @@ export const pluginsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'sites-plugins' ],
 		queryFn: () => fetchUserSitesPlugins(),
+	} );
+
+export const sitePluginQuery = ( siteId: number, pluginSlug: string ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'plugins', pluginSlug ],
+		queryFn: () => fetchSitePlugin( siteId, pluginSlug ),
 	} );
 
 export const sitePluginsQuery = ( siteId: number ) =>

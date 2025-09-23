@@ -578,7 +578,7 @@ class ThemeShowcase extends Component {
 	};
 
 	onShouldThemeControlsStickyChange = ( inView ) => {
-		this.setState( { shouldThemeControlsSticky: this.props.isLoggedIn && ! inView } );
+		this.setState( { shouldThemeControlsSticky: this.props.siteId && ! inView } );
 	};
 
 	render() {

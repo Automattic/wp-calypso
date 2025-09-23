@@ -66,6 +66,12 @@ function Site() {
 								</MenuGroup>
 							) }
 						</Switcher>
+						{ canSwitchEnvironment( site ) && (
+							<>
+								<MenuDivider />
+								<EnvironmentSwitcher site={ site } />
+							</>
+						) }
 					</HeaderBar.Title>
 					{ isAddSiteModalOpen && (
 						<Modal
@@ -74,12 +80,6 @@ function Site() {
 						>
 							<AddNewSite context="sites-dashboard" />
 						</Modal>
-					) }
-					{ canSwitchEnvironment( site ) && (
-						<>
-							<MenuDivider />
-							<EnvironmentSwitcher site={ site } />
-						</>
 					) }
 					{ ! isSiteMigrationInProgress( site ) && (
 						<>
