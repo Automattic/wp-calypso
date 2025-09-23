@@ -15,6 +15,7 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -43,6 +44,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
@@ -116,8 +118,9 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 					type: 'row' as const,
 					alignment: 'start' as const,
 				},
-				children: [ 'city', 'state', 'postalCode' ],
+				children: isMobileViewport ? [ 'city', 'state' ] : [ 'city', 'state', 'postalCode' ],
 			} as FormField,
+			...( isMobileViewport ? [ 'postalCode' ] : [] ),
 			'optOutTransferLock',
 		],
 	};
