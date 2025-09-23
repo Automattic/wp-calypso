@@ -368,7 +368,7 @@ function StagingSiteSyncModalInner( {
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
 		( browserCheckList.totalItems === 0 &&
 			browserCheckList.includeList.length === 0 &&
-			lastKnownBackupAttempt ) ||
+			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
 
