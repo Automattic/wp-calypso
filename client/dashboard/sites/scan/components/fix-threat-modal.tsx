@@ -25,11 +25,16 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 		fixThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
-				createSuccessNotice( __( 'Threat fixed.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					__(
+						'We’re hard at work fixing this threat in the background. Please check back shortly.'
+					),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
 				closeModal?.();
-				createErrorNotice( __( 'Failed to fix threat. Please try again.' ), {
+				createErrorNotice( __( 'Error fixing threat. Please contact support.' ), {
 					type: 'snackbar',
 				} );
 			},
