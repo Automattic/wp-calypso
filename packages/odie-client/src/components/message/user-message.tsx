@@ -95,11 +95,15 @@ export const UserMessage = ( {
 						! interactionHasZendeskEvent( currentSupportInteraction ) && (
 							<BotMessageActions message={ message } />
 						) }
-					<div className="chat-feedback-wrapper">
-						<Sources
-							message={ message }
-							isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
-						/>
+					{ ! isRequestingHumanSupport && (
+						<div className="chat-feedback-wrapper">
+							<Sources
+								message={ message }
+								isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+							/>
+						</div>
+					) }
+					<div>
 						{ isRequestingHumanSupport && (
 							<GetSupport
 								onClickAdditionalEvent={ ( destination ) => {
