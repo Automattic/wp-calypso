@@ -26,7 +26,7 @@ export default function NotificationsExtras() {
 		meta: {
 			snackbar: {
 				success: __( 'Subscription settings saved.' ),
-				error: __( 'Failed to save subsription settings.' ),
+				error: __( 'Failed to save subscription settings.' ),
 			},
 		},
 	} );
