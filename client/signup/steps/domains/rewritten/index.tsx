@@ -10,10 +10,11 @@ import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-searc
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getStepUrl } from '../../utils';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
 
@@ -29,6 +30,9 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 
 	const events = useMemo( () => {
 		return {
+			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
+			},
 			onExternalDomainClick( initialQuery?: string ) {
 				if ( isDomainOnlyFlow ) {
 					return page(
@@ -99,6 +103,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 			allowedTlds,
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
+			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain:
 				! isDomainForGravatarFlow( flowName ) &&
 				! isOnboardingWithEmailFlow &&

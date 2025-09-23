@@ -27,8 +27,6 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
-	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
-	buildType(e2ePreReleaseBuildType("mobile", "2d7f6910-92cf-44b4-a719-e4b2029ea36c"))
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
 })
@@ -1036,15 +1034,48 @@ object PreReleaseE2ETests : BuildType({
 		root(Settings.WpCalypso)
 		cleanCheckout = true
 	}
-
+	
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
-		param("env.VIEWPORT_NAME", "desktop")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 		param("env.ALLURE_RESULTS_PATH", "allure-results")
+	}
+
+	features {
+		matrix {
+			param("env.VIEWPORT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile")
+			))
+		}
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
 	}
 
 	steps {
@@ -1090,7 +1121,6 @@ object PreReleaseE2ETests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 
-
 		bashNodeScript {
 			name = "Collect results"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
@@ -1110,69 +1140,6 @@ object PreReleaseE2ETests : BuildType({
 				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Upload Allure results to S3"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
-
-				# Need to use -C to avoid creation of an unnecessary top level directory.
-				tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
-
-				aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
-			""".trimIndent()
-			conditions {
-				exists("env.ALLURE_RESULTS_PATH")
-				equals("teamcity.build.branch", "trunk")
-			}
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Send webhook to GitHub Actions"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				# Issue call as matticbot.
-				# The GitHub Action workflow expects the filename of the most recent Allure report
-				# as param.
-				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/generate-report.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
-			""".trimIndent()
-			conditions {
-				exists("env.ALLURE_RESULTS_PATH")
-				equals("teamcity.build.branch", "trunk")
-			}
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	features {
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
 		}
 	}
 
@@ -1196,86 +1163,6 @@ object PreReleaseE2ETests : BuildType({
 		}
 	}
 })
-
-fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
-	return E2EBuildType(
-		buildId = "calypso_WebApp_Calypso_E2E_Pre_Release_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "Pre-Release E2E Tests ($targetDevice)",
-		buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production. Will run on $targetDevice size.",
-		testGroup = "calypso-release",
-		buildParams = {
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-			param("env.ALLURE_RESULTS_PATH", "allure-results")
-		},
-		buildSteps = {
-			bashNodeScript {
-				name = "Collect Allure results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p allure-results
-					find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
-
-			bashNodeScript {
-				name = "Upload Allure results to S3"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-					aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
-
-					# Need to use -C to avoid creation of an unnecessary top level directory.
-					tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
-
-					aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
-				""".trimIndent()
-				conditions {
-					exists("env.ALLURE_RESULTS_PATH")
-					equals("teamcity.build.branch", "trunk")
-				}
-				dockerImage = "%docker_image_e2e%"
-			}
-
-			bashNodeScript {
-				name = "Send webhook to GitHub Actions"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					# Issue call as matticbot.
-					# The GitHub Action workflow expects the filename of the most recent Allure report
-					# as param.
-					curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/generate-report.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
-				""".trimIndent()
-				conditions {
-					exists("env.ALLURE_RESULTS_PATH")
-					equals("teamcity.build.branch", "trunk")
-				}
-				dockerImage = "%docker_image_e2e%"
-			}
-		},
-		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#e2eflowtesting-notif"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		},
-		enableCommitStatusPublisher = true,
-	)
-}
 
 object AuthenticationE2ETests : E2EBuildType(
 	buildId = "calypso_WebApp_Calypso_E2E_Authentication",

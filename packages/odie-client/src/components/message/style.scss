@@ -205,7 +205,13 @@ $blueberry-color: #3858e9;
 		flex-direction: column;
 	}
 
+	.MessageActions-module_container {
+		width: 30%;
+		z-index: 1;
+	}
+
 	.chat-feedback-wrapper {
+		margin-top: -24px;
 		width: 100%;
 
 		.odie-sources-foldable-card {
@@ -216,16 +222,20 @@ $blueberry-color: #3858e9;
 			&:not( .is-expanded ) {
 				.foldable-card__content {
 					border: none;
+					margin-top: 0;
 				}
 			}
 
 			.foldable-card__header {
+				margin-left: auto;
+				width: 70%;
 				min-height: 24px;
 				padding: 0;
 			}
 
 			.foldable-card__summary,
 			.foldable-card__summary-expanded {
+				color: var(--studio-gray-80);
 				margin-right: 24px;
 			}
 
@@ -264,10 +274,10 @@ $blueberry-color: #3858e9;
 		}
 
 		.disclaimer {
-			color: var( --studio-gray-20 );
+			color: var( --studio-gray-60 );
 			font-size: $font-body-extra-small;
 			text-align: start;
-			margin: 8px 0;
+			margin-top: 8px;
 
 			.odie-button-link,
 			.components-external-link {
