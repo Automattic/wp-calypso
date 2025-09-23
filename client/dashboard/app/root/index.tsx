@@ -28,7 +28,7 @@ function Root() {
 	const router = useRouter();
 	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
 		select: ( state ) => ( {
-			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
+			routeMeta: state.matches.map( ( match ) => match.meta ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
 
 			// A little trick after investigation router state: it will initially be
@@ -74,7 +74,7 @@ function Root() {
 
 	const title = useMemo( () => {
 		return routeMeta
-			.map( ( metas ) => metas.find( ( meta ) => meta?.title )?.title )
+			.map( ( metas ) => metas?.find( ( meta ) => meta?.title )?.title )
 			.filter( Boolean )
 			.reverse()
 			.join( ' ‹ ' );
