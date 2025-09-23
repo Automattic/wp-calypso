@@ -248,6 +248,7 @@ export default function NewsletterImporter( {
 					) }
 					{ step === 'summary' && (
 						<Summary
+							onImportExpired={ () => page.redirect( `/import/${ selectedSite.slug }` ) }
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
 							onResetImporter={ () => {

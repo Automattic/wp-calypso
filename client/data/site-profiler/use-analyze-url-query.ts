@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import type { UrlData } from 'calypso/blocks/import/types';
 
-export const useAnalyzeUrlQuery = ( domain: string, isValid?: boolean ) => {
+export const useAnalyzeUrlQuery = ( domain: string | undefined, isValid?: boolean ) => {
 	return useQuery( {
 		queryKey: [ 'analyze-url-', domain ],
 		queryFn: (): Promise< UrlData > =>

@@ -1,3 +1,4 @@
+import { ProgressBar } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,6 +11,7 @@ import {
 	usePaidNewsletterQuery,
 } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
+import { useSetOriginSiteMutation } from 'calypso/data/paid-newsletter/use-set-origin-site-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -53,26 +55,16 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 
 	const [ step, setStep ] = useState< StepId >( 'content' );
 
-	const { siteSlug, site, fromSite: fromSiteProp } = props;
+	const { siteSlug, site } = props;
 	const selectedSite = site;
-
-	const [ fromSite, setFromSite ] = useState( fromSiteProp );
 
 	const importerStep = useQuery().get( 'importerStep' );
 
-	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
-	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
-	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
-	const previousFromSite = useRef( fromSite );
 
-	// Reset validFromSite when fromSite changes or is removed
-	useEffect( () => {
-		if ( fromSite !== previousFromSite.current ) {
-			setValidFromSite( false );
-			previousFromSite.current = fromSite;
-		}
-	}, [ fromSite ] );
+	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
+
+	const { setOriginSite, isPending: isSetOriginSitePending } = useSetOriginSiteMutation();
 
 	useEffect( () => {
 		if ( importerStep && stepSlugs.includes( importerStep as StepId ) ) {
@@ -80,13 +72,15 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		}
 	}, [] );
 
-	const { data: paidNewsletterData } = usePaidNewsletterQuery(
+	const { data: paidNewsletterData, isLoading: isPaidNewsletterLoading } = usePaidNewsletterQuery(
 		importer,
 		step,
 		selectedSite?.ID,
 		autoFetchData,
 		'import-paid-subscribers-stepper'
 	);
+
+	const fromSite = paidNewsletterData?.import_url;
 
 	useEffect( () => {
 		if (
@@ -139,26 +133,6 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		isError: isUrlError,
 	} = useAnalyzeUrlQuery( fromSite );
 
-	useEffect( () => {
-		if ( urlData?.platform === importer ) {
-			if ( selectedSite && shouldResetImport && validFromSite === false ) {
-				resetPaidNewsletter( selectedSite.ID, importer, stepSlugs[ 0 ], fromSite );
-				setShouldResetImport( false );
-			}
-
-			setValidFromSite( true );
-		}
-	}, [
-		urlData,
-		fromSite,
-		engine,
-		selectedSite,
-		resetPaidNewsletter,
-		step,
-		validFromSite,
-		shouldResetImport,
-	] );
-
 	const stepsProgress = getStepsProgress( setStep, paidNewsletterData );
 
 	// Helps only show the confetti once even if you navigate between the different steps.
@@ -173,28 +147,44 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		}
 	}, [ importerStatus, showConfetti ] );
 
+	const isLoading =
+		isUrlFetching ||
+		isResetPaidNewsletterPending ||
+		isSetOriginSitePending ||
+		isPaidNewsletterLoading;
+
+	if ( isLoading ) {
+		return (
+			<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
+				<div className="step-container-v2--loading import-layout__center">
+					<ProgressBar className="step-container-v2--loading__progress-bar" />
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
 			<FormattedHeader headerText={ getTitle( engine, urlData ) } />
 
-			{ validFromSite && ! isResetPaidNewsletterPending && (
+			{ !! fromSite && ! isLoading && (
 				<StepProgress steps={ stepsProgress } currentStep={ currentStepNumber } />
 			) }
 
-			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
+			{ ( ! fromSite || isResetPaidNewsletterPending ) && ! isLoading && (
 				<SelectNewsletterForm
 					onContinue={ ( fromSiteOnContinue ) => {
-						setStep( 'content' );
-						setFromSite( fromSiteOnContinue );
+						setStep( nextStepSlug );
+						setOriginSite( selectedSite?.ID ?? 0, engine, nextStepSlug, fromSiteOnContinue );
 					} }
-					value={ fromSite }
+					value={ fromSite ?? '' }
 					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
 					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }
 
-			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
+			{ selectedSite && fromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
 				<>
 					{ step === 'content' && (
 						<Content
@@ -202,9 +192,9 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 							selectedSite={ selectedSite }
 							fromSite={ fromSite }
 							siteSlug={ siteSlug }
-							onContinue={ () => setStep( 'subscribers' ) }
+							onContinue={ () => setStep( nextStepSlug ) }
 							skipNextStep={ () => {
-								setStep( 'subscribers' );
+								setStep( nextStepSlug );
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
 							} }
 						/>
@@ -214,9 +204,9 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 							siteSlug={ siteSlug }
 							selectedSite={ selectedSite }
 							fromSite={ fromSite }
-							onViewSummaryClick={ () => setStep( 'summary' ) }
+							onViewSummaryClick={ () => setStep( nextStepSlug ) }
 							skipNextStep={ () => {
-								setStep( 'summary' );
+								setStep( nextStepSlug );
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
 							} }
 							cardData={ paidNewsletterData.steps[ step ]?.content }
@@ -228,7 +218,13 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 					{ step === 'summary' && (
 						<Summary
 							selectedSite={ selectedSite }
-							onResetImporter={ () => setStep( 'content' ) }
+							onImportExpired={ () => {
+								setStep( stepSlugs[ 0 ] );
+							} }
+							onResetImporter={ () => {
+								setStep( stepSlugs[ 0 ] );
+								resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+							} }
 							steps={ paidNewsletterData.steps }
 							engine={ engine }
 							fromSite={ fromSite }

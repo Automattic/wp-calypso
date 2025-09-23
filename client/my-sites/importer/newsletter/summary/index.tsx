@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
@@ -25,6 +24,7 @@ interface SummaryProps {
 	engine: EngineTypes;
 	fromSite: string;
 	onResetImporter?: () => void;
+	onImportExpired: () => void;
 	showConfetti: boolean;
 	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
 }
@@ -56,6 +56,7 @@ export default function Summary( {
 	showConfetti,
 	onResetImporter = () => {},
 	shouldShownConfetti,
+	onImportExpired,
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const { resetPaidNewsletter } = useResetMutation();
@@ -97,7 +98,7 @@ export default function Summary( {
 
 	useEffect( () => {
 		if ( importerStatus === 'expired' && ! isImportCompleted ) {
-			page.redirect( `/import/${ selectedSite.slug }` );
+			onImportExpired();
 		}
 	}, [] );
 
