@@ -12,6 +12,11 @@ export const updateAvailableField: Field< PluginListRow > = {
 		{ value: 1, label: __( 'Yes' ) },
 		{ value: 0, label: __( 'No' ) },
 	],
-	render: ( { item } ) =>
-		[ 'some', 'all' ].includes( item.hasUpdate ) ? __( 'Yes' ) : __( 'No' ),
+	render: ( { item } ) => {
+		if ( item.areAutoUpdatesAllowed === 'none' ) {
+			return __( 'Auto-managed on this site' );
+		}
+
+		return [ 'some', 'all' ].includes( item.hasUpdate ) ? __( 'Yes' ) : __( 'No' );
+	},
 };
