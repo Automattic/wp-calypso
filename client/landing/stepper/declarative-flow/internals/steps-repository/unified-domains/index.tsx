@@ -4,11 +4,11 @@ import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains';
+import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
