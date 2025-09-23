@@ -19,8 +19,10 @@ export function ActivityEvent( { summary, content, gridicon }: ActivityEventProp
 					size={ 24 }
 				/>
 			) }
-			<strong>{ summary }</strong>
-			{ content?.text && <span>{ content.text }</span> }
+			<div className="site-activity-logs__event-content">
+				<strong>{ summary }</strong>
+				{ content?.text && <span>{ content.text }</span> }
+			</div>
 		</HStack>
 	);
 }
