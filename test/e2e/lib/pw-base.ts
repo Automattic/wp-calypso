@@ -34,7 +34,9 @@ import {
 	getTestAccountByFeature,
 	IncognitoPage,
 	LoginPage,
+	MarketingPage,
 	NewSiteResponse,
+	NoticeComponent,
 	PreviewComponent,
 	RestAPIClient,
 	Secrets,
@@ -51,6 +53,10 @@ import { apiCloseAccount } from '../specs/shared';
 import { getAccount } from './get-account';
 
 export const test = base.extend< {
+	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountAtomic: TestAccount;
 	/**
 	 * Test account selected based on the current environment variables.
 	 */
@@ -75,6 +81,10 @@ export const test = base.extend< {
 	 * Component for interacting with the block widget editor.
 	 */
 	componentBlockWidgetEditor: BlockWidgetEditorComponent;
+	/**
+	 * Component for showing notices (e.g. "Settings saved successfully!")
+	 */
+	componentNotice: NoticeComponent;
 	/**
 	 * Component for interacting with the preview functionality.
 	 */
@@ -120,6 +130,10 @@ export const test = base.extend< {
 	 */
 	pageLogin: LoginPage;
 	/**
+	 * Page object representing the WordPress.com marketing page.
+	 */
+	pageMarketing: MarketingPage;
+	/**
 	 * Page object representing the WordPress.com themes detail page.
 	 */
 	pageThemeDetails: ThemesDetailPage;
@@ -136,6 +150,10 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	accountAtomic: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'atomicUser' );
+		await use( testAccount );
+	},
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
@@ -160,6 +178,10 @@ export const test = base.extend< {
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
+	},
+	componentNotice: async ( { page }, use ) => {
+		const noticeComponent = new NoticeComponent( page );
+		await use( noticeComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
@@ -204,6 +226,10 @@ export const test = base.extend< {
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );
 		await use( loginPage );
+	},
+	pageMarketing: async ( { page }, use ) => {
+		const marketingPage = new MarketingPage( page );
+		await use( marketingPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
