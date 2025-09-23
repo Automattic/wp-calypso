@@ -1,13 +1,18 @@
 import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-core';
-import { siteActivityLogQuery } from '@automattic/api-queries';
+import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { DataViews, View, Field } from '@wordpress/dataviews';
+import { DataViews, View, Field, Filter } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useEffect } from 'react';
+import { filtersSignature } from '../../logs/dataviews/filters';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
+import { extractActivityLogTypeValues, sanitizeFilters, ALLOWED_FILTER_FIELDS } from './filters';
 import { useActivityView } from './views';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
+
+import './style.scss';
 
 function SiteActivityLogsDataViews( {
 	gmtOffset,
@@ -26,6 +31,13 @@ function SiteActivityLogsDataViews( {
 		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
 	);
 
+	const activityLogTypeValues = useMemo( () => {
+		const filters = ( view.filters as Filter[] | undefined ) ?? [];
+		return extractActivityLogTypeValues( filters );
+	}, [ view.filters ] );
+
+	const searchTerm = view.search?.trim() ?? '';
+
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
 		number: view.perPage || 20,
@@ -34,19 +46,32 @@ function SiteActivityLogsDataViews( {
 		before: new Date( endSec * 1000 ).toISOString(),
 	};
 
-	const { data: activityLogData, isFetching } = useQuery(
+	if ( searchTerm ) {
+		activityLogQueryParams.text_search = searchTerm;
+	}
+	if ( activityLogTypeValues.length ) {
+		activityLogQueryParams.group = activityLogTypeValues;
+	}
+
+	const { data: activityLogData, isFetching: isFetchingData } = useQuery(
 		siteActivityLogQuery( site.ID, activityLogQueryParams )
 	);
 
-	// Reset pagination when the date range changes
-	useEffect( () => {
-		setView( ( next ) => ( { ...next, page: 1 } ) );
-	}, [ dateRangeVersion, setView ] );
+	/**
+	 * We're not passing the extra params, like text_search, to the query because that would make the group changes and
+	 * we would lose the selected filters descriptions in the UI.
+	 * The downside of this is that the counts might not be 100% accurate when a search term is applied.
+	 */
+	const { data: groupCountsData, isFetching: isFetchingFilters } = useQuery(
+		siteActivityLogGroupCountsQuery( site.ID )
+	);
+	const isFetching = isFetchingData || isFetchingFilters;
 
 	const logs = useMemo( () => {
-		const suffix = `p${ view.page }`;
-
+		const currentPage = view.page ?? 1;
+		const suffix = `p${ currentPage }`;
 		const items = activityLogData?.activityLogs ?? [];
+
 		return items.map( ( activity: SiteActivityLog, index: number ) => ( {
 			...activity,
 			id: `${ activity.activity_id }|${ suffix }|${ String( index ) }`,
@@ -59,17 +84,41 @@ function SiteActivityLogsDataViews( {
 	};
 
 	const fields = useActivityFields(
-		timezoneString ? { gmtOffset, timezoneString } : { gmtOffset }
+		timezoneString
+			? { gmtOffset, timezoneString, activityLogTypes: groupCountsData?.groups }
+			: { gmtOffset, activityLogTypes: groupCountsData?.groups }
 	);
 
 	const actions = useActivityActions( { isLoading: isFetching } );
 
 	const onChangeView = ( next: View ) => {
+		const nextFilters = sanitizeFilters( next.filters as Filter[] | undefined );
+		const nextSearch = next.search?.trim() ?? '';
+
+		const currentPage = view.page ?? 1;
+		const requestedPage = next.page ?? currentPage;
+
+		const perPageChanged = next.perPage !== view.perPage;
+		const sortChanged = next.sort?.direction !== view.sort?.direction;
+		const filtersChanged =
+			filtersSignature( nextFilters, ALLOWED_FILTER_FIELDS ) !==
+			filtersSignature( view.filters, ALLOWED_FILTER_FIELDS );
+
+		const searchChanged = nextSearch !== searchTerm;
+
+		const datasetChanged = perPageChanged || sortChanged || filtersChanged || searchChanged;
+
 		setView( {
 			...next,
-			filters: [],
+			page: datasetChanged ? 1 : requestedPage,
+			filters: nextFilters,
 		} );
 	};
+
+	// Reset pagination when the date range changes
+	useEffect( () => {
+		setView( ( next ) => ( { ...next, page: 1 } ) );
+	}, [ dateRangeVersion, setView ] );
 
 	return (
 		<DataViews< SiteActivityLog >
@@ -79,7 +128,8 @@ function SiteActivityLogsDataViews( {
 			fields={ fields as Field< SiteActivityLog >[] }
 			view={ view }
 			actions={ actions }
-			search={ false }
+			search
+			searchLabel={ __( 'Search posts by ID, title or author' ) }
 			defaultLayouts={ { table: {} } }
 			onChangeView={ onChangeView }
 		/>
