@@ -47,7 +47,7 @@ interface Props {
 	referralBlogId?: number;
 }
 
-function JetpackStartCheckout( { isClient, referralBlogId }: Props ) {
+function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -319,4 +319,4 @@ function JetpackStartCheckout( { isClient, referralBlogId }: Props ) {
 	);
 }
 
-export default withMarketplaceType( JetpackStartCheckout );
+export default withMarketplaceType( CheckoutV1 );
