@@ -8,6 +8,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ComboboxControl,
+	RadioControl,
 	ToggleControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -334,17 +335,6 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: AutomatedToggle,
 			},
-			{
-				id: 'deploymentMode',
-				label: __( 'Deployment Mode' ),
-				type: 'text' as const,
-				Edit: 'radio',
-				elements: [
-					{ label: __( 'Simple' ), value: 'simple' },
-					{ label: __( 'Advanced' ), value: 'advanced' },
-				],
-				disabled: () => ! selectedRepository,
-			},
 		];
 	}, [
 		installationOptions,
@@ -387,7 +377,6 @@ export const ConnectRepositoryForm = ( {
 						'branch',
 						'targetDir',
 						'isAutomated',
-						'deploymentMode',
 					],
 				} }
 				onChange={ ( edits: Partial< FormData > ) => {
@@ -435,6 +424,25 @@ export const ConnectRepositoryForm = ( {
 
 					setFormData( newFormData );
 				} }
+			/>
+
+			<SectionHeader
+				title={ __( 'Pick your deployment mode' ) }
+				description={ __(
+					'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+				) }
+			/>
+
+			<RadioControl
+				selected={ formData.deploymentMode }
+				onChange={ ( value ) =>
+					setFormData( ( prev ) => ( { ...prev, deploymentMode: value as 'simple' | 'advanced' } ) )
+				}
+				options={ [
+					{ label: __( 'Simple' ), value: 'simple' },
+					{ label: __( 'Advanced' ), value: 'advanced' },
+				] }
+				disabled={ ! selectedRepository }
 			/>
 
 			{ isAdvancedSelected && (
