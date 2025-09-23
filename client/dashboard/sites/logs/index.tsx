@@ -107,47 +107,45 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						</TabPanel>
 					</CardHeader>
 					<CardBody>
-						<div className={ `site-logs__${ logType }` }>
-							{ logType === LogType.PHP || logType === LogType.SERVER ? (
-								<HostingFeatureGatedWithCallout
+						{ logType === LogType.PHP || logType === LogType.SERVER ? (
+							<HostingFeatureGatedWithCallout
+								site={ site }
+								feature={ HostingFeatures.LOGS }
+								{ ...getLogsCalloutProps() }
+							>
+								<SiteLogsDataViews
+									logType={ logType }
+									dateRange={ dateRange }
+									dateRangeVersion={ dateRangeVersion }
+									autoRefresh={ autoRefresh }
+									setAutoRefresh={ setAutoRefresh }
+									gmtOffset={ gmtOffset }
+									timezoneString={ timezoneString }
 									site={ site }
-									feature={ HostingFeatures.LOGS }
-									{ ...getLogsCalloutProps() }
-								>
-									<SiteLogsDataViews
-										logType={ logType }
-										dateRange={ dateRange }
-										dateRangeVersion={ dateRangeVersion }
-										autoRefresh={ autoRefresh }
-										setAutoRefresh={ setAutoRefresh }
-										gmtOffset={ gmtOffset }
-										timezoneString={ timezoneString }
-										site={ site }
-									/>
-								</HostingFeatureGatedWithCallout>
-							) : (
-								<>
-									<SiteActivityLogsDataViews
-										logType={ logType }
-										dateRange={ dateRange }
-										dateRangeVersion={ dateRangeVersion }
-										autoRefresh={ autoRefresh }
-										setAutoRefresh={ setAutoRefresh }
-										gmtOffset={ gmtOffset }
-										timezoneString={ timezoneString }
-										site={ site }
-										hasActivityLogsAccess={ hasActivityLogAccess }
-									/>
-									{ ! hasActivityLogAccess && (
-										<HStack alignment="center" expanded className="site-logs__activity-callout">
-											<div className="site-logs__activity-callout-content">
-												<ActivityLogsCallout siteSlug={ site.slug } />
-											</div>
-										</HStack>
-									) }
-								</>
-							) }
-						</div>
+								/>
+							</HostingFeatureGatedWithCallout>
+						) : (
+							<>
+								<SiteActivityLogsDataViews
+									logType={ logType }
+									dateRange={ dateRange }
+									dateRangeVersion={ dateRangeVersion }
+									autoRefresh={ autoRefresh }
+									setAutoRefresh={ setAutoRefresh }
+									gmtOffset={ gmtOffset }
+									timezoneString={ timezoneString }
+									site={ site }
+									hasActivityLogsAccess={ hasActivityLogAccess }
+								/>
+								{ ! hasActivityLogAccess && (
+									<HStack alignment="center" expanded className="site-logs-card--activity-callout">
+										<div className="site-logs-card--activity-callout-content">
+											<ActivityLogsCallout siteSlug={ site.slug } />
+										</div>
+									</HStack>
+								) }
+							</>
+						) }
 					</CardBody>
 				</Card>
 			</>

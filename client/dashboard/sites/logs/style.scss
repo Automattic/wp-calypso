@@ -3,16 +3,16 @@
 	&:not( &--activity ) .dataviews-pagination__page-select {
 		display: none !important;
 	}
-}
-.site-logs {
-	&__server,
-	&__php {
+
+	&--server,
+	&--php {
 		.dashboard-callout {
 			max-width: 886px;
 			margin: 120px auto;
 		}
 	}
-	&__activity {
+
+	&--activity {
 		&-callout {
 			position: relative;
 
