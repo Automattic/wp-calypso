@@ -3,7 +3,8 @@ import { useContext } from 'react';
 import ClientCheckoutPlaceholder from '../billing-dragon-checkout/checkout-placeholder';
 import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
-import JetpackStartCheckout from './jetpack-start-checkout';
+import CheckoutV1 from './checkout-v1';
+import CheckoutV2 from './checkout-v2';
 
 interface CheckoutProps {
 	referralBlogId?: number;
@@ -14,19 +15,14 @@ function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
-	// Always use JetpackStartCheckout for current regular Checkout flow and referrals
-	if ( isReferralMarketplace || ! isEnabled( 'a4a-bd-checkout' ) ) {
-		return <JetpackStartCheckout referralBlogId={ referralBlogId } isClient={ isClient } />;
+	// Use Checkout V2 (Jetpack Start) for current regular Checkout flow and referrals
+	if ( ! isEnabled( 'a4a-bd-checkout' ) || isReferralMarketplace || isClient ) {
+		return <CheckoutV1 referralBlogId={ referralBlogId } isClient={ isClient } />;
 	}
 
-	// For regular checkout, check feature flag
+	// New Billing Dragon Checkout page, check feature flag
 	if ( isEnabled( 'a4a-bd-checkout' ) ) {
-		return (
-			<>
-				<div style={ { color: 'white' } }> This is the Billing Dragon Checkout page</div>
-				<ClientCheckoutPlaceholder />;
-			</>
-		);
+		return <CheckoutV2 />;
 	}
 
 	return <ClientCheckoutPlaceholder />;
