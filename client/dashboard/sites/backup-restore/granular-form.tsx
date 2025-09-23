@@ -77,10 +77,12 @@ function SiteBackupGranularRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<ExpandableFileSection type="theme" selectedItems={ browserSelectedList } />
-				<ExpandableFileSection type="plugin" selectedItems={ browserSelectedList } />
-				<ExpandableFileSection type="table" selectedItems={ browserSelectedList } />
-				<ExpandableFileSection type="file" selectedItems={ browserSelectedList } />
+				<VStack spacing={ 0 }>
+					<ExpandableFileSection type="theme" selectedItems={ browserSelectedList } />
+					<ExpandableFileSection type="plugin" selectedItems={ browserSelectedList } />
+					<ExpandableFileSection type="table" selectedItems={ browserSelectedList } />
+					<ExpandableFileSection type="file" selectedItems={ browserSelectedList } />
+				</VStack>
 
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
