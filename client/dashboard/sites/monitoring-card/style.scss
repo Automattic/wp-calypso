@@ -1,14 +1,7 @@
 .dashboard-monitoring-card {
 	flex-grow: 1;
 
-	.components-card__body {
-		padding: 0;
-	}
-
 	.dashboard-monitoring-card__content {
-		padding: 16px 24px;
-		box-sizing: border-box;
-
 		&__is-loading {
 			display: flex;
 			justify-content: center;
@@ -19,6 +12,11 @@
 			/* Set a minimum height to prevent layout shift when the chart loads. */
 			min-height: 450px;
 		}
+	}
+
+	&.dashboard-monitoring-card--row-layout {
+		flex-basis: 0;
+		min-width: 250px;
 	}
 
 	.dashboard-monitoring-card__header {
@@ -60,5 +58,11 @@
 				text-align: end;
 			}
 		}
+	}
+}
+
+.dashboard-monitoring-card--row-layout {
+	.visx-legend-label > span {
+		margin-inline-start: 5px;
 	}
 }

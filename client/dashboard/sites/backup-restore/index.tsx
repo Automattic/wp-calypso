@@ -14,6 +14,7 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -22,6 +23,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import SiteBackupRestoreError from './error';
 import SiteBackupRestoreForm from './form';
+import SiteBackupGranularRestoreForm from './granular-form';
 import SiteBackupRestoreProgress from './progress';
 import SiteBackupRestoreSuccess from './success';
 
@@ -34,6 +36,10 @@ function SiteBackupRestore() {
 	const [ restoreId, setRestoreId ] = useState< number | null >( null );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
+	const { fileBrowserState } = useFileBrowserContext();
+	const browserSelectedList = fileBrowserState.getSelectedList();
+	const hasSelectedFiles = browserSelectedList.length > 0;
+	const hasSelectedAllFiles = browserSelectedList[ 0 ]?.path === '//';
 
 	const router = useRouter();
 
@@ -72,7 +78,12 @@ function SiteBackupRestore() {
 	const renderStep = () => {
 		switch ( currentStep ) {
 			case 'form':
-				return (
+				return hasSelectedFiles && ! hasSelectedAllFiles ? (
+					<SiteBackupGranularRestoreForm
+						siteId={ site.ID }
+						onRestoreInitiate={ handleRestoreInitiate }
+					/>
+				) : (
 					<SiteBackupRestoreForm siteId={ site.ID } onRestoreInitiate={ handleRestoreInitiate } />
 				);
 			case 'progress':

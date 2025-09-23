@@ -27,6 +27,7 @@ export interface MonitoringCardProps {
 	tracksId?: string;
 	children?: ReactNode;
 	cardLabel?: string;
+	className?: string;
 }
 
 export default function MonitoringCard( {
@@ -38,6 +39,7 @@ export default function MonitoringCard( {
 	tracksId,
 	children,
 	cardLabel,
+	className,
 }: MonitoringCardProps ) {
 	const renderDescription = () => {
 		if ( description ) {
@@ -114,20 +116,22 @@ export default function MonitoringCard( {
 	);
 
 	return (
-		<Card className="dashboard-monitoring-card">
+		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
-				{ tracksId && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_monitoring_card_impression"
-						properties={ { feature: tracksId } }
-					/>
-				) }
-				{ topContent }
-				{ children && (
-					<VStack className={ contentClassNames } spacing={ 2 } justify="center">
-						{ renderContent() }
-					</VStack>
-				) }
+				<VStack spacing={ 4 }>
+					{ tracksId && (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_monitoring_card_impression"
+							properties={ { feature: tracksId } }
+						/>
+					) }
+					{ topContent }
+					{ children && (
+						<VStack className={ contentClassNames } spacing={ 2 } justify="center">
+							{ renderContent() }
+						</VStack>
+					) }
+				</VStack>
 			</CardBody>
 		</Card>
 	);
