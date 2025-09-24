@@ -21,6 +21,10 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
 		onQueryChange: noop,
+		onAddDomainToCart: noop,
+		onQueryAvailabilityCheck: noop,
+		onDomainAddAvailabilityPreCheck: noop,
+		onSearch: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),

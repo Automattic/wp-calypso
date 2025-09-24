@@ -52,6 +52,7 @@ export interface DomainSearchEvents {
 		domainName: string,
 		rootVendor: string
 	) => void;
+	onSearch: ( query: string, vendor: string, searchCount: number ) => void;
 }
 
 export interface DomainSearchConfig {

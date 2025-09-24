@@ -98,6 +98,17 @@ const DomainSearchWithCart = ( {
 					unavailable_status: unavailableStatus,
 				} );
 			},
+			onSearch: ( query: string, vendor: string, searchCount: number ) => {
+				recordTracksEvent( 'calypso_domain_search', {
+					search_box_value: query,
+					search_count: searchCount,
+					search_vendor: vendor,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					// TODO: Not sure if we still need this
+					// seconds_from_last_search:,
+					flow_name: flowName,
+				} );
+			},
 			onFilterApplied: ( filter: FilterState ) => {
 				recordTracksEvent( 'calypso_domain_search_filters_submit', {
 					flow_name: flowName,
