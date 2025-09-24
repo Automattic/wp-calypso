@@ -73,7 +73,7 @@ const DomainSearchStep: StepType< {
 
 		return {
 			vendor: getSuggestionsVendor( {
-				isSignup: false,
+				isSignup: true,
 				isDomainOnly: isDomainFlow( flow ),
 				flowName: flow,
 			} ),
