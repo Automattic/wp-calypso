@@ -28,6 +28,7 @@ import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
 import { prepareTimestamp, runWithConcurrency } from './helpers';
+import { usePluginCollisionsFromMultisite } from './hooks/use-plugin-collisions';
 import { useTimeSlotCollisionsFromMultisite } from './hooks/use-time-slot-collisions';
 import type { Frequency, Weekday } from '../types';
 import type { Site } from '@automattic/api-core';
@@ -56,20 +57,29 @@ function ScheduledUpdatesNew() {
 	);
 
 	const {
-		error: collisionsError,
-		collidingSiteIds,
-		isLoading: isCollisionsLoading,
+		error: timeError,
+		collidingSiteIds: timeCollidingSiteIds,
+		isLoading: isTimeCollisionsLoading,
 	} = useTimeSlotCollisionsFromMultisite( siteIdsAsNumbers, frequency, weekday, time );
+
+	const {
+		error: pluginError,
+		collidingSiteIds: pluginCollidingSiteIds,
+		isLoading: isPluginCollisionsLoading,
+	} = usePluginCollisionsFromMultisite( siteIdsAsNumbers, selectedPluginSlugs );
 
 	const handleCreate = useCallback( () => {
 		setValidationError( '' );
 
-		if ( ! isValid || isCollisionsLoading ) {
+		if ( ! isValid || isTimeCollisionsLoading || isPluginCollisionsLoading ) {
 			return;
 		}
 
-		// show error if there are collisions
-		// along with the list of sites that have collisions, if less than all selected sites
+		// Prefer showing time collision error first if present; otherwise plugin collision
+		const collisionsError = timeError || pluginError;
+		const collidingSiteIds = timeError ? timeCollidingSiteIds : pluginCollidingSiteIds;
+
+		// show error if there are collisions and optionally list colliding sites
 		if ( collisionsError ) {
 			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
 			const shouldListSites =
@@ -163,11 +173,14 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
-		collidingSiteIds,
-		collisionsError,
 		siteIdsAsNumbers.length,
-		isCollisionsLoading,
+		isTimeCollisionsLoading,
+		isPluginCollisionsLoading,
 		isValid,
+		timeError,
+		pluginError,
+		timeCollidingSiteIds,
+		pluginCollidingSiteIds,
 	] );
 
 	return (
@@ -222,7 +235,9 @@ function ScheduledUpdatesNew() {
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={ ! isValid || isSubmitting || isCollisionsLoading }
+								disabled={
+									! isValid || isSubmitting || isTimeCollisionsLoading || isPluginCollisionsLoading
+								}
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>

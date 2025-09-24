@@ -88,3 +88,31 @@ export const runWithConcurrency = async (
 
 	await Promise.allSettled( Array.from( executing ) );
 };
+
+/**
+ * Validate plugins against existing schedules
+ * - Must select at least one plugin
+ * - If existing plugin sets are provided, block identical set
+ */
+export function validatePlugins(
+	plugins: string[],
+	existingPlugins: Array< string[] > = []
+): string {
+	let error = '';
+
+	if ( plugins.length === 0 ) {
+		error = __( 'Please select at least one plugin to update.' );
+	} else if ( existingPlugins.length ) {
+		const normalized = [ ...plugins ].sort();
+		for ( const existing of existingPlugins ) {
+			if ( JSON.stringify( normalized ) === JSON.stringify( [ ...existing ].sort() ) ) {
+				error = __(
+					'Please select a different set of plugins, as this one has already been chosen.'
+				);
+				break;
+			}
+		}
+	}
+
+	return error;
+}
