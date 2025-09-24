@@ -166,28 +166,26 @@ function SiteBackups() {
 	};
 
 	return (
-		<div style={ { position: 'relative' } }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.BACKUPS }
-				tracksFeatureId="backups"
-				overlay={ <PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> } /> }
-				upsellIcon={ backup }
-				upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
-				upsellImage={ illustrationUrl }
-				upsellDescription={
-					<Text as="p" variant="muted">
-						{ __(
-							'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
-						) }
-					</Text>
-				}
-			>
-				<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
-					<Outlet />
-				</FileBrowserProvider>
-			</HostingFeatureGatedWithCallout>
-		</div>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.BACKUPS }
+			tracksFeatureId="backups"
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> } /> }
+			upsellIcon={ backup }
+			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
+			upsellImage={ illustrationUrl }
+			upsellDescription={
+				<Text as="p" variant="muted">
+					{ __(
+						'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
+					) }
+				</Text>
+			}
+		>
+			<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
+				<Outlet />
+			</FileBrowserProvider>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

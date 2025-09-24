@@ -18,16 +18,14 @@ function SiteDeployments() {
 	}
 
 	return (
-		<div style={ { position: 'relative' } }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.DEPLOYMENT }
-				overlay={ <PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> } /> }
-				{ ...getDeploymentsCalloutProps() }
-			>
-				<Outlet />
-			</HostingFeatureGatedWithCallout>
-		</div>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.DEPLOYMENT }
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> } /> }
+			{ ...getDeploymentsCalloutProps() }
+		>
+			<Outlet />
+		</HostingFeatureGatedWithCallout>
 	);
 }
 
