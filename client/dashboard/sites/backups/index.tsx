@@ -165,21 +165,13 @@ function SiteBackups() {
 		showSuccess: ( message: string ) => createSuccessNotice( message, { type: 'snackbar' } ),
 	};
 
-	if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-		return (
-			<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
-				<Outlet />
-			</FileBrowserProvider>
-		);
-	}
-
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> }>
+		<div style={ { position: 'relative' } }>
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.BACKUPS }
 				tracksFeatureId="backups"
-				asOverlay
+				overlay={ <PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> } /> }
 				upsellIcon={ backup }
 				upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
 				upsellImage={ illustrationUrl }
@@ -191,9 +183,11 @@ function SiteBackups() {
 					</Text>
 				}
 			>
-				<></>
+				<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
+					<Outlet />
+				</FileBrowserProvider>
 			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+		</div>
 	);
 }
 
