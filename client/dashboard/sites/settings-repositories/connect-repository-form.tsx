@@ -152,7 +152,6 @@ export const ConnectRepositoryForm = ( {
 		return repositories.find( ( repository ) => repository.id === formData.selectedRepositoryId );
 	}, [ repositories, formData.selectedRepositoryId ] );
 
-	// Set initial installation when installations load
 	useEffect( () => {
 		if ( installations.length > 0 && formData.selectedInstallationId === '' ) {
 			setFormData( ( prev ) => ( {
@@ -162,7 +161,6 @@ export const ConnectRepositoryForm = ( {
 		}
 	}, [ installations, formData.selectedInstallationId ] );
 
-	// Set default branch when repository changes
 	useEffect( () => {
 		if ( selectedRepository?.default_branch ) {
 			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
@@ -204,21 +202,6 @@ export const ConnectRepositoryForm = ( {
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
 	}, [ repositoryChecks?.suggested_directory, isTargetDirDirty ] );
 
-	const branchOptions = useMemo( () => {
-		const names = new Set< string >();
-		if ( selectedRepository?.default_branch ) {
-			names.add( selectedRepository.default_branch );
-		}
-		remoteBranches.forEach( ( branchName ) => names.add( branchName ) );
-		if ( formData.branch ) {
-			names.add( formData.branch );
-		}
-		return Array.from( names ).map( ( name ) => ( {
-			label: name,
-			value: name,
-		} ) );
-	}, [ remoteBranches, selectedRepository?.default_branch, formData.branch ] );
-
 	const { createDeployment } = useCreateCodeDeployment( site.ID, {
 		onSuccess: () => {
 			onConnected();
@@ -253,6 +236,13 @@ export const ConnectRepositoryForm = ( {
 			setIsSubmitting( false );
 		}
 	};
+
+	const branchOptions = useMemo( () => {
+		return remoteBranches.map( ( branchName ) => ( {
+			label: branchName,
+			value: branchName,
+		} ) );
+	}, [ remoteBranches ] );
 
 	const installationOptions = useMemo( () => {
 		return installations.map( ( installation ) => ( {
@@ -297,10 +287,6 @@ export const ConnectRepositoryForm = ( {
 	);
 
 	const fields: Field< FormData >[] = useMemo( () => {
-		const branchSelectOptions = branchOptions.length
-			? branchOptions
-			: [ { label: __( 'Select a branch' ), value: '' } ];
-
 		return [
 			{
 				id: 'selectedInstallationId',
@@ -323,7 +309,7 @@ export const ConnectRepositoryForm = ( {
 				label: __( 'Deployment Branch' ),
 				type: 'text' as const,
 				Edit: 'select',
-				elements: branchSelectOptions,
+				elements: branchOptions,
 				help: isLoadingBranches
 					? __( 'Loading branches…' )
 					: __( 'Select the branch to deploy from this repository.' ),
