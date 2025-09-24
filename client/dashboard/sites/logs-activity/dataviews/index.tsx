@@ -2,7 +2,8 @@ import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-cor
 import { siteActivityLogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, View, Field } from '@wordpress/dataviews';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
 import { useActivityView } from './views';
@@ -12,20 +13,35 @@ function SiteActivityLogsDataViews( {
 	gmtOffset,
 	timezoneString,
 	site,
+	dateRange,
+	dateRangeVersion,
 }: SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 } ) {
 	const [ view, setView ] = useActivityView();
 
+	// buildTimeRangeInSeconds applies the proper timezone offset and normalizes to full-day bounds.
+	const { startSec, endSec } = useMemo(
+		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
+		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
+	);
+
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
 		number: view.perPage || 20,
 		page: view.page,
+		after: new Date( startSec * 1000 ).toISOString(),
+		before: new Date( endSec * 1000 ).toISOString(),
 	};
 
 	const { data: activityLogData, isFetching } = useQuery(
 		siteActivityLogQuery( site.ID, activityLogQueryParams )
 	);
+
+	// Reset pagination when the date range changes
+	useEffect( () => {
+		setView( ( next ) => ( { ...next, page: 1 } ) );
+	}, [ dateRangeVersion, setView ] );
 
 	const logs = useMemo( () => {
 		const suffix = `p${ view.page }`;
