@@ -130,7 +130,6 @@ export const ConnectRepositoryForm = ( {
 		workflowPath: '.github/workflows/wpcom.yml',
 	} );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ isTargetDirDirty, setIsTargetDirDirty ] = useState( false );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( formData.selectedInstallationId === '' ) {
@@ -186,12 +185,9 @@ export const ConnectRepositoryForm = ( {
 			return;
 		}
 
-		if ( isTargetDirDirty ) {
-			return;
-		}
-
+		// Only update target directory when repository changes, not when branch changes
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
-	}, [ repositoryChecks?.suggested_directory, isTargetDirDirty ] );
+	}, [ repositoryChecks?.suggested_directory, selectedRepository?.id ] );
 
 	const { createDeployment } = useCreateCodeDeployment( site.ID, {
 		onSuccess: () => {
@@ -354,33 +350,6 @@ export const ConnectRepositoryForm = ( {
 				} }
 				onChange={ ( edits: Partial< FormData > ) => {
 					const newFormData = { ...formData, ...edits };
-
-					// Handle special cases for form field changes
-					if ( 'selectedInstallationId' in edits ) {
-						const installationId = edits.selectedInstallationId;
-						if ( installationId === '' ) {
-							newFormData.selectedInstallationId = installations[ 0 ]?.external_id || '';
-						} else {
-							newFormData.selectedInstallationId = Number( installationId );
-						}
-
-						// Reset dependent fields when installation changes
-						newFormData.selectedRepositoryId = '';
-						newFormData.branch = '';
-						newFormData.targetDir = '/';
-						newFormData.workflowPath = '.github/workflows/wpcom.yml';
-						setIsTargetDirDirty( false );
-					}
-
-					if ( 'selectedRepositoryId' in edits ) {
-						const repositoryId = edits.selectedRepositoryId;
-						if ( repositoryId === '' ) {
-							newFormData.selectedRepositoryId = '';
-						} else {
-							newFormData.selectedRepositoryId = Number( repositoryId );
-						}
-					}
-
 					if ( 'targetDir' in edits ) {
 						const trimmedValue = edits.targetDir?.trim() || '';
 						let normalisedValue = '/';
@@ -392,7 +361,6 @@ export const ConnectRepositoryForm = ( {
 							}
 						}
 						newFormData.targetDir = normalisedValue;
-						setIsTargetDirDirty( true );
 					}
 
 					setFormData( newFormData );
