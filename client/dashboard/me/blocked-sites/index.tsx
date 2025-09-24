@@ -9,6 +9,7 @@ import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -194,7 +195,13 @@ export default function BlockedSites() {
 						...paginationInfo,
 						infiniteScrollHandler,
 					} }
-					empty={ __( 'You haven’t blocked any sites yet.' ) }
+					empty={
+						<DataViewsEmptyState
+							title=""
+							description={ __( 'You haven’t blocked any sites yet.' ) }
+							mutedDescription={ false }
+						/>
+					}
 					isLoading={ isLoading }
 					onChangeView={ setView }
 				>
