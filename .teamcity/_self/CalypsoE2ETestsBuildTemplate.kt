@@ -21,7 +21,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
-		param("VIEWPORT", "desktop")
+		param("PROJECT", "desktop")
 		text("TEST_GROUP", "")
 		text("CALYPSO_BASE_URL", "")
 		text("DOCKER_IMAGE_BUILD_NUMBER", "")
@@ -136,15 +136,15 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				cd test/e2e
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
-				echo "Running Playwright tests for project: %VIEWPORT%"
-				yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
+				echo "Running Playwright tests for project: %PROJECT%"
+				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
 			dockerImage = "%docker_image_e2e%"
 		}
   }
 
   artifactRules = """
-		test/e2e/output => %VIEWPORT%/output
+		test/e2e/output => %PROJECT%/output
 		test/e2e/blob-report => blob-report
 	""".trimIndent()
 })
