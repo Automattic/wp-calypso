@@ -334,15 +334,16 @@ function FileBrowserNode( {
 		return (
 			<Button
 				onClick={ handleExpandButtonClick }
-				icon={ isOpen ? chevronDown : expandIcon }
 				className="file-browser-node__separate-expand-button"
 				variant="tertiary"
 				// translators: %s is a directory name
 				aria-label={ sprintf( __( 'Expand contents of %s' ), item.name ) }
 				aria-expanded={ isOpen }
 				size="compact"
-				style={ { color: 'inherit' } }
-			/>
+				style={ { color: 'inherit', paddingLeft: '0', paddingRight: '0' } }
+			>
+				<Icon icon={ isOpen ? chevronDown : expandIcon } size={ 18 } />
+			</Button>
 		);
 	};
 
