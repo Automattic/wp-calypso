@@ -1,13 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 
-export const DiscoverDocumentHead = ( { tabTitle } ) => {
+export const DiscoverDocumentHead = () => {
 	const translate = useTranslate();
 
-	const title = translate( 'Browse %s blogs & read articles ‹ Reader', {
-		args: [ tabTitle ],
-		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-	} );
+	const title = translate( 'Browse popular blogs & read articles ‹ Reader' );
 
 	const meta = [
 		{
