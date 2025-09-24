@@ -1,12 +1,9 @@
-import {
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
 
 function SiteBackupDownloadSuccess( {
 	downloadPointDate,
