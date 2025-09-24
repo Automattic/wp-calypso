@@ -177,7 +177,7 @@ class MainComponent extends Component {
 			);
 		} else if ( 'wp_studio' === category ) {
 			return this.props.translate(
-				'WordPress Studio news, announcements, and feature spotlights.'
+				'WordPress Studio news, announcements, tips, and feature spotlights.'
 			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
