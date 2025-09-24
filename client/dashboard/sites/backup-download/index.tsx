@@ -10,7 +10,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement, useState } from '@wordpress/element';
+import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -29,15 +29,32 @@ type DownloadStep = 'form' | 'progress' | 'success' | 'error';
 
 function SiteBackupDownload() {
 	const { siteSlug, rewindId } = siteBackupDownloadRoute.useParams();
+	const { downloadId: searchDownloadId } = siteBackupDownloadRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const [ currentStep, setCurrentStep ] = useState< DownloadStep >( 'form' );
-	const [ downloadId, setDownloadId ] = useState< number | null >( null );
+
+	// Initialize step based on whether downloadId is provided in search params
+	const initialStep: DownloadStep = searchDownloadId ? 'progress' : 'form';
+
+	const [ currentStep, setCurrentStep ] = useState< DownloadStep >( initialStep );
+	const [ downloadId, setDownloadId ] = useState< number | null >( searchDownloadId || null );
 	const [ downloadUrl, setDownloadUrl ] = useState< string | null >( null );
 	const [ fileSizeBytes, setFileSizeBytes ] = useState< string | undefined >();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	const router = useRouter();
+
+	// Clean up the downloadId query param once we've captured it
+	useEffect( () => {
+		if ( searchDownloadId ) {
+			router.navigate( {
+				to: siteBackupDownloadRoute.fullPath,
+				params: { siteSlug, rewindId },
+				search: {},
+				replace: true,
+			} );
+		}
+	}, [ router, siteSlug, rewindId, searchDownloadId ] );
 
 	const handleDownloadInitiate = ( newDownloadId: number ) => {
 		recordTracksEvent( 'calypso_dashboard_backups_download_started' );
