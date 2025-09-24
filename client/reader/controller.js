@@ -122,6 +122,11 @@ export function feedDiscovery( context, next ) {
 }
 
 export function feedLookup( context ) {
+	if ( ! context.params[ 0 ] ) {
+		page.redirect( `/reader` );
+		return;
+	}
+
 	const url = context.params[ 0 ];
 	context.queryClient
 		.fetchQuery( {
