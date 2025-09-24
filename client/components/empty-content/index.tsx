@@ -41,7 +41,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 			return (
 				<Button
 					primary
-					className="empty-content__action"
+					className="empty-content__action button"
 					onClick={ props.actionCallback }
 					href={ localizeUrl( props.actionURL ?? '' ) }
 					target={ props.actionTarget }

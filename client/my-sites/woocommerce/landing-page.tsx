@@ -143,7 +143,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	if ( ! isEmailVerified ) {
 		secondaryAction = (
 			<Button
-				className="landing-page__secondary empty-content__action"
+				className="landing-page__secondary empty-content__action button"
 				onClick={ changeEmailClickHandler }
 			>
 				Edit email address
