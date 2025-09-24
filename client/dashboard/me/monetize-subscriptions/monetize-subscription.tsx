@@ -238,7 +238,7 @@ export default function MonetizeSubscription() {
 						<HStack alignment="center">
 							<VStack>
 								<HStack alignment="center">
-									<Text weight={ 700 } size="title">
+									<Text weight={ 700 } size="title" as="h3">
 										{ subscription.title }
 									</Text>
 									<Text weight={ 700 }>
