@@ -15,7 +15,12 @@ function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
 	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context
-	if ( isEnabled( 'a4a-bd-checkout' ) && ! isReferralMarketplace && ! isClient ) {
+	if (
+		isEnabled( 'a4a-bd-checkout' ) &&
+		! isReferralMarketplace &&
+		! isClient &&
+		! referralBlogId
+	) {
 		return <CheckoutV2 />;
 	}
 
