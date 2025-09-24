@@ -352,15 +352,9 @@ export const ConnectRepositoryForm = ( {
 					const newFormData = { ...formData, ...edits };
 					if ( 'targetDir' in edits ) {
 						const trimmedValue = edits.targetDir?.trim() || '';
-						let normalisedValue = '/';
-						if ( trimmedValue ) {
-							if ( trimmedValue.startsWith( '/' ) ) {
-								normalisedValue = trimmedValue;
-							} else {
-								normalisedValue = `/${ trimmedValue }`;
-							}
-						}
-						newFormData.targetDir = normalisedValue;
+						newFormData.targetDir = trimmedValue.startsWith( '/' )
+							? trimmedValue
+							: `/${ trimmedValue }`;
 					}
 
 					setFormData( newFormData );
