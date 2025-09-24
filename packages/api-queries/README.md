@@ -78,12 +78,12 @@ These guidelines should be followed to ensure reusability of the queries and mut
   - Add additional logic (e.g., analytics or event tracking) in the component itself:
 
     ```ts
-	const { mutate: updatePHPVersion } = useMutation( sitePHPVersionMutation( site.ID ) );
-	updatePHPVersion( data, {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_settings_updated' );
-		},
-	} );
+    const { mutate: updatePHPVersion } = useMutation( sitePHPVersionMutation( site.ID ) );
+    updatePHPVersion( data, {
+        onSuccess: () => {
+            recordTracksEvent( 'calypso_settings_updated' );
+        },
+    } );
     ```
 
 ### Typings
@@ -94,10 +94,10 @@ Callback functions like `onSuccess` and `select` in particular are tricky when y
 
 ```ts
 const { data } = useQuery( {
-	...sitePurchasesQuery( site.ID ),
+    ...sitePurchasesQuery( site.ID ),
 
-	// No need to specify type for data below.
-	select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
+    // No need to specify type for data below.
+    select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
 } );
 ```
 
