@@ -29,7 +29,6 @@ These guidelines should be followed to ensure reusability of the queries and mut
 
     ```ts
     export const isSiteUsingBlockThemeQuery = ( siteId: number ) => queryOptions( {
-        ...,
         queryFn: async () => {
             const themes = await siteActiveThemesQuery( siteId );
             return themes[0]?.is_block_theme ?? false;
@@ -68,7 +67,7 @@ These guidelines should be followed to ensure reusability of the queries and mut
     ```ts
     export const sitePHPVersionMutation = ( siteId: number ) =>
         mutationOptions( {
-            ...,
+            /* other options */
             onSuccess: () => {
                 queryClient.invalidateQueries( sitePHPVersionQuery( siteId ) );
             },
@@ -96,7 +95,9 @@ Callback functions like `onSuccess` and `select` in particular are tricky when y
 ```ts
 const { data } = useQuery( {
 	...sitePurchasesQuery( site.ID ),
-	select: ( data ) => ... // no need to specify type for data!
+
+	// No need to specify type for data below.
+	select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
 } );
 ```
 
