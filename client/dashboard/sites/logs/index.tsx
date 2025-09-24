@@ -82,7 +82,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							onChange={ handleDateRangeChangeWrapper }
 						/>
 					) }
-					<Card className="site-logs-card">
+					<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 						<CardHeader style={ { paddingBottom: '0' } }>
 							<TabPanel
 								className="site-logs-tabs"

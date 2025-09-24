@@ -1,15 +1,16 @@
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import ExpandableFileSection from './expandable-file-section';
+import { Text } from '../../components/text';
+import FileSectionPanelBody from './file-section-panel-body';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
@@ -77,10 +78,19 @@ function SiteBackupGranularRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<ExpandableFileSection type="theme" selectedItems={ browserSelectedList } />
-				<ExpandableFileSection type="plugin" selectedItems={ browserSelectedList } />
-				<ExpandableFileSection type="table" selectedItems={ browserSelectedList } />
-				<ExpandableFileSection type="file" selectedItems={ browserSelectedList } />
+				<Text>
+					{ _n(
+						'The following item will be restored:',
+						'All the following selected items will be restored:',
+						browserCheckList.totalItems
+					) }
+				</Text>
+				<Panel>
+					<FileSectionPanelBody type="theme" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="plugin" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="table" selectedItems={ browserSelectedList } />
+					<FileSectionPanelBody type="file" selectedItems={ browserSelectedList } />
+				</Panel>
 
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
@@ -94,7 +104,7 @@ function SiteBackupGranularRestoreForm( {
 						isBusy={ isRestoreMutationPending }
 						disabled={ isRestoreMutationPending }
 					>
-						{ __( 'Restore selected files' ) }
+						{ _n( 'Restore selected file', 'Restore selected files', browserCheckList.totalItems ) }
 					</Button>
 				</ButtonStack>
 			</VStack>
