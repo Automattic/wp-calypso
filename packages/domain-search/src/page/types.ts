@@ -53,6 +53,7 @@ export interface DomainSearchEvents {
 		rootVendor: string
 	) => void;
 	onSearch: ( query: string, vendor: string, searchCount: number ) => void;
+	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
 }
 
 export interface DomainSearchConfig {

@@ -25,6 +25,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onQueryAvailabilityCheck: noop,
 		onDomainAddAvailabilityPreCheck: noop,
 		onSearch: noop,
+		onSuggestionsReceive: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),

@@ -15,7 +15,18 @@ export const useSuggestionsList = () => {
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
 		enabled: true,
+		// We should just get suggestions when the query changes
+		staleTime: Infinity,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
 	} );
+
+	if ( ! isLoadingSuggestions && suggestions.length > 0 ) {
+		events.onSuggestionsReceive(
+			query,
+			suggestions.map( ( suggestion ) => suggestion.domain_name )
+		);
+	}
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 

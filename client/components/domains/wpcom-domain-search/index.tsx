@@ -117,6 +117,16 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
+			onSuggestionsReceive: ( query: string, suggestions: string[] ) => {
+				recordTracksEvent( 'calypso_domain_search_results_suggestions_receive', {
+					search_query: query,
+					results: suggestions.join( ';' ),
+					// response_time_ms: responseTime,
+					result_count: suggestions.length,
+					flow_name: flowName,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+				} );
+			},
 		};
 	}, [ props.events, items, flowName ] );
 
