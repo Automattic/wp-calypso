@@ -1,5 +1,4 @@
 import { domainsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -40,11 +39,7 @@ function Domains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					actions={
-						<Button
-							variant="primary"
-							__next40pxDefaultSize
-							href={ isEnabled( 'domain-search-rewrite' ) ? '/setup/domain' : '/start/domain' }
-						>
+						<Button variant="primary" __next40pxDefaultSize href="/setup/domain">
 							{ __( 'Add New Domain' ) }
 						</Button>
 					}

@@ -27,7 +27,9 @@ export default function removeContentStyles( post, dom ) {
 		// Instagram
 		'blockquote[class^="instagram-"], blockquote[class^="instagram-"] *, ' +
 		// Twitter
-		'blockquote[class^="twitter-"], blockquote[class^="twitter-"] *';
+		'blockquote[class^="twitter-"], blockquote[class^="twitter-"] *, ' +
+		// Elements with text-transform styles
+		'[style*="text-transform"]';
 
 	// remove most style attributes
 	const styled = dom.querySelectorAll( '[style]' );

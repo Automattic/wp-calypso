@@ -72,16 +72,14 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				{ ...getLogsCalloutProps() }
 			>
 				<>
-					{ logType !== LogType.ACTIVITY && (
-						<DateRangePicker
-							start={ dateRange.start }
-							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
-							timezoneString={ timezoneString }
-							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
-						/>
-					) }
+					<DateRangePicker
+						start={ dateRange.start }
+						end={ dateRange.end }
+						gmtOffset={ gmtOffset }
+						timezoneString={ timezoneString }
+						locale={ locale }
+						onChange={ handleDateRangeChangeWrapper }
+					/>
 					<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 						<CardHeader style={ { paddingBottom: '0' } }>
 							<TabPanel

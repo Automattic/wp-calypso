@@ -364,14 +364,11 @@ function StagingSiteSyncModalInner( {
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
-	const isGranularMode = isFileBrowserVisible && ! shouldDisableGranularSync;
-
-	const noGranularSelection =
-		isGranularMode && browserCheckList.totalItems > 0 && browserCheckList.includeList.length === 0;
-
 	const isSubmitDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		noGranularSelection ||
+		( browserCheckList.totalItems === 0 &&
+			browserCheckList.includeList.length === 0 &&
+			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
 

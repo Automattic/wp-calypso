@@ -8,9 +8,12 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { __, isRTL } from '@wordpress/i18n';
 import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
@@ -154,9 +157,20 @@ export function BackupsListPage() {
 function SiteBackups() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
+
+	const hostingNotices = {
+		showError: ( message: string ) => createErrorNotice( message, { type: 'snackbar' } ),
+		showSuccess: ( message: string ) => createSuccessNotice( message, { type: 'snackbar' } ),
+	};
 
 	if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-		return <Outlet />;
+		return (
+			<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
+				<Outlet />
+			</FileBrowserProvider>
+		);
 	}
 
 	return (
