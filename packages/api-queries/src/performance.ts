@@ -23,7 +23,7 @@ export const performanceInsightsQuery = ( url: string, token: string ) =>
 		},
 	} );
 
-export function performanceProfilerPagesQuery( siteId: string ) {
+export function performanceProfilerPagesQuery( siteId: number ) {
 	return queryOptions( {
 		queryKey: [ 'performance-profiler-pages', siteId ],
 		queryFn: () => fetchPerformanceProfilerPages( siteId ),

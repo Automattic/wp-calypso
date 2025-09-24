@@ -26,10 +26,10 @@ export async function fetchPerformanceInsights(
 }
 
 export const fetchPerformanceProfilerPages = async (
-	siteIdOrSlug: string
+	siteId: number
 ): Promise< PerformanceProfilerPage[] > => {
 	return wpcom.req.get( {
-		path: `/sites/${ siteIdOrSlug }/site-profiler/pages`,
+		path: `/sites/${ siteId }/site-profiler/pages`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };

@@ -34,7 +34,7 @@ function SitePerformanceContent( { site, settings }: { site: Site; settings: Sit
 		refetchOnWindowFocus: false,
 	} );
 
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } );
+	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
 	const initialPage = page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
 	const [ currentPage, setCurrentPage ] = useState( initialPage );
 	const {
