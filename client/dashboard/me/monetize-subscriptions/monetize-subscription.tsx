@@ -28,6 +28,7 @@ import ActionList from '../../components/action-list';
 import { addFlashMessage } from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import {
 	getMonetizeSubscriptionsUrl,
 	getMonetizeSubscriptionsPageTitle,
@@ -42,8 +43,8 @@ function MonetizeSiteHeader( { name, domain }: { name: string; domain: string } 
 					<Icon icon={ globe } />
 				</VStack>
 				<VStack>
-					<b>{ name }</b>
-					<div>{ domain }</div>
+					<Text weight={ 700 }>{ name }</Text>
+					<Text>{ domain }</Text>
 				</VStack>
 				<Spacer />
 			</HStack>
@@ -237,13 +238,15 @@ export default function MonetizeSubscription() {
 						<HStack alignment="center">
 							<VStack>
 								<HStack alignment="center">
-									<h3>{ subscription.title }</h3>
-									<b>
+									<Text weight={ 700 } size="title">
+										{ subscription.title }
+									</Text>
+									<Text weight={ 700 }>
 										{ formatCurrency(
 											parseFloat( subscription.renewal_price ),
 											subscription.currency
 										) }
-									</b>
+									</Text>
 								</HStack>
 
 								{ ! isProduct && (
