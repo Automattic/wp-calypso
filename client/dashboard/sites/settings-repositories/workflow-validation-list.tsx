@@ -16,7 +16,7 @@ import { check, closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
 import { CodeHighlighter } from '../../components/code-highlighter';
 import { SectionHeader } from '../../components/section-header';
-import type { WorkflowValidationDefinition } from './use-workflow-validations';
+import type { WorkflowValidationDefinition } from './advanced-workflow-validation';
 import type {
 	GitHubWorkflowValidation,
 	GitHubWorkflowValidationItem,

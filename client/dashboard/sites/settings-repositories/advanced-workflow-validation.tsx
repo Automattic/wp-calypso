@@ -3,9 +3,20 @@ import { useQuery } from '@tanstack/react-query';
 import { TextControl, __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useWorkflowValidations } from './use-workflow-validations';
+import { useMemo } from 'react';
 import { WorkflowValidationList } from './workflow-validation-list';
+import {
+	codePushExample,
+	uploadArtifactExample,
+	DEFAULT_WORKFLOW_TEMPLATE,
+} from './workflow-yaml-examples';
 import type { GitHubRepository, GitHubWorkflowValidation } from '@automattic/api-core';
+
+export interface WorkflowValidationDefinition {
+	label: string;
+	description: string;
+	content: string;
+}
 
 interface AdvancedWorkflowValidationProps {
 	selectedInstallationId: number;
@@ -24,7 +35,27 @@ export const AdvancedWorkflowValidation = ( {
 	onWorkflowPathChange,
 	disabled = false,
 }: AdvancedWorkflowValidationProps ) => {
-	const workflowValidations = useWorkflowValidations( branchName );
+	const workflowValidations = useMemo< Record< string, WorkflowValidationDefinition > >( () => {
+		return {
+			valid_yaml_file: {
+				label: __( 'The workflow file is a valid YAML' ),
+				description: __(
+					"Ensure that your workflow file contains a valid YAML structure. Here's an example:"
+				),
+				content: DEFAULT_WORKFLOW_TEMPLATE,
+			},
+			triggered_on_push: {
+				label: __( 'The workflow is triggered on push' ),
+				description: __( 'Ensure that your workflow triggers on code push:' ),
+				content: codePushExample( branchName || 'main' ),
+			},
+			upload_artifact_with_required_name: {
+				label: __( 'The uploaded artifact has the required name' ),
+				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
+				content: uploadArtifactExample(),
+			},
+		};
+	}, [ branchName ] );
 
 	const {
 		data: workflowChecks,
