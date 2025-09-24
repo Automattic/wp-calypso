@@ -180,10 +180,9 @@ test( 'saves preferences successfully', async () => {
 	await act( async () => await user.click( saveButton ) );
 	await waitFor(
 		() => {
-			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-				'Login preferences saved successfully.',
-				{ type: 'snackbar' }
-			);
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Login preferences saved.', {
+				type: 'snackbar',
+			} );
 		},
 		{ timeout: 5000 }
 	);
@@ -214,10 +213,9 @@ test( 'handles save error gracefully', async () => {
 
 	await waitFor(
 		() => {
-			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
-				'Failed to save login preferences. Please try again.',
-				{ type: 'snackbar' }
-			);
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to save login preferences.', {
+				type: 'snackbar',
+			} );
 		},
 		{ timeout: 5000 }
 	);

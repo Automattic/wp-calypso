@@ -125,12 +125,12 @@ export default function PreferencesLogin() {
 			},
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Login preferences saved successfully.' ), {
+					createSuccessNotice( __( 'Login preferences saved.' ), {
 						type: 'snackbar',
 					} );
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
+					createErrorNotice( __( 'Failed to save login preferences.' ), {
 						type: 'snackbar',
 					} );
 				},
