@@ -1172,18 +1172,11 @@ object AuthenticationE2ETests : BuildType({
 	description = "Runs the authentication group E2E tests"
 
 	params {
-		text("TEST_GROUP", "@authentication")
+		param("PROJECT", "authentication")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 	}
 
 	features {
-		matrix {
-			param("VIEWPORT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile")
-			))
-		}
-
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
