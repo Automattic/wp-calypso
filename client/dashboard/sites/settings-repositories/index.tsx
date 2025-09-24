@@ -99,6 +99,14 @@ function RepositoriesList() {
 					onClose={ () => setModalTriggerDeploymentDetails( { isOpen: false, repositoryId: '' } ) }
 					deployments={ deployments }
 					repositoryId={ modalTriggerDeploymentDetails.repositoryId }
+					onSuccess={ () =>
+						router.navigate( {
+							to: siteDeploymentsRoute.fullPath,
+							params: {
+								siteSlug: siteSlug,
+							},
+						} )
+					}
 				/>
 			) }
 		</DataViewsCard>

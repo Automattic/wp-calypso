@@ -19,6 +19,7 @@ interface TriggerDeploymentModalProps {
 	onClose: () => void;
 	deployments: CodeDeploymentData[];
 	repositoryId?: string;
+	onSuccess?: () => void;
 }
 
 interface DeploymentFormData {
@@ -56,6 +57,7 @@ export function TriggerDeploymentModal( {
 	onClose,
 	deployments,
 	repositoryId,
+	onSuccess,
 }: TriggerDeploymentModalProps ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
@@ -106,6 +108,7 @@ export function TriggerDeploymentModal( {
 				onSuccess: () => {
 					createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
 					onClose();
+					onSuccess?.();
 				},
 			}
 		);
