@@ -26,7 +26,7 @@ export function getSiteMcpAbilities(
 	const defaultSiteAbilities = mcpData.site || {};
 
 	// Apply site-specific overrides if they exist (enabled/disabled values: true/false)
-	const siteOverrides: Record< string, boolean > = mcpData.sites?.[ siteIdStr ] || {};
+	const siteOverrides: Record< string, boolean > = ( mcpData.sites?.[ siteIdStr ] as any ) || {};
 
 	// Merge defaults with overrides
 	const mergedAbilities: SiteMcpAbilities = {};
