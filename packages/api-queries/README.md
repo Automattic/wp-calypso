@@ -31,7 +31,7 @@ These guidelines should be followed to ensure reusability of the queries and mut
     export const isSiteUsingBlockThemeQuery = ( siteId: number ) => queryOptions( {
         queryFn: async () => {
             const themes = await siteActiveThemesQuery( siteId );
-            return themes[0]?.is_block_theme ?? false;
+            return themes[ 0 ]?.is_block_theme ?? false;
         },
     } );
     ```
@@ -92,13 +92,13 @@ TanStack Query's types are very fancy. The downside is they can be hard to get w
 
 Callback functions like `onSuccess` and `select` in particular are tricky when you have to provide your own parameter types. These utility functions define the types for you. For example, we don't need to provide the type for `data` in `select` because it is inferred from the query function's return type:
 
-```ts
-const { data } = useQuery( {
-    ...sitePurchasesQuery( site.ID ),
+    ```ts
+    const { data } = useQuery( {
+        ...sitePurchasesQuery( site.ID ),
 
-    // No need to specify type for data below.
-    select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
-} );
-```
+        // No need to specify type for data below.
+        select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
+    } );
+    ```
 
 In fact, we shouldn't specify the type here as it's very error-prone. Instead, we should specify it in the `@automattic/api-core` functions themselves, and by doing so we get type safety for free when using the queries in the components.
