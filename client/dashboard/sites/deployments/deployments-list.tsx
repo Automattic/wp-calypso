@@ -22,6 +22,7 @@ import type { View } from '@wordpress/dataviews';
 
 export function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
+	const { repositoryName: searchRepositoryName } = siteRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
@@ -101,6 +102,10 @@ export function DeploymentsList() {
 		view,
 		fields
 	);
+
+	if ( searchRepositoryName ) {
+		view.search = searchRepositoryName;
+	}
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );

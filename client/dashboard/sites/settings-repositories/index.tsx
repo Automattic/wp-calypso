@@ -59,7 +59,9 @@ function RepositoriesList() {
 					to: siteDeploymentsRoute.fullPath,
 					params: {
 						siteSlug: siteSlug,
-						repositoryId: repository.id,
+					},
+					search: {
+						repositoryName: repository.repository_name,
 					},
 				} );
 			},
