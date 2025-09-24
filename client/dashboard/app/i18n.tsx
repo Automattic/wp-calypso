@@ -50,6 +50,85 @@ function setLocaleInDOM( i18n: I18n, fallbackLangAttr: string ) {
 	document.documentElement.dir = i18n.isRTL() ? 'rtl' : 'ltr';
 }
 
+/*
+ * CSS links come in two flavors: either RTL stylesheets with `.rtl.css` suffix, or LTR ones
+ * with `.css` suffix. This function sets a desired `isRTL` flag on the supplied URL, i.e., it
+ * changes the extension if necessary.
+ */
+function setRTLFlagOnCSSLink( url: string, isRTL: boolean ) {
+	if ( isRTL ) {
+		return url.endsWith( '.rtl.css' ) ? url : url.replace( /\.css$/, '.rtl.css' );
+	}
+
+	return ! url.endsWith( '.rtl.css' ) ? url : url.replace( /\.rtl.css$/, '.css' );
+}
+
+/**
+ * Loads a CSS stylesheet into the page.
+ */
+function loadCSS(
+	cssUrl: string,
+	currentLink: HTMLLinkElement,
+	isRTL: boolean
+): Promise< HTMLLinkElement | null > {
+	return new Promise( ( resolve ) => {
+		// While looping the current links the RTL state might have changed
+		// This is a double-check to ensure the value of isRTL
+		const isRTLHref = currentLink.getAttribute( 'href' )?.endsWith( '.rtl.css' );
+		if ( isRTL === isRTLHref ) {
+			return resolve( null );
+		}
+
+		const link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = cssUrl;
+
+		if ( 'onload' in link ) {
+			link.onload = () => {
+				link.onload = null;
+				resolve( link );
+			};
+		} else {
+			// just wait 500ms if the browser doesn't support link.onload
+			// https://pie.gd/test/script-link-events/
+			// https://github.com/ariya/phantomjs/issues/12332
+			setTimeout( () => resolve( link ), 500 );
+		}
+
+		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
+	} );
+}
+
+/**
+ * Switch the Calypso CSS between RTL and LTR versions.
+ */
+async function switchWebpackCSS( isRTL: boolean ) {
+	const currentLinks = document.querySelectorAll< HTMLLinkElement >(
+		'link[rel="stylesheet"][data-webpack]'
+	);
+
+	for ( const currentLink of currentLinks ) {
+		const currentHref = currentLink.getAttribute( 'href' );
+		if ( ! currentHref ) {
+			continue;
+		}
+
+		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
+		const isNewHrefAdded = currentLink.parentElement?.querySelector( `[href = '${ newHref }']` );
+		if ( currentHref === newHref || isNewHrefAdded ) {
+			return;
+		}
+
+		const newLink = await loadCSS( newHref, currentLink, isRTL );
+
+		if ( newLink ) {
+			newLink.setAttribute( 'data-webpack', 'true' );
+			currentLink.parentElement?.removeChild( currentLink );
+		}
+	}
+}
+
 // Determine the locale to use. The current implementation reads the logged-in user's
 // locale, but it can be made more flexible and support multiple sources. E.g., a locale
 // slug in the route path.
@@ -74,6 +153,7 @@ export function I18nProvider( { children }: PropsWithChildren ) {
 				// and it falls back to `en`.
 				setLoadedLocale( realLanguage );
 				setLocaleInDOM( i18n, realLanguage );
+				switchWebpackCSS( i18n.isRTL() );
 			} )
 			.catch( () => {
 				// Ignore abort errors as they are expected during cleanup
