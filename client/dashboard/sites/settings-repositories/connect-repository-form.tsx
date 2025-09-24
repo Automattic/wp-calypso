@@ -15,8 +15,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
@@ -119,6 +121,7 @@ export const ConnectRepositoryForm = ( {
 	onCancel,
 }: ConnectRepositoryFormProps ) => {
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< FormData >( {
 		selectedInstallationId: installations[ 0 ].external_id,
@@ -191,9 +194,19 @@ export const ConnectRepositoryForm = ( {
 
 	const { createDeployment } = useCreateCodeDeployment( site.ID, {
 		onSuccess: () => {
+			createSuccessNotice( __( 'Repository connected successfully.' ), {
+				type: 'snackbar',
+			} );
 			onConnected();
 		},
-		onError: () => {
+		onError: ( error ) => {
+			createErrorNotice(
+				// translators: "reason" is why connecting the repository failed.
+				sprintf( __( 'Failed to connect repository: %(reason)s' ), { reason: error.message } ),
+				{
+					type: 'snackbar',
+				}
+			);
 			setIsSubmitting( false );
 		},
 	} );
