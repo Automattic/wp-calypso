@@ -21,7 +21,7 @@ const globalOverrides = css`
 		height: 100%;
 		#content.layout__content {
 			background: #fdfdfd;
-			height: 100%;
+			min-height: 100%;
 		}
 	}
 	.layout__primary {
@@ -36,7 +36,7 @@ const globalOverrides = css`
 const mobileBreakpoint = 660;
 
 const ContainerMain = styled.div`
-	height: 100%;
+	min-height: 100%;
 	.add-ons__main {
 		.add-ons__formatted-header {
 			text-align: center;
