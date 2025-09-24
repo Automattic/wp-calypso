@@ -3,8 +3,9 @@ import {
 	githubRepositoriesQuery,
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
+	createCodeDeploymentMutation,
 } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	ComboboxControl,
@@ -22,7 +23,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
-import { useCreateCodeDeployment } from './use-create-code-deployment';
 import type { Site, GitHubInstallation, GitHubRepository } from '@automattic/api-core';
 
 interface ConnectRepositoryFormProps {
@@ -132,7 +132,6 @@ export const ConnectRepositoryForm = ( {
 		deploymentMode: 'simple',
 		workflowPath: '.github/workflows/wpcom.yml',
 	} );
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( formData.selectedInstallationId === '' ) {
@@ -192,8 +191,14 @@ export const ConnectRepositoryForm = ( {
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
 	}, [ repositoryChecks?.suggested_directory, selectedRepository?.id ] );
 
-	const { createDeployment } = useCreateCodeDeployment( site.ID, {
-		onSuccess: () => {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation( {
+		...createCodeDeploymentMutation( site.ID ),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries( {
+				queryKey: [ 'code-deployments', site.ID ],
+			} );
 			createSuccessNotice( __( 'Repository connected successfully.' ), {
 				type: 'snackbar',
 			} );
@@ -207,7 +212,6 @@ export const ConnectRepositoryForm = ( {
 					type: 'snackbar',
 				}
 			);
-			setIsSubmitting( false );
 		},
 	} );
 
@@ -221,20 +225,14 @@ export const ConnectRepositoryForm = ( {
 			return;
 		}
 
-		setIsSubmitting( true );
-
-		try {
-			await createDeployment( {
-				externalRepositoryId: selectedRepository.id,
-				branchName: formData.branch,
-				targetDir: formData.targetDir,
-				installationId: selectedInstallation.external_id,
-				isAutomated: formData.isAutomated,
-				workflowPath: formData.workflowPath || '.github/workflows/wpcom.yml',
-			} );
-		} catch ( error ) {
-			setIsSubmitting( false );
-		}
+		await mutation.mutateAsync( {
+			external_repository_id: selectedRepository.id,
+			branch_name: formData.branch,
+			target_dir: formData.targetDir,
+			installation_id: selectedInstallation.external_id,
+			is_automated: formData.isAutomated,
+			workflow_path: formData.workflowPath || '.github/workflows/wpcom.yml',
+		} );
 	};
 
 	const branchOptions = useMemo( () => {
@@ -413,8 +411,8 @@ export const ConnectRepositoryForm = ( {
 				<Button
 					variant="primary"
 					onClick={ handleSubmit }
-					isBusy={ isSubmitting }
-					disabled={ ! isFormValid || isSubmitting }
+					isBusy={ mutation.isPending }
+					disabled={ ! isFormValid || mutation.isPending }
 					__next40pxDefaultSize
 				>
 					{ __( 'Connect Repository' ) }

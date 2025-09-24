@@ -64,3 +64,24 @@ export interface DeploymentRunWithDeploymentInfo extends DeploymentRun {
 export interface CodeDeploymentDeleteResponse {
 	message: string;
 }
+
+export interface CreateCodeDeploymentVariables {
+	external_repository_id: number;
+	branch_name: string;
+	target_dir: string;
+	installation_id: number;
+	is_automated: boolean;
+	workflow_path?: string;
+}
+
+export interface CreateCodeDeploymentResponse {
+	message: string;
+	target_dir: string;
+	workflow_path?: string;
+	is_automated: boolean;
+}
+
+export interface CreateCodeDeploymentError {
+	code: string;
+	message: string;
+}
