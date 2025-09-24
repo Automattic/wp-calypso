@@ -1,4 +1,8 @@
-import { fetchBasicMetrics, fetchPerformanceInsights } from '@automattic/api-core';
+import {
+	fetchBasicMetrics,
+	fetchPerformanceInsights,
+	fetchPerformanceProfilerPages,
+} from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export const basicMetricsQuery = ( url: string ) =>
@@ -18,3 +22,10 @@ export const performanceInsightsQuery = ( url: string, token: string ) =>
 			return 5000;
 		},
 	} );
+
+export function performanceProfilerPagesQuery( siteId: string ) {
+	return queryOptions( {
+		queryKey: [ 'performance-profiler-pages', siteId ],
+		queryFn: () => fetchPerformanceProfilerPages( siteId ),
+	} );
+}
