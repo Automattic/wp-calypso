@@ -1,3 +1,4 @@
+import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
@@ -42,6 +43,17 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			const availability = await queryClient.ensureQueryData(
 				queries.domainAvailability( domainName )
 			);
+
+			if ( availability ) {
+				const isAvailable = DomainAvailabilityStatus.AVAILABLE === availability.status;
+				const isAvailableSupportedPremiumDomain =
+					DomainAvailabilityStatus.AVAILABLE_PREMIUM === availability.status &&
+					availability.is_supported_premium_domain;
+				// We only log the availability status if the domain is not available or not a supported premium domain
+				const unavailableStatus =
+					! isAvailable && ! isAvailableSupportedPremiumDomain ? availability.status : null;
+				events.onDomainAddAvailabilityPreCheck( unavailableStatus, domainName, suggestion.vendor );
+			}
 
 			if ( ! availability?.trademark_claims_notice_info ) {
 				const result = cart.onAddItem( suggestion );

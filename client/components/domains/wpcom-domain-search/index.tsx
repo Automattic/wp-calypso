@@ -73,6 +73,19 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
+			onDomainAddAvailabilityPreCheck: (
+				unavailableStatus: string | null,
+				domainName: string,
+				rootVendor: string
+			) => {
+				recordTracksEvent( 'calypso_domain_add_availability_precheck', {
+					domain: domainName,
+					flow_name: flowName,
+					root_vendor: rootVendor,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					unavailable_status: unavailableStatus,
+				} );
+			},
 			onFilterApplied: ( filter: FilterState ) => {
 				recordTracksEvent( 'calypso_domain_search_filters_submit', {
 					flow_name: flowName,

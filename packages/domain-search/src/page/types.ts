@@ -42,6 +42,11 @@ export interface DomainSearchEvents {
 	onQueryChange: ( query: string ) => void;
 	onAddDomainToCart: ( domainName: string ) => void;
 	onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => void;
+	onDomainAddAvailabilityPreCheck: (
+		unavailableStatus: string | null,
+		domainName: string,
+		rootVendor: string
+	) => void;
 }
 
 export interface DomainSearchConfig {
