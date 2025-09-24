@@ -22,12 +22,7 @@ interface UnignoreThreatModalProps extends RenderModalProps< Threat > {
 	siteId: number;
 }
 
-export function UnignoreThreatModal( {
-	items,
-	closeModal,
-	onActionPerformed,
-	siteId,
-}: UnignoreThreatModalProps ) {
+export function UnignoreThreatModal( { items, closeModal, siteId }: UnignoreThreatModalProps ) {
 	const threat = items[ 0 ];
 	const unignoreThreat = useMutation( unignoreThreatMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -36,7 +31,6 @@ export function UnignoreThreatModal( {
 		unignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
-				onActionPerformed?.( [ threat ] );
 				createSuccessNotice( __( 'Threat unignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {

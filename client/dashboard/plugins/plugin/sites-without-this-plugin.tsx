@@ -1,5 +1,5 @@
 import { Site } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
+import { ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
@@ -36,10 +36,10 @@ export const SitesWithoutThisPlugin = ( { pluginSlug }: { pluginSlug: string } )
 				id: 'link',
 				header: <div />,
 				getValue: ( { item }: { item: Site } ) => item.URL,
-				render: ( { item }: { item: Site } ) => (
-					<Link to={ `/plugins/${ pluginSlug }/${ item.slug }` }>
+				render: () => (
+					<ExternalLink href={ `https://wordpress.com/plugins/${ pluginSlug }` }>
 						{ __( 'Go to plugin page' ) }
-					</Link>
+					</ExternalLink>
 				),
 			},
 		],

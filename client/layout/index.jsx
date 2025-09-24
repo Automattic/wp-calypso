@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -185,14 +186,22 @@ class Layout extends Component {
 			this.props.currentRoute.startsWith( '/checkout/failed-purchases' );
 
 		return (
-			<MasterbarComponent
-				section={ this.props.sectionGroup }
-				isCheckout={ this.props.sectionName === 'checkout' }
-				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
-				isCheckoutFailed={ isCheckoutFailed }
-				loadHelpCenterIcon={ loadHelpCenterIcon }
-				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
-			/>
+			<>
+				{ this.props.hasUniversalHeader && (
+					<UniversalNavbarHeader
+						isLoggedIn={ this.props.isLoggedIn }
+						sectionName={ this.props.sectionName }
+					/>
+				) }
+				<MasterbarComponent
+					section={ this.props.sectionGroup }
+					isCheckout={ this.props.sectionName === 'checkout' }
+					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
+					isCheckoutFailed={ isCheckoutFailed }
+					loadHelpCenterIcon={ loadHelpCenterIcon }
+					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
+				/>
+			</>
 		);
 	}
 
@@ -205,6 +214,7 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-universal-header': this.props.hasUniversalHeader,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -420,6 +430,11 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
+		const hasUniversalHeader =
+			config.isEnabled( 'themes/universal-header' ) &&
+			! siteId &&
+			[ 'themes', 'theme' ].includes( sectionName );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -456,6 +471,7 @@ export default withCurrentRoute(
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
+			hasUniversalHeader,
 		};
 	} )( Layout )
 );
