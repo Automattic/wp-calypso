@@ -5,11 +5,12 @@ import {
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { ButtonStack } from 'calypso/dashboard/components/button-stack';
+import { Text } from 'calypso/dashboard/components/text';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
@@ -302,72 +303,74 @@ function FileInfoCard( {
 
 	const FileDetail = ( { label, value }: { label: string; value: string | number } ) => {
 		return (
-			<div className="file-card__detail">
-				<Text weight={ 700 }>{ label } </Text>
+			<HStack className="file-card__detail" justify="flex-start" spacing={ 1 }>
+				<Text weight={ 700 }>{ label }</Text>
 				<Text>{ value }</Text>
-			</div>
+			</HStack>
 		);
 	};
 
+	const hasMeta = item.type === 'table' || size || modifiedTime || fileInfo?.hash;
 	return (
 		<Card isRounded={ false } variant="secondary" isBorderless>
 			<CardBody>
 				<VStack>
-					<VStack spacing={ 0 }>
-						{ item.type === 'table' && (
-							<FileDetail
-								label={
-									/* translators: This refers to database table rows. */
-									__( 'Rows:' )
-								}
-								value={ item.rowCount ?? 0 }
-							/>
+					<HStack wrap>
+						{ hasMeta && (
+							<VStack spacing={ 0 }>
+								{ item.type === 'table' && (
+									<FileDetail
+										label={
+											/* translators: This refers to database table rows. */
+											__( 'Rows:' )
+										}
+										value={ item.rowCount ?? 0 }
+									/>
+								) }
+								{ size && (
+									<FileDetail
+										label={
+											/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+											__( 'Size:' )
+										}
+										value={ `${ size.unitAmount } ${ size.unit }` }
+									/>
+								) }
+								{ modifiedTime && (
+									<FileDetail
+										label={
+											/* translators: This refers to the date when the file was modified. */
+											__( 'Modified:' )
+										}
+										value={ modifiedTime }
+									/>
+								) }
+								{ fileInfo?.hash && (
+									<FileDetail
+										label={
+											/* translators: This refers to a unique identifier or checksum. */
+											__( 'Hash:' )
+										}
+										value={ fileInfo.hash }
+									/>
+								) }
+							</VStack>
 						) }
-
-						<HStack justify="space-between">
-							{ modifiedTime && (
-								<FileDetail
-									label={
-										/* translators: This refers to the date when the file was modified. */
-										__( 'Modified:' )
-									}
-									value={ modifiedTime }
-								/>
-							) }
-
-							{ size && (
-								<FileDetail
-									label={
-										/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
-										__( 'Size:' )
-									}
-									value={ `${ size.unitAmount } ${ size.unit }` }
-								/>
-							) }
-						</HStack>
-
-						{ fileInfo?.hash && (
-							<FileDetail
-								label={
-									/* translators: This refers to a unique identifier or checksum. */
-									__( 'Hash:' )
-								}
-								value={ fileInfo.hash }
-							/>
+						{ showActions && (
+							<ButtonStack style={ { width: 'auto', flexShrink: 0 } }>
+								{ renderDownloadButton() }
+								{ item.type !== 'wordpress' && (
+									<Button
+										disabled={ ! isRestoreEnabled }
+										onClick={ restoreFile }
+										variant="secondary"
+									>
+										{ __( 'Restore' ) }
+									</Button>
+								) }
+							</ButtonStack>
 						) }
-					</VStack>
-
-					{ showActions && (
-						<HStack justify="flex-start" spacing={ 4 }>
-							{ renderDownloadButton() }
-							{ item.type !== 'wordpress' && (
-								<Button disabled={ ! isRestoreEnabled } onClick={ restoreFile } variant="secondary">
-									{ __( 'Restore' ) }
-								</Button>
-							) }
-						</HStack>
-					) }
-
+					</HStack>
 					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
 						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
 					) }
