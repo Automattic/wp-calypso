@@ -1,11 +1,12 @@
 import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { siteRoute } from '../../app/router/sites';
+import { siteDeploymentsRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
@@ -15,30 +16,43 @@ import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
-import type { RenderModalProps, View } from '@wordpress/dataviews';
+import type { RenderModalProps, View, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const router = useRouter();
 
 	const { data: deployments = [], isLoading } = useQuery( codeDeploymentsQuery( site.ID ) );
 
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
 
-	const actions = [
+	const actions: Action< CodeDeploymentData >[] = [
 		{
 			id: 'trigger-manual-deployment',
 			label: __( 'Trigger manual deployment' ),
+			callback: () => {},
 		},
 		{
 			id: 'configure-connection',
 			label: __( 'Configure connection' ),
+			callback: () => {},
 		},
 		{
 			id: 'see-deployment-runs',
 			label: __( 'See deployment runs' ),
+			callback: ( items: CodeDeploymentData[] ) => {
+				const repository = items[ 0 ];
+				router.navigate( {
+					to: siteDeploymentsRoute.fullPath,
+					params: {
+						siteSlug: siteSlug,
+						repositoryId: repository.id,
+					},
+				} );
+			},
 		},
 		{
 			id: 'delete',
