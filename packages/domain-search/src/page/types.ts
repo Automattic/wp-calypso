@@ -40,7 +40,12 @@ export interface DomainSearchEvents {
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
 	onQueryChange: ( query: string ) => void;
-	onAddDomainToCart: ( domainName: string ) => void;
+	onAddDomainToCart: (
+		domainName: string,
+		position: number,
+		isPremium: boolean,
+		rootVendor: string
+	) => void;
 	onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => void;
 	onDomainAddAvailabilityPreCheck: (
 		unavailableStatus: string | null,

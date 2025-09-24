@@ -36,7 +36,12 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
 			if ( acceptedTrademarkClaim ) {
 				const result = cart.onAddItem( suggestion );
-				events.onAddDomainToCart( domainName );
+				events.onAddDomainToCart(
+					domainName,
+					suggestion.position,
+					suggestion.is_premium || false,
+					suggestion.vendor
+				);
 				return result;
 			}
 
@@ -57,7 +62,12 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 
 			if ( ! availability?.trademark_claims_notice_info ) {
 				const result = cart.onAddItem( suggestion );
-				events.onAddDomainToCart( domainName );
+				events.onAddDomainToCart(
+					domainName,
+					suggestion.position,
+					suggestion.is_premium || false,
+					suggestion.vendor
+				);
 				return result;
 			}
 

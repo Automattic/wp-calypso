@@ -61,8 +61,20 @@ const DomainSearchWithCart = ( {
 			onContinue: () => {
 				props.events?.onContinue?.( items );
 			},
-			onAddDomainToCart: ( domainName: string ) => {
-				recordTracksEvent( 'calypso_domain_search_add_button_click', { domain: domainName } );
+			onAddDomainToCart: (
+				domainName: string,
+				position: number,
+				isPremium: boolean,
+				rootVendor: string
+			) => {
+				recordTracksEvent( 'calypso_domain_search_add_button_click', {
+					domain: domainName,
+					position,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					is_premium: isPremium,
+					flow_name: flowName,
+					root_vendor: rootVendor,
+				} );
 			},
 			onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
