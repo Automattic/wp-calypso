@@ -198,6 +198,17 @@ export const siteDeploymentsRoute = createRoute( {
 	)
 );
 
+export const siteDeploymentsListRoute = createRoute( {
+	getParentRoute: () => siteDeploymentsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../sites/deployments-list' ).then( ( d ) =>
+		createLazyRoute( 'site-deployments-list' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteMonitoringRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1092,7 +1103,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	];
 
 	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute );
+		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
 	}
 
 	if ( config.supports.sites.performance ) {
