@@ -3,7 +3,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 
 interface FlashMessageProps {
-	overrideDefaultParam?: string;
+	id?: string;
 	value: string;
 	message: string;
 	type?: 'success' | 'error';
@@ -47,7 +47,7 @@ export default function FlashMessage( {
 					break;
 			}
 
-			params.delete( overrideDefaultParam );
+			params.delete( id );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );
