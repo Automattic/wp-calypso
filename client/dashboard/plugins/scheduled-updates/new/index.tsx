@@ -32,7 +32,7 @@ import { useTimeSlotCollisionsFromMultisite } from './hooks/use-time-slot-collis
 import type { Frequency, Weekday } from '../types';
 import type { Site } from '@automattic/api-core';
 
-const BLOCK_CREATE = false;
+const BLOCK_CREATE = true;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
