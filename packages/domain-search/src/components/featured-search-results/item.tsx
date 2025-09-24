@@ -64,6 +64,9 @@ export const FeaturedSearchResultsItem = ( {
 		return existingBadges;
 	}, [ reason, suggestionBadges, policyBadges, suggestion.price_rule ] );
 
+	const { events, railCarId } = useDomainSearch();
+	events.onSuggestionRender( suggestion, railCarId, reason );
+
 	return (
 		<DomainSuggestion.Featured
 			isHighlighted={ reason === 'exact-match' }

@@ -54,6 +54,11 @@ export interface DomainSearchEvents {
 	) => void;
 	onSearch: ( query: string, vendor: string, searchCount: number ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
+	onSuggestionRender: (
+		suggestion: DomainSuggestion,
+		railcarId: string | null,
+		reason?: string | null
+	) => void;
 }
 
 export interface DomainSearchConfig {
@@ -104,6 +109,8 @@ export interface DomainSearchContextType
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
 	config: DomainSearchConfig;
+	railCarId: string | null;
+	setRailCarId: ( railCarId: string | null ) => void;
 }
 
 export type { PriceRulesConfig };

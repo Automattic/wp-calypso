@@ -1,5 +1,6 @@
+import { DomainSuggestion } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { DomainSearch } from '@automattic/domain-search';
+import { DomainSearch, getTld } from '@automattic/domain-search';
 import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
@@ -127,8 +128,41 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
+			onSuggestionRender: (
+				suggestion: DomainSuggestion,
+				railcarId: string | null,
+				reason?: string | null
+			) => {
+				let resultSuffix = '';
+				if ( reason === 'recommended' ) {
+					resultSuffix = '#recommended';
+				} else if ( reason === 'best-alternative' ) {
+					resultSuffix = '#best-alternative';
+				}
+
+				let fetchAlgo = '/domains/search/' + config.vendor;
+				if ( flowName === 'domain-only' ) {
+					fetchAlgo = fetchAlgo + '/domain-only';
+				} else if ( flowName === 'signup' ) {
+					fetchAlgo = fetchAlgo + '/signup';
+				} else {
+					fetchAlgo = fetchAlgo + '/domains';
+				}
+
+				recordTracksEvent( 'calypso_traintracks_render', {
+					ui_position: suggestion.position,
+					flow_name: flowName,
+					railcar: `${ railcarId }-${ suggestion.position }`,
+					fetch_algo: `${ fetchAlgo }/${ suggestion.vendor }`,
+					root_vendor: suggestion.vendor,
+					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
+					fetch_query: getSessionStorageQuery(),
+					domain_type: suggestion.is_premium ? 'premium' : 'standard',
+					tld: getTld( suggestion.domain_name ),
+				} );
+			},
 		};
-	}, [ props.events, items, flowName ] );
+	}, [ props.events, items, flowName, config ] );
 
 	return (
 		<DomainSearch

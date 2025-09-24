@@ -80,6 +80,12 @@ export interface DomainSuggestionQuery {
 
 export interface DomainSuggestion {
 	/**
+	 * The position of this suggestion in the list of suggestions
+	 * @example 0
+	 */
+	position?: number;
+
+	/**
 	 * Rendered formatted cost
 	 * @example "Free" or "€15.00"
 	 */

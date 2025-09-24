@@ -26,6 +26,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onDomainAddAvailabilityPreCheck: noop,
 		onSearch: noop,
 		onSuggestionsReceive: noop,
+		onSuggestionRender: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -66,6 +67,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		tlds: [],
 	},
 	setFilter: () => {},
+	railCarId: null,
+	setRailCarId: () => {},
 	resetFilter: () => {},
 };
 
@@ -88,6 +91,7 @@ export const useDomainSearchContextValue = (
 	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
+	const [ railCarId, setRailCarId ] = useState( null );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
 
 	const closeFullCart = useCallback( () => {
@@ -168,6 +172,8 @@ export const useDomainSearchContextValue = (
 			currentSiteUrl,
 			filter,
 			setFilter,
+			railCarId,
+			setRailCarId,
 			resetFilter: () => setFilter( DEFAULT_FILTER ),
 		};
 	}, [
@@ -182,5 +188,7 @@ export const useDomainSearchContextValue = (
 		normalizedConfig,
 		filter,
 		setFilter,
+		railCarId,
+		setRailCarId,
 	] );
 };
