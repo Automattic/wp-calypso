@@ -17,7 +17,7 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 	}, workerInfo ) => {
 		test.skip(
 			workerInfo.project.name !== 'chrome',
-			'We only run Apple Authentication in desktopChrome'
+			'We only run Apple Authentication in desktop Chrome'
 		);
 
 		let timestamp: Date;

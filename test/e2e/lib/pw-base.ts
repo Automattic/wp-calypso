@@ -32,6 +32,7 @@ import {
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
+	GitHubLoginPage,
 	IncognitoPage,
 	LoginPage,
 	NewSiteResponse,
@@ -111,6 +112,10 @@ export const test = base.extend< {
 	 * Page object representing the WordPress editor page.
 	 */
 	pageEditor: EditorPage;
+	/**
+	 * Page object representing the Github login page.
+	 */
+	pageGitHubLogin: GitHubLoginPage;
 	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
@@ -194,6 +199,10 @@ export const test = base.extend< {
 	pageEditor: async ( { page }, use ) => {
 		const editorPage = new EditorPage( page );
 		await use( editorPage );
+	},
+	pageGitHubLogin: async ( { page }, use ) => {
+		const gitHubLoginPage = new GitHubLoginPage( page );
+		await use( gitHubLoginPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
