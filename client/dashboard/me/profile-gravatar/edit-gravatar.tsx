@@ -7,7 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useState, useEffect, useRef, CSSProperties, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, useMemo, CSSProperties, KeyboardEvent } from 'react';
 
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
@@ -108,6 +108,12 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		transition: 'opacity 0.2s',
 	};
 
+	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
+	const displayUrl = useMemo(
+		() => addQueryArgs( avatarUrl, { ver: Date.now() } ) as unknown as string,
+		[ avatarUrl ]
+	);
+
 	const openGravatarEditor = () => {
 		handleUnverifiedUserClick();
 		if ( isEmailVerified ) {
@@ -147,7 +153,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						aria-label={ uploadButtonLabel }
 					>
 						<img
-							src={ tempImage || avatarUrl }
+							src={ tempImage || displayUrl }
 							alt={ __( 'Gravatar' ) }
 							width={ 48 }
 							height={ 48 }
