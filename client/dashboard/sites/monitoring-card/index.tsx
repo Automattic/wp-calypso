@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	Button,
+	Spinner,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import {
@@ -14,7 +15,6 @@ import {
 import clsx from 'clsx';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
-import { TextSkeleton } from '../../components/text-skeleton';
 import type { ReactNode } from 'react';
 import './style.scss';
 
@@ -26,6 +26,7 @@ export interface MonitoringCardProps {
 	onAnchorClick?: () => void;
 	tracksId?: string;
 	children?: ReactNode;
+	cardLabel?: string;
 	className?: string;
 }
 
@@ -37,16 +38,22 @@ export default function MonitoringCard( {
 	onAnchorClick,
 	tracksId,
 	children,
+	cardLabel,
 	className,
 }: MonitoringCardProps ) {
 	const renderDescription = () => {
-		if ( isLoading ) {
-			return <TextSkeleton length={ 20 } />;
-		}
 		if ( description ) {
 			return description;
 		}
 		return <>&nbsp;</>;
+	};
+
+	const renderContent = () => {
+		if ( isLoading ) {
+			return <Spinner />;
+		}
+
+		return children;
 	};
 
 	const topContent = (
@@ -102,6 +109,12 @@ export default function MonitoringCard( {
 		</HStack>
 	);
 
+	const contentClassNames = clsx(
+		'dashboard-monitoring-card__content',
+		isLoading && 'dashboard-monitoring-card__content__is-loading',
+		cardLabel && `dashboard-monitoring-card__content__${ cardLabel }`
+	);
+
 	return (
 		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
@@ -113,13 +126,9 @@ export default function MonitoringCard( {
 						/>
 					) }
 					{ topContent }
-					{ ! isLoading && children && (
-						<VStack
-							className="dashboard-monitoring-card__content"
-							spacing={ 2 }
-							justify="flex-start"
-						>
-							{ children }
+					{ children && (
+						<VStack className={ contentClassNames } spacing={ 2 } justify="center">
+							{ renderContent() }
 						</VStack>
 					) }
 				</VStack>
