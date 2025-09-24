@@ -361,6 +361,36 @@ describe( 'index', () => {
 					'</blockquote>'
 			);
 		} );
+
+		test( 'preserves all styles on elements with text-transform', () => {
+			const post = {
+				content:
+					'<div style="color: red; text-transform: uppercase; font-size: 16px;">Hello World</div>',
+			};
+			const normalized = withContentDOM( [ removeStyles ] )( post );
+			expect( normalized.content ).toBe(
+				'<div style="color: red; text-transform: uppercase; font-size: 16px;">Hello World</div>'
+			);
+		} );
+
+		test( 'preserves all styles on multiple elements with text-transform', () => {
+			const post = {
+				content:
+					'<p style="text-transform: capitalize; color: blue;">First</p><span style="text-transform: lowercase; font-weight: bold;">Second</span>',
+			};
+			const normalized = withContentDOM( [ removeStyles ] )( post );
+			expect( normalized.content ).toBe(
+				'<p style="text-transform: capitalize; color: blue;">First</p><span style="text-transform: lowercase; font-weight: bold;">Second</span>'
+			);
+		} );
+
+		test( 'removes style attribute when no text-transform is present', () => {
+			const post = {
+				content: '<div style="color: red; font-size: 16px;">Hello World</div>',
+			};
+			const normalized = withContentDOM( [ removeStyles ] )( post );
+			expect( normalized.content ).toBe( '<div>Hello World</div>' );
+		} );
 	} );
 
 	describe( 'makeLinksSafe', () => {

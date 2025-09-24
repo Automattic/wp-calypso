@@ -1,3 +1,5 @@
+import { siteGranularBackupDownloadInitiateMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
@@ -11,8 +13,12 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
+import { useCallback } from 'react';
+import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
+import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -23,11 +29,19 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const publishedTimestamp = backup.published || backup.last_published;
 	const formattedTime = useFormattedTime( publishedTimestamp, {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
+	const { fileBrowserState } = useFileBrowserContext();
+	const { totalItems: selectedFilesCount } = fileBrowserState.getCheckList();
+
+	// Granular backup download mutation
+	const granularDownloadRequest = useMutation(
+		siteGranularBackupDownloadInitiateMutation( site.ID )
+	);
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const direction = isSmallViewport ? 'column-reverse' : 'row';
@@ -39,23 +53,61 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
-	const handleDownloadClick = () => {
+	const handleDownloadClick = useCallback( () => {
 		router.navigate( {
 			to: siteBackupDownloadRoute.fullPath,
 			params: { siteSlug: site.slug, rewindId: backup.rewind_id },
 		} );
-	};
+	}, [ router, site.slug, backup.rewind_id ] );
 
+	const handleGranularDownloadClick = useCallback( () => {
+		const browserCheckList = fileBrowserState.getCheckList();
+		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+
+		recordTracksEvent( 'calypso_dashboard_backup_granular_download_request' );
+
+		granularDownloadRequest.mutate(
+			{
+				rewindId: backup.rewind_id,
+				includePaths,
+				excludePaths,
+			},
+			{
+				onSuccess: ( downloadId ) => {
+					// Navigate to download page with the downloadId to skip the form
+					router.navigate( {
+						to: siteBackupDownloadRoute.fullPath,
+						params: { siteSlug: site.slug, rewindId: backup.rewind_id },
+						search: { downloadId },
+					} );
+				},
+			}
+		);
+	}, [
+		fileBrowserState,
+		recordTracksEvent,
+		granularDownloadRequest,
+		backup.rewind_id,
+		router,
+		site.slug,
+	] );
+
+	const hasSelectedFiles = selectedFilesCount > 0;
 	const actions = backup.rewind_id ? (
 		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
 			<Button
 				variant="tertiary"
 				size={ isSmallViewport ? 'default' : 'compact' }
 				icon={ download }
-				onClick={ handleDownloadClick }
+				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
 				style={ { justifyContent: 'center' } }
+				disabled={ granularDownloadRequest.isPending }
+				isBusy={ granularDownloadRequest.isPending }
 			>
-				{ __( 'Download backup' ) }
+				{ hasSelectedFiles
+					? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
+					: __( 'Download backup' ) }
 			</Button>
 			<Button
 				variant="primary"
@@ -64,7 +116,9 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>
-				{ __( 'Restore to this point' ) }
+				{ hasSelectedFiles
+					? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
+					: __( 'Restore to this point' ) }
 			</Button>
 		</ButtonStack>
 	) : null;
@@ -104,6 +158,18 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							<ImagePreview item={ backup } />
 						) }
 					</Grid>
+					{ !! backup.object?.backup_period && (
+						<div className="backup-details__file-browser">
+							<FileBrowser
+								rewindId={ Number( backup.rewind_id ) }
+								siteId={ site.ID }
+								siteSlug={ site.slug }
+								isRestoreEnabled
+								onTrackEvent={ recordTracksEvent }
+								onRequestGranularRestore={ handleRestoreClick }
+							/>
+						</div>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>

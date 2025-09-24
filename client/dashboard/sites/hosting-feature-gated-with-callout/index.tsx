@@ -3,17 +3,23 @@ import HostingFeatureGate from '../hosting-feature-gate';
 import ActivationCallout from './activation';
 import UpsellCallout, { UpsellCalloutProps } from './upsell';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
+import type { ReactNode } from 'react';
 
 type HostingFeatureGatedWithCalloutProps = Omit<
 	HostingFeatureGateProps,
 	'renderUpsellComponent' | 'renderActivationComponent'
 > &
 	UpsellCalloutProps & {
+		/**
+		 * @deprecated Use `overlay` instead.
+		 */
 		asOverlay?: boolean;
+		overlay?: ReactNode;
 	};
 
 export default function HostingFeatureGatedWithCallout( {
 	asOverlay,
+	overlay,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
@@ -38,14 +44,14 @@ export default function HostingFeatureGatedWithCallout( {
 					/>
 				);
 
-				if ( asOverlay ) {
-					return <CalloutOverlay callout={ callout } />;
+				if ( asOverlay || overlay ) {
+					return <CalloutOverlay callout={ callout } main={ overlay } />;
 				}
 
 				return callout;
 			} }
 			renderActivationComponent={ ( { onClick } ) => (
-				<ActivationCallout asOverlay={ asOverlay } onClick={ onClick } />
+				<ActivationCallout main={ overlay } onClick={ onClick } />
 			) }
 		/>
 	);

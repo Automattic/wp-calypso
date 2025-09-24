@@ -44,7 +44,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
-	const threatCount = scan?.threats.length || 0;
+	const threatCount = scan?.threats?.length || 0;
 
 	const getPageDescription = () => {
 		if ( lastScanTime && lastScanRelativeTime ) {
