@@ -22,7 +22,7 @@ test.describe( 'Marketing: SEO', { tag: [ tags.CALYPSO_PR ] }, () => {
 			await pageMarketing.enterPageTitleStructure( 'Front Page', frontPageText );
 		} );
 
-		await test.step( 'Then I can validate and preciew the text ', async function () {
+		await test.step( 'Then I can validate and preview the text ', async function () {
 			await pageMarketing.validatePreviewTextForPageStructureCategory( frontPageText );
 		} );
 
