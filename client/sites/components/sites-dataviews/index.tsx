@@ -231,7 +231,7 @@ const DotcomSitesDataViews = ( {
 					return item.ID.toString();
 				} }
 				isLoading={ isLoading }
-				defaultLayouts={ { table: {} } }
+				defaultLayouts={ { list: {}, table: {} } }
 				onChangeSelection={ onSelectionChange }
 			/>
 		</div>
