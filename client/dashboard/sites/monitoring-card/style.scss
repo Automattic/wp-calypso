@@ -1,6 +1,19 @@
 .dashboard-monitoring-card {
 	flex-grow: 1;
 
+	.dashboard-monitoring-card__content {
+		&__is-loading {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		&__server-performance {
+			/* Set a minimum height to prevent layout shift when the chart loads. */
+			min-height: 450px;
+		}
+	}
+
 	&.dashboard-monitoring-card--row-layout {
 		flex-basis: 0;
 		min-width: 250px;
@@ -8,6 +21,39 @@
 
 	.dashboard-monitoring-card__header {
 		flex-grow: 1;
+	}
+}
+
+.dashboard-monitoring-card__line-chart {
+	flex-direction: column-reverse !important;
+
+	svg {
+		/* Ensure the chart numbers are not clipped. */
+		overflow: visible;
+	}
+}
+
+.dashboard-monitoring-card__line-chart--tooltip {
+	padding: 13px;
+	line-height: 16px;
+
+	.dashboard-monitoring-card__line-chart--tooltip-lines {
+		margin-top: 12px;
+
+		.dashboard-monitoring-card__line-chart--tooltip-lines--line {
+			display: flex;
+			padding: 3px 0;
+
+			svg {
+				margin-inline-end: 6px;
+			}
+
+			> :last-child {
+				padding-inline-start: 6px;
+				flex-grow: 1;
+				text-align: end;
+			}
+		}
 	}
 }
 

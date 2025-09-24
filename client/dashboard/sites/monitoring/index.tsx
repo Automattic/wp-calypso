@@ -17,6 +17,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import MonitoringCard from '../monitoring-card';
+import MonitoringHttpResponsesCard from '../monitoring-http-responses-card';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
 import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
 import { getMonitoringCalloutProps } from './monitoring-callout';
@@ -78,14 +79,11 @@ function SiteMonitoringBody( {
 				</MonitoringCard>
 			</HStack>
 
-			<MonitoringCard
-				title={ __( 'Successful HTTP responses' ) }
-				description={ __( 'Requests per minute completed without errors by the server.' ) }
-				onDownloadClick={ () => {} }
-				onAnchorClick={ () => {} }
-			>
-				[Successful HTTP responses graph]
-			</MonitoringCard>
+			<MonitoringHttpResponsesCard
+				site={ site }
+				timeRange={ hoursMap[ timeRange ] }
+				requestType="successful"
+			/>
 
 			<MonitoringCard
 				title={ __( 'Unsuccessful HTTP responses' ) }
