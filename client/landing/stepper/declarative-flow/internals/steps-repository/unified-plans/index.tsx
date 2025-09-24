@@ -70,6 +70,8 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
+		case 'plan-upgrade':
+			return 'plans-upgrade';
 		default:
 			return null;
 	}

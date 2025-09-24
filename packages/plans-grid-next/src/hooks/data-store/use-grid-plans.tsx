@@ -168,6 +168,33 @@ export const usePlanTypesWithIntent = ( {
 				TYPE_ECOMMERCE,
 			];
 			break;
+		case 'plans-upgrade': {
+			// Show current plan plus all higher-tier plans (upgrade options only)
+			const upgradePlanTypes = [
+				TYPE_FREE,
+				TYPE_PERSONAL,
+				TYPE_PREMIUM,
+				TYPE_BUSINESS,
+				TYPE_ECOMMERCE,
+			];
+			if ( isEnterpriseAvailable ) {
+				upgradePlanTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+
+			// Find the index of the current plan in the hierarchy
+			const currentPlanIndex = currentSitePlanType
+				? upgradePlanTypes.findIndex( ( planType ) => planType === currentSitePlanType )
+				: -1;
+
+			if ( currentPlanIndex >= 0 ) {
+				// Show current plan and all plans after it (higher tiers)
+				planTypes = upgradePlanTypes.slice( currentPlanIndex );
+			} else {
+				// If current plan not found or no current plan, show all plans
+				planTypes = upgradePlanTypes;
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;

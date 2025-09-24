@@ -28,6 +28,17 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 
+	useStepsProps() {
+		return {
+			[ STEPS.UNIFIED_PLANS.slug ]: {
+				// Note that this step uses this flow name to select the `plans-upgrade` intent.
+
+				// This flag enables upgrade-specific behavior in PlansFeaturesMain
+				isStepperUpgradeFlow: true,
+			},
+		};
+	},
+
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const fetchingSiteError = useSelect(
