@@ -55,6 +55,7 @@ function SiteLogsDataViews( {
 	timezoneString,
 	autoRefresh,
 	setAutoRefresh,
+	autoRefreshDisabledReason,
 	onAutoRefreshRequest,
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
@@ -249,6 +250,7 @@ function SiteLogsDataViews( {
 				label={ __( 'Auto-refresh' ) }
 				checked={ autoRefresh }
 				onChange={ handleAutoRefreshClick }
+				disabled={ Boolean( autoRefreshDisabledReason ) }
 			/>
 		</>
 	);

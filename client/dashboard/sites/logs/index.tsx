@@ -141,6 +141,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									dateRangeVersion={ dateRangeVersion }
 									autoRefresh={ autoRefresh }
 									setAutoRefresh={ setAutoRefresh }
+									autoRefreshDisabledReason={ autoRefreshDisabledReason }
 									onAutoRefreshRequest={ handleAutoRefreshToggle }
 									gmtOffset={ gmtOffset }
 									timezoneString={ timezoneString }
