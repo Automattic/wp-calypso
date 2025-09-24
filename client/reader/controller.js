@@ -121,11 +121,7 @@ export function feedDiscovery( context, next ) {
 	}
 }
 
-export function feedLookup( context, next ) {
-	if ( ! context.params[ 0 ] ) {
-		next();
-	}
-
+export function feedLookup( context ) {
 	const url = context.params[ 0 ];
 	context.queryClient
 		.fetchQuery( {
