@@ -92,13 +92,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.LOGS }
-				asOverlay
-				{ ...getLogsCalloutProps() }
-			>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.LOGS }
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> } /> }
+			{ ...getLogsCalloutProps() }
+		>
+			<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
 				<VStack as="div" spacing={ 3 }>
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
@@ -160,8 +160,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						</CardBody>
 					</Card>
 				</VStack>
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+			</PageLayout>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 
