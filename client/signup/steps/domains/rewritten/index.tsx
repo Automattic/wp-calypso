@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
@@ -20,13 +21,36 @@ import type { StepProps } from './types';
 
 import './style.scss';
 
-const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
-	const { flowName, stepName, submitSignupStep, goToNextStep, locale, queryObject } = props;
+const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme: boolean ) => {
+	if ( ! themeSlug ) {
+		return undefined;
+	}
+
+	const repo = isPurchasingTheme ? 'premium' : 'pub';
+
+	return `${ repo }/${ themeSlug }`;
+};
+
+const DomainSearchUI = (
+	props: StepProps & {
+		locale: string;
+		baseSubmitStepProps: Record< string, unknown >;
+		baseSubmitProvidedDependencies: Record< string, unknown >;
+	}
+) => {
+	const {
+		flowName,
+		stepName,
+		submitSignupStep,
+		goToNextStep,
+		locale,
+		queryObject,
+		baseSubmitStepProps,
+		baseSubmitProvidedDependencies,
+	} = props;
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
-
-	const allowedTldParam = queryObject.tld;
 
 	const events = useMemo( () => {
 		return {
@@ -55,14 +79,20 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 
 				submitSignupStep(
 					{
-						stepName,
+						...baseSubmitStepProps,
+						stepSectionName: '',
 						domainItem,
 						isPurchasingItem: true,
 						siteUrl: domainItem.meta,
-						stepSectionName: '',
 						domainCart,
 					},
-					{ domainItem, siteUrl: domainItem.meta, domainCart }
+					{
+						...baseSubmitProvidedDependencies,
+						signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.CUSTOM,
+						domainItem,
+						siteUrl: domainItem.meta,
+						domainCart,
+					}
 				);
 
 				goToNextStep();
@@ -72,19 +102,38 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 
 				submitSignupStep(
 					{
-						stepName,
+						...baseSubmitStepProps,
+						stepSectionName: '',
 						domainItem: undefined,
 						isPurchasingItem: false,
 						domainCart: [],
 						siteUrl,
 					},
-					{ domainCart: [], siteUrl }
+					{
+						...baseSubmitProvidedDependencies,
+						signupDomainOrigin: suggestion
+							? SIGNUP_DOMAIN_ORIGIN.FREE
+							: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
+						domainCart: [],
+						siteUrl,
+					}
 				);
 
 				goToNextStep();
 			},
 		};
-	}, [ flowName, stepName, submitSignupStep, goToNextStep, locale, isDomainOnlyFlow ] );
+	}, [
+		flowName,
+		stepName,
+		submitSignupStep,
+		goToNextStep,
+		locale,
+		isDomainOnlyFlow,
+		baseSubmitStepProps,
+		baseSubmitProvidedDependencies,
+	] );
+
+	const allowedTldParam = queryObject.tld;
 
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
@@ -177,23 +226,55 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 		submitSignupStep,
 		goToNextStep,
 		stepSectionName,
+		queryObject,
 	} = props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const locale = ! isLoggedIn ? externalLocale : '';
+	const themeSlug = queryObject.theme;
+
+	const baseSubmitStepProps = useMemo( () => {
+		const themeStyleVariation = queryObject.style_variation;
+
+		const isPurchasingTheme = !! queryObject.premium;
+		const themeSlugWithRepo = getThemeSlugWithRepo( themeSlug, isPurchasingTheme );
+
+		return {
+			stepName,
+			themeSlug,
+			themeSlugWithRepo,
+			themeStyleVariation,
+		};
+	}, [ stepName, themeSlug, queryObject ] );
+
+	const baseSubmitProvidedDependencies = useMemo( () => {
+		if ( themeSlug ) {
+			return {
+				useThemeHeadstartItem: true,
+			};
+		}
+
+		return {};
+	}, [ themeSlug ] );
 
 	if ( stepSectionName === USE_MY_DOMAIN_SECTION_NAME ) {
 		const handleUseMyDomainSubmit = ( domainItem: MinimalRequestCartProduct ) => {
 			submitSignupStep(
 				{
-					stepName: stepName,
+					...baseSubmitStepProps,
+					stepSectionName,
 					domainItem,
 					isPurchasingItem: true,
 					siteUrl: domainItem.meta,
-					stepSectionName: stepSectionName,
 					domainCart: [],
 				},
-				{ domainItem, siteUrl: domainItem.meta, domainCart: [] }
+				{
+					...baseSubmitProvidedDependencies,
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+					domainItem,
+					siteUrl: domainItem.meta,
+					domainCart: [],
+				}
 			);
 
 			goToNextStep();
@@ -201,8 +282,21 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 
 		const handleSkip = () => {
 			submitSignupStep(
-				{ stepName, suggestion: undefined, isPurchasingItem: false, domainCart: [], siteUrl: '' },
-				{ suggestion: undefined, domainCart: [], siteUrl: '' }
+				{
+					...baseSubmitStepProps,
+					stepSectionName,
+					suggestion: undefined,
+					isPurchasingItem: false,
+					domainCart: [],
+					siteUrl: '',
+				},
+				{
+					...baseSubmitProvidedDependencies,
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
+					suggestion: undefined,
+					domainCart: [],
+					siteUrl: '',
+				}
 			);
 
 			goToNextStep();
@@ -218,7 +312,14 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 		);
 	}
 
-	return <DomainSearchUI { ...props } locale={ locale } />;
+	return (
+		<DomainSearchUI
+			{ ...props }
+			locale={ locale }
+			baseSubmitStepProps={ baseSubmitStepProps }
+			baseSubmitProvidedDependencies={ baseSubmitProvidedDependencies }
+		/>
+	);
 }
 
 export default localize( DomainSearchStep );
