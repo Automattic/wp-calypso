@@ -1,10 +1,10 @@
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { securityIndexRoute } from '../../app/router/me';
+import { notificationsIndexRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import type { PageHeaderProps } from '../../components/page-header/types';
 
-export default function SecurityPageHeader( props: PageHeaderProps ) {
+export default function NotificationsPageHeader( props: PageHeaderProps ) {
 	const router = useRouter();
 
 	return (
@@ -13,9 +13,9 @@ export default function SecurityPageHeader( props: PageHeaderProps ) {
 				<PageHeader.SubNavigation
 					items={ [
 						{
-							label: __( 'Security' ),
+							label: __( 'Notifications' ),
 							href: router.buildLocation( {
-								to: securityIndexRoute.fullPath,
+								to: notificationsIndexRoute.fullPath,
 							} ).href,
 						},
 					] }

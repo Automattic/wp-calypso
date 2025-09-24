@@ -7,7 +7,7 @@ import type { SubNavigationProps } from './types';
 import './style.scss';
 
 export const SubNavigation = ( props: SubNavigationProps ) => {
-	if ( props.items.length < 2 ) {
+	if ( props.items.length < 1 ) {
 		return null;
 	}
 

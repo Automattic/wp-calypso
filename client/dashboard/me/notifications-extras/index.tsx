@@ -5,9 +5,9 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import NotificationsPageHeader from '../notifications-page-header';
 import {
 	WPCOM_OPTION_KEYS,
 	WPCOM_TITLES,
@@ -33,7 +33,7 @@ export default function NotificationsExtras() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader
+				<NotificationsPageHeader
 					title={ __( 'Extras' ) }
 					description={ __(
 						'Get curated extras like reports, digests, and community updates, so you can stay tuned for what’s happening in the WordPress ecosystem.'

@@ -176,12 +176,11 @@ function UnforwardedBreadcrumbs(
 	} );
 
 	const mergedRefs = useMergeRefs( [ ref, containerRef ] );
-	if ( ! items.length || items.length === 1 ) {
-		return null;
-	}
+	// if ( ! items.length || items.length === 1 ) {
+	// 	return null;
+	// }
 
 	const computedVariant = shouldRenderCompact ? 'compact' : props.variant;
-
 	return (
 		<>
 			<BreadcrumbsNav

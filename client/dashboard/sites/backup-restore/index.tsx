@@ -2,7 +2,6 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
-	Button,
 	Card,
 	CardBody,
 	CardHeader,
@@ -11,8 +10,8 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useState } from '@wordpress/element';
-import { __, isRTL, sprintf } from '@wordpress/i18n';
-import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, cloud } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
@@ -91,22 +90,26 @@ function SiteBackupRestore() {
 		}
 	};
 
-	const backButton = (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug } } );
-			} }
-		>
-			{ __( 'Backups' ) }
-		</Button>
-	);
-
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
+			header={
+				<PageHeader
+					prefix={
+						<PageHeader.SubNavigation
+							items={ [
+								{
+									label: __( 'Backups' ),
+									href: router.buildLocation( {
+										to: siteBackupsRoute.fullPath,
+									} ).href,
+								},
+							] }
+						/>
+					}
+					title={ __( 'Site restore' ) }
+				/>
+			}
 		>
 			<Card>
 				{ currentStep !== 'success' && (
