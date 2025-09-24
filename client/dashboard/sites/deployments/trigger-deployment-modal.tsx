@@ -18,6 +18,7 @@ import { ButtonStack } from '../../components/button-stack';
 interface TriggerDeploymentModalProps {
 	onClose: () => void;
 	deployments: CodeDeploymentData[];
+	repositoryId?: string;
 }
 
 interface DeploymentFormData {
@@ -51,10 +52,14 @@ function DeploymentSelectControl( { data, field, onChange }: DeploymentSelectCon
 	);
 }
 
-export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploymentModalProps ) {
+export function TriggerDeploymentModal( {
+	onClose,
+	deployments,
+	repositoryId,
+}: TriggerDeploymentModalProps ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
-		selectedDeploymentId: '',
+		selectedDeploymentId: repositoryId ?? '',
 	} );
 
 	const selectedDeployment: CodeDeploymentData | null = useMemo( () => {

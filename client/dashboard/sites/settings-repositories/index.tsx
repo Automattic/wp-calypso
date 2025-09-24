@@ -11,6 +11,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import ghIconUrl from '../deployments/gh-icon.svg';
+import { TriggerDeploymentModal } from '../deployments/trigger-deployment-modal';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
@@ -19,10 +20,14 @@ import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-
 import type { RenderModalProps, View, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
+	const router = useRouter();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const router = useRouter();
+	const [ modalTriggerDeploymentDetails, setModalTriggerDeploymentDetails ] = useState( {
+		isOpen: false,
+		repositoryId: '',
+	} );
 
 	const { data: deployments = [], isLoading } = useQuery( codeDeploymentsQuery( site.ID ) );
 
@@ -33,7 +38,12 @@ function RepositoriesList() {
 		{
 			id: 'trigger-manual-deployment',
 			label: __( 'Trigger manual deployment' ),
-			callback: () => {},
+			callback: ( items: CodeDeploymentData[] ) => {
+				setModalTriggerDeploymentDetails( {
+					isOpen: true,
+					repositoryId: items[ 0 ].id.toString(),
+				} );
+			},
 		},
 		{
 			id: 'configure-connection',
@@ -84,6 +94,13 @@ function RepositoriesList() {
 				getItemId={ ( item ) => item.repository_name }
 				empty={ emptyTitle }
 			/>
+			{ modalTriggerDeploymentDetails.isOpen && (
+				<TriggerDeploymentModal
+					onClose={ () => setModalTriggerDeploymentDetails( { isOpen: false, repositoryId: '' } ) }
+					deployments={ deployments }
+					repositoryId={ modalTriggerDeploymentDetails.repositoryId }
+				/>
+			) }
 		</DataViewsCard>
 	);
 }
