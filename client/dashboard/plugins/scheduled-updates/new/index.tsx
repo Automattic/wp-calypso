@@ -74,7 +74,7 @@ function ScheduledUpdatesNew() {
 
 		setIsSubmitting( true );
 
-		const { time: timeCollisions, plugins: pluginCollisions } = collisionsChecker.validateNow( {
+		const { timeCollisions, pluginCollisions } = collisionsChecker.validateNow( {
 			siteIds: siteIdsAsNumbers,
 			plugins: selectedPluginSlugs,
 			frequency,

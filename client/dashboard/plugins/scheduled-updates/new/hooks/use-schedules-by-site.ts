@@ -50,6 +50,16 @@ function getPluginSetsBySiteFromMultisite(
 	return result;
 }
 
+/**
+ * Fetches hosting update schedules and derives per-site maps.
+ *
+ * Builds two maps from the multisite response:
+ * - timeSlotsBySite: Record<number, TimeSlot[]> → site ID to time slots
+ *   ({ frequency, timestamp })
+ * - pluginSetsBySite: Record<number, string[][]> → site ID to arrays of plugin
+ *   sets scheduled together
+ * @returns {{ isLoading: boolean; timeSlotsBySite: Record<number, TimeSlot[]>; pluginSetsBySite: Record<number, string[][]> }} Hook API
+ */
 export function useSchedulesBySite() {
 	const { data, isLoading } = useQuery( hostingUpdateSchedulesQuery() );
 
