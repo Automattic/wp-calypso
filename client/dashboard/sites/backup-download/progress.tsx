@@ -23,11 +23,15 @@ function SiteBackupDownloadProgress( {
 	onDownloadComplete: ( downloadUrl: string, fileSizeBytes?: string ) => void;
 	onDownloadError: () => void;
 } ) {
-	const { data: downloadProgress } = useQuery( {
+	const { data: downloadProgress, error: downloadQueryError } = useQuery( {
 		...siteBackupDownloadProgressQuery( site.ID, downloadId ),
 		enabled: !! downloadId,
 		refetchInterval: ( query ) => {
-			const { data } = query.state;
+			const { data, error } = query.state;
+			// Stop polling if there's an API error
+			if ( data?.error || error ) {
+				return false;
+			}
 
 			// Poll every 1.5 seconds if download is in progress
 			if ( ! data?.url ) {
@@ -42,7 +46,7 @@ function SiteBackupDownloadProgress( {
 	useEffect( () => {
 		if ( downloadProgress?.url ) {
 			onDownloadComplete( downloadProgress.url, downloadProgress.bytes_formatted );
-		} else if ( downloadProgress?.error ) {
+		} else if ( downloadProgress?.error || downloadQueryError ) {
 			onDownloadError();
 		}
 	}, [
@@ -51,6 +55,7 @@ function SiteBackupDownloadProgress( {
 		downloadProgress?.error,
 		onDownloadComplete,
 		onDownloadError,
+		downloadQueryError,
 	] );
 
 	return (

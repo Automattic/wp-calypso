@@ -2,7 +2,7 @@ import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
@@ -78,7 +78,13 @@ function SiteBackupGranularRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<Text>{ __( 'All the following selected items will be restored:' ) }</Text>
+				<Text>
+					{ _n(
+						'The following item will be restored:',
+						'All the following selected items will be restored:',
+						browserCheckList.totalItems
+					) }
+				</Text>
 				<Panel>
 					<FileSectionPanelBody type="theme" selectedItems={ browserSelectedList } />
 					<FileSectionPanelBody type="plugin" selectedItems={ browserSelectedList } />
@@ -98,7 +104,7 @@ function SiteBackupGranularRestoreForm( {
 						isBusy={ isRestoreMutationPending }
 						disabled={ isRestoreMutationPending }
 					>
-						{ __( 'Restore selected files' ) }
+						{ _n( 'Restore selected file', 'Restore selected files', browserCheckList.totalItems ) }
 					</Button>
 				</ButtonStack>
 			</VStack>

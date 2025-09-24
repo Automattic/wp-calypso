@@ -10,8 +10,9 @@ import {
 	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	Notice,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import {
@@ -22,11 +23,13 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { useEligibleSites } from '../hooks/use-eligible-sites';
-import FrequencySelection, { type Frequency, type Weekday } from './components/frequency-selection';
+import FrequencySelection from './components/frequency-selection';
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
 import { prepareTimestamp, runWithConcurrency } from './helpers';
+import { useTimeSlotCollisionsFromMultisite } from './hooks/use-time-slot-collisions';
+import type { Frequency, Weekday } from '../types';
 import type { Site } from '@automattic/api-core';
 
 const BLOCK_CREATE = true;
@@ -37,6 +40,7 @@ function ScheduledUpdatesNew() {
 	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
 	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
 	const [ time, setTime ] = useState( DEFAULT_TIME );
+	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 	const { recordTracksEvent } = useAnalytics();
@@ -51,13 +55,45 @@ function ScheduledUpdatesNew() {
 		siteJetpackMonitorSettingsCreateMutation()
 	);
 
+	const {
+		error: collisionsError,
+		collidingSiteIds,
+		isLoading: isCollisionsLoading,
+	} = useTimeSlotCollisionsFromMultisite( siteIdsAsNumbers, frequency, weekday, time );
+
 	const handleCreate = useCallback( () => {
-		if ( ! isValid ) {
+		setValidationError( '' );
+
+		if ( ! isValid || isCollisionsLoading ) {
 			return;
 		}
 
-		const timestamp = prepareTimestamp( frequency, weekday, time );
+		// show error if there are collisions
+		// along with the list of sites that have collisions, if less than all selected sites
+		if ( collisionsError ) {
+			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
+			const shouldListSites =
+				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIdsAsNumbers.length;
+			const siteList = shouldListSites
+				? collidingSiteIds.map( ( id ) => siteMap.get( id )?.slug || String( id ) ).join( ', ' )
+				: '';
+
+			let message = collisionsError;
+			if ( shouldListSites ) {
+				const sitesLine = sprintf(
+					/* translators: %s is a comma-separated list of site slugs. */
+					__( 'Sites: %s' ),
+					siteList
+				);
+				message = `${ collisionsError }\n${ sitesLine }`;
+			}
+			setValidationError( message );
+			setIsSubmitting( false );
+			return;
+		}
+
 		setIsSubmitting( true );
+		const timestamp = prepareTimestamp( frequency, weekday, time );
 		const body = {
 			plugins: selectedPluginSlugs,
 			schedule: {
@@ -78,9 +114,9 @@ function ScheduledUpdatesNew() {
 				const eventDate = new Date( timestamp * 1000 );
 				const hours = eventDate.getHours();
 				const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
+				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 
 				// Create monitor settings for each successful site using per-site mutation (with retry)
-				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 				const monitorTasks = successfulSiteIds
 					.map( ( siteId ) => siteMap.get( siteId ) )
 					.filter( ( site ): site is Site => Boolean( site ) )
@@ -108,15 +144,16 @@ function ScheduledUpdatesNew() {
 
 				await runWithConcurrency( monitorTasks, 4 );
 				setIsSubmitting( false );
-				// Navigate back to the schedules list
 				navigate( { to: pluginsScheduledUpdatesRoute.to } );
 			},
-			onError: () => {
+			onError: ( error ) => {
 				setIsSubmitting( false );
+				setValidationError(
+					( error as { message?: string } )?.message || __( 'Failed to create schedule.' )
+				);
 			},
 		} );
 	}, [
-		isValid,
 		frequency,
 		weekday,
 		time,
@@ -126,6 +163,11 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
+		collidingSiteIds,
+		collisionsError,
+		siteIdsAsNumbers.length,
+		isCollisionsLoading,
+		isValid,
 	] );
 
 	return (
@@ -170,10 +212,17 @@ function ScheduledUpdatesNew() {
 								setTime( next.time );
 							} }
 						/>
+						{ validationError && (
+							<Notice status="error" isDismissible={ false }>
+								{ validationError.split( '\n' ).map( ( line, idx ) => (
+									<div key={ idx }>{ line }</div>
+								) ) }
+							</Notice>
+						) }
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={ ! isValid || isSubmitting }
+								disabled={ ! isValid || isSubmitting || isCollisionsLoading }
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>
