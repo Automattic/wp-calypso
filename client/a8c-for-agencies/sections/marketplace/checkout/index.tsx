@@ -14,19 +14,13 @@ function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
-	// Use Checkout V2 (Jetpack Start) for current regular Checkout flow and referrals
-	if ( ! isEnabled( 'a4a-bd-checkout' ) || isReferralMarketplace || isClient ) {
-		return <CheckoutV1 referralBlogId={ referralBlogId } isClient={ isClient } />;
-	}
-
-	// New Billing Dragon Checkout page, check feature flag
-	if ( isEnabled( 'a4a-bd-checkout' ) ) {
+	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context
+	if ( isEnabled( 'a4a-bd-checkout' ) && ! isReferralMarketplace && ! isClient ) {
 		return <CheckoutV2 />;
 	}
 
-	// Todo: replace it with a placeholder and error notification.
-	// Fallback, should never happen.
-	return null;
+	// Fallback to the original Checkout V1
+	return <CheckoutV1 referralBlogId={ referralBlogId } isClient={ isClient } />;
 }
 
 export default withMarketplaceType( Checkout );
