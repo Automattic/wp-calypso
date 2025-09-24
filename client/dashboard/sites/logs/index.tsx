@@ -103,15 +103,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-						<DateRangePicker
-							start={ dateRange.start }
-							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
-							timezoneString={ timezoneString }
-							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
-						/>
-				<>
 					<DateRangePicker
 						start={ dateRange.start }
 						end={ dateRange.end }
