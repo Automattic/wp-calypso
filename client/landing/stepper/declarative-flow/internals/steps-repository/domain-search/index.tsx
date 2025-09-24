@@ -2,6 +2,7 @@ import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
 	isDomainFlow,
+	isDomainUpsellFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 	isNewHostedSiteCreationFlow,
@@ -73,7 +74,8 @@ const DomainSearchStep: StepType< {
 
 		return {
 			vendor: getSuggestionsVendor( {
-				isSignup: true,
+				isSignup:
+					! isDomainUpsellFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
 				flowName: flow,
 			} ),

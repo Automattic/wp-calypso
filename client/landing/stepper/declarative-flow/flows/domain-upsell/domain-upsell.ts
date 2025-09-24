@@ -1,8 +1,14 @@
-import { OnboardSelect, updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
+import {
+	OnboardActions,
+	OnboardSelect,
+	updateLaunchpadSettings,
+	useLaunchpad,
+} from '@automattic/data-stores';
 import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { translate } from 'i18n-calypso';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
+import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
@@ -10,17 +16,18 @@ import { ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { ProvidedDependencies } from '../../internals/types';
 import type { Flow } from '../../internals/types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+
+const isUsingRewrittenDomainSearch = shouldRenderRewrittenDomainSearch();
 
 const DOMAIN_UPSELL_STEPS = [
-	shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+	isUsingRewrittenDomainSearch ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+	STEPS.USE_MY_DOMAIN,
 	STEPS.PLANS,
 ];
 
 const domainUpsell: Flow = {
 	name: DOMAIN_UPSELL_FLOW,
-	get title() {
-		return translate( 'Domain Upsell' );
-	},
 	isSignupFlow: false,
 
 	useSteps() {
@@ -38,13 +45,14 @@ const domainUpsell: Flow = {
 			} ),
 			[]
 		);
-		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
+		const { setDomainCartItem, setDomainCartItems, setSignupDomainOrigin, setHideFreePlan } =
+			useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
 
 		const returnUrl =
-			launchpadScreenOption === 'skipped'
+			launchpadScreenOption === 'skipped' || ! flowName
 				? `/home/${ siteSlug }`
-				: `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
+				: `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		function goBack() {
@@ -58,32 +66,80 @@ const domainUpsell: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case 'domains':
-					if ( providedDependencies?.deferDomainSelection ) {
-						try {
-							const siteIdentifier = siteSlug || siteId;
-							if ( siteIdentifier ) {
-								await updateLaunchpadSettings( siteIdentifier, {
-									checklist_statuses: { domain_upsell_deferred: true },
-								} );
-							}
-						} catch ( error ) {}
+				case STEPS.DOMAINS.slug: {
+					if ( ! isUsingRewrittenDomainSearch ) {
+						if ( providedDependencies?.deferDomainSelection ) {
+							try {
+								const siteIdentifier = siteSlug || siteId;
+								if ( siteIdentifier ) {
+									await updateLaunchpadSettings( siteIdentifier, {
+										checklist_statuses: { domain_upsell_deferred: true },
+									} );
+								}
+							} catch ( error ) {}
 
-						return window.location.assign( returnUrl );
+							return window.location.assign( returnUrl );
+						}
+
+						setHideFreePlan( true );
+						navigate( STEPS.PLANS.slug );
+						return;
 					}
-					setHideFreePlan( true );
-					navigate( 'plans' );
 
-				case 'plans':
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+						currentQueryArgs.step = 'domain-input';
+
+						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
+
+						const lastQueryParam = providedDependencies.lastQuery as string | undefined;
+
+						if ( lastQueryParam !== undefined ) {
+							currentQueryArgs.initialQuery = lastQueryParam;
+							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
+						}
+
+						return navigate( useMyDomainURL as typeof currentStep );
+					}
+
+					setHideFreePlan( true );
+
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					return navigate( STEPS.PLANS.slug );
+				}
+				case STEPS.USE_MY_DOMAIN.slug: {
+					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
+							step: providedDependencies.mode,
+							initialQuery: providedDependencies.domain,
+						} );
+						return navigate( destination as typeof currentStep );
+					}
+
+					return navigate( STEPS.PLANS.slug );
+				}
+				case STEPS.PLANS.slug:
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
-						if ( planCartItem && siteSlug && flowName ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+
+						if ( planCartItem && siteSlug ) {
+							await addPlanToCart( siteSlug, flowName as string, true, '', planCartItem );
 						}
 
-						if ( domainCartItem && siteSlug && flowName ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
+						if ( domainCartItem && siteSlug ) {
+							await addProductsToCart( siteSlug, flowName as string, [ domainCartItem ] );
 						}
 
 						return window.location.assign(
