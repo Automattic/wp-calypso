@@ -11,12 +11,15 @@ export default function SecurityAccountRecoverySummary() {
 
 	const { is_passwordless_user } = userSettings;
 
-	const badges: SummaryButtonBadgeProps[] = [
-		{
-			text: is_passwordless_user ? __( 'Password not set' ) : __( 'Password set' ),
-			intent: is_passwordless_user ? 'warning' : 'success',
-		},
-	];
+	const badges: SummaryButtonBadgeProps[] = [];
+
+	if ( is_passwordless_user ) {
+		badges.push( {
+			text: __( 'Password not set' ),
+			intent: 'warning',
+		} );
+	}
+
 	return (
 		<RouterLinkSummaryButton
 			to="/me/security/password"
