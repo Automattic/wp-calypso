@@ -55,6 +55,10 @@ function ScheduledUpdatesNew() {
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 	const isPrecheckLoading = collisionsChecker.isLoading;
 
+	/**
+	 * Pre-checks the inputs to ensure they are valid (time slot and plugin set collisions).
+	 * If there are collisions, throws the Collisions error (+ list of colliding sites, if applicable).
+	 */
 	const precheck = useCallback(
 		( { plugins, frequency, weekday, time }: PrecheckInputs ): void => {
 			const { timeCollisions, pluginCollisions } = collisionsChecker.validateNow( {
@@ -74,7 +78,9 @@ function ScheduledUpdatesNew() {
 				? timeCollisions.collidingSiteIds
 				: pluginCollisions.collidingSiteIds;
 
-			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
+			const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
+			// If there are more than one colliding site and less than all selected sites,
+			// add the list of sites to the error message.
 			const shouldListSites =
 				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIdsAsNumbers.length;
 			const siteList = shouldListSites

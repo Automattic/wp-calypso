@@ -18,8 +18,20 @@ type CreateInputs = {
 	time: string;
 };
 
-type BatchBody = CreateSiteUpdateScheduleBody;
-
+/**
+ * Creates plugin update schedules for the provided sites and wires up monitor checks.
+ *
+ * Given a set of site IDs, returns a `mutateAsync( inputs )` function that:
+ * - Builds the schedule timestamp from `frequency`, `weekday`, and `time`
+ * - Calls the batch create schedules endpoint for all sites
+ * - Emits analytics events for each successfully scheduled site
+ * - Creates Jetpack Monitor checks (site URL and `/wp-cron.php`) for successful sites,
+ *   with concurrency limiting
+ *
+ * Resolves when all side effects complete; rejects if scheduling fails.
+ * @param {number[]} siteIds Site IDs to schedule updates for.
+ * @returns {{ mutateAsync: ( inputs: CreateInputs ) => Promise< void > }} Hook API
+ */
 export function useCreateSchedules( siteIds: number[] ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: eligibleSites = [] } = useEligibleSites();
@@ -32,7 +44,7 @@ export function useCreateSchedules( siteIds: number[] ) {
 		async ( inputs: CreateInputs ) => {
 			const { plugins, frequency, weekday, time } = inputs;
 			const timestamp = prepareTimestamp( frequency, weekday, time );
-			const body: BatchBody = {
+			const body: CreateSiteUpdateScheduleBody = {
 				plugins,
 				schedule: {
 					interval: frequency,
@@ -46,17 +58,17 @@ export function useCreateSchedules( siteIds: number[] ) {
 				createBatch.mutate( body, {
 					onSuccess: async ( results ) => {
 						const successfulSiteIds = ( results || [] )
-							.filter( ( r ) => ! r.error )
-							.map( ( r ) => r.siteId );
+							.filter( ( result ) => ! result.error )
+							.map( ( result ) => result.siteId );
 
 						const eventDate = new Date( timestamp * 1000 );
 						const hours = eventDate.getHours();
 						const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
-						const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
+						const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 
 						const monitorTasks = successfulSiteIds
 							.map( ( id ) => siteMap.get( id ) )
-							.filter( ( s ): s is Site => Boolean( s ) )
+							.filter( ( site ): site is Site => Boolean( site ) )
 							.map( ( site ) => {
 								recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
 									site_slug: site.slug,

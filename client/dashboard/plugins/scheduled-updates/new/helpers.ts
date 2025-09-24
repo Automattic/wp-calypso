@@ -37,7 +37,12 @@ export function prepareTimestamp(
 
 	return event.getTime() / 1000;
 }
-
+/**
+ * Checks for time slot collisions.
+ * @param proposed - The proposed time slot.
+ * @param existing - The existing time slots.
+ * @returns The error message if there is a collision, otherwise an empty string.
+ */
 export function getTimeSlotCollisionError( proposed: TimeSlot, existing: TimeSlot[] = [] ): string {
 	const newDate = new Date( proposed.timestamp * 1000 );
 
@@ -70,6 +75,9 @@ export function getTimeSlotCollisionError( proposed: TimeSlot, existing: TimeSlo
 
 /**
  * Limited concurrency runner
+ * @param tasks - The tasks to run.
+ * @param limit - The limit of concurrent tasks.
+ * @returns The result of the tasks.
  */
 export const runWithConcurrency = async (
 	tasks: Array< () => Promise< unknown > >,
@@ -93,6 +101,9 @@ export const runWithConcurrency = async (
  * Validate plugins against existing schedules
  * - Must select at least one plugin
  * - If existing plugin sets are provided, block identical set
+ * @param plugins - The plugins to validate.
+ * @param existingPlugins - The existing plugin sets.
+ * @returns The error message if there is a collision, otherwise an empty string.
  */
 export function validatePlugins(
 	plugins: string[],
