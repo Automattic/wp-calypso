@@ -56,16 +56,6 @@ These guidelines should be followed to ensure reusability of the queries and mut
     } );
     ```
 
-- Don't add query options that are specific to a particular use case. Instead, add them in the components that need them.
-  - For example, don't add an `enabled` option to any query in this package; the component should pass that instead:
-
-    ```ts
-    const { data } = useQuery( {
-        ...siteWordPressVersionQuery( site.ID ),
-        enabled: site.is_wpcom_staging_site,
-    } );
-    ```
-
 - In general, avoid overriding query options unless absolutely necessary (e.g., `refetchOnMount`).
   - This prevents developers from copy-pasting options without understanding their purpose.
 
