@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -61,12 +60,7 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
-
-	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
-	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
-	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
 	const isA4ADevSite = !! site?.is_a4a_dev_site;
 
 	const hasStagingSitesFeature = useSelector( ( state ) =>
@@ -74,8 +68,6 @@ const DotcomPreviewPane = ( {
 	);
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
-		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
-		const isHostingFeaturesEnabled = isActiveAtomicSite || isHostingFeaturesCalloutEnabled;
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
@@ -89,27 +81,27 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled: ( isSimpleSite || isPlanExpired ) && ! isHostingFeaturesCalloutEnabled,
+				enabled: false,
 				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
@@ -165,14 +157,10 @@ const DotcomPreviewPane = ( {
 			};
 		} );
 	}, [
-		isAtomicSite,
-		isPlanExpired,
 		__,
-		isSimpleSite,
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
-		isHostingFeaturesCalloutEnabled,
 		hasStagingSitesFeature,
 		isA4ADevSite,
 	] );
