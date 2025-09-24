@@ -68,7 +68,11 @@ const domainSearch = ( context, next ) => {
 
 	const getContent = () => {
 		if ( shouldRenderRewrittenDomainSearch() ) {
-			return <DomainSearch />;
+			return (
+				<CalypsoShoppingCartProvider>
+					<DomainSearch />
+				</CalypsoShoppingCartProvider>
+			);
 		}
 
 		return (
