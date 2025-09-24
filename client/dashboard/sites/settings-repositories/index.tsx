@@ -6,12 +6,12 @@ import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { siteDeploymentsRoute, siteRoute } from '../../app/router/sites';
+import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import ghIconUrl from '../deployments/gh-icon.svg';
-import { TriggerDeploymentModal } from '../deployments/trigger-deployment-modal';
+import { TriggerDeploymentModal } from '../deployments-list/trigger-deployment-modal';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
@@ -53,15 +53,11 @@ function RepositoriesList() {
 		{
 			id: 'see-deployment-runs',
 			label: __( 'See deployment runs' ),
-			callback: ( items: CodeDeploymentData[] ) => {
-				const repository = items[ 0 ];
+			callback: () => {
 				router.navigate( {
-					to: siteDeploymentsRoute.fullPath,
+					to: siteDeploymentsListRoute.fullPath,
 					params: {
 						siteSlug: siteSlug,
-					},
-					search: {
-						repositoryName: repository.repository_name,
 					},
 				} );
 			},
@@ -103,7 +99,7 @@ function RepositoriesList() {
 					repositoryId={ modalTriggerDeploymentDetails.repositoryId }
 					onSuccess={ () =>
 						router.navigate( {
-							to: siteDeploymentsRoute.fullPath,
+							to: siteDeploymentsListRoute.fullPath,
 							params: {
 								siteSlug: siteSlug,
 							},

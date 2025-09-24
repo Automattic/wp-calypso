@@ -27,7 +27,6 @@ import type { View } from '@wordpress/dataviews';
 
 function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
-	const { repositoryName: searchRepositoryName } = siteRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
@@ -109,10 +108,6 @@ function DeploymentsList() {
 		view,
 		fields
 	);
-
-	if ( searchRepositoryName ) {
-		view.search = searchRepositoryName;
-	}
 
 	const getTriggerDeploymentTitle = () => {
 		if ( isLoadingDeployments ) {
