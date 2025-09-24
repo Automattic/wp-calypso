@@ -118,8 +118,10 @@ export const ConnectRepositoryForm = ( {
 	onConnected,
 	onCancel,
 }: ConnectRepositoryFormProps ) => {
+	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
+
 	const [ formData, setFormData ] = useState< FormData >( {
-		selectedInstallationId: '',
+		selectedInstallationId: installations[ 0 ].external_id,
 		selectedRepositoryId: '',
 		branch: '',
 		targetDir: '/',
@@ -129,8 +131,6 @@ export const ConnectRepositoryForm = ( {
 	} );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ isTargetDirDirty, setIsTargetDirDirty ] = useState( false );
-
-	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( formData.selectedInstallationId === '' ) {
@@ -151,15 +151,6 @@ export const ConnectRepositoryForm = ( {
 
 		return repositories.find( ( repository ) => repository.id === formData.selectedRepositoryId );
 	}, [ repositories, formData.selectedRepositoryId ] );
-
-	useEffect( () => {
-		if ( installations.length > 0 && formData.selectedInstallationId === '' ) {
-			setFormData( ( prev ) => ( {
-				...prev,
-				selectedInstallationId: installations[ 0 ].external_id,
-			} ) );
-		}
-	}, [ installations, formData.selectedInstallationId ] );
 
 	useEffect( () => {
 		if ( selectedRepository?.default_branch ) {
