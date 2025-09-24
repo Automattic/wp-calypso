@@ -109,6 +109,10 @@ module.exports = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
+		alias: {
+			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
+			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
+		},
 	},
 	node: false,
 	plugins: [
