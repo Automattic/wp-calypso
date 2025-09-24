@@ -65,6 +65,10 @@ export const test = base.extend< {
 	 */
 	accounti18n: TestAccount;
 	/**
+	 * Test account used for SMS-based 2FA.
+	 */
+	accountSMS: TestAccount;
+	/**
 	 * Client for interacting with emails during tests.
 	 */
 	clientEmail: EmailClient;
@@ -152,6 +156,10 @@ export const test = base.extend< {
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountSMS: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'smsUser' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
