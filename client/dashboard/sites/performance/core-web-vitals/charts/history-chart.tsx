@@ -9,7 +9,7 @@ import {
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { timeFormat as d3TimeFormat } from 'd3-time-format';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import React, { createRef, useEffect } from 'react';
 import './style.scss';
 
@@ -201,7 +201,6 @@ const generateSampleData = ( range ) => {
 };
 
 const HistoryChart = ( { data, range, height, d3Format = '%-m/%d', isMobile } ) => {
-	const translate = useTranslate();
 	const svgRef = createRef();
 	const tooltipRef = createRef();
 	const dataAvailable = data && data.some( ( e ) => e.value !== null );
@@ -245,9 +244,9 @@ const HistoryChart = ( { data, range, height, d3Format = '%-m/%d', isMobile } ) 
 				<svg ref={ svgRef }></svg>
 				{ ! dataAvailable && (
 					<div className="info">
-						<p className="heading">{ translate( 'No history available' ) }</p>
+						<p className="heading">{ __( 'No history available' ) }</p>
 						<p>
-							{ translate(
+							{ __(
 								'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
 							) }
 						</p>
