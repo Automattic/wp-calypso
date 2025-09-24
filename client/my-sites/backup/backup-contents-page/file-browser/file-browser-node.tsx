@@ -278,7 +278,10 @@ function FileBrowserNode( {
 				childIsAlternate = ! childIsAlternate;
 
 				return (
-					<div key={ childItem.name } style={ isRoot ? { marginLeft: 0 } : { marginLeft: 26 } }>
+					<div
+						key={ childItem.name }
+						style={ isRoot ? { marginInlineStart: 0 } : { marginInlineStart: 26 } }
+					>
 						<FileBrowserNode
 							item={ childItem }
 							path={ `${ path }${ childItem.name }/` }
