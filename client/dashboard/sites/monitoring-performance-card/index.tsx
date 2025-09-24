@@ -1,10 +1,16 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
+import { LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useLocale } from '../../app/locale';
+import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
+import type { DataPointDate } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -13,7 +19,13 @@ function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	return { start, end };
 }
 
-function useSiteMetricsData( siteId: number, timeRange: number ) {
+type SiteMetricsData = {
+	requestsData: DataPointDate[] | undefined;
+	responseTimeData: DataPointDate[] | undefined;
+	isLoading: boolean;
+};
+
+function useSiteMetricsData( siteId: number, timeRange: number ): SiteMetricsData {
 	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
@@ -35,37 +47,25 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 		return null;
 	};
 
-	// Process the data in the format accepted by uPlot
-	const formattedData =
-		requestsData?.data?.periods?.reduce(
-			( acc, period, index ) => {
-				// Check if the timestamp is already in the arrays, if not, push it
-				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== period.timestamp ) {
-					acc[ 0 ].push( period.timestamp );
+	const formatRequestsDataPeriod = ( period: PeriodData ) => {
+		const value = getDimensionValue( period );
+		return {
+			date: new Date( period.timestamp * 1000 ),
+			value: value === null ? 0 : Math.round( value * 60 * 100 ) / 100, // Convert to requests per minute and round to 2 decimals.
+		};
+	};
 
-					const requestsPerSecondValue = getDimensionValue( period );
-					if ( requestsPerSecondValue !== null ) {
-						const requestsPerMinuteValue = requestsPerSecondValue * 60; // Convert to requests per minute
-						acc[ 1 ].push( requestsPerMinuteValue ); // Push RPM value into the array
-					}
-					// Add response time data as a green line
-					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
-						const responseTimeAverageValue = getDimensionValue(
-							responseTimeData.data.periods[ index ]
-						);
-						if ( responseTimeAverageValue !== null ) {
-							acc[ 2 ].push( responseTimeAverageValue * 1000 ); // Convert to response time average in milliseconds
-						}
-					}
-				}
-
-				return acc;
-			},
-			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
-		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
+	const formatResponseTimeDataPeriod = ( period: PeriodData ) => {
+		const value = getDimensionValue( period );
+		return {
+			date: new Date( period.timestamp * 1000 ),
+			value: value === null ? 0 : Math.round( value * 100 ) / 100,
+		};
+	};
 
 	return {
-		formattedData,
+		requestsData: requestsData?.data?.periods.map( formatRequestsDataPeriod ),
+		responseTimeData: responseTimeData?.data?.periods.map( formatResponseTimeDataPeriod ),
 		isLoading: isLoadingRequestsData || isLoadingResponseTimeData,
 	};
 }
@@ -77,18 +77,191 @@ export default function MonitoringPerformanceCard( {
 	site: Site;
 	timeRange: number;
 } ) {
-	const { formattedData, isLoading } = useSiteMetricsData( site.ID, timeRange );
+	const { requestsData, responseTimeData, isLoading } = useSiteMetricsData( site.ID, timeRange );
+	const locale = useLocale();
+
+	const requestsPerMinuteLabel = __( 'Requests per minute' );
+	const averageResponseTimeLabel = __( 'Average response time (ms)' );
+
+	const data: SeriesData[] = [
+		{
+			label: requestsPerMinuteLabel,
+			data: requestsData || [],
+			options: {
+				gradient: {
+					from: '#3858E9',
+					to: '#3858E9',
+					fromOpacity: 0.2,
+					toOpacity: 0,
+				},
+				stroke: '#3858E9',
+				legendShapeStyle: {
+					color: '#3858E9',
+				},
+			},
+		},
+		{
+			label: averageResponseTimeLabel,
+			data: responseTimeData || [],
+			options: {
+				gradient: {
+					from: '#5BA300',
+					to: '#5BA300',
+					fromOpacity: 0.2,
+					toOpacity: 0,
+				},
+				stroke: '#5BA300',
+				legendShapeStyle: {
+					color: '#5BA300',
+				},
+			},
+		},
+	];
+
+	const lessThanMediumViewport = useViewportMatch( 'medium', '<' );
+
+	let numTicks: undefined | number;
+	switch ( timeRange ) {
+		case 168:
+			numTicks = lessThanMediumViewport ? 3 : 7;
+			break;
+		case 72:
+			numTicks = lessThanMediumViewport ? 3 : 6;
+			break;
+		case 24:
+		case 6:
+			numTicks = lessThanMediumViewport ? 4 : 12;
+			break;
+	}
+
+	const xAxisOptions = {
+		tickFormat: ( date: string ) => {
+			const d = new Date( date );
+
+			if ( timeRange <= 24 ) {
+				return `${ d.getHours() }:${ d.getMinutes().toString().padStart( 2, '0' ) }`;
+			}
+
+			if ( timeRange > 72 || ( timeRange > 24 && lessThanMediumViewport ) ) {
+				return `${ d.toLocaleDateString() }`;
+			}
+
+			return `${ d.toLocaleDateString() } ${ d.getHours() }:${ d
+				.getMinutes()
+				.toString()
+				.padStart( 2, '0' ) }`;
+		},
+		numTicks: numTicks,
+	};
+
+	const getLegendIcon = ( key: string, isTooltip = false ) => {
+		const isLegendGlyph = key.startsWith( 'legend-glyph-' );
+		if ( isLegendGlyph ) {
+			key = key.replace( 'legend-glyph-', '' );
+		}
+
+		switch ( key ) {
+			case requestsPerMinuteLabel:
+				return (
+					<rect
+						width="6"
+						height="6"
+						transform={ ( isTooltip ? 'translate(4, 0) ' : 'translate(3, -1) ' ) + 'rotate(45)' }
+						fill="#3858E9"
+					/>
+				);
+			case averageResponseTimeLabel:
+				return (
+					<circle
+						cx={ isLegendGlyph || isTooltip ? 4 : 0 }
+						cy={ isLegendGlyph || isTooltip ? 4 : 0 }
+						r="4"
+						fill="#5BA300"
+						strokeWidth="1.5"
+					/>
+				);
+		}
+
+		return null;
+	};
 
 	return (
 		<MonitoringCard
+			cardLabel="server-performance"
 			title={ __( 'Server performance' ) }
 			description={ __( 'Requests per minute and average server response time.' ) }
 			onDownloadClick={ () => {} }
 			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 		>
-			{ /* This is being taken care of in another PR: https://github.com/Automattic/wp-calypso/pull/105719 */ }
-			{ formattedData ? '[Server performance data]' : '[No data]' }
+			{ isLoading || requestsData || responseTimeData ? (
+				<LineChart
+					className="dashboard-monitoring-card__line-chart"
+					data={ data }
+					withGradientFill
+					height={ 450 }
+					maxWidth={ 1400 }
+					showLegend
+					withLegendGlyph
+					renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
+					renderTooltip={ ( tooltipProps ) => {
+						if ( ! tooltipProps?.tooltipData?.nearestDatum?.datum?.date ) {
+							return null;
+						}
+
+						const dateStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleDateString(
+							locale,
+							{
+								weekday: 'short',
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric',
+							}
+						);
+						const timeStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleTimeString(
+							locale,
+							{
+								hour12: false,
+								timeZoneName: 'short',
+							}
+						);
+						return (
+							<div className="dashboard-monitoring-card__line-chart--tooltip">
+								<Text isBlock weight="bold" size="larger">
+									{ dateStr }
+								</Text>
+								<Text weight="normal">{ timeStr }</Text>
+
+								<div className="dashboard-monitoring-card__line-chart--tooltip-lines">
+									{ Object.values( tooltipProps.tooltipData.datumByKey ).map( ( series ) => (
+										<div
+											key={ 'tooltip-line-' + series.key }
+											className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
+										>
+											<Text weight="normal">
+												<svg width="8" height="8">
+													{ getLegendIcon( series.key, true ) }
+												</svg>
+												{ series.key }
+											</Text>
+											<Text weight="normal">{ series.datum.value }</Text>
+										</div>
+									) ) }
+								</div>
+							</div>
+						);
+					} }
+					options={ {
+						axis: {
+							x: xAxisOptions,
+						},
+					} }
+				/>
+			) : (
+				<VStack alignment="center">
+					<Text>{ __( 'No data available for this site.' ) }</Text>
+				</VStack>
+			) }
 		</MonitoringCard>
 	);
 }

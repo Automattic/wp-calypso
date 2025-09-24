@@ -167,7 +167,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				</div>
 				{ ( chat.odieId || chat.provider === 'odie' ) && (
 					<ChatMessage
-						message={ getOdieInitialMessage( botNameSlug ) }
+						message={ getOdieInitialMessage( botNameSlug, currentUser?.display_name ) }
 						key={ 0 }
 						currentUser={ currentUser }
 						displayChatWithSupportLabel={ false }
