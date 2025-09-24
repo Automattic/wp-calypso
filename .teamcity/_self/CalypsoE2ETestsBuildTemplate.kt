@@ -36,6 +36,16 @@ object CalypsoE2ETestsBuildTemplate : Template({
       		rules = "+:test/e2e/output/results.xml"
 			verbose = true
     	}
+
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
 	}
 
   	steps {
