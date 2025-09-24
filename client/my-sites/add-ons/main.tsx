@@ -19,13 +19,12 @@ import type { ReactElement } from 'react';
 const globalOverrides = css`
 	.is-section-add-ons {
 		height: 100%;
-		#content.layout__content {
-			background: #fdfdfd;
-			min-height: 100%;
-		}
 	}
 	.layout__primary {
 		height: 100%;
+	}
+	body {
+		--color-surface-backdrop: #fdfdfd;
 	}
 `;
 
