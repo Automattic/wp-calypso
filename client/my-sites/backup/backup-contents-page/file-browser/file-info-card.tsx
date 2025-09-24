@@ -262,6 +262,7 @@ function FileInfoCard( {
 			disabled={ isProcessingDownload }
 			isBusy={ isProcessingDownload }
 			variant="secondary"
+			size="compact"
 		>
 			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
@@ -273,6 +274,7 @@ function FileInfoCard( {
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
 			variant="secondary"
+			size="compact"
 		>
 			{ __( 'Download file' ) }
 		</Button>
@@ -285,8 +287,9 @@ function FileInfoCard( {
 			disabled={ isProcessingDownload }
 			isBusy={ isProcessingDownload }
 			variant="secondary"
+			size="compact"
 		>
-			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Prepare and download' ) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
 	);
 
@@ -312,12 +315,12 @@ function FileInfoCard( {
 
 	const hasMeta = item.type === 'table' || size || modifiedTime || fileInfo?.hash;
 	return (
-		<Card isRounded={ false } variant="secondary" isBorderless>
-			<CardBody>
+		<Card isRounded={ false } isBorderless className="file-card">
+			<CardBody className="file-card__body">
 				<VStack>
-					<HStack wrap>
+					<HStack wrap style={ { alignItems: 'flex-start' } }>
 						{ hasMeta && (
-							<VStack spacing={ 0 }>
+							<VStack spacing={ 1 }>
 								{ item.type === 'table' && (
 									<FileDetail
 										label={
@@ -357,13 +360,14 @@ function FileInfoCard( {
 							</VStack>
 						) }
 						{ showActions && (
-							<ButtonStack style={ { width: 'auto', flexShrink: 0 } }>
+							<ButtonStack style={ { width: 'auto', flexShrink: 0 } } alignment="top">
 								{ renderDownloadButton() }
 								{ item.type !== 'wordpress' && (
 									<Button
 										disabled={ ! isRestoreEnabled }
 										onClick={ restoreFile }
-										variant="secondary"
+										variant="primary"
+										size="compact"
 									>
 										{ __( 'Restore' ) }
 									</Button>
