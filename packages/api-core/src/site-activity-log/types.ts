@@ -93,8 +93,8 @@ export type ActivityActor = {
 };
 
 export interface ActivityLogParams {
-	after?: number;
-	before?: number;
+	after?: string;
+	before?: string;
 	sort_order?: 'asc' | 'desc';
 	page?: number;
 	aggregate?: boolean;

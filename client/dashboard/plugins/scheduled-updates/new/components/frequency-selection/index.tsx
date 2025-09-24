@@ -7,17 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
-export type Weekday =
-	| 'Monday'
-	| 'Tuesday'
-	| 'Wednesday'
-	| 'Thursday'
-	| 'Friday'
-	| 'Saturday'
-	| 'Sunday';
-
-export type Frequency = 'daily' | 'weekly';
+import type { Frequency, Weekday } from '../../../types';
 
 type Props = {
 	frequency: Frequency;
