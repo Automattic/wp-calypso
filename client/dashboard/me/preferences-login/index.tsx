@@ -1,10 +1,14 @@
-import { userLoginPreferencesMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import {
+	userLoginPreferencesMutation,
+	userSettingsQuery,
+	userLoginPreferencesQuery,
+	sitesQuery,
+} from '@automattic/api-queries';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	Button,
 	__experimentalText as Text,
 } from '@wordpress/components';
@@ -13,8 +17,8 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { ButtonStack } from '../../components/button-stack/';
 import { SectionHeader } from '../../components/section-header';
-import { useLoginPreferences } from './query';
 import PreferencesLoginSiteDropdown from './site-dropdown';
 import type { UserLoginPreferencesMutationProps } from '@automattic/api-queries';
 
@@ -22,15 +26,29 @@ type LoginPreferencesFormData = UserLoginPreferencesMutationProps;
 type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
 export default function PreferencesLogin() {
-	// Fetch login preferences and sites using combined hook
-	const {
-		data: loginPreferences,
-		sites = [],
-		isLoading: isLoadingPreferences,
-	} = useLoginPreferences();
-	const mutation = useMutation( userLoginPreferencesMutation() );
-
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	// Fetch user settings for primary_site_ID
+	const userSettingsResult = useSuspenseQuery( userSettingsQuery() );
+	const userPreferences = useSuspenseQuery( userLoginPreferencesQuery() );
+
+	// Fetch user's sites
+	const { data: sites, isLoading: isSiteListLoading } = useSuspenseQuery(
+		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+	);
+
+	// Validate primary_site_ID exists in user's current sites
+	const rawPrimarySiteId = userSettingsResult.data?.primary_site_ID;
+	const isValidPrimarySite = rawPrimarySiteId
+		? sites.some( ( site ) => site.ID === rawPrimarySiteId )
+		: false;
+
+	const loginPreferences = {
+		primarySiteId: isValidPrimarySite && rawPrimarySiteId ? rawPrimarySiteId.toString() : undefined,
+		defaultLandingPage: userPreferences.data.defaultLandingPage,
+	};
+
+	const mutation = useMutation( userLoginPreferencesMutation() );
 
 	// Initialize form data with default values
 	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
@@ -44,7 +62,11 @@ export default function PreferencesLogin() {
 			loginPreferences.defaultLandingPage !== formData.defaultLandingPage
 	);
 
-	const isBusy = mutation.isPending || isLoadingPreferences;
+	const isBusy =
+		mutation.isPending ||
+		userSettingsResult.isLoading ||
+		isSiteListLoading ||
+		userPreferences.isLoading;
 
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
@@ -136,7 +158,7 @@ export default function PreferencesLogin() {
 							{ __( 'Select what you’ll see by default when visiting WordPress.com.' ) }
 						</Text>
 
-						<HStack>
+						<ButtonStack>
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
@@ -146,7 +168,7 @@ export default function PreferencesLogin() {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>
