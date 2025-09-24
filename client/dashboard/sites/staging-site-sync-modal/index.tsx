@@ -382,7 +382,7 @@ function StagingSiteSyncModalInner( {
 			description: sprintf(
 				/* translators: %s: site domain */
 				__( 'The site domain is: %s' ),
-				productionSiteSlug || ''
+				productionSiteSlug
 			),
 		},
 	];
