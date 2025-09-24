@@ -6,8 +6,6 @@ import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import type { PerformanceProfilerPage, PerformanceReport } from '@automattic/api-core';
 
-import './style.scss';
-
 const updateUrl = ( filter: string | undefined ) => {
 	const url = new URL( window.location.href );
 	if ( filter ) {

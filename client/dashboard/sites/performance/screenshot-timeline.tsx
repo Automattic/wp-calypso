@@ -1,13 +1,9 @@
 import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { translate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-
-export type ScreenShotsTimeLine = {
-	data: string;
-	timing: number;
-};
+import { ScreenShotsTimeLine } from 'calypso/data/site-profiler/types';
 
 const Container = styled.div`
 	width: 100%;
@@ -108,7 +104,7 @@ type OverlayState = {
 	timing?: string;
 };
 
-export const ScreenshotTimeline = ( { screenshots }: Props ) => {
+export default function ScreenshotTimeline( { screenshots }: Props ) {
 	const { __ } = useI18n();
 	const [ overlay, setOverlay ] = useState< OverlayState >( {
 		isOpen: false,
@@ -119,8 +115,8 @@ export const ScreenshotTimeline = ( { screenshots }: Props ) => {
 
 	return (
 		<Container>
-			<H2>{ translate( 'Timeline' ) }</H2>
-			<p>{ translate( 'How your site appears to users while loading.' ) }</p>
+			<H2>{ __( 'Timeline' ) }</H2>
+			<p>{ __( 'How your site appears to users while loading.' ) }</p>
 			{ overlay.isOpen && overlay.screenshot && (
 				<ScreenshotModal
 					onRequestClose={ () => setOverlay( { isOpen: false } ) }
@@ -148,4 +144,4 @@ export const ScreenshotTimeline = ( { screenshots }: Props ) => {
 			</Timeline>
 		</Container>
 	);
-};
+}

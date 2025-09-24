@@ -6,13 +6,14 @@ import {
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
+
 import {
 	filterRecommendations,
 	getMetricsNames,
 	highImpactAudits,
 } from 'calypso/performance-profiler/utils/metrics';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
+import MetricsInsight from '../../../dashboard/sites/performance/metrics-insights';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
 
