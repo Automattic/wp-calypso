@@ -2,7 +2,13 @@ import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { TabPanel, Card, CardHeader, CardBody } from '@wordpress/components';
+import {
+	TabPanel,
+	Card,
+	CardHeader,
+	CardBody,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
@@ -93,12 +99,10 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				asOverlay
 				{ ...getLogsCalloutProps() }
 			>
-				{ autoRefreshDisabledReason && (
-					<div style={ { marginBottom: 12 } }>
+				<VStack as="div" spacing={ 3 }>
+					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
-					</div>
-				) }
-				<>
+					) }
 					{ logType !== LogType.ACTIVITY && (
 						<DateRangePicker
 							start={ dateRange.start }
@@ -156,7 +160,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							) }
 						</CardBody>
 					</Card>
-				</>
+				</VStack>
 			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
