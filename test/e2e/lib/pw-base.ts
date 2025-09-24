@@ -32,6 +32,7 @@ import {
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
+	GitHubLoginPage,
 	IncognitoPage,
 	LoginPage,
 	NewSiteResponse,
@@ -63,6 +64,10 @@ export const test = base.extend< {
 	 * Test account used for i18n locale switching.
 	 */
 	accounti18n: TestAccount;
+	/**
+	 * Test account used for SMS-based 2FA.
+	 */
+	accountSMS: TestAccount;
 	/**
 	 * Client for interacting with emails during tests.
 	 */
@@ -112,6 +117,10 @@ export const test = base.extend< {
 	 */
 	pageEditor: EditorPage;
 	/**
+	 * Page object representing the Github login page.
+	 */
+	pageGitHubLogin: GitHubLoginPage;
+	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
 	pageIncognito: IncognitoPage;
@@ -147,6 +156,10 @@ export const test = base.extend< {
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountSMS: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'smsUser' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
@@ -194,6 +207,10 @@ export const test = base.extend< {
 	pageEditor: async ( { page }, use ) => {
 		const editorPage = new EditorPage( page );
 		await use( editorPage );
+	},
+	pageGitHubLogin: async ( { page }, use ) => {
+		const gitHubLoginPage = new GitHubLoginPage( page );
+		await use( gitHubLoginPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
