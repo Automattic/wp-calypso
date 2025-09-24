@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import BillingPageHeader from '../billing-page-header';
 
 function BillingHistory() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Billing history' ) } /> }>
+		<PageLayout size="small" header={ <BillingPageHeader title={ __( 'Billing history' ) } /> }>
 			<div>Billing history content will go here</div>
 		</PageLayout>
 	);

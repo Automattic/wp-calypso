@@ -11,9 +11,9 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
+import BillingPageHeader from '../billing-page-header';
 import {
 	purchasesWideFields,
 	purchasesDesktopFields,
@@ -151,7 +151,7 @@ export default function PurchasesList() {
 	};
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Active upgrades' ) } /> }>
+		<PageLayout size="large" header={ <BillingPageHeader title={ __( 'Active upgrades' ) } /> }>
 			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews

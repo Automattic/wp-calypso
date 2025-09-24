@@ -21,12 +21,12 @@ import { info, warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { formatCreditCardExpiry } from '../../utils/datetime';
 import { isCreditCard } from '../../utils/payment-method';
+import BillingPageHeader from '../billing-page-header';
 import { PaymentMethodImage } from '../billing-purchases/payment-method-image';
 import { PaymentMethodDeleteDialog } from './payment-method-delete-dialog';
 import { PaymentMethodDetails } from './payment-method-details';
@@ -170,7 +170,7 @@ export default function PaymentMethods() {
 		<PageLayout
 			size="large"
 			header={
-				<PageHeader
+				<BillingPageHeader
 					title={ __( 'Payment methods' ) }
 					actions={
 						<Button __next40pxDefaultSize variant="primary" href={ addPaymentMethodUrl }>

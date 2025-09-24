@@ -1,7 +1,7 @@
 import { Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import BillingPageHeader from '../billing-page-header';
 import UserTaxForm from './user-tax-form';
 
 export default function UserTaxInfoPage() {
@@ -9,7 +9,7 @@ export default function UserTaxInfoPage() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader
+				<BillingPageHeader
 					title={ __( 'Tax details' ) }
 					description={ __( 'Configure tax details (VAT/GST/CT) to be included on all receipts.' ) }
 				/>
