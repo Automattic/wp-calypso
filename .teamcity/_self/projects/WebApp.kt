@@ -920,7 +920,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	features {
 		matrix {
-			param("VIEWPORT", listOf(
+			param("PROJECT", listOf(
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile")
 			))
@@ -964,7 +964,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				equals("teamcity.build.step.status.run_tests", "failure")
 			}
 			scriptContent = """
-				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%VIEWPORT%"
+				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
 				
 				# Need to use -C to avoid creation of an unnecessary top level directory.
@@ -996,7 +996,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 
 	features {
 		matrix {
-			param("VIEWPORT", listOf(
+			param("PROJECT", listOf(
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile")
 			))
@@ -1012,7 +1012,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
-				echo "Running pre-release Playwright tests for viewport: %VIEWPORT%"
+				echo "Running pre-release Playwright tests for project %PROJECT%"
 			"""
 		}
 	}

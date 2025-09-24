@@ -4,15 +4,20 @@ import {
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
-import { siteRoute } from '../../app/router/sites';
+import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
+import { TriggerDeploymentModal } from './trigger-deployment-modal';
 import type {
 	DeploymentRun,
 	DeploymentRunWithDeploymentInfo,
@@ -20,11 +25,12 @@ import type {
 } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function DeploymentsList() {
+function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
+	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
 		codeDeploymentsQuery( site.ID )
 	);
 
@@ -68,7 +74,7 @@ export function DeploymentsList() {
 	}, [ deployments, deploymentRunsQueries ] );
 
 	const isLoading =
-		deploymentsLoading || deploymentRunsQueries.some( ( query ) => query.isLoading );
+		isLoadingDeployments || deploymentRunsQueries.some( ( query ) => query.isLoading );
 
 	const repositoryOptions = useMemo( () => {
 		return Array.from( new Set( deploymentRuns.map( ( item ) => item.repository_name ) ) )
@@ -96,17 +102,52 @@ export function DeploymentsList() {
 		repositoryOptions,
 		userNameOptions,
 	} );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
 		view,
 		fields
 	);
 
-	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
-	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );
+	const getTriggerDeploymentTitle = () => {
+		if ( isLoadingDeployments ) {
+			return __( 'Loading repositories…' );
+		} else if ( ! deployments.length ) {
+			return __( 'No connected repositories' );
+		}
+	};
 
 	return (
-		<>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Deployments' ) }
+					actions={
+						<>
+							<RouterLinkButton
+								to={ siteSettingsRepositoriesRoute.fullPath }
+								params={ { siteSlug } }
+								variant="secondary"
+								__next40pxDefaultSize
+							>
+								{ __( 'Manage repositories' ) }
+							</RouterLinkButton>
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () => {
+									setIsModalTriggerDeploymentOpen( true );
+								} }
+								disabled={ isLoadingDeployments || ! deployments.length }
+								title={ getTriggerDeploymentTitle() }
+							>
+								{ __( 'Trigger deployment' ) }
+							</Button>
+						</>
+					}
+				/>
+			}
+		>
 			<DataViewsCard>
 				<DataViews
 					actions={ [
@@ -136,9 +177,22 @@ export function DeploymentsList() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					getItemId={ ( item ) => item.id.toString() }
-					empty={ emptyTitle }
+					empty={
+						( view.filters && view.filters.length > 0 ) || view.search
+							? __( 'No deployments found' )
+							: __( 'No deployments yet' )
+					}
 				/>
 			</DataViewsCard>
-		</>
+
+			{ isModalTriggerDeploymentOpen && (
+				<TriggerDeploymentModal
+					onClose={ () => setIsModalTriggerDeploymentOpen( false ) }
+					deployments={ deployments }
+				/>
+			) }
+		</PageLayout>
 	);
 }
+
+export default DeploymentsList;
