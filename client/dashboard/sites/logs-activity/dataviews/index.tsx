@@ -44,6 +44,10 @@ function SiteActivityLogsDataViews( {
 		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
 	);
 
+	// Convert to ISO strings since that's what the API expects.
+	const afterIso = new Date( startSec * 1000 ).toISOString();
+	const beforeIso = new Date( endSec * 1000 ).toISOString();
+
 	const activityLogTypeValues = useMemo( () => {
 		const filters = ( view.filters as Filter[] | undefined ) ?? [];
 		return extractActivityLogTypeValues( filters );
@@ -55,8 +59,8 @@ function SiteActivityLogsDataViews( {
 		sort_order: view.sort?.direction,
 		number: view.perPage || 20,
 		page: view.page,
-		after: new Date( startSec * 1000 ).toISOString(),
-		before: new Date( endSec * 1000 ).toISOString(),
+		after: afterIso,
+		before: beforeIso,
 	};
 
 	if ( searchTerm ) {
@@ -76,7 +80,11 @@ function SiteActivityLogsDataViews( {
 	 * The downside of this is that the counts might not be 100% accurate when a search term is applied.
 	 */
 	const { data: groupCountsData, isFetching: isFetchingFilters } = useQuery(
-		siteActivityLogGroupCountsQuery( site.ID )
+		siteActivityLogGroupCountsQuery( site.ID, {
+			after: afterIso,
+			before: beforeIso,
+			number: 1000,
+		} )
 	);
 	const isFetching = isFetchingData || isFetchingFilters;
 
