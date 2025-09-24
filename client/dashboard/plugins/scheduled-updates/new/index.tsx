@@ -29,14 +29,11 @@ import type { Frequency, Weekday } from '../types';
 const BLOCK_CREATE = false;
 
 type PrecheckInputs = {
-	siteIds: number[];
 	plugins: string[];
 	frequency: Frequency;
 	weekday: Weekday;
 	time: string;
 };
-
-type PrecheckResult = { ok: true } | { ok: false; message: string; collidingSiteIds: number[] };
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
@@ -46,31 +43,31 @@ function ScheduledUpdatesNew() {
 	const [ time, setTime ] = useState( DEFAULT_TIME );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
 		[ selectedSiteIds ]
 	);
-
 	const collisionsChecker = useScheduleCollisions();
+	const { mutateAsync: runCreate } = useCreateSchedules( siteIdsAsNumbers );
+
+	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 	const isPrecheckLoading = collisionsChecker.isLoading;
 
 	const precheck = useCallback(
-		( inputs: PrecheckInputs ): PrecheckResult => {
-			const { siteIds, plugins, frequency: freq, weekday: wk, time: hhmm } = inputs;
+		( { plugins, frequency, weekday, time }: PrecheckInputs ): void => {
 			const { timeCollisions, pluginCollisions } = collisionsChecker.validateNow( {
-				siteIds,
+				siteIds: siteIdsAsNumbers,
 				plugins,
-				frequency: freq,
-				weekday: wk,
-				time: hhmm,
+				frequency,
+				weekday,
+				time,
 			} );
-
 			const collisionsError = timeCollisions.error || pluginCollisions.error;
+
 			if ( ! collisionsError ) {
-				return { ok: true };
+				return;
 			}
 
 			const collidingSiteIds = timeCollisions.error
@@ -79,7 +76,7 @@ function ScheduledUpdatesNew() {
 
 			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
 			const shouldListSites =
-				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIds.length;
+				collidingSiteIds.length > 0 && collidingSiteIds.length < siteIdsAsNumbers.length;
 			const siteList = shouldListSites
 				? collidingSiteIds.map( ( id ) => siteMap.get( id )?.slug || String( id ) ).join( ', ' )
 				: '';
@@ -91,41 +88,30 @@ function ScheduledUpdatesNew() {
 				message = `${ collisionsError }\n${ sitesLine }`;
 			}
 
-			return { ok: false, message, collidingSiteIds };
+			throw new Error( message );
 		},
-		[ collisionsChecker, eligibleSites ]
+		[ collisionsChecker, eligibleSites, siteIdsAsNumbers ]
 	);
-
-	const { mutateAsync: runCreate } = useCreateSchedules( siteIdsAsNumbers );
 
 	const handleCreate = useCallback( async () => {
 		setValidationError( '' );
-
-		if ( ! isValid || isPrecheckLoading ) {
-			return;
-		}
-
 		setIsSubmitting( true );
-		const result = precheck( {
-			siteIds: siteIdsAsNumbers,
-			plugins: selectedPluginSlugs,
-			frequency,
-			weekday,
-			time,
-		} );
-		if ( ! result.ok ) {
-			setValidationError( result.message );
-			setIsSubmitting( false );
-			return;
-		}
 
 		try {
+			precheck( {
+				plugins: selectedPluginSlugs,
+				frequency,
+				weekday,
+				time,
+			} );
+
 			await runCreate( {
 				plugins: selectedPluginSlugs,
 				frequency,
 				weekday,
 				time,
 			} );
+
 			setIsSubmitting( false );
 			navigate( { to: pluginsScheduledUpdatesRoute.to } );
 		} catch ( error ) {
@@ -134,18 +120,7 @@ function ScheduledUpdatesNew() {
 				( error as { message?: string } )?.message || __( 'Failed to create schedule.' )
 			);
 		}
-	}, [
-		frequency,
-		weekday,
-		time,
-		selectedPluginSlugs,
-		precheck,
-		runCreate,
-		navigate,
-		siteIdsAsNumbers,
-		isValid,
-		isPrecheckLoading,
-	] );
+	}, [ frequency, weekday, time, selectedPluginSlugs, precheck, runCreate, navigate ] );
 
 	return (
 		<PageLayout
