@@ -19,12 +19,10 @@ import type { ReactElement } from 'react';
 const globalOverrides = css`
 	.is-section-add-ons {
 		height: 100%;
+		--color-surface-backdrop: #fdfdfd;
 	}
 	.layout__primary {
 		height: 100%;
-	}
-	body {
-		--color-surface-backdrop: #fdfdfd;
 	}
 `;
 
