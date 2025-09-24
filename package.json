@@ -153,7 +153,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-razorpay": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
-		"@automattic/charts": "^0.23.1",
+		"@automattic/charts": "^0.38.2",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/components": "workspace:^",
