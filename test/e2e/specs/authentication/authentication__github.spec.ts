@@ -7,7 +7,7 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		'Skipping unless running on WordPress.com as GitHub authentication requires prod callbacks'
 	);
 
-	test( 'As a WordPress.com user, I can use my GitHub Id to authenticate ', async ( {
+	test( 'As a WordPress.com user, I can use my GitHub account to authenticate ', async ( {
 		clientEmail,
 		page,
 		pageGitHubLogin,
@@ -15,8 +15,8 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		secrets,
 	}, workerInfo ) => {
 		test.skip(
-			workerInfo.project.name !== 'chrome',
-			'We only run GitHub Authentication in desktop Chrome'
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
 		);
 
 		let timestamp: Date;

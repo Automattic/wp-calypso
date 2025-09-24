@@ -16,8 +16,8 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		secrets,
 	}, workerInfo ) => {
 		test.skip(
-			workerInfo.project.name !== 'chrome',
-			'We only run Apple Authentication in desktop Chrome'
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
 		);
 
 		let timestamp: Date;
@@ -80,8 +80,8 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		secrets,
 	}, workerInfo ) => {
 		test.skip(
-			workerInfo.project.name !== 'chrome',
-			'We only run Apple Authentication in desktop Chrome'
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
 		);
 
 		let timestamp: Date;
