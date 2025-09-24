@@ -34,6 +34,7 @@ function SiteBackupDownload() {
 
 	// Initialize step based on whether downloadId is provided in search params
 	const initialStep: DownloadStep = searchDownloadId ? 'progress' : 'form';
+
 	const [ currentStep, setCurrentStep ] = useState< DownloadStep >( initialStep );
 	const [ downloadId, setDownloadId ] = useState< number | null >( searchDownloadId || null );
 	const [ downloadUrl, setDownloadUrl ] = useState< string | null >( null );
