@@ -6,6 +6,5 @@ export { BackButton } from './components/back-button';
 export { HelpCenterContactForm } from './components/help-center-contact-form';
 export { default as HelpCenterInlineButton } from './components/help-center-inline-button';
 export { default as Mail } from './icons/mail';
-export * from './support-variations';
 export * from './hooks/use-admin-results';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';

@@ -1,24 +1,26 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { useState } from 'react';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
 interface SelectNewsletterFormProps {
-	redirectUrl: string;
 	value: string;
-	isLoading: boolean;
+	setFromSite: ( fromSite: string ) => void;
 	isError: boolean;
+	siteId: number;
+	engine: string;
+	siteSlug: string;
 }
 
 export default function SelectNewsletterForm( {
-	redirectUrl,
 	value,
-	isLoading,
 	isError,
+	setFromSite,
+	engine,
+	siteSlug,
 }: SelectNewsletterFormProps ) {
 	const { __ } = useI18n();
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
@@ -31,17 +33,11 @@ export default function SelectNewsletterForm( {
 
 		const { hostname, pathname } = parseUrl( fromSite );
 		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
+		const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/content`;
 
-		page( addQueryArgs( redirectUrl, { from } ) );
+		setFromSite( from );
+		page( stepUrl );
 	};
-
-	if ( isLoading ) {
-		return (
-			<Card className="select-newsletter-form">
-				<div className="is-loading" />
-			</Card>
-		);
-	}
 
 	const hasError = isUrlInvalid || isError;
 

@@ -87,7 +87,8 @@ export default function MonitoringPerformanceCard( {
 			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 		>
-			<pre>{ JSON.stringify( formattedData, null, 2 ) }</pre>
+			{ /* This is being taken care of in another PR: https://github.com/Automattic/wp-calypso/pull/105719 */ }
+			{ formattedData ? '[Server performance data]' : '[No data]' }
 		</MonitoringCard>
 	);
 }

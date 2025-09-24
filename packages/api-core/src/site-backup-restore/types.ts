@@ -13,6 +13,14 @@ export interface RestoreConfig {
 }
 
 /**
+ * Granular restore configuration options.
+ */
+export interface GranularRestoreConfig {
+	includePaths: string;
+	excludePaths?: string;
+}
+
+/**
  * Restore progress information.
  */
 export interface RestoreProgress {

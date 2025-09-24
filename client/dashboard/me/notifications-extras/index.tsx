@@ -21,7 +21,15 @@ import type { WpcomNotificationSettings } from '@automattic/api-core';
 
 export default function NotificationsExtras() {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
-	const mutation = useMutation( userNotificationsExtrasSettingsMutation() );
+	const mutation = useMutation( {
+		...userNotificationsExtrasSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Subscription settings saved.' ),
+				error: __( 'Failed to save subscription settings.' ),
+			},
+		},
+	} );
 
 	const extraSettings: Partial< WpcomNotificationSettings > | undefined = data?.wpcom;
 	const isSaving = mutation.isPending;
