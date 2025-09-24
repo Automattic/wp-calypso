@@ -5,9 +5,14 @@ import {
 	sitesQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
-	queryClient,
 } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import {
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+	useMutation,
+	keepPreviousData,
+} from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -61,6 +66,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
+	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
