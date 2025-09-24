@@ -39,6 +39,9 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		{
 			id: 'date',
 			label: __( 'Date' ),
+			getValue: ( { item } ) => {
+				return item.published || item.last_published;
+			},
 			render: ( { item } ) => <FormattedTime timestamp={ item.published || item.last_published } />,
 		},
 		{

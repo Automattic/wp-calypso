@@ -11,6 +11,7 @@ import {
 	download as downloadIcon,
 	link as linkIcon,
 } from '@wordpress/icons';
+import clsx from 'clsx';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { TextSkeleton } from '../../components/text-skeleton';
@@ -25,6 +26,7 @@ export interface MonitoringCardProps {
 	onAnchorClick?: () => void;
 	tracksId?: string;
 	children?: ReactNode;
+	className?: string;
 }
 
 export default function MonitoringCard( {
@@ -35,6 +37,7 @@ export default function MonitoringCard( {
 	onAnchorClick,
 	tracksId,
 	children,
+	className,
 }: MonitoringCardProps ) {
 	const renderDescription = () => {
 		if ( isLoading ) {
@@ -100,20 +103,26 @@ export default function MonitoringCard( {
 	);
 
 	return (
-		<Card className="dashboard-monitoring-card">
+		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
-				{ tracksId && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_monitoring_card_impression"
-						properties={ { feature: tracksId } }
-					/>
-				) }
-				{ topContent }
-				{ ! isLoading && children && (
-					<VStack className="dashboard-monitoring-card__content" spacing={ 2 } justify="flex-start">
-						{ children }
-					</VStack>
-				) }
+				<VStack spacing={ 4 }>
+					{ tracksId && (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_monitoring_card_impression"
+							properties={ { feature: tracksId } }
+						/>
+					) }
+					{ topContent }
+					{ ! isLoading && children && (
+						<VStack
+							className="dashboard-monitoring-card__content"
+							spacing={ 2 }
+							justify="flex-start"
+						>
+							{ children }
+						</VStack>
+					) }
+				</VStack>
 			</CardBody>
 		</Card>
 	);

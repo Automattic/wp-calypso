@@ -42,7 +42,10 @@ export interface BaseThreat {
 	primaryKeyColumn?: string;
 	value?: string;
 	diff?: string;
-	context?: Record< string, unknown >;
+	context?: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 	severity: number;
 	source?: string;
 	version?: string;

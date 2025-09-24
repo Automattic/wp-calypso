@@ -9,7 +9,7 @@
         text-align: left;
         border: 1px solid var(--studio-gray-5);
         border-radius: 8px;
-        margin: 0 0 16px;
+        margin: 0;
         overflow: hidden;
     }
 
@@ -53,8 +53,7 @@
             a,
 button {
                 all: unset;
-                padding-top: 16px;
-                padding-bottom: 16px;
+                padding: 16px;
                 display: flex;
                 text-decoration: none;
                 color: var(--studio-gray-100);
@@ -67,25 +66,16 @@ button {
                 width: 100%;
                 min-width: 0;
                 box-sizing: border-box;
+                gap: 8px;
 
                 svg {
                     flex-shrink: 0;
-                }
-
-                > svg:first-child {
-                    margin-right: 10px;
                     fill: $gray-700;
-                    padding-left: 24px;
                     display: block;
                 }
 
-                > svg:last-child {
-                    fill: var($gray-700);
-                    padding-right: 24px;
-                }
-
                 span {
-                    flex: 1 1 auto;
+                    flex: 1;
                     min-width: 0;
                     text-align: left;
                 }

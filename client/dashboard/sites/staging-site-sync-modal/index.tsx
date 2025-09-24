@@ -3,7 +3,6 @@ import {
 	pushToStagingMutation,
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -28,6 +27,7 @@ import {
 	FileBrowserProvider,
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import Environment, { EnvironmentType } from '../../components/environment';
@@ -166,6 +166,7 @@ function StagingSiteSyncModalInner( {
 	onSyncStart,
 }: StagingSiteSyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
+	const { recordTracksEvent } = useAnalytics();
 	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
@@ -178,6 +179,7 @@ function StagingSiteSyncModalInner( {
 	} );
 	const productionSiteSlug = productionSite?.slug;
 	const productionSiteTitle = productionSite?.name;
+	const productionHasWoo = !! productionSite?.options?.woocommerce_is_active;
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
@@ -185,8 +187,10 @@ function StagingSiteSyncModalInner( {
 	} );
 	const stagingSiteSlug = stagingSite?.slug;
 	const stagingSiteTitle = stagingSite?.name;
+	const stagingHasWoo = !! stagingSite?.options?.woocommerce_is_active;
 
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+	const sourceHasWoo = sourceEnvironment === 'staging' ? stagingHasWoo : productionHasWoo;
 
 	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
 	const targetSiteTitle =
@@ -290,6 +294,8 @@ function StagingSiteSyncModalInner( {
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+	const showWooCommerceWarning =
+		sourceHasWoo && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -358,14 +364,11 @@ function StagingSiteSyncModalInner( {
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
-	const isGranularMode = isFileBrowserVisible && ! shouldDisableGranularSync;
-
-	const noGranularSelection =
-		isGranularMode && browserCheckList.totalItems > 0 && browserCheckList.includeList.length === 0;
-
 	const isSubmitDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		noGranularSelection ||
+		( browserCheckList.totalItems === 0 &&
+			browserCheckList.includeList.length === 0 &&
+			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
 
@@ -467,10 +470,35 @@ function StagingSiteSyncModalInner( {
 						</HStack>
 						{ hasWarning && (
 							<VStack style={ { marginTop: '20px' } }>
-								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
-									{ __(
-										'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
-									) }
+								<Notice
+									density="medium"
+									variant="warning"
+									title={ __( 'Warning! Database will be overwritten' ) }
+								>
+									<VStack spacing={ 2 }>
+										<Text as="p">
+											{ __(
+												'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+											) }
+										</Text>
+										{ showWooCommerceWarning && (
+											<Text as="p">
+												{ createInterpolateElement(
+													__(
+														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+													),
+													{
+														a: (
+															<ExternalLink
+																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+																children={ null }
+															/>
+														),
+													}
+												) }
+											</Text>
+										) }
+									</VStack>
 								</Notice>
 							</VStack>
 						) }
