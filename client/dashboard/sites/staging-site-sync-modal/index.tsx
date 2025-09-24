@@ -377,11 +377,11 @@ function StagingSiteSyncModalInner( {
 	const fields: Field< StagingSiteSyncFormData >[] = [
 		{
 			id: 'domain',
-			label: __( "Enter your site's name to confirm" ),
+			label: __( 'Type the site domain to confirm' ),
 			type: 'text' as const,
 			description: sprintf(
 				/* translators: %s: site domain */
-				__( "The site's name is: %s" ),
+				__( 'The site domain is: %s' ),
 				productionSiteSlug || ''
 			),
 		},
