@@ -41,7 +41,7 @@ export interface DomainSearchEvents {
 	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
 	onQueryChange: ( query: string ) => void;
 	onAddDomainToCart: ( domainName: string ) => void;
-	onQueryAvailabilityCheck: ( status: string, domainName: string ) => void;
+	onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => void;
 }
 
 export interface DomainSearchConfig {

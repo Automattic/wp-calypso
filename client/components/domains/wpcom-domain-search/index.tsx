@@ -64,11 +64,11 @@ const DomainSearchWithCart = ( {
 			onAddDomainToCart: ( domainName: string ) => {
 				recordTracksEvent( 'calypso_domain_search_add_button_click', { domain: domainName } );
 			},
-			onQueryAvailabilityCheck: ( status: string, domainName: string ) => {
+			onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
 					available_status: status,
 					flow_name: flowName,
-					// response_time: responseTimeInMs, // TODO: Not sure how to measure this with Tanstack
+					response_time: responseTime,
 					search_query: domainName,
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );

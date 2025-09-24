@@ -1,6 +1,10 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
+import {
+	type DomainAvailability,
+	DomainAvailabilityStatus,
+	fetchDomainAvailability,
+} from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
@@ -15,16 +19,19 @@ export const useSuggestionsList = () => {
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
-	const { isLoading: isLoadingQueryAvailability, data: availabilityData } = useQuery( {
+	const { isLoading: isLoadingQueryAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: !! getTld( query ),
+		queryFn: async () => {
+			const start = Date.now();
+			const availability = await fetchDomainAvailability( query );
+			const availabilityResponseTime = Date.now() - start;
+			if ( availability ) {
+				events.onQueryAvailabilityCheck( availability.status, query, availabilityResponseTime );
+			}
+			return availability;
+		},
 	} );
-
-	useEffect( () => {
-		if ( availabilityData && ! isLoadingQueryAvailability ) {
-			events.onQueryAvailabilityCheck( availabilityData.status, query );
-		}
-	}, [ availabilityData, isLoadingQueryAvailability, events, query ] );
 
 	const premiumSuggestions = useMemo(
 		() =>
