@@ -84,7 +84,9 @@ export default function DomainGlueRecordsForm( {
 							}
 							suffix={
 								<InputControlSuffixWrapper>
-									<Text variant="muted">{ suffix }</Text>
+									<Text variant="muted" style={ { 'white-space': 'nowrap' } }>
+										{ suffix }
+									</Text>
 								</InputControlSuffixWrapper>
 							}
 						/>
