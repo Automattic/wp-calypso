@@ -40,3 +40,13 @@ export async function unignoreThreat( siteId: number, threatId: number ): Promis
 export async function fixThreat( siteId: number, threatId: number ): Promise< SiteScan > {
 	return updateThreat( siteId, threatId, { fix: true } );
 }
+
+export async function fixThreats( siteId: number, threatIds: number[] ): Promise< SiteScan > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/alerts/fix`,
+		apiNamespace: 'wpcom/v2',
+		body: {
+			threat_ids: threatIds,
+		},
+	} );
+}

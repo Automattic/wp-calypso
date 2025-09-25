@@ -1,12 +1,12 @@
-import type { ViewTable, ViewGrid } from '@wordpress/dataviews';
+import type { ViewTable, ViewGrid, ViewPickerGrid } from '@wordpress/dataviews';
 
-export type SitesView = ViewTable | ViewGrid;
+export type SitesView = ViewTable | ViewGrid | ViewPickerGrid;
 
 // The view preferences are a subset of the view object.
 // It includes the merged layout object of all view types ever explicitly set by the user.
 export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' > > & {
-	type?: ViewTable[ 'type' ] | ViewGrid[ 'type' ];
-	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] >;
+	type?: ViewTable[ 'type' ] | ViewGrid[ 'type' ] | ViewPickerGrid[ 'type' ];
+	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] & ViewPickerGrid[ 'layout' ] >;
 };
 
 export interface HostingDashboardOptIn {
