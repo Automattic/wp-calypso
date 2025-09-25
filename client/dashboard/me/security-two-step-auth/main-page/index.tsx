@@ -1,4 +1,5 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -82,7 +83,7 @@ export default function SecurityTwoStepAuthMainPage( {
 								}
 						  ) ) }
 			</Notice>
-			<EnhancedSecurity />
+			{ isEnabled( 'two-factor/enhanced-security' ) && <EnhancedSecurity /> }
 			<SecurityKeys />
 			<ApplicationPasswords />
 			<BackupCodes />
