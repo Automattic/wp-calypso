@@ -7,3 +7,10 @@ export function fetchMarketplacePlugin( slug: string ): Promise< MarketplacePlug
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+export function fetchMarketplacePlugins(): Promise< MarketplacePlugin[] > {
+	return wpcom.req.get( {
+		path: '/marketplace/products',
+		apiNamespace: 'wpcom/v2',
+	} );
+}
