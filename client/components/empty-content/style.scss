@@ -46,7 +46,9 @@
 	}
 }
 
-.empty-content__action {
+.empty-content__action,
+button.empty-content__action,
+a.empty-content__action {
 	margin: 0 0 10px 10px;
 	max-width: 100%;
 	overflow: hidden;

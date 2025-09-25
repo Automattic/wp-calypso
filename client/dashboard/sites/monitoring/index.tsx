@@ -19,6 +19,7 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import MonitoringCard from '../monitoring-card';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
 import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
+import MonitoringResponseTypesCard from '../monitoring-response-types-card';
 import { getMonitoringCalloutProps } from './monitoring-callout';
 import type { Site } from '@automattic/api-core';
 
@@ -66,16 +67,7 @@ function SiteMonitoringBody( {
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
 				<MonitoringRequestMethodsCard site={ site } timeRange={ hoursMap[ timeRange ] } />
-
-				<MonitoringCard
-					title={ __( 'Response types' ) }
-					description={ __( 'Percentage of dynamic versus static responses.' ) }
-					onDownloadClick={ () => {} }
-					onAnchorClick={ () => {} }
-					className="dashboard-monitoring-card--row-layout"
-				>
-					[Response types graph]
-				</MonitoringCard>
+				<MonitoringResponseTypesCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 			</HStack>
 
 			<MonitoringCard
@@ -122,43 +114,43 @@ function SiteMonitoring() {
 	};
 
 	return (
-		<PageLayout
-			header={
-				<HStack
-					justify="space-between"
-					alignment="stretch"
-					wrap
-					spacing={ isSmallViewport ? 5 : 10 }
-				>
-					<PageHeader title={ __( 'Monitoring' ) } />
-					<div>
-						<ToggleGroupControl
-							value={ timeRange }
-							isBlock
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							onChange={ handleTimeRangeChange }
-							label={ __( 'Time period' ) }
-							hideLabelFromVision
-						>
-							<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
-							<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
-							<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
-							<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
-						</ToggleGroupControl>
-					</div>
-				</HStack>
-			}
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.MONITOR }
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> } /> }
+			{ ...getMonitoringCalloutProps() }
 		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.MONITOR }
-				asOverlay
-				{ ...getMonitoringCalloutProps() }
+			<PageLayout
+				header={
+					<HStack
+						justify="space-between"
+						alignment="stretch"
+						wrap
+						spacing={ isSmallViewport ? 5 : 10 }
+					>
+						<PageHeader title={ __( 'Monitoring' ) } />
+						<div>
+							<ToggleGroupControl
+								value={ timeRange }
+								isBlock
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								onChange={ handleTimeRangeChange }
+								label={ __( 'Time period' ) }
+								hideLabelFromVision
+							>
+								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
+								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
+								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
+								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
+							</ToggleGroupControl>
+						</div>
+					</HStack>
+				}
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+			</PageLayout>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 
