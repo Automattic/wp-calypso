@@ -38,7 +38,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			utm: 'wpcomme',
 			onProfileUpdated: () => {
 				// Bust cache so the <img> reloads the latest avatar immediately
-				setTempImage( addQueryArgs( avatarUrl, { ver: Date.now() } ) as unknown as string );
+				setTempImage( addQueryArgs( avatarUrl, { ver: Date.now() } ) as string );
 			},
 		} );
 
@@ -110,7 +110,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 
 	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
 	const displayUrl = useMemo(
-		() => addQueryArgs( avatarUrl, { ver: Date.now() } ) as unknown as string,
+		() => addQueryArgs( avatarUrl, { ver: Date.now() } ) as string,
 		[ avatarUrl ]
 	);
 
