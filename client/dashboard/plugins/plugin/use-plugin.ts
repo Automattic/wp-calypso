@@ -86,6 +86,17 @@ export const usePlugin = ( pluginSlug: string ) => {
 		  )
 		: [ [], [] ];
 
+	let icon;
+	if ( isMarketplacePlugin ) {
+		icon = marketplacePlugins?.results[ pluginSlug ]?.icons;
+	} else if ( wpOrgPlugin?.icons ) {
+		if ( '1x' in wpOrgPlugin.icons ) {
+			icon = wpOrgPlugin.icons[ '1x' ];
+		} else if ( 'default' in wpOrgPlugin.icons ) {
+			icon = wpOrgPlugin.icons.default;
+		}
+	}
+
 	return {
 		isLoading:
 			isLoadingSitesPlugins ||
@@ -98,8 +109,6 @@ export const usePlugin = ( pluginSlug: string ) => {
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
 		plugin: pluginData,
-		icons: isMarketplacePlugin
-			? marketplacePlugins?.results[ pluginSlug ]?.icons
-			: wpOrgPlugin?.icons,
+		icon,
 	};
 };
