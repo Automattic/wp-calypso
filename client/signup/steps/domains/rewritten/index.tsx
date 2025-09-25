@@ -333,7 +333,7 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 	const baseSubmitProvidedDependencies = useMemo( () => {
 		if ( themeSlug ) {
 			return {
-				useThemeHeadstartItem: true,
+				useThemeHeadstart: true,
 			};
 		}
 
