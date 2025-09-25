@@ -2,8 +2,8 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAnalytics } from '../../../app/analytics';
+import { Valuation } from '../utils';
 import { Metrics } from './index';
-import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
 
 type StatusSectionProps = {
 	value: Valuation;
@@ -22,7 +22,6 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 		onRecommendationsFilterChange,
 	} = props;
 	const { recordTracksEvent } = useAnalytics();
-
 
 	const getStatus = ( value: Valuation ) => {
 		if ( value === 'bad' ) {

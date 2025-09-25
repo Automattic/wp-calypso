@@ -1,16 +1,10 @@
 import { __ } from '@wordpress/i18n';
-import { clsx } from 'clsx';
-import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	mapThresholdsToStatus,
-	displayValue,
-} from 'calypso/performance-profiler/utils/metrics';
-import { Metrics } from './index';
+import clsx from 'clsx';
+import { useAnalytics } from '../../../app/analytics';
+import { CircularPerformanceScore } from '../circular-performance-score';
+import { displayValue, getMetricsNames, mapThresholdsToStatus } from '../utils';
 import { StatusIndicator } from './status-indicator';
-import {
-	getMetricsNames,
-} from '../utils';
+import { Metrics } from './index';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics;
@@ -20,7 +14,7 @@ type Props = Record< Metrics, number > & {
 
 const MetricTabBar = ( props: Props ) => {
 	const { activeTab, setActiveTab, showOverall } = props;
-
+	const { recordTracksEvent } = useAnalytics();
 	const handleTabClick = ( tab: Metrics ) => {
 		setActiveTab( tab );
 		recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
@@ -28,7 +22,7 @@ const MetricTabBar = ( props: Props ) => {
 		} );
 	};
 
-	const metricsNames = getMetricsNames( __ );
+	const metricsNames = getMetricsNames();
 
 	return (
 		<div className="metric-tab-bar">

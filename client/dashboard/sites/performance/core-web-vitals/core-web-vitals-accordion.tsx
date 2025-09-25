@@ -1,15 +1,10 @@
 import { FoldableCard } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { useAnalytics } from '../../../app/analytics';
+import { CircularPerformanceScore } from '../circular-performance-score';
+import { getMetricsNames, mapThresholdsToStatus, displayValue } from '../utils';
 import { Metrics } from './index';
-import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
-import {
-	mapThresholdsToStatus,
-	displayValue,
-} from 'calypso/performance-profiler/utils/metrics';
-import {
-	getMetricsNames,
-} from '../utils';
 import './core-web-vitals-accordion.scss';
 
 type Props = Record< Metrics, number > & {
@@ -66,7 +61,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 		}
 	};
 
-	const metricsNames = getMetricsNames( __ );
+	const metricsNames = getMetricsNames();
 	const entries = Object.entries( metricsNames );
 	const overallEntry = entries.find( ( [ key ] ) => key === 'overall' );
 	const otherEntries = entries.filter( ( [ key ] ) => key !== 'overall' );
