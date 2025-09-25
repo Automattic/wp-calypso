@@ -4,6 +4,7 @@ import {
 	monetizeSubscriptionResumeAutoRenew,
 	monetizeSubscriptionStop,
 } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -17,12 +18,13 @@ import {
 	Button,
 	Notice,
 	CardBody,
+	ToggleControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, globe, chevronRight, chevronLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { formatDate } from 'date-fns';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { addFlashMessage } from '../../components/flash-message';
@@ -33,6 +35,7 @@ import {
 	getMonetizeSubscriptionsUrl,
 	getMonetizeSubscriptionsPageTitle,
 } from '../../me/monetize-subscriptions/urls';
+import { formatDate } from '../../utils/datetime';
 import type { MonetizeSubscription } from '@automattic/api-core';
 
 function MonetizeSiteHeader( { name, domain }: { name: string; domain: string } ) {
@@ -58,6 +61,7 @@ function AutoRenewButton( {
 	isAutoRenewing,
 	isUpdating,
 	isProduct,
+	subscription,
 }: {
 	disableAutoRenew: ( data: any, variables: object ) => void;
 	enableAutoRenew: ( data: any, variables: object ) => void;
@@ -85,25 +89,65 @@ function AutoRenewButton( {
 			} );
 		}
 	};
+	const fields = [
+		{
+			id: 'is_auto_renew_enabled',
+			label: __( 'Enable auto-renew' ),
+			Edit: ( { data }: { data: MonetizeSubscription } ) => {
+				const locale = useLocale();
+				const helpText = ( () => {
+					if ( isAutoRenewing ) {
+						// translators: date is a formatted date string
+						return sprintf( __( 'You will be billed on %(date)s' ), {
+							date: formatDate( new Date( Date.parse( data.end_date ) ), locale, {
+								dateStyle: 'long',
+							} ),
+						} );
+					}
+				} )();
+				return (
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ title }
+						checked={ isAutoRenewing }
+						disabled={ isUpdating }
+						onChange={ () => ( isAutoRenewing ? disableAutoRenew() : enableAutoRenew() ) }
+						help={ helpText }
+					/>
+				);
+			},
+		},
+	];
+
+	const form = {
+		type: 'regular' as const,
+		labelPosition: 'top' as const,
+		fields: [
+			{
+				id: 'autoRenew',
+				label: __( 'Manage subscription' ),
+				children: [ 'is_auto_renew_enabled' ],
+			},
+		],
+	};
+
 	return (
-		<ActionList.ActionItem
-			title={ title }
-			description={ title }
-			actions={
-				<Button
-					variant="secondary"
-					size="compact"
-					disabled={ isUpdating }
-					onClick={ () => {
-						isAutoRenewing
-							? disableAutoRenew( null, { onError: onError } )
-							: enableAutoRenew( null, { onError: onError } );
-					} }
-				>
-					{ title }
-				</Button>
-			}
-		/>
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 } alignment="left">
+					<DataForm
+						fields={ fields }
+						data={ subscription }
+						form={ form }
+						onChange={ () => {
+							isAutoRenewing
+								? disableAutoRenew( null, { onError: onError } )
+								: enableAutoRenew( null, { onError: onError } );
+						} }
+					/>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -126,7 +170,7 @@ function StopSubscriptionButton( {
 	return (
 		<ActionList.ActionItem
 			title={ title }
-			description={ title }
+			description={ __( "We'll be sorry to see you go!" ) }
 			actions={
 				<Button
 					variant="secondary"
@@ -193,6 +237,7 @@ const BackButton = () => {
 export default function MonetizeSubscription() {
 	const params = monetizeSubscriptionRoute.useParams();
 	const subscriptionId: string = params.subscriptionId;
+	const locale = useLocale();
 
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
@@ -213,7 +258,6 @@ export default function MonetizeSubscription() {
 	const isProduct = !! subscription && ! isRenewable;
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
-
 	return (
 		<PageLayout
 			size="small"
@@ -231,79 +275,82 @@ export default function MonetizeSubscription() {
 			) }
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
-				<Card>
-					<MonetizeSiteHeader name={ subscription.site_title } domain={ subscription.site_url } />
+				<VStack spacing={ 4 }>
+					<Card>
+						<MonetizeSiteHeader name={ subscription.site_title } domain={ subscription.site_url } />
 
-					<CardHeader>
-						<HStack alignment="center">
-							<VStack>
-								<HStack alignment="center">
-									<Text weight={ 700 } size="title" as="h3">
-										{ subscription.title }
-									</Text>
-									<Text weight={ 700 }>
-										{ formatCurrency(
-											parseFloat( subscription.renewal_price ),
-											subscription.currency
-										) }
-									</Text>
-								</HStack>
+						<CardHeader>
+							<HStack alignment="center">
+								<VStack>
+									<HStack alignment="center">
+										<Text weight={ 700 } size="title" as="h3">
+											{ subscription.title }
+										</Text>
+										<Text weight={ 700 }>
+											{ formatCurrency(
+												parseFloat( subscription.renewal_price ),
+												subscription.currency
+											) }
+										</Text>
+									</HStack>
 
-								{ ! isProduct && (
-									<center>
-										{ subscription.renew_interval
-											? __( 'Auto-renew is ON' )
-											: __( 'Auto-renew is OFF' ) }
-									</center>
-								) }
-							</VStack>
-						</HStack>
-					</CardHeader>
+									{ ! isProduct && (
+										<center>
+											{ subscription.renew_interval
+												? __( 'Auto-renew is ON' )
+												: __( 'Auto-renew is OFF' ) }
+										</center>
+									) }
+								</VStack>
+							</HStack>
+						</CardHeader>
 
-					<CardBody>
-						<HStack>
-							<Card>
-								<CardHeader>{ __( 'Renew interval' ) }</CardHeader>
-								<CardBody>
-									<HStack alignment="center">{ subscription.renew_interval || '-' }</HStack>
-								</CardBody>
-							</Card>
-							<Card>
-								<CardHeader>{ __( 'Subscribed On' ) }</CardHeader>
-								<CardBody>{ formatDate( subscription.start_date, 'MMM dd, yyyy' ) }</CardBody>
-							</Card>
-							<Card>
-								<CardHeader>
-									{ isDisabledAutorenewing ? __( 'Expires on' ) : __( 'Renews on' ) }
-								</CardHeader>
+						<CardBody>
+							<HStack>
+								<Card>
+									<CardHeader>{ __( 'Renew interval' ) }</CardHeader>
+									<CardBody>
+										<HStack alignment="center">{ subscription.renew_interval || '-' }</HStack>
+									</CardBody>
+								</Card>
+								<Card>
+									<CardHeader>{ __( 'Subscribed On' ) }</CardHeader>
+									<CardBody>
+										{ formatDate( new Date( Date.parse( subscription.start_date ) ), locale ) }
+									</CardBody>
+								</Card>
+								<Card>
+									<CardHeader>
+										{ isDisabledAutorenewing ? __( 'Expires on' ) : __( 'Renews on' ) }
+									</CardHeader>
 
-								<CardBody>
-									{ subscription.end_date
-										? formatDate( subscription.end_date, 'MMM dd, yyyy' )
-										: __( 'Never Expires' ) }
-								</CardBody>
-							</Card>
-						</HStack>
-					</CardBody>
+									<CardBody>
+										{ subscription.end_date
+											? formatDate( new Date( Date.parse( subscription.end_date ) ), locale )
+											: __( 'Never Expires' ) }
+									</CardBody>
+								</Card>
+							</HStack>
+						</CardBody>
+					</Card>
+					{ isRenewable && (
+						<AutoRenewButton
+							subscription={ subscription }
+							isAutoRenewing={ isAutoRenewing }
+							isUpdating={ isUpdating }
+							disableAutoRenew={ disableAutoRenew }
+							enableAutoRenew={ enableAutoRenew }
+							isProduct={ isProduct }
+						/>
+					) }
 					<ActionList>
-						{ isRenewable && (
-							<AutoRenewButton
-								subscription={ subscription }
-								isAutoRenewing={ isAutoRenewing }
-								isUpdating={ isUpdating }
-								disableAutoRenew={ disableAutoRenew }
-								enableAutoRenew={ enableAutoRenew }
-								isProduct={ isProduct }
-							/>
-						) }
-
 						<StopSubscriptionButton
 							subscription={ subscription }
 							stopSubscription={ stopSubscription }
 							isProduct={ isProduct }
 						/>
 					</ActionList>
-				</Card>
+				</VStack>
 			) }
 		</PageLayout>
 	);
