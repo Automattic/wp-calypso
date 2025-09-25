@@ -165,70 +165,68 @@ export default function PersonalDetailsSection( {
 	};
 
 	return (
-		<>
-			<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'Personal details' ) }
-								headingId="personal-details-heading"
-							/>
+		<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Personal details' ) }
+							headingId="personal-details-heading"
+						/>
 
-							{ /* First & last name */ }
-							<DataForm< UserSettings >
-								data={ data }
-								fields={ nameFields }
-								form={ nameForm }
-								onChange={ handleFieldChange }
-							/>
+						{ /* First & last name */ }
+						<DataForm< UserSettings >
+							data={ data }
+							fields={ nameFields }
+							form={ nameForm }
+							onChange={ handleFieldChange }
+						/>
 
-							{ /* Username */ }
-							<UsernameSection
-								value={ data.user_login || '' }
-								onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
-								currentUsername={ currentUsername }
-								isAutomattician={ isAutomattician }
-								isEmailVerified={ isEmailVerified }
-								canChangeUsername={ canChangeUsername }
-								onCancel={ handleUsernameCancel }
-							/>
+						{ /* Username */ }
+						<UsernameSection
+							value={ data.user_login || '' }
+							onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
+							currentUsername={ currentUsername }
+							isAutomattician={ isAutomattician }
+							isEmailVerified={ isEmailVerified }
+							canChangeUsername={ canChangeUsername }
+							onCancel={ handleUsernameCancel }
+						/>
 
-							{ /* Email address */ }
-							<InputControl
-								__next40pxDefaultSize
-								id="email-input"
-								type="email"
-								label={ __( 'Email address' ) }
-								value={ data.user_email || '' }
-								onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
-								autoComplete="email"
-								aria-describedby="email-help"
-							/>
+						{ /* Email address */ }
+						<InputControl
+							__next40pxDefaultSize
+							id="email-input"
+							type="email"
+							label={ __( 'Email address' ) }
+							value={ data.user_email || '' }
+							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
+							autoComplete="email"
+							aria-describedby="email-help"
+						/>
 
-							{ /* Developer checkbox */ }
-							<DataForm< UserSettings >
-								data={ data }
-								fields={ [ devAccountField ] }
-								form={ devForm }
-								onChange={ handleFieldChange }
-							/>
+						{ /* Developer checkbox */ }
+						<DataForm< UserSettings >
+							data={ data }
+							fields={ [ devAccountField ] }
+							form={ devForm }
+							onChange={ handleFieldChange }
+						/>
 
-							<HStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isSaving }
-									disabled={ isSaving || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</HStack>
-						</VStack>
-					</CardBody>
-				</Card>
-			</form>
-		</>
+						<HStack justify="flex-start">
+							<Button
+								variant="primary"
+								type="submit"
+								isBusy={ isSaving }
+								disabled={ isSaving || ! isDirty }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				</CardBody>
+			</Card>
+		</form>
 	);
 }
