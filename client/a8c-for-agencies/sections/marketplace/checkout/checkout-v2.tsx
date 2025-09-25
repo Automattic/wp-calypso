@@ -26,6 +26,7 @@ function CheckoutV2() {
 			className="checkout"
 			title={ title }
 			withBorder
+			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
@@ -45,9 +46,7 @@ function CheckoutV2() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<div className="checkout__container">
-					<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
-				</div>
+				<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
 			</LayoutBody>
 		</Layout>
 	);
