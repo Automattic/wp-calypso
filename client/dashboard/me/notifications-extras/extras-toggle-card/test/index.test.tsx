@@ -145,7 +145,7 @@ describe( 'ExtrasToggleCard', () => {
 		} );
 	} );
 
-	it( 'calls onMutate when "Unsubscribe from all" is clicked', async () => {
+	it( 'calls onMutate with only changed values when "Unsubscribe from all" is clicked', async () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -162,24 +162,6 @@ describe( 'ExtrasToggleCard', () => {
 			marketing: false,
 			research: false,
 			community: false,
-		} );
-	} );
-
-	it( 'only sends changes for options that differ from current state in "Subscribe to all"', async () => {
-		const extraSettings = {
-			...defaultExtraSettings,
-			marketing: true, // Already enabled
-			research: false,
-		};
-
-		renderExtrasToggleCard( { extraSettings } );
-
-		const subscribeAllToggle = screen.getByLabelText( 'Unsubscribe from all' ); // Should show "Unsubscribe" since marketing is true
-		await userEvent.click( subscribeAllToggle );
-
-		// Should only send the change for marketing (from true to false)
-		expect( mockOnMutate ).toHaveBeenCalledWith( {
-			marketing: false,
 		} );
 	} );
 
@@ -208,39 +190,6 @@ describe( 'ExtrasToggleCard', () => {
 		await userEvent.click( subscribeAllToggle );
 
 		expect( mockOnMutate ).not.toHaveBeenCalled();
-	} );
-
-	it( 'does not call onMutate when no changes are needed for "Subscribe to all"', async () => {
-		const extraSettings = {
-			...defaultExtraSettings,
-			marketing: true,
-			research: true,
-			community: true,
-			promotion: true,
-			news: true,
-			digest: true,
-			reports: true,
-			news_developer: true,
-			scheduled_updates: true,
-		};
-
-		renderExtrasToggleCard( { extraSettings } );
-
-		// All are already enabled, clicking "Unsubscribe from all" then "Subscribe to all" should not call onMutate again
-		const toggle = screen.getByLabelText( 'Unsubscribe from all' );
-		await userEvent.click( toggle ); // This will call onMutate to disable all
-
-		mockOnMutate.mockClear();
-
-		// Now click subscribe to all - but since they're all already true, no mutation should happen
-		// First we need to simulate the state change from the previous click
-		renderExtrasToggleCard( { extraSettings: defaultExtraSettings } );
-
-		const subscribeAllToggle = screen.getByLabelText( 'Subscribe to all' );
-		await userEvent.click( subscribeAllToggle );
-
-		// This should call onMutate because we're going from all false to all true
-		expect( mockOnMutate ).toHaveBeenCalled();
 	} );
 
 	it( 'handles individual toggle changes correctly', async () => {
