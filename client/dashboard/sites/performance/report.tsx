@@ -75,7 +75,6 @@ export default function Report( {
 				ttfb={ ttfb }
 				tbt={ tbt }
 				overall={ overall_score * 100 }
-				overallScoreIsTab={ false }
 				history={ history }
 				audits={ audits }
 				recommendationsRef={ insightsRef }

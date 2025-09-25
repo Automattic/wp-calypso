@@ -66,39 +66,25 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
-	overallScoreIsTab?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
-	const defaultTab = props.overallScoreIsTab ? 'overall' : 'fcp';
-	const [ activeTab, setActiveTab ] = useState< Metrics | null >( defaultTab );
+	const [ activeTab, setActiveTab ] = useState< Metrics | null >( 'overall' );
 	const isDesktop = useViewportMatch( 'medium' );
 
 	if ( isDesktop ) {
 		return (
-			<div className="core-web-vitals-display is-desktop">
-				<MetricTabBar
-					activeTab={ activeTab ?? defaultTab }
-					setActiveTab={ setActiveTab }
-					showOverall={ props.overallScoreIsTab }
-					{ ...props }
-				/>
+			<>
+				<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
 				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
-			</div>
+			</>
 		);
 	}
 
 	return (
-		<div className="core-web-vitals-display">
-			<CoreWebVitalsAccordion
-				activeTab={ activeTab }
-				setActiveTab={ setActiveTab }
-				showOverall={ props.overallScoreIsTab }
-				{ ...props }
-			>
-				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
-			</CoreWebVitalsAccordion>
-		</div>
+		<CoreWebVitalsAccordion activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props }>
+			<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
+		</CoreWebVitalsAccordion>
 	);
 };

@@ -37,7 +37,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return null;
 	}
 
-	const metricsNames = getMetricsNames( __ );
+	const metricsNames = getMetricsNames();
 	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 
@@ -151,7 +151,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 							{ isPerformanceScoreSelected
 								? sprintf(
 										/* translators: %(to)s is the good threshold */
-										__( '(90–%(%s)s)' ),
+										__( '(90–%(to)s)' ),
 										{
 											to: formatUnit( good ),
 										}
@@ -174,7 +174,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 							{ isPerformanceScoreSelected
 								? sprintf(
 										/* translators: %(to)s is the needs improvement threshold */
-										__( '(%(50)s–%(%s)s)' ),
+										__( '(50–%(to)s)' ),
 										{
 											to: formatUnit( needsImprovement ),
 										}
@@ -198,7 +198,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 							{ isPerformanceScoreSelected
 								? sprintf(
 										/* translators: %(to)s is the bad threshold */
-										__( '(%(0)s-%(to)s)' ),
+										__( '(0-%(to)s)' ),
 										{
 											to: formatUnit( bad ),
 										}
