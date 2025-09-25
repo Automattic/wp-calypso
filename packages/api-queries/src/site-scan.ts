@@ -14,7 +14,13 @@ import { queryClient } from './query-client';
 export const fixThreatsStatusQuery = ( siteId: number, threatIds: number[] ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'fix-threats', 'status', threatIds ],
-		queryFn: () => fetchFixThreatsStatus( siteId, threatIds ),
+		queryFn: async () => {
+			const result = await fetchFixThreatsStatus( siteId, threatIds );
+			return {
+				...result,
+				threats: Object.values( result.threats ),
+			};
+		},
 	} );
 
 export const siteScanQuery = ( siteId: number ) =>
