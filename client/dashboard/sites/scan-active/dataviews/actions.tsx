@@ -2,6 +2,7 @@ import { Icon } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
+import { BulkFixThreatsModal } from '../../scan/components/bulk-fix-threats-modal';
 import { FixThreatModal } from '../../scan/components/fix-threat-modal';
 import { IgnoreThreatModal } from '../../scan/components/ignore-threat-modal';
 import type { Threat } from '@automattic/api-core';
@@ -15,9 +16,12 @@ export function getActions( siteId: number ): Action< Threat >[] {
 			label: __( 'Fix threat' ),
 			modalHeader: __( 'Fix threat' ),
 			supportsBulk: true,
-			RenderModal: ( { items, closeModal } ) => (
-				<FixThreatModal items={ items } closeModal={ closeModal } siteId={ siteId } />
-			),
+			RenderModal: ( { items, closeModal } ) => {
+				if ( items.length === 1 ) {
+					return <FixThreatModal items={ items } closeModal={ closeModal } siteId={ siteId } />;
+				}
+				return <BulkFixThreatsModal items={ items } closeModal={ closeModal } siteId={ siteId } />;
+			},
 			isEligible: ( threat: Threat ) => !! threat.fixable,
 		},
 		{

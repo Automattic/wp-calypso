@@ -8,7 +8,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { SeverityBadge } from '../severity-badge';
-import { getThreatIcon } from '../utils';
+import { getThreatFix, getThreatIcon } from '../utils';
 import type { Threat } from '@automattic/api-core';
 
 export function ThreatsDetailCard( { threats }: { threats: Threat[] } ) {
@@ -24,7 +24,9 @@ export function ThreatsDetailCard( { threats }: { threats: Threat[] } ) {
 					/>
 					<VStack justify="flex-start" spacing={ 1 } wrap>
 						<Text weight={ 500 }>{ threat.title }</Text>
-						<Text variant="muted">{ threat.vulnerability_description }</Text>
+						<Text variant="muted">
+							{ threats.length > 1 ? getThreatFix( threat ) : threat.vulnerability_description }
+						</Text>
 					</VStack>
 				</HStack>
 				<SeverityBadge severity={ threat.severity } />
