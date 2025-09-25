@@ -1,13 +1,19 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { isDomainForGravatarFlow, isEcommerceFlow, isFreeFlow } from '@automattic/onboarding';
+import {
+	isDomainForGravatarFlow,
+	isEcommerceFlow,
+	isFreeFlow,
+	isWithThemeFlow,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
-import { localize } from 'i18n-calypso';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { localize, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -15,7 +21,7 @@ import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/pa
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
 
@@ -47,6 +53,8 @@ const DomainSearchUI = (
 		queryObject,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
+		previousStepName,
+		goBack,
 	} = props;
 
 	const isDomainOnlyFlow = flowName === 'domain';
@@ -223,6 +231,51 @@ const DomainSearchUI = (
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flowName ] );
 
+	const translate = useTranslate();
+	const userSiteCount = useSelector( getCurrentUserSiteCount );
+
+	const { hideBack, backUrl, backLabelText } = useMemo( () => {
+		let backUrl;
+		let backLabelText;
+
+		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' ) && ! goBack;
+
+		const hideBack = flowName === 'domain' || shouldHideBack;
+
+		const [ sitesBackLabelText, defaultBackUrl ] =
+			userSiteCount && userSiteCount === 1
+				? [ translate( 'Back to My Home' ), '/home' ]
+				: [ translate( 'Back to sites' ), '/sites' ];
+
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			backUrl = null;
+			backLabelText = null;
+		} else if ( 'with-plugin' === flowName ) {
+			backUrl = '/plugins';
+			backLabelText = translate( 'Back to plugins' );
+		} else if ( isWithThemeFlow( flowName ) ) {
+			backUrl = '/themes';
+			backLabelText = translate( 'Back to themes' );
+		} else if ( 'plans-first' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
+		} else {
+			backUrl = defaultBackUrl;
+			backLabelText = sitesBackLabelText;
+
+			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
+			if ( backTo && isRelativeUrl( backTo ) ) {
+				backUrl = backTo;
+				backLabelText = translate( 'Back' );
+			}
+		}
+
+		return {
+			hideBack,
+			backUrl,
+			backLabelText,
+		};
+	}, [ flowName, previousStepName, goBack, userSiteCount, translate ] );
+
 	return (
 		<StepWrapper
 			{ ...props }
@@ -230,6 +283,9 @@ const DomainSearchUI = (
 			hideSkip
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
+			hideBack={ hideBack }
+			backUrl={ backUrl }
+			backLabelText={ backLabelText }
 			isWideLayout
 			stepContent={
 				<WPCOMDomainSearch
