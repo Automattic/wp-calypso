@@ -81,7 +81,7 @@ export default function PreferencesLogin() {
 			id: 'primarySiteId',
 			label: __( 'Primary site' ),
 			description: __( 'Choose the default site dashboard you’ll see at login.' ),
-			isVisible: () => user.site_count > 0,
+			isVisible: () => user.visible_site_count > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
