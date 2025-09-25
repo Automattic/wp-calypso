@@ -1,4 +1,4 @@
-import { DataHelper } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
 /**
@@ -12,17 +12,15 @@ test.describe( 'Authentication: SMS', { tag: [ tags.AUTHENTICATION ] }, () => {
 		'Skipping unless running on WordPress.com'
 	);
 
-	test( 'As a WordPress.com user, I can require 2fa via SMS', async ( {
-		page,
-		accountSMS,
-	}, workerInfo ) => {
+	test( 'As a WordPress.com user, I can require 2fa via SMS', async ( { page }, workerInfo ) => {
 		test.skip(
 			workerInfo.project.name !== 'authentication',
 			'The authentication project is the only one that has the right browser settings for authentication tests'
 		);
 
 		await test.step( 'When I log in as a user with 2fa', async function () {
-			await accountSMS.authenticate( page );
+			const testAccount = new TestAccount( 'smsUser' );
+			await testAccount.logInViaLoginPage( page );
 		} );
 
 		await test.step( 'Then I am on the home page', async function () {
