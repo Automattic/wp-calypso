@@ -49,7 +49,11 @@ interface ConnectRepositoryFormData {
 }
 
 // Custom repository selector component with search functionality
-const RepositorySelector = ( { field, onChange, data }: DataFormControlProps< FormData > ) => {
+const RepositorySelector = ( {
+	field,
+	onChange,
+	data,
+}: DataFormControlProps< ConnectRepositoryFormData > ) => {
 	const { id, getValue } = field;
 	const currentValue = getValue?.( { item: data } );
 
