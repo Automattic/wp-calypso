@@ -67,8 +67,4 @@ export const fixThreatMutation = ( siteId: number ) =>
 export const fixThreatsMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( threatIds: number[] ) => fixThreats( siteId, threatIds ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( siteScanQuery( siteId ) );
-			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
-		},
 	} );
