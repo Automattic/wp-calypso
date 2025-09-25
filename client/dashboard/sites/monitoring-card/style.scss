@@ -61,4 +61,9 @@
 	.visx-legend-label > span {
 		margin-inline-start: 5px;
 	}
+
+	.pie-chart > svg {
+		/* Prevent the chart from overflowing its container. */
+		max-width: 100%;
+	}
 }
