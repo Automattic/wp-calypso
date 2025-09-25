@@ -1,13 +1,10 @@
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
-import {
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect, useRef, useMemo, CSSProperties, KeyboardEvent } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
@@ -123,7 +120,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 
 	return (
 		<VStack spacing={ 4 }>
-			<HStack justify="flex-start">
+			<ButtonStack justify="flex-start">
 				<button
 					type="button"
 					onClick={ openGravatarEditor }
@@ -176,7 +173,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 				<Button variant="tertiary" onClick={ openGravatarEditor }>
 					{ __( 'Update avatar' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
 				<div
