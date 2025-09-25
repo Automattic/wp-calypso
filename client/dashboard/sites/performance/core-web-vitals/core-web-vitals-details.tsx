@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { CircularPerformanceScore } from '../circular-performance-score';
 import {
 	getMetricsNames,
@@ -53,12 +53,10 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 
 	const displayUnit = () => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return __( 's', { comment: 'Used for displaying a time range in seconds, eg. 1-2s' } );
+			return __( 's' );
 		}
 		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
-			return __( 'ms', {
-				comment: 'Used for displaying a range in milliseconds, eg. 100-200ms',
-			} );
+			return __( 'ms' );
 		}
 		return '';
 	};
@@ -151,14 +149,21 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						<div className="range-heading">{ __( 'Excellent' ) }</div>
 						<div className="range-subheading">
 							{ isPerformanceScoreSelected
-								? __( '(90–%(to)s)', {
-										args: { to: formatUnit( good ) },
-										comment: 'Displaying a percentage range, eg. 90-100',
-								  } )
-								: __( '(0–%(to)s%(unit)s)', {
-										args: { to: formatUnit( good ), unit: displayUnit() },
-										comment: 'Displaying a time range, eg. 0-1s',
-								  } ) }
+								? sprintf(
+										/* translators: %(to)s is the good threshold */
+										__( '(90–%(%s)s)' ),
+										{
+											to: formatUnit( good ),
+										}
+								  )
+								: sprintf(
+										/* translators: %(to)s is the good threshold, %(unit)s is the unit */
+										__( '(0–%(to)s%(unit)s)' ),
+										{
+											to: formatUnit( good ),
+											unit: displayUnit(),
+										}
+								  ) }
 						</div>
 					</div>
 					<div className="range">
@@ -167,21 +172,22 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						<div className="range-heading">{ __( 'Needs Improvement' ) }</div>
 						<div className="range-subheading">
 							{ isPerformanceScoreSelected
-								? __( '(%(from)s–%(to)s)', {
-										args: {
-											from: 50,
+								? sprintf(
+										/* translators: %(to)s is the needs improvement threshold */
+										__( '(%(50)s–%(%s)s)' ),
+										{
 											to: formatUnit( needsImprovement ),
-										},
-										comment: 'Displaying a percentage range, eg. 50-89',
-								  } )
-								: __( '(%(from)s–%(to)s%(unit)s)', {
-										args: {
+										}
+								  )
+								: sprintf(
+										/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
+										__( '(%(from)s–%(to)s%(unit)s)' ),
+										{
 											from: formatUnit( good ),
 											to: formatUnit( needsImprovement ),
 											unit: displayUnit(),
-										},
-										comment: 'Displaying a time range, eg. 2-3s',
-								  } ) }
+										}
+								  ) }
 						</div>
 					</div>
 					<div className="range">
@@ -190,20 +196,21 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						<div className="range-heading">{ __( 'Poor' ) }</div>
 						<div className="range-subheading">
 							{ isPerformanceScoreSelected
-								? __( '(%(from)s-%(to)s) ', {
-										args: {
-											from: 0,
+								? sprintf(
+										/* translators: %(to)s is the bad threshold */
+										__( '(%(0)s-%(to)s)' ),
+										{
 											to: formatUnit( bad ),
-										},
-										comment: 'Displaying a percentage range, eg. 0-49',
-								  } )
-								: __( '(Over %(from)s%(unit)s) ', {
-										args: {
+										}
+								  )
+								: sprintf(
+										/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
+										__( '(Over %(from)s%(unit)s)' ),
+										{
 											from: formatUnit( needsImprovement ),
 											unit: displayUnit(),
-										},
-										comment: 'Displaying a time range, eg. >2s',
-								  } ) }
+										}
+								  ) }
 						</div>
 					</div>
 				</div>

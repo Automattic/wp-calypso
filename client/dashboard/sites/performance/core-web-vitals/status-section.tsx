@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAnalytics } from '../../../app/analytics';
 import { Valuation } from '../utils';
@@ -43,11 +44,12 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 			filter,
 		} );
 
-	const getRecommendationsText = ( quantity: number ) => {
+	const getRecommendationsText = () => {
 		if ( activeTab === 'overall' ) {
-			return __( '{{a}}View all recommendations{{/a}}', {
-				components: {
-					a: (
+			return createInterpolateElement(
+				__( '<recommendLink>View all recommendations</recommendLink>' ),
+				{
+					recommendLink: (
 						/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 						<Button
 							variant="link"
@@ -64,35 +66,37 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 							} }
 						/>
 					),
-				},
-			} );
+				}
+			);
 		}
 
-		return __(
-			'{{a}}View %(quantity)d recommendation{{/a}}',
-			'{{a}}View %(quantity)d recommendations{{/a}}',
+		return createInterpolateElement(
+			sprintf(
+				/* translators: %d is the number of recommendations */
+				_n(
+					'<viewLink>View %d recommendation</viewLink>',
+					'<viewLink>View %d recommendations</viewLink>',
+					recommendationsQuantity ?? 0
+				),
+				recommendationsQuantity ?? 0
+			),
 			{
-				count: recommendationsQuantity,
-				args: { quantity: recommendationsQuantity },
-				components: {
-					a: (
-						/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-						<Button
-							variant="link"
-							className="button"
-							role="button"
-							tabIndex={ 0 }
-							onClick={ () => {
-								recordRecommendationsClickEvent( activeTab ?? '' );
-								onRecommendationsFilterChange?.( activeTab ?? '' );
-								recommendationsRef?.current?.scrollIntoView( {
-									behavior: 'smooth',
-									block: 'start',
-								} );
-							} }
-						/>
-					),
-				},
+				viewLink: (
+					<Button
+						variant="link"
+						className="button"
+						role="button"
+						tabIndex={ 0 }
+						onClick={ () => {
+							recordRecommendationsClickEvent( activeTab ?? '' );
+							onRecommendationsFilterChange?.( activeTab ?? '' );
+							recommendationsRef?.current?.scrollIntoView( {
+								behavior: 'smooth',
+								block: 'start',
+							} );
+						} }
+					/>
+				),
 			}
 		);
 	};

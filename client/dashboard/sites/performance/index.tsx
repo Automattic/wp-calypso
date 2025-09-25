@@ -97,7 +97,7 @@ function SitePerformanceContent( { site, settings }: { site: Site; settings: Sit
 				}
 			/>
 			<div className="site-performance-report">
-				{ isFetchingReport || isRunningReport ? (
+				{ isFetchingReport || isRunningReport || ! currentReport ? (
 					<ReportLoading
 						pageTitle={ currentPage.title.rendered }
 						isSavedReport={

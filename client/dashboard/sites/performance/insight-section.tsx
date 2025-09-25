@@ -1,5 +1,5 @@
 import { SelectDropdown } from '@automattic/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-web-vitals';
@@ -53,16 +53,14 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 		}
 	}, [ selectedFilter, filter ] );
 
-	const metricsNames = getMetricsNames( __ );
+	const metricsNames = getMetricsNames();
 
 	return (
 		<div className="performance-profiler-insights-section" ref={ ref }>
 			<div className="header">
 				<div>
 					<h2 className="title">{ __( 'Personalized Recommendations' ) }</h2>
-					<p className="subtitle">
-						{ getSubtitleText( selectedFilter, filteredAudits.length, __ ) }
-					</p>
+					<p className="subtitle">{ getSubtitleText( selectedFilter, filteredAudits.length ) }</p>
 				</div>
 				<div className="filter">
 					<SelectDropdown
@@ -111,33 +109,29 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 	);
 }
 
-function getSubtitleText(
-	selectedFilter: string,
-	numRecommendations: number,
-	translate: typeof __
-) {
-	const metricsNames = getMetricsNames( translate );
+function getSubtitleText( selectedFilter: string, numRecommendations: number ) {
+	const metricsNames = getMetricsNames();
 
 	if ( numRecommendations ) {
 		if ( selectedFilter === 'all' ) {
-			return __(
+			return _n(
+				/* translators: %(numRecommendations)d is the number of recommendations */
 				'We found %(numRecommendations)d thing you can do for improving your page.',
 				'We found %(numRecommendations)d things you can do for improving your page.',
+				numRecommendations,
 				{
-					args: { numRecommendations },
-					count: numRecommendations,
+					numRecommendations,
 				}
 			);
 		}
-		return __(
+		return _n(
+			/* translators: %(numRecommendations)d is the number of recommendations, %(metric)s is the metric name */
 			'We found %(numRecommendations)d thing you can do for improving %(metric)s.',
 			'We found %(numRecommendations)d things you can do for improving %(metric)s.',
+			numRecommendations,
 			{
-				args: {
-					numRecommendations,
-					metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-				},
-				count: numRecommendations,
+				numRecommendations,
+				metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
 			}
 		);
 	}
@@ -148,11 +142,13 @@ function getSubtitleText(
 		);
 	}
 
-	return __( "Great job! We didn't find any recommendations for improving %(metric)s.", {
-		args: {
+	return sprintf(
+		/* translators: %(metric)s is the metric name */
+		"Great job! We didn't find any recommendations for improving %(metric)s.",
+		{
 			metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-		},
-	} );
+		}
+	);
 }
 
 export default forwardRef( InsightsSection );

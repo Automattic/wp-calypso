@@ -26,7 +26,7 @@ export default function Report( {
 	isError,
 	onRetest,
 }: {
-	report: PerformanceReport | undefined;
+	report: PerformanceReport;
 	currentPage: PerformanceProfilerPage;
 	isError: boolean;
 	onRetest: () => void;
@@ -48,7 +48,7 @@ export default function Report( {
 		screenshots,
 		is_wpcom,
 		fullPageScreenshot,
-	} = report || {};
+	} = report;
 
 	if ( isError ) {
 		return <ReportErrorNotice onRetestClick={ onRetest } />;
