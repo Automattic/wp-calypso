@@ -4,11 +4,11 @@ import {
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from '@wordpress/element';
-import { useAnalytics } from '../../../../app/analytics';
-import { useEligibleSites } from '../../hooks/use-eligible-sites';
+import { useAnalytics } from '../../../app/analytics';
 import { CRON_CHECK_INTERVAL } from '../constants';
 import { prepareTimestamp, runWithConcurrency } from '../helpers';
-import type { Frequency, Weekday } from '../../types';
+import { useEligibleSites } from './use-eligible-sites';
+import type { Frequency, Weekday } from '../types';
 import type { Site, CreateSiteUpdateScheduleBody } from '@automattic/api-core';
 
 type CreateInputs = {

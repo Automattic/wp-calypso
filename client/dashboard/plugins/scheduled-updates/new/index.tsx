@@ -16,22 +16,28 @@ import {
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import {
+	NEW_SCHEDULE_DEFAULT_FREQUENCY,
+	NEW_SCHEDULE_DEFAULT_TIME,
+	NEW_SCHEDULE_DEFAULT_WEEKDAY,
+} from '../constants';
+import { formatScheduleCollisionsErrorMulti } from '../helpers';
+import { useCreateSchedules } from '../hooks/use-create-schedules';
 import { useEligibleSites } from '../hooks/use-eligible-sites';
-import FrequencySelection from './components/frequency-selection';
-import PluginsSelection from './components/plugins-selection';
-import SitesSelection from './components/sites-selection';
-import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY } from './constants';
-import { formatScheduleCollisionsErrorMulti } from './helpers';
-import { useCreateSchedules } from './hooks/use-create-schedules';
-import { useScheduleCollisions } from './hooks/use-schedule-collisions';
+import { useScheduleCollisions } from '../hooks/use-schedule-collisions';
+import FrequencySelection from './frequency-selection';
+import PluginsSelection from './plugins-selection';
+import SitesSelection from './sites-selection';
 import type { Frequency, Weekday } from '../types';
+
 const BLOCK_CREATE = false;
+
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
-	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
-	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
-	const [ time, setTime ] = useState( DEFAULT_TIME );
+	const [ frequency, setFrequency ] = useState< Frequency >( NEW_SCHEDULE_DEFAULT_FREQUENCY );
+	const [ weekday, setWeekday ] = useState< Weekday >( NEW_SCHEDULE_DEFAULT_WEEKDAY );
+	const [ time, setTime ] = useState( NEW_SCHEDULE_DEFAULT_TIME );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from '@wordpress/element';
 import { prepareTimestamp, validateTimeSlot, validatePlugins } from '../helpers';
 import { useSchedulesBySite } from './use-schedules-by-site';
-import type { Frequency, Weekday, ScheduleCollisions } from '../../types';
+import type { Frequency, Weekday, ScheduleCollisions } from '../types';
 
 type Inputs = {
 	siteIds: number[];

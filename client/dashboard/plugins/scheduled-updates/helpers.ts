@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { TimeSlot, Frequency, Weekday, ScheduleCollisions } from '../types';
+import type { TimeSlot, Frequency, Weekday, ScheduleCollisions } from './types';
 import type { Site } from '@automattic/api-core';
 
 export function prepareTimestamp(
