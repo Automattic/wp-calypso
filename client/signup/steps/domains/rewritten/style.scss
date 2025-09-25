@@ -1,31 +1,29 @@
-.signup__step.is-domain-search:has( .step-wrapper--domain-search ) {
-	height: 100vh;
-	box-sizing: border-box;
+.domain-search--step-wrapper {
+	--domain-search-content-max-width: 1040px;
 
-	.step-wrapper {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
+	--domain-search-mini-cart-inline-padding: 16px;
+
+	@include break-small {
+		--domain-search-mini-cart-inline-padding: 24px;
 	}
 
-	.step-wrapper__header {
-		margin-top: 0 !important;
-		padding-top: 24px;
-
-		@include break-large {
-			padding-top: 48px;
-		}
-	}
-
-	.step-wrapper__content {
-		display: flex;
-		flex: 1;
-		padding-bottom: 36px;
+	.domain-search--initial-state__already-own-domain-cta {
+		box-sizing: border-box;
+		position: fixed;
+		width: 100%;
+		left: 0;
+		right: 0;
+		bottom: 36px;
+		padding-inline: var( --domain-search-mini-cart-inline-padding );
 	}
 }
 
-.domain-search--step-wrapper {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
+.signup__step:has( .step-wrapper--domain-search ) {
+	.step-wrapper {
+		padding-inline: 16px;
+
+		@include break-small {
+			padding-inline: 24px;
+		}
+	}
 }

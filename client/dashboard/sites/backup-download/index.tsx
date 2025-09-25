@@ -113,7 +113,6 @@ function SiteBackupDownload() {
 			case 'success':
 				return downloadUrl ? (
 					<SiteBackupDownloadSuccess
-						site={ site }
 						downloadPointDate={ downloadPointDate }
 						downloadUrl={ downloadUrl }
 						fileSizeBytes={ fileSizeBytes }
@@ -141,8 +140,8 @@ function SiteBackupDownload() {
 			size="small"
 			header={ <PageHeader prefix={ backButton } title={ __( 'Download backup' ) } /> }
 		>
-			<Card>
-				{ currentStep !== 'success' && (
+			{ currentStep !== 'success' ? (
+				<Card>
 					<CardHeader>
 						<SectionHeader
 							title={ __( 'Download point' ) }
@@ -163,11 +162,13 @@ function SiteBackupDownload() {
 							decoration={ <Icon icon={ cloud } /> }
 						/>
 					</CardHeader>
-				) }
-				<CardBody>
-					<VStack spacing={ 4 }>{ renderStep() }</VStack>
-				</CardBody>
-			</Card>
+					<CardBody>
+						<VStack spacing={ 4 }>{ renderStep() }</VStack>
+					</CardBody>
+				</Card>
+			) : (
+				renderStep()
+			) }
 		</PageLayout>
 	);
 }

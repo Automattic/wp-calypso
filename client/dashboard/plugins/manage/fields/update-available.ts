@@ -5,13 +5,25 @@ import type { Field } from '@wordpress/dataviews';
 export const updateAvailableField: Field< PluginListRow > = {
 	id: 'updateAvailable',
 	label: __( 'Update Available' ),
-	getValue: ( { item } ) => ( [ 'some', 'all' ].includes( item.hasUpdate ) ? 1 : 0 ),
+	getValue: ( { item } ) => {
+		if ( item.areAutoUpdatesAllowed === 'none' ) {
+			return 0;
+		}
+
+		return [ 'some', 'all' ].includes( item.hasUpdate ) ? 2 : 1;
+	},
 	enableHiding: false,
 	enableSorting: true,
 	elements: [
-		{ value: 1, label: __( 'Yes' ) },
-		{ value: 0, label: __( 'No' ) },
+		{ value: 2, label: __( 'Yes' ) },
+		{ value: 1, label: __( 'No' ) },
+		{ value: 0, label: __( 'Updates auto-managed' ) },
 	],
-	render: ( { item } ) =>
-		[ 'some', 'all' ].includes( item.hasUpdate ) ? __( 'Yes' ) : __( 'No' ),
+	render: ( { item } ) => {
+		if ( item.areAutoUpdatesAllowed === 'none' ) {
+			return __( 'Updates auto-managed' );
+		}
+
+		return [ 'some', 'all' ].includes( item.hasUpdate ) ? __( 'Yes' ) : __( 'No' );
+	},
 };

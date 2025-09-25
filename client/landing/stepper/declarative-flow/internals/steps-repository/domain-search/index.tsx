@@ -153,7 +153,11 @@ const DomainSearchStep: StepType< {
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
-			className={ shouldUseStepContainerV2( flow ) ? 'domain-search--step-container-v2' : '' }
+			className={
+				shouldUseStepContainerV2( flow )
+					? 'domain-search--step-container-v2'
+					: 'domain-search--step-container'
+			}
 			currentSiteId={ site?.ID }
 			// eslint-disable-next-line no-nested-ternary
 			currentSiteUrl={ site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined }
@@ -190,7 +194,7 @@ const DomainSearchStep: StepType< {
 
 	return (
 		<StepContainer
-			stepName="domain-search"
+			stepName="step-container--domain-search"
 			isWideLayout
 			flowName={ flow }
 			formattedHeader={
