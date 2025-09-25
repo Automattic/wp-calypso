@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { UserSettings, UsernameValidationResult } from './types';
+import type { UserSettings } from './types';
 
 export async function updateUserSettings(
 	data: Partial< UserSettings >
@@ -36,15 +36,4 @@ export async function updateUserSettings(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )
 	);
 	return await wpcom.req.post( '/me/settings', payload );
-}
-
-export async function validateUsername( username: string ): Promise< UsernameValidationResult > {
-	return await wpcom.req.get( `/me/username/validate/${ username }` );
-}
-
-export async function submitUsernameChange(
-	username: string,
-	action: string
-): Promise< { success: boolean; message?: string } > {
-	return await wpcom.req.post( '/me/username', { username, action } );
 }

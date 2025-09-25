@@ -42,6 +42,7 @@ export * from './me-sites-plugins';
 export * from './me-ssh';
 export * from './me-tax-details';
 export * from './me-two-step';
+export * from './me-username';
 export * from './meta-sms-country-codes';
 export * from './notification-devices';
 export * from './p2';
