@@ -38,14 +38,15 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 		enabled: isBulkFixInProgress,
 	} );
 
-	const handleBulkFixed = useCallback( () => {
-		queryClient.invalidateQueries( siteScanQuery( siteId ) );
-		queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
-		closeModal?.();
-		createSuccessNotice( __( 'All threats have been successfully fixed!' ), {
-			type: 'snackbar',
-		} );
-	}, [ closeModal, createSuccessNotice, queryClient, siteId ] );
+	const handleBulkFixed = useCallback(
+		( message: string ) => {
+			queryClient.invalidateQueries( siteScanQuery( siteId ) );
+			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
+			closeModal?.();
+			createSuccessNotice( message, { type: 'snackbar' } );
+		},
+		[ closeModal, createSuccessNotice, queryClient, siteId ]
+	);
 
 	useEffect( () => {
 		if ( ! bulkFixStatusData?.threats ) {
@@ -53,14 +54,23 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 		}
 
 		if ( isBulkFixInProgress ) {
-			const allFixed = Object.values( bulkFixStatusData.threats ).every(
+			const pendingThreats = bulkFixStatusData.threats.filter(
+				( threat ) => threat?.status === 'in_progress'
+			);
+			if ( pendingThreats.length > 0 ) {
+				return;
+			}
+
+			const fixedThreats = bulkFixStatusData.threats.filter(
 				( threat ) => threat?.status === 'fixed'
 			);
+			const allFixed = fixedThreats.length === bulkFixStatusData.threats.length;
+			const message = allFixed
+				? __( 'All threats were successfully fixed.' )
+				: __( 'Not all threats could be fixed. Please contact our support.' );
 
-			if ( allFixed ) {
-				setIsBulkFixInProgress( false );
-				handleBulkFixed();
-			}
+			setIsBulkFixInProgress( false );
+			handleBulkFixed( message );
 		}
 	}, [ bulkFixStatusData, isBulkFixInProgress, handleBulkFixed ] );
 
