@@ -240,11 +240,9 @@ describe( 'PersonalDetailsSection', () => {
 
 			await waitFor( () => {
 				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-					'Username changed successfully!',
+					'Username saved.',
 					expect.objectContaining( {
 						type: 'snackbar',
-						isDismissible: true,
-						explicitDismiss: true,
 						speak: true,
 						politeness: 'polite',
 					} )
@@ -309,10 +307,11 @@ describe( 'PersonalDetailsSection', () => {
 			await waitFor( () => {
 				// Verify the notice was created with proper accessibility options
 				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-					'Username changed successfully!',
+					'Username saved.',
 					expect.objectContaining( {
 						speak: true,
 						politeness: 'polite',
+						type: 'snackbar',
 					} )
 				);
 			} );
