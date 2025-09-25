@@ -6,7 +6,6 @@ import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-tra
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
-import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
@@ -20,7 +19,6 @@ import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DEPLOYMENTS,
 	FEATURE_TO_ROUTE_MAP,
-	HOSTING_FEATURES,
 	LOGS_PHP,
 	LOGS_WEB,
 	MONITORING,
@@ -73,16 +71,6 @@ const DotcomPreviewPane = ( {
 				label: __( 'Overview' ),
 				enabled: true,
 				featureIds: [ OVERVIEW ],
-			},
-			{
-				label: (
-					<span>
-						{ __( 'Hosting Features' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
-				enabled: false,
-				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
