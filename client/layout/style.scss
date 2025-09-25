@@ -94,12 +94,14 @@ body.command-palette-modal-open {
 		}
 	}
 
-	.is-logged-in & {
+	.is-section-plugins.is-logged-in & {
 		// The plugins site view needs the header to be full width, so the padding
 		// is added on the header and .plugins-browser__content-wrapper instead
-		.is-section-plugins & {
-			padding: 47px 0 32px calc(var(--sidebar-width-max) + 1px);
-		}
+		padding: 47px 0 32px calc(var(--sidebar-width-max) + 1px);
+	}
+
+	.is-section-plugins.is-logged-in.has-no-sidebar & {
+		padding: 79px 32px 32px;
 	}
 
 	// Tablets
@@ -119,6 +121,10 @@ body.command-palette-modal-open {
 		.is-section-themes.has-no-sidebar.is-logged-in & {
 			padding: 47px 0 0;
 		}
+
+		.is-section-plugins.has-no-sidebar.is-logged-in & {
+			padding: 71px 24px 24px;
+		}
 	}
 
 	// Mobile (Full Width)
@@ -129,6 +135,10 @@ body.command-palette-modal-open {
 
 		.has-no-sidebar & {
 			padding-left: 0;
+		}
+
+		.is-section-plugins.has-no-sidebar.is-logged-in & {
+			padding: calc(var(--masterbar-height) + 1px) 0 0;
 		}
 	}
 }

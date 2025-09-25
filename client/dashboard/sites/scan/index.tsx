@@ -75,45 +75,46 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	};
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Scan' ) }
-					description={ getPageDescription() }
-					actions={
-						<ButtonStack>
-							<ScanNowButton site={ site } scanState={ scanState } />
-							{ /* @TODO: Hide this button if there are no fixable threats */ }
-							<Button variant="primary">
-								{ sprintf(
-									/* translators: %d: number of threats */
-									__( 'Auto-fix %(threatsCount)d threats' ),
-									{
-										// @TODO: replace with the actual number of active fixable threats
-										threatsCount: 4,
-									}
-								) }
-							</Button>
-						</ButtonStack>
-					}
-				/>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.SCAN }
+			tracksFeatureId="scan"
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Scan' ) } /> } /> }
+			upsellIcon={ shield }
+			upsellTitle={ __( 'Scan for security threats' ) }
+			upsellImage={ illustrationUrl }
+			upsellDescription={
+				<Text as="p" variant="muted">
+					{ __(
+						'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
+					) }
+				</Text>
 			}
-			notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
 		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.SCAN }
-				tracksFeatureId="scan"
-				asOverlay
-				upsellIcon={ shield }
-				upsellTitle={ __( 'Scan for security threats' ) }
-				upsellImage={ illustrationUrl }
-				upsellDescription={
-					<Text as="p" variant="muted">
-						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for most issues.
-					</Text>
+			<PageLayout
+				header={
+					<PageHeader
+						title={ __( 'Scan' ) }
+						description={ getPageDescription() }
+						actions={
+							<ButtonStack>
+								<ScanNowButton site={ site } scanState={ scanState } />
+								{ /* @TODO: Hide this button if there are no fixable threats */ }
+								<Button variant="primary">
+									{ sprintf(
+										/* translators: %d: number of threats */
+										__( 'Auto-fix %(threatsCount)d threats' ),
+										{
+											// @TODO: replace with the actual number of active fixable threats
+											threatsCount: 4,
+										}
+									) }
+								</Button>
+							</ButtonStack>
+						}
+					/>
 				}
+				notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
 			>
 				<Card>
 					<CardHeader style={ { paddingBottom: '0' } }>
@@ -135,8 +136,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
 					</CardBody>
 				</Card>
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+			</PageLayout>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

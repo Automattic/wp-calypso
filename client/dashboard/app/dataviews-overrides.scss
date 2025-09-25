@@ -9,11 +9,6 @@
 	}
 }
 
-// Remove the top padding of the card body when the DataViews is empty.
-.components-card-body:has( > .dataviews-wrapper > .dataviews-no-results ) {
-	padding-top: 0;
-}
-
 // When displaying URLs in the DataViews, using the --wp-admin-theme-color link color is overwhelming.
 // Using this class name, we override the link color with the text color.
 a.dataviews-url-field {

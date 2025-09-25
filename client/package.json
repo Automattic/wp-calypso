@@ -32,7 +32,7 @@
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/calypso-support-session": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
-		"@automattic/charts": ">=0.14.0 <1.0.0",
+		"@automattic/charts": "^0.38.2",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/components": "workspace:^",
