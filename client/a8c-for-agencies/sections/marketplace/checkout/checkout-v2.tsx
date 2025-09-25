@@ -12,7 +12,7 @@ import BillingDragonCheckout from '../billing-dragon-checkout';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 
-import './style.scss';
+import './style-v2.scss';
 
 function CheckoutV2() {
 	const translate = useTranslate();
