@@ -38,7 +38,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserCheckList = fileBrowserState.getCheckList( rewindId );
+	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
 	const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 	const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 
@@ -114,7 +114,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
 						<Spacer marginBottom={ 2 }>
-							{ fileBrowserState.getCheckList( rewindId ).totalItems === 0 ? (
+							{ fileBrowserState.getCheckList( Number( rewindId ) ).totalItems === 0 ? (
 								<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 							) : (
 								<ButtonStack justify="flex-start">
@@ -139,7 +139,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 					</div>
 					<div className="backup-contents-page__body">
 						<FileBrowser
-							rewindId={ rewindId }
+							rewindId={ Number( rewindId ) }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 							hasCredentials={ hasCredentials }
