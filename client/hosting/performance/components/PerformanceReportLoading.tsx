@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { PerformanceReportLoadingProgress } from 'calypso/performance-profiler/pages/loading-screen/progress';
 
@@ -15,6 +15,12 @@ export const PerformanceReportLoading = ( {
 	onRetestClick(): void;
 } ) => {
 	const { __ } = useI18n();
+	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
+
+	const handleRetestClick = () => {
+		setIsButtonClicked( true );
+		onRetestClick();
+	};
 
 	return (
 		<div className="site-performance__loader">
@@ -31,21 +37,22 @@ export const PerformanceReportLoading = ( {
 			/>
 			{ ! isLoadingPages && (
 				<p>
-					{ createInterpolateElement(
-						__(
-							'Your report is on the way — this usually takes about 30 seconds.<br />You can <button>start a fresh test</button> anytime if needed.'
-						),
-						{
-							button: (
-								<Button
-									variant="link"
-									style={ { fontSize: 'inherit' } }
-									onClick={ onRetestClick }
-								/>
-							),
-							br: <br />,
-						}
-					) }
+					{ __( 'Your report is on the way — this usually takes about 30 seconds.' ) }
+					<br />
+					{ ! isButtonClicked &&
+						createInterpolateElement(
+							__( 'You can <button>start a fresh test</button> anytime if needed.' ),
+							{
+								button: (
+									<Button
+										variant="link"
+										style={ { fontSize: 'inherit' } }
+										onClick={ handleRetestClick }
+									/>
+								),
+								br: <br />,
+							}
+						) }
 				</p>
 			) }
 		</div>
