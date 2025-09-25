@@ -198,7 +198,9 @@ export const useAttachmentHandler = () => {
 			input.click();
 		},
 		variant: 'ghost' as const,
-		disabled: isAttachingFile || ( isLiveChat && connectionStatus !== 'connected' ),
+		disabled:
+			isAttachingFile ||
+			( isLiveChat && [ 'disconnected', 'reconnecting' ].includes( connectionStatus ?? '' ) ),
 		'aria-label': __( 'Attach file', __i18n_text_domain__ ),
 	};
 

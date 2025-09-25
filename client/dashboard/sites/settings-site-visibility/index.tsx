@@ -1,9 +1,4 @@
-import {
-	siteLaunchMutation,
-	siteBySlugQuery,
-	siteSettingsMutation,
-	siteSettingsQuery,
-} from '@automattic/api-queries';
+import { siteLaunchMutation, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -22,7 +17,6 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
-	const settingsMutation = useMutation( siteSettingsMutation( site.ID ) );
 	const launchMutation = useMutation( siteLaunchMutation( site.ID ) );
 
 	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
@@ -83,7 +77,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 			);
 		}
 
-		return <PrivacyForm site={ site } settings={ settings } mutation={ settingsMutation } />;
+		return <PrivacyForm site={ site } settings={ settings } />;
 	};
 
 	return (

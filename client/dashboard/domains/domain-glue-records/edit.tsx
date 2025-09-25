@@ -2,9 +2,7 @@ import { DomainGlueRecord } from '@automattic/api-core';
 import { domainGlueRecordsQuery, domainGlueRecordUpdateMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -15,8 +13,15 @@ export default function EditDomainGlueRecords() {
 	const navigate = useNavigate();
 	const { domainName, nameServer } = domainRoute.useParams();
 	const { data: glueRecordsData } = useSuspenseQuery( domainGlueRecordsQuery( domainName ) );
-	const updateMutation = useMutation( domainGlueRecordUpdateMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const updateMutation = useMutation( {
+		...domainGlueRecordUpdateMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Glue record saved.' ),
+				error: __( 'Failed to save glue record.' ),
+			},
+		},
+	} );
 	const { recordTracksEvent } = useAnalytics();
 	const glueRecord = glueRecordsData.find(
 		( glueRecord: DomainGlueRecord ) => glueRecord.nameserver === nameServer
@@ -25,10 +30,6 @@ export default function EditDomainGlueRecords() {
 	const handleSubmit = ( updatedGlueRecord: DomainGlueRecord ) => {
 		updateMutation.mutate( updatedGlueRecord, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Glue record updated successfully.' ), {
-					type: 'snackbar',
-				} );
-
 				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record', {
 					domain: domainName,
 					nameserver: updatedGlueRecord.nameserver,
@@ -41,8 +42,6 @@ export default function EditDomainGlueRecords() {
 				} );
 			},
 			onError: ( error ) => {
-				createErrorNotice( __( 'Failed to update glue record.' ), { type: 'snackbar' } );
-
 				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record_failure', {
 					domain: domainName,
 					nameserver: updatedGlueRecord.nameserver,

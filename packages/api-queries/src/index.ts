@@ -2,6 +2,7 @@ export * from './query-client';
 
 export * from './domain-availability';
 export * from './domain-connection-setup';
+export * from './domain-contact-verification';
 export * from './domain-dns-records';
 export * from './domain-dnssec';
 export * from './domain-forwarding';
@@ -31,6 +32,7 @@ export * from './me-preferences-login';
 export * from './me-purchases';
 export * from './me-settings';
 export * from './me-notifications-settings';
+export * from './me-social-logins';
 export * from './me-ssh';
 export * from './me-tax-details';
 export * from './me-two-step';

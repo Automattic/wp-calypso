@@ -11,10 +11,8 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { ReactElement } from 'react';
 import { domainSecurityRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
@@ -29,9 +27,15 @@ interface SslCertificateProps {
 }
 
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	const mutation = useMutation( provisionSslCertificateMutation( domainName ) );
+	const mutation = useMutation( {
+		...provisionSslCertificateMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'New SSL certificate requested.' ),
+				error: __( 'Failed to provision SSL certificate.' ),
+			},
+		},
+	} );
 
 	const getSslStatusMessage = ( sslDetails: SslDetails ) => {
 		const hasFailureReasons =
@@ -84,16 +88,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'New certificate requested.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to provision SSL certificate.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( undefined );
 	};
 
 	const renderFailureReasons = (

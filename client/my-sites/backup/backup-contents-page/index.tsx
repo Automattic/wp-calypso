@@ -12,6 +12,7 @@ import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/us
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
@@ -37,6 +38,10 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
 	const { fileBrowserState } = useFileBrowserContext();
+	const browserCheckList = fileBrowserState.getCheckList();
+	const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+	const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
@@ -57,17 +62,26 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		[ dispatch ]
 	);
 
-	const handleRequestGranularDownload = useCallback(
-		( siteId: number, rewindId: number, includePaths: string, excludePaths: string ) => {
-			dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
-			page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
-		},
-		[ dispatch, siteSlug ]
-	);
+	const handleRequestGranularDownload = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_download_multiple_files' ) );
+		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		page.redirect( backupDownloadPath( siteSlug, rewindId.toString() ) );
+	}, [ dispatch, siteId, rewindId, siteSlug, includePaths, excludePaths ] );
 
 	const handleRequestGranularRestore = useCallback( ( siteSlug: string, rewindId: number ) => {
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	}, [] );
+
+	const onGranularRestoreClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files', {
+				...( hasCredentials !== undefined && {
+					has_credentials: hasCredentials,
+				} ),
+			} )
+		);
+		handleRequestGranularRestore( siteSlug, rewindId );
+	}, [ dispatch, hasCredentials, handleRequestGranularRestore, siteSlug, rewindId ] );
 
 	return (
 		<>
@@ -99,11 +113,29 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
-						{ fileBrowserState.getCheckList().totalItems === 0 && (
-							<Spacer marginBottom={ 2 }>
+						<Spacer marginBottom={ 2 }>
+							{ fileBrowserState.getCheckList().totalItems === 0 ? (
 								<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
-							</Spacer>
-						) }
+							) : (
+								<ButtonStack justify="flex-start">
+									<Button
+										__next40pxDefaultSize
+										onClick={ handleRequestGranularDownload }
+										variant="secondary"
+									>
+										{ translate( 'Download selected files' ) }
+									</Button>
+									<Button
+										__next40pxDefaultSize
+										onClick={ onGranularRestoreClick }
+										disabled={ ! isRestoreEnabled }
+										variant="primary"
+									>
+										{ translate( 'Restore selected files' ) }
+									</Button>
+								</ButtonStack>
+							) }
+						</Spacer>
 					</div>
 					<div className="backup-contents-page__body">
 						<FileBrowser
@@ -113,7 +145,6 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							hasCredentials={ hasCredentials }
 							isRestoreEnabled={ isRestoreEnabled }
 							onTrackEvent={ handleTrackEvent }
-							onRequestGranularDownload={ handleRequestGranularDownload }
 							onRequestGranularRestore={ handleRequestGranularRestore }
 						/>
 					</div>

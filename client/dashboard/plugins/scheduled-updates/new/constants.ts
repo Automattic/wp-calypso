@@ -1,4 +1,4 @@
-import type { Frequency, Weekday } from './components/frequency-selection';
+import type { Frequency, Weekday } from '../types';
 
 export const DEFAULT_TIME = '04:00';
 export const DEFAULT_FREQUENCY: Frequency = 'daily';

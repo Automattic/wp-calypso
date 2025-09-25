@@ -10,10 +10,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { edit, trash } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
@@ -31,13 +29,17 @@ export default function SshKey( {
 } ) {
 	const userLocale = useLocale();
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 
-	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation(
-		deleteSshKeyMutation()
-	);
+	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation( {
+		...deleteSshKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'SSH key deleted.' ),
+				error: __( 'Failed to delete SSH key.' ),
+			},
+		},
+	} );
 
 	const handleEdit = () => {
 		setIsEditing( true );
@@ -45,16 +47,6 @@ export default function SshKey( {
 
 	const handleRemove = () => {
 		deleteSshKey( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'SSH key removed.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to remove SSH key.' ), {
-					type: 'snackbar',
-				} );
-			},
 			onSettled: () => {
 				setIsRemoveDialogOpen( false );
 			},

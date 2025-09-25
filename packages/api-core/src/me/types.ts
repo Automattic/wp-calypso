@@ -1,5 +1,11 @@
 export type UserFlags = 'calypso_allow_nonprimary_domains_without_plan';
 
+export interface SocialLoginConnection {
+	service: string;
+	service_user_email: string;
+	service_user_id: string;
+}
+
 export interface User {
 	ID: number;
 	username: string;
@@ -8,6 +14,7 @@ export interface User {
 	language: string;
 	locale_variant: string;
 	email: string;
+	email_verified: boolean;
 	has_unseen_notes: boolean;
 	site_count: number;
 	meta: {
@@ -17,6 +24,7 @@ export interface User {
 			};
 		};
 	};
+	social_login_connections: SocialLoginConnection[];
 }
 
 export interface TwoStep {

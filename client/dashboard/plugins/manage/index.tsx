@@ -1,9 +1,10 @@
-import { marketplaceSearchQuery, pluginsQuery } from '@automattic/api-queries';
+import { marketplaceSearchQuery, pluginsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getActions } from './actions';
@@ -16,9 +17,13 @@ import './style.scss';
 
 export default function PluginsList() {
 	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const actions = getActions();
 	const [ view, setView ] = useState( defaultView );
-	const data = useMemo( () => mapApiPluginsToDataViewPlugins( sitesPlugins ), [ sitesPlugins ] );
+	const data = useMemo(
+		() => mapApiPluginsToDataViewPlugins( sites, sitesPlugins ),
+		[ sites, sitesPlugins ]
+	);
 
 	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data, view, fields );
@@ -48,10 +53,14 @@ export default function PluginsList() {
 	}, [ filteredPlugins, iconsBySlug ] );
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Manage plugins' ) } /> }>
+		<PageLayout
+			size="large"
+			header={ <PageHeader title={ __( 'Manage plugins' ) } /> }
+			notices={ <OptInWelcome tracksContext="plugins" /> }
+		>
 			<DataViewsCard>
 				<DataViews
-					isLoading={ isLoadingPlugins || isLoadingMarketplace }
+					isLoading={ isLoadingPlugins || isLoadingMarketplace || isLoadingSites }
 					data={ filteredPluginsWithIcons ?? [] }
 					fields={ fields }
 					view={ view }

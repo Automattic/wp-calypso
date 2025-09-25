@@ -1,16 +1,12 @@
-import { LogType, PHPLog, ServerLog, SiteActivityLog } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
-import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
-import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import type { Field } from '@wordpress/dataviews';
+import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
+import type { Field, Operator, DataViewRenderFieldProps } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -52,40 +48,13 @@ export function useFields( {
 	logType,
 	timezoneString,
 	gmtOffset,
-}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] | Field< SiteActivityLog >[] {
+}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] {
 	const locale = useLocale();
 
-	let dateTimeLabel = __( 'Date & time' );
-
 	const isLargeScreen = useViewportMatch( 'huge', '>=' );
-
-	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
-	const dateTimeWithTz = __( 'Date & time (%s)' );
-	if ( timezoneString && isLargeScreen ) {
-		dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
-	} else if ( typeof gmtOffset === 'number' ) {
-		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
-	}
+	const dateTimeLabel = getDateTimeLabel( { timezoneString, gmtOffset, isLargeScreen } );
 
 	return useMemo( () => {
-		const formatDateCell = ( value?: string | number, formatAsUTC?: boolean ) => {
-			if ( ! value ) {
-				return '';
-			}
-			const dateFormat = 'M j, Y \\a\\t g:i A';
-			const date = typeof value === 'number' ? new Date( value * 1000 ) : new Date( value );
-			if ( formatAsUTC ) {
-				return dateI18n( dateFormat, date, 'UTC' );
-			}
-
-			return timezoneString
-				? dateI18n( dateFormat, date, timezoneString )
-				: formatDateWithOffset( date, gmtOffset as number, locale, {
-						dateStyle: 'medium',
-						timeStyle: 'short',
-				  } );
-		};
-
 		if ( logType === LogType.PHP ) {
 			return [
 				{
@@ -94,12 +63,12 @@ export function useFields( {
 					label: dateTimeLabel,
 					enableHiding: false,
 					enableSorting: true,
-					getValue: ( { item } ) => item.timestamp,
-					render: ( { item } ) => {
+					getValue: ( { item }: { item: PHPLog } ) => item.timestamp,
+					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => {
 						const value = item.timestamp;
-						return <span>{ formatDateCell( value ) }</span>;
+						return <span>{ formatDateCell( { value, timezoneString, gmtOffset, locale } ) }</span>;
 					},
-					filterBy: { operators: [] },
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'severity',
@@ -107,122 +76,65 @@ export function useFields( {
 					label: __( 'Severity' ),
 					enableSorting: false,
 					elements: VALUES_SEVERITY.map( ( severity ) => ( { value: severity, label: severity } ) ),
-					getValue: ( { item } ) => item.severity,
-					render: ( { item } ) => (
+					getValue: ( { item }: { item: PHPLog } ) => item.severity,
+					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
 						<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
 							{ item.severity }
 						</Badge>
 					),
-					filterBy: { operators: [ 'isAny' ] },
+					filterBy: { operators: [ 'isAny' as Operator ] },
 				},
 				{
 					id: 'message',
 					type: 'text',
 					label: __( 'Message' ),
 					enableSorting: false,
-					getValue: ( { item } ) => item.message,
-					render: ( { item } ) => (
+					getValue: ( { item }: { item: PHPLog } ) => item.message,
+					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
 						<span className="site-logs-ellipsis">{ String( item.message ) }</span>
 					),
-					filterBy: { operators: [] },
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'kind',
 					type: 'text',
 					label: __( 'Group' ),
 					enableSorting: false,
-					getValue: ( { item } ) => item.kind,
-					filterBy: { operators: [] },
+					getValue: ( { item }: { item: PHPLog } ) => item.kind,
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'name',
 					type: 'text',
 					label: __( 'Source' ),
 					enableSorting: false,
-					getValue: ( { item } ) => item.name,
-					render: ( { item } ) => <span className="site-logs-wrap">{ String( item.name ) }</span>,
-					filterBy: { operators: [] },
+					getValue: ( { item }: { item: PHPLog } ) => item.name,
+					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
+						<span className="site-logs-wrap">{ String( item.name ) }</span>
+					),
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'file',
 					type: 'text',
 					label: __( 'File' ),
 					enableSorting: false,
-					getValue: ( { item } ) => item.file,
-					render: ( { item } ) => <span className="site-logs-wrap">{ String( item.file ) }</span>,
-					filterBy: { operators: [] },
+					getValue: ( { item }: { item: PHPLog } ) => item.file,
+					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
+						<span className="site-logs-wrap">{ String( item.file ) }</span>
+					),
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'line',
 					type: 'integer',
 					label: __( 'Line' ),
 					enableSorting: false,
-					getValue: ( { item } ) => item.line,
-					render: ( { item } ) => formatNumber( item.line ),
-					filterBy: { operators: [] },
+					getValue: ( { item }: { item: PHPLog } ) => item.line,
+					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => formatNumber( item.line ),
+					filterBy: { operators: [] as Operator[] },
 				},
 			] satisfies Field< PHPLog >[];
-		}
-
-		if ( logType === LogType.ACTIVITY ) {
-			return [
-				{
-					id: 'published',
-					type: 'datetime',
-					label: dateTimeLabel,
-					enableHiding: false,
-					enableSorting: true,
-					getValue: ( { item } ) => item.published,
-					render: ( { item } ) => {
-						const value = item.published;
-						return <span>{ formatDateCell( value ) }</span>;
-					},
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'published_utc',
-					type: 'datetime',
-					label: __( 'Date & Time (UTC)' ),
-					enableHiding: true,
-					enableSorting: true,
-					getValue: ( { item } ) => item.published,
-					render: ( { item } ) => {
-						const value = item.published;
-						return <span>{ formatDateCell( value, true ) }</span>;
-					},
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'event',
-					type: 'text',
-					label: __( 'Event' ),
-					enableSorting: false,
-					getValue: ( { item } ) => `${ item.summary }: ${ item.content.text }`,
-					render: ( { item } ) => (
-						<HStack spacing="2" alignment="left" className="site-activity-logs__event">
-							{ item.gridicon && (
-								<Icon
-									className="site-activity-logs__event-icon"
-									icon={ gridiconToWordPressIcon( item.gridicon ) }
-									size={ 24 }
-								/>
-							) }
-							<strong>{ item.summary }</strong>
-							<span>{ item.content.text }</span>
-						</HStack>
-					),
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'actor',
-					type: 'text',
-					label: __( 'User' ),
-					enableSorting: false,
-					getValue: ( { item } ) => item.actor?.name || __( 'Unknown' ),
-					render: ( { item } ) => <span>{ item.actor?.name || __( 'Unknown' ) }</span>,
-					filterBy: { operators: [] },
-				},
-			] satisfies Field< SiteActivityLog >[];
 		}
 
 		// server (web) logs
@@ -233,12 +145,12 @@ export function useFields( {
 				label: dateTimeLabel,
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item } ) => item.date ?? item.timestamp,
-				render: ( { item } ) => {
+				getValue: ( { item }: { item: ServerLog } ) => item.date ?? item.timestamp,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => {
 					const value = item.date ?? item.timestamp;
-					return <span>{ formatDateCell( value ) }</span>;
+					return <span>{ formatDateCell( { value, timezoneString, gmtOffset, locale } ) }</span>;
 				},
-				filterBy: { operators: [] },
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'request_type',
@@ -246,13 +158,13 @@ export function useFields( {
 				label: __( 'Request type' ),
 				enableSorting: false,
 				elements: VALUES_REQUEST_TYPE.map( ( t ) => ( { value: t, label: t } ) ),
-				getValue: ( { item } ) => item.request_type,
-				render: ( { item } ) => (
+				getValue: ( { item }: { item: ServerLog } ) => item.request_type,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
 					<Badge intent="default" className={ `badge--${ item.request_type }` }>
 						{ item.request_type }
 					</Badge>
 				),
-				filterBy: { operators: [ 'isAny' ] },
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'status',
@@ -260,152 +172,156 @@ export function useFields( {
 				label: __( 'Status' ),
 				enableSorting: false,
 				elements: VALUES_STATUS.map( ( status ) => ( { value: status, label: status } ) ),
-				getValue: ( { item } ) => item.status,
-				filterBy: { operators: [ 'isAny' ] },
+				getValue: ( { item }: { item: ServerLog } ) => item.status,
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'request_url',
 				type: 'text',
 				label: __( 'Request URL' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.request_url,
-				render: ( { item } ) => (
+				getValue: ( { item }: { item: ServerLog } ) => item.request_url,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
 					<span className="site-logs-wrap">{ String( item.request_url ) }</span>
 				),
-				filterBy: { operators: [] },
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'body_bytes_sent',
 				type: 'integer',
 				label: __( 'Body bytes sent' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.body_bytes_sent,
-				render: ( { item } ) => <span>{ formatNumber( item.body_bytes_sent ) }</span>,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.body_bytes_sent,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
+					<span>{ formatNumber( item.body_bytes_sent ) }</span>
+				),
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'cached',
 				type: 'text',
 				label: __( 'Cached' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.cached,
+				getValue: ( { item }: { item: ServerLog } ) => item.cached,
 				elements: VALUES_CACHED.map( ( cachedValue ) => ( {
 					value: cachedValue,
 					label: getLabelCached( cachedValue ),
 				} ) ),
-				render: ( { item } ) => <span>{ getLabelCached( item.cached ) }</span>,
-				filterBy: { operators: [ 'isAny' ] },
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
+					<span>{ getLabelCached( item.cached ) }</span>
+				),
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'http_host',
 				type: 'text',
 				label: __( 'HTTP Host' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.http_host,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.http_host,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_referer',
 				type: 'text',
 				label: __( 'HTTP Referrer' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.http_referer,
-				render: ( { item } ) => (
+				getValue: ( { item }: { item: ServerLog } ) => item.http_referer,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
 					<span className="site-logs-wrap">{ String( item.http_referer ) }</span>
 				),
-				filterBy: { operators: [] },
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http2',
 				type: 'text',
 				label: __( 'HTTP/2' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.http2,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.http2,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_user_agent',
 				type: 'text',
 				label: __( 'User Agent' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.http_user_agent,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.http_user_agent,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_version',
 				type: 'text',
 				label: __( 'HTTP Version' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.http_version,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.http_version,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_x_forwarded_for',
 				type: 'text',
 				label: __( 'X-Forwarded-For' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.http_x_forwarded_for,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.http_x_forwarded_for,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'renderer',
 				type: 'text',
 				label: __( 'Renderer' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.renderer,
+				getValue: ( { item }: { item: ServerLog } ) => item.renderer,
 				elements: VALUES_RENDERER.map( ( renderer ) => ( {
 					value: renderer,
 					label: getLabelRenderer( renderer ),
 				} ) ),
-				filterBy: { operators: [ 'isAny' ] },
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'request_completion',
 				type: 'text',
 				label: __( 'Request Completion' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.request_completion,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.request_completion,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'request_time',
 				type: 'text',
 				label: __( 'Request Time' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.request_time,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.request_time,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'scheme',
 				type: 'text',
 				label: __( 'Scheme' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.scheme,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.scheme,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'timestamp',
 				type: 'integer',
 				label: __( 'Timestamp' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.timestamp,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.timestamp,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'type',
 				type: 'text',
 				label: __( 'Type' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.type,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.type,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'user_ip',
 				type: 'text',
 				label: __( 'User IP' ),
 				enableSorting: false,
-				getValue: ( { item } ) => item.user_ip,
-				filterBy: { operators: [] },
+				getValue: ( { item }: { item: ServerLog } ) => item.user_ip,
+				filterBy: { operators: [] as Operator[] },
 			},
 		] satisfies Field< ServerLog >[];
 	}, [ dateTimeLabel, gmtOffset, locale, logType, timezoneString ] );

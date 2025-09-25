@@ -60,28 +60,6 @@ export class UploadingPane extends PureComponent {
 		this.state = { urlInput: null, fileToBeUploaded: null };
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { importerStatus } = this.props;
-		const { importerStatus: prevImporterStatus } = prevProps;
-
-		if (
-			( prevImporterStatus.importerState === appStates.UPLOADING ||
-				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ||
-				prevImporterStatus.importerState === appStates.UPLOAD_SUCCESS ) &&
-			importerStatus.importerState === appStates.UPLOAD_SUCCESS
-		) {
-			switch ( importerStatus.importerFileType ) {
-				case 'content':
-					this.props.startMappingAuthors( importerStatus.importerId );
-					break;
-				case 'playground':
-				case 'jetpack_backup':
-					// The startImporting action is dispatched from the onboarding flow
-					break;
-			}
-		}
-	}
-
 	getMessage = () => {
 		const { importerState, importerFileType } = this.props.importerStatus;
 		const { filename, percentComplete = 0 } = this.props;

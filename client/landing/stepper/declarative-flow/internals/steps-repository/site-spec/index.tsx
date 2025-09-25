@@ -11,7 +11,7 @@ const SiteSpec: StepType = function SiteSpec() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
-			<div id="site-spec-container" />
+			<div id="site-spec-container" style={ { height: '100vh' } } />
 		</>
 	);
 };

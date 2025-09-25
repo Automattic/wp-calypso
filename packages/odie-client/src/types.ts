@@ -301,4 +301,5 @@ export type SupportInteraction = {
 	last_updated: string;
 	users: SupportInteractionUser[];
 	events: SupportInteractionEvent[];
+	environment: 'staging' | 'production';
 };

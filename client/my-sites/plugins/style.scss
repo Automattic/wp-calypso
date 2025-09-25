@@ -18,7 +18,7 @@
 	}
 
 	.navigation-header {
-		@media ( max-width: $break-small ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding-bottom: 16px;
 			margin-bottom: 0;
 		}
@@ -171,6 +171,23 @@ body.is-section-plugins {
 
 		@include breakpoint-deprecated( '<660px' ) {
 			padding: 1rem;
+		}
+	}
+}
+
+.is-section-plugins.has-no-sidebar .main {
+	&:not( .hosting-dashboard-layout ):not( .hosting-dashboard-layout-column ):not( .plugins-browser ) {
+		padding: 0;
+	}
+
+	&.is-plugin-details {
+		.navigation-header {
+			padding-top: 0;
+			margin-top: -47px;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				padding: 16px;
+			}
 		}
 	}
 }

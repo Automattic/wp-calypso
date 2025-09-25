@@ -1,8 +1,14 @@
 /* eslint-disable no-restricted-imports */
 import { DomainSearch } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
-import { type CartKey, type ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import {
+	type CartKey,
+	type MinimalRequestCartProduct,
+	type ResponseCartProduct,
+	useShoppingCart,
+} from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
+import { getDomainsInCart } from '../../../lib/cart-values/cart-items';
 
 const wpcomCartToDomainSearchCart = (
 	domain: ResponseCartProduct,
@@ -44,6 +50,7 @@ interface UseWPCOMShoppingCartForDomainSearchOptions {
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
 	onContinue?( cartItems: ResponseCartProduct[] ): void;
+	onAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
 
 export const useWPCOMShoppingCartForDomainSearch = ( {
@@ -52,13 +59,12 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 	flowAllowsMultipleDomainsInCart,
 	isFirstDomainFreeForFirstYear,
 	onContinue,
+	onAddDomainToCart = ( domain ) => domain,
 }: UseWPCOMShoppingCartForDomainSearchOptions ) => {
 	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 
 	return useMemo( () => {
-		const domainItems = flowAllowsMultipleDomainsInCart
-			? responseCart.products.filter( ( product ) => product.is_domain_registration )
-			: [];
+		const domainItems = flowAllowsMultipleDomainsInCart ? getDomainsInCart( responseCart ) : [];
 
 		// Order domains from most expensive to least expensive
 		domainItems.sort( ( a, b ) => {
@@ -86,7 +92,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
 				const cartItems = await addProductsToCart( [
-					{
+					onAddDomainToCart( {
 						product_slug,
 						meta: domain_name,
 						extra: {
@@ -96,7 +102,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 							} ),
 							...( flowName && { flow_name: flowName } ),
 						},
-					},
+					} ),
 				] );
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
@@ -123,5 +129,6 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 		isFirstDomainFreeForFirstYear,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
+		onAddDomainToCart,
 	] );
 };

@@ -79,7 +79,7 @@ export default function ConnectStripe( {
 					step="subscribers"
 					primary={ false }
 					navigate={ () => {
-						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
 					} }
 					label={
 						fixMe( {

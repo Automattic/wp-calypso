@@ -3,7 +3,6 @@ import {
 	pushToStagingMutation,
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -14,12 +13,12 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
-import { __, isRTL } from '@wordpress/i18n';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import useRewindableActivityLogQuery from '../../../data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../lib/jetpack/backup-utils';
@@ -28,11 +27,14 @@ import {
 	FileBrowserProvider,
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
+import { Notice } from '../../components/notice';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
+import type { Field } from '@wordpress/dataviews';
 
 // File browser config used for granular selection
 const fileBrowserConfig: FileBrowserConfig = {
@@ -48,6 +50,10 @@ const fileBrowserConfig: FileBrowserConfig = {
 };
 
 type BackupActivity = { rewindId: number; activityTs: number };
+
+type StagingSiteSyncFormData = {
+	domain: string;
+};
 
 const DirectionArrow = () => {
 	return (
@@ -165,7 +171,10 @@ function StagingSiteSyncModalInner( {
 	onSyncStart,
 }: StagingSiteSyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
-	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
+	const { recordTracksEvent } = useAnalytics();
+	const [ formData, setFormData ] = useState< StagingSiteSyncFormData >( {
+		domain: '',
+	} );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
@@ -177,6 +186,7 @@ function StagingSiteSyncModalInner( {
 	} );
 	const productionSiteSlug = productionSite?.slug;
 	const productionSiteTitle = productionSite?.name;
+	const productionHasWoo = !! productionSite?.options?.woocommerce_is_active;
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
@@ -184,8 +194,10 @@ function StagingSiteSyncModalInner( {
 	} );
 	const stagingSiteSlug = stagingSite?.slug;
 	const stagingSiteTitle = stagingSite?.name;
+	const stagingHasWoo = !! stagingSite?.options?.woocommerce_is_active;
 
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+	const sourceHasWoo = sourceEnvironment === 'staging' ? stagingHasWoo : productionHasWoo;
 
 	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
 	const targetSiteTitle =
@@ -289,6 +301,8 @@ function StagingSiteSyncModalInner( {
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+	const showWooCommerceWarning =
+		sourceHasWoo && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -350,23 +364,28 @@ function StagingSiteSyncModalInner( {
 		}
 	};
 
-	const handleDomainConfirmation = useCallback(
-		( value: string | undefined ) => setDomainConfirmation( value || '' ),
-		[]
-	);
-
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
-	const isGranularMode = isFileBrowserVisible && ! shouldDisableGranularSync;
-
-	const noGranularSelection =
-		isGranularMode && browserCheckList.totalItems > 0 && browserCheckList.includeList.length === 0;
-
 	const isSubmitDisabled =
-		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		noGranularSelection ||
+		( showDomainConfirmation && formData.domain !== productionSiteSlug ) ||
+		( browserCheckList.totalItems === 0 &&
+			browserCheckList.includeList.length === 0 &&
+			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
+
+	const fields: Field< StagingSiteSyncFormData >[] = [
+		{
+			id: 'domain',
+			label: __( 'Type the site domain to confirm' ),
+			type: 'text' as const,
+			description: sprintf(
+				/* translators: %s: site domain */
+				__( 'The site domain is: %s' ),
+				productionSiteSlug
+			),
+		},
+	];
 
 	return (
 		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
@@ -449,7 +468,9 @@ function StagingSiteSyncModalInner( {
 							spacing={ 2 }
 							style={ {
 								borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-								borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+								borderBottom: hasWarning
+									? 'none'
+									: '1px solid var(--wp-components-color-gray-300, #ddd)',
 								padding: '16px 0',
 								marginTop: isFileBrowserVisible ? '16px' : '0',
 							} }
@@ -462,24 +483,54 @@ function StagingSiteSyncModalInner( {
 								onChange={ handleDatabaseCheckboxChange }
 							/>
 						</HStack>
+						{ hasWarning && (
+							<VStack style={ { marginTop: '20px' } }>
+								<Notice
+									density="medium"
+									variant="warning"
+									title={ __( 'Warning! Database will be overwritten' ) }
+								>
+									<VStack spacing={ 2 }>
+										<Text as="p">
+											{ __(
+												'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+											) }
+										</Text>
+										{ showWooCommerceWarning && (
+											<Text as="p">
+												{ createInterpolateElement(
+													__(
+														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+													),
+													{
+														a: (
+															<ExternalLink
+																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+																children={ null }
+															/>
+														),
+													}
+												) }
+											</Text>
+										) }
+									</VStack>
+								</Notice>
+							</VStack>
+						) }
 					</VStack>
 
 					{ showDomainConfirmation && (
-						<InputControl
-							__next40pxDefaultSize
-							label={
-								<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
-									<Text>
-										{ __( 'Enter your site‘s name' ) }{ ' ' }
-										<Text color="var(--dashboard__foreground-color-error)">
-											{ productionSiteSlug }
-										</Text>{ ' ' }
-										{ __( 'to confirm.' ) }
-									</Text>
-								</HStack>
-							}
-							onChange={ handleDomainConfirmation }
-							value={ domainConfirmation }
+						<DataForm< StagingSiteSyncFormData >
+							data={ formData }
+							fields={ fields }
+							form={ { layout: { type: 'regular' as const }, fields } }
+							onChange={ ( edits: Partial< StagingSiteSyncFormData > ) => {
+								setFormData( ( data ) => ( {
+									...data,
+									...edits,
+									domain: edits.domain?.trim() ?? data.domain,
+								} ) );
+							} }
 						/>
 					) }
 					<HStack>

@@ -209,7 +209,7 @@ $newsletter_importer_line-height: 20px;
 	fill: var(--studio-gray-20);
 }
 
-.select-newsletter-form .is-loading {
+.importer-loading .is-loading {
 	@include placeholder( --color-neutral-10 );
 	margin-bottom: 0;
 }

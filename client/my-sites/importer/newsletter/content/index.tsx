@@ -40,9 +40,10 @@ const isImporting = ( importerState: ImporterState | undefined ) => {
 		(
 			[
 				appStates.IMPORT_FAILURE,
-				appStates.IMPORT_SUCCESS,
 				appStates.IMPORTING,
 				appStates.MAP_AUTHORS,
+				appStates.IMPORT_SUCCESS,
+				appStates.UPLOAD_SUCCESS,
 			] as ImporterState[]
 		 ).includes( importerState )
 	);
@@ -56,7 +57,6 @@ const isUploading = ( importerState: ImporterState | undefined ) => {
 				appStates.UPLOAD_PROCESSING,
 				appStates.READY_FOR_UPLOAD,
 				appStates.UPLOAD_FAILURE,
-				appStates.UPLOAD_SUCCESS,
 				appStates.UPLOADING,
 			] as ImporterState[]
 		 ).includes( importerState )

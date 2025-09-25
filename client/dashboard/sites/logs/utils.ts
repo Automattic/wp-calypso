@@ -1,6 +1,7 @@
 import { dateI18n } from '@wordpress/date';
+import { __, sprintf } from '@wordpress/i18n';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
-import { formatDateWithOffset } from '../../utils/datetime';
+import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
 import type { PHPLog } from '@automattic/api-core';
 
 type DateRange = { start: Date; end: Date };
@@ -90,4 +91,61 @@ export function getInitialDateRangeFromSearch( search: string ): DateRange | nul
 	const start = toDate( params.get( 'from' ) );
 	const end = toDate( params.get( 'to' ) );
 	return start && end && start <= end ? { start, end } : null;
+}
+
+export const LOG_TABS = [
+	{ name: 'activity', title: __( 'Activity' ) },
+	{ name: 'php', title: __( 'PHP errors' ) },
+	{ name: 'server', title: __( 'Web server' ) },
+];
+
+export function formatDateCell( {
+	timezoneString,
+	gmtOffset,
+	locale,
+	value,
+	formatAsUTC,
+}: {
+	timezoneString?: string;
+	gmtOffset?: number;
+	locale: string;
+	value?: string | number;
+	formatAsUTC?: boolean;
+} ) {
+	if ( ! value ) {
+		return '';
+	}
+	const dateFormat = 'M j, Y \\a\\t g:i A';
+	const date = typeof value === 'number' ? new Date( value * 1000 ) : new Date( value );
+	if ( formatAsUTC ) {
+		return dateI18n( dateFormat, date, 'UTC' );
+	}
+
+	return timezoneString
+		? dateI18n( dateFormat, date, timezoneString )
+		: formatDateWithOffset( date, gmtOffset as number, locale, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+		  } );
+}
+
+export function getDateTimeLabel( {
+	timezoneString,
+	gmtOffset,
+	isLargeScreen,
+}: {
+	timezoneString?: string;
+	gmtOffset?: number;
+	isLargeScreen: boolean;
+} ) {
+	let dateTimeLabel = __( 'Date & time' );
+
+	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
+	const dateTimeWithTz = __( 'Date & time (%s)' );
+	if ( timezoneString && isLargeScreen ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
+	} else if ( typeof gmtOffset === 'number' ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
+	}
+	return dateTimeLabel;
 }

@@ -85,6 +85,7 @@ export interface Steps {
 }
 
 export interface PaidNewsletterData {
+	import_url: string;
 	current_step: StepId;
 	steps: Steps;
 }

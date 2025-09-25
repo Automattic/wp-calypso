@@ -34,9 +34,25 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		...sitePreviewLinksQuery( site.ID ),
 		enabled: linksPermitted,
 	} );
-	const createMutation = useMutation( sitePreviewLinkCreateMutation( site.ID ) );
-	const deleteMutation = useMutation( sitePreviewLinkDeleteMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const createMutation = useMutation( {
+		...sitePreviewLinkCreateMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Preview link enabled.' ),
+				error: __( 'Failed to enable preview link.' ),
+			},
+		},
+	} );
+	const deleteMutation = useMutation( {
+		...sitePreviewLinkDeleteMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Preview link disabled.' ),
+				error: __( 'Failed to disable preview link.' ),
+			},
+		},
+	} );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	if ( ! linksPermitted ) {
 		return null;
@@ -44,24 +60,10 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 
 	const handleChange = ( { enabled }: { enabled?: boolean } ) => {
 		if ( enabled ) {
-			createMutation.mutate( undefined, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Preview link enabled.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to enable preview link.' ), { type: 'snackbar' } );
-				},
-			} );
+			createMutation.mutate( undefined );
 		} else {
 			links.forEach( ( { code } ) => {
-				deleteMutation.mutate( code, {
-					onSuccess: () => {
-						createSuccessNotice( __( 'Preview link disabled.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to disable preview link.' ), { type: 'snackbar' } );
-					},
-				} );
+				deleteMutation.mutate( code );
 			} );
 		}
 	};

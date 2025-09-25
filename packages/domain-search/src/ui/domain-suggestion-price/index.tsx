@@ -77,7 +77,9 @@ export const DomainSuggestionPrice = ( {
 					</>
 				) : (
 					<HStack spacing={ 1 } alignment={ alignment }>
-						<Text size={ priceSize }>{ price }</Text>
+						<Text size={ priceSize } align={ alignment }>
+							{ price }
+						</Text>
 						{ renewPrice && renewPrice === price && <Text>{ __( '/year' ) }</Text> }
 					</HStack>
 				) }

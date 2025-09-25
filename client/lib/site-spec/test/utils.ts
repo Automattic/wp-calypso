@@ -12,7 +12,7 @@ import {
 	isSiteSpecEnabled,
 	getSiteSpecUrl,
 	getSiteSpecUrlByType,
-	getSiteSpecConfig,
+	getDefaultSiteSpecConfig,
 } from '../utils';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -121,26 +121,31 @@ describe( 'SiteSpec Utils', () => {
 		} );
 	} );
 
-	describe( 'getSiteSpecConfig', () => {
-		it( 'should return configuration object with all values', () => {
+	describe( 'getDefaultSiteSpecConfig', () => {
+		it( 'should return configuration object with all values including tracking', () => {
 			mockConfig.mockReturnValueOnce( {
 				agent_url: 'https://api.example.com/agent',
 				agent_id: 'test-agent-id',
 				build_site_url: 'https://example.com/build?spec_id=',
 			} );
 
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 
 			expect( result ).toEqual( {
 				agentUrl: 'https://api.example.com/agent',
 				agentId: 'test-agent-id',
 				buildSiteUrl: 'https://example.com/build?spec_id=',
+				tracking: {
+					enabled: true,
+					prefix: 'jetpack_calypso',
+					getOverrides: expect.any( Function ),
+				},
 			} );
 		} );
 
 		it( 'should return empty object when config is undefined', () => {
 			mockConfig.mockReturnValueOnce( undefined );
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 			expect( result ).toEqual( {} );
 		} );
 
@@ -150,10 +155,33 @@ describe( 'SiteSpec Utils', () => {
 				// Missing agent_url and build_site_url
 			} );
 
-			const result = getSiteSpecConfig();
+			const result = getDefaultSiteSpecConfig();
 
 			expect( result ).toEqual( {
 				agentId: 'test-agent-id',
+				tracking: {
+					enabled: true,
+					prefix: 'jetpack_calypso',
+					getOverrides: expect.any( Function ),
+				},
+			} );
+		} );
+
+		it( 'should always include tracking configuration with correct values', () => {
+			mockConfig.mockReturnValueOnce( {} );
+
+			const result = getDefaultSiteSpecConfig();
+
+			expect( result.tracking ).toEqual( {
+				enabled: true,
+				prefix: 'jetpack_calypso',
+				getOverrides: expect.any( Function ),
+			} );
+
+			// Test that getOverrides function returns expected values
+			const overrides = result.tracking?.getOverrides?.( 'test-event' );
+			expect( overrides ).toEqual( {
+				client: 'calypso',
 			} );
 		} );
 	} );

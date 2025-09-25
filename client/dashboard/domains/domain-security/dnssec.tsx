@@ -8,9 +8,7 @@ import {
 	__experimentalVStack as VStack,
 	ToggleControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
 
@@ -20,23 +18,20 @@ interface DnsSecProps {
 }
 
 export default function DnsSec( { domainName, domain }: DnsSecProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	const mutation = useMutation( domainDnssecMutation( domainName ) );
+	const mutation = useMutation( {
+		...domainDnssecMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'DNSSEC setting saved.' ),
+				error: __( 'Failed to save DNSSEC settings.' ),
+			},
+		},
+	} );
 
 	const { isPending } = mutation;
 
 	const handleToggleChange = ( enabled: boolean ) => {
-		mutation.mutate( enabled, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'DNSSEC setting saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save DNSSEC settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( enabled );
 	};
 
 	return (

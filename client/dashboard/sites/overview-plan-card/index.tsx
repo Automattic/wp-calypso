@@ -104,14 +104,28 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const isV2Page = window?.location?.pathname?.startsWith( '/v2' );
+	const isFreePlan = site.plan?.is_free;
+
+	const getBillingLinkProps = () => {
+		if ( isFreePlan ) {
+			return { externalLink: `/plans/${ site.slug }` };
+		}
+
+		if ( isV2Page ) {
+			return { link: `/me/billing/purchases/purchase/${ purchase?.ID }` };
+		}
+
+		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };
+	};
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			externalLink={ site.plan?.is_free ? `/plans/${ site.slug }` : undefined }
-			link={ ! site.plan?.is_free ? `/me/billing/purchases/purchase/${ purchase?.ID }` : undefined }
+			{ ...getBillingLinkProps() }
 			tracksId="plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }

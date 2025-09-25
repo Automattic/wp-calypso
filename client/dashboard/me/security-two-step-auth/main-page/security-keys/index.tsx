@@ -4,12 +4,10 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
@@ -41,11 +39,15 @@ const SecurityKeysList = ( {
 	data: SecurityKeyRegistration[];
 	isLoading: boolean;
 } ) => {
-	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation(
-		deleteTwoStepAuthSecurityKeyMutation()
-	);
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation( {
+		...deleteTwoStepAuthSecurityKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Security key deleted.' ),
+				error: __( 'Failed to delete security key.' ),
+			},
+		},
+	} );
 
 	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
 		useState< SecurityKeyRegistration | null >( null );
@@ -55,16 +57,6 @@ const SecurityKeysList = ( {
 			deleteSecurityKey(
 				{ credential_id: selectedKeyToRemove.id },
 				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Security key removed.' ), {
-							type: 'snackbar',
-						} );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to remove security key.' ), {
-							type: 'snackbar',
-						} );
-					},
 					onSettled: () => {
 						setSelectedKeyToRemove( null );
 					},

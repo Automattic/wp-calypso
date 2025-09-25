@@ -1,4 +1,4 @@
-import { emailsQuery, queryClient } from '@automattic/api-queries';
+import { emailsQuery, queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { rootRoute } from './root';
@@ -13,7 +13,11 @@ export const emailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: () => queryClient.ensureQueryData( emailsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( emailsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {

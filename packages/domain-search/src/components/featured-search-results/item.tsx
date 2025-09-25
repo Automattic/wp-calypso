@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
 import { usePolicyBadges } from '../../hooks/use-policy-badges';
-import { useSuggestion } from '../../hooks/use-suggestion';
+import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
@@ -36,7 +36,7 @@ export const FeaturedSearchResultsItem = ( {
 	const policyBadges = usePolicyBadges( domainName );
 
 	const badges = useMemo( () => {
-		if ( reason === 'exact-match' ) {
+		if ( reason === 'exact-match' && suggestion.price_rule !== DomainPriceRule.DOMAIN_MOVE_PRICE ) {
 			return [
 				<DomainSuggestionBadge key="available" variation="success">
 					{ __( "It's available!" ) }
@@ -60,7 +60,7 @@ export const FeaturedSearchResultsItem = ( {
 			);
 		}
 		return existingBadges;
-	}, [ reason, suggestionBadges, policyBadges ] );
+	}, [ reason, suggestionBadges, policyBadges, suggestion.price_rule ] );
 
 	return (
 		<DomainSuggestion.Featured

@@ -28,6 +28,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDisplayName,
 	isExpired,
@@ -647,7 +648,13 @@ export function PurchaseItemPaymentMethod( {
 		e.preventDefault();
 		e.stopPropagation();
 
-		page( `/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add` );
+		if ( isJetpackCloud() ) {
+			window.open(
+				`https://wordpress.com/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add`
+			);
+		} else {
+			page( `/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add` );
+		}
 	};
 
 	if (
@@ -726,7 +733,15 @@ export function BackupPaymentMethodNotice() {
 		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
 		{
 			components: {
-				link: <a href="/me/purchases/payment-methods" />,
+				link: (
+					<a
+						href={
+							isJetpackCloud()
+								? 'https://wordpress.com/me/purchases/payment-methods'
+								: '/me/purchases/payment-methods'
+						}
+					/>
+				),
 			},
 		}
 	);

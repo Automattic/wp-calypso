@@ -1,4 +1,4 @@
-import { isJetpackBackupSlug } from '@automattic/calypso-products';
+import { isJetpackBackupSlug, WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import Debug from 'debug';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
@@ -49,7 +49,9 @@ export function showUpsellIfNoBackup( context, next ) {
 					'uninitialized' === getRewindState( state, siteId )?.state
 				}
 				display={ context.primary }
-				productSlugTest={ isJetpackBackupSlug }
+				productSlugTest={ ( slug ) =>
+					isJetpackBackupSlug( slug ) || slug === WPCOM_FEATURES_BACKUPS
+				}
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<UpsellPlaceholder />

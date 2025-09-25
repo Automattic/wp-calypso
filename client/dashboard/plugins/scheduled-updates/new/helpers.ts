@@ -1,4 +1,5 @@
-import type { Frequency, Weekday } from './components/frequency-selection';
+import { __ } from '@wordpress/i18n';
+import type { TimeSlot, Frequency, Weekday } from '../types';
 
 export function prepareTimestamp(
 	frequency: Frequency,
@@ -37,6 +38,36 @@ export function prepareTimestamp(
 	return event.getTime() / 1000;
 }
 
+export function getTimeSlotCollisionError( proposed: TimeSlot, existing: TimeSlot[] = [] ): string {
+	const newDate = new Date( proposed.timestamp * 1000 );
+
+	if ( newDate < new Date() ) {
+		return __( 'Please choose a time in the future for this schedule.' );
+	}
+
+	for ( const slot of existing ) {
+		const existingDate = new Date( slot.timestamp * 1000 );
+
+		if (
+			( proposed.frequency === 'daily' || slot.frequency === 'daily' ) &&
+			existingDate.getHours() === newDate.getHours()
+		) {
+			return __( 'Please choose another time, as this slot is already scheduled.' );
+		}
+
+		if (
+			proposed.frequency === 'weekly' &&
+			slot.frequency === 'weekly' &&
+			newDate.getDay() === existingDate.getDay() &&
+			newDate.getHours() === existingDate.getHours()
+		) {
+			return __( 'Please choose another time, as this slot is already scheduled.' );
+		}
+	}
+
+	return '';
+}
+
 /**
  * Limited concurrency runner
  */
@@ -57,3 +88,31 @@ export const runWithConcurrency = async (
 
 	await Promise.allSettled( Array.from( executing ) );
 };
+
+/**
+ * Validate plugins against existing schedules
+ * - Must select at least one plugin
+ * - If existing plugin sets are provided, block identical set
+ */
+export function validatePlugins(
+	plugins: string[],
+	existingPlugins: Array< string[] > = []
+): string {
+	let error = '';
+
+	if ( plugins.length === 0 ) {
+		error = __( 'Please select at least one plugin to update.' );
+	} else if ( existingPlugins.length ) {
+		const normalized = [ ...plugins ].sort();
+		for ( const existing of existingPlugins ) {
+			if ( JSON.stringify( normalized ) === JSON.stringify( [ ...existing ].sort() ) ) {
+				error = __(
+					'Please select a different set of plugins, as this one has already been chosen.'
+				);
+				break;
+			}
+		}
+	}
+
+	return error;
+}

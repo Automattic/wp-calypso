@@ -62,7 +62,15 @@ export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
-	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
+	const restoreDefaultEmailRecordsMutation = useMutation( {
+		...domainDnsEmailMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Default email DNS records restored.' ),
+				error: __( 'Failed to restore default email DNS records.' ),
+			},
+		},
+	} );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const {
@@ -177,16 +185,6 @@ export default function DomainDns() {
 
 	const handleRestoreDefaultEmailRecords = () => {
 		restoreDefaultEmailRecordsMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'The default email DNS records were successfully fixed!' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'There was a problem when restoring default email DNS records' ), {
-					type: 'snackbar',
-				} );
-			},
 			onSettled: () => {
 				setIsRestoreDefaultEmailRecordsDialogOpen( false );
 			},
