@@ -5,7 +5,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import MarkedLines from '../../../components/marked-lines';
 import { Text } from '../../../components/text';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
-import { getThreatFix } from '../utils';
 
 export function ThreatDescription( { threat }: { threat: Threat } ) {
 	const renderFixTitle = () => {
@@ -117,7 +116,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
 					) }
 				</Text>
-				<Text variant="muted">{ getThreatFix( threat ) }</Text>
+				<Text variant="muted">{ threat.fix_description }</Text>
 			</>
 		);
 	};

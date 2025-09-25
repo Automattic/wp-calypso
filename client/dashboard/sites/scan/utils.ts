@@ -1,5 +1,4 @@
 import { Threat } from '@automattic/api-core';
-import { __, sprintf } from '@wordpress/i18n';
 import { wordpress, code, plugins, brush, blockTable, warning } from '@wordpress/icons';
 
 export function getThreatType(
@@ -37,43 +36,6 @@ export function getThreatType(
 
 	return 'none';
 }
-
-export const getThreatFix = ( threat: Threat ) => {
-	const { fixable } = threat;
-
-	if ( ! fixable ) {
-		return null;
-	}
-
-	switch ( fixable.fixer ) {
-		case 'replace':
-			return __( 'Jetpack Scan will replace the affected file or directory.' );
-		case 'delete':
-			return __( 'Jetpack Scan will delete the affected file or directory.' );
-		case 'update':
-			if ( fixable.target ) {
-				return sprintf(
-					/** translators: %s: version */
-					__( 'Jetpack Scan will update to a newer version (%s).' ),
-					fixable.target
-				);
-			}
-			return __( 'Jetpack Scan will update to a newer version.' );
-		case 'edit':
-			return __( 'Jetpack Scan will edit the affected file or directory.' );
-		case 'rollback':
-			if ( fixable.target ) {
-				return sprintf(
-					/** translators: %s: version */
-					__( 'Jetpack Scan will rollback the affected file to the version from %s.' ),
-					fixable.target
-				);
-			}
-			return __( 'Jetpack Scan will rollback the affected file to an older (clean) version.' );
-		default:
-			return __( 'Jetpack Scan will resolve the threat.' );
-	}
-};
 
 export const getThreatIcon = ( threat: Threat ) => {
 	const type = getThreatType( threat );
