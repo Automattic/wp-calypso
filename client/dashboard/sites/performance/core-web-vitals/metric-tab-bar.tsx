@@ -1,14 +1,16 @@
-import { clsx } from 'clsx';
 import { __ } from '@wordpress/i18n';
-import { Metrics } from './index';
+import { clsx } from 'clsx';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	getMetricsNames,
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
+import { Metrics } from './index';
 import { StatusIndicator } from './status-indicator';
+import {
+	getMetricsNames,
+} from '../utils';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics;

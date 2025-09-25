@@ -1,23 +1,25 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
+import {
+	metricsThresholds,
+	mapThresholdsToStatus,
+	getMetricValuations,
+	displayValue,
+} from 'calypso/performance-profiler/utils/metrics';
+import HistoryChart from './charts/history-chart';
+import { StatusIndicator } from './status-indicator';
+import { StatusSection } from './status-section';
 import {
 	Metrics,
 	PerformanceMetricsHistory,
 	PerformanceMetricsItemQueryResponse,
 } from './index';
-import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	getMetricsNames,
-	metricsThresholds,
-	mapThresholdsToStatus,
-	getMetricValuations,
-	displayValue,
 	filterRecommendations,
-} from 'calypso/performance-profiler/utils/metrics';
-import HistoryChart from './charts/history-chart';
-import { StatusIndicator } from './status-indicator';
-import { StatusSection } from './status-section';
+} from '../utils';
 
 type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;

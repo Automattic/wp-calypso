@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import Markdown from 'react-markdown';
 import { PerformanceMetricsItemQueryResponse } from '../core-web-vitals';
-import { highImpactAudits } from 'calypso/performance-profiler/utils/metrics';
+import { highImpactAudits } from '../utils';
 
 interface InsightHeaderProps {
 	data: PerformanceMetricsItemQueryResponse;

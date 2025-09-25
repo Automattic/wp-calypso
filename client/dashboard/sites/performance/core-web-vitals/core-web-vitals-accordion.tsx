@@ -1,14 +1,15 @@
 import { FoldableCard } from '@automattic/components';
-import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { Metrics } from './index';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
-import { recordTracksEvent } from '../../../app/analytics';
 import {
-	getMetricsNames,
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
+import {
+	getMetricsNames,
+} from '../utils';
 import './core-web-vitals-accordion.scss';
 
 type Props = Record< Metrics, number > & {

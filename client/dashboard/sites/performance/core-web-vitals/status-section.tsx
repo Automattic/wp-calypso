@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
+import { useAnalytics } from '../../../app/analytics';
 import { Metrics } from './index';
-import { recordTracksEvent } from '../../../app/analytics';
 import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
 
 type StatusSectionProps = {

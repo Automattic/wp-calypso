@@ -3,13 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-web-vitals';
-import {
-	filterRecommendations,
-	getMetricsNames,
-	highImpactAudits,
-} from 'calypso/performance-profiler/utils/metrics';
 import MetricsInsight from './metrics-insight';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
+import { filterRecommendations, getMetricsNames, highImpactAudits } from './utils';
 
 type InsightsSectionProps = {
 	fullPageScreenshot: FullPageScreenshot;
@@ -44,7 +40,7 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 				updateQueryParams( { filter: option.value }, true );
 			}
 		},
-		[ onRecommendationsFilterChange ]
+		[ onRecommendationsFilterChange, recordTracksEvent ]
 	);
 
 	useEffect( () => {
