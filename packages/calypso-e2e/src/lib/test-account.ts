@@ -132,7 +132,7 @@ export class TestAccount {
 			inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 			sentTo: this.credentials.smsNumber.number,
 			body: 'WordPress.com verification code',
-			receivedAfter: new Date( Date.now() - 60 * 1000 ), // Last minute
+			receivedAfter: new Date( Date.now() - 10 * 1000 ), // Last 10 seconds
 		} );
 		return emailClient.get2FACodeFromMessage( message );
 	}
