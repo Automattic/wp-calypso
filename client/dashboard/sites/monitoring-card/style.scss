@@ -8,7 +8,8 @@
 			align-items: center;
 		}
 
-		&__server-performance {
+		&__server-performance,
+		&__http-responses {
 			/* Set a minimum height to prevent layout shift when the chart loads. */
 			min-height: 450px;
 		}
