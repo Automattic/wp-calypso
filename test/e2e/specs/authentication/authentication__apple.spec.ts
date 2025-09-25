@@ -137,11 +137,13 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 			await pageAppleLogin.clickButtonContainingText( 'Continue' );
 		} );
 
-		await test.step( 'And I athorize WPCOM to sign into WooCommerce', async function () {
-			const approveButton = page.locator( 'button:text("Approve")' );
-			if ( ( await approveButton.count() ) > 0 ) {
-				await approveButton.click();
-			}
+		await test.step( 'And I authorize WPCOM to sign into WooCommerce', async function () {
+			await page.addLocatorHandler(
+				page.getByRole( 'button', { name: 'Approve' } ),
+				async ( locator ) => {
+					await locator.click();
+				}
+			);
 		} );
 
 		await test.step( 'Then I am redirected to woo.com upon successful login', async function () {
