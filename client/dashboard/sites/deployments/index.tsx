@@ -2,7 +2,6 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -21,7 +20,7 @@ function SiteDeployments() {
 		<HostingFeatureGatedWithCallout
 			site={ site }
 			feature={ HostingFeatures.DEPLOYMENT }
-			overlay={ <PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> } /> }
+			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getDeploymentsCalloutProps() }
 		>
 			<Outlet />
