@@ -5,7 +5,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { profilerVersion } from '../../../performance-profiler/utils/profiler-version';
 import { useAnalytics } from '../../app/analytics';
 import type { PerformanceProfilerPage } from '@automattic/api-core';
 
@@ -84,7 +83,6 @@ export default function PageSelector( {
 				onChange={ ( page_id ) => {
 					recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
 						is_home: page_id === '0',
-						version: profilerVersion(),
 					} );
 
 					const url = new URL( window.location.href );

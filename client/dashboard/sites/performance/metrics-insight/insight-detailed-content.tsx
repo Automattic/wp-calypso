@@ -1,7 +1,7 @@
 import {
 	FullPageScreenshot,
 	PerformanceMetricsDetailsQueryResponse,
-} from 'calypso/data/site-profiler/types';
+} from '../core-web-vitals';
 import { InsightTable } from './insight-table';
 import { InsightTree } from './insight-tree';
 

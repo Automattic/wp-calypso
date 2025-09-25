@@ -2,7 +2,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { PerformanceMetricsItemQueryResponse } from '../core-web-vitals';
 import { highImpactAudits } from 'calypso/performance-profiler/utils/metrics';
 
 interface InsightHeaderProps {

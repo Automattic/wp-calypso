@@ -1,18 +1,13 @@
 import { SelectDropdown } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
-import {
-	FullPageScreenshot,
-	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
+import { useAnalytics } from '../../app/analytics';
+import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-web-vitals';
 import {
 	filterRecommendations,
 	getMetricsNames,
 	highImpactAudits,
 } from 'calypso/performance-profiler/utils/metrics';
-import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import MetricsInsight from './metrics-insight';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 
@@ -30,6 +25,7 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 	const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
 		props;
 	const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
+	const { recordTracksEvent } = useAnalytics();
 
 	const sortHighImpactAudits = ( a: string, b: string ) =>
 		highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
@@ -107,7 +103,6 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 						recordTracksEvent( 'calypso_performance_profiler_insight_click', {
 							url: props.url,
 							key,
-							version: profilerVersion(),
 						} )
 					}
 				/>

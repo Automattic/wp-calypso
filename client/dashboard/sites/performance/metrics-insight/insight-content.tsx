@@ -5,11 +5,10 @@ import Markdown from 'react-markdown';
 import {
 	FullPageScreenshot,
 	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
+} from '../core-web-vitals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LLMMessage } from 'calypso/performance-profiler/components/llm-message';
 import { ThumbsUpIcon, ThumbsDownIcon } from 'calypso/performance-profiler/icons/thumbs';
-import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { InsightDetailedContent } from './insight-detailed-content';
 
 interface InsightContentProps {
@@ -95,7 +94,6 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 			chat_id: chatId,
 			rating,
 			...( userFeedback && { user_feedback: userFeedback } ),
-			version: profilerVersion(),
 		} );
 
 		setFeedbackSent( true );

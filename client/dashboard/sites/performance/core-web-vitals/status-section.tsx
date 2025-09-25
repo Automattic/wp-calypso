@@ -1,12 +1,9 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import { Metrics } from 'calypso/data/site-profiler/types';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { __ } from '@wordpress/i18n';
+import { Metrics } from './index';
+import { recordTracksEvent } from '../../../app/analytics';
 import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
-import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
-
-import './status-section.scss';
 
 type StatusSectionProps = {
 	value: Valuation;
@@ -17,8 +14,6 @@ type StatusSectionProps = {
 };
 
 export const StatusSection = ( props: StatusSectionProps ) => {
-	const translate = useTranslate();
-
 	const {
 		value,
 		recommendationsQuantity,
@@ -26,6 +21,9 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 		activeTab,
 		onRecommendationsFilterChange,
 	} = props;
+	const { recordTracksEvent } = useAnalytics();
+
+
 	const getStatus = ( value: Valuation ) => {
 		if ( value === 'bad' ) {
 			return 'poor';
@@ -36,15 +34,14 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 	};
 	const status = getStatus( value );
 	const statusText = {
-		poor: translate( 'Poor' ),
-		neutral: translate( 'Needs improvement' ),
-		good: translate( 'Excellent' ),
+		poor: __( 'Poor' ),
+		neutral: __( 'Needs improvement' ),
+		good: __( 'Excellent' ),
 	}[ status ];
 
 	const recordRecommendationsClickEvent = ( filter: string ) =>
 		recordTracksEvent( 'calypso_performance_profiler_recommendations_link_click', {
 			filter,
-			version: profilerVersion(),
 		} );
 
 	return (
@@ -53,7 +50,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 			{ !! recommendationsQuantity && (
 				<div className="recommendations-text">
 					{ activeTab === 'overall'
-						? translate( '{{a}}View all recommendations{{/a}}', {
+						? __( '{{a}}View all recommendations{{/a}}', {
 								components: {
 									a: (
 										/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
@@ -74,7 +71,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 									),
 								},
 						  } )
-						: translate(
+						: __(
 								'{{a}}View %(quantity)d recommendation{{/a}}',
 								'{{a}}View %(quantity)d recommendations{{/a}}',
 								{

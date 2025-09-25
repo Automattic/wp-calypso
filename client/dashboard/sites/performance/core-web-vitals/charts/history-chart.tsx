@@ -1,4 +1,5 @@
 import { useResizeObserver } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 import { extent as d3Extent, max as d3Max } from 'd3-array';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import {
@@ -9,9 +10,7 @@ import {
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { timeFormat as d3TimeFormat } from 'd3-time-format';
-import { __ } from '@wordpress/i18n';
-import React, { createRef, useEffect } from 'react';
-import './style.scss';
+import { createRef, useEffect } from 'react';
 
 const MAX_TICKS = 4;
 

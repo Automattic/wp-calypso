@@ -1,15 +1,14 @@
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import { Metrics } from 'calypso/data/site-profiler/types';
+import { __ } from '@wordpress/i18n';
+import { Metrics } from './index';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordTracksEvent } from '../../../app/analytics';
 import {
 	getMetricsNames,
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
-import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import './core-web-vitals-accordion.scss';
 
 type Props = Record< Metrics, number > & {
@@ -52,7 +51,7 @@ const CardHeader = ( props: HeaderProps ) => {
 
 export const CoreWebVitalsAccordion = ( props: Props ) => {
 	const { activeTab, setActiveTab, children, showOverall } = props;
-	const translate = useTranslate();
+	const { recordTracksEvent } = useAnalytics();
 
 	const onClick = ( key: Metrics ) => {
 		// If the user clicks the current tab, close it.
@@ -61,13 +60,12 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 		} else {
 			recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
 				tab: key,
-				version: profilerVersion(),
 			} );
 			setActiveTab( key as Metrics );
 		}
 	};
 
-	const metricsNames = getMetricsNames( translate );
+	const metricsNames = getMetricsNames( __ );
 	const entries = Object.entries( metricsNames );
 	const overallEntry = entries.find( ( [ key ] ) => key === 'overall' );
 	const otherEntries = entries.filter( ( [ key ] ) => key !== 'overall' );
@@ -102,7 +100,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 							/>
 						}
 						hideSummary
-						screenReaderText={ translate( 'More' ) }
+						screenReaderText={ __( 'More' ) }
 						compact
 						clickableHeader
 						smooth

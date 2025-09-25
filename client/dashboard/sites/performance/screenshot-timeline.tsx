@@ -3,7 +3,7 @@ import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ScreenShotsTimeLine } from 'calypso/data/site-profiler/types';
+import { ScreenShotsTimeLine } from './core-web-vitals';
 
 const Container = styled.div`
 	width: 100%;

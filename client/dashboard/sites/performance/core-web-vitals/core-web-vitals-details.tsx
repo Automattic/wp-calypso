@@ -1,11 +1,11 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
+import { useViewportMatch } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 import {
 	Metrics,
 	PerformanceMetricsHistory,
 	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
+} from './index';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	getMetricsNames,
@@ -35,14 +35,13 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	onRecommendationsFilterChange,
 	...metrics
 } ) => {
-	const translate = useTranslate();
-	const isMobile = ! useDesktopBreakpoint();
+	const isMobile = ! useViewportMatch( 'medium' );
 
 	if ( ! activeTab ) {
 		return null;
 	}
 
-	const metricsNames = getMetricsNames( translate );
+	const metricsNames = getMetricsNames( __ );
 	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 
@@ -58,10 +57,10 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 
 	const displayUnit = () => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return translate( 's', { comment: 'Used for displaying a time range in seconds, eg. 1-2s' } );
+			return __( 's', { comment: 'Used for displaying a time range in seconds, eg. 1-2s' } );
 		}
 		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
-			return translate( 'ms', {
+			return __( 'ms', {
 				comment: 'Used for displaying a range in milliseconds, eg. 100-200ms',
 			} );
 		}
@@ -140,27 +139,27 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					/>
 				</div>
 				<p>
-					{ getMetricValuations( translate )[ activeTab ].explanation }
+					{ getMetricValuations( __ )[ activeTab ].explanation }
 					&nbsp;
 					<a
-						href={ localizeUrl( getMetricValuations( translate )[ activeTab ].docsUrl ) }
+						href={ localizeUrl( getMetricValuations( __ )[ activeTab ].docsUrl ) }
 						target="_blank"
 						rel="noreferrer"
 					>
-						{ translate( 'Learn more ↗' ) }
+						{ __( 'Learn more ↗' ) }
 					</a>
 				</p>
 				<div className="core-web-vitals-display__ranges">
 					<div className="range">
 						<StatusIndicator speed="good" />
-						<div className="range-heading">{ translate( 'Excellent' ) }</div>
+						<div className="range-heading">{ __( 'Excellent' ) }</div>
 						<div className="range-subheading">
 							{ isPerformanceScoreSelected
-								? translate( '(90–%(to)s)', {
+								? __( '(90–%(to)s)', {
 										args: { to: formatUnit( good ) },
 										comment: 'Displaying a percentage range, eg. 90-100',
 								  } )
-								: translate( '(0–%(to)s%(unit)s)', {
+								: __( '(0–%(to)s%(unit)s)', {
 										args: { to: formatUnit( good ), unit: displayUnit() },
 										comment: 'Displaying a time range, eg. 0-1s',
 								  } ) }
@@ -169,17 +168,17 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="needsImprovement" />
 
-						<div className="range-heading">{ translate( 'Needs Improvement' ) }</div>
+						<div className="range-heading">{ __( 'Needs Improvement' ) }</div>
 						<div className="range-subheading">
 							{ isPerformanceScoreSelected
-								? translate( '(%(from)s–%(to)s)', {
+								? __( '(%(from)s–%(to)s)', {
 										args: {
 											from: 50,
 											to: formatUnit( needsImprovement ),
 										},
 										comment: 'Displaying a percentage range, eg. 50-89',
 								  } )
-								: translate( '(%(from)s–%(to)s%(unit)s)', {
+								: __( '(%(from)s–%(to)s%(unit)s)', {
 										args: {
 											from: formatUnit( good ),
 											to: formatUnit( needsImprovement ),
@@ -192,17 +191,17 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="bad" />
 
-						<div className="range-heading">{ translate( 'Poor' ) }</div>
+						<div className="range-heading">{ __( 'Poor' ) }</div>
 						<div className="range-subheading">
 							{ isPerformanceScoreSelected
-								? translate( '(%(from)s-%(to)s) ', {
+								? __( '(%(from)s-%(to)s) ', {
 										args: {
 											from: 0,
 											to: formatUnit( bad ),
 										},
 										comment: 'Displaying a percentage range, eg. 0-49',
 								  } )
-								: translate( '(Over %(from)s%(unit)s) ', {
+								: __( '(Over %(from)s%(unit)s) ', {
 										args: {
 											from: formatUnit( needsImprovement ),
 											unit: displayUnit(),
