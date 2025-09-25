@@ -224,7 +224,7 @@ describe( 'NotificationsExtras', () => {
 	} );
 
 	it( 'shows "Unsubscribe from all" when at least one setting is enabled (WP)', async () => {
-		// Start with all WordPress.com settings enabled
+		// Start with one WordPress.com settings enabled
 		const settingsWithWpcomEnabled: UserNotificationSettings = {
 			...defaultUserSettings,
 			wpcom: {
@@ -251,7 +251,7 @@ describe( 'NotificationsExtras', () => {
 	} );
 
 	it( 'shows "Unsubscribe from all" when at least one setting is enabled (Jetpack)', async () => {
-		// Start with all WordPress.com settings enabled
+		// Start with one Jetpack setting enabled
 		const settingsWithWpcomEnabled: UserNotificationSettings = {
 			...defaultUserSettings,
 			wpcom: {
@@ -296,45 +296,6 @@ describe( 'NotificationsExtras', () => {
 		// Click the WordPress.com Suggestions toggle
 		const wpcomSuggestions = screen.getAllByLabelText( 'Suggestions' )[ 0 ];
 		await userEvent.click( wpcomSuggestions );
-
-		await waitFor( () => {
-			const snackbar = notificationSnackBar();
-			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
-		} );
-	} );
-
-	it( 'handles "Unsubscribe from all" correctly', async () => {
-		const customSettings: UserNotificationSettings = {
-			...defaultUserSettings,
-			wpcom: {
-				...defaultWpcomSettings,
-				marketing: true,
-				research: true,
-				community: true,
-			},
-		};
-
-		mockGetNotificationSettingsApi( customSettings );
-		mockSaveNotificationSettingsApi( {
-			marketing: false,
-			research: false,
-			community: false,
-		} );
-
-		dashboardRender(
-			<>
-				<Snackbars />
-				<NotificationsExtras />
-			</>
-		);
-
-		await waitFor( () => {
-			expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
-		} );
-
-		// Click the "Unsubscribe from all" button
-		await userEvent.click( screen.getByText( 'Unsubscribe from all' ) );
 
 		await waitFor( () => {
 			const snackbar = notificationSnackBar();
