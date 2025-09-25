@@ -15,8 +15,9 @@ export const updateAvailableField: Field< PluginListRow > = {
 	enableHiding: false,
 	enableSorting: true,
 	elements: [
-		{ value: 1, label: __( 'Yes' ) },
-		{ value: 0, label: __( 'No' ) },
+		{ value: 2, label: __( 'Yes' ) },
+		{ value: 1, label: __( 'No' ) },
+		{ value: 0, label: __( 'Updates auto-managed' ) },
 	],
 	render: ( { item } ) => {
 		if ( item.areAutoUpdatesAllowed === 'none' ) {
