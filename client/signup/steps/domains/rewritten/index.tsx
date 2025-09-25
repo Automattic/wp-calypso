@@ -292,6 +292,7 @@ const DomainSearchUI = (
 					className="domain-search--step-wrapper"
 					flowName={ flowName }
 					initialQuery={ queryObject.new }
+					currentSiteUrl={ queryObject.siteSlug ? `https://${ queryObject.siteSlug }` : undefined }
 					events={ events }
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
