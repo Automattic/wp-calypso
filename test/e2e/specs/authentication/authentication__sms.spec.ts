@@ -17,6 +17,8 @@ test.describe( 'Authentication: SMS', { tag: [ tags.AUTHENTICATION ] }, () => {
 			workerInfo.project.name !== 'authentication',
 			'The authentication project is the only one that has the right browser settings for authentication tests'
 		);
+		// This should not be smaller than the timeout in the email client: {@link EmailClient.getLastMatchingMessage}
+		test.setTimeout( 130_000 );
 
 		await test.step( 'When I log in as a user with 2fa', async function () {
 			const testAccount = new TestAccount( 'smsUser' );
