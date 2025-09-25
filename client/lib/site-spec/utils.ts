@@ -14,6 +14,7 @@ export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	locale?: string;
 	tracking?: {
 		enabled?: boolean;
 		prefix?: string;
