@@ -13,6 +13,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.*
 
 object WebApp : Project({
 	id("WebApp")
@@ -1193,19 +1194,8 @@ object AuthenticationE2ETests : BuildType({
 		}
 		buildReportTab {
           title = "Playwright Report"
-          startPage = "report/main.html"
+          startPage = "%PROJECT%/output/html/index.html"
         }
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Merge blob reports"
-			scriptContent = """
-				echo "Merging individual blob reports into a single HTML report"
-				cd test/e2e
-				npx playwright merge-reports --reporter html ./blob-report
-			"""
-		}
 	}
 
 	triggers {
