@@ -13,7 +13,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 
 object WebApp : Project({
 	id("WebApp")
@@ -1192,10 +1191,6 @@ object AuthenticationE2ETests : BuildType({
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
-		buildReportTab {
-          title = "Playwright Report"
-          startPage = "%PROJECT%/output/html/index.html"
-        }
 	}
 
 	triggers {
