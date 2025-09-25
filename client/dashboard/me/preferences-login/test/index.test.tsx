@@ -256,9 +256,9 @@ test( 'hides primary site selector when user has no sites', async () => {
 		{ timeout: 5000 }
 	);
 
-	expect( screen.queryByText( 'PRIMARY SITE' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Primary site' ) ).not.toBeInTheDocument();
 
-	expect( screen.getByText( 'DEFAULT LANDING PAGE' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
 } );
 
 test( 'disables save button while saving', async () => {

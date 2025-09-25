@@ -86,7 +86,7 @@ export default function PreferencesLogin() {
 	const fields: Field< LoginPreferencesFormData >[] = [
 		{
 			id: 'primarySiteId',
-			label: __( 'PRIMARY SITE' ),
+			label: __( 'Primary site' ),
 			description: __( 'Choose the default site dashboard you’ll see at login.' ),
 			isVisible: () => sites.length > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
@@ -114,7 +114,7 @@ export default function PreferencesLogin() {
 		},
 		{
 			id: 'defaultLandingPage',
-			label: __( 'DEFAULT LANDING PAGE' ),
+			label: __( 'Default landing page' ),
 			Edit: 'radio',
 			elements: [
 				{ label: __( 'Primary site dashboard' ), value: 'primary-site-dashboard' },
