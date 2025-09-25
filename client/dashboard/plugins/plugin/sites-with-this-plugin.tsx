@@ -206,14 +206,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			isActivating,
 			isDeactivating,
 			isFetching,
-			activateMutate,
+			plugin?.name,
 			plugin?.id,
 			deactivateMutate,
+			activateMutate,
 			isEnablingAutoupdate,
 			isDisablingAutoupdate,
-			enableAutoupdateMutate,
-			disableAutoupdateMutate,
 			pluginSlug,
+			disableAutoupdateMutate,
+			enableAutoupdateMutate,
 		]
 	);
 
