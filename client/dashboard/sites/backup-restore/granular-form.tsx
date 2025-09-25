@@ -26,8 +26,8 @@ function SiteBackupGranularRestoreForm( {
 	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserCheckList = fileBrowserState.getCheckList();
-	const browserSelectedList = fileBrowserState.getSelectedList();
+	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
+	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 
 	const handleGranularRestore = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );

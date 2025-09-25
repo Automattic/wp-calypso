@@ -110,9 +110,13 @@ export interface FileBrowserState {
 }
 
 export interface FileBrowserStateActions {
-	getNode: ( path: string ) => FileBrowserNode | null;
-	getCheckList: () => FileBrowserNodeCheckList;
-	getSelectedList: () => FileBrowserCheckListInfo[];
-	setNodeCheckState: ( nodePath: string, checkState: FileBrowserCheckState ) => void;
-	addChildNodes: ( parentPath: string, childrenPaths: FileBrowserItem[] ) => void;
+	getNode: ( path: string, rewindId: number ) => FileBrowserNode | null;
+	getCheckList: ( rewindId: number ) => FileBrowserNodeCheckList;
+	getSelectedList: ( rewindId: number ) => FileBrowserCheckListInfo[];
+	setNodeCheckState: (
+		nodePath: string,
+		checkState: FileBrowserCheckState,
+		rewindId: number
+	) => void;
+	addChildNodes: ( parentPath: string, childrenPaths: FileBrowserItem[], rewindId: number ) => void;
 }

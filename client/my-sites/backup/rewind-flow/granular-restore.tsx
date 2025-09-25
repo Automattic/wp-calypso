@@ -168,8 +168,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	} = useSelector( ( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress ) );
 
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserCheckList = fileBrowserState.getCheckList();
-	const browserSelectedList = fileBrowserState.getSelectedList();
+	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
+	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 
 	const [ loading, setLoading ] = useState( true );
 

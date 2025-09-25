@@ -37,7 +37,7 @@ function SiteBackupRestore() {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserSelectedList = fileBrowserState.getSelectedList();
+	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 	const hasSelectedFiles = browserSelectedList.length > 0;
 	const hasSelectedAllFiles = browserSelectedList[ 0 ]?.path === '//';
 

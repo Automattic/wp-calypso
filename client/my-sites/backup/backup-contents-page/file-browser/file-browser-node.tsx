@@ -60,7 +60,7 @@ function FileBrowserNode( {
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const { getNode, addChildNodes, setNodeCheckState } = fileBrowserState;
-	const browserNodeItem = getNode( path );
+	const browserNodeItem = getNode( path, rewindId );
 	const expandIcon = isRTL() ? chevronLeft : chevronRight;
 	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
@@ -113,18 +113,18 @@ function FileBrowserNode( {
 	const addChildrenWhenLoaded = useCallback(
 		( path: string, backupFiles: FileBrowserItem[] ) => {
 			if ( backupFiles ) {
-				addChildNodes( path, backupFiles.filter( shouldAddChildNode ) );
+				addChildNodes( path, backupFiles.filter( shouldAddChildNode ), rewindId );
 			}
 		},
-		[ addChildNodes, shouldAddChildNode ]
+		[ addChildNodes, rewindId, shouldAddChildNode ]
 	);
 
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
 		( path: string, checkState: FileBrowserCheckState ) => {
-			setNodeCheckState( path, checkState );
+			setNodeCheckState( path, checkState, rewindId );
 		},
-		[ setNodeCheckState ]
+		[ rewindId, setNodeCheckState ]
 	);
 
 	// Using isSuccess to track the API call status

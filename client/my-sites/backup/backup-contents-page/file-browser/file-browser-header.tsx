@@ -7,16 +7,16 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useFileBrowserContext } from './file-browser-context';
 
-function FileBrowserHeader() {
+function FileBrowserHeader( { rewindId }: { rewindId: number } ) {
 	const { fileBrowserState } = useFileBrowserContext();
 	const { getNode, getCheckList, setNodeCheckState } = fileBrowserState;
-	const rootNode = getNode( '/' );
-	const browserCheckList = getCheckList();
+	const rootNode = getNode( '/', rewindId );
+	const browserCheckList = getCheckList( rewindId );
 
 	// A simple toggle.  Mixed will go to unchecked.
 	const onCheckboxChange = () => {
 		const newCheckState = rootNode && rootNode.checkState === 'unchecked' ? 'checked' : 'unchecked';
-		setNodeCheckState( '/', newCheckState );
+		setNodeCheckState( '/', newCheckState, rewindId );
 	};
 
 	return (
