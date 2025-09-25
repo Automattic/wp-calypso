@@ -10,7 +10,7 @@ import {
 	uploadArtifactExample,
 	DEFAULT_WORKFLOW_TEMPLATE,
 } from './workflow-yaml-examples';
-import type { GitHubRepository, GitHubWorkflowValidation } from '@automattic/api-core';
+import type { GitHubRepository } from '@automattic/api-core';
 
 export interface WorkflowValidationDefinition {
 	label: string;
@@ -112,7 +112,7 @@ export const AdvancedWorkflowValidation = ( {
 
 			<WorkflowValidationList
 				validations={ workflowValidations }
-				result={ workflowChecks as GitHubWorkflowValidation | undefined }
+				result={ workflowChecks }
 				isLoading={ isFetchingWorkflowChecks }
 				onVerify={ handleVerifyWorkflow }
 				canVerify={ canVerifyWorkflow }
