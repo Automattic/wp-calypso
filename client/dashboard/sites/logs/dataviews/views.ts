@@ -85,5 +85,6 @@ export function useView( {
 		primaryField: config.primaryField,
 		fields: config.visibleFields,
 		layout: config.layout,
+		infiniteScrollEnabled: true,
 	} ) );
 }

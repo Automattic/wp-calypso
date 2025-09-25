@@ -1,6 +1,0 @@
-.site-logs-card {
-	// Hide per-page pagination everywhere except activity logs.
-	&:not(&--activity) .dataviews-pagination__page-select {
-		display: none !important;
-	}
-}

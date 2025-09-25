@@ -1,16 +1,28 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
-import { siteLogsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { siteLogsInfiniteQuery } from '@automattic/api-queries';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl } from '@wordpress/components';
+import {
+	ToggleControl,
+	Spinner,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalSpacer as Spacer,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { LogsDownloader } from '../downloader';
-import { buildTimeRangeInSeconds } from '../utils';
+import {
+	buildTimeRangeInSeconds,
+	buildPhpLogsWithId,
+	buildServerLogsWithId,
+	type PhpLogWithId,
+	type ServerLogWithId,
+} from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
 import { getInitialFiltersFromSearch, getAllowedFields, filtersSignature } from './filters';
@@ -49,6 +61,7 @@ function SiteLogsDataViews( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
+	const loadMoreRef = useRef< HTMLDivElement | null >( null );
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -71,70 +84,109 @@ function SiteLogsDataViews( {
 		pageSize: view.perPage,
 	};
 
-	// This keeps a per-page cursor cache - page 1 has no cursor.
-	const cursorsRef = useRef< Map< number, string > >( new Map() );
-
-	// For the current page, use its cursor (or null/undefined on page 1).
-	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
-
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( site.ID, params, scrollId ) );
-
-	useEffect( () => {
-		if ( ! siteLogs ) {
-			return;
-		}
-		const nextPage = ( view.page ?? 1 ) + 1;
-		const id = siteLogs.scroll_id;
-
-		if ( id ) {
-			cursorsRef.current.set( nextPage, id );
-		} else {
-			cursorsRef.current.delete( nextPage );
-		}
-	}, [ siteLogs, view.page ] );
+	const { data, isLoading, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
+		useInfiniteQuery( {
+			...siteLogsInfiniteQuery( site.ID, params ),
+		} );
 
 	useEffect( () => {
 		setView( ( value ) => ( { ...value, page: 1 } ) );
-
-		// Reset pagination + cursors
-		cursorsRef.current.clear();
 	}, [ dateRangeVersion, setView ] );
 
-	const logs = useMemo( () => {
-		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = siteLogs?.logs ?? [];
+	const phpLogs = useMemo< PhpLogWithId[] >( () => {
+		if ( logType !== LogType.PHP ) {
+			return [];
+		}
+		return buildPhpLogsWithId( ( data?.pages as Array< { logs?: PHPLog[] } > ) ?? [] );
+	}, [ data?.pages, logType ] );
 
-		return items.map( ( log, index ) => {
-			if ( logType === LogType.PHP ) {
-				const php = log as PHPLog;
-				return {
-					...php,
-					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
-						index
-					) }`,
-				};
+	const serverLogs = useMemo< ServerLogWithId[] >( () => {
+		if ( logType !== LogType.SERVER ) {
+			return [];
+		}
+		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
+	}, [ data?.pages, logType ] );
+
+	const currentPage = view.page ?? 1;
+	const perPage = view.perPage ?? 50;
+	const displayedPhpLogs = useMemo(
+		() => phpLogs.slice( 0, currentPage * perPage ),
+		[ phpLogs, currentPage, perPage ]
+	);
+	const displayedServerLogs = useMemo(
+		() => serverLogs.slice( 0, currentPage * perPage ),
+		[ serverLogs, currentPage, perPage ]
+	);
+
+	const infiniteScrollHandler = useCallback( () => {
+		// Reveal what we already have loaded
+		const totalLoaded = logType === LogType.PHP ? phpLogs.length : serverLogs.length;
+		const displayedCount =
+			logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length;
+		if ( displayedCount < totalLoaded ) {
+			setView( ( prev ) => ( { ...prev, page: ( prev.page ?? 1 ) + 1 } ) );
+		}
+
+		// Prefetch next page early when we're close to exhausting loaded items
+		const remainingLoaded =
+			( logType === LogType.PHP ? phpLogs.length : serverLogs.length ) - currentPage * perPage;
+		const shouldPrefetch = hasNextPage && ! isFetchingNextPage && remainingLoaded <= perPage;
+		if ( shouldPrefetch ) {
+			if ( autoRefresh ) {
+				setAutoRefresh( false );
 			}
-			const server = log as ServerLog;
-			return {
-				...server,
-				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
-					server.request_url
-				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
-			};
-		} );
-	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
+			fetchNextPage();
+		}
+	}, [
+		displayedPhpLogs.length,
+		displayedServerLogs.length,
+		phpLogs.length,
+		serverLogs.length,
+		logType,
+		currentPage,
+		perPage,
+		hasNextPage,
+		isFetchingNextPage,
+		fetchNextPage,
+		autoRefresh,
+		setAutoRefresh,
+		setView,
+	] );
 
-	const paginationInfo = {
-		totalItems: siteLogs?.total_results || 0,
-		totalPages:
-			!! siteLogs?.total_results && !! view.perPage
-				? Math.ceil( siteLogs.total_results / view.perPage )
-				: 0,
-	};
+	// One-time prefetch right after the first page is loaded for smoother initial scrolling
+	useEffect( () => {
+		if ( data?.pages?.length === 1 && hasNextPage && ! isFetchingNextPage ) {
+			fetchNextPage();
+		}
+	}, [ data?.pages?.length, hasNextPage, isFetchingNextPage, fetchNextPage ] );
+
+	useEffect( () => {
+		const el = loadMoreRef.current;
+		if ( ! el ) {
+			return;
+		}
+		const observer = new IntersectionObserver(
+			( entries ) => {
+				if ( entries[ 0 ]?.isIntersecting ) {
+					infiniteScrollHandler();
+				}
+			},
+			{ root: null, rootMargin: '600px 0px', threshold: 0 }
+		);
+		observer.observe( el );
+		return () => {
+			observer.disconnect();
+		};
+	}, [ infiniteScrollHandler ] );
 
 	const fields = useFields(
 		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
 	);
+
+	const paginationInfo = {
+		totalItems: logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length,
+		totalPages: 1,
+	};
 
 	const onChangeView = ( next: View ) => {
 		// Disable auto-refresh when the user changes the page
@@ -182,9 +234,8 @@ function SiteLogsDataViews( {
 		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
 		window.history.replaceState( null, '', url.pathname + url.search );
 
-		// Apply view with only allowed filters; reset page/cursors if dataset changed
+		// Apply view with only allowed filters; reset page if dataset changed
 		if ( datasetChanged ) {
-			cursorsRef.current.clear();
 			setView( {
 				...next,
 				page: 1,
@@ -234,8 +285,8 @@ function SiteLogsDataViews( {
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
-					data={ logs as PHPLog[] }
-					isLoading={ isFetching }
+					data={ displayedPhpLogs }
+					isLoading={ isLoading && displayedPhpLogs.length === 0 }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					view={ view }
@@ -247,8 +298,8 @@ function SiteLogsDataViews( {
 				/>
 			) : (
 				<DataViews< ServerLog >
-					data={ logs as ServerLog[] }
-					isLoading={ isFetching }
+					data={ displayedServerLogs }
+					isLoading={ isLoading && displayedServerLogs.length === 0 }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					view={ view }
@@ -259,6 +310,16 @@ function SiteLogsDataViews( {
 					header={ LogsHeader }
 				/>
 			) }
+			{ isFetchingNextPage && (
+				<VStack className="site-logs-infinite-loader" spacing={ 2 }>
+					<HStack alignment="center" spacing={ 2 }>
+						<Spinner />
+						<span>{ __( 'Loading more…' ) }</span>
+					</HStack>
+					<Spacer margin={ 0 } paddingTop={ 3 } />
+				</VStack>
+			) }
+			<Spacer as="div" margin={ 0 } paddingTop={ 1 } ref={ loadMoreRef } aria-hidden />
 		</>
 	);
 }
