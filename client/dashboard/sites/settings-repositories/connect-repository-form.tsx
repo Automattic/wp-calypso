@@ -19,6 +19,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
@@ -350,8 +351,19 @@ export const ConnectRepositoryForm = ( {
 		<VStack spacing={ 6 }>
 			<SectionHeader
 				title={ __( 'Configure repository connection' ) }
-				description={ __(
-					"Select a repository and choose where you'd like your files to deploy."
+				description={ createInterpolateElement(
+					__(
+						'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
+					),
+					{
+						a: (
+							<ExternalLink
+								href={ `https://github.com/settings/installations/${ selectedInstallation?.external_id }` }
+							>
+								{ __( 'Adjust permissions on GitHub' ) }
+							</ExternalLink>
+						),
+					}
 				) }
 			/>
 
