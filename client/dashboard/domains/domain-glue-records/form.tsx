@@ -2,18 +2,25 @@ import {
 	Card,
 	CardBody,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	Button,
+	privateApis,
 } from '@wordpress/components';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { ButtonStack } from '../../components/button-stack';
 import { Text } from '../../components/text';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { ValidatedInputControl } = unlock( privateApis );
 
 export interface FormData {
 	nameServer: string;
@@ -61,17 +68,20 @@ export default function DomainGlueRecordsForm( {
 					const { id, getValue } = field;
 					const suffix = `.${ domainName }`;
 					const value = getValue( { item: data } ).replace( suffix, '' );
+					const validationMessage = field.isValid?.custom?.( { nameServer: value } );
 
 					return (
-						// TODO: Show the error via Data Form when the ValidatedInputControl component is ready.
-						<InputControl
-							__next40pxDefaultSize
+						<ValidatedInputControl
+							required={ !! field.isValid?.required }
 							label={ field.label }
 							placeholder={ field.placeholder }
 							value={ value }
 							onChange={ ( value ) => {
 								return onChange( { [ id ]: value + suffix } );
 							} }
+							customValidity={
+								validationMessage ? { type: 'invalid', message: validationMessage } : undefined
+							}
 							suffix={
 								<InputControlSuffixWrapper>
 									<Text variant="muted">{ suffix }</Text>
