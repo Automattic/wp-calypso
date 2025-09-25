@@ -20,6 +20,9 @@ declare module '@tanstack/react-query' {
 			snackbar?: {
 				success?: string;
 				error?: string;
+				speak?: boolean; // announce to screen readers
+				successPoliteness?: 'polite' | 'assertive'; // wait or interrupt to announce
+				errorPoliteness?: 'polite' | 'assertive';
 			};
 		};
 	}
@@ -36,16 +39,26 @@ export default function Snackbars() {
 		return queryClient.getMutationCache().subscribe( ( event ) => {
 			const { type, mutation } = event;
 			if ( type === 'updated' ) {
-				if ( event.action.type === 'success' ) {
-					const message = mutation.meta?.snackbar?.success;
-					if ( message ) {
-						createSuccessNotice( message, { type: 'snackbar' } );
-					}
-				} else if ( event.action.type === 'error' ) {
-					const message = mutation.meta?.snackbar?.error;
-					if ( message ) {
-						createErrorNotice( message, { type: 'snackbar' } );
-					}
+				const snackbarConfig = mutation.meta?.snackbar;
+				if ( ! snackbarConfig ) {
+					return;
+				}
+
+				const { success, error, successPoliteness, errorPoliteness, ...otherProps } =
+					snackbarConfig;
+
+				if ( event.action.type === 'success' && success ) {
+					createSuccessNotice( success, {
+						type: 'snackbar',
+						...( successPoliteness && { politeness: successPoliteness } ),
+						...otherProps,
+					} );
+				} else if ( event.action.type === 'error' && error ) {
+					createErrorNotice( error, {
+						type: 'snackbar',
+						...( errorPoliteness && { politeness: errorPoliteness } ),
+						...otherProps,
+					} );
 				}
 			}
 		} );

@@ -37,7 +37,19 @@ export default function PersonalDetailsSection( {
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 
-	const mutation = useMutation( userSettingsMutation() );
+	const mutation = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Settings saved.' ),
+				error: __( 'Failed to save settings.' ),
+				speak: true,
+				successPoliteness: 'polite',
+				errorPoliteness: 'assertive',
+			},
+		},
+	} );
+
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
 
 	const currentUsername = userSettings?.user_login || '';
@@ -47,11 +59,9 @@ export default function PersonalDetailsSection( {
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
-			createSuccessNotice( __( 'Username changed successfully!' ), {
+			createSuccessNotice( __( 'Username saved.' ), {
 				type: 'snackbar',
-				isDismissible: true,
-				explicitDismiss: true,
-				speak: true, // Announce to screen readers
+				speak: true,
 				politeness: 'polite',
 			} );
 			const currentUrl = new URL( window.location.href );
@@ -78,22 +88,6 @@ export default function PersonalDetailsSection( {
 		mutation.mutate( submissionEdits, {
 			onSuccess: () => {
 				setEdits( {} );
-				createSuccessNotice( __( 'Settings saved successfully.' ), {
-					type: 'snackbar',
-					isDismissible: true,
-					explicitDismiss: true,
-					speak: true,
-					politeness: 'polite',
-				} );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to save settings.' ), {
-					type: 'snackbar',
-					isDismissible: true,
-					explicitDismiss: true,
-					speak: true,
-					politeness: 'assertive',
-				} );
 			},
 		} );
 	};
