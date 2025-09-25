@@ -5,7 +5,7 @@ import {
 	siteBackupActivityLogEntriesQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, useParams, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
@@ -17,7 +17,7 @@ import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState, useEffect } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { siteRoute, siteBackupDetailRoute } from '../../app/router/sites';
+import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -34,15 +34,16 @@ import type { ActivityLogEntry } from '@automattic/api-core';
 export function BackupsListPage() {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
+	const router = useRouter();
 
-	// Try to get rewindId parameter if we're on the detail route
-	let rewindId: string | undefined;
-	try {
-		const params = siteBackupDetailRoute.useParams();
-		rewindId = params.rewindId;
-	} catch {
-		// Not on detail route, rewindId remains undefined
-	}
+	const routeParams = useParams( {
+		// TODO: This workaround is needed until we update @tanstack/react-router that supports optional params.
+		from: siteBackupDetailRoute.id as unknown as undefined,
+		strict: false,
+		shouldThrow: false,
+	} );
+
+	const rewindId = routeParams?.rewindId;
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -60,12 +61,32 @@ export function BackupsListPage() {
 		timezoneString,
 		gmtOffset,
 	} );
-	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+	const [ selectedBackup, setSelectedBackupInState ] = useState< ActivityLogEntry | null >( null );
+
+	const setSelectedBackup = ( backup?: ActivityLogEntry | null, replace = false ) => {
+		if ( backup ) {
+			router.navigate( {
+				to: siteBackupDetailRoute.fullPath,
+				params: {
+					siteSlug: site.slug,
+					rewindId: backup.rewind_id,
+				},
+				replace,
+			} );
+		} else {
+			router.navigate( {
+				to: siteBackupsIndexRoute.fullPath,
+				params: {
+					siteSlug: siteSlug,
+				},
+				replace,
+			} );
+		}
+	};
 
 	// Fetch activity log if we have a rewindId to auto-select
 	const { data: activityLog } = useQuery( {
 		...siteBackupActivityLogEntriesQuery( site.ID ),
-		enabled: !! rewindId,
 	} );
 
 	// Auto-select backup based on rewindId parameter
@@ -73,14 +94,21 @@ export function BackupsListPage() {
 		if ( rewindId && activityLog ) {
 			const targetBackup = activityLog.find( ( item ) => item.rewind_id === rewindId );
 			if ( targetBackup ) {
-				setSelectedBackup( targetBackup );
+				setSelectedBackupInState( targetBackup );
 			}
+			return;
+		}
+		// if no rewindId, then it's hitting the index route
+		// let's redirect to the first found backup
+		const backup = activityLog?.[ 0 ];
+		if ( ! rewindId && backup ) {
+			setSelectedBackup( backup, true );
 		}
 	}, [ rewindId, activityLog ] );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		handleDateRangeChange( next );
-		setSelectedBackup( null );
+		setSelectedBackup( null, false );
 	};
 	const [ showDetails, setShowDetails ] = useState( false );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );

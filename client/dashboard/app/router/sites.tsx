@@ -381,7 +381,7 @@ export const siteBackupsRoute = createRoute( {
 	)
 );
 
-const backupsListLoader = async ( siteSlug: string ) => {
+const backupsListPageLoader = async ( siteSlug: string ) => {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 	// Preload activity log backup-related entries.
 	if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
@@ -393,7 +393,7 @@ export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
-		await backupsListLoader( siteSlug );
+		await backupsListPageLoader( siteSlug );
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
@@ -404,15 +404,14 @@ export const siteBackupsIndexRoute = createRoute( {
 );
 
 export const siteBackupDetailRoute = createRoute( {
-	getParentRoute: () => siteBackupsIndexRoute,
+	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId',
 	loader: async ( { params: { siteSlug } } ) => {
-		await backupsListLoader( siteSlug );
+		await backupsListPageLoader( siteSlug );
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-detail' )( {
-			// Yes, the backup detail page is the backups list page.
 			component: d.BackupsListPage,
 		} )
 	)
@@ -1130,8 +1129,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
-				siteBackupsIndexRoute,
 				siteBackupDetailRoute,
+				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
 			] )
