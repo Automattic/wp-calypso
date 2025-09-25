@@ -32,19 +32,16 @@ export const useSuggestionsList = () => {
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
-	const { isLoading: isLoadingQueryAvailability } = useQuery( {
+	const { isLoading: isLoadingQueryAvailability, data: availabilityData } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: !! getTld( query ),
-		queryFn: async () => {
-			const start = Date.now();
-			const availability = await fetchDomainAvailability( query );
-			const availabilityResponseTime = Date.now() - start;
-			if ( availability ) {
-				events.onQueryAvailabilityCheck( availability.status, query, availabilityResponseTime );
-			}
-			return availability;
-		},
 	} );
+
+	useEffect( () => {
+		if ( availabilityData && ! isLoadingQueryAvailability ) {
+			events.onQueryAvailabilityCheck( availabilityData.status, query );
+		}
+	}, [ availabilityData, isLoadingQueryAvailability, events, query ] );
 
 	const premiumSuggestions = useMemo(
 		() =>

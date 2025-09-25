@@ -77,11 +77,12 @@ const DomainSearchWithCart = ( {
 					root_vendor: rootVendor,
 				} );
 			},
-			onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => {
+			onQueryAvailabilityCheck: ( status: string, domainName: string ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
 					available_status: status,
 					flow_name: flowName,
-					response_time: responseTime,
+					// TODO: Not sure if we still need this
+					// response_time: responseTime,
 					search_query: domainName,
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );

@@ -46,7 +46,7 @@ export interface DomainSearchEvents {
 		isPremium: boolean,
 		rootVendor: string
 	) => void;
-	onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => void;
+	onQueryAvailabilityCheck: ( status: string, domainName: string ) => void;
 	onDomainAddAvailabilityPreCheck: (
 		unavailableStatus: string | null,
 		domainName: string,
