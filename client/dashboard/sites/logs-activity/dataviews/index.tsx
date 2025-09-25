@@ -1,7 +1,6 @@
 import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-core';
 import { siteActivityLogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { DataViews, View, Field } from '@wordpress/dataviews';
 import { useMemo } from 'react';
 import { useActivityActions } from './actions';
@@ -17,7 +16,6 @@ function SiteActivityLogsDataViews( {
 	logType: typeof LogType.ACTIVITY;
 } ) {
 	const [ view, setView ] = useActivityView();
-	const router = useRouter();
 
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
@@ -48,7 +46,7 @@ function SiteActivityLogsDataViews( {
 		timezoneString ? { gmtOffset, timezoneString } : { gmtOffset }
 	);
 
-	const actions = useActivityActions( { isLoading: isFetching, site, router } );
+	const actions = useActivityActions( { isLoading: isFetching, site } );
 
 	const onChangeView = ( next: View ) => {
 		setView( {
