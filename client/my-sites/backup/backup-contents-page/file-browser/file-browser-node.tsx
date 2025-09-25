@@ -51,6 +51,21 @@ function FileBrowserNode( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
+	// Spinner styles for different positions
+	const spinnerStyles = {
+		left: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+			padding: '0 6px',
+		},
+		right: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+		},
+	};
+
 	const { fileBrowserState } = useFileBrowserContext();
 	const isRoot = path === '/';
 	const isCurrentNodeClicked = activeNodePath === path;
@@ -331,34 +346,21 @@ function FileBrowserNode( {
 			return null;
 		}
 
-		const spinnerStyle = {
-			width: '12px',
-			height: '12px',
-			padding: '0 6px',
-			margin: 0,
-		};
-
 		if ( isLoading && isOpen ) {
-			return <Spinner style={ spinnerStyle } />;
+			return <Spinner style={ spinnerStyles.left } />;
 		}
 
 		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
 	};
 
 	const expandButton = () => {
-		const spinnerStyle = {
-			width: '12px',
-			height: '12px',
-			margin: 0,
-		};
-
 		if ( isLoading && isOpen ) {
 			return (
 				<div
 					className="file-browser-node__separate-expand-button"
 					style={ { padding: '6px', color: 'inherit' } }
 				>
-					<Spinner style={ spinnerStyle } />
+					<Spinner style={ spinnerStyles.right } />
 				</div>
 			);
 		}
