@@ -4,7 +4,7 @@ import {
 	fetchDomainAvailability,
 } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
@@ -21,12 +21,14 @@ export const useSuggestionsList = () => {
 		refetchOnWindowFocus: false,
 	} );
 
-	if ( ! isLoadingSuggestions && suggestions.length > 0 ) {
-		events.onSuggestionsReceive(
-			query,
-			suggestions.map( ( suggestion ) => suggestion.domain_name )
-		);
-	}
+	useEffect( () => {
+		if ( ! isLoadingSuggestions && suggestions.length > 0 ) {
+			events.onSuggestionsReceive(
+				query,
+				suggestions.map( ( suggestion ) => suggestion.domain_name )
+			);
+		}
+	}, [ suggestions, isLoadingSuggestions, events, query ] );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
