@@ -1,6 +1,6 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	ToggleControl,
@@ -58,6 +58,7 @@ function SiteLogsDataViews( {
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
@@ -236,6 +237,11 @@ function SiteLogsDataViews( {
 
 		// Apply view with only allowed filters; reset page if dataset changed
 		if ( datasetChanged ) {
+			// Clear prior infinite data for old sort/filter so we don't show an empty state.
+			queryClient.removeQueries( {
+				queryKey: [ 'site', site.ID, 'logs', 'infinite' ],
+				exact: false,
+			} );
 			setView( {
 				...next,
 				page: 1,
