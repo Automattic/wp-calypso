@@ -25,7 +25,12 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
-import type { Site, GitHubInstallation, GitHubRepository } from '@automattic/api-core';
+import type {
+	Site,
+	GitHubInstallation,
+	GitHubRepository,
+	CreateCodeDeploymentVariables,
+} from '@automattic/api-core';
 
 interface ConnectRepositoryFormProps {
 	site: Site;
@@ -140,7 +145,7 @@ export const ConnectRepositoryForm = ( {
 		targetDir: '/',
 		isAutomated: false,
 		deploymentMode: 'simple',
-		workflowPath: '.github/workflows/wpcom.yml',
+		workflowPath: undefined,
 	} );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
@@ -235,14 +240,19 @@ export const ConnectRepositoryForm = ( {
 			return;
 		}
 
-		await mutation.mutateAsync( {
+		const mutationData: CreateCodeDeploymentVariables = {
 			external_repository_id: selectedRepository.id,
 			branch_name: formData.branch,
 			target_dir: formData.targetDir,
 			installation_id: selectedInstallation.external_id,
 			is_automated: formData.isAutomated,
-			workflow_path: formData.workflowPath || '.github/workflows/wpcom.yml',
-		} );
+		};
+
+		if ( formData.deploymentMode === 'advanced' ) {
+			mutationData.workflow_path = formData.workflowPath || '.github/workflows/wpcom.yml';
+		}
+
+		await mutation.mutateAsync( mutationData );
 	};
 
 	const branchOptions = useMemo( () => {
