@@ -37,7 +37,6 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2/backport/site-overview": true,
-		"dashboard/v2/backport/sites-list": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"domain-search-rewrite": false,

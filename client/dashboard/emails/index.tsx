@@ -1,168 +1,41 @@
 import { Email } from '@automattic/api-core';
-import { emailsQuery, sitesQuery, siteDomainsQuery } from '@automattic/api-queries';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { emailsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
-import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import '../sites/emails/styles.scss';
+import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
 import type { View } from '@wordpress/dataviews';
-
-const fields = [
-	{
-		id: 'emailAddress',
-		label: __( 'Email Address' ),
-		enableGlobalSearch: true,
-		render: ( { item }: { item: Email } ) =>
-			item.type === 'mailbox' ? (
-				<ExternalLink href={ `https://mail.${ item.domainName }` }>
-					{ item.emailAddress }
-				</ExternalLink>
-			) : (
-				item.emailAddress
-			),
-	},
-	{
-		id: 'type',
-		label: __( 'Type' ),
-		render: ( { item }: { item: Email } ) =>
-			item.type === 'mailbox' ? __( 'Mailbox' ) : __( 'Forwarding' ),
-		getValue: ( { item }: { item: Email } ) => item.type,
-		elements: [
-			{ value: 'mailbox', label: __( 'Mailbox' ) },
-			{ value: 'forwarding', label: __( 'Forwarding' ) },
-		],
-	},
-	{
-		id: 'provider',
-		label: __( 'Provider' ),
-		render: ( { item }: { item: Email } ) => {
-			if ( item.type === 'forwarding' && item.forwardingTo ) {
-				return `${ __( 'Forwards to' ) } ${ item.forwardingTo }`;
-			}
-
-			// Display the provider display name from the data
-			// This keeps the component agnostic while showing user-friendly names
-			return item.providerDisplayName;
-		},
-		getValue: ( { item }: { item: Email } ) => item.provider,
-	},
-];
 
 function Emails() {
 	const navigate = useNavigate();
-	// Fetch all sites and then fetch domains for each site
-	const { data: sites } = useQuery( sitesQuery() );
-	const siteIds = sites?.map( ( s ) => s.ID ) ?? [];
-	const siteDomainsResults = useQueries( {
-		queries: siteIds.map( ( id ) => siteDomainsQuery( id ) ),
-	} );
-	// Combine domains from all sites into a single flat list
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const domains = siteDomainsResults.flatMap( ( r ) => r.data ?? [] );
-	const isLoading = ! sites || siteDomainsResults.some( ( r ) => r.isLoading );
+	const { data: allEmails, isLoading } = useQuery( emailsQuery() );
+	const emails = allEmails ?? [];
 
-	const emails = useQuery( emailsQuery() ).data;
 	const [ selection, setSelection ] = useState< Email[] >( [] );
-
-	// View config
-	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		page: 1,
-		perPage: 10,
-		sort: {
-			field: 'emailAddress',
-			direction: 'asc',
-		},
-		fields: [ 'type', 'provider' ],
-		titleField: 'emailAddress',
-	} );
+	const [ view, setView ] = useState< View >( DEFAULT_EMAILS_VIEW );
 
 	const actions = useMemo(
-		() => [
-			{
-				id: 'manage',
-				label: __( 'Manage' ),
-				callback: ( items: Email[] ) => {
-					navigate( { to: `/emails/${ items[ 0 ].id }` } );
-				},
-			},
-			{
-				id: 'edit',
-				label: __( 'Edit' ),
-				callback: ( items: Email[] ) => {
-					navigate( { to: `/emails/${ items[ 0 ].id }/edit` } );
-				},
-			},
-			{
-				id: 'access-webmail',
-				label: __( 'Access Webmail' ),
-				callback: ( items: Email[] ) => {
-					window.open( `https://mail.${ items[ 0 ].domainName }`, '_blank' );
-				},
-				isEligible: ( item: Email ) => item.type === 'mailbox',
-			},
-			{
-				id: 'delete',
-				label: __( 'Delete' ),
-				callback: () => {
-					setSelection( [] );
-				},
-				isDestructive: true,
-				supportsBulk: true,
-			},
-		],
-		[ navigate ]
+		() => createEmailActions( navigate, setSelection ),
+		[ navigate, setSelection ]
 	);
 
-	if ( ! emails ) {
-		return;
-	}
-
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, fields );
-
-	const onClickItem = ( item: Email ) => {
-		navigate( { to: `/emails/${ item.id }` } );
-	};
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Emails' ) }
-					actions={
-						<>
-							<Button variant="secondary" __next40pxDefaultSize>
-								{ __( 'Add Email Forwarder' ) }
-							</Button>
-							<Button variant="primary" __next40pxDefaultSize>
-								{ __( 'Add Mailbox' ) }
-							</Button>
-						</>
-					}
-				/>
-			}
-			notices={
-				<>
-					<OptInWelcome tracksContext="emails" />
-					<Notice status="warning" isDismissible={ false }>
-						{ __( 'This is using fake data for the moment' ) }
-					</Notice>
-				</>
-			}
-		>
+		<PageLayout header={ <PageHeader title={ __( 'Emails' ) } /> }>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
 					isLoading={ isLoading }
-					fields={ fields }
+					fields={ emailFields }
 					view={ view }
 					onChangeView={ setView }
-					onClickItem={ onClickItem }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )

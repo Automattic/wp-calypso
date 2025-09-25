@@ -39,7 +39,6 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2/backport/site-overview": true,
-		"dashboard/v2/backport/sites-list": true,
 		"domain-search-rewrite": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
