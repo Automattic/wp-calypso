@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';

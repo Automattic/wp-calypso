@@ -7,7 +7,6 @@ import { isValidUrl } from 'calypso/lib/importer/url-validation';
 
 interface SelectNewsletterFormProps {
 	value: string;
-	setFromSite: ( fromSite: string ) => void;
 	isError: boolean;
 	onContinue: ( fromSite: string ) => void;
 }

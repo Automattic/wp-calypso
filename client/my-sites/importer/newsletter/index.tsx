@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -130,9 +131,13 @@ export default function NewsletterImporter( {
 	const stepsProgress = getStepsProgress( engine, selectedSite?.slug || '', paidNewsletterData );
 	const nextStepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`;
 
-	const redirectFromSite = ( fromSite: string ) => {
-		const { hostname, pathname } = parseUrl( fromSite );
+	const redirectFromSite = ( fromSiteInput: string ) => {
+		const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
+		const { hostname, pathname } = parseUrl( fromSiteInput );
 		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
+
+		setOriginSite( selectedSite?.ID ?? 0, engine, 'content', fromSiteInput );
+		setFromSite( fromSiteInput );
 
 		page( addQueryArgs( stepUrl, { from } ) );
 	};
@@ -170,14 +175,7 @@ export default function NewsletterImporter( {
 			{ ! fromSite && ! isLoading && (
 				<SelectNewsletterForm
 					onContinue={ redirectFromSite }
-					siteId={ selectedSite?.ID ?? 0 }
 					value={ fromSite }
-					setFromSite={ ( fromSite ) => {
-						setOriginSite( selectedSite?.ID ?? 0, engine, 'content', fromSite );
-						setFromSite( fromSite );
-					} }
-					siteSlug={ siteSlug }
-					engine={ engine }
 					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }

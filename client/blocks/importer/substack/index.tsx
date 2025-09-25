@@ -55,7 +55,7 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 
 	const [ step, setStep ] = useState< StepId >( 'content' );
 
-	const { siteSlug, site } = props;
+	const { siteSlug, site, fromSite: fromSiteProp } = props;
 	const selectedSite = site;
 
 	const importerStep = useQuery().get( 'importerStep' );
@@ -65,6 +65,16 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
 
 	const { setOriginSite, isPending: isSetOriginSitePending } = useSetOriginSiteMutation();
+
+	/**
+	 * Pass the fromSite prop to the mutation to set the origin site when
+	 * coming from the Calypso migration flow (/setup/site-migration/site-migration-identify).
+	 */
+	useEffect( () => {
+		if ( fromSiteProp && selectedSite ) {
+			setOriginSite( selectedSite.ID, engine, stepSlugs[ 0 ], fromSiteProp );
+		}
+	}, [] );
 
 	useEffect( () => {
 		if ( importerStep && stepSlugs.includes( importerStep as StepId ) ) {
@@ -175,16 +185,14 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 			{ ( ! fromSite || isResetPaidNewsletterPending ) && ! isLoading && (
 				<SelectNewsletterForm
 					onContinue={ ( fromSiteOnContinue ) => {
-						setStep( nextStepSlug );
-						setOriginSite( selectedSite?.ID ?? 0, engine, nextStepSlug, fromSiteOnContinue );
+						resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ], fromSiteOnContinue );
 					} }
 					value={ fromSite ?? '' }
-					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
 					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }
 
-			{ selectedSite && fromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
+			{ selectedSite && fromSite && ! isLoading && (
 				<>
 					{ step === 'content' && (
 						<Content
@@ -226,10 +234,13 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 								resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
 							} }
 							steps={ paidNewsletterData.steps }
-							engine={ engine }
 							fromSite={ fromSite }
 							showConfetti={ showConfetti }
 							shouldShownConfetti={ setShowConfetti }
+							resetImporter={ function (): void {
+								setStep( stepSlugs[ 0 ] );
+								resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+							} }
 						/>
 					) }
 				</>

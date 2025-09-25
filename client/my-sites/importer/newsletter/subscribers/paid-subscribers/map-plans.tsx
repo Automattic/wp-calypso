@@ -51,7 +51,7 @@ function findNewProduct( currentProducts: Array< Product >, previousProducts: Ar
 	);
 }
 
-interface MapPlansProps extends SubscribersStepProps {
+interface MapPlansProps extends Omit< SubscribersStepProps, 'fromSite' > {
 	onStartImport: () => void;
 }
 
