@@ -6,8 +6,8 @@ export const PerformanceReportLoading = ( {
 	pageTitle,
 	isLoadingPages,
 }: {
-	isSavedReport: boolean;
-	pageTitle: string;
+	isSavedReport?: boolean;
+	pageTitle?: string;
 	isLoadingPages?: boolean;
 } ) => {
 	const { __ } = useI18n();

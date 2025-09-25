@@ -11,7 +11,7 @@ interface PerformanceReportProps {
 	isError: boolean;
 	isRetesting: boolean;
 	onRetestClick(): void;
-	pageTitle: string;
+	pageTitle?: string;
 	filter?: string;
 	onFilterChange?( fitler: string ): void;
 }
