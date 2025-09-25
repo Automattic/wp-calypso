@@ -824,6 +824,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
+						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {

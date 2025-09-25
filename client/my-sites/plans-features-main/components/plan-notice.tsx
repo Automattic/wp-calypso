@@ -1,5 +1,6 @@
 import { PlanSlug, isProPlan, isStarterPlan } from '@automattic/calypso-products';
 import { Site, SiteMediaStorage } from '@automattic/data-stores';
+import { PlansIntent } from '@automattic/plans-grid-next';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
@@ -22,6 +23,7 @@ export type PlanNoticeProps = {
 	isInSignup?: boolean;
 	showLegacyStorageFeature?: boolean;
 	mediaStorage?: SiteMediaStorage;
+	intent?: PlansIntent;
 	discountInformation?: {
 		coupon: string;
 		discountEndDate: Date;
@@ -96,7 +98,7 @@ function useResolveNoticeType(
 }
 
 export default function PlanNotice( props: PlanNoticeProps ) {
-	const { siteId, visiblePlans, discountInformation } = props;
+	const { siteId, visiblePlans, discountInformation, intent } = props;
 	const translate = useTranslate();
 	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
 	const noticeType = useResolveNoticeType( props, isNoticeDismissed );
@@ -178,6 +180,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					siteId={ siteId }
 					visiblePlans={ visiblePlans }
+					intent={ intent }
 				/>
 			);
 		case PLAN_RETIREMENT_NOTICE:
