@@ -3,17 +3,15 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import { useAuth } from '../../../app/auth';
 import { render } from '../../../test-utils';
 import PreferencesLogin from '../index';
 import type { Site } from '@automattic/api-core';
 import type { DeepPartial } from 'utility-types';
-
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
 
 const API_BASE = 'https://public-api.wordpress.com';
 const mockPrimarySiteId = 123;
@@ -32,10 +30,10 @@ if ( typeof CSS.escape !== 'function' ) {
 Element.prototype.scrollIntoView = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( {
-		createSuccessNotice: mockCreateSuccessNotice,
-		createErrorNotice: mockCreateErrorNotice,
-	} ),
+	useDispatch: jest.fn( () => ( {
+		createSuccessNotice: jest.fn(),
+		createErrorNotice: jest.fn(),
+	} ) ),
 	store: jest.fn(),
 	combineReducers: jest.fn(),
 	createReduxStore: jest.fn(),
@@ -149,7 +147,7 @@ test( 'save button becomes enabled when form is modified', async () => {
 	);
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
-	await act( async () => await user.click( sitesRadio ) );
+	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 	await waitFor(
@@ -161,6 +159,10 @@ test( 'save button becomes enabled when form is modified', async () => {
 } );
 
 test( 'saves preferences successfully', async () => {
+	const mockCreateSuccessNotice = jest.fn();
+	( useDispatch as jest.Mock ).mockReturnValue( {
+		createSuccessNotice: mockCreateSuccessNotice,
+	} );
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
@@ -178,11 +180,11 @@ test( 'saves preferences successfully', async () => {
 		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
-	await act( async () => await user.click( sitesRadio ) );
+	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 
-	await act( async () => await user.click( saveButton ) );
+	await user.click( saveButton );
 	await waitFor(
 		() => {
 			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Login preferences saved.', {
@@ -194,6 +196,10 @@ test( 'saves preferences successfully', async () => {
 } );
 
 test( 'handles save error gracefully', async () => {
+	const mockCreateErrorNotice = jest.fn();
+	( useDispatch as jest.Mock ).mockReturnValue( {
+		createErrorNotice: mockCreateErrorNotice,
+	} );
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
@@ -269,6 +275,10 @@ test( 'hides primary site selector when user has no sites', async () => {
 } );
 
 test( 'disables save button while saving', async () => {
+	const mockCreateSuccessNotice = jest.fn();
+	( useDispatch as jest.Mock ).mockReturnValue( {
+		createSuccessNotice: mockCreateSuccessNotice,
+	} );
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
@@ -287,11 +297,11 @@ test( 'disables save button while saving', async () => {
 		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
-	await act( async () => await user.click( sitesRadio ) );
+	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 
-	await act( async () => await user.click( saveButton ) );
+	await user.click( saveButton );
 
 	await waitFor(
 		() => {
