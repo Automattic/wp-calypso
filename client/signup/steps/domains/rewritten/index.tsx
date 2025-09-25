@@ -184,10 +184,7 @@ const DomainSearchUI = (
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
-			allowsUsingOwnDomain:
-				! isDomainForGravatarFlow( flowName ) &&
-				! isOnboardingWithEmailFlow &&
-				! isFreeFlow( flowName ),
+			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 
