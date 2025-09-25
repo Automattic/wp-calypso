@@ -242,7 +242,9 @@ const SitePerformanceContent = () => {
 	);
 
 	const subtitle =
-		! performanceReport.isLoading && performanceReport.performanceReport
+		! performanceReport.isLoading &&
+		! performanceReport.isRetesting &&
+		performanceReport.performanceReport
 			? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
 					args: {
 						testedDate: moment( performanceReport.performanceReport.timestamp ).format(
