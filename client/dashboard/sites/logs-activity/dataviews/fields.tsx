@@ -56,6 +56,9 @@ export function useActivityFields( {
 	const isLargeScreen = useViewportMatch( 'huge', '>=' );
 	const dateTimeLabel = getDateTimeLabel( { timezoneString, gmtOffset, isLargeScreen } );
 
+	const localIsUTC =
+		( timezoneString ? timezoneString.toUpperCase().includes( 'UTC' ) : false ) || gmtOffset === 0;
+
 	const activityLogTypeElements = useMemo< ActivityLogTypeOption[] >( () => {
 		if ( ! activityLogTypes ) {
 			return [];
@@ -84,23 +87,33 @@ export function useActivityFields( {
 				},
 				filterBy: { operators: [] },
 			},
-			{
-				id: 'published_utc',
-				type: 'datetime',
-				label: __( 'Date & Time (UTC)' ),
-				enableHiding: true,
-				enableSorting: true,
-				getValue: ( { item } ) => item.published,
-				render: ( { item } ) => {
-					const value = item.published;
-					return (
-						<span>
-							{ formatDateCell( { value, timezoneString, gmtOffset, locale, formatAsUTC: true } ) }
-						</span>
-					);
-				},
-				filterBy: { operators: [] },
-			},
+			...( ! localIsUTC
+				? [
+						{
+							id: 'published_utc',
+							type: 'datetime',
+							label: __( 'Date & time (UTC)' ),
+							enableHiding: true,
+							enableSorting: true,
+							getValue: ( { item } ) => item.published,
+							render: ( { item } ) => {
+								const value = item.published;
+								return (
+									<span>
+										{ formatDateCell( {
+											value,
+											timezoneString,
+											gmtOffset,
+											locale,
+											formatAsUTC: true,
+										} ) }
+									</span>
+								);
+							},
+							filterBy: { operators: [] },
+						} as Field< SiteActivityLog >,
+				  ]
+				: [] ),
 			{
 				id: 'event',
 				type: 'text',
@@ -147,5 +160,6 @@ export function useActivityFields( {
 		dateTimeLabel,
 		activityLogTypeElements,
 		activityLogTypes,
+		localIsUTC,
 	] );
 }
