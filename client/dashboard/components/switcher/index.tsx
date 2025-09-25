@@ -13,6 +13,9 @@ export default function Switcher< T >( {
 	getItemName,
 	getItemUrl,
 	renderItemIcon,
+	open,
+	onToggle,
+	defaultOpen,
 }: {
 	items?: T[];
 	value: T;
@@ -20,9 +23,17 @@ export default function Switcher< T >( {
 	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
 	renderItemIcon: RenderItemIcon< T >;
+
+	// For controlled usage of the switcher
+	open?: boolean;
+	onToggle?: ( willOpen: boolean ) => void;
+	defaultOpen?: boolean;
 } ) {
 	return (
 		<Dropdown
+			open={ open }
+			onToggle={ onToggle }
+			defaultOpen={ defaultOpen }
 			renderToggle={ ( { onToggle, isOpen } ) => (
 				<Button
 					className="dashboard-menu__item active"
