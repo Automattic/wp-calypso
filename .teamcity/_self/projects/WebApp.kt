@@ -1191,6 +1191,21 @@ object AuthenticationE2ETests : BuildType({
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
+		buildReportTab {
+          title = "Playwright Report"
+          startPage = "report/main.html"
+        }
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Merge blob reports"
+			scriptContent = """
+				echo "Merging individual blob reports into a single HTML report"
+				cd test/e2e
+				npx playwright merge-reports --reporter html ./blob-report
+			"""
+		}
 	}
 
 	triggers {
