@@ -104,15 +104,7 @@ export default async function (): Promise< void > {
 			clientRender
 		);
 
-		page(
-			'/reader/feeds/lookup/*',
-			redirectLoggedOutToSignup,
-			sidebar,
-			feedLookup,
-			feedListing,
-			makeLayout,
-			clientRender
-		);
+		page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
 
 		setupReaderRedirects();
 	}
