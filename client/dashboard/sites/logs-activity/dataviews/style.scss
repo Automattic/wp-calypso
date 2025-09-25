@@ -1,0 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+.components-search-control.dataviews-search {
+	@include break-small {
+		min-width: 250px; // makes the placeholder text fully visible on bigger screens
+	}
+}

@@ -112,6 +112,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Scheduled Updates' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate( 'Learn Faster to Grow Faster' );
+		} else if ( 'wp_studio' === category ) {
+			return this.props.translate( 'WordPress Studio' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -172,6 +174,10 @@ class MainComponent extends Component {
 		} else if ( 'learn' === category ) {
 			return this.props.translate(
 				'Take your WordPress.com site to new heights with expert webinars, courses, and community forums.'
+			);
+		} else if ( 'wp_studio' === category ) {
+			return this.props.translate(
+				'WordPress Studio news, announcements, tips, and feature spotlights.'
 			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
