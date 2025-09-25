@@ -10,7 +10,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import './styles.scss';
-import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from '../../emails/shared';
+import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from '../../emails/dataviews';
 import type { View } from '@wordpress/dataviews';
 
 function SiteEmails() {
