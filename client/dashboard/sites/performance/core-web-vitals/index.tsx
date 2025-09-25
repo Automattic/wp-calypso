@@ -65,12 +65,10 @@ export type ScreenShotsTimeLine = {
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
-	recommendationsRef: React.RefObject< HTMLDivElement > | null;
-	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
-	const [ activeTab, setActiveTab ] = useState< Metrics | null >( 'overall' );
+	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall' );
 	const isDesktop = useViewportMatch( 'medium' );
 
 	if ( isDesktop ) {
