@@ -187,7 +187,10 @@ const DomainSearchStep: StepType< {
 			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
-				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isNewHostedSiteCreationFlow( flow )
+				isOnboardingFlow( flow ) ||
+				isDomainFlow( flow ) ||
+				isNewHostedSiteCreationFlow( flow ) ||
+				isDomainUpsellFlow( flow )
 			}
 			slots={ slots }
 		/>
