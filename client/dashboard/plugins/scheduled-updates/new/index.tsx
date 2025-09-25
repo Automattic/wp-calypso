@@ -28,12 +28,12 @@ import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
 import { prepareTimestamp, runWithConcurrency } from './helpers';
-import { usePluginCollisionsFromMultisite } from './hooks/use-plugin-collisions';
-import { useTimeSlotCollisionsFromMultisite } from './hooks/use-time-slot-collisions';
+import { useScheduleCollisions } from './hooks/use-schedule-collisions';
 import type { Frequency, Weekday } from '../types';
 import type { Site } from '@automattic/api-core';
 
 const BLOCK_CREATE = true;
+const VALIDATION_EAGER = false;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
@@ -56,28 +56,37 @@ function ScheduledUpdatesNew() {
 		siteJetpackMonitorSettingsCreateMutation()
 	);
 
-	const {
-		error: timeError,
-		collidingSiteIds: timeCollidingSiteIds,
-		isLoading: isTimeCollisionsLoading,
-	} = useTimeSlotCollisionsFromMultisite( siteIdsAsNumbers, frequency, weekday, time );
+	const eagerCollisionInputs = VALIDATION_EAGER
+		? { siteIds: siteIdsAsNumbers, plugins: selectedPluginSlugs, frequency, weekday, time }
+		: undefined;
+	const collisionsChecker = useScheduleCollisions( eagerCollisionInputs, {
+		eager: VALIDATION_EAGER,
+	} );
 
-	const {
-		error: pluginError,
-		collidingSiteIds: pluginCollidingSiteIds,
-		isLoading: isPluginCollisionsLoading,
-	} = usePluginCollisionsFromMultisite( siteIdsAsNumbers, selectedPluginSlugs );
+	const isScheduleCollisionsLoading = collisionsChecker.isLoading;
 
 	const handleCreate = useCallback( () => {
 		setValidationError( '' );
 
-		if ( ! isValid || isTimeCollisionsLoading || isPluginCollisionsLoading ) {
+		if ( ! isValid || isScheduleCollisionsLoading ) {
 			return;
 		}
 
+		setIsSubmitting( true );
+
+		const { timeCollisions, pluginCollisions } = collisionsChecker.validateNow( {
+			siteIds: siteIdsAsNumbers,
+			plugins: selectedPluginSlugs,
+			frequency,
+			weekday,
+			time,
+		} );
+
 		// Prefer showing time collision error first if present; otherwise plugin collision
-		const collisionsError = timeError || pluginError;
-		const collidingSiteIds = timeError ? timeCollidingSiteIds : pluginCollidingSiteIds;
+		const collisionsError = timeCollisions.error || pluginCollisions.error;
+		const collidingSiteIds = timeCollisions.error
+			? timeCollisions.collidingSiteIds
+			: pluginCollisions.collidingSiteIds;
 
 		// show error if there are collisions and optionally list colliding sites
 		if ( collisionsError ) {
@@ -102,7 +111,6 @@ function ScheduledUpdatesNew() {
 			return;
 		}
 
-		setIsSubmitting( true );
 		const timestamp = prepareTimestamp( frequency, weekday, time );
 		const body = {
 			plugins: selectedPluginSlugs,
@@ -173,14 +181,10 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
-		siteIdsAsNumbers.length,
-		isTimeCollisionsLoading,
-		isPluginCollisionsLoading,
+		siteIdsAsNumbers,
 		isValid,
-		timeError,
-		pluginError,
-		timeCollidingSiteIds,
-		pluginCollidingSiteIds,
+		isScheduleCollisionsLoading,
+		collisionsChecker,
 	] );
 
 	return (
@@ -235,9 +239,7 @@ function ScheduledUpdatesNew() {
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={
-									! isValid || isSubmitting || isTimeCollisionsLoading || isPluginCollisionsLoading
-								}
+								disabled={ ! isValid || isSubmitting || isScheduleCollisionsLoading }
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>
