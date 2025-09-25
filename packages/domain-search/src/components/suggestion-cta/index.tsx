@@ -59,13 +59,16 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 
 			setTrademarkClaimModalOpen( true );
 		},
-		onSuccess: () => {
-			events.onAddDomainToCart(
-				domainName,
-				suggestion.position,
-				suggestion.is_premium ?? false,
-				suggestion.vendor
-			);
+		onSuccess: ( data ) => {
+			// If `data` is undefined, the domain was not added to the cart yet
+			if ( data ) {
+				events.onAddDomainToCart(
+					domainName,
+					suggestion.position,
+					suggestion.is_premium ?? false,
+					suggestion.vendor
+				);
+			}
 		},
 		networkMode: 'always',
 		retry: false,
