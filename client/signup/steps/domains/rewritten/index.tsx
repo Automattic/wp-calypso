@@ -235,6 +235,7 @@ const DomainSearchUI = (
 			hideSkip
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
+			isWideLayout
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"

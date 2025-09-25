@@ -1,5 +1,5 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
-import { LineChart, SeriesData } from '@automattic/charts';
+import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -10,7 +10,6 @@ import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-import type { DataPointDate } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
