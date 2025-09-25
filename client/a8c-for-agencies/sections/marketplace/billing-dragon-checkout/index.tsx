@@ -141,8 +141,8 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/client/subscriptions' }
-				customizedPreviousPath="/client/subscriptions"
+				redirectTo={ window.location.origin + '/purchases/licenses' }
+				customizedPreviousPath="/marketplace"
 				isInModal={ false }
 				siteSlug=""
 				siteId={ 0 }
