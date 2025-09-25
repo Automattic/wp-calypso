@@ -7,7 +7,14 @@ export const siteLogsInfiniteQuery = ( siteId: number, params: SiteLogsParams ) 
 		queryFn: ( { pageParam }: { pageParam: string | null } ) =>
 			fetchSiteLogs( siteId, params, pageParam ?? undefined ),
 		initialPageParam: null as string | null,
-		getNextPageParam: ( lastPage ) => lastPage.scroll_id || undefined,
+		getNextPageParam: ( lastPage ) => {
+			const pageSize = params.pageSize ?? 50;
+			const count = Array.isArray( lastPage?.logs ) ? lastPage.logs.length : 0;
+			if ( count < pageSize ) {
+				return undefined;
+			}
+			return lastPage.scroll_id || undefined;
+		},
 		staleTime: Infinity,
 		enabled: params.start <= params.end,
 	} );
