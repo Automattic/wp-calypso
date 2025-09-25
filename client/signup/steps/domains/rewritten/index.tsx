@@ -129,8 +129,6 @@ const DomainSearchUI = (
 				goToNextStep();
 			},
 			onSkip( suggestion?: FreeDomainSuggestion ) {
-				const siteUrl = suggestion?.domain_name.replace( '.wordpress.com', '' );
-
 				submitSignupStep(
 					{
 						...baseSubmitStepProps,
@@ -138,7 +136,7 @@ const DomainSearchUI = (
 						domainItem: undefined,
 						isPurchasingItem: false,
 						domainCart: [],
-						siteUrl,
+						siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
 					},
 					{
 						...baseSubmitProvidedDependencies,
@@ -146,7 +144,7 @@ const DomainSearchUI = (
 							? SIGNUP_DOMAIN_ORIGIN.FREE
 							: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
 						domainCart: [],
-						siteUrl,
+						siteUrl: suggestion?.domain_name,
 					}
 				);
 
