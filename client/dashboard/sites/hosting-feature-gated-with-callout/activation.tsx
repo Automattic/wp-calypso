@@ -3,12 +3,13 @@ import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import illustrationUrl from './upsell-illustration.svg';
+import type { ReactNode } from 'react';
 
 export default function ActivationCallout( {
-	asOverlay,
+	main,
 	onClick,
 }: {
-	asOverlay?: boolean;
+	main?: ReactNode;
 	onClick: () => void;
 } ) {
 	const callout = (
@@ -50,8 +51,8 @@ export default function ActivationCallout( {
 		/>
 	);
 
-	if ( asOverlay ) {
-		return <CalloutOverlay callout={ callout } />;
+	if ( main ) {
+		return <CalloutOverlay callout={ callout } main={ main } />;
 	}
 
 	return callout;

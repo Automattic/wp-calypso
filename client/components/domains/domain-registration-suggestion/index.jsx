@@ -20,7 +20,7 @@ import {
 	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/legacy/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

@@ -35,6 +35,7 @@ export * from './me-preferences';
 export * from './me-purchases';
 export * from './me-settings';
 export * from './me-notification-settings';
+export * from './me-social-logins';
 export * from './me-shopping-cart';
 export * from './me-sites';
 export * from './me-sites-plugins';

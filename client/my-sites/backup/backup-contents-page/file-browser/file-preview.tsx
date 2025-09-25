@@ -2,9 +2,11 @@ import {
 	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Icon,
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { unseen } from '@wordpress/icons';
 import { useCallback } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
@@ -59,10 +61,11 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	if ( isSensitive && ! showSensitivePreview ) {
 		return (
 			<VStack className="file-card__preview-sensitive" alignment="center">
+				<Icon icon={ unseen } />
 				<Text as="p">
 					{ __( 'This preview is hidden because it contains sensitive information.' ) }
 				</Text>
-				<Button size="compact" variant="primary" onClick={ handleShowPreviewClick }>
+				<Button size="compact" variant="secondary" onClick={ handleShowPreviewClick }>
 					{ __( 'Show preview' ) }
 				</Button>
 			</VStack>

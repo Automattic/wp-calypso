@@ -1,15 +1,7 @@
-import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Button,
-} from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { siteBackupsRoute } from '../../app/router/sites';
-import { ButtonStack } from '../../components/button-stack';
+import { Notice } from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 
 const SiteBackupRestoreSuccess = ( {
@@ -20,12 +12,6 @@ const SiteBackupRestoreSuccess = ( {
 	site: Site;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
-	const router = useRouter();
-
-	const handleAllBackupsClick = () => {
-		recordTracksEvent( 'calypso_dashboard_backups_restore_all_backups' );
-		router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug: site.slug } } );
-	};
 
 	const handleViewWebsiteClick = () => {
 		recordTracksEvent( 'calypso_dashboard_backups_restore_view_website' );
@@ -33,25 +19,23 @@ const SiteBackupRestoreSuccess = ( {
 	};
 
 	return (
-		<HStack spacing={ 4 }>
-			<HStack justify="flex-start">
-				<Icon icon={ check } />
-				<VStack spacing={ 1 }>
-					<Text size={ 15 }>{ __( 'Site successfully restored' ) }</Text>
-					<Text size={ 13 } variant="muted">
-						{ restorePointDate }
-					</Text>
-				</VStack>
-			</HStack>
-			<ButtonStack justify="flex-end">
-				<Button variant="tertiary" text={ __( 'All backups' ) } onClick={ handleAllBackupsClick } />
+		<Notice
+			variant="success"
+			title={ __( 'Site successfully restored' ) }
+			actions={
 				<Button
 					variant="primary"
 					text={ __( 'View website ↗' ) }
 					onClick={ handleViewWebsiteClick }
 				/>
-			</ButtonStack>
-		</HStack>
+			}
+		>
+			{ sprintf(
+				/* translators: %s is the date of the restore point */
+				__( 'We restored the backup from %s.' ),
+				restorePointDate
+			) }
+		</Notice>
 	);
 };
 

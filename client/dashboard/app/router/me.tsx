@@ -235,6 +235,14 @@ export const securityRoute = createRoute( {
 			},
 		],
 	} ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( accountRecoveryQuery() ),
+			queryClient.ensureQueryData( connectedApplicationsQuery() ),
+			queryClient.ensureQueryData( sshKeysQuery() ),
+		] );
+	},
 	getParentRoute: () => meRoute,
 	path: 'security',
 } );
