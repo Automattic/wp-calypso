@@ -119,8 +119,8 @@ function SiteBackupRestore() {
 			size="small"
 			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
 		>
-			<Card>
-				{ currentStep !== 'success' && (
+			{ currentStep !== 'success' ? (
+				<Card>
 					<CardHeader>
 						<SectionHeader
 							title={ __( 'Restore point' ) }
@@ -141,11 +141,13 @@ function SiteBackupRestore() {
 							decoration={ <Icon icon={ cloud } /> }
 						/>
 					</CardHeader>
-				) }
-				<CardBody>
-					<VStack spacing={ 4 }>{ renderStep() }</VStack>
-				</CardBody>
-			</Card>
+					<CardBody>
+						<VStack spacing={ 4 }>{ renderStep() }</VStack>
+					</CardBody>
+				</Card>
+			) : (
+				renderStep()
+			) }
 		</PageLayout>
 	);
 }

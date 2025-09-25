@@ -292,6 +292,13 @@ export const siteLogsServerRoute = createRoute( {
 );
 
 export const siteLogsActivityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Activity' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteLogsRoute,
 	path: 'activity',
 	loader: async ( { params: { siteSlug } } ) => {
