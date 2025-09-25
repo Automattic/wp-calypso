@@ -44,7 +44,7 @@ export default function PluginsList() {
 		} )
 	);
 
-	const iconsBySlug = useMemo( () => {
+	const iconBySlug = useMemo( () => {
 		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
 
 		const marketplaceSearchBySlug = ( marketplaceSearch?.data.results || [] ).reduce(
@@ -56,24 +56,27 @@ export default function PluginsList() {
 		);
 
 		return filteredPlugins.reduce( ( acc, { slug } ) => {
-			acc.set(
-				slug,
-				marketplacePluginsBySlug.get( slug )?.icons ||
-					marketplaceSearchBySlug.get( slug )?.plugin?.icons ||
-					null
-			);
+			let icon;
+			if ( marketplacePluginsBySlug.has( slug ) ) {
+				icon = marketplacePluginsBySlug.get( slug )?.icons;
+			} else if ( marketplaceSearchBySlug.has( slug ) ) {
+				icon = marketplaceSearchBySlug.get( slug )?.plugin?.icons;
+			}
+
+			acc.set( slug, icon );
+
 			return acc;
-		}, new Map< string, PluginListRow[ 'icons' ] >() );
+		}, new Map< string, PluginListRow[ 'icon' ] >() );
 	}, [ filteredPlugins, marketplacePlugins, marketplaceSearch ] );
 
-	const filteredPluginsWithIcons = useMemo( () => {
+	const filteredPluginsWithIcon = useMemo( () => {
 		return filteredPlugins.map( ( plugin ) => {
 			return {
 				...plugin,
-				icons: iconsBySlug?.get( plugin.slug ) || null,
+				icon: iconBySlug?.get( plugin.slug ),
 			};
 		} );
-	}, [ filteredPlugins, iconsBySlug ] );
+	}, [ filteredPlugins, iconBySlug ] );
 
 	return (
 		<PageLayout
@@ -89,7 +92,7 @@ export default function PluginsList() {
 						isLoadingMarketplaceSearch ||
 						isLoadingSites
 					}
-					data={ filteredPluginsWithIcons ?? [] }
+					data={ filteredPluginsWithIcon ?? [] }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
