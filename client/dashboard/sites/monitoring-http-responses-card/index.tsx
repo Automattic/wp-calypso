@@ -1,13 +1,21 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import {
+	GlyphDiamond,
+	GlyphStar,
+	GlyphCross,
+	GlyphTriangle,
+	GlyphSquare,
+	GlyphCircle,
+} from '@visx/glyph';
 import { useViewportMatch } from '@wordpress/compose';
-import { useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useMemo, createElement } from '@wordpress/element';
 import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
-import type { SiteMetricsData, PeriodData, TimeRange } from '../monitoring/types';
-import type { Site } from '@automattic/api-core';
+import type { HTTPCodeSerie } from './http-codes';
+import type { TimeRange } from '../monitoring/types';
+import type { Site, SiteHostingMetrics } from '@automattic/api-core';
 import type { DataPointDate } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
@@ -18,112 +26,154 @@ function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 }
 
 type SiteMetricsData = {
-	responseStatusData: DataPointDate[] | undefined;
+	responseStatusData: HttpStatusDataPoints | undefined;
 	isLoading: boolean;
 };
 
-function useSiteMetricsData( siteId: number, timeRange: number ): SiteMetricsData {
+type HttpStatusDataPoints = {
+	[ statusCode: string ]: DataPointDate[];
+};
+
+function useSiteMetricsData(
+	siteId: number,
+	timeRange: number,
+	httpCodeSeries: HTTPCodeSerie[],
+	allowedStatusCodes: number[]
+): SiteMetricsData {
 	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
-	const { data: responseStatusData, isPending: isLoading } = useQuery(
-		siteMetricsQuery( siteId, { start, end, metric: 'requests_persec', dimension: 'http_status' } )
-	);
+	const { data: responseStatusData, isPending: isLoading } = useQuery( {
+		...siteMetricsQuery( siteId, {
+			start,
+			end,
+			metric: 'requests_persec',
+			dimension: 'http_status',
+		} ),
+		select: ( requestMethodsData: SiteHostingMetrics ): HttpStatusDataPoints => {
+			if ( ! requestMethodsData?.data?.periods ) {
+				return {};
+			}
 
-	// Function to get the dimension value for a specific key and period.
-	const getDimensionValue = ( period: PeriodData ) => {
-		if ( typeof period?.dimension === 'object' ) {
-			return null; /*Object.values( period.dimension ).length > 0
-				? { Object.keys( period.dimension )[ 0 ]: Object.values( period.dimension )[ 0 ] }
-				: ;*/
-		}
+			const values: HttpStatusDataPoints = {};
 
-		return null;
-	};
+			// Initialize values for each status code in the series that should be shown in the legend.
+			httpCodeSeries.forEach( ( statusCode: HTTPCodeSerie ) => {
+				if ( statusCode.showInLegend ) {
+					values[ statusCode.statusCode ] = [];
+				}
+			} );
 
-	const filterRequestsDataPeriod = ( period: PeriodData ) => {
-		const value = getDimensionValue( period );
-		//return value.statusCode
-	};
-
-	const formatResponseStatusDataPeriod = ( periods: PeriodData[] ) => {
-		if ( ! periods || periods.length === 0 ) {
-			return {};
-		}
-
-		const values = {};
-
-		// Iterate over periods.
-		for ( const period of periods ) {
-			if ( typeof period?.dimension === 'object' ) {
-				const date = new Date( period.timestamp * 1000 );
-
-				for ( const [ statusCode, count ] of Object.entries( period.dimension ) ) {
-					// Only include 200, 301, 302.
-					if ( ! [ 200, 301, 302 ].includes( parseInt( statusCode ) ) ) {
+			// Iterate over periods.
+			if ( requestMethodsData?.data?.periods ) {
+				for ( const period of requestMethodsData.data.periods ) {
+					if ( typeof period?.dimension !== 'object' ) {
 						continue;
 					}
 
-					if ( ! values.hasOwnProperty( statusCode ) ) {
-						values[ statusCode ] = [];
-					}
+					const date = new Date( period.timestamp * 1000 );
 
-					values[ statusCode ].push( {
-						date,
-						value: count === null ? 0 : Math.round( count * 60 * 100 ) / 100, // Convert to requests per minute and round to 2 decimals.
+					allowedStatusCodes.forEach( ( statusCode ) => {
+						const count = period.dimension.hasOwnProperty( statusCode )
+							? period.dimension[ statusCode ]
+							: 0;
+
+						// If the status code is not in the values object, only add it if the count is greater than 0.
+						if ( count > 0 && ! values.hasOwnProperty( statusCode ) ) {
+							values[ statusCode ] = [];
+						}
+
+						values.hasOwnProperty( statusCode ) &&
+							values[ statusCode ].push( {
+								date,
+								value: count > 0 ? Math.round( count * 60 * 100 ) / 100 : 0, // Convert to requests per minute and round to 2 decimals.
+							} );
 					} );
 				}
 			}
-		}
 
-		return values;
-	};
+			return values;
+		},
+	} );
 
 	return {
-		responseStatusData: formatResponseStatusDataPeriod( responseStatusData?.data?.periods ),
+		responseStatusData,
 		isLoading,
 	};
 }
 
 const chartColors = [ '#3858E9', '#5BA300', '#F57600', '#B51963' ];
+const chartGlyphs = [
+	GlyphCircle,
+	GlyphCross,
+	GlyphTriangle,
+	GlyphSquare,
+	GlyphDiamond,
+	GlyphStar,
+];
 
 export default function MonitoringHttpResponsesCard( {
 	site,
 	timeRange,
-	requestType,
+	httpCodeSeries,
+	cardLabel,
+	cardDescription,
 }: {
 	site: Site;
 	timeRange: number;
-	requestType: 'successful' | 'failed';
+	httpCodeSeries: HTTPCodeSerie[];
+	cardLabel?: string;
+	className?: string;
 } ) {
-	const { responseStatusData, isLoading } = useSiteMetricsData( site.ID, timeRange );
+	const statusCodes = httpCodeSeries.map( ( { statusCode } ) => statusCode );
 
-	console.log( responseStatusData );
+	const { responseStatusData, isLoading } = useSiteMetricsData(
+		site.ID,
+		timeRange,
+		httpCodeSeries,
+		statusCodes
+	);
 
 	const data: SeriesData[] = [];
+	const codeStyles: { [ label: string ]: { color: string; glyph: any } } = {};
 	let index = 0;
 
-	for ( const [ statusCode, values ] of Object.entries( responseStatusData || {} ) ) {
-		const color = chartColors[ index % chartColors.length ];
+	if ( responseStatusData ) {
+		httpCodeSeries.forEach( ( httpCodeSerie: HTTPCodeSerie ) => {
+			if ( ! responseStatusData.hasOwnProperty( httpCodeSerie.statusCode ) ) {
+				return;
+			}
 
-		data.push( {
-			label: statusCode,
-			data: values || [],
-			options: {
-				gradient: {
-					from: color,
-					to: color,
-					fromOpacity: 0.2,
-					toOpacity: 0,
+			if ( ! codeStyles.hasOwnProperty( httpCodeSerie.label ) ) {
+				const color = chartColors[ index % chartColors.length ];
+				codeStyles[ httpCodeSerie.label ] = {
+					color,
+					glyph: createElement( chartGlyphs[ index % chartGlyphs.length ], {
+						size: 50,
+						fill: color,
+					} ),
+				};
+			}
+
+			data.push( {
+				label: httpCodeSerie.label,
+				data: responseStatusData[ httpCodeSerie.statusCode ],
+				options: {
+					gradient: {
+						from: codeStyles[ httpCodeSerie.label ].color,
+						to: codeStyles[ httpCodeSerie.label ].color,
+						fromOpacity: 0.2,
+						toOpacity: 0,
+					},
+					stroke: codeStyles[ httpCodeSerie.label ].color,
+					legendShapeStyle: {
+						color: codeStyles[ httpCodeSerie.label ].color,
+					},
 				},
-				stroke: color,
-				legendShapeStyle: {
-					color: color,
-				},
-			},
+			} );
+
+			++index;
 		} );
-
-		++index;
 	}
 
 	const lessThanMediumViewport = useViewportMatch( 'medium', '<' );
@@ -162,49 +212,22 @@ export default function MonitoringHttpResponsesCard( {
 		numTicks: numTicks,
 	};
 
-	const getLegendIcon = ( key: string, isTooltip = false ) => {
+	const getLegendIcon = ( key: string ) => {
 		const isLegendGlyph = key.startsWith( 'legend-glyph-' );
 		if ( isLegendGlyph ) {
 			key = key.replace( 'legend-glyph-', '' );
 		}
 
-		switch ( key ) {
-			case 'Requests per minute':
-				return (
-					<rect
-						width="6"
-						height="6"
-						transform={ ( isTooltip ? 'translate(4, 0) ' : 'translate(3, -1) ' ) + 'rotate(45)' }
-						fill="#3858E9"
-					/>
-				);
-			case 'Average response time (ms)':
-				return (
-					<circle
-						cx={ isLegendGlyph || isTooltip ? 4 : 0 }
-						cy={ isLegendGlyph || isTooltip ? 4 : 0 }
-						r="4"
-						fill="#5BA300"
-						strokeWidth="1.5"
-					/>
-				);
-		}
-
-		return null;
+		return codeStyles.hasOwnProperty( key ) ? (
+			codeStyles[ key ].glyph
+		) : (
+			<GlyphSquare size={ 50 } fill="#3858E9" />
+		);
 	};
-
-	const cardLabel =
-		requestType === 'successful'
-			? __( 'Successful HTTP responses' )
-			: __( 'Unsuccessful HTTP responses' );
-	const cardDescription =
-		requestType === 'successful'
-			? __( 'Requests per minute completed without errors by the server.' )
-			: __( 'Requests per minute that encountered errors or issues during processing.' );
 
 	return (
 		<MonitoringCard
-			cardLabel="server-performance"
+			cardLabel="http-responses"
 			title={ cardLabel }
 			description={ cardDescription }
 			onDownloadClick={ () => {} }
@@ -219,6 +242,9 @@ export default function MonitoringHttpResponsesCard( {
 				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
+				glyphStyle={ {
+					radius: 8,
+				} }
 				renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
 				renderTooltip={ ( tooltipProps ) => {
 					if ( ! tooltipProps?.tooltipData?.nearestDatum?.datum?.date ) {
@@ -255,8 +281,8 @@ export default function MonitoringHttpResponsesCard( {
 										className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
 									>
 										<Text weight="normal">
-											<svg width="8" height="8">
-												{ getLegendIcon( series.key, true ) }
+											<svg width="5" height="5">
+												{ getLegendIcon( series.key ) }
 											</svg>
 											{ series.key }
 										</Text>

@@ -18,9 +18,14 @@ import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import MonitoringCard from '../monitoring-card';
 import MonitoringHttpResponsesCard from '../monitoring-http-responses-card';
+import {
+	useSuccessHttpCodeSeries,
+	useErrorHttpCodeSeries,
+} from '../monitoring-http-responses-card/http-codes';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
 import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
 import { getMonitoringCalloutProps } from './monitoring-callout';
+import type { HTTPCodeSerie } from '../monitoring-http-responses-card/http-codes';
 import type { Site } from '@automattic/api-core';
 
 const hoursMap: Record< string, number > = {
@@ -58,6 +63,8 @@ function SiteMonitoringBody( {
 	locale: string;
 } ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const successHttpCodeSeries: HTTPCodeSerie[] = useSuccessHttpCodeSeries();
+	const errorHttpCodeSeries: HTTPCodeSerie[] = useErrorHttpCodeSeries();
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
@@ -82,19 +89,20 @@ function SiteMonitoringBody( {
 			<MonitoringHttpResponsesCard
 				site={ site }
 				timeRange={ hoursMap[ timeRange ] }
-				requestType="successful"
+				httpCodeSeries={ successHttpCodeSeries }
+				cardLabel={ __( 'Successful HTTP responses' ) }
+				cardDescription={ __( 'Requests per minute completed without errors by the server.' ) }
 			/>
 
-			<MonitoringCard
-				title={ __( 'Unsuccessful HTTP responses' ) }
-				description={ __(
+			<MonitoringHttpResponsesCard
+				site={ site }
+				timeRange={ hoursMap[ timeRange ] }
+				httpCodeSeries={ errorHttpCodeSeries }
+				cardLabel={ __( 'Unsuccessful HTTP responses' ) }
+				cardDescription={ __(
 					'Requests per minute that encountered errors or issues during processing.'
 				) }
-				onDownloadClick={ () => {} }
-				onAnchorClick={ () => {} }
-			>
-				[Unsuccessful HTTP responses graph]
-			</MonitoringCard>
+			/>
 		</VStack>
 	);
 }

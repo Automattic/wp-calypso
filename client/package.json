@@ -96,6 +96,7 @@
 		"@tanstack/react-query-devtools": "^5.83.0",
 		"@tanstack/react-query-persist-client": "^5.83.0",
 		"@tanstack/react-router": "^1.114.34",
+		"@visx/glyph": "^3.12.0",
 		"@wordpress/a11y": "^4.23.0",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",

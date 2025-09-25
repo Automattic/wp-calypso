@@ -18,7 +18,7 @@ import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 import './style.scss';
 
-export interface MonitoringCardProps {
+interface MonitoringCardProps {
 	title: string;
 	description?: ReactNode;
 	isLoading?: boolean;
