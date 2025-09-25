@@ -10,7 +10,7 @@ import {
 } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { getImporterStatus } from 'calypso/my-sites/importer/newsletter/utils';
 
-type SetStep = React.Dispatch< React.SetStateAction< StepId > >;
+type SetStep = ( step: StepId ) => void;
 
 function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 	if ( stepStatus === 'done' ) {

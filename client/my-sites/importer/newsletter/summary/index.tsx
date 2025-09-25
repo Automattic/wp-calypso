@@ -182,7 +182,7 @@ export default function Summary( {
 										substackPaymentsSettingsLink: (
 											// @ts-expect-error Used in translate components doesn't need children.
 											<ExternalLink
-												href={ `https://${ normalizeFromSite(
+												href={ `${ normalizeFromSite(
 													fromSite
 												) }/publish/settings?search=Pause%20subscription` }
 											/>
@@ -198,7 +198,7 @@ export default function Summary( {
 										substackPaymentsSettingsLink: (
 											// @ts-expect-error Used in translate components doesn't need children.
 											<ExternalLink
-												href={ `https://${ normalizeFromSite(
+												href={ `${ normalizeFromSite(
 													fromSite
 												) }/publish/settings?search=Pause%20subscription` }
 											/>

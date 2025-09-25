@@ -72,7 +72,7 @@ export default function StepInitial( {
 			</p>
 
 			<Button
-				href={ `https://${ normalizeFromSite( fromSite ) }/publish/subscribers` }
+				href={ `${ normalizeFromSite( fromSite ) }/publish/subscribers` }
 				target="_blank"
 				rel="noreferrer noopener"
 				icon={ external }

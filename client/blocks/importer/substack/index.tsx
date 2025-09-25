@@ -1,5 +1,6 @@
 import { ProgressBar } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -53,7 +54,14 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 	const importer: Importer = 'substack';
 	const engine = importer;
 
-	const [ step, setStep ] = useState< StepId >( 'content' );
+	const [ step, setStepState ] = useState< StepId >( 'content' );
+
+	const setStep = ( newStep: StepId ) => {
+		setStepState( newStep );
+		const newUrl = addQueryArgs( window.location.href, { importerStep: newStep } );
+
+		window.history.replaceState( {}, '', newUrl );
+	};
 
 	const { siteSlug, site, fromSite: fromSiteProp } = props;
 	const selectedSite = site;
@@ -141,7 +149,7 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		data: urlData,
 		isFetching: isUrlFetching,
 		isError: isUrlError,
-	} = useAnalyzeUrlQuery( fromSite );
+	} = useAnalyzeUrlQuery( fromSite ?? '' );
 
 	const stepsProgress = getStepsProgress( setStep, paidNewsletterData );
 
