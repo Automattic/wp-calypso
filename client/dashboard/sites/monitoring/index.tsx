@@ -24,6 +24,7 @@ import {
 } from '../monitoring-http-responses-card/http-codes';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
 import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
+import MonitoringResponseTypesCard from '../monitoring-response-types-card';
 import { getMonitoringCalloutProps } from './monitoring-callout';
 import type { HTTPCodeSerie } from '../monitoring-http-responses-card/http-codes';
 import type { Site } from '@automattic/api-core';
@@ -74,16 +75,7 @@ function SiteMonitoringBody( {
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
 				<MonitoringRequestMethodsCard site={ site } timeRange={ hoursMap[ timeRange ] } />
-
-				<MonitoringCard
-					title={ __( 'Response types' ) }
-					description={ __( 'Percentage of dynamic versus static responses.' ) }
-					onDownloadClick={ () => {} }
-					onAnchorClick={ () => {} }
-					className="dashboard-monitoring-card--row-layout"
-				>
-					[Response types graph]
-				</MonitoringCard>
+				<MonitoringResponseTypesCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 			</HStack>
 
 			<MonitoringHttpResponsesCard
