@@ -82,9 +82,6 @@ const preferencesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData(
-				sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
-			),
 		] );
 	},
 } ).lazy( () =>

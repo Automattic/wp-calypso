@@ -5,7 +5,7 @@ import {
 	rawUserPreferencesQuery,
 	sitesQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -18,6 +18,7 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack/';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from './site-dropdown';
@@ -32,7 +33,8 @@ interface LoginPreferencesFormData {
 export default function PreferencesLogin() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { data: rawPrimarySiteId } = useSuspenseQuery( {
+	const { user } = useAuth();
+	const { data: primarySiteId } = useSuspenseQuery( {
 		...userSettingsQuery(),
 		select: ( data ) => data.primary_site_ID,
 	} );
@@ -49,17 +51,9 @@ export default function PreferencesLogin() {
 		},
 	} );
 
-	const { data: sites, isLoading: isSiteListLoading } = useSuspenseQuery(
+	const { data: sites, isLoading: isSiteListLoading } = useQuery(
 		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
-
-	// Validate primary_site_ID exists in user's current sites
-	const isValidPrimarySite = sites.some( ( site ) => site.ID === rawPrimarySiteId );
-
-	const loginPreferences = {
-		primarySiteId: isValidPrimarySite && rawPrimarySiteId ? rawPrimarySiteId : undefined,
-		defaultLandingPage,
-	};
 
 	const { mutateAsync: saveUserSettings, isPending: isSavingUserSettings } = useMutation(
 		userSettingsMutation()
@@ -69,18 +63,17 @@ export default function PreferencesLogin() {
 	);
 
 	// Initialize form data with default values
-	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
-		primarySiteId: loginPreferences.primarySiteId,
-		defaultLandingPage: loginPreferences.defaultLandingPage,
-	} ) );
+	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( {
+		primarySiteId,
+		defaultLandingPage,
+	} );
 
 	// Check if form has been modified
 	const isDirty = Boolean(
-		loginPreferences.primarySiteId !== formData.primarySiteId ||
-			loginPreferences.defaultLandingPage !== formData.defaultLandingPage
+		primarySiteId !== formData.primarySiteId || defaultLandingPage !== formData.defaultLandingPage
 	);
 
-	const isBusy = isSavingUserSettings || isSavingUserPreferences || isSiteListLoading;
+	const isBusy = isSavingUserSettings || isSavingUserPreferences;
 
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
@@ -88,14 +81,15 @@ export default function PreferencesLogin() {
 			id: 'primarySiteId',
 			label: __( 'Primary site' ),
 			description: __( 'Choose the default site dashboard you’ll see at login.' ),
-			isVisible: () => sites.length > 0,
+			isVisible: () => user.site_count > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
 				return (
 					<VStack>
 						<PreferencesLoginSiteDropdown
-							sites={ sites }
+							sites={ sites ?? [] }
+							isLoading={ isSiteListLoading }
 							value={ value }
 							onChange={ ( newValue ) => {
 								if ( newValue ) {

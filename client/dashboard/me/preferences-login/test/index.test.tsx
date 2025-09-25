@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useAuth } from '../../../app/auth';
 import { render } from '../../../test-utils';
 import PreferencesLogin from '../index';
 import type { Site } from '@automattic/api-core';
@@ -43,6 +44,10 @@ jest.mock( '@wordpress/data', () => ( {
 	createSelector: jest.fn( ( selector ) => selector ),
 	select: jest.fn(),
 	dispatch: jest.fn(),
+} ) );
+
+jest.mock( '../../../app/auth', () => ( {
+	useAuth: jest.fn( () => ( { user: { site_count: 2 } } ) ),
 } ) );
 
 const mockSites: DeepPartial< Site >[] = [
@@ -246,6 +251,8 @@ test( 'hides primary site selector when user has no sites', async () => {
 		} );
 
 	nock( API_BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: [] } );
+
+	( useAuth as jest.Mock ).mockReturnValue( { user: { site_count: 0 } } );
 
 	render( <PreferencesLogin /> );
 
