@@ -14,6 +14,7 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		pageLogin,
 		secrets,
 	}, workerInfo ) => {
+		test.skip( true, 'Skipping the tests because of captcha issues on GitHub login page' );
 		test.skip(
 			workerInfo.project.name !== 'authentication',
 			'The authentication project is the only one that has the right browser settings for authentication tests'
