@@ -35,6 +35,9 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 				// This flag enables upgrade-specific behavior in PlansFeaturesMain
 				isStepperUpgradeFlow: true,
+
+				// This is NOT a signup flow - use logged-in behavior for current plans
+				isInSignup: false,
 			},
 		};
 	},

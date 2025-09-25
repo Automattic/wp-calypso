@@ -176,6 +176,12 @@ export interface UnifiedPlansStepProps {
 	isCustomDomainAllowedOnFreePlan?: boolean;
 
 	useStepContainerV2?: boolean;
+
+	/**
+	 * Whether this step is being used in a signup flow context.
+	 * Defaults to true to preserve existing behavior.
+	 */
+	isInSignup?: boolean;
 }
 
 /**
@@ -225,6 +231,7 @@ function UnifiedPlansStep( {
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
 	onIntentChange,
+	isInSignup = true,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -527,7 +534,7 @@ function UnifiedPlansStep( {
 				siteId={ selectedSite?.ID }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-				isInSignup
+				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				intervalType={
 					intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
