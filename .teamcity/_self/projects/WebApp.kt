@@ -922,7 +922,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		matrix {
 			param("PROJECT", listOf(
 				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile")
+				value("mobile", label = "Mobile"),
 			))
 		}
 		pullRequests {
@@ -1201,6 +1201,12 @@ object AuthenticationE2ETests : BuildType({
 			branchFilter = "+:<default>"
 			triggerBuild = always()
 			withPendingChangesOnly = true
+		}
+
+		vcs {
+			branchFilter = """
+				+:e2e/migrate-authentication-build-to-playwright-test
+			""".trimIndent()
 		}
 	}
 })
