@@ -19,6 +19,7 @@ import editorPreviewIllustration from 'calypso/assets/images/customer-home/illus
 import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -108,25 +109,40 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-			back_to: window.location.href.replace( window.location.origin, '' ),
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const searchLink = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs(
+				{
+					siteSlug,
+					back_to: window.location.href.replace( window.location.origin, '' ),
+				},
+				'/setup/domain-upsell'
+		  )
+		: addQueryArgs(
+				{
+					domainAndPlanPackage: true,
+					domain: true,
+					back_to: window.location.href.replace( window.location.origin, '' ),
+				},
+				`/domains/add/${ siteSlug }`
+		  );
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const plansPageLink = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs(
+				{
+					siteSlug,
+					back_to: window.location.href.replace( window.location.origin, '' ),
+				},
+				'/setup/domain-upsell/plans'
+		  )
+		: addQueryArgs(
+				{
+					domain: true,
+					domainAndPlanPackage: true,
+				},
+				`/plans/yearly/${ siteSlug }`
+		  );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {

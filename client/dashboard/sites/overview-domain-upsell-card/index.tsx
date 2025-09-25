@@ -6,6 +6,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+// This imports the feature flag decider and will be removed soon.
+// eslint-disable-next-line no-restricted-imports
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
@@ -70,11 +73,18 @@ const DomainUpsellCardContent = ( {
 		}
 
 		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
-			window.location.href = addQueryArgs( `/plans/yearly/${ site.slug }`, {
-				domain: true,
-				domainAndPlanPackage: true,
-				back_to: backUrl,
-			} );
+			if ( shouldRenderRewrittenDomainSearch() ) {
+				window.location.href = addQueryArgs( '/setup/domain-upsell/plans', {
+					siteSlug: site.slug,
+					back_to: backUrl,
+				} );
+			} else {
+				window.location.href = addQueryArgs( `/plans/yearly/${ site.slug }`, {
+					domain: true,
+					domainAndPlanPackage: true,
+					back_to: backUrl,
+				} );
+			}
 		} else {
 			window.location.href = addQueryArgs( `/checkout/${ site.slug }`, {
 				cancel_to: backUrl,
@@ -82,6 +92,17 @@ const DomainUpsellCardContent = ( {
 			} );
 		}
 	};
+
+	const chooseYourOwnUrl = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs( `${ window.location.origin }/setup/domain-upsell`, {
+				siteSlug: site.slug,
+				back_to: backUrl,
+		  } )
+		: addQueryArgs( `${ window.location.origin }/domains/add/${ site.slug }`, {
+				domainAndPlanPackage: true,
+				domain: true,
+				back_to: backUrl,
+		  } );
 
 	return (
 		<Callout
@@ -95,16 +116,7 @@ const DomainUpsellCardContent = ( {
 						) : (
 							<TextBlur>{ search }</TextBlur>
 						),
-						link: (
-							<Link
-								to={ addQueryArgs( `${ window.location.origin }/domains/add/${ site.slug }`, {
-									domainAndPlanPackage: true,
-									domain: true,
-									back_to: backUrl,
-								} ) }
-								onClick={ handleChooseYourOwn }
-							/>
-						),
+						link: <Link to={ chooseYourOwnUrl } onClick={ handleChooseYourOwn } />,
 					} ) }
 				</Text>
 			}

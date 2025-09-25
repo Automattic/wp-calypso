@@ -21,6 +21,7 @@ import domainUpsellIllustration from 'calypso/assets/images/customer-home/illust
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -125,14 +126,22 @@ export function RenderDomainUpsell( {
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-			back_to: window.location.href.replace( window.location.origin, '' ),
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const searchLink = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs(
+				{
+					siteSlug,
+					back_to: window.location.href.replace( window.location.origin, '' ),
+				},
+				'/setup/domain-upsell'
+		  )
+		: addQueryArgs(
+				{
+					domainAndPlanPackage: true,
+					domain: true,
+					back_to: window.location.href.replace( window.location.origin, '' ),
+				},
+				`/domains/add/${ siteSlug }`
+		  );
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
 			button_url: searchLink,
@@ -141,16 +150,23 @@ export function RenderDomainUpsell( {
 		} );
 	};
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const plansPageLink = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs(
+				{
+					siteSlug,
+					back_to: window.location.href.replace( window.location.origin, '' ),
+				},
+				'/setup/domain-upsell/plans'
+		  )
+		: addQueryArgs(
+				{
+					domain: true,
+					domainAndPlanPackage: true,
+				},
+				`/plans/yearly/${ siteSlug }`
+		  );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const getDismissClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_dismiss_click' );

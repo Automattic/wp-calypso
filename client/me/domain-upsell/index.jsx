@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -121,13 +122,23 @@ export function RenderDomainUpsell( {
 
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+
+	const searchLink = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs(
+				{
+					siteSlug,
+					back_to: backUrl,
+				},
+				`/setup/domain-upsell`
+		  )
+		: addQueryArgs(
+				{
+					domainAndPlanPackage: true,
+					domain: true,
+				},
+				`/domains/add/${ siteSlug }`
+		  );
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_profile_domain_upsell_search_click', {
 			button_url: searchLink,
@@ -136,16 +147,20 @@ export function RenderDomainUpsell( {
 		} );
 	};
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const plansPageLink = shouldRenderRewrittenDomainSearch()
+		? addQueryArgs( '/setup/domain-upsell/plans', {
+				siteSlug,
+				back_to: backUrl,
+		  } )
+		: addQueryArgs(
+				{
+					domain: true,
+					domainAndPlanPackage: true,
+				},
+				`/plans/yearly/${ siteSlug }`
+		  );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const getDismissClickHandler = () => {
 		recordTracksEvent( 'calypso_profile_domain_upsell_dismiss_click' );

@@ -35,7 +35,8 @@ const domainUpsell: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = useQuery().get( 'flowToReturnTo' );
+		const backTo = useQuery().get( 'back_to' );
+		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const siteId = useSiteIdParam();
 		const { getDomainCartItem, getPlanCartItem } = useSelect(
@@ -50,9 +51,7 @@ const domainUpsell: Flow = {
 		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
 
 		const returnUrl =
-			launchpadScreenOption === 'skipped' || ! flowName
-				? `/home/${ siteSlug }`
-				: `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
+			launchpadScreenOption === 'skipped' || ! backTo ? `/home/${ siteSlug }` : backTo;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		function goBack() {
@@ -135,11 +134,11 @@ const domainUpsell: Flow = {
 						const domainCartItem = getDomainCartItem();
 
 						if ( planCartItem && siteSlug ) {
-							await addPlanToCart( siteSlug, flowName as string, true, '', planCartItem );
+							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
 						}
 
 						if ( domainCartItem && siteSlug ) {
-							await addProductsToCart( siteSlug, flowName as string, [ domainCartItem ] );
+							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
 
 						return window.location.assign(
