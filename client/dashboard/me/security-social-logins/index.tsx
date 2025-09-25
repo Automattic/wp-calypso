@@ -12,8 +12,10 @@ import { ActionList } from '../../components/action-list';
 import ConfirmModal from '../../components/confirm-modal';
 import PageLayout from '../../components/page-layout';
 import GitHubIcon from '../../images/github-logo.svg';
+import GoogleIcon from '../../images/google-logo.svg';
 import SecurityPageHeader from '../security-page-header';
 import GitHubLogin from './github-login';
+import GoogleLogin from './google-login';
 import type { SocialLoginButtonProps } from './types';
 import type { SocialLoginConnection, ConnectSocialUserArgs } from '@automattic/api-core';
 
@@ -157,6 +159,18 @@ export default function SecuritySocialLogins() {
 			}
 		>
 			<ActionList>
+				<SocialLoginItem
+					service="Google"
+					decoration={ GoogleIcon }
+					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
+						<GoogleLogin
+							isConnected={ isConnected }
+							responseHandler={ responseHandler }
+							handleDisconnect={ handleDisconnect }
+							isLoading={ isLoading }
+						/>
+					) }
+				/>
 				<SocialLoginItem
 					service="GitHub"
 					decoration={ GitHubIcon }
