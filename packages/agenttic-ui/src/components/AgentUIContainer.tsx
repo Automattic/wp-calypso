@@ -288,6 +288,13 @@ export function AgentUIContainer( {
 		( event: React.PointerEvent< HTMLDivElement > ) => {
 			const target = event.target as HTMLElement;
 
+			// Check if the target element is from an iframe.
+			const isFromIframe = target.ownerDocument !== document;
+
+			if ( isFromIframe ) {
+				return; // Don't start drag for iframe content clicks.
+			}
+
 			// Don't drag if clicking inside non-draggable areas
 			const isNonDraggable = target.closest(
 				DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS
