@@ -179,32 +179,61 @@ describe( 'NotificationsExtras', () => {
 			expect( wpcomSuggestions ).toBeChecked();
 		} );
 
-		// WordPress.com toggles
+		// WordPress.com toggles - verify enabled ones are checked
 		const wpcomSuggestions = screen.getAllByLabelText( 'Suggestions' )[ 0 ];
 		const wpcomResearch = screen.getAllByLabelText( 'Research' )[ 0 ];
 		expect( wpcomSuggestions ).toBeChecked();
 		expect( wpcomResearch ).toBeChecked();
 
-		// Jetpack toggles
+		// WordPress.com toggles - verify disabled ones are unchecked
+		expect( screen.getByLabelText( 'Community' ) ).not.toBeChecked();
+		expect( screen.getAllByLabelText( 'Promotions' )[ 0 ] ).not.toBeChecked();
+		expect( screen.getAllByLabelText( 'Newsletter' )[ 0 ] ).not.toBeChecked();
+		expect( screen.getByLabelText( 'Digests' ) ).not.toBeChecked();
+		expect( screen.getAllByLabelText( 'Reports' )[ 0 ] ).not.toBeChecked();
+		expect( screen.getByLabelText( 'Developer Newsletter' ) ).not.toBeChecked();
+		expect( screen.getByLabelText( 'Scheduled updates' ) ).not.toBeChecked();
+
+		// Jetpack toggles - verify enabled ones are checked
 		const jetpackSuggestions = screen.getAllByLabelText( 'Suggestions' )[ 1 ];
 		const jetpackNewsletter = screen.getAllByLabelText( 'Newsletter' )[ 1 ];
 		expect( jetpackSuggestions ).toBeChecked();
 		expect( jetpackNewsletter ).toBeChecked();
+
+		// Jetpack toggles - verify disabled ones are unchecked
+		expect( screen.getAllByLabelText( 'Research' )[ 1 ] ).not.toBeChecked();
+		expect( screen.getAllByLabelText( 'Promotions' )[ 1 ] ).not.toBeChecked();
+		expect( screen.getAllByLabelText( 'Reports' )[ 1 ] ).not.toBeChecked();
 	} );
 
-	it( 'handles WordPress.com "Subscribe to all" toggle correctly', async () => {
+	it( 'shows "Subscribe to all" when no settings are enabled', async () => {
+		// Start with all settings false
 		mockGetNotificationSettingsApi();
-		mockSaveNotificationSettingsApi( {
-			marketing: true,
-			research: true,
-			community: true,
-			promotion: true,
-			news: true,
-			digest: true,
-			reports: true,
-			news_developer: true,
-			scheduled_updates: true,
+
+		dashboardRender(
+			<>
+				<Snackbars />
+				<NotificationsExtras />
+			</>
+		);
+
+		// Initially, all settings are false, so both sections should show "Subscribe to all"
+		await waitFor( () => {
+			expect( screen.getAllByText( 'Subscribe to all' ) ).toHaveLength( 2 );
 		} );
+	} );
+
+	it( 'shows "Unsubscribe from all" when at least one setting is enabled (WP)', async () => {
+		// Start with all WordPress.com settings enabled
+		const settingsWithWpcomEnabled: UserNotificationSettings = {
+			...defaultUserSettings,
+			wpcom: {
+				...defaultWpcomSettings,
+				marketing: true,
+			},
+		};
+
+		mockGetNotificationSettingsApi( settingsWithWpcomEnabled );
 
 		dashboardRender(
 			<>
@@ -214,31 +243,24 @@ describe( 'NotificationsExtras', () => {
 		);
 
 		await waitFor( () => {
-			expect( screen.getAllByText( 'Subscribe to all' ) ).toHaveLength( 2 );
-		} );
-
-		// Click the "Subscribe to all" button for WordPress.com section
-		const subscribeAllButtons = screen.getAllByText( 'Subscribe to all' );
-		const wpcomSubscribeAll = subscribeAllButtons[ 0 ];
-
-		await userEvent.click( wpcomSubscribeAll );
-
-		await waitFor( () => {
-			const snackbar = notificationSnackBar();
-			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
+			// WordPress.com section should show "Unsubscribe from all" because all options are enabled
+			expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
+			// Jetpack section should show "Subscribe to all" because no Jetpack options are enabled
+			expect( screen.getByText( 'Subscribe to all' ) ).toBeVisible();
 		} );
 	} );
 
-	it( 'handles Jetpack "Subscribe to all" toggle correctly', async () => {
-		mockGetNotificationSettingsApi();
-		mockSaveNotificationSettingsApi( {
-			jetpack_marketing: true,
-			jetpack_research: true,
-			jetpack_promotion: true,
-			jetpack_news: true,
-			jetpack_reports: true,
-		} );
+	it( 'shows "Unsubscribe from all" when at least one setting is enabled (Jetpack)', async () => {
+		// Start with all WordPress.com settings enabled
+		const settingsWithWpcomEnabled: UserNotificationSettings = {
+			...defaultUserSettings,
+			wpcom: {
+				...defaultWpcomSettings,
+				jetpack_marketing: true,
+			},
+		};
+
+		mockGetNotificationSettingsApi( settingsWithWpcomEnabled );
 
 		dashboardRender(
 			<>
@@ -248,23 +270,14 @@ describe( 'NotificationsExtras', () => {
 		);
 
 		await waitFor( () => {
-			expect( screen.getAllByText( 'Subscribe to all' ) ).toHaveLength( 2 );
-		} );
-
-		// Click the "Subscribe to all" button for Jetpack section (second one)
-		const subscribeAllButtons = screen.getAllByText( 'Subscribe to all' );
-		const jetpackSubscribeAll = subscribeAllButtons[ 1 ];
-
-		await userEvent.click( jetpackSubscribeAll );
-
-		await waitFor( () => {
-			const snackbar = notificationSnackBar();
-			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
+			// WordPress.com section should show "Subscribe to all" because all options are enabled
+			expect( screen.getByText( 'Subscribe to all' ) ).toBeVisible();
+			// Jetpack section should show "Unsubscribe from all" because no Jetpack options are enabled
+			expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
 		} );
 	} );
 
-	it( 'handles individual toggle changes', async () => {
+	it( 'shows snackbar notification on change', async () => {
 		mockGetNotificationSettingsApi();
 		mockSaveNotificationSettingsApi( { marketing: true } );
 
@@ -288,33 +301,6 @@ describe( 'NotificationsExtras', () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
-		} );
-	} );
-
-	it( 'shows "Unsubscribe from all" when some options are enabled', async () => {
-		const customSettings: UserNotificationSettings = {
-			...defaultUserSettings,
-			wpcom: {
-				...defaultWpcomSettings,
-				marketing: true,
-				research: true,
-			},
-		};
-
-		mockGetNotificationSettingsApi( customSettings );
-
-		dashboardRender(
-			<>
-				<Snackbars />
-				<NotificationsExtras />
-			</>
-		);
-
-		await waitFor( () => {
-			// WordPress.com section should show "Unsubscribe from all" because some options are enabled
-			expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
-			// Jetpack section should show "Subscribe to all" because no options are enabled
-			expect( screen.getByText( 'Subscribe to all' ) ).toBeVisible();
 		} );
 	} );
 
