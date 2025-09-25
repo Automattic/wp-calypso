@@ -200,7 +200,9 @@ test( 'handles save error gracefully', async () => {
 	);
 
 	// Mock the save API requests, forcing the preferences update to error
-	mockUpdateUserSettingsSuccess();
+	nock( API_BASE )
+		.post( '/rest/v1.1/me/settings', { primary_site_ID: mockPrimarySiteId } )
+		.reply( 500, { error: 'Server error' } );
 	nock( API_BASE )
 		.post( '/rest/v1.1/me/preferences', matchesLoginPreferencesPayload )
 		.reply( 500, { error: 'Server error' } );

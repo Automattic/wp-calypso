@@ -1,7 +1,8 @@
 import {
-	userLoginPreferencesMutation,
+	userSettingsMutation,
+	userPreferencesMutation,
 	userSettingsQuery,
-	userLoginPreferencesQuery,
+	rawUserPreferencesQuery,
 	sitesQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
@@ -20,40 +21,57 @@ import { store as noticesStore } from '@wordpress/notices';
 import { ButtonStack } from '../../components/button-stack/';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from './site-dropdown';
-import type { UserLoginPreferencesMutationProps } from '@automattic/api-queries';
 
-type LoginPreferencesFormData = UserLoginPreferencesMutationProps;
 type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
+
+interface LoginPreferencesFormData {
+	primarySiteId?: number;
+	defaultLandingPage: LandingPage;
+}
 
 export default function PreferencesLogin() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	// Fetch user settings for primary_site_ID
-	const userSettingsResult = useSuspenseQuery( userSettingsQuery() );
-	const userPreferences = useSuspenseQuery( userLoginPreferencesQuery() );
+	const { data: rawPrimarySiteId } = useSuspenseQuery( {
+		...userSettingsQuery(),
+		select: ( data ) => data.primary_site_ID,
+	} );
+	const { data: defaultLandingPage } = useSuspenseQuery( {
+		...rawUserPreferencesQuery(),
+		select: ( preferences ): LandingPage => {
+			if ( preferences[ 'sites-landing-page' ]?.useSitesAsLandingPage ) {
+				return 'sites';
+			}
+			if ( preferences[ 'reader-landing-page' ]?.useReaderAsLandingPage ) {
+				return 'reader';
+			}
+			return 'primary-site-dashboard';
+		},
+	} );
 
-	// Fetch user's sites
 	const { data: sites, isLoading: isSiteListLoading } = useSuspenseQuery(
 		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
 	// Validate primary_site_ID exists in user's current sites
-	const rawPrimarySiteId = userSettingsResult.data?.primary_site_ID;
-	const isValidPrimarySite = rawPrimarySiteId
-		? sites.some( ( site ) => site.ID === rawPrimarySiteId )
-		: false;
+	const isValidPrimarySite = sites.some( ( site ) => site.ID === rawPrimarySiteId );
 
 	const loginPreferences = {
-		primarySiteId: isValidPrimarySite && rawPrimarySiteId ? rawPrimarySiteId.toString() : undefined,
-		defaultLandingPage: userPreferences.data.defaultLandingPage,
+		primarySiteId: isValidPrimarySite && rawPrimarySiteId ? rawPrimarySiteId : undefined,
+		defaultLandingPage,
 	};
 
-	const mutation = useMutation( userLoginPreferencesMutation() );
+	const { mutateAsync: saveUserSettings, isPending: isSavingUserSettings } = useMutation(
+		userSettingsMutation()
+	);
+	const { mutateAsync: saveUserPreferences, isPending: isSavingUserPreferences } = useMutation(
+		userPreferencesMutation()
+	);
 
 	// Initialize form data with default values
 	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
 		primarySiteId: loginPreferences.primarySiteId,
-		defaultLandingPage: loginPreferences.defaultLandingPage || 'primary-site-dashboard',
+		defaultLandingPage: loginPreferences.defaultLandingPage,
 	} ) );
 
 	// Check if form has been modified
@@ -62,11 +80,7 @@ export default function PreferencesLogin() {
 			loginPreferences.defaultLandingPage !== formData.defaultLandingPage
 	);
 
-	const isBusy =
-		mutation.isPending ||
-		userSettingsResult.isLoading ||
-		isSiteListLoading ||
-		userPreferences.isLoading;
+	const isBusy = isSavingUserSettings || isSavingUserPreferences || isSiteListLoading;
 
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
@@ -77,7 +91,7 @@ export default function PreferencesLogin() {
 			isVisible: () => sites.length > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
-				const value = getValue( { item: data } );
+				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
 				return (
 					<VStack>
 						<PreferencesLoginSiteDropdown
@@ -85,7 +99,7 @@ export default function PreferencesLogin() {
 							value={ value }
 							onChange={ ( newValue ) => {
 								if ( newValue ) {
-									onChange( { [ id ]: newValue } );
+									onChange( { [ id ]: parseInt( newValue, 10 ) } );
 								}
 							} }
 							label={ hideLabelFromVision ? '' : field.label }
@@ -118,24 +132,40 @@ export default function PreferencesLogin() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{
-				primarySiteId: formData.primarySiteId,
-				defaultLandingPage: formData.defaultLandingPage,
-			},
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Login preferences saved.' ), {
-						type: 'snackbar',
-					} );
+		const updatedAt = Date.now();
+		Promise.allSettled( [
+			saveUserSettings( {
+				primary_site_ID: formData.primarySiteId,
+			} ),
+			saveUserPreferences( {
+				'sites-landing-page': {
+					useSitesAsLandingPage: formData.defaultLandingPage === 'sites',
+					updatedAt,
 				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save login preferences.' ), {
-						type: 'snackbar',
-					} );
+				'reader-landing-page': {
+					useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
+					updatedAt,
 				},
+			} ),
+		] ).then( ( [ userTask, prefTask ] ) => {
+			if ( userTask.status === 'rejected' && prefTask.status === 'rejected' ) {
+				createErrorNotice( __( 'Failed to save login preferences.' ), {
+					type: 'snackbar',
+				} );
+			} else if ( userTask.status === 'rejected' ) {
+				createErrorNotice( __( 'Failed to save primary site.' ), {
+					type: 'snackbar',
+				} );
+			} else if ( prefTask.status === 'rejected' ) {
+				createErrorNotice( __( 'Failed to save default landing page.' ), {
+					type: 'snackbar',
+				} );
+			} else {
+				createSuccessNotice( __( 'Login preferences saved.' ), {
+					type: 'snackbar',
+				} );
 			}
-		);
+		} );
 	};
 
 	return (

@@ -27,7 +27,6 @@ export * from './me-connected-applications';
 export * from './me-dpa';
 export * from './me-payment-methods';
 export * from './me-preferences';
-export * from './me-preferences-login';
 export * from './me-purchases';
 export * from './me-settings';
 export * from './me-notifications-settings';

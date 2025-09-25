@@ -15,7 +15,7 @@ export interface HostingDashboardOptIn {
 }
 
 export interface LandingPagePreference {
-	updatedAt: number;
+	updatedAt: number; // Result of Date.now()
 }
 
 export interface SitesLandingPage extends LandingPagePreference {
