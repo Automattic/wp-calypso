@@ -171,6 +171,11 @@
 			.layout__secondary ~ .layout__primary & {
 				left: calc(var(--sidebar-width-max) + 1px);
 				width: calc(100% - var(--sidebar-width-max) - 1px);
+
+				.has-no-sidebar & {
+					left: 0;
+					width: 100%;
+				}
 			}
 		}
 

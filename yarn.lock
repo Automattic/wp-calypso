@@ -858,11 +858,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:>=0.14.0 <1.0.0":
-  version: 0.30.0
-  resolution: "@automattic/charts@npm:0.30.0"
+"@automattic/charts@npm:>=0.14.0 <1.0.0, @automattic/charts@npm:^0.38.2":
+  version: 0.38.2
+  resolution: "@automattic/charts@npm:0.38.2"
   dependencies:
-    "@automattic/number-formatters": "npm:^1.0.10"
+    "@automattic/number-formatters": "npm:^1.0.12"
     "@babel/runtime": "npm:7.27.6"
     "@react-spring/web": "npm:9.7.5"
     "@visx/annotation": "npm:^3.12.0"
@@ -886,45 +886,11 @@ __metadata:
     deepmerge: "npm:4.3.1"
     fast-deep-equal: "npm:3.1.3"
     gridicons: "npm:3.4.2"
-    tslib: "npm:2.5.0"
+    tslib: "npm:2.8.1"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 2c7fbd4a2c11c3e8030a1efa235da30daee2a350d26ad2b91bb5132e83ba5595dd75b6c47c40450ce57dfeb05e1fef6bd591a1a12aa0c3e166c44efbddd1c702
-  languageName: node
-  linkType: hard
-
-"@automattic/charts@npm:^0.23.1":
-  version: 0.23.1
-  resolution: "@automattic/charts@npm:0.23.1"
-  dependencies:
-    "@automattic/number-formatters": "npm:^1.0.10"
-    "@babel/runtime": "npm:7.27.6"
-    "@react-spring/web": "npm:9.7.5"
-    "@visx/annotation": "npm:^3.12.0"
-    "@visx/axis": "npm:^3.12.0"
-    "@visx/curve": "npm:^3.12.0"
-    "@visx/event": "npm:^3.12.0"
-    "@visx/gradient": "npm:^3.12.0"
-    "@visx/grid": "npm:^3.12.0"
-    "@visx/group": "npm:^3.12.0"
-    "@visx/legend": "npm:^3.12.0"
-    "@visx/pattern": "npm:^3.12.0"
-    "@visx/responsive": "npm:^3.12.0"
-    "@visx/scale": "npm:^3.12.0"
-    "@visx/shape": "npm:^3.12.0"
-    "@visx/text": "npm:^3.12.0"
-    "@visx/tooltip": "npm:^3.12.0"
-    "@visx/xychart": "npm:^3.12.0"
-    clsx: "npm:2.1.1"
-    date-fns: "npm:^4.1.0"
-    deepmerge: "npm:4.3.1"
-    gridicons: "npm:3.4.2"
-    tslib: "npm:2.5.0"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: b8557f87b40306506902e4e32cbb879effc90d6fe6f84f2873bdf8a19d566825b6aac48721e8109a1db11a957111c712bee507b94bf490960888cff9c498dd0b
+  checksum: 82a5eb010eec0ba8d60999ac1e6470c35eca94de12ee33d9e0c60523a2595a31a71c318be0393ba409b22b832469ff22e9d72e6232e8f4ab8961e7b53283da7b
   languageName: node
   linkType: hard
 
@@ -1469,7 +1435,6 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
@@ -1804,14 +1769,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "@automattic/number-formatters@npm:1.0.10"
+"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "@automattic/number-formatters@npm:1.0.12"
   dependencies:
     "@wordpress/date": "npm:^5.19.0"
     debug: "npm:^4.4.0"
     tslib: "npm:^2.5.0"
-  checksum: 60c9f8463d646c912df1a5a1df42d3eb772a878c78f00c628215312e79c35019076b75b9e207a12cb7e05ff0497b86fabda34ec1dd5fdd70b9a971e0b9cb1493
+  checksum: d645096296cd4bf386960b04e7e476f88bcb8ee2dcb0a650543151a7e3676f30f4e6dea9d583046886380458536c14a3590670c5c31ab3776171b545fd679b8d
   languageName: node
   linkType: hard
 
@@ -15628,7 +15593,7 @@ __metadata:
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
+    "@automattic/charts": "npm:^0.38.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -37600,14 +37565,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.5.0":
-  version: 2.5.0
-  resolution: "tslib@npm:2.5.0"
-  checksum: e32fc99cc730dd514e53c44e668d76016e738f0bcc726aad5dbd2d335cf19b87a95a9b1e4f0a9993e370f1d702b5e471cdd4acabcac428a3099d496b9af2021e
-  languageName: node
-  linkType: hard
-
-"tslib@npm:>=2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:^2.6.0, tslib@npm:^2.6.2, tslib@npm:^2.8.1":
+"tslib@npm:2.8.1, tslib@npm:>=2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:^2.6.0, tslib@npm:^2.6.2, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -39654,7 +39612,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.23.1"
+    "@automattic/charts": "npm:^0.38.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
