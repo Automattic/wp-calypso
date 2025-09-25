@@ -1,7 +1,7 @@
 import { useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
-import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { sitePerformanceRoute } from '../../app/router/sites';
+import { PerformanceProfilerDashboardContent } from './dashboard-content';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import type { PerformanceProfilerPage, PerformanceReport } from '@automattic/api-core';

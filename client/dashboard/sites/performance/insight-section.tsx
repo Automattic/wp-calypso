@@ -4,8 +4,12 @@ import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'reac
 import { useAnalytics } from '../../app/analytics';
 import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-web-vitals';
 import MetricsInsight from './metrics-insight';
-import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
-import { filterRecommendations, getMetricsNames, highImpactAudits } from './utils';
+import {
+	updateQueryParams,
+	filterRecommendations,
+	getMetricsNames,
+	highImpactAudits,
+} from './utils';
 
 type InsightsSectionProps = {
 	fullPageScreenshot: FullPageScreenshot;

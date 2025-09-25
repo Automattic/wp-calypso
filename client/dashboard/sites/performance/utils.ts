@@ -1,5 +1,5 @@
-import { PerformanceMetricsItemQueryResponse, Metrics } from './core-web-vitals';
 import { __ } from '@wordpress/i18n';
+import { PerformanceMetricsItemQueryResponse, Metrics } from './core-web-vitals';
 
 export type Valuation = 'good' | 'needsImprovement' | 'bad';
 
@@ -111,7 +111,7 @@ export const displayValue = ( metric: Metrics, value: number ): string => {
 	return `${ max2Decimals( value ) }`;
 };
 
-export const getMetricValuations = ( translate: ( text: string ) => string ) => ( {
+export const getMetricValuations = () => ( {
 	fcp: {
 		good: __( 'Your site‘s First Contentful Paint is excellent' ),
 		needsImprovement: __( 'Your site‘s First Contentful Paint needs improvement' ),
@@ -196,3 +196,19 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		docsUrl: 'https://developer.wordpress.com/docs/site-performance/speed-test/#performance-score',
 	},
 } );
+
+export const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
+	const queryParams = new URLSearchParams( window.location.search );
+	Object.keys( params ).forEach( ( key ) => {
+		if ( params[ key ] ) {
+			queryParams.set( key, params[ key ] );
+		}
+	} );
+
+	// If forceReload is true, we want to reload the page with the new query params instead of just updating the URL
+	if ( forceReload ) {
+		window.location.href = `/speed-test-tool?${ queryParams.toString() }`;
+	} else {
+		window.history.replaceState( {}, '', `?${ queryParams.toString() }` );
+	}
+};

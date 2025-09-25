@@ -43,61 +43,65 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 			filter,
 		} );
 
+	const getRecommendationsText = ( quantity: number ) => {
+		if ( activeTab === 'overall' ) {
+			return __( '{{a}}View all recommendations{{/a}}', {
+				components: {
+					a: (
+						/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
+						<Button
+							variant="link"
+							className="button"
+							role="button"
+							tabIndex={ 0 }
+							onClick={ () => {
+								recordRecommendationsClickEvent( 'all' );
+								onRecommendationsFilterChange?.( '' );
+								recommendationsRef?.current?.scrollIntoView( {
+									behavior: 'smooth',
+									block: 'start',
+								} );
+							} }
+						/>
+					),
+				},
+			} );
+		}
+
+		return __(
+			'{{a}}View %(quantity)d recommendation{{/a}}',
+			'{{a}}View %(quantity)d recommendations{{/a}}',
+			{
+				count: recommendationsQuantity,
+				args: { quantity: recommendationsQuantity },
+				components: {
+					a: (
+						/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
+						<Button
+							variant="link"
+							className="button"
+							role="button"
+							tabIndex={ 0 }
+							onClick={ () => {
+								recordRecommendationsClickEvent( activeTab ?? '' );
+								onRecommendationsFilterChange?.( activeTab ?? '' );
+								recommendationsRef?.current?.scrollIntoView( {
+									behavior: 'smooth',
+									block: 'start',
+								} );
+							} }
+						/>
+					),
+				},
+			}
+		);
+	};
+
 	return (
 		<div className="status-section">
 			<div className={ clsx( 'status-badge', { [ status ]: true } ) }>{ statusText }</div>
 			{ !! recommendationsQuantity && (
-				<div className="recommendations-text">
-					{ activeTab === 'overall'
-						? __( '{{a}}View all recommendations{{/a}}', {
-								components: {
-									a: (
-										/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-										<Button
-											variant="link"
-											className="button"
-											role="button"
-											tabIndex={ 0 }
-											onClick={ () => {
-												recordRecommendationsClickEvent( 'all' );
-												onRecommendationsFilterChange?.( '' );
-												recommendationsRef?.current?.scrollIntoView( {
-													behavior: 'smooth',
-													block: 'start',
-												} );
-											} }
-										/>
-									),
-								},
-						  } )
-						: __(
-								'{{a}}View %(quantity)d recommendation{{/a}}',
-								'{{a}}View %(quantity)d recommendations{{/a}}',
-								{
-									count: recommendationsQuantity,
-									args: { quantity: recommendationsQuantity },
-									components: {
-										a: (
-											/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-											<Button
-												variant="link"
-												className="button"
-												role="button"
-												tabIndex={ 0 }
-												onClick={ () => {
-													recordRecommendationsClickEvent( activeTab ?? '' );
-													onRecommendationsFilterChange?.( activeTab ?? '' );
-													recommendationsRef?.current?.scrollIntoView( {
-														behavior: 'smooth',
-														block: 'start',
-													} );
-												} }
-											/>
-										),
-									},
-								}
-						  ) }
-				</div>
+				<div className="recommendations-text">{ getRecommendationsText() }</div>
 			) }
 		</div>
 	);
