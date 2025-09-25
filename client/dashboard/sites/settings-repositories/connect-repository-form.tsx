@@ -32,7 +32,7 @@ interface ConnectRepositoryFormProps {
 	onCancel: () => void;
 }
 
-interface FormData {
+interface ConnectRepositoryFormData {
 	selectedInstallationId: number | '';
 	selectedRepositoryId: number | '';
 	branch: string;
@@ -78,7 +78,11 @@ const RepositorySelector = ( { field, onChange, data }: DataFormControlProps< Fo
 };
 
 // Custom GitHub account selector with add button
-const GitHubAccountSelector = ( { field, onChange, data }: DataFormControlProps< FormData > ) => {
+const GitHubAccountSelector = ( {
+	field,
+	onChange,
+	data,
+}: DataFormControlProps< ConnectRepositoryFormData > ) => {
 	const { id, getValue } = field;
 
 	return (
@@ -107,7 +111,7 @@ const AutomatedToggle = ( {
 	onChange,
 	data,
 	hideLabelFromVision,
-}: DataFormControlProps< FormData > ) => {
+}: DataFormControlProps< ConnectRepositoryFormData > ) => {
 	const { id, getValue } = field;
 	const currentValue = getValue?.( { item: data } );
 
@@ -128,7 +132,7 @@ export const ConnectRepositoryForm = ( {
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const [ formData, setFormData ] = useState< FormData >( {
+	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( {
 		selectedInstallationId: installations[ 0 ].external_id,
 		selectedRepositoryId: '',
 		branch: '',
@@ -289,7 +293,7 @@ export const ConnectRepositoryForm = ( {
 		isAdvancedValid
 	);
 
-	const fields: Field< FormData >[] = useMemo( () => {
+	const fields: Field< ConnectRepositoryFormData >[] = useMemo( () => {
 		return [
 			{
 				id: 'selectedInstallationId',
@@ -351,7 +355,7 @@ export const ConnectRepositoryForm = ( {
 				) }
 			/>
 
-			<DataForm< FormData >
+			<DataForm< ConnectRepositoryFormData >
 				data={ formData }
 				fields={ fields }
 				form={ {
@@ -364,7 +368,7 @@ export const ConnectRepositoryForm = ( {
 						'isAutomated',
 					],
 				} }
-				onChange={ ( edits: Partial< FormData > ) => {
+				onChange={ ( edits: Partial< ConnectRepositoryFormData > ) => {
 					const newFormData = { ...formData, ...edits };
 					if ( 'targetDir' in edits ) {
 						const trimmedValue = edits.targetDir?.trim() || '';
