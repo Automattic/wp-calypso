@@ -1,4 +1,4 @@
-import { marketplaceSearchQuery, pluginsQuery } from '@automattic/api-queries';
+import { marketplaceSearchQuery, pluginsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -17,9 +17,13 @@ import './style.scss';
 
 export default function PluginsList() {
 	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const actions = getActions();
 	const [ view, setView ] = useState( defaultView );
-	const data = useMemo( () => mapApiPluginsToDataViewPlugins( sitesPlugins ), [ sitesPlugins ] );
+	const data = useMemo(
+		() => mapApiPluginsToDataViewPlugins( sites, sitesPlugins ),
+		[ sites, sitesPlugins ]
+	);
 
 	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data, view, fields );
@@ -56,7 +60,7 @@ export default function PluginsList() {
 		>
 			<DataViewsCard>
 				<DataViews
-					isLoading={ isLoadingPlugins || isLoadingMarketplace }
+					isLoading={ isLoadingPlugins || isLoadingMarketplace || isLoadingSites }
 					data={ filteredPluginsWithIcons ?? [] }
 					fields={ fields }
 					view={ view }

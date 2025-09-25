@@ -1,0 +1,48 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.domain-search--calypso {
+	--domain-search-content-max-width: 1040px;
+
+	@include break-small {
+		--domain-search-mini-cart-inline-padding: 24px;
+	}
+
+	@include break-large {
+		--domain-search-mini-cart-inline-padding: 32px;
+	}
+
+	.domains-mini-cart__container {
+		@include break-medium {
+			width: calc( 100% - var( --sidebar-width-min ) );
+			left: var( --sidebar-width-min );
+		}
+	}
+}
+
+body:has( .calypso-domain-search ) {
+	.domain-search__go-back {
+		color: var( --studio-gray-50 );
+		font-size: 0.875rem;
+		line-height: 17px;
+		text-decoration: none;
+		margin-bottom: 18px;
+	}
+
+	@media ( max-width: #{$break-small} ) {
+		.layout__content {
+			padding-inline: 16px !important;
+		}
+
+		.new-domains-redirection-notice-upsell__banner {
+			margin-bottom: 24px;
+		}
+	}
+
+	@media ( max-width: #{$break-medium} ) {
+		.formatted-header {
+			margin-top: 0;
+			margin-left: 0;
+		}
+	}
+}
