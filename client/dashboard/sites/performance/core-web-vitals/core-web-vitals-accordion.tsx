@@ -2,14 +2,13 @@ import { FoldableCard } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAnalytics } from '../../../app/analytics';
-import { CircularPerformanceScore } from '../circular-performance-score';
 import { getMetricsNames, mapThresholdsToStatus, displayValue } from '../utils';
+import PerformanceScore from './performance-score';
 import { Metrics } from './index';
-import './core-web-vitals-accordion.scss';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics | null;
-	setActiveTab: ( tab: Metrics | null ) => void;
+	setActiveTab: ( tab: Metrics ) => void;
 	children: React.ReactNode;
 	showOverall?: boolean;
 };
@@ -33,7 +32,7 @@ const CardHeader = ( props: HeaderProps ) => {
 
 				{ isPerformanceScoreSelected ? (
 					<div className="metric-tab-bar__tab-metric performance-score accordion">
-						<CircularPerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
+						<PerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
 				) : (
 					<span className={ `core-web-vitals-accordion__header-text-value ${ statusClassName } ` }>

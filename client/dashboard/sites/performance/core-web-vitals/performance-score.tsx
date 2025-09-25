@@ -1,16 +1,9 @@
-import { CircularProgressBar } from '@automattic/components';
-
-type CircularPerformanceScoreProps = {
+type PerformanceScoreProps = {
 	score: number;
 	size: number;
-	steps?: number;
 };
 
-export const CircularPerformanceScore = ( {
-	score,
-	size,
-	steps = 100,
-}: CircularPerformanceScoreProps ) => {
+export default function PerformanceScore( { score, size }: PerformanceScoreProps ) {
 	const getStatus = ( value: number ) => {
 		if ( value <= 49 ) {
 			return 'poor';
@@ -22,12 +15,6 @@ export const CircularPerformanceScore = ( {
 
 	return (
 		<div className={ `circular-performance-bar ${ getStatus( score ) }` }>
-			<CircularProgressBar
-				currentStep={ score }
-				size={ size }
-				numberOfSteps={ steps }
-				showProgressText={ false }
-			/>
 			<div
 				className={ `circular-performance-score ${
 					size > 48 && 'circular-performance-score--large'
@@ -37,4 +24,4 @@ export const CircularPerformanceScore = ( {
 			</div>
 		</div>
 	);
-};
+}

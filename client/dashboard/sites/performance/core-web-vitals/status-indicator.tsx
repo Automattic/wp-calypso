@@ -1,5 +1,4 @@
-import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
-
+type Valuation = 'good' | 'needsImprovement' | 'bad';
 type Props = { speed: Valuation };
 
 const innerSvg = {

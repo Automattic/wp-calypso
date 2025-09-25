@@ -1,8 +1,13 @@
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Card,
+	CardBody,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useAnalytics } from '../../../app/analytics';
-import { CircularPerformanceScore } from '../circular-performance-score';
 import { displayValue, getMetricsNames, mapThresholdsToStatus } from '../utils';
+import PerformanceScore from './performance-score';
 import { StatusIndicator } from './status-indicator';
 import { Metrics } from './index';
 
@@ -12,7 +17,7 @@ type Props = Record< Metrics, number > & {
 };
 
 const MetricTabBar = ( props: Props ) => {
-	const { activeTab, setActiveTab, overall } = props;
+	const { setActiveTab, overall } = props;
 	const { recordTracksEvent } = useAnalytics();
 	const handleTabClick = ( tab: Metrics ) => {
 		setActiveTab( tab );
@@ -24,55 +29,54 @@ const MetricTabBar = ( props: Props ) => {
 	const metricsNames = getMetricsNames();
 
 	return (
-		<div className="metric-tab-bar">
-			<button onClick={ () => handleTabClick( 'overall' ) }>
-				<div className="metric-tab-bar__tab-text">
-					<div className="metric-tab-bar__tab-header">{ __( 'Performance Score' ) }</div>
-					<div className="metric-tab-bar__tab-metric">
-						<CircularPerformanceScore score={ overall } size={ 48 } />
-					</div>
-				</div>
-			</button>
-			<div className="metric-tab-bar__tab-container">
-				{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
-					if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
-						return null;
-					}
+		<VStack spacing={ 4 }>
+			<Card>
+				<CardBody>
+					<button onClick={ () => handleTabClick( 'overall' ) }>
+						<Text>{ __( 'Performance Score' ) }</Text>
+						<PerformanceScore score={ overall } size={ 48 } />
+					</button>
+				</CardBody>
+			</Card>
 
-					// Only display TBT if INP is not available
-					if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
-						return null;
-					}
+			<Card>
+				<CardBody>
+					{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
+						if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
+							return null;
+						}
 
-					if ( key === 'overall' ) {
-						return null;
-					}
+						// Only display TBT if INP is not available
+						if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
+							return null;
+						}
 
-					const status = mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] );
-					const statusClassName = status === 'needsImprovement' ? 'needs-improvement' : status;
+						if ( key === 'overall' ) {
+							return null;
+						}
 
-					return (
-						<button
-							key={ key }
-							className={ clsx( 'metric-tab-bar__tab', { active: key === activeTab } ) }
-							onClick={ () => handleTabClick( key as Metrics ) }
-						>
-							<div className="metric-tab-bar__tab-status">
-								<StatusIndicator
-									speed={ mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] ) }
-								/>
-							</div>
-							<div className="metric-tab-bar__tab-text">
-								<div className="metric-tab-bar__tab-header">{ displayName }</div>
-								<div className={ `metric-tab-bar__tab-metric ${ statusClassName }` }>
-									{ displayValue( key as Metrics, props[ key as Metrics ] ) }
+						const status = mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] );
+						const statusClassName = status === 'needsImprovement' ? 'needs-improvement' : status;
+
+						return (
+							<button key={ key } onClick={ () => handleTabClick( key as Metrics ) }>
+								<div className="metric-tab-bar__tab-status">
+									<StatusIndicator
+										speed={ mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] ) }
+									/>
 								</div>
-							</div>
-						</button>
-					);
-				} ) }
-			</div>
-		</div>
+								<div className="metric-tab-bar__tab-text">
+									<div className="metric-tab-bar__tab-header">{ displayName }</div>
+									<div className={ `metric-tab-bar__tab-metric ${ statusClassName }` }>
+										{ displayValue( key as Metrics, props[ key as Metrics ] ) }
+									</div>
+								</div>
+							</button>
+						);
+					} ) }
+				</CardBody>
+			</Card>
+		</VStack>
 	);
 };
 

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ScreenShotsTimeLine } from './core-web-vitals';
@@ -105,7 +104,6 @@ type OverlayState = {
 };
 
 export default function ScreenshotTimeline( { screenshots }: Props ) {
-	const { __ } = useI18n();
 	const [ overlay, setOverlay ] = useState< OverlayState >( {
 		isOpen: false,
 	} );

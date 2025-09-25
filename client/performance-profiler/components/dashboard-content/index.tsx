@@ -8,7 +8,7 @@ import { NewsletterBanner } from 'calypso/performance-profiler/components/newsle
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { useReportCompletedEffect } from 'calypso/performance-profiler/hooks/use-report-track-events-effect';
-import { CoreWebVitalsDisplay } from '../../../dashboard/sites/performance/core-web-vitals';
+import CoreWebVitalsDisplay from '../../../dashboard/sites/performance/core-web-vitals';
 import Disclaimer from '../../../dashboard/sites/performance/disclaimer';
 import InsightsSection from '../../../dashboard/sites/performance/insight-section';
 import ScreenshotTimeline from '../../../dashboard/sites/performance/screenshot-timeline';

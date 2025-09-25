@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Card, CardBody } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
-import { CircularPerformanceScore } from '../circular-performance-score';
 import {
 	getMetricsNames,
 	filterRecommendations,
@@ -11,6 +11,7 @@ import {
 	getMetricValuations,
 } from '../utils';
 import HistoryChart from './charts/history-chart';
+import PerformanceScore from './performance-score';
 import { StatusIndicator } from './status-indicator';
 import { StatusSection } from './status-section';
 import { Metrics, PerformanceMetricsHistory, PerformanceMetricsItemQueryResponse } from './index';
@@ -102,120 +103,120 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	const isPerformanceScoreSelected = activeTab === 'overall';
 
 	return (
-		<div className="core-web-vitals-display__details">
-			<div className="core-web-vitals-display__description">
-				<div className="core-web-vitals-display__description-container">
-					<div className="header">
-						{ ! isMobile && (
-							<span className="core-web-vitals-display__description-subheading">
-								{ displayName }
-							</span>
-						) }
+		<Card>
+			<CardBody>
+				<div className="core-web-vitals-display__description">
+					<div className="core-web-vitals-display__description-container">
+						<div className="header">
+							{ ! isMobile && (
+								<span className="core-web-vitals-display__description-subheading">
+									{ displayName }
+								</span>
+							) }
 
-						{ ! isMobile && (
-							<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
-								{ isPerformanceScoreSelected ? (
-									<div className="metric-tab-bar__tab-metric performance-score tab">
-										<CircularPerformanceScore score={ value } size={ 72 } />
-									</div>
-								) : (
-									displayValue( activeTab as Metrics, value )
-								) }
+							{ ! isMobile && (
+								<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
+									{ isPerformanceScoreSelected ? (
+										<div className="metric-tab-bar__tab-metric performance-score tab">
+											<PerformanceScore score={ value } size={ 72 } />
+										</div>
+									) : (
+										displayValue( activeTab as Metrics, value )
+									) }
+								</div>
+							) }
+						</div>
+						<StatusSection
+							activeTab={ activeTab }
+							recommendationsRef={ recommendationsRef }
+							value={ status }
+							onRecommendationsFilterChange={ onRecommendationsFilterChange }
+							recommendationsQuantity={ numberOfAuditsForMetric }
+						/>
+					</div>
+					<p>
+						{ getMetricValuations()[ activeTab ].explanation }
+						&nbsp;
+						<a
+							href={ localizeUrl( getMetricValuations()[ activeTab ].docsUrl ) }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ __( 'Learn more ↗' ) }
+						</a>
+					</p>
+					<div className="core-web-vitals-display__ranges">
+						<div className="range">
+							<StatusIndicator speed="good" />
+							<div className="range-heading">{ __( 'Excellent' ) }</div>
+							<div className="range-subheading">
+								{ isPerformanceScoreSelected
+									? sprintf(
+											/* translators: %(to)s is the good threshold */
+											__( '(90–%(to)s)' ),
+											{
+												to: formatUnit( good ),
+											}
+									  )
+									: sprintf(
+											/* translators: %(to)s is the good threshold, %(unit)s is the unit */
+											__( '(0–%(to)s%(unit)s)' ),
+											{
+												to: formatUnit( good ),
+												unit: displayUnit(),
+											}
+									  ) }
 							</div>
-						) }
-					</div>
-					<StatusSection
-						activeTab={ activeTab }
-						recommendationsRef={ recommendationsRef }
-						value={ status }
-						onRecommendationsFilterChange={ onRecommendationsFilterChange }
-						recommendationsQuantity={ numberOfAuditsForMetric }
-					/>
-				</div>
-				<p>
-					{ getMetricValuations( __ )[ activeTab ].explanation }
-					&nbsp;
-					<a
-						href={ localizeUrl( getMetricValuations( __ )[ activeTab ].docsUrl ) }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Learn more ↗' ) }
-					</a>
-				</p>
-				<div className="core-web-vitals-display__ranges">
-					<div className="range">
-						<StatusIndicator speed="good" />
-						<div className="range-heading">{ __( 'Excellent' ) }</div>
-						<div className="range-subheading">
-							{ isPerformanceScoreSelected
-								? sprintf(
-										/* translators: %(to)s is the good threshold */
-										__( '(90–%(to)s)' ),
-										{
-											to: formatUnit( good ),
-										}
-								  )
-								: sprintf(
-										/* translators: %(to)s is the good threshold, %(unit)s is the unit */
-										__( '(0–%(to)s%(unit)s)' ),
-										{
-											to: formatUnit( good ),
-											unit: displayUnit(),
-										}
-								  ) }
 						</div>
-					</div>
-					<div className="range">
-						<StatusIndicator speed="needsImprovement" />
+						<div className="range">
+							<StatusIndicator speed="needsImprovement" />
 
-						<div className="range-heading">{ __( 'Needs Improvement' ) }</div>
-						<div className="range-subheading">
-							{ isPerformanceScoreSelected
-								? sprintf(
-										/* translators: %(to)s is the needs improvement threshold */
-										__( '(50–%(to)s)' ),
-										{
-											to: formatUnit( needsImprovement ),
-										}
-								  )
-								: sprintf(
-										/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
-										__( '(%(from)s–%(to)s%(unit)s)' ),
-										{
-											from: formatUnit( good ),
-											to: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										}
-								  ) }
+							<div className="range-heading">{ __( 'Needs Improvement' ) }</div>
+							<div className="range-subheading">
+								{ isPerformanceScoreSelected
+									? sprintf(
+											/* translators: %(to)s is the needs improvement threshold */
+											__( '(50–%(to)s)' ),
+											{
+												to: formatUnit( needsImprovement ),
+											}
+									  )
+									: sprintf(
+											/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
+											__( '(%(from)s–%(to)s%(unit)s)' ),
+											{
+												from: formatUnit( good ),
+												to: formatUnit( needsImprovement ),
+												unit: displayUnit(),
+											}
+									  ) }
+							</div>
 						</div>
-					</div>
-					<div className="range">
-						<StatusIndicator speed="bad" />
+						<div className="range">
+							<StatusIndicator speed="bad" />
 
-						<div className="range-heading">{ __( 'Poor' ) }</div>
-						<div className="range-subheading">
-							{ isPerformanceScoreSelected
-								? sprintf(
-										/* translators: %(to)s is the bad threshold */
-										__( '(0-%(to)s)' ),
-										{
-											to: formatUnit( bad ),
-										}
-								  )
-								: sprintf(
-										/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
-										__( '(Over %(from)s%(unit)s)' ),
-										{
-											from: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										}
-								  ) }
+							<div className="range-heading">{ __( 'Poor' ) }</div>
+							<div className="range-subheading">
+								{ isPerformanceScoreSelected
+									? sprintf(
+											/* translators: %(to)s is the bad threshold */
+											__( '(0-%(to)s)' ),
+											{
+												to: formatUnit( bad ),
+											}
+									  )
+									: sprintf(
+											/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
+											__( '(Over %(from)s%(unit)s)' ),
+											{
+												from: formatUnit( needsImprovement ),
+												unit: displayUnit(),
+											}
+									  ) }
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div className="core-web-vitals-display__history-graph-container">
 				<HistoryChart
 					data={ dataAvailable && historicalData }
 					range={ [
@@ -226,7 +227,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					d3Format="%b %d"
 					isMobile={ isMobile }
 				/>
-			</div>
-		</div>
+			</CardBody>
+		</Card>
 	);
 };

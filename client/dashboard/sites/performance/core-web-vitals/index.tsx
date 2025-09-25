@@ -1,3 +1,4 @@
+import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useState } from 'react';
 import { CoreWebVitalsAccordion } from './core-web-vitals-accordion';
@@ -65,18 +66,20 @@ export type ScreenShotsTimeLine = {
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
-export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
+export default function CoreWebVitalsDisplay( props: CoreWebVitalsDisplayProps ) {
 	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall' );
 	const isDesktop = useViewportMatch( 'medium' );
 
 	if ( isDesktop ) {
 		return (
-			<>
+			<Grid alignment="topLeft" columns={ 2 } templateColumns="25% 1fr">
 				<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
 				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
-			</>
+			</Grid>
 		);
 	}
 
@@ -85,4 +88,4 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 			<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
 		</CoreWebVitalsAccordion>
 	);
-};
+}
