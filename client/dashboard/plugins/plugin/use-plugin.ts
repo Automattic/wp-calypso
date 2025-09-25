@@ -2,9 +2,9 @@ import { PluginItem, Site, SitePlugin } from '@automattic/api-core';
 import {
 	pluginsQuery,
 	sitesQuery,
-	marketplacePluginQuery,
 	wpOrgPluginQuery,
 	sitePluginQuery,
+	marketplacePluginsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -24,9 +24,10 @@ export const usePlugin = ( pluginSlug: string ) => {
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( pluginsQuery() );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const { data: marketplacePlugin, isLoading: isLoadingMarketplacePlugin } = useQuery(
-		marketplacePluginQuery( pluginSlug )
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
+		marketplacePluginsQuery()
 	);
+	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
 		wpOrgPluginQuery( pluginSlug, locale )
 	);
@@ -90,13 +91,15 @@ export const usePlugin = ( pluginSlug: string ) => {
 			isLoadingSitesPlugins ||
 			isLoadingSites ||
 			isLoadingWpOrgPlugin ||
-			isLoadingMarketplacePlugin ||
+			isLoadingMarketplacePlugins ||
 			isLoadingSitePlugins,
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
 		plugin: pluginData,
-		icons: wpOrgPlugin?.icons || marketplacePlugin?.icons,
+		icons: isMarketplacePlugin
+			? marketplacePlugins?.results[ pluginSlug ]?.icons
+			: wpOrgPlugin?.icons,
 	};
 };

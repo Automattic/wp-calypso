@@ -8,7 +8,9 @@ export function fetchMarketplacePlugin( slug: string ): Promise< MarketplacePlug
 	} );
 }
 
-export function fetchMarketplacePlugins(): Promise< MarketplacePlugin[] > {
+export function fetchMarketplacePlugins(): Promise< {
+	results: Record< string, MarketplacePlugin >;
+} > {
 	return wpcom.req.get( {
 		path: '/marketplace/products',
 		apiNamespace: 'wpcom/v2',

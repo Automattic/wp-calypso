@@ -1,4 +1,10 @@
-import { marketplaceSearchQuery, pluginsQuery, sitesQuery } from '@automattic/api-queries';
+import { MarketplaceSearchResult } from '@automattic/api-core';
+import {
+	marketplacePluginsQuery,
+	marketplaceSearchQuery,
+	pluginsQuery,
+	sitesQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -28,20 +34,37 @@ export default function PluginsList() {
 	const { data: filteredPlugins, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data, view, fields );
 	}, [ data, view ] );
-
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplace } = useQuery(
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
+		marketplacePluginsQuery()
+	);
+	const { data: marketplaceSearch, isLoading: isLoadingMarketplaceSearch } = useQuery(
 		marketplaceSearchQuery( {
 			perPage: Number( view.perPage ),
 			slugs: filteredPlugins.map( ( plugin ) => plugin.slug ),
 		} )
 	);
-	const plugins = ( marketplacePlugins?.data.results || [] ).flat();
+
 	const iconsBySlug = useMemo( () => {
-		return plugins.reduce( ( acc, result ) => {
-			acc.set( result.fields.slug, result.fields.plugin.icons );
+		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
+
+		const marketplaceSearchBySlug = ( marketplaceSearch?.data.results || [] ).reduce(
+			( acc, { fields } ) => {
+				acc.set( fields.slug, fields );
+				return acc;
+			},
+			new Map< string, MarketplaceSearchResult[ 'fields' ] >()
+		);
+
+		return filteredPlugins.reduce( ( acc, { slug } ) => {
+			acc.set(
+				slug,
+				marketplacePluginsBySlug.get( slug )?.icons ||
+					marketplaceSearchBySlug.get( slug )?.plugin?.icons ||
+					null
+			);
 			return acc;
 		}, new Map< string, PluginListRow[ 'icons' ] >() );
-	}, [ plugins ] );
+	}, [ filteredPlugins, marketplacePlugins, marketplaceSearch ] );
 
 	const filteredPluginsWithIcons = useMemo( () => {
 		return filteredPlugins.map( ( plugin ) => {
@@ -60,7 +83,12 @@ export default function PluginsList() {
 		>
 			<DataViewsCard>
 				<DataViews
-					isLoading={ isLoadingPlugins || isLoadingMarketplace || isLoadingSites }
+					isLoading={
+						isLoadingPlugins ||
+						isLoadingMarketplacePlugins ||
+						isLoadingMarketplaceSearch ||
+						isLoadingSites
+					}
 					data={ filteredPluginsWithIcons ?? [] }
 					fields={ fields }
 					view={ view }
