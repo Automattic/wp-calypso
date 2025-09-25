@@ -10,11 +10,6 @@ import { useBackupState } from './use-backup-state';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-const DEFAULT_LAYOUTS = {
-	table: {},
-	list: {},
-};
-
 export function BackupsList( {
 	site,
 	selectedBackup,
@@ -130,7 +125,7 @@ export function BackupsList( {
 				view={ view }
 				onChangeView={ onChangeView }
 				isLoading={ isLoadingActivityLog }
-				defaultLayouts={ DEFAULT_LAYOUTS }
+				defaultLayouts={ { list: {} } }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search backups' ) }
 				onChangeSelection={ onChangeSelection }
