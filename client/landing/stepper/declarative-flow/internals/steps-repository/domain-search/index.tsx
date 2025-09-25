@@ -227,6 +227,7 @@ const DomainSearchStep: StepType< {
 			stepName="step-container--domain-search"
 			isWideLayout
 			flowName={ flow }
+			goBack={ navigation.goBack }
 			formattedHeader={
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 			}
