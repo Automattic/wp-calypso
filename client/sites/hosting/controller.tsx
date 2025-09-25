@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { CalloutOverlay } from 'calypso/dashboard/components/callout-overlay';
 import PageLayout from 'calypso/dashboard/components/page-layout';
@@ -16,7 +15,7 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	const site = getSelectedSite( state );
 
 	let content;
-	if ( isEnabled( 'hosting/hosting-features-callout' ) && site ) {
+	if ( site ) {
 		const hasSftpFeature =
 			! site.plan?.expired && site.plan?.features.active.includes( FEATURE_SFTP );
 		const shouldShowActivationCallout = ! site.is_wpcom_atomic && hasSftpFeature;
@@ -66,11 +65,7 @@ export function hostingFeaturesCallout(
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
 
-		if (
-			site &&
-			! areHostingFeaturesSupported( site ) &&
-			isEnabled( 'hosting/hosting-features-callout' )
-		) {
+		if ( site && ! areHostingFeaturesSupported( site ) ) {
 			const callout =
 				! site.is_wpcom_atomic &&
 				! site.plan?.expired &&

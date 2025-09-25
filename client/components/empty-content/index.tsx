@@ -73,9 +73,20 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 		}
 	}
 
-	const { line, illustration, isCompact = false } = props;
+	function renderLine(): React.ReactNode {
+		if ( typeof props.line === 'string' ) {
+			return <h3 className="empty-content__line">{ props.line }</h3>;
+		}
+		if ( React.isValidElement( props.line ) && props.line.type === React.Fragment ) {
+			return <div className="empty-content__line">{ props.line }</div>;
+		}
+		return props.line ?? null;
+	}
+
+	const { illustration, isCompact = false } = props;
 	const translate = useTranslate();
 	const action = props.action && primaryAction();
+	const line = props.line && renderLine();
 	const secondaryActionEl = props.secondaryAction && secondaryAction();
 	const title =
 		props.title !== undefined ? props.title : translate( "You haven't created any content yet." );
@@ -103,11 +114,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 			) : (
 				title ?? null
 			) }
-			{ typeof line === 'string' ? (
-				<h3 className="empty-content__line">{ props.line }</h3>
-			) : (
-				line ?? null
-			) }
+			{ line }
 			{ action }
 			{ secondaryActionEl }
 			{ props.children }

@@ -198,6 +198,17 @@ export const siteDeploymentsRoute = createRoute( {
 	)
 );
 
+export const siteDeploymentsListRoute = createRoute( {
+	getParentRoute: () => siteDeploymentsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../sites/deployments-list' ).then( ( d ) =>
+		createLazyRoute( 'site-deployments-list' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteMonitoringRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -281,6 +292,13 @@ export const siteLogsServerRoute = createRoute( {
 );
 
 export const siteLogsActivityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Activity' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteLogsRoute,
 	path: 'activity',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -427,6 +445,12 @@ export const siteBackupDownloadRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId/download',
+	validateSearch: ( search ) => {
+		const downloadId = Number( search.downloadId );
+		return {
+			downloadId: downloadId > 0 ? downloadId : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../sites/backup-download' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-download' )( {
@@ -1086,7 +1110,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	];
 
 	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute );
+		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
 	}
 
 	if ( config.supports.sites.performance ) {

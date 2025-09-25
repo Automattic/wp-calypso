@@ -154,7 +154,7 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					{ ! isSelfHostedJetpackConnectedSite && (
+					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 						<VStack spacing={ spacing } justify="start">
 							<DomainsCard site={ site } isCompact={ isSmallViewport } />
 							<DIFMUpsellCard site={ site } />

@@ -57,7 +57,6 @@ export default function MapPlans( {
 	selectedSite,
 	engine,
 	siteSlug,
-	fromSite,
 }: SubscribersStepProps ) {
 	const { __ } = useI18n();
 	const [ productToAdd, setProductToAdd ] = useState< TierToAdd | null >( null );
@@ -130,7 +129,6 @@ export default function MapPlans( {
 				selectedSite={ selectedSite }
 				engine={ engine }
 				siteSlug={ siteSlug }
-				fromSite={ fromSite }
 			/>
 		);
 	}
@@ -206,7 +204,7 @@ export default function MapPlans( {
 				siteId={ selectedSite.ID }
 				step={ currentStep }
 				navigate={ () => {
-					navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+					navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
 				} }
 				disabled={ isImportButtonDisabled }
 			/>

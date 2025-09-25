@@ -7,6 +7,7 @@ export const mockUserSettings: UserSettings = {
 	display_name: 'Test User',
 	is_dev_account: false,
 	password: 'password',
+	is_passwordless_user: false,
 	tracks_opt_out: false,
 	user_email: 'test@example.com',
 	user_login: 'testuser',

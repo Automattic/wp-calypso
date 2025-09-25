@@ -8,9 +8,12 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { __, isRTL } from '@wordpress/i18n';
 import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
@@ -154,32 +157,35 @@ export function BackupsListPage() {
 function SiteBackups() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
 
-	if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-		return <Outlet />;
-	}
+	const hostingNotices = {
+		showError: ( message: string ) => createErrorNotice( message, { type: 'snackbar' } ),
+		showSuccess: ( message: string ) => createSuccessNotice( message, { type: 'snackbar' } ),
+	};
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.BACKUPS }
-				tracksFeatureId="backups"
-				asOverlay
-				upsellIcon={ backup }
-				upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
-				upsellImage={ illustrationUrl }
-				upsellDescription={
-					<Text as="p" variant="muted">
-						{ __(
-							'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
-						) }
-					</Text>
-				}
-			>
-				<></>
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.BACKUPS }
+			tracksFeatureId="backups"
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> } /> }
+			upsellIcon={ backup }
+			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
+			upsellImage={ illustrationUrl }
+			upsellDescription={
+				<Text as="p" variant="muted">
+					{ __(
+						'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
+					) }
+				</Text>
+			}
+		>
+			<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
+				<Outlet />
+			</FileBrowserProvider>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

@@ -17,7 +17,7 @@ import ActionRenderModal, { getModalHeader } from '../manage/components/action-r
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import FieldActionToggle from './components/field-action-toggle';
-import { SiteWithPluginActivationStatus, usePlugin } from './use-plugin';
+import { SiteWithPluginData, usePlugin } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
 import type { PluginListRow } from '../manage/types';
@@ -47,11 +47,9 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 	const { mutateAsync: disableAutoupdateMutate, isPending: isDisablingAutoupdate } = useMutation(
 		sitePluginAutoupdateDisableMutation()
 	);
-	const [ selection, setSelection ] = useState< SiteWithPluginActivationStatus[] >( [] );
+	const [ selection, setSelection ] = useState< SiteWithPluginData[] >( [] );
 	const [ updateModalOpen, setUpdateModalOpen ] = useState( false );
-	const [ siteToUpdate, setSiteToUpdate ] = useState< SiteWithPluginActivationStatus | null >(
-		null
-	);
+	const [ siteToUpdate, setSiteToUpdate ] = useState< SiteWithPluginData | null >( null );
 	const closeUpdateModal = () => {
 		setUpdateModalOpen( false );
 		setSiteToUpdate( null );
@@ -62,8 +60,8 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'domain',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: SiteWithPluginActivationStatus } ) => item.URL,
-				render: ( { item }: { item: SiteWithPluginActivationStatus } ) => item.URL,
+				getValue: ( { item }: { item: SiteWithPluginData } ) => item.URL,
+				render: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -71,9 +69,9 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'active',
 				label: __( 'Active' ),
-				getValue: ( { item }: { item: SiteWithPluginActivationStatus } ) =>
+				getValue: ( { item }: { item: SiteWithPluginData } ) =>
 					pluginBySiteId.get( item.ID )?.active ?? false,
-				render: ( { item }: { item: SiteWithPluginActivationStatus } ) => {
+				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
 					const checked = pluginItem?.active ?? false;
 					const isBusy = isActivating || isDeactivating || isFetching;
@@ -117,9 +115,9 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'autoupdate',
 				label: __( 'Autoupdate' ),
-				getValue: ( { item }: { item: SiteWithPluginActivationStatus } ) =>
+				getValue: ( { item }: { item: SiteWithPluginData } ) =>
 					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
-				render: ( { item }: { item: SiteWithPluginActivationStatus } ) => {
+				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const pluginItem = pluginBySiteId.get( item.ID );
 					const checked = pluginItem?.autoupdate ?? false;
 					const isBusy = isEnablingAutoupdate || isDisablingAutoupdate || isFetching;
@@ -169,7 +167,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'update',
 				label: __( 'Update' ),
-				render: ( { item }: { item: SiteWithPluginActivationStatus } ) => {
+				render: ( { item }: { item: SiteWithPluginData } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
 
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
@@ -318,6 +316,16 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						},
 						isEligible: ( item ) => pluginBySiteId.get( item.ID )?.autoupdate ?? false,
 						supportsBulk: true,
+					},
+					{
+						id: 'settings',
+						label: __( 'Settings' ),
+						callback: ( items ) => {
+							const [ site ] = items;
+							window.open( site.actionLinks?.Settings, '_blank' );
+						},
+						isEligible: ( item ) => !! item.actionLinks?.Settings,
+						supportsBulk: false,
 					},
 					{
 						id: 'delete',

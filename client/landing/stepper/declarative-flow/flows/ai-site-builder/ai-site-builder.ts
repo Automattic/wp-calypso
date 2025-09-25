@@ -79,6 +79,31 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const { addBlogSticker } = useAddBlogStickerMutation();
 
 		const queryParams = useQuery();
+
+		const goToCheckout = async () => {
+			const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+			const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
+			const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
+				siteId: siteIdFromSiteData,
+				checkout: 'success',
+			} );
+			window.location.assign(
+				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
+					redirect_to:
+						queryParams.get( 'redirect' ) === 'site-launch'
+							? siteLaunchUrl
+							: addQueryArgs( bigSkyUrl, {
+									checkout: 'success',
+							  } ),
+					checkoutBackUrl: addQueryArgs( bigSkyUrl, {
+						checkout: 'cancel',
+					} ),
+					signup: 1,
+					'big-sky-checkout': 1,
+				} )
+			);
+		};
+
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -191,6 +216,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							console.log( 'ADD TO CART', res );
 						} );
 					}
+
+					// Flow is plan => domain and we are on domains: go to checkout
+					if ( queryParams.get( 'flow' ) === 'plan-domain' ) {
+						await goToCheckout();
+						return;
+					}
+
 					return navigate( 'plans' );
 				}
 
@@ -207,27 +239,12 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 						);
 					}
 
-					const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
-					const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
-					const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
-						siteId: siteIdFromSiteData,
-						checkout: 'success',
-					} );
-					window.location.assign(
-						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
-							redirect_to:
-								queryParams.get( 'redirect' ) === 'site-launch'
-									? siteLaunchUrl
-									: addQueryArgs( bigSkyUrl, {
-											checkout: 'success',
-									  } ),
-							checkoutBackUrl: addQueryArgs( bigSkyUrl, {
-								checkout: 'cancel',
-							} ),
-							signup: 1,
-							'big-sky-checkout': 1,
-						} )
-					);
+					// Flow is plan => domain and we are on plans: go to domains
+					if ( queryParams.get( 'flow' ) === 'plan-domain' ) {
+						return navigate( 'domains' );
+					}
+
+					await goToCheckout();
 				}
 
 				case 'site-launch': {

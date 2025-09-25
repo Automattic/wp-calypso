@@ -3,7 +3,6 @@ import {
 	pushToStagingMutation,
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -28,6 +27,7 @@ import {
 	FileBrowserProvider,
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import Environment, { EnvironmentType } from '../../components/environment';
@@ -166,6 +166,7 @@ function StagingSiteSyncModalInner( {
 	onSyncStart,
 }: StagingSiteSyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
+	const { recordTracksEvent } = useAnalytics();
 	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
@@ -363,14 +364,11 @@ function StagingSiteSyncModalInner( {
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
-	const isGranularMode = isFileBrowserVisible && ! shouldDisableGranularSync;
-
-	const noGranularSelection =
-		isGranularMode && browserCheckList.totalItems > 0 && browserCheckList.includeList.length === 0;
-
 	const isSubmitDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		noGranularSelection ||
+		( browserCheckList.totalItems === 0 &&
+			browserCheckList.includeList.length === 0 &&
+			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
 
