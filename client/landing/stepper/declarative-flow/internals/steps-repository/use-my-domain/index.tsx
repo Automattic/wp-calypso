@@ -11,7 +11,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import {
@@ -55,6 +55,12 @@ const UseMyDomain: StepType< {
 		goBack?.();
 	};
 
+	const clearQueryParams = () => {
+		const { pathname, search } = window.location;
+		const newURL = removeQueryArgs( pathname + search, 'step', 'initialQuery', 'lastQuery' );
+		window.history.replaceState( {}, document.title, newURL );
+	};
+
 	const handleOnTransfer = async ( { domain, authCode }: { domain: string; authCode: string } ) => {
 		const domainCartItem = domainTransfer( {
 			domain: domain,
@@ -66,6 +72,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
+		clearQueryParams();
 		submit?.( { domainCartItem } );
 	};
 
@@ -74,6 +81,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
+		clearQueryParams();
 		submit?.( { domainCartItem } );
 	};
 
