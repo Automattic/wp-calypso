@@ -3,7 +3,7 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useState, useEffect, useRef, useMemo, CSSProperties, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, CSSProperties, KeyboardEvent } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 
 interface EditGravatarProps {
@@ -27,6 +27,15 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 
 	// Initialize the Gravatar Quick Editor to manage avatars in a dedicated Gravatar UI
 	const quickEditorRef = useRef< GravatarQuickEditorCore | null >( null );
+	const avatarUrlRef = useRef( avatarUrl );
+
+	// Update the avatar URL reference when the prop changes
+	useEffect( () => {
+		avatarUrlRef.current = avatarUrl;
+	}, [ avatarUrl ] );
+
+	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
+	const displayUrl = addQueryArgs( avatarUrlRef.current, { ver: Date.now() } );
 
 	useEffect( () => {
 		quickEditorRef.current = new GravatarQuickEditorCore( {
@@ -35,7 +44,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			utm: 'wpcomme',
 			onProfileUpdated: () => {
 				// Bust cache so the <img> reloads the latest avatar immediately
-				setTempImage( addQueryArgs( avatarUrl, { ver: Date.now() } ) as string );
+				setTempImage( addQueryArgs( avatarUrlRef.current, { ver: Date.now() } ) as string );
 			},
 		} );
 
@@ -53,7 +62,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			} catch ( _e ) {}
 			quickEditorRef.current = null;
 		};
-	}, [ userEmail, avatarUrl ] );
+	}, [ userEmail ] );
 
 	const handleUnverifiedUserClick = (): void => {
 		if ( ! isEmailVerified ) {
@@ -104,12 +113,6 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		opacity: isOverlayVisible ? 1 : 0,
 		transition: 'opacity 0.2s',
 	};
-
-	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
-	const displayUrl = useMemo(
-		() => addQueryArgs( avatarUrl, { ver: Date.now() } ) as string,
-		[ avatarUrl ]
-	);
 
 	const openGravatarEditor = () => {
 		handleUnverifiedUserClick();
