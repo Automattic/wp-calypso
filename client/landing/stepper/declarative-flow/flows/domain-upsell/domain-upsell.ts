@@ -7,6 +7,7 @@ import {
 import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
+import { useRef } from 'react';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
@@ -54,11 +55,17 @@ const domainUpsell: Flow = {
 			launchpadScreenOption === 'skipped' || ! backTo ? `/home/${ siteSlug }` : backTo;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
+		const submittedDomains = useRef( false );
+
 		function goBack() {
 			if ( currentStep === 'domains' ) {
 				return window.location.assign( returnUrl );
 			}
 			if ( currentStep === 'plans' ) {
+				if ( ! submittedDomains.current ) {
+					return window.location.assign( returnUrl );
+				}
+
 				navigate( 'domains' );
 			}
 		}
@@ -81,6 +88,7 @@ const domainUpsell: Flow = {
 						}
 
 						setHideFreePlan( true );
+						submittedDomains.current = true;
 						navigate( STEPS.PLANS.slug );
 						return;
 					}
@@ -100,6 +108,8 @@ const domainUpsell: Flow = {
 
 						return navigate( useMyDomainURL as typeof currentStep );
 					}
+
+					submittedDomains.current = true;
 
 					setHideFreePlan( true );
 
@@ -125,6 +135,8 @@ const domainUpsell: Flow = {
 						} );
 						return navigate( destination as typeof currentStep );
 					}
+
+					submittedDomains.current = true;
 
 					return navigate( STEPS.PLANS.slug );
 				}
