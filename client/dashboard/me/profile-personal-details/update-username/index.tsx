@@ -3,13 +3,13 @@ import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	RadioControl,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import React, { useEffect, useState } from 'react';
+import { ButtonStack } from '../../../components/button-stack';
 import { announceToScreenReader } from './accessibility-utils';
 import {
 	isUsernameValid,
@@ -155,14 +155,14 @@ export default function UsernameUpdateForm( {
 				</VStack>
 			) }
 
-			<HStack justify="flex-start">
+			<ButtonStack justify="flex-start">
 				<Button variant="primary" onClick={ onShowConfirmModal } disabled={ isSaveDisabled }>
 					{ __( 'Change username' ) }
 				</Button>
 				<Button variant="secondary" onClick={ cancelUsernameChange }>
 					{ __( 'Cancel' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</VStack>
 	);
 }
