@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import SecurityTwoStepAuthPageLayout from '../security-two-step-auth/common/page-layout';
@@ -21,6 +22,13 @@ export default function SecurityTwoStepAuthApp() {
 
 	return (
 		<SecurityTwoStepAuthPageLayout>
+			<ComponentViewTracker
+				eventName="calypso_dashboard_security_two_step_auth_app_page_view"
+				properties={ {
+					is_enabled: isTwoStepAppEnabled,
+					backup_codes_printed: isBackupCodesPrinted,
+				} }
+			/>
 			<VStack spacing={ 8 }>
 				{ ! isTwoStepAppEnabled && (
 					<Notice variant="info" title={ __( 'Before you continue' ) }>

@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
@@ -55,6 +56,12 @@ export default function SecuritySshKey() {
 				/>
 			}
 		>
+			<ComponentViewTracker
+				eventName="calypso_dashboard_security_ssh_key_page_view"
+				properties={ {
+					has_ssh_key: sshKey !== null,
+				} }
+			/>
 			{ sshKey && ! isEditing ? (
 				<SshKey sshKey={ sshKey } setIsEditing={ setIsEditing } username={ username } />
 			) : (

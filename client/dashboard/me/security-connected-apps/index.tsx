@@ -13,6 +13,7 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import useIntlCollator from '../../app/hooks/use-intl-collator';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -152,6 +153,12 @@ export default function SecurityConnectedApps() {
 				/>
 			}
 		>
+			<ComponentViewTracker
+				eventName="calypso_dashboard_security_connected_apps_page_view"
+				properties={ {
+					total_items: totalItems,
+				} }
+			/>
 			<DataViewsCard>
 				<DataViews< ConnectedApplication >
 					getItemId={ ( item ) => item.ID }
