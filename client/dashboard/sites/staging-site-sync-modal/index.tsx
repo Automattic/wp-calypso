@@ -524,7 +524,7 @@ function StagingSiteSyncModalInner( {
 							data={ formData }
 							fields={ fields }
 							form={ { layout: { type: 'regular' as const }, fields } }
-							onChange={ ( edits: { domain?: string } ) => {
+							onChange={ ( edits: Partial< StagingSiteSyncFormData > ) => {
 								setFormData( ( data ) => ( {
 									...data,
 									...edits,
