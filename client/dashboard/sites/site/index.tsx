@@ -29,7 +29,7 @@ import EnvironmentSwitcher from './environment-switcher';
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
-	const sites = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } ).data;
+	const { data: sites } = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } );
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
