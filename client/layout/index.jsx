@@ -431,9 +431,16 @@ export default withCurrentRoute(
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
 		const hasUniversalHeader =
-			config.isEnabled( 'themes/universal-header' ) &&
-			! siteId &&
-			[ 'themes', 'theme' ].includes( sectionName );
+			( config.isEnabled( 'themes/universal-header' ) &&
+				! siteId &&
+				[ 'themes', 'theme' ].includes( sectionName ) ) ||
+			( config.isEnabled( 'plugins/universal-header' ) &&
+				! siteId &&
+				[ 'plugins' ].includes( sectionName ) &&
+				! (
+					currentRoute.startsWith( '/plugins/manage' ) ||
+					currentRoute.startsWith( '/plugins/scheduled-updates' )
+				) );
 
 		return {
 			masterbarIsHidden,

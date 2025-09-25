@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -455,9 +454,7 @@ const SitesDashboard = ( {
 						sitesCount={ paginatedSites.length }
 					/>
 
-					{ ! selectedSite &&
-					siteType === DEFAULT_SITE_TYPE &&
-					isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
+					{ ! selectedSite && siteType === DEFAULT_SITE_TYPE ? (
 						<AsyncLoad require="../v2/sites-list" placeholder={ null } />
 					) : (
 						<DotcomSitesDataViews

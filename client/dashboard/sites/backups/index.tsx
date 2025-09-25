@@ -165,35 +165,27 @@ function SiteBackups() {
 		showSuccess: ( message: string ) => createSuccessNotice( message, { type: 'snackbar' } ),
 	};
 
-	if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-		return (
+	return (
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.BACKUPS }
+			tracksFeatureId="backups"
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> } /> }
+			upsellIcon={ backup }
+			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
+			upsellImage={ illustrationUrl }
+			upsellDescription={
+				<Text as="p" variant="muted">
+					{ __(
+						'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
+					) }
+				</Text>
+			}
+		>
 			<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
 				<Outlet />
 			</FileBrowserProvider>
-		);
-	}
-
-	return (
-		<PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.BACKUPS }
-				tracksFeatureId="backups"
-				asOverlay
-				upsellIcon={ backup }
-				upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
-				upsellImage={ illustrationUrl }
-				upsellDescription={
-					<Text as="p" variant="muted">
-						{ __(
-							'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
-						) }
-					</Text>
-				}
-			>
-				<></>
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

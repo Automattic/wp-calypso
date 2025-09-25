@@ -58,6 +58,7 @@ module.exports = {
 							'!@automattic/viewport',
 							'!@automattic/languages',
 							'!@automattic/charts',
+							'!@automattic/load-script',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
