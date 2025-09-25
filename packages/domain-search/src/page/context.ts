@@ -172,8 +172,6 @@ export const useDomainSearchContextValue = (
 			currentSiteUrl,
 			filter,
 			setFilter,
-			railCarId,
-			setRailCarId,
 			resetFilter: () => setFilter( DEFAULT_FILTER ),
 		};
 	}, [
@@ -188,7 +186,5 @@ export const useDomainSearchContextValue = (
 		normalizedConfig,
 		filter,
 		setFilter,
-		railCarId,
-		setRailCarId,
 	] );
 };

@@ -1,6 +1,6 @@
 import { useDebounce } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 
@@ -8,14 +8,9 @@ const DELAY_TIMEOUT = 300;
 const SEARCH_EVENT_DELAY_TIMEOUT = 10000;
 let searchCount = 0;
 
-const getNewRailcarId = () => {
-	const randomId = crypto.randomUUID().replace( /-/g, '' );
-	return `${ randomId }-domain-suggestion`;
-};
-
 export const Input = () => {
 	const { __ } = useI18n();
-	const { query, setQuery, events, config, setRailCarId } = useDomainSearch();
+	const { query, setQuery, events, config } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 
 	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
@@ -27,6 +22,7 @@ export const Input = () => {
 	useEffect( () => {
 		const timeout = setTimeout( () => {
 			setRailCarId( railcarId );
+			setQuery( localQuery );
 		}, DELAY_TIMEOUT );
 		return () => {
 			clearTimeout( timeout );
@@ -42,7 +38,7 @@ export const Input = () => {
 		return () => {
 			clearTimeout( searchEventTimeout );
 		};
-	}, [ localQuery, setQuery, events, config, setRailCarId, railcarId ] );
+	}, [ localQuery, setQuery, events, config ] );
 
 	return (
 		<DomainSearchControls.Input

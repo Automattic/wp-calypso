@@ -17,10 +17,10 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 	const policyBadges = usePolicyBadges( domainName );
 	const badges = [ ...suggestionBadges, ...policyBadges ];
-	const { events, railCarId } = useDomainSearch();
+	const { events } = useDomainSearch();
 	const suggestion = useSuggestion( domainName );
 
-	events.onSuggestionRender( suggestion, railCarId );
+	events.onSuggestionRender( suggestion );
 
 	return (
 		<DomainSuggestion

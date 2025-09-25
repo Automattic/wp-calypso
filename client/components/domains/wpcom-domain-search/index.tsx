@@ -1,9 +1,9 @@
 import { DomainSuggestion } from '@automattic/api-core';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { useMemo, type ComponentProps } from 'react';
+import { useMemo, useState, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 import type { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -30,6 +30,7 @@ const DomainSearchWithCart = ( {
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
 	const { onContinue, onAddDomainToCart } = props.events ?? {};
+	const [ railcarId, setRailcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
 
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
@@ -131,7 +132,6 @@ const DomainSearchWithCart = ( {
 			},
 			onSuggestionRender: (
 				suggestion: DomainSuggestion,
-				railcarId: string | null,
 				reason?: string | null
 			) => {
 				let resultSuffix = '';
@@ -163,6 +163,8 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
+		// omitting railcarId from dependencies to prevent infinite loop when `onQueryChange` updates that value
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.events, items, flowName, config ] );
 
 	return (

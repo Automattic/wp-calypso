@@ -64,8 +64,8 @@ export const FeaturedSearchResultsItem = ( {
 		return existingBadges;
 	}, [ reason, suggestionBadges, policyBadges, suggestion.price_rule ] );
 
-	const { events, railCarId } = useDomainSearch();
-	events.onSuggestionRender( suggestion, railCarId, reason );
+	const { events } = useDomainSearch();
+	events.onSuggestionRender( suggestion, reason );
 
 	return (
 		<DomainSuggestion.Featured

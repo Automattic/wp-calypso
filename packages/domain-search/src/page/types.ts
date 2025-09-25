@@ -54,11 +54,7 @@ export interface DomainSearchEvents {
 	) => void;
 	onSearch: ( query: string, vendor: string, searchCount: number ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
-	onSuggestionRender: (
-		suggestion: DomainSuggestion,
-		railcarId: string | null,
-		reason?: string | null
-	) => void;
+	onSuggestionRender: ( suggestion: DomainSuggestion, reason?: string | null ) => void;
 }
 
 export interface DomainSearchConfig {
