@@ -1,4 +1,5 @@
 import { MonetizeSubscription } from '@automattic/api-core';
+import { Link } from '@tanstack/react-router';
 import { Fields } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -7,6 +8,7 @@ import {
 	MonetizeSubscriptionTerms,
 	MonetizeSubscriptionType,
 } from './monetize-item';
+import { getMonetizeSubscriptionUrl } from './urls';
 
 export function useMonetizeFieldDefinitions() {
 	return useMemo( () => {
@@ -15,16 +17,6 @@ export function useMonetizeFieldDefinitions() {
 }
 
 export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
-	const getPurchaseUrl = ( item: MonetizeSubscription ) => {
-		const subscriptionId = item.ID;
-		if ( ! subscriptionId ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Cannot display manage purchase page for subscription without ID' );
-			return;
-		}
-		return `/me/purchases/other/${ subscriptionId }`;
-	};
-
 	return [
 		{
 			id: 'site',
@@ -40,9 +32,9 @@ export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
 			// Render the site icon
 			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
-					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
+					<Link title={ __( 'Manage purchase' ) } to={ getMonetizeSubscriptionUrl( item.ID ) }>
 						<MonetizeSubscriptionIcon subscription={ item } />
-					</a>
+					</Link>
 				);
 			},
 		},
@@ -59,9 +51,9 @@ export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
 			},
 			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
-					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
+					<Link title={ __( 'Manage purchase' ) } to={ getMonetizeSubscriptionUrl( item.ID ) }>
 						{ item.title }
-					</a>
+					</Link>
 				);
 			},
 		},
