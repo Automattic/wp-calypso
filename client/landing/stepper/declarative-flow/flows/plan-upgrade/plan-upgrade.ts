@@ -1,4 +1,5 @@
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -24,6 +25,7 @@ function initialize() {
 
 const planUpgradeFlow: FlowV2< typeof initialize > = {
 	name: 'plan-upgrade',
+	title: __( 'Upgrade plan' ),
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
