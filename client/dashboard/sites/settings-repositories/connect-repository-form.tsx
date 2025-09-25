@@ -15,6 +15,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
@@ -42,33 +43,37 @@ interface FormData {
 }
 
 // Custom repository selector component with search functionality
-const RepositorySelector = ( {
-	field,
-	onChange,
-	data,
-	hideLabelFromVision,
-}: DataFormControlProps< FormData > ) => {
+const RepositorySelector = ( { field, onChange, data }: DataFormControlProps< FormData > ) => {
 	const { id, getValue } = field;
 	const currentValue = getValue?.( { item: data } );
 
 	// Get repository options from the field elements
 	const repositoryOptions = field.elements || [];
 	return (
-		<ComboboxControl
-			__next40pxDefaultSize
-			allowReset
-			label={ hideLabelFromVision ? '' : field.label }
-			value={ currentValue === '' ? '' : currentValue?.toString() || '' }
-			onChange={ ( value ) => {
-				if ( ! value ) {
-					onChange( { [ id ]: '' } );
-					return;
-				}
-				onChange( { [ id ]: Number( value ) } );
-			} }
-			options={ repositoryOptions }
-			placeholder={ __( 'Select a repository' ) }
-		/>
+		<VStack spacing={ 2 }>
+			<HStack justify="space-between" alignment="center">
+				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
+					{ __( 'Repository' ) }
+				</Text>
+				<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-repo-existing-source/">
+					{ __( 'Create a new repository' ) }
+				</ExternalLink>
+			</HStack>
+			<ComboboxControl
+				__next40pxDefaultSize
+				allowReset
+				value={ currentValue === '' ? '' : currentValue?.toString() || '' }
+				onChange={ ( value ) => {
+					if ( ! value ) {
+						onChange( { [ id ]: '' } );
+						return;
+					}
+					onChange( { [ id ]: Number( value ) } );
+				} }
+				options={ repositoryOptions }
+				placeholder={ __( 'Select a repository' ) }
+			/>
+		</VStack>
 	);
 };
 
