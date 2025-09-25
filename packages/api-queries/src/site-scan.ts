@@ -18,7 +18,10 @@ export const fixThreatsStatusQuery = ( siteId: number, threatIds: number[] ) =>
 			const result = await fetchFixThreatsStatus( siteId, threatIds );
 			return {
 				...result,
-				threats: Object.values( result.threats ),
+				threats: Object.entries( result.threats ).map( ( [ id, threat ] ) => ( {
+					...threat,
+					id,
+				} ) ),
 			};
 		},
 	} );
