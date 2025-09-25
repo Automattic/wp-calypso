@@ -6,6 +6,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
+import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import '../sites/emails/styles.scss';
@@ -28,7 +29,10 @@ function Emails() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Emails' ) } /> }>
+		<PageLayout
+			header={ <PageHeader title={ __( 'Emails' ) } /> }
+			notices={ <OptInWelcome tracksContext="emails" /> }
+		>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
