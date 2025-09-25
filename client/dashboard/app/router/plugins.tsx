@@ -1,4 +1,9 @@
-import { sitesQuery, queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
+import {
+	pluginsQuery,
+	sitesQuery,
+	queryClient,
+	rawUserPreferencesQuery,
+} from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { rootRoute } from './root';
@@ -65,7 +70,10 @@ export const pluginsManageRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
-	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+	loader: async () => {
+		queryClient.ensureQueryData( pluginsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
 } ).lazy( () =>
 	import( '../../plugins/manage' ).then( ( d ) =>
 		createLazyRoute( 'plugins-manage' )( {
