@@ -1,9 +1,12 @@
 import { useSearch } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { sitePerformanceRoute } from '../../app/router/sites';
-import { PerformanceProfilerDashboardContent } from './dashboard-content';
+import { CoreWebVitalsDisplay } from './core-web-vitals';
+import Disclaimer from './disclaimer';
+import InsightsSection from './insight-section';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
+import ScreenshotTimeline from './screenshot-timeline';
 import type { PerformanceProfilerPage, PerformanceReport } from '@automattic/api-core';
 
 const updateUrl = ( filter: string | undefined ) => {
@@ -30,6 +33,22 @@ export default function Report( {
 } ) {
 	const { filter } = useSearch( { from: sitePerformanceRoute.fullPath } );
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
+	const insightsRef = useRef< HTMLDivElement >( null );
+
+	const {
+		overall_score,
+		fcp,
+		lcp,
+		cls,
+		inp,
+		ttfb,
+		tbt,
+		audits,
+		history,
+		screenshots,
+		is_wpcom,
+		fullPageScreenshot,
+	} = report || {};
 
 	if ( isError ) {
 		return <ReportErrorNotice onRetestClick={ onRetest } />;
@@ -47,16 +66,38 @@ export default function Report( {
 	return (
 		<>
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
-			<PerformanceProfilerDashboardContent
-				performanceReport={ report }
-				url={ currentPage.link }
-				hash={ currentPage.wpcom_performance_report_hash }
-				overallScoreIsTab
-				filter={ recommendationsFilter }
-				displayNewsletterBanner={ false }
-				displayMigrationBanner={ false }
+
+			<CoreWebVitalsDisplay
+				fcp={ fcp }
+				lcp={ lcp }
+				cls={ cls }
+				inp={ inp }
+				ttfb={ ttfb }
+				tbt={ tbt }
+				overall={ overall_score * 100 }
+				overallScoreIsTab={ false }
+				history={ history }
+				audits={ audits }
+				recommendationsRef={ insightsRef }
 				onRecommendationsFilterChange={ handleRecommendationsFilterChange }
 			/>
+
+			<ScreenshotTimeline screenshots={ screenshots ?? [] } />
+
+			{ audits && (
+				<InsightsSection
+					fullPageScreenshot={ fullPageScreenshot }
+					audits={ audits }
+					url={ currentPage.link }
+					isWpcom={ is_wpcom }
+					ref={ insightsRef }
+					hash={ currentPage.wpcom_performance_report_hash }
+					filter={ recommendationsFilter }
+					onRecommendationsFilterChange={ handleRecommendationsFilterChange }
+				/>
+			) }
+
+			<Disclaimer />
 		</>
 	);
 }
