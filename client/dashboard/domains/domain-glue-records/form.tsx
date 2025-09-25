@@ -68,7 +68,7 @@ export default function DomainGlueRecordsForm( {
 					const { id, getValue } = field;
 					const suffix = `.${ domainName }`;
 					const value = getValue( { item: data } ).replace( suffix, '' );
-					const validationMessage = field.isValid?.custom?.( { nameServer: value } );
+					const validationMessage = field.isValid?.custom?.( data, field );
 
 					return (
 						<ValidatedInputControl
@@ -76,7 +76,7 @@ export default function DomainGlueRecordsForm( {
 							label={ field.label }
 							placeholder={ field.placeholder }
 							value={ value }
-							onChange={ ( value ) => {
+							onChange={ ( value: string ) => {
 								return onChange( { [ id ]: value + suffix } );
 							} }
 							customValidity={
@@ -84,7 +84,7 @@ export default function DomainGlueRecordsForm( {
 							}
 							suffix={
 								<InputControlSuffixWrapper>
-									<Text variant="muted" style={ { 'white-space': 'nowrap' } }>
+									<Text variant="muted" style={ { whiteSpace: 'nowrap' } }>
 										{ suffix }
 									</Text>
 								</InputControlSuffixWrapper>
