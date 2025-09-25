@@ -10,7 +10,7 @@ import {
 	GlyphCircle,
 } from '@visx/glyph';
 import { useViewportMatch } from '@wordpress/compose';
-import { useMemo, createElement } from '@wordpress/element';
+import { useMemo, createElement, Element } from '@wordpress/element';
 import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
 import type { HTTPCodeSerie } from './http-codes';
@@ -122,8 +122,8 @@ export default function MonitoringHttpResponsesCard( {
 	site: Site;
 	timeRange: number;
 	httpCodeSeries: HTTPCodeSerie[];
-	cardLabel?: string;
-	className?: string;
+	cardLabel: string;
+	cardDescription: string;
 } ) {
 	const statusCodes = httpCodeSeries.map( ( { statusCode } ) => statusCode );
 
@@ -135,7 +135,7 @@ export default function MonitoringHttpResponsesCard( {
 	);
 
 	const data: SeriesData[] = [];
-	const codeStyles: { [ label: string ]: { color: string; glyph: any } } = {};
+	const codeStyles: { [ label: string ]: { color: string; glyph: Element } } = {};
 	let index = 0;
 
 	if ( responseStatusData ) {

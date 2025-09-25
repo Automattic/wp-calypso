@@ -16,7 +16,6 @@ import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import MonitoringCard from '../monitoring-card';
 import MonitoringHttpResponsesCard from '../monitoring-http-responses-card';
 import {
 	useSuccessHttpCodeSeries,
