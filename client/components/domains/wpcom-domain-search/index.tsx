@@ -3,7 +3,7 @@ import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytic
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { useMemo, useState, type ComponentProps } from 'react';
+import { useMemo, useRef, useState, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 import type { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -54,6 +54,8 @@ const DomainSearchWithCart = ( {
 		};
 	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
 
+	const searchCount = useRef( 0 );
+
 	const events = useMemo( () => {
 		return {
 			...props.events,
@@ -101,10 +103,11 @@ const DomainSearchWithCart = ( {
 					unavailable_status: unavailableStatus,
 				} );
 			},
-			onSearch: ( query: string, vendor: string, searchCount: number ) => {
+			onSearch: ( query: string, vendor: string ) => {
+				searchCount.current++;
 				recordTracksEvent( 'calypso_domain_search', {
 					search_box_value: query,
-					search_count: searchCount,
+					search_count: searchCount.current,
 					search_vendor: vendor,
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 					// TODO: Not sure if we still need this

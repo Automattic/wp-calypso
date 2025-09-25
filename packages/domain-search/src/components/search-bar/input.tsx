@@ -6,7 +6,6 @@ import { DomainSearchControls } from '../../ui';
 
 const DELAY_TIMEOUT = 300;
 const SEARCH_EVENT_DELAY_TIMEOUT = 10000;
-let searchCount = 0;
 
 export const Input = () => {
 	const { __ } = useI18n();
@@ -31,8 +30,7 @@ export const Input = () => {
 
 	useEffect( () => {
 		const searchEventTimeout = setTimeout( () => {
-			searchCount++;
-			events.onSearch( localQuery, config?.vendor, searchCount );
+			events.onSearch( localQuery, config?.vendor );
 		}, SEARCH_EVENT_DELAY_TIMEOUT );
 
 		return () => {
