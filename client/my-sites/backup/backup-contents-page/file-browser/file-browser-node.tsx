@@ -2,6 +2,7 @@ import {
 	Button,
 	CheckboxControl,
 	Icon,
+	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -330,10 +331,38 @@ function FileBrowserNode( {
 			return null;
 		}
 
+		const spinnerStyle = {
+			width: '12px',
+			height: '12px',
+			padding: '0 6px',
+			margin: 0,
+		};
+
+		if ( isLoading && isOpen ) {
+			return <Spinner style={ spinnerStyle } />;
+		}
+
 		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
 	};
 
 	const expandButton = () => {
+		const spinnerStyle = {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+		};
+
+		if ( isLoading && isOpen ) {
+			return (
+				<div
+					className="file-browser-node__separate-expand-button"
+					style={ { padding: '6px', color: 'inherit' } }
+				>
+					<Spinner style={ spinnerStyle } />
+				</div>
+			);
+		}
+
 		return (
 			<Button
 				onClick={ handleExpandButtonClick }
