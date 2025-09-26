@@ -4,7 +4,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
-import { navigate } from 'calypso/lib/navigate';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -52,12 +51,17 @@ function findNewProduct( currentProducts: Array< Product >, previousProducts: Ar
 	);
 }
 
+interface MapPlansProps extends Omit< SubscribersStepProps, 'fromSite' > {
+	onStartImport: () => void;
+}
+
 export default function MapPlans( {
 	cardData,
 	selectedSite,
 	engine,
 	siteSlug,
-}: SubscribersStepProps ) {
+	onStartImport,
+}: MapPlansProps ) {
 	const { __ } = useI18n();
 	const [ productToAdd, setProductToAdd ] = useState< TierToAdd | null >( null );
 
@@ -129,6 +133,7 @@ export default function MapPlans( {
 				selectedSite={ selectedSite }
 				engine={ engine }
 				siteSlug={ siteSlug }
+				onStartImport={ onStartImport }
 			/>
 		);
 	}
@@ -203,9 +208,7 @@ export default function MapPlans( {
 				engine={ engine }
 				siteId={ selectedSite.ID }
 				step={ currentStep }
-				navigate={ () => {
-					navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
-				} }
+				navigate={ onStartImport }
 				disabled={ isImportButtonDisabled }
 			/>
 
@@ -215,6 +218,7 @@ export default function MapPlans( {
 					product={ productToAdd }
 					annualProduct={ productToAdd.annualProduct }
 					isOnlyTier
+					siteId={ selectedSite.ID }
 					hideWelcomeEmailInput
 					hideAdvancedSettings
 				/>
