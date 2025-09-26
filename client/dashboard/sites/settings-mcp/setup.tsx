@@ -83,12 +83,6 @@ function McpSetupComponent( { siteSlug }: { siteSlug: string } ) {
 						},
 					],
 				};
-			case 'llamafile':
-				return {
-					mcpServers: {
-						[ serverName ]: baseConfig,
-					},
-				};
 			default:
 				return {
 					mcpServers: {

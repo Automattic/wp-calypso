@@ -89,12 +89,6 @@ function McpSetupComponent( { path, userSettings } ) {
 						},
 					],
 				};
-			case 'llamafile':
-				return {
-					mcpServers: {
-						[ serverName ]: baseConfig,
-					},
-				};
 			default:
 				return {
 					mcpServers: {
