@@ -13,11 +13,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
 import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
@@ -33,7 +32,6 @@ export default function PersonalDetailsSection( {
 }: PersonalDetailsSectionProps ) {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 
@@ -52,20 +50,6 @@ export default function PersonalDetailsSection( {
 	const currentUsername = userSettings?.user_login || '';
 	const isEmailVerified = userSettings?.email_verified ?? true;
 	const canChangeUsername = userSettings?.user_login_can_be_changed ?? true;
-
-	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
-		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
-			createSuccessNotice( __( 'Username saved.' ), {
-				type: 'snackbar',
-				speak: true,
-				politeness: 'polite',
-			} );
-			const currentUrl = new URL( window.location.href );
-			currentUrl.searchParams.delete( 'usernameChangeSuccess' );
-			window.history.replaceState( {}, '', currentUrl.toString() );
-		}
-	}, [ createSuccessNotice, createErrorNotice ] );
 
 	// Form event handlers
 	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
@@ -157,6 +141,12 @@ export default function PersonalDetailsSection( {
 
 	return (
 		<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
+			<FlashMessage
+				key="usernameChangeSuccess"
+				value="true"
+				message={ __( 'Username saved.' ) }
+				type="success"
+			/>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
