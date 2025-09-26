@@ -13,8 +13,9 @@ export type McpAbilitiesApiStructure = {
  */
 export function getSiteMcpAbilities(
 	userSettings: { mcp_abilities?: McpAbilities } | null | undefined,
-	siteId: string | number
-): SiteMcpAbilities {
+	siteId: string | number,
+	siteSettings?: { default_tools?: boolean } | null | undefined
+): SiteMcpAbilities & { accountToolsEnabled?: boolean } {
 	const siteIdStr = String( siteId );
 	const mcpData = userSettings?.mcp_abilities;
 
@@ -50,7 +51,25 @@ export function getSiteMcpAbilities(
 		}
 	} );
 
-	return mergedAbilities;
+	// Determine if account tools should be enabled
+	// Check if there are any enabled account-level abilities
+	const hasEnabledAccountTools =
+		mcpData.account && Object.values( mcpData.account ).some( ( ability ) => ability.enabled );
+
+	// Check if site has default tools enabled (from site settings)
+	const hasDefaultSiteTools = siteSettings?.default_tools === true;
+
+	// Set accountToolsEnabled to true if:
+	// 1. Explicitly set in site overrides, OR
+	// 2. There are enabled account-level tools, OR
+	// 3. Site has default tools available
+	const accountToolsEnabled =
+		siteOverrides.accountToolsEnabled ?? ( hasEnabledAccountTools || hasDefaultSiteTools );
+
+	return {
+		...mergedAbilities,
+		accountToolsEnabled,
+	};
 }
 
 /**
@@ -165,7 +184,7 @@ export function convertAbilitiesFromApi(
 export function createSiteSpecificApiPayload(
 	userSettings: { mcp_abilities?: McpAbilities } | null | undefined,
 	siteId: string | number,
-	abilities: SiteMcpAbilities
+	abilities: SiteMcpAbilities & { accountToolsEnabled?: boolean }
 ): { mcp_abilities: McpAbilitiesApiStructure } {
 	const siteIdNum = Number( siteId );
 	const mcpData = userSettings?.mcp_abilities;
@@ -180,6 +199,11 @@ export function createSiteSpecificApiPayload(
 	// Find only the abilities that differ from defaults
 	const siteOverrides: Record< string, boolean > = {};
 	Object.entries( abilities ).forEach( ( [ abilityName, ability ] ) => {
+		// Skip the accountToolsEnabled field
+		if ( abilityName === 'accountToolsEnabled' ) {
+			return;
+		}
+
 		const defaultAbility = defaultSiteAbilities[ abilityName ];
 
 		// Only store if it differs from the default
@@ -187,6 +211,11 @@ export function createSiteSpecificApiPayload(
 			siteOverrides[ abilityName ] = ability.enabled;
 		}
 	} );
+
+	// Add accountToolsEnabled if it's set (and not the default true)
+	if ( abilities.accountToolsEnabled !== undefined && abilities.accountToolsEnabled !== true ) {
+		siteOverrides.accountToolsEnabled = abilities.accountToolsEnabled;
+	}
 
 	// Create the optimized payload (only include site-specific overrides)
 	const payload: McpAbilitiesApiStructure = {};

@@ -1,6 +1,7 @@
 import {
 	isAutomatticianQuery,
 	siteBySlugQuery,
+	siteSettingsQuery,
 	userSettingsQuery,
 	userSettingsMutation,
 } from '@automattic/api-queries';
@@ -13,12 +14,14 @@ import {
 	ToggleControl,
 	ExternalLink,
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useMemo, useCallback, createElement } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
@@ -29,6 +32,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
 	// Use the standard userSettingsMutation (now supports mcp_abilities)
 	const saveMcpMutation = useMutation( {
 		...userSettingsMutation(),
@@ -42,18 +46,29 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 
 	// Get tools from user settings using the new nested structure
 	const availableTools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {
-		const abilities = getSiteMcpAbilities( userSettings, site.ID );
+		const abilities = getSiteMcpAbilities( userSettings, site.ID, siteSettings as any );
 		return Object.entries( abilities );
-	}, [ userSettings, site.ID ] );
+	}, [ userSettings, site.ID, siteSettings ] );
 
 	const hasTools = availableTools.length > 0;
 
-	const [ formData, setFormData ] = useState< SiteMcpAbilities >( () =>
-		getSiteMcpAbilities( userSettings, site.ID )
-	);
+	const [ formData, setFormData ] = useState< any >( () => {
+		const abilities = getSiteMcpAbilities( userSettings, site.ID, siteSettings as any );
+		return {
+			...abilities,
+		};
+	} );
 
 	// Calculate if any tools are enabled in form data (for master toggle state)
-	const anyToolsEnabled = hasTools && Object.values( formData ).some( ( tool ) => tool.enabled );
+	const anyToolsEnabled =
+		hasTools &&
+		Object.entries( formData ).some(
+			( [ key, value ] ) =>
+				key !== 'accountToolsEnabled' &&
+				typeof value === 'object' &&
+				value &&
+				( value as any ).enabled
+		);
 
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
@@ -69,33 +84,36 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 				createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
 			}
 		},
-		[ formData, userSettings, site.ID, saveMcpMutation, createErrorNotice ]
+		[ formData, userSettings, site.ID, siteSettings, saveMcpMutation, createErrorNotice ]
 	);
 
 	const handleMasterToggle = useCallback(
 		( enabled: boolean ) => {
 			// Get the complete list of available tools from userSettings
-			const currentAbilities = getSiteMcpAbilities( userSettings, site.ID );
-			const updatedTools: SiteMcpAbilities = {};
+			const currentAbilities = getSiteMcpAbilities( userSettings, site.ID, siteSettings as any );
+			const updatedTools: any = {};
 
 			// Update all available tools to the same enabled state
 			Object.entries( currentAbilities ).forEach( ( [ toolId, tool ] ) => {
 				updatedTools[ toolId ] = {
-					...tool,
+					...( tool as any ),
 					enabled,
 				};
 			} );
 
+			// Preserve the accountToolsEnabled setting
+			updatedTools.accountToolsEnabled = formData.accountToolsEnabled;
+
 			setFormData( updatedTools );
 		},
-		[ userSettings, site.ID ]
+		[ userSettings, site.ID, formData.accountToolsEnabled ]
 	);
 
 	const handleToolChange = useCallback( ( toolId: string, enabled: boolean ) => {
-		setFormData( ( prev ) => ( {
+		setFormData( ( prev: any ) => ( {
 			...prev,
 			[ toolId ]: {
-				...prev[ toolId ],
+				...( prev[ toolId ] as any ),
 				enabled,
 			},
 		} ) );
@@ -107,7 +125,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 			toolId,
 			{
 				...tool,
-				enabled: formData[ toolId ]?.enabled ?? tool.enabled,
+				enabled: ( formData[ toolId ] as any )?.enabled ?? ( tool as any ).enabled,
 			},
 		] );
 	}, [ availableTools, formData ] );
@@ -116,48 +134,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	if ( ! isAutomattician ) {
 		return null;
 	}
-
-	// Group tools by type first, then by category
-	const groupedByType: Record<
-		string,
-		Record< string, [ string, SiteMcpAbilities[ string ] ][] >
-	> = tools.reduce(
-		(
-			typeGroups: Record< string, Record< string, [ string, SiteMcpAbilities[ string ] ][] > >,
-			[ toolId, tool ]
-		) => {
-			const type = tool.type || 'tool'; // Default to 'tool' instead of 'other'
-			const category = tool.category || 'General';
-
-			// Only include the three main types
-			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
-				return typeGroups;
-			}
-
-			if ( ! typeGroups[ type ] ) {
-				typeGroups[ type ] = {};
-			}
-			if ( ! typeGroups[ type ][ category ] ) {
-				typeGroups[ type ][ category ] = [];
-			}
-			typeGroups[ type ][ category ].push( [ toolId, tool ] );
-			return typeGroups;
-		},
-		{} as Record< string, Record< string, [ string, SiteMcpAbilities[ string ] ][] > >
-	);
-
-	// Type descriptions
-	const typeDescriptions: Record< string, string > = {
-		tool: __(
-			'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
-		),
-		resource: __(
-			'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
-		),
-		prompt: __(
-			'Prompts help AI assistants understand context and provide better responses to your queries.'
-		),
-	};
 
 	const renderContent = () => {
 		if ( ! hasTools ) {
@@ -173,9 +149,9 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 		}
 
 		return (
-			<form onSubmit={ handleSubmit }>
-				<Card>
-					<CardBody>
+			<Card>
+				<CardBody>
+					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
 							<div
 								style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }
@@ -191,80 +167,71 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 									</Button>
 								) }
 							</div>
-						</VStack>
-					</CardBody>
-				</Card>
 
-				{ hasTools && anyToolsEnabled && (
-					<>
-						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => {
-							const typeKey = type as 'tool' | 'resource' | 'prompt';
-							return (
-								<div key={ type } style={ { marginTop: '24px' } }>
-									<Text as="h1">{ __( 'Site-level MCP Tools' ) }</Text>
-									<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
-										{ typeDescriptions[ typeKey ] }
+							{ hasTools && anyToolsEnabled && (
+								<VStack spacing={ 3 }>
+									<Heading level={ 4 }>{ __( 'Site-specific MCP Tools' ) }</Heading>
+									<Text as="p" variant="muted">
+										{ __( 'Control which MCP tools are available for this site.' ) }
 									</Text>
-									<Card>
-										<CardBody>
-											<VStack spacing={ 6 }>
-												{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
-													<VStack key={ category } spacing={ 4 }>
-														<Text as="h3" style={ { textTransform: 'capitalize' } }>
-															{ category }
-														</Text>
-														{ categoryTools.map( ( [ toolId, tool ] ) => (
-															<VStack key={ toolId } spacing={ 3 }>
-																<ToggleControl
-																	checked={ tool.enabled }
-																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-																	label={ tool.title }
-																	help={ tool.description }
-																/>
-															</VStack>
-														) ) }
-													</VStack>
-												) ) }
-											</VStack>
-										</CardBody>
-									</Card>
-								</div>
-							);
-						} ) }
-					</>
-				) }
+									<VStack spacing={ 4 }>
+										{ tools
+											.filter( ( [ toolId ] ) => toolId !== 'accountToolsEnabled' )
+											.map( ( [ toolId, tool ] ) => (
+												<ToggleControl
+													key={ toolId }
+													checked={ tool.enabled }
+													onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+													label={ tool.title }
+													help={ tool.description }
+												/>
+											) ) }
+									</VStack>
+								</VStack>
+							) }
 
-				{ anyToolsEnabled && (
-					<>
-						<div style={ { marginTop: '24px' } }>
-							<Text as="h1">{ __( 'Account-level MCP Tools' ) }</Text>
-							<Text as="p" variant="muted" style={ { margin: 0 } }>
-								{ createInterpolateElement(
-									__(
-										'Account-level MCP tools are available across all your sites, <a>manage account MCP settings</a>.'
-									),
-									{
-										a: createElement( 'a', { href: '/me/mcp', target: '_blank' } ),
-									}
-								) }
-							</Text>
-						</div>
-					</>
-				) }
+							{ anyToolsEnabled && (
+								<VStack spacing={ 3 }>
+									<Heading level={ 4 }>{ __( 'Account-level MCP Tools' ) }</Heading>
+									<Text as="p" variant="muted">
+										{ createInterpolateElement(
+											__(
+												'Account-level tools work across all sites. <a>Manage account MCP settings</a>.'
+											),
+											{
+												a: <a href="/me/mcp" target="_blank" rel="noreferrer" />,
+											}
+										) }
+									</Text>
+									<ToggleControl
+										checked={ formData.accountToolsEnabled ?? true }
+										onChange={ ( checked ) =>
+											setFormData( ( prev: any ) => ( { ...prev, accountToolsEnabled: checked } ) )
+										}
+										label={ __( 'Account-level MCP tools' ) }
+										help={ __(
+											'When enabled, account-level MCP tools will be available on this site.'
+										) }
+									/>
+								</VStack>
+							) }
 
-				{ hasTools && (
-					<div style={ { marginTop: '24px' } }>
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ saveMcpMutation.isPending }
-							disabled={ saveMcpMutation.isPending }
-						>
-							{ saveMcpMutation.isPending ? __( 'Saving…' ) : __( 'Save MCP tools' ) }
-						</Button>
-					</div>
-				) }
-			</form>
+							{ hasTools && (
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ saveMcpMutation.isPending }
+										disabled={ saveMcpMutation.isPending }
+									>
+										{ saveMcpMutation.isPending ? __( 'Saving…' ) : __( 'Save MCP tools' ) }
+									</Button>
+								</ButtonStack>
+							) }
+						</VStack>
+					</form>
+				</CardBody>
+			</Card>
 		);
 	};
 

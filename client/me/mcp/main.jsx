@@ -4,14 +4,14 @@ import {
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 	Card,
 	CardBody,
-	CardHeader,
 	ToggleControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, createElement } from 'react';
+import { useState, useEffect } from 'react';
 import { connect, useDispatch as useReduxDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormButton from 'calypso/components/forms/form-button';
@@ -22,6 +22,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
+import { ButtonStack } from '../../dashboard/components/button-stack';
 import { getAccountMcpAbilities, createAccountApiPayload } from './utils';
 
 function McpComponent( { path, userSettings, isUpdating } ) {
@@ -114,62 +115,12 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 			},
 		] );
 
-		// Group tools by type first, then by category
-		const groupedByType = tools.reduce( ( typeGroups, [ toolId, tool ] ) => {
-			const type = tool.type || 'tool'; // Default to 'tool' instead of 'other'
-			const category = tool.category || 'General';
-
-			// Only include the three main types
-			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
-				return typeGroups;
-			}
-
-			if ( ! typeGroups[ type ] ) {
-				typeGroups[ type ] = {};
-			}
-			if ( ! typeGroups[ type ][ category ] ) {
-				typeGroups[ type ][ category ] = [];
-			}
-			typeGroups[ type ][ category ].push( [ toolId, tool ] );
-			return typeGroups;
-		}, {} );
-
-		// Type descriptions
-		const typeDescriptions = {
-			tool: translate(
-				'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
-			),
-			resource: translate(
-				'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
-			),
-			prompt: translate(
-				'Prompts help AI assistants understand context and provide better responses to your queries.'
-			),
-		};
-
-		// Type display names
-		const typeDisplayNames = {
-			tool: translate( 'Tools' ),
-			resource: translate( 'Resources' ),
-			prompt: translate( 'Prompts' ),
-		};
-
 		return (
-			<form onSubmit={ handleSubmit }>
-				<Card style={ { borderRadius: '0' } }>
-					<CardHeader size="small">
-						<VStack spacing={ 2 }>
-							<Text as="h1">{ translate( 'Account-level MCP tools' ) }</Text>
-							<Text as="p" variant="muted">
-								{ translate(
-									'These tools are available across all your sites. You can enable or disable them here to control access globally.'
-								) }
-							</Text>
-						</VStack>
-					</CardHeader>
-					<CardBody>
-						{ hasTools ? (
-							<VStack spacing={ 3 }>
+			<Card>
+				<CardBody>
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 }>
+							{ hasTools ? (
 								<div
 									style={ {
 										display: 'flex',
@@ -188,96 +139,63 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 										</Button>
 									) }
 								</div>
-							</VStack>
-						) : (
-							<Text as="p" variant="muted">
-								{ translate( 'No MCP tools are currently available.' ) }
-							</Text>
-						) }
-					</CardBody>
-				</Card>
+							) : (
+								<Text as="p" variant="muted">
+									{ translate( 'No MCP tools are currently available.' ) }
+								</Text>
+							) }
 
-				{ hasTools && anyToolsEnabled && (
-					<>
-						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-							<div key={ type } style={ { marginTop: '24px' } }>
-								<Card style={ { borderRadius: '0' } }>
-									<CardHeader size="small">
-										<VStack spacing={ 2 }>
-											<Text as="h1">{ typeDisplayNames[ type ] }</Text>
-											<Text as="p" variant="muted">
-												{ typeDescriptions[ type ] }
-											</Text>
-										</VStack>
-									</CardHeader>
-									<CardBody>
-										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
-												<VStack key={ category } spacing={ 4 }>
-													<Text as="h3" style={ { textTransform: 'capitalize' } }>
-														{ category }
-													</Text>
-													<VStack spacing={ 4 }>
-														{ categoryTools.map( ( [ toolId, tool ] ) => (
-															<VStack key={ toolId } spacing={ 3 }>
-																<ToggleControl
-																	checked={ tool.enabled }
-																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-																	label={ tool.title }
-																	help={ tool.description }
-																	disabled={ ! anyToolsEnabled }
-																/>
-															</VStack>
-														) ) }
-													</VStack>
-												</VStack>
-											) ) }
-										</VStack>
-									</CardBody>
-								</Card>
-							</div>
-						) ) }
-					</>
-				) }
-
-				{ hasTools && anyToolsEnabled && (
-					<>
-						<div style={ { marginTop: '24px' } }>
-							<Card>
-								<CardBody>
-									<VStack spacing={ 3 }>
-										<Text as="h4" style={ { margin: 0 } }>
-											{ translate( 'Site-specific MCP settings' ) }
-										</Text>
-										<Text as="p" variant="muted" style={ { margin: 0 } }>
-											{ createInterpolateElement(
-												translate(
-													'Account-level MCP tools are available on all your sites. You can manage site-specific MCP access and overrides in <a>individual site settings</a>.'
-												),
-												{
-													a: createElement( 'a', {
-														href: '/sites',
-														target: '_blank',
-														style: { textDecoration: 'underline' },
-													} ),
-												}
-											) }
-										</Text>
+							{ hasTools && anyToolsEnabled && (
+								<VStack spacing={ 3 }>
+									<Heading level={ 4 }>{ translate( 'Account-level MCP Tools' ) }</Heading>
+									<Text as="p" variant="muted">
+										{ translate( 'Control which MCP tools are available across all your sites.' ) }
+									</Text>
+									<VStack spacing={ 4 }>
+										{ tools.map( ( [ toolId, tool ] ) => (
+											<ToggleControl
+												key={ toolId }
+												checked={ tool.enabled }
+												onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+												label={ tool.title }
+												help={ tool.description }
+												disabled={ ! anyToolsEnabled }
+											/>
+										) ) }
 									</VStack>
-								</CardBody>
-							</Card>
-						</div>
-					</>
-				) }
+								</VStack>
+							) }
 
-				{ hasTools && (
-					<div style={ { marginTop: '24px' } }>
-						<FormButton isSubmitting={ isUpdating } disabled={ isUpdating || ! hasUnsavedChanges }>
-							{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP tools' ) }
-						</FormButton>
-					</div>
-				) }
-			</form>
+							{ hasTools && anyToolsEnabled && (
+								<VStack spacing={ 3 }>
+									<Heading level={ 4 }>{ translate( 'Site-specific MCP settings' ) }</Heading>
+									<Text as="p" variant="muted">
+										{ createInterpolateElement(
+											translate(
+												'Account-level tools work across all sites. <a>Manage site-specific MCP settings</a> to control which tools are available on a specific site.'
+											),
+											{
+												a: <a href="/sites" target="_blank" rel="noreferrer" />,
+											}
+										) }
+									</Text>
+								</VStack>
+							) }
+
+							{ hasTools && (
+								<ButtonStack justify="flex-start">
+									<FormButton
+										isSubmitting={ isUpdating }
+										disabled={ isUpdating || ! hasUnsavedChanges }
+									>
+										{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP tools' ) }
+									</FormButton>
+								</ButtonStack>
+							) }
+						</VStack>
+					</form>
+				</CardBody>
+			</Card>
 		);
 	};
 
