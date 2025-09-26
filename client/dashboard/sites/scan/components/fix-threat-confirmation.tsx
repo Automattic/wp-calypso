@@ -1,4 +1,5 @@
-import { Button, Icon, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, Icon, __experimentalVStack as VStack } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
@@ -6,6 +7,11 @@ import { ButtonStack } from '../../../components/button-stack';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import type { Threat } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
+
+type ConfirmationFormData = {
+	confirmation: string;
+};
 
 interface FixThreatConfirmationProps {
 	threat: Threat;
@@ -22,11 +28,24 @@ export function FixThreatConfirmation( {
 	disabled = false,
 	isLoading = false,
 }: FixThreatConfirmationProps ) {
-	const [ confirmationInput, setConfirmationInput ] = useState( '' );
+	const [ formData, setFormData ] = useState< ConfirmationFormData >( { confirmation: '' } );
 
 	const slug = threat.extension?.slug || 'unknown-slug';
-	const isConfirmed = confirmationInput === slug;
+	const isConfirmed = formData.confirmation === slug;
 	const shouldBeDisabled = disabled || isLoading || ! isConfirmed;
+
+	const fields: Field< ConfirmationFormData >[] = [
+		{
+			id: 'confirmation',
+			label: __( 'Confirmation' ),
+			type: 'text',
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'confirmation' ],
+	};
 
 	return (
 		<VStack spacing={ 4 }>
@@ -94,12 +113,13 @@ export function FixThreatConfirmation( {
 				) }
 			</Text>
 
-			<TextControl
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				onChange={ ( value: string ) => setConfirmationInput( value ) }
-				value={ confirmationInput }
-				autoComplete="off"
+			<DataForm< ConfirmationFormData >
+				data={ formData }
+				fields={ fields }
+				form={ form }
+				onChange={ ( edits: Partial< ConfirmationFormData > ) => {
+					setFormData( ( data ) => ( { ...data, ...edits } ) );
+				} }
 			/>
 
 			<ButtonStack justify="flex-end">
