@@ -51,3 +51,13 @@ export const userPreferenceMutation = < P extends keyof UserPreferences >( prefe
 			);
 		},
 	} );
+
+export const userPreferencesMutation = () =>
+	mutationOptions( {
+		mutationFn: ( data: Partial< UserPreferences > ) => updatePreferences( data ),
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>
+				oldData ? { ...oldData, ...newData } : newData
+			);
+		},
+	} );

@@ -57,11 +57,7 @@ export default function MonitoringCard( {
 	};
 
 	const topContent = (
-		<HStack
-			className="dashboard-monitoring-card__content"
-			justify="space-between"
-			alignment="flex-start"
-		>
+		<HStack justify="space-between" alignment="flex-start">
 			<VStack spacing={ 4 } className="dashboard-monitoring-card__header">
 				<HStack justify="space-between">
 					<HStack spacing={ 1 } alignment="center" expanded={ false }>

@@ -5,6 +5,8 @@ import {
 	fetchCodeDeploymentRunLogs,
 	fetchCodeDeploymentRunLogDetail,
 	deleteCodeDeployment,
+	createCodeDeployment,
+	CreateCodeDeploymentVariables,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -38,6 +40,12 @@ export const codeDeploymentDeleteMutation = ( siteId: number, deploymentId: numb
 	mutationOptions( {
 		mutationFn: ( removeFiles: boolean ) =>
 			deleteCodeDeployment( siteId, deploymentId, removeFiles ),
+	} );
+
+export const createCodeDeploymentMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( variables: CreateCodeDeploymentVariables ) =>
+			createCodeDeployment( siteId, variables ),
 	} );
 
 export const deploymentRunLogsQuery = ( siteId: number, deploymentId: number, runId: number ) =>

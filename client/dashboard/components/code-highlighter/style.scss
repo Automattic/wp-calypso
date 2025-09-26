@@ -1,0 +1,14 @@
+.code-highlighter {
+	height: fit-content;
+	max-height: 30lh;
+	border-radius: 4px;
+
+	.language-yaml {
+		color: #2a46ce !important;
+		text-wrap: pretty;
+	}
+
+	.token.key.atrule {
+		color: #008a20 !important;
+	}
+}
