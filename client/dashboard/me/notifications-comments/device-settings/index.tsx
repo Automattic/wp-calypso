@@ -10,7 +10,6 @@ import {
 	SelectControl,
 	CardBody,
 	Card,
-	Spinner,
 	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -106,8 +105,6 @@ export const DevicesSettings = () => {
 								}
 							) }
 						/>
-
-						{ hasDevices && isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					<SelectControl
 						disabled={ isMutating || ! hasDevices }
