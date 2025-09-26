@@ -1,7 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { addQueryArgs } from '@wordpress/url';
 import { ReactNode } from 'react';
 import { ClickHandler } from 'calypso/components/step-progress';
 import {
@@ -24,7 +23,6 @@ function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 export function getStepsProgress(
 	engine: string,
 	selectedSiteSlug: string,
-	fromSite: string,
 	paidNewsletterData?: PaidNewsletterData
 ) {
 	const summaryStatus = getImporterStatus( paidNewsletterData?.steps );
@@ -33,11 +31,7 @@ export function getStepsProgress(
 		{
 			message: __( 'Content' ),
 			onClick: () => {
-				navigate(
-					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
-						from: fromSite,
-					} )
-				);
+				navigate( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content` );
 			},
 			show: 'onComplete',
 			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.content?.status ),
@@ -45,11 +39,7 @@ export function getStepsProgress(
 		{
 			message: __( 'Subscribers' ),
 			onClick: () => {
-				navigate(
-					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/subscribers`, {
-						from: fromSite,
-					} )
-				);
+				navigate( `/import/newsletter/${ engine }/${ selectedSiteSlug }/subscribers` );
 			},
 			show: 'onComplete',
 			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.subscribers?.status ),
@@ -57,11 +47,7 @@ export function getStepsProgress(
 		{
 			message: __( 'Summary' ),
 			onClick: () => {
-				navigate(
-					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/summary`, {
-						from: fromSite,
-					} )
-				);
+				navigate( `/import/newsletter/${ engine }/${ selectedSiteSlug }/summary` );
 			},
 			show: summaryStatus === 'done' || summaryStatus === 'skipped' ? 'always' : 'onComplete',
 			indicator: getStepProgressIndicator( summaryStatus === 'done' ? 'done' : 'initial' ),

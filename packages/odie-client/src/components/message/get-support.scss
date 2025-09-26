@@ -34,6 +34,10 @@
 				border-bottom: none;
 			}
 
+			&:only-child {
+				border-radius: 16px;
+			}
+
 			&:hover {
 				background: color-mix( in srgb, #fff 98%, var( --wp-admin-theme-color, #3858e9 ) );
 				color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );

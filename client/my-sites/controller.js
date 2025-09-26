@@ -937,7 +937,11 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) ) {
+	const selectedSite = getSelectedSite( state );
+	const shouldShowNavigation = config.isEnabled( 'themes/universal-header' )
+		? selectedSite
+		: isUserLoggedIn( state );
+	if ( shouldShowNavigation ) {
 		navigation( context, next );
 	}
 	next();

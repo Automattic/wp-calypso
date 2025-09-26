@@ -9,8 +9,8 @@ export const PerformanceReportLoading = ( {
 	isLoadingPages,
 	onRetestClick,
 }: {
-	isSavedReport: boolean;
-	pageTitle: string;
+	isSavedReport?: boolean;
+	pageTitle?: string;
 	isLoadingPages?: boolean;
 	onRetestClick(): void;
 } ) => {

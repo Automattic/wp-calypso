@@ -88,7 +88,7 @@ export default function StepInitial( {
 			{ selectedSite.ID && (
 				<SubscriberUploadForm
 					siteId={ selectedSite.ID }
-					nextStepUrl={ `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` }
+					nextStepUrl={ `/import/newsletter/${ engine }/${ siteSlug }/summary` }
 					skipNextStep={ skipNextStep }
 					cardData={ cardData }
 				/>

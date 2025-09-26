@@ -27,23 +27,6 @@ export function getDiscoverStreamTags( tags: string[] | null, isLoggedIn: boolea
 	return tags;
 }
 
-export function getSelectedTabTitle( selectedTab: string ) {
-	if ( selectedTab === RECOMMENDED_TAB ) {
-		return 'popular';
-	}
-
-	if ( selectedTab === LATEST_TAB ) {
-		return 'new';
-	}
-	if ( selectedTab === FIRST_POSTS_TAB ) {
-		return 'fresh';
-	}
-	if ( selectedTab === FRESHLY_PRESSED_TAB ) {
-		return 'Freshly Pressed';
-	}
-	return decodeURIComponent( selectedTab );
-}
-
 export function getDefaultTab() {
 	return isEnabled( 'reader/discover/freshly-pressed' ) ? FRESHLY_PRESSED_TAB : RECOMMENDED_TAB;
 }

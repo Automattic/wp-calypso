@@ -167,3 +167,15 @@ export function formatLabel(
 		formatDate( endForDisplay, locale, { dateStyle: 'medium' } )
 	);
 }
+
+// Determine if the given date range matches the last 7 days preset
+export function isLast7Days(
+	range: { start: Date; end: Date },
+	timezoneString?: string,
+	gmtOffset?: number
+): boolean {
+	const siteToday =
+		parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) ) ??
+		new Date( new Date().getFullYear(), new Date().getMonth(), new Date().getDate() );
+	return getActivePresetId( range.start, range.end, siteToday ) === 'last-7-days';
+}

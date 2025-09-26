@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -33,12 +34,16 @@ export default function ThemeShowcaseHeader( {
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
+	const shouldUseLoggedInHeader = isEnabled( 'themes/universal-header' )
+		? selectedSiteId
+		: isLoggedIn;
+
 	const {
 		title: documentHeadTitle,
 		metaDescription: metaDescription,
 		header: themesHeaderTitle,
 		description: themesHeaderDescription,
-	} = isLoggedIn
+	} = shouldUseLoggedInHeader
 		? {
 				title: title,
 				metaDescription: description,
@@ -93,7 +98,7 @@ export default function ThemeShowcaseHeader( {
 				meta={ metas }
 				skipTitleFormatting={ skipTitleFormatting }
 			/>
-			{ isLoggedIn ? (
+			{ shouldUseLoggedInHeader ? (
 				<div className="themes__header-navigation-container">
 					<NavigationHeader
 						compactBreadcrumb={ false }

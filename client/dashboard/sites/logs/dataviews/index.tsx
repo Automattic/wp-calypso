@@ -13,32 +13,20 @@ import { LogsDownloader } from '../downloader';
 import { buildTimeRangeInSeconds } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
-import { getInitialFiltersFromSearch, getAllowedFields } from './filters';
+import { getInitialFiltersFromSearch, getAllowedFields, filtersSignature } from './filters';
+import { syncFiltersSearchParams } from './url-sync';
 import { useView, toFilterParams } from './views';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 import './style.scss';
 import type { Dispatch, SetStateAction } from 'react';
 
-function filtersSignature(
-	filters: Filter[] | undefined,
-	allowed: ReadonlyArray< string >
-): string {
-	return allowed
-		.slice()
-		.sort()
-		.map( ( field ) => {
-			const raw = filters?.find( ( filter ) => filter.field === field )?.value;
-			const values = Array.isArray( raw ) ? ( raw as string[] ).slice().sort() : [];
-			return `${ field }:${ values.slice().sort().join( ',' ) }`;
-		} )
-		.join( '|' );
-}
-
 export type SiteLogsDataViewsProps = {
 	dateRange: { start: Date; end: Date };
 	autoRefresh: boolean;
 	setAutoRefresh: Dispatch< SetStateAction< boolean > >;
+	autoRefreshDisabledReason?: string | null;
+	onAutoRefreshRequest?: ( isChecked: boolean ) => boolean;
 	dateRangeVersion?: number;
 	gmtOffset: number;
 	timezoneString: string | undefined;
@@ -53,6 +41,8 @@ function SiteLogsDataViews( {
 	timezoneString,
 	autoRefresh,
 	setAutoRefresh,
+	autoRefreshDisabledReason,
+	onAutoRefreshRequest,
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
@@ -189,18 +179,7 @@ function SiteLogsDataViews( {
 
 		// Sync allowed filters to URL using sourceFilters
 		const url = new URL( window.location.href );
-		const isEmpty = ( value?: string[] ) => ! value || value.length === 0;
-		allowed.forEach( ( field ) => {
-			const value =
-				( sourceFilters.find( ( filter ) => filter.field === field )?.value as
-					| string[]
-					| undefined ) || [];
-			if ( isEmpty( value ) ) {
-				url.searchParams.delete( field );
-			} else {
-				url.searchParams.set( field, value.slice().sort().toString() );
-			}
-		} );
+		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
 		window.history.replaceState( null, '', url.pathname + url.search );
 
 		// Apply view with only allowed filters; reset page/cursors if dataset changed
@@ -220,7 +199,9 @@ function SiteLogsDataViews( {
 	};
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
-		setAutoRefresh( isChecked );
+		if ( onAutoRefreshRequest && ! onAutoRefreshRequest( isChecked ) ) {
+			return; // blocked by parent; notice already set
+		}
 		recordTracksEvent( 'calypso_dashboard_site_logs_auto_refresh', { enabled: isChecked } );
 	};
 
@@ -244,6 +225,7 @@ function SiteLogsDataViews( {
 				label={ __( 'Auto-refresh' ) }
 				checked={ autoRefresh }
 				onChange={ handleAutoRefreshClick }
+				disabled={ Boolean( autoRefreshDisabledReason ) }
 			/>
 		</>
 	);

@@ -22,12 +22,7 @@ interface IgnoreThreatModalProps extends RenderModalProps< Threat > {
 	siteId: number;
 }
 
-export function IgnoreThreatModal( {
-	items,
-	closeModal,
-	onActionPerformed,
-	siteId,
-}: IgnoreThreatModalProps ) {
+export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatModalProps ) {
 	const threat = items[ 0 ];
 
 	const ignoreThreat = useMutation( ignoreThreatMutation( siteId ) );
@@ -37,7 +32,6 @@ export function IgnoreThreatModal( {
 		ignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
-				onActionPerformed?.( [ threat ] );
 				createSuccessNotice( __( 'Threat ignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {

@@ -14,6 +14,8 @@ Rule of thumb: use sentence case for almost everything.
 
 Button labels, modal titles, and form labels; they all use sentence case.
 
+Treat "Hosting Dashboard" like a proper noun. Capitalize it when referring to the product.
+
 ## Snackbars
 
 When a network request completes it will often pop up a “snackbar” notification. The copy in these notifications should be informative.

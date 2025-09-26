@@ -79,7 +79,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		if ( site ) {
-			// The site type used by the hosting dashboard is slightly different, but _mostly_ compatible,
+			// The site type used by the Hosting Dashboard is slightly different, but _mostly_ compatible,
 			// so this is safe to copy in to the cache.
 			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
