@@ -220,11 +220,7 @@ export default function NewsletterImporter( {
 									steps={ paidNewsletterData.steps }
 									resetImporter={ resetImporter }
 									onResetImporter={ () => {
-										page.redirect(
-											`/import/newsletter/substack/${
-												selectedSite.slug
-											}/content?from=${ fromSite }`
-										);
+										page.redirect( `/import/newsletter/substack/${ selectedSite.slug }/content` );
 									} }
 									fromSite={ fromSite }
 									showConfetti={ showConfetti }
