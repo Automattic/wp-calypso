@@ -410,7 +410,8 @@ function getLoggedInPlansAction( {
 	const createLoggedInPlansAction = (
 		text: TranslateResult,
 		variant: GridAction[ 'primary' ][ 'variant' ] = 'primary',
-		ariaLabel?: TranslateResult
+		ariaLabel?: TranslateResult,
+		status?: GridAction[ 'primary' ][ 'status' ]
 	) => ( {
 		primary: {
 			callback: async () => {
@@ -428,7 +429,8 @@ function getLoggedInPlansAction( {
 				setIsLoading( false );
 				return;
 			},
-			status: ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ],
+			status:
+				status ?? ( ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ] ),
 			text,
 			ariaLabel,
 			variant,
@@ -565,5 +567,10 @@ function getLoggedInPlansAction( {
 		);
 	}
 
-	return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );
+	return createLoggedInPlansAction(
+		translate( 'Upgrade', { context: 'verb' } ),
+		'primary',
+		undefined,
+		canUserManageCurrentPlan ? undefined : 'disabled'
+	);
 }
