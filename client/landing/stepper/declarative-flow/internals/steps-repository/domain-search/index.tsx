@@ -87,7 +87,8 @@ const DomainSearchStep: StepType< {
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
-				! isDomainFlow( flow ),
+				! isDomainFlow( flow ) &&
+				! isDomainUpsellFlow( flow ),
 			allowedTlds,
 			allowsUsingOwnDomain: ! isAIBuilderFlow( flow ) && ! isNewHostedSiteCreationFlow( flow ),
 		};
