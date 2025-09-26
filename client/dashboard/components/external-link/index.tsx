@@ -13,12 +13,12 @@ const titleFieldTextOverflowStyles = {
 interface Props extends PropsWithChildren {
 	href: string;
 	children: React.ReactNode;
-	disabled: boolean;
+	disabled?: boolean;
 	className?: string;
 	ellipsisMode?: ComponentProps< typeof Text >[ 'ellipsizeMode' ];
 }
 
-export const ExternalLink = ( { href, children, disabled, className, ellipsisMode }: Props ) => {
+export const ExternalLink = ( { href, children, disabled = false, className }: Props ) => {
 	return disabled ? (
 		<Text variant="muted" className={ className }>
 			{ children }

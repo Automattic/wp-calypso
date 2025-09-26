@@ -8,15 +8,8 @@
 	}
 }
 
-.site-list-settings__card {
-	max-height: unset;
-	transition: max-height 0.2s ease-in-out;
-	&.collapsed {
-		max-height: 112px;
-		overflow: hidden;
-	}
-}
 
 .site-list-settings__card-placeholder {
 	height: 112px;
 }
+

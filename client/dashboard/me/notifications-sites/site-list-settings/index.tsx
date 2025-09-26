@@ -1,7 +1,7 @@
 import { Site } from '@automattic/api-core';
 import { sitesQuery } from '@automattic/api-queries';
 import { useFuzzySearch } from '@automattic/search';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -10,50 +10,13 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import clsx from 'clsx';
-import Fuse from 'fuse.js';
-import { memo, useDeferredValue, useMemo, useState, useTransition } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { TextSkeleton } from '../../../components/text-skeleton';
+import { CollapsibleCard } from '../collapsible-card';
 import { SiteNotificationSettings } from '../site-notification-settings';
-import {
-	SiteNotificationSettingsProvider,
-	useSiteNotificationSettingsContext,
-} from '../site-notification-settings/context';
-import { StreamSettings } from '../stream-settings';
+import { SiteSettings } from '../site-settings';
 
 import './index.scss';
-
-const CollapsibleCard = () => {
-	const site = useSiteNotificationSettingsContext();
-	const [ isCollapsed, setIsCollapsed ] = useState< boolean >( true );
-	const [ isPending, startTransition ] = useTransition();
-
-	if ( ! site ) {
-		return null;
-	}
-
-	const handleCollapsedChange = ( collapsed: boolean ) => {
-		startTransition( () => {
-			setIsCollapsed( collapsed );
-		} );
-	};
-	return (
-		<Card
-			key={ site.ID }
-			className={ clsx( 'site-list-settings__card', { collapsed: isCollapsed } ) }
-		>
-			<CardBody>
-				<SiteNotificationSettings
-					isCollapsed={ isCollapsed }
-					onCollapsedChange={ handleCollapsedChange }
-				/>
-				{ ! isCollapsed && ! isPending && (
-					<StreamSettings className="site-list-settings__stream-settings" blogId={ site.ID } />
-				) }
-			</CardBody>
-		</Card>
-	);
-};
 
 export const Placeholder = () => {
 	return (
@@ -101,9 +64,9 @@ export const SiteListSettings = () => {
 			/>
 			<VStack spacing={ 4 }>
 				{ filteredSites.map( ( site: Site ) => (
-					<SiteNotificationSettingsProvider value={ site } key={ site.ID }>
-						<CollapsibleCard key={ site.ID } />
-					</SiteNotificationSettingsProvider>
+					<CollapsibleCard key={ site.ID } header={ <SiteNotificationSettings site={ site } /> }>
+						<SiteSettings siteId={ site.ID } />
+					</CollapsibleCard>
 				) ) }
 				{ filteredSites.length === 0 && (
 					<Card>
