@@ -119,6 +119,25 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	)
 );
 
+export const pluginsScheduledUpdatesEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit schedule' ),
+			},
+		],
+	} ),
+	getParentRoute: () => pluginsRoute,
+	path: 'scheduled-updates/edit/$scheduleId',
+	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+} ).lazy( () =>
+	import( '../../plugins/scheduled-updates/edit' ).then( ( d ) =>
+		createLazyRoute( 'plugins-scheduled-updates-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createPluginsRoutes = () => {
 	const childRoutes: AnyRoute[] = [
 		pluginsIndexRoute,
@@ -126,6 +145,7 @@ export const createPluginsRoutes = () => {
 		pluginsManageRoute,
 		pluginsScheduledUpdatesRoute,
 		pluginsScheduledUpdatesNewRoute,
+		pluginsScheduledUpdatesEditRoute,
 	];
 	return [ pluginsRoute.addChildren( childRoutes ) ];
 };
