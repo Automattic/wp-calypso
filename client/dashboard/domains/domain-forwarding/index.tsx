@@ -114,7 +114,7 @@ function DomainForwarding() {
 			},
 			{
 				id: 'forward_paths',
-				label: __( 'Path Forwarding' ),
+				label: __( 'Path forwarding' ),
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
@@ -124,7 +124,7 @@ function DomainForwarding() {
 			},
 			{
 				id: 'is_permanent',
-				label: __( 'Redirect Type' ),
+				label: __( 'Redirect type' ),
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,

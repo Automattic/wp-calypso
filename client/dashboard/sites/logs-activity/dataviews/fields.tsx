@@ -87,7 +87,7 @@ export function useActivityFields( {
 			{
 				id: 'published_utc',
 				type: 'datetime',
-				label: __( 'Date & Time (UTC)' ),
+				label: __( 'Date & time (UTC)' ),
 				enableHiding: true,
 				enableSorting: true,
 				getValue: ( { item } ) => item.published,

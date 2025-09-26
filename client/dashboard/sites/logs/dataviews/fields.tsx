@@ -215,7 +215,7 @@ export function useFields( {
 			{
 				id: 'http_host',
 				type: 'text',
-				label: __( 'HTTP Host' ),
+				label: __( 'HTTP host' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_host,
 				filterBy: { operators: [] as Operator[] },
@@ -223,7 +223,7 @@ export function useFields( {
 			{
 				id: 'http_referer',
 				type: 'text',
-				label: __( 'HTTP Referrer' ),
+				label: __( 'HTTP referrer' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_referer,
 				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
@@ -242,7 +242,7 @@ export function useFields( {
 			{
 				id: 'http_user_agent',
 				type: 'text',
-				label: __( 'User Agent' ),
+				label: __( 'User agent' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_user_agent,
 				filterBy: { operators: [] as Operator[] },
@@ -250,7 +250,7 @@ export function useFields( {
 			{
 				id: 'http_version',
 				type: 'text',
-				label: __( 'HTTP Version' ),
+				label: __( 'HTTP version' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_version,
 				filterBy: { operators: [] as Operator[] },
@@ -278,7 +278,7 @@ export function useFields( {
 			{
 				id: 'request_completion',
 				type: 'text',
-				label: __( 'Request Completion' ),
+				label: __( 'Request completion' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.request_completion,
 				filterBy: { operators: [] as Operator[] },
@@ -286,7 +286,7 @@ export function useFields( {
 			{
 				id: 'request_time',
 				type: 'text',
-				label: __( 'Request Time' ),
+				label: __( 'Request time' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.request_time,
 				filterBy: { operators: [] as Operator[] },
