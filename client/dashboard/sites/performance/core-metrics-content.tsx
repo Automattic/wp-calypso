@@ -17,7 +17,7 @@ import {
 	displayValue,
 	getMetricValuations,
 } from './utils';
-import Chart from './core-web-vitals/charts/chart';
+import CoreMetricsChart from './core-metrics-chart';
 import { StatusIndicator } from './core-web-vitals/status-indicator';
 import { StatusBadge } from './core-web-vitals/status-section';
 import { RecommendationsLink } from './core-web-vitals/recommendations-link';
@@ -234,8 +234,8 @@ export default function CoreMetricsContent( {
 						</HStack>
 					</HStack>
 				</Spacer>
-				{ dataAvailable ? (
-					<Chart data={ historicalData } />
+				{ true ? (
+					<CoreMetricsChart data={ historicalData } />
 				) : (
 					<Text>{ __( 'No history available' ) }</Text>
 				) }
