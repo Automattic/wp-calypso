@@ -106,5 +106,7 @@ export function normalizeFromSite( fromSite: string ) {
 		return result.groups.slug + '.substack.com';
 	}
 
-	return fromSite;
+	const cleanUrl = fromSite.replace( /[/\\]+$/, '' );
+
+	return cleanUrl.startsWith( 'http' ) ? cleanUrl : `https://${ cleanUrl }`;
 }

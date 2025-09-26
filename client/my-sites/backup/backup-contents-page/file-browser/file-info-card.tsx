@@ -181,10 +181,10 @@ function FileInfoCard( {
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		setNodeCheckState( '/', 'unchecked' );
+		setNodeCheckState( '/', 'unchecked', rewindId );
 
 		// Mark this file as selected
-		setNodeCheckState( path, 'checked' );
+		setNodeCheckState( path, 'checked', rewindId );
 
 		// Request granular restore
 		onRequestGranularRestore( siteSlug, rewindId );

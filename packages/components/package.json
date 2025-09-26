@@ -57,7 +57,7 @@
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/base-styles": "^5.23.0",
-		"@wordpress/components": "^30.2.0",
+		"@wordpress/components": "^30.4.0",
 		"@wordpress/compose": "7.23.0",
 		"@wordpress/date": "5.23.0",
 		"@wordpress/html-entities": "4.23.0",

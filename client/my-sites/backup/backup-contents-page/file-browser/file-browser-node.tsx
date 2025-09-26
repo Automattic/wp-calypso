@@ -2,6 +2,7 @@ import {
 	Button,
 	CheckboxControl,
 	Icon,
+	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -50,6 +51,21 @@ function FileBrowserNode( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
+	// Spinner styles for different positions
+	const spinnerStyles = {
+		left: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+			padding: '0 6px',
+		},
+		right: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+		},
+	};
+
 	const { fileBrowserState } = useFileBrowserContext();
 	const isRoot = path === '/';
 	const isCurrentNodeClicked = activeNodePath === path;
@@ -60,7 +76,7 @@ function FileBrowserNode( {
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const { getNode, addChildNodes, setNodeCheckState } = fileBrowserState;
-	const browserNodeItem = getNode( path );
+	const browserNodeItem = getNode( path, rewindId );
 	const expandIcon = isRTL() ? chevronLeft : chevronRight;
 	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
@@ -113,18 +129,18 @@ function FileBrowserNode( {
 	const addChildrenWhenLoaded = useCallback(
 		( path: string, backupFiles: FileBrowserItem[] ) => {
 			if ( backupFiles ) {
-				addChildNodes( path, backupFiles.filter( shouldAddChildNode ) );
+				addChildNodes( path, backupFiles.filter( shouldAddChildNode ), rewindId );
 			}
 		},
-		[ addChildNodes, shouldAddChildNode ]
+		[ addChildNodes, rewindId, shouldAddChildNode ]
 	);
 
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
 		( path: string, checkState: FileBrowserCheckState ) => {
-			setNodeCheckState( path, checkState );
+			setNodeCheckState( path, checkState, rewindId );
 		},
-		[ setNodeCheckState ]
+		[ rewindId, setNodeCheckState ]
 	);
 
 	// Using isSuccess to track the API call status
@@ -330,10 +346,25 @@ function FileBrowserNode( {
 			return null;
 		}
 
+		if ( isLoading && isOpen ) {
+			return <Spinner style={ spinnerStyles.left } />;
+		}
+
 		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
 	};
 
 	const expandButton = () => {
+		if ( isLoading && isOpen ) {
+			return (
+				<div
+					className="file-browser-node__separate-expand-button"
+					style={ { padding: '6px', color: 'inherit' } }
+				>
+					<Spinner style={ spinnerStyles.right } />
+				</div>
+			);
+		}
+
 		return (
 			<Button
 				onClick={ handleExpandButtonClick }

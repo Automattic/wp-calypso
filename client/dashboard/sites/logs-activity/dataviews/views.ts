@@ -25,6 +25,7 @@ export function useActivityView( {
 				published: { maxWidth: '175px', minWidth: '140px' },
 				published_utc: { maxWidth: '175px', minWidth: '140px' },
 				actor: { maxWidth: '150px', minWidth: '75px' },
+				event: { minWidth: '500px' },
 			},
 		},
 		search: initialSearch ?? undefined,

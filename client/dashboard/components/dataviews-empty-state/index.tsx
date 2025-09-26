@@ -9,6 +9,7 @@ interface DataViewsEmptyStateProps {
 	description: string;
 	illustration?: ReactNode;
 	title: string;
+	mutedDescription?: boolean;
 }
 
 export function DataViewsEmptyState( {
@@ -16,6 +17,7 @@ export function DataViewsEmptyState( {
 	title,
 	illustration,
 	description,
+	mutedDescription = true,
 }: DataViewsEmptyStateProps ) {
 	return (
 		<VStack spacing={ 6 } alignment="center" className="dashboard-dataviews-empty-state">
@@ -23,7 +25,7 @@ export function DataViewsEmptyState( {
 			<VStack spacing={ 2 } alignment="center">
 				<div className="dashboard-dataviews-empty-state__heading">{ title }</div>
 				<Text
-					variant="muted"
+					variant={ mutedDescription ? 'muted' : undefined }
 					align="center"
 					className="dashboard-dataviews-empty-state__sub-heading"
 				>

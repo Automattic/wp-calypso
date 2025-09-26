@@ -11,7 +11,8 @@ export interface SubscribersStepProps {
 	status: StepStatus;
 	engine: 'substack';
 	fromSite: string;
-	nextStepUrl: string;
+	nextStepUrl?: string;
+	onViewSummaryClick?: () => void;
 	selectedSite: SiteDetails;
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 	siteSlug: string;

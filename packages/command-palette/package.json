@@ -55,7 +55,7 @@
 		"@emotion/styled": "^11.11.0",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/commands": "^1.23.0",
-		"@wordpress/components": "^30.2.0",
+		"@wordpress/components": "^30.4.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
