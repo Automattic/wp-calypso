@@ -12,6 +12,11 @@ function PrimaryMenu() {
 			{ supports.domains && <Menu.Item to="/domains">{ __( 'Domains' ) }</Menu.Item> }
 			{ supports.emails && <Menu.Item to="/emails">{ __( 'Emails' ) }</Menu.Item> }
 			{ supports.plugins && <Menu.Item to="/plugins/manage">{ __( 'Plugins' ) }</Menu.Item> }
+			{ supports.themes && (
+				<Menu.ExternalItem href="/themes" className="dashboard-menu__item">
+					{ __( 'Themes' ) }
+				</Menu.ExternalItem>
+			) }
 		</Menu>
 	);
 }

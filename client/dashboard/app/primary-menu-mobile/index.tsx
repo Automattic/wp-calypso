@@ -1,6 +1,7 @@
 import { DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
+import Menu from '../../components/menu';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAppContext } from '../context';
 
@@ -41,6 +42,11 @@ function PrimaryMenuMobile() {
 						<RouterLinkMenuItem to="/plugins" onClick={ onClose }>
 							{ __( 'Plugins' ) }
 						</RouterLinkMenuItem>
+					) }
+					{ supports.themes && (
+						<Menu.ExternalItem as={ Menu.ItemLink } href="/themes" onClick={ onClose }>
+							{ __( 'Themes' ) }
+						</Menu.ExternalItem>
 					) }
 				</>
 			) }
