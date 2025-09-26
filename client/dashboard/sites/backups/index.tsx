@@ -14,7 +14,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
@@ -37,7 +37,7 @@ export function BackupsListPage() {
 	const router = useRouter();
 
 	const routeParams = useParams( {
-		// TODO: This workaround is needed until we update @tanstack/react-router that supports optional params.
+		// TODO: This workaround is needed until we update @tanstack/react-router to a version that supports optional params.
 		from: siteBackupDetailRoute.id as unknown as undefined,
 		strict: false,
 		shouldThrow: false,
@@ -63,26 +63,29 @@ export function BackupsListPage() {
 	} );
 	const [ selectedBackup, setSelectedBackupInState ] = useState< ActivityLogEntry | null >( null );
 
-	const setSelectedBackup = ( backup?: ActivityLogEntry | null, replace = false ) => {
-		if ( backup ) {
-			router.navigate( {
-				to: siteBackupDetailRoute.fullPath,
-				params: {
-					siteSlug: site.slug,
-					rewindId: backup.rewind_id,
-				},
-				replace,
-			} );
-		} else {
-			router.navigate( {
-				to: siteBackupsIndexRoute.fullPath,
-				params: {
-					siteSlug: siteSlug,
-				},
-				replace,
-			} );
-		}
-	};
+	const setSelectedBackup = useCallback(
+		( backup?: ActivityLogEntry | null, replace = false ) => {
+			if ( backup ) {
+				router.navigate( {
+					to: siteBackupDetailRoute.fullPath,
+					params: {
+						siteSlug,
+						rewindId: backup.rewind_id,
+					},
+					replace,
+				} );
+			} else {
+				router.navigate( {
+					to: siteBackupsIndexRoute.fullPath,
+					params: {
+						siteSlug,
+					},
+					replace,
+				} );
+			}
+		},
+		[ router, siteSlug ]
+	);
 
 	// Fetch activity log if we have a rewindId to auto-select
 	const { data: activityLog } = useQuery( {
@@ -104,7 +107,7 @@ export function BackupsListPage() {
 		if ( ! rewindId && backup ) {
 			setSelectedBackup( backup, true );
 		}
-	}, [ rewindId, activityLog ] );
+	}, [ rewindId, activityLog, setSelectedBackup ] );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		handleDateRangeChange( next );
