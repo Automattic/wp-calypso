@@ -68,15 +68,7 @@ export default function Report( {
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 
 			<CoreMetrics
-				fcp={ fcp }
-				lcp={ lcp }
-				cls={ cls }
-				inp={ inp }
-				ttfb={ ttfb }
-				tbt={ tbt }
-				overall={ overall_score * 100 }
-				history={ history }
-				audits={ audits }
+				report={ report }
 				recommendationsRef={ insightsRef }
 				onRecommendationsFilterChange={ handleRecommendationsFilterChange }
 			/>

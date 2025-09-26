@@ -4,6 +4,7 @@ import { useState } from 'react';
 // import { CoreWebVitalsAccordion } from './core-web-vitals/core-web-vitals-accordion';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
+import type { PerformanceReport } from '@automattic/api-core';
 
 // Types moved from calypso/data/site-profiler/types
 export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall';
@@ -63,9 +64,8 @@ export type ScreenShotsTimeLine = {
 	timing: number;
 };
 
-type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
-	history: PerformanceMetricsHistory;
-	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+type CoreWebVitalsDisplayProps = {
+	report: PerformanceReport;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
@@ -77,8 +77,8 @@ export default function CoreMetrics( props: CoreWebVitalsDisplayProps ) {
 	if ( isDesktop ) {
 		return (
 			<Grid alignment="topLeft" columns={ 2 } templateColumns="25% 1fr">
-				<CoreMetricsTabs activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
-				<CoreMetricsContent activeTab={ activeTab } { ...props } />
+				<CoreMetricsTabs report={ props.report } activeTab={ activeTab } setActiveTab={ setActiveTab } />
+				<CoreMetricsContent report={ props.report } activeTab={ activeTab } recommendationsRef={ props.recommendationsRef } onRecommendationsFilterChange={ props.onRecommendationsFilterChange } />
 			</Grid>
 		);
 	}

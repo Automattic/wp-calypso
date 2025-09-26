@@ -10,14 +10,35 @@ import { displayValue, getMetricsNames, mapThresholdsToStatus } from './utils';
 
 import { StatusIndicator } from './core-web-vitals/status-indicator';
 import { Metrics } from './core-metrics';
+import type { PerformanceReport } from '@automattic/api-core';
 
-type Props = Record< Metrics, number > & {
+type Props = {
+	report: PerformanceReport;
 	activeTab: Metrics;
 	setActiveTab: ( tab: Metrics ) => void;
 };
 
 const CoreMetricsTabs = ( props: Props ) => {
-	const { setActiveTab, overall } = props;
+	const { report, setActiveTab } = props;
+	const {
+		overall_score,
+		fcp,
+		lcp,
+		cls,
+		inp,
+		ttfb,
+		tbt,
+	} = report;
+
+	const metrics = {
+		fcp,
+		lcp,
+		cls,
+		inp,
+		ttfb,
+		tbt,
+		overall: overall_score * 100,
+	};
 	const { recordTracksEvent } = useAnalytics();
 	const handleTabClick = ( tab: Metrics ) => {
 		setActiveTab( tab );
@@ -33,21 +54,21 @@ const CoreMetricsTabs = ( props: Props ) => {
 			<Card>
 				<CardBody>
 					<button onClick={ () => handleTabClick( 'overall' ) }>
-						<Text>{ __( 'Performance Score' ) }</Text>
-						{/* <PerformanceScore score={ overall } size={ 48 } /> */}
-					</button>
-				</CardBody>
-			</Card>
+					<Text>{ __( 'Performance Score' ) }</Text>
+					{/* <PerformanceScore score={ metrics.overall } size={ 48 } /> */}
+				</button>
+			</CardBody>
+		</Card>
 
 			<Card>
 				<CardBody>
 					{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
-						if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
+						if ( metrics[ key as Metrics ] === undefined || metrics[ key as Metrics ] === null ) {
 							return null;
 						}
 
 						// Only display TBT if INP is not available
-						if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
+						if ( key === 'tbt' && metrics[ 'inp' ] !== undefined && metrics[ 'inp' ] !== null ) {
 							return null;
 						}
 
@@ -55,20 +76,20 @@ const CoreMetricsTabs = ( props: Props ) => {
 							return null;
 						}
 
-						const status = mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] );
+						const status = mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] );
 						const statusClassName = status === 'needsImprovement' ? 'needs-improvement' : status;
 
 						return (
 							<button key={ key } onClick={ () => handleTabClick( key as Metrics ) }>
 								<div className="metric-tab-bar__tab-status">
 									<StatusIndicator
-										speed={ mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] ) }
+										speed={ mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] ) }
 									/>
 								</div>
 								<div className="metric-tab-bar__tab-text">
 									<div className="metric-tab-bar__tab-header">{ displayName }</div>
 									<div className={ `metric-tab-bar__tab-metric ${ statusClassName }` }>
-										{ displayValue( key as Metrics, props[ key as Metrics ] ) }
+										{ displayValue( key as Metrics, metrics[ key as Metrics ] ) }
 									</div>
 								</div>
 							</button>

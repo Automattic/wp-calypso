@@ -20,12 +20,12 @@ import Chart from './core-web-vitals/charts/chart';
 import { StatusIndicator } from './core-web-vitals/status-indicator';
 import { StatusBadge } from './core-web-vitals/status-section';
 import { RecommendationsLink } from './core-web-vitals/recommendations-link';
-import { Metrics, PerformanceMetricsHistory, PerformanceMetricsItemQueryResponse } from './core-metrics';
+import { Metrics } from './core-metrics';
+import type { PerformanceReport } from '@automattic/api-core';
 
-type CoreMetricsContentProps = Record< Metrics, number > & {
-	history: PerformanceMetricsHistory;
+type CoreMetricsContentProps = {
+	report: PerformanceReport;
 	activeTab: Metrics | null;
-	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
@@ -72,13 +72,32 @@ const getScoreText = (
 };
 
 export default function CoreMetricsContent( {
+	report,
 	activeTab,
-	history,
-	audits,
 	recommendationsRef,
 	onRecommendationsFilterChange,
-	...metrics
 }: CoreMetricsContentProps ) {
+	const {
+		overall_score,
+		fcp,
+		lcp,
+		cls,
+		inp,
+		ttfb,
+		tbt,
+		audits,
+		history,
+	} = report;
+
+	const metrics = {
+		fcp,
+		lcp,
+		cls,
+		inp,
+		ttfb,
+		tbt,
+		overall: overall_score * 100,
+	};
 	const isMobile = ! useViewportMatch( 'medium' );
 
 	if ( ! activeTab ) {
