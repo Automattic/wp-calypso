@@ -1,4 +1,5 @@
 import { useSearch } from '@tanstack/react-router';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState, useRef } from 'react';
 import { sitePerformanceRoute } from '../../app/router/sites';
 import CoreMetrics from './core-metrics';
@@ -64,7 +65,7 @@ export default function Report( {
 	};
 
 	return (
-		<>
+		<VStack spacing={ 6 }>
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 
 			<CoreMetrics
@@ -89,6 +90,6 @@ export default function Report( {
 			) }
 
 			<Disclaimer />
-		</>
+		</VStack>
 	);
 }

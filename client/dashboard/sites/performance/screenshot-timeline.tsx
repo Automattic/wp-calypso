@@ -1,52 +1,15 @@
 import styled from '@emotion/styled';
-import { Modal } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Modal,
+	Card,
+	CardBody,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ScreenShotsTimeLine } from '../core-metrics';
-
-const Container = styled.div`
-	width: 100%;
-	box-sizing: border-box;
-	border: 1px solid var( --studio-gray-5 );
-	padding: 24px;
-	border-radius: 4px;
-	overflow: hidden;
-	background: var( --studio-white );
-`;
-
-const Timeline = styled.div`
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	gap: 1.5rem;
-	text-align: center;
-	overflow: auto;
-	padding: 0 2px;
-`;
-
-const H2 = styled.h2`
-	font-weight: 500;
-	font-size: 1rem;
-	margin-bottom: 8px;
-`;
-
-const Thumbnail = styled.img`
-	border: 1px solid var( --studio-gray-0 );
-	border-radius: 6px;
-	width: 100%;
-	min-width: 60px;
-	cursor: pointer;
-`;
-
-const Tick = styled.p`
-	margin: 6px 0 0;
-	color: var( --studio-gray-80 );
-	font-size: 0.875rem;
-`;
-const Img = styled.img`
-	width: 100%;
-	height: auto;
-`;
+import { ScreenShotsTimeLine } from './core-metrics';
 
 const ScreenshotModal = styled( Modal )`
 	@media ( min-width: 600px ) {
@@ -112,34 +75,49 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 	}
 
 	return (
-		<Container>
-			<H2>{ __( 'Timeline' ) }</H2>
-			<p>{ __( 'How your site appears to users while loading.' ) }</p>
-			{ overlay.isOpen && overlay.screenshot && (
-				<ScreenshotModal
-					onRequestClose={ () => setOverlay( { isOpen: false } ) }
-					contentLabel={ __( 'Screenshot preview' ) }
-				>
-					<Img alt={ overlay.timing } src={ overlay.screenshot.data } />
-				</ScreenshotModal>
-			) }
-			<Timeline>
-				{ screenshots.map( ( screenshot, index ) => {
-					const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
-					return (
-						<div key={ index }>
-							<Thumbnail
-								alt={ timing }
-								src={ screenshot.data }
-								onClick={ () =>
-									setOverlay( { isOpen: true, screenshot: screenshot, timing: timing } )
-								}
-							/>
-							<Tick>{ timing }</Tick>
-						</div>
-					);
-				} ) }
-			</Timeline>
-		</Container>
+		<Card>
+			<CardBody>
+				<VStack spacing={ 6 }>
+					<Text size={ 15 } weight={ 500 }>
+						{ __( 'Page load timeline' ) }
+					</Text>
+					{ overlay.isOpen && overlay.screenshot && (
+						<ScreenshotModal
+							onRequestClose={ () => setOverlay( { isOpen: false } ) }
+							contentLabel={ __( 'Screenshot preview' ) }
+						>
+							<img style={ { width: '100%', height: 'auto' } } alt={ overlay.timing } src={ overlay.screenshot.data } />
+						</ScreenshotModal>
+					) }
+					<HStack spacing={ 4 }>
+						{ screenshots.map( ( screenshot, index ) => {
+							const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
+							return (
+								<VStack key={ index } spacing={ 2 } alignment="center">
+									<Card style={ { overflow: 'hidden' } }>
+										<img
+											style={ {
+												display: 'block',
+												width: '100%',
+												height: 'auto',
+												cursor: 'pointer',
+											} }
+											alt={ timing }
+											src={ screenshot.data }
+											onClick={ () =>
+												setOverlay( { isOpen: true, screenshot: screenshot, timing: timing } )
+											}
+										/>
+									</Card>
+									<Text size="small" variant="muted">
+										{ timing }
+									</Text>
+								</VStack>
+							);
+						} ) }
+					</HStack>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
