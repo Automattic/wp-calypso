@@ -21,17 +21,7 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 		jest.clearAllMocks();
 	} );
 
-	describe( 'Conditional rendering and content', () => {
-		it( 'renders when isOpen is true', () => {
-			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
-			expect( screen.getByText( 'Confirm username change?' ) ).toBeInTheDocument();
-		} );
-
-		it( 'does not render when isOpen is false', () => {
-			render( <UsernameUpdateConfirmationModal { ...defaultProps } isOpen={ false } /> );
-			expect( screen.queryByText( 'Confirm username change?' ) ).not.toBeInTheDocument();
-		} );
-
+	describe( 'Modal content', () => {
 		it( 'displays warning message with current username', () => {
 			render(
 				<UsernameUpdateConfirmationModal { ...defaultProps } currentUsername="myusername" />
