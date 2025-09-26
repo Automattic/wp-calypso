@@ -82,7 +82,14 @@ export function BackupsListPage() {
 
 	const renderMobileView = () => {
 		if ( showDetails && selectedBackup ) {
-			return <BackupDetails backup={ selectedBackup } site={ site } />;
+			return (
+				<BackupDetails
+					backup={ selectedBackup }
+					site={ site }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			);
 		}
 
 		return (
@@ -128,7 +135,11 @@ export function BackupsListPage() {
 					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
-			notices={ shouldShowNotices ? <BackupNotices site={ site } /> : undefined }
+			notices={
+				shouldShowNotices ? (
+					<BackupNotices site={ site } timezoneString={ timezoneString } gmtOffset={ gmtOffset } />
+				) : undefined
+			}
 		>
 			{ hasBackups && (
 				<>
@@ -145,7 +156,14 @@ export function BackupsListPage() {
 								gmtOffset={ gmtOffset }
 							/>
 
-							{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+							{ selectedBackup && (
+								<BackupDetails
+									backup={ selectedBackup }
+									site={ site }
+									timezoneString={ timezoneString }
+									gmtOffset={ gmtOffset }
+								/>
+							) }
 						</Grid>
 					) }
 				</>
