@@ -86,7 +86,7 @@ const CoreMetricsTabs = ( {
 					const status = mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] );
 
 					return (
-						<TabButton onClick={ () => handleTabClick( key as Metrics ) }>
+						<TabButton key={ key } onClick={ () => handleTabClick( key as Metrics ) }>
 							<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
 								{ displayName }
 							</Text>
