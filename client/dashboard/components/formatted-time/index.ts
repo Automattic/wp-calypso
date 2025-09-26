@@ -38,8 +38,11 @@ export function useFormattedTime(
 			dateInSiteTimezone.getFullYear() === siteToday.getFullYear();
 
 		if ( isToday ) {
-			// translators: time today
-			return sprintf( __( 'Today at %s' ), formatted );
+			if ( formatOptions?.timeStyle ) {
+				// translators: time today
+				return sprintf( __( 'Today at %s' ), formatted );
+			}
+			return __( 'Today' );
 		} else if ( timezoneString ) {
 			return formatDate( date, locale, {
 				...formatOptions,
