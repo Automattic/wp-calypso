@@ -2,6 +2,7 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString, isWithinNext } from '../../../utils/datetime';
 import {
@@ -12,10 +13,12 @@ import {
 	needsToRenewSoon,
 	isRecentMonthlyPurchase,
 	creditCardExpiresBeforeSubscription,
+	getRenewUrlForPurchases,
 } from '../../../utils/purchase';
 import { getPurchaseUrl, getAddPaymentMethodUrlFor } from '../urls';
 import { ExpiringLaterText } from './purchase-expiring-notice';
 import { shouldShowCardExpiringWarning } from './purchase-notice';
+import { UpcomingRenewalsDialog } from './upcoming-renewals-dialog';
 import type { NoticeVariant } from '../../../components/notice/types';
 import type { Purchase } from '@automattic/api-core';
 
@@ -86,6 +89,9 @@ export function OtherRenewablePurchasesNotice( {
 	purchaseAttachedTo: Purchase | undefined;
 	renewableSitePurchases: Purchase[];
 } ) {
+	const [ isUpcomingRenewalsDialogVisible, setUpcomingRenewalsDialogVisible ] =
+		useState< boolean >( false );
+
 	if ( ! purchase.site_slug ) {
 		return null;
 	}
@@ -147,9 +153,8 @@ export function OtherRenewablePurchasesNotice( {
 	const earliestOtherExpiry = earliestOtherExpiringPurchase
 		? getRelativeTimeString( new Date( earliestOtherExpiringPurchase.expiry_date ) )
 		: '';
-	// FIXME: open upcoming renewals dialog
-	const openUpcomingRenewalsDialog = () => undefined;
-	const link = <Button onClick={ () => openUpcomingRenewalsDialog() } />;
+	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
+	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
 	const managePurchase = <a href={ getPurchaseUrl( currentPurchase ) } />;
 
 	let noticeStatus: NoticeVariant = 'info';
@@ -164,8 +169,8 @@ export function OtherRenewablePurchasesNotice( {
 			suppressErrorStylingForCurrentPurchase && suppressErrorStylingForOtherPurchases
 				? 'info'
 				: 'error';
-		// FIXME: handle "renew all" action
-		noticeActionOnClick = () => null;
+		noticeActionOnClick = () =>
+			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		noticeActionText = __( 'Renew all' );
 
 		if ( isExpired( currentPurchase ) ) {
@@ -425,8 +430,8 @@ export function OtherRenewablePurchasesNotice( {
 		anotherPurchaseIsExpiring
 	) {
 		noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
-		// FIXME: handle "renew all" action
-		noticeActionOnClick = () => null;
+		noticeActionOnClick = () =>
+			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		noticeActionText = __( 'Renew all' );
 
 		if ( anotherPurchaseIsExpired ) {
@@ -568,8 +573,8 @@ export function OtherRenewablePurchasesNotice( {
 		anotherPurchaseIsExpiring
 	) {
 		noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
-		// FIXME: handle "renew all" action
-		noticeActionOnClick = () => null;
+		noticeActionOnClick = () =>
+			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		noticeActionText = __( 'Renew Now' );
 
 		if ( anotherPurchaseIsExpired ) {
@@ -627,8 +632,8 @@ export function OtherRenewablePurchasesNotice( {
 		anotherPurchaseIsExpiring
 	) {
 		noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
-		// FIXME: handle "renew all" action
-		noticeActionOnClick = () => null;
+		noticeActionOnClick = () =>
+			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		noticeActionText = __( 'Renew Now' );
 
 		if ( anotherPurchaseIsExpired ) {
@@ -694,24 +699,37 @@ export function OtherRenewablePurchasesNotice( {
 		}
 	}
 
-	if ( ! noticeText ) {
-		return null;
+	if ( noticeText ) {
+		return (
+			<>
+				{ isUpcomingRenewalsDialogVisible && (
+					<UpcomingRenewalsDialog
+						onClose={ () => setUpcomingRenewalsDialogVisible( false ) }
+						onConfirm={ ( purchases ) => {
+							if ( purchases.length < 1 ) {
+								setUpcomingRenewalsDialogVisible( false );
+								return;
+							}
+							window.location.href = getRenewUrlForPurchases( purchases );
+						} }
+						siteDomain={ purchase.meta ?? purchase.domain }
+						purchases={ renewableSitePurchases }
+					/>
+				) }
+				<Notice variant={ noticeStatus }>
+					{ noticeText }
+					{ ( noticeActionHref || noticeActionOnClick ) && (
+						<Button
+							href={ noticeActionHref ?? undefined }
+							onClick={ noticeActionOnClick ?? undefined }
+						>
+							{ noticeActionText }
+						</Button>
+					) }
+				</Notice>
+			</>
+		);
 	}
 
-	// FIXME: render UpcomingRenewalsDialog for renewableSitePurchases
-	return (
-		<>
-			<Notice variant={ noticeStatus }>
-				{ noticeText }
-				{ ( noticeActionHref || noticeActionOnClick ) && (
-					<Button
-						href={ noticeActionHref ?? undefined }
-						onClick={ noticeActionOnClick ?? undefined }
-					>
-						{ noticeActionText }
-					</Button>
-				) }
-			</Notice>
-		</>
-	);
+	return null;
 }
