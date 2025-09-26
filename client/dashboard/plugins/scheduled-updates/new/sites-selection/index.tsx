@@ -1,11 +1,11 @@
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { DataViewsCard } from '../../../../../components/dataviews-card';
-import { Name, URL, SiteIconLink } from '../../../../../sites/site-fields';
-import { getSiteDisplayName } from '../../../../../utils/site-name';
-import { getSiteDisplayUrl } from '../../../../../utils/site-url';
-import { useEligibleSites } from '../../../hooks/use-eligible-sites';
+import { DataViewsCard } from '../../../../components/dataviews-card';
+import { Name, URL, SiteIconLink } from '../../../../sites/site-fields';
+import { getSiteDisplayName } from '../../../../utils/site-name';
+import { getSiteDisplayUrl } from '../../../../utils/site-url';
+import { useEligibleSites } from '../../hooks/use-eligible-sites';
 import type { Site } from '@automattic/api-core';
 
 const siteFields: Field< Site >[] = [

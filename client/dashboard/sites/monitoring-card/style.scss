@@ -66,4 +66,8 @@
 		/* Prevent the chart from overflowing its container. */
 		max-width: 100%;
 	}
+
+	.dashboard-monitoring-card__content {
+		min-height: 350px;
+	}
 }

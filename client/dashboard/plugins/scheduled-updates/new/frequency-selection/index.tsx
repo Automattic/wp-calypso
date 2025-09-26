@@ -7,7 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { Frequency, Weekday } from '../../../types';
+import type { Frequency, Weekday } from '../../types';
 
 type Props = {
 	frequency: Frequency;

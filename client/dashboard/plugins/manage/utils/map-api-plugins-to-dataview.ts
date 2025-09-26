@@ -1,5 +1,6 @@
+import { getAllowedPluginActions } from '../../plugin/utils/get-allowed-plugin-actions';
 import type { PluginListRow } from '../types';
-import type { PluginItem, PluginsResponse } from '@automattic/api-core';
+import type { PluginItem, PluginsResponse, Site } from '@automattic/api-core';
 
 type Aggregated = {
 	name: string;
@@ -7,6 +8,7 @@ type Aggregated = {
 	count: number;
 	activeCount: number;
 	updateCount: number;
+	autoupdateAllowedCount: number;
 	autoupdateCount: number;
 	siteIds: number[];
 };
@@ -21,13 +23,23 @@ function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 
 	return 'some';
 }
 
-export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): PluginListRow[] {
-	if ( ! response?.sites ) {
+export function mapApiPluginsToDataViewPlugins(
+	userSites?: Site[],
+	response?: PluginsResponse
+): PluginListRow[] {
+	if ( ! userSites || ! response?.sites ) {
 		return [];
 	}
-	const sites = response.sites;
+
+	const sitesById = userSites.reduce( ( acc, site ) => {
+		acc.set( site.ID, site );
+		return acc;
+	}, new Map< number, Site >() );
+
+	const pluginsBySite = response.sites;
 	const map = new Map< string, Aggregated >();
-	Object.entries( sites ).forEach( ( [ siteIdStr, plugins ] ) => {
+
+	Object.entries( pluginsBySite ).forEach( ( [ siteIdStr, plugins ] ) => {
 		const siteId = Number( siteIdStr );
 		( plugins as PluginItem[] ).forEach( ( p ) => {
 			if ( ! p.id ) {
@@ -40,9 +52,11 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 				count: 0,
 				activeCount: 0,
 				updateCount: 0,
+				autoupdateAllowedCount: 0,
 				autoupdateCount: 0,
 				siteIds: [],
 			};
+
 			entry.count += 1;
 			entry.siteIds.push( siteId );
 			if ( p.active ) {
@@ -54,12 +68,30 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 			if ( p.autoupdate ) {
 				entry.autoupdateCount += 1;
 			}
+
+			const site = sitesById.get( siteId );
+			if ( site ) {
+				const { autoupdate } = getAllowedPluginActions( site, p.slug );
+				entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
+			}
 			map.set( p.id, entry );
 		} );
 	} );
 
 	return Array.from( map.entries() ).map(
-		( [ id, { name, slug, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
+		( [
+			id,
+			{
+				name,
+				slug,
+				count,
+				activeCount,
+				updateCount,
+				autoupdateAllowedCount,
+				autoupdateCount,
+				siteIds,
+			},
+		] ) => ( {
 			id,
 			name,
 			icons: null,
@@ -67,6 +99,7 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 			sitesCount: count,
 			hasUpdate: mapCountToQuantifier( updateCount, count ),
 			isActive: mapCountToQuantifier( activeCount, count ),
+			areAutoUpdatesAllowed: mapCountToQuantifier( autoupdateAllowedCount, count ),
 			areAutoUpdatesEnabled: mapCountToQuantifier( autoupdateCount, count ),
 			siteIds,
 		} )
