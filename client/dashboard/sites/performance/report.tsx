@@ -36,20 +36,7 @@ export default function Report( {
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 	const insightsRef = useRef< HTMLDivElement >( null );
 
-	const {
-		overall_score,
-		fcp,
-		lcp,
-		cls,
-		inp,
-		ttfb,
-		tbt,
-		audits,
-		history,
-		screenshots,
-		is_wpcom,
-		fullPageScreenshot,
-	} = report;
+	const { audits, screenshots, is_wpcom, fullPageScreenshot } = report;
 
 	if ( isError ) {
 		return <ReportErrorNotice onRetestClick={ onRetest } />;
