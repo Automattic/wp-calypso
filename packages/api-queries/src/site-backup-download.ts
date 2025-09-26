@@ -1,6 +1,7 @@
 import {
 	fetchSiteBackupDownloadProgress,
 	initiateSiteBackupDownload,
+	initiateGranularBackupDownload,
 	prepareBackupDownload,
 	getBackupDownloadStatus,
 	type DownloadConfig,
@@ -64,4 +65,25 @@ export const siteBackupFilteredDownloadPrepareMutation = () =>
 			manifestFilter: string;
 			dataType: number;
 		} ) => prepareBackupDownload( siteId, rewindId, manifestFilter, dataType ),
+	} );
+
+/**
+ * Initiate a granular backup download with selected paths.
+ * @param siteId - The ID of the site to initiate a granular download for.
+ * @returns A promise that resolves to the download ID.
+ */
+export const siteGranularBackupDownloadInitiateMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( {
+			rewindId,
+			includePaths,
+			excludePaths,
+		}: {
+			rewindId: string;
+			includePaths: string;
+			excludePaths?: string;
+		} ) => initiateGranularBackupDownload( siteId, rewindId, includePaths, excludePaths ),
+		onSuccess: ( downloadId ) => {
+			queryClient.prefetchQuery( siteBackupDownloadProgressQuery( siteId, downloadId ) );
+		},
 	} );

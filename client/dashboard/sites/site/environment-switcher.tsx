@@ -9,7 +9,6 @@ import {
 	isCreatingStagingSiteQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -25,6 +24,7 @@ import { useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import Environment from '../../components/environment';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
@@ -144,6 +144,7 @@ const EnvironmentSwitcherDropdown = ( {
 };
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+	const { recordTracksEvent } = useAnalytics();
 	const queryClient = useQueryClient();
 
 	const productionSiteId = getProductionSiteId( site );

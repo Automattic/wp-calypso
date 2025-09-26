@@ -161,7 +161,7 @@ export default function GravatarProfileSection( {
 								{
 									strong: <strong />,
 									// @ts-expect-error children prop is injected by createInterpolateElement
-									external: <ExternalLink href="https://gravatar.com" />,
+									external: <ExternalLink href="https://gravatar.com/profile" />,
 								}
 							) }
 						/>

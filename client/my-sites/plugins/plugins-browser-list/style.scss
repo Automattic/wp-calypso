@@ -27,21 +27,18 @@
 	}
 }
 
-.plugins-browser-list__elements {
+.card.plugins-browser-list__elements {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: flex-start;
 	padding: 0;
+	// Card margin interferes with section spacing.
+	margin-bottom: 0;
 	box-shadow: none;
 	background: none;
 	gap: 0 18px;
 
 	&::after {
 		display: none;
-	}
-
-	&.card {
-		// Card margin interferes with section spacing.
-		margin-bottom: 0;
 	}
 }

@@ -14,13 +14,8 @@ export function getActions( siteId: number ): Action< Threat >[] {
 			label: __( 'Unignore threat' ),
 			modalHeader: __( 'Unignore threat' ),
 			supportsBulk: false,
-			RenderModal: ( { items, closeModal, onActionPerformed } ) => (
-				<UnignoreThreatModal
-					items={ items }
-					closeModal={ closeModal }
-					onActionPerformed={ onActionPerformed }
-					siteId={ siteId }
-				/>
+			RenderModal: ( { items, closeModal } ) => (
+				<UnignoreThreatModal items={ items } closeModal={ closeModal } siteId={ siteId } />
 			),
 		},
 		{

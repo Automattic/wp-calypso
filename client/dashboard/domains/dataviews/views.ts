@@ -1,12 +1,13 @@
-import type { ViewTable, ViewList } from '@wordpress/dataviews';
+import type { ViewTable, ViewList, ViewPickerGrid } from '@wordpress/dataviews';
 
-export type DomainsView = ViewTable | ViewList;
+export type DomainsView = ViewTable | ViewList | ViewPickerGrid;
 
-export const DEFAULT_VIEW: Partial< DomainsView > = {
-	filters: [],
+// Base properties that are common to all view types
+const BASE_VIEW_PROPS = {
+	filters: [] as any[],
 	sort: {
 		field: 'domain',
-		direction: 'asc',
+		direction: 'asc' as const,
 	},
 	page: 1,
 	perPage: 10,
@@ -23,8 +24,10 @@ export const DEFAULT_VIEW: Partial< DomainsView > = {
 	],
 };
 
-export const SITE_CONTEXT_VIEW: Partial< DomainsView > = {
-	...DEFAULT_VIEW,
+export const DEFAULT_VIEW = BASE_VIEW_PROPS;
+
+export const SITE_CONTEXT_VIEW = {
+	...BASE_VIEW_PROPS,
 	fields: [ 'type', 'ssl_status', 'expiry', 'domain_status' ],
 };
 

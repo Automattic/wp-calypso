@@ -52,9 +52,9 @@ export default function PaidSubscribers( {
 					status={ status }
 					cardData={ cardData }
 					engine={ engine }
-					fromSite={ fromSite }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
+					fromSite={ fromSite }
 					setAutoFetchData={ setAutoFetchData }
 					siteSlug={ siteSlug }
 					skipNextStep={ skipNextStep }

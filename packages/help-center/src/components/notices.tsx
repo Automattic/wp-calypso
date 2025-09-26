@@ -63,7 +63,6 @@ export const EmailFallbackNotice: React.FC = () => {
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	params.set( 'mode', 'EMAIL' );
 	params.set( 'wapuuFlow', 'true' );
 	const url = '/contact-form?' + params.toString();
 	return (

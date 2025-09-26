@@ -30,9 +30,11 @@ export const nameField: Field< PluginListRow > = {
 				<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icons } ) }>
 					{ icon }
 				</div>
-				<Link to={ pluginRoute.to } params={ { pluginId: item.slug } }>
-					{ field.getValue( { item } ) }
-				</Link>
+				<Link
+					to={ pluginRoute.to }
+					params={ { pluginId: item.slug } }
+					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
+				/>
 			</HStack>
 		);
 	},
