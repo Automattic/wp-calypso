@@ -182,6 +182,11 @@ export interface UnifiedPlansStepProps {
 	 * Defaults to true to preserve existing behavior.
 	 */
 	isInSignup?: boolean;
+
+	/**
+	 * Whether this step is being used in a stepper upgrade flow context.
+	 */
+	isStepperUpgradeFlow?: boolean;
 }
 
 /**
@@ -232,6 +237,7 @@ function UnifiedPlansStep( {
 	shouldHideNavButtons,
 	onIntentChange,
 	isInSignup = true,
+	isStepperUpgradeFlow = false,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -546,6 +552,7 @@ function UnifiedPlansStep( {
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
+				isStepperUpgradeFlow={ isStepperUpgradeFlow }
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
