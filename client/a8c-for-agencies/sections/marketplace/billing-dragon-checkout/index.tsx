@@ -41,7 +41,8 @@ function BillingDragonCheckoutContent( {
 
 	debug( '[A4A Checkout] Cart items: ', cartItems );
 
-	// Add products to cart when referral data is loaded
+	// Add products to cart when data is loaded
+	// Note: We are loading products from A4A cart to the Billing Dragon cart
 	useEffect( () => {
 		// Skip if we're already ready
 		if ( isReady ) {
@@ -68,7 +69,7 @@ function BillingDragonCheckoutContent( {
 		debug( '[A4A Checkout] Cart items inside useEffect: ', cartItems );
 
 		const productsToAdd = cartItems.map( ( product ) => {
-			debug( '[A4A Checkout] Processing product to add: ', {
+			const product_cart = {
 				// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
 				product_id: product.alternative_product_id || product.product_id,
 				product_slug: product.slug,
@@ -76,16 +77,9 @@ function BillingDragonCheckoutContent( {
 					isA4ASitelessCheckout: true,
 					agency_id: agency.id,
 				},
-			} );
-			return createRequestCartProduct( {
-				// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
-				product_id: product.alternative_product_id || product.product_id,
-				product_slug: product.slug,
-				extra: {
-					isA4ASitelessCheckout: true,
-					agency_id: agency.id,
-				},
-			} );
+			};
+			debug( '[A4A Checkout] Processing product to add: ', product_cart );
+			return createRequestCartProduct( product_cart );
 		} );
 
 		debug( '[A4A Checkout] Products to add', productsToAdd );
@@ -108,7 +102,8 @@ function BillingDragonCheckoutContent( {
 		}
 	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems ] );
 
-	// Debugging: Set a timeout to force showing the checkout after 10 seconds
+	// Debugging: Set a timeout to force showing the checkout after 2 seconds
+	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.
 	useEffect( () => {
 		if ( isReady || error ) {
 			return;
@@ -117,7 +112,7 @@ function BillingDragonCheckoutContent( {
 		const timeoutId = setTimeout( () => {
 			debug( '[A4A Checkout] Timeout reached, showing checkout anyway' );
 			setIsReady( true );
-		}, 10000 );
+		}, 2000 );
 
 		return () => clearTimeout( timeoutId );
 	}, [ isReady, error ] );
