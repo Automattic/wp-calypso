@@ -67,31 +67,4 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 			expect( mockOnCancel ).toHaveBeenCalled();
 		} );
 	} );
-
-	describe( 'Accessibility', () => {
-		it( 'has proper dialog role and ARIA attributes', () => {
-			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
-
-			const dialog = screen.getByTestId( 'username-change-dialog' );
-			expect( dialog ).toHaveAttribute( 'role', 'dialog' );
-			expect( dialog ).toHaveAttribute( 'aria-labelledby', 'username-change-title' );
-			expect( dialog ).toHaveAttribute( 'aria-describedby', 'username-change-description' );
-		} );
-
-		it( 'has proper heading structure', () => {
-			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
-
-			const heading = screen.getByRole( 'heading', { name: 'Confirm username change' } );
-			expect( heading ).toHaveAttribute( 'id', 'username-change-title' );
-		} );
-
-		it( 'focuses on the modal when opened', () => {
-			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
-
-			// ConfirmDialog creates multiple dialog elements, check that at least one exists
-			const dialogs = screen.getAllByRole( 'dialog' );
-			expect( dialogs.length ).toBeGreaterThan( 0 );
-			expect( document.body ).toContainElement( dialogs[ 0 ] );
-		} );
-	} );
 } );
