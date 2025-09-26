@@ -120,8 +120,10 @@ export default function HostingDashboardOptInForm() {
 													href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
 													icon
 													onClick={ () =>
-														recordTracksEvent(
-															'calypso_account_new_hosting_dashboard_survey_click'
+														dispatch(
+															recordTracksEvent(
+																'calypso_account_new_hosting_dashboard_survey_click'
+															)
 														)
 													}
 												/>
