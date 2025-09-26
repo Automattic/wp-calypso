@@ -407,7 +407,7 @@ function StagingSiteSyncModalInner( {
 							spacing={ 2 }
 							justify="space-between"
 							alignment="center"
-							style={ { padding: '8px 0' } }
+							style={ { padding: '4px 0' } }
 						>
 							<CheckboxControl
 								__nextHasNoMarginBottom
@@ -435,7 +435,7 @@ function StagingSiteSyncModalInner( {
 						</HStack>
 
 						<div hidden={ ! isFileBrowserVisible }>
-							<VStack spacing={ 2 }>
+							<VStack spacing={ 4 }>
 								<CardDivider />
 								{ displayBackupDate && (
 									<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
@@ -471,7 +471,7 @@ function StagingSiteSyncModalInner( {
 								borderBottom: hasWarning
 									? 'none'
 									: '1px solid var(--wp-components-color-gray-300, #ddd)',
-								padding: '16px 0',
+								padding: '15px 0',
 								marginTop: isFileBrowserVisible ? '16px' : '0',
 							} }
 						>
