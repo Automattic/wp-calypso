@@ -43,7 +43,7 @@ function McpSetupComponent( { siteSlug }: { siteSlug: string } ) {
 		continue: 'https://docs.continue.dev/customize/deep-dives/mcp',
 		default: 'https://modelcontextprotocol.io/docs/servers',
 	};
-	const serverName = `${ site?.slug }-mcp`;
+	const serverName = `${ site.slug }-mcp`;
 
 	// Generate MCP configuration based on selected client
 	const generateMcpConfig = ( client: string ) => {
