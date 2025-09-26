@@ -7,6 +7,7 @@ import {
 	NEWSLETTER_FLOW,
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
+	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
 	Step,
 	useStepPersistedState,
@@ -70,7 +71,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
-		case 'plan-upgrade':
+		case PLAN_UPGRADE_FLOW:
 			return 'plans-upgrade';
 		default:
 			return null;

@@ -1,3 +1,4 @@
+import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
@@ -24,7 +25,7 @@ function initialize() {
 }
 
 const planUpgradeFlow: FlowV2< typeof initialize > = {
-	name: 'plan-upgrade',
+	name: PLAN_UPGRADE_FLOW,
 	title: __( 'Upgrade plan' ),
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
