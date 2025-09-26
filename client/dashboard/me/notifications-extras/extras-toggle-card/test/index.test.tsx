@@ -83,7 +83,7 @@ describe( 'ExtrasToggleCard', () => {
 	it( 'shows "Subscribe to all" when no options are enabled', () => {
 		renderExtrasToggleCard();
 
-		expect( screen.getByText( 'Subscribe to all' ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'Subscribe to all' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Unsubscribe from all' ) ).not.toBeInTheDocument();
 	} );
 
@@ -96,7 +96,7 @@ describe( 'ExtrasToggleCard', () => {
 
 		renderExtrasToggleCard( { extraSettings } );
 
-		expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'Unsubscribe from all' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Subscribe to all' ) ).not.toBeInTheDocument();
 	} );
 

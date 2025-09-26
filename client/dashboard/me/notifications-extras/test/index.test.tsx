@@ -244,9 +244,9 @@ describe( 'NotificationsExtras', () => {
 
 		await waitFor( () => {
 			// WordPress.com section should show "Unsubscribe from all" because all options are enabled
-			expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
+			expect( screen.getByRole( 'checkbox', { name: 'Unsubscribe from all' } ) ).toBeVisible();
 			// Jetpack section should show "Subscribe to all" because no Jetpack options are enabled
-			expect( screen.getByText( 'Subscribe to all' ) ).toBeVisible();
+			expect( screen.getByRole( 'checkbox', { name: 'Subscribe to all' } ) ).toBeVisible();
 		} );
 	} );
 
@@ -271,9 +271,9 @@ describe( 'NotificationsExtras', () => {
 
 		await waitFor( () => {
 			// WordPress.com section should show "Subscribe to all" because all options are enabled
-			expect( screen.getByText( 'Subscribe to all' ) ).toBeVisible();
+			expect( screen.getByRole( 'checkbox', { name: 'Subscribe to all' } ) ).toBeVisible();
 			// Jetpack section should show "Unsubscribe from all" because no Jetpack options are enabled
-			expect( screen.getByText( 'Unsubscribe from all' ) ).toBeVisible();
+			expect( screen.getByRole( 'checkbox', { name: 'Unsubscribe from all' } ) ).toBeVisible();
 		} );
 	} );
 
