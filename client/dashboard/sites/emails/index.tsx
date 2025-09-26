@@ -9,6 +9,7 @@ import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import NoEmailsEmptyState from '../../emails/components/NoEmailsEmptyState';
 import './styles.scss';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from '../../emails/dataviews';
 import type { View } from '@wordpress/dataviews';
@@ -56,6 +57,7 @@ function SiteEmails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
+					empty={ <NoEmailsEmptyState /> }
 				/>
 			</DataViewsCard>
 		</PageLayout>
