@@ -197,21 +197,29 @@ const DomainSearchUI = (
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
+				if (
+					isDomainForGravatarFlow( flowName ) ||
+					isFreeFlow( flowName ) ||
+					isOnboardingWithEmailFlow
+				) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo />;
 			},
 			BeforeFullCartItems: () => {
-				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
+				if (
+					isDomainForGravatarFlow( flowName ) ||
+					isFreeFlow( flowName ) ||
+					isOnboardingWithEmailFlow
+				) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName ] );
+	}, [ flowName, isOnboardingWithEmailFlow ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
@@ -297,6 +305,7 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
+					isFirstDomainFreeForFirstYear={ ! isOnboardingWithEmailFlow }
 				/>
 			}
 		/>
