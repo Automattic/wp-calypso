@@ -1,57 +1,46 @@
-import {
-	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Text } from '../../../components/text';
+import ConfirmModal from '../../../components/confirm-modal';
 
 interface UsernameUpdateConfirmationModalProps {
-	isVisible: boolean;
+	isOpen: boolean;
 	currentUsername: string;
 	onConfirm: () => void;
 	onCancel: () => void;
+	isBusy: boolean;
 }
 
 export default function UsernameUpdateConfirmationModal( {
-	isVisible,
+	isOpen,
 	currentUsername,
 	onConfirm,
 	onCancel,
+	isBusy,
 }: UsernameUpdateConfirmationModalProps ) {
-	if ( ! isVisible ) {
+	if ( ! isOpen ) {
 		return null;
 	}
 
 	return (
-		<ConfirmDialog onConfirm={ onConfirm } onCancel={ onCancel }>
-			<VStack
-				spacing={ 4 }
-				role="dialog"
-				aria-labelledby="username-change-title"
-				aria-describedby="username-change-description"
-				data-testid="username-change-dialog"
-			>
-				<h3 id="username-change-title">{ __( 'Confirm username change' ) }</h3>
-				<VStack spacing={ 2 } id="username-change-description">
-					<Text>
-						{
-							/* translators: %(username)s is the current username that will be changed */
-							__(
-								'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
-									'Once changed, you will not be able to revert it.'
-							)
-								.replace( '{{strong}}', '' )
-								.replace( '{{/strong}}', '' )
-								.replace( '%(username)s', currentUsername )
-						}
-					</Text>
-					<Text>
-						{ __(
-							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
-						) }
-					</Text>
-				</VStack>
-			</VStack>
-		</ConfirmDialog>
+		<ConfirmModal
+			isOpen={ isOpen }
+			title={ __( 'Confirm username change?' ) }
+			__experimentalHideHeader={ false }
+			onConfirm={ onConfirm }
+			onCancel={ onCancel }
+			confirmButtonProps={ { label: __( 'OK' ), isBusy } }
+			cancelButtonText={ __( 'Cancel' ) }
+			isDismissible={ false }
+		>
+			{
+				/* translators: %(username)s is the current username that will be changed */
+				__(
+					'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
+						'Once changed, you will not be able to revert it.'
+				)
+					.replace( '{{strong}}', '' )
+					.replace( '{{/strong}}', '' )
+					.replace( '%(username)s', currentUsername )
+			}
+		</ConfirmModal>
 	);
 }

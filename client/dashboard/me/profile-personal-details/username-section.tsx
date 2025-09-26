@@ -47,7 +47,7 @@ export default function UsernameSection( {
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
 
-	const usernameMutation = useMutation( usernameChangeMutation() );
+	const { mutate: updateUsername, isPending } = useMutation( usernameChangeMutation() );
 	const confirmFormRef = useRef< HTMLDivElement >( null );
 	const [ hasAnnouncedForm, setHasAnnouncedForm ] = useState( false );
 
@@ -137,6 +137,31 @@ export default function UsernameSection( {
 		}
 	};
 
+	const submitUsernameChange = async () => {
+		setShowConfirmModal( false );
+
+		if ( ! value || ! isUsernameValid( validationResult ) ) {
+			return;
+		}
+
+		const action = usernameAction || 'none';
+
+		updateUsername(
+			{ username: value, action },
+			{
+				onSuccess: () => {
+					// Reload the page to refresh cookies and user object
+					const currentUrl = new URL( window.location.href );
+					currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
+					window.location.href = currentUrl.toString();
+				},
+				onError: ( error: unknown ) => {
+					setValidationResult( error as ValidationResult );
+				},
+			}
+		);
+	};
+
 	return (
 		<>
 			{ /* Not using DataForm to avoid focus issues on the custom Edit property */ }
@@ -198,33 +223,11 @@ export default function UsernameSection( {
 
 			{ /* Confirmation modal to update username */ }
 			<UsernameUpdateConfirmationModal
-				isVisible={ showConfirmModal }
+				isOpen={ showConfirmModal }
 				currentUsername={ currentUsername }
-				onConfirm={ async () => {
-					setShowConfirmModal( false );
-
-					if ( ! value || ! isUsernameValid( validationResult ) ) {
-						return;
-					}
-
-					const action = usernameAction || 'none';
-
-					usernameMutation.mutate(
-						{ username: value, action },
-						{
-							onSuccess: () => {
-								// Reload the page to refresh cookies and user object
-								const currentUrl = new URL( window.location.href );
-								currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
-								window.location.href = currentUrl.toString();
-							},
-							onError: ( error: unknown ) => {
-								setValidationResult( error as ValidationResult );
-							},
-						}
-					);
-				} }
+				onConfirm={ submitUsernameChange }
 				onCancel={ () => setShowConfirmModal( false ) }
+				isBusy={ isPending }
 			/>
 		</>
 	);
