@@ -17,16 +17,16 @@ function SitePerformance() {
 	}
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.PERFORMANCE }
-				asOverlay
-				{ ...getPerformanceCalloutProps() }
-			>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.PERFORMANCE }
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> } /> }
+			{ ...getPerformanceCalloutProps() }
+		>
+			<PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> }>
 				<></>
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+			</PageLayout>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

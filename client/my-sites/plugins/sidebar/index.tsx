@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { SyntheticEvent } from '@wordpress/element';
 import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -44,19 +45,21 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			}
 		>
 			<SidebarMenu>
-				<SidebarItem
-					className="sidebar__menu-item--plugins"
-					link="/plugins"
-					label={ translate( 'Marketplace' ) }
-					tooltip={ isCollapsed && translate( 'Marketplace' ) }
-					onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
-					selected={
-						path.startsWith( '/plugins' ) &&
-						! path.startsWith( '/plugins/scheduled-updates' ) &&
-						! isManagedPluginSelected
-					}
-					customIcon={ <SidebarIconPlugins /> }
-				/>
+				{ ! isEnabled( 'plugins/universal-header' ) && (
+					<SidebarItem
+						className="sidebar__menu-item--plugins"
+						link="/plugins"
+						label={ translate( 'Marketplace' ) }
+						tooltip={ isCollapsed && translate( 'Marketplace' ) }
+						onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
+						selected={
+							path.startsWith( '/plugins' ) &&
+							! path.startsWith( '/plugins/scheduled-updates' ) &&
+							! isManagedPluginSelected
+						}
+						customIcon={ <SidebarIconPlugins /> }
+					/>
+				) }
 
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
@@ -76,6 +79,24 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					selected={ path.startsWith( '/plugins/scheduled-updates' ) }
 					customIcon={ <SidebarIconCalendar /> }
 				/>
+
+				{ isEnabled( 'plugins/universal-header' ) && (
+					<SidebarItem
+						className="sidebar__menu-item--plugins"
+						link="/plugins"
+						label={ translate( 'Marketplace' ) }
+						tooltip={ isCollapsed && translate( 'Marketplace' ) }
+						onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
+						selected={
+							path.startsWith( '/plugins' ) &&
+							! path.startsWith( '/plugins/scheduled-updates' ) &&
+							! isManagedPluginSelected
+						}
+						customIcon={ <SidebarIconPlugins /> }
+						forceExternalLink
+						sidebarIsCollapsed={ isCollapsed }
+					/>
+				) }
 			</SidebarMenu>
 		</GlobalSidebar>
 	);

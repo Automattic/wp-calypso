@@ -920,9 +920,9 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	features {
 		matrix {
-			param("VIEWPORT", listOf(
+			param("PROJECT", listOf(
 				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile")
+				value("mobile", label = "Mobile"),
 			))
 		}
 		pullRequests {
@@ -964,7 +964,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				equals("teamcity.build.step.status.run_tests", "failure")
 			}
 			scriptContent = """
-				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%VIEWPORT%"
+				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
 				
 				# Need to use -C to avoid creation of an unnecessary top level directory.
@@ -996,7 +996,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 
 	features {
 		matrix {
-			param("VIEWPORT", listOf(
+			param("PROJECT", listOf(
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile")
 			))
@@ -1012,7 +1012,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
-				echo "Running pre-release Playwright tests for viewport: %VIEWPORT%"
+				echo "Running pre-release Playwright tests for project %PROJECT%"
 			"""
 		}
 	}
@@ -1164,18 +1164,19 @@ object PreReleaseE2ETests : BuildType({
 	}
 })
 
-object AuthenticationE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Authentication",
-	buildUuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
-	buildName = "Authentication E2E Tests",
-	buildDescription = "Runs a suite of Authentication E2E tests.",
-	concurrentBuilds = 1,
-	testGroup = "authentication",
-	buildParams = {
-		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
-		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
+object AuthenticationE2ETests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Calypso_E2E_Authentication")
+	uuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8"
+	name = "Authentication E2E Tests"
+	description = "Runs the authentication group E2E tests"
+
+	params {
+		param("PROJECT", "authentication")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+	}
+
+	features {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -1190,8 +1191,9 @@ object AuthenticationE2ETests : E2EBuildType(
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
-	},
-	buildTriggers = {
+	}
+
+	triggers {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/6"
@@ -1200,8 +1202,14 @@ object AuthenticationE2ETests : E2EBuildType(
 			triggerBuild = always()
 			withPendingChangesOnly = true
 		}
+
+		vcs {
+			branchFilter = """
+				+:e2e/migrate-authentication-build-to-playwright-test
+			""".trimIndent()
+		}
 	}
-)
+})
 
 object QuarantinedE2ETests: E2EBuildType(
 	buildId = "calypso_WebApp_Quarantined_E2E_Tests",

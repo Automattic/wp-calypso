@@ -3,13 +3,22 @@ import {
 	userPreferenceQuery,
 	userPreferenceMutation,
 	sitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import {
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+	useMutation,
+	keepPreviousData,
+} from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import deepmerge from 'deepmerge';
+import { useState, useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { sitesRoute } from '../app/router/sites';
@@ -57,6 +66,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
+	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
@@ -129,6 +139,16 @@ export default function Sites() {
 	} else if ( hasFilterOrSearch ) {
 		emptyDescription = __( 'Your search did not match any sites.' );
 	}
+
+	useEffect( () => {
+		if ( sites ) {
+			sites.forEach( ( site ) => {
+				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
+				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
+				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
+			} );
+		}
+	}, [ sites ] );
 
 	return (
 		<>

@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ActivityLogParams, ActivityLogsData } from './types';
+import type { ActivityLogParams, ActivityLogsData, ActivityLogGroupCountResponse } from './types';
 
 export async function fetchSiteActivityLog(
 	siteId: number,
@@ -20,4 +20,19 @@ export async function fetchSiteActivityLog(
 		itemsPerPage: response.itemsPerPage,
 		totalPages: response.totalPages,
 	};
+}
+
+export async function fetchSiteActivityLogGroupCounts(
+	siteId: number,
+	params: ActivityLogParams
+): Promise< ActivityLogGroupCountResponse > {
+	const response = await wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/activity/count/group`,
+			apiNamespace: 'wpcom/v2',
+		},
+		params
+	);
+
+	return response;
 }

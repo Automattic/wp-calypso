@@ -1,7 +1,7 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { BranchDisplay } from '../../deployments/branch-display';
+import { BranchDisplay } from '../../deployments-list/branch-display';
 import { OwnerDisplay } from '../owner-display';
 import { TargetDirDisplay } from '../target-dir-display';
 import type { CodeDeploymentData } from '@automattic/api-core';

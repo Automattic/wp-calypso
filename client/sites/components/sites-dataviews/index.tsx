@@ -31,6 +31,11 @@ type Props = {
 	selectedItem: SiteExcerptData | null | undefined;
 } & Pick< React.ComponentProps< typeof SiteField >, 'sitePreviewPane' >;
 
+const DEFAULT_LAYOUTS = {
+	table: {},
+	list: {},
+};
+
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
 
@@ -231,7 +236,7 @@ const DotcomSitesDataViews = ( {
 					return item.ID.toString();
 				} }
 				isLoading={ isLoading }
-				defaultLayouts={ { table: {} } }
+				defaultLayouts={ DEFAULT_LAYOUTS }
 				onChangeSelection={ onSelectionChange }
 			/>
 		</div>

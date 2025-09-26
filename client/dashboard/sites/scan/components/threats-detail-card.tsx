@@ -24,7 +24,9 @@ export function ThreatsDetailCard( { threats }: { threats: Threat[] } ) {
 					/>
 					<VStack justify="flex-start" spacing={ 1 } wrap>
 						<Text weight={ 500 }>{ threat.title }</Text>
-						<Text variant="muted">{ threat.vulnerability_description }</Text>
+						<Text variant="muted">
+							{ threats.length > 1 ? threat.fix_description : threat.vulnerability_description }
+						</Text>
 					</VStack>
 				</HStack>
 				<SeverityBadge severity={ threat.severity } />

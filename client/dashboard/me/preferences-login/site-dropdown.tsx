@@ -24,6 +24,7 @@ interface PreferencesLoginSiteDropdownProps {
 	onChange: ( value: string | null | undefined ) => void;
 	label?: string;
 	hideLabelFromVision?: boolean;
+	isLoading?: boolean;
 }
 
 // Simple site icon component following dashboard pattern
@@ -82,6 +83,7 @@ export default function PreferencesLoginSiteDropdown( {
 	onChange,
 	label = '',
 	hideLabelFromVision = false,
+	isLoading = false,
 }: PreferencesLoginSiteDropdownProps ) {
 	// Prepare options for ComboboxControl
 	const options: SiteOption[] = sites.map( ( site: Site ) => ( {
@@ -135,6 +137,7 @@ export default function PreferencesLoginSiteDropdown( {
 			onChange={ onChange }
 			options={ options }
 			allowReset={ false }
+			isLoading={ isLoading }
 			__experimentalRenderItem={ renderItem }
 		/>
 	);

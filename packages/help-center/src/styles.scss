@@ -137,10 +137,10 @@
 		top: var( --masterbar-height, 0 );
 		max-height: calc( 100% - 45px );
 		height: calc( 100% - var( --masterbar-height, 0 ) );
-		animation: 0.25s ease-out 0s 1 normal none running fadeIn;
+		animation: none;
+		transition: none;
 
 		&.is-minimized {
-			animation: none;
 			min-height: $head-foot-height;
 			max-height: $head-foot-height;
 			top: calc( 100vh - #{$head-foot-height} );

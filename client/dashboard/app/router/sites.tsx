@@ -1,5 +1,6 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	githubInstallationsQuery,
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
@@ -198,6 +199,17 @@ export const siteDeploymentsRoute = createRoute( {
 	)
 );
 
+export const siteDeploymentsListRoute = createRoute( {
+	getParentRoute: () => siteDeploymentsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../sites/deployments-list' ).then( ( d ) =>
+		createLazyRoute( 'site-deployments-list' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteMonitoringRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -281,6 +293,13 @@ export const siteLogsServerRoute = createRoute( {
 );
 
 export const siteLogsActivityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Activity' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteLogsRoute,
 	path: 'activity',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -944,6 +963,20 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesConnectRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories/connect',
+	loader: async () => {
+		await queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-connect' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1077,6 +1110,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
 		siteSettingsRepositoriesRoute,
+		siteSettingsRepositoriesConnectRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -1092,7 +1126,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	];
 
 	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute );
+		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
 	}
 
 	if ( config.supports.sites.performance ) {

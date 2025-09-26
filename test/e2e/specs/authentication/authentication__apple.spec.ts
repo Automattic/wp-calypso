@@ -8,8 +8,6 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		'Skipping unless running on WordPress.com as Apple authentication requires prod callbacks'
 	);
 
-	let code: string;
-
 	test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( {
 		clientEmail,
 		page,
@@ -17,8 +15,13 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		pageLogin,
 		secrets,
 	}, workerInfo ) => {
-		test.skip( workerInfo.project.name !== 'chrome', 'We only run Apple Authentication in Chrome' );
+		test.skip(
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
+		);
+
 		let timestamp: Date;
+		let code: string;
 
 		await test.step( 'Given I am on the login page', async function () {
 			await pageLogin.visit();
@@ -76,11 +79,20 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		pageLogin,
 		secrets,
 	}, workerInfo ) => {
-		test.skip( workerInfo.project.name !== 'chrome', 'We only run Apple Authentication in Chrome' );
+		test.skip(
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
+		);
 
 		let timestamp: Date;
+		let code: string;
 
-		await test.step( 'Given I am on the login page', async function () {
+		await test.step( 'Given I wait 30 seconds to avoid Apple OTP code reuse error', async function () {
+			// Wait 30s to avoid OTP code reuse error.
+			await page.waitForTimeout( 30000 );
+		} );
+
+		await test.step( 'And I am on the login page', async function () {
 			await pageLogin.visit( {
 				path: secrets.wooLoginPath,
 			} );
@@ -107,16 +119,14 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 
 			// Handle potential 2FA challenge.
 			if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
-				if ( ! code ) {
-					const message = await clientEmail.getLastMatchingMessage( {
-						inboxId: secrets.mailosaur.totpUserInboxId,
-						receivedAfter: timestamp,
-						subject: 'SMS',
-						body: 'Your Apple Account code is',
-					} );
+				const message = await clientEmail.getLastMatchingMessage( {
+					inboxId: secrets.mailosaur.totpUserInboxId,
+					receivedAfter: timestamp,
+					subject: 'SMS',
+					body: 'Your Apple Account code is',
+				} );
 
-					code = clientEmail.get2FACodeFromMessage( message );
-				}
+				code = clientEmail.get2FACodeFromMessage( message );
 
 				await pageAppleLogin.enter2FACode( code );
 				await pageAppleLogin.clickButtonWithExactText( 'Trust' );
@@ -127,11 +137,13 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 			await pageAppleLogin.clickButtonContainingText( 'Continue' );
 		} );
 
-		await test.step( 'And I athorize WPCOM to sign into WooCommerce', async function () {
-			const approveButton = page.locator( 'button:text("Approve")' );
-			if ( ( await approveButton.count() ) > 0 ) {
-				await approveButton.click();
-			}
+		await test.step( 'And I authorize WPCOM to sign into WooCommerce', async function () {
+			await page.addLocatorHandler(
+				page.getByRole( 'button', { name: 'Approve' } ),
+				async ( locator ) => {
+					await locator.click();
+				}
+			);
 		} );
 
 		await test.step( 'Then I am redirected to woo.com upon successful login', async function () {
