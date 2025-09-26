@@ -2,7 +2,7 @@ import { SelectDropdown } from '@automattic/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-web-vitals';
+import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-metrics';
 import MetricsInsight from './metrics-insight';
 import {
 	updateQueryParams,

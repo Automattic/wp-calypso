@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { PerformanceMetricsItemQueryResponse, Metrics } from './core-web-vitals';
+import { PerformanceMetricsItemQueryResponse, Metrics } from './core-metrics';
 
 export type Valuation = 'good' | 'needsImprovement' | 'bad';
 
@@ -102,6 +102,10 @@ export const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
 export const displayValue = ( metric: Metrics, value: number ): string => {
 	if ( value === null || value === undefined ) {
 		return '';
+	}
+
+	if ( metric === 'overall' ) {
+		return `${ Math.floor( value ) }`;
 	}
 
 	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'fid', 'tbt' ].includes( metric ) ) {

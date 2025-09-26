@@ -5,7 +5,7 @@ import Markdown from 'react-markdown';
 import {
 	FullPageScreenshot,
 	PerformanceMetricsItemQueryResponse,
-} from '../core-web-vitals';
+} from '../core-web-vitals/core-metrics';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LLMMessage } from 'calypso/performance-profiler/components/llm-message';
 import { ThumbsUpIcon, ThumbsDownIcon } from 'calypso/performance-profiler/icons/thumbs';

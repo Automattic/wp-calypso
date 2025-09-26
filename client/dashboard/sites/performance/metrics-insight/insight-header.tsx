@@ -2,7 +2,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsItemQueryResponse } from '../core-web-vitals';
+import { PerformanceMetricsItemQueryResponse } from '../core-web-vitals/core-metrics';
 import { highImpactAudits } from '../utils';
 
 interface InsightHeaderProps {

@@ -5,18 +5,18 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../../../app/analytics';
-import { displayValue, getMetricsNames, mapThresholdsToStatus } from '../utils';
-import PerformanceScore from './performance-score';
-import { StatusIndicator } from './status-indicator';
-import { Metrics } from './index';
+import { useAnalytics } from '../../app/analytics';
+import { displayValue, getMetricsNames, mapThresholdsToStatus } from './utils';
+
+import { StatusIndicator } from './core-web-vitals/status-indicator';
+import { Metrics } from './core-metrics';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics;
 	setActiveTab: ( tab: Metrics ) => void;
 };
 
-const MetricTabBar = ( props: Props ) => {
+const CoreMetricsTabs = ( props: Props ) => {
 	const { setActiveTab, overall } = props;
 	const { recordTracksEvent } = useAnalytics();
 	const handleTabClick = ( tab: Metrics ) => {
@@ -34,7 +34,7 @@ const MetricTabBar = ( props: Props ) => {
 				<CardBody>
 					<button onClick={ () => handleTabClick( 'overall' ) }>
 						<Text>{ __( 'Performance Score' ) }</Text>
-						<PerformanceScore score={ overall } size={ 48 } />
+						{/* <PerformanceScore score={ overall } size={ 48 } /> */}
 					</button>
 				</CardBody>
 			</Card>
@@ -80,4 +80,4 @@ const MetricTabBar = ( props: Props ) => {
 	);
 };
 
-export default MetricTabBar;
+export default CoreMetricsTabs;

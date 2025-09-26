@@ -1,7 +1,7 @@
 import {
 	FullPageScreenshot,
 	PerformanceMetricsDetailsQueryResponse,
-} from '../core-web-vitals';
+} from '../core-web-vitals/core-metrics';
 import { InsightTable } from './insight-table';
 import { InsightTree } from './insight-tree';
 

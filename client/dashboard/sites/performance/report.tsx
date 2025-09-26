@@ -1,7 +1,7 @@
 import { useSearch } from '@tanstack/react-router';
 import { useState, useRef } from 'react';
 import { sitePerformanceRoute } from '../../app/router/sites';
-import CoreWebVitalsDisplay from './core-web-vitals';
+import CoreMetrics from './core-metrics';
 import Disclaimer from './disclaimer';
 import InsightsSection from './insight-section';
 import ReportErrorNotice from './report-error-notice';
@@ -67,7 +67,7 @@ export default function Report( {
 		<>
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 
-			<CoreWebVitalsDisplay
+			<CoreMetrics
 				fcp={ fcp }
 				lcp={ lcp }
 				cls={ cls }

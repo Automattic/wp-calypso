@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import {
 	FullPageScreenshot,
 	PerformanceMetricsItemQueryResponse,
-} from '../core-web-vitals';
+} from '../core-web-vitals/core-metrics';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { useDeviceTab } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { Tip } from 'calypso/performance-profiler/components/tip';

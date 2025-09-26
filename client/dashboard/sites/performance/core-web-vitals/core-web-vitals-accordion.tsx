@@ -3,8 +3,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAnalytics } from '../../../app/analytics';
 import { getMetricsNames, mapThresholdsToStatus, displayValue } from '../utils';
-import PerformanceScore from './performance-score';
-import { Metrics } from './index';
+import { Metrics } from '../core-metrics';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics | null;
@@ -30,7 +29,7 @@ const CardHeader = ( props: HeaderProps ) => {
 			<div className="core-web-vitals-accordion__header-text">
 				<span className="core-web-vitals-accordion__header-text-name">{ displayName }</span>
 
-				{ isPerformanceScoreSelected ? (
+				{/* { isPerformanceScoreSelected ? (
 					<div className="metric-tab-bar__tab-metric performance-score accordion">
 						<PerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
@@ -38,7 +37,7 @@ const CardHeader = ( props: HeaderProps ) => {
 					<span className={ `core-web-vitals-accordion__header-text-value ${ statusClassName } ` }>
 						{ displayValue( metricKey, metricValue ) }
 					</span>
-				) }
+				) } */}
 			</div>
 		</div>
 	);

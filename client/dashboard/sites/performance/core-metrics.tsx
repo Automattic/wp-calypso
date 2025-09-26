@@ -1,9 +1,9 @@
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useState } from 'react';
-import { CoreWebVitalsAccordion } from './core-web-vitals-accordion';
-import { CoreWebVitalsDetails } from './core-web-vitals-details';
-import MetricTabBar from './metric-tab-bar';
+// import { CoreWebVitalsAccordion } from './core-web-vitals/core-web-vitals-accordion';
+import CoreMetricsContent from './core-metrics-content';
+import CoreMetricsTabs from './core-metrics-tabs';
 
 // Types moved from calypso/data/site-profiler/types
 export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall';
@@ -70,22 +70,24 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
-export default function CoreWebVitalsDisplay( props: CoreWebVitalsDisplayProps ) {
+export default function CoreMetrics( props: CoreWebVitalsDisplayProps ) {
 	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall' );
 	const isDesktop = useViewportMatch( 'medium' );
 
 	if ( isDesktop ) {
 		return (
 			<Grid alignment="topLeft" columns={ 2 } templateColumns="25% 1fr">
-				<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
-				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
+				<CoreMetricsTabs activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
+				<CoreMetricsContent activeTab={ activeTab } { ...props } />
 			</Grid>
 		);
 	}
 
-	return (
-		<CoreWebVitalsAccordion activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props }>
-			<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
-		</CoreWebVitalsAccordion>
-	);
+	return null;
+
+	// return (
+	// 	<CoreWebVitalsAccordion activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props }>
+	// 		<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
+	// 	</CoreWebVitalsAccordion>
+	// );
 }

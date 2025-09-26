@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { PerformanceMetricsDetailsQueryResponse } from '../core-web-vitals';
+import { PerformanceMetricsDetailsQueryResponse } from '../core-web-vitals/core-metrics';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
 
 interface InsightTreeProps {

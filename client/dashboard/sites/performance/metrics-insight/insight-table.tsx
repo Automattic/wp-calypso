@@ -4,7 +4,7 @@ import Markdown from 'react-markdown';
 import {
 	FullPageScreenshot,
 	PerformanceMetricsDetailsQueryResponse,
-} from '../core-web-vitals';
+} from '../core-web-vitals/core-metrics';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
 import { InsightScreenshotWithOverlay } from './insight-screenshot';
 
