@@ -71,7 +71,7 @@ export function BackupsList( {
 		},
 	} );
 
-	const fields = getFields();
+	const fields = getFields( timezoneString, gmtOffset );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {
