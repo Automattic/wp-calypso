@@ -19,10 +19,6 @@ jest.mock( '../username-validation-utils', () => ( {
 	getAllowedActions: jest.fn(),
 } ) );
 
-jest.mock( '../accessibility-utils', () => ( {
-	announceToScreenReader: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/api-queries', () => ( {
 	updateUsernameMutation: jest.fn( () => ( {
 		mutationFn: jest.fn(),

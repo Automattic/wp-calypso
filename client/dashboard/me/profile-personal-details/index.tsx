@@ -43,9 +43,6 @@ export default function PersonalDetailsSection( {
 			snackbar: {
 				success: __( 'Settings saved.' ),
 				error: __( 'Failed to save settings.' ),
-				speak: true,
-				successPoliteness: 'polite',
-				errorPoliteness: 'assertive',
 			},
 		},
 	} );

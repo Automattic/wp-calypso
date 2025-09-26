@@ -8,9 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import React, { useEffect, useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
-import { announceToScreenReader } from './accessibility-utils';
 import {
 	isUsernameValid,
 	getUsernameValidationMessage,
@@ -50,29 +48,14 @@ export default function UsernameUpdateForm( {
 	onValidationChange,
 }: UsernameUpdateFormProps ) {
 	const { isPending } = useMutation( updateUsernameMutation() );
-	const [ hasAnnouncedRadioOptions, setHasAnnouncedRadioOptions ] = useState( false );
 
 	const cancelUsernameChange = () => {
 		onValidationChange( null );
 		onCancel();
 	};
 
-	// Accessibility: Announce when blog radio options appear
 	const actions = getAllowedActions( validationResult );
 	const showRadioOptions = Object.keys( actions ).length > 1;
-
-	useEffect( () => {
-		if ( showRadioOptions && ! hasAnnouncedRadioOptions ) {
-			announceToScreenReader(
-				__(
-					'Blog options are now available. You can choose whether to create a matching blog address.'
-				)
-			);
-			setHasAnnouncedRadioOptions( true );
-		} else if ( ! showRadioOptions ) {
-			setHasAnnouncedRadioOptions( false );
-		}
-	}, [ showRadioOptions, hasAnnouncedRadioOptions ] );
 
 	if ( ! hasUsernameChange || ! usernameToConfirm ) {
 		return null;
