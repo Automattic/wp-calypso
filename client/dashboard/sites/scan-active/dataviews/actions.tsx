@@ -1,6 +1,6 @@
 import { Icon } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
-import { __, _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
 import { BulkFixThreatsModal } from '../../scan/components/bulk-fix-threats-modal';
 import { FixThreatModal } from '../../scan/components/fix-threat-modal';
@@ -8,7 +8,8 @@ import { IgnoreThreatModal } from '../../scan/components/ignore-threat-modal';
 import type { Threat } from '@automattic/api-core';
 
 export function getActions( siteId: number, threatCount: number ): Action< Threat >[] {
-	const fixTitle = _n( 'Fix threat', 'Fix threats', threatCount );
+	// The action could be triggered directly, with no previous selection, hence we should consider 0 threats as well.
+	const fixTitle = threatCount <= 1 ? __( 'Fix threat' ) : __( 'Fix threats' );
 	return [
 		{
 			id: 'fix',
