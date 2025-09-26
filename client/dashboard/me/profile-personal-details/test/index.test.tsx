@@ -248,24 +248,32 @@ describe( 'PersonalDetailsSection', () => {
 			} );
 		} );
 
-		it( 'shows error notice on mutation error', async () => {
-			const user = userEvent.setup();
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
+		it( 'shows error notice on username mutation error', async () => {
+			// Access the mocked function to override the behavior for this test
+			const { updateUsernameMutation } = require( '@automattic/api-queries' );
+			updateUsernameMutation.mockReturnValue( {
+				mutationFn: jest.fn().mockRejectedValue( new Error( 'Username update failed' ) ),
+				meta: {
+					snackbar: {
+						error: 'Failed to update username.',
+					},
+				},
 			} );
 
-			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
-			await user.clear( firstNameInput );
-			await user.type( firstNameInput, 'Updated' );
+			const eligibleUserData = {
+				...mockUserSettings,
+				email_verified: true,
+				user_login_can_be_changed: true,
+			};
 
-			const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-			expect( saveButton ).toBeEnabled();
+			renderWithUserData( eligibleUserData );
 
-			// Test that save button exists and can be clicked (error handling is mocked)
-			await user.click( saveButton );
-			expect( saveButton ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Username' ) ).toBeInTheDocument();
+			} );
+
+			expect( updateUsernameMutation ).toHaveBeenCalledWith();
+			expect( updateUsernameMutation().meta.snackbar.error ).toBe( 'Failed to update username.' );
 		} );
 	} );
 

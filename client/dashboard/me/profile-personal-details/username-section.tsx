@@ -46,7 +46,20 @@ export default function UsernameSection( {
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
 
-	const { mutate: updateUsername, isPending } = useMutation( updateUsernameMutation() );
+	const { mutate: updateUsername, isPending } = useMutation( {
+		...updateUsernameMutation(),
+		onSuccess: () => {
+			// Reload the page to refresh cookies and user object
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.set( 'updated', 'username' );
+			window.location.href = currentUrl.toString();
+		},
+		meta: {
+			snackbar: {
+				error: __( 'Failed to update username.' ),
+			},
+		},
+	} );
 
 	const hasUsernameChange = !! ( value && value !== currentUsername );
 
@@ -131,20 +144,7 @@ export default function UsernameSection( {
 
 		const action = usernameAction || 'none';
 
-		updateUsername(
-			{ username: value, action },
-			{
-				onSuccess: () => {
-					// Reload the page to refresh cookies and user object
-					const currentUrl = new URL( window.location.href );
-					currentUrl.searchParams.set( 'updated', 'username' );
-					window.location.href = currentUrl.toString();
-				},
-				onError: ( error: unknown ) => {
-					setValidationResult( error as ValidationResult );
-				},
-			}
-		);
+		updateUsername( { username: value, action } );
 	};
 
 	return (
