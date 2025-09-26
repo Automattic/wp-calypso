@@ -36,8 +36,12 @@ const defaultWpcomSettings: WpcomNotificationSettings = {
 };
 
 const defaultUserSettings: UserNotificationSettings = {
-	blogs: {},
-	other: {},
+	blogs: [],
+	other: {
+		timeline: { comment_like: false, comment_reply: false },
+		email: { comment_like: false, comment_reply: false },
+		devices: [],
+	},
 	wpcom: defaultWpcomSettings,
 };
 
