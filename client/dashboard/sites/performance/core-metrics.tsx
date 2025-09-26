@@ -81,7 +81,6 @@ export default function CoreMetrics( {
 			<Grid alignment="topLeft" columns={ 2 } templateColumns="25% 1fr">
 				<CoreMetricsTabs
 					report={ report }
-					activeTab={ activeTab }
 					setActiveTab={ setActiveTab }
 				/>
 				<CoreMetricsContent

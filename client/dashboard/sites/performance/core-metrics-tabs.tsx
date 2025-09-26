@@ -1,6 +1,7 @@
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Button,
 	Card,
 	CardBody,
 } from '@wordpress/components';
@@ -11,24 +12,16 @@ import { displayValue, getMetricsNames, mapThresholdsToStatus } from './utils';
 import { StatusIndicator } from './core-web-vitals/status-indicator';
 import { Metrics } from './core-metrics';
 import type { PerformanceReport } from '@automattic/api-core';
+import { OverallScore, MetricScore } from './core-metrics-score';
 
-type Props = {
+const CoreMetricsTabs = ( {
+	report,
+	setActiveTab,
+}: {
 	report: PerformanceReport;
-	activeTab: Metrics;
 	setActiveTab: ( tab: Metrics ) => void;
-};
-
-const CoreMetricsTabs = ( props: Props ) => {
-	const { report, setActiveTab } = props;
-	const {
-		overall_score,
-		fcp,
-		lcp,
-		cls,
-		inp,
-		ttfb,
-		tbt,
-	} = report;
+} ) => {
+	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt } = report;
 
 	const metrics = {
 		fcp,
@@ -53,12 +46,18 @@ const CoreMetricsTabs = ( props: Props ) => {
 		<VStack spacing={ 4 }>
 			<Card>
 				<CardBody>
-					<button onClick={ () => handleTabClick( 'overall' ) }>
-					<Text>{ __( 'Performance Score' ) }</Text>
-					{/* <PerformanceScore score={ metrics.overall } size={ 48 } /> */}
-				</button>
-			</CardBody>
-		</Card>
+					<Button onClick={ () => handleTabClick( 'overall' ) }>
+					<VStack justify="flex-start">
+						<Text size={ 11 } upperCase variant="muted">{ __( 'Performance Score' ) }</Text>
+						<OverallScore
+							metric={ 'overall' }
+							status={ mapThresholdsToStatus( 'overall', metrics.overall ) }
+							value={ metrics.overall }
+						/>
+					</VStack>
+					</Button>
+				</CardBody>
+			</Card>
 
 			<Card>
 				<CardBody>
@@ -77,22 +76,21 @@ const CoreMetricsTabs = ( props: Props ) => {
 						}
 
 						const status = mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] );
-						const statusClassName = status === 'needsImprovement' ? 'needs-improvement' : status;
 
 						return (
-							<button key={ key } onClick={ () => handleTabClick( key as Metrics ) }>
+							<Button key={ key } onClick={ () => handleTabClick( key as Metrics ) }>
 								<div className="metric-tab-bar__tab-status">
 									<StatusIndicator
 										speed={ mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] ) }
 									/>
 								</div>
-								<div className="metric-tab-bar__tab-text">
-									<div className="metric-tab-bar__tab-header">{ displayName }</div>
-									<div className={ `metric-tab-bar__tab-metric ${ statusClassName }` }>
-										{ displayValue( key as Metrics, metrics[ key as Metrics ] ) }
-									</div>
-								</div>
-							</button>
+								<VStack justify="flex-start">
+									<Text size={ 11 } upperCase variant="muted">
+										{ displayName }
+									</Text>
+									<MetricScore metric={ key as Metrics } status={ status } value={ metrics[ key as Metrics ] } />
+								</VStack>
+							</Button>
 						);
 					} ) }
 				</CardBody>

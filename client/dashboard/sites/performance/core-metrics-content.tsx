@@ -22,72 +22,20 @@ import { StatusBadge } from './core-web-vitals/status-section';
 import { RecommendationsLink } from './core-web-vitals/recommendations-link';
 import { Metrics } from './core-metrics';
 import type { PerformanceReport } from '@automattic/api-core';
-
-type CoreMetricsContentProps = {
-	report: PerformanceReport;
-	activeTab: Metrics | null;
-	recommendationsRef: React.RefObject< HTMLDivElement > | null;
-	onRecommendationsFilterChange?: ( filter: string ) => void;
-};
-
-const getColorForStatus = ( status: string ): string => {
-	if ( status === 'bad' ) {
-		return '#CC1818';
-	}
-	if ( status === 'needsImprovement' ) {
-		return '#B36100';
-	}
-	return '#21873B';
-};
-
-const getValueText = ( status: string, value: string ): React.ReactNode => (
-	<Text color={ getColorForStatus( status ) } size={ 32 }>
-		{ value }
-	</Text>
-);
-
-const getScoreText = (
-	isOverall: boolean,
-	status: string,
-	value: number,
-	metric: Metrics
-): React.ReactNode => {
-	const formattedValue = displayValue( metric, value );
-	if ( isOverall ) {
-		return (
-			<HStack justify="flex-start">
-				{ getValueText( status, formattedValue ) }
-				<Text size={ 20 } variant="muted">
-					/100
-				</Text>
-			</HStack>
-		);
-	}
-
-	return (
-		<Text size={ 20 } variant="muted">
-			{ getValueText( status, formattedValue ) }
-		</Text>
-	);
-};
+import { OverallScore, MetricScore } from './core-metrics-score';
 
 export default function CoreMetricsContent( {
 	report,
 	activeTab,
 	recommendationsRef,
 	onRecommendationsFilterChange,
-}: CoreMetricsContentProps ) {
-	const {
-		overall_score,
-		fcp,
-		lcp,
-		cls,
-		inp,
-		ttfb,
-		tbt,
-		audits,
-		history,
-	} = report;
+}: {
+	report: PerformanceReport;
+	activeTab: Metrics | null;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
+} ) {
+	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history } = report;
 
 	const metrics = {
 		fcp,
@@ -177,7 +125,11 @@ export default function CoreMetricsContent( {
 							<StatusBadge value={ status } />
 						</HStack>
 
-						{ getScoreText( isOverall, status, value, activeTab as Metrics ) }
+						{ isOverall ? (
+							<OverallScore metric={ activeTab as Metrics } status={ status } value={ value } />
+						) : (
+							<MetricScore metric={ activeTab as Metrics } status={ status } value={ value } />
+						) }
 					</VStack>
 					{ numberOfAuditsForMetric > 0 && (
 						<RecommendationsLink
@@ -287,4 +239,4 @@ export default function CoreMetricsContent( {
 			</CardBody>
 		</Card>
 	);
-};
+}
