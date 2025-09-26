@@ -55,9 +55,7 @@ export function useActivityFields( {
 	const locale = useLocale();
 	const isLargeScreen = useViewportMatch( 'huge', '>=' );
 	const dateTimeLabel = getDateTimeLabel( { timezoneString, gmtOffset, isLargeScreen } );
-
-	const localIsUTC =
-		( timezoneString ? timezoneString.toUpperCase().includes( 'UTC' ) : false ) || gmtOffset === 0;
+	const localIsUTC = gmtOffset === 0;
 
 	const activityLogTypeElements = useMemo< ActivityLogTypeOption[] >( () => {
 		if ( ! activityLogTypes ) {
