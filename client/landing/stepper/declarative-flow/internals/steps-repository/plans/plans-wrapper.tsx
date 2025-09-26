@@ -192,7 +192,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const getHeaderText = () => {
 		if ( isDomainUpsellFlow( flowName ) ) {
-			return __( 'There’s a plan for you' );
+			return __( 'Choose the perfect plan' );
 		}
 
 		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
@@ -211,12 +211,33 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if (
-			isStartWritingFlow( flowName ) ||
-			isNewsletterFlow( flowName ) ||
-			isDomainUpsellFlow( flowName )
-		) {
+		if ( isStartWritingFlow( flowName ) || isNewsletterFlow( flowName ) ) {
 			return;
+		}
+
+		if ( isDomainUpsellFlow( flowName ) && domainCartItem?.meta ) {
+			return (
+				<>
+					<p>
+						{ translate(
+							'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+							{
+								args: {
+									domainName: domainCartItem.meta,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'You’ll also unlock advanced features that make it easy to build and grow your site.'
+						) }
+					</p>
+				</>
+			);
 		}
 
 		if ( ! hideFreePlan ) {
