@@ -15,7 +15,7 @@ export const userNotificationsSettingsQuery = () =>
 		queryFn: fetchUserNotificationSettings,
 	} );
 
-interface Variables {
+export interface Variables {
 	data: InputUserNotificationSettings;
 	applyToAll?: boolean;
 }
