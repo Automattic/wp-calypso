@@ -62,7 +62,7 @@ export const DomainSearch = ( {
 
 	return (
 		<DomainSearchContext.Provider value={ contextValue }>
-			<div className={ clsx( 'domain-search', className ) }>{ children }</div>
+			<div className={ clsx( 'domain-search-legacy', className ) }>{ children }</div>
 		</DomainSearchContext.Provider>
 	);
 };

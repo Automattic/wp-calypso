@@ -13,11 +13,7 @@ export default function ExportDataGuide( {
 	fromSite: string;
 	selectedSiteUrl: string;
 } ) {
-	const normalizedFromSite = normalizeFromSite( fromSite );
-
-	const baseUrl = normalizedFromSite.startsWith( 'http' )
-		? normalizedFromSite
-		: `https://${ normalizedFromSite }`;
+	const baseUrl = normalizeFromSite( fromSite );
 
 	const settingsUrl = `${
 		baseUrl.endsWith( '/' ) ? baseUrl.slice( 0, -1 ) : baseUrl

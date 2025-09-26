@@ -1,10 +1,20 @@
 import { Dropdown, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import SwitcherContent, { type RenderItemIcon } from './switcher-content';
+import type { ComponentProps } from 'react';
 
 interface RenderCallbackProps {
 	onClose: () => void;
 }
+
+type SwitcherProps< T > = {
+	items?: T[];
+	value: T;
+	children?: ( props: RenderCallbackProps ) => React.ReactNode;
+	getItemName: ( item: T ) => string;
+	getItemUrl: ( item: T ) => string;
+	renderItemIcon: RenderItemIcon< T >;
+} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >; // For controlled usage of the switcher
 
 export default function Switcher< T >( {
 	items,
@@ -13,16 +23,15 @@ export default function Switcher< T >( {
 	getItemName,
 	getItemUrl,
 	renderItemIcon,
-}: {
-	items?: T[];
-	value: T;
-	children?: ( props: RenderCallbackProps ) => React.ReactNode;
-	getItemName: ( item: T ) => string;
-	getItemUrl: ( item: T ) => string;
-	renderItemIcon: RenderItemIcon< T >;
-} ) {
+	open,
+	onToggle,
+	defaultOpen,
+}: SwitcherProps< T > ) {
 	return (
 		<Dropdown
+			open={ open }
+			onToggle={ onToggle }
+			defaultOpen={ defaultOpen }
 			renderToggle={ ( { onToggle, isOpen } ) => (
 				<Button
 					className="dashboard-menu__item active"

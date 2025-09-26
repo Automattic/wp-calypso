@@ -9,3 +9,40 @@
 .dashboard-backups__progress-bar{
 	--wp-components-color-foreground: var(--wp-admin-theme-color);
 }
+
+.backup-details__file-browser {
+	.file-browser-header {
+		border-bottom: 1px solid $gray-100;
+		padding-bottom: 8px;
+		margin: 8px 0;
+	}
+
+	.file-card__body {
+		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+	}
+
+	.file-card {
+		.components-button.is-secondary {
+			background: #fff;
+		}
+	}
+	.file-card__preview-sensitive {
+		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		border: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.08);
+		border-radius: $radius-large;
+		padding: 20px 8px;
+	}
+
+	.file-card__preview-sensitive svg {
+		fill: var(--wp-admin-theme-color);
+	}
+
+	.file-card__preview img {
+		max-width: 100%;
+	}
+
+	.file-card__preview pre {
+		--color-surface: #fff;
+		padding: 1.6em;
+	}
+}

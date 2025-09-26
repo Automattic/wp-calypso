@@ -27,10 +27,14 @@
 		.help-center-article-content__header {
 			.help-center-article-content__header-link {
 				@include body-medium;
-				color: $gray-800;
+				color: var(--studio-gray-60);
 				margin: 8px 0;
 				display: block;
 				text-decoration: none;
+
+				svg.gridicons-external {
+					top: 3px;
+				}
 			}
 
 			h1.help-center-article-content__header-title {
