@@ -1,7 +1,4 @@
-import {
-	validateUsername,
-	submitUsernameChange as apiSubmitUsernameChange,
-} from '@automattic/api-core';
+import { validateUsername } from '@automattic/api-core';
 import { debounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import type { UsernameValidationResult } from '@automattic/api-core';
@@ -75,8 +72,4 @@ export function getAllowedActions(
 		return {};
 	}
 	return validationResult.allowed_actions ?? {};
-}
-
-export async function submitUsernameChange( username: string, action: string ) {
-	return apiSubmitUsernameChange( username, action );
 }

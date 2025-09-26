@@ -1,4 +1,4 @@
-import { usernameChangeMutation } from '@automattic/api-queries';
+import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -47,7 +47,7 @@ export default function UsernameSection( {
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
 
-	const { mutate: updateUsername, isPending } = useMutation( usernameChangeMutation() );
+	const { mutate: updateUsername, isPending } = useMutation( updateUsernameMutation() );
 	const confirmFormRef = useRef< HTMLDivElement >( null );
 	const [ hasAnnouncedForm, setHasAnnouncedForm ] = useState( false );
 
@@ -137,7 +137,7 @@ export default function UsernameSection( {
 		}
 	};
 
-	const submitUsernameChange = async () => {
+	const submitUpdateUsername = async () => {
 		setShowConfirmModal( false );
 
 		if ( ! value || ! isUsernameValid( validationResult ) ) {
@@ -225,7 +225,7 @@ export default function UsernameSection( {
 			<UsernameUpdateConfirmationModal
 				isOpen={ showConfirmModal }
 				currentUsername={ currentUsername }
-				onConfirm={ submitUsernameChange }
+				onConfirm={ submitUpdateUsername }
 				onCancel={ () => setShowConfirmModal( false ) }
 				isBusy={ isPending }
 			/>

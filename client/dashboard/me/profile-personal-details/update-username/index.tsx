@@ -1,4 +1,4 @@
-import { usernameChangeMutation } from '@automattic/api-queries';
+import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -49,7 +49,7 @@ export default function UsernameUpdateForm( {
 	onCancel,
 	onValidationChange,
 }: UsernameUpdateFormProps ) {
-	const usernameMutation = useMutation( usernameChangeMutation() );
+	const { isPending } = useMutation( updateUsernameMutation() );
 	const [ hasAnnouncedRadioOptions, setHasAnnouncedRadioOptions ] = useState( false );
 
 	const cancelUsernameChange = () => {
@@ -79,9 +79,7 @@ export default function UsernameUpdateForm( {
 	}
 
 	const isSaveDisabled =
-		userLoginConfirm !== usernameToConfirm ||
-		! isUsernameValid( validationResult ) ||
-		usernameMutation.isPending;
+		userLoginConfirm !== usernameToConfirm || ! isUsernameValid( validationResult ) || isPending;
 
 	const usernameMatch = userLoginConfirm === usernameToConfirm && userLoginConfirm.length > 0;
 	const message = getUsernameValidationMessage( validationResult );

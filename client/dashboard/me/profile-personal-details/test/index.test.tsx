@@ -19,7 +19,7 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 	isUsernameValid: jest.fn(),
 	getUsernameValidationMessage: jest.fn(),
 	getAllowedActions: jest.fn( () => ( {} ) ),
-	submitUsernameChange: jest.fn(),
+	updateUsername: jest.fn(),
 } ) );
 
 // Mock the API queries (return query configurations, not data)
@@ -36,7 +36,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 		mutationFn: jest.fn(),
 		onSuccess: jest.fn(),
 	} ) ),
-	usernameChangeMutation: jest.fn( () => ( {
+	updateUsernameMutation: jest.fn( () => ( {
 		mutationFn: jest.fn(),
 		onSuccess: jest.fn(),
 	} ) ),

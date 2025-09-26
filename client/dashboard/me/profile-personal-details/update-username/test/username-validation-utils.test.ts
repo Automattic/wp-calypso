@@ -1,16 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import {
-	validateUsername,
-	submitUsernameChange as apiSubmitUsernameChange,
-} from '@automattic/api-core';
+import { validateUsername } from '@automattic/api-core';
 import {
 	validateUsernameDebounced,
 	isUsernameValid,
 	getUsernameValidationMessage,
 	getAllowedActions,
-	submitUsernameChange,
 	type ValidationResult,
 } from '../username-validation-utils';
 
@@ -44,13 +40,10 @@ jest.mock( '@wordpress/compose', () => {
 
 jest.mock( '@automattic/api-core', () => ( {
 	validateUsername: jest.fn(),
-	submitUsernameChange: jest.fn(),
+	updateUsername: jest.fn(),
 } ) );
 
 const mockValidateUsername = validateUsername as jest.MockedFunction< typeof validateUsername >;
-const mockApiSubmitUsernameChange = apiSubmitUsernameChange as jest.MockedFunction<
-	typeof apiSubmitUsernameChange
->;
 
 describe( 'Username Validation Utils', () => {
 	beforeEach( () => {
@@ -192,34 +185,6 @@ describe( 'Username Validation Utils', () => {
 		it( 'returns empty object for validation result without allowed_actions', () => {
 			const result: ValidationResult = { success: true };
 			expect( getAllowedActions( result ) ).toEqual( {} );
-		} );
-	} );
-
-	describe( 'submitUsernameChange', () => {
-		it( 'calls API with correct parameters', async () => {
-			mockApiSubmitUsernameChange.mockResolvedValue( { success: true } );
-
-			await submitUsernameChange( 'newusername', 'redirect' );
-
-			expect( mockApiSubmitUsernameChange ).toHaveBeenCalledWith( 'newusername', 'redirect' );
-		} );
-
-		it( 'returns API response', async () => {
-			const expectedResponse = { success: true, message: 'Username changed' };
-			mockApiSubmitUsernameChange.mockResolvedValue( expectedResponse );
-
-			const result = await submitUsernameChange( 'newusername', 'none' );
-
-			expect( result ).toEqual( expectedResponse );
-		} );
-
-		it( 'propagates API errors', async () => {
-			const apiError = new Error( 'Network error' );
-			mockApiSubmitUsernameChange.mockRejectedValue( apiError );
-
-			await expect( submitUsernameChange( 'newusername', 'none' ) ).rejects.toThrow(
-				'Network error'
-			);
 		} );
 	} );
 } );

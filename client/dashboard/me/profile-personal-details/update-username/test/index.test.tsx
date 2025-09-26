@@ -24,7 +24,7 @@ jest.mock( '../accessibility-utils', () => ( {
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
-	usernameChangeMutation: jest.fn( () => ( {
+	updateUsernameMutation: jest.fn( () => ( {
 		mutationFn: jest.fn(),
 	} ) ),
 } ) );

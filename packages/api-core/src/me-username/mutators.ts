@@ -5,7 +5,7 @@ export async function validateUsername( username: string ): Promise< UsernameVal
 	return await wpcom.req.get( `/me/username/validate/${ username }` );
 }
 
-export async function submitUsernameChange(
+export async function updateUsername(
 	username: string,
 	action: string
 ): Promise< UsernameChangeResult > {
