@@ -1,4 +1,5 @@
-import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import ConfirmModal from '../../../components/confirm-modal';
 
 interface UsernameUpdateConfirmationModalProps {
@@ -31,16 +32,21 @@ export default function UsernameUpdateConfirmationModal( {
 			cancelButtonText={ __( 'Cancel' ) }
 			isDismissible={ false }
 		>
-			{
-				/* translators: %(username)s is the current username that will be changed */
-				__(
-					'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
-						'Once changed, you will not be able to revert it.'
-				)
-					.replace( '{{strong}}', '' )
-					.replace( '{{/strong}}', '' )
-					.replace( '%(username)s', currentUsername )
-			}
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %(username)s is the current username that will be changed */
+					__(
+						'You are about to change your username, <strong>%s</strong>. ' +
+							'Once changed, you will not be able to revert it. <break />' +
+							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
+					),
+					currentUsername
+				),
+				{
+					strong: <strong />,
+					break: <br />,
+				}
+			) }
 		</ConfirmModal>
 	);
 }
