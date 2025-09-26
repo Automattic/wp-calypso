@@ -56,13 +56,13 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 
 			return Object.entries( methodsMap ).map(
 				( [ method, value ]: [ string, number ], index ): DataPointPercentage => {
-					const valuePercentage = Math.round( ( value * 100 ) / sum );
+					const valuePercentage = ( value * 100 ) / sum;
 
 					return {
 						label: method.toUpperCase(),
-						value: Math.round( value * 100 ) / 100,
+						value: value,
 						percentage: valuePercentage,
-						valueDisplay: valuePercentage.toString() + '%',
+						valueDisplay: ( Math.round( valuePercentage * 10 ) / 100 ).toString() + '%',
 						color: chartColors[ index % chartColors.length ],
 					};
 				}

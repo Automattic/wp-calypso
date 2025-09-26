@@ -1,7 +1,10 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { DataPointPercentage, PieChart, Legend } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
@@ -57,14 +60,14 @@ function useResponseTypesData( siteId: number, timeRange: number ): ResponseType
 
 			return Object.entries( methodsMap ).map(
 				( [ method, value ]: [ string, number ], index ): DataPointPercentage => {
-					const valuePercentage = Math.round( ( value * 100 ) / sum );
+					const valuePercentage = ( value * 100 ) / sum;
 
 					return {
 						label:
 							method === 'php' ? 'Dynamic' : method.slice( 0, 1 ).toUpperCase() + method.slice( 1 ),
-						value: Math.round( value * 100 ) / 100,
+						value: value,
 						percentage: valuePercentage,
-						valueDisplay: valuePercentage.toString() + '%',
+						valueDisplay: ( Math.round( valuePercentage * 10 ) / 10 ).toString() + '%',
 						color: chartColors[ index % chartColors.length ],
 					};
 				}
@@ -104,17 +107,19 @@ export default function MonitoringResponseTypesCard( {
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
-			<Legend chartId="response-types-chart" items={ mapDataForLegend( data ) } />
-			<HStack alignment="center">
-				<PieChart
-					chartId="response-types-chart"
-					thickness={ 0.3 }
-					gapScale={ 0.02 }
-					size={ 300 }
-					data={ data }
-					showLabels={ false }
-				/>
-			</HStack>
+			<VStack justify="space-between" expanded>
+				<Legend chartId="response-types-chart" items={ mapDataForLegend( data ) } />
+				<HStack alignment="center">
+					<PieChart
+						chartId="response-types-chart"
+						thickness={ 0.3 }
+						gapScale={ 0.02 }
+						size={ 300 }
+						data={ data }
+						showLabels={ false }
+					/>
+				</HStack>
+			</VStack>
 		</MonitoringCard>
 	);
 }
