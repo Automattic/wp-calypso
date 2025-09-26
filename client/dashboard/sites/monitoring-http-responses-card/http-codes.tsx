@@ -20,7 +20,7 @@ export const useSuccessHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 302,
-			label: __( '302: Moved Temporarily' ),
+			label: __( '302: Found' ),
 			showInLegend: true,
 		},
 	];
@@ -61,7 +61,7 @@ export const useErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 402,
-			label: __( '402 Payment Required' ),
+			label: __( '402: Payment Required' ),
 		},
 		{
 			statusCode: 405,
