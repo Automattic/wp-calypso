@@ -86,9 +86,7 @@ function SiteLogsDataViews( {
 	};
 
 	const { data, isLoading, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
-		useInfiniteQuery( {
-			...siteLogsInfiniteQuery( site.ID, params ),
-		} );
+		useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
 
 	useEffect( () => {
 		setView( ( value ) => ( { ...value, page: 1 } ) );
@@ -180,9 +178,7 @@ function SiteLogsDataViews( {
 		};
 	}, [ infiniteScrollHandler ] );
 
-	const fields = useFields(
-		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
-	);
+	const fields = useFields( { logType, timezoneString, gmtOffset } );
 
 	const paginationInfo = {
 		totalItems: logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length,
@@ -295,6 +291,7 @@ function SiteLogsDataViews( {
 					isLoading={ isLoading && displayedPhpLogs.length === 0 }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
+					getItemId={ ( item ) => item.id }
 					view={ view }
 					actions={ actions as Action< PHPLog >[] }
 					search={ false }
@@ -308,6 +305,7 @@ function SiteLogsDataViews( {
 					isLoading={ isLoading && displayedServerLogs.length === 0 }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
+					getItemId={ ( item ) => item.id }
 					view={ view }
 					actions={ actions as Action< ServerLog >[] }
 					search={ false }

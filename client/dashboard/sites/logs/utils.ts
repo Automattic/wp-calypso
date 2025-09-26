@@ -155,18 +155,20 @@ export function getDateTimeLabel( {
 export type PhpLogWithId = PHPLog & { id: string };
 export type ServerLogWithId = ServerLog & { id: string };
 
+// Build a stable, readable ID by joining meaningful parts.
+const joinId = ( parts: Array< string | number | null | undefined > ): string =>
+	parts
+		.map( ( part ) => ( part === null || part === undefined ? '' : String( part ) ) )
+		.join( '|' );
+
 export function buildPhpLogsWithId( pages: Array< { logs?: PHPLog[] } > ): PhpLogWithId[] {
 	const out: PhpLogWithId[] = [];
 	pages.forEach( ( page, pageIndex ) => {
 		const suffix = `p${ pageIndex + 1 }`;
 		const items = page?.logs ?? [];
 		items.forEach( ( php, index ) => {
-			out.push( {
-				...php,
-				id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
-					index
-				) }`,
-			} );
+			const id = joinId( [ php.timestamp, php.file, php.line, php.kind, php.name, suffix, index ] );
+			out.push( { ...php, id } );
 		} );
 	} );
 	return out;
@@ -178,12 +180,16 @@ export function buildServerLogsWithId( pages: Array< { logs?: ServerLog[] } > ):
 		const suffix = `p${ pageIndex + 1 }`;
 		const items = page?.logs ?? [];
 		items.forEach( ( server, index ) => {
-			out.push( {
-				...server,
-				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
-					server.request_url
-				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
-			} );
+			const id = joinId( [
+				server.timestamp,
+				server.request_type,
+				server.status,
+				server.request_url,
+				server.user_ip,
+				suffix,
+				index,
+			] );
+			out.push( { ...server, id } );
 		} );
 	} );
 	return out;

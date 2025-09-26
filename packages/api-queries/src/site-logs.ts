@@ -4,9 +4,9 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 export const siteLogsInfiniteQuery = ( siteId: number, params: SiteLogsParams ) =>
 	infiniteQueryOptions( {
 		queryKey: [ 'site', siteId, 'logs', 'infinite', params ],
-		queryFn: ( { pageParam }: { pageParam: string | null } ) =>
-			fetchSiteLogs( siteId, params, pageParam ?? undefined ),
-		initialPageParam: null as string | null,
+		queryFn: ( { pageParam }: { pageParam: string | undefined } ) =>
+			fetchSiteLogs( siteId, params, pageParam ),
+		initialPageParam: undefined as string | undefined,
 		getNextPageParam: ( lastPage ) => {
 			const pageSize = params.pageSize ?? 50;
 			const count = Array.isArray( lastPage?.logs ) ? lastPage.logs.length : 0;
