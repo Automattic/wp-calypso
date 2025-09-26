@@ -1,6 +1,7 @@
-import { Card, FormLabel, NoticeBanner, ExternalLink } from '@automattic/components';
+import { Card, FormLabel, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import Banner from 'calypso/components/banner';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -30,7 +31,7 @@ export default function HostingDashboardOptInForm() {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ enabled, setEnabled ] = useState( savedPreference?.value === 'opt-in' );
 
-	// We do not want the survey NoticeBanner to disappear immediately after opting out
+	// We do not want the survey banner to disappear immediately after opting out
 	// is complete. This state is used to keep it around until the component is unmounted.
 	const [ optedOutThisMount, setOptedOutThisMount ] = useState( false );
 
@@ -106,13 +107,11 @@ export default function HostingDashboardOptInForm() {
 						</FormLabel>
 					</FormFieldset>
 					{ showOptOutSurvey && (
-						<FormFieldset className="account__hosting-dashboard-notice-banner">
-							<NoticeBanner
+						<FormFieldset>
+							<Banner
 								title={ translate( 'Prefer the previous version?' ) }
-								level="info"
-								hideCloseButton
-							>
-								{ translate(
+								showIcon={ false }
+								description={ translate(
 									'{{surveyLink}}Please complete this short survey{{/surveyLink}} to help us understand what didn’t work and how we can improve.',
 									{
 										components: {
@@ -130,7 +129,7 @@ export default function HostingDashboardOptInForm() {
 										},
 									}
 								) }
-							</NoticeBanner>
+							/>
 						</FormFieldset>
 					) }
 					<FormButton
