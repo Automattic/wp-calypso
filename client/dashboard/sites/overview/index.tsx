@@ -11,6 +11,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
+import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -105,6 +106,7 @@ function SiteOverview( {
 										variant="primary"
 										href={ site.options.admin_url }
 										icon={ wordpress }
+										label={ __( 'WP Admin' ) }
 									>
 										{ __( 'WP Admin' ) }
 									</Button>
@@ -162,6 +164,27 @@ function SiteOverview( {
 					) }
 				</HStack>
 			</VStack>
+			<GuidedTourContextProvider
+				tourId="hosting-dashboard-tours-site-overview"
+				isSkippable
+				guidedTours={ [
+					{
+						id: 'hosting-dashboard-tours-site-overview-wp-admin',
+						title: __( 'Go to WP Admin' ),
+						description: __(
+							'Use this button to quickly switch from the Hosting Dashboard to your WP Admin.'
+						),
+					},
+				] }
+			>
+				<GuidedTourStep
+					id="hosting-dashboard-tours-site-overview-wp-admin"
+					selector={ `.dashboard-section-header__actions a[aria-label="${ __( 'WP Admin' ) }"]` }
+					placement="bottom"
+					inline
+					popoverStyle={ { zIndex: 2 } }
+				/>
+			</GuidedTourContextProvider>
 		</PageLayout>
 	);
 }
