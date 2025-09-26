@@ -70,7 +70,11 @@ export function RenewNoticeAction( {
 	}
 
 	if ( ! purchase.is_rechargable ) {
-		return <Button onClick={ onClick }>{ __( 'Renew now' ) }</Button>;
+		return (
+			<Button variant="primary" onClick={ onClick }>
+				{ __( 'Renew now' ) }
+			</Button>
+		);
 	}
 	return null;
 }
