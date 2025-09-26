@@ -12,14 +12,26 @@ const getColorForStatus = ( status: string ): string => {
 	return '#21873B';
 };
 
-const getValueText = ( { metric, status, value, size, lineHeight }: {
+const getValueText = ( {
+	metric,
+	status,
+	value,
+	size,
+	lineHeight,
+}: {
 	metric: Metrics;
 	status: string;
 	value: number;
 	size: number;
 	lineHeight: string;
 } ) => (
-	<Text color={ getColorForStatus( status ) } size={ size } weight={ 500 } lineHeight={ lineHeight }>
+	<Text
+		align="end"
+		color={ getColorForStatus( status ) }
+		size={ size }
+		weight={ 500 }
+		lineHeight={ lineHeight }
+	>
 		{ displayValue( metric, value ) }
 	</Text>
 );
@@ -38,7 +50,7 @@ export function OverallScore( {
 	value: number;
 } ) {
 	return (
-		<HStack spacing={ 1 } justify="flex-start" alignment="baseline">
+		<HStack spacing={ 1 } justify="flex-start">
 			{ getValueText( { metric, status, value, size, lineHeight } ) }
 			<Text size={ 12 } variant="muted">
 				/ 100

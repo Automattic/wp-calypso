@@ -120,9 +120,9 @@ export default function CoreMetricsContent( {
 		<Card>
 			<CardBody>
 				<HStack spacing={ 2 } justify="space-between" alignment="flex-start">
-					<VStack spacing={ 4 }>
-						<HStack spacing={ 2 } alignment="topLeft">
-							<Text size="title">{ displayName }</Text>
+					<VStack spacing={ 4 } alignment="flex-start">
+						<HStack spacing={ 2 } alignment="left">
+							<Text size="title" weight={ 500 }>{ displayName }</Text>
 							<StatusBadge value={ status } />
 						</HStack>
 
