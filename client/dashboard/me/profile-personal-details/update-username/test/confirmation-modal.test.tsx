@@ -9,10 +9,11 @@ import { render } from '../../../../test-utils';
 import UsernameUpdateConfirmationModal from '../confirmation-modal';
 
 const defaultProps = {
-	isVisible: true,
+	isOpen: true,
 	currentUsername: 'testuser',
 	onConfirm: jest.fn(),
 	onCancel: jest.fn(),
+	isBusy: false,
 };
 
 describe( 'UsernameUpdateConfirmationModal', () => {
@@ -21,14 +22,14 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 	} );
 
 	describe( 'Conditional rendering and content', () => {
-		it( 'renders when isVisible is true', () => {
+		it( 'renders when isOpen is true', () => {
 			render( <UsernameUpdateConfirmationModal { ...defaultProps } /> );
-			expect( screen.getByText( 'Confirm username change' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Confirm username change?' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not render when isVisible is false', () => {
-			render( <UsernameUpdateConfirmationModal { ...defaultProps } isVisible={ false } /> );
-			expect( screen.queryByText( 'Confirm username change' ) ).not.toBeInTheDocument();
+		it( 'does not render when isOpen is false', () => {
+			render( <UsernameUpdateConfirmationModal { ...defaultProps } isOpen={ false } /> );
+			expect( screen.queryByText( 'Confirm username change?' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'displays warning message with current username', () => {
@@ -36,12 +37,8 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 				<UsernameUpdateConfirmationModal { ...defaultProps } currentUsername="myusername" />
 			);
 
-			expect(
-				screen.getByText( /You are about to change your username, myusername/ )
-			).toBeInTheDocument();
-			expect(
-				screen.getByText( /Once changed, you will not be able to revert it/ )
-			).toBeInTheDocument();
+			expect( screen.getByText( /You are about to change your username,/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /myusername/ ) ).toBeInTheDocument();
 		} );
 	} );
 

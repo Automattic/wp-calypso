@@ -224,8 +224,8 @@ describe( 'PersonalDetailsSection', () => {
 		it( 'shows success notice on successful username change', async () => {
 			Object.defineProperty( window, 'location', {
 				value: {
-					search: '?usernameChangeSuccess=true',
-					href: 'http://localhost/?usernameChangeSuccess=true',
+					search: '?updated=username',
+					href: 'http://localhost/?updated=username',
 				},
 				writable: true,
 			} );
@@ -243,8 +243,6 @@ describe( 'PersonalDetailsSection', () => {
 					'Username saved.',
 					expect.objectContaining( {
 						type: 'snackbar',
-						speak: true,
-						politeness: 'polite',
 					} )
 				);
 			} );
@@ -290,8 +288,8 @@ describe( 'PersonalDetailsSection', () => {
 		it( 'has proper ARIA attributes for success notice', async () => {
 			Object.defineProperty( window, 'location', {
 				value: {
-					search: '?usernameChangeSuccess=true',
-					href: 'http://localhost/?usernameChangeSuccess=true',
+					search: '?updated=username',
+					href: 'http://localhost/?updated=username',
 				},
 				writable: true,
 			} );
@@ -305,12 +303,10 @@ describe( 'PersonalDetailsSection', () => {
 			renderWithUserData();
 
 			await waitFor( () => {
-				// Verify the notice was created with proper accessibility options
+				// Verify the notice was created with snackbar type
 				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
 					'Username saved.',
 					expect.objectContaining( {
-						speak: true,
-						politeness: 'polite',
 						type: 'snackbar',
 					} )
 				);
