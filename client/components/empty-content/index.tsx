@@ -62,7 +62,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 		if ( props.secondaryActionURL || props.secondaryActionCallback ) {
 			return (
 				<Button
-					className="empty-content__action button"
+					className="empty-content__action"
 					onClick={ props.secondaryActionCallback }
 					href={ props.secondaryActionURL }
 					target={ props.secondaryActionTarget }

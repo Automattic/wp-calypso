@@ -36,7 +36,9 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		timeStyle: 'short',
 	} );
 	const { fileBrowserState } = useFileBrowserContext();
-	const { totalItems: selectedFilesCount } = fileBrowserState.getCheckList();
+	const { totalItems: selectedFilesCount } = fileBrowserState.getCheckList(
+		Number( backup.rewind_id )
+	);
 
 	// Granular backup download mutation
 	const granularDownloadRequest = useMutation(
@@ -61,7 +63,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 	}, [ router, site.slug, backup.rewind_id ] );
 
 	const handleGranularDownloadClick = useCallback( () => {
-		const browserCheckList = fileBrowserState.getCheckList();
+		const browserCheckList = fileBrowserState.getCheckList( Number( backup.rewind_id ) );
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 
@@ -161,6 +163,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 					{ !! backup.object?.backup_period && (
 						<div className="backup-details__file-browser">
 							<FileBrowser
+								key={ backup.rewind_id }
 								rewindId={ Number( backup.rewind_id ) }
 								siteId={ site.ID }
 								siteSlug={ site.slug }

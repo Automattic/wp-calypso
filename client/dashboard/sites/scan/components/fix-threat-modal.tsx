@@ -41,15 +41,9 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 		} );
 	};
 
-	const fixButtonLabel = items.length === 1 ? __( 'Fix threat' ) : __( 'Fix all threats' );
-	const description =
-		items.length === 1
-			? __( 'Jetpack will be fixing the following threat:' )
-			: __( 'Jetpack will be fixing the following threats:' );
-
 	return (
 		<VStack spacing={ 4 }>
-			<Text variant="muted">{ description }</Text>
+			<Text variant="muted">{ __( 'Jetpack will be fixing the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ items } />
 			<ThreatDescription threat={ items[ 0 ] } />
 			<ButtonStack justify="flex-end">
@@ -62,7 +56,7 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 					isBusy={ fixThreat.isPending }
 					disabled={ fixThreat.isPending }
 				>
-					{ fixButtonLabel }
+					{ __( 'Fix threat' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>

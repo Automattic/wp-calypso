@@ -1,4 +1,4 @@
-import { useState, useCallback } from '@wordpress/element';
+import { useState, useCallback, useRef } from '@wordpress/element';
 import {
 	FileBrowserCheckState,
 	FileBrowserItem,
@@ -24,7 +24,20 @@ const createInitialState = (): FileBrowserState => ( {
 } );
 
 export function useFileBrowserState(): FileBrowserStateActions {
-	const [ state, setState ] = useState< FileBrowserState >( createInitialState );
+	// Use useRef to persist the state map across renders
+	const stateMapRef = useRef< Map< number, FileBrowserState > >( new Map() );
+
+	// Force re-render when state changes
+	const [ , forceUpdate ] = useState( {} );
+	const triggerUpdate = useCallback( () => forceUpdate( {} ), [] );
+
+	// Helper to get or create state for a rewindId
+	const getStateForRewindId = useCallback( ( rewindId: number ): FileBrowserState => {
+		if ( ! stateMapRef.current.has( rewindId ) ) {
+			stateMapRef.current.set( rewindId, createInitialState() );
+		}
+		return stateMapRef.current.get( rewindId )!;
+	}, [] );
 
 	const getNodeFromState = useCallback(
 		( currentState: FileBrowserState, fullPath: string[] | string ): FileBrowserNode | null => {
@@ -172,75 +185,85 @@ export function useFileBrowserState(): FileBrowserStateActions {
 	);
 
 	const setNodeCheckState = useCallback(
-		( nodePath: string, checkState: FileBrowserCheckState ) => {
-			setState( ( prevState ) => {
-				const newState = { ...prevState };
-				// Payload needs to give us the path to the node and the new checkState
-				// We need to find the node in the tree
-				// parent.children[0]
-				const { parent, index } = getParentAndIndex( newState, nodePath );
-				if ( ! parent || index === undefined ) {
-					// Root node special case
-					if ( '/' === nodePath ) {
-						const newRoot = { ...newState.rootNode };
-						newRoot.checkState = checkState;
-						updateChildrenStatus( newRoot, checkState );
-						newState.rootNode = newRoot;
-						return newState;
-					}
-					return prevState;
+		( nodePath: string, checkState: FileBrowserCheckState, rewindId: number ) => {
+			const currentState = getStateForRewindId( rewindId );
+			const newState = { ...currentState };
+
+			// Payload needs to give us the path to the node and the new checkState
+			// We need to find the node in the tree
+			// parent.children[0]
+			const { parent, index } = getParentAndIndex( newState, nodePath );
+			if ( ! parent || index === undefined ) {
+				// Root node special case
+				if ( '/' === nodePath ) {
+					const newRoot = { ...newState.rootNode };
+					newRoot.checkState = checkState;
+					updateChildrenStatus( newRoot, checkState );
+					newState.rootNode = newRoot;
+					stateMapRef.current.set( rewindId, newState );
+					triggerUpdate();
+					return;
 				}
-				const newNode = { ...parent.children[ index ] };
-				const nodeToUpdate = getNodeFromState( prevState, nodePath );
-				if ( ! nodeToUpdate ) {
-					return prevState;
-				}
-				// We need to update the node's checkState
-				newNode.checkState = checkState;
-				parent.children[ index ] = newNode;
-				// We need to update the node's children's checkState
-				if ( checkState !== 'mixed' ) {
-					updateChildrenStatus( newNode, checkState );
-				}
-				updateParent( newState, newNode );
-				return newState;
-			} );
+				return;
+			}
+			const newNode = { ...parent.children[ index ] };
+			const nodeToUpdate = getNodeFromState( currentState, nodePath );
+			if ( ! nodeToUpdate ) {
+				return;
+			}
+			// We need to update the node's checkState
+			newNode.checkState = checkState;
+			parent.children[ index ] = newNode;
+			// We need to update the node's children's checkState
+			if ( checkState !== 'mixed' ) {
+				updateChildrenStatus( newNode, checkState );
+			}
+			updateParent( newState, newNode );
+			stateMapRef.current.set( rewindId, newState );
+			triggerUpdate();
 		},
-		[ getParentAndIndex, getNodeFromState, updateChildrenStatus, updateParent ]
+		[
+			getStateForRewindId,
+			getParentAndIndex,
+			getNodeFromState,
+			updateChildrenStatus,
+			updateParent,
+			triggerUpdate,
+		]
 	);
 
 	const addChildNodes = useCallback(
-		( parentPath: string, childrenPaths: FileBrowserItem[] ) => {
-			setState( ( prevState ) => {
-				// Payload needs to give us the path to the parent and a list of children paths
-				// We need to find the parent node in the tree
-				const parentNode = getNodeFromState( prevState, parentPath );
-				if ( ! parentNode ) {
-					return prevState;
-				}
-				if ( parentNode.childrenLoaded ) {
-					return prevState;
-				}
-				// We need to add the children to the parent node
-				// They'll inherit the parent's state with default childrenLoading/Loaded/children values
-				for ( const childPath of childrenPaths ) {
-					parentNode.children.push( {
-						id: childPath.id ?? '',
-						path: childPath.path ?? childPath.name,
-						type: fileBrowserToRestoreType( childPath.type ),
-						ancestors: [ ...parentNode.ancestors, parentNode.path ],
-						checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
-						childrenLoaded: false,
-						children: [],
-						totalItems: childPath.totalItems ?? 0,
-					} );
-				}
+		( parentPath: string, childrenPaths: FileBrowserItem[], rewindId: number ) => {
+			const currentState = getStateForRewindId( rewindId );
+			// We need to find the parent node in the tree
+			const parentNode = getNodeFromState( currentState, parentPath );
+			if ( ! parentNode ) {
+				return;
+			}
+			if ( parentNode.childrenLoaded ) {
+				return;
+			}
+			// We need to add the children to the parent node
+			// They'll inherit the parent's state with default childrenLoading/Loaded/children values
+			for ( const childPath of childrenPaths ) {
+				parentNode.children.push( {
+					id: childPath.id ?? '',
+					path: childPath.path ?? childPath.name,
+					type: fileBrowserToRestoreType( childPath.type ),
+					ancestors: [ ...parentNode.ancestors, parentNode.path ],
+					checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
+					childrenLoaded: false,
+					children: [],
+					totalItems: childPath.totalItems ?? 0,
+				} );
+			}
 
-				parentNode.childrenLoaded = true;
-				return prevState;
-			} );
+			parentNode.childrenLoaded = true;
+			// Update the state in the map
+			stateMapRef.current.set( rewindId ?? -1, currentState );
+			triggerUpdate();
 		},
-		[ getNodeFromState, fileBrowserToRestoreType ]
+		[ getStateForRewindId, getNodeFromState, fileBrowserToRestoreType, triggerUpdate ]
 	);
 
 	const getNodeFullPath = useCallback( ( node: FileBrowserNode ): string => {
@@ -382,41 +405,50 @@ export function useFileBrowserState(): FileBrowserStateActions {
 		[ getNodeFullPath ]
 	);
 
-	const getSelectedList = useCallback( (): FileBrowserCheckListInfo[] => {
-		let selectedList: FileBrowserCheckListInfo[] = [];
+	const getSelectedList = useCallback(
+		( rewindId: number ): FileBrowserCheckListInfo[] => {
+			let selectedList: FileBrowserCheckListInfo[] = [];
 
-		const currentNode = state.rootNode;
-		if ( currentNode === undefined ) {
+			const currentState = getStateForRewindId( rewindId );
+			const currentNode = currentState.rootNode;
+			if ( currentNode === undefined ) {
+				return selectedList;
+			}
+
+			selectedList = addSelectedItemsToList( currentNode, selectedList );
+
 			return selectedList;
-		}
+		},
+		[ getStateForRewindId, addSelectedItemsToList ]
+	);
 
-		selectedList = addSelectedItemsToList( currentNode, selectedList );
+	const getCheckList = useCallback(
+		( rewindId: number ): FileBrowserNodeCheckList => {
+			let checkList: FileBrowserNodeCheckList = {
+				totalItems: 0,
+				includeList: [],
+				excludeList: [],
+			};
 
-		return selectedList;
-	}, [ state.rootNode, addSelectedItemsToList ] );
+			const currentState = getStateForRewindId( rewindId );
+			const currentNode = currentState.rootNode;
+			if ( currentNode === undefined ) {
+				return checkList;
+			}
 
-	const getCheckList = useCallback( (): FileBrowserNodeCheckList => {
-		let checkList: FileBrowserNodeCheckList = {
-			totalItems: 0,
-			includeList: [],
-			excludeList: [],
-		};
+			checkList = addChildrenToList( currentNode, checkList );
 
-		const currentNode = state.rootNode;
-		if ( currentNode === undefined ) {
 			return checkList;
-		}
-
-		checkList = addChildrenToList( currentNode, checkList );
-
-		return checkList;
-	}, [ state.rootNode, addChildrenToList ] );
+		},
+		[ getStateForRewindId, addChildrenToList ]
+	);
 
 	const getNode = useCallback(
-		( path: string ): FileBrowserNode | null => {
-			return getNodeFromState( state, path );
+		( path: string, rewindId: number ): FileBrowserNode | null => {
+			const currentState = getStateForRewindId( rewindId );
+			return getNodeFromState( currentState, path );
 		},
-		[ state, getNodeFromState ]
+		[ getStateForRewindId, getNodeFromState ]
 	);
 
 	return {
