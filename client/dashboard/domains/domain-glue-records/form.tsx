@@ -1,26 +1,12 @@
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
-	Button,
-	privateApis,
-} from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { ButtonStack } from '../../components/button-stack';
-import { Text } from '../../components/text';
+import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-const { ValidatedInputControl } = unlock( privateApis );
 
 export interface FormData {
 	nameServer: string;
@@ -71,7 +57,7 @@ export default function DomainGlueRecordsForm( {
 					const validationMessage = field.isValid?.custom?.( data, field );
 
 					return (
-						<ValidatedInputControl
+						<SuffixInputControl
 							required={ !! field.isValid?.required }
 							label={ field.label }
 							placeholder={ field.placeholder }
@@ -82,13 +68,7 @@ export default function DomainGlueRecordsForm( {
 							customValidity={
 								validationMessage ? { type: 'invalid', message: validationMessage } : undefined
 							}
-							suffix={
-								<InputControlSuffixWrapper>
-									<Text variant="muted" style={ { whiteSpace: 'nowrap' } }>
-										{ suffix }
-									</Text>
-								</InputControlSuffixWrapper>
-							}
+							suffix={ suffix }
 						/>
 					);
 				},
