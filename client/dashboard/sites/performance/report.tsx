@@ -65,7 +65,7 @@ export default function Report( {
 	};
 
 	return (
-		<VStack spacing={ 6 }>
+		<VStack spacing={ 8 }>
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 
 			<CoreMetrics

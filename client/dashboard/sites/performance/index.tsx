@@ -97,25 +97,21 @@ function SitePerformanceContent( { site, settings }: { site: Site; settings: Sit
 					</HStack>
 				}
 			/>
-			<div className="site-performance-report">
-				{ isFetchingReport || isRunningReport || ! currentReport ? (
-					<ReportLoading
-						pageTitle={ currentPage.title.rendered }
-						isSavedReport={
-							isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
-						}
-					/>
-				) : (
-					<Report
-						currentPage={ currentPage }
-						report={ currentReport }
-						isError={
-							( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError
-						}
-						onRetest={ handleReportRefetch }
-					/>
-				) }
-			</div>
+			{ isFetchingReport || isRunningReport || ! currentReport ? (
+				<ReportLoading
+					pageTitle={ currentPage.title.rendered }
+					isSavedReport={
+						isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
+					}
+				/>
+			) : (
+				<Report
+					currentPage={ currentPage }
+					report={ currentReport }
+					isError={ ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError }
+					onRetest={ handleReportRefetch }
+				/>
+			) }
 		</PageLayout>
 	);
 }
