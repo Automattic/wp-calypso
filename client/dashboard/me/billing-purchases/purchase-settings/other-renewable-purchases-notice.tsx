@@ -546,8 +546,6 @@ export function OtherRenewablePurchasesNotice( {
 		} else if ( currentPurchase.payment_card_id ) {
 			noticeStatus = shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info';
 			noticeActionHref = getAddPaymentMethodUrlFor( purchase );
-			// FIXME: handle "update all" action
-			noticeActionOnClick = () => null;
 			noticeActionText = __( 'Update all' );
 			noticeText = createInterpolateElement(
 				sprintf(
@@ -677,8 +675,6 @@ export function OtherRenewablePurchasesNotice( {
 		} else if ( currentPurchase.payment_card_id ) {
 			noticeStatus = 'info';
 			noticeActionHref = getAddPaymentMethodUrlFor( purchase );
-			// FIXME: handle "update all" action
-			noticeActionOnClick = () => null;
 			noticeActionText = __( 'Update all' );
 			noticeText = createInterpolateElement(
 				sprintf(
@@ -720,6 +716,7 @@ export function OtherRenewablePurchasesNotice( {
 					{ noticeText }
 					{ ( noticeActionHref || noticeActionOnClick ) && (
 						<Button
+							variant="primary"
 							href={ noticeActionHref ?? undefined }
 							onClick={ noticeActionOnClick ?? undefined }
 						>
