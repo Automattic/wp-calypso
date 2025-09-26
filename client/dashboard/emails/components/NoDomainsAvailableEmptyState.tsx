@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import DomainEmptyIllustration from '../resources/domain-empty-illustration';
 
-const NoEmailsEmptyState = () => {
+const NoDomainsAvailableEmptyState = () => {
 	return (
 		<DataViewsEmptyState
 			title={ __( 'Hold up! You need a domain first.' ) }
@@ -20,4 +20,4 @@ const NoEmailsEmptyState = () => {
 	);
 };
 
-export default NoEmailsEmptyState;
+export default NoDomainsAvailableEmptyState;

@@ -8,7 +8,7 @@ import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import NoEmailsEmptyState from './components/NoEmailsEmptyState';
+import NoDomainsAvailableEmptyState from './components/NoDomainsAvailableEmptyState';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
 import { domainHasEmail } from './utils/email-utils';
 import type { View } from '@wordpress/dataviews';
@@ -86,7 +86,7 @@ export default function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					empty={ domainsWithoutEmails ? <></> : <NoEmailsEmptyState /> }
+					empty={ domainsWithoutEmails ? <></> : <NoDomainsAvailableEmptyState /> }
 				/>
 			</DataViewsCard>
 		</PageLayout>
