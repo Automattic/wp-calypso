@@ -151,7 +151,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 					tooltip,
 				} }
 			/>
-			{ purchase.status === 'canceled' && cancellationInfo && (
+			{ cancellationInfo && (
 				<span
 					className="status-card__info-icon"
 					onClick={ () => setShowPopover( ! showPopover ) }
@@ -167,8 +167,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 					<Gridicon icon="info-outline" size={ 18 } />
 				</span>
 			) }
-			{ purchase.status === 'canceled' &&
-				cancellationInfo &&
+			{ cancellationInfo &&
 				showPopover &&
 				( isMobile ? (
 					<InfoModal title="" onClose={ () => setShowPopover( false ) }>
