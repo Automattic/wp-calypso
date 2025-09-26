@@ -45,7 +45,7 @@ function McpSetupComponent( { path, userSettings } ) {
 
 	// Documentation links for each client
 	const clientDocumentation = {
-		claude: 'https://docs.anthropic.com/en/docs/claude-desktop-mcp',
+		claude: 'https://docs.claude.com/en/docs/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
 		continue: 'https://docs.continue.dev/customize/deep-dives/mcp',
