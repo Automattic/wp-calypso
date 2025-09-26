@@ -12,14 +12,14 @@ export const PerformanceReportLoading = ( {
 	isSavedReport?: boolean;
 	pageTitle?: string;
 	isLoadingPages?: boolean;
-	onRetestClick(): void;
+	onRetestClick?(): void;
 } ) => {
 	const { __ } = useI18n();
 	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
 
 	const handleRetestClick = () => {
 		setIsButtonClicked( true );
-		onRetestClick();
+		onRetestClick?.();
 	};
 
 	return (
