@@ -57,6 +57,7 @@ const domain: FlowV2< typeof initialize > = {
 			setPlanCartItem,
 			setProductCartItems,
 			setPendingAction,
+			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		const { siteSlug, site } = useSiteData();
@@ -121,7 +122,6 @@ const domain: FlowV2< typeof initialize > = {
 						} )
 					);
 				case STEPS.USE_MY_DOMAIN.slug:
-					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if (
 						providedDependencies &&
 						'mode' in providedDependencies &&
@@ -137,6 +137,8 @@ const domain: FlowV2< typeof initialize > = {
 					}
 
 					if ( siteSlug && providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );
 						setSignupCompleteSlug( siteSlug );
 
@@ -153,6 +155,12 @@ const domain: FlowV2< typeof initialize > = {
 						} );
 
 						return navigate( STEPS.PROCESSING.slug );
+					}
+
+					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
 					}
 
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );

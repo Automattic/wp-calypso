@@ -1,14 +1,5 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-import {
-	START_WRITING_FLOW,
-	ONBOARDING_FLOW,
-	StepContainer,
-	isStartWritingFlow,
-	Step,
-	DOMAIN_FLOW,
-} from '@automattic/onboarding';
+import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
@@ -19,7 +10,6 @@ import {
 	UseMyDomainInputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -38,9 +28,7 @@ const UseMyDomain: StepType< {
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
-	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 	const location = useLocation();
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
@@ -69,8 +57,6 @@ const UseMyDomain: StepType< {
 				signup: true,
 			},
 		} );
-		setHideFreePlan( true );
-		setDomainCartItem( domainCartItem );
 
 		clearQueryParams();
 		submit?.( { domainCartItem } );
@@ -78,8 +64,6 @@ const UseMyDomain: StepType< {
 
 	const handleOnConnect = async ( domain: string ) => {
 		const domainCartItem = domainMapping( { domain } );
-		setHideFreePlan( true );
-		setDomainCartItem( domainCartItem );
 
 		clearQueryParams();
 		submit?.( { domainCartItem } );
@@ -125,17 +109,6 @@ const UseMyDomain: StepType< {
 		);
 	};
 
-	const getStepContent = () => {
-		switch ( flow ) {
-			case START_WRITING_FLOW:
-			case ONBOARDING_FLOW:
-			case DOMAIN_FLOW:
-				return getBlogOnboardingFlowStepContent();
-			default:
-				return getDefaultStepContent();
-		}
-	};
-
 	const shouldHideButtons = isStartWritingFlow( flow );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
@@ -165,7 +138,7 @@ const UseMyDomain: StepType< {
 					columnWidth={ columnWidth }
 					heading={ <Step.Heading text={ headingText } /> }
 				>
-					{ getStepContent() }
+					{ getBlogOnboardingFlowStepContent() }
 				</Step.CenteredColumnLayout>
 			</>
 		);
@@ -182,7 +155,7 @@ const UseMyDomain: StepType< {
 				isHorizontalLayout={ false }
 				isWideLayout
 				isLargeSkipLayout={ false }
-				stepContent={ getStepContent() }
+				stepContent={ getBlogOnboardingFlowStepContent() }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>

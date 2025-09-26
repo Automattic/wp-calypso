@@ -65,6 +65,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
+			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
@@ -170,8 +171,6 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					return navigate( 'plans' );
 				case 'use-my-domain': {
-					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-
 					if (
 						providedDependencies &&
 						'mode' in providedDependencies &&
@@ -184,6 +183,12 @@ const onboarding: FlowV2< typeof initialize > = {
 							initialQuery: providedDependencies.domain,
 						} );
 						return navigate( destination as typeof currentStepSlug );
+					}
+
+					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						setDomainCartItem( providedDependencies.domainCartItem );
 					}
 
 					return navigate( 'plans' );
