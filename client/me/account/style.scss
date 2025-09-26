@@ -96,6 +96,16 @@
 	font-size: $font-body-small;
 }
 
+.account__hosting-dashboard-notice-banner {
+	.notice-banner {
+		font-size: $font-body-small;
+	}
+
+	.notice-banner__title {
+		font-size: inherit;
+	}
+}
+
 main.account {
 	.email-verification-banner {
 		margin-bottom: 16px;
