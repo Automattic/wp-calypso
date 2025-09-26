@@ -126,9 +126,19 @@ export default function CoreMetricsContent( {
 						</HStack>
 
 						{ isOverall ? (
-							<OverallScore metric={ activeTab as Metrics } status={ status } value={ value } />
+							<OverallScore
+								size={ 32 }
+								metric={ activeTab as Metrics }
+								status={ status }
+								value={ value }
+							/>
 						) : (
-							<MetricScore metric={ activeTab as Metrics } status={ status } value={ value } />
+							<MetricScore
+								size={ 32 }
+								metric={ activeTab as Metrics }
+								status={ status }
+								value={ value }
+							/>
 						) }
 					</VStack>
 					{ numberOfAuditsForMetric > 0 && (

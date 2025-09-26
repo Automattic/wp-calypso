@@ -7,12 +7,23 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { displayValue, getMetricsNames, mapThresholdsToStatus } from './utils';
-
-import { StatusIndicator } from './core-web-vitals/status-indicator';
+import { getMetricsNames, mapThresholdsToStatus } from './utils';
 import { Metrics } from './core-metrics';
 import type { PerformanceReport } from '@automattic/api-core';
 import { OverallScore, MetricScore } from './core-metrics-score';
+
+const TabButton = ( { children, onClick }: { children: React.ReactNode; onClick: () => void } ) => {
+	return (
+		<Button
+			style={ { height: 'unset', width: '100%', paddingTop: '8px', paddingBottom: '8px' } }
+			onClick={ onClick }
+		>
+			<VStack alignment="flex-start" spacing={ 0 }>
+				{ children }
+			</VStack>
+		</Button>
+	);
+};
 
 const CoreMetricsTabs = ( {
 	report,
@@ -43,57 +54,51 @@ const CoreMetricsTabs = ( {
 	const metricsNames = getMetricsNames();
 
 	return (
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 6 }>
 			<Card>
-				<CardBody>
-					<Button onClick={ () => handleTabClick( 'overall' ) }>
-					<VStack justify="flex-start">
-						<Text size={ 11 } upperCase variant="muted">{ __( 'Performance Score' ) }</Text>
-						<OverallScore
-							metric={ 'overall' }
-							status={ mapThresholdsToStatus( 'overall', metrics.overall ) }
-							value={ metrics.overall }
-						/>
-					</VStack>
-					</Button>
-				</CardBody>
+				<TabButton onClick={ () => handleTabClick( 'overall' ) }>
+					<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
+						{ __( 'Performance Score' ) }
+					</Text>
+					<OverallScore
+						lineHeight="32px"
+						metric={ 'overall' }
+						status={ mapThresholdsToStatus( 'overall', metrics.overall ) }
+						value={ metrics.overall }
+					/>
+				</TabButton>
 			</Card>
-
 			<Card>
-				<CardBody>
-					{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
-						if ( metrics[ key as Metrics ] === undefined || metrics[ key as Metrics ] === null ) {
-							return null;
-						}
+				{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
+					if ( metrics[ key as Metrics ] === undefined || metrics[ key as Metrics ] === null ) {
+						return null;
+					}
 
-						// Only display TBT if INP is not available
-						if ( key === 'tbt' && metrics[ 'inp' ] !== undefined && metrics[ 'inp' ] !== null ) {
-							return null;
-						}
+					// Only display TBT if INP is not available
+					if ( key === 'tbt' && metrics[ 'inp' ] !== undefined && metrics[ 'inp' ] !== null ) {
+						return null;
+					}
 
-						if ( key === 'overall' ) {
-							return null;
-						}
+					if ( key === 'overall' ) {
+						return null;
+					}
 
-						const status = mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] );
+					const status = mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] );
 
-						return (
-							<Button key={ key } onClick={ () => handleTabClick( key as Metrics ) }>
-								<div className="metric-tab-bar__tab-status">
-									<StatusIndicator
-										speed={ mapThresholdsToStatus( key as Metrics, metrics[ key as Metrics ] ) }
-									/>
-								</div>
-								<VStack justify="flex-start">
-									<Text size={ 11 } upperCase variant="muted">
-										{ displayName }
-									</Text>
-									<MetricScore metric={ key as Metrics } status={ status } value={ metrics[ key as Metrics ] } />
-								</VStack>
-							</Button>
-						);
-					} ) }
-				</CardBody>
+					return (
+						<TabButton onClick={ () => handleTabClick( key as Metrics ) }>
+							<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
+								{ displayName }
+							</Text>
+							<MetricScore
+								lineHeight="32px"
+								metric={ key as Metrics }
+								status={ status }
+								value={ metrics[ key as Metrics ] }
+							/>
+						</TabButton>
+					);
+				} ) }
 			</Card>
 		</VStack>
 	);

@@ -12,24 +12,34 @@ const getColorForStatus = ( status: string ): string => {
 	return '#21873B';
 };
 
-const getValueText = ( metric: Metrics, status: string, value: number ) => (
-	<Text color={ getColorForStatus( status ) } size={ 32 }>
+const getValueText = ( { metric, status, value, size, lineHeight }: {
+	metric: Metrics;
+	status: string;
+	value: number;
+	size: number;
+	lineHeight: string;
+} ) => (
+	<Text color={ getColorForStatus( status ) } size={ size } weight={ 500 } lineHeight={ lineHeight }>
 		{ displayValue( metric, value ) }
 	</Text>
 );
 
 export function OverallScore( {
+	lineHeight = 'inherit',
 	metric,
 	status,
+	size = 20,
 	value,
 }: {
+	lineHeight?: string;
 	metric: Metrics;
 	status: string;
+	size?: number;
 	value: number;
 } ) {
 	return (
 		<HStack spacing={ 1 } justify="flex-start" alignment="baseline">
-			{ getValueText( metric, status, value ) }
+			{ getValueText( { metric, status, value, size, lineHeight } ) }
 			<Text size={ 12 } variant="muted">
 				/ 100
 			</Text>
@@ -38,17 +48,17 @@ export function OverallScore( {
 }
 
 export function MetricScore( {
+	lineHeight = 'inherit',
 	metric,
 	status,
+	size = 20,
 	value,
 }: {
+	lineHeight?: string;
 	metric: Metrics;
 	status: string;
+	size?: number;
 	value: number;
 } ) {
-	return (
-		<Text size={ 20 } variant="muted">
-			{ getValueText( metric, status, value ) }
-		</Text>
-	);
+	return getValueText( { metric, status, value, size, lineHeight } );
 }

@@ -78,7 +78,7 @@ export default function CoreMetrics( {
 
 	if ( isDesktop ) {
 		return (
-			<Grid alignment="topLeft" columns={ 2 } templateColumns="25% 1fr">
+			<Grid alignment="topLeft" columns={ 2 } gap={ 6 } templateColumns="204px 1fr">
 				<CoreMetricsTabs
 					report={ report }
 					setActiveTab={ setActiveTab }
