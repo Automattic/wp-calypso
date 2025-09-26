@@ -223,7 +223,7 @@ export default function NewsletterImporter( {
 										page.redirect(
 											`/import/newsletter/substack/${
 												selectedSite.slug
-											}/${ 'content' }?from=${ fromSite }`
+											}/content?from=${ fromSite }`
 										);
 									} }
 									fromSite={ fromSite }
