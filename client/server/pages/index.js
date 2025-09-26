@@ -60,6 +60,7 @@ import { deserialize } from 'calypso/state/utils';
 import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
+import { checkoutCSPMiddleware } from '../middleware/checkout-csp.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 const debug = debugFactory( 'calypso:pages' );
@@ -930,6 +931,7 @@ export default function pages() {
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
+	app.use( checkoutCSPMiddleware );
 	app.use( middlewareUnsupportedBrowser() );
 
 	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
