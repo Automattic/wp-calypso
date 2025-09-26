@@ -2,6 +2,7 @@ import {
 	Button,
 	CheckboxControl,
 	Icon,
+	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -50,6 +51,21 @@ function FileBrowserNode( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
+	// Spinner styles for different positions
+	const spinnerStyles = {
+		left: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+			padding: '0 6px',
+		},
+		right: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+		},
+	};
+
 	const { fileBrowserState } = useFileBrowserContext();
 	const isRoot = path === '/';
 	const isCurrentNodeClicked = activeNodePath === path;
@@ -330,10 +346,25 @@ function FileBrowserNode( {
 			return null;
 		}
 
+		if ( isLoading && isOpen ) {
+			return <Spinner style={ spinnerStyles.left } />;
+		}
+
 		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
 	};
 
 	const expandButton = () => {
+		if ( isLoading && isOpen ) {
+			return (
+				<div
+					className="file-browser-node__separate-expand-button"
+					style={ { padding: '6px', color: 'inherit' } }
+				>
+					<Spinner style={ spinnerStyles.right } />
+				</div>
+			);
+		}
+
 		return (
 			<Button
 				onClick={ handleExpandButtonClick }

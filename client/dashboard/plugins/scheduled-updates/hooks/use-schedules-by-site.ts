@@ -1,7 +1,7 @@
 import { hostingUpdateSchedulesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
-import type { TimeSlot } from '../../types';
+import type { TimeSlot } from '../types';
 import type { HostingUpdateSchedulesResponse } from '@automattic/api-core';
 
 function getTimeSlotsBySiteFromMultisite(

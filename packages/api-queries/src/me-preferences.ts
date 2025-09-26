@@ -46,9 +46,20 @@ export const userPreferenceMutation = < P extends keyof UserPreferences >( prefe
 				[ preferenceName ]: data,
 			} as Partial< UserPreferences > ),
 		onSuccess: ( newData ) => {
-			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>
-				oldData ? { ...oldData, ...newData } : newData
-			);
+			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) => {
+				if ( ! oldData ) {
+					return newData;
+				}
+
+				// If newData doesn't contain the preference key, it means it was unset.
+				// We need to remove it from oldData.
+				if ( ! ( preferenceName in newData ) ) {
+					const { [ preferenceName ]: _, ...rest } = oldData;
+					return { ...rest, ...newData };
+				}
+
+				return { ...oldData, ...newData };
+			} );
 		},
 	} );
 

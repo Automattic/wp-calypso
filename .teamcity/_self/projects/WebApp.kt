@@ -1202,12 +1202,6 @@ object AuthenticationE2ETests : BuildType({
 			triggerBuild = always()
 			withPendingChangesOnly = true
 		}
-
-		vcs {
-			branchFilter = """
-				+:e2e/migrate-authentication-build-to-playwright-test
-			""".trimIndent()
-		}
 	}
 })
 
