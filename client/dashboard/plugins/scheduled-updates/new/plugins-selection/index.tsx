@@ -1,9 +1,9 @@
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { DataViewsCard } from '../../../../../components/dataviews-card';
-import { DataViewsEmptyState } from '../../../../../components/dataviews-empty-state';
-import { useEligiblePlugins } from '../../../hooks/use-eligible-plugins';
+import { DataViewsCard } from '../../../../components/dataviews-card';
+import { DataViewsEmptyState } from '../../../../components/dataviews-empty-state';
+import { useEligiblePlugins } from '../../hooks/use-eligible-plugins';
 import type { CorePlugin } from '@automattic/api-core';
 
 const pluginFields: Field< CorePlugin >[] = [

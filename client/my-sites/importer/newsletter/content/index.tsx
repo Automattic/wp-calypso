@@ -19,11 +19,12 @@ import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 interface ContentProps {
-	nextStepUrl: string;
+	nextStepUrl?: string;
 	engine: EngineTypes;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
+	onContinue?: () => void;
 	skipNextStep: () => void;
 }
 
@@ -73,6 +74,7 @@ export default function Content( {
 	selectedSite,
 	siteSlug,
 	fromSite,
+	onContinue,
 	skipNextStep,
 }: ContentProps ) {
 	const siteTitle = selectedSite.title;
@@ -189,6 +191,9 @@ export default function Content( {
 
 					{ isImporting( importerState ) && (
 						<ImportingPane
+							onContinue={ onContinue }
+							fromSite={ fromSite }
+							importerEngine={ engine }
 							importerStatus={ importerStatus }
 							sourceType={ title }
 							site={ selectedSite }

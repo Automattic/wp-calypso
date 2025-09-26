@@ -11,7 +11,7 @@ interface PerformanceReportProps {
 	isError: boolean;
 	isRetesting: boolean;
 	onRetestClick(): void;
-	pageTitle: string;
+	pageTitle?: string;
 	filter?: string;
 	onFilterChange?( fitler: string ): void;
 }
@@ -37,6 +37,7 @@ export const PerformanceReport = ( {
 			<PerformanceReportLoading
 				isSavedReport={ ! isRetesting && !! hash }
 				pageTitle={ pageTitle }
+				onRetestClick={ onRetestClick }
 			/>
 		);
 	}

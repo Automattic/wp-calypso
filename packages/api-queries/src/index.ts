@@ -31,6 +31,7 @@ export * from './me-preferences';
 export * from './me-purchases';
 export * from './me-settings';
 export * from './me-notifications-settings';
+export * from './me-notifications-devices';
 export * from './me-social-logins';
 export * from './me-ssh';
 export * from './me-tax-details';

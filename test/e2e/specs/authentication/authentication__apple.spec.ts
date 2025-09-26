@@ -74,6 +74,7 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 
 	test( 'As a WooCommerce user, I can use my Apple Id to authenticate ', async ( {
 		clientEmail,
+		environment,
 		page,
 		pageAppleLogin,
 		pageLogin,
@@ -92,10 +93,18 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 			await page.waitForTimeout( 30000 );
 		} );
 
-		await test.step( 'And I am on the login page', async function () {
-			await pageLogin.visit( {
-				path: secrets.wooLoginPath,
-			} );
+		await test.step( 'When I visit the WooCommerce home page', async function () {
+			await page.goto( environment.WOO_BASE_URL );
+		} );
+
+		await test.step( 'And I choose to log in', async function () {
+			await page.getByRole( 'link', { name: 'Log in' } ).click();
+		} );
+
+		await test.step( 'Then I see the WordPress.com log in page', async function () {
+			await expect(
+				page.getByRole( 'heading', { name: 'Log in to Woo with WordPress.com' } )
+			).toBeVisible();
 		} );
 
 		await test.step( 'When I click on Login with Apple button', async function () {
@@ -146,8 +155,10 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 			);
 		} );
 
-		await test.step( 'Then I am redirected to woo.com upon successful login', async function () {
-			await page.waitForURL( /.*woocommerce\.com*/ );
+		await test.step( 'Then I am see the my dashboard page on WooCommerce.com', async function () {
+			await expect
+				.poll( async () => page.url() )
+				.toBe( `${ environment.WOO_BASE_URL }/my-dashboard/` );
 		} );
 	} );
 } );
