@@ -11,7 +11,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import ghIconUrl from '../deployments/gh-icon.svg';
-import { TriggerDeploymentModal } from '../deployments-list/trigger-deployment-modal';
+import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
@@ -24,10 +24,6 @@ function RepositoriesList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const [ modalTriggerDeploymentDetails, setModalTriggerDeploymentDetails ] = useState( {
-		isOpen: false,
-		repositoryId: '',
-	} );
 
 	const { data: deployments = [], isLoading } = useQuery( codeDeploymentsQuery( site.ID ) );
 
@@ -38,12 +34,16 @@ function RepositoriesList() {
 		{
 			id: 'trigger-manual-deployment',
 			label: __( 'Trigger manual deployment' ),
-			callback: ( items: CodeDeploymentData[] ) => {
-				setModalTriggerDeploymentDetails( {
-					isOpen: true,
-					repositoryId: items[ 0 ].id.toString(),
-				} );
+			RenderModal: ( { items, closeModal }: RenderModalProps< CodeDeploymentData > ) => {
+				return (
+					<TriggerDeploymentModalForm
+						deployments={ deployments }
+						repositoryId={ items[ 0 ].id.toString() }
+						onClose={ closeModal }
+					/>
+				);
 			},
+			modalSize: 'medium',
 		},
 		{
 			id: 'configure-connection',
@@ -92,21 +92,6 @@ function RepositoriesList() {
 				getItemId={ ( item ) => item.repository_name }
 				empty={ emptyTitle }
 			/>
-			{ modalTriggerDeploymentDetails.isOpen && (
-				<TriggerDeploymentModal
-					onClose={ () => setModalTriggerDeploymentDetails( { isOpen: false, repositoryId: '' } ) }
-					deployments={ deployments }
-					repositoryId={ modalTriggerDeploymentDetails.repositoryId }
-					onSuccess={ () =>
-						router.navigate( {
-							to: siteDeploymentsListRoute.fullPath,
-							params: {
-								siteSlug: siteSlug,
-							},
-						} )
-					}
-				/>
-			) }
 		</DataViewsCard>
 	);
 }

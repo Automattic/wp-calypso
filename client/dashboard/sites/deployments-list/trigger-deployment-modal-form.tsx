@@ -2,7 +2,6 @@ import { createCodeDeploymentRunMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
-	Modal,
 	SelectControl,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -15,13 +14,12 @@ import { store as noticesStore } from '@wordpress/notices';
 import { CodeDeploymentData } from '../../../sites/deployments/deployments/use-code-deployments-query';
 import { ButtonStack } from '../../components/button-stack';
 
-interface TriggerDeploymentModalProps {
-	onClose: () => void;
+interface TriggerDeploymentModalFormProps {
 	deployments: CodeDeploymentData[];
 	repositoryId?: string;
+	onClose?: () => void;
 	onSuccess?: () => void;
 }
-
 interface DeploymentFormData {
 	selectedDeploymentId: string;
 }
@@ -54,12 +52,12 @@ function DeploymentSelectControl( { data, field, onChange }: DeploymentSelectCon
 	);
 }
 
-export function TriggerDeploymentModal( {
+export function TriggerDeploymentModalForm( {
 	onClose,
 	deployments,
 	repositoryId,
 	onSuccess,
-}: TriggerDeploymentModalProps ) {
+}: TriggerDeploymentModalFormProps ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
 		selectedDeploymentId: repositoryId ?? '',
@@ -108,7 +106,7 @@ export function TriggerDeploymentModal( {
 			{
 				onSuccess: () => {
 					createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
-					onClose();
+					onClose?.();
 					onSuccess?.();
 				},
 			}
@@ -116,39 +114,37 @@ export function TriggerDeploymentModal( {
 	};
 
 	return (
-		<Modal title={ __( 'Trigger manual deploy' ) } onRequestClose={ onClose } size="medium">
-			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 }>
-					<Text as="p">
-						{ __(
-							'You’re about to deploy changes from the selected repository to your production site. This will update the deployed files and may affect your live site.'
-						) }
-					</Text>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 4 }>
+				<Text as="p">
+					{ __(
+						'You’re about to deploy changes from the selected repository to your production site. This will update the deployed files and may affect your live site.'
+					) }
+				</Text>
 
-					<DataForm< DeploymentFormData >
-						data={ deploymentFormData }
-						fields={ fields }
-						form={ form }
-						onChange={ ( edits: Partial< DeploymentFormData > ) => {
-							setDeploymentFormData( ( data ) => ( { ...data, ...edits } ) );
-						} }
-					/>
+				<DataForm< DeploymentFormData >
+					data={ deploymentFormData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits: Partial< DeploymentFormData > ) => {
+						setDeploymentFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
+				/>
 
-					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
-							{ __( 'Cancel' ) }
-						</Button>
-						<Button
-							variant="primary"
-							type="submit"
-							disabled={ ! selectedDeployment || isCreatingCodeDeploymentRun }
-							__next40pxDefaultSize
-						>
-							{ __( 'Deploy to production' ) }
-						</Button>
-					</ButtonStack>
-				</VStack>
-			</form>
-		</Modal>
+				<ButtonStack justify="flex-end">
+					<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						type="submit"
+						disabled={ ! selectedDeployment || isCreatingCodeDeploymentRun }
+						__next40pxDefaultSize
+					>
+						{ __( 'Deploy to production' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+		</form>
 	);
 }
