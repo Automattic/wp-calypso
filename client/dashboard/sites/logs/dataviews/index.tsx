@@ -4,7 +4,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	ToggleControl,
-	Spinner,
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
@@ -13,7 +13,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useEffect, useCallback, useRef } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { LogsDownloader } from '../downloader';
 import {
@@ -62,7 +62,6 @@ function SiteLogsDataViews( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
-	const loadMoreRef = useRef< HTMLDivElement | null >( null );
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -117,7 +116,7 @@ function SiteLogsDataViews( {
 		[ serverLogs, currentPage, perPage ]
 	);
 
-	const infiniteScrollHandler = useCallback( () => {
+	const handleLoadMore = useCallback( () => {
 		// Reveal what we already have loaded
 		const totalLoaded = logType === LogType.PHP ? phpLogs.length : serverLogs.length;
 		const displayedCount =
@@ -126,14 +125,12 @@ function SiteLogsDataViews( {
 			setView( ( prev ) => ( { ...prev, page: ( prev.page ?? 1 ) + 1 } ) );
 		}
 
-		// Prefetch next page early when we're close to exhausting loaded items
+		// Proactively fetch the next cursor page when we're within one page of the end.
+		// This keeps hasNextPage accurate and lets the "Load more" button reveal items immediately.
 		const remainingLoaded =
 			( logType === LogType.PHP ? phpLogs.length : serverLogs.length ) - currentPage * perPage;
 		const shouldPrefetch = hasNextPage && ! isFetchingNextPage && remainingLoaded <= perPage;
 		if ( shouldPrefetch ) {
-			if ( autoRefresh ) {
-				setAutoRefresh( false );
-			}
 			fetchNextPage();
 		}
 	}, [
@@ -147,36 +144,12 @@ function SiteLogsDataViews( {
 		hasNextPage,
 		isFetchingNextPage,
 		fetchNextPage,
-		autoRefresh,
-		setAutoRefresh,
 		setView,
 	] );
 
-	// One-time prefetch right after the first page is loaded for smoother initial scrolling
-	useEffect( () => {
-		if ( data?.pages?.length === 1 && hasNextPage && ! isFetchingNextPage ) {
-			fetchNextPage();
-		}
-	}, [ data?.pages?.length, hasNextPage, isFetchingNextPage, fetchNextPage ] );
-
-	useEffect( () => {
-		const el = loadMoreRef.current;
-		if ( ! el ) {
-			return;
-		}
-		const observer = new IntersectionObserver(
-			( entries ) => {
-				if ( entries[ 0 ]?.isIntersecting ) {
-					infiniteScrollHandler();
-				}
-			},
-			{ root: null, rootMargin: '600px 0px', threshold: 0 }
-		);
-		observer.observe( el );
-		return () => {
-			observer.disconnect();
-		};
-	}, [ infiniteScrollHandler ] );
+	const scrollToTop = () => {
+		window.scrollTo( 0, 0 );
+	};
 
 	const fields = useFields( { logType, timezoneString, gmtOffset } );
 
@@ -314,16 +287,27 @@ function SiteLogsDataViews( {
 					header={ LogsHeader }
 				/>
 			) }
-			{ isFetchingNextPage && (
-				<VStack className="site-logs-infinite-loader" spacing={ 2 }>
-					<HStack alignment="center" spacing={ 2 }>
-						<Spinner />
-						<span>{ __( 'Loading more…' ) }</span>
-					</HStack>
-					<Spacer margin={ 0 } paddingTop={ 3 } />
-				</VStack>
-			) }
-			<Spacer as="div" margin={ 0 } paddingTop={ 1 } ref={ loadMoreRef } aria-hidden />
+
+			<VStack spacing={ 2 }>
+				<Spacer margin={ 0 } paddingTop={ 3 } />
+				<HStack alignment="center" spacing={ 2 }>
+					<Button
+						variant="primary"
+						onClick={ handleLoadMore }
+						disabled={
+							! hasNextPage &&
+							( logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length ) >=
+								( logType === LogType.PHP ? phpLogs.length : serverLogs.length )
+						}
+					>
+						{ __( 'Load more' ) }
+					</Button>
+					<Button variant="tertiary" onClick={ scrollToTop }>
+						{ __( 'Back to top' ) }
+					</Button>
+				</HStack>
+				<Spacer margin={ 0 } paddingTop={ 3 } />
+			</VStack>
 		</>
 	);
 }
