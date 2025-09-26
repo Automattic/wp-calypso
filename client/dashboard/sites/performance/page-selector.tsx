@@ -8,6 +8,8 @@ import { useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import type { PerformanceProfilerPage } from '@automattic/api-core';
 
+import './page-selector.scss';
+
 interface PageOption {
 	url: string;
 	path: string;
@@ -37,19 +39,17 @@ function mapPageToPageOption( page: PerformanceProfilerPage, siteUrl: string ): 
 	};
 }
 
-interface PageSelectorProps {
-	siteUrl: string;
-	pages: PerformanceProfilerPage[];
-	currentPage: PerformanceProfilerPage | undefined;
-	onChange: ( page_id: string | null | undefined ) => void;
-}
-
 export default function PageSelector( {
 	siteUrl,
 	pages,
 	currentPage,
 	onChange,
-}: PageSelectorProps ) {
+}: {
+	siteUrl: string;
+	pages: PerformanceProfilerPage[];
+	currentPage: PerformanceProfilerPage | undefined;
+	onChange: ( page_id: string | null | undefined ) => void;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	const currentPageOption: PageOption | undefined = currentPage

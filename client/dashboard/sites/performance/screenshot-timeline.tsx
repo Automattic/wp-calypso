@@ -86,7 +86,11 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 							onRequestClose={ () => setOverlay( { isOpen: false } ) }
 							contentLabel={ __( 'Screenshot preview' ) }
 						>
-							<img style={ { width: '100%', height: 'auto' } } alt={ overlay.timing } src={ overlay.screenshot.data } />
+							<img
+								style={ { width: '100%', height: 'auto' } }
+								alt={ overlay.timing }
+								src={ overlay.screenshot.data }
+							/>
 						</ScreenshotModal>
 					) }
 					<HStack spacing={ 4 }>

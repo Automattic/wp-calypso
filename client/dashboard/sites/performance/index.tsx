@@ -5,6 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { usePerformanceData } from '../../app/hooks/site-performance';
@@ -85,7 +86,7 @@ function SitePerformanceContent( { site, settings }: { site: Site; settings: Sit
 					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
 				}
 				actions={
-					<>
+					<HStack>
 						<PageSelector
 							siteUrl={ site.URL }
 							currentPage={ currentPage }
@@ -93,7 +94,7 @@ function SitePerformanceContent( { site, settings }: { site: Site; settings: Sit
 							onChange={ handlePageChange }
 						/>
 						<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-					</>
+					</HStack>
 				}
 			/>
 			<div className="site-performance-report">
