@@ -13,7 +13,7 @@ import {
 	highImpactAudits,
 } from 'calypso/performance-profiler/utils/metrics';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
-import MetricsInsight from '../../../dashboard/sites/performance/metrics-insights';
+import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
 

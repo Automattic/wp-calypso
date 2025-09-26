@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ScreenShotsTimeLine } from './core-web-vitals/core-metrics';
+import { ScreenShotsTimeLine } from '../core-metrics';
 
 const Container = styled.div`
 	width: 100%;

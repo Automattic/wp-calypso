@@ -64,21 +64,32 @@ export type ScreenShotsTimeLine = {
 	timing: number;
 };
 
-type CoreWebVitalsDisplayProps = {
+export default function CoreMetrics( {
+	report,
+	recommendationsRef,
+	onRecommendationsFilterChange,
+}: {
 	report: PerformanceReport;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
-};
-
-export default function CoreMetrics( props: CoreWebVitalsDisplayProps ) {
+} ) {
 	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall' );
 	const isDesktop = useViewportMatch( 'medium' );
 
 	if ( isDesktop ) {
 		return (
 			<Grid alignment="topLeft" columns={ 2 } templateColumns="25% 1fr">
-				<CoreMetricsTabs report={ props.report } activeTab={ activeTab } setActiveTab={ setActiveTab } />
-				<CoreMetricsContent report={ props.report } activeTab={ activeTab } recommendationsRef={ props.recommendationsRef } onRecommendationsFilterChange={ props.onRecommendationsFilterChange } />
+				<CoreMetricsTabs
+					report={ report }
+					activeTab={ activeTab }
+					setActiveTab={ setActiveTab }
+				/>
+				<CoreMetricsContent
+					report={ report }
+					activeTab={ activeTab }
+					recommendationsRef={ recommendationsRef }
+					onRecommendationsFilterChange={ onRecommendationsFilterChange }
+				/>
 			</Grid>
 		);
 	}
