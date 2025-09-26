@@ -1,8 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	__experimentalText as Text,
-	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalSpacer as Spacer,
+	__experimentalVStack as VStack,
 	Card,
 	CardBody,
 } from '@wordpress/components';
@@ -118,9 +119,9 @@ export default function CoreMetricsContent( {
 	return (
 		<Card>
 			<CardBody>
-				<HStack spacing={ 2 }>
-					<VStack spacing={ 2 }>
-						<HStack spacing={ 2 }>
+				<HStack spacing={ 2 } justify="space-between" alignment="flex-start">
+					<VStack spacing={ 4 }>
+						<HStack spacing={ 2 } alignment="topLeft">
 							<Text size="title">{ displayName }</Text>
 							<StatusBadge value={ status } />
 						</HStack>
@@ -140,6 +141,16 @@ export default function CoreMetricsContent( {
 								value={ value }
 							/>
 						) }
+						<div style={ { maxWidth: '500px' } }>
+							<Text variant="muted">{ getMetricValuations()[ activeTab ].explanation }</Text>
+							<a
+								href={ localizeUrl( getMetricValuations()[ activeTab ].docsUrl ) }
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ __( 'Learn more ↗' ) }
+							</a>
+						</div>
 					</VStack>
 					{ numberOfAuditsForMetric > 0 && (
 						<RecommendationsLink
@@ -150,87 +161,79 @@ export default function CoreMetricsContent( {
 						/>
 					) }
 				</HStack>
-				<Text variant="muted">
-					{ getMetricValuations()[ activeTab ].explanation }
-					<a
-						href={ localizeUrl( getMetricValuations()[ activeTab ].docsUrl ) }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Learn more ↗' ) }
-					</a>
-				</Text>
-				<HStack spacing={ 2 } justify="flex-start">
-					<HStack justify="flex-start">
-						<StatusIndicator speed="good" />
-						<Text size="small">{ __( 'Excellent' ) }</Text>
-						<Text>
-							{ isOverall
-								? sprintf(
-										/* translators: %(to)s is the good threshold */
-										__( '(90–%(to)s)' ),
-										{
-											to: formatUnit( good ),
-										}
-								  )
-								: sprintf(
-										/* translators: %(to)s is the good threshold, %(unit)s is the unit */
-										__( '(0–%(to)s%(unit)s)' ),
-										{
-											to: formatUnit( good ),
-											unit: displayUnit(),
-										}
-								  ) }
-						</Text>
-					</HStack>
-					<HStack justify="flex-start">
-						<StatusIndicator speed="needsImprovement" />
+				<Spacer marginTop={ 4 }>
+					<HStack spacing={ 2 } justify="flex-start">
+						<HStack justify="flex-start">
+							<StatusIndicator speed="good" />
+							<Text size="small">{ __( 'Excellent' ) }</Text>
+							<Text>
+								{ isOverall
+									? sprintf(
+											/* translators: %(to)s is the good threshold */
+											__( '(90–%(to)s)' ),
+											{
+												to: formatUnit( good ),
+											}
+									  )
+									: sprintf(
+											/* translators: %(to)s is the good threshold, %(unit)s is the unit */
+											__( '(0–%(to)s%(unit)s)' ),
+											{
+												to: formatUnit( good ),
+												unit: displayUnit(),
+											}
+									  ) }
+							</Text>
+						</HStack>
+						<HStack justify="flex-start">
+							<StatusIndicator speed="needsImprovement" />
 
-						<Text size="small">{ __( 'Needs Improvement' ) }</Text>
-						<Text>
-							{ isOverall
-								? sprintf(
-										/* translators: %(to)s is the needs improvement threshold */
-										__( '(50–%(to)s)' ),
-										{
-											to: formatUnit( needsImprovement ),
-										}
-								  )
-								: sprintf(
-										/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
-										__( '(%(from)s–%(to)s%(unit)s)' ),
-										{
-											from: formatUnit( good ),
-											to: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										}
-								  ) }
-						</Text>
-					</HStack>
-					<HStack justify="flex-start">
-						<StatusIndicator speed="bad" />
+							<Text size="small">{ __( 'Needs Improvement' ) }</Text>
+							<Text>
+								{ isOverall
+									? sprintf(
+											/* translators: %(to)s is the needs improvement threshold */
+											__( '(50–%(to)s)' ),
+											{
+												to: formatUnit( needsImprovement ),
+											}
+									  )
+									: sprintf(
+											/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
+											__( '(%(from)s–%(to)s%(unit)s)' ),
+											{
+												from: formatUnit( good ),
+												to: formatUnit( needsImprovement ),
+												unit: displayUnit(),
+											}
+									  ) }
+							</Text>
+						</HStack>
+						<HStack justify="flex-start">
+							<StatusIndicator speed="bad" />
 
-						<Text size="small">{ __( 'Poor' ) }</Text>
-						<Text>
-							{ isOverall
-								? sprintf(
-										/* translators: %(to)s is the bad threshold */
-										__( '(0-%(to)s)' ),
-										{
-											to: formatUnit( bad ),
-										}
-								  )
-								: sprintf(
-										/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
-										__( '(Over %(from)s%(unit)s)' ),
-										{
-											from: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										}
-								  ) }
-						</Text>
+							<Text size="small">{ __( 'Poor' ) }</Text>
+							<Text>
+								{ isOverall
+									? sprintf(
+											/* translators: %(to)s is the bad threshold */
+											__( '(0-%(to)s)' ),
+											{
+												to: formatUnit( bad ),
+											}
+									  )
+									: sprintf(
+											/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
+											__( '(Over %(from)s%(unit)s)' ),
+											{
+												from: formatUnit( needsImprovement ),
+												unit: displayUnit(),
+											}
+									  ) }
+							</Text>
+						</HStack>
 					</HStack>
-				</HStack>
+				</Spacer>
 				{ dataAvailable ? (
 					<Chart data={ historicalData } />
 				) : (
