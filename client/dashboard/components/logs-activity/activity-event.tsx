@@ -19,10 +19,15 @@ export function ActivityEvent( { summary, content, gridicon }: ActivityEventProp
 					size={ 24 }
 				/>
 			) }
-			<div className="site-activity-logs__event-content">
+			<HStack
+				spacing="1"
+				justify="flex-start"
+				alignment="start"
+				className="site-activity-logs__event-content"
+			>
 				<strong>{ summary }</strong>
 				{ content?.text && <span>{ content.text }</span> }
-			</div>
+			</HStack>
 		</HStack>
 	);
 }
