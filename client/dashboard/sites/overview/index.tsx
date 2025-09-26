@@ -11,6 +11,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useRef } from 'react';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -89,6 +90,8 @@ function SiteOverview( {
 		isSmallViewport,
 	} );
 
+	const wpAdminButtonRef = useRef( null );
+
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
 
 	return (
@@ -102,11 +105,11 @@ function SiteOverview( {
 								<>
 									<StagingSiteSyncDropdown siteSlug={ siteSlug } />
 									<Button
+										ref={ wpAdminButtonRef }
 										__next40pxDefaultSize
 										variant="primary"
 										href={ site.options.admin_url }
 										icon={ wordpress }
-										label={ __( 'WP Admin' ) }
 									>
 										{ __( 'WP Admin' ) }
 									</Button>
@@ -166,7 +169,6 @@ function SiteOverview( {
 			</VStack>
 			<GuidedTourContextProvider
 				tourId="hosting-dashboard-tours-site-overview"
-				isSkippable
 				guidedTours={ [
 					{
 						id: 'hosting-dashboard-tours-site-overview-wp-admin',
@@ -177,13 +179,14 @@ function SiteOverview( {
 					},
 				] }
 			>
-				<GuidedTourStep
-					id="hosting-dashboard-tours-site-overview-wp-admin"
-					selector={ `.dashboard-section-header__actions a[aria-label="${ __( 'WP Admin' ) }"]` }
-					placement="bottom"
-					inline
-					popoverStyle={ { zIndex: 2 } }
-				/>
+				{ wpAdminButtonRef.current && (
+					<GuidedTourStep
+						id="hosting-dashboard-tours-site-overview-wp-admin"
+						target={ wpAdminButtonRef.current }
+						placement="bottom"
+						inline
+					/>
+				) }
 			</GuidedTourContextProvider>
 		</PageLayout>
 	);
