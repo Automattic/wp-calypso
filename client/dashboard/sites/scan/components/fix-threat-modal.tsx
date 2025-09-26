@@ -49,7 +49,6 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 		<VStack spacing={ 4 }>
 			<Text variant="muted">{ __( 'Jetpack will be fixing the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ items } />
-			<ThreatDescription threat={ items[ 0 ] } />
 
 			{ isExtensionDeleteFixer ? (
 				<FixThreatConfirmation
@@ -60,19 +59,22 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 					isLoading={ fixThreat.isPending }
 				/>
 			) : (
-				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ closeModal }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						variant="primary"
-						onClick={ handleFixThreat }
-						isBusy={ fixThreat.isPending }
-						disabled={ fixThreat.isPending }
-					>
-						{ __( 'Fix threat' ) }
-					</Button>
-				</ButtonStack>
+				<>
+					<ThreatDescription threat={ items[ 0 ] } />
+					<ButtonStack justify="flex-end">
+						<Button variant="tertiary" onClick={ closeModal }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ handleFixThreat }
+							isBusy={ fixThreat.isPending }
+							disabled={ fixThreat.isPending }
+						>
+							{ __( 'Fix threat' ) }
+						</Button>
+					</ButtonStack>
+				</>
 			) }
 		</VStack>
 	);
