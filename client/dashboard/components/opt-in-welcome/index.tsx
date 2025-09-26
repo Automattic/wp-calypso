@@ -33,7 +33,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	return (
 		<Notice onClose={ handleClose } variant="info" icon={ starEmpty }>
 			<ComponentViewTracker
-				eventName="calypso_hosting_dashboard_welcome_banner_impression"
+				eventName="calypso_dashboard_welcome_banner_impression"
 				properties={ { context: tracksContext } }
 			/>
 			{ createInterpolateElement(
