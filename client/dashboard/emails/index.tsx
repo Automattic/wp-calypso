@@ -2,16 +2,12 @@ import { Email } from '@automattic/api-core';
 import { emailsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
-import { OptInWelcome } from '../components/opt-in-welcome';
-import { PageHeader } from '../components/page-header';
-import PageLayout from '../components/page-layout';
-import '../sites/emails/styles.scss';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
+import { Layout } from './layout';
+import '../sites/emails/styles.scss';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -32,23 +28,7 @@ function Emails() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					actions={
-						<>
-							<Button className="emails__add-email-forwarder" variant="link" __next40pxDefaultSize>
-								{ __( 'Add email forwarder' ) }
-							</Button>
-							<Button variant="primary" __next40pxDefaultSize>
-								{ __( 'Add mailbox' ) }
-							</Button>
-						</>
-					}
-				/>
-			}
-			notices={ <OptInWelcome tracksContext="emails" /> }
-		>
+		<Layout>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
@@ -65,7 +45,7 @@ function Emails() {
 					paginationInfo={ paginationInfo }
 				/>
 			</DataViewsCard>
-		</PageLayout>
+		</Layout>
 	);
 }
 
