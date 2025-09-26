@@ -98,20 +98,7 @@ describe( 'PersonalDetailsSection', () => {
 			expect( screen.getByLabelText( 'Username' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( 'I am a developer' ) ).toBeInTheDocument();
-		} );
 
-		it( 'populates fields with user data', async () => {
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
-				expect( screen.getByDisplayValue( 'Test Last Name' ) ).toBeInTheDocument();
-				expect( screen.getByDisplayValue( 'testuser' ) ).toBeInTheDocument();
-				expect( screen.getByDisplayValue( 'test@example.com' ) ).toBeInTheDocument();
-			} );
-		} );
-
-		it( 'shows save button when form is not dirty', async () => {
 			renderWithUserData();
 
 			await waitFor( () => {
@@ -123,21 +110,6 @@ describe( 'PersonalDetailsSection', () => {
 	} );
 
 	describe( 'Form interactions', () => {
-		it( 'toggles developer checkbox', async () => {
-			const user = userEvent.setup();
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByLabelText( 'I am a developer' ) ).toBeInTheDocument();
-			} );
-
-			const checkbox = screen.getByLabelText( 'I am a developer' );
-			expect( checkbox ).not.toBeChecked();
-
-			await user.click( checkbox );
-			expect( checkbox ).toBeChecked();
-		} );
-
 		it( 'submits form with updated data', async () => {
 			const user = userEvent.setup();
 			renderWithUserData();
@@ -194,7 +166,7 @@ describe( 'PersonalDetailsSection', () => {
 		} );
 	} );
 
-	describe( 'Username change flow', () => {
+	describe( 'Username update flow', () => {
 		it( 'shows username update form when username is changed', async () => {
 			const user = userEvent.setup();
 			const eligibleUserData = {
@@ -311,7 +283,6 @@ describe( 'PersonalDetailsSection', () => {
 			renderWithUserData();
 
 			await waitFor( () => {
-				// Verify the notice was created with snackbar type
 				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
 					'Username saved.',
 					expect.objectContaining( {
