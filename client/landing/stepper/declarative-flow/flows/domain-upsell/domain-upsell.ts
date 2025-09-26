@@ -67,7 +67,11 @@ const domainUpsell: Flow = {
 					return window.location.assign( returnUrl );
 				}
 
-				navigate( 'domains' );
+				return navigate( 'domains' );
+			}
+
+			if ( currentStep === 'use-my-domain' ) {
+				return navigate( 'domains' );
 			}
 		}
 
