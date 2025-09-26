@@ -137,7 +137,7 @@ export default function UsernameSection( {
 				onSuccess: () => {
 					// Reload the page to refresh cookies and user object
 					const currentUrl = new URL( window.location.href );
-					currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
+					currentUrl.searchParams.set( 'updated', 'username' );
 					window.location.href = currentUrl.toString();
 				},
 				onError: ( error: unknown ) => {
