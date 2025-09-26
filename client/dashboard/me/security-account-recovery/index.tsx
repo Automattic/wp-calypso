@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import ComponentViewTracker from '../../components/component-view-tracker';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import RecoveryEmail from './recovery-email';
@@ -18,7 +17,6 @@ export default function SecurityAccountRecovery() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_security_account_recovery_page_view" />
 			<RecoveryEmail />
 			<RecoverySMS />
 		</PageLayout>

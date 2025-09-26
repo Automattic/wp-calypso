@@ -4,7 +4,6 @@ import { useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
-import ComponentViewTracker from '../../components/component-view-tracker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PrintBackupCodes from '../security-two-step-auth/common/print-backup-codes';
@@ -40,7 +39,6 @@ export default function SecurityTwoStepAuthBackupCodes() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_security_two_step_auth_backup_codes_page_view" />
 			<PrintBackupCodes hideVerifyBackupCodesHeader username={ username } />
 		</PageLayout>
 	);

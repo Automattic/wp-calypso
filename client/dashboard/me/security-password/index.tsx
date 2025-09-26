@@ -17,7 +17,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
-import ComponentViewTracker from '../../components/component-view-tracker';
 import FlashMessage from '../../components/flash-message';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
@@ -127,7 +126,6 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_security_password_page_view" />
 			<FlashMessage value="password" message={ __( 'Your password was saved successfully.' ) } />
 			<Card className="security-password-card">
 				<CardBody>

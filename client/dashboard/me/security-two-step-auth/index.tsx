@@ -1,7 +1,6 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import ComponentViewTracker from '../../components/component-view-tracker';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import SecurityTwoStepAuthEmptyState from './empty-state';
@@ -37,14 +36,6 @@ export default function SecurityTwoStepAuth() {
 				/>
 			}
 		>
-			<ComponentViewTracker
-				eventName="calypso_dashboard_security_two_step_auth_page_view"
-				properties={ {
-					two_step_enabled,
-					two_step_sms_enabled,
-					two_step_enhanced_security_forced,
-				} }
-			/>
 			{ two_step_enabled ? (
 				<SecurityTwoStepAuthMainPage userSettings={ userSettings } />
 			) : (

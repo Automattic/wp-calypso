@@ -1,6 +1,5 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import ComponentViewTracker from '../../components/component-view-tracker';
 import SecurityTwoStepAuthPageLayout from '../security-two-step-auth/common/page-layout';
 import PrintBackupCodes from '../security-two-step-auth/common/print-backup-codes';
 import SetupPhoneNumber from './setup-phone-number';
@@ -16,13 +15,6 @@ export default function SecurityTwoStepAuthSMS() {
 
 	return (
 		<SecurityTwoStepAuthPageLayout>
-			<ComponentViewTracker
-				eventName="calypso_dashboard_security_two_step_auth_sms_page_view"
-				properties={ {
-					is_enabled: isTwoStepSMSEnabled,
-					backup_codes_printed: isBackupCodesPrinted,
-				} }
-			/>
 			{ showPrintBackupCodes ? (
 				<PrintBackupCodes username={ username } />
 			) : (

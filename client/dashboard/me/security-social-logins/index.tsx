@@ -10,7 +10,6 @@ import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { securitySocialLoginsRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
-import ComponentViewTracker from '../../components/component-view-tracker';
 import ConfirmModal from '../../components/confirm-modal';
 import PageLayout from '../../components/page-layout';
 import AppleIcon from '../../images/apple-logo.svg';
@@ -166,7 +165,6 @@ export default function SecuritySocialLogins() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_security_social_logins_page_view" />
 			<ActionList>
 				<SocialLoginItem
 					service="Google"
