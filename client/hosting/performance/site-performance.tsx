@@ -67,12 +67,8 @@ const SitePerformanceContent = () => {
 	}, [ dispatch, siteId ] );
 
 	const queryParams = useSelector( getCurrentQueryArguments );
-	const {
-		pages,
-		isInitialLoading,
-		savePerformanceReportUrl,
-		refetch: refetchPages,
-	} = useSitePerformancePageReports();
+	const { pages, isLoadingPages, savePerformanceReportUrl, refetchPages } =
+		useSitePerformancePageReports();
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -174,10 +170,7 @@ const SitePerformanceContent = () => {
 
 	const isMobile = useMobileBreakpoint();
 	const disableControls =
-		performanceReport.isLoading ||
-		isInitialLoading ||
-		! isSitePublic ||
-		isSavingPerformanceReportUrl;
+		performanceReport.isLoading || isLoadingPages || ! isSitePublic || isSavingPerformanceReportUrl;
 
 	const handleDeviceTabChange = ( tab: TabType ) => {
 		setActiveTab( tab );
@@ -310,8 +303,8 @@ const SitePerformanceContent = () => {
 					value={ activeTab }
 				/>
 			</div>
-			{ isInitialLoading && isSitePublic ? (
-				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
+			{ isLoadingPages && isSitePublic ? (
+				<PerformanceReportLoading isLoadingPages />
 			) : (
 				<>
 					{ ! isSitePublic ? (
@@ -325,21 +318,19 @@ const SitePerformanceContent = () => {
 							}
 						/>
 					) : (
-						currentPage && (
-							<>
-								<ExpiredReportNotice
-									reportTimestamp={ performanceReport.performanceReport?.timestamp }
-									onRetest={ retestPage }
-								/>
-								<PerformanceReport
-									{ ...performanceReport }
-									pageTitle={ currentPage.label }
-									onRetestClick={ retestPage }
-									onFilterChange={ handleRecommendationsFilterChange }
-									filter={ recommendationsFilter }
-								/>
-							</>
-						)
+						<>
+							<ExpiredReportNotice
+								reportTimestamp={ performanceReport.performanceReport?.timestamp }
+								onRetest={ retestPage }
+							/>
+							<PerformanceReport
+								{ ...performanceReport }
+								pageTitle={ currentPage?.label }
+								onRetestClick={ retestPage }
+								onFilterChange={ handleRecommendationsFilterChange }
+								filter={ recommendationsFilter }
+							/>
+						</>
 					) }
 				</>
 			) }

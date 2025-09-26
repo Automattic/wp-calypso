@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from '@wordpress/element';
-import { prepareTimestamp, getTimeSlotCollisionError, validatePlugins } from '../helpers';
+import { prepareTimestamp, validateTimeSlot, validatePlugins } from '../helpers';
 import { useSchedulesBySite } from './use-schedules-by-site';
-import type { Frequency, Weekday } from '../../types';
+import type { Frequency, Weekday, ScheduleCollisions } from '../types';
 
 type Inputs = {
 	siteIds: number[];
@@ -18,11 +18,7 @@ type Options = {
 	eager?: boolean;
 };
 
-type ValidationResult = {
-	isLoading: boolean;
-	timeCollisions: { error: string; collidingSiteIds: number[] };
-	pluginCollisions: { error: string; collidingSiteIds: number[] };
-};
+type ValidationResult = ScheduleCollisions & { isLoading: boolean };
 
 type HookResult = {
 	isLoading: boolean;
@@ -47,7 +43,7 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 
 			let timeError = '';
 			const timeIds = siteIds.filter( ( id ) => {
-				const err = getTimeSlotCollisionError( proposed, timeSlotsBySite[ id ] || [] );
+				const err = validateTimeSlot( proposed, timeSlotsBySite[ id ] || [] );
 				// Record only the first non-empty error as the representative message.
 				// We still collect all colliding site IDs, but avoid overwriting the message.
 				if ( err && ! timeError ) {

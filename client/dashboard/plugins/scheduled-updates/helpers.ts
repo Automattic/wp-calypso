@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import type { TimeSlot, Frequency, Weekday } from '../types';
+import type { TimeSlot, Frequency, Weekday, ScheduleCollisions } from './types';
+import type { Site } from '@automattic/api-core';
 
 export function prepareTimestamp(
 	frequency: Frequency,
@@ -37,8 +38,13 @@ export function prepareTimestamp(
 
 	return event.getTime() / 1000;
 }
-
-export function getTimeSlotCollisionError( proposed: TimeSlot, existing: TimeSlot[] = [] ): string {
+/**
+ * Checks for time slot collisions.
+ * @param proposed - The proposed time slot.
+ * @param existing - The existing time slots.
+ * @returns The error message if there is a collision, otherwise an empty string.
+ */
+export function validateTimeSlot( proposed: TimeSlot, existing: TimeSlot[] = [] ): string {
 	const newDate = new Date( proposed.timestamp * 1000 );
 
 	if ( newDate < new Date() ) {
@@ -70,6 +76,9 @@ export function getTimeSlotCollisionError( proposed: TimeSlot, existing: TimeSlo
 
 /**
  * Limited concurrency runner
+ * @param tasks - The tasks to run.
+ * @param limit - The limit of concurrent tasks.
+ * @returns The result of the tasks.
  */
 export const runWithConcurrency = async (
 	tasks: Array< () => Promise< unknown > >,
@@ -93,6 +102,9 @@ export const runWithConcurrency = async (
  * Validate plugins against existing schedules
  * - Must select at least one plugin
  * - If existing plugin sets are provided, block identical set
+ * @param plugins - The plugins to validate.
+ * @param existingPlugins - The existing plugin sets.
+ * @returns The error message if there is a collision, otherwise an empty string.
  */
 export function validatePlugins(
 	plugins: string[],
@@ -115,4 +127,56 @@ export function validatePlugins(
 	}
 
 	return error;
+}
+
+/**
+ * Formats a multi-line error string for schedule collisions, including both time and
+ * plugin collisions when present. It conditionally appends a list of site slugs for
+ * each collision type when the collision affects a strict subset of the selected sites.
+ *
+ * Lines are separated by "\n" and are suitable for rendering as multiple divs.
+ */
+export function formatScheduleCollisionsErrorMulti( {
+	collisions: { timeCollisions, pluginCollisions },
+	eligibleSites,
+	selectedSiteIds,
+}: {
+	collisions: ScheduleCollisions;
+	eligibleSites: Site[];
+	selectedSiteIds: number[];
+} ): string {
+	const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
+
+	const formatLine = ( error: string, collidingSiteIds: number[] ) => {
+		if ( ! error ) {
+			return '';
+		}
+
+		const shouldListSites =
+			collidingSiteIds.length > 0 && collidingSiteIds.length < selectedSiteIds.length;
+
+		if ( ! shouldListSites ) {
+			return error;
+		}
+
+		const siteList = collidingSiteIds
+			.map( ( id ) => siteMap.get( id )?.slug || String( id ) )
+			.join( ', ' );
+
+		// translators: %s is a comma-separated list of site slugs.
+		const sitesLine = __( 'Sites: %s' ).replace( '%s', siteList );
+		return `${ error }\n${ sitesLine }`;
+	};
+
+	const lines: string[] = [];
+	const timeLine = formatLine( timeCollisions.error, timeCollisions.collidingSiteIds );
+	if ( timeLine ) {
+		lines.push( timeLine );
+	}
+	const pluginLine = formatLine( pluginCollisions.error, pluginCollisions.collidingSiteIds );
+	if ( pluginLine ) {
+		lines.push( pluginLine );
+	}
+
+	return lines.join( '\n' );
 }
