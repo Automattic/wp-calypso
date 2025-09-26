@@ -40,11 +40,9 @@ export function BackupsListPage() {
 	const router = useRouter();
 
 	const routeParams = useParams( {
-		// TODO: This workaround is needed until we update @tanstack/react-router to a version that supports optional params.
-		from: siteBackupDetailRoute.id as unknown as undefined,
 		strict: false,
 		shouldThrow: false,
-	} );
+	} ) as { rewindId?: string } | undefined;
 
 	const rewindId = routeParams?.rewindId;
 
