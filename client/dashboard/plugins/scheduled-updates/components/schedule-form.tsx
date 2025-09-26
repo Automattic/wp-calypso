@@ -21,6 +21,8 @@ import PluginsSelection from './plugins-selection';
 import SitesSelection from './sites-selection';
 import type { Frequency, Weekday } from '../types';
 
+const BLOCK_CREATE = true;
+
 type Inputs = {
 	siteIds: string[];
 	plugins: string[];
@@ -159,7 +161,7 @@ export function ScheduledUpdatesForm( { submitLabel, onSubmit, initial, onSitesC
 					<div>
 						<Button
 							variant="primary"
-							disabled={ ! isValid || isSubmitting || isPrecheckLoading }
+							disabled={ ! isValid || isSubmitting || isPrecheckLoading || BLOCK_CREATE }
 							onClick={ handleSave }
 							__next40pxDefaultSize
 						>
