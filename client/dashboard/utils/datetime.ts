@@ -277,7 +277,7 @@ export function parseYmdLocal( value: string ): Date | null {
 }
 
 /**
- * Format a date as "YYYY-MM-DD" (local time).
+ * Format a date as a site calendar day (YYYY-MM-DD).
  */
 export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: number ) {
 	if ( timezoneString ) {

@@ -74,7 +74,7 @@ describe( 'datetime utils (site-time)', () => {
 			expect( formatSiteYmd( new Date( 2025, 8, 22, 23, 59 ) ) ).toBe( '2025-09-22' );
 		} );
 
-		it( 'is idempotent with parseYmdLocal', () => {
+		it( 'produces the same string after parsing with parseYmdLocal', () => {
 			const d = new Date( 2025, 8, 22 );
 			const ymd = formatSiteYmd( d );
 			expect( formatSiteYmd( parseYmdLocal( ymd )! ) ).toBe( ymd );
