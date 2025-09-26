@@ -9,7 +9,6 @@ import {
 	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -72,7 +71,6 @@ export const WebSettings = () => {
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 4 } alignment="left" justify="space-between">
 						<SectionHeader level={ 3 } title={ __( 'Web' ) } />
-						{ isMutating && <Spinner style={ { margin: 0 } } /> }
 					</HStack>
 					<SettingsPanel options={ options } onChange={ handleChange } disabled={ isMutating } />
 				</VStack>

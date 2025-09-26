@@ -1,5 +1,4 @@
 import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -48,11 +47,7 @@ function SiteDomains() {
 					title={ __( 'Domains' ) }
 					actions={
 						<Button
-							href={
-								isEnabled( 'domain-search-rewrite' )
-									? addQueryArgs( '/setup/domain', { siteSlug: site.slug } )
-									: `/domains/add/${ site.slug }`
-							}
+							href={ addQueryArgs( '/setup/domain', { siteSlug: site.slug } ) }
 							variant="primary"
 							__next40pxDefaultSize
 						>

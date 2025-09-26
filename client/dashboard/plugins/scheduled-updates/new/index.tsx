@@ -1,8 +1,3 @@
-import {
-	updateSchedulesBatchCreateMutation,
-	siteJetpackMonitorSettingsCreateMutation,
-} from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
@@ -10,10 +5,10 @@ import {
 	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	Notice,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { useAnalytics } from '../../../app/analytics';
 import {
 	pluginsScheduledUpdatesNewRoute,
 	pluginsScheduledUpdatesRoute,
@@ -21,111 +16,90 @@ import {
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import {
+	NEW_SCHEDULE_DEFAULT_FREQUENCY,
+	NEW_SCHEDULE_DEFAULT_TIME,
+	NEW_SCHEDULE_DEFAULT_WEEKDAY,
+} from '../constants';
+import { formatScheduleCollisionsErrorMulti } from '../helpers';
+import { useCreateSchedules } from '../hooks/use-create-schedules';
 import { useEligibleSites } from '../hooks/use-eligible-sites';
-import FrequencySelection, { type Frequency, type Weekday } from './components/frequency-selection';
-import PluginsSelection from './components/plugins-selection';
-import SitesSelection from './components/sites-selection';
-import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
-import { prepareTimestamp, runWithConcurrency } from './helpers';
-import type { Site } from '@automattic/api-core';
+import { useScheduleCollisions } from '../hooks/use-schedule-collisions';
+import FrequencySelection from './frequency-selection';
+import PluginsSelection from './plugins-selection';
+import SitesSelection from './sites-selection';
+import type { Frequency, Weekday } from '../types';
 
-const BLOCK_CREATE = true;
+const BLOCK_CREATE = false;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
-	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
-	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
-	const [ time, setTime ] = useState( DEFAULT_TIME );
+	const [ frequency, setFrequency ] = useState< Frequency >( NEW_SCHEDULE_DEFAULT_FREQUENCY );
+	const [ weekday, setWeekday ] = useState< Weekday >( NEW_SCHEDULE_DEFAULT_WEEKDAY );
+	const [ time, setTime ] = useState( NEW_SCHEDULE_DEFAULT_TIME );
+	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
-	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
 		[ selectedSiteIds ]
 	);
-	const createBatch = useMutation( updateSchedulesBatchCreateMutation( siteIdsAsNumbers ) );
-	const { mutateAsync: createMonitorForSite } = useMutation(
-		siteJetpackMonitorSettingsCreateMutation()
-	);
+	const collisionsChecker = useScheduleCollisions();
+	const { mutateAsync: runCreate } = useCreateSchedules( siteIdsAsNumbers );
 
-	const handleCreate = useCallback( () => {
-		if ( ! isValid ) {
-			return;
-		}
+	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
+	const isPrecheckLoading = collisionsChecker.isLoading;
 
-		const timestamp = prepareTimestamp( frequency, weekday, time );
+	const handleCreate = useCallback( async () => {
+		setValidationError( '' );
 		setIsSubmitting( true );
-		const body = {
-			plugins: selectedPluginSlugs,
-			schedule: {
-				timestamp,
-				interval: frequency,
-				health_check_paths: [],
-			},
-			health_check_paths: [],
-		};
 
-		createBatch.mutate( body, {
-			onSuccess: async ( results ) => {
-				const successfulSiteIds = ( results || [] )
-					.filter( ( result ) => ! result.error )
-					.map( ( result ) => result.siteId );
+		try {
+			const collisions = collisionsChecker.validateNow( {
+				siteIds: siteIdsAsNumbers,
+				plugins: selectedPluginSlugs,
+				frequency,
+				weekday,
+				time,
+			} );
 
-				// Precompute values reused per site for Tracks
-				const eventDate = new Date( timestamp * 1000 );
-				const hours = eventDate.getHours();
-				const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
+			const message = formatScheduleCollisionsErrorMulti( {
+				collisions,
+				eligibleSites,
+				selectedSiteIds: siteIdsAsNumbers,
+			} );
 
-				// Create monitor settings for each successful site using per-site mutation (with retry)
-				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
-				const monitorTasks = successfulSiteIds
-					.map( ( siteId ) => siteMap.get( siteId ) )
-					.filter( ( site ): site is Site => Boolean( site ) )
-					.map( ( site ) => {
-						recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
-							site_slug: site.slug,
-							frequency,
-							plugins_number: selectedPluginSlugs.length,
-							hours,
-							weekday: weekdayIndex,
-						} );
+			if ( message ) {
+				throw new Error( message );
+			}
 
-						return async () => {
-							await createMonitorForSite( {
-								siteId: site.ID,
-								body: {
-									urls: [
-										{ monitor_url: site.URL, check_interval: CRON_CHECK_INTERVAL },
-										{ monitor_url: site.URL + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
-									],
-								},
-							} );
-						};
-					} );
+			await runCreate( {
+				plugins: selectedPluginSlugs,
+				frequency,
+				weekday,
+				time,
+			} );
 
-				await runWithConcurrency( monitorTasks, 4 );
-				setIsSubmitting( false );
-				// Navigate back to the schedules list
-				navigate( { to: pluginsScheduledUpdatesRoute.to } );
-			},
-			onError: () => {
-				setIsSubmitting( false );
-			},
-		} );
+			setIsSubmitting( false );
+			navigate( { to: pluginsScheduledUpdatesRoute.to } );
+		} catch ( error ) {
+			setIsSubmitting( false );
+			setValidationError(
+				( error as { message?: string } )?.message || __( 'Failed to create schedule.' )
+			);
+		}
 	}, [
-		isValid,
 		frequency,
 		weekday,
 		time,
 		selectedPluginSlugs,
-		createBatch,
+		collisionsChecker,
 		eligibleSites,
-		createMonitorForSite,
+		siteIdsAsNumbers,
+		runCreate,
 		navigate,
-		recordTracksEvent,
 	] );
 
 	return (
@@ -170,10 +144,17 @@ function ScheduledUpdatesNew() {
 								setTime( next.time );
 							} }
 						/>
+						{ validationError && (
+							<Notice status="error" isDismissible={ false }>
+								{ validationError.split( '\n' ).map( ( line, idx ) => (
+									<div key={ idx }>{ line }</div>
+								) ) }
+							</Notice>
+						) }
 						<HStack justify="start">
 							<Button
 								variant="primary"
-								disabled={ ! isValid || isSubmitting }
+								disabled={ ! isValid || isSubmitting || isPrecheckLoading }
 								onClick={ handleCreate }
 								__next40pxDefaultSize
 							>

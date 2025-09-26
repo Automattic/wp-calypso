@@ -10,7 +10,7 @@ import {
 	twoStepAuthAppSetupQuery,
 	sshKeysQuery,
 	userNotificationsSettingsQuery,
-	userLoginPreferencesQuery,
+	rawUserPreferencesQuery,
 	connectedApplicationsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
@@ -83,10 +83,7 @@ const preferencesRoute = createRoute( {
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
-			queryClient.ensureQueryData( userLoginPreferencesQuery() ),
-			queryClient.ensureQueryData(
-				sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
-			),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
 } ).lazy( () =>
@@ -235,6 +232,14 @@ export const securityRoute = createRoute( {
 			},
 		],
 	} ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( accountRecoveryQuery() ),
+			queryClient.ensureQueryData( connectedApplicationsQuery() ),
+			queryClient.ensureQueryData( sshKeysQuery() ),
+		] );
+	},
 	getParentRoute: () => meRoute,
 	path: 'security',
 } );

@@ -47,6 +47,27 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
+import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import {
+	checkDomainAvailability,
+	getAvailableTlds,
+	getDomainSuggestionSearch,
+} from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import wpcom from 'calypso/lib/wp';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/legacy/utils';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { DomainSearch } from '../__legacy/domain-search';
+import { DomainCartV2 } from '../domain-cart';
+import { DomainSearchInput } from '../domain-search-input';
+import DomainSearchResults from '../domain-search-results';
 import {
 	recordDomainAvailabilityReceive,
 	recordDomainAddAvailabilityPreCheck,
@@ -62,28 +83,7 @@ import {
 	recordDomainClickMissing,
 	resetSearchCount,
 	enqueueSearchStatReport,
-} from 'calypso/components/domains/register-domain-step/analytics';
-import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
-import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
-import {
-	checkDomainAvailability,
-	getAvailableTlds,
-	getDomainSuggestionSearch,
-} from 'calypso/lib/domains';
-import { domainAvailability } from 'calypso/lib/domains/constants';
-import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import wpcom from 'calypso/lib/wp';
-import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import { DomainSearch } from '../__legacy/domain-search';
-import { DomainCartV2 } from '../domain-cart';
-import { DomainSearchInput } from '../domain-search-input';
-import DomainSearchResults from '../domain-search-results';
+} from './analytics';
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,

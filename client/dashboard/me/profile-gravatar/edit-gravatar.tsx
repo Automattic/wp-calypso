@@ -1,67 +1,10 @@
-import path from 'path';
-import {
-	Button,
-	Spinner,
-	FormFileUpload,
-	DropZone,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, upload, caution } from '@wordpress/icons';
-import { useState, CSSProperties, KeyboardEvent } from 'react';
-import wpcom from 'calypso/lib/wp';
-
-const ALLOWED_FILE_EXTENSIONS = [ 'jpg', 'jpeg', 'gif', 'png' ];
-
-/**
- * Crops an image file to a square aspect ratio
- * @param file - The image file to crop
- * @returns A promise that resolves to the cropped file blob
- */
-const cropFile = async ( file: File ): Promise< Blob > => {
-	return new Promise( ( resolve, reject ) => {
-		const img = new Image();
-		img.onload = () => {
-			// Get the smallest dimension to make a square
-			const size = Math.min( img.width, img.height );
-
-			// Calculate crop coordinates (center the crop)
-			const left = ( img.width - size ) / 2;
-			const top = ( img.height - size ) / 2;
-
-			// Create canvas for cropping
-			const canvas = document.createElement( 'canvas' );
-			canvas.width = size;
-			canvas.height = size;
-
-			// Draw cropped image on canvas
-			const ctx = canvas.getContext( '2d' );
-			if ( ! ctx ) {
-				reject( new Error( 'Could not get canvas context' ) );
-				return;
-			}
-
-			ctx.drawImage( img, left, top, size, size, 0, 0, size, size );
-
-			// Convert canvas to blob
-			canvas.toBlob( ( blob ) => {
-				if ( ! blob ) {
-					reject( new Error( 'Could not create blob from canvas' ) );
-					return;
-				}
-				resolve( blob );
-			}, file.type );
-		};
-
-		img.onerror = () => {
-			reject( new Error( 'Could not load image for cropping' ) );
-		};
-
-		// Load image from file
-		img.src = URL.createObjectURL( file );
-	} );
-};
+import { addQueryArgs } from '@wordpress/url';
+import { useState, useEffect, useRef, CSSProperties, KeyboardEvent } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
@@ -73,7 +16,6 @@ interface EditGravatarProps {
 }
 
 const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGravatarProps ) => {
-	const [ isUploading, setIsUploading ] = useState< boolean >( false );
 	const [ tempImage, setTempImage ] = useState< string | null >( null );
 	const [ showEmailVerificationNotice, setShowEmailVerificationNotice ] =
 		useState< boolean >( false );
@@ -83,77 +25,44 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		? __( 'Change profile photo' )
 		: __( 'Verify your email to change profile photo' );
 
-	const handleUploadError = ( errorMessage: string ): void => {
-		// This could be replaced with a WordPress Notice component in the future
-		// eslint-disable-next-line no-console
-		console.error( errorMessage );
-	};
+	// Initialize the Gravatar Quick Editor to manage avatars in a dedicated Gravatar UI
+	const quickEditorRef = useRef< GravatarQuickEditorCore | null >( null );
+	const avatarUrlRef = useRef( avatarUrl );
 
-	const uploadGravatarFile = async ( file: File ): Promise< void > => {
-		setIsUploading( true );
-		// crop file image to be a square
-		const croppedFile = await cropFile( file );
-		// Upload using wpcom REST API
-		wpcom.req
-			.post( {
-				method: 'POST',
-				path: '/gravatar-upload',
-				body: {},
-				apiNamespace: 'wpcom/v2',
-				formData: [
-					[ 'account', userEmail ],
-					[ 'filedata', croppedFile ],
-				],
-			} )
-			.then( () => {
-				setIsUploading( false );
+	// Update the avatar URL reference when the prop changes
+	useEffect( () => {
+		avatarUrlRef.current = avatarUrl;
+	}, [ avatarUrl ] );
 
-				// Create a temporary image preview
-				const fileReader = new FileReader();
-				fileReader.addEventListener( 'load', () => {
-					if ( typeof fileReader.result === 'string' ) {
-						setTempImage( fileReader.result );
-					}
-				} );
-				fileReader.readAsDataURL( file );
-			} )
-			.catch( () => {
-				setIsUploading( false );
-				handleUploadError(
-					__( 'Hmm, your new profile photo was not saved. Please try uploading again.' )
-				);
-			} );
-	};
+	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
+	const displayUrl = addQueryArgs( avatarUrlRef.current, { ver: Date.now() } );
 
-	const handleReceiveFile = ( event: React.ChangeEvent< HTMLInputElement > ): void => {
-		const files = event.target.files;
-		if ( ! files || ! files.length ) {
-			return;
-		}
+	useEffect( () => {
+		quickEditorRef.current = new GravatarQuickEditorCore( {
+			email: userEmail,
+			scope: [ 'avatars' ],
+			utm: 'wpcomme',
+			onProfileUpdated: () => {
+				// Bust cache so the <img> reloads the latest avatar immediately
+				setTempImage( addQueryArgs( avatarUrlRef.current, { ver: Date.now() } ) as string );
+			},
+		} );
 
-		const file = files[ 0 ];
-		const extension = path.extname( file.name ).toLowerCase().substring( 1 );
+		const onPageHide = () => {
+			try {
+				quickEditorRef.current?.close?.();
+			} catch ( _e ) {}
+		};
+		window.addEventListener( 'pagehide', onPageHide );
 
-		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
-			let errorMessage = '';
-
-			if ( extension ) {
-				// translators: %s is the file extension that is not supported
-				errorMessage = __(
-					'Sorry, %s files are not supported - please make sure your image is in JPG, GIF, or PNG format.'
-				).replace( '%s', extension );
-			} else {
-				errorMessage = __(
-					'Sorry, images of that filetype are not supported - please make sure your image is in JPG, GIF, or PNG format.'
-				);
-			}
-
-			handleUploadError( errorMessage );
-			return;
-		}
-
-		uploadGravatarFile( file );
-	};
+		return () => {
+			window.removeEventListener( 'pagehide', onPageHide );
+			try {
+				quickEditorRef.current?.close?.();
+			} catch ( _e ) {}
+			quickEditorRef.current = null;
+		};
+	}, [ userEmail ] );
 
 	const handleUnverifiedUserClick = (): void => {
 		if ( ! isEmailVerified ) {
@@ -205,108 +114,69 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		transition: 'opacity 0.2s',
 	};
 
-	const handleUpdateAvatar = ( openFileDialog: () => void ) => {
+	const openGravatarEditor = () => {
 		handleUnverifiedUserClick();
 		if ( isEmailVerified ) {
-			openFileDialog();
+			quickEditorRef.current?.open?.();
 		}
 	};
 
 	return (
-		<VStack
-			style={ {
-				opacity: isUploading ? 0.7 : 1,
-			} }
-			spacing={ 4 }
-		>
-			<FormFileUpload
-				accept="image/*"
-				onChange={ handleReceiveFile }
-				render={ ( { openFileDialog } ) => (
-					<HStack justify="flex-start">
-						<button
-							type="button"
-							onClick={ () => {
-								handleUpdateAvatar( openFileDialog );
-							} }
-							style={ {
-								border: 'none',
-								padding: 0,
-								background: 'transparent',
-								cursor: isEmailVerified ? 'pointer' : 'default',
-							} }
-							aria-label={ uploadButtonLabel }
-						>
-							<div
-								style={ {
-									position: 'relative',
-									width: 48,
-									height: 48,
-									borderRadius: '50%',
-									overflow: 'hidden',
-								} }
-								onMouseOver={ handleMouseOver }
-								onMouseOut={ handleMouseOut }
-								onFocus={ handleFocus }
-								onBlur={ handleBlur }
-								onKeyDown={ handleKeyDown }
-								tabIndex={ 0 }
-								role="button"
-								aria-label={ uploadButtonLabel }
-							>
-								{ isEmailVerified && (
-									<DropZone
-										label={ __( 'Drop to upload profile photo' ) }
-										onFilesDrop={ ( files: File[] ) => {
-											if ( files.length ) {
-												uploadGravatarFile( files[ 0 ] );
-											}
-										} }
-										style={ {
-											position: 'absolute',
-											top: 0,
-											left: 0,
-											width: '100%',
-											height: '100%',
-											zIndex: 1,
-										} }
-									/>
+		<VStack spacing={ 4 }>
+			<ButtonStack justify="flex-start">
+				<button
+					type="button"
+					onClick={ openGravatarEditor }
+					style={ {
+						border: 'none',
+						padding: 0,
+						background: 'transparent',
+						cursor: isEmailVerified ? 'pointer' : 'default',
+					} }
+					aria-label={ uploadButtonLabel }
+				>
+					<div
+						style={ {
+							position: 'relative',
+							width: 48,
+							height: 48,
+							borderRadius: '50%',
+							overflow: 'hidden',
+						} }
+						onMouseOver={ handleMouseOver }
+						onMouseOut={ handleMouseOut }
+						onFocus={ handleFocus }
+						onBlur={ handleBlur }
+						onKeyDown={ handleKeyDown }
+						tabIndex={ 0 }
+						role="button"
+						aria-label={ uploadButtonLabel }
+					>
+						<img
+							src={ tempImage || displayUrl }
+							alt={ __( 'Gravatar' ) }
+							width={ 48 }
+							height={ 48 }
+							style={ { objectFit: 'cover' } }
+						/>
+
+						<div className="overlay-hover" style={ overlayStyle }>
+							<div style={ { color: '#fff' } }>
+								{ ! isEmailVerified && (
+									<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
 								) }
 
-								<img
-									src={ tempImage || avatarUrl }
-									alt={ __( 'Gravatar' ) }
-									width={ 48 }
-									height={ 48 }
-									style={ { objectFit: 'cover' } }
-								/>
-
-								<div className="overlay-hover" style={ overlayStyle }>
-									<div style={ { color: '#fff' } }>
-										{ ! isEmailVerified && (
-											<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
-										) }
-
-										{ isEmailVerified && ! isUploading && (
-											<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
-										) }
-
-										{ isEmailVerified && isUploading && <Spinner /> }
-									</div>
-								</div>
+								{ isEmailVerified && (
+									<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
+								) }
 							</div>
-						</button>
-						<Button
-							variant="tertiary"
-							onClick={ () => {
-								handleUpdateAvatar( openFileDialog );
-							} }
-						>
-							{ __( 'Update avatar' ) }
-						</Button>
-					</HStack>
-				) }
-			/>
+						</div>
+					</div>
+				</button>
+				<Button variant="tertiary" onClick={ openGravatarEditor }>
+					{ __( 'Update avatar' ) }
+				</Button>
+			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
 				<div

@@ -1,5 +1,4 @@
 import { siteByIdQuery, stagingSiteDeleteMutation } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -11,6 +10,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { Site } from '@automattic/api-core';
 
@@ -23,6 +23,7 @@ export default function StagingSiteDeleteModal( {
 } ) {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	const { data: productionSite } = useQuery( {
