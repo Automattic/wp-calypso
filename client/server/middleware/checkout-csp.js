@@ -165,12 +165,10 @@ function generateCSPHeader( nonce, isDevelopment ) {
 
 	const cspHeader = Object.entries( directives )
 		.map( ( [ key, value ] ) => {
-			const wrappedItems = ( Array.isArray( value.wrapped ) ? value.wrapped : [] )
-				.map( ( item ) => `'${ item }'` )
-				.join( ' ' );
-			const rawItems = ( Array.isArray( value.raw ) ? value.raw : [] ).join( ' ' );
+			const wrappedItems = ( value.wrapped ?? [] ).map( ( item ) => `'${ item }'` );
+			const rawItems = value.raw ?? [];
 
-			const allExpressions = [ wrappedItems, rawItems ].join( ' ' );
+			const allExpressions = [ ...wrappedItems, ...rawItems ].join( ' ' );
 
 			return `${ key } ${ allExpressions }`;
 		} )
