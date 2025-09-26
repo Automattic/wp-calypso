@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import FlashMessage from '../../components/flash-message';
@@ -29,6 +30,8 @@ type SecurityPasswordFormData = {
 };
 
 export default function SecurityPassword() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const mutation = useMutation( userSettingsMutation() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ isReloading, setIsReloading ] = useState( false );
@@ -40,12 +43,13 @@ export default function SecurityPassword() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		recordTracksEvent( 'calypso_dashboard_security_password_save_password_click' );
 		mutation.mutate(
 			{ password: formData.password },
 			{
 				onSuccess: () => {
-					// Since changing a user's password invalidates the session, we reload.
 					setIsReloading( true );
+					// Since changing a user's password invalidates the session, we reload.
 					window.location.replace( '?updated=password' );
 				},
 				onError: ( error: Error ) => {
@@ -58,11 +62,14 @@ export default function SecurityPassword() {
 	};
 
 	const handleGeneratePassword = () => {
+		recordTracksEvent( 'calypso_dashboard_security_password_generate_password_click' );
 		setFormData( ( data ) => ( {
 			...data,
 			password: generatePassword(),
 		} ) );
 	};
+
+	const isLoading = mutation.isPending || isReloading;
 
 	const fields: Field< SecurityPasswordFormData >[] = useMemo(
 		() => [
@@ -85,6 +92,7 @@ export default function SecurityPassword() {
 							onChange={ ( value ) => {
 								return onChange( { [ id ]: value ?? '' } );
 							} }
+							disabled={ isLoading }
 							suffix={
 								<InputControlSuffixWrapper>
 									<Button
@@ -104,7 +112,7 @@ export default function SecurityPassword() {
 				// There is currently a bug that prevents it from working.
 			},
 		],
-		[ isPasswordVisible ]
+		[ isPasswordVisible, isLoading ]
 	);
 
 	return (
@@ -134,12 +142,7 @@ export default function SecurityPassword() {
 								} }
 							/>
 							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ mutation.isPending || isReloading }
-									disabled={ mutation.isPending || isReloading }
-								>
+								<Button variant="primary" type="submit" isBusy={ isLoading } disabled={ isLoading }>
 									{ __( 'Save' ) }
 								</Button>
 								<Button variant="secondary" onClick={ handleGeneratePassword }>

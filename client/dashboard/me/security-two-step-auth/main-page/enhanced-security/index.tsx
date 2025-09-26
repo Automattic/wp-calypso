@@ -9,9 +9,12 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../../../app/analytics';
 import { SectionHeader } from '../../../../components/section-header';
 
 export default function EnhancedSecurity() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const { two_step_enhanced_security_forced, two_step_enhanced_security } = userSettings;
 
@@ -22,6 +25,9 @@ export default function EnhancedSecurity() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleChange = ( value: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_security_enhanced_security_change_click', {
+			two_step_enhanced_security: value,
+		} );
 		updateUserSettings(
 			{ two_step_enhanced_security: value },
 			{

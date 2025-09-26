@@ -6,6 +6,7 @@ import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { securitySocialLoginsRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
@@ -38,6 +39,7 @@ const SocialLoginItem = ( {
 } ) => {
 	const { user } = useAuth();
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -123,7 +125,10 @@ const SocialLoginItem = ( {
 				actions={ renderButton( {
 					isConnected,
 					responseHandler,
-					handleDisconnect: () => setIsRemoveDialogOpen( true ),
+					handleDisconnect: () => {
+						recordTracksEvent( 'calypso_dashboard_security_social_logins_disconnect_dialog_open' );
+						setIsRemoveDialogOpen( true );
+					},
 					isLoading: isConnectingSocialUser,
 				} ) }
 			/>

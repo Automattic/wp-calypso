@@ -18,6 +18,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
@@ -29,6 +30,8 @@ type SecurityEmailFormData = {
 };
 
 export default function RecoveryEmail() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { data: accountRecoveryData } = useSuspenseQuery( accountRecoveryQuery() );
 	const { data: serverData } = useQuery( userSettingsQuery() );
 
@@ -54,6 +57,7 @@ export default function RecoveryEmail() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		recordTracksEvent( 'calypso_dashboard_security_account_recovery_email_validate_email_click' );
 		validateEmail( formData.email, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email was saved successfully.' ), {
@@ -69,6 +73,7 @@ export default function RecoveryEmail() {
 	};
 
 	const handleRemove = () => {
+		recordTracksEvent( 'calypso_dashboard_security_account_recovery_email_remove_email_click' );
 		removeEmail( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email was removed successfully.' ), {
@@ -89,6 +94,9 @@ export default function RecoveryEmail() {
 
 	const handleResendValidation = () => {
 		setShowResendButton( false );
+		recordTracksEvent(
+			'calypso_dashboard_security_account_recovery_email_resend_validation_click'
+		);
 		resendValidation( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email validation was resent successfully.' ), {
@@ -189,7 +197,12 @@ export default function RecoveryEmail() {
 									{ accountRecoveryEmail && (
 										<Button
 											variant="tertiary"
-											onClick={ () => setIsRemoveDialogOpen( true ) }
+											onClick={ () => {
+												setIsRemoveDialogOpen( true );
+												recordTracksEvent(
+													'calypso_dashboard_security_account_recovery_email_remove_email_dialog_open'
+												);
+											} }
 											isBusy={ isRemoveEmailPending }
 											disabled={ isRemoveEmailPending }
 										>

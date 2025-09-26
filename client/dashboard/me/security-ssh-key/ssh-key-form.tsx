@@ -16,6 +16,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
@@ -38,6 +39,8 @@ export default function SshKeyForm( {
 	setIsEditing?: ( isEditing: boolean ) => void;
 	username: string;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< SshKeyFormData >( {
@@ -64,10 +67,12 @@ export default function SshKeyForm( {
 	} );
 
 	const handleUpdateSshKey = () => {
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click' );
 		updateSshKey( formData.key );
 	};
 
 	const handleCreateSshKey = () => {
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_create_click' );
 		createSshKey( { key: formData.key, name: 'default' } );
 	};
 

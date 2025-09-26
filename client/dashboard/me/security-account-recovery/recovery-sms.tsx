@@ -13,6 +13,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
@@ -32,6 +33,8 @@ const initialFormData: SecuritySMSFormData = {
 };
 
 export default function RecoverySMS() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { data: accountRecoveryData } = useSuspenseQuery( accountRecoveryQuery() );
 	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 
@@ -76,6 +79,7 @@ export default function RecoverySMS() {
 			} );
 			return;
 		}
+		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_validate_sms_click' );
 		validateSMS( formData.smsNumber, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery SMS number was saved successfully.' ), {
@@ -91,6 +95,7 @@ export default function RecoverySMS() {
 	};
 
 	const handleValidateSMSCode = () => {
+		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_validate_sms_code_click' );
 		validateSMSCode( formData.smsCode, {
 			onSuccess: () => {
 				setShowSuccessNotice( true );
@@ -113,6 +118,7 @@ export default function RecoverySMS() {
 	};
 
 	const handleRemove = () => {
+		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_remove_sms_click' );
 		removeSMS( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery SMS number was removed successfully.' ), {
@@ -132,6 +138,7 @@ export default function RecoverySMS() {
 	};
 
 	const handleResendValidation = () => {
+		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_resend_validation_click' );
 		setShowResendButton( false );
 		resendValidation( undefined, {
 			onSuccess: () => {
@@ -241,7 +248,12 @@ export default function RecoverySMS() {
 									{ accountRecoveryPhone && (
 										<Button
 											variant="tertiary"
-											onClick={ () => setIsRemoveDialogOpen( true ) }
+											onClick={ () => {
+												recordTracksEvent(
+													'calypso_dashboard_security_account_recovery_sms_remove_sms_dialog_open'
+												);
+												setIsRemoveDialogOpen( true );
+											} }
 											isBusy={ isRemoveSMSPending }
 											disabled={ isRemoveSMSPending }
 										>
