@@ -24,6 +24,7 @@ export interface ActivityLogEntry {
 		backup_period?: number;
 		backup_warnings?: string;
 		backup_errors?: string;
+		type?: string;
 	};
 	published: string;
 	rewind_id: string;
