@@ -507,6 +507,7 @@ module.exports = {
 					'__experimentalDivider',
 					'__experimentalGrid',
 					'__experimentalHStack',
+					'__experimentalBadge',
 					'__experimentalVStack',
 					'__experimentalSpacer',
 					'__experimentalText',

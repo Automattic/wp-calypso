@@ -1,0 +1,14 @@
+.site-notification-settings {
+	padding: 8px 0px 12px 0px;
+	max-height: unset;
+
+
+	&__toggle {
+		svg {
+			transition: transform 0.2s ease-in-out;
+		}
+		&.collapsed svg{
+			transform: rotate(180deg);
+		}
+	}
+}

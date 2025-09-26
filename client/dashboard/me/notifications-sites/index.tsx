@@ -7,6 +7,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { BrowserNotificationCard } from './browser-notification-card';
 import { BrowserNotificationNotice } from './browser-notification-notice';
+import { SiteListSettings } from './site-list-settings';
 
 export default function NotificationsSites() {
 	const { data: status } = useQuery( notificationPushPermissionStateQuery() );
@@ -25,8 +26,9 @@ export default function NotificationsSites() {
 		>
 			{ status === 'denied' && <BrowserNotificationNotice /> }
 
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 8 }>
 				<BrowserNotificationCard status={ status } />
+				<SiteListSettings />
 			</VStack>
 		</PageLayout>
 	);

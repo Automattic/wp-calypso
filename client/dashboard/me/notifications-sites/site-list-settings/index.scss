@@ -1,0 +1,22 @@
+.site-list-settings__stream-settings {
+	margin-left: -24px;
+	margin-right: -24px;
+
+	.components-tab-panel__tabs, .components-tab-panel__tab-content {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+}
+
+.site-list-settings__card {
+	max-height: unset;
+	transition: max-height 0.2s ease-in-out;
+	&.collapsed {
+		max-height: 112px;
+		overflow: hidden;
+	}
+}
+
+.site-list-settings__card-placeholder {
+	height: 112px;
+}
