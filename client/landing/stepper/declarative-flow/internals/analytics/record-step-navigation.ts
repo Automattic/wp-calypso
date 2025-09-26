@@ -65,7 +65,9 @@ export function recordStepNavigation( {
 			}
 
 			if (
-				[ 'cart_items', 'domain_item', 'email_item', 'domain_cart' ].includes( propName ) &&
+				[ 'cart_items', 'domain_item', 'domain_cart_item', 'email_item', 'domain_cart' ].includes(
+					propName
+				) &&
 				typeof propValue !== 'string'
 			) {
 				propValue = Object.entries( propValue || {} )

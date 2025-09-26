@@ -1,4 +1,5 @@
 import { queryClient } from '@automattic/api-queries';
+// eslint-disable-next-line no-restricted-imports
 import {
 	initializeAnalytics,
 	recordTracksEvent,

@@ -5,8 +5,8 @@ import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils';
+import { mockUserSettings } from '../../profile/__mocks__/user-settings';
 import GravatarProfileSection from '../index';
-import { mockUserSettings } from './__mocks__/user-settings';
 
 describe( 'GravatarProfileSection Form Validation', () => {
 	describe( 'Display Name Validation', () => {

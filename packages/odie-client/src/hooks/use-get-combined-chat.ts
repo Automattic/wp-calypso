@@ -25,7 +25,6 @@ export const useGetCombinedChat = (
 ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
-	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -37,6 +36,8 @@ export const useGetCombinedChat = (
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
+	const conversationId =
+		getConversationIdFromInteraction( currentSupportInteraction ) || mainChatState.conversationId;
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();

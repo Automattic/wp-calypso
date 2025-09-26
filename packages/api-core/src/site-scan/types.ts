@@ -30,12 +30,15 @@ export interface Threat {
 	severity: number;
 	fixer?: ThreatFixer | null;
 	fixed_on?: string;
-	status: 'current' | 'fixed' | 'ignored';
+	status: 'current' | 'fixed' | 'ignored' | 'in_progress';
 	fixable?: ThreatFixer;
 	extension?: ThreatExtension;
 	source?: string;
 	filename?: string;
-	context?: Record< string, string | Record< string, unknown > >;
+	context?: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 	version?: string;
 	table?: string;
 	rows?: Record< string, unknown >;
