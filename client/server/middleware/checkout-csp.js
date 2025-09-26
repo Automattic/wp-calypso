@@ -7,44 +7,174 @@ import crypto from 'crypto';
  * @returns {string} The complete CSP policy string
  */
 function generateCSPHeader( nonce, isDevelopment ) {
-	const directives = [
-		"default-src 'self'",
-		// Payment processors, fraud prevention, support chat, and analytics
-		`script-src 'self' 'nonce-${ nonce }' https://js.stripe.com https://checkout.stripe.com https://www.paypal.com https://www.paypalobjects.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://cdn.smooch.io https://static.zdassets.com https://ekr.zdassets.com https://*.zendesk.com https://surveys-static-prd.survicate-cdn.com https://survey.survicate.com https://cdn.siftscience.com https://stats.wp.com https://use.typekit.net`,
-		// Styles including Survicate surveys, Smooch chat, and Google Fonts
-		"style-src 'self' 'unsafe-inline' https://surveys-static-prd.survicate-cdn.com https://cdn.smooch.io https://fonts.googleapis.com https://s0.wp.com",
-		"img-src 'self' data: https: blob: https://pixel.wp.com https://s1.wp.com https://s0.wp.com",
-		// API connections - payment processors, WP.com services, and support
-		"connect-src 'self' https://api.stripe.com https://public-api.wordpress.com https://widgets.wp.com https://wpcom.com wss://*.zendesk.com https://*.zendesk.com https://*.smooch.io https://api.smooch.io https://ekr.zdassets.com",
-		// Payment and support frames
-		"frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com https://www.paypal.com https://www.google.com/recaptcha/ https://recaptcha.google.com https://public-api.wordpress.com",
-		// Fonts - allow support widget fonts, WordPress.com fonts, and WooCommerce fonts
-		"font-src 'self' data: https://surveys-static-prd.survicate-cdn.com https://cdn.smooch.io https://fonts.gstatic.com https://s1.wp.com https://s0.wp.com https://use.typekit.net https://woocommerce.com",
-		"object-src 'none'",
-		"base-uri 'self'",
-		"form-action 'self' https://checkout.stripe.com",
-		"frame-ancestors 'none'",
-		'report-uri https://public-api.wordpress.com/csp/',
-	];
+	const directives = {
+		'default-src': {
+			wrapped: [ 'self' ],
+		},
+		'script-src': {
+			// Scripts
+			wrapped: [ 'self', `nonce-${ nonce }` ],
+			raw: [
+				// Payment processors
+				'https://js.stripe.com',
+				'https://checkout.stripe.com',
+				'https://www.paypal.com',
+				'https://www.paypalobjects.com',
+				// Fraud prevention
+				'https://www.google.com/recaptcha/',
+				'https://www.gstatic.com/recaptcha/',
+				'https://cdn.siftscience.com',
+				// Support
+				'https://cdn.smooch.io',
+				'https://static.zdassets.com',
+				'https://ekr.zdassets.com',
+				'https://*.zendesk.com',
+				// Surveys
+				'https://surveys-static-prd.survicate-cdn.com',
+				'https://survey.survicate.com',
+				// Analytics
+				'https://stats.wp.com',
+				// Fonts
+				'https://use.typekit.net',
+			],
+		},
+		'style-src': {
+			// Styles
+			wrapped: [ 'self', 'unsafe-inline' ],
+			raw: [
+				// Surveys
+				'https://surveys-static-prd.survicate-cdn.com',
+				// Support chat
+				'https://cdn.smooch.io',
+				// Fonts
+				'https://fonts.googleapis.com',
+				// Styles from WordPress.com CDN
+				'https://s0.wp.com',
+			],
+		},
+		'img-src': {
+			// Images
+			wrapped: [ 'self' ],
+			raw: [
+				'data:',
+				// TODO: try to drop this loose rule. We should not allow loading images from anywhere.
+				'https:',
+				'blob:',
+				// Images from WordPress.com CDN
+				'https://pixel.wp.com',
+				'https://s0.wp.com',
+				'https://s1.wp.com',
+			],
+		},
+		'connect-src': {
+			// API connections
+			wrapped: [ 'self' ],
+			raw: [
+				// Payment processor
+				'https://api.stripe.com',
+				// WordPress.com services
+				'https://public-api.wordpress.com',
+				'https://widgets.wp.com',
+				'https://wpcom.com',
+				// Support chat
+				'wss://*.zendesk.com',
+				'https://*.zendesk.com',
+				'https://*.smooch.io',
+				'https://api.smooch.io',
+				'https://ekr.zdassets.com',
+			],
+		},
+		'frame-src': {
+			// Allowed frames
+			wrapped: [ 'self' ],
+			raw: [
+				// Payment processors
+				'https://js.stripe.com',
+				'https://checkout.stripe.com',
+				'https://hooks.stripe.com',
+				'https://www.paypal.com',
+				// Fraud/spam prevention
+				'https://www.google.com/recaptcha/',
+				'https://recaptcha.google.com',
+				// WordPress.com services
+				'https://public-api.wordpress.com',
+			],
+		},
+		'font-src': {
+			// Fonts
+			wrapped: [ 'self' ],
+			raw: [
+				'data:',
+				// Surveys
+				'https://surveys-static-prd.survicate-cdn.com',
+				// Support chat
+				'https://cdn.smooch.io',
+				// Fonts from Google Fonts
+				'https://fonts.gstatic.com',
+				// Fonts from WordPress.com CDN
+				'https://s1.wp.com',
+				'https://s0.wp.com',
+				// Fonts from Typekit
+				'https://use.typekit.net',
+				// Fonts from WooCommerce.com
+				'https://woocommerce.com',
+			],
+		},
+		'object-src': {
+			// Allowed objects
+			wrapped: [ 'none' ],
+		},
+		'base-uri': {
+			// Allowed base URIs
+			wrapped: [ 'self' ],
+		},
+		'form-action': {
+			// Allowed form actions
+			wrapped: [ 'self' ],
+			raw: [
+				// Payment processors
+				'https://checkout.stripe.com',
+			],
+		},
+		'frame-ancestors': {
+			// Allowed frame ancestors
+			wrapped: [ 'none' ],
+		},
+		'report-uri': {
+			// Report URI
+			raw: [ 'https://public-api.wordpress.com/csp/' ],
+		},
+	};
 
-	let cspHeader = directives.join( '; ' );
-
-	// In development, allow eval for webpack and HTTP for local resources
 	if ( isDevelopment ) {
 		// Add 'unsafe-eval' to script-src for webpack
-		cspHeader = cspHeader.replace( 'script-src', "script-src 'unsafe-eval'" );
-
-		// URLs that need HTTP versions in development
-		const httpAllowList = [ 'stats.wp.com', 'pixel.wp.com', 's0.wp.com', 's1.wp.com' ];
+		directives[ 'script-src' ].wrapped.push( 'unsafe-eval' );
 
 		// Add HTTP versions alongside HTTPS versions
-		httpAllowList.forEach( ( domain ) => {
-			cspHeader = cspHeader.replace(
-				new RegExp( `https://${ domain.replace( '.', '\\.' ) }`, 'g' ),
-				`https://${ domain } http://${ domain }`
-			);
-		} );
+		const httpAllowList = [ 'stats.wp.com', 'pixel.wp.com', 's0.wp.com', 's1.wp.com' ];
+		for ( const key in directives ) {
+			if ( Array.isArray( directives[ key ].raw ) ) {
+				httpAllowList.forEach( ( httpDomain ) => {
+					if ( directives[ key ].raw.includes( `https://${ httpDomain }` ) ) {
+						directives[ key ].raw.push( `http://${ httpDomain }` );
+					}
+				} );
+			}
+		}
 	}
+
+	const cspHeader = Object.entries( directives )
+		.map( ( [ key, value ] ) => {
+			const wrappedItems = ( Array.isArray( value.wrapped ) ? value.wrapped : [] )
+				.map( ( item ) => `'${ item }'` )
+				.join( ' ' );
+			const rawItems = ( Array.isArray( value.raw ) ? value.raw : [] ).join( ' ' );
+
+			const allExpressions = [ wrappedItems, rawItems ].join( ' ' );
+
+			return `${ key } ${ allExpressions }`;
+		} )
+		.join( '; ' );
 
 	return cspHeader;
 }
