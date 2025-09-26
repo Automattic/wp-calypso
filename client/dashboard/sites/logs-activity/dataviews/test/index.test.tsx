@@ -47,6 +47,14 @@ jest.mock( '@tanstack/react-router', () => ( {
 	...jest.requireActual( '@tanstack/react-router' ),
 	useRouter: () => ( {
 		navigate: mockNavigate,
+		state: {
+			location: {
+				pathname: '/',
+				search: '',
+				hash: '',
+				href: '/',
+			},
+		},
 	} ),
 } ) );
 
