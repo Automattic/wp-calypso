@@ -69,43 +69,6 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 		);
 	};
 
-	const getThreatFix = () => {
-		const { fixable } = threat;
-
-		if ( ! fixable ) {
-			return null;
-		}
-
-		switch ( fixable.fixer ) {
-			case 'replace':
-				return __( 'Jetpack Scan will replace the affected file or directory.' );
-			case 'delete':
-				return __( 'Jetpack Scan will delete the affected file or directory.' );
-			case 'update':
-				if ( fixable.target ) {
-					return sprintf(
-						/** translators: %s: version */
-						__( 'Jetpack Scan will update to a newer version (%s).' ),
-						fixable.target
-					);
-				}
-				return __( 'Jetpack Scan will update to a newer version.' );
-			case 'edit':
-				return __( 'Jetpack Scan will edit the affected file or directory.' );
-			case 'rollback':
-				if ( fixable.target ) {
-					return sprintf(
-						/** translators: %s: version */
-						__( 'Jetpack Scan will rollback the affected file to the version from %s.' ),
-						fixable.target
-					);
-				}
-				return __( 'Jetpack Scan will rollback the affected file to an older (clean) version.' );
-			default:
-				return __( 'Jetpack Scan will resolve the threat.' );
-		}
-	};
-
 	const renderFix = () => {
 		if ( threat.status === 'fixed' ) {
 			return;
@@ -153,7 +116,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
 					) }
 				</Text>
-				<Text variant="muted">{ getThreatFix() }</Text>
+				<Text variant="muted">{ threat.fix_description }</Text>
 			</>
 		);
 	};

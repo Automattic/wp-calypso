@@ -1,7 +1,7 @@
 import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -99,6 +99,11 @@ function RepositoriesList() {
 function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
+
+	const handleConnectRepository = () => {
+		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
+	};
 
 	return (
 		<PageLayout
@@ -108,7 +113,7 @@ function SiteRepositories() {
 					title={ __( 'Repositories' ) }
 					description={ __( 'Connect repositories to your WordPress site.' ) }
 					actions={
-						<Button variant="primary" __next40pxDefaultSize>
+						<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
 							{ __( 'Connect repository' ) }
 						</Button>
 					}

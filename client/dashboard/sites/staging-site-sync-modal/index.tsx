@@ -213,16 +213,32 @@ function StagingSiteSyncModalInner( {
 		onClose();
 	}, [ onClose ] );
 
+	// Determine latest successful backup for rewindId/display
+	const activityQuery = useRewindableActivityLogQuery(
+		querySiteId,
+		{
+			name: SUCCESSFUL_BACKUP_ACTIVITIES,
+			aggregate: false,
+			number: 1,
+			sortOrder: 'desc',
+		},
+		{}
+	) as { data: BackupActivity[] | undefined; isLoading: boolean };
+	const { data: backupData, isLoading: isLoadingBackupAttempt } = activityQuery;
+
+	const lastKnownBackupAttempt: BackupActivity | undefined = backupData?.[ 0 ];
+	const rewindId = lastKnownBackupAttempt?.rewindId ?? 0;
+
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserCheckList = fileBrowserState.getCheckList();
+	const browserCheckList = fileBrowserState.getCheckList( rewindId );
 
 	const WP_CONFIG_PATH = '/wp-config.php';
 	const WP_CONTENT_PATH = '/wp-content';
 	const SQL_PATH = '/sql';
 
-	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH );
-	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH );
-	const sqlNode = fileBrowserState.getNode( SQL_PATH );
+	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH, rewindId );
+	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH, rewindId );
+	const sqlNode = fileBrowserState.getNode( SQL_PATH, rewindId );
 
 	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
@@ -245,10 +261,10 @@ function StagingSiteSyncModalInner( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState );
-			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState, rewindId );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState, rewindId );
 		},
-		[ fileBrowserState ]
+		[ fileBrowserState, rewindId ]
 	);
 
 	const onFilesFoldersCheckboxChange = useCallback( () => {
@@ -259,11 +275,11 @@ function StagingSiteSyncModalInner( {
 
 	const handleDatabaseCheckboxChange = useCallback( () => {
 		if ( sqlNode?.checkState === 'checked' ) {
-			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked', rewindId );
 		} else {
-			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked', rewindId );
 		}
-	}, [ fileBrowserState, sqlNode ] );
+	}, [ fileBrowserState, sqlNode, rewindId ] );
 
 	const handleFileSelectionModeChange = useCallback(
 		( value: string ) => {
@@ -275,22 +291,6 @@ function StagingSiteSyncModalInner( {
 		},
 		[ updateFilesAndFoldersCheckState ]
 	);
-
-	// Determine latest successful backup for rewindId/display
-	const activityQuery = useRewindableActivityLogQuery(
-		querySiteId,
-		{
-			name: SUCCESSFUL_BACKUP_ACTIVITIES,
-			aggregate: false,
-			number: 1,
-			sortOrder: 'desc',
-		},
-		{}
-	) as { data: BackupActivity[] | undefined; isLoading: boolean };
-	const { data: backupData, isLoading: isLoadingBackupAttempt } = activityQuery;
-
-	const lastKnownBackupAttempt: BackupActivity | undefined = backupData?.[ 0 ];
-	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const locale = useLocale();
 	const displayBackupDate = lastKnownBackupAttempt
@@ -455,7 +455,7 @@ function StagingSiteSyncModalInner( {
 								) }
 								<HStack style={ { marginInlineStart: '14px' } }>
 									<FileBrowser
-										rewindId={ rewindId ?? 0 }
+										rewindId={ rewindId }
 										siteId={ querySiteId }
 										siteSlug={ querySiteSlug as string }
 										fileBrowserConfig={ fileBrowserConfig }

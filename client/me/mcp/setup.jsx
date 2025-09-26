@@ -41,16 +41,14 @@ function McpSetupComponent( { path, userSettings } ) {
 		{ label: 'VS Code', value: 'vscode' },
 		{ label: 'Cursor', value: 'cursor' },
 		{ label: 'Continue', value: 'continue' },
-		{ label: 'Llamafile', value: 'llamafile' },
 	];
 
 	// Documentation links for each client
 	const clientDocumentation = {
-		claude: 'https://docs.anthropic.com/en/docs/claude-desktop-mcp',
+		claude: 'https://docs.claude.com/en/docs/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
 		continue: 'https://docs.continue.dev/customize/deep-dives/mcp',
-		llamafile: 'https://github.com/Mozilla-Ocho/llamafile',
 		default: 'https://modelcontextprotocol.io/docs/servers',
 	};
 
@@ -90,12 +88,6 @@ function McpSetupComponent( { path, userSettings } ) {
 							...baseConfig,
 						},
 					],
-				};
-			case 'llamafile':
-				return {
-					mcpServers: {
-						[ serverName ]: baseConfig,
-					},
 				};
 			default:
 				return {
