@@ -56,8 +56,8 @@ const UseMyDomain: StepType< {
 	};
 
 	const clearQueryParams = () => {
-		const { pathname, search } = window.location;
-		const newURL = removeQueryArgs( pathname + search, 'step', 'initialQuery', 'lastQuery' );
+		const { pathname, search, hash } = window.location;
+		const newURL = removeQueryArgs( pathname + search + hash, 'step', 'initialQuery', 'lastQuery' );
 		window.history.replaceState( {}, document.title, newURL );
 	};
 
