@@ -7,7 +7,7 @@ import {
 import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
@@ -47,8 +47,9 @@ const domainUpsell: Flow = {
 			} ),
 			[]
 		);
-		const { setDomainCartItem, setDomainCartItems, setSignupDomainOrigin, setHideFreePlan } =
-			useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { setDomainCartItem, setDomainCartItems, setSignupDomainOrigin } = useDispatch(
+			ONBOARD_STORE
+		) as OnboardActions;
 		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
 
 		const returnUrl =
@@ -87,7 +88,6 @@ const domainUpsell: Flow = {
 							return window.location.assign( returnUrl );
 						}
 
-						setHideFreePlan( true );
 						submittedDomains.current = true;
 						navigate( STEPS.PLANS.slug );
 						return;
@@ -110,8 +110,6 @@ const domainUpsell: Flow = {
 					}
 
 					submittedDomains.current = true;
-
-					setHideFreePlan( true );
 
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
@@ -163,6 +161,13 @@ const domainUpsell: Flow = {
 		}
 
 		return { submit, goBack };
+	},
+	useSideEffect() {
+		const { setHideFreePlan } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+
+		useEffect( () => {
+			setHideFreePlan( true );
+		}, [ setHideFreePlan ] );
 	},
 };
 
