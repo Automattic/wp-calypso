@@ -55,7 +55,7 @@ export const userPreferenceMutation = < P extends keyof UserPreferences >( prefe
 				// We need to remove it from oldData.
 				if ( ! ( preferenceName in newData ) ) {
 					const { [ preferenceName ]: _, ...rest } = oldData;
-					return rest;
+					return { ...rest, ...newData };
 				}
 
 				return { ...oldData, ...newData };

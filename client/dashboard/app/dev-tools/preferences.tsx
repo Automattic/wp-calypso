@@ -13,7 +13,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Text } from '../../components/text';
 import type { UserPreferences } from '@automattic/api-core';
@@ -45,7 +45,10 @@ function Preference( { name }: { name: string } ) {
 
 function PreferenceList() {
 	const { data: preferences } = useQuery( rawUserPreferencesQuery() );
-	const entries = Object.entries( preferences ?? {} );
+	const entries = useMemo(
+		() => Object.entries( preferences ?? {} ).sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) ),
+		[ preferences ]
+	);
 
 	return (
 		<div>
