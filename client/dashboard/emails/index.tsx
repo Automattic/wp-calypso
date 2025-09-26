@@ -34,22 +34,29 @@ export default function Emails() {
 	const isLoadingDomains = domainsQueries.some( ( q ) => q.isLoading );
 
 	// Aggregate all domains into a single array
-	const domains: SiteDomain[] = useMemo( () => {
+	const { domainsWithEmails, domainsWithoutEmails } = useMemo( () => {
 		if ( isLoadingDomains ) {
-			return [];
+			return { domainsWithEmails: [], domainsWithoutEmails: [] };
 		}
 
 		// We filter the same way v1 does.
-		return domainsQueries
+		const domains = domainsQueries
 			.flatMap( ( q ) => ( q.data as SiteDomain[] ) ?? [] )
-			.filter( ( domain ) => ! domain.wpcom_domain && domainHasEmail( domain ) );
+			.filter( ( domain ) => ! domain.wpcom_domain );
+
+		const domainsWithEmails = domains.filter( domainHasEmail ) as SiteDomain[];
+		const domainsWithoutEmails = domains.filter(
+			( domain ) => ! domainHasEmail( domain )
+		) as SiteDomain[];
+		return { domainsWithEmails, domainsWithoutEmails };
 	}, [ domainsQueries, isLoadingDomains ] );
 
 	// Filter emails to those belonging to managed sites by either siteId or matching one of the managed domains
-	const emails = ( allEmails ?? [] ).filter( ( e ) => {
-		const siteIdMatch = e.siteId && siteIds.includes( Number( e.siteId ) );
-		const domainMatch =
-			e.domainName && domains.filter( ( domain ) => domain.domain === e.domainName );
+	const emails = ( allEmails ?? [] ).filter( ( email ) => {
+		const siteIdMatch = email.siteId && siteIds.includes( Number( email.siteId ) );
+		const domainMatch = domainsWithEmails.filter(
+			( domain: SiteDomain ) => domain.domain === email?.domainName
+		);
 		return Boolean( siteIdMatch && domainMatch );
 	} );
 
@@ -79,7 +86,7 @@ export default function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					empty={ <NoEmailsEmptyState /> }
+					empty={ domainsWithoutEmails ? <></> : <NoEmailsEmptyState /> }
 				/>
 			</DataViewsCard>
 		</PageLayout>

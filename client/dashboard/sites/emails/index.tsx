@@ -9,7 +9,7 @@ import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import NoEmailsEmptyState from '../../emails/components/NoEmailsEmptyState';
+import NoDomainsAvailableEmptyState from '../../emails/components/NoEmailsEmptyState';
 import './styles.scss';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from '../../emails/dataviews';
 import type { View } from '@wordpress/dataviews';
@@ -22,10 +22,15 @@ function SiteEmails() {
 	const { data: allEmails, isLoading: isEmailsLoading } = useQuery( emailsQuery() );
 
 	// Filter emails to those belonging to this site by either siteId or matching one of the site's domains
-	const siteDomainNames = new Set( ( domains ?? [] ).map( ( d: SiteDomain ) => d.domain ) );
+	const nonWpcomDomains = new Set(
+		( domains ?? [] )
+			.filter( ( domain ) => ! domain.wpcom_domain )
+			.map( ( d: SiteDomain ) => d.domain )
+	);
+
 	const emails = ( allEmails ?? [] ).filter( ( e ) => {
 		const siteIdMatch = e.siteId && Number( e.siteId ) === site?.ID;
-		const domainMatch = e.domainName && siteDomainNames.has( e.domainName );
+		const domainMatch = e.domainName && nonWpcomDomains.has( e.domainName );
 		return siteIdMatch || domainMatch;
 	} );
 
@@ -57,7 +62,7 @@ function SiteEmails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					empty={ <NoEmailsEmptyState /> }
+					empty={ nonWpcomDomains.size > 0 ? <></> : <NoDomainsAvailableEmptyState /> }
 				/>
 			</DataViewsCard>
 		</PageLayout>
