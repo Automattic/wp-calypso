@@ -31,9 +31,18 @@ export async function updateUserSettings(
 		'two_step_sms_phone_number',
 		'primary_site_ID',
 		'mcp_abilities',
+		'user_email_change_pending',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )
 	);
 	return await wpcom.req.post( '/me/settings', payload );
+}
+
+export async function cancelPendingEmailChange(): Promise< Partial< UserSettings > > {
+	return await wpcom.req.post( '/me/settings', { user_email_change_pending: false } );
+}
+
+export async function resendEmailVerification( email: string ): Promise< Partial< UserSettings > > {
+	return await wpcom.req.post( '/me/settings', { user_email: email } );
 }

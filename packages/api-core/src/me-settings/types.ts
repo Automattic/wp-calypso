@@ -53,4 +53,9 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+
+	// Email verification fields
+	user_email_change_pending?: boolean;
+	new_user_email?: string;
+	email_verified?: boolean;
 }
