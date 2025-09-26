@@ -22,6 +22,8 @@ interface SummaryProps {
 	steps: Steps;
 	resetImporter: () => void;
 	fromSite: string;
+	onResetImporter?: () => void;
+	onImportExpired: () => void;
 	showConfetti: boolean;
 	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
 }
@@ -51,6 +53,7 @@ export default function Summary( {
 	resetImporter,
 	fromSite,
 	showConfetti,
+	onResetImporter = () => {},
 	shouldShownConfetti,
 }: SummaryProps ) {
 	const { __ } = useI18n();
@@ -134,11 +137,7 @@ export default function Summary( {
 					) }
 				</div>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton
-						href={ `/import/newsletter/substack/${ selectedSite.slug }` }
-						onClick={ resetImporter }
-						primary
-					>
+					<ImporterActionButton onClick={ onResetImporter } primary>
 						{ __( 'Start over' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
@@ -183,7 +182,7 @@ export default function Summary( {
 										substackPaymentsSettingsLink: (
 											// @ts-expect-error Used in translate components doesn't need children.
 											<ExternalLink
-												href={ `https://${ normalizeFromSite(
+												href={ `${ normalizeFromSite(
 													fromSite
 												) }/publish/settings?search=Pause%20subscription` }
 											/>
@@ -199,7 +198,7 @@ export default function Summary( {
 										substackPaymentsSettingsLink: (
 											// @ts-expect-error Used in translate components doesn't need children.
 											<ExternalLink
-												href={ `https://${ normalizeFromSite(
+												href={ `${ normalizeFromSite(
 													fromSite
 												) }/publish/settings?search=Pause%20subscription` }
 											/>
@@ -229,7 +228,7 @@ export default function Summary( {
 						{ __( 'Customize your newsletter' ) }
 					</ImporterActionButton>
 					{ steps?.content && (
-						<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
+						<ImporterActionButton href={ `${ selectedSite.URL }/wp-admin/edit.php` }>
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }

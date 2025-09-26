@@ -173,6 +173,7 @@ jobs:
     environment:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
+      SKIP_TSC: 'true'
       # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
       # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
       #PR_DEBUG_RELEASE: 'true'

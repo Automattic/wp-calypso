@@ -53,4 +53,8 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+
+	// Username change related fields
+	email_verified?: boolean;
+	user_login_can_be_changed?: boolean;
 }
