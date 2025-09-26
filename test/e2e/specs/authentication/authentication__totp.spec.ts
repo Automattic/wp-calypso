@@ -99,7 +99,12 @@ test.describe(
 			} );
 
 			await test.step( 'And I approve logon to woo.com', async function () {
-				await page.getByRole( 'button', { name: 'Approve' } ).click();
+				await page.addLocatorHandler(
+					page.getByRole( 'button', { name: 'Approve' } ),
+					async ( locator ) => {
+						await locator.click();
+					}
+				);
 			} );
 
 			await test.step( 'Then I am redirected to woo.com', async function () {
