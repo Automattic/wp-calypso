@@ -35,7 +35,6 @@ function Emails() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Emails' ) }
 					actions={
 						<>
 							<Button className="emails__add-email-forwarder" variant="link" __next40pxDefaultSize>
