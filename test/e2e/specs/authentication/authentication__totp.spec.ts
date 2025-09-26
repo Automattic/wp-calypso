@@ -65,7 +65,7 @@ test.describe(
 		}, workerInfo ) => {
 			test.skip(
 				workerInfo.project.name !== 'authentication',
-				'The authentication project is the only one that has the right browser settings for authentication tests'
+				'The authentication project is the only one that has the right browser settings for authentication tests.'
 			);
 
 			const credentials = secrets.testAccounts.totpUser;
