@@ -18,15 +18,22 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	);
 	const { recordTracksEvent } = useAnalytics();
 
+	const handleClose = () => {
+		dismiss( new Date().toISOString() );
+		recordTracksEvent( 'calypso_dashboard_welcome_banner_dismiss_click', {
+			context: tracksContext,
+		} );
+	};
+
 	// Optimistically hide the banner assuming the preference will get saved.
 	if ( isDismissing || isDismissedPersisted ) {
 		return null;
 	}
 
 	return (
-		<Notice onClose={ () => dismiss( new Date().toISOString() ) } variant="info" icon={ starEmpty }>
+		<Notice onClose={ handleClose } variant="info" icon={ starEmpty }>
 			<ComponentViewTracker
-				eventName="calypso_hosting_dashboard_welcome_banner_impression"
+				eventName="calypso_dashboard_welcome_banner_impression"
 				properties={ { context: tracksContext } }
 			/>
 			{ createInterpolateElement(
@@ -38,7 +45,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 						<Link
 							to="/me/preferences"
 							onClick={ () => {
-								recordTracksEvent( 'calypso_hosting_dashboard_welcome_banner_preferences_click', {
+								recordTracksEvent( 'calypso_dashboard_welcome_banner_preferences_click', {
 									context: tracksContext,
 								} );
 							} }
@@ -48,7 +55,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 						<ExternalLink
 							href="https://automattic.survey.fm/new-hosting-dashboard-opt-in-survey"
 							onClick={ () =>
-								recordTracksEvent( 'calypso_hosting_dashboard_welcome_banner_survey_click', {
+								recordTracksEvent( 'calypso_dashboard_welcome_banner_survey_click', {
 									context: tracksContext,
 								} )
 							}

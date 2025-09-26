@@ -30,7 +30,7 @@ export interface Threat {
 	severity: number;
 	fixer?: ThreatFixer | null;
 	fixed_on?: string;
-	status: 'current' | 'fixed' | 'ignored';
+	status: 'current' | 'fixed' | 'ignored' | 'in_progress';
 	fixable?: ThreatFixer;
 	extension?: ThreatExtension;
 	source?: string;

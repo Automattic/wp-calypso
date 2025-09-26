@@ -28,7 +28,8 @@ import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
-	const sites = useQuery( sitesQuery() ).data;
+	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
+	const { data: sites } = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } );
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -49,6 +50,8 @@ function Site() {
 							getItemName={ getSiteDisplayName }
 							getItemUrl={ ( site ) => `/sites/${ site.slug }` }
 							renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
+							open={ isSwitcherOpen }
+							onToggle={ setIsSwitcherOpen }
 						>
 							{ ( { onClose } ) => (
 								<MenuGroup>

@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
+	Modal,
 	TabPanel,
 	Card,
 	CardHeader,
@@ -12,6 +13,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
+import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
@@ -20,6 +22,7 @@ import { useTimeSince } from '../../components/time-since';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { ActiveThreatsDataViews } from '../scan-active';
 import { ScanHistoryDataViews } from '../scan-history';
+import { BulkFixThreatsModal } from './components/bulk-fix-threats-modal';
 import illustrationUrl from './scan-callout-illustration.svg';
 import { ScanNotices } from './scan-notices';
 import { ScanNowButton } from './scan-now-button';
@@ -38,10 +41,12 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const router = useRouter();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ showBulkFixModal, setShowBulkFixModal ] = useState( false );
 
 	const scanState = useScanState( site.ID );
 	const { scan, status } = scanState;
 
+	const fixableThreatsCount = scan?.threats?.filter( ( threat ) => threat.fixable ).length || 0;
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
 	const threatCount = scan?.threats?.length || 0;
@@ -99,17 +104,17 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						actions={
 							<ButtonStack>
 								<ScanNowButton site={ site } scanState={ scanState } />
-								{ /* @TODO: Hide this button if there are no fixable threats */ }
-								<Button variant="primary">
-									{ sprintf(
-										/* translators: %d: number of threats */
-										__( 'Auto-fix %(threatsCount)d threats' ),
-										{
-											// @TODO: replace with the actual number of active fixable threats
-											threatsCount: 4,
-										}
-									) }
-								</Button>
+								{ fixableThreatsCount > 0 && (
+									<Button variant="primary" onClick={ () => setShowBulkFixModal( true ) }>
+										{ sprintf(
+											/* translators: %d: number of threats */
+											__( 'Auto-fix %(threatsCount)d threats' ),
+											{
+												threatsCount: fixableThreatsCount,
+											}
+										) }
+									</Button>
+								) }
 							</ButtonStack>
 						}
 					/>
@@ -137,6 +142,19 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					</CardBody>
 				</Card>
 			</PageLayout>
+			{ showBulkFixModal && (
+				<Modal
+					title={ __( 'Auto-fix threats' ) }
+					onRequestClose={ () => setShowBulkFixModal( false ) }
+					size="medium"
+				>
+					<BulkFixThreatsModal
+						items={ scan?.threats?.filter( ( threat ) => threat.fixable ) || [] }
+						closeModal={ () => setShowBulkFixModal( false ) }
+						siteId={ site.ID }
+					/>
+				</Modal>
+			) }
 		</HostingFeatureGatedWithCallout>
 	);
 }

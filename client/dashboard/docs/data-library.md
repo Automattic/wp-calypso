@@ -16,7 +16,10 @@ The data library is organized around these key principles:
 
 ## Query definitions
 
-We are using queries defined in the `@automattic/api-queries` package.
+We are using queries defined in the `@automattic/api-queries` package. For more details, refer to the following documentation:
+
+- [@automattic/api-core](../../../packages/api-core/README.md) - Core data fetching functions and type definitions
+- [@automattic/api-queries](../../../packages/api-queries/README.md) - TanStack Query layer built on top of api-core
 
 ## Query usage
 
