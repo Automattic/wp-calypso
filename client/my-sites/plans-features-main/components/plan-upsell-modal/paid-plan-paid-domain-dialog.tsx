@@ -20,6 +20,7 @@ export function PaidPlanPaidDomainDialog( {
 	generatedWPComSubdomain,
 	onFreePlanSelected,
 	onPlanSelected,
+	isDomainTransfer,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -35,16 +36,23 @@ export function PaidPlanPaidDomainDialog( {
 		onFreePlanSelected();
 	}
 
+	const getSubHeadingText = () => {
+		if ( isDomainTransfer ) {
+			return translate(
+				"To transfer your domain, you'll need a paid plan. Choose annual billing and get the domain free for a year."
+			);
+		}
+		return translate(
+			"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+		);
+	};
+
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
 				{ translate( 'Paid plan required' ) }
 			</Heading>
-			<SubHeading id="plan-upsell-modal-description">
-				{ translate(
-					'To transfer your domain, you’ll need a paid plan. Choose annual billing and get the domain free for a year.'
-				) }
-			</SubHeading>
+			<SubHeading id="plan-upsell-modal-description">{ getSubHeadingText() }</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
 					<PaidDomainSuggestedPlanSection
