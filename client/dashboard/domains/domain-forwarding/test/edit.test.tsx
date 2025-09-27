@@ -161,7 +161,7 @@ test( 'shows advanced settings panel expanded when initial data has non-default 
 	// Advanced settings panel should be expanded due to non-default values
 	await waitFor( () => {
 		expect( screen.getByText( 'Advanced settings' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'HTTP Redirect Type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Path forwarding' ) ).toBeInTheDocument();
 	} );
 } );
@@ -234,7 +234,7 @@ test( 'handles advanced settings correctly when updating', async () => {
 	await user.click( advancedPanel );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'HTTP Redirect Type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 	} );
 
 	// Change redirect type to permanent

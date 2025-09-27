@@ -79,7 +79,7 @@ function DomainGlueRecords() {
 		() => [
 			{
 				id: 'nameServer',
-				label: __( 'Name Server' ),
+				label: __( 'Name server' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -97,7 +97,7 @@ function DomainGlueRecords() {
 			},
 			{
 				id: 'ipAddress',
-				label: __( 'IP Address' ),
+				label: __( 'IP address' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
