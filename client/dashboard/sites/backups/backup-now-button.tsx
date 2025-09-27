@@ -44,43 +44,18 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		triggerBackup();
 	};
 
-	// Generate button content based on backup status
-	const getButtonContent = () => {
-		// Show enqueued state only for this button when it triggered the backup
-		if ( isEnqueued ) {
-			return {
-				label: __( 'Backup enqueued' ),
-				tooltip: __( 'A backup has been queued and will start shortly.' ),
-			};
-		}
+	const buttonLabel = __( 'Back up now' );
 
-		if ( status === 'running' ) {
-			return {
-				label: __( 'Backup in progress' ),
-				tooltip: __( 'A backup is currently in progress.' ),
-			};
-		}
-
-		return {
-			label: __( 'Back up now' ),
-			tooltip: __( 'Create a backup of your site now.' ),
-		};
-	};
-
-	const isBusy = isRunning || isPending || isEnqueued;
+	const isDisabled = isRunning || isPending || isEnqueued;
 
 	return (
 		<Button
 			variant="secondary"
 			onClick={ handleClick }
-			disabled={ isBusy }
-			isBusy={ isBusy }
+			disabled={ isDisabled }
 			accessibleWhenDisabled
-			description={ getButtonContent().tooltip }
-			label={ getButtonContent().label }
-			showTooltip
 		>
-			{ getButtonContent().label }
+			{ buttonLabel }
 		</Button>
 	);
 }
