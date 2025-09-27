@@ -6,7 +6,7 @@ import crypto from 'crypto';
  * @param {boolean} isDevelopment - Whether we're in development mode
  * @returns {string} The complete CSP policy string
  */
-function generateCSPHeader( nonce, isDevelopment ) {
+export function generateCSPHeader( nonce, isDevelopment ) {
 	const directives = {
 		'default-src': {
 			wrapped: [ 'self' ],

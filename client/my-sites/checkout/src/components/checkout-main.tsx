@@ -29,6 +29,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
+import { useCheckoutCSP } from '../hooks/use-checkout-csp';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
@@ -134,6 +135,9 @@ export default function CheckoutMain( {
 	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
+
+	// Log that checkout has CSP (navigation interception handled globally)
+	useCheckoutCSP();
 
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
