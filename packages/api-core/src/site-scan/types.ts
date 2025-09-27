@@ -84,7 +84,7 @@ export interface ThreatActionOptions {
 
 export interface FixThreatStatus {
 	id?: number;
-	status: 'in_progress' | 'fixed' | 'failed';
+	status: 'not_started' | 'in_progress' | 'fixed' | 'not_fixed';
 	last_updated?: string;
 	error?: string;
 }
