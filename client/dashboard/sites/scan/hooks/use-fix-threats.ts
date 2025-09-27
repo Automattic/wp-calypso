@@ -45,7 +45,9 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 			return { isComplete: false, allFixed: false };
 		}
 
-		const pending = threats.filter( ( t ) => t.status === 'in_progress' );
+		const pending = threats.filter(
+			( t ) => t.status === 'in_progress' || t.status === 'not_started'
+		);
 		const fixed = threats.filter( ( t ) => t.status === 'fixed' );
 
 		return {
