@@ -37,6 +37,7 @@ export const PerformanceReport = ( {
 			<PerformanceReportLoading
 				isSavedReport={ ! isRetesting && !! hash }
 				pageTitle={ pageTitle }
+				onRetestClick={ onRetestClick }
 			/>
 		);
 	}

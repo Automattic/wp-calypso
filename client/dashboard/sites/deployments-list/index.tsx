@@ -4,7 +4,7 @@ import {
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
@@ -18,7 +18,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
-import { TriggerDeploymentModal } from './trigger-deployment-modal';
+import { TriggerDeploymentModalForm } from './trigger-deployment-modal-form';
 import type {
 	DeploymentRun,
 	DeploymentRunWithDeploymentInfo,
@@ -30,6 +30,7 @@ function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
+	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
 		codeDeploymentsQuery( site.ID )
@@ -193,10 +194,16 @@ function DeploymentsList() {
 			</DataViewsCard>
 
 			{ isModalTriggerDeploymentOpen && (
-				<TriggerDeploymentModal
-					onClose={ () => setIsModalTriggerDeploymentOpen( false ) }
-					deployments={ deployments }
-				/>
+				<Modal
+					title={ __( 'Trigger manual deploy' ) }
+					onRequestClose={ closeModalTriggerDeployment }
+					size="medium"
+				>
+					<TriggerDeploymentModalForm
+						deployments={ deployments }
+						onClose={ closeModalTriggerDeployment }
+					/>
+				</Modal>
 			) }
 		</PageLayout>
 	);

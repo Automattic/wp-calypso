@@ -1,5 +1,5 @@
 import { DataHelper, TOTPClient } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Authentication: Time-based One Time Passcode (TOTP)',
@@ -57,29 +57,39 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a Woo.com user, I can use a TOTP to secure my account on Woo.com ', async ( {
+		test( 'As a WooCommerce.com user, I can use a TOTP to secure my account on WooCommerce.com ', async ( {
 			page,
 			pageLogin,
 			secrets,
+			environment,
 		}, workerInfo ) => {
 			test.skip(
 				workerInfo.project.name !== 'authentication',
-				'The authentication project is the only one that has the right browser settings for authentication tests'
+				'The authentication project is the only one that has the right browser settings for authentication tests.'
 			);
 
 			const credentials = secrets.testAccounts.totpUser;
 
-			await test.step( 'When I visit the WordPress.com login page', async function () {
-				await pageLogin.visit( { path: secrets.wooLoginPath } );
-				await page.waitForURL( /log-in/ );
-			} );
-
 			// Wait 30s to avoid OTP code reuse error.
-			await test.step( 'And I wait 30 seconds to avoid OTP code reuse error', async function () {
+			await test.step( 'Given I wait 30 seconds to avoid OTP code reuse error', async function () {
 				await page.waitForTimeout( 30000 );
 			} );
 
-			await test.step( 'And I enter my username', async function () {
+			await test.step( 'When I visit the WooCommerce home page', async function () {
+				await page.goto( environment.WOO_BASE_URL );
+			} );
+
+			await test.step( 'And I choose to log in', async function () {
+				await page.getByRole( 'link', { name: 'Log in' } ).click();
+			} );
+
+			await test.step( 'Then I see the WordPress.com log in page', async function () {
+				await expect(
+					page.getByRole( 'heading', { name: 'Log in to Woo with WordPress.com' } )
+				).toBeVisible();
+			} );
+
+			await test.step( 'When I enter my username', async function () {
 				await pageLogin.fillUsername( credentials.username as string );
 				await pageLogin.clickSubmit();
 			} );
@@ -98,17 +108,10 @@ test.describe(
 				await pageLogin.submitVerificationCode( code );
 			} );
 
-			await test.step( 'And I approve logon to woo.com', async function () {
-				await page.addLocatorHandler(
-					page.getByRole( 'button', { name: 'Approve' } ),
-					async ( locator ) => {
-						await locator.click();
-					}
-				);
-			} );
-
-			await test.step( 'Then I am redirected to woo.com', async function () {
-				await page.waitForURL( /.*woocommerce\.com*/ );
+			await test.step( 'Then I am see the my dashboard page on WooCommerce.com', async function () {
+				await expect
+					.poll( async () => page.url() )
+					.toBe( `${ environment.WOO_BASE_URL }/my-dashboard/` );
 			} );
 		} );
 	}

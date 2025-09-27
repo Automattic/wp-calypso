@@ -101,9 +101,10 @@ export class ImportingPane extends PureComponent {
 		} ).isRequired,
 		importerEngine: PropTypes.string,
 		sourceType: PropTypes.string.isRequired,
-		nextStepUrl: PropTypes.string.isRequired,
+		nextStepUrl: PropTypes.string,
 		invalidateCardData: PropTypes.func,
 		infoNotice: PropTypes.func,
+		onContinue: PropTypes.func,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -186,6 +187,7 @@ export class ImportingPane extends PureComponent {
 		const isImporting = this.isImporting();
 		const isError = this.isError();
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
+		const onContinue = this.props.onContinue ?? ( () => {} );
 
 		return (
 			<ImporterActionButtonContainer noSpacing>
@@ -194,14 +196,20 @@ export class ImportingPane extends PureComponent {
 						<ImporterActionButton primary busy disabled>
 							{ this.props.translate( 'Importing' ) }
 						</ImporterActionButton>
-						<ImporterActionButton href={ nextStepUrl }>
+						<ImporterActionButton
+							{ ...( nextStepUrl && { href: nextStepUrl } ) }
+							onClick={ onContinue }
+						>
 							{ this.props.translate( 'Continue' ) }
 						</ImporterActionButton>
 					</>
 				) }
 				{ isFinished && (
 					<ImporterActionButtonContainer noSpacing>
-						<ImporterActionButton href={ nextStepUrl }>
+						<ImporterActionButton
+							{ ...( nextStepUrl && { href: nextStepUrl } ) }
+							onClick={ onContinue }
+						>
 							{ this.props.translate( 'Continue' ) }
 						</ImporterActionButton>
 					</ImporterActionButtonContainer>
@@ -275,7 +283,8 @@ export class ImportingPane extends PureComponent {
 								duration: 5000,
 							} );
 							invalidateCardData();
-							navigate( this.props.nextStepUrl );
+							this.props.nextStepUrl && navigate( this.props.nextStepUrl );
+							this.props.onContinue?.();
 						} }
 						siteId={ siteId }
 						sourceType={ sourceType }

@@ -12,7 +12,7 @@ e.g. it’s instead of it's
 
 Rule of thumb: use sentence case for almost everything.
 
-Button labels, modal titles, and form labels; they all use sentence case.
+Button labels, modal titles, form labels, and DataViews field labels; they all use sentence case.
 
 Treat "Hosting Dashboard" like a proper noun. Capitalize it when referring to the product.
 

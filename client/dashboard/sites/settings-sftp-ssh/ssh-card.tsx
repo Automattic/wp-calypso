@@ -215,7 +215,7 @@ export default function SshCard( {
 	const fields: Field< SshCardFormData >[] = [
 		{
 			id: 'connection_command',
-			label: __( 'connection command' ),
+			label: __( 'Connection command' ),
 			Edit: ( { field, data } ) => {
 				return (
 					<ClipboardInputControl
