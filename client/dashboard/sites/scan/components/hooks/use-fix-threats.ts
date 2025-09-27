@@ -7,20 +7,21 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
+type FixState = 'idle' | 'fixing' | 'completed';
+
 export function useFixThreats( siteId: number, threatIds: number[] ) {
 	const queryClient = useQueryClient();
-	const [ isFixing, setIsFixing ] = useState( false );
-	const [ hasStartedFixing, setHasStartedFixing ] = useState( false );
+	const [ fixState, setFixState ] = useState< FixState >( 'idle' );
 
 	const fixMutation = useMutation( {
 		...fixThreatsMutation( siteId ),
-		onError: () => setIsFixing( false ),
+		onError: () => setFixState( 'idle' ),
 	} );
 
 	const { data: threats = [] } = useQuery( {
 		...fixThreatsStatusQuery( siteId, threatIds ),
-		refetchInterval: isFixing ? 2000 : false,
-		enabled: isFixing && threatIds.length > 0,
+		refetchInterval: fixState === 'fixing' ? 2000 : false,
+		enabled: fixState === 'fixing' && threatIds.length > 0,
 		select: ( data ) => {
 			if ( ! data?.threats ) {
 				return [];
@@ -34,12 +35,12 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 
 	const status = useMemo( () => {
 		// If we haven't started fixing yet, not complete
-		if ( ! hasStartedFixing ) {
+		if ( fixState === 'idle' ) {
 			return { isComplete: false, allFixed: false };
 		}
 
 		// If fixing but no threat data yet, not complete
-		if ( threats.length === 0 ) {
+		if ( fixState === 'fixing' && threats.length === 0 ) {
 			return { isComplete: false, allFixed: false };
 		}
 
@@ -50,25 +51,24 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 			isComplete: pending.length === 0,
 			allFixed: fixed.length === threats.length,
 		};
-	}, [ threats, hasStartedFixing ] );
+	}, [ threats, fixState ] );
 
 	const startFix = useCallback( () => {
-		setIsFixing( true );
-		setHasStartedFixing( true );
+		setFixState( 'fixing' );
 		return fixMutation.mutate( threatIds );
 	}, [ threatIds, fixMutation ] );
 
 	useEffect( () => {
-		if ( status.isComplete && isFixing ) {
-			setIsFixing( false );
+		if ( status.isComplete && fixState === 'fixing' ) {
+			setFixState( 'completed' );
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
 			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
 		}
-	}, [ status, isFixing, queryClient, siteId ] );
+	}, [ status, fixState, queryClient, siteId ] );
 
 	return {
 		startFix,
-		isFixing,
+		isFixing: fixState === 'fixing',
 		status,
 		error: fixMutation.error,
 	};
