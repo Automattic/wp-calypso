@@ -31,6 +31,7 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 				id: Number( id ),
 			} ) );
 		},
+		gcTime: 0, // Always fetch fresh status data, never use cached results
 	} );
 
 	const status = useMemo( () => {
