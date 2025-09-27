@@ -1,17 +1,11 @@
-import {
-	fixThreatsMutation,
-	fixThreatsStatusQuery,
-	siteScanQuery,
-	siteScanHistoryQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
+import { useFixThreats } from '../hooks/use-fix-threats';
 import { ThreatsDetailCard } from './threats-detail-card';
 import type { Threat } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
@@ -27,63 +21,38 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	const bulkFixableIds = new Set( bulkFixableThreats.map( ( item ) => item.id ) );
 	const remainingThreats = items.filter( ( item ) => ! bulkFixableIds.has( item.id ) );
 
-	const queryClient = useQueryClient();
-	const bulkFixThreats = useMutation( fixThreatsMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const [ isBulkFixInProgress, setIsBulkFixInProgress ] = useState( false );
 
-	const { data: bulkFixStatusData } = useQuery( {
-		...fixThreatsStatusQuery( siteId, Array.from( bulkFixableIds ) ),
-		refetchInterval: isBulkFixInProgress ? 2000 : false,
-		enabled: isBulkFixInProgress,
-	} );
-
-	const handleBulkFixed = useCallback(
-		( message: string ) => {
-			queryClient.invalidateQueries( siteScanQuery( siteId ) );
-			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
-			closeModal?.();
-			createSuccessNotice( message, { type: 'snackbar' } );
-		},
-		[ closeModal, createSuccessNotice, queryClient, siteId ]
+	const { startFix, isFixing, status, error } = useFixThreats(
+		siteId,
+		Array.from( bulkFixableIds )
 	);
 
 	useEffect( () => {
-		if ( ! bulkFixStatusData?.threats ) {
-			return;
-		}
+		if ( status.isComplete && ! isFixing ) {
+			closeModal?.();
 
-		if ( isBulkFixInProgress ) {
-			const pendingThreats = bulkFixStatusData.threats.filter(
-				( threat ) => threat?.status === 'in_progress'
-			);
-			if ( pendingThreats.length > 0 ) {
-				return;
-			}
-
-			const fixedThreats = bulkFixStatusData.threats.filter(
-				( threat ) => threat?.status === 'fixed'
-			);
-			const allFixed = fixedThreats.length === bulkFixStatusData.threats.length;
-			const message = allFixed
-				? __( 'All threats were successfully fixed.' )
-				: __( 'Not all threats could be fixed. Please contact our support.' );
-
-			setIsBulkFixInProgress( false );
-			handleBulkFixed( message );
-		}
-	}, [ bulkFixStatusData, isBulkFixInProgress, handleBulkFixed ] );
-
-	const handleFixThreats = () => {
-		setIsBulkFixInProgress( true );
-		bulkFixThreats.mutate( Array.from( bulkFixableIds ), {
-			onError: () => {
-				closeModal?.();
-				createErrorNotice( __( 'Error fixing threats. Please contact support.' ), {
+			if ( status.allFixed ) {
+				createSuccessNotice( __( 'All threats were successfully fixed.' ), { type: 'snackbar' } );
+			} else {
+				createErrorNotice( __( 'Not all threats could be fixed. Please contact our support.' ), {
 					type: 'snackbar',
 				} );
-			},
-		} );
+			}
+		}
+	}, [ status, isFixing, closeModal, createSuccessNotice, createErrorNotice ] );
+
+	useEffect( () => {
+		if ( error ) {
+			closeModal?.();
+			createErrorNotice( __( 'Error fixing threats. Please contact support.' ), {
+				type: 'snackbar',
+			} );
+		}
+	}, [ error, closeModal, createErrorNotice ] );
+
+	const handleFixThreats = () => {
+		startFix();
 	};
 
 	const bulkFixableSection = (
@@ -119,10 +88,10 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 				<Button
 					variant="primary"
 					onClick={ handleFixThreats }
-					isBusy={ isBulkFixInProgress }
-					disabled={ ! canBulkFix || isBulkFixInProgress }
+					isBusy={ isFixing }
+					disabled={ ! canBulkFix || isFixing }
 				>
-					{ isBulkFixInProgress ? __( 'Fixing threats…' ) : __( 'Fix all threats' ) }
+					{ __( 'Fix all threats' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>
