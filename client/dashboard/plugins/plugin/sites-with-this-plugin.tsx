@@ -106,6 +106,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								__( 'Failed to deactivate %s' ),
 								plugin?.name ?? ''
 							) }
+							actionId="activate"
 						/>
 					);
 				},
@@ -158,6 +159,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								__( 'Failed to disable auto‑updates for %s' ),
 								plugin?.name ?? ''
 							) }
+							actionId="autoupdate"
 						/>
 					);
 				},
