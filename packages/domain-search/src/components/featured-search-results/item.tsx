@@ -5,6 +5,7 @@ import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestio
 import { usePolicyBadges } from '../../hooks/use-policy-badges';
 import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
+import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
 import { DomainSuggestionPrice } from '../suggestion-price';
@@ -20,17 +21,18 @@ export const FeaturedSearchResultsItem = ( {
 	domainName,
 	isSingleFeaturedSuggestion,
 }: FeaturedSearchResultsItemProps ) => {
+	const { query } = useDomainSearch();
 	const [ domain, ...tlds ] = domainName.split( '.' );
 
 	const suggestion = useSuggestion( domainName );
 
 	const matchReasons = useMemo( () => {
-		if ( ! suggestion.match_reasons ) {
+		if ( ! suggestion.match_reasons || query !== domainName ) {
 			return;
 		}
 
 		return parseMatchReasons( domainName, suggestion.match_reasons );
-	}, [ domainName, suggestion.match_reasons ] );
+	}, [ domainName, suggestion.match_reasons, query ] );
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 	const policyBadges = usePolicyBadges( domainName );
