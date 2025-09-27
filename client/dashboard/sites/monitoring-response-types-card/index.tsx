@@ -7,23 +7,15 @@ import {
 } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { convertTimeRangeToUnix, chartColors } from '../monitoring/utils';
 import MonitoringCard from '../monitoring-card';
-import type { LegendData, TimeRange } from '../monitoring/types';
+import type { LegendData } from '../monitoring/types';
 import type { Site, SiteHostingMetrics } from '@automattic/api-core';
-
-function convertTimeRangeToUnix( timeRange: number ): TimeRange {
-	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
-	const end = Math.floor( new Date().getTime() / 1000 );
-
-	return { start, end };
-}
 
 type ResponseTypesData = {
 	data: DataPointPercentage[];
 	isLoading: boolean;
 };
-
-const chartColors = [ '#3858E9', '#5BA300', '#F57600', '#B51963' ];
 
 function useResponseTypesData( siteId: number, timeRange: number ): ResponseTypesData {
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
