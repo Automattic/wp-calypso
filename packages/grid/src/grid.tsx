@@ -165,6 +165,7 @@ export function Grid( {
 							disabled={ ! editMode }
 							onResize={ ( delta ) => handleResize( id, delta ) }
 							onResizeEnd={ persistTemporaryLayout }
+							actionableContent={ childrenMap.get( id )?.props.actionableContent }
 						>
 							{ childrenMap.get( id ) }
 						</GridItem>

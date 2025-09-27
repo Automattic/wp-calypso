@@ -9,6 +9,7 @@ export function GridItem( {
 	maxColumns,
 	disabled = false,
 	children,
+	actionableContent = null,
 	onResize,
 	onResizeEnd,
 }: {
@@ -16,6 +17,7 @@ export function GridItem( {
 	maxColumns: number;
 	disabled?: boolean;
 	children: React.ReactNode;
+	actionableContent?: React.ReactNode;
 	onResize: ( delta: { width: number; height: number } ) => void;
 	onResizeEnd: () => void;
 } ) {
@@ -78,17 +80,21 @@ export function GridItem( {
 	) : null;
 
 	return (
-		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			<div style={ contentStyle }>
-				{ children }
-				<ResizeHandle
-					disabled={ disabled }
-					itemId={ item.key }
-					onResize={ handleResize }
-					onResizeEnd={ handleResizeEnd }
-				/>
+		<div ref={ setNodeRef } style={ style } { ...attributes }>
+			{ actionableContent }
+
+			<div { ...listeners } style={ { height: '100%' } }>
+				<div style={ contentStyle }>
+					{ children }
+					<ResizeHandle
+						disabled={ disabled }
+						itemId={ item.key }
+						onResize={ handleResize }
+						onResizeEnd={ handleResizeEnd }
+					/>
+				</div>
+				{ previewOverlay }
 			</div>
-			{ previewOverlay }
 		</div>
 	);
 }
