@@ -81,3 +81,15 @@ export interface ThreatActionOptions {
 	unignore?: boolean;
 	fix?: boolean;
 }
+
+export interface FixThreatStatus {
+	id?: number;
+	status: 'in_progress' | 'fixed' | 'failed';
+	last_updated?: string;
+	error?: string;
+}
+
+export interface FixThreatsStatusResponse {
+	ok: boolean;
+	threats: Record< string, FixThreatStatus >;
+}

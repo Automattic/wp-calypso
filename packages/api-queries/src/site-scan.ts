@@ -15,16 +15,7 @@ export const fixThreatsStatusQuery = ( siteId: number, threatIds: number[] ) =>
 	queryOptions( {
 		meta: { persist: false },
 		queryKey: [ 'site', siteId, 'fix-threats', 'status', threatIds ],
-		queryFn: async () => {
-			const result = await fetchFixThreatsStatus( siteId, threatIds );
-			return {
-				...result,
-				threats: Object.entries( result.threats ).map( ( [ id, threat ] ) => ( {
-					...threat,
-					id,
-				} ) ),
-			};
-		},
+		queryFn: () => fetchFixThreatsStatus( siteId, threatIds ),
 	} );
 
 export const siteScanQuery = ( siteId: number ) =>
