@@ -13,9 +13,9 @@ import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataview
 import { domainHasEmail } from './utils/email-utils';
 import type { View } from '@wordpress/dataviews';
 
-import '../sites/emails/styles.scss';
+import './style.scss';
 
-export default function Emails() {
+function Emails() {
 	const navigate = useNavigate();
 
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
@@ -92,3 +92,5 @@ export default function Emails() {
 		</PageLayout>
 	);
 }
+
+export default Emails;
