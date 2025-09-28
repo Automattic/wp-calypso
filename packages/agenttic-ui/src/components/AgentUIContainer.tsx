@@ -142,8 +142,18 @@ export function AgentUIContainer( {
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
 		( value: string ) => {
-			input.setValue( value );
+			const valueWithSpace = value.endsWith( ' ' )
+				? value
+				: `${ value } `;
+			input.setValue( valueWithSpace );
 			clearSuggestions?.();
+			if ( input.textareaRef.current ) {
+				input.textareaRef.current.focus();
+				input.textareaRef.current.setSelectionRange(
+					valueWithSpace.length,
+					valueWithSpace.length
+				);
+			}
 		},
 		[ input.setValue, clearSuggestions ]
 	);
@@ -547,6 +557,9 @@ export function AgentUIContainer( {
 									onStop={ onStop }
 									suggestions={ suggestions }
 									clearSuggestions={ clearSuggestions }
+									handleSuggestionSubmit={
+										handleSuggestionSubmit
+									}
 								/>
 							</div>
 						) }

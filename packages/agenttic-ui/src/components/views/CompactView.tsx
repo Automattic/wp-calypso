@@ -25,6 +25,7 @@ interface CompactViewProps {
 	onStop?: () => void;
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
+	handleSuggestionSubmit?: ( value: string ) => void;
 }
 
 export function CompactView( {
@@ -44,19 +45,12 @@ export function CompactView( {
 	onStop,
 	suggestions,
 	clearSuggestions,
+	handleSuggestionSubmit,
 }: CompactViewProps ) {
 	const [ suggestionsVisible, setSuggestionsVisible ] = useState( false );
 
 	// Use our custom timeout hook for proper cleanup
 	const { setNamedTimeout, clearAllTimeouts } = useMultiTimeout();
-
-	const handleSuggestionSubmit = useCallback(
-		( suggestionValue: string ) => {
-			onChange( suggestionValue );
-			clearSuggestions?.();
-		},
-		[ onChange, clearSuggestions ]
-	);
 
 	useEffect( () => {
 		// Clear any existing timeouts when dependencies change
