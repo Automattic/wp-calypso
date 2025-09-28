@@ -26,6 +26,8 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 - [UI Components](./docs/ui-components.md) - Documentation for the component architecture and design principles
 - [Testing Strategy](./docs/testing.md) - Documentation for the testing approach and best practices
 - [Entry Points](./docs/entry-points.md) - Documentation for the entry points and how to define new ones (a4a, WordPress.com, etc.)
+- [Internationalization](./docs/i18n.md) - Documentation for internationalization and translation practices
+- [Typography and Copy](./docs/typography-and-copy.md) - Documentation for typography guidelines and copy standards
 
 ## Bugs
 
