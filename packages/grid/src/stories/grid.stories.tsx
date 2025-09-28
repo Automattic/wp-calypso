@@ -305,8 +305,7 @@ export const WithOverlayActions: StoryObj< typeof Grid > = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'This example demonstrates the Grid component in edit mode with drag, drop, and resize functionality. Use the edit mode to reorder and resize the cards. Grab and drag the handle in the bottom-right corner of each card to resize it. The layout and edit mode are managed with local state.',
+				story: 'This example demonstrates how to add overlay actions to the Grid component.',
 			},
 		},
 		layout: '',
