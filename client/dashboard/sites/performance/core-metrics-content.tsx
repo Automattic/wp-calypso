@@ -2,7 +2,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
@@ -18,7 +17,6 @@ import {
 	getMetricValuations,
 } from './utils';
 import CoreMetricsChart from './core-metrics-chart';
-import { StatusIndicator } from './core-web-vitals/status-indicator';
 import { StatusBadge } from './core-web-vitals/status-section';
 import { RecommendationsLink } from './core-web-vitals/recommendations-link';
 import { Metrics } from './core-metrics';
@@ -57,26 +55,6 @@ export default function CoreMetricsContent( {
 	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 
-	const { good, needsImprovement, bad } = metricsThresholds[ activeTab ];
-
-	const formatUnit = ( value: number | string ) => {
-		const num = parseFloat( value as string );
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return +( num / 1000 ).toFixed( 2 );
-		}
-		return num;
-	};
-
-	const displayUnit = () => {
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return __( 's' );
-		}
-		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
-			return __( 'ms' );
-		}
-		return '';
-	};
-
 	// Add leading zero to date values. Safari expects the date string to follow the ISO 8601 format (i.e., YYYY-MM-DD)
 	const addLeadingZero = ( value: number ) => {
 		if ( value < 10 ) {
@@ -105,7 +83,7 @@ export default function CoreMetricsContent( {
 
 		return {
 			date: formattedDate,
-			value: formatUnit( item ),
+			value: item,
 		};
 	} );
 
@@ -119,136 +97,61 @@ export default function CoreMetricsContent( {
 	return (
 		<Card>
 			<CardBody>
-				<HStack spacing={ 2 } justify="space-between" alignment="flex-start">
-					<VStack spacing={ 4 } alignment="flex-start">
-						<HStack spacing={ 2 } alignment="left">
-							<Text size="title" weight={ 500 }>{ displayName }</Text>
-							<StatusBadge value={ status } />
-						</HStack>
+				<VStack spacing={ 4 }>
+					<HStack spacing={ 2 } justify="space-between" alignment="flex-start">
+						<VStack spacing={ 4 } alignment="flex-start">
+							<HStack spacing={ 2 } alignment="left">
+								<Text size="title" weight={ 500 }>
+									{ displayName }
+								</Text>
+								<StatusBadge value={ status } />
+							</HStack>
 
-						{ isOverall ? (
-							<OverallScore
-								size={ 32 }
-								metric={ activeTab as Metrics }
-								status={ status }
-								value={ value }
-							/>
-						) : (
-							<MetricScore
-								size={ 32 }
-								metric={ activeTab as Metrics }
-								status={ status }
-								value={ value }
+							{ isOverall ? (
+								<OverallScore
+									size={ 32 }
+									metric={ activeTab as Metrics }
+									status={ status }
+									value={ value }
+								/>
+							) : (
+								<MetricScore
+									size={ 32 }
+									metric={ activeTab as Metrics }
+									status={ status }
+									value={ value }
+								/>
+							) }
+							<div style={ { maxWidth: '500px' } }>
+								<Text variant="muted">{ getMetricValuations()[ activeTab ].explanation }</Text>
+								<a
+									href={ localizeUrl( getMetricValuations()[ activeTab ].docsUrl ) }
+									target="_blank"
+									rel="noreferrer"
+								>
+									{ __( 'Learn more ↗' ) }
+								</a>
+							</div>
+						</VStack>
+						{ numberOfAuditsForMetric > 0 && (
+							<RecommendationsLink
+								activeTab={ activeTab }
+								recommendationsQuantity={ numberOfAuditsForMetric }
+								recommendationsRef={ recommendationsRef }
+								onRecommendationsFilterChange={ onRecommendationsFilterChange }
 							/>
 						) }
-						<div style={ { maxWidth: '500px' } }>
-							<Text variant="muted">{ getMetricValuations()[ activeTab ].explanation }</Text>
-							<a
-								href={ localizeUrl( getMetricValuations()[ activeTab ].docsUrl ) }
-								target="_blank"
-								rel="noreferrer"
-							>
-								{ __( 'Learn more ↗' ) }
-							</a>
-						</div>
-					</VStack>
-					{ numberOfAuditsForMetric > 0 && (
-						<RecommendationsLink
-							activeTab={ activeTab }
-							recommendationsQuantity={ numberOfAuditsForMetric }
-							recommendationsRef={ recommendationsRef }
-							onRecommendationsFilterChange={ onRecommendationsFilterChange }
-						/>
-					) }
-				</HStack>
-				<Spacer marginTop={ 4 }>
-					<HStack spacing={ 2 } justify="flex-start">
-						<HStack justify="flex-start">
-							<StatusIndicator speed="good" />
-							<Text size="small">{ __( 'Excellent' ) }</Text>
-							<Text>
-								{ isOverall
-									? sprintf(
-											/* translators: %(to)s is the good threshold */
-											__( '(90–%(to)s)' ),
-											{
-												to: formatUnit( good ),
-											}
-									  )
-									: sprintf(
-											/* translators: %(to)s is the good threshold, %(unit)s is the unit */
-											__( '(0–%(to)s%(unit)s)' ),
-											{
-												to: formatUnit( good ),
-												unit: displayUnit(),
-											}
-									  ) }
-							</Text>
-						</HStack>
-						<HStack justify="flex-start">
-							<StatusIndicator speed="needsImprovement" />
-
-							<Text size="small">{ __( 'Needs Improvement' ) }</Text>
-							<Text>
-								{ isOverall
-									? sprintf(
-											/* translators: %(to)s is the needs improvement threshold */
-											__( '(50–%(to)s)' ),
-											{
-												to: formatUnit( needsImprovement ),
-											}
-									  )
-									: sprintf(
-											/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
-											__( '(%(from)s–%(to)s%(unit)s)' ),
-											{
-												from: formatUnit( good ),
-												to: formatUnit( needsImprovement ),
-												unit: displayUnit(),
-											}
-									  ) }
-							</Text>
-						</HStack>
-						<HStack justify="flex-start">
-							<StatusIndicator speed="bad" />
-
-							<Text size="small">{ __( 'Poor' ) }</Text>
-							<Text>
-								{ isOverall
-									? sprintf(
-											/* translators: %(to)s is the bad threshold */
-											__( '(0-%(to)s)' ),
-											{
-												to: formatUnit( bad ),
-											}
-									  )
-									: sprintf(
-											/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
-											__( '(Over %(from)s%(unit)s)' ),
-											{
-												from: formatUnit( needsImprovement ),
-												unit: displayUnit(),
-											}
-									  ) }
-							</Text>
-						</HStack>
 					</HStack>
-				</Spacer>
-				{ true ? (
-					<CoreMetricsChart data={ historicalData } />
-				) : (
-					<Text>{ __( 'No history available' ) }</Text>
-				) }
-				{ /* <HistoryChart
-					data={ dataAvailable && historicalData }
-					range={ [
-						formatUnit( metricsThresholds[ activeTab ].good ),
-						formatUnit( metricsThresholds[ activeTab ].needsImprovement ),
-					] }
-					height={ 300 }
-					d3Format="%b %d"
-					isMobile={ isMobile }
-				/> */ }
+					{ true ? (
+						<CoreMetricsChart
+							data={ historicalData }
+							activeTab={ activeTab }
+							metricsThresholds={ metricsThresholds }
+						/>
+					) : (
+						<Text>{ __( 'No history available' ) }</Text>
+					) }
+				</VStack>
 			</CardBody>
 		</Card>
 	);
