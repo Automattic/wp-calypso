@@ -11,13 +11,14 @@ import {
 	CheckboxControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
+import EmailSection from './email-section';
+import EmailVerificationBanner from './email-verification-banner';
 import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
@@ -151,6 +152,9 @@ export default function PersonalDetailsSection( {
 							headingId="personal-details-heading"
 						/>
 
+						{ /* Email verification banner */ }
+						<EmailVerificationBanner />
+
 						{ /* First & last name */ }
 						<DataForm< UserSettings >
 							data={ data }
@@ -171,15 +175,10 @@ export default function PersonalDetailsSection( {
 						/>
 
 						{ /* Email address */ }
-						<InputControl
-							__next40pxDefaultSize
-							id="email-input"
-							type="email"
-							label={ __( 'Email address' ) }
+						<EmailSection
 							value={ data.user_email || '' }
 							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
-							autoComplete="email"
-							aria-describedby="email-help"
+							disabled={ isSaving }
 						/>
 
 						{ /* Developer checkbox */ }
