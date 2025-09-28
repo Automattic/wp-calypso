@@ -16,7 +16,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { initCheckoutNavigationInterceptor } from 'calypso/lib/checkout-csp-navigation-interceptor';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
@@ -36,9 +35,6 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
-
-// Initialize checkout navigation interceptor early
-initCheckoutNavigationInterceptor();
 
 /**
  * Re-export

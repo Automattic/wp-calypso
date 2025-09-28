@@ -55,6 +55,7 @@ import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutCSPMeta } from './checkout-csp-meta';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import CheckoutMainContent from './checkout-main-content';
 import { OnChangeItemVariant } from './item-variation-picker';
@@ -136,8 +137,8 @@ export default function CheckoutMain( {
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
-	// Log that checkout has CSP (navigation interception handled globally)
-	useCheckoutCSP();
+	// Get CSP directives for meta tags
+	const { cspDirectives } = useCheckoutCSP();
 
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
@@ -816,6 +817,8 @@ export default function CheckoutMain( {
 
 	return (
 		<Fragment>
+			{ /* Add CSP meta tags to enhance base CSP header */ }
+			<CheckoutCSPMeta cspDirectives={ cspDirectives } />
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
