@@ -16,7 +16,7 @@ function generateMetaCSPDirectives( nonce: string ): string {
 	const directives: Record< string, { wrapped?: string[]; raw?: string[] } > = {
 		// More specific script sources for checkout
 		'script-src': {
-			wrapped: [ 'self', `nonce-${ nonce }` ],
+			wrapped: nonce ? [ 'self', `nonce-${ nonce }` ] : [ 'self' ],
 			raw: [
 				// Payment processors
 				'https://js.stripe.com',
@@ -29,12 +29,29 @@ function generateMetaCSPDirectives( nonce: string ): string {
 				'https://cdn.siftscience.com',
 				// Analytics
 				'https://stats.wp.com',
+				// Surveys
+				'https://surveys-static-prd.survicate-cdn.com',
+				'https://survey.survicate.com',
+				// Support
+				'https://cdn.smooch.io',
+				'https://static.zdassets.com',
+				'https://ekr.zdassets.com',
+				'https://*.zendesk.com',
+				// Fonts
+				'https://use.typekit.net',
 			],
 		},
 		// Style sources
 		'style-src': {
 			wrapped: [ 'self', 'unsafe-inline' ],
-			raw: [ 'https://fonts.googleapis.com', 'https://s0.wp.com' ],
+			raw: [
+				'https://fonts.googleapis.com',
+				'https://s0.wp.com',
+				// Surveys
+				'https://surveys-static-prd.survicate-cdn.com',
+				// Support chat
+				'https://cdn.smooch.io',
+			],
 		},
 		// Connect sources for API calls
 		'connect-src': {
@@ -44,6 +61,13 @@ function generateMetaCSPDirectives( nonce: string ): string {
 				'https://public-api.wordpress.com',
 				'https://widgets.wp.com',
 				'https://wpcom.com',
+				// Support chat
+				'wss://*.zendesk.com',
+				'https://*.zendesk.com',
+				'https://wpcom.zendesk.com',
+				'https://*.smooch.io',
+				'https://api.smooch.io',
+				'https://ekr.zdassets.com',
 			],
 		},
 		// Frame sources for payment iframes
@@ -64,10 +88,7 @@ function generateMetaCSPDirectives( nonce: string ): string {
 			wrapped: [ 'self' ],
 			raw: [ 'https://checkout.stripe.com' ],
 		},
-		// Critical for PCI DSS 6.4.3 - Prevent clickjacking
-		'frame-ancestors': {
-			wrapped: [ 'none' ],
-		},
+		// Note: frame-ancestors is ignored in meta tags, must be set via header
 	};
 
 	if ( isDevelopment ) {
@@ -108,19 +129,16 @@ function generateMetaCSPDirectives( nonce: string ): string {
  * Hook to manage checkout CSP directives
  * Returns the CSP directives string and nonce to be used in the CheckoutCSPMeta component
  */
-export function useCheckoutCSP(): { cspDirectives: string; nonce: string } {
-	// Generate a nonce for this session (in production, this should come from the server)
+export function useCheckoutCSP(): { cspDirectives: string } {
+	// Try to get nonce from existing script tags (should be set server-side)
 	const nonce = useMemo( () => {
-		// Try to get nonce from existing script tags
 		const scriptWithNonce = document.querySelector( 'script[nonce]' );
 		if ( scriptWithNonce ) {
-			return scriptWithNonce.getAttribute( 'nonce' ) || '';
+			const nonceValue = scriptWithNonce.getAttribute( 'nonce' );
+			return nonceValue || '';
 		}
-
-		// Fallback: generate a client-side nonce (less secure, but better than nothing)
-		const array = new Uint8Array( 16 );
-		crypto.getRandomValues( array );
-		return Array.from( array, ( byte ) => byte.toString( 16 ).padStart( 2, '0' ) ).join( '' );
+		// Don't generate client-side nonce as it won't work with CSP
+		return '';
 	}, [] );
 
 	const cspDirectives = useMemo( () => generateMetaCSPDirectives( nonce ), [ nonce ] );
@@ -128,9 +146,9 @@ export function useCheckoutCSP(): { cspDirectives: string; nonce: string } {
 	useEffect( () => {
 		debug( 'Checkout component mounted - CSP meta directives generated' );
 		debug( 'CSP Directives:', cspDirectives );
-		debug( 'Nonce:', nonce );
+		debug( 'Nonce found:', nonce ? 'yes' : 'no' );
 		debug( 'Check Network tab for base CSP headers on the checkout document request' );
 	}, [ cspDirectives, nonce ] );
 
-	return { cspDirectives, nonce };
+	return { cspDirectives };
 }
