@@ -1,6 +1,6 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
@@ -33,23 +33,49 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 			closeModal?.();
 
 			if ( status.allFixed ) {
-				createSuccessNotice( __( 'All threats were successfully fixed.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					_n( 'Threat fixed.', 'All threats were successfully fixed.', bulkFixableThreats.length ),
+					{
+						type: 'snackbar',
+					}
+				);
 			} else {
-				createErrorNotice( __( 'Not all threats could be fixed. Please contact our support.' ), {
-					type: 'snackbar',
-				} );
+				createErrorNotice(
+					_n(
+						'Failed to fix threat. Please contact support.',
+						'Not all threats could be fixed. Please contact support.',
+						bulkFixableThreats.length
+					),
+					{
+						type: 'snackbar',
+					}
+				);
 			}
 		}
-	}, [ status, isFixing, closeModal, createSuccessNotice, createErrorNotice ] );
+	}, [
+		status,
+		isFixing,
+		closeModal,
+		createSuccessNotice,
+		createErrorNotice,
+		bulkFixableThreats.length,
+	] );
 
 	useEffect( () => {
 		if ( error ) {
 			closeModal?.();
-			createErrorNotice( __( 'Error fixing threats. Please contact support.' ), {
-				type: 'snackbar',
-			} );
+			createErrorNotice(
+				_n(
+					'Error fixing threat. Please contact support.',
+					'Error fixing threats. Please contact support.',
+					bulkFixableThreats.length
+				),
+				{
+					type: 'snackbar',
+				}
+			);
 		}
-	}, [ error, closeModal, createErrorNotice ] );
+	}, [ error, closeModal, createErrorNotice, bulkFixableThreats.length ] );
 
 	const handleFixThreats = () => {
 		startFix();
@@ -58,7 +84,11 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	const bulkFixableSection = (
 		<>
 			<Text variant="muted">
-				{ __( 'Jetpack will be fixing the selected threats and low risk items:' ) }
+				{ _n(
+					'Jetpack will be fixing the selected threat and low risk item:',
+					'Jetpack will be fixing the selected threats and low risk items:',
+					bulkFixableThreats.length
+				) }
 			</Text>
 			<ThreatsDetailCard threats={ bulkFixableThreats } />
 		</>
@@ -67,8 +97,10 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	const remainingThreatsSection = (
 		<>
 			<Text variant="muted">
-				{ __(
-					'These threats cannot be fixed in bulk because individual confirmation is required:'
+				{ _n(
+					'This threat cannot be fixed in bulk because individual confirmation is required:',
+					'These threats cannot be fixed in bulk because individual confirmation is required:',
+					remainingThreats.length
 				) }
 			</Text>
 			<ThreatsDetailCard threats={ remainingThreats } />
