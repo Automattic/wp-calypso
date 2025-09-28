@@ -80,7 +80,7 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 							isBusy={ isFixing }
 							disabled={ isFixing }
 						>
-							{ __( 'Fix threat' ) }
+							{ isFixing ? __( 'Fixing threat…' ) : __( 'Fix threat' ) }
 						</Button>
 					</ButtonStack>
 				</>

@@ -91,7 +91,9 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 					isBusy={ isFixing }
 					disabled={ ! canBulkFix || isFixing }
 				>
-					{ __( 'Fix all threats' ) }
+					{ isFixing
+						? _n( 'Fixing threat…', 'Fixing threats…', bulkFixableThreats.length )
+						: _n( 'Fix threat', 'Fix all threats', bulkFixableThreats.length ) }
 				</Button>
 			</ButtonStack>
 		</VStack>
