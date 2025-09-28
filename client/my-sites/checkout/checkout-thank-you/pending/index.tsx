@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -124,8 +123,11 @@ function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 }
 
 function performRedirect( url: string ): void {
+	// Always use window.location.href to force a full page reload.
+	// This ensures CSP meta tags from checkout are properly cleared
+	// when leaving the checkout flow (PCI DSS 6.4.3 compliance).
 	if ( url.startsWith( '/' ) ) {
-		page( url );
+		window.location.href = url;
 		return;
 	}
 	window.location.href = url;
