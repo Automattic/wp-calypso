@@ -4,7 +4,6 @@ import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { fixMe } from 'i18n-calypso';
 import StripeLogoSvg from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
-import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
@@ -29,13 +28,17 @@ function updateConnectUrl( connectUrl: string, fromSite: QueryArgParsed, engine:
 	return addQueryArgs( connectUrl, { state: btoa( JSON.stringify( decodedState ) ) } );
 }
 
+interface ConnectStripeProps extends SubscribersStepProps {
+	onStartImport: () => void;
+}
+
 export default function ConnectStripe( {
 	cardData,
 	fromSite,
 	engine,
 	selectedSite,
-	siteSlug,
-}: SubscribersStepProps ) {
+	onStartImport,
+}: ConnectStripeProps ) {
 	const { __ } = useI18n();
 	if ( cardData?.connect_url === undefined ) {
 		return null;
@@ -78,9 +81,7 @@ export default function ConnectStripe( {
 					siteId={ selectedSite.ID }
 					step="subscribers"
 					primary={ false }
-					navigate={ () => {
-						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
-					} }
+					navigate={ onStartImport }
 					label={
 						fixMe( {
 							text: 'Continue with free subscribers',

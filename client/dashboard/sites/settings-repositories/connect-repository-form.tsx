@@ -328,7 +328,7 @@ export const ConnectRepositoryForm = ( {
 			},
 			{
 				id: 'branch',
-				label: __( 'Deployment Branch' ),
+				label: __( 'Deployment branch' ),
 				type: 'text' as const,
 				Edit: 'select',
 				elements: branchOptions,
@@ -339,14 +339,14 @@ export const ConnectRepositoryForm = ( {
 			},
 			{
 				id: 'targetDir',
-				label: __( 'Destination Directory' ),
+				label: __( 'Destination directory' ),
 				type: 'text' as const,
 				help: __( 'This path is relative to the server root.' ),
 				disabled: () => ! selectedRepository,
 			},
 			{
 				id: 'isAutomated',
-				label: __( 'Automated Deployments' ),
+				label: __( 'Automated deployments' ),
 				type: 'text' as const,
 				Edit: AutomatedToggle,
 			},

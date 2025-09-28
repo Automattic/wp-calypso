@@ -15,7 +15,7 @@ import type { Action, Field, View } from '@wordpress/dataviews';
 export const emailFields: Field< Email >[] = [
 	{
 		id: 'emailAddress',
-		label: __( 'Email Address' ),
+		label: __( 'Email address' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Email } ) => {
 			let iconEl = <Icon icon={ wordpress } size={ 28 } className="professional-email-icon" />;

@@ -226,15 +226,6 @@ function getConfig( {
 				</InlineSupportLink>
 			</>
 		),
-		optionalUrl: {
-			title: translate( 'Substack URL' ),
-			description: translate(
-				'Recommended: Include the Substack URL to import comments and author information.'
-			),
-			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
-				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
-			} ),
-		},
 		acceptedFileTypes: [ '.zip' ],
 		weight: 0,
 	};

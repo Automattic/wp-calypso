@@ -28,6 +28,7 @@ class EnvVariables implements SupportedEnvVariables {
 		TEST_ON_ATOMIC: false,
 		TIMEOUT: 10000,
 		VIEWPORT_NAME: 'desktop',
+		WOO_BASE_URL: 'https://woocommerce.com',
 		WPCOM_BASE_URL: 'https://wordpress.com',
 	};
 
@@ -215,6 +216,14 @@ class EnvVariables implements SupportedEnvVariables {
 	 */
 	get CALYPSO_BASE_URL(): string {
 		return this.getValidatedUrlEnvVar( 'CALYPSO_BASE_URL' );
+	}
+
+	/**
+	 * Returns the WooCommerce base URL.
+	 * @example 'https://woocommerce.com'
+	 */
+	get WOO_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'WOO_BASE_URL' );
 	}
 
 	/**

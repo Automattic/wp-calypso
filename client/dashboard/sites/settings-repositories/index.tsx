@@ -1,24 +1,26 @@
 import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { siteRoute } from '../../app/router/sites';
+import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import ghIconUrl from '../deployments/gh-icon.svg';
+import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
-import type { RenderModalProps, View } from '@wordpress/dataviews';
+import type { RenderModalProps, View, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
+	const router = useRouter();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
@@ -28,7 +30,38 @@ function RepositoriesList() {
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
 
-	const actions = [
+	const actions: Action< CodeDeploymentData >[] = [
+		{
+			id: 'trigger-manual-deployment',
+			label: __( 'Trigger manual deployment' ),
+			RenderModal: ( { items, closeModal }: RenderModalProps< CodeDeploymentData > ) => {
+				return (
+					<TriggerDeploymentModalForm
+						deployments={ deployments }
+						repositoryId={ items[ 0 ].id.toString() }
+						onClose={ closeModal }
+					/>
+				);
+			},
+			modalSize: 'medium',
+		},
+		{
+			id: 'configure-connection',
+			label: __( 'Configure connection' ),
+			callback: () => {},
+		},
+		{
+			id: 'see-deployment-runs',
+			label: __( 'See deployment runs' ),
+			callback: () => {
+				router.navigate( {
+					to: siteDeploymentsListRoute.fullPath,
+					params: {
+						siteSlug: siteSlug,
+					},
+				} );
+			},
+		},
 		{
 			id: 'delete',
 			label: __( 'Disconnect repository' ),
