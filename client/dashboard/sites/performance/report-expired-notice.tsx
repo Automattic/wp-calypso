@@ -1,5 +1,4 @@
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -43,22 +42,20 @@ export default function ReportExpiredNotice( { onRetest, reportTimestamp }: Repo
 	}
 
 	return (
-		<div style={ { marginBottom: '32px' } }>
-			<Notice status="warning" isDismissible={ false }>
-				<HStack spacing={ 2 } justify="space-between">
-					<VStack spacing={ 2 }>
-						<Text>
-							<b>{ __( 'These results are more than 24 hours old' ) }</b>
-						</Text>
-						<Text>
-							{ __( 'Test the page again if you have recently made updates to your site.' ) }
-						</Text>
-					</VStack>
-					<Button variant="primary" onClick={ onRetest }>
-						{ __( 'Test again' ) }
-					</Button>
-				</HStack>
-			</Notice>
-		</div>
+		<Notice variant="info">
+			<VStack spacing={ 4 } alignment="flex-start" expanded={ false }>
+				<VStack spacing={ 1 }>
+					<Text>
+						<b>{ __( 'These results are more than 24 hours old' ) }</b>
+					</Text>
+					<Text>
+						{ __( 'Test the page again if you have recently made updates to your site.' ) }
+					</Text>
+				</VStack>
+				<Button variant="primary" onClick={ onRetest }>
+					{ __( 'Test again' ) }
+				</Button>
+			</VStack>
+		</Notice>
 	);
 }
