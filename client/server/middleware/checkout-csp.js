@@ -1,49 +1,13 @@
 import crypto from 'crypto';
 
 /**
- * Generate base CSP header for all routes
- * This provides a maximally permissive policy that exists primarily for reporting
- * Actual security restrictions are added via checkout-specific headers
- * @returns {string} The base CSP policy string
- */
-export function generateBaseCSPHeader() {
-	// Maximally permissive base CSP - allows everything
-	// The main purpose is to enable CSP reporting
-	// Checkout pages will have more restrictive headers
-	const directives = {
-		'default-src': {
-			raw: [ '*', 'data:', 'blob:', "'unsafe-inline'", "'unsafe-eval'" ],
-		},
-		// Report violations for monitoring and PCI DSS compliance
-		'report-uri': {
-			raw: [ 'https://public-api.wordpress.com/csp/' ],
-		},
-	};
-
-	// No need for development-specific changes since we're already maximally permissive
-
-	const cspHeader = Object.entries( directives )
-		.map( ( [ key, value ] ) => {
-			const wrappedItems = ( value.wrapped ?? [] ).map( ( item ) => `'${ item }'` );
-			const rawItems = value.raw ?? [];
-
-			const allExpressions = [ ...wrappedItems, ...rawItems ].join( ' ' );
-
-			return `${ key } ${ allExpressions }`;
-		} )
-		.join( '; ' );
-
-	return cspHeader;
-}
-
-/**
  * Generate CSP header for checkout pages
- * These provide the specific restrictions for checkout pages (PCI DSS 6.4.3)
+ * Provides restrictive policy for PCI DSS 6.4.3 compliance
  * @param {string} nonce - The nonce to use for inline scripts
  * @param {boolean} isDevelopment - Whether we're in development mode
  * @returns {string} The CSP policy string for checkout
  */
-export function generateMetaCSPDirectives( nonce, isDevelopment ) {
+export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 	const directives = {
 		// More specific script sources for checkout
 		'script-src': {
@@ -136,31 +100,27 @@ export function generateMetaCSPDirectives( nonce, isDevelopment ) {
 }
 
 /**
- * Legacy function for backward compatibility
- * Generate full CSP header (base + meta directives combined)
- * @param {string} nonce - The nonce to use for inline scripts
- * @param {boolean} isDevelopment - Whether we're in development mode
- * @returns {string} The complete CSP policy string
- */
-export function generateCSPHeader( nonce, isDevelopment ) {
-	// Combine base and meta directives for backward compatibility
-	const base = generateBaseCSPHeader();
-	const meta = generateMetaCSPDirectives( nonce, isDevelopment );
-
-	// Simple combination - in practice, the meta directives would override
-	// but this maintains backward compatibility
-	return `${ base }; ${ meta }`;
-}
-
-/**
- * Middleware to add Content Security Policy headers
- * - Non-checkout routes: permissive base policy with reporting enabled
- * - Checkout routes: restrictive policy for PCI DSS 6.4.3 compliance
+ * Middleware to add Content Security Policy headers to checkout pages only
+ * Applies restrictive policy for PCI DSS 6.4.3 compliance
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
 export function checkoutCSPMiddleware( req, res, next ) {
+	// Check if this is a checkout route
+	const path = req.path;
+	const isCheckoutRoute =
+		path.startsWith( '/checkout' ) &&
+		! path.includes( '/thank-you' ) &&
+		! path.includes( '/failed-purchases' ) &&
+		! path.includes( '/licensing-' );
+
+	if ( ! isCheckoutRoute ) {
+		// Not a checkout page, skip CSP
+		next();
+		return;
+	}
+
 	// Initialize req.context if it doesn't exist
 	if ( ! req.context ) {
 		req.context = {};
@@ -177,21 +137,15 @@ export function checkoutCSPMiddleware( req, res, next ) {
 	// Also store in res.locals for potential future use
 	res.locals.nonce = nonce;
 
-	// Set base CSP header (lenient policy) for all routes
-	const baseCSPHeader = generateBaseCSPHeader();
-	res.setHeader( 'Content-Security-Policy-Report-Only', baseCSPHeader );
+	// Determine if we're in development mode
+	const isDevelopment =
+		req.hostname === 'calypso.localhost' ||
+		req.hostname === 'localhost' ||
+		process.env.NODE_ENV === 'development';
 
-	// For checkout pages, set restrictive CSP header
-	const path = req.path;
-	const isCheckoutRoute =
-		path.startsWith( '/checkout' ) &&
-		! path.includes( '/thank-you' ) &&
-		! path.includes( '/failed-purchases' ) &&
-		! path.includes( '/licensing-' );
-
-	if ( isCheckoutRoute ) {
-		req.context.checkoutCSPNonce = nonce;
-	}
+	// Generate and set restrictive CSP header for checkout
+	const checkoutCSPHeader = generateCheckoutCSPHeader( nonce, isDevelopment );
+	res.setHeader( 'Content-Security-Policy', checkoutCSPHeader );
 
 	next();
 }
