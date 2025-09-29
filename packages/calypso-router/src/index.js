@@ -570,12 +570,19 @@ Page.prototype.stop = function () {
 
 Page.prototype.show = function ( path, state, dispatch, push ) {
 	// Force full page reload when navigating TO checkout for CSP compliance (PCI DSS 6.4.3)
+	// Only force reload if we're NOT already on a checkout page
 	const isNavigatingToCheckout =
 		path.includes( '/checkout/' ) &&
 		! path.includes( '/thank-you' ) &&
 		! path.includes( '/failed-purchases' );
 
-	if ( isNavigatingToCheckout && hasWindow ) {
+	const isCurrentlyOnCheckout =
+		hasWindow &&
+		this._window.location.pathname.includes( '/checkout/' ) &&
+		! this._window.location.pathname.includes( '/thank-you' ) &&
+		! this._window.location.pathname.includes( '/failed-purchases' );
+
+	if ( isNavigatingToCheckout && ! isCurrentlyOnCheckout && hasWindow ) {
 		this._window.location.href = path;
 		return new Context( path, state, this );
 	}
@@ -653,12 +660,19 @@ Page.prototype.redirect = function ( from, to ) {
 
 Page.prototype.replace = function ( path, state, init, dispatch ) {
 	// Force full page reload when navigating TO checkout for CSP compliance (PCI DSS 6.4.3)
+	// Only force reload if we're NOT already on a checkout page
 	const isNavigatingToCheckout =
 		path.includes( '/checkout/' ) &&
 		! path.includes( '/thank-you' ) &&
 		! path.includes( '/failed-purchases' );
 
-	if ( isNavigatingToCheckout && hasWindow ) {
+	const isCurrentlyOnCheckout =
+		hasWindow &&
+		this._window.location.pathname.includes( '/checkout/' ) &&
+		! this._window.location.pathname.includes( '/thank-you' ) &&
+		! this._window.location.pathname.includes( '/failed-purchases' );
+
+	if ( isNavigatingToCheckout && ! isCurrentlyOnCheckout && hasWindow ) {
 		this._window.location.href = path;
 		return new Context( path, state, this );
 	}
