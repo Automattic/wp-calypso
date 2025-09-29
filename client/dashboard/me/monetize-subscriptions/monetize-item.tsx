@@ -80,5 +80,5 @@ export const MonetizeSubscriptionIcon = ( {
 		return <SiteIcon site={ site } size={ 36 } />;
 	}
 
-	return <></>;
+	return null;
 };
