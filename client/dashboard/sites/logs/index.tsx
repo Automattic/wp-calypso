@@ -170,7 +170,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									hasActivityLogsAccess={ hasActivityLogAccess }
 								/>
 								{ ! hasActivityLogAccess && (
-									<HStack alignment="center" expanded className="site-logs-card--activity-callout">
+									<HStack alignment="center" className="site-logs-card--activity-callout">
 										<div className="site-logs-card--activity-callout-content">
 											<ActivityLogsCallout siteSlug={ site.slug } />
 										</div>
