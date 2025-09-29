@@ -5,21 +5,20 @@ import {
 	type BackupEntry,
 	BackupEntryStatuses,
 	BackupEntryErrorStatuses,
+	fetchSiteBackups,
 } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import wpcom from 'calypso/lib/wp';
 import { useBackupState } from '../use-backup-state';
 
-// Mock lib/wp to return data directly from our test setup
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
+// Mock the specific fetcher function used by siteBackupsQuery
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	fetchSiteBackups: jest.fn(),
 } ) );
 
-const wpMock = wpcom;
+const mockFetchSiteBackups = fetchSiteBackups as jest.MockedFunction< typeof fetchSiteBackups >;
 
 // Test data factory
 const createBackupEntry = ( overrides: Partial< BackupEntry > = {} ): BackupEntry => ( {
@@ -53,19 +52,14 @@ function TestWrapper( { children }: { children: React.ReactNode } ) {
 	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 }
 
-// Mock backups API endpoint by setting up the mock response
-function mockBackupsAPI( siteId: number, backups: BackupEntry[] ) {
-	wpMock.req.get.mockImplementation( ( path: string ) => {
-		if ( path === `/sites/${ siteId }/rewind/backups` ) {
-			return Promise.resolve( backups );
-		}
-		return Promise.reject( new Error( `Unexpected path: ${ path }` ) );
-	} );
+// Mock backups API by setting up the mock response
+function mockBackupsAPI( backups: BackupEntry[] ) {
+	mockFetchSiteBackups.mockResolvedValue( backups );
 }
 
 // Clean up after each test
 afterEach( () => {
-	wpMock.req.get.mockReset();
+	mockFetchSiteBackups.mockReset();
 } );
 
 describe( 'useBackupState', () => {
@@ -73,7 +67,7 @@ describe( 'useBackupState', () => {
 
 	beforeEach( () => {
 		// Default to empty backups list
-		mockBackupsAPI( mockSiteId, [] );
+		mockBackupsAPI( [] );
 	} );
 
 	describe( 'idle state', () => {
@@ -94,7 +88,7 @@ describe( 'useBackupState', () => {
 				status: BackupEntryStatuses.FINISHED,
 				percent: '100',
 			} );
-			mockBackupsAPI( mockSiteId, [ finishedBackup ] );
+			mockBackupsAPI( [ finishedBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -112,7 +106,7 @@ describe( 'useBackupState', () => {
 				status: BackupEntryStatuses.ERROR,
 				percent: '95',
 			} );
-			mockBackupsAPI( mockSiteId, [ failedBackup ] );
+			mockBackupsAPI( [ failedBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -133,7 +127,7 @@ describe( 'useBackupState', () => {
 				percent: '45',
 				period: '1756169052',
 			} );
-			mockBackupsAPI( mockSiteId, [ runningBackup ] );
+			mockBackupsAPI( [ runningBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -151,7 +145,7 @@ describe( 'useBackupState', () => {
 				status: BackupEntryStatuses.STARTED,
 				percent: '',
 			} );
-			mockBackupsAPI( mockSiteId, [ backupWithoutPercent ] );
+			mockBackupsAPI( [ backupWithoutPercent ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -171,7 +165,7 @@ describe( 'useBackupState', () => {
 				period: '1756169052',
 				percent: '75',
 			} );
-			mockBackupsAPI( mockSiteId, [ progressBackup ] );
+			mockBackupsAPI( [ progressBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -190,7 +184,7 @@ describe( 'useBackupState', () => {
 				period: '1756169052',
 				percent: '100',
 			} );
-			mockBackupsAPI( mockSiteId, [ completedBackup ] );
+			mockBackupsAPI( [ completedBackup ] );
 
 			// Manually refetch the query to simulate the polling behavior
 			await testQueryClient.refetchQueries( {
@@ -211,7 +205,7 @@ describe( 'useBackupState', () => {
 				period: '1756169052',
 				percent: '100',
 			} );
-			mockBackupsAPI( mockSiteId, [ completedBackup ] );
+			mockBackupsAPI( [ completedBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -230,7 +224,7 @@ describe( 'useBackupState', () => {
 				status: BackupEntryErrorStatuses.ERROR,
 				period: '1756169052',
 			} );
-			mockBackupsAPI( mockSiteId, [ failedBackup ] );
+			mockBackupsAPI( [ failedBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -249,7 +243,7 @@ describe( 'useBackupState', () => {
 				period: '1756169052',
 				percent: '30',
 			} );
-			mockBackupsAPI( mockSiteId, [ progressBackup ] );
+			mockBackupsAPI( [ progressBackup ] );
 
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
@@ -267,7 +261,7 @@ describe( 'useBackupState', () => {
 				status: BackupEntryErrorStatuses.ERROR,
 				period: '1756169052',
 			} );
-			mockBackupsAPI( mockSiteId, [ failedBackup ] );
+			mockBackupsAPI( [ failedBackup ] );
 
 			// Manually refetch the query to simulate the polling behavior
 			await testQueryClient.refetchQueries( {
