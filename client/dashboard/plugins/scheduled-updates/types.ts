@@ -23,6 +23,6 @@ export interface ScheduledUpdateRow {
 	lastUpdate: number | null;
 	nextUpdate: number;
 	active: boolean;
-	schedule: 'daily' | 'weekly';
+	schedule: Frequency;
 	scheduleId: string;
 }
