@@ -14,7 +14,7 @@ import { getRelativeTimeString } from '../../../utils/datetime';
 import { getSubtitleForDisplay, isExpired, isRenewing } from '../../../utils/purchase';
 import { getPurchaseUrlForId } from '../urls';
 import type { Purchase } from '@automattic/api-core';
-import type { Field, View } from '@wordpress/dataviews';
+import type { Field, View, Action } from '@wordpress/dataviews';
 
 interface Props {
 	siteDomain: string;
@@ -54,6 +54,7 @@ function getPurchaseFields( {
 	const fields: Field< Purchase >[] = [
 		{
 			id: 'product_name',
+			type: 'text',
 			label: __( 'Product' ),
 			getValue: ( { item } ) => ( item.is_domain ? item.meta ?? '' : item.product_name ),
 			render: ( { item } ) => {
@@ -71,6 +72,7 @@ function getPurchaseFields( {
 		},
 		{
 			id: 'amount',
+			type: 'text',
 			label: __( 'Price' ),
 			getValue: ( { item } ) =>
 				formatCurrency( item.sale_amount ?? item.amount, item.currency_code, { stripZeros: true } ),
@@ -87,7 +89,9 @@ function getPurchaseFields( {
 	if ( ! hideManagePurchaseLinks ) {
 		fields.push( {
 			id: 'manage',
+			type: 'text',
 			label: __( 'Actions' ),
+			getValue: () => '',
 			render: ( { item } ) => (
 				<Link to={ getPurchaseUrlForId( item.ID ) } onClick={ onClose }>
 					{ __( 'Manage purchase' ) }
@@ -121,9 +125,9 @@ export function UpcomingRenewalsDialog( {
 		type: 'table',
 		perPage: 100,
 		page: 1,
-		showTitle: true,
-		titleField: 'product_name',
-		fields: [ 'amount', 'manage' ],
+		fields: hideManagePurchaseLinks
+			? [ 'product_name', 'amount' ]
+			: [ 'product_name', 'amount', 'manage' ],
 		layout: {},
 	} );
 
@@ -138,6 +142,31 @@ export function UpcomingRenewalsDialog( {
 	const fields = useMemo(
 		() => getPurchaseFields( { hideManagePurchaseLinks, onClose } ),
 		[ hideManagePurchaseLinks, onClose ]
+	);
+
+	const dataWithIds = useMemo(
+		() =>
+			purchasesSortByRecentExpiryDate.map( ( purchase ) => ( {
+				...purchase,
+				id: purchase.ID.toString(),
+			} ) ),
+		[ purchasesSortByRecentExpiryDate ]
+	);
+
+	const actions = useMemo(
+		(): Action< Purchase & { id: string } >[] => [
+			{
+				id: 'select-for-renewal',
+				label: __( 'Select for renewal' ),
+				supportsBulk: true,
+				icon: () => null,
+				callback: () => {
+					// This action exists just to enable bulk selection checkboxes
+					// The actual renewal logic is handled by the dialog's confirm button
+				},
+			},
+		],
+		[]
 	);
 
 	const handleConfirm = () => {
@@ -166,16 +195,17 @@ export function UpcomingRenewalsDialog( {
 			</VStack>
 			<Divider margin={ 3 } />
 			<DataViews
-				data={ purchasesSortByRecentExpiryDate }
+				data={ dataWithIds }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
 				selection={ selection }
 				onChangeSelection={ setSelection }
-				getItemId={ ( item ) => item.ID.toString() }
+				actions={ actions }
+				getItemId={ ( item ) => item.id }
 				isLoading={ false }
 				paginationInfo={ {
-					totalItems: purchasesSortByRecentExpiryDate.length,
+					totalItems: dataWithIds.length,
 					totalPages: 1,
 				} }
 				defaultLayouts={ { table: {} } }
