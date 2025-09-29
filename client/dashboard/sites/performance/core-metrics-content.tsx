@@ -7,21 +7,20 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
+import { Metrics } from './core-metrics';
+import CoreMetricsChart from './core-metrics-chart';
+import { OverallScore, MetricScore } from './core-metrics-score';
+import { RecommendationsLink } from './core-web-vitals/recommendations-link';
+import { StatusBadge } from './core-web-vitals/status-section';
 import {
 	getMetricsNames,
 	filterRecommendations,
 	mapThresholdsToStatus,
 	metricsThresholds,
-	displayValue,
 	getMetricValuations,
 } from './utils';
-import CoreMetricsChart from './core-metrics-chart';
-import { StatusBadge } from './core-web-vitals/status-section';
-import { RecommendationsLink } from './core-web-vitals/recommendations-link';
-import { Metrics } from './core-metrics';
 import type { PerformanceReport } from '@automattic/api-core';
-import { OverallScore, MetricScore } from './core-metrics-score';
 
 export default function CoreMetricsContent( {
 	report,
