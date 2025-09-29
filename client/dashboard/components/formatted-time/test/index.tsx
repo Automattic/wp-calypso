@@ -15,13 +15,21 @@ function TestFormattedTime( {
 	formatOptions,
 	timezoneString,
 	gmtOffset,
+	lowercaseCalendarLabel,
 }: {
 	timestamp: string;
 	formatOptions?: Intl.DateTimeFormatOptions;
 	timezoneString?: string;
 	gmtOffset?: number;
+	lowercaseCalendarLabel?: boolean;
 } ) {
-	const formatted = useFormattedTime( timestamp, formatOptions, timezoneString, gmtOffset );
+	const formatted = useFormattedTime(
+		timestamp,
+		formatOptions,
+		timezoneString,
+		gmtOffset,
+		lowercaseCalendarLabel
+	);
 	return <span data-testid="formatted-time">{ formatted }</span>;
 }
 
@@ -226,5 +234,36 @@ describe( 'useFormattedTime', () => {
 		expect( formattedElement ).toHaveTextContent( /September 25, 2025/ );
 		expect( formattedElement ).toHaveTextContent( /9:00 PM/ );
 		expect( formattedElement ).not.toHaveTextContent( /Today/ );
+	} );
+
+	test( 'formats as lowercase "today at" when lowercaseCalendarLabel is true', () => {
+		const timestamp = '2025-09-26T20:00:00Z';
+		const timezoneString = 'America/Los_Angeles';
+		const formatOptions = { timeStyle: 'short' as const };
+
+		render(
+			<TestFormattedTime
+				timestamp={ timestamp }
+				timezoneString={ timezoneString }
+				formatOptions={ formatOptions }
+				lowercaseCalendarLabel
+			/>
+		);
+
+		const formattedElement = screen.getByTestId( 'formatted-time' );
+		expect( formattedElement ).toBeVisible();
+		expect( formattedElement ).toHaveTextContent( /today at 1:00 PM/ );
+		expect( formattedElement ).not.toHaveTextContent( /Today/ );
+	} );
+
+	test( 'formats as lowercase "today" when lowercaseCalendarLabel is true without time style', () => {
+		const timestamp = '2025-09-26T10:30:00Z';
+
+		render( <TestFormattedTime timestamp={ timestamp } lowercaseCalendarLabel /> );
+
+		const formattedElement = screen.getByTestId( 'formatted-time' );
+		expect( formattedElement ).toBeVisible();
+		expect( formattedElement ).toHaveTextContent( 'today' );
+		expect( formattedElement ).not.toHaveTextContent( 'Today' );
 	} );
 } );
