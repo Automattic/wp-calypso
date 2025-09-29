@@ -18,7 +18,6 @@ export const monetizeSubscriptionsQuery = () =>
 export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 	queryOptions( {
 		...monetizeSubscriptionsQuery(),
-		enabled: !! subscriptionId,
 		select: ( data ) => {
 			const subscription = data?.find( ( sub ) => sub.ID === subscriptionId );
 			if ( ! subscription ) {

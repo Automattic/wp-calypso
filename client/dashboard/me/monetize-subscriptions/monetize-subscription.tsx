@@ -223,10 +223,9 @@ const BackButton = () => {
 	);
 };
 
-export default function MonetizeSubscriptionDtails() {
+export default function MonetizeSubscriptionDetails() {
 	const params = monetizeSubscriptionRoute.useParams();
-	const subscriptionId: string = params.subscriptionId;
-
+	const subscriptionId: string = params.subscriptionId ?? '';
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
 	const { mutate: stopSubscription, isPending: isStoppingSubscription } = useMutation(
