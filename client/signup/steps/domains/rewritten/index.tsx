@@ -7,6 +7,7 @@ import {
 	isWithThemeFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -304,14 +305,28 @@ const DomainSearchUI = (
 		};
 	}, [ flowName, previousStepName, goBack, userSiteCount, translate ] );
 
+	const getUseDomainIOwnLink = () => {
+		if ( ! query || ! config.allowsUsingOwnDomain ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="step-wrapper__navigation-link forward"
+				onClick={ () => events.onExternalDomainClick( query ) }
+				variant="link"
+			>
+				<span>{ __( 'Use a domain I already own' ) }</span>
+			</Button>
+		);
+	};
+
 	return (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
-			hideSkip={ ! query || ! config.allowsUsingOwnDomain }
-			skipButtonAlign="top"
-			goToNextStep={ () => events.onExternalDomainClick( query ) }
-			skipLabelText={ __( 'Use a domain I already own' ) }
+			hideSkip
+			customizedActionButtons={ getUseDomainIOwnLink() }
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
 			hideBack={ hideBack }
