@@ -124,7 +124,7 @@ function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 
 function performRedirect( url: string ): void {
 	// Always use window.location.href to force a full page reload.
-	// This ensures CSP meta tags from checkout are properly cleared
+	// This ensures CSP headers from checkout are properly cleared
 	// when leaving the checkout flow (PCI DSS 6.4.3 compliance).
 	if ( url.startsWith( '/' ) ) {
 		window.location.href = url;

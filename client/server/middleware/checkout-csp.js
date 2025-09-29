@@ -3,13 +3,13 @@ import crypto from 'crypto';
 /**
  * Generate base CSP header for all routes
  * This provides a maximally permissive policy that exists primarily for reporting
- * Actual security restrictions are added via meta tags on checkout pages
+ * Actual security restrictions are added via checkout-specific headers
  * @returns {string} The base CSP policy string
  */
 export function generateBaseCSPHeader() {
 	// Maximally permissive base CSP - allows everything
 	// The main purpose is to enable CSP reporting
-	// Checkout pages will add restrictions via meta tags
+	// Checkout pages will have more restrictive headers
 	const directives = {
 		'default-src': {
 			raw: [ '*', 'data:', 'blob:', "'unsafe-inline'", "'unsafe-eval'" ],
@@ -37,11 +37,11 @@ export function generateBaseCSPHeader() {
 }
 
 /**
- * Generate additional CSP directives for meta tags
- * These provide the specific restrictions for checkout pages
+ * Generate CSP header for checkout pages
+ * These provide the specific restrictions for checkout pages (PCI DSS 6.4.3)
  * @param {string} nonce - The nonce to use for inline scripts
  * @param {boolean} isDevelopment - Whether we're in development mode
- * @returns {string} The additional CSP policy string for meta tags
+ * @returns {string} The CSP policy string for checkout
  */
 export function generateMetaCSPDirectives( nonce, isDevelopment ) {
 	const directives = {
@@ -153,9 +153,9 @@ export function generateCSPHeader( nonce, isDevelopment ) {
 }
 
 /**
- * Middleware to add base Content Security Policy headers to ALL routes
- * This provides a permissive base policy with reporting enabled
- * Checkout pages enhance this with restrictive meta tags for PCI DSS 6.4.3 compliance
+ * Middleware to add Content Security Policy headers
+ * - Non-checkout routes: permissive base policy with reporting enabled
+ * - Checkout routes: restrictive policy for PCI DSS 6.4.3 compliance
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
@@ -181,7 +181,7 @@ export function checkoutCSPMiddleware( req, res, next ) {
 	const baseCSPHeader = generateBaseCSPHeader();
 	res.setHeader( 'Content-Security-Policy-Report-Only', baseCSPHeader );
 
-	// For checkout pages, store nonce for use by meta tags
+	// For checkout pages, set restrictive CSP header
 	const path = req.path;
 	const isCheckoutRoute =
 		path.startsWith( '/checkout' ) &&

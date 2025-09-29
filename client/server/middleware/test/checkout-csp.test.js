@@ -42,7 +42,7 @@ describe( 'checkout-csp middleware', () => {
 	} );
 
 	describe( 'generateMetaCSPDirectives', () => {
-		it( 'should generate restrictive CSP directives for meta tags', () => {
+		it( 'should generate restrictive CSP directives for checkout', () => {
 			const nonce = 'test-nonce-123';
 			const isDevelopment = false;
 			const directives = generateMetaCSPDirectives( nonce, isDevelopment );
