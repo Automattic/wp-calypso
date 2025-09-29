@@ -255,8 +255,13 @@ describe( 'Domain Confirmation', () => {
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
 		expect( screen.getByLabelText( 'Type the site domain to confirm' ) ).toBeInTheDocument();
+	} );
 
-		const domainInput = screen.getByLabelText( 'Type the site domain to confirm' );
-		expect( domainInput ).toHaveAttribute( 'type', 'text' );
+	test( 'does not show domain confirmation when not syncing to production', () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal( { syncType: 'push', environment: 'production' } );
+
+		expect( screen.queryByLabelText( 'Type the site domain to confirm' ) ).not.toBeInTheDocument();
 	} );
 } );
