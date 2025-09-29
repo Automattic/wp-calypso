@@ -13,6 +13,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
@@ -60,8 +61,17 @@ const DomainSearchUI = (
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
+	const siteSlug = queryObject.siteSlug;
+	const currentSiteUrl = siteSlug ? `https://${ siteSlug }` : undefined;
+
+	const { query, setQuery } = useQueryHandler( {
+		initialQuery: queryObject.new,
+		currentSiteUrl,
+	} );
+
 	const events = useMemo( () => {
 		return {
+			onQueryChange: setQuery,
 			onAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -92,6 +102,7 @@ const DomainSearchUI = (
 					getStepUrl( flowName, stepName, USE_MY_DOMAIN_SECTION_NAME, locale, {
 						step: useMyDomainInputMode.domainInput,
 						initialQuery: initialQuery,
+						siteSlug,
 					} )
 				);
 			},
@@ -162,6 +173,8 @@ const DomainSearchUI = (
 	}, [
 		flowName,
 		stepName,
+		siteSlug,
+		setQuery,
 		submitSignupStep,
 		goToNextStep,
 		locale,
@@ -288,7 +301,10 @@ const DomainSearchUI = (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
-			hideSkip
+			hideSkip={ ! query || ! config.allowsUsingOwnDomain }
+			skipButtonAlign="top"
+			goToNextStep={ () => events.onExternalDomainClick( query ) }
+			skipLabelText={ __( 'Use a domain I already own' ) }
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
 			hideBack={ hideBack }
@@ -299,8 +315,8 @@ const DomainSearchUI = (
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"
 					flowName={ flowName }
-					initialQuery={ queryObject.new }
-					currentSiteUrl={ queryObject.siteSlug ? `https://${ queryObject.siteSlug }` : undefined }
+					query={ query }
+					currentSiteUrl={ currentSiteUrl }
 					events={ events }
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
