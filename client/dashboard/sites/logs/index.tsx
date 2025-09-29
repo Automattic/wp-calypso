@@ -96,20 +96,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
+	// hide the datepicker if the user doesn't have access to activity logs or doesn't have logging feature at all
+	const shouldShowDateRangePicker =
+		( hasActivityLogAccess && logType === LogType.ACTIVITY ) || // this is for the activity tab
+		( hasHostingFeature( site, HostingFeatures.LOGS ) && logType !== LogType.ACTIVITY ); // this is for php and server tabs
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
 			<VStack as="div" spacing={ 3 }>
 				{ autoRefreshDisabledReason && (
 					<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 				) }
-				<DateRangePicker
-					start={ dateRange.start }
-					end={ dateRange.end }
-					gmtOffset={ gmtOffset }
-					timezoneString={ timezoneString }
-					locale={ locale }
-					onChange={ handleDateRangeChangeWrapper }
-				/>
+				{ shouldShowDateRangePicker && (
+					<DateRangePicker
+						start={ dateRange.start }
+						end={ dateRange.end }
+						gmtOffset={ gmtOffset }
+						timezoneString={ timezoneString }
+						locale={ locale }
+						onChange={ handleDateRangeChangeWrapper }
+					/>
+				) }
 				<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 					<CardHeader style={ { paddingBottom: '0' } }>
 						<TabPanel
