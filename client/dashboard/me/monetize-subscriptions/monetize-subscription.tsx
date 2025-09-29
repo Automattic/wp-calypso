@@ -159,7 +159,7 @@ function StopSubscriptionButton( {
 	return (
 		<ActionList.ActionItem
 			title={ title }
-			description={ __( "We'll be sorry to see you go!" ) }
+			description={ __( "We’ll be sorry to see you go!" ) }
 			actions={
 				<Button
 					variant="secondary"
