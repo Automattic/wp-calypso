@@ -52,8 +52,8 @@ function AutoRenewButton( {
 	isProduct,
 	subscription,
 }: {
-	disableAutoRenew: ( data: any, variables: object ) => void;
-	enableAutoRenew: ( data: any, variables: object ) => void;
+	disableAutoRenew: () => void;
+	enableAutoRenew: () => void;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
 	isProduct: boolean;
@@ -63,7 +63,7 @@ function AutoRenewButton( {
 	const title = isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' );
 	const onError = () => {
 		if ( isProduct ) {
-			createErrorNotice( __( 'There was a problem while removing your product.' ), {
+			createErrorNotice( __( 'Failed to remove your product.' ), {
 				actions: [
 					{
 						url: CALYPSO_CONTACT,
@@ -72,7 +72,7 @@ function AutoRenewButton( {
 				],
 			} );
 		} else {
-			createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
+			createErrorNotice( __( 'Failed to update your subscription.' ), {
 				url: CALYPSO_CONTACT,
 				label: __( 'Please contact support' ),
 			} );
