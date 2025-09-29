@@ -37,9 +37,16 @@ function getScrollableContainer( node: HTMLElement ): HTMLElement | undefined {
 
 export function navigate( path: string, openInNewTab = false, forceReload = false ): void {
 	if ( isSameOrigin( path ) ) {
+		// Force reload when navigating TO checkout to ensure proper CSP headers (PCI DSS 6.4.3)
+		const isNavigatingToCheckout =
+			path.includes( '/checkout/' ) &&
+			! path.includes( '/thank-you' ) &&
+			! path.includes( '/failed-purchases' );
+		const shouldForceCheckoutReload = isNavigatingToCheckout && ! forceReload;
+
 		if ( openInNewTab ) {
 			window.open( path, '_blank' );
-		} else if ( forceReload ) {
+		} else if ( forceReload || shouldForceCheckoutReload ) {
 			window.location.href = path;
 		} else if ( isCurrentPathOutOfScope( window.location.pathname ) ) {
 			const state = { path };
