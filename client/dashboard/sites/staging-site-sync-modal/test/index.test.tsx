@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
@@ -155,7 +155,6 @@ const mockUseQuery = ( productionSite?: Site, stagingSite?: Site ) => {
 				return { data: stagingSite, isLoading: false, refetch: jest.fn() };
 			}
 		}
-		// Also handle backup-related queries to avoid undefined data
 		if ( queryKey?.includes( 'site-backup-contents' ) ) {
 			return { data: [], isLoading: false, refetch: jest.fn() };
 		}
@@ -341,9 +340,10 @@ describe( 'Form Submission', () => {
 
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
-		const domainInput = screen.getByLabelText( 'Type the site domain to confirm' );
+		const modal = screen.getByRole( 'dialog' );
+		const domainInput = within( modal ).getByLabelText( 'Type the site domain to confirm' );
 		const user = userEvent.setup();
-		const submitButton = screen.getByRole( 'button', { name: 'Push' } );
+		const submitButton = within( modal ).getByRole( 'button', { name: 'Push' } );
 		expect( submitButton ).toBeDisabled();
 
 		await user.type( domainInput, 'test-site' );
@@ -376,12 +376,16 @@ describe( 'Form Submission', () => {
 		mockUseQuery( prod, stag );
 		const { user } = setup( { syncType: 'push', environment: 'staging' } );
 
-		await user.click( screen.getByLabelText( 'Database' ) );
-		await user.type( screen.getByLabelText( 'Type the site domain to confirm' ), 'test-site' );
+		const modal = screen.getByRole( 'dialog' );
+		await user.click( within( modal ).getByLabelText( 'Database' ) );
+		await user.type(
+			within( modal ).getByLabelText( 'Type the site domain to confirm' ),
+			'test-site'
+		);
 
 		const { useMutation } = require( '@tanstack/react-query' );
 		const submitMutation = useMutation().mutate;
-		await user.click( screen.getByRole( 'button', { name: 'Push' } ) );
+		await user.click( within( modal ).getByRole( 'button', { name: 'Push' } ) );
 
 		expect( submitMutation ).toHaveBeenCalledWith(
 			expect.objectContaining( { types: 'paths' } ),
