@@ -27,6 +27,7 @@ import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
+import { useBackupState } from './use-backup-state';
 import './style.scss';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
@@ -34,6 +35,8 @@ export function BackupsListPage() {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const backupState = useBackupState( site.ID );
 
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
@@ -115,7 +118,7 @@ export function BackupsListPage() {
 					onChange={ handleDateRangeChangeWrapper }
 				/>
 			</div>
-			<BackupNowButton site={ site } />
+			<BackupNowButton site={ site } backupState={ backupState } />
 		</>
 	);
 
@@ -128,7 +131,7 @@ export function BackupsListPage() {
 					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
-			notices={ shouldShowNotices ? <BackupNotices site={ site } /> : undefined }
+			notices={ shouldShowNotices ? <BackupNotices backupState={ backupState } /> : undefined }
 		>
 			{ hasBackups && (
 				<>

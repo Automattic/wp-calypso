@@ -4,14 +4,13 @@ import { createInterpolateElement, useState, useEffect } from '@wordpress/elemen
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
-import { useBackupState } from './use-backup-state';
-import type { Site } from '@automattic/api-core';
+import type { BackupState } from './use-backup-state';
 
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { site }: { site: Site } ) {
-	const { status, backup } = useBackupState( site.ID );
+export function BackupNotices( { backupState }: { backupState: BackupState } ) {
+	const { status, backup } = backupState;
 	const backupDate = useFormattedTime( backup?.started ?? '', {
 		timeStyle: 'short',
 	} );
@@ -27,6 +26,14 @@ export function BackupNotices( { site }: { site: Site } ) {
 			setIsDismissed( false );
 		}
 	}, [ status ] );
+
+	if ( status === 'enqueued' ) {
+		return (
+			<Notice variant="info" title={ __( 'Backup starting…' ) }>
+				{ __( 'We’re preparing to make a backup of your site.' ) }
+			</Notice>
+		);
+	}
 
 	if ( status === 'running' ) {
 		return (
