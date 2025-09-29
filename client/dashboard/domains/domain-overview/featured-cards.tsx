@@ -18,10 +18,12 @@ export default function FeaturedCards() {
 				<FeaturedCardRenew domain={ domain } />
 			) }
 			<FeaturedCardSite domain={ domain } />
-			<FeaturedCardEmails domain={ domain } />
-			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
-				<FeaturedCardPrivacy domain={ domain } />
+			{ domain.subtype.id !== DomainSubtype.SITE_REDIRECT && (
+				<FeaturedCardEmails domain={ domain } />
 			) }
+			{ ! [ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.SITE_REDIRECT ].includes(
+				domain.subtype.id
+			) && <FeaturedCardPrivacy domain={ domain } /> }
 		</Grid>
 	);
 }
