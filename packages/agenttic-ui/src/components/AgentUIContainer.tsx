@@ -48,6 +48,27 @@ interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
 }
 
+function DragOverlay() {
+	return (
+		<div
+			style={ {
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				zIndex: 9999,
+				cursor: 'grabbing',
+				pointerEvents: 'auto',
+				userSelect: 'none',
+				WebkitUserSelect: 'none',
+				MozUserSelect: 'none',
+				msUserSelect: 'none',
+			} }
+		/>
+	);
+}
+
 export function AgentUIContainer( {
 	children,
 	messages,
@@ -97,6 +118,9 @@ export function AgentUIContainer( {
 
 	// Track animation state
 	const [ isAnimating, setIsAnimating ] = useState( false );
+
+	const [ isDragging, setIsDragging ] = useState( false );
+
 	useEffect( () => {
 		// Reset flags when chat state changes.
 		wasClickedToOpen.current = false;
@@ -317,15 +341,23 @@ export function AgentUIContainer( {
 			);
 
 			if ( ! isNonDraggable ) {
+				// Prevent text selection during drag
+				event.preventDefault();
 				dragControls.start( event.nativeEvent );
 			}
 		},
 		[ dragControls ]
 	);
 
+	const handleDragStart = useCallback( () => {
+		setIsDragging( true );
+	}, [] );
+
 	// Handle drag end with snap functionality
 	const handleDragEnd = useCallback(
 		( _event: any, info: PanInfo ) => {
+			setIsDragging( false );
+
 			// Determine which side based on drop position
 			// For true 50/50 split, account for the chat widget's width
 			const dropX = info.point.x;
@@ -484,6 +516,9 @@ export function AgentUIContainer( {
 					pointerEvents: 'none',
 				} }
 			/>
+
+			{ isDragging && <DragOverlay /> }
+
 			<motion.div
 				ref={ chatRef }
 				data-slot="chat-floating"
@@ -500,6 +535,7 @@ export function AgentUIContainer( {
 				dragMomentum={ false }
 				dragElastic={ 0.1 }
 				dragTransition={ { power: 0.1, timeConstant: 100 } }
+				onDragStart={ handleDragStart }
 				onDragEnd={ handleDragEnd }
 				onPointerDown={ handlePointerDown }
 				style={ {
