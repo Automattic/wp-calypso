@@ -2,18 +2,12 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	ToggleControl,
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
-} from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { LogsDownloader } from '../downloader';
 import {
@@ -45,6 +39,8 @@ export type SiteLogsDataViewsProps = {
 	site: Site;
 };
 
+const DEFAULT_PER_PAGE = 50;
+
 function SiteLogsDataViews( {
 	logType,
 	dateRange,
@@ -62,6 +58,8 @@ function SiteLogsDataViews( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
+	const rafIdRef = useRef< number | null >( null );
+	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -81,15 +79,55 @@ function SiteLogsDataViews( {
 		end: endSec,
 		filter,
 		sortOrder: view.sort?.direction,
-		pageSize: view.perPage,
+		pageSize: DEFAULT_PER_PAGE,
 	};
 
 	const { data, isLoading, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
 		useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
 
+	const handleResize = useCallback( () => {
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		if ( rafIdRef.current ) {
+			cancelAnimationFrame( rafIdRef.current );
+		}
+
+		rafIdRef.current = requestAnimationFrame( () => {
+			if ( ! dataviewsRef.current ) {
+				return;
+			}
+
+			const { top } = dataviewsRef.current.getBoundingClientRect();
+			const maxHeight = window.innerHeight - top - 32 - 1;
+			dataviewsRef.current.style.maxHeight = `${ maxHeight }px`;
+		} );
+	}, [] );
+
 	useEffect( () => {
 		setView( ( value ) => ( { ...value, page: 1 } ) );
 	}, [ dateRangeVersion, setView ] );
+
+	useLayoutEffect( () => {
+		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		handleResize();
+		window.addEventListener( 'resize', handleResize );
+		window.addEventListener( 'orientationchange', handleResize );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+			window.removeEventListener( 'orientationchange', handleResize );
+
+			if ( rafIdRef.current ) {
+				cancelAnimationFrame( rafIdRef.current );
+			}
+		};
+	}, [ logType, handleResize ] );
 
 	const phpLogs = useMemo< PhpLogWithId[] >( () => {
 		if ( logType !== LogType.PHP ) {
@@ -105,58 +143,7 @@ function SiteLogsDataViews( {
 		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
 	}, [ data?.pages, logType ] );
 
-	const currentPage = view.page ?? 1;
-	const perPage = view.perPage ?? 50;
-	const displayedPhpLogs = useMemo(
-		() => phpLogs.slice( 0, currentPage * perPage ),
-		[ phpLogs, currentPage, perPage ]
-	);
-	const displayedServerLogs = useMemo(
-		() => serverLogs.slice( 0, currentPage * perPage ),
-		[ serverLogs, currentPage, perPage ]
-	);
-
-	const handleLoadMore = useCallback( () => {
-		// Reveal what we already have loaded
-		const totalLoaded = logType === LogType.PHP ? phpLogs.length : serverLogs.length;
-		const displayedCount =
-			logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length;
-		if ( displayedCount < totalLoaded ) {
-			setView( ( prev ) => ( { ...prev, page: ( prev.page ?? 1 ) + 1 } ) );
-		}
-
-		// Proactively fetch the next cursor page when we're within one page of the end.
-		// This keeps hasNextPage accurate and lets the "Load more" button reveal items immediately.
-		const remainingLoaded =
-			( logType === LogType.PHP ? phpLogs.length : serverLogs.length ) - currentPage * perPage;
-		const shouldPrefetch = hasNextPage && ! isFetchingNextPage && remainingLoaded <= perPage;
-		if ( shouldPrefetch ) {
-			fetchNextPage();
-		}
-	}, [
-		displayedPhpLogs.length,
-		displayedServerLogs.length,
-		phpLogs.length,
-		serverLogs.length,
-		logType,
-		currentPage,
-		perPage,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-		setView,
-	] );
-
-	const scrollToTop = () => {
-		window.scrollTo( 0, 0 );
-	};
-
 	const fields = useFields( { logType, timezoneString, gmtOffset } );
-
-	const paginationInfo = {
-		totalItems: logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length,
-		totalPages: 1,
-	};
 
 	const onChangeView = ( next: View ) => {
 		// Disable auto-refresh when the user changes the page
@@ -256,12 +243,33 @@ function SiteLogsDataViews( {
 		</>
 	);
 
+	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
+
+	const infiniteScrollHandler = useCallback( () => {
+		if ( hasNextPage && ! isFetchingNextPage ) {
+			fetchNextPage();
+		}
+	}, [ hasNextPage, isFetchingNextPage, fetchNextPage ] );
+
+	const paginationInfo = {
+		totalItems: logs.length,
+		totalPages: 1,
+		infiniteScrollHandler,
+	};
+
+	useEffect( () => {
+		setView( ( currentView ) => ( {
+			...currentView,
+			perPage: Math.max( logs.length, currentView.perPage ?? DEFAULT_PER_PAGE ),
+		} ) );
+	}, [ logs.length, setView ] );
+
 	return (
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
-					data={ displayedPhpLogs }
-					isLoading={ isLoading && displayedPhpLogs.length === 0 }
+					data={ phpLogs }
+					isLoading={ isLoading }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -274,8 +282,8 @@ function SiteLogsDataViews( {
 				/>
 			) : (
 				<DataViews< ServerLog >
-					data={ displayedServerLogs }
-					isLoading={ isLoading && displayedServerLogs.length === 0 }
+					data={ serverLogs }
+					isLoading={ isLoading }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -287,27 +295,6 @@ function SiteLogsDataViews( {
 					header={ LogsHeader }
 				/>
 			) }
-
-			<VStack spacing={ 2 }>
-				<Spacer margin={ 0 } paddingTop={ 3 } />
-				<HStack alignment="center" spacing={ 2 }>
-					<Button
-						variant="primary"
-						onClick={ handleLoadMore }
-						disabled={
-							! hasNextPage &&
-							( logType === LogType.PHP ? displayedPhpLogs.length : displayedServerLogs.length ) >=
-								( logType === LogType.PHP ? phpLogs.length : serverLogs.length )
-						}
-					>
-						{ __( 'Load more' ) }
-					</Button>
-					<Button variant="tertiary" onClick={ scrollToTop }>
-						{ __( 'Back to top' ) }
-					</Button>
-				</HStack>
-				<Spacer margin={ 0 } paddingTop={ 3 } />
-			</VStack>
 		</>
 	);
 }
