@@ -9,6 +9,7 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useState, useContext, useEffect } from 'react';
+import { SectionHeader } from '../../section-header';
 import { GuidedTourContext } from '../context';
 import type { ComponentProps, CSSProperties } from 'react';
 
@@ -117,9 +118,7 @@ export function GuidedTourStep( {
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
 						<HStack justify="space-between">
-							<Text as="h2" size={ 15 } weight={ 500 } lineHeight="20px">
-								{ currentTour.title }
-							</Text>
+							<SectionHeader title={ currentTour.title } level={ 3 } />
 							{ totalSteps > 1 && currentStep + 1 < totalSteps && isSkippable && (
 								<Button icon={ closeSmall } iconSize={ 24 } onClick={ endTour } />
 							) }

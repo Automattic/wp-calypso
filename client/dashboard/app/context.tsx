@@ -32,6 +32,7 @@ export type AppConfig = {
 		help: boolean;
 		notifications: boolean;
 		me: MeSupports | false;
+		commandPalette: boolean;
 	};
 };
 
@@ -51,6 +52,7 @@ const AppContext = createContext< AppConfig >( {
 		help: false,
 		notifications: false,
 		me: false,
+		commandPalette: false,
 	},
 } );
 
