@@ -9,7 +9,7 @@
 	flex-direction: column;
 	padding: 36px 24px;
 	background-color: inherit;
-	& .card {
+	& .card, &.card {
 		box-shadow: none;
 	}
 
