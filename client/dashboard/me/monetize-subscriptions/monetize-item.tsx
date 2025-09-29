@@ -1,18 +1,21 @@
 import { MonetizeSubscription } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { formatDate } from 'date-fns';
 import SiteIcon from '../../sites/site-icon';
+import { formatDate } from '../../utils/datetime';
 
 export const MonetizeSubscriptionTerms = ( {
 	subscription,
 }: {
 	subscription: MonetizeSubscription;
 } ) => {
+	const locale = useLocale();
+
 	if ( subscription.end_date === null ) {
 		return <>{ __( 'Never expires' ) }</>;
 	}
@@ -22,12 +25,16 @@ export const MonetizeSubscriptionTerms = ( {
 			{ subscription.renew_interval === null
 				? // translators: %(date)s is the date the subscription expires. Format is LL (e.g. January 1, 2020).
 				  sprintf( __( 'Expires on %(date)s' ), {
-						date: formatDate( subscription.end_date, 'LL' ),
+						date: formatDate( new Date( Date.parse( subscription?.end_date ?? '' ) ), locale, {
+							dateStyle: 'long',
+						} ),
 				  } )
 				: // translators: %(siteUrl)s is the URL of the site. %(date)s is the date the subscription renews. . Format is LL (e.g. January 1, 2020).
 				  sprintf( __( 'Renews at %(amount)s on %(date)s' ), {
 						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-						date: formatDate( subscription.end_date, 'LL' ),
+						date: formatDate( new Date( Date.parse( subscription?.end_date ?? '' ) ), locale, {
+							dateStyle: 'long',
+						} ),
 				  } ) }
 		</>
 	);
