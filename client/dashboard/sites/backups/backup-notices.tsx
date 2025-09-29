@@ -76,8 +76,7 @@ export function BackupNotices( { site }: { site: Site } ) {
 						backupDate
 					),
 					{
-						// @ts-expect-error children prop is injected by createInterpolateElement
-						external: <ExternalLink href="https://jetpack.com/support/backup/" />,
+						external: <ExternalLink href="https://jetpack.com/support/backup/" children={ null } />,
 					}
 				) }
 			</Notice>
