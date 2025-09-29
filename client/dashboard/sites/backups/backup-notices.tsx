@@ -4,17 +4,27 @@ import { createInterpolateElement, useState, useEffect } from '@wordpress/elemen
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
-import { useBackupState } from './use-backup-state';
-import type { Site } from '@automattic/api-core';
+import type { BackupState } from './use-backup-state';
+
+interface BackupNoticesProps {
+	backupState: BackupState;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
 
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { site }: { site: Site } ) {
-	const { status, backup } = useBackupState( site.ID );
-	const backupDate = useFormattedTime( backup?.started ?? '', {
-		timeStyle: 'short',
-	} );
+export function BackupNotices( { backupState, timezoneString, gmtOffset }: BackupNoticesProps ) {
+	const { status, backup } = backupState;
+	const backupDate = useFormattedTime(
+		backup?.started ?? '',
+		{
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	const handleDismiss = () => {
@@ -27,6 +37,14 @@ export function BackupNotices( { site }: { site: Site } ) {
 			setIsDismissed( false );
 		}
 	}, [ status ] );
+
+	if ( status === 'enqueued' ) {
+		return (
+			<Notice variant="info" title={ __( 'Backup starting…' ) }>
+				{ __( 'We’re preparing to make a backup of your site.' ) }
+			</Notice>
+		);
+	}
 
 	if ( status === 'running' ) {
 		return (
@@ -76,8 +94,7 @@ export function BackupNotices( { site }: { site: Site } ) {
 						backupDate
 					),
 					{
-						// @ts-expect-error children prop is injected by createInterpolateElement
-						external: <ExternalLink href="https://jetpack.com/support/backup/" />,
+						external: <ExternalLink href="https://jetpack.com/support/backup/" children={ null } />,
 					}
 				) }
 			</Notice>

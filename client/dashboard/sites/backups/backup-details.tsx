@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
-	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
@@ -23,18 +22,31 @@ import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/route
 import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { ImagePreview } from './image-preview';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
-export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
+interface BackupDetailsProps {
+	backup: ActivityLogEntry;
+	site: Site;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
+export function BackupDetails( { backup, site, timezoneString, gmtOffset }: BackupDetailsProps ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const publishedTimestamp = backup.published || backup.last_published;
-	const formattedTime = useFormattedTime( publishedTimestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
+	const formattedTime = useFormattedTime(
+		publishedTimestamp,
+		{
+			dateStyle: 'medium',
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
 	const { fileBrowserState } = useFileBrowserContext();
 	const { totalItems: selectedFilesCount } = fileBrowserState.getCheckList(
 		Number( backup.rewind_id )

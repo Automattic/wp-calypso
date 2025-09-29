@@ -1,19 +1,32 @@
 import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { ActivityLogEntry } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
-	const formattedTime = useFormattedTime( timestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
-	return <>{ formattedTime }</>;
-};
+interface FormattedTimeProps {
+	timestamp: string;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
 
-export function getFields(): Field< ActivityLogEntry >[] {
+function FormattedTime( { timestamp, timezoneString, gmtOffset }: FormattedTimeProps ) {
+	return useFormattedTime(
+		timestamp,
+		{
+			dateStyle: 'medium',
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
+}
+
+export function getFields(
+	timezoneString?: string,
+	gmtOffset?: number
+): Field< ActivityLogEntry >[] {
 	return [
 		{
 			id: 'icon',
@@ -31,7 +44,8 @@ export function getFields(): Field< ActivityLogEntry >[] {
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) => {
-				const actor = item.actor?.name ? ` by ${ item.actor.name }` : '';
+				// translators: %s is the name of the person who performed the action
+				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				return item.summary + actor;
 			},
 			enableGlobalSearch: true,
@@ -42,7 +56,13 @@ export function getFields(): Field< ActivityLogEntry >[] {
 			getValue: ( { item } ) => {
 				return item.published || item.last_published;
 			},
-			render: ( { item } ) => <FormattedTime timestamp={ item.published || item.last_published } />,
+			render: ( { item } ) => (
+				<FormattedTime
+					timestamp={ item.published || item.last_published }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			),
 		},
 		{
 			id: 'content_text',

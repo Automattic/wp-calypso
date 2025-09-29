@@ -8,7 +8,7 @@ const DomainMenu = ( { domainName }: { domainName: string } ) => {
 
 	return (
 		<ResponsiveMenu label={ __( 'Domain Menu' ) }>
-			<ResponsiveMenu.Item to={ `/domains/${ domainName }` } activeOptions={ { exact: true } }>
+			<ResponsiveMenu.Item to={ `/domains/${ domainName }` }>
 				{ __( 'Overview' ) }
 			</ResponsiveMenu.Item>
 			{ supports.emails && (

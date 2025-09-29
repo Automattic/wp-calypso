@@ -1,25 +1,26 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
-	__experimentalText as Text,
-	Button,
-} from '@wordpress/components';
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteBackupActivityLogEntriesQuery,
+} from '@automattic/api-queries';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { Outlet, useParams, useRouter } from '@tanstack/react-router';
+import { __experimentalGrid as Grid, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __, isRTL } from '@wordpress/i18n';
 import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { siteRoute } from '../../app/router/sites';
+import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BackupDetails } from './backup-details';
@@ -27,18 +28,30 @@ import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
+import { useBackupState } from './use-backup-state';
 import './style.scss';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
 export function BackupsListPage() {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
+	const router = useRouter();
+
+	const routeParams = useParams( {
+		strict: false,
+		shouldThrow: false,
+	} ) as { rewindId?: string } | undefined;
+
+	const rewindId = routeParams?.rewindId;
+
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const backupState = useBackupState( site.ID );
 
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
-			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
@@ -49,11 +62,57 @@ export function BackupsListPage() {
 		timezoneString,
 		gmtOffset,
 	} );
-	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+	const [ selectedBackup, setSelectedBackupInState ] = useState< ActivityLogEntry | null >( null );
+
+	const setSelectedBackup = useCallback(
+		( backup?: ActivityLogEntry | null, replace = false ) => {
+			if ( backup ) {
+				router.navigate( {
+					to: siteBackupDetailRoute.fullPath,
+					params: {
+						siteSlug,
+						rewindId: backup.rewind_id,
+					},
+					replace,
+				} );
+			} else {
+				router.navigate( {
+					to: siteBackupsIndexRoute.fullPath,
+					params: {
+						siteSlug,
+					},
+					replace,
+				} );
+			}
+		},
+		[ router, siteSlug ]
+	);
+
+	// Fetch activity log if we have a rewindId to auto-select
+	const { data: activityLog } = useQuery( {
+		...siteBackupActivityLogEntriesQuery( site.ID ),
+	} );
+
+	// Auto-select backup based on rewindId parameter
+	useEffect( () => {
+		if ( rewindId && activityLog ) {
+			const targetBackup = activityLog.find( ( item ) => item.rewind_id === rewindId );
+			if ( targetBackup ) {
+				setSelectedBackupInState( targetBackup );
+			}
+			return;
+		}
+		// if no rewindId, then it's hitting the index route
+		// let's redirect to the first found backup
+		const backup = activityLog?.[ 0 ];
+		if ( ! rewindId && backup ) {
+			setSelectedBackup( backup, true );
+		}
+	}, [ rewindId, activityLog, setSelectedBackup ] );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		handleDateRangeChange( next );
-		setSelectedBackup( null );
+		setSelectedBackup( null, false );
 	};
 	const [ showDetails, setShowDetails ] = useState( false );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -82,7 +141,14 @@ export function BackupsListPage() {
 
 	const renderMobileView = () => {
 		if ( showDetails && selectedBackup ) {
-			return <BackupDetails backup={ selectedBackup } site={ site } />;
+			return (
+				<BackupDetails
+					backup={ selectedBackup }
+					site={ site }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			);
 		}
 
 		return (
@@ -115,7 +181,7 @@ export function BackupsListPage() {
 					onChange={ handleDateRangeChangeWrapper }
 				/>
 			</div>
-			<BackupNowButton site={ site } />
+			<BackupNowButton site={ site } backupState={ backupState } />
 		</>
 	);
 
@@ -128,7 +194,15 @@ export function BackupsListPage() {
 					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
-			notices={ shouldShowNotices ? <BackupNotices site={ site } /> : undefined }
+			notices={
+				shouldShowNotices ? (
+					<BackupNotices
+						backupState={ backupState }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				) : undefined
+			}
 		>
 			{ hasBackups && (
 				<>
@@ -145,7 +219,14 @@ export function BackupsListPage() {
 								gmtOffset={ gmtOffset }
 							/>
 
-							{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+							{ selectedBackup && (
+								<BackupDetails
+									backup={ selectedBackup }
+									site={ site }
+									timezoneString={ timezoneString }
+									gmtOffset={ gmtOffset }
+								/>
+							) }
 						</Grid>
 					) }
 				</>

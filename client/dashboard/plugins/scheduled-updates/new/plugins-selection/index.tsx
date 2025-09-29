@@ -2,7 +2,6 @@ import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wor
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../../components/dataviews-card';
-import { DataViewsEmptyState } from '../../../../components/dataviews-empty-state';
 import { useEligiblePlugins } from '../../hooks/use-eligible-plugins';
 import type { CorePlugin } from '@automattic/api-core';
 
@@ -67,13 +66,7 @@ function ScheduledUpdatesPluginsSelection( {
 				actions={ actions }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
-				empty={
-					<DataViewsEmptyState
-						title=""
-						description={ __( 'Please select a site to view available plugins.' ) }
-						mutedDescription={ false }
-					/>
-				}
+				empty={ <p>{ __( 'Please select a site to view available plugins.' ) }</p> }
 			/>
 		</DataViewsCard>
 	);
