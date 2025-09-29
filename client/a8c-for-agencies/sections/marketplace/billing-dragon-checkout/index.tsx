@@ -138,7 +138,6 @@ function BillingDragonCheckoutContent( {
 				sitelessCheckoutType="a4a"
 				redirectTo={ window.location.origin + '/purchases/licenses' }
 				customizedPreviousPath="/marketplace"
-				isInModal={ false }
 				siteSlug=""
 				siteId={ 0 }
 			/>
