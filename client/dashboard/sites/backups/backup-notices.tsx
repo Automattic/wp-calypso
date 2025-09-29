@@ -18,7 +18,7 @@ interface BackupNoticesProps {
 export function BackupNotices( { backupState, timezoneString, gmtOffset }: BackupNoticesProps ) {
 	const { status, backup } = backupState;
 	const backupDate = useFormattedTime(
-		backup?.started ?? '',
+		backup?.started ? backup.started.replace( ' ', 'T' ) + 'Z' : '',
 		{
 			timeStyle: 'short',
 		},
