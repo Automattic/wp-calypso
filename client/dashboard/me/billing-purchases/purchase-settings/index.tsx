@@ -38,7 +38,6 @@ import {
 	Notice,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, isRTL, sprintf } from '@wordpress/i18n';
@@ -51,7 +50,6 @@ import {
 	siteLogo,
 	commentAuthorAvatar,
 } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
@@ -445,10 +443,15 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ReinstallButton( { purchase }: { purchase: Purchase } ) {
-	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation(
-		reinstallMarketplacePluginsQuery( purchase.blog_id )
-	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation( {
+		...reinstallMarketplacePluginsQuery( purchase.blog_id ),
+		meta: {
+			snackbar: {
+				success: __( 'Plugins reinstalled.' ),
+				error: __( 'Failed to reinstall plugins.' ),
+			},
+		},
+	} );
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
@@ -466,16 +469,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 						size="compact"
 						disabled={ isMutationPending }
 						onClick={ () => {
-							reinstallPlugins( undefined, {
-								onSuccess: () => {
-									createSuccessNotice( __( 'Plugins reinstalled.' ), { type: 'snackbar' } );
-								},
-								onError: ( error ) => {
-									createErrorNotice( error?.message || __( 'Failed to reinstall plugins.' ), {
-										type: 'snackbar',
-									} );
-								},
-							} );
+							reinstallPlugins();
 						} }
 					>
 						{ __( 'Reinstall plugins' ) }
