@@ -26,7 +26,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 						{ createInterpolateElement(
 							__(
 								/* translators: <domain/> is the domain name */
-								'We tried to start a transfer for your domain <domain/> but we got the following error:'
+								'We tried to start a transfer for your domain <domain/>, but we got the following error:'
 							),
 							{
 								domain: <strong>{ domain_name }</strong>,
@@ -47,7 +47,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 					{ createInterpolateElement(
 						__(
 							/* translators: <domain/> is the domain name, <owner/> is the domain owner */
-							'We tried to start a transfer for your domain <domain/> but an error occurred. Please contact the domain owner, <owner/>, for more details.'
+							'We tried to start a transfer for your domain <domain/>, but an error occurred. Please contact the domain owner, <owner/>, for more details.'
 						),
 						{
 							domain: <strong>{ domain_name }</strong>,
@@ -90,7 +90,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 					{ createInterpolateElement(
 						__(
 							/* translators: <domain/> is the domain name */
-							'We were unable to complete the transfer of <domain/>. You can remove the transfer from your account or try to start the transfer again.'
+							'We were unable to complete the transfer of <domain/>. You can remove the transfer from your account or try to start it again.'
 						),
 						{
 							domain: <strong>{ domain_name }</strong>,
