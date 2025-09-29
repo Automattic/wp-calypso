@@ -88,7 +88,7 @@ function AutoRenewButton( {
 					if ( isAutoRenewing ) {
 						// translators: date is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( Date.parse( data.end_date ) ), locale, {
+							date: formatDate( new Date( Date.parse( data?.end_date ?? '' ) ), locale, {
 								dateStyle: 'long',
 							} ),
 						} );
@@ -152,14 +152,14 @@ function StopSubscriptionButton( {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const title = isProduct
-		? // eslint-disable-next-line @wordpress/i18n-translator-comments
+		? // translators: %s is the product title
 		  sprintf( __( 'Remove %s product' ), subscription.title )
-		: // eslint-disable-next-line @wordpress/i18n-translator-comments
+		: // translators: %s is the product title
 		  sprintf( __( 'Stop %s subscription' ), subscription.title );
 	return (
 		<ActionList.ActionItem
 			title={ title }
-			description={ __( "We’ll be sorry to see you go!" ) }
+			description={ __( 'We’ll be sorry to see you go!' ) }
 			actions={
 				<Button
 					variant="secondary"
