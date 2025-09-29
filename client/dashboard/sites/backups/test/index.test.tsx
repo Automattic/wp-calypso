@@ -4,7 +4,6 @@
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
-import * as tanstackRouter from '@tanstack/react-router';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -61,6 +60,19 @@ jest.mock(
 		} ),
 	} )
 );
+
+const mockRouterParams = { siteSlug: 'test-site', rewindId: 'rewind-123' };
+
+jest.mock( '@tanstack/react-router', () => {
+	const actual = jest.requireActual( '@tanstack/react-router' );
+
+	return {
+		...actual,
+		useParams: jest.fn( () => {
+			return mockRouterParams;
+		} ),
+	};
+} );
 
 const mockSite: Site = {
 	ID: mockSiteId,
@@ -123,7 +135,6 @@ const mockBackupEntries = [
 	},
 ] as unknown as ActivityLogEntry[];
 
-const mockRouterParams = { siteSlug: 'test-site', rewindId: 'rewind-123' };
 const summaryTestCases: ReadonlyArray< readonly [ string, string ] > = [
 	[ 'rewind-123', 'Daily backup completed successfully' ],
 	[ 'rewind-456', 'Third backup completed successfully' ],
@@ -134,12 +145,6 @@ jest.mock( '../../../app/router/sites', () => ( {
 		useParams: () => ( { siteSlug: 'test-site' } ),
 	},
 } ) );
-
-const useParamsSpy = jest.spyOn( tanstackRouter, 'useParams' );
-
-useParamsSpy.mockImplementation( () => {
-	return mockRouterParams;
-} );
 
 function renderBackupsListPage() {
 	nock( API_BASE ).get( '/rest/v1.1/sites/test-site' ).query( true ).reply( 200, mockSite );
@@ -189,6 +194,5 @@ test.each( summaryTestCases )(
 		await waitFor( () => {
 			expect( screen.getAllByText( summary ) ).toHaveLength( 2 );
 		} );
-		screen.logTestingPlaygroundURL();
 	}
 );
