@@ -98,7 +98,7 @@ export function UpcomingRenewalsDialog( {
 				};
 				return (
 					<VStack key={ purchase.ID }>
-						<HStack>
+						<HStack alignment="top">
 							<HStack alignment="left">
 								<CheckboxControl
 									name={ `${ purchase.product_slug }-${ purchase.ID }` }
