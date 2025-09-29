@@ -11,7 +11,7 @@ import {
 	CardBody,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
@@ -108,7 +108,11 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 									<Button variant="primary" onClick={ () => setShowBulkFixModal( true ) }>
 										{ sprintf(
 											/* translators: %d: number of threats */
-											__( 'Auto-fix %(threatsCount)d threats' ),
+											_n(
+												'Auto-fix %(threatsCount)d threat',
+												'Auto-fix %(threatsCount)d threats',
+												fixableThreatsCount
+											),
 											{
 												threatsCount: fixableThreatsCount,
 											}
