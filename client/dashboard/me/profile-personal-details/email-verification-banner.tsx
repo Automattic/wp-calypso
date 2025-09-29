@@ -10,8 +10,9 @@ import Notice from '../../components/notice';
 
 export default function EmailVerificationBanner() {
 	const { data: userData } = useSuspenseQuery( userSettingsQuery() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ showResendButton, setShowResendButton ] = useState( true );
+	const [ showSuccessNotice, setShowSuccessNotice ] = useState( false );
 
 	const isEmailPending = userData.user_email_change_pending;
 	const pendingEmail = userData.new_user_email;
@@ -22,7 +23,6 @@ export default function EmailVerificationBanner() {
 			return;
 		}
 
-		// Not using <FlashMessage> because we need actions
 		const params = new URLSearchParams( window.location.search );
 		const newEmailResult = params.get( 'new_email_result' );
 
@@ -33,32 +33,18 @@ export default function EmailVerificationBanner() {
 			);
 
 			params.delete( 'new_email_result' );
-
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );
 		} else if ( newEmailResult === '1' ) {
-			createSuccessNotice(
-				__(
-					'Email address updated. Make sure you update your contact information for any registered domains.'
-				),
-				{
-					type: 'snackbar',
-					actions: [
-						{
-							label: __( 'Update' ),
-							url: '/v2/domains/',
-						},
-					],
-				}
-			);
+			setShowSuccessNotice( true );
 
 			params.delete( 'new_email_result' );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );
 		}
-	}, [] );
+	}, [ createErrorNotice ] );
 
 	// Resend email
 	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
@@ -87,6 +73,24 @@ export default function EmailVerificationBanner() {
 		resendEmail( pendingEmail || '' );
 	};
 
+	if ( showSuccessNotice ) {
+		return (
+			<Notice
+				variant="success"
+				title={ __( 'Email address updated' ) }
+				onClose={ () => setShowSuccessNotice( false ) }
+				actions={
+					<Button variant="link" href="/v2/domains/">
+						{ __( 'Update domain contacts' ) }
+					</Button>
+				}
+			>
+				{ __( 'Make sure you update your contact information for any registered domains.' ) }
+			</Notice>
+		);
+	}
+
+	// Show pending email verification notice
 	if ( ! isEmailPending || ! pendingEmail ) {
 		return null;
 	}
@@ -98,13 +102,8 @@ export default function EmailVerificationBanner() {
 				title={ __( 'Verify your email' ) }
 				actions={
 					showResendButton && (
-						<Button
-							variant="primary"
-							onClick={ handleResendEmail }
-							disabled={ isResendPending }
-							isBusy={ isResendPending }
-						>
-							{ __( 'Resend email' ) }
+						<Button variant="link" onClick={ handleResendEmail } disabled={ isResendPending }>
+							{ __( 'Resend verification email' ) }
 						</Button>
 					)
 				}

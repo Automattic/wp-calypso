@@ -84,9 +84,12 @@ export default function EmailSection( { value, onChange, disabled = false }: Ema
 		if ( isEmailPending ) {
 			return (
 				<>
-					{ createInterpolateElement( __( '<em>Your email has not been verified yet.</em>' ), {
-						em: <em />,
-					} ) }
+					{ createInterpolateElement(
+						__( '<em>Your email has not been verified yet.</em>' + ' ' ),
+						{
+							em: <em />,
+						}
+					) }
 					<Button
 						variant="link"
 						onClick={ handleCancelPendingEmail }
