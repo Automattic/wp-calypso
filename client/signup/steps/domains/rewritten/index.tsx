@@ -212,6 +212,7 @@ const DomainSearchUI = (
 		return {
 			BeforeResults: () => {
 				if (
+					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -223,6 +224,7 @@ const DomainSearchUI = (
 			},
 			BeforeFullCartItems: () => {
 				if (
+					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -233,7 +235,7 @@ const DomainSearchUI = (
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName, isOnboardingWithEmailFlow ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
