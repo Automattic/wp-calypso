@@ -16,6 +16,7 @@ export interface ActivityLogEntry {
 	last_published: string;
 	name: string;
 	generator?: ActivityGenerator;
+	is_rewindable: boolean;
 	object?: {
 		backup_type?: string;
 		rewind_id?: string;

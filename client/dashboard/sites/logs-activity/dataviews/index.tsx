@@ -110,7 +110,7 @@ function SiteActivityLogsDataViews( {
 			: { gmtOffset, activityLogTypes: groupCountsData?.groups }
 	);
 
-	const actions = useActivityActions( { isLoading: isFetching } );
+	const actions = useActivityActions( { isLoading: isFetching, site } );
 
 	const onChangeView = ( next: View ) => {
 		const nextFilters = sanitizeFilters( next.filters as Filter[] | undefined );

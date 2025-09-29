@@ -67,7 +67,7 @@ export function getFields(): Field< Threat >[] {
 		},
 		{
 			id: 'fixed_on',
-			label: __( 'Resolved On' ),
+			label: __( 'Resolved on' ),
 			type: 'date',
 			filterBy: {
 				operators: [ 'on', 'before', 'after' ],

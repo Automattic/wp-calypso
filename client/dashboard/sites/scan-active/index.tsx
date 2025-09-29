@@ -19,11 +19,15 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		sort: { field: 'severity', direction: 'desc' },
 	} );
 
+	const [ selection, setSelection ] = useState< string[] >( [] );
 	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields();
-	const actions = useMemo( () => getActions( site.ID ), [ site.ID ] );
+	const actions = useMemo(
+		() => getActions( site.ID, selection.length ),
+		[ site.ID, selection.length ]
+	);
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
@@ -77,9 +81,11 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 			fields={ fields }
 			getItemId={ ( item ) => item.id.toString() }
 			isLoading={ isLoading }
+			onChangeSelection={ setSelection }
 			onChangeView={ setView }
 			paginationInfo={ paginationInfo }
 			searchLabel={ __( 'Search' ) }
+			selection={ selection }
 			view={ view }
 		/>
 	);

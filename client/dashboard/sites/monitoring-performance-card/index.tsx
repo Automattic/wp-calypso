@@ -1,6 +1,7 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import { GlyphDiamond, GlyphCircle } from '@visx/glyph';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
@@ -153,7 +154,7 @@ export default function MonitoringPerformanceCard( {
 		numTicks: numTicks,
 	};
 
-	const getLegendIcon = ( key: string, isTooltip = false ) => {
+	const getLegendIcon = ( key: string ) => {
 		const isLegendGlyph = key.startsWith( 'legend-glyph-' );
 		if ( isLegendGlyph ) {
 			key = key.replace( 'legend-glyph-', '' );
@@ -161,24 +162,9 @@ export default function MonitoringPerformanceCard( {
 
 		switch ( key ) {
 			case requestsPerMinuteLabel:
-				return (
-					<rect
-						width="6"
-						height="6"
-						transform={ ( isTooltip ? 'translate(4, 0) ' : 'translate(3, -1) ' ) + 'rotate(45)' }
-						fill="#3858E9"
-					/>
-				);
+				return <GlyphDiamond size={ 50 } fill="#3858E9" />;
 			case averageResponseTimeLabel:
-				return (
-					<circle
-						cx={ isLegendGlyph || isTooltip ? 4 : 0 }
-						cy={ isLegendGlyph || isTooltip ? 4 : 0 }
-						r="4"
-						fill="#5BA300"
-						strokeWidth="1.5"
-					/>
-				);
+				return <GlyphCircle size={ 50 } fill="#5BA300" />;
 		}
 
 		return null;
@@ -238,8 +224,8 @@ export default function MonitoringPerformanceCard( {
 											className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
 										>
 											<Text weight="normal">
-												<svg width="8" height="8">
-													{ getLegendIcon( series.key, true ) }
+												<svg width="5" height="5">
+													{ getLegendIcon( series.key ) }
 												</svg>
 												{ series.key }
 											</Text>

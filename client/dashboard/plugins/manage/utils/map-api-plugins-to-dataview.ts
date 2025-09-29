@@ -31,10 +31,12 @@ export function mapApiPluginsToDataViewPlugins(
 		return [];
 	}
 
-	const sitesById = userSites.reduce( ( acc, site ) => {
-		acc.set( site.ID, site );
-		return acc;
-	}, new Map< number, Site >() );
+	const sitesById = userSites
+		.filter( ( site ) => site.capabilities.update_plugins )
+		.reduce( ( acc, site ) => {
+			acc.set( site.ID, site );
+			return acc;
+		}, new Map< number, Site >() );
 
 	const pluginsBySite = response.sites;
 	const map = new Map< string, Aggregated >();
