@@ -1,20 +1,20 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Link } from '@tanstack/react-router';
 import {
-	CheckboxControl,
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { getRelativeTimeString } from '../../../utils/datetime';
 import { getSubtitleForDisplay, isExpired, isRenewing } from '../../../utils/purchase';
 import { getPurchaseUrlForId } from '../urls';
 import type { Purchase } from '@automattic/api-core';
+import type { Field, View } from '@wordpress/dataviews';
 
 interface Props {
 	siteDomain: string;
@@ -44,6 +44,61 @@ function ExpiresText( { purchase }: { purchase: Purchase } ) {
 	} );
 }
 
+function getPurchaseFields( {
+	hideManagePurchaseLinks,
+	onClose,
+}: {
+	hideManagePurchaseLinks?: boolean;
+	onClose: () => void;
+} ): Field< Purchase >[] {
+	const fields: Field< Purchase >[] = [
+		{
+			id: 'product_name',
+			label: __( 'Product' ),
+			getValue: ( { item } ) => ( item.is_domain ? item.meta ?? '' : item.product_name ),
+			render: ( { item } ) => {
+				const purchaseTypeText = getSubtitleForDisplay( item );
+				return (
+					<VStack spacing={ 1 }>
+						<Text>{ item.is_domain ? item.meta ?? '' : item.product_name }</Text>
+						<Text variant="muted">
+							{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
+							<span>{ purchaseTypeText && <ExpiresText purchase={ item } /> }</span>
+						</Text>
+					</VStack>
+				);
+			},
+		},
+		{
+			id: 'amount',
+			label: __( 'Price' ),
+			getValue: ( { item } ) =>
+				formatCurrency( item.sale_amount ?? item.amount, item.currency_code, { stripZeros: true } ),
+			render: ( { item } ) => (
+				<Text>
+					{ formatCurrency( item.sale_amount ?? item.amount, item.currency_code, {
+						stripZeros: true,
+					} ) }
+				</Text>
+			),
+		},
+	];
+
+	if ( ! hideManagePurchaseLinks ) {
+		fields.push( {
+			id: 'manage',
+			label: __( 'Actions' ),
+			render: ( { item } ) => (
+				<Link to={ getPurchaseUrlForId( item.ID ) } onClick={ onClose }>
+					{ __( 'Manage purchase' ) }
+				</Link>
+			),
+		} );
+	}
+
+	return fields;
+}
+
 export function UpcomingRenewalsDialog( {
 	siteDomain,
 	purchases,
@@ -52,8 +107,6 @@ export function UpcomingRenewalsDialog( {
 	submitButtonText,
 	hideManagePurchaseLinks,
 }: Props ) {
-	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
-
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
@@ -64,17 +117,42 @@ export function UpcomingRenewalsDialog( {
 		[ purchases ]
 	);
 
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		perPage: 100,
+		page: 1,
+		showTitle: true,
+		titleField: 'product_name',
+		fields: [ 'amount', 'manage' ],
+		layout: {},
+	} );
+
+	const [ selection, setSelection ] = useState< string[] >(
+		purchases.map( ( purchase ) => purchase.ID.toString() )
+	);
+
 	useEffect( () => {
-		setSelectedPurchases( purchases.map( ( purchase ) => purchase.ID ) );
+		setSelection( purchases.map( ( purchase ) => purchase.ID.toString() ) );
 	}, [ purchases ] );
+
+	const fields = useMemo(
+		() => getPurchaseFields( { hideManagePurchaseLinks, onClose } ),
+		[ hideManagePurchaseLinks, onClose ]
+	);
+
+	const handleConfirm = () => {
+		const selectedPurchaseIds = selection.map( Number );
+		const selectedPurchasesData = purchases.filter( ( purchase ) =>
+			selectedPurchaseIds.includes( purchase.ID )
+		);
+		onConfirm( selectedPurchasesData );
+	};
 
 	return (
 		<ConfirmDialog
 			size="large"
 			confirmButtonText={ submitButtonText ?? __( 'Renew now' ) }
-			onConfirm={ () =>
-				onConfirm( purchases.filter( ( purchase ) => selectedPurchases.includes( purchase.ID ) ) )
-			}
+			onConfirm={ handleConfirm }
 			onCancel={ onClose }
 		>
 			<VStack>
@@ -87,55 +165,21 @@ export function UpcomingRenewalsDialog( {
 				</Text>
 			</VStack>
 			<Divider margin={ 3 } />
-			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
-				const purchaseTypeText = getSubtitleForDisplay( purchase );
-				const onChange = () => {
-					if ( selectedPurchases.includes( purchase.ID ) ) {
-						setSelectedPurchases( selectedPurchases.filter( ( id ) => id !== purchase.ID ) );
-					} else {
-						setSelectedPurchases( selectedPurchases.concat( [ purchase.ID ] ) );
-					}
-				};
-				return (
-					<VStack key={ purchase.ID }>
-						<HStack alignment="top">
-							<HStack alignment="left">
-								<CheckboxControl
-									name={ `${ purchase.product_slug }-${ purchase.ID }` }
-									checked={ selectedPurchases.includes( purchase.ID ) }
-									onChange={ onChange }
-								/>
-								<VStack>
-									<Text>{ purchase.is_domain ? purchase.meta ?? '' : purchase.product_name }</Text>
-									<Text variant="muted">
-										{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
-										<span>{ purchaseTypeText && <ExpiresText purchase={ purchase } /> }</span>
-									</Text>
-								</VStack>
-							</HStack>
-							<HStack>
-								<Text>
-									{ formatCurrency(
-										purchase.sale_amount ?? purchase.amount,
-										purchase.currency_code,
-										{
-											stripZeros: true,
-										}
-									) }
-								</Text>
-								{ ! hideManagePurchaseLinks && (
-									<Text>
-										<Link to={ getPurchaseUrlForId( purchase.ID ) } onClick={ () => onClose() }>
-											{ __( 'Manage purchase' ) }
-										</Link>
-									</Text>
-								) }
-							</HStack>
-						</HStack>
-						<Divider margin={ 3 } />
-					</VStack>
-				);
-			} ) }
+			<DataViews
+				data={ purchasesSortByRecentExpiryDate }
+				fields={ fields }
+				view={ view }
+				onChangeView={ setView }
+				selection={ selection }
+				onChangeSelection={ setSelection }
+				getItemId={ ( item ) => item.ID.toString() }
+				isLoading={ false }
+				paginationInfo={ {
+					totalItems: purchasesSortByRecentExpiryDate.length,
+					totalPages: 1,
+				} }
+				defaultLayouts={ { table: {} } }
+			/>
 		</ConfirmDialog>
 	);
 }
