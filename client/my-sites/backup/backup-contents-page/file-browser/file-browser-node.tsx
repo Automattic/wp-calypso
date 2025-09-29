@@ -324,7 +324,7 @@ function FileBrowserNode( {
 				return (
 					<Text
 						variant="muted"
-						style={ { marginInlineStart: showSeparateExpandButton ? 43 : 63, fontStyle: 'italic' } }
+						style={ { marginInlineStart: showSeparateExpandButton ? 36 : 63, fontStyle: 'italic' } }
 					>
 						{ __( 'Empty' ) }
 					</Text>
