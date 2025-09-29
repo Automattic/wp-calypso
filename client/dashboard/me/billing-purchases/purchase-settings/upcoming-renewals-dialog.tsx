@@ -22,7 +22,7 @@ interface Props {
 	onClose: () => void;
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string;
-	showManagePurchaseLinks?: boolean;
+	hideManagePurchaseLinks?: boolean;
 }
 
 function ExpiresText( { purchase }: { purchase: Purchase } ) {
@@ -50,7 +50,7 @@ export function UpcomingRenewalsDialog( {
 	onClose,
 	onConfirm,
 	submitButtonText,
-	showManagePurchaseLinks = true,
+	hideManagePurchaseLinks,
 }: Props ) {
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
@@ -123,7 +123,7 @@ export function UpcomingRenewalsDialog( {
 										}
 									) }
 								</Text>
-								{ showManagePurchaseLinks && (
+								{ ! hideManagePurchaseLinks && (
 									<Text>
 										<Link to={ getPurchaseUrlForId( purchase.ID ) }>
 											{ __( 'Manage purchase' ) }
