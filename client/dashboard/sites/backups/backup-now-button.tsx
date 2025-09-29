@@ -37,8 +37,6 @@ export function BackupNowButton( { site, backupState }: BackupNowButtonProps ) {
 		triggerBackup();
 	};
 
-	const buttonLabel = __( 'Back up now' );
-
 	const isDisabled = isRunning || isPending || isEnqueued;
 
 	return (
@@ -48,7 +46,7 @@ export function BackupNowButton( { site, backupState }: BackupNowButtonProps ) {
 			disabled={ isDisabled }
 			accessibleWhenDisabled
 		>
-			{ buttonLabel }
+			{ __( 'Back up now' ) }
 		</Button>
 	);
 }
