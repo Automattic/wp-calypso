@@ -4,6 +4,7 @@ import {
 	fetchGithubRepositoryBranches,
 	fetchGithubRepositoryChecks,
 	fetchGithubWorkflowChecks,
+	fetchGithubWorkflowTemplates,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -104,4 +105,13 @@ export const githubWorkflowChecksQuery = (
 		meta: {
 			persist: false,
 		},
+	} );
+
+export const githubWorkflowTemplatesQuery = (
+	repositoryBranch: string,
+	template: 'simple' | 'with_composer'
+) =>
+	queryOptions( {
+		queryKey: [ 'github', 'repository', repositoryBranch, 'workflow', template ],
+		queryFn: () => fetchGithubWorkflowTemplates( repositoryBranch, template ),
 	} );

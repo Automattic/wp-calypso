@@ -35,3 +35,7 @@ export interface GitHubWorkflowValidation {
 	workflow_path: string;
 	checked_items: GitHubWorkflowValidationItem[];
 }
+
+export interface GitHubWorkflowTemplate {
+	template: string;
+}
