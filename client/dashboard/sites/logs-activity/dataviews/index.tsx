@@ -167,7 +167,9 @@ function SiteActivityLogsDataViews( {
 			fields={ fields as Field< SiteActivityLog >[] }
 			view={ view }
 			actions={ actions }
-			config={ hasActivityLogsAccess ? undefined : { perPageSizes: [ 20 ] } } // Disable changing perPage if no access
+			config={
+				hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
+			} // Disable changing perPage if no access
 			search
 			searchLabel={ __( 'Search posts by ID, title or author' ) }
 			defaultLayouts={ { table: {} } }
