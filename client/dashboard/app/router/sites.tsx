@@ -392,6 +392,13 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
@@ -403,16 +410,20 @@ export const siteBackupsRoute = createRoute( {
 export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Preload activity log backup-related entries.
-		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
+			component: d.BackupsListPage,
+		} )
+	)
+);
+
+export const siteBackupDetailRoute = createRoute( {
+	getParentRoute: () => siteBackupsRoute,
+	path: '$rewindId',
+} ).lazy( () =>
+	import( '../../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backup-detail' )( {
 			component: d.BackupsListPage,
 		} )
 	)
@@ -1151,6 +1162,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
+				siteBackupDetailRoute,
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
