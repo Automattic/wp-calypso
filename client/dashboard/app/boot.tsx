@@ -9,6 +9,7 @@ import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
+import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
 import type { AppConfig } from './context';
 
@@ -21,6 +22,7 @@ function boot( config: AppConfig ) {
 
 	maybeInitializeSupportSession( wpcom );
 	loadDevHelpers();
+	loadPreferencesHelper();
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {

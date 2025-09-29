@@ -6,14 +6,17 @@ import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { securitySocialLoginsRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
 import ConfirmModal from '../../components/confirm-modal';
 import PageLayout from '../../components/page-layout';
+import AppleIcon from '../../images/apple-logo.svg';
 import GitHubIcon from '../../images/github-logo.svg';
 import GoogleIcon from '../../images/google-logo.svg';
 import SecurityPageHeader from '../security-page-header';
+import AppleLogin from './apple-login';
 import GitHubLogin from './github-login';
 import GoogleLogin from './google-login';
 import type { SocialLoginButtonProps } from './types';
@@ -35,6 +38,7 @@ const SocialLoginItem = ( {
 } ) => {
 	const { user } = useAuth();
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -120,7 +124,10 @@ const SocialLoginItem = ( {
 				actions={ renderButton( {
 					isConnected,
 					responseHandler,
-					handleDisconnect: () => setIsRemoveDialogOpen( true ),
+					handleDisconnect: () => {
+						recordTracksEvent( 'calypso_dashboard_security_social_logins_disconnect_dialog_open' );
+						setIsRemoveDialogOpen( true );
+					},
 					isLoading: isConnectingSocialUser,
 				} ) }
 			/>
@@ -164,6 +171,18 @@ export default function SecuritySocialLogins() {
 					decoration={ GoogleIcon }
 					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
 						<GoogleLogin
+							isConnected={ isConnected }
+							responseHandler={ responseHandler }
+							handleDisconnect={ handleDisconnect }
+							isLoading={ isLoading }
+						/>
+					) }
+				/>
+				<SocialLoginItem
+					service="Apple"
+					decoration={ AppleIcon }
+					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
+						<AppleLogin
 							isConnected={ isConnected }
 							responseHandler={ responseHandler }
 							handleDisconnect={ handleDisconnect }

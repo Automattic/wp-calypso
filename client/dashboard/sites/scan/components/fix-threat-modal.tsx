@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
+import { FixThreatConfirmation } from './fix-threat-confirmation';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
 import type { Threat } from '@automattic/api-core';
@@ -41,30 +42,40 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 		} );
 	};
 
-	const fixButtonLabel = items.length === 1 ? __( 'Fix threat' ) : __( 'Fix all threats' );
-	const description =
-		items.length === 1
-			? __( 'Jetpack will be fixing the following threat:' )
-			: __( 'Jetpack will be fixing the following threats:' );
+	const isExtensionDeleteFixer =
+		threat.signature === 'Vulnerable.WP.Extension' && threat.fixable?.fixer === 'delete';
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text variant="muted">{ description }</Text>
+			<Text variant="muted">{ __( 'Jetpack will be fixing the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ items } />
-			<ThreatDescription threat={ items[ 0 ] } />
-			<ButtonStack justify="flex-end">
-				<Button variant="tertiary" onClick={ closeModal }>
-					{ __( 'Cancel' ) }
-				</Button>
-				<Button
-					variant="primary"
-					onClick={ handleFixThreat }
-					isBusy={ fixThreat.isPending }
+
+			{ isExtensionDeleteFixer ? (
+				<FixThreatConfirmation
+					threat={ threat }
+					onCancel={ closeModal }
+					onConfirm={ handleFixThreat }
 					disabled={ fixThreat.isPending }
-				>
-					{ fixButtonLabel }
-				</Button>
-			</ButtonStack>
+					isLoading={ fixThreat.isPending }
+				/>
+			) : (
+				<>
+					<ThreatDescription threat={ items[ 0 ] } />
+					<ButtonStack justify="flex-end">
+						<Button variant="tertiary" onClick={ closeModal }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ handleFixThreat }
+							isBusy={ fixThreat.isPending }
+							disabled={ fixThreat.isPending }
+						>
+							{ __( 'Fix threat' ) }
+						</Button>
+					</ButtonStack>
+				</>
+			) }
 		</VStack>
 	);
 }

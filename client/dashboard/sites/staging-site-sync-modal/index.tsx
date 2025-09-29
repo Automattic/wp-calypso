@@ -13,12 +13,12 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
-import { __, isRTL } from '@wordpress/i18n';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import useRewindableActivityLogQuery from '../../../data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../lib/jetpack/backup-utils';
@@ -34,6 +34,7 @@ import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
+import type { Field } from '@wordpress/dataviews';
 
 // File browser config used for granular selection
 const fileBrowserConfig: FileBrowserConfig = {
@@ -49,6 +50,10 @@ const fileBrowserConfig: FileBrowserConfig = {
 };
 
 type BackupActivity = { rewindId: number; activityTs: number };
+
+type StagingSiteSyncFormData = {
+	domain: string;
+};
 
 const DirectionArrow = () => {
 	return (
@@ -167,7 +172,9 @@ function StagingSiteSyncModalInner( {
 }: StagingSiteSyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
 	const { recordTracksEvent } = useAnalytics();
-	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
+	const [ formData, setFormData ] = useState< StagingSiteSyncFormData >( {
+		domain: '',
+	} );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
@@ -206,16 +213,32 @@ function StagingSiteSyncModalInner( {
 		onClose();
 	}, [ onClose ] );
 
+	// Determine latest successful backup for rewindId/display
+	const activityQuery = useRewindableActivityLogQuery(
+		querySiteId,
+		{
+			name: SUCCESSFUL_BACKUP_ACTIVITIES,
+			aggregate: false,
+			number: 1,
+			sortOrder: 'desc',
+		},
+		{}
+	) as { data: BackupActivity[] | undefined; isLoading: boolean };
+	const { data: backupData, isLoading: isLoadingBackupAttempt } = activityQuery;
+
+	const lastKnownBackupAttempt: BackupActivity | undefined = backupData?.[ 0 ];
+	const rewindId = lastKnownBackupAttempt?.rewindId ?? 0;
+
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserCheckList = fileBrowserState.getCheckList();
+	const browserCheckList = fileBrowserState.getCheckList( rewindId );
 
 	const WP_CONFIG_PATH = '/wp-config.php';
 	const WP_CONTENT_PATH = '/wp-content';
 	const SQL_PATH = '/sql';
 
-	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH );
-	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH );
-	const sqlNode = fileBrowserState.getNode( SQL_PATH );
+	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH, rewindId );
+	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH, rewindId );
+	const sqlNode = fileBrowserState.getNode( SQL_PATH, rewindId );
 
 	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
@@ -238,10 +261,10 @@ function StagingSiteSyncModalInner( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState );
-			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState, rewindId );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState, rewindId );
 		},
-		[ fileBrowserState ]
+		[ fileBrowserState, rewindId ]
 	);
 
 	const onFilesFoldersCheckboxChange = useCallback( () => {
@@ -252,11 +275,11 @@ function StagingSiteSyncModalInner( {
 
 	const handleDatabaseCheckboxChange = useCallback( () => {
 		if ( sqlNode?.checkState === 'checked' ) {
-			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked', rewindId );
 		} else {
-			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked', rewindId );
 		}
-	}, [ fileBrowserState, sqlNode ] );
+	}, [ fileBrowserState, sqlNode, rewindId ] );
 
 	const handleFileSelectionModeChange = useCallback(
 		( value: string ) => {
@@ -268,22 +291,6 @@ function StagingSiteSyncModalInner( {
 		},
 		[ updateFilesAndFoldersCheckState ]
 	);
-
-	// Determine latest successful backup for rewindId/display
-	const activityQuery = useRewindableActivityLogQuery(
-		querySiteId,
-		{
-			name: SUCCESSFUL_BACKUP_ACTIVITIES,
-			aggregate: false,
-			number: 1,
-			sortOrder: 'desc',
-		},
-		{}
-	) as { data: BackupActivity[] | undefined; isLoading: boolean };
-	const { data: backupData, isLoading: isLoadingBackupAttempt } = activityQuery;
-
-	const lastKnownBackupAttempt: BackupActivity | undefined = backupData?.[ 0 ];
-	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const locale = useLocale();
 	const displayBackupDate = lastKnownBackupAttempt
@@ -357,20 +364,28 @@ function StagingSiteSyncModalInner( {
 		}
 	};
 
-	const handleDomainConfirmation = useCallback(
-		( value: string | undefined ) => setDomainConfirmation( value || '' ),
-		[]
-	);
-
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
 	const isSubmitDisabled =
-		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
+		( showDomainConfirmation && formData.domain !== productionSiteSlug ) ||
 		( browserCheckList.totalItems === 0 &&
 			browserCheckList.includeList.length === 0 &&
 			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
 		pushMutation.isPending;
+
+	const fields: Field< StagingSiteSyncFormData >[] = [
+		{
+			id: 'domain',
+			label: __( 'Type the site domain to confirm' ),
+			type: 'text' as const,
+			description: sprintf(
+				/* translators: %s: site domain */
+				__( 'The site domain is: %s' ),
+				productionSiteSlug
+			),
+		},
+	];
 
 	return (
 		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
@@ -440,7 +455,7 @@ function StagingSiteSyncModalInner( {
 								) }
 								<HStack style={ { marginInlineStart: '14px' } }>
 									<FileBrowser
-										rewindId={ rewindId ?? 0 }
+										rewindId={ rewindId }
 										siteId={ querySiteId }
 										siteSlug={ querySiteSlug as string }
 										fileBrowserConfig={ fileBrowserConfig }
@@ -505,21 +520,17 @@ function StagingSiteSyncModalInner( {
 					</VStack>
 
 					{ showDomainConfirmation && (
-						<InputControl
-							__next40pxDefaultSize
-							label={
-								<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
-									<Text>
-										{ __( 'Enter your site‘s name' ) }{ ' ' }
-										<Text color="var(--dashboard__foreground-color-error)">
-											{ productionSiteSlug }
-										</Text>{ ' ' }
-										{ __( 'to confirm.' ) }
-									</Text>
-								</HStack>
-							}
-							onChange={ handleDomainConfirmation }
-							value={ domainConfirmation }
+						<DataForm< StagingSiteSyncFormData >
+							data={ formData }
+							fields={ fields }
+							form={ { layout: { type: 'regular' as const }, fields } }
+							onChange={ ( edits: Partial< StagingSiteSyncFormData > ) => {
+								setFormData( ( data ) => ( {
+									...data,
+									...edits,
+									domain: edits.domain?.trim() ?? data.domain,
+								} ) );
+							} }
 						/>
 					) }
 					<HStack>

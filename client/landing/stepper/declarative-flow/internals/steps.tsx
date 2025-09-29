@@ -142,6 +142,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-squarespace' ),
 	},
 
+	IMPORTER_SUBSTACK: {
+		slug: 'importerSubstack',
+		asyncComponent: () => import( './steps-repository/importer-substack' ),
+	},
+
 	IMPORTER_WIX: {
 		slug: 'importerWix',
 		asyncComponent: () => import( './steps-repository/importer-wix' ),

@@ -125,7 +125,7 @@ export function BackupsList( {
 				view={ view }
 				onChangeView={ onChangeView }
 				isLoading={ isLoadingActivityLog }
-				defaultLayouts={ { table: {} } }
+				defaultLayouts={ { list: {} } }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search backups' ) }
 				onChangeSelection={ onChangeSelection }

@@ -22,6 +22,11 @@ import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
+const DEFAULT_LAYOUTS = {
+	table: {},
+	list: {},
+};
+
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
@@ -91,7 +96,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 				actions={ actions }
 				view={ view }
 				isLoading={ isLoading }
-				defaultLayouts={ { table: {} } }
+				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ {
 					...paginationInfo,
 					infiniteScrollHandler,
