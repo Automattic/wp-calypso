@@ -1,5 +1,6 @@
 import {
 	fetchMonetizeSubscriptions,
+	MonetizeSubscription,
 	MonetizeSubscriptionAutoRenewResponse,
 	MonetizeSubscriptionStopResponse,
 	requestAutoRenewDisable,
@@ -9,17 +10,22 @@ import {
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
+const MonetizeQueryKeys = [ 'me', 'monetize', 'subscriptions' ];
+
 export const monetizeSubscriptionsQuery = () =>
 	queryOptions( {
-		queryKey: [ 'me', 'monetize', 'subscriptions' ],
+		queryKey: MonetizeQueryKeys,
 		queryFn: () => fetchMonetizeSubscriptions(),
 	} );
 
 export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 	queryOptions( {
-		...monetizeSubscriptionsQuery(),
-		select: ( data ) => {
-			const subscription = data?.find( ( sub ) => sub.ID === subscriptionId );
+		queryKey: [ ...MonetizeQueryKeys, subscriptionId ],
+		queryFn: async () => {
+			const subscriptions: MonetizeSubscription[] = await queryClient.ensureQueryData( {
+				queryKey: monetizeSubscriptionsQuery().queryKey,
+			} );
+			const subscription = ( subscriptions ?? [] ).find( ( sub ) => sub.ID === subscriptionId );
 			if ( ! subscription ) {
 				throw new Error( `Subscription with ID ${ subscriptionId } not found` );
 			}
