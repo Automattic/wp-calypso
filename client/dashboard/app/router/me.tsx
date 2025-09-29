@@ -499,6 +499,11 @@ export const notificationsSitesRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => notificationsRoute,
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+			queryClient.ensureQueryData( userNotificationsDevicesQuery() ),
+		] ),
 	path: '/sites',
 } ).lazy( () =>
 	import( '../../me/notifications-sites' ).then( ( d ) =>
