@@ -6,7 +6,8 @@ export function useFormattedTime(
 	timestamp: string,
 	formatOptions?: Intl.DateTimeFormatOptions,
 	timezoneString?: string,
-	gmtOffset?: number
+	gmtOffset?: number,
+	lowercaseCalendarLabel?: boolean
 ) {
 	const locale = useLocale();
 
@@ -39,10 +40,14 @@ export function useFormattedTime(
 
 		if ( isToday ) {
 			if ( formatOptions?.timeStyle ) {
+				if ( lowercaseCalendarLabel ) {
+					// translators: time today
+					return sprintf( __( 'today at %s' ), formatted );
+				}
 				// translators: time today
 				return sprintf( __( 'Today at %s' ), formatted );
 			}
-			return __( 'Today' );
+			return lowercaseCalendarLabel ? __( 'today' ) : __( 'Today' );
 		} else if ( timezoneString ) {
 			return formatDate( date, locale, {
 				...formatOptions,
