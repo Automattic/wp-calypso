@@ -112,10 +112,12 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 						<HelpCenterHeader onDismiss={ onDismiss } />
 						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
-						<Elevation
-							borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
-							value={ 4 }
-						></Elevation>
+						{ ! isMobile && (
+							<Elevation
+								borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
+								value={ 4 }
+							></Elevation>
+						) }
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>

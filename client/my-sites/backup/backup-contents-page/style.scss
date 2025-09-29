@@ -117,13 +117,28 @@
 		}
 
 		.file-card {
+			background-color: var(--studio-gray-0);
+
+			.components-button.is-secondary {
+				background: #fff;
+				border: 0;
+				color: var( --theme-base-color );
+			}
+
 			&__preview-sensitive {
 				background-color: var(--studio-gray-60);
 				padding: 20px 8px;
 			}
 
+			&__preview-sensitive svg {
+				fill: #fff;
+			}
+
 			&__preview-sensitive p {
 				color: #fff;
+			}
+			&__detail {
+				font-size: $font-body-small;
 			}
 		}
 

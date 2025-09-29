@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';
 import { getDefaultSiteSpecConfig, isSiteSpecEnabled, SiteSpecConfig } from './utils';
@@ -10,6 +11,7 @@ declare global {
 				agentUrl?: string;
 				agentId?: string;
 				buildSiteUrl?: string;
+				locale?: string;
 				onMessage?: ( message: unknown ) => void;
 				onError?: ( error: unknown ) => void;
 			} ) => void;
@@ -42,6 +44,8 @@ type UseSiteSpecOptions = {
  */
 export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 	const { container = '#site-spec-container', onMessage, onError, siteSpecConfig } = options;
+
+	const locale = useLocale();
 
 	useEffect( () => {
 		// SSR/Non-browser guard
@@ -77,6 +81,7 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 				window.SiteSpec.init( {
 					container: containerEl,
 					...config,
+					locale,
 					onMessage,
 					onError,
 				} );
@@ -96,6 +101,6 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 			// If the loader manages a global "loaded" flag, reset it so
 			resetSiteSpecScriptState();
 		};
-		// Re-run only if the container target or handlers change.
-	}, [ container, onMessage, onError ] );
+		// Re-run only if the container target, handlers, locale, or config change.
+	}, [ container, onMessage, onError, locale, siteSpecConfig ] );
 }

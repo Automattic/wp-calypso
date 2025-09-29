@@ -55,7 +55,7 @@ export function getFields(): Field< Threat >[] {
 		},
 		{
 			id: 'first_detected',
-			label: __( 'Detected On' ),
+			label: __( 'Detected on' ),
 			type: 'date',
 			filterBy: {
 				operators: [ 'on', 'before', 'after' ],

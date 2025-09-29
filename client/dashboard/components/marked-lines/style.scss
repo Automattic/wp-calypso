@@ -16,7 +16,7 @@
 .marked-lines__line-numbers {
 	display: flex;
 	flex-direction: column;
-	text-align: right;
+	text-align: end;
 }
 
 .marked-lines__line-number {
@@ -37,7 +37,7 @@
 }
 
 .marked-lines__line {
-	padding-left: 8px;
+	padding-inline-start: 8px;
 }
 
 .marked-lines__mark {
