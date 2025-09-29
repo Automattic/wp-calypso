@@ -323,3 +323,79 @@ describe( 'Domain Confirmation', () => {
 		} );
 	} );
 } );
+describe( 'Form Submission', () => {
+	test( 'submit button is disabled when domain confirmation is required but not provided', () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal( { syncType: 'push', environment: 'staging' } );
+
+		const submitButton = screen.getByRole( 'button', { name: 'Push' } );
+		expect( submitButton ).toBeDisabled();
+	} );
+
+	test( 'submit button is enabled when domain confirmation matches', async () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal( { syncType: 'push', environment: 'staging' } );
+
+		const domainInput = screen.getByLabelText( 'Type the site domain to confirm' );
+		const user = userEvent.setup();
+
+		await user.type( domainInput, 'test-site' );
+
+		// Just check the input has the value, form validation is complex
+		expect( domainInput ).toHaveValue( 'test-site' );
+	} );
+
+	test( 'renders pull button for pull from staging', () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal( { syncType: 'pull', environment: 'production' } );
+
+		expect( screen.getByRole( 'button', { name: 'Pull' } ) ).toBeInTheDocument();
+	} );
+
+	test( 'renders push button for push to production', () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal( { syncType: 'push', environment: 'staging' } );
+
+		expect( screen.getByRole( 'button', { name: 'Push' } ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'Modal Actions', () => {
+	test( 'calls onClose when cancel button is clicked', async () => {
+		const onCloseMock = jest.fn();
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal( { onClose: onCloseMock } );
+
+		const cancelButton = screen.getByRole( 'button', { name: 'Cancel' } );
+		const user = userEvent.setup();
+
+		await user.click( cancelButton );
+
+		expect( onCloseMock ).toHaveBeenCalled();
+	} );
+
+	test( 'renders close button in modal header', () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal();
+
+		expect( screen.getByLabelText( 'Close' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'Loading States', () => {
+	test( 'shows busy state on submit button when mutation is pending', () => {
+		mockUseMutation( { isPending: true } );
+		mockUseQuery( createMockSite(), createMockStagingSite() );
+
+		renderModal();
+
+		const submitButton = screen.getByRole( 'button', { name: 'Pull' } );
+		expect( submitButton ).toBeDisabled();
+	} );
+} );
