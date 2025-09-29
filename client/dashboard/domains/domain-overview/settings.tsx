@@ -7,8 +7,8 @@ import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
-import DomainRedirectSettingsSummary from '../domain-redirect/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
+import SiteRedirectSettingsSummary from '../domain-site-redirect/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
 import DomainGlueRecordsSettingsSummary from '../overview-glue-records/summary';
 export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
@@ -82,7 +82,7 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 	}
 
 	if ( domain.subtype.id === DomainSubtype.SITE_REDIRECT && domain.current_user_can_manage ) {
-		buttonListItems.push( <DomainRedirectSettingsSummary key="redirect" domain={ domain } /> );
+		buttonListItems.push( <SiteRedirectSettingsSummary key="redirect" domain={ domain } /> );
 	}
 
 	return (

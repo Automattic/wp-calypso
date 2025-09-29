@@ -75,6 +75,7 @@ export * from './site-plugins';
 export * from './site-preview-links';
 export * from './site-primary-data-center';
 export * from './site-purchases';
+export * from './site-redirect';
 export * from './site-reset';
 export * from './site-scan';
 export * from './site-settings';

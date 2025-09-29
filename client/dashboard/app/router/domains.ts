@@ -415,6 +415,24 @@ export const domainGlueRecordsEditRoute = createRoute( {
 	)
 );
 
+export const domainSiteRedirectRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Site redirect' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'site-redirect',
+} ).lazy( () =>
+	import( '../../domains/domain-site-redirect' ).then( ( d ) =>
+		createLazyRoute( 'site-redirect' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const domainSecurityRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -565,6 +583,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsRoute,
 			domainGlueRecordsAddRoute,
 			domainGlueRecordsEditRoute,
+			domainSiteRedirectRoute,
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
 			domainTransferToOtherUserRoute,
