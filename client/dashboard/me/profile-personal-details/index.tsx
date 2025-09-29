@@ -1,61 +1,114 @@
-import { userSettingsMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import {
+	isAutomatticianQuery,
+	userSettingsMutation,
+	userSettingsQuery,
+} from '@automattic/api-queries';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
 	CardBody,
 	CheckboxControl,
-	Notice,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
+import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
+import './style.scss';
 
-const fields: Field< UserSettings >[] = [
-	{
-		id: 'first_name',
-		label: __( 'First name' ),
-		type: 'text',
-	},
-	{
-		id: 'last_name',
-		label: __( 'Last name' ),
-		type: 'text',
-	},
-	{
-		id: 'user_login',
-		label: __( 'Username' ),
-		type: 'text',
-		Edit: ( { field, data, hideLabelFromVision } ) => {
-			const { getValue } = field;
-			return (
-				<InputControl
-					__next40pxDefaultSize
-					label={ hideLabelFromVision ? '' : field.label }
-					value={ getValue( { item: data } ) }
-					disabled
-					onChange={ () => {} }
-				/>
-			);
+interface PersonalDetailsSectionProps {
+	profile: UserSettings;
+}
+
+export default function PersonalDetailsSection( {
+	profile: serverProfile,
+}: PersonalDetailsSectionProps ) {
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+
+	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
+
+	const mutation = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Settings saved.' ),
+				error: __( 'Failed to save settings.' ),
+			},
 		},
-	},
-	{
-		id: 'user_email',
-		label: __( 'Email address' ),
-		type: 'email',
-	},
-	{
+	} );
+
+	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
+
+	const currentUsername = userSettings?.user_login || '';
+	const isEmailVerified = userSettings?.email_verified ?? true;
+	const canChangeUsername = userSettings?.user_login_can_be_changed ?? true;
+
+	// Form event handlers
+	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
+		setEdits( ( current ) => ( { ...current, ...partial } ) );
+	};
+
+	const handleSubmit = async ( e: React.FormEvent ) => {
+		e.preventDefault();
+
+		// Exclude username changes from main form submission
+		const { user_login, ...submissionEdits } = edits;
+
+		if ( Object.keys( submissionEdits ).length === 0 ) {
+			return;
+		}
+
+		mutation.mutate( submissionEdits, {
+			onSuccess: () => {
+				setEdits( {} );
+			},
+		} );
+	};
+
+	const handleUsernameCancel = useCallback( () => {
+		setEdits( ( current ) => {
+			const { user_login, ...rest } = current;
+			return rest;
+		} );
+	}, [] );
+
+	const isDirty = Object.keys( edits ).some( ( key ) => {
+		// Exclude username changes from main form dirty check since they need special handling
+		if ( key === 'user_login' ) {
+			return false;
+		}
+		return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
+	} );
+
+	const isSaving = mutation.isPending;
+
+	// DataForm fields
+	const nameFields: Field< UserSettings >[] = [
+		{
+			id: 'first_name',
+			label: __( 'First name' ),
+			type: 'text',
+		},
+		{
+			id: 'last_name',
+			label: __( 'Last name' ),
+			type: 'text',
+		},
+	];
+
+	const devAccountField: Field< UserSettings > = {
 		id: 'is_dev_account',
 		label: __( 'I am a developer' ),
 		type: 'boolean',
-		description: __( 'Opt me into previews of new developer-focused features.' ),
+		description: __( 'Opt in to previews of new developer-focused features.' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue, description } = field;
 			return (
@@ -68,70 +121,74 @@ const fields: Field< UserSettings >[] = [
 				/>
 			);
 		},
-	},
-];
+	};
 
-const form: Form = {
-	layout: {
-		type: 'regular' as const,
-		labelPosition: 'top' as const,
-	},
-	fields: [ 'first_name', 'last_name', 'user_login', 'user_email', 'is_dev_account' ],
-};
+	const nameForm: Form = {
+		layout: {
+			type: 'regular' as const,
+			labelPosition: 'top' as const,
+		},
+		fields: [ 'first_name', 'last_name' ],
+	};
 
-interface PersonalDetailsSectionProps {
-	profile: UserSettings;
-}
-
-// excluding user_login since it's read-only
-const controlledKeys = fields
-	.filter( ( field ) => field.id !== 'user_login' )
-	.map( ( field ) => field.id );
-
-export default function PersonalDetailsSection( {
-	profile: serverProfile,
-}: PersonalDetailsSectionProps ) {
-	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
-	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
-	const mutation = useMutation( userSettingsMutation() );
-	const isSaving = mutation.isPending;
-	const isDirty = controlledKeys.some( ( key ) => {
-		return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
-	} );
-
-	function onChange( partial: Partial< UserSettings > ) {
-		setEdits( ( current ) => ( { ...current, ...partial } ) );
-	}
-
-	function handleSubmit( e: React.FormEvent ) {
-		e.preventDefault();
-
-		if ( ! edits || Object.keys( edits ).length === 0 ) {
-			return;
-		}
-
-		mutation.mutate( edits, { onSuccess: () => setEdits( {} ) } );
-	}
+	const devForm: Form = {
+		layout: {
+			type: 'regular' as const,
+			labelPosition: 'top' as const,
+		},
+		fields: [ 'is_dev_account' ],
+	};
 
 	return (
-		<form onSubmit={ handleSubmit }>
+		<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
+			<FlashMessage value="username" message={ __( 'Username saved.' ) } />
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<SectionHeader level={ 3 } title={ __( 'Personal details' ) } />
-
-						<DataForm< UserSettings >
-							data={ data }
-							fields={ fields }
-							form={ form }
-							onChange={ onChange }
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Personal details' ) }
+							headingId="personal-details-heading"
 						/>
 
-						{ mutation.error && (
-							<Notice status="error" isDismissible={ false }>
-								{ ( mutation.error as Error ).message }
-							</Notice>
-						) }
+						{ /* First & last name */ }
+						<DataForm< UserSettings >
+							data={ data }
+							fields={ nameFields }
+							form={ nameForm }
+							onChange={ handleFieldChange }
+						/>
+
+						{ /* Username */ }
+						<UsernameSection
+							value={ data.user_login || '' }
+							onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
+							currentUsername={ currentUsername }
+							isAutomattician={ isAutomattician }
+							isEmailVerified={ isEmailVerified }
+							canChangeUsername={ canChangeUsername }
+							onCancel={ handleUsernameCancel }
+						/>
+
+						{ /* Email address */ }
+						<InputControl
+							__next40pxDefaultSize
+							id="email-input"
+							type="email"
+							label={ __( 'Email address' ) }
+							value={ data.user_email || '' }
+							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
+							autoComplete="email"
+							aria-describedby="email-help"
+						/>
+
+						{ /* Developer checkbox */ }
+						<DataForm< UserSettings >
+							data={ data }
+							fields={ [ devAccountField ] }
+							form={ devForm }
+							onChange={ handleFieldChange }
+						/>
 
 						<HStack justify="flex-start">
 							<Button

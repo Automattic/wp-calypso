@@ -127,7 +127,7 @@ test( 'shows advanced settings panel', async () => {
 	await user.click( advancedPanel );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'HTTP Redirect Type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Path forwarding' ) ).toBeInTheDocument();
 	} );
 } );

@@ -66,6 +66,7 @@ export class EmailClient {
 		const message = await this.client.messages.get( inboxId, searchCriteria, {
 			receivedAfter: receivedAfter !== undefined ? receivedAfter : this.startTimestamp,
 			timeout: 120 * 1000, // Sometimes email is slow to be received.
+			suppressError: true, // Don't throw if no messages are found.
 		} );
 		return message;
 	}

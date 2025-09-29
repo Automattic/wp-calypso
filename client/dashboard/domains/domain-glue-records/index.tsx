@@ -11,6 +11,7 @@ import {
 	domainGlueRecordsEditRoute,
 } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -78,7 +79,7 @@ function DomainGlueRecords() {
 		() => [
 			{
 				id: 'nameServer',
-				label: __( 'Name Server' ),
+				label: __( 'Name server' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -96,7 +97,7 @@ function DomainGlueRecords() {
 			},
 			{
 				id: 'ipAddress',
-				label: __( 'IP Address' ),
+				label: __( 'IP address' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -148,9 +149,15 @@ function DomainGlueRecords() {
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					empty={
-						view.search
-							? __( 'No glue records found.' )
-							: __( 'No glue records found for this domain.' )
+						<DataViewsEmptyState
+							title=""
+							description={
+								view.search
+									? __( 'No glue records found.' )
+									: __( 'No glue records found for this domain.' )
+							}
+							mutedDescription={ false }
+						/>
 					}
 				/>
 			</DataViewsCard>

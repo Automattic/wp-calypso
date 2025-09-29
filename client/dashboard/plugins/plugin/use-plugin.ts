@@ -66,23 +66,25 @@ export const usePlugin = ( pluginSlug: string ) => {
 		: undefined;
 
 	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [ SiteWithPluginData[], Site[] ] = sites
-		? sites.reduce(
-				( acc, site ) => {
-					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
-						const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
-						const actionLinks = actionLinksBySiteId.get( Number( site.ID ) ) || {
-							Settings: `${ site.URL }/wp-admin/plugins.php`,
-						};
+		? sites
+				.filter( ( site ) => site.capabilities.update_plugins )
+				.reduce(
+					( acc, site ) => {
+						if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
+							const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
+							const actionLinks = actionLinksBySiteId.get( Number( site.ID ) ) || {
+								Settings: `${ site.URL }/wp-admin/plugins.php`,
+							};
 
-						acc[ 0 ].push( { ...site, isPluginActive, actionLinks } );
-					} else {
-						acc[ 1 ].push( site );
-					}
+							acc[ 0 ].push( { ...site, isPluginActive, actionLinks } );
+						} else {
+							acc[ 1 ].push( site );
+						}
 
-					return acc;
-				},
-				[ [], [] ] as [ SiteWithPluginData[], Site[] ]
-		  )
+						return acc;
+					},
+					[ [], [] ] as [ SiteWithPluginData[], Site[] ]
+				)
 		: [ [], [] ];
 
 	return {

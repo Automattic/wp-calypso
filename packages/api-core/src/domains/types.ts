@@ -41,6 +41,7 @@ export interface DomainSummary {
 		status: string;
 		status_type: 'success' | 'neutral' | 'error';
 	};
+	email_forwards_count: number;
 	expired: boolean;
 	expiry: string | false;
 	has_registration: boolean;

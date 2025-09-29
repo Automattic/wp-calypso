@@ -34,5 +34,6 @@ export interface SupportedEnvVariables {
 	readonly TEST_ON_ATOMIC: boolean;
 	readonly TIMEOUT: number;
 	readonly VIEWPORT_NAME: ViewportName;
+	readonly WOO_BASE_URL: string;
 	readonly WPCOM_BASE_URL: string;
 }

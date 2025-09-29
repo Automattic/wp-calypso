@@ -207,7 +207,7 @@ export function backupContents( context, next ) {
 				isPersistent: true,
 			} ) }
 		>
-			<BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />
+			<BackupContentsPage siteId={ siteId } rewindId={ Number( context.params.rewindId ) } />
 		</FileBrowserProvider>
 	);
 	next();
