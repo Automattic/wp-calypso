@@ -4,6 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { isCloseToExpiration } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
+/**
+ * Used to determine if we should render RenewNoticeAction.
+ */
 export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
@@ -31,6 +34,13 @@ export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 	return false;
 }
 
+/**
+ * Render the action button in ExpiredRenewNotice or PurchaseExpiringNotice
+ *
+ * IMPORTANT: call shouldShowRenewNoticeAction before rendering this. Otherwise
+ * there will be a space left for a button in the notice and nothing will be
+ * rendered there.
+ */
 export function RenewNoticeAction( {
 	onClick,
 	purchase,
@@ -69,12 +79,9 @@ export function RenewNoticeAction( {
 		);
 	}
 
-	if ( ! purchase.is_rechargable ) {
-		return (
-			<Button variant="primary" onClick={ onClick }>
-				{ __( 'Renew now' ) }
-			</Button>
-		);
-	}
-	return null;
+	return (
+		<Button variant="primary" onClick={ onClick }>
+			{ __( 'Renew now' ) }
+		</Button>
+	);
 }
