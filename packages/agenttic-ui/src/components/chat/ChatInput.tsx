@@ -40,6 +40,8 @@ interface ChatInputProps {
 	onStop?: () => void; // Optional callback for stopping current request
 	disabled?: boolean; // Allow disabling submit button for validation
 	className?: string;
+	onMouseEnter?: () => void;
+	onMouseLeave?: () => void;
 }
 
 export function ChatInput( {
@@ -60,6 +62,8 @@ export function ChatInput( {
 	onStop,
 	disabled = false,
 	className,
+	onMouseEnter,
+	onMouseLeave,
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = ( value.trim() || isProcessing ) && ! disabled;
@@ -152,7 +156,12 @@ export function ChatInput( {
 	};
 
 	return (
-		<div data-slot="chat-input" className={ styles.container }>
+		<div
+			data-slot="chat-input"
+			className={ styles.container }
+			onMouseEnter={ onMouseEnter }
+			onMouseLeave={ onMouseLeave }
+		>
 			<motion.div
 				className={ styles.textareaContainer }
 				initial={ {

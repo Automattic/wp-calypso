@@ -12,6 +12,8 @@ export interface SuggestionsProps {
 	onSubmit?: ( message: string ) => void;
 	layout?: 'horizontal' | 'vertical';
 	visible?: boolean;
+	onMouseEnter?: () => void;
+	onMouseLeave?: () => void;
 }
 
 export const Suggestions: React.FC< SuggestionsProps > = ( {
@@ -20,6 +22,8 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	onSubmit,
 	layout = 'horizontal',
 	visible = true,
+	onMouseEnter,
+	onMouseLeave,
 } ) => {
 	const handleSuggestionClick = ( suggestion: Suggestion ) => {
 		if ( onSubmit ) {
@@ -44,6 +48,8 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					animate={ { opacity: 1, y: '-100%' } }
 					exit={ { opacity: 0, y: '-80%' } }
 					transition={ fastSpringWithDelay }
+					onMouseEnter={ onMouseEnter }
+					onMouseLeave={ onMouseLeave }
 				>
 					{ suggestions.map(
 						( suggestion: Suggestion, index: number ) => (

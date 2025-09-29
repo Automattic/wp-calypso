@@ -52,6 +52,16 @@ export function CompactView( {
 	// Use our custom timeout hook for proper cleanup
 	const { setNamedTimeout, clearAllTimeouts } = useMultiTimeout();
 
+	const hideSuggestionsAfterTimeout = useCallback( () => {
+		setNamedTimeout(
+			'hide-suggestions',
+			() => {
+				setSuggestionsVisible( false );
+			},
+			SUGGESTIONS_AUTO_HIDE_DELAY
+		);
+	}, [ setNamedTimeout ] );
+
 	useEffect( () => {
 		// Clear any existing timeouts when dependencies change
 		clearAllTimeouts();
@@ -71,29 +81,14 @@ export function CompactView( {
 		// Case 3: Input empty + suggestions available - show with auto-hide
 		setSuggestionsVisible( true );
 
-		// Set up auto-hide sequence
-		setNamedTimeout(
-			'hide-suggestions',
-			() => {
-				setSuggestionsVisible( false );
-
-				// Wait for exit animation before clearing suggestions
-				setNamedTimeout(
-					'clear-suggestions',
-					() => {
-						clearSuggestions?.();
-					},
-					SUGGESTIONS_EXIT_ANIMATION_DURATION
-				);
-			},
-			SUGGESTIONS_AUTO_HIDE_DELAY
-		);
+		hideSuggestionsAfterTimeout();
 	}, [
 		value,
 		suggestions,
 		clearAllTimeouts,
 		setNamedTimeout,
 		clearSuggestions,
+		hideSuggestionsAfterTimeout,
 	] );
 
 	return (
@@ -113,6 +108,11 @@ export function CompactView( {
 				customActions={ customActions }
 				actionOrder={ actionOrder }
 				onStop={ onStop }
+				onMouseEnter={ () => {
+					clearAllTimeouts();
+					setSuggestionsVisible( true );
+				} }
+				onMouseLeave={ () => hideSuggestionsAfterTimeout() }
 			/>
 			{ ! value && (
 				<Suggestions
@@ -120,6 +120,11 @@ export function CompactView( {
 					onSubmit={ handleSuggestionSubmit }
 					layout="vertical"
 					visible={ suggestionsVisible }
+					onMouseEnter={ () => {
+						clearAllTimeouts();
+						setSuggestionsVisible( true );
+					} }
+					onMouseLeave={ () => hideSuggestionsAfterTimeout() }
 				/>
 			) }
 		</>
