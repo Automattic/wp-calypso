@@ -29,7 +29,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
-import { useCheckoutCSP } from '../hooks/use-checkout-csp';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
@@ -55,7 +54,6 @@ import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
-import { CheckoutCSPMeta } from './checkout-csp-meta';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import CheckoutMainContent from './checkout-main-content';
 import { OnChangeItemVariant } from './item-variation-picker';
@@ -136,9 +134,6 @@ export default function CheckoutMain( {
 	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
-
-	// Get CSP directives for meta tags
-	const { cspDirectives } = useCheckoutCSP();
 
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
@@ -817,8 +812,6 @@ export default function CheckoutMain( {
 
 	return (
 		<Fragment>
-			{ /* Add CSP meta tags to enhance base CSP header */ }
-			<CheckoutCSPMeta cspDirectives={ cspDirectives } />
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
