@@ -98,8 +98,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
 	// hide the datepicker if the user doesn't have access to activity logs or doesn't have logging feature at all
 	const shouldShowDateRangePicker = hasHostingFeature( site, HostingFeatures.LOGS );
-		( hasActivityLogAccess && logType === LogType.ACTIVITY ) || // this is for the activity tab
-		( hasHostingFeature( site, HostingFeatures.LOGS ) && logType !== LogType.ACTIVITY ); // this is for php and server tabs
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
 			<VStack as="div" spacing={ 3 }>
