@@ -6,7 +6,7 @@ import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, useRef, useState, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
-import type { MinimalRequestCartProduct, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | 'events' > & {
 	currentSiteId?: number;
@@ -133,10 +133,7 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
-			onSuggestionRender: (
-				suggestion: DomainSuggestion,
-				reason?: string | null
-			) => {
+			onSuggestionRender: ( suggestion: DomainSuggestion, reason?: string | null ) => {
 				let resultSuffix = '';
 				if ( reason === 'recommended' ) {
 					resultSuffix = '#recommended';
