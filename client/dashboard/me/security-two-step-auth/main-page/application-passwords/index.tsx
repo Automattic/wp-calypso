@@ -108,7 +108,7 @@ const ApplicationPasswordsList = ( {
 				getItemId={ ( item ) => item.ID }
 				paginationInfo={ { totalItems: data.length, totalPages: 1 } }
 				defaultLayouts={ { list: {} } }
-				empty={ __( 'No application passwords added.' ) }
+				empty={ <p>{ __( 'No application passwords added.' ) }</p> }
 				isLoading={ isLoading }
 				actions={ [
 					{

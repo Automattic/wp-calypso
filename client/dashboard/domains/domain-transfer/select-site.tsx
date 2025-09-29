@@ -144,7 +144,7 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 					onChangeView={ setView }
 					selection={ selection }
 					onChangeSelection={ handleSelectionChange }
-					empty={ getEmptyStateMessage() }
+					empty={ <p>{ getEmptyStateMessage() }</p> }
 				>
 					<DataViews.Layout />
 				</DataViews>
