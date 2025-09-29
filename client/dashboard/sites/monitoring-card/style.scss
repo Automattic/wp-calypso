@@ -1,7 +1,13 @@
 .dashboard-monitoring-card {
 	flex-grow: 1;
 
+	.components-card__body, .dashboard-monitoring-card__body {
+		height: 100%;
+	}
+
 	.dashboard-monitoring-card__content {
+		flex-grow: 1;
+
 		&__is-loading {
 			display: flex;
 			justify-content: center;
