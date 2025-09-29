@@ -29,6 +29,7 @@ interface FileInfoCardProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	eventPrefix: string;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -42,6 +43,7 @@ function FileInfoCard( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	eventPrefix,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const { fileBrowserState, locale, notices } = useFileBrowserContext();
@@ -86,13 +88,13 @@ function FileInfoCard( {
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
+			onTrackEvent( `${ eventPrefix }backup_browser_download`, {
 				file_type: fileType,
 			} );
 
 			return;
 		},
-		[ onTrackEvent ]
+		[ onTrackEvent, eventPrefix ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -190,7 +192,7 @@ function FileInfoCard( {
 		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+		onTrackEvent( `${ eventPrefix }backup_browser_restore_single_file`, {
 			file_type: item.type,
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
@@ -201,6 +203,7 @@ function FileInfoCard( {
 		siteSlug,
 		rewindId,
 		onTrackEvent,
+		eventPrefix,
 		item.type,
 		hasCredentials,
 	] );
@@ -376,7 +379,12 @@ function FileInfoCard( {
 						) }
 					</HStack>
 					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+						<FilePreview
+							item={ item }
+							siteId={ siteId }
+							onTrackEvent={ onTrackEvent }
+							eventPrefix={ eventPrefix }
+						/>
 					) }
 				</VStack>
 			</CardBody>

@@ -15,12 +15,13 @@ interface FilePreviewProps {
 	item: FileBrowserItem;
 	siteId: number;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	eventPrefix: string;
 }
 
 /**
  * This component is responsible for rendering the preview of a file.
  */
-function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
+function FilePreview( { item, siteId, onTrackEvent, eventPrefix }: FilePreviewProps ) {
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -45,9 +46,9 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
 		if ( onTrackEvent ) {
-			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+			onTrackEvent( `${ eventPrefix }backup_browser_preview_file_sensitive_click` );
 		}
-	}, [ onTrackEvent ] );
+	}, [ onTrackEvent, eventPrefix ] );
 
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
@@ -112,7 +113,7 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 		}
 
 		if ( onTrackEvent ) {
-			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', {
+			onTrackEvent( `${ eventPrefix }backup_browser_preview_file`, {
 				file_type: item.type,
 			} );
 		}

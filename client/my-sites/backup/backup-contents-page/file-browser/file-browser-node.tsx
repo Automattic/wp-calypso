@@ -32,6 +32,7 @@ interface FileBrowserNodeProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	eventPrefix: string;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -49,6 +50,7 @@ function FileBrowserNode( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	eventPrefix,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
 	// Spinner styles for different positions
@@ -182,7 +184,7 @@ function FileBrowserNode( {
 			setFetchContentsOnMount( true );
 
 			if ( item.type !== 'dir' && onTrackEvent ) {
-				onTrackEvent( 'calypso_jetpack_backup_browser_view_file', {
+				onTrackEvent( `${ eventPrefix }backup_browser_view_file`, {
 					file_type: item.type,
 				} );
 			}
@@ -213,6 +215,7 @@ function FileBrowserNode( {
 		onCheckboxChange,
 		showFileCard,
 		onTrackEvent,
+		eventPrefix,
 	] );
 
 	const handleExpandButtonClick = useCallback( () => {
@@ -311,6 +314,7 @@ function FileBrowserNode( {
 							hasCredentials={ hasCredentials }
 							isRestoreEnabled={ isRestoreEnabled }
 							onTrackEvent={ onTrackEvent }
+							eventPrefix={ eventPrefix }
 							onRequestGranularRestore={ onRequestGranularRestore }
 							// Hacky way to pass extensions details to the child node
 							{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
@@ -424,6 +428,7 @@ function FileBrowserNode( {
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
 					onTrackEvent={ onTrackEvent }
+					eventPrefix={ eventPrefix }
 					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
 			) }
