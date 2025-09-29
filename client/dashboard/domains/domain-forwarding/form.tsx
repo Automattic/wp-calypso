@@ -67,7 +67,7 @@ export default function DomainForwardingForm( {
 
 	const isPermanentField = {
 		id: 'isPermanent',
-		label: __( 'HTTP Redirect Type' ),
+		label: __( 'HTTP redirect type' ),
 		type: 'text' as const,
 		Edit: 'radio',
 		elements: [

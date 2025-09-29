@@ -3,8 +3,10 @@ import type { View } from '@wordpress/dataviews';
 
 export function useActivityView( {
 	initialFilters,
+	initialSearch,
 }: {
 	initialFilters?: View[ 'filters' ];
+	initialSearch?: string;
 } = {} ) {
 	return useState< View >( () => ( {
 		type: 'table',
@@ -23,7 +25,9 @@ export function useActivityView( {
 				published: { maxWidth: '175px', minWidth: '140px' },
 				published_utc: { maxWidth: '175px', minWidth: '140px' },
 				actor: { maxWidth: '150px', minWidth: '75px' },
+				event: { minWidth: '500px' },
 			},
 		},
+		search: initialSearch ?? undefined,
 	} ) );
 }

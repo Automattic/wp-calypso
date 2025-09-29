@@ -83,14 +83,6 @@ export function BackupsList( {
 			setSelectedBackup( null );
 			return;
 		}
-
-		const isCurrentSelectionValid =
-			selectedBackup &&
-			activityLog.some( ( backup ) => backup.activity_id === selectedBackup.activity_id );
-
-		if ( ! isCurrentSelectionValid ) {
-			setSelectedBackup( activityLog[ 0 ] );
-		}
 	}, [
 		autoSelect,
 		isLoadingActivityLog,
@@ -125,7 +117,7 @@ export function BackupsList( {
 				view={ view }
 				onChangeView={ onChangeView }
 				isLoading={ isLoadingActivityLog }
-				defaultLayouts={ { table: {} } }
+				defaultLayouts={ { list: {} } }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search backups' ) }
 				onChangeSelection={ onChangeSelection }

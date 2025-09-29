@@ -26,7 +26,10 @@ import { navigate } from 'calypso/lib/navigate';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
 
-export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () => void ) {
+export function useActions(
+	viewType: 'table' | 'list' | 'grid' | 'pickerGrid',
+	onClose?: () => void
+) {
 	const translate = useTranslate();
 	const {
 		getFullDomain,

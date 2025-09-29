@@ -238,7 +238,7 @@ export class UploadingPane extends PureComponent {
 				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ nextStepUrl }
+						{ ...( nextStepUrl && { href: nextStepUrl } ) }
 						onClick={ skipNextStep }
 						disabled={ skipButtonDisabled }
 					>

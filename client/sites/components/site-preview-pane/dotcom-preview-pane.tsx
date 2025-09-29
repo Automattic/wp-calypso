@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,7 +6,6 @@ import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-tra
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
-import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
@@ -21,7 +19,6 @@ import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DEPLOYMENTS,
 	FEATURE_TO_ROUTE_MAP,
-	HOSTING_FEATURES,
 	LOGS_PHP,
 	LOGS_WEB,
 	MONITORING,
@@ -61,12 +58,7 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
-
-	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
-	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
-	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
 	const isA4ADevSite = !! site?.is_a4a_dev_site;
 
 	const hasStagingSitesFeature = useSelector( ( state ) =>
@@ -74,8 +66,6 @@ const DotcomPreviewPane = ( {
 	);
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
-		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
-		const isHostingFeaturesEnabled = isActiveAtomicSite || isHostingFeaturesCalloutEnabled;
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
@@ -83,33 +73,23 @@ const DotcomPreviewPane = ( {
 				featureIds: [ OVERVIEW ],
 			},
 			{
-				label: (
-					<span>
-						{ __( 'Hosting Features' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
-				enabled: ( isSimpleSite || isPlanExpired ) && ! isHostingFeaturesCalloutEnabled,
-				featureIds: [ HOSTING_FEATURES ],
-			},
-			{
 				label: __( 'Deployments' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
@@ -165,14 +145,10 @@ const DotcomPreviewPane = ( {
 			};
 		} );
 	}, [
-		isAtomicSite,
-		isPlanExpired,
 		__,
-		isSimpleSite,
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
-		isHostingFeaturesCalloutEnabled,
 		hasStagingSitesFeature,
 		isA4ADevSite,
 	] );

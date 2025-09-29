@@ -1,4 +1,6 @@
+import page from '@automattic/calypso-router';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -12,6 +14,7 @@ import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutatio
 import { useSetOriginSiteMutation } from 'calypso/data/paid-newsletter/use-set-origin-site-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { parseUrl } from 'calypso/lib/importer/url-validation';
 import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -128,6 +131,17 @@ export default function NewsletterImporter( {
 	const stepsProgress = getStepsProgress( engine, selectedSite?.slug || '', paidNewsletterData );
 	const nextStepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`;
 
+	const redirectFromSite = ( fromSiteInput: string ) => {
+		const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
+		const { hostname, pathname } = parseUrl( fromSiteInput );
+		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
+
+		setOriginSite( selectedSite?.ID ?? 0, engine, 'content', fromSiteInput );
+		setFromSite( fromSiteInput );
+
+		page( addQueryArgs( stepUrl, { from } ) );
+	};
+
 	// Helps only show the confetti once even if you navigate between the different steps.
 	const shouldShowConfettiRef = useRef( false );
 	const [ showConfetti, setShowConfetti ] = useState( false );
@@ -160,14 +174,8 @@ export default function NewsletterImporter( {
 
 			{ ! fromSite && ! isLoading && (
 				<SelectNewsletterForm
-					siteId={ selectedSite?.ID ?? 0 }
+					onContinue={ redirectFromSite }
 					value={ fromSite }
-					setFromSite={ ( fromSite ) => {
-						setOriginSite( selectedSite?.ID ?? 0, engine, 'content', fromSite );
-						setFromSite( fromSite );
-					} }
-					siteSlug={ siteSlug }
-					engine={ engine }
 					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }
@@ -207,9 +215,13 @@ export default function NewsletterImporter( {
 							) }
 							{ step === 'summary' && (
 								<Summary
+									onImportExpired={ () => page.redirect( `/import/${ selectedSite.slug }` ) }
 									selectedSite={ selectedSite }
 									steps={ paidNewsletterData.steps }
 									resetImporter={ resetImporter }
+									onResetImporter={ () => {
+										page.redirect( `/import/newsletter/substack/${ selectedSite.slug }/content` );
+									} }
 									fromSite={ fromSite }
 									showConfetti={ showConfetti }
 									shouldShownConfetti={ setShowConfetti }

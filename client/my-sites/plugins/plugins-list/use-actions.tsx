@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Icon, link, linkOff, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
@@ -45,9 +46,19 @@ export function useActions(
 			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'manage-plugin' );
-				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
+				const pluginSlug = plugins?.[ 0 ]?.slug;
+				if ( pluginSlug ) {
+					const url = `/plugins/${ pluginSlug }`;
+					if ( isEnabled( 'plugins/universal-header' ) ) {
+						window.open( url, '_blank' );
+					} else {
+						navigate( url );
+					}
+				}
 			},
-			label: translate( 'Manage plugin' ),
+			label: isEnabled( 'plugins/universal-header' )
+				? translate( 'Manage plugin ↗' )
+				: translate( 'Manage plugin' ),
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: false,

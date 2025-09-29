@@ -113,7 +113,7 @@ function DomainForwarding() {
 			},
 			{
 				id: 'forward_paths',
-				label: __( 'Path Forwarding' ),
+				label: __( 'Path forwarding' ),
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
@@ -123,7 +123,7 @@ function DomainForwarding() {
 			},
 			{
 				id: 'is_permanent',
-				label: __( 'Redirect Type' ),
+				label: __( 'Redirect type' ),
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
@@ -173,7 +173,7 @@ function DomainForwarding() {
 					paginationInfo={ paginationInfo }
 					getItemId={ getForwardingId }
 					defaultLayouts={ DEFAULT_LAYOUTS }
-					empty={ __( 'No forwarding rules found for this domain.' ) }
+					empty={ <p>{ __( 'No forwarding rules found for this domain.' ) }</p> }
 				/>
 			</DataViewsCard>
 		</PageLayout>
