@@ -185,7 +185,9 @@ const DomainSearchStep: StepType< {
 			flowName={ flow }
 			config={ config }
 			query={ query }
-			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
+			isFirstDomainFreeForFirstYear={
+				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isDomainUpsellFlow( flow )
+			}
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
