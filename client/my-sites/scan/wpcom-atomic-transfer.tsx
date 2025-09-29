@@ -11,6 +11,8 @@ import Main from 'calypso/components/main';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
+import { useDispatch } from 'calypso/state';
+import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
@@ -42,6 +44,7 @@ const ScanLoadingPlaceholder = () => {
 // Wrapper component that handles the feature loading logic
 const ScanAtomicTransferWrapper = () => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const dispatch = useDispatch();
 
 	const featuresNotLoaded: boolean = useSelector(
 		( state: AppState ) =>
@@ -97,6 +100,9 @@ const ScanAtomicTransferWrapper = () => {
 		},
 
 		getProductUrl: ( siteSlug: string ) => `/scan/${ siteSlug }`,
+		onActivationResolved: () => {
+			dispatch( requestScanStatus( siteId ) );
+		},
 	};
 
 	// Render the atomic transfer UI with the scan-specific content

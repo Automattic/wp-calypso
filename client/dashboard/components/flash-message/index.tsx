@@ -2,8 +2,8 @@ import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 
-interface FlasshMessageProps {
-	key?: string;
+interface FlashMessageProps {
+	queryParam?: string;
 	value: string;
 	message: string;
 	type?: 'success' | 'error';
@@ -14,11 +14,11 @@ interface FlasshMessageProps {
  * Clears the query parameter when done.
  */
 export default function FlashMessage( {
-	key = 'updated',
+	queryParam = 'updated',
 	value,
 	message,
 	type = 'success',
-}: FlasshMessageProps ) {
+}: FlashMessageProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
@@ -26,7 +26,7 @@ export default function FlashMessage( {
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( key ) === value ) {
+		if ( params.get( queryParam ) === value ) {
 			switch ( type ) {
 				case 'error':
 					createErrorNotice( message, { type: 'snackbar' } );
@@ -36,7 +36,7 @@ export default function FlashMessage( {
 					break;
 			}
 
-			params.delete( key );
+			params.delete( queryParam );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );

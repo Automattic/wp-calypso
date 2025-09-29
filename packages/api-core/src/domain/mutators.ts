@@ -5,3 +5,9 @@ export function disconnectDomain( domainName: string ): Promise< void > {
 		path: `/domains/${ domainName }/disconnect-domain-from-site`,
 	} );
 }
+
+export function resendIcannVerificationEmail( domainName: string ): Promise< void > {
+	return wpcom.req.post( {
+		path: `/domains/${ domainName }/resend-icann`,
+	} );
+}

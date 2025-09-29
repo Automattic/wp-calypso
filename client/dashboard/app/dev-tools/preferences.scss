@@ -1,0 +1,20 @@
+@import '@wordpress/base-styles/variables';
+
+.preferences-helper__current-preferences {
+	font-size: $font-size-small;
+	text-transform: none;
+}
+
+.environment.is-prefs:not(:hover) .preferences-helper__current-preferences {
+	display: none;
+}
+
+.environment.is-prefs:hover .preferences-helper__current-preferences {
+	display: block;
+	inset-inline-end: 0;
+	max-height: 80vh;
+	overflow-y: scroll;
+	position: absolute;
+	bottom: 100%;
+	margin: 0;
+}

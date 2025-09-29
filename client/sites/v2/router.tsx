@@ -2,8 +2,10 @@ import { siteBySlugQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Outlet, createRootRoute, createRoute } from '@tanstack/react-router';
 import { canManageSite } from 'calypso/dashboard/sites/features';
+import { getSiteDisplayName } from 'calypso/dashboard/utils/site-name';
 import { hasSiteTrialEnded } from 'calypso/dashboard/utils/site-trial';
 import Root from './components/root';
+import type { Site } from '@automattic/api-core';
 
 /**
  * Define general routes
@@ -26,6 +28,13 @@ export const dashboardSitesCompatibilityRoute = createRoute( {
 } );
 
 export const siteRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
+		meta: [
+			{
+				title: loaderData && getSiteDisplayName( loaderData.site ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location } ) => {
@@ -44,6 +53,8 @@ export const siteRoute = createRoute( {
 		if ( ! canManageSite( site ) ) {
 			page.redirect( '/sites' );
 		}
+
+		return { site };
 	},
 	component: () => <Outlet />,
 } );

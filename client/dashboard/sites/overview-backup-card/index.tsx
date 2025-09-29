@@ -33,7 +33,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No backups yet' ) }
 				description={ __( 'Your first backup will be ready soon.' ) }
-				externalLink={ getBackupUrl( site ) }
+				link={ getBackupUrl( site ) }
 			/>
 		);
 	}
@@ -43,7 +43,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 			{ ...CARD_PROPS }
 			heading={ timeSinceLastBackup }
 			description={ formattedLastBackupTime }
-			externalLink={ getBackupUrl( site ) }
+			link={ getBackupUrl( site ) }
 			intent="success"
 		/>
 	);

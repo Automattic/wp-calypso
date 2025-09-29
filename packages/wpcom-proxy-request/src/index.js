@@ -154,6 +154,13 @@ const makeRequest = ( originalParams, fn ) => {
 		// the XMLHttpRequest#response to ondownloadprogress there, then parse the chunks here).
 	}
 
+	if ( params.signal ) {
+		params.signal.addEventListener( 'abort', ( event ) => {
+			submitRequest( { abort: true, callback: params.callback } );
+			fn?.( event );
+		} );
+		delete params.signal;
+	}
 	if ( loaded ) {
 		submitRequest( params );
 	} else {

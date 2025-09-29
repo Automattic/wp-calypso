@@ -16,6 +16,9 @@ export const SupportArticleHeader = ( {
 		</div>
 	) : (
 		<div className="help-center-article-content__header">
+			<h1 className="help-center-article-content__header-title">
+				{ decodeEntities( post.title ) }
+			</h1>
 			<ExternalLink
 				className="help-center-article-content__header-link"
 				href={ post.URL }
@@ -24,8 +27,5 @@ export const SupportArticleHeader = ( {
 			>
 				{ __( 'Open support page', __i18n_text_domain__ ) }
 			</ExternalLink>
-			<h1 className="help-center-article-content__header-title">
-				{ decodeEntities( post.title ) }
-			</h1>
 		</div>
 	);

@@ -7,7 +7,12 @@ import { DomainSuggestion } from '../../ui';
 import type { UnavailableProps } from '../../ui/domain-suggestion/unavailable';
 
 export const UnavailableSearchResult = () => {
-	const { query, queries, events } = useDomainSearch();
+	const {
+		query,
+		queries,
+		events,
+		config: { allowsUsingOwnDomain },
+	} = useDomainSearch();
 	const { data: availability } = useQuery( queries.domainAvailability( query ) );
 
 	const { onExternalDomainClick } = events;
@@ -55,11 +60,12 @@ export const UnavailableSearchResult = () => {
 			domain: domainArgument.replace( `.${ availability.tld }`, '' ),
 			tld: availability.tld,
 			reason: 'already-registered',
-			onTransferClick: onExternalDomainClick
-				? () => onExternalDomainClick( domainArgument )
-				: undefined,
+			onTransferClick:
+				allowsUsingOwnDomain && onExternalDomainClick
+					? () => onExternalDomainClick( domainArgument )
+					: undefined,
 		};
-	}, [ availability, onExternalDomainClick ] );
+	}, [ availability, onExternalDomainClick, allowsUsingOwnDomain ] );
 
 	if ( ! props ) {
 		return null;

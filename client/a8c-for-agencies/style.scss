@@ -165,8 +165,8 @@
 		color: var(--color-primary-50);
 	}
 
-	.components-button.is-destructive,
-	.button.is-scary {
+	.components-button.is-destructive:not(:disabled),
+	.button.is-scary:not(:disabled) {
 		color: var(--color-scary-50);
 		border-color: var(--color-scary-50);
 
@@ -176,6 +176,7 @@
 			border-color: var(--color-scary-60);
 			color: var(--color-scary-60);
 		}
+
 	}
 
 	.components-button.is-primary.is-destructive,

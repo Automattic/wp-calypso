@@ -5,9 +5,10 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../../app/analytics';
 import type { PluginListRow } from '../types';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
@@ -195,6 +196,16 @@ export default function ActionRenderModal( {
 }: ActionRenderModalProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isBusy, setIsBusy ] = useState( false );
+	const { recordTracksEvent } = useAnalytics();
+
+	useEffect( () => {
+		recordTracksEvent( `calypso_hosting_dashboard_plugins_${ actionId }_click` );
+	}, [ actionId, recordTracksEvent ] );
+
+	const handleCancel = () => {
+		recordTracksEvent( `calypso_hosting_dashboard_plugins_${ actionId }_cancel_click` );
+		closeModal?.();
+	};
 
 	const buildSuccessPrefix = ( action: string, selected: PluginListRow[] ) => {
 		if ( selected.length === 1 ) {
@@ -409,6 +420,7 @@ export default function ActionRenderModal( {
 	};
 
 	const handleConfirm = async () => {
+		recordTracksEvent( `calypso_hosting_dashboard_plugins_${ actionId }_confirm_click` );
 		setIsBusy( true );
 		try {
 			const { successCount, errorCount } = await onExecute( items );
@@ -454,7 +466,7 @@ export default function ActionRenderModal( {
 				<Button
 					__next40pxDefaultSize
 					variant="tertiary"
-					onClick={ closeModal }
+					onClick={ handleCancel }
 					disabled={ isBusy }
 					accessibleWhenDisabled
 				>

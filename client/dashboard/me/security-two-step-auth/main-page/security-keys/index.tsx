@@ -4,13 +4,12 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
@@ -41,30 +40,27 @@ const SecurityKeysList = ( {
 	data: SecurityKeyRegistration[];
 	isLoading: boolean;
 } ) => {
-	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation(
-		deleteTwoStepAuthSecurityKeyMutation()
-	);
+	const { recordTracksEvent } = useAnalytics();
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation( {
+		...deleteTwoStepAuthSecurityKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Security key deleted.' ),
+				error: __( 'Failed to delete security key.' ),
+			},
+		},
+	} );
 
 	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
 		useState< SecurityKeyRegistration | null >( null );
 
 	const handleRemove = () => {
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_security_keys_remove_key_click' );
 		if ( selectedKeyToRemove ) {
 			deleteSecurityKey(
 				{ credential_id: selectedKeyToRemove.id },
 				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Security key removed.' ), {
-							type: 'snackbar',
-						} );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to remove security key.' ), {
-							type: 'snackbar',
-						} );
-					},
 					onSettled: () => {
 						setSelectedKeyToRemove( null );
 					},
@@ -83,7 +79,7 @@ const SecurityKeysList = ( {
 				getItemId={ ( item ) => item.id }
 				paginationInfo={ { totalItems: data.length, totalPages: 1 } }
 				defaultLayouts={ { list: {} } }
-				empty={ __( 'No security keys registered.' ) }
+				empty={ <p>{ __( 'No security keys registered.' ) }</p> }
 				isLoading={ isLoading }
 				actions={ [
 					{
@@ -93,6 +89,9 @@ const SecurityKeysList = ( {
 						isPrimary: true,
 						callback: ( items: SecurityKeyRegistration[] ) => {
 							const item = items[ 0 ];
+							recordTracksEvent(
+								'calypso_dashboard_security_two_step_auth_security_keys_remove_key_dialog_open'
+							);
 							setSelectedKeyToRemove( item );
 						},
 					},
@@ -117,6 +116,8 @@ const SecurityKeysList = ( {
 };
 
 export default function SecurityKeys() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
 
 	const { data: securityKeys, isLoading } = useQuery( twoStepAuthSecurityKeysQuery() );
@@ -160,7 +161,12 @@ export default function SecurityKeys() {
 									<Button
 										variant="secondary"
 										size="compact"
-										onClick={ () => setIsAddKeyModalOpen( true ) }
+										onClick={ () => {
+											setIsAddKeyModalOpen( true );
+											recordTracksEvent(
+												'calypso_dashboard_security_two_step_auth_security_keys_register_key_modal_open'
+											);
+										} }
 									>
 										{ __( 'Register key' ) }
 									</Button>

@@ -124,7 +124,13 @@ export function Preview( { site }: { site: Site } ) {
 		<Link
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { display: 'block', height: '100%', width: '100%' } }
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
 		>
 			{ resizeListener }
 			{ iframeDisabled && (

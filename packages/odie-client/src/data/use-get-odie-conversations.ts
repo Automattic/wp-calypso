@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useI18n } from '@wordpress/react-i18n';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
 import { getTimestamp } from '../utils';
@@ -10,7 +9,6 @@ import type { OdieConversation } from '../types';
  * Retrieves the list of conversations handled by AI.
  */
 export const useGetOdieConversations = ( enabled = true ) => {
-	const { __ } = useI18n();
 	const { botNameSlug, version } = useOdieAssistantContext();
 
 	return useQuery< OdieConversation[], Error >( {
@@ -41,7 +39,6 @@ export const useGetOdieConversations = ( enabled = true ) => {
 					messages: summary
 						? [
 								{
-									displayName: __( 'Me', __i18n_text_domain__ ),
 									received: getTimestamp( summary.created_at ),
 									role: summary.role ?? 'bot',
 									text: summary.content ?? '',

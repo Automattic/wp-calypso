@@ -1,9 +1,10 @@
-import { test, expect } from '../../lib/pw-base';
+import { DataHelper } from '@automattic/calypso-e2e';
+import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe( 'Dashboard: Basic & Routing', { tag: [ '@dashboard' ] }, () => {
+test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test.skip(
-		! process.env.CALYPSO_BASE_URL || process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
-		'Skipping for wordpress.com or if CALYPSO_BASE_URL is undefined, as v2 dashboard is not enabled yet.'
+		DataHelper.isCalypsoProduction(),
+		'Skipping for WordPress.com as v2 dashboard is not enabled yet.'
 	);
 
 	test( 'As a WordPress.com user, I can see the new v2 dashboard page as a list of my sites', async ( {

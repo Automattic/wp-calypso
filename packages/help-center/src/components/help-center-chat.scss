@@ -1,5 +1,7 @@
 @import "variables";
 
+$footer-height: 73px;
+
 /**
  * Styles for '/odie' route.
  */
@@ -10,31 +12,4 @@
 	flex-direction: column;
 	max-width: 410px;
 	padding: 0;
-
-	.odie-chat-message-input-container {
-		border-radius: 0;
-
-		@media screen and (max-width: 660px) {
-			max-width: 100%;
-		}
-
-		.odie-send-message-input {
-			&:disabled {
-				-webkit-text-fill-color: var(--color-neutral-20);
-				background: var(--color-neutral-0);
-				border-color: var(--color-neutral-0);
-				color: var(--color-neutral-20);
-			}
-		}
-
-		.components-form-file-upload {
-			button {
-				padding: 7px;
-				&:focus {
-					outline: 2px solid $help-center-blue;
-					outline-offset: 1px;
-				}
-			}
-		}
-	}
 }

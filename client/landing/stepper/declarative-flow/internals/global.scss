@@ -230,13 +230,6 @@ button {
 	margin: 0 auto;
 }
 
-.is-section-stepper {
-	.search-filters__popover {
-		--color-accent: var(--studio-blue-50) !important;
-		--color-accent-60: var(--studio-blue-60) !important;
-	}
-}
-
 .intro {
 	&:not(.newsletter).signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */

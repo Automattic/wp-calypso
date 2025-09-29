@@ -16,8 +16,12 @@ const CARD_PROPS = {
 };
 
 function getScanURL( site: Site ) {
-	return isSelfHostedJetpackConnected( site )
-		? `https://cloud.jetpack.com/scan/${ site.slug }`
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return `https://cloud.jetpack.com/scan/${ site.slug }`;
+	}
+
+	return window?.location?.pathname?.startsWith( '/v2' )
+		? `/sites/${ site.slug }/scan`
 		: `https://wordpress.com/scan/${ site.slug }`;
 }
 
@@ -34,7 +38,7 @@ function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			{ ...CARD_PROPS }
 			heading={ description }
 			description={ __( 'Auto fixes are available.' ) }
-			externalLink={ getScanURL( site ) }
+			link={ getScanURL( site ) }
 			intent="error"
 		/>
 	);
@@ -57,7 +61,7 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			{ ...CARD_PROPS }
 			heading={ __( 'No risks found' ) }
 			description={ description }
-			externalLink={ getScanURL( site ) }
+			link={ getScanURL( site ) }
 			intent="success"
 		/>
 	);

@@ -13,7 +13,6 @@ import {
 	CartCheckoutPage,
 	StartSiteFlow,
 	SecretsManager,
-	SignupDomainPage,
 	MyHomePage,
 	ComingSoonPage,
 	NewSiteResponse,
@@ -23,6 +22,7 @@ import {
 	MeSidebarComponent,
 	NoticeComponent,
 	PurchasesPage,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -69,9 +69,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Skip domain selection', async function () {
-			const signupDomainPage = new SignupDomainPage( page );
-			await signupDomainPage.searchForFooDomains();
-			await signupDomainPage.skipDomainSelection();
+			const signupDomainPage = new RewrittenDomainSearchComponent( page );
+			await signupDomainPage.search( 'foo' );
+			await signupDomainPage.skipPurchase();
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {

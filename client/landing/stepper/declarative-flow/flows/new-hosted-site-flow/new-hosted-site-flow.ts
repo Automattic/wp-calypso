@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -27,6 +28,10 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
+const DOMAINS_STEP = shouldRenderRewrittenDomainSearch()
+	? STEPS.DOMAIN_SEARCH
+	: STEPS.UNIFIED_DOMAINS;
+
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
@@ -41,7 +46,7 @@ async function initialize( reduxStore: Store ) {
 	const steps = [];
 
 	if ( showDomainStep ) {
-		steps.push( STEPS.UNIFIED_DOMAINS );
+		steps.push( DOMAINS_STEP );
 	}
 
 	const utmSource = queryParams.get( 'utm_source' );
@@ -113,7 +118,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const getGoBack = () => {
 			if ( _currentStepSlug === STEPS.UNIFIED_PLANS.slug && showDomainStep ) {
-				return () => navigate( STEPS.UNIFIED_DOMAINS.slug );
+				return () => navigate( DOMAINS_STEP.slug );
 			}
 
 			if ( _currentStepSlug === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
@@ -125,9 +130,13 @@ const hosting: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
-				case STEPS.UNIFIED_DOMAINS.slug: {
+				case DOMAINS_STEP.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
+					}
+
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						throw new Error( 'Navigation to use my domain is not supported for this flow' );
 					}
 
 					setSiteUrl( providedDependencies.siteUrl as string );

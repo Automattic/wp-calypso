@@ -9,27 +9,28 @@ import {
 	CardHeader,
 	ToggleControl,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createElement } from 'react';
 import { connect, useDispatch as useReduxDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormButton from 'calypso/components/forms/form-button';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
+import { getAccountMcpAbilities, createAccountApiPayload } from './utils';
 
 function McpComponent( { path, userSettings, isUpdating } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useReduxDispatch();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
-	// Get tools from user settings
-	const mcpAbilities = userSettings?.mcp_abilities || {};
+	// Get account-level tools from user settings using the new nested structure
+	const mcpAbilities = getAccountMcpAbilities( userSettings );
 	const availableTools = Object.entries( mcpAbilities );
 	const hasTools = availableTools.length > 0;
 
@@ -43,12 +44,13 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 	// Check if form data has changed from original user settings
 	const hasUnsavedChanges = ( () => {
-		if ( ! userSettings?.mcp_abilities || ! formData.mcp_abilities ) {
+		const originalAbilities = getAccountMcpAbilities( userSettings );
+		if ( ! originalAbilities || ! formData.mcp_abilities ) {
 			return false;
 		}
 
-		return Object.keys( userSettings.mcp_abilities ).some( ( toolId ) => {
-			const originalEnabled = userSettings.mcp_abilities[ toolId ]?.enabled;
+		return Object.keys( originalAbilities ).some( ( toolId ) => {
+			const originalEnabled = originalAbilities[ toolId ]?.enabled;
 			const currentEnabled = formData.mcp_abilities[ toolId ]?.enabled;
 			return originalEnabled !== currentEnabled;
 		} );
@@ -56,12 +58,11 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 	// Update form data when userSettings changes
 	useEffect( () => {
-		if ( userSettings?.mcp_abilities ) {
-			setFormData( {
-				mcp_abilities: userSettings.mcp_abilities,
-			} );
-		}
-	}, [ userSettings?.mcp_abilities ] );
+		const accountAbilities = getAccountMcpAbilities( userSettings );
+		setFormData( {
+			mcp_abilities: accountAbilities,
+		} );
+	}, [ userSettings ] );
 
 	if ( ! isAutomattician ) {
 		return null;
@@ -70,16 +71,10 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 	const handleSubmit = ( e ) => {
 		e.preventDefault();
 
-		// Use settingsOverride to bypass the unsaved settings mechanism
-		// Convert the tools object to a simple key-value array with enabled status
-		const toolsArray = {};
-		Object.entries( formData.mcp_abilities ).forEach( ( [ toolId, tool ] ) => {
-			toolsArray[ toolId ] = tool.enabled ? 1 : 0;
-		} );
+		// Create the new nested API payload for account-level settings
+		const settingsData = createAccountApiPayload( userSettings, formData.mcp_abilities );
 
-		const settingsData = { mcp_abilities: toolsArray };
-
-		// Save directly using settingsOverride
+		// Save using the new nested structure
 		reduxDispatch( saveUserSettings( settingsData ) );
 	};
 
@@ -142,7 +137,7 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 		// Type descriptions
 		const typeDescriptions = {
 			tool: translate(
-				'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
+				'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
 			),
 			resource: translate(
 				'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
@@ -161,11 +156,20 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 		return (
 			<form onSubmit={ handleSubmit }>
-				<SectionHeader label={ translate( 'MCP Access Control' ) } />
 				<Card style={ { borderRadius: '0' } }>
+					<CardHeader size="small">
+						<VStack spacing={ 2 }>
+							<Text as="h1">{ translate( 'Account-level MCP tools' ) }</Text>
+							<Text as="p" variant="muted">
+								{ translate(
+									'These tools are available across all your sites. You can enable or disable them here to control access globally.'
+								) }
+							</Text>
+						</VStack>
+					</CardHeader>
 					<CardBody>
 						{ hasTools ? (
-							<VStack spacing={ 2 }>
+							<VStack spacing={ 3 }>
 								<div
 									style={ {
 										display: 'flex',
@@ -233,6 +237,36 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 								</Card>
 							</div>
 						) ) }
+					</>
+				) }
+
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<div style={ { marginTop: '24px' } }>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<Text as="h4" style={ { margin: 0 } }>
+											{ translate( 'Site-specific MCP settings' ) }
+										</Text>
+										<Text as="p" variant="muted" style={ { margin: 0 } }>
+											{ createInterpolateElement(
+												translate(
+													'Account-level MCP tools are available on all your sites. You can manage site-specific MCP access and overrides in <a>individual site settings</a>.'
+												),
+												{
+													a: createElement( 'a', {
+														href: '/sites',
+														target: '_blank',
+														style: { textDecoration: 'underline' },
+													} ),
+												}
+											) }
+										</Text>
+									</VStack>
+								</CardBody>
+							</Card>
+						</div>
 					</>
 				) }
 

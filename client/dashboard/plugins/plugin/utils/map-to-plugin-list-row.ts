@@ -1,9 +1,9 @@
-import { SiteWithPluginActivationStatus, usePlugin } from '../use-plugin';
+import { SiteWithPluginData, usePlugin } from '../use-plugin';
 import type { PluginListRow } from '../../manage/types';
 
 export const mapToPluginListRow = (
 	plugin: ReturnType< typeof usePlugin >[ 'plugin' ],
-	items: SiteWithPluginActivationStatus[]
+	items: SiteWithPluginData[]
 ): Partial< PluginListRow > => {
 	return {
 		id: plugin?.id,

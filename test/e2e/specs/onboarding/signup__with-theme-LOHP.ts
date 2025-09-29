@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	BrowserManager,
-	DomainSearchComponent,
 	UserSignupPage,
 	SignupPickPlanPage,
 	CartCheckoutPage,
@@ -22,6 +21,7 @@ import {
 	LoggedOutThemesPage,
 	ThemesDetailPage,
 	cancelAtomicPurchaseFlow,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -86,10 +86,10 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 		} );
 
 		it( 'Skip domain selection', async function () {
-			const domainSearch = new DomainSearchComponent( page );
+			const domainSearch = new RewrittenDomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
+			await domainSearch.skipPurchase();
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {

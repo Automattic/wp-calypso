@@ -49,6 +49,7 @@ export const SITE_OPTIONS = [
 	'site_intent',
 	'software_version',
 	'updated_at',
+	'woocommerce_is_active',
 	'wpcom_production_blog_id',
 ];
 

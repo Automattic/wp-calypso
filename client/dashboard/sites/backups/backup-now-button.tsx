@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useBackupState } from '../../app/hooks/site-backup-state';
+import { useBackupState } from './use-backup-state';
 import type { Site } from '@automattic/api-core';
 
 interface BackupNowButtonProps {

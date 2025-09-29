@@ -3,6 +3,7 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
+	name: 'WordPress.com',
 	basePath: '/v2',
 	mainRoute: '/sites',
 	Logo,
@@ -28,5 +29,6 @@ boot( {
 			apps: true,
 		},
 		plugins: true,
+		commandPalette: false,
 	},
 } );

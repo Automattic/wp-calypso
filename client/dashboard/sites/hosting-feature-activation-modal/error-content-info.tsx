@@ -1,3 +1,4 @@
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	Card,
@@ -6,7 +7,7 @@ import {
 	CardHeader,
 	ExternalLink,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Fragment } from 'react';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Notice } from '../../components/notice';
@@ -91,8 +92,13 @@ type HoldingMessage = {
 const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = {
 	[ EligibilityErrors.NO_BUSINESS_PLAN ]: {
 		code: EligibilityErrors.NO_BUSINESS_PLAN,
-		// TODO: Resolve plan name instead of hardcoding it.
-		title: __( 'Business plan required' ),
+		title: sprintf(
+			// translators: %(planName)s is the name of the plan
+			__( '%(planName)s plan required' ),
+			{
+				planName: getPlanNames()[ DotcomPlans.BUSINESS ],
+			}
+		),
 		description: __( 'You’ll also get to install custom themes, plugins, and have more storage.' ),
 	},
 	[ EligibilityErrors.NON_ADMIN_USER ]: {

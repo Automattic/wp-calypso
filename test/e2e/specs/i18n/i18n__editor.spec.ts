@@ -1,5 +1,5 @@
 import { RestAPIClient } from '@automattic/calypso-e2e';
-import { tags, test, expect } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 import { locale } from '../../lib/types-shared';
 
 const localesToTest: Array< locale > = [

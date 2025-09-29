@@ -6,13 +6,16 @@ import {
 	CardBody,
 	CheckboxControl,
 	__experimentalVStack as VStack,
+	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
+import { useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import FlashMessage from '../../components/flash-message';
+import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
 
@@ -65,6 +68,7 @@ const fields: Field< OptInFormData >[] = [
 
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
@@ -78,6 +82,11 @@ export default function PreferencesLanguageForm() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+
+		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle', {
+			enabled: formData.enabled,
+		} );
+
 		saveOptInPreference(
 			{
 				value: formData.enabled ? 'opt-in' : 'opt-out',
@@ -110,7 +119,7 @@ export default function PreferencesLanguageForm() {
 		<Card>
 			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
 			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 6 } alignment="flex-start">
+				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }
@@ -119,6 +128,28 @@ export default function PreferencesLanguageForm() {
 							setFormData( ( current ) => ( { ...current, ...edits } ) );
 						} }
 					/>
+					{ ! formData.enabled && ( optIn.value === 'opt-in' || isRedirecting ) && (
+						<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
+							{ createInterpolateElement(
+								__(
+									'<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn’t work and how we can improve.'
+								),
+								{
+									surveyLink: (
+										<ExternalLink
+											href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
+											onClick={ () =>
+												recordTracksEvent(
+													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
+												)
+											}
+											children={ null }
+										/>
+									),
+								}
+							) }
+						</Notice>
+					) }
 					<Button
 						variant="primary"
 						type="submit"

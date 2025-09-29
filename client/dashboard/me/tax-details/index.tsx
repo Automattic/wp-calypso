@@ -10,7 +10,7 @@ export default function UserTaxInfoPage() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Tax Details' ) }
+					title={ __( 'Tax details' ) }
 					description={ __( 'Configure tax details (VAT/GST/CT) to be included on all receipts.' ) }
 				/>
 			}

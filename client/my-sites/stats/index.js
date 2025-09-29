@@ -19,6 +19,7 @@ import {
 	purchase,
 	redirectToDaySummary,
 	realtime,
+	statsMoved,
 } from './controller';
 
 import './style.scss';
@@ -103,6 +104,7 @@ export default function () {
 	// Email stats Pages
 	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
 	statsPage( `/stats/day/emails/:site`, emailSummary );
+	statsPage( '/stats/moved/:site', statsMoved );
 
 	// Anything else should redirect to default stats page
 	page( '/stats/(.*)', redirectToDefaultSitePage );

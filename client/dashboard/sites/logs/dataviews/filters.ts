@@ -1,5 +1,21 @@
 import { LogType } from '@automattic/api-core';
+import { decodeSearchParam } from './url-sync';
 import type { Filter } from '@wordpress/dataviews';
+
+export function filtersSignature(
+	filters: Filter[] | undefined,
+	allowed: ReadonlyArray< string >
+): string {
+	return allowed
+		.slice()
+		.sort()
+		.map( ( field ) => {
+			const raw = filters?.find( ( filter ) => filter.field === field )?.value;
+			const values = Array.isArray( raw ) ? ( raw as string[] ).slice().sort() : [];
+			return `${ field }:${ values.slice().sort().join( ',' ) }`;
+		} )
+		.join( '|' );
+}
 
 const SEVERITY_LABELS: Readonly< Record< string, string > > = {
 	user: 'User',
@@ -17,27 +33,14 @@ type SimpleFilter = {
 };
 
 export function getAllowedFields( logType: LogType ): ReadonlyArray< string > {
-	if ( logType === LogType.PHP ) {
-		return [ 'severity' ];
-	}
-	if ( logType === LogType.ACTIVITY ) {
-		return [];
-	}
-	return [ 'cached', 'renderer', 'request_type', 'status' ];
+	return logType === LogType.PHP
+		? [ 'severity' ]
+		: [ 'cached', 'renderer', 'request_type', 'status' ];
 }
 
 export function getInitialFiltersFromSearch( logType: LogType, search: string ): Filter[] {
 	const allowed = getAllowedFields( logType );
 	const params = new URLSearchParams( search );
-
-	const decode = ( value: string ): string => {
-		const withSpaces = value.replace( /\+/g, ' ' );
-		try {
-			return decodeURIComponent( withSpaces );
-		} catch {
-			return withSpaces;
-		}
-	};
 
 	const normalizeSeverity = ( values: string[] ): string[] =>
 		Array.from(
@@ -56,7 +59,7 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 		}
 		let values = raw
 			.split( ',' )
-			.map( ( rawToken ) => decode( rawToken ).trim() )
+			.map( ( rawToken ) => decodeSearchParam( rawToken ).trim() )
 			.filter( Boolean );
 		if ( field === 'severity' ) {
 			values = normalizeSeverity( values );

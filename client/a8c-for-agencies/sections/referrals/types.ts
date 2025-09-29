@@ -42,4 +42,5 @@ export interface ReferralAPIResponse {
 	client: ReferralClient;
 	products: ReferralPurchase[];
 	status: string;
+	checkout_url: string;
 }

@@ -1,11 +1,10 @@
-import { DomainSubtype } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { domainConnectionSetupRoute } from '../../app/router/domains';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Domain } from '@automattic/api-core';
 
 export default function DomainConnectionSetupSummary( { domain }: { domain: Domain } ) {
-	if ( domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION || domain.points_to_wpcom ) {
+	if ( domain.points_to_wpcom ) {
 		return null;
 	}
 

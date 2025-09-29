@@ -1,4 +1,4 @@
-import { fetchDomain, disconnectDomain } from '@automattic/api-core';
+import { fetchDomain, disconnectDomain, resendIcannVerificationEmail } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
@@ -14,4 +14,9 @@ export const disconnectDomainMutation = ( domainName: string ) =>
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainQuery( domainName ) );
 		},
+	} );
+
+export const resendIcannVerificationEmailMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: () => resendIcannVerificationEmail( domainName ),
 	} );

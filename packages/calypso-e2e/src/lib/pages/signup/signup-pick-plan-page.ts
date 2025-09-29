@@ -33,20 +33,19 @@ export class SignupPickPlanPage {
 	 * @param {Plans} name Name of the plan.
 	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
-	async selectPlan( name: Plans ): Promise< NewSiteResponse > {
+	async selectPlan( name: Plans, redirectUrl?: RegExp ): Promise< NewSiteResponse > {
 		await this.page.waitForURL( plansPageUrl );
 
-		let url: RegExp;
 		if ( name !== 'Free' ) {
 			// Non-free plans should redirect to the Checkout cart.
-			url = new RegExp( '.*checkout.*' );
+			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			url = new RegExp( '.*setup/site-setup.*' );
+			redirectUrl ??= new RegExp( '.*setup/site-setup.*' );
 		}
 
 		const actions = [
 			this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } ),
-			this.page.waitForURL( url, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];
 

@@ -12,6 +12,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
+import HelpCenterRecentConversations from './help-center-recent-conversations';
 import HelpCenterSearchResults from './help-center-search-results';
 import { BlockedZendeskNotice } from './notices';
 import './help-center-search.scss';
@@ -93,6 +94,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
+			<HelpCenterRecentConversations />
 			<BlockedZendeskNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
@@ -100,8 +102,9 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
-				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
+				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
+				useSearchControl
 			/>
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }

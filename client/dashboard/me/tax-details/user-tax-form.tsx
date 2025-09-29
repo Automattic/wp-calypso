@@ -5,7 +5,6 @@ import {
 	userTaxDetailsQuery,
 	userTaxDetailsMutation,
 } from '@automattic/api-queries';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -259,8 +258,6 @@ export default function UserTaxForm() {
 		setUserTaxDetails( { ...userTaxDetails, ...localData } );
 	};
 
-	const resetSupportInteraction = useResetSupportInteraction();
-
 	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
 	/* This is a call to action for contacting support */
@@ -277,10 +274,9 @@ export default function UserTaxForm() {
 			e.preventDefault();
 			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
-			await resetSupportInteraction();
 			recordTracksEvent( 'calypso_dashboard_vat_details_support_click' );
 		},
-		[ recordTracksEvent, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
+		[ recordTracksEvent, setNavigateToRoute, setShowHelpCenter ]
 	);
 
 	const genericTaxName =

@@ -19,11 +19,12 @@ import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 interface ContentProps {
-	nextStepUrl: string;
+	nextStepUrl?: string;
 	engine: EngineTypes;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
+	onContinue?: () => void;
 	skipNextStep: () => void;
 }
 
@@ -40,9 +41,10 @@ const isImporting = ( importerState: ImporterState | undefined ) => {
 		(
 			[
 				appStates.IMPORT_FAILURE,
-				appStates.IMPORT_SUCCESS,
 				appStates.IMPORTING,
 				appStates.MAP_AUTHORS,
+				appStates.IMPORT_SUCCESS,
+				appStates.UPLOAD_SUCCESS,
 			] as ImporterState[]
 		 ).includes( importerState )
 	);
@@ -56,7 +58,6 @@ const isUploading = ( importerState: ImporterState | undefined ) => {
 				appStates.UPLOAD_PROCESSING,
 				appStates.READY_FOR_UPLOAD,
 				appStates.UPLOAD_FAILURE,
-				appStates.UPLOAD_SUCCESS,
 				appStates.UPLOADING,
 			] as ImporterState[]
 		 ).includes( importerState )
@@ -73,6 +74,7 @@ export default function Content( {
 	selectedSite,
 	siteSlug,
 	fromSite,
+	onContinue,
 	skipNextStep,
 }: ContentProps ) {
 	const siteTitle = selectedSite.title;
@@ -189,6 +191,9 @@ export default function Content( {
 
 					{ isImporting( importerState ) && (
 						<ImportingPane
+							onContinue={ onContinue }
+							fromSite={ fromSite }
+							importerEngine={ engine }
 							importerStatus={ importerStatus }
 							sourceType={ title }
 							site={ selectedSite }

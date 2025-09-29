@@ -105,8 +105,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId, setZendeskConnectionStatus } =
-		useDispatch( HELP_CENTER_STORE );
+	const {
+		setIsChatLoaded,
+		setZendeskClientId,
+		setZendeskConnectionStatus,
+		setSupportTypingStatus,
+	} = useDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -133,6 +137,19 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		setZendeskConnectionStatus( 'reconnecting' );
 		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
 	}, [ setZendeskConnectionStatus ] );
+
+	const typingStartListener = useCallback(
+		( { conversation }: ConversationData ) => {
+			setSupportTypingStatus( conversation.id, true );
+		},
+		[ setSupportTypingStatus ]
+	);
+	const typingStopListener = useCallback(
+		( { conversation }: ConversationData ) => {
+			setSupportTypingStatus( conversation.id, false );
+		},
+		[ setSupportTypingStatus ]
+	);
 
 	const connectedListener = useCallback( () => {
 		setZendeskConnectionStatus( 'connected' );
@@ -205,6 +222,8 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch.on( 'disconnected', disconnectedListener );
 			Smooch.on( 'reconnecting', reconnectingListener );
 			Smooch.on( 'connected', connectedListener );
+			Smooch.on( 'typing:start', typingStartListener );
+			Smooch.on( 'typing:stop', typingStopListener );
 		}
 
 		return () => {
@@ -218,12 +237,18 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch?.off?.( 'reconnecting', reconnectingListener );
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'connected', connectedListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'typing:stop', typingStopListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
 	}, [
 		getUnreadListener,
 		setZendeskConnectionStatus,
 		clientIdListener,
 		isChatLoaded,
+		typingStartListener,
+		typingStopListener,
 		getUnreadNotifications,
 		setZendeskClientId,
 		disconnectedListener,

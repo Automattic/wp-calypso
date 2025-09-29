@@ -99,9 +99,12 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 						const target = node?.querySelector( `#${ CSS.escape( hash.slice( 1 ) ) }` );
 						if ( target instanceof HTMLElement ) {
 							target.setAttribute( 'tabindex', '-1' );
-							target.focus();
-
-							target.scrollIntoView();
+							target.focus( {
+								// Let scrollIntoView handle the scrolling.
+								// The scroll of focus is a bit buggy in Safari.
+								preventScroll: true,
+							} );
+							target.scrollIntoView( { behavior: 'smooth' } );
 						}
 					};
 				},

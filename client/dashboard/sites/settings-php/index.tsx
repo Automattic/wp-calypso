@@ -6,10 +6,8 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { ButtonStack } from '../../components/button-stack';
@@ -27,8 +25,15 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		...sitePHPVersionQuery( site.ID ),
 		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
-	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...sitePHPVersionMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'PHP version saved.' ),
+				error: __( 'Failed to save PHP version.' ),
+			},
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
@@ -61,16 +66,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData.version, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'PHP version saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save PHP version.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( formData.version );
 	};
 
 	const description = hasPlanFeature( site, HostingFeatures.PHP )

@@ -16,6 +16,7 @@ export interface WpcomRequestParams {
 	metaAPI?: {
 		accessAllUsersBlogs?: boolean;
 	};
+	signal?: AbortSignal;
 	apiNamespace?: string;
 	formData?: ( string | File )[][];
 }

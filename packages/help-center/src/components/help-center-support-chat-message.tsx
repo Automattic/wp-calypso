@@ -1,15 +1,14 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gravatar, TimeSince } from '@automattic/components';
-import { HumanAvatar, WapuuAvatar } from '@automattic/odie-client/src/assets';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
+import SummaryButton from '@automattic/components/src/summary-button';
+import { WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
-import { HELP_CENTER_STORE } from '../stores';
 import type {
 	OdieConversation,
 	OdieMessage,
@@ -32,15 +31,18 @@ export const HelpCenterSupportChatMessage = ( {
 	sectionName,
 	conversation,
 	numberOfUnreadMessages = 0,
+	homePageVersion = false,
 }: {
 	message: OdieMessage | ZendeskMessage;
 	sectionName?: string;
 	conversation: OdieConversation | ZendeskConversation;
 	numberOfUnreadMessages?: number;
+	homePageVersion?: boolean;
 } ) => {
 	const { __ } = useI18n();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, role, text, altText } = message;
+	const { received, role, text, altText } = message;
+	const navigate = useNavigate();
 	const messageText =
 		'metadata' in message && message.metadata?.type === 'csat'
 			? __(
@@ -51,14 +53,15 @@ export const HelpCenterSupportChatMessage = ( {
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const supportInteraction = supportInteractions.find(
 		( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
 	);
 
 	const messageDisplayName =
-		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
+		role === 'business'
+			? __( 'Happiness chat', __i18n_text_domain__ )
+			: __( 'Support assistant chat', __i18n_text_domain__ );
 
 	const renderAvatar = () => {
 		if ( role === 'bot' ) {
@@ -66,7 +69,7 @@ export const HelpCenterSupportChatMessage = ( {
 		}
 
 		if ( role === 'business' ) {
-			return <HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />;
+			return <WordPressLogo size={ 20 } />;
 		}
 
 		return (
@@ -82,61 +85,106 @@ export const HelpCenterSupportChatMessage = ( {
 
 	const receivedDateISO = new Date( received * 1000 ).toISOString();
 
+	function renderMessage() {
+		return (
+			<>
+				<div
+					className={ clsx( 'help-center-support-chat__conversation-avatar', {
+						'has-unread-messages': hasUnreadMessages,
+					} ) }
+				>
+					{ renderAvatar() }
+					{ hasUnreadMessages && (
+						<div className="help-center-support-chat__conversation-badge">
+							+{ numberOfUnreadMessages }
+						</div>
+					) }
+				</div>
+
+				<div className="help-center-support-chat__conversation-information">
+					<div className="help-center-support-chat__conversation-information-message">
+						{ messageText || altText }
+					</div>
+					<div className="help-center-support-chat__conversation-sub-information">
+						<span className="help-center-support-chat__conversation-information-name">
+							{ messageDisplayName }
+						</span>
+						<Icon
+							size={ 2 }
+							icon={
+								<svg
+									width="2"
+									height="2"
+									viewBox="0 0 2 2"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<circle cx="1" cy="1" r="1" fill="#787C82" />
+								</svg>
+							}
+						/>
+						<span className="help-center-support-chat__conversation-information-time">
+							<TimeSince date={ receivedDateISO } dateFormat="lll" />
+						</span>
+					</div>
+				</div>
+
+				<div className="help-center-support-chat__open-conversation">
+					<Icon icon={ chevronRight } size={ 24 } />
+				</div>
+			</>
+		);
+	}
+
+	if ( homePageVersion ) {
+		return (
+			<SummaryButton
+				strapline={ __( 'Recent Conversation', __i18n_text_domain__ ) }
+				title={ messageText || altText || '' }
+				description={
+					<div className="help-center-support-chat__conversation-sub-information">
+						<span className="help-center-support-chat__conversation-information-name">
+							{ messageDisplayName }
+						</span>
+						<Icon
+							size={ 2 }
+							icon={
+								<svg
+									width="2"
+									height="2"
+									viewBox="0 0 2 2"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<circle cx="1" cy="1" r="1" fill="#787C82" />
+								</svg>
+							}
+						/>
+						<span className="help-center-support-chat__conversation-information-time">
+							<TimeSince date={ receivedDateISO } dateFormat="lll" />
+						</span>
+					</div>
+				}
+				onClick={ () => {
+					trackContactButtonClicked( sectionName || helpCenterContextSectionName );
+					navigate( `/odie?id=${ supportInteraction?.uuid }` );
+				} }
+			/>
+		);
+	}
+
 	return (
 		<Link
 			to={ `/odie?id=${ supportInteraction?.uuid }` }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-				setCurrentSupportInteraction( supportInteraction );
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': hasUnreadMessages,
 				[ `is-${ supportInteraction?.status }` ]: supportInteraction?.status,
 			} ) }
 		>
-			<div
-				className={ clsx( 'help-center-support-chat__conversation-avatar', {
-					'has-unread-messages': hasUnreadMessages,
-				} ) }
-			>
-				{ renderAvatar() }
-
-				{ hasUnreadMessages && (
-					<div className="help-center-support-chat__conversation-badge">
-						+{ numberOfUnreadMessages }
-					</div>
-				) }
-			</div>
-			<div className="help-center-support-chat__conversation-information">
-				<div className="help-center-support-chat__conversation-information-message">
-					{ messageText || altText }
-				</div>
-				<div className="help-center-support-chat__conversation-sub-information">
-					<span className="help-center-support-chat__conversation-information-name">
-						{ messageDisplayName }
-					</span>
-					<Icon
-						size={ 2 }
-						icon={
-							<svg
-								width="2"
-								height="2"
-								viewBox="0 0 2 2"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<circle cx="1" cy="1" r="1" fill="#787C82" />
-							</svg>
-						}
-					/>
-					<span className="help-center-support-chat__conversation-information-time">
-						<TimeSince date={ receivedDateISO } dateFormat="lll" />
-					</span>
-				</div>
-			</div>
-			<div className="help-center-support-chat__open-conversation">
-				<Icon icon={ chevronRight } size={ 24 } />
-			</div>
+			{ renderMessage() }
 		</Link>
 	);
 };

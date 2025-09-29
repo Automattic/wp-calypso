@@ -15,6 +15,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
@@ -42,6 +43,11 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		),
 
 	[ DOMAIN_FLOW ]: () => import( /* webpackChunkName: "domain-flow" */ './flows/domain/domain' ),
+
+	[ AI_SITE_BUILDER_SPEC_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "ai-site-builder-spec-flow" */ './flows/ai-site-builder-spec/ai-site-builder-spec'
+		),
 };
 
 /**

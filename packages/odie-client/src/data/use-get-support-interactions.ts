@@ -9,13 +9,8 @@ import type { SupportProvider } from '../types';
  */
 export const useGetSupportInteractions = (
 	provider: SupportProvider | null = null,
-	per_page = 10,
-	status: string | string[] = 'open',
-	page = 1,
-	enabled = true,
-	freshness = 0
+	enabled = true
 ) => {
-	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
 	const isTestMode = isTestModeEnvironment();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( enabled );
 	let shouldFetch = enabled;
@@ -25,22 +20,9 @@ export const useGetSupportInteractions = (
 	}
 
 	return useQuery( {
-		queryKey: [
-			'support-interactions',
-			'get-interactions',
-			provider,
-			freshness,
-			path,
-			isTestMode,
-			canConnectToZendesk,
-		],
-		queryFn: async () => {
-			const response = await handleSupportInteractionsFetch( 'GET', path, isTestMode );
-
-			if ( response.length === 0 ) {
-				return null;
-			}
-
+		queryKey: [ 'support-interactions', 'get-interactions', isTestMode ],
+		queryFn: () => handleSupportInteractionsFetch( 'GET', '?per_page=100&page=1', isTestMode ),
+		select: ( response ) => {
 			if ( provider ) {
 				return response.filter( ( interaction ) =>
 					interaction.events.some( ( event ) => event.event_source === provider )
@@ -53,8 +35,6 @@ export const useGetSupportInteractions = (
 						! interaction.events.some( ( event ) => event.event_source.includes( 'zendesk' ) )
 				);
 			}
-
-			return response;
 		},
 		enabled: shouldFetch,
 		staleTime: 1000 * 30, // 30 seconds

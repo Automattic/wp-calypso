@@ -3,53 +3,82 @@ import {
 	pushToStagingMutation,
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
 	Modal,
 	Icon,
+	CardDivider,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
+	CheckboxControl,
+	SelectControl,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
-import { __, isRTL } from '@wordpress/i18n';
+import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import useRewindableActivityLogQuery from '../../../data/activity-log/use-rewindable-activity-log-query';
+import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../lib/jetpack/backup-utils';
+import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
+import {
+	FileBrowserProvider,
+	useFileBrowserContext,
+} from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../app/analytics';
+import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
+import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
-import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
+import { Notice } from '../../components/notice';
+import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
+import type { Field } from '@wordpress/dataviews';
+
+// File browser config used for granular selection
+const fileBrowserConfig: FileBrowserConfig = {
+	restrictedTypes: [ 'plugin', 'theme' ],
+	restrictedPaths: [ 'wp-content' ],
+	excludeTypes: [ 'wordpress' ],
+	alwaysInclude: [ 'wp-config.php' ],
+	showFileCard: false,
+	showBackupTime: false,
+	showSeparateExpandButton: true,
+	expandDirectoriesOnClick: false,
+	showHeader: false,
+};
+
+type BackupActivity = { rewindId: number; activityTs: number };
+
+type StagingSiteSyncFormData = {
+	domain: string;
+};
 
 const DirectionArrow = () => {
 	return (
-		<div style={ { marginTop: '44px' } }>
-			<Icon
-				icon={ isRTL() ? chevronLeft : chevronRight }
-				style={ {
-					fill: '#949494',
-				} }
-			/>
-		</div>
+		<Icon
+			icon={ isRTL() ? chevronLeft : chevronRight }
+			style={ {
+				fill: '#949494',
+			} }
+		/>
 	);
 };
 
 interface EnvironmentLabelProps {
-	label: string;
 	environmentType: EnvironmentType;
 	siteTitle?: string;
 }
 
-const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLabelProps ) => {
+const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps ) => {
 	return (
 		<VStack spacing={ 1 }>
-			<SectionHeader level={ 3 } title={ label } />
 			<HStack spacing={ 2 }>
-				<SiteEnvironmentBadge environmentType={ environmentType } />
+				<Environment environmentType={ environmentType } />
 				{ siteTitle && (
 					<Text
+						variant="muted"
 						style={ {
 							whiteSpace: 'nowrap',
 							overflow: 'hidden',
@@ -64,16 +93,6 @@ const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLab
 		</VStack>
 	);
 };
-
-interface StagingSiteSyncModalProps {
-	onClose: () => void;
-	syncType: 'pull' | 'push';
-	environment: 'production' | 'staging';
-	productionSiteId: number;
-	stagingSiteId: number;
-	onSyncStart: () => void;
-}
-
 interface EnvironmentConfig {
 	title: string;
 	description: string;
@@ -84,8 +103,6 @@ interface EnvironmentConfig {
 interface SyncConfig {
 	staging: EnvironmentConfig;
 	production: EnvironmentConfig;
-	fromLabel: string;
-	toLabel: string;
 	learnMore: string;
 	submit: string;
 }
@@ -96,7 +113,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			staging: {
 				title: __( 'Pull from Production' ),
 				description: __(
-					'Pulling will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+					'Pulling will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 				syncFrom: 'production',
 				syncTo: 'staging',
@@ -104,13 +121,11 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			production: {
 				title: __( 'Pull from Staging' ),
 				description: __(
-					'Pulling will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+					'Pulling will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 				syncFrom: 'staging',
 				syncTo: 'production',
 			},
-			fromLabel: __( 'Pull' ),
-			toLabel: __( 'To' ),
 			learnMore: __( 'Read more about <a>environment pull</a>.' ),
 			submit: __( 'Pull' ),
 		};
@@ -120,7 +135,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		staging: {
 			title: __( 'Push to Production' ),
 			description: __(
-				'Pushing will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+				'Pushing will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
 			syncFrom: 'staging',
 			syncTo: 'production',
@@ -128,19 +143,26 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		production: {
 			title: __( 'Push to Staging' ),
 			description: __(
-				'Pushing will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+				'Pushing will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
 			syncFrom: 'production',
 			syncTo: 'staging',
 		},
-		fromLabel: __( 'Push' ),
-		toLabel: __( 'To' ),
 		learnMore: __( 'Read more about <a>environment push</a>.' ),
 		submit: __( 'Push' ),
 	};
 };
 
-export default function StagingSiteSyncModal( {
+interface StagingSiteSyncModalProps {
+	onClose: () => void;
+	syncType: 'pull' | 'push';
+	environment: 'production' | 'staging';
+	productionSiteId: number;
+	stagingSiteId: number;
+	onSyncStart: () => void;
+}
+
+function StagingSiteSyncModalInner( {
 	onClose,
 	syncType,
 	environment,
@@ -149,7 +171,11 @@ export default function StagingSiteSyncModal( {
 	onSyncStart,
 }: StagingSiteSyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
-	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
+	const { recordTracksEvent } = useAnalytics();
+	const [ formData, setFormData ] = useState< StagingSiteSyncFormData >( {
+		domain: '',
+	} );
+	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -160,6 +186,7 @@ export default function StagingSiteSyncModal( {
 	} );
 	const productionSiteSlug = productionSite?.slug;
 	const productionSiteTitle = productionSite?.name;
+	const productionHasWoo = !! productionSite?.options?.woocommerce_is_active;
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
@@ -167,15 +194,17 @@ export default function StagingSiteSyncModal( {
 	} );
 	const stagingSiteSlug = stagingSite?.slug;
 	const stagingSiteTitle = stagingSite?.name;
+	const stagingHasWoo = !! stagingSite?.options?.woocommerce_is_active;
 
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+	const sourceHasWoo = sourceEnvironment === 'staging' ? stagingHasWoo : productionHasWoo;
 
 	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
 	const targetSiteTitle =
 		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
-	// TODO: Uncomment once we need it for granular sync.
-	// const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+	const querySiteSlug = sourceEnvironment === 'staging' ? stagingSiteSlug : productionSiteSlug;
 
 	const pullMutation = useMutation( pullFromStagingMutation( productionSiteId, stagingSiteId ) );
 	const pushMutation = useMutation( pushToStagingMutation( productionSiteId, stagingSiteId ) );
@@ -184,9 +213,110 @@ export default function StagingSiteSyncModal( {
 		onClose();
 	}, [ onClose ] );
 
+	// Determine latest successful backup for rewindId/display
+	const activityQuery = useRewindableActivityLogQuery(
+		querySiteId,
+		{
+			name: SUCCESSFUL_BACKUP_ACTIVITIES,
+			aggregate: false,
+			number: 1,
+			sortOrder: 'desc',
+		},
+		{}
+	) as { data: BackupActivity[] | undefined; isLoading: boolean };
+	const { data: backupData, isLoading: isLoadingBackupAttempt } = activityQuery;
+
+	const lastKnownBackupAttempt: BackupActivity | undefined = backupData?.[ 0 ];
+	const rewindId = lastKnownBackupAttempt?.rewindId ?? 0;
+
+	const { fileBrowserState } = useFileBrowserContext();
+	const browserCheckList = fileBrowserState.getCheckList( rewindId );
+
+	const WP_CONFIG_PATH = '/wp-config.php';
+	const WP_CONTENT_PATH = '/wp-content';
+	const SQL_PATH = '/sql';
+
+	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH, rewindId );
+	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH, rewindId );
+	const sqlNode = fileBrowserState.getNode( SQL_PATH, rewindId );
+
+	const filesAndFoldersNodesCheckState = useMemo( () => {
+		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
+		if ( nodes.length === 0 ) {
+			return 'unchecked';
+		}
+		const checkedCount = nodes.filter( ( node ) => node?.checkState === 'checked' ).length;
+		const mixedCount = nodes.filter( ( node ) => node?.checkState === 'mixed' ).length;
+		if ( mixedCount > 0 ) {
+			return 'mixed';
+		}
+		if ( checkedCount === nodes.length ) {
+			return 'checked';
+		}
+		if ( checkedCount === 0 ) {
+			return 'unchecked';
+		}
+		return 'mixed';
+	}, [ wpContentNode, wpConfigNode ] );
+
+	const updateFilesAndFoldersCheckState = useCallback(
+		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState, rewindId );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState, rewindId );
+		},
+		[ fileBrowserState, rewindId ]
+	);
+
+	const onFilesFoldersCheckboxChange = useCallback( () => {
+		updateFilesAndFoldersCheckState(
+			filesAndFoldersNodesCheckState === 'checked' ? 'unchecked' : 'checked'
+		);
+	}, [ filesAndFoldersNodesCheckState, updateFilesAndFoldersCheckState ] );
+
+	const handleDatabaseCheckboxChange = useCallback( () => {
+		if ( sqlNode?.checkState === 'checked' ) {
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked', rewindId );
+		} else {
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked', rewindId );
+		}
+	}, [ fileBrowserState, sqlNode, rewindId ] );
+
+	const handleFileSelectionModeChange = useCallback(
+		( value: string ) => {
+			const isExpanded = value === 'true';
+			setIsFileBrowserVisible( isExpanded );
+			if ( ! isExpanded ) {
+				updateFilesAndFoldersCheckState( 'unchecked' );
+			}
+		},
+		[ updateFilesAndFoldersCheckState ]
+	);
+
+	const locale = useLocale();
+	const displayBackupDate = lastKnownBackupAttempt
+		? new Intl.DateTimeFormat( locale, { dateStyle: 'medium', timeStyle: 'short' } ).format(
+				new Date( lastKnownBackupAttempt.activityTs )
+		  )
+		: null;
+
+	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+	const showWooCommerceWarning =
+		sourceHasWoo && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
+
 	const handleConfirm = () => {
-		// TODO: Sync everything for now. Later we will add granular sync.
-		const options = { types: 'paths', include_paths: '', exclude_paths: '' };
+		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+
+		if (
+			shouldDisableGranularSync ||
+			( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' )
+		) {
+			include_paths = '';
+			exclude_paths = '';
+		}
+
+		const options = { types: 'paths', include_paths, exclude_paths } as const;
 
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
@@ -234,21 +364,31 @@ export default function StagingSiteSyncModal( {
 		}
 	};
 
-	const handleDomainConfirmation = useCallback(
-		( value: string | undefined ) => setDomainConfirmation( value || '' ),
-		[]
-	);
+	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
-	const showDomainConfirmation = targetEnvironment === 'production';
+	const isSubmitDisabled =
+		( showDomainConfirmation && formData.domain !== productionSiteSlug ) ||
+		( browserCheckList.totalItems === 0 &&
+			browserCheckList.includeList.length === 0 &&
+			!! lastKnownBackupAttempt ) ||
+		pullMutation.isPending ||
+		pushMutation.isPending;
 
-	const isSubmitDisabled = showDomainConfirmation && domainConfirmation !== productionSiteSlug;
+	const fields: Field< StagingSiteSyncFormData >[] = [
+		{
+			id: 'domain',
+			label: __( 'Type the site domain to confirm' ),
+			type: 'text' as const,
+			description: sprintf(
+				/* translators: %s: site domain */
+				__( 'The site domain is: %s' ),
+				productionSiteSlug
+			),
+		},
+	];
 
 	return (
-		<Modal
-			title={ syncConfig[ environment ].title }
-			onRequestClose={ handleClose }
-			style={ { maxWidth: '668px' } }
-		>
+		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
@@ -256,40 +396,144 @@ export default function StagingSiteSyncModal( {
 					} ) }
 				</Text>
 				<HStack spacing={ 4 } alignment="left">
-					<EnvironmentLabel
-						label={ syncConfig.fromLabel }
-						environmentType={ sourceEnvironment }
-						siteTitle={ sourceSiteTitle }
-					/>
+					<EnvironmentLabel environmentType={ sourceEnvironment } siteTitle={ sourceSiteTitle } />
 					<DirectionArrow />
-					<EnvironmentLabel
-						label={ syncConfig.toLabel }
-						environmentType={ targetEnvironment }
-						siteTitle={ targetSiteTitle }
-					/>
+					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
 				</HStack>
-				<VStack spacing={ 6 }>
-					{ showDomainConfirmation && (
-						<InputControl
-							__next40pxDefaultSize
-							label={
-								<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
-									<Text>
-										{ __( 'Enter your site‘s name' ) }{ ' ' }
-										<Text color="var(--dashboard__foreground-color-error)">
-											{ productionSiteSlug }
-										</Text>{ ' ' }
-										{ __( 'to confirm.' ) }
-									</Text>
+				{ /* File selection and database controls */ }
+				<VStack spacing={ 5 }>
+					<VStack spacing={ 0 }>
+						<HStack
+							spacing={ 2 }
+							justify="space-between"
+							alignment="center"
+							style={ { padding: '4px 0' } }
+						>
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Files and folders' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={
+									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+								}
+								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+								onChange={ onFilesFoldersCheckboxChange }
+							/>
+							<SelectControl
+								value={ isFileBrowserVisible ? 'true' : 'false' }
+								variant="minimal"
+								disabled={ shouldDisableGranularSync }
+								options={ [
+									{ label: __( 'All files and folders' ), value: 'false' },
+									{ label: __( 'Specific files and folders' ), value: 'true' },
+								] }
+								onChange={ handleFileSelectionModeChange }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								aria-label={ __( 'Select files and folders to sync' ) }
+							/>
+						</HStack>
+
+						<div hidden={ ! isFileBrowserVisible }>
+							<VStack spacing={ 4 }>
+								<CardDivider />
+								{ displayBackupDate && (
+									<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
+										<Text variant="muted">
+											{ createInterpolateElement(
+												__( 'Content from the latest backup: <date />.' ),
+												{
+													date: <span>{ displayBackupDate }</span>,
+												}
+											) }{ ' ' }
+											<ExternalLink
+												href={ `/backup/${ querySiteSlug as string }` }
+												children={ __( 'Create new backup' ) }
+											/>
+										</Text>
+									</HStack>
+								) }
+								<HStack style={ { marginInlineStart: '14px' } }>
+									<FileBrowser
+										rewindId={ rewindId }
+										siteId={ querySiteId }
+										siteSlug={ querySiteSlug as string }
+										fileBrowserConfig={ fileBrowserConfig }
+									/>
 								</HStack>
-							}
-							onChange={ handleDomainConfirmation }
-							value={ domainConfirmation }
+							</VStack>
+						</div>
+						<HStack
+							alignment="left"
+							spacing={ 2 }
+							style={ {
+								borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+								borderBottom: hasWarning
+									? 'none'
+									: '1px solid var(--wp-components-color-gray-300, #ddd)',
+								padding: '15px 0',
+								marginTop: isFileBrowserVisible ? '16px' : '0',
+							} }
+						>
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Database' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={ hasWarning }
+								onChange={ handleDatabaseCheckboxChange }
+							/>
+						</HStack>
+						{ hasWarning && (
+							<Notice
+								density="medium"
+								variant="warning"
+								title={ __( 'Warning! Database will be overwritten' ) }
+							>
+								<VStack spacing={ 2 }>
+									<Text as="p">
+										{ __(
+											'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+										) }
+									</Text>
+									{ showWooCommerceWarning && (
+										<Text as="p">
+											{ createInterpolateElement(
+												__(
+													'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+												),
+												{
+													a: (
+														<ExternalLink
+															href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+															children={ null }
+														/>
+													),
+												}
+											) }
+										</Text>
+									) }
+								</VStack>
+							</Notice>
+						) }
+					</VStack>
+
+					{ showDomainConfirmation && (
+						<DataForm< StagingSiteSyncFormData >
+							data={ formData }
+							fields={ fields }
+							form={ { layout: { type: 'regular' as const }, fields } }
+							onChange={ ( edits: Partial< StagingSiteSyncFormData > ) => {
+								setFormData( ( data ) => ( {
+									...data,
+									...edits,
+									domain: edits.domain?.trim() ?? data.domain,
+								} ) );
+							} }
 						/>
 					) }
 					<HStack>
 						<HStack>
-							<Text className="staging-site-card__footer-text">
+							<Text>
 								{ createInterpolateElement( syncConfig.learnMore, {
 									a: (
 										<InlineSupportLink
@@ -308,7 +552,7 @@ export default function StagingSiteSyncModal( {
 							<Button
 								variant="primary"
 								onClick={ handleConfirm }
-								disabled={ isSubmitDisabled || pullMutation.isPending || pushMutation.isPending }
+								disabled={ isSubmitDisabled }
 								isBusy={ pullMutation.isPending || pushMutation.isPending }
 							>
 								{ syncConfig.submit }
@@ -318,5 +562,19 @@ export default function StagingSiteSyncModal( {
 				</VStack>
 			</VStack>
 		</Modal>
+	);
+}
+
+export default function StagingSiteSyncModal( props: StagingSiteSyncModalProps ) {
+	const locale = useLocale();
+	const notices = {
+		showError: () => {},
+		showSuccess: () => {},
+	};
+
+	return (
+		<FileBrowserProvider locale={ locale } notices={ notices }>
+			<StagingSiteSyncModalInner { ...props } />
+		</FileBrowserProvider>
 	);
 }

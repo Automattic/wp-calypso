@@ -7,18 +7,13 @@
 	@include help-center-link;
 
 	.help-center-search-results-dev__resource {
-		margin-right: 15px;
+		margin-right: 13px;
 		display: block;
-		background: var(--studio-gray-0);
 		fill: var(--studio-blue-50);
-		padding: 8px;
+		padding-left: 19px;
 		text-transform: uppercase;
 		font-weight: 500;
 		font-size: 0.75rem;
-	}
-
-	li:last-child {
-		margin-bottom: 14px;
 	}
 
 	.help-center-search-results__title {
@@ -39,18 +34,6 @@
 
 		@media screen and (min-width: 661px) {
 			font-size: $font-body;
-		}
-	}
-
-	// Homepage conversations section
-	.help-center-homepage-conversations {
-		.help-center-support-chat__conversation-container {
-			border-radius: 4px;
-			border: 1.5px solid #C3C4C7;
-
-			&:hover, &.is-unread-message {
-				border: 1.5px solid $help-center-blue !important;
-			}
 		}
 	}
 }

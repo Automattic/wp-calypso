@@ -5,6 +5,7 @@ export { DomainsMiniCart } from './domains-mini-cart';
 export { DomainsFullCart } from './domains-full-cart';
 export { DomainsFullCartItems } from './domains-full-cart-items';
 export { DomainsFullCartItem } from './domains-full-cart-items/item';
+export { DomainsFullCartSkipButton } from './domains-full-cart-skip-button';
 export { DomainSuggestionsList } from './domain-suggestions-list';
 export { FeaturedDomainSuggestionsList } from './featured-domain-suggestions-list';
 export { DomainSuggestion } from './domain-suggestion';

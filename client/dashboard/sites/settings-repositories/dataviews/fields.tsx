@@ -1,7 +1,7 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { BranchDisplay } from '../../deployment-list/branch-display';
+import { BranchDisplay } from '../../deployments-list/branch-display';
 import { OwnerDisplay } from '../owner-display';
 import { TargetDirDisplay } from '../target-dir-display';
 import type { CodeDeploymentData } from '@automattic/api-core';
@@ -50,7 +50,7 @@ export function useRepositoryFields() {
 			},
 			{
 				id: 'target_dir',
-				label: __( 'Target Directory' ),
+				label: __( 'Target directory' ),
 				getValue: ( { item } ) => item.target_dir,
 				render: ( { item } ) => <TargetDirDisplay targetDir={ item.target_dir } />,
 				enableHiding: true,
@@ -58,7 +58,7 @@ export function useRepositoryFields() {
 			},
 			{
 				id: 'auto_deploy',
-				label: __( 'Auto Deploy' ),
+				label: __( 'Auto deploy' ),
 				getValue: ( { item } ) => ( item.is_automated ? 'On' : 'Off' ),
 				render: ( { item } ) => (
 					<Text size="small" style={ { color: '#3b3b3b' } }>

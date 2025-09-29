@@ -8,6 +8,13 @@ function prepareMarkdownImage( imgUrl: string, isPlaceholder: boolean ): string 
 	return isPlaceholder ? `![Image](${ imgUrl })` : `[![Image](${ imgUrl })](${ imgUrl })`;
 }
 
+function addTargetBlankToLinks( node: Element ) {
+	if ( node.tagName === 'A' && node.hasAttribute( 'href' ) ) {
+		node.setAttribute( 'target', '_blank' );
+		node.setAttribute( 'rel', 'noopener noreferrer' );
+	}
+}
+
 function convertUrlsToMarkdown( text: string ): string {
 	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w.-]+\.[a-z]{2,}(\.[a-z]{2,})*(\/[^\s]*)?)/gi;
 
@@ -49,9 +56,17 @@ function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
 			break;
 		case 'text':
 			if ( message.htmlText ) {
+				// Configure DOMPurify to add target="_blank" to all links
+				DOMPurify.addHook( 'afterSanitizeAttributes', addTargetBlankToLinks );
+
+				const sanitizedHtml = DOMPurify.sanitize( message.htmlText );
+
+				// Remove the hook after use to avoid affecting other sanitizations
+				DOMPurify.removeHook( 'afterSanitizeAttributes', addTargetBlankToLinks );
+
 				messageContent = (
 					// eslint-disable-next-line react/no-danger
-					<span dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( message.htmlText ) } } />
+					<span dangerouslySetInnerHTML={ { __html: sanitizedHtml } } />
 				);
 			} else {
 				messageContent = convertUrlsToMarkdown( message.text );

@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
+	Modal,
 	TabPanel,
 	Card,
 	CardHeader,
@@ -12,12 +13,23 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
+import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import illustrationUrl from '../backups/backups-callout-illustration.svg';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout'; // @TODO: replace with Scan callout illustration
+import { useTimeSince } from '../../components/time-since';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { ActiveThreatsDataViews } from '../scan-active';
+import { ScanHistoryDataViews } from '../scan-history';
+import { BulkFixThreatsModal } from './components/bulk-fix-threats-modal';
+import illustrationUrl from './scan-callout-illustration.svg';
+import { ScanNotices } from './scan-notices';
+import { ScanNowButton } from './scan-now-button';
+import { ScanStatus } from './status';
+import { useScanState } from './use-scan-state';
+
+import './style.scss';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -29,6 +41,27 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const router = useRouter();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ showBulkFixModal, setShowBulkFixModal ] = useState( false );
+
+	const scanState = useScanState( site.ID );
+	const { scan, status } = scanState;
+
+	const fixableThreatsCount = scan?.threats?.filter( ( threat ) => threat.fixable ).length || 0;
+	const lastScanTime = scan?.most_recent?.timestamp;
+	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
+	const threatCount = scan?.threats?.length || 0;
+
+	const getPageDescription = () => {
+		if ( lastScanTime && lastScanRelativeTime ) {
+			return sprintf(
+				/* translators: %s: relative time since last scan */
+				__( 'Latest scan ran %s.' ),
+				lastScanRelativeTime
+			);
+		}
+
+		return null;
+	};
 
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
 		if ( tab === 'active' ) {
@@ -38,46 +71,55 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		}
 	};
 
+	const renderActiveTab = () => {
+		const showStatus = status === 'enqueued' || status === 'running';
+		if ( showStatus ) {
+			return <ScanStatus scanState={ scanState } />;
+		}
+		return <ActiveThreatsDataViews site={ site } />;
+	};
+
 	return (
-		<PageLayout
-			header={
-				// @TODO: Add translation and relative time
-				<PageHeader
-					title={ __( 'Scan' ) }
-					description="Latest automated scan run X hours ago"
-					actions={
-						<ButtonStack>
-							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
-							<Button variant="primary">
-								{ sprintf(
-									/* translators: %d: number of threats */
-									__( 'Auto-fix %(threatsCount)d threats' ),
-									{
-										// @TODO: replace with the actual number of active fixable threats
-										threatsCount: 4,
-									}
-								) }
-							</Button>
-						</ButtonStack>
-					}
-				/>
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.SCAN }
+			tracksFeatureId="scan"
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Scan' ) } /> } /> }
+			upsellIcon={ shield }
+			upsellTitle={ __( 'Scan for security threats' ) }
+			upsellImage={ illustrationUrl }
+			upsellDescription={
+				<Text as="p" variant="muted">
+					{ __(
+						'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
+					) }
+				</Text>
 			}
 		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.SCAN }
-				tracksFeatureId="scan"
-				asOverlay
-				upsellIcon={ shield }
-				upsellTitle={ __( 'Scan for security threats' ) }
-				upsellImage={ illustrationUrl }
-				upsellDescription={
-					<Text as="p" variant="muted">
-						{ /* @TODO: update copy when the design is ready and add translation */ }
-						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for many issues.
-					</Text>
+			<PageLayout
+				header={
+					<PageHeader
+						title={ __( 'Scan' ) }
+						description={ getPageDescription() }
+						actions={
+							<ButtonStack>
+								<ScanNowButton site={ site } scanState={ scanState } />
+								{ fixableThreatsCount > 0 && (
+									<Button variant="primary" onClick={ () => setShowBulkFixModal( true ) }>
+										{ sprintf(
+											/* translators: %d: number of threats */
+											__( 'Auto-fix %(threatsCount)d threats' ),
+											{
+												threatsCount: fixableThreatsCount,
+											}
+										) }
+									</Button>
+								) }
+							</ButtonStack>
+						}
+					/>
 				}
+				notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
 			>
 				<Card>
 					<CardHeader style={ { paddingBottom: '0' } }>
@@ -95,19 +137,25 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						</TabPanel>
 					</CardHeader>
 					<CardBody>
-						{ scanTab === 'active' ? (
-							<Text as="p" variant="muted">
-								{ __( 'No active threats found. Your site is secure.' ) }
-							</Text>
-						) : (
-							<Text as="p" variant="muted">
-								{ __( 'So far, there are no archived threats on your site.' ) }
-							</Text>
-						) }
+						{ scanTab === 'active' && renderActiveTab() }
+						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
 					</CardBody>
 				</Card>
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+			</PageLayout>
+			{ showBulkFixModal && (
+				<Modal
+					title={ __( 'Auto-fix threats' ) }
+					onRequestClose={ () => setShowBulkFixModal( false ) }
+					size="medium"
+				>
+					<BulkFixThreatsModal
+						items={ scan?.threats?.filter( ( threat ) => threat.fixable ) || [] }
+						closeModal={ () => setShowBulkFixModal( false ) }
+						siteId={ site.ID }
+					/>
+				</Modal>
+			) }
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

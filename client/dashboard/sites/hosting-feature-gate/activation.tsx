@@ -4,11 +4,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { lazy, useEffect, useState, ReactNode, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
-import type { HostingFeatures, Site } from '@automattic/api-core';
+import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 interface HostingFeatureActivationProps {
 	site: Site;
-	feature: HostingFeatures;
+	feature: HostingFeatureSlug;
 	tracksFeatureId: string;
 	renderActivationComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
 }

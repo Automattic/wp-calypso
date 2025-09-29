@@ -1,3 +1,18 @@
+export type McpAbility = {
+	name: string;
+	title: string;
+	description: string;
+	category: string;
+	type: string;
+	enabled: boolean;
+};
+
+export type McpAbilities = {
+	account?: Record< string, McpAbility >;
+	site?: Record< string, McpAbility >; // Default values for all sites
+	sites?: Record< string, Record< string, number > >; // Custom overrides per site (0/1 values only)
+};
+
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
@@ -7,6 +22,7 @@ export interface UserSettings {
 	display_name: string;
 	is_dev_account: boolean;
 	password: string;
+	is_passwordless_user: boolean;
 	tracks_opt_out: boolean;
 	user_email: string;
 	user_login: string;
@@ -16,6 +32,7 @@ export interface UserSettings {
 	i18n_empathy_mode?: boolean;
 	use_fallback_for_incomplete_languages?: boolean;
 	enable_translator?: boolean;
+	subscription_delivery_email_blocked?: boolean;
 	two_step_app_enabled: boolean;
 	two_step_backup_codes_printed: boolean;
 	two_step_enabled: boolean;
@@ -33,4 +50,11 @@ export interface UserSettings {
 	subscription_delivery_hour: number;
 	subscription_delivery_jabber_default: boolean;
 	p2_disable_autofollow_on_comment: boolean;
+
+	primary_site_ID?: number;
+	mcp_abilities?: McpAbilities;
+
+	// Username change related fields
+	email_verified?: boolean;
+	user_login_can_be_changed?: boolean;
 }

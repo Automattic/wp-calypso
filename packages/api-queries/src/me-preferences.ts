@@ -4,8 +4,17 @@ import { queryClient } from './query-client';
 import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
-	'sites-view': {},
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
+	'hosting-dashboard-welcome-notice-dismissed': '',
+	'reader-landing-page': {
+		useReaderAsLandingPage: false,
+		updatedAt: 0,
+	},
+	'sites-landing-page': {
+		useSitesAsLandingPage: false,
+		updatedAt: 0,
+	},
+	'sites-view': {},
 };
 
 // Returns all user preferences, without applying any defaults.
@@ -36,6 +45,27 @@ export const userPreferenceMutation = < P extends keyof UserPreferences >( prefe
 			updatePreferences( {
 				[ preferenceName ]: data,
 			} as Partial< UserPreferences > ),
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) => {
+				if ( ! oldData ) {
+					return newData;
+				}
+
+				// If newData doesn't contain the preference key, it means it was unset.
+				// We need to remove it from oldData.
+				if ( ! ( preferenceName in newData ) ) {
+					const { [ preferenceName ]: _, ...rest } = oldData;
+					return { ...rest, ...newData };
+				}
+
+				return { ...oldData, ...newData };
+			} );
+		},
+	} );
+
+export const userPreferencesMutation = () =>
+	mutationOptions( {
+		mutationFn: ( data: Partial< UserPreferences > ) => updatePreferences( data ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>
 				oldData ? { ...oldData, ...newData } : newData

@@ -14,6 +14,8 @@ export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
+export const ECOMMERCE_FLOW = 'ecommerce';
+export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
 
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
@@ -34,6 +36,7 @@ export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
+export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 
 export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
@@ -73,6 +76,10 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 
 export const isEntrepreneurFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ENTREPRENEUR_FLOW ].includes( flowName ) );
+};
+
+export const isEcommerceFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ ECOMMERCE_FLOW, ECOMMERCE_MONTHLY_FLOW ].includes( flowName ) );
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
@@ -121,6 +128,10 @@ export const ecommerceFlowRecurTypes = {
 	'3Y': '3Y',
 };
 
+export const isFreeFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ FREE_FLOW ].includes( flowName ) );
+};
+
 export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName ) );
 };
@@ -141,6 +152,10 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 
 export const isAIBuilderFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
+};
+
+export const isAIBuilderSpecFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_SPEC_FLOW ].includes( flowName ) );
 };
 
 export const isPlaygroundFlow = ( flowName: string | null ) => {

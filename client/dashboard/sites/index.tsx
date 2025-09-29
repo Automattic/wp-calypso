@@ -3,21 +3,31 @@ import {
 	userPreferenceQuery,
 	userPreferenceMutation,
 	sitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import {
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+	useMutation,
+	keepPreviousData,
+} from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import deepmerge from 'deepmerge';
+import { useState, useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsCard } from '../components/dataviews-card';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
+import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { getActions } from './actions';
+import { useActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import noSitesIllustration from './no-sites-illustration.svg';
@@ -56,7 +66,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const router = useRouter();
+	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
@@ -84,7 +94,7 @@ export default function Sites() {
 	} );
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
-	const actions = getActions( router );
+	const actions = useActions();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -130,6 +140,16 @@ export default function Sites() {
 		emptyDescription = __( 'Your search did not match any sites.' );
 	}
 
+	useEffect( () => {
+		if ( sites ) {
+			sites.forEach( ( site ) => {
+				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
+				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
+				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
+			} );
+		}
+	}, [ sites ] );
+
 	return (
 		<>
 			{ isModalOpen && (
@@ -152,8 +172,8 @@ export default function Sites() {
 						}
 					/>
 				}
+				notices={ <SitesNotices /> }
 			>
-				<SitesNotices />
 				<DataViewsCard>
 					<DataViews< Site >
 						getItemId={ ( item ) => item.ID.toString() }
@@ -206,6 +226,42 @@ export default function Sites() {
 						}
 					/>
 				</DataViewsCard>
+				<GuidedTourContextProvider
+					tourId="hosting-dashboard-tours-sites"
+					isSkippable
+					guidedTours={ [
+						{
+							id: 'hosting-dashboard-tours-sites-switch-layouts',
+							title: __( 'Switch layouts' ),
+							description: __(
+								'Choose between a visual grid view and a more compact table view of your sites.'
+							),
+						},
+						{
+							id: 'hosting-dashboard-tours-sites-appearance-options',
+							title: __( 'Appearance options' ),
+							description: __(
+								'Choose which site properties you see as well as sorting, density, and the number of sites displayed on each page.'
+							),
+						},
+					] }
+				>
+					<GuidedTourStep
+						id="hosting-dashboard-tours-sites-switch-layouts"
+						selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
+						placement="bottom"
+						inline
+						// The footer in DataViews uses a z-index of 2, so we need to apply the same value to ensure our element does not appear behind it.
+						popoverStyle={ { zIndex: 2 } }
+					/>
+					<GuidedTourStep
+						id="hosting-dashboard-tours-sites-appearance-options"
+						selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
+						placement="bottom"
+						inline
+						popoverStyle={ { zIndex: 2 } }
+					/>
+				</GuidedTourContextProvider>
 			</PageLayout>
 		</>
 	);

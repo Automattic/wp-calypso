@@ -13,8 +13,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNotice } from '../../../app/hooks/use-notice';
+import { useCallback, useMemo, useState } from 'react';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
 const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
@@ -31,30 +30,16 @@ export const SubscriptionSettings = () => {
 	const { data: rawSettings } = useSuspenseQuery( userSettingsQuery() );
 	const originalSettings = getSettings( rawSettings );
 	const [ dataState, setDataState ] = useState< SettingsData >( originalSettings );
-	const { createSuccessNotice, createErrorNotice } = useNotice();
 
-	const {
-		mutate: saveSettings,
-		isPending: isSaving,
-		isSuccess: isSuccessSaving,
-		isError: isErrorSaving,
-	} = useMutation( userSettingsMutation() );
-
-	useEffect( () => {
-		if ( isSuccessSaving ) {
-			createSuccessNotice( __( 'Settings saved successfully.' ), {
-				type: 'snackbar',
-			} );
-		}
-	}, [ isSuccessSaving, createSuccessNotice ] );
-
-	useEffect( () => {
-		if ( isErrorSaving ) {
-			createErrorNotice( __( 'Failed to save settings.' ), {
-				type: 'snackbar',
-			} );
-		}
-	}, [ isErrorSaving, createErrorNotice ] );
+	const { mutate: saveSettings, isPending: isSaving } = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Subscription settings saved.' ),
+				error: __( 'Failed to save subscription settings.' ),
+			},
+		},
+	} );
 
 	const isDataStateDirty = useMemo(
 		() => isDirty( dataState, originalSettings ),

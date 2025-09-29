@@ -17,6 +17,7 @@ export type MeSupports = {
 };
 
 export type AppConfig = {
+	name: string;
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -31,10 +32,12 @@ export type AppConfig = {
 		help: boolean;
 		notifications: boolean;
 		me: MeSupports | false;
+		commandPalette: boolean;
 	};
 };
 
 const AppContext = createContext< AppConfig >( {
+	name: '',
 	basePath: '',
 	mainRoute: '',
 	Logo: null,
@@ -49,6 +52,7 @@ const AppContext = createContext< AppConfig >( {
 		help: false,
 		notifications: false,
 		me: false,
+		commandPalette: false,
 	},
 } );
 

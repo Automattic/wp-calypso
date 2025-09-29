@@ -5,10 +5,10 @@
 import {
 	DataHelper,
 	RestAPIClient,
-	DomainSearchComponent,
 	NewUserResponse,
 	UserSignupPage,
 	CartCheckoutPage,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -31,7 +31,6 @@ describe(
 
 		let newUserDetails: NewUserResponse;
 		let cartCheckoutPage: CartCheckoutPage;
-		let domainSearchComponent: DomainSearchComponent;
 		let page: Page;
 		let selectedDomain: string;
 
@@ -54,15 +53,15 @@ describe(
 		} );
 
 		it( 'Select a domain name', async function () {
-			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName + '.blog' );
+			const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+			await domainSearchComponent.search( blogName );
 
-			const promises = await Promise.all( [
-				domainSearchComponent.selectDomain( '.blog' ),
+			selectedDomain = await domainSearchComponent.selectFirstSuggestion();
+
+			await Promise.all( [
+				domainSearchComponent.continue(),
 				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
 			] );
-
-			selectedDomain = promises[ 0 ];
 		} );
 
 		it( 'See domain and plan at checkout', async function () {

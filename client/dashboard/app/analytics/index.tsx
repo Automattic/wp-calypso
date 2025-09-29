@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 import { createContext, useContext } from 'react';
 
 export type AnalyticsClient = {
@@ -21,4 +23,18 @@ export function AnalyticsProvider( { children, client }: AnalyticsProviderProps 
 
 export function useAnalytics() {
 	return useContext( AnalyticsContext );
+}
+
+export function bumpStat( group: string, name: string ) {
+	if ( typeof window === 'undefined' || ! config( 'mc_analytics_enabled' ) ) {
+		return;
+	}
+
+	const url = addQueryArgs( document.location.protocol + '//pixel.wp.com/g.gif', {
+		v: 'wpcom-no-pv',
+		[ `x_${ group }` ]: name,
+		t: Math.random().toString(),
+	} );
+
+	new window.Image().src = url;
 }
