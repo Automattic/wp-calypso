@@ -1,11 +1,9 @@
-import { hostingUpdateSchedulesQuery, sitesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, FormToggle } from '@wordpress/components';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { format, fromUnixTime } from 'date-fns';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	pluginsScheduledUpdatesNewRoute,
 	pluginsScheduledUpdatesRoute,
@@ -14,6 +12,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SiteIconLink } from '../../sites/site-fields';
+import { useScheduledUpdates } from './hooks/use-scheduled-updates';
 import { ScheduledUpdateRow } from './types';
 
 export const fields: Field< ScheduledUpdateRow >[] = [
@@ -83,56 +82,12 @@ export const defaultView: View = {
 export default function PluginsScheduledUpdates() {
 	const [ view, setView ] = useState( defaultView );
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesRoute.fullPath } );
-	const { data: scheduledUpdates, isLoading: isLoadingSchedules } = useQuery(
-		hostingUpdateSchedulesQuery()
-	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const mappedData = useMemo( () => {
-		if ( ! scheduledUpdates || ! sites ) {
-			return [];
-		}
-		if ( ! scheduledUpdates.sites ) {
-			return [];
-		}
-		const updates = scheduledUpdates.sites;
-		const result: ScheduledUpdateRow[] = [];
 
-		for ( const site_id in updates ) {
-			for ( const scheduleId in updates[ site_id ] ) {
-				const { timestamp, schedule, interval, last_run_timestamp, active } =
-					updates[ site_id ][ scheduleId ];
-				const id = `${ site_id }-${ scheduleId }-${ schedule }-${ interval }`;
-				const site = sites.find( ( s ) => s.ID === parseInt( site_id, 10 ) );
-				if ( ! site ) {
-					continue;
-				}
-				result.push( {
-					id,
-					site: site,
-					lastUpdate: last_run_timestamp,
-					nextUpdate: timestamp,
-					active,
-					schedule,
-					scheduleId,
-				} );
-			}
-		}
-
-		// sort by schedule (daily/weekly) then timestamp
-		result.sort( ( a, b ) => {
-			if ( a.schedule === b.schedule ) {
-				return a.nextUpdate - b.nextUpdate;
-			}
-			return a.schedule.localeCompare( b.schedule );
-		} );
-		return result;
-	}, [ scheduledUpdates, sites ] );
-
+	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { data: filtered, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( mappedData, view, fields );
-	}, [ mappedData, view ] );
+		return filterSortAndPaginate( scheduledUpdates, view, fields );
+	}, [ scheduledUpdates, view ] );
 
-	const isLoading = isLoadingSchedules || isLoadingSites;
 	return (
 		<PageLayout
 			size="large"
