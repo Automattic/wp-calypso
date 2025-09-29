@@ -29,6 +29,7 @@ export async function updateUserSettings(
 		'p2_disable_autofollow_on_comment',
 		'two_step_sms_country',
 		'two_step_sms_phone_number',
+		'two_step_enhanced_security',
 		'primary_site_ID',
 		'mcp_abilities',
 	];

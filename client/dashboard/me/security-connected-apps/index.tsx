@@ -12,17 +12,18 @@ import { __, sprintf } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import useIntlCollator from '../../app/hooks/use-intl-collator';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
-import { Text } from '../../components/text';
 import SecurityPageHeader from '../security-page-header';
 import ApplicationDetailsModal from './application-details-modal';
 import type { ConnectedApplication } from '@automattic/api-core';
 
 export default function SecurityConnectedApps() {
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data: connectedApplications, isLoading } = useSuspenseQuery(
@@ -41,6 +42,7 @@ export default function SecurityConnectedApps() {
 
 	const handleDisconnect = () => {
 		if ( selectedApplicationToRemove ) {
+			recordTracksEvent( 'calypso_dashboard_security_connected_apps_remove_click' );
 			deleteConnectedApplication( selectedApplicationToRemove.ID, {
 				onSuccess: () => {
 					createSuccessNotice(
@@ -114,6 +116,7 @@ export default function SecurityConnectedApps() {
 						label: __( 'Disconnect' ),
 						callback: ( items: ConnectedApplication[] ) => {
 							const item = items[ 0 ];
+							recordTracksEvent( 'calypso_dashboard_security_connected_apps_remove_dialog_open' );
 							setSelectedApplicationToRemove( item );
 						},
 					},
@@ -122,6 +125,9 @@ export default function SecurityConnectedApps() {
 						label: __( 'View details' ),
 						callback: ( items: ConnectedApplication[] ) => {
 							const item = items[ 0 ];
+							recordTracksEvent(
+								'calypso_dashboard_security_connected_apps_view_details_modal_open'
+							);
 							setSelectedApplicationToView( item );
 						},
 					},
@@ -163,11 +169,7 @@ export default function SecurityConnectedApps() {
 					onChangeView={ () => {} }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ { totalItems, totalPages: 1 } }
-					empty={
-						<Text as="p" variant="muted" style={ { paddingBlock: '48px' } }>
-							{ __( 'You haven’t connected any apps yet.' ) }
-						</Text>
-					}
+					empty={ <p>{ __( 'You haven’t connected any apps yet.' ) }</p> }
 				>
 					<DataViews.Layout />
 				</DataViews>

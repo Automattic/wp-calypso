@@ -11,7 +11,6 @@ import {
 	domainGlueRecordsEditRoute,
 } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
-import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -149,15 +148,11 @@ function DomainGlueRecords() {
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					empty={
-						<DataViewsEmptyState
-							title=""
-							description={
-								view.search
-									? __( 'No glue records found.' )
-									: __( 'No glue records found for this domain.' )
-							}
-							mutedDescription={ false }
-						/>
+						<p>
+							{ view.search
+								? __( 'No glue records found.' )
+								: __( 'No glue records found for this domain.' ) }
+						</p>
 					}
 				/>
 			</DataViewsCard>
