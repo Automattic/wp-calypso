@@ -2,6 +2,7 @@ import { MonetizeSubscription } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDate } from 'date-fns';
@@ -36,12 +37,8 @@ export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubs
 	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (
-		<button
-			onClick={ ( event ) => {
-				event.stopPropagation();
-				event.preventDefault();
-				window.location.href = subscription.site_url;
-			} }
+		<Link
+			to={ subscription.site_url }
 			title={
 				// translators: %(siteUrl)s is the TLD of the site (e.g. example.com).
 				sprintf( __( 'Visit %(siteUrl)s' ), {
@@ -50,7 +47,7 @@ export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubs
 			}
 		>
 			{ siteUrl }
-		</button>
+		</Link>
 	);
 };
 
