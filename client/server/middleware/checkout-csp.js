@@ -39,6 +39,7 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 				'https://public-api.wordpress.com',
 				'https://widgets.wp.com',
 				'https://wpcom.com',
+				'https://sandbox.paypal.com',
 			],
 		},
 		// Frame sources for payment iframes
