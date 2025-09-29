@@ -181,7 +181,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 								siteSlug={ site.slug }
 								isRestoreEnabled
 								onTrackEvent={ recordTracksEvent }
-								eventPrefix="calypso_dashboard_"
+								source="dashboard"
 								onRequestGranularRestore={ handleRestoreClick }
 							/>
 						</div>

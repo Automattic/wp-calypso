@@ -36,8 +36,8 @@ interface FileBrowserProps {
 	// Tracks analytics callback
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 
-	// Event prefix for tracks events (defaults to 'calypso_jetpack_')
-	eventPrefix?: string;
+	// Source context for Track events (defaults to 'calypso')
+	source?: 'calypso' | 'dashboard';
 
 	// Granular restore action callback
 	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
@@ -52,7 +52,7 @@ function FileBrowser( {
 	isRestoreEnabled,
 	displayBackupDate,
 	onTrackEvent,
-	eventPrefix = 'calypso_jetpack_',
+	source = 'calypso',
 	onRequestGranularRestore = () => {},
 }: FileBrowserProps ) {
 	// This is the path of the node that is clicked
@@ -100,7 +100,7 @@ function FileBrowser( {
 				hasCredentials={ hasCredentials }
 				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
-				eventPrefix={ eventPrefix }
+				source={ source }
 				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 		</div>

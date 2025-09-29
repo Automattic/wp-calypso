@@ -15,13 +15,13 @@ interface FilePreviewProps {
 	item: FileBrowserItem;
 	siteId: number;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
-	eventPrefix: string;
+	source: 'calypso' | 'dashboard';
 }
 
 /**
  * This component is responsible for rendering the preview of a file.
  */
-function FilePreview( { item, siteId, onTrackEvent, eventPrefix }: FilePreviewProps ) {
+function FilePreview( { item, siteId, onTrackEvent, source }: FilePreviewProps ) {
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -46,9 +46,13 @@ function FilePreview( { item, siteId, onTrackEvent, eventPrefix }: FilePreviewPr
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
 		if ( onTrackEvent ) {
-			onTrackEvent( `${ eventPrefix }backup_browser_preview_file_sensitive_click` );
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_preview_file_sensitive_click' );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+			}
 		}
-	}, [ onTrackEvent, eventPrefix ] );
+	}, [ onTrackEvent, source ] );
 
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
@@ -113,9 +117,12 @@ function FilePreview( { item, siteId, onTrackEvent, eventPrefix }: FilePreviewPr
 		}
 
 		if ( onTrackEvent ) {
-			onTrackEvent( `${ eventPrefix }backup_browser_preview_file`, {
-				file_type: item.type,
-			} );
+			const trackingProps = { file_type: item.type };
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_preview_file', trackingProps );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', trackingProps );
+			}
 		}
 		return content;
 	};

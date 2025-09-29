@@ -29,7 +29,7 @@ interface FileInfoCardProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
-	eventPrefix: string;
+	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -43,7 +43,7 @@ function FileInfoCard( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
-	eventPrefix,
+	source,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const { fileBrowserState, locale, notices } = useFileBrowserContext();
@@ -88,13 +88,16 @@ function FileInfoCard( {
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			onTrackEvent( `${ eventPrefix }backup_browser_download`, {
-				file_type: fileType,
-			} );
+			const trackingProps = { file_type: fileType };
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_download', trackingProps );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_download', trackingProps );
+			}
 
 			return;
 		},
-		[ onTrackEvent, eventPrefix ]
+		[ onTrackEvent, source ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -192,10 +195,15 @@ function FileInfoCard( {
 		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		onTrackEvent( `${ eventPrefix }backup_browser_restore_single_file`, {
+		const trackingProps = {
 			file_type: item.type,
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
-		} );
+		};
+		if ( source === 'dashboard' ) {
+			onTrackEvent( 'calypso_dashboard_backup_browser_restore_single_file', trackingProps );
+		} else {
+			onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', trackingProps );
+		}
 	}, [
 		setNodeCheckState,
 		path,
@@ -203,7 +211,7 @@ function FileInfoCard( {
 		siteSlug,
 		rewindId,
 		onTrackEvent,
-		eventPrefix,
+		source,
 		item.type,
 		hasCredentials,
 	] );
@@ -383,7 +391,7 @@ function FileInfoCard( {
 							item={ item }
 							siteId={ siteId }
 							onTrackEvent={ onTrackEvent }
-							eventPrefix={ eventPrefix }
+							source={ source }
 						/>
 					) }
 				</VStack>
