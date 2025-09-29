@@ -212,13 +212,17 @@ class Document extends Component {
 							__html: inlineScript,
 						} }
 					/>
-					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
+					{ i18nLocaleScript && ! useTranslationChunks && (
+						<script src={ i18nLocaleScript } nonce={ inlineScriptNonce } />
+					) }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/runtime.js` } /> }
+					{ env === 'development' && (
+						<script src={ `/calypso/${ target }/runtime.js` } nonce={ inlineScriptNonce } />
+					) }
 					{ env !== 'development' &&
 						manifests.map( ( manifest ) => (
 							<script
@@ -234,6 +238,7 @@ class Document extends Component {
 							defer
 							id="bilmur"
 							src={ getBilmurUrl() }
+							nonce={ inlineScriptNonce }
 							data-provider="wordpress.com"
 							data-service="calypso"
 							data-customproperties={ `{"route_name": "${ sectionName }"}` }
@@ -241,14 +246,16 @@ class Document extends Component {
 						/>
 					) }
 
-					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
+					{ entrypoint?.language?.manifest && (
+						<script src={ entrypoint.language.manifest } nonce={ inlineScriptNonce } />
+					) }
 
 					{ ( entrypoint?.language?.translations || [] ).map( ( translationChunk ) => (
-						<script key={ translationChunk } src={ translationChunk } />
+						<script key={ translationChunk } src={ translationChunk } nonce={ inlineScriptNonce } />
 					) ) }
 
 					{ entrypoint.js.map( ( asset ) => (
-						<script key={ asset } src={ asset } />
+						<script key={ asset } src={ asset } nonce={ inlineScriptNonce } />
 					) ) }
 					<script
 						nonce={ inlineScriptNonce }

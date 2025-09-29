@@ -3,7 +3,7 @@
 	"env_id": "production",
 	"favicon_url": "//s1.wp.com/i/favicon.ico",
 	"client_slug": "browser",
-	"hostname": "wordpress.com",
+	"hostname": "wordpress",
 	"i18n_default_locale_slug": "en",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
@@ -18,6 +18,7 @@
 	"zendesk_presales_chat_key_akismet": "7ce13115-7b34-4069-9d64-228d90f148d1",
 	"zendesk_presales_chat_key_jp_checkout": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
+	"enforce_csp_policy": false,
 	"features": {
 		"100-year-plan/vip": true,
 		"a4a-dev-sites": true,
