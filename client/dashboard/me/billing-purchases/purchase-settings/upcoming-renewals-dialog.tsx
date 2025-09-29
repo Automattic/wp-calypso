@@ -125,7 +125,7 @@ export function UpcomingRenewalsDialog( {
 								</Text>
 								{ ! hideManagePurchaseLinks && (
 									<Text>
-										<Link to={ getPurchaseUrlForId( purchase.ID ) }>
+										<Link to={ getPurchaseUrlForId( purchase.ID ) } onClick={ () => onClose() }>
 											{ __( 'Manage purchase' ) }
 										</Link>
 									</Text>
