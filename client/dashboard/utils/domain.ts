@@ -14,7 +14,7 @@ import type {
 } from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
-	return domain.primary_domain ? domain.domain : domain.site_slug;
+	return domain.primary_domain && ! isRedirectDomain( domain ) ? domain.domain : domain.site_slug;
 }
 
 export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
@@ -24,6 +24,10 @@ export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase )
 		cancel_to: backUrl,
 		redirect_to: backUrl,
 	} );
+}
+
+export function isRedirectDomain( domain: DomainSummary ) {
+	return domain.subtype.id === DomainSubtype.SITE_REDIRECT;
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {
