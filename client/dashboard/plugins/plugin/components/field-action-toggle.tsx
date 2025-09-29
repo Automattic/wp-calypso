@@ -1,6 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../../app/analytics';
 import type { ComponentProps } from 'react';
 
 export type FieldActionToggleProps = {
@@ -17,6 +18,8 @@ export type FieldActionToggleProps = {
 	errorOff: string;
 	// Prevent default click (to avoid row selection etc.). Defaults to true.
 	preventDefaultClick?: boolean;
+	// Action identifier used for analytics: e.g. "activate" or "autoupdate".
+	actionId: 'activate' | 'autoupdate';
 };
 
 export default function FieldActionToggle( {
@@ -29,8 +32,10 @@ export default function FieldActionToggle( {
 	successOff,
 	errorOff,
 	preventDefaultClick = true,
+	actionId,
 }: FieldActionToggleProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	return (
 		<ToggleControl
@@ -42,6 +47,11 @@ export default function FieldActionToggle( {
 				}
 			} }
 			onChange={ ( next ) => {
+				recordTracksEvent(
+					`calypso_hosting_dashboard_plugins_${ actionId }_toggle_${
+						next ? 'enable' : 'disable'
+					}_click`
+				);
 				onToggle( next )
 					.then( () => {
 						createSuccessNotice( next ? successOn : successOff, { type: 'snackbar' } );

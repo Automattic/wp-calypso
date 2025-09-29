@@ -8,7 +8,8 @@
 			align-items: center;
 		}
 
-		&__server-performance {
+		&__server-performance,
+		&__http-responses {
 			/* Set a minimum height to prevent layout shift when the chart loads. */
 			min-height: 450px;
 		}
@@ -31,6 +32,13 @@
 		/* Ensure the chart numbers are not clipped. */
 		overflow: visible;
 	}
+
+	.visx-legend-item > svg {
+		margin-inline-start: 5px;
+		margin-top: 8px;
+		width: 8px;
+		height: 8px;
+	}
 }
 
 .dashboard-monitoring-card__line-chart--tooltip {
@@ -46,6 +54,7 @@
 
 			svg {
 				margin-inline-end: 6px;
+				overflow: visible;
 			}
 
 			> :last-child {
