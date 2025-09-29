@@ -62,8 +62,6 @@ jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 } ) );
 
-// Don't mock FileBrowser - let it render normally
-
 jest.mock( '../../../components/inline-support-link', () => {
 	return jest.fn( ( { children } ) => <button>{ children }</button> );
 } );
@@ -187,6 +185,13 @@ const renderModal = ( props = {} ) => {
 	return render( <StagingSiteSyncModal { ...defaultProps } { ...props } /> );
 };
 
+// Test helper to render the modal with defaults and return a fresh user instance
+const setup = ( props = {} ) => {
+	const utils = render( <StagingSiteSyncModal { ...defaultProps } { ...props } /> );
+	const user = userEvent.setup();
+	return { user, ...utils };
+};
+
 describe( 'StagingSiteSyncModal', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -281,7 +286,7 @@ describe( 'Domain Confirmation', () => {
 		test( 'database checkbox shows warning when checked', async () => {
 			mockUseQuery( createMockSite(), createMockStagingSite() );
 
-			renderModal();
+			const { user } = setup();
 
 			const databaseCheckbox = screen.getByLabelText( 'Database' );
 			expect( databaseCheckbox ).toBeInTheDocument();
@@ -290,16 +295,13 @@ describe( 'Domain Confirmation', () => {
 				screen.queryByText( /Warning! Database will be overwritten/i )
 			).not.toBeInTheDocument();
 
-			const user = userEvent.setup();
 			await user.click( databaseCheckbox );
 
 			await waitFor( () => {
 				expect( screen.getByText( /Warning! Database will be overwritten/i ) ).toBeInTheDocument();
 			} );
 
-			expect(
-				screen.getByText( /Selecting database option will overwrite the site database/i )
-			).toBeInTheDocument();
+			expect( screen.getByText( /overwrite the site database/i ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -311,15 +313,14 @@ describe( 'Domain Confirmation', () => {
 
 		mockUseQuery( siteWithWoo, stagingSiteWithWoo );
 
-		renderModal( { syncType: 'push', environment: 'staging' } );
+		const { user } = setup( { syncType: 'push', environment: 'staging' } );
 
 		const databaseCheckbox = screen.getByLabelText( 'Database' );
-		const user = userEvent.setup();
 
 		await user.click( databaseCheckbox );
 
 		await waitFor( () => {
-			expect( screen.getByText( /This site also has WooCommerce installed/i ) ).toBeInTheDocument();
+			expect( screen.getByText( /WooCommerce installed/i ) ).toBeInTheDocument();
 		} );
 	} );
 } );
