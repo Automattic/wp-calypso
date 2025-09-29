@@ -219,7 +219,7 @@ export function ExpiringLaterText( {
 					{ purchaseName, expiry }
 				),
 				{
-					link: <Button onClick={ autoRenewingUpgradesAction } />,
+					link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
 				}
 			);
 		}
@@ -245,7 +245,7 @@ export function ExpiringLaterText( {
 						{ purchaseName, expiry }
 					),
 					{
-						link: <Button onClick={ autoRenewingUpgradesAction } />,
+						link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
 					}
 				);
 			}
@@ -269,7 +269,7 @@ export function ExpiringLaterText( {
 					{ purchaseName, expiry }
 				),
 				{
-					link: <Button onClick={ autoRenewingUpgradesAction } />,
+					link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
 				}
 			);
 		}
@@ -293,7 +293,7 @@ export function ExpiringLaterText( {
 				{ purchaseName, expiry }
 			),
 			{
-				link: <Button onClick={ autoRenewingUpgradesAction } />,
+				link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
 			}
 		);
 	}
