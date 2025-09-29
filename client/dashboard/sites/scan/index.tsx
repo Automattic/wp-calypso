@@ -1,5 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -43,6 +43,16 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ showBulkFixModal, setShowBulkFixModal ] = useState( false );
 
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
+
+	const { gmtOffset, timezoneString } = siteSettings;
+
 	const scanState = useScanState( site.ID );
 	const { scan, status } = scanState;
 
@@ -76,7 +86,13 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		if ( showStatus ) {
 			return <ScanStatus scanState={ scanState } />;
 		}
-		return <ActiveThreatsDataViews site={ site } />;
+		return (
+			<ActiveThreatsDataViews
+				site={ site }
+				timezoneString={ timezoneString }
+				gmtOffset={ gmtOffset }
+			/>
+		);
 	};
 
 	return (
@@ -142,7 +158,13 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					</CardHeader>
 					<CardBody>
 						{ scanTab === 'active' && renderActiveTab() }
-						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
+						{ scanTab === 'history' && (
+							<ScanHistoryDataViews
+								site={ site }
+								timezoneString={ timezoneString }
+								gmtOffset={ gmtOffset }
+							/>
+						) }
 					</CardBody>
 				</Card>
 			</PageLayout>

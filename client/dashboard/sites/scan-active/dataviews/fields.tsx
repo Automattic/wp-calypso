@@ -12,15 +12,25 @@ import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
-	const formattedTime = useFormattedTime( timestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
-	return <>{ formattedTime }</>;
-};
+interface FormattedTimeProps {
+	timestamp: string;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
 
-export function getFields(): Field< Threat >[] {
+function FormattedTime( { timestamp, timezoneString, gmtOffset }: FormattedTimeProps ) {
+	return useFormattedTime(
+		timestamp,
+		{
+			dateStyle: 'medium',
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
+}
+
+export function getFields( timezoneString?: string, gmtOffset?: number ): Field< Threat >[] {
 	return [
 		{
 			id: 'severity',
@@ -64,7 +74,13 @@ export function getFields(): Field< Threat >[] {
 				const date = new Date( item.first_detected );
 				return formatYmd( date );
 			},
-			render: ( { item } ) => <FormattedTime timestamp={ item.first_detected } />,
+			render: ( { item } ) => (
+				<FormattedTime
+					timestamp={ item.first_detected }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			),
 		},
 		{
 			id: 'auto_fix',

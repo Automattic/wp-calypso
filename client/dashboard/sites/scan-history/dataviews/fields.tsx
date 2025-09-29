@@ -12,13 +12,23 @@ import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
-	const formattedTime = useFormattedTime( timestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
-	return <>{ formattedTime }</>;
-};
+interface FormattedTimeProps {
+	timestamp: string;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
+function FormattedTime( { timestamp, timezoneString, gmtOffset }: FormattedTimeProps ) {
+	return useFormattedTime(
+		timestamp,
+		{
+			dateStyle: 'medium',
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
+}
 
 const getStatusLabel = ( status: string ): string => {
 	switch ( status ) {
@@ -42,7 +52,7 @@ const getStatusIntent = ( status: string ): 'default' | 'success' | 'warning' =>
 	}
 };
 
-export function getFields(): Field< Threat >[] {
+export function getFields( timezoneString?: string, gmtOffset?: number ): Field< Threat >[] {
 	return [
 		{
 			id: 'status',
@@ -80,7 +90,15 @@ export function getFields(): Field< Threat >[] {
 				return formatYmd( date );
 			},
 			render: ( { item } ) =>
-				item.fixed_on ? <FormattedTime timestamp={ item.fixed_on } /> : <Text>—</Text>,
+				item.fixed_on ? (
+					<FormattedTime
+						timestamp={ item.fixed_on }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				) : (
+					<Text>—</Text>
+				),
 		},
 		{
 			id: 'threat',
