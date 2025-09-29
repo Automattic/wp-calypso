@@ -328,7 +328,7 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					isFirstDomainFreeForFirstYear={ ! isOnboardingWithEmailFlow }
+					isFirstDomainFreeForFirstYear={ ! isFreeFlow( flowName ) }
 				/>
 			}
 		/>

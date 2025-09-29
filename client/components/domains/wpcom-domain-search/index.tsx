@@ -30,7 +30,7 @@ const DomainSearchWithCart = ( {
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
-		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
+		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
 		onAddDomainToCart,
