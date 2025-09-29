@@ -7,10 +7,6 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		DataHelper.isCalypsoProduction() === false,
 		'Skipping unless running on WordPress.com as Apple authentication requires prod callbacks'
 	);
-	test.skip(
-		true,
-		'Skipping Apple authentication tests as they are too unreliable (account often get locked on Apple)'
-	);
 
 	test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( {
 		clientEmail,
