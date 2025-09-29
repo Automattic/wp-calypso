@@ -61,5 +61,4 @@ export interface UserSettings {
 	// Email verification fields
 	user_email_change_pending?: boolean;
 	new_user_email?: string;
-	email_verified?: boolean;
 }
