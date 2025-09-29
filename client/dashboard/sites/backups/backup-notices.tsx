@@ -7,14 +7,25 @@ import { Notice } from '../../components/notice';
 import { useBackupState } from './use-backup-state';
 import type { Site } from '@automattic/api-core';
 
+interface BackupNoticesProps {
+	site: Site;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { site }: { site: Site } ) {
+export function BackupNotices( { site, timezoneString, gmtOffset }: BackupNoticesProps ) {
 	const { status, backup } = useBackupState( site.ID );
-	const backupDate = useFormattedTime( backup?.started ?? '', {
-		timeStyle: 'short',
-	} );
+	const backupDate = useFormattedTime(
+		backup?.started ?? '',
+		{
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	const handleDismiss = () => {

@@ -19,6 +19,20 @@ export function ScanHistoryDataViews( { site }: { site: Site } ) {
 			field: 'fixed_on',
 			direction: 'desc',
 		},
+		layout: {
+			styles: {
+				status: {
+					maxWidth: '100px',
+				},
+				threat: {
+					minWidth: '500px',
+				},
+				fixed_on: {
+					maxWidth: '175px',
+					minWidth: '160px',
+				},
+			},
+		},
 	} );
 
 	const { data: scanHistory, isLoading } = useQuery( siteScanHistoryQuery( site.ID ) );

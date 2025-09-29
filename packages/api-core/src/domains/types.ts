@@ -5,14 +5,17 @@ export enum DomainTypes {
 	TRANSFER = 'transfer',
 }
 
-export enum DomainTransferStatus {
-	PENDING_OWNER = 'pending_owner',
-	PENDING_REGISTRY = 'pending_registry',
-	CANCELLED = 'cancelled',
-	COMPLETED = 'completed',
-	PENDING_START = 'pending_start',
-	PENDING_ASYNC = 'pending_async',
-}
+export const DomainTransferStatus = {
+	PENDING_OWNER: 'pending_owner',
+	PENDING_REGISTRY: 'pending_registry',
+	CANCELLED: 'cancelled',
+	COMPLETED: 'completed',
+	PENDING_START: 'pending_start',
+	PENDING_ASYNC: 'pending_async',
+} as const;
+
+export type DomainTransferStatus =
+	( typeof DomainTransferStatus )[ keyof typeof DomainTransferStatus ];
 
 export enum DomainSubtype {
 	DEFAULT_ADDRESS = 'default_address',
