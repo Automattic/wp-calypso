@@ -19,20 +19,12 @@ export function buildTimeRangeInSeconds(
 	gmtOffset?: number
 ): { startSec: number; endSec: number } {
 	if ( timezoneString ) {
-		// Get per-day DST-aware offsets (seconds) for the site TZ
-		const startMidday = new Date( start.getFullYear(), start.getMonth(), start.getDate(), 12 );
-		const endMidday = new Date( end.getFullYear(), end.getMonth(), end.getDate(), 12 );
-
-		const startOffsetSec = Number( dateI18n( 'Z', startMidday, timezoneString ) );
-		const endOffsetSec = Number( dateI18n( 'Z', endMidday, timezoneString ) );
-
-		if ( Number.isFinite( startOffsetSec ) && Number.isFinite( endOffsetSec ) ) {
-			const startLocal = startOfDay( start ).getTime();
-			const endLocal = endOfDay( end ).getTime();
-			return {
-				startSec: Math.floor( ( startLocal - startOffsetSec * 1000 ) / 1000 ),
-				endSec: Math.floor( ( endLocal - endOffsetSec * 1000 ) / 1000 ),
-			};
+		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
+		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
+		const startSec = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString ) );
+		const endSec = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString ) );
+		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
+			return { startSec, endSec };
 		}
 	}
 	if ( typeof gmtOffset === 'number' ) {
