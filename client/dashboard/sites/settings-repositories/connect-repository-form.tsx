@@ -436,6 +436,10 @@ export const ConnectRepositoryForm = ( {
 						setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
 					}
 					disabled={ ! selectedRepository }
+					siteId={ site.ID }
+					onWorkflowCreated={ ( workflowPath ) =>
+						setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
+					}
 				/>
 			) }
 
