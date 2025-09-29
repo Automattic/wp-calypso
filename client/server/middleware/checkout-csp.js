@@ -9,9 +9,9 @@ import crypto from 'crypto';
  */
 export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 	const directives = {
-		// More specific script sources for checkout
+		// PCI DSS 6.4.3: Use nonces for all scripts (no 'self' - stricter security)
 		'script-src': {
-			wrapped: [ 'self', `nonce-${ nonce }` ],
+			wrapped: [ `nonce-${ nonce }` ],
 			raw: [
 				// Payment processors
 				'https://js.stripe.com',
