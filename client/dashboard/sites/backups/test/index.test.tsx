@@ -34,6 +34,9 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 } ) );
 
+// Mock scrollIntoView for JSDOM compatibility
+Element.prototype.scrollIntoView = jest.fn();
+
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
