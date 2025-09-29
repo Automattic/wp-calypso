@@ -237,12 +237,16 @@ const DomainSearchUI = (
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
 	const headerText = useMemo( () => {
+		if ( isOnboardingWithEmailFlow ) {
+			return __( 'Choose a domain for your Professional Email' );
+		}
+
 		if ( isDomainForGravatarFlow( flowName ) ) {
 			return __( 'Choose a domain' );
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flowName ] );
+	}, [ flowName, isOnboardingWithEmailFlow ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( isDomainForGravatarFlow( flowName ) ) {
