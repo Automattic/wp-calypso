@@ -40,6 +40,7 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 				'https://widgets.wp.com',
 				'https://wpcom.com',
 				'https://sandbox.paypal.com',
+				'https://survey.survicate.com',
 			],
 		},
 		// Frame sources for payment iframes
