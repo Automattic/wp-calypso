@@ -11,7 +11,6 @@ import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
-import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -180,15 +179,11 @@ function DeploymentsList() {
 					paginationInfo={ paginationInfo }
 					getItemId={ ( item ) => item.id.toString() }
 					empty={
-						<DataViewsEmptyState
-							title=""
-							description={
-								( view.filters && view.filters.length > 0 ) || view.search
-									? __( 'No deployments found' )
-									: __( 'No deployments yet' )
-							}
-							mutedDescription={ false }
-						/>
+						<p>
+							{ ( view.filters && view.filters.length > 0 ) || view.search
+								? __( 'No deployments found' )
+								: __( 'No deployments yet' ) }
+						</p>
 					}
 				/>
 			</DataViewsCard>
