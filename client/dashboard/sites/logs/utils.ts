@@ -21,8 +21,8 @@ export function buildTimeRangeInSeconds(
 	if ( timezoneString ) {
 		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
 		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = +dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString );
-		const endSec = +dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString );
+		const startSec = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString ) );
+		const endSec = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString ) );
 		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
 			return { startSec, endSec };
 		}
