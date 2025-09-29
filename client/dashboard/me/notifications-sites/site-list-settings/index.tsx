@@ -13,7 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useDeferredValue, useState } from 'react';
 import { TextSkeleton } from '../../../components/text-skeleton';
 import { CollapsibleCard } from '../collapsible-card';
-import { SiteNotificationSettings } from '../site-notification-settings';
+import { SitePreview } from '../site-preview';
 import { SiteSettings } from '../site-settings';
 
 import './index.scss';
@@ -64,7 +64,7 @@ export const SiteListSettings = () => {
 			/>
 			<VStack spacing={ 4 }>
 				{ filteredSites.map( ( site: Site ) => (
-					<CollapsibleCard key={ site.ID } header={ <SiteNotificationSettings site={ site } /> }>
+					<CollapsibleCard key={ site.ID } header={ <SitePreview site={ site } /> }>
 						<SiteSettings siteId={ site.ID } />
 					</CollapsibleCard>
 				) ) }

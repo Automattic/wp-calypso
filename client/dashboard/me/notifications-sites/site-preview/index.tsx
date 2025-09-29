@@ -28,7 +28,7 @@ interface Props {
 	site: Site;
 }
 
-export const SiteNotificationSettings = ( { site }: Props ) => {
+export const SitePreview = ( { site }: Props ) => {
 	const badge = getSiteBadge( site );
 
 	return (
