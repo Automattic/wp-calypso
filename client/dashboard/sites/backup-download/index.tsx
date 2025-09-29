@@ -1,4 +1,5 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -20,6 +21,7 @@ import { useFormattedTime } from '../../components/formatted-time';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import SiteBackupDownloadError from './error';
 import SiteBackupDownloadForm from './form';
 import SiteBackupDownloadProgress from './progress';
@@ -165,7 +167,13 @@ function SiteBackupDownload() {
 								} ),
 								{
 									LearnMore: (
-										<ExternalLink href="https://jetpack.com/support/backup/">
+										<ExternalLink
+											href={ localizeUrl(
+												isSelfHostedJetpackConnected( site )
+													? 'https://jetpack.com/support/backup/'
+													: 'https://wordpress.com/support/restore/'
+											) }
+										>
 											{ __( 'Learn more' ) }
 										</ExternalLink>
 									),
