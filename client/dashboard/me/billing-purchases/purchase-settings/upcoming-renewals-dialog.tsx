@@ -1,5 +1,4 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -44,13 +43,7 @@ function ExpiresText( { purchase }: { purchase: Purchase } ) {
 	} );
 }
 
-function getPurchaseFields( {
-	hideManagePurchaseLinks,
-	onClose,
-}: {
-	hideManagePurchaseLinks?: boolean;
-	onClose: () => void;
-} ): Field< Purchase >[] {
+function getPurchaseFields(): Field< Purchase >[] {
 	const fields: Field< Purchase >[] = [
 		{
 			id: 'product_name',
@@ -86,20 +79,6 @@ function getPurchaseFields( {
 		},
 	];
 
-	if ( ! hideManagePurchaseLinks ) {
-		fields.push( {
-			id: 'manage',
-			type: 'text',
-			label: __( 'Actions' ),
-			getValue: () => '',
-			render: ( { item } ) => (
-				<Link to={ getPurchaseUrlForId( item.ID ) } onClick={ onClose }>
-					{ __( 'Manage purchase' ) }
-				</Link>
-			),
-		} );
-	}
-
 	return fields;
 }
 
@@ -125,9 +104,7 @@ export function UpcomingRenewalsDialog( {
 		type: 'table',
 		perPage: 100,
 		page: 1,
-		fields: hideManagePurchaseLinks
-			? [ 'product_name', 'amount' ]
-			: [ 'product_name', 'amount', 'manage' ],
+		fields: [ 'product_name', 'amount' ],
 		layout: {},
 	} );
 
@@ -139,10 +116,7 @@ export function UpcomingRenewalsDialog( {
 		setSelection( purchases.map( ( purchase ) => purchase.ID.toString() ) );
 	}, [ purchases ] );
 
-	const fields = useMemo(
-		() => getPurchaseFields( { hideManagePurchaseLinks, onClose } ),
-		[ hideManagePurchaseLinks, onClose ]
-	);
+	const fields = useMemo( () => getPurchaseFields(), [] );
 
 	const dataWithIds = useMemo(
 		() =>
@@ -153,21 +127,34 @@ export function UpcomingRenewalsDialog( {
 		[ purchasesSortByRecentExpiryDate ]
 	);
 
-	const actions = useMemo(
-		(): Action< Purchase & { id: string } >[] => [
+	const actions = useMemo( (): Action< Purchase >[] => {
+		const actionsList: Action< Purchase >[] = [
 			{
 				id: 'select-for-renewal',
 				label: __( 'Select for renewal' ),
 				supportsBulk: true,
 				icon: () => null,
 				callback: () => {
-					// This action exists just to enable bulk selection checkboxes
-					// The actual renewal logic is handled by the dialog's confirm button
+					// This action exists just to enable bulk selection checkboxes.
+					// The actual renewal logic is handled by the dialog's confirm button.
 				},
 			},
-		],
-		[]
-	);
+		];
+
+		if ( ! hideManagePurchaseLinks ) {
+			actionsList.push( {
+				id: 'manage-purchase',
+				label: __( 'Manage purchase' ),
+				supportsBulk: false,
+				callback: ( [ item ] ) => {
+					onClose();
+					window.location.href = getPurchaseUrlForId( item.ID );
+				},
+			} );
+		}
+
+		return actionsList;
+	}, [ hideManagePurchaseLinks, onClose ] );
 
 	const handleConfirm = () => {
 		const selectedPurchaseIds = selection.map( Number );
@@ -202,7 +189,7 @@ export function UpcomingRenewalsDialog( {
 				selection={ selection }
 				onChangeSelection={ setSelection }
 				actions={ actions }
-				getItemId={ ( item ) => item.id }
+				getItemId={ ( item ) => item.ID.toString() }
 				isLoading={ false }
 				paginationInfo={ {
 					totalItems: dataWithIds.length,
