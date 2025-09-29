@@ -7,12 +7,12 @@ import {
 	SelectControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../components/settings-panel';
-import { ExternalLink } from '../../../components/external-link';
 import { getFieldLabel } from '../helpers/translations';
 import { useSiteSettings, useSettingsMutation } from '../hooks';
 
