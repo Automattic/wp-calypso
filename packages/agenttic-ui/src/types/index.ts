@@ -71,6 +71,9 @@ export interface AgentUIProps {
 	// Controlled input props (optional)
 	inputValue?: string;
 	onInputChange?: ( value: string ) => void;
+
+	// Drag and drop props
+	draggableStates?: ChatState[]; // Specify which chat states allow dragging (defaults to ['expanded'] for backward compatibility)
 }
 
 export interface NoticeConfig {

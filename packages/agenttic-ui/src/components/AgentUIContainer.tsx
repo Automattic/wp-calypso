@@ -70,6 +70,7 @@ export function AgentUIContainer( {
 	className,
 	inputValue: controlledInputValue,
 	onInputChange: controlledOnInputChange,
+	draggableStates = [ 'expanded' ], // Default to only expanded for backward compatibility
 	...props
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
@@ -182,15 +183,18 @@ export function AgentUIContainer( {
 		return true;
 	}, [ inputValue, chatRef ] );
 
-	const getHeightForState = ( state: string ) => {
-		if ( state === 'collapsed' ) {
-			return STYLE_CONSTANTS.COLLAPSED_SIZE;
-		}
-		if ( state === 'compact' ) {
-			return compactHeight;
-		}
-		return STYLE_CONSTANTS.EXPANDED_HEIGHT;
-	};
+	const getHeightForState = useCallback(
+		( state: string ) => {
+			if ( state === 'collapsed' ) {
+				return STYLE_CONSTANTS.COLLAPSED_SIZE;
+			}
+			if ( state === 'compact' ) {
+				return compactHeight;
+			}
+			return STYLE_CONSTANTS.EXPANDED_HEIGHT;
+		},
+		[ compactHeight ]
+	);
 
 	// Handle hover to show compact view
 	const handleHover = useCallback( () => {
@@ -277,20 +281,22 @@ export function AgentUIContainer( {
 			// Use provided side or fall back to current side
 			const targetSide = side ?? currentSide;
 
+			// Calculate current height based on chat state
+			const currentHeight = getHeightForState( chat.state );
+
 			// Calculate target position
 			const targetX =
 				targetSide === 'left'
 					? constraintBox.left
 					: constraintBox.right - STYLE_CONSTANTS.COMPACT_WIDTH;
-			const targetY =
-				constraintBox.bottom - STYLE_CONSTANTS.EXPANDED_HEIGHT;
+			const targetY = constraintBox.bottom - currentHeight;
 
 			return {
 				x: targetX - baseX,
 				y: targetY - baseY,
 			};
 		},
-		[ currentSide ]
+		[ currentSide, chat.state, getHeightForState ]
 	);
 
 	// Handle pointer down to control drag initiation
@@ -487,7 +493,7 @@ export function AgentUIContainer( {
 				onMouseLeave={
 					chat.state === 'compact' ? handleAutoCollapse : undefined
 				}
-				drag={ chat.state === 'expanded' }
+				drag={ draggableStates.includes( chat.state ) }
 				dragControls={ dragControls }
 				dragListener={ false }
 				dragConstraints={ constraintsRef }
@@ -501,6 +507,9 @@ export function AgentUIContainer( {
 					y,
 					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
 					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					cursor: draggableStates.includes( chat.state )
+						? 'grab'
+						: 'default',
 				} }
 			>
 				<motion.div

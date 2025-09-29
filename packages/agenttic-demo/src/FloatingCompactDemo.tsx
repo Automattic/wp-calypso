@@ -285,6 +285,7 @@ const FloatingCompactDemo: React.FC = () => {
 				onStop={ abortCurrentRequest }
 				variant="floating"
 				floatingChatState="compact"
+				draggableStates={ [ 'collapsed', 'compact', 'expanded' ] }
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }
 				messageRenderer={ messageRenderer }
