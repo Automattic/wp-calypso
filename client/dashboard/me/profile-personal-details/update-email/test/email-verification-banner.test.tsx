@@ -23,6 +23,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
 	useSuspenseQuery: jest.fn(),
 	useMutation: jest.fn(),
 } ) );
@@ -31,6 +32,12 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
+	combineReducers: jest.fn( ( reducers ) => reducers ),
+	createReduxStore: jest.fn(),
+	register: jest.fn(),
+	createSelector: jest.fn(),
+	useSelect: jest.fn(),
+	dispatch: jest.fn(),
 } ) );
 
 const mockReplaceState = jest.fn();
@@ -82,18 +89,15 @@ describe( 'EmailVerificationBanner', () => {
 		expect( mockResendEmail ).toHaveBeenCalledWith( 'pending@example.com' );
 	} );
 
-	it( 'does not call resend when pendingEmail is empty', async () => {
+	it( 'does not render when pendingEmail is empty', () => {
 		const { useSuspenseQuery } = require( '@tanstack/react-query' );
 		useSuspenseQuery.mockReturnValue( {
 			data: { ...mockPendingUserData, new_user_email: '' },
 		} );
 
-		const user = userEvent.setup();
-		render( <EmailVerificationBanner /> );
+		const { container } = render( <EmailVerificationBanner /> );
 
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
-
-		expect( mockResendEmail ).not.toHaveBeenCalled();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'shows error notice for failed verification', async () => {

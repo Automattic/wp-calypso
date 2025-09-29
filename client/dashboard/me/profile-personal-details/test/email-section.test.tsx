@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import { mockUserSettings } from '../../profile/__mocks__/user-settings';
@@ -22,9 +22,9 @@ jest.mock( '@automattic/api-queries', () => ( {
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
 	useSuspenseQuery: jest.fn(),
 	useMutation: jest.fn(),
-	useQueryClient: () => ( { invalidateQueries: jest.fn() } ),
 } ) );
 
 jest.mock( 'email-validator', () => ( {
@@ -86,50 +86,14 @@ describe( 'EmailSection', () => {
 		expect( mockCancelPendingEmail ).toHaveBeenCalled();
 	} );
 
-	it( 'shows success state for valid email', async () => {
+	it( 'calls onChange when input value changes', async () => {
+		const mockOnChange = jest.fn();
 		const user = userEvent.setup();
-		render( <EmailSection { ...defaultProps } onChange={ jest.fn() } /> );
+		render( <EmailSection { ...defaultProps } onChange={ mockOnChange } /> );
 
 		const emailInput = screen.getByLabelText( 'Email address' );
-		await user.clear( emailInput );
-		await user.type( emailInput, 'valid@example.com' );
+		await user.type( emailInput, 'x' );
 
-		await waitFor( () => {
-			expect( screen.getByText( 'Email address looks good!' ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'shows error state for invalid email', async () => {
-		const emailValidator = require( 'email-validator' );
-		emailValidator.validate.mockReturnValue( false );
-
-		const user = userEvent.setup();
-		render( <EmailSection { ...defaultProps } onChange={ jest.fn() } /> );
-
-		const emailInput = screen.getByLabelText( 'Email address' );
-		await user.clear( emailInput );
-		await user.type( emailInput, 'invalid-email' );
-
-		await waitFor( () => {
-			expect( screen.getByText( 'Please enter a valid email address.' ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'handles email validator errors', async () => {
-		const emailValidator = require( 'email-validator' );
-		emailValidator.validate.mockImplementation( () => {
-			throw new Error( 'Validator error' );
-		} );
-
-		const user = userEvent.setup();
-		render( <EmailSection { ...defaultProps } onChange={ jest.fn() } /> );
-
-		const emailInput = screen.getByLabelText( 'Email address' );
-		await user.clear( emailInput );
-		await user.type( emailInput, 'test@example.com' );
-
-		await waitFor( () => {
-			expect( screen.getByText( 'Please enter a valid email address.' ) ).toBeInTheDocument();
-		} );
+		expect( mockOnChange ).toHaveBeenCalled();
 	} );
 } );

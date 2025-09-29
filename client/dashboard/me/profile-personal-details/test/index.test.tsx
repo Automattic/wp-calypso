@@ -22,6 +22,31 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 	updateUsername: jest.fn(),
 } ) );
 
+// Mock the email component to avoid complexity
+jest.mock( '../email-section', () => {
+	return function MockEmailSection( {
+		value,
+		onChange,
+	}: {
+		value: string;
+		onChange: ( value: string ) => void;
+	} ) {
+		return (
+			<input
+				aria-label="Email address"
+				value={ value }
+				onChange={ ( e ) => onChange( e.target.value ) }
+			/>
+		);
+	};
+} );
+
+jest.mock( '../update-email/email-verification-banner', () => {
+	return function MockEmailVerificationBanner() {
+		return null;
+	};
+} );
+
 // Mock the API queries (return query configurations, not data)
 jest.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: jest.fn( () => ( {
@@ -39,6 +64,12 @@ jest.mock( '@automattic/api-queries', () => ( {
 	updateUsernameMutation: jest.fn( () => ( {
 		mutationFn: jest.fn(),
 		onSuccess: jest.fn(),
+	} ) ),
+	cancelPendingEmailChangeMutation: jest.fn( () => ( {
+		mutationFn: jest.fn(),
+	} ) ),
+	resendEmailVerificationMutation: jest.fn( () => ( {
+		mutationFn: jest.fn(),
 	} ) ),
 } ) );
 
