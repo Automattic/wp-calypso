@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { ActivityLogEntry } from '@automattic/api-core';
@@ -44,7 +44,8 @@ export function getFields(
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) => {
-				const actor = item.actor?.name ? ` by ${ item.actor.name }` : '';
+				// translators: %s is the name of the person who performed the action
+				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				return item.summary + actor;
 			},
 			enableGlobalSearch: true,
