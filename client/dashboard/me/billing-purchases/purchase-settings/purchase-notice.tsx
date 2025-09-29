@@ -268,7 +268,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 	const productType =
 		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY
-			? __( 'ecommerce' )
+			? __( 'Ecommerce' )
 			: // translators: Business is a plan name
 			  __( 'Business' );
 	const noticeText = daysToExpiry
