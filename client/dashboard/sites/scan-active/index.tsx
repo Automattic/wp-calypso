@@ -17,6 +17,17 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		fields: [ 'severity', 'threat', 'first_detected', 'auto_fix' ],
 		perPage: 10,
 		sort: { field: 'severity', direction: 'desc' },
+		layout: {
+			styles: {
+				threat: {
+					minWidth: '500px',
+				},
+				first_detected: {
+					maxWidth: '175px',
+					minWidth: '140px',
+				},
+			},
+		},
 	} );
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
