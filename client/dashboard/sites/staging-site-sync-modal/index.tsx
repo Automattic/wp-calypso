@@ -407,7 +407,7 @@ function StagingSiteSyncModalInner( {
 							spacing={ 2 }
 							justify="space-between"
 							alignment="center"
-							style={ { padding: '8px 0' } }
+							style={ { padding: '4px 0' } }
 						>
 							<CheckboxControl
 								__nextHasNoMarginBottom
@@ -435,7 +435,7 @@ function StagingSiteSyncModalInner( {
 						</HStack>
 
 						<div hidden={ ! isFileBrowserVisible }>
-							<VStack spacing={ 2 }>
+							<VStack spacing={ 4 }>
 								<CardDivider />
 								{ displayBackupDate && (
 									<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
@@ -471,7 +471,7 @@ function StagingSiteSyncModalInner( {
 								borderBottom: hasWarning
 									? 'none'
 									: '1px solid var(--wp-components-color-gray-300, #ddd)',
-								padding: '16px 0',
+								padding: '15px 0',
 								marginTop: isFileBrowserVisible ? '16px' : '0',
 							} }
 						>
@@ -484,38 +484,36 @@ function StagingSiteSyncModalInner( {
 							/>
 						</HStack>
 						{ hasWarning && (
-							<VStack style={ { marginTop: '20px' } }>
-								<Notice
-									density="medium"
-									variant="warning"
-									title={ __( 'Warning! Database will be overwritten' ) }
-								>
-									<VStack spacing={ 2 }>
+							<Notice
+								density="medium"
+								variant="warning"
+								title={ __( 'Warning! Database will be overwritten' ) }
+							>
+								<VStack spacing={ 2 }>
+									<Text as="p">
+										{ __(
+											'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+										) }
+									</Text>
+									{ showWooCommerceWarning && (
 										<Text as="p">
-											{ __(
-												'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+											{ createInterpolateElement(
+												__(
+													'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+												),
+												{
+													a: (
+														<ExternalLink
+															href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+															children={ null }
+														/>
+													),
+												}
 											) }
 										</Text>
-										{ showWooCommerceWarning && (
-											<Text as="p">
-												{ createInterpolateElement(
-													__(
-														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-													),
-													{
-														a: (
-															<ExternalLink
-																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-																children={ null }
-															/>
-														),
-													}
-												) }
-											</Text>
-										) }
-									</VStack>
-								</Notice>
-							</VStack>
+									) }
+								</VStack>
+							</Notice>
 						) }
 					</VStack>
 

@@ -8,7 +8,7 @@ import {
 	startOfYear,
 	differenceInCalendarDays,
 } from 'date-fns';
-import { formatDate, formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { formatDate, parseYmdLocal, formatYmd } from '../../utils/datetime';
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
@@ -145,26 +145,12 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 }
 
 // UI-specific: Date range label for the picker
-export function formatLabel(
-	start: Date,
-	end: Date,
-	locale: string,
-	timezoneString?: string,
-	gmtOffset?: number
-) {
-	// Normalize to site calendar days first, then format visually for the locale.
-	// This avoids off-by-one issues when the Date carries a different local timezone
-	// than the site's timezone.
-	const startYmd = formatYmd( start, timezoneString, gmtOffset );
-	const endYmd = formatYmd( end, timezoneString, gmtOffset );
-	const startForDisplay = parseYmdLocal( startYmd )!;
-	const endForDisplay = parseYmdLocal( endYmd )!;
-
+export function formatLabel( start: Date, end: Date, locale: string ) {
 	return sprintf(
 		/* translators: %1$s: start date, %2$s: end date */
 		__( '%1$s to %2$s' ),
-		formatDate( startForDisplay, locale, { dateStyle: 'medium' } ),
-		formatDate( endForDisplay, locale, { dateStyle: 'medium' } )
+		formatDate( start, locale, { dateStyle: 'medium' } ),
+		formatDate( end, locale, { dateStyle: 'medium' } )
 	);
 }
 
