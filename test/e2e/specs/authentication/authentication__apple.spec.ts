@@ -9,7 +9,7 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 	);
 	test.skip(
 		true,
-		'Skipping Apple authentication tests as they are too unreliable (account often get locked on Apple)'
+		'Skipping Apple authentication tests as they are too unreliable (account gets locked on Apple)'
 	);
 
 	test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( {
