@@ -98,19 +98,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			overlay={ <PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> } /> }
 			{ ...getLogsCalloutProps() }
 		>
-			<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
+			<PageLayout
+				header={
+					<VStack as="div" spacing={ 0 } direction="row" alignment="end">
+						<PageHeader title={ __( 'Logs' ) } />
+
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChangeWrapper }
+						/>
+					</VStack>
+				}
+			>
 				<VStack as="div" spacing={ 3 }>
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					<DateRangePicker
-						start={ dateRange.start }
-						end={ dateRange.end }
-						gmtOffset={ gmtOffset }
-						timezoneString={ timezoneString }
-						locale={ locale }
-						onChange={ handleDateRangeChangeWrapper }
-					/>
 					<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 						<CardHeader style={ { paddingBottom: '0' } }>
 							<TabPanel
