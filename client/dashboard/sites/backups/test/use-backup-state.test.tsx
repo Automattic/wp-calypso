@@ -155,6 +155,45 @@ describe( 'useBackupState', () => {
 				expect( result.current.status ).toBe( 'running' );
 			} );
 		} );
+
+		it( 'should continue tracking a backup that is still running', async () => {
+			const runningBackup = createBackupEntry( {
+				status: BackupEntryStatuses.STARTED,
+				percent: '50',
+				period: '1756169052',
+			} );
+			mockBackupsAPI( [ runningBackup ] );
+
+			const { result } = renderHook( () => useBackupState( mockSiteId ), {
+				wrapper: TestWrapper,
+			} );
+
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'running' );
+				expect( result.current.backup?.period ).toBe( '1756169052' );
+			} );
+
+			// Update mock with same backup still running (no status change)
+			const stillRunningBackup = createBackupEntry( {
+				status: BackupEntryStatuses.STARTED,
+				period: '1756169052',
+				percent: '75', // Progress updated but still running
+			} );
+			mockBackupsAPI( [ stillRunningBackup ] );
+
+			// Trigger refetch to simulate polling
+			await testQueryClient.refetchQueries( {
+				queryKey: [ 'site', mockSiteId, 'backups' ],
+			} );
+
+			// Should still be tracking the same backup
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'running' );
+				expect( result.current.backup?.period ).toBe( '1756169052' );
+				expect( result.current.backup?.percent ).toBe( '75' );
+				expect( result.current.hasRecentlyCompleted ).toBe( false );
+			} );
+		} );
 	} );
 
 	describe( 'success state', () => {
