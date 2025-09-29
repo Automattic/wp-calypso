@@ -1,16 +1,6 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
-import { displayValue } from './utils';
+import { displayValue, getColorForStatus } from './utils';
 import { Metrics } from './core-metrics';
-
-const getColorForStatus = ( status: string ): string => {
-	if ( status === 'bad' ) {
-		return '#CC1818';
-	}
-	if ( status === 'needsImprovement' ) {
-		return '#B36100';
-	}
-	return '#21873B';
-};
 
 const getValueText = ( {
 	metric,
