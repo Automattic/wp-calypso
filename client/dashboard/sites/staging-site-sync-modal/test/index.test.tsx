@@ -2,15 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
 import type { UseQueryOptions } from '@tanstack/react-query';
 
 jest.mock( '@automattic/api-queries', () => ( {
-	siteByIdQuery: jest.fn( () => ( {
-		queryKey: [ 'site-by-id' ],
+	siteByIdQuery: jest.fn( ( id: number ) => ( {
+		queryKey: [ 'site-by-id', id ],
 		queryFn: () => Promise.resolve( {} ),
 	} ) ),
 	pushToStagingMutation: jest.fn( () => ( {
@@ -67,38 +68,49 @@ jest.mock( '../../../components/inline-support-link', () => {
 	return jest.fn( ( { children } ) => <button>{ children }</button> );
 } );
 
-const mockFileBrowserState = {
-	sqlNodeState: 'unchecked',
-};
-
+// Mock file browser context with a real Provider using state so updates re-render the tree
 jest.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
-	() => ( {
-		FileBrowserProvider: ( { children }: { children: React.ReactNode } ) => children,
-		useFileBrowserContext: () => ( {
-			fileBrowserState: {
-				getCheckList: jest.fn( () => ( {
-					totalItems: 5,
-					includeList: [ { id: '/wp-content' } ],
+	() => {
+		const { createContext, useContext, createElement, useState } = require( '@wordpress/element' );
+
+		const FileBrowserContext = createContext( null );
+
+		const FileBrowserProvider = ( { children }: { children: React.ReactNode } ) => {
+			const [ sqlState, setSqlState ] = useState( 'unchecked' );
+			const fileBrowserState = {
+				getCheckList: () => ( {
+					totalItems: 0,
+					includeList: [],
 					excludeList: [],
-				} ) ),
-				getNode: jest.fn( ( path: string ) => {
+				} ),
+				getNode: ( path: string ) => {
+					if ( path === '/sql' ) {
+						return { checkState: sqlState };
+					}
 					if ( path === '/wp-content' || path === '/wp-config.php' ) {
 						return { checkState: 'unchecked' };
 					}
-					if ( path === '/sql' ) {
-						return { checkState: mockFileBrowserState.sqlNodeState };
-					}
 					return null;
-				} ),
-				setNodeCheckState: jest.fn( ( path: string, state: string ) => {
+				},
+				setNodeCheckState: ( path: string, next: string ) => {
 					if ( path === '/sql' ) {
-						mockFileBrowserState.sqlNodeState = state;
+						setSqlState( next );
 					}
-				} ),
-			},
-		} ),
-	} )
+				},
+			};
+
+			return createElement(
+				FileBrowserContext.Provider,
+				{ value: { fileBrowserState } },
+				children
+			);
+		};
+
+		const useFileBrowserContext = () => useContext( FileBrowserContext );
+
+		return { FileBrowserProvider, useFileBrowserContext };
+	}
 );
 
 const createMockSite = ( options = {} ): Site =>
@@ -263,5 +275,51 @@ describe( 'Domain Confirmation', () => {
 		renderModal( { syncType: 'push', environment: 'production' } );
 
 		expect( screen.queryByLabelText( 'Type the site domain to confirm' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'Database Selection', () => {
+		test( 'database checkbox shows warning when checked', async () => {
+			mockUseQuery( createMockSite(), createMockStagingSite() );
+
+			renderModal();
+
+			const databaseCheckbox = screen.getByLabelText( 'Database' );
+			expect( databaseCheckbox ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( /Warning! Database will be overwritten/i )
+			).not.toBeInTheDocument();
+
+			const user = userEvent.setup();
+			await user.click( databaseCheckbox );
+
+			await waitFor( () => {
+				expect( screen.getByText( /Warning! Database will be overwritten/i ) ).toBeInTheDocument();
+			} );
+
+			expect(
+				screen.getByText( /Selecting database option will overwrite the site database/i )
+			).toBeInTheDocument();
+		} );
+	} );
+
+	test( 'shows WooCommerce warning when syncing WooCommerce site to production', async () => {
+		const siteWithWoo = createMockSite( { options: { woocommerce_is_active: true } } );
+		const stagingSiteWithWoo = createMockStagingSite( {
+			options: { woocommerce_is_active: true },
+		} );
+
+		mockUseQuery( siteWithWoo, stagingSiteWithWoo );
+
+		renderModal( { syncType: 'push', environment: 'staging' } );
+
+		const databaseCheckbox = screen.getByLabelText( 'Database' );
+		const user = userEvent.setup();
+
+		await user.click( databaseCheckbox );
+
+		await waitFor( () => {
+			expect( screen.getByText( /This site also has WooCommerce installed/i ) ).toBeInTheDocument();
+		} );
 	} );
 } );
