@@ -52,7 +52,7 @@ export interface SiteScan {
 	state: 'unavailable' | 'idle' | 'scanning' | 'provisioning';
 	threats: Threat[];
 	has_cloud: boolean;
-	current: {
+	current?: {
 		is_initial: boolean;
 		timestamp: string;
 		progress: number;
