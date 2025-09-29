@@ -2,12 +2,13 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Icon, arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
+import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { LogsDownloader } from '../downloader';
 import {
@@ -16,6 +17,7 @@ import {
 	buildServerLogsWithId,
 	type PhpLogWithId,
 	type ServerLogWithId,
+	throttle,
 } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
@@ -60,6 +62,7 @@ function SiteLogsDataViews( {
 	const search = router.state.location.search;
 	const rafIdRef = useRef< number | null >( null );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
+	const [ showScrollTop, setShowScrollTop ] = useState( false );
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -251,10 +254,32 @@ function SiteLogsDataViews( {
 		}
 	}, [ hasNextPage, isFetchingNextPage, fetchNextPage ] );
 
+	useEffect( () => {
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		const el = dataviewsRef.current;
+
+		const handleScroll = throttle( () => {
+			const scrollTop = el.scrollTop;
+			const scrollHeight = el.scrollHeight;
+			const clientHeight = el.clientHeight;
+
+			setShowScrollTop( scrollTop > clientHeight * 2 );
+
+			if ( scrollTop + clientHeight >= scrollHeight - 100 ) {
+				infiniteScrollHandler();
+			}
+		}, 100 );
+
+		el.addEventListener( 'scroll', handleScroll );
+		return () => el.removeEventListener( 'scroll', handleScroll );
+	}, [ infiniteScrollHandler ] );
+
 	const paginationInfo = {
 		totalItems: logs.length,
 		totalPages: 1,
-		infiniteScrollHandler,
 	};
 
 	useEffect( () => {
@@ -294,6 +319,15 @@ function SiteLogsDataViews( {
 					onChangeView={ onChangeView }
 					header={ LogsHeader }
 				/>
+			) }
+			{ showScrollTop && (
+				<Button
+					variant="tertiary"
+					className="site-logs-scroll-to-top"
+					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
+				>
+					<Icon icon={ arrowUp } size={ 24 } />
+				</Button>
 			) }
 		</>
 	);
