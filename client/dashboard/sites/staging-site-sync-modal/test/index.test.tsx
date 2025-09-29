@@ -335,17 +335,21 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'submit button is enabled when domain confirmation matches', async () => {
+		const useRewindableActivityLogQuery = require( '../../../../data/activity-log/use-rewindable-activity-log-query' );
+		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
 		mockUseQuery( createMockSite(), createMockStagingSite() );
 
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
 		const domainInput = screen.getByLabelText( 'Type the site domain to confirm' );
 		const user = userEvent.setup();
+		const submitButton = screen.getByRole( 'button', { name: 'Push' } );
+		expect( submitButton ).toBeDisabled();
 
 		await user.type( domainInput, 'test-site' );
 
-		// Just check the input has the value, form validation is complex
 		expect( domainInput ).toHaveValue( 'test-site' );
+		expect( submitButton ).toBeEnabled();
 	} );
 
 	test( 'renders pull button for pull from staging', () => {
@@ -362,6 +366,27 @@ describe( 'Form Submission', () => {
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
 		expect( screen.getByRole( 'button', { name: 'Push' } ) ).toBeInTheDocument();
+	} );
+
+	test( 'submits with expected options on push to production', async () => {
+		const useRewindableActivityLogQuery = require( '../../../../data/activity-log/use-rewindable-activity-log-query' );
+		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
+		const prod = createMockSite( { slug: 'test-site' } );
+		const stag = createMockStagingSite();
+		mockUseQuery( prod, stag );
+		const { user } = setup( { syncType: 'push', environment: 'staging' } );
+
+		await user.click( screen.getByLabelText( 'Database' ) );
+		await user.type( screen.getByLabelText( 'Type the site domain to confirm' ), 'test-site' );
+
+		const { useMutation } = require( '@tanstack/react-query' );
+		const submitMutation = useMutation().mutate;
+		await user.click( screen.getByRole( 'button', { name: 'Push' } ) );
+
+		expect( submitMutation ).toHaveBeenCalledWith(
+			expect.objectContaining( { types: 'paths' } ),
+			expect.any( Object )
+		);
 	} );
 } );
 
