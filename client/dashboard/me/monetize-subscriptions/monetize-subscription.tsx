@@ -52,8 +52,8 @@ function AutoRenewButton( {
 	isProduct,
 	subscription,
 }: {
-	disableAutoRenew: () => void;
-	enableAutoRenew: () => void;
+	disableAutoRenew: ( data: any, variables?: object ) => void;
+	enableAutoRenew: ( data: any, variables?: object ) => void;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
 	isProduct: boolean;
@@ -70,11 +70,17 @@ function AutoRenewButton( {
 						label: __( 'Please contact support' ),
 					},
 				],
+				type: 'snackbar',
 			} );
 		} else {
 			createErrorNotice( __( 'Failed to update your subscription.' ), {
-				url: CALYPSO_CONTACT,
-				label: __( 'Please contact support' ),
+				actions: [
+					{
+						url: CALYPSO_CONTACT,
+						label: __( 'Please contact support' ),
+					},
+				],
+				type: 'snackbar',
 			} );
 		}
 	};
@@ -100,7 +106,11 @@ function AutoRenewButton( {
 						label={ title }
 						checked={ isAutoRenewing }
 						disabled={ isUpdating }
-						onChange={ () => ( isAutoRenewing ? disableAutoRenew() : enableAutoRenew() ) }
+						onChange={ () =>
+							isAutoRenewing
+								? disableAutoRenew( null, { onError: onError } )
+								: enableAutoRenew( null, { onError: onError } )
+						}
 						help={ helpText }
 					/>
 				);
@@ -180,6 +190,7 @@ function StopSubscriptionButton( {
 												label: __( 'Please contact support' ),
 											},
 										],
+										type: 'snackbar',
 									} );
 								} else {
 									createErrorNotice(
@@ -191,6 +202,7 @@ function StopSubscriptionButton( {
 													label: __( 'Please contact support' ),
 												},
 											],
+											type: 'snackbar',
 										}
 									);
 								}
