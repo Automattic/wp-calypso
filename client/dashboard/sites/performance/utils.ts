@@ -1,24 +1,29 @@
 import { __ } from '@wordpress/i18n';
-import { PerformanceMetricsItemQueryResponse, Metrics } from './core-metrics';
+import { PerformanceMetricsItemQueryResponse } from './core-metrics';
 
 export type Valuation = 'good' | 'needsImprovement' | 'bad';
 
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall';
+
 export const getMetricsNames = () => ( {
+	overall: { name: __( 'All recommendations' ) },
 	fcp: { name: __( 'First Contentful Paint' ) },
 	lcp: { name: __( 'Largest Contentful Paint' ) },
 	cls: { name: __( 'Cumulative Layout Shift' ) },
 	inp: { name: __( 'Interaction to Next Paint' ) },
 	ttfb: { name: __( 'Time to First Byte' ) },
 	tbt: { name: __( 'Total Blocking Time' ) },
-	overall: { name: __( 'Performance Score' ) },
 } );
 
 export const filterRecommendations = (
-	selectedFilter: string,
+	selectedFilter: Metrics,
 	audit?: PerformanceMetricsItemQueryResponse
 ) => {
 	return (
-		selectedFilter === 'all' || audit?.metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
+		selectedFilter === 'overall' ||
+		audit?.metricSavings?.hasOwnProperty(
+			selectedFilter.toUpperCase() as keyof typeof audit.metricSavings
+		)
 	);
 };
 

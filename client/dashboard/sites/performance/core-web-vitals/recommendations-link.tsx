@@ -2,35 +2,24 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
-import { Metrics } from '../core-metrics';
-
-type RecommendationsLinkProps = {
-	activeTab: Metrics | null;
-	recommendationsQuantity?: number;
-	recommendationsRef?: React.RefObject< HTMLDivElement > | null;
-	onRecommendationsFilterChange?: ( filter: string ) => void;
-};
+import { Metrics } from '../utils';
 
 export const RecommendationsLink = ( {
 	activeTab,
-	recommendationsQuantity,
-	recommendationsRef,
-	onRecommendationsFilterChange,
-}: RecommendationsLinkProps ) => {
+	count,
+	onClick,
+}: {
+	activeTab: Metrics;
+	count: number;
+	onClick: ( filter: Metrics ) => void;
+} ) => {
 	const { recordTracksEvent } = useAnalytics();
 
-	const recordRecommendationsClickEvent = ( filter: string ) =>
+	const handleClick = ( filter: Metrics ) => {
 		recordTracksEvent( 'calypso_performance_profiler_recommendations_link_click', {
 			filter,
 		} );
-
-	const handleClick = ( filter: string ) => {
-		recordRecommendationsClickEvent( filter );
-		onRecommendationsFilterChange?.( filter );
-		recommendationsRef?.current?.scrollIntoView( {
-			behavior: 'smooth',
-			block: 'start',
-		} );
+		onClick( filter );
 	};
 
 	if ( activeTab === 'overall' ) {
@@ -38,7 +27,7 @@ export const RecommendationsLink = ( {
 			__( '<recommendLink>View all recommendations</recommendLink>' ),
 			{
 				recommendLink: (
-					<Button variant="secondary" size="compact" onClick={ () => handleClick( 'all' ) } />
+					<Button variant="secondary" size="compact" onClick={ () => handleClick( 'overall' ) } />
 				),
 			}
 		);
@@ -50,17 +39,13 @@ export const RecommendationsLink = ( {
 			_n(
 				'<viewLink>View %d recommendation</viewLink>',
 				'<viewLink>View %d recommendations</viewLink>',
-				recommendationsQuantity ?? 0
+				count ?? 0
 			),
-			recommendationsQuantity ?? 0
+			count ?? 0
 		),
 		{
 			viewLink: (
-				<Button
-					variant="secondary"
-					size="compact"
-					onClick={ () => handleClick( activeTab ?? '' ) }
-				/>
+				<Button variant="secondary" size="compact" onClick={ () => handleClick( activeTab ) } />
 			),
 		}
 	);

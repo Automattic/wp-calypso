@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Metrics } from './core-metrics';
 import CoreMetricsChart from './core-metrics-chart';
 import { OverallScore, MetricScore } from './core-metrics-score';
 import { RecommendationsLink } from './core-web-vitals/recommendations-link';
@@ -19,6 +18,7 @@ import {
 	mapThresholdsToStatus,
 	metricsThresholds,
 	getMetricValuations,
+	Metrics,
 } from './utils';
 import type { PerformanceReport } from '@automattic/api-core';
 
@@ -29,9 +29,9 @@ export default function CoreMetricsContent( {
 	onRecommendationsFilterChange,
 }: {
 	report: PerformanceReport;
-	activeTab: Metrics | null;
+	activeTab: Metrics;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
-	onRecommendationsFilterChange?: ( filter: string ) => void;
+	onRecommendationsFilterChange: ( filter: Metrics ) => void;
 } ) {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history } = report;
 
@@ -86,12 +86,13 @@ export default function CoreMetricsContent( {
 		};
 	} );
 
+	const isOverall = activeTab === 'overall';
+
 	const numberOfAuditsForMetric = Object.keys( audits ).filter( ( key ) =>
-		filterRecommendations( activeTab === 'overall' ? 'all' : activeTab, audits[ key ] )
+		filterRecommendations( activeTab, audits[ key ] )
 	).length;
 
 	const status = mapThresholdsToStatus( activeTab as Metrics, value );
-	const isOverall = activeTab === 'overall';
 
 	return (
 		<Card>
@@ -135,9 +136,14 @@ export default function CoreMetricsContent( {
 						{ numberOfAuditsForMetric > 0 && (
 							<RecommendationsLink
 								activeTab={ activeTab }
-								recommendationsQuantity={ numberOfAuditsForMetric }
-								recommendationsRef={ recommendationsRef }
-								onRecommendationsFilterChange={ onRecommendationsFilterChange }
+								count={ numberOfAuditsForMetric }
+								onClick={ ( filter: Metrics ) => {
+									onRecommendationsFilterChange( filter );
+									recommendationsRef?.current?.scrollIntoView( {
+										behavior: 'smooth',
+										block: 'start',
+									} );
+								} }
 							/>
 						) }
 					</HStack>

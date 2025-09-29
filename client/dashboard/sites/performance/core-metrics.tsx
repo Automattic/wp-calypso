@@ -4,10 +4,8 @@ import { useState } from 'react';
 // import { CoreWebVitalsAccordion } from './core-web-vitals/core-web-vitals-accordion';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
+import { Metrics } from './utils';
 import type { PerformanceReport } from '@automattic/api-core';
-
-// Types moved from calypso/data/site-profiler/types
-export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall';
 
 export type PerformanceMetricsHistory = {
 	collection_period: Array< string | { year: number; month: number; day: number } >;
@@ -71,7 +69,7 @@ export default function CoreMetrics( {
 }: {
 	report: PerformanceReport;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
-	onRecommendationsFilterChange?: ( filter: string ) => void;
+	onRecommendationsFilterChange: ( filter: Metrics ) => void;
 } ) {
 	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall' );
 	const isDesktop = useViewportMatch( 'medium' );
@@ -83,8 +81,8 @@ export default function CoreMetrics( {
 				report={ report }
 				activeTab={ activeTab }
 				recommendationsRef={ recommendationsRef }
+				/>
 				onRecommendationsFilterChange={ onRecommendationsFilterChange }
-			/>
 		</Grid>
 	);
 

@@ -8,18 +8,19 @@ import InsightsSection from './insight-section';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ScreenshotTimeline from './screenshot-timeline';
+import { Metrics } from './utils';
 import type { PerformanceProfilerPage, PerformanceReport } from '@automattic/api-core';
 
-const updateUrl = ( filter: string | undefined ) => {
-	const url = new URL( window.location.href );
-	if ( filter ) {
-		url.searchParams.set( 'filter', filter );
-	} else {
-		url.searchParams.delete( 'filter' );
-	}
+// const updateUrl = ( filter: string | undefined ) => {
+// 	const url = new URL( window.location.href );
+// 	if ( filter ) {
+// 		url.searchParams.set( 'filter', filter );
+// 	} else {
+// 		url.searchParams.delete( 'filter' );
+// 	}
 
-	window.history.replaceState( {}, '', url.toString() );
-};
+// 	window.history.replaceState( {}, '', url.toString() );
+// };
 
 export default function Report( {
 	report,
@@ -33,7 +34,9 @@ export default function Report( {
 	onRetest: () => void;
 } ) {
 	const { filter } = useSearch( { from: sitePerformanceRoute.fullPath } );
-	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
+	const [ recommendationsFilter, setRecommendationsFilter ] = useState< Metrics >(
+		filter ?? 'overall'
+	);
 	const insightsRef = useRef< HTMLDivElement >( null );
 
 	const { audits, screenshots, is_wpcom, fullPageScreenshot } = report;
@@ -46,9 +49,9 @@ export default function Report( {
 		return null;
 	}
 
-	const handleRecommendationsFilterChange = ( filter: string ) => {
+	const handleRecommendationsFilterChange = ( filter: Metrics ) => {
 		setRecommendationsFilter( filter );
-		updateUrl( filter );
+		//updateUrl( filter );
 	};
 
 	return (
@@ -71,8 +74,8 @@ export default function Report( {
 					isWpcom={ is_wpcom }
 					ref={ insightsRef }
 					hash={ currentPage.wpcom_performance_report_hash }
-					filter={ recommendationsFilter }
-					onRecommendationsFilterChange={ handleRecommendationsFilterChange }
+					selectedFilter={ recommendationsFilter }
+					onFilterChange={ handleRecommendationsFilterChange }
 				/>
 			) }
 

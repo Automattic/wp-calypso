@@ -4,25 +4,26 @@ import {
 	__experimentalText as Text,
 	Card,
 	CardBody,
+	CustomSelectControl,
 } from '@wordpress/components';
-import { SelectDropdown } from '@automattic/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { FullPageScreenshot, PerformanceMetricsItemQueryResponse } from './core-metrics';
 import MetricsInsight from './metrics-insight';
-import {
-	updateQueryParams,
-	filterRecommendations,
-	getMetricsNames,
-	highImpactAudits,
-} from './utils';
+import { filterRecommendations, getMetricsNames, highImpactAudits, Metrics } from './utils';
 
-function getSubtitleText( selectedFilter: string, numRecommendations: number ) {
+export type CustomSelectControlOption = {
+	key: Metrics;
+	name: string;
+	hint: string;
+};
+
+function getSubtitleText( selectedFilter: Metrics, numRecommendations: number ) {
 	const metricsNames = getMetricsNames();
 
 	if ( numRecommendations ) {
-		if ( selectedFilter === 'all' ) {
+		if ( selectedFilter === 'overall' ) {
 			return sprintf(
 				/* translators: %d is the number of recommendations */
 				_n(
@@ -47,7 +48,7 @@ function getSubtitleText( selectedFilter: string, numRecommendations: number ) {
 		);
 	}
 
-	if ( selectedFilter === 'all' ) {
+	if ( selectedFilter === 'overall' ) {
 		return __(
 			"Great job! We didn't find any recommendations for improving the speed of your page."
 		);
@@ -62,49 +63,50 @@ function getSubtitleText( selectedFilter: string, numRecommendations: number ) {
 	);
 }
 
+const sortHighImpactAudits = ( a: string, b: string ) =>
+	highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
+
 type InsightsSectionProps = {
 	fullPageScreenshot: FullPageScreenshot;
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	url: string;
 	isWpcom: boolean;
 	hash: string;
-	filter?: string;
-	onRecommendationsFilterChange?: ( filter: string ) => void;
+	selectedFilter: Metrics;
+	onFilterChange: ( filter: Metrics ) => void;
 };
 
 function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) {
-	const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
-		props;
-	const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
+	const { audits, fullPageScreenshot, isWpcom, hash, selectedFilter, onFilterChange } = props;
 	const { recordTracksEvent } = useAnalytics();
 
-	const sortHighImpactAudits = ( a: string, b: string ) =>
-		highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
 	const filteredAudits = Object.keys( audits )
 		.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
 		.sort( sortHighImpactAudits );
-	const onFilter = useCallback(
-		( option: { label: string; value: string } ) => {
-			recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
-				filter: option.value,
-			} );
-			setSelectedFilter( option.value );
-			if ( onRecommendationsFilterChange ) {
-				onRecommendationsFilterChange( option.value );
-			} else {
-				updateQueryParams( { filter: option.value }, true );
-			}
-		},
-		[ onRecommendationsFilterChange, recordTracksEvent ]
-	);
 
-	useEffect( () => {
-		if ( filter && filter !== selectedFilter ) {
-			setSelectedFilter( filter );
-		}
-	}, [ selectedFilter, filter ] );
+	const onFilter = ( item: CustomSelectControlOption ) => {
+		recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+			filter: item.key,
+		} );
+
+		onFilterChange( item.key as Metrics );
+	};
 
 	const metricsNames = getMetricsNames();
+
+	const options: CustomSelectControlOption[] = Object.keys( metricsNames ).map(
+		( key: string ) => ( {
+			name: metricsNames[ key as Metrics ]?.name,
+			key: key as Metrics,
+			hint: Object.keys( audits )
+				.filter( ( auditKey ) => filterRecommendations( key as Metrics, audits[ auditKey ] ) )
+				.length.toString(),
+		} )
+	);
+
+	const getSelectedOption = useCallback( () => {
+		return options.find( ( option: CustomSelectControlOption ) => option.key === selectedFilter );
+	}, [ selectedFilter, options ] );
 
 	return (
 		<Card ref={ ref }>
@@ -118,28 +120,14 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 							{ getSubtitleText( selectedFilter, filteredAudits.length ) }
 						</Text>
 					</VStack>
-					<SelectDropdown
-						value={ selectedFilter }
-						initialSelected={ selectedFilter }
-						onSelect={ onFilter }
-						selectedText={
-							selectedFilter === 'all'
-								? __( 'All recommendations' )
-								: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name
-						}
-						selectedCount={ filteredAudits.length }
-						options={ [
-							{ label: 'All recommendations', value: 'all', count: Object.keys( audits ).length },
-						].concat(
-							Object.keys( metricsNames ).map( ( key ) => ( {
-								label: metricsNames[ key as keyof typeof metricsNames ]?.name,
-								value: key,
-								count: Object.keys( audits ).filter( ( auditKey ) =>
-									filterRecommendations( key, audits[ auditKey ] )
-								).length,
-							} ) )
-						) }
-						compact
+
+					<CustomSelectControl
+						label={ __( 'Recommendations' ) }
+						value={ getSelectedOption() }
+						options={ options }
+						hideLabelFromVision
+						onChange={ ( { selectedItem } ) => onFilter( selectedItem ) }
+						__next40pxDefaultSize
 					/>
 				</HStack>
 				{ filteredAudits.map( ( key, index ) => (
