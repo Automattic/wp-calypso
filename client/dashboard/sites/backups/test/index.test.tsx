@@ -3,6 +3,8 @@
  */
 
 import '@testing-library/jest-dom';
+import { HostingFeatures } from '@automattic/api-core';
+import * as tanstackRouter from '@tanstack/react-router';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -40,10 +42,37 @@ jest.mock( '@wordpress/i18n', () => ( {
 	sprintf: ( text: string ) => text,
 } ) );
 
+jest.mock(
+	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
+	() => ( {
+		useFileBrowserContext: () => ( {
+			fileBrowserState: {
+				getCheckList: () => ( {
+					includeList: [],
+					excludeList: [],
+					totalItems: 0,
+				} ),
+			},
+			locale: 'en',
+			notices: {
+				showError: jest.fn(),
+				showSuccess: jest.fn(),
+			},
+		} ),
+	} )
+);
+
 const mockSite: Site = {
 	ID: mockSiteId,
 	slug: 'test-site',
 	name: 'Test Site',
+	plan: {
+		expired: false,
+		features: {
+			active: [ HostingFeatures.BACKUPS ],
+		},
+	},
+	is_wpcom_atomic: true,
 } as Site;
 
 const mockBackupEntries = [
@@ -51,6 +80,7 @@ const mockBackupEntries = [
 		activity_id: '1',
 		rewind_id: 'rewind-111',
 		summary: 'First backup completed successfully',
+		content: { text: 'First backup details' },
 		published: '2025-09-21T10:00:00Z',
 		name: 'rewind__backup_complete_full',
 		is_rewindable: true,
@@ -59,6 +89,7 @@ const mockBackupEntries = [
 		activity_id: '2',
 		rewind_id: 'rewind-123',
 		summary: 'Daily backup completed successfully',
+		content: { text: 'Daily backup details' },
 		published: '2025-09-23T10:00:00Z',
 		name: 'rewind__backup_complete_full',
 		is_rewindable: true,
@@ -67,6 +98,7 @@ const mockBackupEntries = [
 		activity_id: '3',
 		rewind_id: 'rewind-456',
 		summary: 'Third backup completed successfully',
+		content: { text: 'Third backup details' },
 		published: '2025-09-24T10:00:00Z',
 		name: 'rewind__backup_complete_full',
 		is_rewindable: true,
@@ -75,6 +107,7 @@ const mockBackupEntries = [
 		activity_id: '4',
 		rewind_id: 'rewind-789',
 		summary: 'Fourth backup completed successfully',
+		content: { text: 'Fourth backup details' },
 		published: '2025-09-25T10:00:00Z',
 		name: 'rewind__backup_complete_full',
 		is_rewindable: true,
@@ -83,6 +116,7 @@ const mockBackupEntries = [
 		activity_id: '5',
 		rewind_id: 'rewind-999',
 		summary: 'Fifth backup completed successfully',
+		content: { text: 'Fifth backup details' },
 		published: '2025-09-26T10:00:00Z',
 		name: 'rewind__backup_complete_full',
 		is_rewindable: true,
@@ -90,15 +124,22 @@ const mockBackupEntries = [
 ] as unknown as ActivityLogEntry[];
 
 const mockRouterParams = { siteSlug: 'test-site', rewindId: 'rewind-123' };
+const summaryTestCases: ReadonlyArray< readonly [ string, string ] > = [
+	[ 'rewind-123', 'Daily backup completed successfully' ],
+	[ 'rewind-456', 'Third backup completed successfully' ],
+];
 
 jest.mock( '../../../app/router/sites', () => ( {
 	siteRoute: {
 		useParams: () => ( { siteSlug: 'test-site' } ),
 	},
-	siteBackupDetailRoute: {
-		useParams: () => mockRouterParams,
-	},
 } ) );
+
+const useParamsSpy = jest.spyOn( tanstackRouter, 'useParams' );
+
+useParamsSpy.mockImplementation( () => {
+	return mockRouterParams;
+} );
 
 function renderBackupsListPage() {
 	nock( API_BASE ).get( '/rest/v1.1/sites/test-site' ).query( true ).reply( 200, mockSite );
@@ -113,8 +154,9 @@ function renderBackupsListPage() {
 		} );
 
 	nock( API_BASE )
-		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
+		.get( `/wpcom/v2/sites/${ mockSiteId }/activity/rewindable` )
 		.query( true )
+		.times( 2 )
 		.reply( 200, {
 			current: {
 				orderedItems: mockBackupEntries,
@@ -134,19 +176,19 @@ afterEach( () => {
 beforeAll( () => {
 	nock.disableNetConnect();
 } );
-
 afterAll( () => {
 	nock.enableNetConnect();
 } );
 
-test( 'renders loading state initially', async () => {
-	mockRouterParams.rewindId = 'rewind-123';
-	renderBackupsListPage();
+test.each( summaryTestCases )(
+	'renders the details section correctly for rewindId %s',
+	async ( rewindId, summary ) => {
+		mockRouterParams.rewindId = rewindId;
+		renderBackupsListPage();
 
-	await waitFor(
-		() => {
-			expect( screen.getByTestId( 'loading' ) ).toBeInTheDocument();
-		},
-		{ timeout: 5000 }
-	);
-} );
+		await waitFor( () => {
+			expect( screen.getAllByText( summary ) ).toHaveLength( 2 );
+		} );
+		screen.logTestingPlaygroundURL();
+	}
+);
