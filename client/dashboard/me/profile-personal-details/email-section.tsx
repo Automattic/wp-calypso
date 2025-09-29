@@ -52,10 +52,14 @@ export default function EmailSection( { value, onChange, disabled = false }: Ema
 				return;
 			}
 
-			if ( ! emailValidator.validate( email ) ) {
+			try {
+				if ( ! emailValidator.validate( email ) ) {
+					setEmailValidationState( 'invalid' );
+				} else {
+					setEmailValidationState( 'valid' );
+				}
+			} catch ( error ) {
 				setEmailValidationState( 'invalid' );
-			} else {
-				setEmailValidationState( 'valid' );
 			}
 		},
 		[ currentEmail ]
@@ -84,12 +88,9 @@ export default function EmailSection( { value, onChange, disabled = false }: Ema
 		if ( isEmailPending ) {
 			return (
 				<>
-					{ createInterpolateElement(
-						__( '<em>Your email has not been verified yet.</em>' + ' ' ),
-						{
-							em: <em />,
-						}
-					) }
+					{ createInterpolateElement( __( '<em>Your email has not been verified yet.</em>' ), {
+						em: <em />,
+					} ) }{ ' ' }
 					<Button
 						variant="link"
 						onClick={ handleCancelPendingEmail }
@@ -152,6 +153,7 @@ export default function EmailSection( { value, onChange, disabled = false }: Ema
 			disabled={ disabled || isEmailPending }
 			className={ getValidationClass() }
 			help={ getHelpText() }
+			aria-describedby={ getHelpText() ? 'email-help' : undefined }
 		/>
 	);
 }

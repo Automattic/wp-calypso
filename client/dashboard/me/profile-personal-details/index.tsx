@@ -18,7 +18,7 @@ import { useState, useMemo, useCallback } from 'react';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
 import EmailSection from './email-section';
-import EmailVerificationBanner from './email-verification-banner';
+import EmailVerificationBanner from './update-email/email-verification-banner';
 import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';

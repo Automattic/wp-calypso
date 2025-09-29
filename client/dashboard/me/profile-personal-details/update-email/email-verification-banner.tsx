@@ -6,7 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
-import Notice from '../../components/notice';
+import Notice from '../../../components/notice';
 
 export default function EmailVerificationBanner() {
 	const { data: userData } = useSuspenseQuery( userSettingsQuery() );
@@ -70,7 +70,10 @@ export default function EmailVerificationBanner() {
 	} );
 
 	const handleResendEmail = () => {
-		resendEmail( pendingEmail || '' );
+		if ( ! pendingEmail ) {
+			return;
+		}
+		resendEmail( pendingEmail );
 	};
 
 	if ( showSuccessNotice ) {
@@ -103,7 +106,7 @@ export default function EmailVerificationBanner() {
 				actions={
 					showResendButton && (
 						<Button variant="link" onClick={ handleResendEmail } disabled={ isResendPending }>
-							{ __( 'Resend verification email' ) }
+							{ __( 'Resend email' ) }
 						</Button>
 					)
 				}
