@@ -114,7 +114,7 @@ export default function MonitoringCard( {
 	return (
 		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
-				<VStack spacing={ 4 } className="dashboard-monitoring-card__body">
+				<VStack spacing={ 4 } className="dashboard-monitoring-card__body" justify="flex-start">
 					{ tracksId && (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_monitoring_card_impression"

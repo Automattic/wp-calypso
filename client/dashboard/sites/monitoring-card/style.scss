@@ -1,10 +1,6 @@
 .dashboard-monitoring-card {
 	flex-grow: 1;
 
-	.dashboard-monitoring-card__body {
-		justify-content: flex-start;
-	}
-
 	.components-card__body, .dashboard-monitoring-card__body {
 		height: 100%;
 	}
