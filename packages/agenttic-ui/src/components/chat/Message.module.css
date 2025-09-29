@@ -84,3 +84,26 @@
     background-color: var(--color-muted);
     font-weight: 600;
 }
+
+/* Disabled message styling */
+.message.disabled {
+    pointer-events: auto;
+    filter: grayscale(50%);
+}
+
+.message.disabled .content {
+    opacity: 0.6;
+}
+
+.message.disabled * {
+    pointer-events: none;
+}
+
+/* Allow tooltip to show on hover */
+.message.disabled:hover {
+    pointer-events: auto;
+}
+
+.message.disabled:hover .content {
+    pointer-events: auto;
+}

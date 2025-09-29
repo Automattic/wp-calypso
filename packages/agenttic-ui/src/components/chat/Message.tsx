@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import React from 'react';
 import Markdown from 'react-markdown';
 import type { ComponentType } from 'react';
+import { __ } from '@wordpress/i18n';
 import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/classNames';
 import { fadeVariants } from '../animations';
@@ -58,9 +59,23 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 				animate="visible"
 				data-slot="message"
 				data-role={ message.role }
-				className={ cn( styles.message, styles[ message.role ] ) }
+				className={ cn(
+					styles.message,
+					styles[ message.role ],
+					message.disabled ? styles.disabled : undefined
+				) }
 			>
-				<div className={ styles.content }>
+				<div
+					className={ styles.content }
+					title={
+						message.disabled
+							? __(
+									'This action is no longer available or cannot be performed',
+									'a8c-agenttic'
+							  )
+							: undefined
+					}
+				>
 					<div className={ styles.bubble }>
 						{ renderMessageContent() }
 					</div>

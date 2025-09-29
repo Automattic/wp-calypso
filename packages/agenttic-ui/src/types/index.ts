@@ -24,6 +24,7 @@ export interface Message {
 	showIcon: boolean;
 	icon?: string;
 	actions?: MessageAction[];
+	disabled?: boolean;
 }
 
 export interface MessageAction {
