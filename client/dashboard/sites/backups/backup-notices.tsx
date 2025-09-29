@@ -59,7 +59,7 @@ export function BackupNotices( { backupState, timezoneString, gmtOffset }: Backu
 				{ sprintf(
 					/* translators: %s is a date, like "Today at 10:00". */
 					__( 'We’re making a backup of your site from %s' ),
-					backupDate
+					backupDate.toLowerCase()
 				) }
 			</Notice>
 		);
@@ -91,7 +91,7 @@ export function BackupNotices( { backupState, timezoneString, gmtOffset }: Backu
 						__(
 							'We weren’t able to finish your backup from %s, but don’t worry — your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
 						),
-						backupDate
+						backupDate.toLowerCase()
 					),
 					{
 						external: <ExternalLink href="https://jetpack.com/support/backup/" children={ null } />,
