@@ -113,7 +113,7 @@ export function UpcomingRenewalsDialog( {
 									</Text>
 								</VStack>
 							</HStack>
-							<VStack>
+							<HStack>
 								<Text>
 									{ formatCurrency(
 										purchase.sale_amount ?? purchase.amount,
@@ -124,13 +124,13 @@ export function UpcomingRenewalsDialog( {
 									) }
 								</Text>
 								{ showManagePurchaseLinks && (
-									<div className="upcoming-renewals-dialog__renewal-settings-link">
+									<Text>
 										<Link to={ getPurchaseUrlForId( purchase.ID ) }>
 											{ __( 'Manage purchase' ) }
 										</Link>
-									</div>
+									</Text>
 								) }
-							</VStack>
+							</HStack>
 						</HStack>
 						<Divider margin={ 3 } />
 					</VStack>
