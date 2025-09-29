@@ -90,7 +90,7 @@ export function BackupNotices( { backupState, timezoneString, gmtOffset }: Backu
 					sprintf(
 						/* translators: %s is a date, like "today at 10:00" */
 						__(
-							'We weren’t able to finish your backup from %s, but don’t worry — your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
+							'We weren’t able to finish your backup from %s, but don’t worry—your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
 						),
 						backupDate
 					),
