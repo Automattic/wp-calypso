@@ -1,3 +1,10 @@
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Card,
+	CardBody,
+} from '@wordpress/components';
 import { SelectDropdown } from '@automattic/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
@@ -10,6 +17,50 @@ import {
 	getMetricsNames,
 	highImpactAudits,
 } from './utils';
+
+function getSubtitleText( selectedFilter: string, numRecommendations: number ) {
+	const metricsNames = getMetricsNames();
+
+	if ( numRecommendations ) {
+		if ( selectedFilter === 'all' ) {
+			return sprintf(
+				/* translators: %d is the number of recommendations */
+				_n(
+					'We found %d thing you can do for improving your page.',
+					'We found %d things you can do for improving your page.',
+					numRecommendations
+				),
+				numRecommendations
+			);
+		}
+		return sprintf(
+			/* translators: %(numRecommendations)d is the number of recommendations, %(metric)s is the metric name */
+			_n(
+				'We found %(numRecommendations)d thing you can do for improving %(metric)s.',
+				'We found %(numRecommendations)d things you can do for improving %(metric)s.',
+				numRecommendations
+			),
+			{
+				numRecommendations,
+				metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+			}
+		);
+	}
+
+	if ( selectedFilter === 'all' ) {
+		return __(
+			"Great job! We didn't find any recommendations for improving the speed of your page."
+		);
+	}
+
+	return sprintf(
+		/* translators: %(metric)s is the metric name */
+		"Great job! We didn't find any recommendations for improving %(metric)s.",
+		{
+			metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+		}
+	);
+}
 
 type InsightsSectionProps = {
 	fullPageScreenshot: FullPageScreenshot;
@@ -56,13 +107,17 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 	const metricsNames = getMetricsNames();
 
 	return (
-		<div className="performance-profiler-insights-section" ref={ ref }>
-			<div className="header">
-				<div>
-					<h2 className="title">{ __( 'Personalized Recommendations' ) }</h2>
-					<p className="subtitle">{ getSubtitleText( selectedFilter, filteredAudits.length ) }</p>
-				</div>
-				<div className="filter">
+		<Card ref={ ref }>
+			<CardBody>
+				<HStack justify="space-between">
+					<VStack>
+						<Text size={ 15 } weight={ 500 }>
+							{ __( 'Personalized Recommendations' ) }
+						</Text>
+						<Text variant="muted">
+							{ getSubtitleText( selectedFilter, filteredAudits.length ) }
+						</Text>
+					</VStack>
 					<SelectDropdown
 						value={ selectedFilter }
 						initialSelected={ selectedFilter }
@@ -86,68 +141,26 @@ function InsightsSection( props: InsightsSectionProps, ref: ForwardedRef< HTMLDi
 						) }
 						compact
 					/>
-				</div>
-			</div>
-			{ filteredAudits.map( ( key, index ) => (
-				<MetricsInsight
-					key={ key }
-					insight={ { ...audits[ key ], id: key } }
-					fullPageScreenshot={ fullPageScreenshot }
-					index={ index }
-					url={ props.url }
-					isWpcom={ isWpcom }
-					hash={ hash }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_performance_profiler_insight_click', {
-							url: props.url,
-							key,
-						} )
-					}
-				/>
-			) ) }
-		</div>
-	);
-}
-
-function getSubtitleText( selectedFilter: string, numRecommendations: number ) {
-	const metricsNames = getMetricsNames();
-
-	if ( numRecommendations ) {
-		if ( selectedFilter === 'all' ) {
-			return _n(
-				/* translators: %(numRecommendations)d is the number of recommendations */
-				'We found %(numRecommendations)d thing you can do for improving your page.',
-				'We found %(numRecommendations)d things you can do for improving your page.',
-				numRecommendations,
-				{
-					numRecommendations,
-				}
-			);
-		}
-		return _n(
-			/* translators: %(numRecommendations)d is the number of recommendations, %(metric)s is the metric name */
-			'We found %(numRecommendations)d thing you can do for improving %(metric)s.',
-			'We found %(numRecommendations)d things you can do for improving %(metric)s.',
-			numRecommendations,
-			{
-				numRecommendations,
-				metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-			}
-		);
-	}
-
-	if ( selectedFilter === 'all' ) {
-		return __(
-			"Great job! We didn't find any recommendations for improving the speed of your page."
-		);
-	}
-
-	return sprintf(
-		/* translators: %(metric)s is the metric name */
-		"Great job! We didn't find any recommendations for improving %(metric)s.",
-		{
-			metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-		}
+				</HStack>
+				{ filteredAudits.map( ( key, index ) => (
+					<MetricsInsight
+						key={ key }
+						insight={ { ...audits[ key ], id: key } }
+						fullPageScreenshot={ fullPageScreenshot }
+						index={ index }
+						url={ props.url }
+						isWpcom={ isWpcom }
+						hash={ hash }
+						onClick={ () =>
+							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
+								url: props.url,
+								key,
+							} )
+						}
+					/>
+				) ) }
+			</CardBody>
+		</Card>
 	);
 }
 
