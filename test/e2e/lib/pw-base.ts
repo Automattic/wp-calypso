@@ -34,6 +34,7 @@ import {
 	getTestAccountByFeature,
 	GitHubLoginPage,
 	IncognitoPage,
+	JetpackTrafficPage,
 	LoginPage,
 	MarketingPage,
 	NewSiteResponse,
@@ -133,6 +134,10 @@ export const test = base.extend< {
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
 	pageIncognito: IncognitoPage;
+	/**
+	 * Page object representing the Jetpack Traffic Page
+	 */
+	pageJetpackTraffic: JetpackTrafficPage;
 	/**
 	 * Page object representing the WordPress.com login page.
 	 */
@@ -238,6 +243,10 @@ export const test = base.extend< {
 		await incognitoPage.spawn();
 		await use( incognitoPage );
 		await incognitoPage.close();
+	},
+	pageJetpackTraffic: async ( { page }, use ) => {
+		const jetpackTrafficPage = new JetpackTrafficPage( page );
+		await use( jetpackTrafficPage );
 	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );
