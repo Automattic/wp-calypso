@@ -1,4 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -32,6 +32,16 @@ type RestoreStep = 'form' | 'progress' | 'success' | 'error';
 function SiteBackupRestore() {
 	const { siteSlug, rewindId } = siteBackupRestoreRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
+
+	const { gmtOffset, timezoneString } = siteSettings;
 	const [ currentStep, setCurrentStep ] = useState< RestoreStep >( 'form' );
 	const [ restoreId, setRestoreId ] = useState< number | null >( null );
 	const { createSuccessNotice } = useDispatch( noticesStore );
@@ -72,7 +82,9 @@ function SiteBackupRestore() {
 		new Date( parseFloat( rewindId ) * 1000 ).toISOString(),
 		{
 			timeStyle: 'short',
-		}
+		},
+		timezoneString,
+		gmtOffset
 	);
 
 	const renderStep = () => {

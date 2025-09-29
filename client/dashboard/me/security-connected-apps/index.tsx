@@ -18,7 +18,6 @@ import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
-import { Text } from '../../components/text';
 import SecurityPageHeader from '../security-page-header';
 import ApplicationDetailsModal from './application-details-modal';
 import type { ConnectedApplication } from '@automattic/api-core';
@@ -170,11 +169,7 @@ export default function SecurityConnectedApps() {
 					onChangeView={ () => {} }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ { totalItems, totalPages: 1 } }
-					empty={
-						<Text as="p" variant="muted" style={ { paddingBlock: '48px' } }>
-							{ __( 'You haven’t connected any apps yet.' ) }
-						</Text>
-					}
+					empty={ <p>{ __( 'You haven’t connected any apps yet.' ) }</p> }
 				>
 					<DataViews.Layout />
 				</DataViews>

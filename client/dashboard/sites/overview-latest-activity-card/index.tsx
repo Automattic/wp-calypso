@@ -94,7 +94,7 @@ export default function LatestActivityCard( {
 						getItemId={ ( item ) => item.activity_id }
 						paginationInfo={ { totalItems: data.length, totalPages: 1 } }
 						defaultLayouts={ { list: {} } }
-						empty={ __( 'No activity yet.' ) }
+						empty={ <p>{ __( 'No activity yet.' ) }</p> }
 					>
 						<DataViews.Layout />
 					</DataViews>

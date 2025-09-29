@@ -8,16 +8,14 @@ import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
+import {
+	convertTimeRangeToUnix,
+	getLineChartTickNumber,
+	getLineChartTickLabel,
+} from '../monitoring/utils';
 import MonitoringCard from '../monitoring-card';
-import type { PeriodData, TimeRange } from '../monitoring/types';
+import type { PeriodData } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-
-function convertTimeRangeToUnix( timeRange: number ): TimeRange {
-	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
-	const end = Math.floor( new Date().getTime() / 1000 );
-
-	return { start, end };
-}
 
 type SiteMetricsData = {
 	requestsData: DataPointDate[] | undefined;
@@ -119,39 +117,10 @@ export default function MonitoringPerformanceCard( {
 	];
 
 	const lessThanMediumViewport = useViewportMatch( 'medium', '<' );
-
-	let numTicks: undefined | number;
-	switch ( timeRange ) {
-		case 168:
-			numTicks = lessThanMediumViewport ? 3 : 7;
-			break;
-		case 72:
-			numTicks = lessThanMediumViewport ? 3 : 6;
-			break;
-		case 24:
-		case 6:
-			numTicks = lessThanMediumViewport ? 4 : 12;
-			break;
-	}
-
 	const xAxisOptions = {
-		tickFormat: ( date: string ) => {
-			const d = new Date( date );
-
-			if ( timeRange <= 24 ) {
-				return `${ d.getHours() }:${ d.getMinutes().toString().padStart( 2, '0' ) }`;
-			}
-
-			if ( timeRange > 72 || ( timeRange > 24 && lessThanMediumViewport ) ) {
-				return `${ d.toLocaleDateString() }`;
-			}
-
-			return `${ d.toLocaleDateString() } ${ d.getHours() }:${ d
-				.getMinutes()
-				.toString()
-				.padStart( 2, '0' ) }`;
-		},
-		numTicks: numTicks,
+		tickFormat: ( date: string ) =>
+			getLineChartTickLabel( date, timeRange, lessThanMediumViewport ),
+		numTicks: getLineChartTickNumber( timeRange, lessThanMediumViewport ),
 	};
 
 	const getLegendIcon = ( key: string ) => {

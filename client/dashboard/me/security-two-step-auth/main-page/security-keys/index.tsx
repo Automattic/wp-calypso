@@ -79,7 +79,7 @@ const SecurityKeysList = ( {
 				getItemId={ ( item ) => item.id }
 				paginationInfo={ { totalItems: data.length, totalPages: 1 } }
 				defaultLayouts={ { list: {} } }
-				empty={ __( 'No security keys registered.' ) }
+				empty={ <p>{ __( 'No security keys registered.' ) }</p> }
 				isLoading={ isLoading }
 				actions={ [
 					{

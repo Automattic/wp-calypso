@@ -6,14 +6,25 @@ import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
 import type { BackupState } from './use-backup-state';
 
+interface BackupNoticesProps {
+	backupState: BackupState;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { backupState }: { backupState: BackupState } ) {
+export function BackupNotices( { backupState, timezoneString, gmtOffset }: BackupNoticesProps ) {
 	const { status, backup } = backupState;
-	const backupDate = useFormattedTime( backup?.started ?? '', {
-		timeStyle: 'short',
-	} );
+	const backupDate = useFormattedTime(
+		backup?.started ?? '',
+		{
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset
+	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	const handleDismiss = () => {
