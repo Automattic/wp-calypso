@@ -70,6 +70,10 @@ export const test = base.extend< {
 	 */
 	accounti18n: TestAccount;
 	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountSimpleSiteFreePlan: TestAccount;
+	/**
 	 * Test account used for SMS-based 2FA.
 	 */
 	accountSMS: TestAccount;
@@ -169,6 +173,10 @@ export const test = base.extend< {
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountSimpleSiteFreePlan: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
 		await use( testAccount );
 	},
 	accountSMS: async ( { page }, use ) => {
