@@ -10,7 +10,7 @@ const phpLogsViewConfig = {
 	allowedFilters: [ 'severity' ],
 	layout: {
 		styles: {
-			timestamp: { maxWidth: '175px', minWidth: '140px' },
+			timestamp: { maxWidth: '300px', minWidth: '140px' },
 			name: { maxWidth: '200px', minWidth: '75px' },
 			message: { maxWidth: '30vw' },
 			file: { minWidth: '300px' },
@@ -26,7 +26,7 @@ const serverLogsViewConfig = {
 	allowedFilters: [ 'cached', 'request_type', 'status', 'renderer' ],
 	layout: {
 		styles: {
-			date: { maxWidth: '175px', minWidth: '140px' },
+			date: { maxWidth: '300px', minWidth: '140px' },
 			request_url: { minWidth: '300px' },
 			http_referer: { minWidth: '300px' },
 		},

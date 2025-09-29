@@ -29,5 +29,6 @@ boot( {
 			apps: false,
 		},
 		plugins: false,
+		commandPalette: false,
 	},
 } );

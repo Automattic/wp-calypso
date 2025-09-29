@@ -3,13 +3,17 @@ import { emailsQuery, siteBySlugQuery, siteDomainsQuery } from '@automattic/api-
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import NoDomainsAvailableEmptyState from '../../emails/components/NoDomainsAvailableEmptyState';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from '../../emails/dataviews';
-import { Layout } from '../../emails/layout';
-import './styles.scss';
 import type { View } from '@wordpress/dataviews';
+
+import './styles.scss';
 
 function SiteEmails() {
 	const navigate = useNavigate();
@@ -19,10 +23,15 @@ function SiteEmails() {
 	const { data: allEmails, isLoading: isEmailsLoading } = useQuery( emailsQuery() );
 
 	// Filter emails to those belonging to this site by either siteId or matching one of the site's domains
-	const siteDomainNames = new Set( ( domains ?? [] ).map( ( d: SiteDomain ) => d.domain ) );
+	const nonWpcomDomains = new Set(
+		( domains ?? [] )
+			.filter( ( domain ) => ! domain.wpcom_domain )
+			.map( ( d: SiteDomain ) => d.domain )
+	);
+
 	const emails = ( allEmails ?? [] ).filter( ( e ) => {
 		const siteIdMatch = e.siteId && Number( e.siteId ) === site?.ID;
-		const domainMatch = e.domainName && siteDomainNames.has( e.domainName );
+		const domainMatch = e.domainName && nonWpcomDomains.has( e.domainName );
 		return siteIdMatch || domainMatch;
 	} );
 
@@ -39,7 +48,7 @@ function SiteEmails() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
 	return (
-		<Layout>
+		<PageLayout header={ <PageHeader title={ __( 'Emails' ) } /> }>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
@@ -54,9 +63,10 @@ function SiteEmails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
+					empty={ nonWpcomDomains.size > 0 ? <></> : <NoDomainsAvailableEmptyState /> }
 				/>
 			</DataViewsCard>
-		</Layout>
+		</PageLayout>
 	);
 }
 

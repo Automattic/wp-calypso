@@ -90,7 +90,7 @@ function RepositoriesList() {
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => item.repository_name }
-				empty={ emptyTitle }
+				empty={ <p>{ emptyTitle }</p> }
 			/>
 		</DataViewsCard>
 	);

@@ -87,7 +87,7 @@ export function getFields(): Field< Threat >[] {
 			label: __( 'Details' ),
 			getValue: ( { item } ) => item.title,
 			render: ( { item } ) => (
-				<HStack spacing={ 2 } justify="flex-start" wrap>
+				<HStack spacing={ 2 } justify="flex-start">
 					<Icon
 						className="site-scan-threats__type-icon"
 						icon={ getThreatIcon( item ) }
