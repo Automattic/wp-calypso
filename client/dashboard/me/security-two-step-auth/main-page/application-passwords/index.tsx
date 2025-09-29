@@ -12,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
@@ -65,6 +66,7 @@ const ApplicationPasswordsList = ( {
 	isLoading: boolean;
 } ) => {
 	const locale = useLocale();
+	const { recordTracksEvent } = useAnalytics();
 
 	const { mutate: deleteApplicationPassword, isPending: isDeletingApplicationPassword } =
 		useMutation( deleteTwoStepAuthApplicationPasswordMutation() );
@@ -76,6 +78,7 @@ const ApplicationPasswordsList = ( {
 
 	const handleRemove = () => {
 		if ( selectedKeyToRemove ) {
+			recordTracksEvent( 'calypso_dashboard_security_application_passwords_remove_password_click' );
 			deleteApplicationPassword( selectedKeyToRemove.ID, {
 				onSuccess: () => {
 					createSuccessNotice(
@@ -118,6 +121,9 @@ const ApplicationPasswordsList = ( {
 						isPrimary: true,
 						callback: ( items: TwoStepAuthApplicationPassword[] ) => {
 							const item = items[ 0 ];
+							recordTracksEvent(
+								'calypso_dashboard_security_application_passwords_remove_password_dialog_open'
+							);
 							setSelectedKeyToRemove( item );
 						},
 					},
@@ -142,6 +148,8 @@ const ApplicationPasswordsList = ( {
 };
 
 export default function ApplicationPasswords() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ isAddApplicationPasswordModalOpen, setIsAddApplicationPasswordModalOpen ] =
 		useState( false );
 
@@ -179,7 +187,12 @@ export default function ApplicationPasswords() {
 							<Button
 								variant="secondary"
 								size="compact"
-								onClick={ () => setIsAddApplicationPasswordModalOpen( true ) }
+								onClick={ () => {
+									setIsAddApplicationPasswordModalOpen( true );
+									recordTracksEvent(
+										'calypso_dashboard_security_application_passwords_add_password_modal_open'
+									);
+								} }
 							>
 								{ __( 'Add application password' ) }
 							</Button>

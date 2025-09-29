@@ -11,6 +11,8 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useRef } from 'react';
+import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -88,6 +90,8 @@ function SiteOverview( {
 		isSmallViewport,
 	} );
 
+	const wpAdminButtonRef = useRef( null );
+
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
 
 	return (
@@ -101,6 +105,7 @@ function SiteOverview( {
 								<>
 									<StagingSiteSyncDropdown siteSlug={ siteSlug } />
 									<Button
+										ref={ wpAdminButtonRef }
 										__next40pxDefaultSize
 										variant="primary"
 										href={ site.options.admin_url }
@@ -162,6 +167,27 @@ function SiteOverview( {
 					) }
 				</HStack>
 			</VStack>
+			<GuidedTourContextProvider
+				tourId="hosting-dashboard-tours-site-overview"
+				guidedTours={ [
+					{
+						id: 'hosting-dashboard-tours-site-overview-wp-admin',
+						title: __( 'Go to WP Admin' ),
+						description: __(
+							'Use this button to quickly switch from the Hosting Dashboard to your WP Admin.'
+						),
+					},
+				] }
+			>
+				{ wpAdminButtonRef.current && (
+					<GuidedTourStep
+						id="hosting-dashboard-tours-site-overview-wp-admin"
+						target={ wpAdminButtonRef.current }
+						placement="bottom"
+						inline
+					/>
+				) }
+			</GuidedTourContextProvider>
 		</PageLayout>
 	);
 }

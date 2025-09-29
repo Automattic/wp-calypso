@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import type { SocialLoginButtonProps } from './types';
 import type { ConnectSocialUserArgs } from '@automattic/api-core';
 
@@ -20,6 +21,8 @@ export default function GitHubLogin( {
 	handleDisconnect,
 	isLoading,
 }: SocialLoginButtonProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutate: postLoginRequest } = useMutation( postLoginRequestMutation() );
@@ -89,6 +92,7 @@ export default function GitHubLogin( {
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		e.preventDefault();
 		setShowLoading( true );
+		recordTracksEvent( 'calypso_dashboard_security_social_logins_github_login_click' );
 
 		window.location.href = addQueryArgs(
 			'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize',

@@ -9,6 +9,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
@@ -39,6 +40,8 @@ const SecurityKeysList = ( {
 	data: SecurityKeyRegistration[];
 	isLoading: boolean;
 } ) => {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation( {
 		...deleteTwoStepAuthSecurityKeyMutation(),
 		meta: {
@@ -53,6 +56,7 @@ const SecurityKeysList = ( {
 		useState< SecurityKeyRegistration | null >( null );
 
 	const handleRemove = () => {
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_security_keys_remove_key_click' );
 		if ( selectedKeyToRemove ) {
 			deleteSecurityKey(
 				{ credential_id: selectedKeyToRemove.id },
@@ -85,6 +89,9 @@ const SecurityKeysList = ( {
 						isPrimary: true,
 						callback: ( items: SecurityKeyRegistration[] ) => {
 							const item = items[ 0 ];
+							recordTracksEvent(
+								'calypso_dashboard_security_two_step_auth_security_keys_remove_key_dialog_open'
+							);
 							setSelectedKeyToRemove( item );
 						},
 					},
@@ -109,6 +116,8 @@ const SecurityKeysList = ( {
 };
 
 export default function SecurityKeys() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
 
 	const { data: securityKeys, isLoading } = useQuery( twoStepAuthSecurityKeysQuery() );
@@ -152,7 +161,12 @@ export default function SecurityKeys() {
 									<Button
 										variant="secondary"
 										size="compact"
-										onClick={ () => setIsAddKeyModalOpen( true ) }
+										onClick={ () => {
+											setIsAddKeyModalOpen( true );
+											recordTracksEvent(
+												'calypso_dashboard_security_two_step_auth_security_keys_register_key_modal_open'
+											);
+										} }
 									>
 										{ __( 'Register key' ) }
 									</Button>
