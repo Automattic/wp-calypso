@@ -2,10 +2,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	Notice,
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Notice } from '../../components/notice';
 const REFRESH_REPORT_INTERVAL = 24; // 24 hours
 
 type ReportExpiredNotice = {
