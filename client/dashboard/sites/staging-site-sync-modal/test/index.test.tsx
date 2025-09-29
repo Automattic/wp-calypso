@@ -281,28 +281,28 @@ describe( 'Domain Confirmation', () => {
 
 		expect( screen.queryByLabelText( 'Type the site domain to confirm' ) ).not.toBeInTheDocument();
 	} );
+} );
 
-	describe( 'Database Selection', () => {
-		test( 'database checkbox shows warning when checked', async () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
+describe( 'Warnings', () => {
+	test( 'database checkbox shows warning when checked', async () => {
+		mockUseQuery( createMockSite(), createMockStagingSite() );
 
-			const { user } = setup();
+		const { user } = setup();
 
-			const databaseCheckbox = screen.getByLabelText( 'Database' );
-			expect( databaseCheckbox ).toBeInTheDocument();
+		const databaseCheckbox = screen.getByLabelText( 'Database' );
+		expect( databaseCheckbox ).toBeInTheDocument();
 
-			expect(
-				screen.queryByText( /Warning! Database will be overwritten/i )
-			).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( /Warning! Database will be overwritten/i )
+		).not.toBeInTheDocument();
 
-			await user.click( databaseCheckbox );
+		await user.click( databaseCheckbox );
 
-			await waitFor( () => {
-				expect( screen.getByText( /Warning! Database will be overwritten/i ) ).toBeInTheDocument();
-			} );
-
-			expect( screen.getByText( /overwrite the site database/i ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( /Warning! Database will be overwritten/i ) ).toBeInTheDocument();
 		} );
+
+		expect( screen.getByText( /overwrite the site database/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows WooCommerce warning when syncing WooCommerce site to production', async () => {
