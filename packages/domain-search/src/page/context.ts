@@ -27,6 +27,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onSearch: noop,
 		onSuggestionsReceive: noop,
 		onSuggestionRender: noop,
+		onSuggestionInteract: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),

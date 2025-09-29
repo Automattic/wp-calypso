@@ -55,6 +55,7 @@ export interface DomainSearchEvents {
 	onSearch: ( query: string, vendor: string ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
 	onSuggestionRender: ( suggestion: DomainSuggestion, reason?: string | null ) => void;
+	onSuggestionInteract: ( suggestion: DomainSuggestion ) => void;
 }
 
 export interface DomainSearchConfig {

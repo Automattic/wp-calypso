@@ -111,7 +111,10 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			<DomainSuggestionPrimaryCTA
 				disabled={ isMutating }
 				isBusy={ isPending }
-				onClick={ () => addToCart( { acceptedTrademarkClaim: false } ) }
+				onClick={ () => {
+					events.onSuggestionInteract( suggestion );
+					addToCart( { acceptedTrademarkClaim: false } );
+				} }
 			/>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal

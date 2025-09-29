@@ -162,6 +162,14 @@ const DomainSearchWithCart = ( {
 					tld: getTld( suggestion.domain_name ),
 				} );
 			},
+			onSuggestionInteract: ( suggestion: DomainSuggestion ) => {
+				recordTracksEvent( 'calypso_traintracks_interact', {
+					railcar: `${ railcarId }-${ suggestion.position }`,
+					action: 'domain_added_to_cart',
+					domain: suggestion.domain_name,
+					root_vendor: suggestion.vendor,
+				} );
+			},
 		};
 		// omitting railcarId from dependencies to prevent infinite loop when `onQueryChange` updates that value
 		// eslint-disable-next-line react-hooks/exhaustive-deps
