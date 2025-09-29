@@ -121,6 +121,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 		);
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const renderStartTransferButton = () => {
 		if ( ! current_user_is_owner || DomainTransferStatus.PENDING_START !== transfer_status ) {
 			return null;
@@ -140,7 +141,8 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 		<Notice variant={ errorLevel ? 'error' : 'info' }>
 			<VStack spacing={ 4 }>
 				{ renderDescriptionText() }
-				{ renderStartTransferButton() }
+				{ /* To do: add cta once we implemented the transfer flow */ }
+				{ /* { renderStartTransferButton() } */ }
 			</VStack>
 		</Notice>
 	);
