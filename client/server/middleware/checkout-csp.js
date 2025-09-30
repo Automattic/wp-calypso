@@ -31,16 +31,23 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 			'https://fonts.googleapis.com',
 			'https://*.wp.com',
 			'http://*.wp.com',
+			'https://surveys-static-prd.survicate-cdn.com',
 		],
 
 		// EGRESS CONTROL: Tight allowlist for network connections (primary exfil gate)
 		'connect-src': [
 			"'self'",
-			// Payment processors only
+			// Payment processors
 			'https://api.stripe.com',
 			'https://q.stripe.com',
+			'https://www.sandbox.paypal.com',
+			'https://www.paypal.com',
 			// WordPress.com API (required for checkout)
 			'https://public-api.wordpress.com',
+			// Support and surveys
+			'https://wpcom.zendesk.com',
+			'https://ekr.zdassets.com',
+			'https://survey.survicate.com',
 		],
 
 		// Frame sources - payment widgets and WordPress.com API
