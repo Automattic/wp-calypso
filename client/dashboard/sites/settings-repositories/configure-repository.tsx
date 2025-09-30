@@ -1,29 +1,85 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+	siteBySlugQuery,
+	githubInstallationsQuery,
+	updateCodeDeploymentMutation,
+	codeDeploymentQuery,
+} from '@automattic/api-queries';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	ExternalLink,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
 	const { siteSlug, deploymentId } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: existingDeployment } = useSuspenseQuery(
+		codeDeploymentQuery( site.ID, deploymentId )
+	);
+	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
 
-	const isEditing = Boolean( deploymentId );
-	const fromPath = isEditing
-		? '/sites/$siteSlug/settings/repositories/manage/$deploymentId'
-		: '/sites/$siteSlug/settings/repositories/connect';
-	const navigate = useNavigate( { from: fromPath } );
-
-	const handleConnected = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
-	};
+	const navigate = useNavigate( {
+		from: '/sites/$siteSlug/settings/repositories/manage/$deploymentId',
+	} );
 
 	const handleCancel = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+	};
+
+	const queryClient = useQueryClient();
+
+	const updateMutation = useMutation( {
+		...updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries( {
+				queryKey: [ 'site', site.ID, 'code-deployments' ],
+			} );
+			await queryClient.invalidateQueries( {
+				queryKey: [ 'site', site.ID, 'code-deployment', deploymentId ],
+			} );
+			createSuccessNotice( __( 'Repository settings updated successfully.' ), {
+				type: 'snackbar',
+			} );
+			navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+		},
+		onError: ( error ) => {
+			createErrorNotice(
+				// translators: "reason" is why updating the repository failed.
+				sprintf( __( 'Failed to update repository: %(reason)s' ), { reason: error.message } ),
+				{
+					type: 'snackbar',
+				}
+			);
+		},
+	} );
+
+	const selectedInstallation = installations.find(
+		( inst ) => inst.external_id === existingDeployment.installation_id
+	);
+
+	const initialValues = {
+		selectedInstallationId: existingDeployment.installation_id,
+		selectedRepositoryId: existingDeployment.external_repository_id,
+		branch: existingDeployment.branch_name,
+		targetDir: existingDeployment.target_dir,
+		isAutomated: existingDeployment.is_automated,
+		deploymentMode: existingDeployment.workflow_path
+			? ( 'advanced' as const )
+			: ( 'simple' as const ),
+		workflowPath: existingDeployment.workflow_path,
 	};
 
 	return (
@@ -31,24 +87,36 @@ export default function ConfigureRepository() {
 			size="small"
 			header={
 				<PageHeader
-					title={ isEditing ? __( 'Configure Connection' ) : __( 'Connect Repository' ) }
-					description={
-						isEditing
-							? __( 'Update the GitHub repository settings for your WordPress site.' )
-							: __( 'Connect a GitHub repository to deploy code to your WordPress site.' )
-					}
+					title={ __( 'Configure Connection' ) }
+					description={ __( 'Update the GitHub repository settings for your WordPress site.' ) }
 				/>
 			}
 		>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 6 }>
+						<SectionHeader
+							title={ __( 'Repository connection details' ) }
+							description={ createInterpolateElement(
+								__(
+									'Update the connection used to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
+								),
+								{
+									a: (
+										<ExternalLink
+											href={ `https://github.com/settings/installations/${ selectedInstallation?.external_id }` }
+										>
+											{ __( 'Adjust permissions on GitHub' ) }
+										</ExternalLink>
+									),
+								}
+							) }
+						/>
 						<ConnectRepositoryForm
-							site={ site }
-							onConnected={ handleConnected }
 							onCancel={ handleCancel }
-							deploymentId={ deploymentId }
-							isEditing={ isEditing }
+							mutation={ updateMutation }
+							initialValues={ initialValues }
+							submitText={ __( 'Update Connection' ) }
 						/>
 					</VStack>
 				</CardBody>

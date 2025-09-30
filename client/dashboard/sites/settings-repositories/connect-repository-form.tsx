@@ -3,11 +3,8 @@ import {
 	githubRepositoriesQuery,
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
-	createCodeDeploymentMutation,
-	updateCodeDeploymentMutation,
-	codeDeploymentQuery,
 } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
 import {
 	Button,
 	ComboboxControl,
@@ -19,30 +16,30 @@ import {
 	__experimentalText as Text,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
 import type {
-	Site,
 	GitHubInstallation,
 	GitHubRepository,
 	CreateAndUpdateCodeDeploymentVariables,
 } from '@automattic/api-core';
 
 interface ConnectRepositoryFormProps {
-	site: Site;
-	onConnected: () => void;
 	onCancel: () => void;
-	deploymentId?: number;
-	isEditing?: boolean;
+	mutation: UseMutationResult<
+		CreateAndUpdateCodeDeploymentVariables,
+		Error,
+		CreateAndUpdateCodeDeploymentVariables,
+		unknown
+	>;
+	initialValues: ConnectRepositoryFormData;
+	submitText: string;
 }
 
-interface ConnectRepositoryFormData {
+export interface ConnectRepositoryFormData {
 	selectedInstallationId: number | '';
 	selectedRepositoryId: number | '';
 	branch: string;
@@ -139,56 +136,14 @@ const AutomatedToggle = ( {
 };
 
 export const ConnectRepositoryForm = ( {
-	site,
-	onConnected,
 	onCancel,
-	deploymentId,
-	isEditing = false,
+	mutation,
+	initialValues,
+	submitText,
 }: ConnectRepositoryFormProps ) => {
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { data: existingDeployment } = useQuery( {
-		...codeDeploymentQuery( site.ID, deploymentId ?? 0 ),
-		enabled: isEditing && !! deploymentId,
-	} );
-
-	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( () => {
-		if ( isEditing && existingDeployment ) {
-			return {
-				selectedInstallationId: existingDeployment.installation_id,
-				selectedRepositoryId: existingDeployment.external_repository_id,
-				branch: existingDeployment.branch_name,
-				targetDir: existingDeployment.target_dir,
-				isAutomated: existingDeployment.is_automated,
-				deploymentMode: existingDeployment.workflow_path ? 'advanced' : 'simple',
-				workflowPath: existingDeployment.workflow_path,
-			};
-		}
-		return {
-			selectedInstallationId: installations[ 0 ]?.external_id || '',
-			selectedRepositoryId: '',
-			branch: '',
-			targetDir: '/',
-			isAutomated: false,
-			deploymentMode: 'simple',
-			workflowPath: undefined,
-		};
-	} );
-
-	useEffect( () => {
-		if ( isEditing && existingDeployment ) {
-			setFormData( {
-				selectedInstallationId: existingDeployment.installation_id,
-				selectedRepositoryId: existingDeployment.external_repository_id,
-				branch: existingDeployment.branch_name,
-				targetDir: existingDeployment.target_dir,
-				isAutomated: existingDeployment.is_automated,
-				deploymentMode: existingDeployment.workflow_path ? 'advanced' : 'simple',
-				workflowPath: existingDeployment.workflow_path,
-			} );
-		}
-	}, [ isEditing, existingDeployment ] );
+	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( formData.selectedInstallationId === '' ) {
@@ -247,57 +202,6 @@ export const ConnectRepositoryForm = ( {
 		// Only update target directory when repository changes, not when branch changes
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
 	}, [ repositoryChecks?.suggested_directory, selectedRepository?.id ] );
-
-	const queryClient = useQueryClient();
-
-	const createMutation = useMutation( {
-		...createCodeDeploymentMutation( site.ID ),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'code-deployments' ],
-			} );
-			createSuccessNotice( __( 'Repository connected successfully.' ), {
-				type: 'snackbar',
-			} );
-			onConnected();
-		},
-		onError: ( error ) => {
-			createErrorNotice(
-				// translators: "reason" is why connecting the repository failed.
-				sprintf( __( 'Failed to connect repository: %(reason)s' ), { reason: error.message } ),
-				{
-					type: 'snackbar',
-				}
-			);
-		},
-	} );
-
-	const updateMutation = useMutation( {
-		...updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'code-deployments' ],
-			} );
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'code-deployment', deploymentId ],
-			} );
-			createSuccessNotice( __( 'Repository settings updated successfully.' ), {
-				type: 'snackbar',
-			} );
-			onConnected();
-		},
-		onError: ( error ) => {
-			createErrorNotice(
-				// translators: "reason" is why updating the repository failed.
-				sprintf( __( 'Failed to update repository: %(reason)s' ), { reason: error.message } ),
-				{
-					type: 'snackbar',
-				}
-			);
-		},
-	} );
-
-	const mutation = isEditing ? updateMutation : createMutation;
 
 	const handleSubmit = async () => {
 		if (
@@ -427,33 +331,7 @@ export const ConnectRepositoryForm = ( {
 	] );
 
 	return (
-		<VStack spacing={ 6 }>
-			<SectionHeader
-				title={
-					isEditing
-						? __( 'Repository connection details' )
-						: __( 'Configure repository connection' )
-				}
-				description={ createInterpolateElement(
-					isEditing
-						? __(
-								'Update the connection used to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
-						  )
-						: __(
-								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
-						  ),
-					{
-						a: (
-							<ExternalLink
-								href={ `https://github.com/settings/installations/${ selectedInstallation?.external_id }` }
-							>
-								{ __( 'Adjust permissions on GitHub' ) }
-							</ExternalLink>
-						),
-					}
-				) }
-			/>
-
+		<>
 			<DataForm< ConnectRepositoryFormData >
 				data={ formData }
 				fields={ fields }
@@ -523,9 +401,9 @@ export const ConnectRepositoryForm = ( {
 					disabled={ ! isFormValid || mutation.isPending }
 					__next40pxDefaultSize
 				>
-					{ isEditing ? __( 'Update Connection' ) : __( 'Connect Repository' ) }
+					{ submitText }
 				</Button>
 			</HStack>
-		</VStack>
+		</>
 	);
 };
