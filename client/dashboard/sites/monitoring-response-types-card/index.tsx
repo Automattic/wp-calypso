@@ -111,6 +111,7 @@ export default function MonitoringResponseTypesCard( {
 						size={ 300 }
 						data={ data }
 						showLabels={ false }
+						withTooltips
 					/>
 				</HStack>
 			</VStack>

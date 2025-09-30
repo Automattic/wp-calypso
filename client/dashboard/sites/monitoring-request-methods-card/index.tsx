@@ -105,6 +105,7 @@ export default function MonitoringRequestMethodsCard( {
 					size={ 300 }
 					data={ data }
 					showLabels={ false }
+					withTooltips
 				/>
 			</HStack>
 		</MonitoringCard>

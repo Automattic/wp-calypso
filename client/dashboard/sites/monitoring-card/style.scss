@@ -82,9 +82,24 @@
 }
 
 .dashboard-monitoring-card--row-layout {
-	.pie-chart > svg {
-		/* Prevent the chart from overflowing its container. */
-		max-width: 100%;
+	.pie-chart {
+		position: relative;
+
+		> svg {
+			/* Prevent the chart from overflowing its container. */
+			max-width: 100%;
+		}
+
+		> div[role="tooltip"] {
+			position: absolute;
+			margin-top: 20px;
+			margin-inline-start: 20px;
+			border-radius: 4px;
+			border: 1px solid #DDD;
+			background: #FFF;
+			padding: 16px;
+			text-wrap: nowrap;
+		}
 	}
 
 	.dashboard-monitoring-card__content {
