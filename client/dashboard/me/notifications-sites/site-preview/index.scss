@@ -1,6 +1,6 @@
 .site-preview {
 	width: 100%;
-	display: flex;
+	overflow: hidden;
 
 	&__badge {
 		grid-column-start: 2;
@@ -14,13 +14,17 @@
 		width: 100%;
 
 		.components-external-link__contents {
-			max-width: 250px;
+			max-width: 170px;
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
 
-			@include break-small {
+			@include break-mobile {
 				overflow: unset;
+				max-width: unset;
+				max-width: 250px;
+			}
+			@include break-small {
 				max-width: unset;
 			}
 		}
