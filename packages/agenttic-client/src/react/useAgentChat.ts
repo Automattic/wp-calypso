@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getAgentManager } from './agentManager';
 import {
+	createMessageRenderer,
 	type MarkdownComponents,
 	type MarkdownExtensions,
-} from '../utils/markdownParser';
-import { createMessageRenderer } from '../utils/createMessageRenderer';
+} from '../utils/createMessageRenderer';
 import type {
 	AuthProvider,
 	Message as ClientMessage,
@@ -29,11 +29,11 @@ export interface Suggestion {
 	prompt: string;
 }
 
-// Re-export markdown types from parser
+// Re-export markdown types
 export type {
 	MarkdownComponents,
 	MarkdownExtensions,
-} from '../utils/markdownParser';
+} from '../utils/createMessageRenderer';
 
 // UI Message format (simplified for UI components)
 export interface UIMessage {
@@ -233,7 +233,6 @@ export interface UseAgentChatConfig {
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
-	withStreamdown?: boolean; // Use streamdown library for markdown rendering
 }
 
 // Hook return interface
@@ -737,19 +736,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	}, [ registrations ] );
 
 	// Create a memoized message renderer with current configuration
-	const messageRenderer = useMemo(
-		() =>
-			createMessageRenderer( {
-				components: state.markdownComponents,
-				extensions: state.markdownExtensions,
-				withStreamdown: config.withStreamdown,
-			} ),
-		[
-			state.markdownComponents,
-			state.markdownExtensions,
-			config.withStreamdown,
-		]
-	);
+	const messageRenderer = useMemo( () => {
+		return createMessageRenderer( {
+			components: state.markdownComponents,
+			extensions: state.markdownExtensions,
+			enableStreaming: config?.enableStreaming,
+		} );
+	}, [
+		state.markdownComponents,
+		state.markdownExtensions,
+		config?.enableStreaming,
+	] );
 
 	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {

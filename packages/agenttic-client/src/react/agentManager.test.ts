@@ -383,6 +383,7 @@ describe( 'agentManager', () => {
 					] ),
 				} ),
 				withHistory: true,
+				abortSignal: expect.any( AbortSignal ),
 			} );
 		} );
 

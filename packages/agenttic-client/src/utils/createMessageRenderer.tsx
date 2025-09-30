@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import type { PluggableList } from 'unified';
 import {
@@ -13,13 +14,46 @@ import {
 	processMarkdownExtensions,
 } from '../markdown-extensions';
 import type { MarkdownExtensions } from '../markdown-extensions/types';
-import { ConditionalMarkdown } from './dynamicMarkdown';
+
+// Re-export types for consumers
+export type MarkdownComponents = Components;
+export type { MarkdownExtensions } from '../markdown-extensions/types';
+
+type StreamingUtils = {
+	parseIncompleteMarkdown: ( text: string ) => string;
+	parseMarkdownIntoBlocks: ( markdown: string ) => Promise< string[] >;
+};
+
+let streamingUtils: StreamingUtils | null = null;
+let streamingPromise: Promise< StreamingUtils > | null = null;
+
+async function loadStreamingUtils(): Promise< StreamingUtils > {
+	if ( streamingUtils ) {
+		return streamingUtils;
+	}
+	if ( streamingPromise ) {
+		return streamingPromise;
+	}
+
+	streamingPromise = Promise.all( [
+		import( './streaming/parseIncompleteMarkdown' ),
+		import( './streaming/parseBlocks' ),
+	] ).then( ( [ incomplete, blocks ] ) => {
+		streamingUtils = {
+			parseIncompleteMarkdown: incomplete.parseIncompleteMarkdown,
+			parseMarkdownIntoBlocks: blocks.parseMarkdownIntoBlocks,
+		};
+		return streamingUtils;
+	} );
+
+	return streamingPromise;
+}
 
 interface CreateMessageRendererOptions {
 	components?: Components;
 	extensions?: MarkdownExtensions;
 	remarkPlugins?: PluggableList;
-	withStreamdown?: boolean;
+	enableStreaming?: boolean;
 }
 
 /**
@@ -34,10 +68,10 @@ export function createMessageRenderer(
 		components = {},
 		extensions = {},
 		remarkPlugins = [],
-		withStreamdown = false,
+		enableStreaming = false,
 	} = options;
 
-	// Process extensions to get components and plugins
+	// Process extensions once when creating the renderer
 	const processed = processMarkdownExtensions( extensions );
 
 	// Merge extension components with user components (user takes precedence)
@@ -51,14 +85,38 @@ export function createMessageRenderer(
 
 	// Return a component that renders markdown with all the configuration
 	return function MessageRenderer( { children }: { children: string } ) {
+		const [ processedText, setProcessedText ] = React.useState( children );
+
+		React.useEffect( () => {
+			if ( enableStreaming ) {
+				loadStreamingUtils()
+					.then( async ( utils ) => {
+						const blocks =
+							await utils.parseMarkdownIntoBlocks( children );
+						const processedContent = blocks
+							.map( ( block ) => {
+								return utils.parseIncompleteMarkdown(
+									block.trim()
+								);
+							} )
+							.join( '\n\n' );
+						setProcessedText( processedContent );
+					} )
+					.catch( () => {
+						setProcessedText( children );
+					} );
+			} else {
+				setProcessedText( children );
+			}
+		}, [ children ] );
+
 		return (
-			<ConditionalMarkdown
+			<ReactMarkdown
 				components={ finalComponents }
 				remarkPlugins={ finalPlugins }
-				withStreamdown={ withStreamdown }
 			>
-				{ children }
-			</ConditionalMarkdown>
+				{ processedText }
+			</ReactMarkdown>
 		);
 	};
 }

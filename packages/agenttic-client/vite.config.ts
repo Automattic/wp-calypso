@@ -19,20 +19,18 @@ export default defineConfig({
 				// React and related
 				'react',
 				'react-dom',
-				
+
 				// WordPress dependencies (available as globals)
 				'@wordpress/i18n',
 				'@wordpress/api-fetch',
-				
+
 				// Chart libraries (should be provided by consuming app)
 				'@automattic/charts',
 				'@visx/xychart',
-				
 				// Markdown dependencies
-				'streamdown',
 				'react-markdown',
 				'remark-gfm',
-				
+
 				// Other utilities that should be externalized
 				'unified',
 			],

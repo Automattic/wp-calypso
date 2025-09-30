@@ -19,7 +19,6 @@ export {
 	createAbortController,
 } from './client/utils/core';
 export { createMessageRenderer } from './utils/createMessageRenderer';
-export { ConditionalMarkdown } from './utils/dynamicMarkdown';
 
 // All type exports (safe to expose)
 export type {
