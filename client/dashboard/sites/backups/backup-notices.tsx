@@ -1,13 +1,17 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
+import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
-import { useBackupState } from './use-backup-state';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import type { BackupState } from './use-backup-state';
 import type { Site } from '@automattic/api-core';
 
 interface BackupNoticesProps {
+	backupState: BackupState;
 	site: Site;
 	timezoneString?: string;
 	gmtOffset?: number;
@@ -16,15 +20,21 @@ interface BackupNoticesProps {
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { site, timezoneString, gmtOffset }: BackupNoticesProps ) {
-	const { status, backup } = useBackupState( site.ID );
+export function BackupNotices( {
+	backupState,
+	site,
+	timezoneString,
+	gmtOffset,
+}: BackupNoticesProps ) {
+	const { status, backup } = backupState;
 	const backupDate = useFormattedTime(
-		backup?.started ?? '',
+		backup?.started ? backup.started.replace( ' ', 'T' ) + 'Z' : '',
 		{
 			timeStyle: 'short',
 		},
 		timezoneString,
-		gmtOffset
+		gmtOffset,
+		true // Use lowercase calendar label
 	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
@@ -39,6 +49,14 @@ export function BackupNotices( { site, timezoneString, gmtOffset }: BackupNotice
 		}
 	}, [ status ] );
 
+	if ( status === 'enqueued' ) {
+		return (
+			<Notice variant="info" title={ __( 'Backup starting…' ) }>
+				{ __( 'We’re preparing to make a backup of your site.' ) }
+			</Notice>
+		);
+	}
+
 	if ( status === 'running' ) {
 		return (
 			<Notice
@@ -50,7 +68,7 @@ export function BackupNotices( { site, timezoneString, gmtOffset }: BackupNotice
 				) }
 			>
 				{ sprintf(
-					/* translators: %s is a date, like "Today at 10:00". */
+					/* translators: %s is a date, like "today at 10:00". */
 					__( 'We’re making a backup of your site from %s' ),
 					backupDate
 				) }
@@ -80,15 +98,21 @@ export function BackupNotices( { site, timezoneString, gmtOffset }: BackupNotice
 			>
 				{ createInterpolateElement(
 					sprintf(
-						/* translators: %s is a date, like "Today at 10:00" */
+						/* translators: %s is a date, like "today at 10:00" */
 						__(
-							'We weren’t able to finish your backup from %s, but don’t worry — your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
+							'We weren’t able to finish your backup from %s, but don’t worry—your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
 						),
 						backupDate
 					),
 					{
-						// @ts-expect-error children prop is injected by createInterpolateElement
-						external: <ExternalLink href="https://jetpack.com/support/backup/" />,
+						external: isSelfHostedJetpackConnected( site ) ? (
+							<ExternalLink
+								href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }
+								children={ null }
+							/>
+						) : (
+							<InlineSupportLink supportContext="backups" children={ null } />
+						),
 					}
 				) }
 			</Notice>

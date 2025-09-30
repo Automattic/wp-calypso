@@ -99,20 +99,27 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// hide the datepicker if the user doesn't have access to activity logs or doesn't have logging feature at all
 	const shouldShowDateRangePicker = hasHostingFeature( site, HostingFeatures.LOGS );
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
+		<PageLayout
+			header={
+				<VStack as="div" spacing={ 0 } direction="row" alignment="end">
+					<PageHeader title={ __( 'Logs' ) } />
+
+					{ shouldShowDateRangePicker && (
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChangeWrapper }
+						/>
+					) }
+				</VStack>
+			}
+		>
 			<VStack as="div" spacing={ 3 }>
 				{ autoRefreshDisabledReason && (
 					<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
-				) }
-				{ shouldShowDateRangePicker && (
-					<DateRangePicker
-						start={ dateRange.start }
-						end={ dateRange.end }
-						gmtOffset={ gmtOffset }
-						timezoneString={ timezoneString }
-						locale={ locale }
-						onChange={ handleDateRangeChangeWrapper }
-					/>
 				) }
 				<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 					<CardHeader style={ { paddingBottom: '0' } }>

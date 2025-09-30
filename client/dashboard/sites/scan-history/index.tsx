@@ -10,7 +10,17 @@ import { getFields } from './dataviews/fields';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function ScanHistoryDataViews( { site }: { site: Site } ) {
+interface ScanHistoryDataViewsProps {
+	site: Site;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
+export function ScanHistoryDataViews( {
+	site,
+	timezoneString,
+	gmtOffset,
+}: ScanHistoryDataViewsProps ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'status', 'fixed_on', 'threat', 'severity' ],
@@ -38,7 +48,7 @@ export function ScanHistoryDataViews( { site }: { site: Site } ) {
 	const { data: scanHistory, isLoading } = useQuery( siteScanHistoryQuery( site.ID ) );
 	const threats = scanHistory?.threats || [];
 
-	const fields = getFields();
+	const fields = getFields( timezoneString, gmtOffset );
 	const actions = getActions( site.ID );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
