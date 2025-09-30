@@ -11,30 +11,11 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDeferredValue, useState } from 'react';
-import { TextSkeleton } from '../../../components/text-skeleton';
 import { CollapsibleCard } from '../collapsible-card';
 import { SitePreview } from '../site-preview';
 import { SiteSettings } from '../site-settings';
 
 import './index.scss';
-
-export const Placeholder = () => {
-	return (
-		<>
-			{ Array.from( { length: 3 } ).map( ( _, index ) => (
-				<Card className="site-list-settings__card-placeholder" key={ index }>
-					<CardBody>
-						<VStack spacing={ 2 }>
-							<TextSkeleton length={ 15 } />
-							<TextSkeleton length={ 30 } />
-							<TextSkeleton length={ 30 } />
-						</VStack>
-					</CardBody>
-				</Card>
-			) ) }
-		</>
-	);
-};
 
 export const SiteListSettings = () => {
 	const [ search, setSearch ] = useState< string | undefined >();
