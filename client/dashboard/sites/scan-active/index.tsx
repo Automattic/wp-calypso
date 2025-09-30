@@ -2,10 +2,10 @@ import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import { useTimeSince } from '../../components/time-since';
-import { useActions } from './dataviews/actions';
+import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
@@ -45,7 +45,7 @@ export function ActiveThreatsDataViews( {
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields( timezoneString, gmtOffset );
-	const actions = useActions( site, selection.length );
+	const actions = useMemo( () => getActions( site, selection.length ), [ site, selection.length ] );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
