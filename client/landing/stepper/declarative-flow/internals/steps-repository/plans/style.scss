@@ -134,7 +134,7 @@
 	}
 }
 
-.domain-upsell.plans {
+.domain-and-plan.plans {
 	.signup-header h1 {
 		display: none;
 	}
@@ -169,7 +169,7 @@
 
 // Override styles for newsletter flow
 .newsletter.plans,
-.domain-upsell.plans {
+.domain-and-plan.plans {
 	.step-container {
 		.step-wrapper__header {
 			.formatted-header {
