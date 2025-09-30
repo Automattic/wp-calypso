@@ -1,5 +1,5 @@
-import { createCodeDeploymentMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { createCodeDeploymentMutation, githubWorkflowChecksQuery } from '@automattic/api-queries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -15,28 +15,23 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { CodeHighlighter } from '../../components/code-highlighter';
 import { SectionHeader } from '../../components/section-header';
-import { DEFAULT_WORKFLOW_TEMPLATE } from './workflow-yaml-examples';
-import type { WorkflowValidationDefinition } from './advanced-workflow-validation';
-import type {
-	GitHubWorkflowValidation,
-	GitHubWorkflowValidationItem,
-	GitHubRepository,
-} from '@automattic/api-core';
+import {
+	DEFAULT_WORKFLOW_TEMPLATE,
+	codePushExample,
+	uploadArtifactExample,
+} from './workflow-yaml-examples';
+import type { GitHubWorkflowValidationItem, GitHubRepository } from '@automattic/api-core';
 
-interface Workflow {
-	file_name: string;
-	workflow_path: string;
+export interface WorkflowValidationDefinition {
+	label: string;
+	description: string;
+	content: string;
 }
 
 interface WorkflowValidationListProps {
-	validations: Record< string, WorkflowValidationDefinition >;
-	result?: GitHubWorkflowValidation;
-	isLoading: boolean;
-	onVerify(): void;
-	canVerify: boolean;
 	repository?: Pick< GitHubRepository, 'id' | 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
@@ -44,7 +39,6 @@ interface WorkflowValidationListProps {
 	disabled?: boolean;
 	siteId: number;
 	installationId: number;
-	workflows?: Workflow[];
 	isCreatingNewWorkflow?: boolean;
 }
 
@@ -63,11 +57,6 @@ const WORKFLOWS_DIRECTORY = '.github/workflows/';
 const RECOMMENDED_WORKFLOW_PATH = WORKFLOWS_DIRECTORY + 'wpcom.yml';
 
 export const WorkflowValidationList = ( {
-	validations,
-	result,
-	isLoading,
-	onVerify,
-	canVerify,
 	repository,
 	branchName,
 	workflowPath,
@@ -77,22 +66,74 @@ export const WorkflowValidationList = ( {
 	installationId,
 	isCreatingNewWorkflow = false,
 }: WorkflowValidationListProps ) => {
-	const items = result?.checked_items ?? [];
+	const queryClient = useQueryClient();
 	const [ expandedCards, setExpandedCards ] = useState< Set< string > >( new Set() );
+	const [ installError, setInstallError ] = useState< string >();
+
+	// Define workflow validations
+	const workflowValidations = useMemo< Record< string, WorkflowValidationDefinition > >( () => {
+		return {
+			valid_yaml_file: {
+				label: __( 'The workflow file is a valid YAML' ),
+				description: __(
+					"Ensure that your workflow file contains a valid YAML structure. Here's an example:"
+				),
+				content: DEFAULT_WORKFLOW_TEMPLATE,
+			},
+			triggered_on_push: {
+				label: __( 'The workflow is triggered on push' ),
+				description: __( 'Ensure that your workflow triggers on code push:' ),
+				content: codePushExample( branchName || 'main' ),
+			},
+			upload_artifact_with_required_name: {
+				label: __( 'The uploaded artifact has the required name' ),
+				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
+				content: uploadArtifactExample(),
+			},
+		};
+	}, [ branchName ] );
+
+	// Query for workflow checks
+	const {
+		data: workflowChecks,
+		isFetching: isFetchingWorkflowChecks,
+		refetch: refetchWorkflowChecks,
+	} = useQuery(
+		githubWorkflowChecksQuery(
+			repository?.owner ?? '',
+			repository?.name ?? '',
+			branchName,
+			workflowPath ?? ''
+		),
+		{
+			enabled: !! repository && !! branchName && !! workflowPath,
+		}
+	);
+
+	const canVerifyWorkflow = Boolean( workflowPath && installationId && repository && branchName );
+
+	const items = workflowChecks?.checked_items ?? [];
 
 	const { mutate: createDeployment, isPending: isInstallingWorkflow } = useMutation( {
 		...createCodeDeploymentMutation( siteId ),
 		onSuccess: async () => {
+			// Invalidate workflows query to refresh the list
+			await queryClient.invalidateQueries( {
+				queryKey: [ 'deployment-workflows', repository?.owner, repository?.name, branchName ],
+			} );
 			await onWorkflowCreated?.( RECOMMENDED_WORKFLOW_PATH );
 		},
 	} );
-
-	const [ installError, setInstallError ] = useState< string >();
 
 	useEffect( () => {
 		// Reset install error when component mounts or when repository changes
 		setInstallError( undefined );
 	}, [ repository ] );
+
+	// Early return if required props are missing
+	if ( ! repository || ! branchName ) {
+		return null;
+	}
 
 	const handleInstallWorkflow = () => {
 		if ( ! repository ) {
@@ -125,18 +166,18 @@ export const WorkflowValidationList = ( {
 	};
 
 	const summaryMessage = () => {
-		if ( ! result || ! repository || ! branchName ) {
+		if ( ! workflowChecks || ! repository || ! branchName ) {
 			return null;
 		}
 
-		const workflowFile = result.workflow_path || workflowPath;
+		const workflowFile = workflowChecks.workflow_path || workflowPath;
 		if ( ! workflowFile ) {
 			return null;
 		}
 
 		const workflowUrl = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflowFile }`;
 		const message =
-			result.conclusion === 'success'
+			workflowChecks.conclusion === 'success'
 				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
 						filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
 				  } )
@@ -207,9 +248,9 @@ export const WorkflowValidationList = ( {
 						actions={
 							<Button
 								variant="secondary"
-								onClick={ onVerify }
-								disabled={ isLoading || ! canVerify }
-								isBusy={ isLoading }
+								onClick={ () => refetchWorkflowChecks() }
+								disabled={ isFetchingWorkflowChecks || ! canVerifyWorkflow }
+								isBusy={ isFetchingWorkflowChecks }
 							>
 								{ __( 'Verify workflow' ) }
 							</Button>
@@ -218,14 +259,14 @@ export const WorkflowValidationList = ( {
 
 					{ summaryMessage() }
 
-					{ ! result && ! isLoading && (
+					{ ! workflowChecks && ! isFetchingWorkflowChecks && (
 						<Notice status="info" isDismissible={ false }>
 							<Text>{ __( 'Run a workflow check to validate your configuration.' ) }</Text>
 						</Notice>
 					) }
 
 					{ items.map( ( item ) => {
-						const validation = validations[ item.validation_name ];
+						const validation = workflowValidations[ item.validation_name ];
 
 						if ( ! validation ) {
 							return null;
@@ -242,7 +283,7 @@ export const WorkflowValidationList = ( {
 										onClick={ () => toggleCard( item.validation_name ) }
 									>
 										<HStack spacing={ 2 } justify="flex-start" alignment="center">
-											{ getStatusIcon( isLoading ? 'loading' : item.status ) }
+											{ getStatusIcon( isFetchingWorkflowChecks ? 'loading' : item.status ) }
 											<Text weight={ 500 }>{ validation.label }</Text>
 										</HStack>
 									</HStack>

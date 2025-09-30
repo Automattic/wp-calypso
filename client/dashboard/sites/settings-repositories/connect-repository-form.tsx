@@ -24,7 +24,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
+import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import type {
 	Site,
 	GitHubInstallation,
@@ -45,7 +45,7 @@ interface ConnectRepositoryFormData {
 	targetDir: string;
 	isAutomated: boolean;
 	deploymentMode: 'simple' | 'advanced';
-	workflowPath: string | undefined;
+	workflowPath: string;
 }
 
 // Custom repository selector component with search functionality
@@ -149,7 +149,7 @@ export const ConnectRepositoryForm = ( {
 		targetDir: '/',
 		isAutomated: false,
 		deploymentMode: 'simple',
-		workflowPath: undefined,
+		workflowPath: '',
 	} );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
@@ -308,6 +308,31 @@ export const ConnectRepositoryForm = ( {
 		isAdvancedValid
 	);
 
+	const renderAdvancedWorkflow = () => {
+		if ( ! selectedRepository ) {
+			return null;
+		}
+
+		return (
+			<AdvancedWorkflowStyle
+				repository={ selectedRepository }
+				branchName={ formData.branch }
+				workflowPath={ formData.workflowPath }
+				onWorkflowCreation={ ( workflowPath ) =>
+					setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
+				}
+				onChooseWorkflow={ ( workflowPath ) =>
+					setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
+				}
+				isLoading={ isLoadingRepositories }
+				isFetching={ isLoadingBranches }
+				useComposerWorkflow={ !! repositoryChecks?.has_composer && ! repositoryChecks?.has_vendor }
+				siteId={ site.ID }
+				installationId={ selectedInstallation?.external_id ?? 0 }
+			/>
+		);
+	};
+
 	const fields: Field< ConnectRepositoryFormData >[] = useMemo( () => {
 		return [
 			{
@@ -426,22 +451,7 @@ export const ConnectRepositoryForm = ( {
 				disabled={ ! selectedRepository }
 			/>
 
-			{ isAdvancedSelected && (
-				<AdvancedWorkflowValidation
-					selectedInstallationId={ selectedInstallation?.external_id ?? 0 }
-					repository={ selectedRepository }
-					branchName={ formData.branch }
-					workflowPath={ formData.workflowPath }
-					onWorkflowPathChange={ ( workflowPath ) =>
-						setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
-					}
-					disabled={ ! selectedRepository }
-					siteId={ site.ID }
-					onWorkflowCreated={ ( workflowPath ) =>
-						setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
-					}
-				/>
-			) }
+			{ isAdvancedSelected && renderAdvancedWorkflow() }
 
 			<HStack justify="flex-end">
 				<Button variant="tertiary" onClick={ onCancel }>
