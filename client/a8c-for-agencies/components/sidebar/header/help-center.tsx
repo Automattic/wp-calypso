@@ -6,14 +6,13 @@ import {
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import clsx from 'clsx';
-import { useRef } from 'react';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SidebarHelpCenter = ( { onClick } ) => {
-	const helpIconRef = useRef();
+const SidebarHelpCenter = ( { onClick }: { onClick: () => void } ) => {
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE );
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			show: store.isHelpCenterShown(),
 			isMinimized: store.getIsMinimized(),
@@ -38,7 +37,7 @@ const SidebarHelpCenter = ( { onClick } ) => {
 				className={ clsx( 'sidebar__item-help', {
 					'is-active': show,
 				} ) }
-				icon={ <HelpIcon ref={ helpIconRef } /> }
+				icon={ <HelpIcon /> }
 			/>
 		</>
 	);
