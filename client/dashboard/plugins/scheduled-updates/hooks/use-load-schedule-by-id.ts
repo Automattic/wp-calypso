@@ -2,6 +2,7 @@ import { hostingUpdateSchedulesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { WEEKDAYS } from '../constants';
+import { normalizeScheduleId } from '../helpers';
 import type { InitialValues } from '../components/schedule-form';
 
 type Result = {
@@ -24,12 +25,12 @@ export function useLoadScheduleById( scheduleId: string ): Result {
 		}
 
 		const sitesMap = data?.sites || {};
+		const normalizedId = normalizeScheduleId( scheduleId );
 
 		const participatingSiteIds: string[] = [];
 		let firstSchedule = undefined;
-
 		for ( const [ siteIdStr, schedulesMap ] of Object.entries( sitesMap ) ) {
-			const sched = schedulesMap[ scheduleId ];
+			const sched = schedulesMap[ normalizedId ];
 			if ( sched ) {
 				participatingSiteIds.push( siteIdStr );
 				if ( ! firstSchedule ) {
