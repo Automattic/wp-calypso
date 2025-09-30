@@ -9,9 +9,14 @@ import PageLayout from '../../components/page-layout';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug, deploymentId } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories/connect' } );
+
+	const isEditing = Boolean( deploymentId );
+	const fromPath = isEditing
+		? '/sites/$siteSlug/settings/repositories/manage/$deploymentId'
+		: '/sites/$siteSlug/settings/repositories/connect';
+	const navigate = useNavigate( { from: fromPath } );
 
 	const handleConnected = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
@@ -26,8 +31,12 @@ export default function ConfigureRepository() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Connect Repository' ) }
-					description={ __( 'Connect a GitHub repository to deploy code to your WordPress site.' ) }
+					title={ isEditing ? __( 'Configure Connection' ) : __( 'Connect Repository' ) }
+					description={
+						isEditing
+							? __( 'Update the GitHub repository settings for your WordPress site.' )
+							: __( 'Connect a GitHub repository to deploy code to your WordPress site.' )
+					}
 				/>
 			}
 		>
@@ -38,6 +47,8 @@ export default function ConfigureRepository() {
 							site={ site }
 							onConnected={ handleConnected }
 							onCancel={ handleCancel }
+							deploymentId={ deploymentId }
+							isEditing={ isEditing }
 						/>
 					</VStack>
 				</CardBody>
