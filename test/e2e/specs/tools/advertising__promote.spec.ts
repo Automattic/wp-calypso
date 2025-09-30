@@ -47,7 +47,10 @@ test.describe( 'Advertising: Promote', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then I land in Blaze campaign landing page', async function () {
-			await expect( pageBlazeCampaign.makeMostOfYourBlazeCampaignHeading ).toBeVisible();
+			// Wait for the Blaze Campaign page to load - this can take a while!
+			await expect( pageBlazeCampaign.makeMostOfYourBlazeCampaignHeading ).toBeVisible( {
+				timeout: 30_000,
+			} );
 		} );
 
 		await test.step( 'When I click on Get started', async function () {
