@@ -1,8 +1,4 @@
-import {
-	type DomainAvailability,
-	DomainAvailabilityStatus,
-	fetchDomainAvailability,
-} from '@automattic/api-core';
+import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { getTld } from '../helpers';
