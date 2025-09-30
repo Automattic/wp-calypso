@@ -6,14 +6,16 @@ import {
 	CardBody,
 	CheckboxControl,
 	__experimentalVStack as VStack,
+	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
+import { useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import FlashMessage from '../../components/flash-message';
+import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
 
@@ -126,6 +128,28 @@ export default function PreferencesLanguageForm() {
 							setFormData( ( current ) => ( { ...current, ...edits } ) );
 						} }
 					/>
+					{ ! formData.enabled && ( optIn.value === 'opt-in' || isRedirecting ) && (
+						<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
+							{ createInterpolateElement(
+								__(
+									'<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn’t work and how we can improve.'
+								),
+								{
+									surveyLink: (
+										<ExternalLink
+											href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
+											onClick={ () =>
+												recordTracksEvent(
+													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
+												)
+											}
+											children={ null }
+										/>
+									),
+								}
+							) }
+						</Notice>
+					) }
 					<Button
 						variant="primary"
 						type="submit"

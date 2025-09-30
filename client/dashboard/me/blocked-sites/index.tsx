@@ -194,7 +194,7 @@ export default function BlockedSites() {
 						...paginationInfo,
 						infiniteScrollHandler,
 					} }
-					empty={ __( 'You haven’t blocked any sites yet.' ) }
+					empty={ <p>{ __( 'You haven’t blocked any sites yet.' ) }</p> }
 					isLoading={ isLoading }
 					onChangeView={ setView }
 				>

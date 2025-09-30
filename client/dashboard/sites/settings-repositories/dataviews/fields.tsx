@@ -50,7 +50,7 @@ export function useRepositoryFields() {
 			},
 			{
 				id: 'target_dir',
-				label: __( 'Target Directory' ),
+				label: __( 'Target directory' ),
 				getValue: ( { item } ) => item.target_dir,
 				render: ( { item } ) => <TargetDirDisplay targetDir={ item.target_dir } />,
 				enableHiding: true,
@@ -58,7 +58,7 @@ export function useRepositoryFields() {
 			},
 			{
 				id: 'auto_deploy',
-				label: __( 'Auto Deploy' ),
+				label: __( 'Auto deploy' ),
 				getValue: ( { item } ) => ( item.is_automated ? 'On' : 'Off' ),
 				render: ( { item } ) => (
 					<Text size="small" style={ { color: '#3b3b3b' } }>

@@ -72,7 +72,7 @@ export const getContactFormFields = (
 	return [
 		{
 			id: 'firstName',
-			label: __( 'First Name' ),
+			label: __( 'First name' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -80,7 +80,7 @@ export const getContactFormFields = (
 		},
 		{
 			id: 'lastName',
-			label: __( 'Last Name' ),
+			label: __( 'Last name' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -130,7 +130,7 @@ export const getContactFormFields = (
 		},
 		{
 			id: 'address2',
-			label: __( 'Address Line 2' ),
+			label: __( 'Address line 2' ),
 			type: 'text',
 		},
 		{
@@ -150,7 +150,7 @@ export const getContactFormFields = (
 		},
 		{
 			id: 'postalCode',
-			label: __( 'Post Code' ),
+			label: __( 'Post code' ),
 			type: 'text',
 			isValid: {
 				required: true,

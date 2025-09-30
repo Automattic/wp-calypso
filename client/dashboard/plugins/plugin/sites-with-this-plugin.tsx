@@ -106,6 +106,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								__( 'Failed to deactivate %s' ),
 								plugin?.name ?? ''
 							) }
+							actionId="activate"
 						/>
 					);
 				},
@@ -158,6 +159,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								__( 'Failed to disable auto‑updates for %s' ),
 								plugin?.name ?? ''
 							) }
+							actionId="autoupdate"
 						/>
 					);
 				},
@@ -206,14 +208,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			isActivating,
 			isDeactivating,
 			isFetching,
-			activateMutate,
+			plugin?.name,
 			plugin?.id,
 			deactivateMutate,
+			activateMutate,
 			isEnablingAutoupdate,
 			isDisablingAutoupdate,
-			enableAutoupdateMutate,
-			disableAutoupdateMutate,
 			pluginSlug,
+			disableAutoupdateMutate,
+			enableAutoupdateMutate,
 		]
 	);
 

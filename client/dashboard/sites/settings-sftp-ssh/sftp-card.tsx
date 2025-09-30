@@ -90,17 +90,17 @@ export default function SftpCard( {
 		},
 		{
 			id: 'port',
-			label: __( 'port' ),
+			label: __( 'Port' ),
 			Edit: ClipboardInputControlEdit,
 		},
 		{
 			id: 'username',
-			label: __( 'username' ),
+			label: __( 'Username' ),
 			Edit: ClipboardInputControlEdit,
 		},
 		{
 			id: 'password',
-			label: __( 'password' ),
+			label: __( 'Password' ),
 			Edit: ( { field, data } ) => {
 				const { getValue } = field;
 				const value = getValue( { item: data } );

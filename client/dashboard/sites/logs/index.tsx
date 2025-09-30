@@ -25,8 +25,6 @@ import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
 import { LOG_TABS } from './utils';
 
-import './style.scss';
-
 function SiteLogs( { logType }: { logType: LogType } ) {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
@@ -42,7 +40,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
@@ -98,19 +96,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			overlay={ <PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> } /> }
 			{ ...getLogsCalloutProps() }
 		>
-			<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
+			<PageLayout
+				header={
+					<VStack as="div" spacing={ 0 } direction="row" alignment="end">
+						<PageHeader title={ __( 'Logs' ) } />
+
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChangeWrapper }
+						/>
+					</VStack>
+				}
+			>
 				<VStack as="div" spacing={ 3 }>
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					<DateRangePicker
-						start={ dateRange.start }
-						end={ dateRange.end }
-						gmtOffset={ gmtOffset }
-						timezoneString={ timezoneString }
-						locale={ locale }
-						onChange={ handleDateRangeChangeWrapper }
-					/>
 					<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 						<CardHeader style={ { paddingBottom: '0' } }>
 							<TabPanel

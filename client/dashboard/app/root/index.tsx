@@ -23,7 +23,7 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
-	const { name, LoadingLogo = WordPressLogo } = useAppContext();
+	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
 	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
@@ -101,7 +101,7 @@ function Root() {
 					</CatchNotFound>
 				</main>
 			) }
-			<CommandPalette />
+			{ supports.commandPalette && <CommandPalette /> }
 			<Snackbars />
 			<PageViewTracker />
 			{ 'development' === process.env.NODE_ENV && (

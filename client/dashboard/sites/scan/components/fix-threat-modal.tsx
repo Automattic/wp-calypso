@@ -1,11 +1,12 @@
-import { fixThreatMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
+import { useFixThreats } from '../hooks/use-fix-threats';
+import { FixThreatConfirmation } from './fix-threat-confirmation';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
 import type { Threat } from '@automattic/api-core';
@@ -17,54 +18,73 @@ interface FixThreatModalProps extends RenderModalProps< Threat > {
 
 export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalProps ) {
 	const threat = items[ 0 ];
+	const threatIds = [ threat.id ];
 
-	const fixThreat = useMutation( fixThreatMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const handleFixThreat = () => {
-		fixThreat.mutate( threat.id, {
-			onSuccess: () => {
-				closeModal?.();
-				createSuccessNotice(
-					__(
-						'We’re hard at work fixing this threat in the background. Please check back shortly.'
-					),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				closeModal?.();
-				createErrorNotice( __( 'Error fixing threat. Please contact support.' ), {
+	const { startFix, isFixing, status, error } = useFixThreats( siteId, threatIds );
+
+	useEffect( () => {
+		if ( status.isComplete && ! isFixing ) {
+			closeModal?.();
+
+			if ( status.allFixed ) {
+				createSuccessNotice( __( 'Threat fixed.' ), { type: 'snackbar' } );
+			} else {
+				createErrorNotice( __( 'Failed to fix threat. Please contact support.' ), {
 					type: 'snackbar',
 				} );
-			},
-		} );
+			}
+		}
+	}, [ status, isFixing, closeModal, createSuccessNotice, createErrorNotice ] );
+
+	useEffect( () => {
+		if ( error ) {
+			closeModal?.();
+			createErrorNotice( __( 'Failed to fix threat. Please contact support.' ), {
+				type: 'snackbar',
+			} );
+		}
+	}, [ error, closeModal, createErrorNotice ] );
+
+	const handleFixThreat = () => {
+		startFix();
 	};
 
-	const fixButtonLabel = items.length === 1 ? __( 'Fix threat' ) : __( 'Fix all threats' );
-	const description =
-		items.length === 1
-			? __( 'Jetpack will be fixing the following threat:' )
-			: __( 'Jetpack will be fixing the following threats:' );
+	const isExtensionDeleteFixer =
+		threat.signature === 'Vulnerable.WP.Extension' && threat.fixable?.fixer === 'delete';
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text variant="muted">{ description }</Text>
+			<Text variant="muted">{ __( 'Jetpack will be fixing the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ items } />
-			<ThreatDescription threat={ items[ 0 ] } />
-			<ButtonStack justify="flex-end">
-				<Button variant="tertiary" onClick={ closeModal }>
-					{ __( 'Cancel' ) }
-				</Button>
-				<Button
-					variant="primary"
-					onClick={ handleFixThreat }
-					isBusy={ fixThreat.isPending }
-					disabled={ fixThreat.isPending }
-				>
-					{ fixButtonLabel }
-				</Button>
-			</ButtonStack>
+
+			{ isExtensionDeleteFixer ? (
+				<FixThreatConfirmation
+					threat={ threat }
+					onCancel={ closeModal }
+					onConfirm={ handleFixThreat }
+					disabled={ isFixing }
+					isLoading={ isFixing }
+				/>
+			) : (
+				<>
+					<ThreatDescription threat={ items[ 0 ] } />
+					<ButtonStack justify="flex-end">
+						<Button variant="tertiary" onClick={ closeModal }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ handleFixThreat }
+							isBusy={ isFixing }
+							disabled={ isFixing }
+						>
+							{ isFixing ? __( 'Fixing threat…' ) : __( 'Fix threat' ) }
+						</Button>
+					</ButtonStack>
+				</>
+			) }
 		</VStack>
 	);
 }

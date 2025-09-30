@@ -8,12 +8,16 @@ import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import BillingDragonCheckout from '../billing-dragon-checkout';
 import withMarketplaceType from '../hoc/with-marketplace-type';
+import useShoppingCart from '../hooks/use-shopping-cart';
 
-import './style.scss';
+import './style-v2.scss';
 
 function CheckoutV2() {
 	const translate = useTranslate();
+
+	const { selectedCartItems } = useShoppingCart();
 
 	const title = translate( 'Checkout' );
 
@@ -21,6 +25,7 @@ function CheckoutV2() {
 		<Layout
 			className="checkout"
 			title={ title }
+			withBorder
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
@@ -41,7 +46,7 @@ function CheckoutV2() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<div>This is the placeholder for the new Checkout for Billing Dragon System.</div>
+				<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
 			</LayoutBody>
 		</Layout>
 	);
