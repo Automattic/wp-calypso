@@ -4,20 +4,6 @@ import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
 
-/**
- * Simple throttle function to limit how often a function can be called.
- */
-export function throttle( fn: () => void, limit: number ) {
-	let inThrottle: boolean;
-	return function ( this: unknown, ...args: unknown[] ) {
-		if ( ! inThrottle ) {
-			fn.apply( this, args as never );
-			inThrottle = true;
-			setTimeout( () => ( inThrottle = false ), limit );
-		}
-	};
-}
-
 type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;

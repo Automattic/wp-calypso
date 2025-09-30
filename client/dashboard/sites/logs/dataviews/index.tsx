@@ -3,6 +3,7 @@ import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { ToggleControl, Button } from '@wordpress/components';
+import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -17,7 +18,6 @@ import {
 	buildServerLogsWithId,
 	type PhpLogWithId,
 	type ServerLogWithId,
-	throttle,
 } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
