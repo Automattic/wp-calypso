@@ -6,11 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
-import {
-	__experimentalGrid as Grid,
-	__experimentalText as Text,
-	Button,
-} from '@wordpress/components';
+import { __experimentalGrid as Grid, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __, isRTL } from '@wordpress/i18n';
@@ -24,6 +20,7 @@ import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../a
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BackupDetails } from './backup-details';
@@ -31,6 +28,7 @@ import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
+import { useBackupState } from './use-backup-state';
 import './style.scss';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
@@ -48,10 +46,12 @@ export function BackupsListPage() {
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
+	const backupState = useBackupState( site.ID );
+
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
-			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
@@ -141,7 +141,14 @@ export function BackupsListPage() {
 
 	const renderMobileView = () => {
 		if ( showDetails && selectedBackup ) {
-			return <BackupDetails backup={ selectedBackup } site={ site } />;
+			return (
+				<BackupDetails
+					backup={ selectedBackup }
+					site={ site }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			);
 		}
 
 		return (
@@ -174,7 +181,7 @@ export function BackupsListPage() {
 					onChange={ handleDateRangeChangeWrapper }
 				/>
 			</div>
-			<BackupNowButton site={ site } />
+			<BackupNowButton site={ site } backupState={ backupState } />
 		</>
 	);
 
@@ -187,7 +194,16 @@ export function BackupsListPage() {
 					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
-			notices={ shouldShowNotices ? <BackupNotices site={ site } /> : undefined }
+			notices={
+				shouldShowNotices ? (
+					<BackupNotices
+						backupState={ backupState }
+						site={ site }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				) : undefined
+			}
 		>
 			{ hasBackups && (
 				<>
@@ -204,7 +220,14 @@ export function BackupsListPage() {
 								gmtOffset={ gmtOffset }
 							/>
 
-							{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+							{ selectedBackup && (
+								<BackupDetails
+									backup={ selectedBackup }
+									site={ site }
+									timezoneString={ timezoneString }
+									gmtOffset={ gmtOffset }
+								/>
+							) }
 						</Grid>
 					) }
 				</>

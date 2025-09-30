@@ -5,24 +5,46 @@
 	align-items: center;
 	width: 100%;
 
-	> * { flex: 0 0 auto; }
+	> * {
+		flex: 0 0 auto;
+	}
 }
 
 /* Popover sizing */
 .daterange-popover .components-popover__content {
 	overflow: visible;
 	width: auto;
-	max-width: calc(100vw - 48px);
+	max-width: calc( 100vw - 48px );
 }
 
-
- /* Body rows */
+/* Body rows */
 .daterange-inputs {
 	margin-bottom: 12px;
 }
 
+.daterange-input {
+	&__field {
+		// The extra class is to make sure it overrides the default button styles
+		&.components-button {
+			background: $white;
+			padding: $grid-unit-05 $grid-unit-05 $grid-unit-05 $grid-unit-10;
+			box-shadow: none;
+			border-radius: $radius-small;
+			border: 1px solid $gray-600;
+		}
+		svg {
+			color: $gray-900;
+			padding: $grid-unit-05;
+		}
+	}
+	&__text {
+		color: $gray-900;
+		padding: 0 $grid-unit-05;
+	}
+}
+
 /* Mobile */
-@media (max-width: 600px) {
+@media ( max-width: 600px ) {
 	.daterange-calendar {
 		display: flex;
 		justify-content: center;
@@ -31,14 +53,14 @@
 }
 
 /* Medium screens: presets and calendar should be centered with no awkward right margin */
-@media (min-width: 601px) and (max-width: 899px) {
+@media ( min-width: 601px ) and ( max-width: 899px ) {
 	.daterange-body {
 		justify-content: space-between !important;
 	}
 }
 
 /* Desktop presets column: ensure a reasonable width to avoid awkward wrapping */
-@media (min-width: 601px) {
+@media ( min-width: 601px ) {
 	.daterange-presets {
 		min-width: 240px;
 	}
@@ -54,9 +76,9 @@
 }
 
 /* Hide native date picker icons inside our date inputs (visual only) */
-.daterange-inputs input[type="date"]::-webkit-calendar-picker-indicator {
+.daterange-inputs input[type='date']::-webkit-calendar-picker-indicator {
 	display: none;
 }
-.daterange-inputs input[type="date"]::-webkit-clear-button {
+.daterange-inputs input[type='date']::-webkit-clear-button {
 	display: none;
 }
