@@ -1,20 +1,19 @@
 import { createGithubWorkflowMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import {
+	Button,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { CodeHighlighter } from '../../components/code-highlighter';
-import type { GitHubRepository } from '@automattic/api-core';
-
-interface Workflow {
-	file_name: string;
-	workflow_path: string;
-}
+import type { GitHubRepository, GitHubWorkflow } from '@automattic/api-core';
 
 interface NewWorkflowWizardProps {
-	repository: Pick< GitHubRepository, 'id' | 'owner' | 'name' >;
+	repository: GitHubRepository;
 	repositoryBranch: string;
-	workflows?: Workflow[];
+	workflows?: GitHubWorkflow[];
 	templateName: string;
 	exampleTemplate: string;
 	onWorkflowCreated( path: string ): void;
@@ -37,7 +36,6 @@ export const NewWorkflowWizard = ( {
 	const { mutate: createWorkflow, isPending } = useMutation( {
 		...createGithubWorkflowMutation(),
 		onSuccess: () => {
-			// Invalidate related queries to refresh the data
 			queryClient.invalidateQueries( {
 				queryKey: [ 'github', 'workflows' ],
 			} );
@@ -63,41 +61,30 @@ export const NewWorkflowWizard = ( {
 	}, [ workflows ] );
 
 	return (
-		<div className="github-deployments-new-workflow-wizard">
-			<div className="github-deployments-new-workflow-wizard__workflow-file">
-				<div className="github-deployments-new-workflow-wizard__workflow-file-name">
-					<span>{ RECOMMENDED_WORKFLOW_PATH }</span>
-				</div>
+		<VStack spacing={ 4 }>
+			<Text as="pre">{ RECOMMENDED_WORKFLOW_PATH }</Text>
+			<CodeHighlighter content={ exampleTemplate } />
 
-				<CodeHighlighter content={ exampleTemplate } />
-			</div>
+			{ error && <Text>{ error }</Text> }
 
-			{ error && (
-				<Text variant="muted" style={ { color: 'var(--wp--preset--color--vivid-red)' } }>
-					{ error }
-				</Text>
-			) }
-
-			<div css={ { marginTop: '16px' } }>
-				<Button
-					type="button"
-					variant="secondary"
-					disabled={ isPending }
-					isBusy={ isPending }
-					onClick={ () =>
-						createWorkflow( {
-							repository_id: repository.id,
-							repository_owner: repository.owner,
-							repository_name: repository.name,
-							branch_name: repositoryBranch,
-							file_name: RECOMMENDED_WORKFLOW_PATH,
-							workflow_template: templateName,
-						} )
-					}
-				>
-					{ __( 'Install workflow for me' ) }
-				</Button>
-			</div>
-		</div>
+			<Button
+				type="button"
+				variant="secondary"
+				disabled={ isPending }
+				isBusy={ isPending }
+				onClick={ () =>
+					createWorkflow( {
+						repository_id: repository.id,
+						repository_owner: repository.owner,
+						repository_name: repository.name,
+						branch_name: repositoryBranch,
+						file_name: RECOMMENDED_WORKFLOW_PATH,
+						workflow_template: templateName,
+					} )
+				}
+			>
+				{ __( 'Install workflow for me' ) }
+			</Button>
+		</VStack>
 	);
 };
