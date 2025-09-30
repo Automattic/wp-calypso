@@ -1180,8 +1180,14 @@ export function CheckoutStepGroup( {
 	);
 }
 
-const paymentMethodStepProps = getDefaultPaymentMethodStep();
 export function PaymentMethodStep( props: Partial< CheckoutStepProps > ) {
+	const paymentMethodStepProps = useMemo(
+		() =>
+			getDefaultPaymentMethodStep( {
+				onPageLoadError: props.onPageLoadError,
+			} ),
+		[ props.onPageLoadError ]
+	);
 	return <CheckoutStep { ...{ ...paymentMethodStepProps, ...props } } />;
 }
 PaymentMethodStep.isCheckoutStep = true;
