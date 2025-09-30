@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import noThreatsIllustration from '../scan-active/no-threats-illustration.svg';
-import { useActions } from './dataviews/actions';
+import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -49,7 +49,7 @@ export function ScanHistoryDataViews( {
 	const threats = scanHistory?.threats || [];
 
 	const fields = getFields( timezoneString, gmtOffset );
-	const actions = useActions( site );
+	const actions = getActions( site );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
 	const NoArchivedThreatsFound = () => {
