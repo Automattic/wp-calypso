@@ -98,17 +98,15 @@ export const WorkflowValidationList = ( {
 		data: workflowChecks,
 		isFetching: isFetchingWorkflowChecks,
 		refetch: refetchWorkflowChecks,
-	} = useQuery(
-		githubWorkflowChecksQuery(
+	} = useQuery( {
+		...githubWorkflowChecksQuery(
 			repository?.owner ?? '',
 			repository?.name ?? '',
 			branchName,
 			workflowPath ?? ''
 		),
-		{
-			enabled: !! repository && !! branchName && !! workflowPath,
-		}
-	);
+		enabled: !! repository && !! branchName && !! workflowPath,
+	} );
 
 	const canVerifyWorkflow = Boolean( workflowPath && installationId && repository && branchName );
 

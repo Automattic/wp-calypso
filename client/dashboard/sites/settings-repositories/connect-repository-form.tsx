@@ -3,6 +3,7 @@ import {
 	githubRepositoriesQuery,
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
+	githubWorkflowsQuery,
 	createCodeDeploymentMutation,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -189,6 +190,31 @@ export const ConnectRepositoryForm = ( {
 		enabled: !! selectedInstallation && !! selectedRepository,
 	} );
 
+	const { data: workflows = [] } = useQuery( {
+		...githubWorkflowsQuery(
+			selectedRepository?.owner ?? '',
+			selectedRepository?.name ?? '',
+			formData.branch
+		),
+		enabled: !! selectedRepository && !! formData.branch,
+	} );
+
+	useEffect( () => {
+		if (
+			workflows.length > 0 &&
+			! formData.workflowPath &&
+			formData.deploymentMode === 'advanced'
+		) {
+			setFormData( ( prev ) => ( { ...prev, workflowPath: workflows[ 0 ].workflow_path } ) );
+		}
+	}, [ workflows, formData.workflowPath, formData.deploymentMode ] );
+
+	useEffect( () => {
+		if ( formData.deploymentMode === 'simple' && formData.workflowPath ) {
+			setFormData( ( prev ) => ( { ...prev, workflowPath: '' } ) );
+		}
+	}, [ formData.deploymentMode, formData.workflowPath ] );
+
 	const { data: repositoryChecks } = useQuery( {
 		...githubRepositoryChecksQuery(
 			selectedInstallation?.external_id ?? 0,
@@ -318,6 +344,7 @@ export const ConnectRepositoryForm = ( {
 				repository={ selectedRepository }
 				branchName={ formData.branch }
 				workflowPath={ formData.workflowPath }
+				workflows={ workflows }
 				onWorkflowCreation={ ( workflowPath ) =>
 					setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
 				}

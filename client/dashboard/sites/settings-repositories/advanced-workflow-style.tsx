@@ -1,4 +1,4 @@
-import { githubWorkflowsQuery, githubWorkflowTemplatesQuery } from '@automattic/api-queries';
+import { githubWorkflowTemplatesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink, SelectControl, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -6,12 +6,13 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { NewWorkflowWizard } from './new-workflow-wizard';
 import { WorkflowValidationList } from './workflow-validation-list';
-import type { GitHubRepository } from '@automattic/api-core';
+import type { GitHubRepository, GitHubWorkflow } from '@automattic/api-core';
 
 type AdvancedWorkflowStyleProps = {
 	repository?: GitHubRepository;
 	branchName: string;
 	workflowPath?: string;
+	workflows: GitHubWorkflow[];
 	isLoading: boolean;
 	isFetching: boolean;
 	useComposerWorkflow: boolean;
@@ -27,6 +28,7 @@ export const AdvancedWorkflowStyle = ( {
 	repository,
 	branchName,
 	workflowPath,
+	workflows,
 	onWorkflowCreation,
 	onChooseWorkflow,
 	useComposerWorkflow,
@@ -35,16 +37,10 @@ export const AdvancedWorkflowStyle = ( {
 }: AdvancedWorkflowStyleProps ) => {
 	const templateName = useComposerWorkflow ? 'with_composer' : 'simple';
 
-	const { data: template } = useQuery( githubWorkflowTemplatesQuery( branchName, templateName ), {
+	const { data: template } = useQuery( {
+		...githubWorkflowTemplatesQuery( branchName, templateName ),
 		enabled: !! branchName,
 	} );
-
-	const { data: workflows = [] } = useQuery(
-		githubWorkflowsQuery( repository?.owner ?? '', repository?.name ?? '', branchName ),
-		{
-			enabled: !! repository && !! branchName,
-		}
-	);
 
 	const workflowOptions = useMemo( () => {
 		const options =
