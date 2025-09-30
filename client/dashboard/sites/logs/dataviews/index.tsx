@@ -7,7 +7,7 @@ import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { Icon, arrowUp } from '@wordpress/icons';
+import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -322,12 +322,12 @@ function SiteLogsDataViews( {
 			) }
 			{ showScrollTop && (
 				<Button
-					variant="tertiary"
+					icon={ arrowUp }
+					iconSize={ 24 }
+					size="compact"
 					className="site-logs-scroll-to-top"
 					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
-				>
-					<Icon icon={ arrowUp } size={ 24 } />
-				</Button>
+				/>
 			) }
 		</>
 	);
