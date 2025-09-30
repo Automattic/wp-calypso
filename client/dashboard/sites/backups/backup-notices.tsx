@@ -28,12 +28,13 @@ export function BackupNotices( {
 }: BackupNoticesProps ) {
 	const { status, backup } = backupState;
 	const backupDate = useFormattedTime(
-		backup?.started ?? '',
+		backup?.started ? backup.started.replace( ' ', 'T' ) + 'Z' : '',
 		{
 			timeStyle: 'short',
 		},
 		timezoneString,
-		gmtOffset
+		gmtOffset,
+		true // Use lowercase calendar label
 	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
@@ -67,7 +68,7 @@ export function BackupNotices( {
 				) }
 			>
 				{ sprintf(
-					/* translators: %s is a date, like "Today at 10:00". */
+					/* translators: %s is a date, like "today at 10:00". */
 					__( 'We’re making a backup of your site from %s' ),
 					backupDate
 				) }
@@ -97,9 +98,9 @@ export function BackupNotices( {
 			>
 				{ createInterpolateElement(
 					sprintf(
-						/* translators: %s is a date, like "Today at 10:00" */
+						/* translators: %s is a date, like "today at 10:00" */
 						__(
-							'We weren’t able to finish your backup from %s, but don’t worry — your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
+							'We weren’t able to finish your backup from %s, but don’t worry—your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
 						),
 						backupDate
 					),
