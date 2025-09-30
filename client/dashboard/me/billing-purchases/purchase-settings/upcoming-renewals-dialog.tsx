@@ -118,15 +118,6 @@ export function UpcomingRenewalsDialog( {
 
 	const fields = useMemo( () => getPurchaseFields(), [] );
 
-	const dataWithIds = useMemo(
-		() =>
-			purchasesSortByRecentExpiryDate.map( ( purchase ) => ( {
-				...purchase,
-				id: purchase.ID.toString(),
-			} ) ),
-		[ purchasesSortByRecentExpiryDate ]
-	);
-
 	const actions = useMemo( (): Action< Purchase >[] => {
 		const actionsList: Action< Purchase >[] = [
 			{
@@ -183,7 +174,7 @@ export function UpcomingRenewalsDialog( {
 			</VStack>
 			<Divider margin={ 3 } />
 			<DataViews
-				data={ dataWithIds }
+				data={ purchasesSortByRecentExpiryDate }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
@@ -193,7 +184,7 @@ export function UpcomingRenewalsDialog( {
 				getItemId={ ( item ) => item.ID.toString() }
 				isLoading={ false }
 				paginationInfo={ {
-					totalItems: dataWithIds.length,
+					totalItems: purchasesSortByRecentExpiryDate.length,
 					totalPages: 1,
 				} }
 				defaultLayouts={ { table: {} } }
