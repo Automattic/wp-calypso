@@ -15,16 +15,16 @@ import { Notice } from '../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface UnignoreThreatModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function UnignoreThreatModal( { items, closeModal, siteId }: UnignoreThreatModalProps ) {
+export function UnignoreThreatModal( { items, closeModal, site }: UnignoreThreatModalProps ) {
 	const threat = items[ 0 ];
-	const unignoreThreat = useMutation( unignoreThreatMutation( siteId ) );
+	const unignoreThreat = useMutation( unignoreThreatMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleUnignoreThreat = () => {
@@ -46,7 +46,7 @@ export function UnignoreThreatModal( { items, closeModal, siteId }: UnignoreThre
 		<VStack spacing={ 4 }>
 			<Text variant="muted">{ __( 'Jetpack will be unignoring the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ [ threat ] } />
-			<ThreatDescription threat={ threat } />
+			<ThreatDescription threat={ threat } site={ site } />
 			<Notice variant="warning">
 				{ createInterpolateElement(
 					__(

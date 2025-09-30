@@ -15,17 +15,17 @@ import { Notice } from '../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface IgnoreThreatModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatModalProps ) {
+export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModalProps ) {
 	const threat = items[ 0 ];
 
-	const ignoreThreat = useMutation( ignoreThreatMutation( siteId ) );
+	const ignoreThreat = useMutation( ignoreThreatMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleIgnoreThreat = () => {
@@ -47,7 +47,7 @@ export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatMo
 		<VStack spacing={ 4 }>
 			<Text variant="muted">{ __( 'Jetpack will be ignoring the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ [ threat ] } />
-			<ThreatDescription threat={ threat } />
+			<ThreatDescription threat={ threat } site={ site } />
 			<Notice variant="error">
 				{ createInterpolateElement(
 					__(
