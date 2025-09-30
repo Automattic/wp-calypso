@@ -301,7 +301,8 @@ function StagingSiteSyncModalInner( {
 		  )
 		: null;
 
-	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+	//const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+	const shouldDisableGranularSync = true;
 
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 	const showWooCommerceWarning =
@@ -371,7 +372,8 @@ function StagingSiteSyncModalInner( {
 
 	const isSubmitDisabled =
 		( showDomainConfirmation && formData.domain !== productionSiteSlug ) ||
-		( browserCheckList.totalItems === 0 &&
+		( ! shouldDisableGranularSync &&
+			browserCheckList.totalItems === 0 &&
 			browserCheckList.includeList.length === 0 &&
 			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
