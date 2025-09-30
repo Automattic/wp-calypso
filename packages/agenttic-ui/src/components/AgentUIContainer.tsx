@@ -438,6 +438,21 @@ export function AgentUIContainer( {
 		}
 	}, [ chat.state, input.value ] );
 
+	// Show emptyView only if a react element is provided, on floating variant, with no messages and no input
+	const showEmptyView =
+		emptyView &&
+		variant === 'floating' &&
+		messages.length === 0 &&
+		! input.value.trim() &&
+		React.isValidElement( emptyView );
+
+	// Clone the emptyView and inject handleSuggestionSubmit
+	const computedEmptyView = showEmptyView
+		? React.cloneElement( emptyView, {
+				onSuggestionClick: handleSuggestionSubmit,
+		  } as any )
+		: undefined;
+
 	// Create context value
 	const contextValue: AgentUIContextValue = {
 		// Core data
@@ -460,7 +475,7 @@ export function AgentUIContainer( {
 		// UI state
 		variant,
 		placeholder,
-		emptyView,
+		emptyView: computedEmptyView,
 		messageRenderer,
 
 		// Floating chat specific

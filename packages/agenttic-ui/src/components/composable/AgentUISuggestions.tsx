@@ -13,8 +13,14 @@ export function AgentUISuggestions( {
 	showSuggestions,
 	onSelect,
 }: AgentUISuggestionsProps = {} ) {
-	const { suggestions, handleSuggestionSubmit, inputValue } =
-		useAgentUIContext();
+	const {
+		suggestions,
+		handleSuggestionSubmit,
+		inputValue,
+		messages,
+		variant,
+		emptyView,
+	} = useAgentUIContext();
 
 	const handleSubmit = useCallback(
 		( message: string ) => {
@@ -31,6 +37,16 @@ export function AgentUISuggestions( {
 
 	// Only show when input is empty or showSuggestions is true.
 	if ( inputValue && ! showSuggestions ) {
+		return null;
+	}
+
+	// Hide suggestions when emptyView is being shown
+	if (
+		emptyView &&
+		variant === 'floating' &&
+		messages.length === 0 &&
+		! inputValue
+	) {
 		return null;
 	}
 

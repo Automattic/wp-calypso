@@ -14,6 +14,7 @@ export interface SuggestionsProps {
 	visible?: boolean;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
+	translateY?: string | number;
 }
 
 export const Suggestions: React.FC< SuggestionsProps > = ( {
@@ -24,6 +25,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	visible = true,
 	onMouseEnter,
 	onMouseLeave,
+	translateY = '-100%',
 } ) => {
 	const handleSuggestionClick = ( suggestion: Suggestion ) => {
 		if ( onSubmit ) {
@@ -45,7 +47,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 						className
 					) }
 					initial={ { opacity: 0, y: '-80%' } }
-					animate={ { opacity: 1, y: '-100%' } }
+					animate={ { opacity: 1, y: translateY } }
 					exit={ { opacity: 0, y: '-80%' } }
 					transition={ fastSpringWithDelay }
 					onMouseEnter={ onMouseEnter }

@@ -31,6 +31,7 @@ export { Message } from './components/chat/Message';
 export { Suggestions } from './components/chat/Suggestions';
 export { AnimatedPlaceholder } from './components/chat/AnimatedPlaceholder';
 export { ChatHeader } from './components/chat/ChatHeader';
+export { EmptyView } from './components/chat/EmptyView';
 export { CollapsedView } from './components/views/CollapsedView';
 export { CompactView } from './components/views/CompactView';
 export { ConversationView } from './components/views/ConversationView';
