@@ -60,7 +60,7 @@ export interface DomainSearchProps {
 	};
 	cart: DomainSearchCart;
 	className?: string;
-	initialQuery?: string;
+	query?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
 	config?: Partial< DomainSearchConfig >;
@@ -69,7 +69,7 @@ export interface DomainSearchProps {
 export interface DomainSearchContextType
 	extends Omit<
 		DomainSearchProps,
-		'className' | 'initialQuery' | 'events' | 'config' | 'getPriceRuleForSuggestion'
+		'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
 	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;

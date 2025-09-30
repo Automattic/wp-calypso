@@ -11,17 +11,17 @@
 		display: none;
 	}
 
-	.components-checkbox-control__input[type="checkbox"]:disabled:checked {
+	.components-checkbox-control__input[type='checkbox']:disabled:checked {
 		background: #f0f0f0;
 		border-color: #ddd;
 	}
 
-	.components-checkbox-control:has(input[disabled]:checked) {
+	.components-checkbox-control:has( input[disabled]:checked ) {
 		.components-checkbox-control__checked {
 			fill: #a0a5aa;
 		}
 	}
-	
+
 	.components-select-control__input[disabled] {
 		color: #a0a5aa;
 		background-color: #f7f7f7;
@@ -93,7 +93,6 @@
 	}
 
 	.components-checkbox-control {
-		margin-left: 4px;
 		font-size: $font-body-small;
 	}
 
@@ -161,10 +160,6 @@
 		.file-browser-header__selecting {
 			display: none;
 		}
-	}
-
-	.file-browser-node .components-checkbox-control {
-		margin-left: 8px;
 	}
 }
 
