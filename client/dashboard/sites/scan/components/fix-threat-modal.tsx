@@ -26,9 +26,16 @@ export function FixThreatModal( { items, closeModal, site }: FixThreatModalProps
 
 	const { startFix, isFixing, status, error } = useFixThreats( site.ID, threatIds );
 
+	const isExtensionDeleteFixer =
+		threat.signature === 'Vulnerable.WP.Extension' && threat.fixable?.fixer === 'delete';
+
 	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_scan_fix_threat_modal_open' );
-	}, [ recordTracksEvent ] );
+		if ( isExtensionDeleteFixer ) {
+			recordTracksEvent( 'calypso_dashboard_scan_fix_threat_confirmation_modal_open' );
+		} else {
+			recordTracksEvent( 'calypso_dashboard_scan_fix_threat_modal_open' );
+		}
+	}, [ recordTracksEvent, isExtensionDeleteFixer ] );
 
 	useEffect( () => {
 		if ( status.isComplete && ! isFixing ) {
@@ -59,9 +66,6 @@ export function FixThreatModal( { items, closeModal, site }: FixThreatModalProps
 		recordTracksEvent( 'calypso_dashboard_scan_fix_threat_click' );
 		startFix();
 	};
-
-	const isExtensionDeleteFixer =
-		threat.signature === 'Vulnerable.WP.Extension' && threat.fixable?.fixer === 'delete';
 
 	return (
 		<VStack spacing={ 4 }>
