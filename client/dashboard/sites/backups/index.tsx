@@ -103,15 +103,17 @@ export function BackupsListPage() {
 			}
 			return;
 		}
+
 		// if no rewindId, then it's hitting the index route
-		// let's redirect to the first found backup
-		// but no redirection if it's mobile
+		// we select the first found backup without changing the route in that case to make things look nice.
+		// no selection if it's mobile!
 		const backup = activityLog?.[ 0 ];
 		if ( ! rewindId && backup && ! isSmallViewport ) {
-			setSelectedBackup( backup, true );
+			setSelectedBackupInState( backup );
 		}
 
 		// no rewind id in param, and no backup? We have an empty query
+		// don't set any backup
 		if ( ! rewindId && ! backup ) {
 			setSelectedBackupInState( null );
 		}
