@@ -42,6 +42,7 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 			description: __(
 				'All domains on this site will redirect here as long as this domain is set as your primary domain.'
 			),
+			placeholder: 'example.com',
 			isValid: {
 				required: true,
 			},
