@@ -4,7 +4,7 @@ import {
 	redirectIfDuplicatedView as _redirectIfDuplicatedView,
 	render as clientRender,
 } from 'calypso/controller';
-import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
 const redirectIfDuplicatedView = ( context, next ) => {
@@ -19,7 +19,6 @@ export default function () {
 		'/settings/writing/:site_id',
 		siteSelection,
 		_redirectIfDuplicatedView( 'options-writing.php' ),
-		navigation,
 		siteSettings,
 		makeLayout,
 		clientRender
@@ -31,7 +30,6 @@ export default function () {
 		'/settings/taxonomies/:taxonomy/:site_id',
 		siteSelection,
 		redirectIfDuplicatedView,
-		navigation,
 		setScroll,
 		makeLayout,
 		clientRender
