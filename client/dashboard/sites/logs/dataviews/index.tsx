@@ -85,8 +85,9 @@ function SiteLogsDataViews( {
 		pageSize: DEFAULT_PER_PAGE,
 	};
 
-	const { data, isLoading, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
-		useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
+	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery(
+		siteLogsInfiniteQuery( site.ID, params )
+	);
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -294,7 +295,7 @@ function SiteLogsDataViews( {
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ phpLogs }
-					isLoading={ isLoading }
+					isLoading={ isFetching }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -308,7 +309,7 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ serverLogs }
-					isLoading={ isLoading }
+					isLoading={ isFetching }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
