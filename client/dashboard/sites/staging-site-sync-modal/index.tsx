@@ -36,6 +36,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
 import type { Field } from '@wordpress/dataviews';
+
 // File browser config used for granular selection
 const fileBrowserConfig: FileBrowserConfig = {
 	restrictedTypes: [ 'plugin', 'theme' ],
