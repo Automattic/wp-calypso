@@ -98,7 +98,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	return (
 		<PageLayout
 			header={
-				<VStack as="div" spacing={ 0 } direction="row" alignment="end">
+				<VStack as="div" spacing={ 0 } direction="row" alignment="end" justify="flex-start">
 					<PageHeader title={ __( 'Logs' ) } />
 
 					{ shouldShowDateRangePicker && (
