@@ -126,7 +126,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 									<Button
 										variant="primary"
 										onClick={ () => {
-											recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_modal_open', {
+											recordTracksEvent( 'calypso_dashboard_scan_fix_threats_cta_click', {
 												threat_count: fixableThreatsCount,
 											} );
 											setShowBulkFixModal( true );
