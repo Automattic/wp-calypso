@@ -1,4 +1,4 @@
-import { DropdownMenu } from '@wordpress/components';
+import { __experimentalHStack as HStack, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
 import Menu from '../../components/menu';
@@ -44,9 +44,17 @@ function PrimaryMenuMobile() {
 						</RouterLinkMenuItem>
 					) }
 					{ supports.themes && (
-						<Menu.ExternalItem as={ Menu.ItemLink } href="/themes" onClick={ onClose }>
-							{ __( 'Themes' ) }
-						</Menu.ExternalItem>
+						<Menu.ItemLink
+							href="/themes"
+							onClick={ onClose }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<HStack justify="flex-start" spacing={ 1 }>
+								<span>{ __( 'Themes' ) }</span>
+								<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+							</HStack>
+						</Menu.ItemLink>
 					) }
 				</>
 			) }
