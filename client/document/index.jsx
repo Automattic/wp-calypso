@@ -146,9 +146,11 @@ class Document extends Component {
 					) ) }
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					{ chunkCssLinks( chunkFiles, isRTL ) }
-					{ chunkFiles.js.map( ( chunk ) => (
-						<link key={ chunk } rel="preload" as="script" href={ chunk } />
-					) ) }
+					{ /* Disable JS preloading for checkout (CSP/PCI compliance) */ }
+					{ sectionName !== 'checkout' &&
+						chunkFiles.js.map( ( chunk ) => (
+							<link key={ chunk } rel="preload" as="script" href={ chunk } />
+						) ) }
 				</Head>
 				<body
 					className={ clsx( {
