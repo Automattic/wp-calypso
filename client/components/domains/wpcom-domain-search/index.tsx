@@ -31,7 +31,7 @@ const DomainSearchWithCart = ( {
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
 	const { onContinue, onAddDomainToCart } = props.events ?? {};
-	const [ railcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
+	const [ railcarId, setRailcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
 
 	const { query, setQuery } = useQueryHandler( {
 		initialQuery: props.query,
@@ -67,6 +67,7 @@ const DomainSearchWithCart = ( {
 			...props.events,
 			onQueryChange: ( query: string ) => {
 				setQuery( query );
+				setRailcarId( getNewRailcarId( 'domain-suggestion' ) );
 				props.events?.onQueryChange?.( query );
 			},
 			onContinue: () => {

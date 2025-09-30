@@ -92,7 +92,6 @@ export const useDomainSearchContextValue = (
 	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
-	const [ railCarId, setRailCarId ] = useState( null );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
 
 	const closeFullCart = useCallback( () => {
