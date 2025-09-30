@@ -1,5 +1,5 @@
-import { createCodeDeploymentMutation, githubWorkflowChecksQuery } from '@automattic/api-queries';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { githubWorkflowChecksQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -15,7 +15,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { CodeHighlighter } from '../../components/code-highlighter';
 import { SectionHeader } from '../../components/section-header';
 import {
@@ -32,14 +32,9 @@ export interface WorkflowValidationDefinition {
 }
 
 interface WorkflowValidationListProps {
-	repository?: Pick< GitHubRepository, 'id' | 'owner' | 'name' >;
+	repository: GitHubRepository;
 	branchName: string;
-	workflowPath?: string;
-	onWorkflowCreated?: ( path: string ) => void | Promise< void >;
-	disabled?: boolean;
-	siteId: number;
-	installationId: number;
-	isCreatingNewWorkflow?: boolean;
+	workflowPath: string;
 }
 
 const getStatusIcon = ( status: GitHubWorkflowValidationItem[ 'status' ] | 'loading' ) => {
@@ -53,22 +48,12 @@ const getStatusIcon = ( status: GitHubWorkflowValidationItem[ 'status' ] | 'load
 	return <Icon icon={ isSuccess ? check : closeSmall } style={ { fill } } size={ 20 } />;
 };
 
-const WORKFLOWS_DIRECTORY = '.github/workflows/';
-const RECOMMENDED_WORKFLOW_PATH = WORKFLOWS_DIRECTORY + 'wpcom.yml';
-
 export const WorkflowValidationList = ( {
 	repository,
 	branchName,
 	workflowPath,
-	onWorkflowCreated,
-	disabled = false,
-	siteId,
-	installationId,
-	isCreatingNewWorkflow = false,
 }: WorkflowValidationListProps ) => {
-	const queryClient = useQueryClient();
 	const [ expandedCards, setExpandedCards ] = useState< Set< string > >( new Set() );
-	const [ installError, setInstallError ] = useState< string >();
 
 	// Define workflow validations
 	const workflowValidations = useMemo< Record< string, WorkflowValidationDefinition > >( () => {
@@ -93,7 +78,6 @@ export const WorkflowValidationList = ( {
 		};
 	}, [ branchName ] );
 
-	// Query for workflow checks
 	const {
 		data: workflowChecks,
 		isFetching: isFetchingWorkflowChecks,
@@ -105,51 +89,17 @@ export const WorkflowValidationList = ( {
 			branchName,
 			workflowPath ?? ''
 		),
-		enabled: !! repository && !! branchName && !! workflowPath,
+		enabled: !! repository && !! branchName,
 	} );
 
-	const canVerifyWorkflow = Boolean( workflowPath && installationId && repository && branchName );
+	const canVerifyWorkflow = Boolean( workflowPath && repository && branchName );
 
 	const items = workflowChecks?.checked_items ?? [];
-
-	const { mutate: createDeployment, isPending: isInstallingWorkflow } = useMutation( {
-		...createCodeDeploymentMutation( siteId ),
-		onSuccess: async () => {
-			// Invalidate workflows query to refresh the list
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'deployment-workflows', repository?.owner, repository?.name, branchName ],
-			} );
-			await onWorkflowCreated?.( RECOMMENDED_WORKFLOW_PATH );
-		},
-	} );
-
-	useEffect( () => {
-		// Reset install error when component mounts or when repository changes
-		setInstallError( undefined );
-	}, [ repository ] );
 
 	// Early return if required props are missing
 	if ( ! repository || ! branchName ) {
 		return null;
 	}
-
-	const handleInstallWorkflow = () => {
-		if ( ! repository ) {
-			return;
-		}
-
-		createDeployment( {
-			external_repository_id: repository.id,
-			branch_name: branchName,
-			target_dir: '/',
-			installation_id: installationId,
-			is_automated: false,
-			workflow_path: RECOMMENDED_WORKFLOW_PATH,
-		} );
-	};
-
-	// Check if we should show the install workflow state
-	const shouldShowInstallWorkflow = isCreatingNewWorkflow;
 
 	const toggleCard = ( validationName: string ) => {
 		setExpandedCards( ( prev ) => {
@@ -189,115 +139,63 @@ export const WorkflowValidationList = ( {
 		return <Text>{ message }</Text>;
 	};
 
-	// Don't render anything if no workflow is selected and we're not creating a new one
-	if ( ! workflowPath && ! isCreatingNewWorkflow ) {
-		return null;
-	}
-
 	return (
 		<VStack spacing={ 3 }>
-			{ shouldShowInstallWorkflow && (
-				<VStack spacing={ 3 }>
-					<Text>
-						{ __(
-							'This workflow will be created in your repository and will handle automatic deployments to your WordPress.com site.'
-						) }
-					</Text>
-
-					<div className="github-deployments-new-workflow-wizard__workflow-file">
-						<div
-							className="github-deployments-new-workflow-wizard__workflow-file-name"
-							style={ {
-								fontFamily: 'monospace',
-								border: '1px solid #ddd',
-								padding: '8px 12px',
-								backgroundColor: '#f6f7f7',
-								borderRadius: '4px',
-								marginBottom: '12px',
-							} }
-						>
-							{ RECOMMENDED_WORKFLOW_PATH }
-						</div>
-						<CodeHighlighter content={ DEFAULT_WORKFLOW_TEMPLATE } />
-					</div>
-
-					{ installError && (
-						<Notice status="warning" isDismissible={ false }>
-							{ installError }
-						</Notice>
-					) }
-
+			<SectionHeader
+				title={ __( 'Workflow check' ) }
+				actions={
 					<Button
-						type="button"
 						variant="secondary"
-						disabled={ isInstallingWorkflow || disabled }
-						isBusy={ isInstallingWorkflow }
-						onClick={ handleInstallWorkflow }
+						onClick={ () => refetchWorkflowChecks() }
+						disabled={ isFetchingWorkflowChecks || ! canVerifyWorkflow }
+						isBusy={ isFetchingWorkflowChecks }
 					>
-						{ __( 'Install workflow for me' ) }
+						{ __( 'Verify workflow' ) }
 					</Button>
-				</VStack>
+				}
+			/>
+
+			{ summaryMessage() }
+
+			{ ! workflowChecks && ! isFetchingWorkflowChecks && (
+				<Notice status="info" isDismissible={ false }>
+					<Text>{ __( 'Run a workflow check to validate your configuration.' ) }</Text>
+				</Notice>
 			) }
 
-			{ workflowPath && ! isCreatingNewWorkflow && (
-				<>
-					<SectionHeader
-						title={ __( 'Workflow check' ) }
-						actions={
-							<Button
-								variant="secondary"
-								onClick={ () => refetchWorkflowChecks() }
-								disabled={ isFetchingWorkflowChecks || ! canVerifyWorkflow }
-								isBusy={ isFetchingWorkflowChecks }
+			{ items.map( ( item ) => {
+				const validation = workflowValidations[ item.validation_name ];
+
+				if ( ! validation ) {
+					return null;
+				}
+
+				const isExpanded = expandedCards.has( item.validation_name );
+
+				return (
+					<Card key={ item.validation_name }>
+						<CardBody style={ { padding: '16px' } }>
+							<HStack
+								spacing={ 2 }
+								style={ { cursor: 'pointer' } }
+								onClick={ () => toggleCard( item.validation_name ) }
 							>
-								{ __( 'Verify workflow' ) }
-							</Button>
-						}
-					/>
+								<HStack spacing={ 2 } justify="flex-start" alignment="center">
+									{ getStatusIcon( isFetchingWorkflowChecks ? 'loading' : item.status ) }
+									<Text weight={ 500 }>{ validation.label }</Text>
+								</HStack>
+							</HStack>
 
-					{ summaryMessage() }
-
-					{ ! workflowChecks && ! isFetchingWorkflowChecks && (
-						<Notice status="info" isDismissible={ false }>
-							<Text>{ __( 'Run a workflow check to validate your configuration.' ) }</Text>
-						</Notice>
-					) }
-
-					{ items.map( ( item ) => {
-						const validation = workflowValidations[ item.validation_name ];
-
-						if ( ! validation ) {
-							return null;
-						}
-
-						const isExpanded = expandedCards.has( item.validation_name );
-
-						return (
-							<Card key={ item.validation_name }>
-								<CardBody style={ { padding: '16px' } }>
-									<HStack
-										spacing={ 2 }
-										style={ { cursor: 'pointer' } }
-										onClick={ () => toggleCard( item.validation_name ) }
-									>
-										<HStack spacing={ 2 } justify="flex-start" alignment="center">
-											{ getStatusIcon( isFetchingWorkflowChecks ? 'loading' : item.status ) }
-											<Text weight={ 500 }>{ validation.label }</Text>
-										</HStack>
-									</HStack>
-
-									{ isExpanded && (
-										<VStack spacing={ 2 } style={ { marginTop: '12px' } }>
-											<Text>{ validation.description }</Text>
-											<CodeHighlighter content={ validation.content } />
-										</VStack>
-									) }
-								</CardBody>
-							</Card>
-						);
-					} ) }
-				</>
-			) }
+							{ isExpanded && (
+								<VStack spacing={ 2 } style={ { marginTop: '12px' } }>
+									<Text>{ validation.description }</Text>
+									<CodeHighlighter content={ validation.content } />
+								</VStack>
+							) }
+						</CardBody>
+					</Card>
+				);
+			} ) }
 		</VStack>
 	);
 };

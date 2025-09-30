@@ -9,9 +9,9 @@ import { WorkflowValidationList } from './workflow-validation-list';
 import type { GitHubRepository, GitHubWorkflow } from '@automattic/api-core';
 
 type AdvancedWorkflowStyleProps = {
-	repository?: GitHubRepository;
+	repository: GitHubRepository;
 	branchName: string;
-	workflowPath?: string;
+	workflowPath: string;
 	workflows: GitHubWorkflow[];
 	isLoading: boolean;
 	isFetching: boolean;
@@ -32,8 +32,6 @@ export const AdvancedWorkflowStyle = ( {
 	onWorkflowCreation,
 	onChooseWorkflow,
 	useComposerWorkflow,
-	siteId,
-	installationId,
 }: AdvancedWorkflowStyleProps ) => {
 	const templateName = useComposerWorkflow ? 'with_composer' : 'simple';
 
@@ -89,11 +87,6 @@ export const AdvancedWorkflowStyle = ( {
 				repository={ repository }
 				branchName={ branchName }
 				workflowPath={ workflowPath }
-				onWorkflowCreated={ onWorkflowCreation }
-				disabled={ isLoading || isFetching }
-				siteId={ siteId }
-				installationId={ installationId }
-				isCreatingNewWorkflow={ false }
 			/>
 		);
 	};
