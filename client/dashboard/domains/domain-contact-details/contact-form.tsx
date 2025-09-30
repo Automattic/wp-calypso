@@ -15,7 +15,6 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -27,6 +26,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { getContactFormFields } from './contact-form-fields';
 import ContactFormPrivacy from './contact-form-privacy';
+import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 
 interface ContactFormProps {
 	domainName: string;
@@ -44,8 +44,6 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
-	const isMobileViewport = useViewportMatch( 'small', '<' );
-
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
@@ -85,8 +83,8 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	};
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() => getContactFormFields( countryList ?? [], statesList ?? [] ),
-		[ countryList, statesList ]
+		() => getContactFormFields( countryList ?? [], statesList ?? [], selectedCountryCode ),
+		[ countryList, statesList, selectedCountryCode ]
 	);
 
 	const form = {
@@ -110,17 +108,10 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				children: [ 'email', 'phone' ],
 			} as FormField,
 			'countryCode',
-			'address1',
-			'address2',
-			{
-				id: 'location-row',
-				layout: {
-					type: 'row' as const,
-					alignment: 'start' as const,
-				},
-				children: isMobileViewport ? [ 'city', 'state' ] : [ 'city', 'state', 'postalCode' ],
-			} as FormField,
-			...( isMobileViewport ? [ 'postalCode' ] : [] ),
+			...RegionAddressFieldsLayout( {
+				statesList,
+				countryCode: selectedCountryCode,
+			} ),
 			'optOutTransferLock',
 		],
 	};

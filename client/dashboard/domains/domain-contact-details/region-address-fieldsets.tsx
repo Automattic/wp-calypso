@@ -1,19 +1,22 @@
-import {
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalInputControl as InputControl,
-	SelectControl,
-} from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { type StatesListItem, type DomainContactDetails } from '@automattic/api-core';
+import { __experimentalInputControl as InputControl, SelectControl } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-// import {
-// 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
-// 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
-// } from './custom-form-fieldsets/constants';
-// import EuAddressFieldset from './custom-form-fieldsets/eu-address-fieldset';
-// import UkAddressFieldset from './custom-form-fieldsets/uk-address-fieldset';
-// import UsAddressFieldset from './custom-form-fieldsets/us-address-fieldset';
-import type { FieldProps } from '../managed-contact-details-form-fields';
-import type { StatesListItem, DomainContactDetails } from '@automattic/api-core';
+import { useEffect } from 'react';
+import {
+	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
+	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
+} from './custom-form-fieldsets/constants';
+
+const STATE_SELECT_TEXT: Record< string, string > = {
+	CA: __( 'Select Province' ),
+	US: __( 'Select State' ),
+};
+
+const POST_CODE_LABEL: Record< string, string > = {
+	US: __( 'ZIP code' ),
+};
 
 const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 	const StateFieldEdit = ( {
@@ -66,86 +69,14 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 	return StateFieldEdit;
 };
 
-export interface RegionAddressFieldsetsProps {
-	countryCode: string;
-	shouldAutoFocusAddressField?: boolean;
-	arePostalCodesSupported?: boolean;
-	hasCountryStates?: boolean;
-	contactDetailsErrors: Record< string, string | undefined >;
-	getFieldProps: (
-		name: string,
-		options: {
-			customErrorMessage?: string;
-			needsChildRef?: boolean;
-		}
-	) => FieldProps;
-}
-
-export default function getRegionAddressFieldsets( statesList: StatesListItem[] | undefined ) {
+export function RegionAddressFieldsets(
+	statesList: StatesListItem[] | undefined,
+	countryCode: string
+): Field< DomainContactDetails >[] {
 	const StateFieldEdit = createStateFieldEdit( statesList );
+	const arePostalCodesSupported = true; //getCountryPostalCodeSupport( statesList, countryCode );
 
-	// const getRegionAddressFieldset = () => {
-	// 	if ( ! hasCountryStates ) {
-	// 		if ( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
-	// 			return (
-	// 				<EuAddressFieldset
-	// 					countryCode={ countryCode }
-	// 					arePostalCodesSupported={ arePostalCodesSupported }
-	// 					contactDetailsErrors={ contactDetailsErrors }
-	// 					getFieldProps={ getFieldProps }
-	// 				/>
-	// 			);
-	// 		}
-
-	// 		if ( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
-	// 			return (
-	// 				<UkAddressFieldset
-	// 					countryCode={ countryCode }
-	// 					arePostalCodesSupported={ arePostalCodesSupported }
-	// 					contactDetailsErrors={ contactDetailsErrors }
-	// 					getFieldProps={ getFieldProps }
-	// 				/>
-	// 			);
-	// 		}
-	// 	}
-
-	// 	return (
-	// 		<UsAddressFieldset
-	// 			countryCode={ countryCode }
-	// 			arePostalCodesSupported={ arePostalCodesSupported }
-	// 			contactDetailsErrors={ contactDetailsErrors }
-	// 			getFieldProps={ getFieldProps }
-	// 		/>
-	// 	);
-	// };
-
-	const customFormFieldsets = [
-		{
-			id: 'city',
-			label: __( 'City' ),
-			type: 'text',
-			isValid: {
-				required: true,
-			},
-		},
-		{
-			id: 'state',
-			label: __( 'State' ),
-			type: 'text',
-			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
-			Edit: StateFieldEdit,
-		},
-		{
-			id: 'postalCode',
-			label: __( 'Post code' ),
-			type: 'text',
-			isValid: {
-				required: true,
-			},
-		},
-	];
-
-	return [
+	const fields: Field< DomainContactDetails >[] = [
 		{
 			id: 'address1',
 			label: __( 'Address' ),
@@ -159,6 +90,90 @@ export default function getRegionAddressFieldsets( statesList: StatesListItem[] 
 			label: __( 'Address line 2' ),
 			type: 'text',
 		},
-		...customFormFieldsets,
+		{
+			id: 'city',
+			label: __( 'City' ),
+			type: 'text',
+			isValid: {
+				required: true,
+			},
+		},
+		{
+			id: 'state',
+			label: STATE_SELECT_TEXT[ countryCode ] || __( 'Select State' ),
+			type: 'text',
+			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
+			Edit: StateFieldEdit,
+		},
+	];
+
+	if ( arePostalCodesSupported ) {
+		fields.push( {
+			id: 'postalCode',
+			label: POST_CODE_LABEL[ countryCode ] || __( 'Postal Code' ),
+			type: 'text',
+			isValid: {
+				required: true,
+			},
+		} );
+	}
+
+	return fields;
+}
+
+export function RegionAddressFieldsLayout( {
+	statesList,
+	countryCode,
+}: {
+	statesList: StatesListItem[] | undefined;
+	countryCode: string;
+} ) {
+	const hasCountryStates = countryCode ? !! statesList?.length : false;
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+
+	if ( ! hasCountryStates ) {
+		if ( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
+			return [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row' as const,
+						alignment: 'start' as const,
+					},
+					children: [ 'postalCode', 'city' ],
+				} as Field< DomainContactDetails >,
+			];
+		}
+
+		if ( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
+			return [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row' as const,
+						alignment: 'start' as const,
+					},
+					children: [ 'city', 'postalCode' ],
+				} as Field< DomainContactDetails >,
+			];
+		}
+	}
+
+	return [
+		'address1',
+		'address2',
+		{
+			id: 'location-row',
+			layout: {
+				type: 'row' as const,
+				alignment: 'start' as const,
+			},
+			children: isMobileViewport ? [ 'city', 'state' ] : [ 'city', 'state', 'postalCode' ],
+		} as Field< DomainContactDetails >,
+		...( isMobileViewport ? [ 'postalCode' ] : [] ),
 	];
 }

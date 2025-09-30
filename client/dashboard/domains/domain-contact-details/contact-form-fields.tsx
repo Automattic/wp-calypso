@@ -8,15 +8,14 @@ import { type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
-import getRegionAddressFieldsets from './region-address-fieldsets';
+import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { DomainContactDetails } from '@automattic/api-core';
 
 export const getContactFormFields = (
 	countryList: Array< { name: string; code: string } > | undefined,
-	statesList: Array< { name: string; code: string } > | undefined
+	statesList: Array< { name: string; code: string } > | undefined,
+	countryCode: string
 ): Field< DomainContactDetails >[] => {
-	const regionAddressFieldsets = getRegionAddressFieldsets( statesList );
-
 	return [
 		{
 			id: 'firstName',
@@ -68,7 +67,7 @@ export const getContactFormFields = (
 				required: true,
 			},
 		},
-		...regionAddressFieldsets,
+		...RegionAddressFieldsets( statesList, countryCode ),
 		{
 			id: 'optOutTransferLock',
 			label: __( 'Opt-out of the 60-day transfer lock' ),
