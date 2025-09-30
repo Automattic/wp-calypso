@@ -37,8 +37,12 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 			'https://public-api.wordpress.com',
 		],
 
-		// Frame sources - payment widgets only
-		'frame-src': [ 'https://js.stripe.com', 'https://checkout.stripe.com' ],
+		// Frame sources - payment widgets and WordPress.com API
+		'frame-src': [
+			'https://js.stripe.com',
+			'https://checkout.stripe.com',
+			'https://public-api.wordpress.com',
+		],
 
 		// EGRESS CONTROL: Restrict form submissions
 		'form-action': [ "'self'", 'https://api.stripe.com', 'https://checkout.stripe.com' ],
