@@ -4,23 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { convertTimeRangeToUnix, chartColors } from '../monitoring/utils';
 import MonitoringCard from '../monitoring-card';
-import type { LegendData, TimeRange } from '../monitoring/types';
+import type { LegendData } from '../monitoring/types';
 import type { Site, SiteHostingMetrics } from '@automattic/api-core';
-
-function convertTimeRangeToUnix( timeRange: number ): TimeRange {
-	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
-	const end = Math.floor( new Date().getTime() / 1000 );
-
-	return { start, end };
-}
 
 type SiteRequestMethodsData = {
 	data: DataPointPercentage[];
 	isLoading: boolean;
 };
-
-const chartColors = [ '#3858E9', '#5BA300', '#F57600', '#B51963' ];
 
 function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteRequestMethodsData {
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
@@ -56,13 +48,13 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 
 			return Object.entries( methodsMap ).map(
 				( [ method, value ]: [ string, number ], index ): DataPointPercentage => {
-					const valuePercentage = Math.round( ( value * 100 ) / sum );
+					const valuePercentage = ( value * 100 ) / sum;
 
 					return {
 						label: method.toUpperCase(),
-						value: Math.round( value * 100 ) / 100,
+						value: value,
 						percentage: valuePercentage,
-						valueDisplay: valuePercentage.toString() + '%',
+						valueDisplay: ( Math.round( valuePercentage * 10 ) / 100 ).toString() + '%',
 						color: chartColors[ index % chartColors.length ],
 					};
 				}

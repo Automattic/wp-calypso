@@ -26,9 +26,9 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 	let interval = 'month';
 
 	if ( purchase.subscription?.purchase_price ) {
-		amount = purchase.subscription.purchase_price;
-		currency = purchase.subscription.purchase_currency;
-		interval = purchase.subscription.billing_interval_unit;
+		amount = Number( purchase.subscription.purchase_price );
+		currency = purchase.subscription.purchase_currency ?? '';
+		interval = purchase.subscription.billing_interval_unit ?? '';
 	}
 
 	if ( ! amount ) {

@@ -17,6 +17,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Notice } from '../../../../components/notice';
 import type { Field } from '@wordpress/dataviews';
@@ -26,6 +27,8 @@ type TwoStepAuthAppFormData = {
 };
 
 export default function DisableTwoStepDialog( { onClose }: { onClose: () => void } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -57,6 +60,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 	const handleResendSMSCode = useCallback( () => {
 		setIsSMSResendThrottled( true );
 		setError( null );
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_resend_sms_code_click' );
 		resendSMSCode( undefined, {
 			onSuccess: () => {
 				setError( null );
@@ -78,7 +82,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 				handleThrottleSMSRequests();
 			},
 		} );
-	}, [ resendSMSCode ] );
+	}, [ resendSMSCode, recordTracksEvent ] );
 
 	useEffect( () => {
 		if ( isTwoStepSMSEnabled ) {
@@ -89,6 +93,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		setError( null );
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_disable_two_step_click' );
 		validateTwoStepCode(
 			{
 				code: formData.code,

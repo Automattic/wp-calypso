@@ -30,6 +30,17 @@
 	}
 }
 
+.a4a-popover__content p{
+	color: var( --color-neutral-50 );
+	@include body-small;
+	margin-bottom: 0;
+}
+
+.badge-assigned-to .status-card__info-icon{
+	vertical-align: bottom;
+	margin-left: 4px;
+}
+
 // TODO: remove when the list view declares a proper primary field.
 //
 // The issue here is that the email is not provided as a primary field,

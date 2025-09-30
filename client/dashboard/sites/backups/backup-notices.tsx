@@ -4,17 +4,28 @@ import { createInterpolateElement, useState, useEffect } from '@wordpress/elemen
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
-import { useBackupState } from './use-backup-state';
-import type { Site } from '@automattic/api-core';
+import type { BackupState } from './use-backup-state';
+
+interface BackupNoticesProps {
+	backupState: BackupState;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
 
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { site }: { site: Site } ) {
-	const { status, backup } = useBackupState( site.ID );
-	const backupDate = useFormattedTime( backup?.started ?? '', {
-		timeStyle: 'short',
-	} );
+export function BackupNotices( { backupState, timezoneString, gmtOffset }: BackupNoticesProps ) {
+	const { status, backup } = backupState;
+	const backupDate = useFormattedTime(
+		backup?.started ? backup.started.replace( ' ', 'T' ) + 'Z' : '',
+		{
+			timeStyle: 'short',
+		},
+		timezoneString,
+		gmtOffset,
+		true // Use lowercase calendar label
+	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	const handleDismiss = () => {
@@ -28,6 +39,14 @@ export function BackupNotices( { site }: { site: Site } ) {
 		}
 	}, [ status ] );
 
+	if ( status === 'enqueued' ) {
+		return (
+			<Notice variant="info" title={ __( 'Backup starting…' ) }>
+				{ __( 'We’re preparing to make a backup of your site.' ) }
+			</Notice>
+		);
+	}
+
 	if ( status === 'running' ) {
 		return (
 			<Notice
@@ -39,7 +58,7 @@ export function BackupNotices( { site }: { site: Site } ) {
 				) }
 			>
 				{ sprintf(
-					/* translators: %s is a date, like "Today at 10:00". */
+					/* translators: %s is a date, like "today at 10:00". */
 					__( 'We’re making a backup of your site from %s' ),
 					backupDate
 				) }
@@ -69,15 +88,14 @@ export function BackupNotices( { site }: { site: Site } ) {
 			>
 				{ createInterpolateElement(
 					sprintf(
-						/* translators: %s is a date, like "Today at 10:00" */
+						/* translators: %s is a date, like "today at 10:00" */
 						__(
-							'We weren’t able to finish your backup from %s, but don’t worry — your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
+							'We weren’t able to finish your backup from %s, but don’t worry—your existing data is safe. <external>Check our help guide</external> or contact support to get this resolved.'
 						),
 						backupDate
 					),
 					{
-						// @ts-expect-error children prop is injected by createInterpolateElement
-						external: <ExternalLink href="https://jetpack.com/support/backup/" />,
+						external: <ExternalLink href="https://jetpack.com/support/backup/" children={ null } />,
 					}
 				) }
 			</Notice>

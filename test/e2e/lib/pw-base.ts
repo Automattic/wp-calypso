@@ -36,7 +36,9 @@ import {
 	getTestAccountByFeature,
 	GitHubLoginPage,
 	IncognitoPage,
+	JetpackTrafficPage,
 	LoginPage,
+	MarketingPage,
 	MediaHelper,
 	NewSiteResponse,
 	PreviewComponent,
@@ -55,6 +57,10 @@ import { apiCloseAccount } from '../specs/shared';
 import { getAccount } from './get-account';
 
 export const test = base.extend< {
+	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountAtomic: TestAccount;
 	/**
 	 * Test account selected based on the current environment variables.
 	 */
@@ -144,9 +150,17 @@ export const test = base.extend< {
 	 */
 	pageIncognito: IncognitoPage;
 	/**
+	 * Page object representing the Jetpack Traffic Page
+	 */
+	pageJetpackTraffic: JetpackTrafficPage;
+	/**
 	 * Page object representing the WordPress.com login page.
 	 */
 	pageLogin: LoginPage;
+	/**
+	 * Page object representing the WordPress.com marketing page.
+	 */
+	pageMarketing: MarketingPage;
 	/**
 	 * Page object representing the WordPress.com themes detail page.
 	 */
@@ -164,6 +178,10 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	accountAtomic: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'atomicUser' );
+		await use( testAccount );
+	},
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
@@ -252,9 +270,17 @@ export const test = base.extend< {
 		await use( incognitoPage );
 		await incognitoPage.close();
 	},
+	pageJetpackTraffic: async ( { page }, use ) => {
+		const jetpackTrafficPage = new JetpackTrafficPage( page );
+		await use( jetpackTrafficPage );
+	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );
 		await use( loginPage );
+	},
+	pageMarketing: async ( { page }, use ) => {
+		const marketingPage = new MarketingPage( page );
+		await use( marketingPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
@@ -303,6 +329,7 @@ export const tags = {
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
+	DASHBOARD: '@dashboard',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',

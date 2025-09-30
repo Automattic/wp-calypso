@@ -150,7 +150,7 @@ export const purchaseSettingsRoute = createRoute( {
 			purchase,
 		};
 	},
-	path: '/purchases/purchase/$purchaseId',
+	path: '/purchases/$purchaseId',
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings' )( {
