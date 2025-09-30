@@ -3,7 +3,7 @@ import type { Domain } from './types';
 
 export function fetchDomain( domainName: string ): Promise< Domain > {
 	return wpcom.req.get( {
-		path: `/domain-details/${ domainName }`,
+		path: `/domain-details/${ encodeURIComponent( domainName ) }`,
 		apiVersion: '1.2',
 	} );
 }
