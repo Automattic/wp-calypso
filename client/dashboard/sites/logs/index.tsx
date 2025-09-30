@@ -6,7 +6,6 @@ import {
 	Card,
 	CardBody,
 	CardHeader,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	TabPanel,
 } from '@wordpress/components';
@@ -22,7 +21,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { ActivityLogsCallout } from '../logs-activity/activity-logs-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
@@ -174,13 +172,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									site={ site }
 									hasActivityLogsAccess={ hasActivityLogAccess }
 								/>
-								{ ! hasActivityLogAccess && (
-									<HStack alignment="center" className="site-logs-card--activity-callout">
-										<div className="site-logs-card--activity-callout-content">
-											<ActivityLogsCallout siteSlug={ site.slug } />
-										</div>
-									</HStack>
-								) }
 							</>
 						) }
 					</CardBody>

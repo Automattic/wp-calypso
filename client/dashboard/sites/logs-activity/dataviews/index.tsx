@@ -2,12 +2,14 @@ import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-cor
 import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, View, Field, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useEffect } from 'react';
 import { filtersSignature } from '../../logs/dataviews/filters';
 import { syncFiltersSearchParams } from '../../logs/dataviews/url-sync';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
+import { ActivityLogsCallout } from '../activity-logs-callout';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
 import {
@@ -160,23 +162,33 @@ function SiteActivityLogsDataViews( {
 	}, [ dateRangeVersion, setView ] );
 
 	return (
-		<DataViews< SiteActivityLog >
-			data={ logs }
-			isLoading={ isFetching }
-			paginationInfo={ paginationInfo }
-			fields={ fields as Field< SiteActivityLog >[] }
-			view={ view }
-			actions={ actions }
-			config={
-				hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
-			} // Disable changing perPage if no access
-			search
-			searchLabel={ __( 'Search posts by ID, title or author' ) }
-			defaultLayouts={ { table: {} } }
-			onChangeView={ onChangeView }
-			empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
-			children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
-		/>
+		<>
+			<DataViews< SiteActivityLog >
+				data={ logs }
+				isLoading={ isFetching }
+				paginationInfo={ paginationInfo }
+				fields={ fields as Field< SiteActivityLog >[] }
+				view={ view }
+				actions={ actions }
+				config={
+					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
+				} // Disable changing perPage if no access
+				search
+				searchLabel={ __( 'Search posts by ID, title or author' ) }
+				defaultLayouts={ { table: {} } }
+				onChangeView={ onChangeView }
+				empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
+				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
+			/>
+
+			{ ! hasActivityLogsAccess && ! isFetching && (
+				<HStack alignment="center" className="site-logs-card--activity-callout">
+					<div className="site-logs-card--activity-callout-content">
+						<ActivityLogsCallout siteSlug={ site.slug } />
+					</div>
+				</HStack>
+			) }
+		</>
 	);
 }
 
