@@ -22,9 +22,9 @@ export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
 	id: string;
 }
 
-export type PHPLogData = Omit< PHPLog, 'id' | 'line' > & {
+export interface PHPLogData extends Omit< PHPLog, 'id' | 'line' > {
 	line: string;
-};
+}
 
 export const LogType = {
 	PHP: 'php',
@@ -64,10 +64,10 @@ export interface ServerLog extends ServerLogFromEndpoint {
 	id: string;
 }
 
-export type ServerData = Omit< ServerLog, 'timestamp' | 'body_bytes_sent' > & {
+export interface ServerData extends Omit< ServerLog, 'id' | 'timestamp' | 'body_bytes_sent' > {
 	timestamp: string;
 	body_bytes_sent: string;
-};
+}
 
 export interface SiteLogsParams {
 	logType: LogType;
