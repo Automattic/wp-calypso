@@ -1,6 +1,7 @@
 import { githubWorkflowTemplatesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink, SelectControl, __experimentalText as Text } from '@wordpress/components';
+import { VStack } from '@wordpress/components/build-types/v-stack';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -84,7 +85,7 @@ export const AdvancedWorkflowStyle = ( {
 	};
 
 	return (
-		<div>
+		<VStack spacing={ 4 }>
 			<SelectControl
 				label={ __( 'Deployment workflow' ) }
 				value={ workflowPath ?? '' }
@@ -94,11 +95,7 @@ export const AdvancedWorkflowStyle = ( {
 				__next40pxDefaultSize
 			/>
 
-			<Text
-				variant="muted"
-				style={ { marginTop: '16px', marginBottom: 0 } }
-				className="github-deployments-deployment-style__workflow-recipes"
-			>
+			<Text variant="muted">
 				{ createInterpolateElement(
 					__(
 						'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
@@ -113,7 +110,7 @@ export const AdvancedWorkflowStyle = ( {
 				) }
 			</Text>
 
-			{ isLoading ? null : <div style={ { marginTop: '16px' } }>{ getContent() }</div> }
-		</div>
+			{ isLoading ? null : getContent() }
+		</VStack>
 	);
 };
