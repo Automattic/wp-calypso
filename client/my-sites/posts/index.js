@@ -1,14 +1,16 @@
 import page from '@automattic/calypso-router';
-import { redirectIfDuplicatedView } from 'calypso/controller';
+import { redirectIfDuplicatedView, makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
+import { siteSelection, sites } from 'calypso/my-sites/controller';
 
 export default function () {
 	page(
-		'/posts/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
+		'/posts/:author?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,
 		redirectIfDuplicatedView( 'edit.php' ),
-		navigation
+		sites,
+		makeLayout,
+		clientRender
 	);
 
 	page( '/posts/*', ( { path } ) => {
