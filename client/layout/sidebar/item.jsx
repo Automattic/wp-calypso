@@ -6,13 +6,11 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
-import { isExternal } from 'calypso/lib/url';
 import { preload } from 'calypso/sections-helper';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export default function SidebarItem( props ) {
-	const isExternalLink = isExternal( props.link );
-	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
+	const showAsExternal = props.forceExternalLink;
 	const classes = clsx( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
@@ -107,7 +105,6 @@ SidebarItem.propTypes = {
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
 	forceExternalLink: PropTypes.bool,
-	forceInternalLink: PropTypes.bool,
 	forceShowExternalIcon: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,

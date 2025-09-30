@@ -4,17 +4,26 @@ import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 
-export const requestFetchAdminMenu = ( action ) =>
-	http(
-		{
-			method: 'GET',
-			path: `/sites/${ action.siteId }/admin-menu/?_locale=user`,
-			apiNamespace: 'wpcom/v2',
-		},
-		action
-	);
+export const requestFetchAdminMenu = ( action ) => {
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), action.siteId, { treatAtomicAsJetpackSite: false } ) ) {
+			return;
+		}
+
+		dispatch(
+			http(
+				{
+					method: 'GET',
+					path: `/sites/${ action.siteId }/admin-menu/?_locale=user`,
+					apiNamespace: 'wpcom/v2',
+				},
+				action
+			)
+		);
+	};
+};
 
 const sanitizeUrl = ( url, wpAdminUrl ) => {
 	const isSafeInternalUrl = new RegExp( '^/' ).test( url );

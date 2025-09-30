@@ -25,7 +25,6 @@ export const MySitesSidebarUnifiedItem = ( {
 	title,
 	url,
 	className = '',
-	shouldOpenExternalLinksInCurrentTab,
 	showTooltip = false,
 	forceExternalLink = false,
 	forceShowExternalIcon = false,
@@ -53,7 +52,6 @@ export const MySitesSidebarUnifiedItem = ( {
 			onNavigate={ onNavigate }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
 			forceChevronIcon={ forceChevronIcon }
@@ -76,7 +74,6 @@ MySitesSidebarUnifiedItem.propTypes = {
 	title: PropTypes.string,
 	showTooltip: PropTypes.bool,
 	url: PropTypes.string,
-	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	forceExternalLink: PropTypes.bool,
 	forceShowExternalIcon: PropTypes.bool,
 	forceChevronIcon: PropTypes.bool,

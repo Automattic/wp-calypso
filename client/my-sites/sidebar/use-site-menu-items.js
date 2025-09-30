@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
@@ -25,7 +24,9 @@ const useSiteMenuItems = () => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
+	);
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSiteId ) );
 	const isPlanExpired = useSelector( ( state ) => !! getSelectedSite( state )?.plan?.expired );
@@ -66,7 +67,7 @@ const useSiteMenuItems = () => {
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 	const showP2s = useSelector( hasSiteWithP2 );
 
-	const hasUnifiedImporter = isEnabled( 'importer/unified' );
+	const capabilities = useSelector( ( state ) => state.currentUser.capabilities[ selectedSiteId ] );
 
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu( { showP2s: showP2s } );
@@ -80,10 +81,10 @@ const useSiteMenuItems = () => {
 	}
 
 	/**
-	 * When we have a jetpack connected site & we cannot retrieve the dynamic menu from that site.
+	 * When we have a jetpack connected site, show static Calypso menu.
 	 */
-	if ( isJetpack && ! isAtomic && ! menuItems ) {
-		return jetpackMenu( { siteDomain, hasUnifiedImporter } );
+	if ( isJetpack ) {
+		return jetpackMenu( { siteDomain, capabilities } );
 	}
 
 	/**

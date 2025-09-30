@@ -30,7 +30,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 	sidebarCollapsed,
-	shouldOpenExternalLinksInCurrentTab,
 	isUnifiedSiteSidebarVisible,
 	...props
 } ) => {
@@ -126,7 +125,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 							selected={ isSelected }
 							trackClickEvent={ trackClickEvent }
 							isSubItem
-							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
 							forceShowExternalIcon={ shouldForceShowExternalIcon( item ) }
 						/>
 					);
@@ -145,7 +143,6 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
-	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	/*
 	Example of children shape:
 	[

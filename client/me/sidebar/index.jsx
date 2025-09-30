@@ -217,7 +217,6 @@ class MeSidebar extends Component {
 						link="/sites"
 						label={ translate( 'Manage Blogs' ) }
 						icon={ category }
-						forceInternalLink
 						onNavigate={ ( event, urlPath ) => {
 							this.handleGlobalSidebarMenuItemClick( urlPath );
 						} }

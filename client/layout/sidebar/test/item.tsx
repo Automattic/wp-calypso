@@ -20,15 +20,6 @@ test( 'external links open in a new tab', () => {
 	);
 } );
 
-test( 'external links can be forced to open in the same tab', () => {
-	render( <SidebarItem label="My Example" link="https://my-example.com" forceInternalLink /> );
-
-	expect( screen.getByRole( 'link', { name: 'My Example' } ) ).not.toHaveAttribute(
-		'target',
-		'_blank'
-	);
-} );
-
 test( 'internal links open in a the same tab', () => {
 	render( <SidebarItem label="Home" link="/home/example.com" /> );
 
