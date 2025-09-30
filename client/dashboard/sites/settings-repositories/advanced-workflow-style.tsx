@@ -18,8 +18,6 @@ type AdvancedWorkflowStyleProps = {
 	useComposerWorkflow: boolean;
 	onWorkflowCreation( path: string ): void;
 	onChooseWorkflow( path: string ): void;
-	siteId: number;
-	installationId: number;
 };
 
 export const AdvancedWorkflowStyle = ( {

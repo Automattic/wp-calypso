@@ -354,8 +354,6 @@ export const ConnectRepositoryForm = ( {
 				isLoading={ isLoadingRepositories }
 				isFetching={ isLoadingBranches }
 				useComposerWorkflow={ !! repositoryChecks?.has_composer && ! repositoryChecks?.has_vendor }
-				siteId={ site.ID }
-				installationId={ selectedInstallation?.external_id ?? 0 }
 			/>
 		);
 	};
