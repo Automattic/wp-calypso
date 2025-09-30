@@ -1,7 +1,11 @@
 import { githubWorkflowTemplatesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink, SelectControl, __experimentalText as Text } from '@wordpress/components';
-import { VStack } from '@wordpress/components/build-types/v-stack';
+import {
+	ExternalLink,
+	SelectControl,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
