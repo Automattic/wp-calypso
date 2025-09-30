@@ -59,7 +59,6 @@ export function CheckoutProvider( {
 						onPaymentComplete={ onPaymentComplete }
 						onPaymentRedirect={ onPaymentRedirect }
 						onPaymentError={ onPaymentError }
-						onPageLoadError={ onPageLoadError }
 						isLoading={ isLoading }
 						isValidating={ isValidating }
 						redirectToUrl={ redirectToUrl }
