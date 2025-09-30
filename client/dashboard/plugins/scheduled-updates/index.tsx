@@ -1,21 +1,19 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Button, FormToggle } from '@wordpress/components';
+import { useLocale } from '@automattic/i18n-utils';
+import { FormToggle } from '@wordpress/components';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { format, fromUnixTime } from 'date-fns';
 import { useMemo, useState } from 'react';
-import {
-	pluginsScheduledUpdatesNewRoute,
-	pluginsScheduledUpdatesRoute,
-} from '../../app/router/plugins';
+import { pluginsScheduledUpdatesNewRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { SiteIconLink } from '../../sites/site-fields';
+import { formatDate } from '../../utils/datetime';
 import { useScheduledUpdates } from './hooks/use-scheduled-updates';
 import { ScheduledUpdateRow } from './types';
 
-export const fields: Field< ScheduledUpdateRow >[] = [
+const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => [
 	{
 		id: 'site',
 		type: 'text',
@@ -24,16 +22,25 @@ export const fields: Field< ScheduledUpdateRow >[] = [
 	},
 	{
 		id: 'lastUpdate',
-		type: 'text',
+		type: 'integer',
 		label: __( 'Last Update' ),
 		render: ( { item } ) =>
-			item.lastUpdate ? format( fromUnixTime( item.lastUpdate ), 'MMM d, yyyy H:mm' ) : '-',
+			item.lastUpdate
+				? formatDate( new Date( item.lastUpdate * 1000 ), locale, {
+						dateStyle: 'medium',
+						timeStyle: 'short',
+				  } )
+				: '-',
 	},
 	{
 		id: 'nextUpdate',
-		type: 'text',
+		type: 'integer',
 		label: __( 'Next Update' ),
-		render: ( { item } ) => format( fromUnixTime( item.nextUpdate ), 'MMM d, yyyy H:mm' ),
+		render: ( { item } ) =>
+			formatDate( new Date( item.nextUpdate * 1000 ), locale, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			} ),
 	},
 	{
 		id: 'schedule',
@@ -54,6 +61,7 @@ export const fields: Field< ScheduledUpdateRow >[] = [
 	},
 	{
 		id: 'scheduleId',
+		type: 'text',
 		label: __( 'Schedule' ),
 	},
 	{
@@ -81,12 +89,14 @@ export const defaultView: View = {
 
 export default function PluginsScheduledUpdates() {
 	const [ view, setView ] = useState( defaultView );
-	const navigate = useNavigate( { from: pluginsScheduledUpdatesRoute.fullPath } );
+	const locale = useLocale();
+
+	const fields = useMemo( () => getFields( locale ), [ locale ] );
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
-	}, [ scheduledUpdates, view ] );
+	}, [ scheduledUpdates, view, fields ] );
 
 	return (
 		<PageLayout
@@ -95,13 +105,13 @@ export default function PluginsScheduledUpdates() {
 				<PageHeader
 					title={ __( 'Scheduled updates' ) }
 					actions={
-						<Button
+						<RouterLinkButton
 							variant="primary"
-							onClick={ () => navigate( { to: pluginsScheduledUpdatesNewRoute.to } ) }
+							to={ pluginsScheduledUpdatesNewRoute.to }
 							__next40pxDefaultSize
 						>
 							{ __( 'New schedule' ) }
-						</Button>
+						</RouterLinkButton>
 					}
 				/>
 			}
@@ -115,9 +125,13 @@ export default function PluginsScheduledUpdates() {
 					view={ view }
 					onChangeView={ setView }
 					isLoading={ isLoading }
-					empty={ __(
-						"Oops! We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-					) }
+					empty={
+						scheduledUpdates.length === 0
+							? __( 'No scheduled updates yet.' )
+							: __(
+									"We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
+							  )
+					}
 					actions={ [
 						{
 							id: 'edit',
