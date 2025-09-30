@@ -12,8 +12,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
-import { addQueryArgs } from 'calypso/lib/url';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isNotAtomicJetpack, isP2Site, isStagingSite } from 'calypso/sites-dashboard/utils';
@@ -124,21 +123,8 @@ export function RenderDomainUpsell( {
 
 	const backUrl = window.location.href.replace( window.location.origin, '' );
 
-	const searchLink = shouldRenderRewrittenDomainSearch()
-		? addQueryArgs(
-				{
-					siteSlug,
-					back_to: backUrl,
-				},
-				`/setup/domain-and-plan`
-		  )
-		: addQueryArgs(
-				{
-					domainAndPlanPackage: true,
-					domain: true,
-				},
-				`/domains/add/${ siteSlug }`
-		  );
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
+
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_profile_domain_upsell_search_click', {
 			button_url: searchLink,
@@ -147,18 +133,7 @@ export function RenderDomainUpsell( {
 		} );
 	};
 
-	const plansPageLink = shouldRenderRewrittenDomainSearch()
-		? addQueryArgs( '/setup/domain-and-plan/plans', {
-				siteSlug,
-				back_to: backUrl,
-		  } )
-		: addQueryArgs(
-				{
-					domain: true,
-					domainAndPlanPackage: true,
-				},
-				`/plans/yearly/${ siteSlug }`
-		  );
+	const plansPageLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, step: 'plans' } );
 
 	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 

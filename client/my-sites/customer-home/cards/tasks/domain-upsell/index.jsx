@@ -19,9 +19,8 @@ import editorPreviewIllustration from 'calypso/assets/images/customer-home/illus
 import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { TASK_DOMAIN_UPSELL } from 'calypso/my-sites/customer-home/cards/constants';
@@ -109,38 +108,11 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = shouldRenderRewrittenDomainSearch()
-		? addQueryArgs(
-				{
-					siteSlug,
-					back_to: window.location.href.replace( window.location.origin, '' ),
-				},
-				'/setup/domain-and-plan'
-		  )
-		: addQueryArgs(
-				{
-					domainAndPlanPackage: true,
-					domain: true,
-					back_to: window.location.href.replace( window.location.origin, '' ),
-				},
-				`/domains/add/${ siteSlug }`
-		  );
+	const backUrl = window.location.href.replace( window.location.origin, '' );
 
-	const plansPageLink = shouldRenderRewrittenDomainSearch()
-		? addQueryArgs(
-				{
-					siteSlug,
-					back_to: window.location.href.replace( window.location.origin, '' ),
-				},
-				'/setup/domain-and-plan/plans'
-		  )
-		: addQueryArgs(
-				{
-					domain: true,
-					domainAndPlanPackage: true,
-				},
-				`/plans/yearly/${ siteSlug }`
-		  );
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
+
+	const plansPageLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, step: 'plans' } );
 
 	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 

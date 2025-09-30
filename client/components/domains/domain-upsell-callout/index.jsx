@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { isP2Site } from 'calypso/sites-dashboard/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -42,11 +43,13 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 
 		recordTracksEvent( trackEventClick );
 
+		const domainUpsellUrl = getDomainAndPlanUpsellUrl( { siteSlug: site.slug } );
+
 		if ( shouldRenderRewrittenDomainSearch() ) {
-			return window.location.assign( `/setup/domain-and-plan?siteSlug=${ site.slug }` );
+			return window.location.assign( domainUpsellUrl );
 		}
 
-		page( `/domains/add/${ site.domain }?domainAndPlanPackage=true` );
+		page( domainUpsellUrl );
 	}, [ trackEventClick, site ] );
 
 	const getDismissClickHandler = () => {

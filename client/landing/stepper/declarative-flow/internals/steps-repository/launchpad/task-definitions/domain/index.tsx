@@ -1,7 +1,7 @@
 import { Task } from '@automattic/launchpad';
 import { isStartWritingFlow } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { isDomainUpsellCompleted } from '../../task-helper';
 import { TaskAction } from '../../types';
 
@@ -10,10 +10,16 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
-		const purchaseDomainUrl = addQueryArgs( '/setup/domain-and-plan', {
+		if ( ! siteSlug ) {
+			return '';
+		}
+
+		const backUrl = `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
+
+		const purchaseDomainUrl = getDomainAndPlanUpsellUrl( {
 			siteSlug,
-			back_to: `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`,
-			new: site?.name,
+			backUrl,
+			suggestion: site?.name,
 		} );
 
 		return domainUpsellCompleted ? `/domains/manage/${ siteSlug }` : purchaseDomainUrl;
