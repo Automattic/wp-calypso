@@ -159,6 +159,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'posts',
+		paths: [ '/posts' ],
+		module: 'calypso/my-sites/posts',
+		group: 'sites',
+	},
+	{
 		name: 'settings-performance',
 		paths: [ '/settings/performance' ],
 		module: 'calypso/my-sites/site-settings/settings-performance',
@@ -398,14 +404,6 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/reader/feeds/[^\\/]+', '/reader/blogs/[^\\/]+', '/reader/a8c', '/reader/p2' ],
-		module: 'calypso/reader',
-		group: 'reader',
-		enableLoggedOut: true,
-		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
-		paths: [ '/reader/feeds/lookup/.*' ],
 		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,
