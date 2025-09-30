@@ -14,6 +14,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
@@ -40,6 +41,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 
+	const { recordTracksEvent } = useAnalytics();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ showBulkFixModal, setShowBulkFixModal ] = useState( false );
 
@@ -105,7 +107,15 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 							<ButtonStack>
 								<ScanNowButton site={ site } scanState={ scanState } />
 								{ fixableThreatsCount > 0 && (
-									<Button variant="primary" onClick={ () => setShowBulkFixModal( true ) }>
+									<Button
+										variant="primary"
+										onClick={ () => {
+											recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_modal_open', {
+												threat_count: fixableThreatsCount,
+											} );
+											setShowBulkFixModal( true );
+										} }
+									>
 										{ sprintf(
 											/* translators: %d: number of threats */
 											_n(

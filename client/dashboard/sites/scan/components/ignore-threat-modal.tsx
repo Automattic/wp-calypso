@@ -10,6 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
@@ -25,10 +26,12 @@ interface IgnoreThreatModalProps extends RenderModalProps< Threat > {
 export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatModalProps ) {
 	const threat = items[ 0 ];
 
+	const { recordTracksEvent } = useAnalytics();
 	const ignoreThreat = useMutation( ignoreThreatMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleIgnoreThreat = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_click' );
 		ignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
@@ -43,6 +46,10 @@ export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatMo
 		} );
 	};
 
+	const handleCodeableClick = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_codeable_estimate_click' );
+	};
+
 	return (
 		<VStack spacing={ 4 }>
 			<Text variant="muted">{ __( 'Jetpack will be ignoring the following threat:' ) }</Text>
@@ -54,7 +61,11 @@ export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatMo
 						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with <codeable />.'
 					),
 					{
-						codeable: <ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>,
+						codeable: (
+							<ExternalLink href={ CODEABLE_JETPACK_SCAN_URL } onClick={ handleCodeableClick }>
+								Codeable
+							</ExternalLink>
+						),
 					}
 				) }
 			</Notice>

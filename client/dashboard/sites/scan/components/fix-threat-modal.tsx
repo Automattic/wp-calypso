@@ -3,6 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import { useFixThreats } from '../hooks/use-fix-threats';
@@ -20,6 +21,7 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 	const threat = items[ 0 ];
 	const threatIds = [ threat.id ];
 
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { startFix, isFixing, status, error } = useFixThreats( siteId, threatIds );
@@ -48,6 +50,7 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 	}, [ error, closeModal, createErrorNotice ] );
 
 	const handleFixThreat = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_fix_threat_click' );
 		startFix();
 	};
 

@@ -3,6 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import { useFixThreats } from '../hooks/use-fix-threats';
@@ -21,6 +22,7 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	const bulkFixableIds = new Set( bulkFixableThreats.map( ( item ) => item.id ) );
 	const remainingThreats = items.filter( ( item ) => ! bulkFixableIds.has( item.id ) );
 
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { startFix, isFixing, status, error } = useFixThreats(
@@ -78,6 +80,9 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	}, [ error, closeModal, createErrorNotice, bulkFixableThreats.length ] );
 
 	const handleFixThreats = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_click', {
+			threat_count: bulkFixableThreats.length,
+		} );
 		startFix();
 	};
 

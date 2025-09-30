@@ -10,6 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
@@ -24,10 +25,12 @@ interface UnignoreThreatModalProps extends RenderModalProps< Threat > {
 
 export function UnignoreThreatModal( { items, closeModal, siteId }: UnignoreThreatModalProps ) {
 	const threat = items[ 0 ];
+	const { recordTracksEvent } = useAnalytics();
 	const unignoreThreat = useMutation( unignoreThreatMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleUnignoreThreat = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_unignore_threat_click' );
 		unignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
@@ -42,6 +45,10 @@ export function UnignoreThreatModal( { items, closeModal, siteId }: UnignoreThre
 		} );
 	};
 
+	const handleCodeableClick = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_codeable_estimate_click' );
+	};
+
 	return (
 		<VStack spacing={ 4 }>
 			<Text variant="muted">{ __( 'Jetpack will be unignoring the following threat:' ) }</Text>
@@ -53,7 +60,11 @@ export function UnignoreThreatModal( { items, closeModal, siteId }: UnignoreThre
 						'By unignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site as an active threat. If you are unsure please request an estimate with <codeable />.'
 					),
 					{
-						codeable: <ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>,
+						codeable: (
+							<ExternalLink href={ CODEABLE_JETPACK_SCAN_URL } onClick={ handleCodeableClick }>
+								Codeable
+							</ExternalLink>
+						),
 					}
 				) }
 			</Notice>
