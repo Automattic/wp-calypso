@@ -3,10 +3,10 @@ import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
 import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
-import { getViewDetailsAction } from '../../scan/actions';
 import { BulkFixThreatsModal } from '../../scan/components/bulk-fix-threats-modal';
 import { FixThreatModal } from '../../scan/components/fix-threat-modal';
 import { IgnoreThreatModal } from '../../scan/components/ignore-threat-modal';
+import { getViewDetailsAction } from '../../scan/dataviews/actions';
 import type { Threat, Site } from '@automattic/api-core';
 
 export function getActions( site: Site, threatCount: number ): Action< Threat >[] {

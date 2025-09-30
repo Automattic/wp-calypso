@@ -1,8 +1,8 @@
 import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
-import { getViewDetailsAction } from '../../scan/actions';
 import { UnignoreThreatModal } from '../../scan/components/unignore-threat-modal';
+import { getViewDetailsAction } from '../../scan/dataviews/actions';
 import type { Threat, Site } from '@automattic/api-core';
 
 export function getActions( site: Site ): Action< Threat >[] {

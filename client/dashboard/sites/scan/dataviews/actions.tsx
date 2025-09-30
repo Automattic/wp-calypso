@@ -1,8 +1,8 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { ThreatDescription } from './components/threat-description';
-import { ThreatsDetailCard } from './components/threats-detail-card';
+import { ThreatDescription } from '../components/threat-description';
+import { ThreatsDetailCard } from '../components/threats-detail-card';
 import type { Threat, Site } from '@automattic/api-core';
 
 export function getViewDetailsAction( site: Site ): Action< Threat > {
