@@ -9,59 +9,63 @@ import crypto from 'crypto';
  */
 export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 	const directives = {
-		// PCI DSS 6.4.3: Use nonces for all scripts (no 'self' - stricter security)
+		// Default deny everything
+		'default-src': {
+			wrapped: [ 'none' ],
+		},
+		// PCI DSS 6.4.3: Nonce-based with strict-dynamic for scripts
+		// 'self' kept as fallback for browsers that don't support strict-dynamic
 		'script-src': {
-			wrapped: [ `nonce-${ nonce }` ],
+			wrapped: [ `nonce-${ nonce }`, 'strict-dynamic', 'self' ],
 			raw: [
-				// Payment processors
+				// Payment processors (fallback for non-strict-dynamic browsers)
 				'https://js.stripe.com',
 				'https://checkout.stripe.com',
-				'https://www.paypal.com',
-				'https://www.paypalobjects.com',
-				// Fraud prevention
-				'https://www.google.com/recaptcha/',
-				'https://www.gstatic.com/recaptcha/',
-				'https://cdn.siftscience.com',
-				// Analytics
-				'https://stats.wp.com',
 			],
 		},
-		// Style sources
+		// Styles - allow self and inline (needed for dynamic styles)
 		'style-src': {
 			wrapped: [ 'self', 'unsafe-inline' ],
-			raw: [ 'https://fonts.googleapis.com', 'https://s0.wp.com' ],
+			raw: [ 'https://fonts.googleapis.com' ],
 		},
-		// Connect sources for API calls
+		// EGRESS CONTROL: Tight allowlist for network connections (primary exfil gate)
 		'connect-src': {
 			wrapped: [ 'self' ],
 			raw: [
+				// Payment processors only
 				'https://api.stripe.com',
+				'https://q.stripe.com',
+				// WordPress.com API (required for checkout)
 				'https://public-api.wordpress.com',
-				'https://widgets.wp.com',
-				'https://wpcom.com',
-				'https://sandbox.paypal.com',
-				'https://survey.survicate.com',
 			],
 		},
-		// Frame sources for payment iframes
+		// Frame sources - payment widgets only
 		'frame-src': {
-			wrapped: [ 'self' ],
-			raw: [
-				'https://js.stripe.com',
-				'https://checkout.stripe.com',
-				'https://hooks.stripe.com',
-				'https://www.paypal.com',
-				'https://www.google.com/recaptcha/',
-				'https://recaptcha.google.com',
-				'https://public-api.wordpress.com',
-			],
+			raw: [ 'https://js.stripe.com', 'https://checkout.stripe.com' ],
 		},
-		// Critical for PCI DSS 6.4.3 - Restrict form actions
+		// EGRESS CONTROL: Restrict form submissions
 		'form-action': {
 			wrapped: [ 'self' ],
-			raw: [ 'https://checkout.stripe.com' ],
+			raw: [ 'https://api.stripe.com', 'https://checkout.stripe.com' ],
 		},
-		// Critical for PCI DSS 6.4.3 - Prevent clickjacking
+		// Images - self + data URIs only
+		'img-src': {
+			wrapped: [ 'self', 'data:' ],
+		},
+		// Fonts - self only
+		'font-src': {
+			wrapped: [ 'self' ],
+			raw: [ 'https://fonts.gstatic.com' ],
+		},
+		// Prevent base tag hijacking
+		'base-uri': {
+			wrapped: [ 'none' ],
+		},
+		// Block all plugins
+		'object-src': {
+			wrapped: [ 'none' ],
+		},
+		// Prevent clickjacking
 		'frame-ancestors': {
 			wrapped: [ 'none' ],
 		},
