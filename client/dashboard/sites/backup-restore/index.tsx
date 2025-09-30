@@ -19,6 +19,7 @@ import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -145,16 +146,18 @@ function SiteBackupRestore() {
 									restorePointDate,
 								} ),
 								{
-									LearnMore: (
+									LearnMore: isSelfHostedJetpackConnected( site ) ? (
 										<ExternalLink
 											href={ localizeUrl(
-												isSelfHostedJetpackConnected( site )
-													? 'https://jetpack.com/support/backup/restoring-with-jetpack-backup/'
-													: 'https://wordpress.com/support/restore/'
+												'https://jetpack.com/support/backup/restoring-with-jetpack-backup/'
 											) }
 										>
 											{ __( 'Learn more' ) }
 										</ExternalLink>
+									) : (
+										<InlineSupportLink supportContext="backups">
+											{ __( 'Learn more' ) }
+										</InlineSupportLink>
 									),
 								}
 							) }

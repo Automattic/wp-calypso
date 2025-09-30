@@ -4,6 +4,7 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
+import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { BackupState } from './use-backup-state';
@@ -103,15 +104,13 @@ export function BackupNotices( {
 						backupDate
 					),
 					{
-						external: (
+						external: isSelfHostedJetpackConnected( site ) ? (
 							<ExternalLink
-								href={ localizeUrl(
-									isSelfHostedJetpackConnected( site )
-										? 'https://jetpack.com/support/backup/'
-										: 'https://wordpress.com/support/restore/'
-								) }
+								href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }
 								children={ null }
 							/>
+						) : (
+							<InlineSupportLink supportContext="backups" children={ null } />
 						),
 					}
 				) }

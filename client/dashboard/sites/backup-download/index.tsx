@@ -18,6 +18,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupDownloadRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -166,16 +167,14 @@ function SiteBackupDownload() {
 									downloadPointDate,
 								} ),
 								{
-									LearnMore: (
-										<ExternalLink
-											href={ localizeUrl(
-												isSelfHostedJetpackConnected( site )
-													? 'https://jetpack.com/support/backup/'
-													: 'https://wordpress.com/support/restore/'
-											) }
-										>
+									LearnMore: isSelfHostedJetpackConnected( site ) ? (
+										<ExternalLink href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }>
 											{ __( 'Learn more' ) }
 										</ExternalLink>
+									) : (
+										<InlineSupportLink supportContext="backups">
+											{ __( 'Learn more' ) }
+										</InlineSupportLink>
 									),
 								}
 							) }
