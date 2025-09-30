@@ -9,20 +9,20 @@ import { useFixThreats } from '../hooks/use-fix-threats';
 import { FixThreatConfirmation } from './fix-threat-confirmation';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface FixThreatModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalProps ) {
+export function FixThreatModal( { items, closeModal, site }: FixThreatModalProps ) {
 	const threat = items[ 0 ];
 	const threatIds = [ threat.id ];
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { startFix, isFixing, status, error } = useFixThreats( siteId, threatIds );
+	const { startFix, isFixing, status, error } = useFixThreats( site.ID, threatIds );
 
 	useEffect( () => {
 		if ( status.isComplete && ! isFixing ) {
