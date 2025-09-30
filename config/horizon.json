@@ -119,7 +119,7 @@
 		"themes/discovery": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
-		"themes/universal-header": false,
+		"themes/universal-header": true,
 		"plugins/universal-header": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,

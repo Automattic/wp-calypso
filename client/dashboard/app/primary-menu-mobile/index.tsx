@@ -1,6 +1,7 @@
-import { DropdownMenu } from '@wordpress/components';
+import { __experimentalHStack as HStack, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
+import Menu from '../../components/menu';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAppContext } from '../context';
 
@@ -41,6 +42,19 @@ function PrimaryMenuMobile() {
 						<RouterLinkMenuItem to="/plugins" onClick={ onClose }>
 							{ __( 'Plugins' ) }
 						</RouterLinkMenuItem>
+					) }
+					{ supports.themes && (
+						<Menu.ItemLink
+							href="/themes"
+							onClick={ onClose }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<HStack justify="flex-start" spacing={ 1 }>
+								<span>{ __( 'Themes' ) }</span>
+								<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+							</HStack>
+						</Menu.ItemLink>
 					) }
 				</>
 			) }
