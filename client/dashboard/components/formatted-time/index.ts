@@ -69,3 +69,22 @@ export function useFormattedTime(
 
 	return formatted;
 }
+
+interface FormattedTimeProps {
+	timestamp: string;
+	timezoneString?: string;
+	gmtOffset?: number;
+	formatOptions?: Intl.DateTimeFormatOptions;
+}
+
+export function FormattedTime( {
+	timestamp,
+	timezoneString,
+	gmtOffset,
+	formatOptions = {
+		dateStyle: 'medium',
+		timeStyle: 'short',
+	},
+}: FormattedTimeProps ) {
+	return useFormattedTime( timestamp, formatOptions, timezoneString, gmtOffset );
+}

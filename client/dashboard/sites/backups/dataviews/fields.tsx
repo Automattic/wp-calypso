@@ -1,27 +1,9 @@
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useFormattedTime } from '../../../components/formatted-time';
+import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { ActivityLogEntry } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-
-interface FormattedTimeProps {
-	timestamp: string;
-	timezoneString?: string;
-	gmtOffset?: number;
-}
-
-function FormattedTime( { timestamp, timezoneString, gmtOffset }: FormattedTimeProps ) {
-	return useFormattedTime(
-		timestamp,
-		{
-			dateStyle: 'medium',
-			timeStyle: 'short',
-		},
-		timezoneString,
-		gmtOffset
-	);
-}
 
 export function getFields(
 	timezoneString?: string,

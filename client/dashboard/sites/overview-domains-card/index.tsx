@@ -128,34 +128,34 @@ export default function DomainsCard( {
 	isCompact?: boolean;
 } ) {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
-	const filteredSiteDomains = useMemo( () => {
-		// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
-		if ( siteDomains && siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
-			return siteDomains.filter(
-				( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain
-			);
-		}
+	const { data: siteDomains } = useQuery( {
+		...siteDomainsQuery( site.ID ),
+		select: ( data ) => {
+			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
+			}
 
-		return siteDomains;
-	}, [ siteDomains ] );
+			return data;
+		},
+	} );
 
 	if ( site.is_wpcom_staging_site ) {
 		return null;
 	}
 
-	if ( ! sitePlan || ! filteredSiteDomains ) {
+	if ( ! sitePlan || ! siteDomains ) {
 		return <CalloutSkeleton />;
 	}
 
 	if (
 		isSelfHostedJetpackConnected( site ) &&
-		filteredSiteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
+		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
 		return <DomainTransferUpsellCard />;
 	}
 
-	if ( ! filteredSiteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
@@ -163,7 +163,7 @@ export default function DomainsCard( {
 		<SiteDomainDataViews
 			type={ isCompact ? 'list' : 'table' }
 			site={ site }
-			domains={ filteredSiteDomains }
+			domains={ siteDomains }
 		/>
 	);
 }

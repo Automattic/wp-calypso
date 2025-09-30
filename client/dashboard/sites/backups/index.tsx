@@ -198,6 +198,7 @@ export function BackupsListPage() {
 				shouldShowNotices ? (
 					<BackupNotices
 						backupState={ backupState }
+						site={ site }
 						timezoneString={ timezoneString }
 						gmtOffset={ gmtOffset }
 					/>

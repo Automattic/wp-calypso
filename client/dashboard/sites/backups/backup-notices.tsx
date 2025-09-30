@@ -1,13 +1,18 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
+import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { BackupState } from './use-backup-state';
+import type { Site } from '@automattic/api-core';
 
 interface BackupNoticesProps {
 	backupState: BackupState;
+	site: Site;
 	timezoneString?: string;
 	gmtOffset?: number;
 }
@@ -15,7 +20,12 @@ interface BackupNoticesProps {
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { backupState, timezoneString, gmtOffset }: BackupNoticesProps ) {
+export function BackupNotices( {
+	backupState,
+	site,
+	timezoneString,
+	gmtOffset,
+}: BackupNoticesProps ) {
 	const { status, backup } = backupState;
 	const backupDate = useFormattedTime(
 		backup?.started ? backup.started.replace( ' ', 'T' ) + 'Z' : '',
@@ -95,7 +105,14 @@ export function BackupNotices( { backupState, timezoneString, gmtOffset }: Backu
 						backupDate
 					),
 					{
-						external: <ExternalLink href="https://jetpack.com/support/backup/" children={ null } />,
+						external: isSelfHostedJetpackConnected( site ) ? (
+							<ExternalLink
+								href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }
+								children={ null }
+							/>
+						) : (
+							<InlineSupportLink supportContext="backups" children={ null } />
+						),
 					}
 				) }
 			</Notice>
