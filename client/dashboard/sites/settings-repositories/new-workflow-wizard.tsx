@@ -6,7 +6,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
 import { CodeHighlighter } from '../../components/code-highlighter';
 import type { GitHubRepository, GitHubWorkflow } from '@automattic/api-core';
 
@@ -31,7 +30,6 @@ export const NewWorkflowWizard = ( {
 	exampleTemplate,
 }: NewWorkflowWizardProps ) => {
 	const queryClient = useQueryClient();
-	const [ error, setError ] = useState< string >();
 
 	const { mutate: createWorkflow, isPending } = useMutation( {
 		...createGithubWorkflowMutation(),
@@ -43,29 +41,22 @@ export const NewWorkflowWizard = ( {
 		},
 	} );
 
-	useEffect( () => {
-		const existingWorkflow = !! workflows?.find(
-			( workflow ) => workflow.workflow_path === RECOMMENDED_WORKFLOW_PATH
-		);
+	const existingWorkflow = workflows?.find(
+		( workflow ) => workflow.workflow_path === RECOMMENDED_WORKFLOW_PATH
+	);
 
-		if ( existingWorkflow ) {
-			setError(
-				__(
-					'A workflow file with this name already exists. Installing this workflow will overwrite it.'
-				)
-			);
-			return;
-		}
-
-		setError( undefined );
-	}, [ workflows ] );
+	const errorMessage = existingWorkflow
+		? __(
+				'A workflow file with this name already exists. Installing this workflow will overwrite it.'
+		  )
+		: undefined;
 
 	return (
 		<VStack spacing={ 4 }>
 			<Text as="pre">{ RECOMMENDED_WORKFLOW_PATH }</Text>
 			<CodeHighlighter content={ exampleTemplate } />
 
-			{ error && <Text>{ error }</Text> }
+			{ errorMessage && <Text>{ errorMessage }</Text> }
 
 			<Button
 				type="button"
