@@ -14,20 +14,6 @@ export const Input = () => {
 
 	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
 
-	// We generate a new railcar ID for each search
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const railcarId = useMemo( () => getNewRailcarId(), [ localQuery ] );
-
-	useEffect( () => {
-		const timeout = setTimeout( () => {
-			setRailCarId( railcarId );
-			setQuery( localQuery );
-		}, DELAY_TIMEOUT );
-		return () => {
-			clearTimeout( timeout );
-		};
-	}, [ localQuery, setRailCarId, railcarId ] );
-
 	useEffect( () => {
 		const searchEventTimeout = setTimeout( () => {
 			events.onSearch( localQuery, config?.vendor );

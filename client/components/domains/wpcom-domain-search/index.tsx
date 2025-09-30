@@ -5,6 +5,7 @@ import { FilterState } from '@automattic/domain-search/src/components/search-bar
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, useRef, useState, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
+import { useQueryHandler } from './use-query-handler';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -30,7 +31,9 @@ const DomainSearchWithCart = ( {
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
 	const { onContinue, onAddDomainToCart } = props.events ?? {};
-	const [ railcarId, setRailcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
+	const [ railcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
+
+	const { query } = useQueryHandler( {} );
 
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
@@ -157,7 +160,7 @@ const DomainSearchWithCart = ( {
 					fetch_algo: `${ fetchAlgo }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
 					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
-					fetch_query: getSessionStorageQuery(),
+					fetch_query: query,
 					domain_type: suggestion.is_premium ? 'premium' : 'standard',
 					tld: getTld( suggestion.domain_name ),
 				} );
