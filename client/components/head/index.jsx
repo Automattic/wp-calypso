@@ -8,6 +8,7 @@ const Head = ( {
 	branchName,
 	inlineScriptNonce,
 	faviconUrl,
+	skipManifest = false,
 } ) => {
 	return (
 		<head>
@@ -32,14 +33,15 @@ const Head = ( {
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
-			{ ! branchName || 'trunk' === branchName ? (
-				<link rel="manifest" href="/calypso/manifest.json" />
-			) : (
-				<link
-					rel="manifest"
-					href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName ) }
-				/>
-			) }
+			{ ! skipManifest &&
+				( ! branchName || 'trunk' === branchName ? (
+					<link rel="manifest" href="/calypso/manifest.json" />
+				) : (
+					<link
+						rel="manifest"
+						href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName ) }
+					/>
+				) ) }
 			<link
 				rel="preload"
 				href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"

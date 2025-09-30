@@ -137,6 +137,7 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					skipManifest={ sectionName === 'checkout' }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />

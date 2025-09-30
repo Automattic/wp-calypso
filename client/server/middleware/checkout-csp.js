@@ -25,7 +25,13 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 		],
 
 		// Styles - allow self and inline (needed for dynamic styles)
-		'style-src': [ "'self'", "'unsafe-inline'", 'https://fonts.googleapis.com' ],
+		'style-src': [
+			"'self'",
+			"'unsafe-inline'",
+			'https://fonts.googleapis.com',
+			'https://*.wp.com',
+			'http://*.wp.com',
+		],
 
 		// EGRESS CONTROL: Tight allowlist for network connections (primary exfil gate)
 		'connect-src': [
@@ -50,11 +56,13 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 		// Images - self + data URIs + WordPress.com CDN (both HTTP and HTTPS)
 		'img-src': [ "'self'", 'data:', 'https://*.wp.com', 'http://*.wp.com' ],
 
-		// Fonts - self + CDNs
+		// Fonts - self + CDNs + data URIs for inline fonts
 		'font-src': [
 			"'self'",
+			'data:',
 			'https://fonts.gstatic.com',
 			'https://*.wp.com',
+			'http://*.wp.com',
 			'https://use.typekit.net',
 			'https://woocommerce.com',
 		],
