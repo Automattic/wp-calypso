@@ -11,7 +11,7 @@ const PluginsMenu = () => {
 				{ __( 'Scheduled updates' ) }
 			</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item href="/plugins" target="_blank" rel="noopener noreferrer">
-				<span>{ __( 'Browse plugins' ) }</span>
+				{ __( 'Browse plugins' ) }
 			</ResponsiveMenu.Item>
 		</ResponsiveMenu>
 	);

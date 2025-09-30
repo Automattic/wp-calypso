@@ -22,7 +22,7 @@ function PrimaryMenu() {
 			) }
 			{ supports.themes && (
 				<ResponsiveMenu.Item href="/themes" target="_blank" rel="noopener noreferrer">
-					<span>{ __( 'Themes' ) }</span>
+					{ __( 'Themes' ) }
 				</ResponsiveMenu.Item>
 			) }
 		</ResponsiveMenu>
