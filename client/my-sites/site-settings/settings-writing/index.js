@@ -4,7 +4,8 @@ import {
 	redirectIfDuplicatedView as _redirectIfDuplicatedView,
 	render as clientRender,
 } from 'calypso/controller';
-import { sites, siteSelection } from 'calypso/my-sites/controller';
+import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
+import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
 const redirectIfDuplicatedView = ( context, next ) => {
 	_redirectIfDuplicatedView( `edit-tags.php?taxonomy=${ context.params.taxonomy }` )(
@@ -17,10 +18,22 @@ export default function () {
 	page(
 		'/settings/writing/:site_id',
 		siteSelection,
-		_redirectIfDuplicatedView( 'options-writing.php' )
+		_redirectIfDuplicatedView( 'options-writing.php' ),
+		navigation,
+		siteSettings,
+		makeLayout,
+		clientRender
 	);
 
 	page( '/settings/taxonomies/:taxonomy', siteSelection, sites, makeLayout, clientRender );
 
-	page( '/settings/taxonomies/:taxonomy/:site_id', siteSelection, redirectIfDuplicatedView );
+	page(
+		'/settings/taxonomies/:taxonomy/:site_id',
+		siteSelection,
+		redirectIfDuplicatedView,
+		navigation,
+		setScroll,
+		makeLayout,
+		clientRender
+	);
 }
