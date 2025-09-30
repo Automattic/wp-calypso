@@ -50,8 +50,8 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 		},
 		// Images - self + data URIs + WordPress.com CDN
 		'img-src': {
-			wrapped: [ 'self', 'data:' ],
-			raw: [ 'https://*.wp.com' ],
+			wrapped: [ 'self' ],
+			raw: [ 'data:', 'https://*.wp.com' ],
 		},
 		// Fonts - self + CDNs
 		'font-src': {
@@ -77,6 +77,9 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 		directives[ 'script-src' ].wrapped.push( 'unsafe-eval' );
 
 		// Add HTTP versions for development
+		// Allow HTTP for *.wp.com in img-src
+		directives[ 'img-src' ].raw.push( 'http://*.wp.com' );
+
 		const httpDomains = [ 'stats.wp.com', 'pixel.wp.com', 's0.wp.com', 's1.wp.com' ];
 		httpDomains.forEach( ( domain ) => {
 			if (
