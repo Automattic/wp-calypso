@@ -22,16 +22,16 @@ import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
+import { useInstallGithub } from './use-install-github';
 import type {
 	Site,
 	GitHubInstallation,
 	GitHubRepository,
 	CreateCodeDeploymentVariables,
 } from '@automattic/api-core';
-
 interface ConnectRepositoryFormProps {
 	site: Site;
 	onConnected: () => void;
@@ -87,13 +87,27 @@ const RepositorySelector = ( {
 	);
 };
 
-// Custom GitHub account selector with add button
+type GitHubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
+	onNewGithubInstallationAdded: ( installationId: number ) => Promise< void >;
+	githubInstallationsError: Error | null;
+};
+
 const GitHubAccountSelector = ( {
 	field,
 	onChange,
 	data,
-}: DataFormControlProps< ConnectRepositoryFormData > ) => {
+	onNewGithubInstallationAdded,
+	githubInstallationsError,
+}: GitHubAccountSelectorProps ) => {
 	const { id, getValue } = field;
+	const { installGithub } = useInstallGithub();
+
+	const onAddGitHubAccount = useCallback( () => {
+		installGithub( {
+			onSuccess: onNewGithubInstallationAdded,
+			githubInstallationsError,
+		} );
+	}, [ onNewGithubInstallationAdded, installGithub, githubInstallationsError ] );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -101,7 +115,9 @@ const GitHubAccountSelector = ( {
 				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
 					{ __( 'GitHub account' ) }
 				</Text>
-				<Button variant="link">{ __( 'Add GitHub account' ) }</Button>
+				<Button variant="link" onClick={ onAddGitHubAccount }>
+					{ __( 'Add GitHub account 2' ) }
+				</Button>
 			</HStack>
 			<SelectControl
 				__next40pxDefaultSize
@@ -139,7 +155,11 @@ export const ConnectRepositoryForm = ( {
 	onConnected,
 	onCancel,
 }: ConnectRepositoryFormProps ) => {
-	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
+	const {
+		data: installations,
+		refetch: refetchGithubInstallations,
+		error: githubInstallationsError,
+	} = useSuspenseQuery( githubInstallationsQuery() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( {
@@ -308,13 +328,39 @@ export const ConnectRepositoryForm = ( {
 		isAdvancedValid
 	);
 
+	const handleNewGithubInstallationAdded = useCallback(
+		async ( installationId: number ) => {
+			const { data: newInstallations } = await refetchGithubInstallations();
+
+			const newInstallation = newInstallations?.find(
+				( installation ) => installation.external_id === installationId
+			);
+
+			if ( newInstallation ) {
+				setFormData( ( prev ) => ( {
+					...prev,
+					selectedInstallationId: newInstallation.external_id,
+				} ) );
+			}
+		},
+		[ refetchGithubInstallations ]
+	);
+
 	const fields: Field< ConnectRepositoryFormData >[] = useMemo( () => {
 		return [
 			{
 				id: 'selectedInstallationId',
 				label: __( 'GitHub account' ),
 				type: 'text' as const,
-				Edit: GitHubAccountSelector,
+				Edit: ( props ) => {
+					return (
+						<GitHubAccountSelector
+							{ ...props }
+							onNewGithubInstallationAdded={ handleNewGithubInstallationAdded }
+							githubInstallationsError={ githubInstallationsError }
+						/>
+					);
+				},
 				elements: installationOptions,
 				help: installationHelpText,
 			},
@@ -359,6 +405,7 @@ export const ConnectRepositoryForm = ( {
 		branchOptions,
 		isLoadingBranches,
 		selectedRepository,
+		handleNewGithubInstallationAdded,
 	] );
 
 	return (

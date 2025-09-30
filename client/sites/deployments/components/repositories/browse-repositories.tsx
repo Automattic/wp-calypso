@@ -81,12 +81,14 @@ export const GitHubBrowseRepositories = ( {
 	return (
 		<div className="github-deployments-repositories">
 			<div className="github-deployments-repositories__search-bar">
+				1
 				<GitHubInstallationsDropdown
 					onAddInstallation={ onNewInstallationRequest }
 					installations={ installations }
 					value={ installation }
 					onChange={ setInstallation }
 				/>
+				2
 				<SearchControl
 					css={ { flex: 1 } }
 					__nextHasNoMarginBottom
