@@ -42,7 +42,7 @@ export const GitHubInstallationsDropdown = ( {
 			) ) }
 			<SelectDropdown.Separator />
 			<SelectDropdown.Item onClick={ onAddInstallation } key="add">
-				{ __( 'Add GitHub account 1' ) }
+				{ __( 'Add GitHub account' ) }
 			</SelectDropdown.Item>
 		</SelectDropdown>
 	);

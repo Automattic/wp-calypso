@@ -116,7 +116,7 @@ const GitHubAccountSelector = ( {
 					{ __( 'GitHub account' ) }
 				</Text>
 				<Button variant="link" onClick={ onAddGitHubAccount }>
-					{ __( 'Add GitHub account 2' ) }
+					{ __( 'Add GitHub account' ) }
 				</Button>
 			</HStack>
 			<SelectControl
