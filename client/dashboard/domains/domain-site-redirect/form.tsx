@@ -82,7 +82,8 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 		} );
 	};
 
-	const canSubmit = ! isLoading && isItemValid( formData, fields, form );
+	const isDirty = JSON.stringify( formData ) !== JSON.stringify( initialData );
+	const canSubmit = ! isLoading && isDirty && isItemValid( formData, fields, form );
 
 	return (
 		<Card>
