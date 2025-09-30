@@ -54,6 +54,24 @@ describe( 'Region Address Fieldsets', () => {
 		{ code: 'BC', name: 'British Columbia' },
 	];
 
+	const mockCountryListWithPostalCodes = [
+		{ code: 'US', name: 'United States', has_postal_codes: true, vat_supported: false },
+		{ code: 'CA', name: 'Canada', has_postal_codes: true, vat_supported: false },
+		{ code: 'GB', name: 'United Kingdom', has_postal_codes: true, vat_supported: false },
+		{ code: 'DE', name: 'Germany', has_postal_codes: true, vat_supported: false },
+		{ code: 'FR', name: 'France', has_postal_codes: true, vat_supported: false },
+		{ code: 'AR', name: 'Argentina', has_postal_codes: true, vat_supported: false },
+		{ code: 'IE', name: 'Ireland', has_postal_codes: true, vat_supported: false },
+		{ code: 'NL', name: 'Netherlands', has_postal_codes: true, vat_supported: false },
+		{ code: 'BE', name: 'Belgium', has_postal_codes: true, vat_supported: false },
+	];
+
+	const mockCountryListWithoutPostalCodes = [
+		{ code: 'AE', name: 'United Arab Emirates', has_postal_codes: false, vat_supported: false },
+		{ code: 'HK', name: 'Hong Kong', has_postal_codes: false, vat_supported: false },
+		{ code: 'SG', name: 'Singapore', has_postal_codes: false, vat_supported: false },
+	];
+
 	describe( 'RegionAddressFieldsets function', () => {
 		test( 'should return standard address fields for US without states', () => {
 			const fields = RegionAddressFieldsets( undefined, 'US' );
@@ -99,10 +117,11 @@ describe( 'Region Address Fieldsets', () => {
 	} );
 
 	describe( 'RegionAddressFieldsLayout function', () => {
-		test( 'should return EU layout for EU countries without states', () => {
+		test( 'should return EU layout for EU countries without states (with postal codes)', () => {
 			const layout = RegionAddressFieldsLayout( {
 				statesList: undefined,
-				countryCode: CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ],
+				countryList: mockCountryListWithPostalCodes,
+				countryCode: CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ], // 'AR'
 			} );
 
 			expect( layout ).toEqual( [
@@ -119,10 +138,32 @@ describe( 'Region Address Fieldsets', () => {
 			] );
 		} );
 
-		test( 'should return UK layout for UK countries without states', () => {
+		test( 'should return EU layout for EU countries without states (without postal codes)', () => {
 			const layout = RegionAddressFieldsLayout( {
 				statesList: undefined,
-				countryCode: CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ],
+				countryList: mockCountryListWithoutPostalCodes,
+				countryCode: 'AR', // EU country not in the postal codes list
+			} );
+
+			expect( layout ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city' ],
+				},
+			] );
+		} );
+
+		test( 'should return UK layout for UK countries without states (with postal codes)', () => {
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode: CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ], // 'GB'
 			} );
 
 			expect( layout ).toEqual( [
@@ -139,13 +180,35 @@ describe( 'Region Address Fieldsets', () => {
 			] );
 		} );
 
-		test( 'should return US layout for countries with states (desktop)', () => {
+		test( 'should return UK layout for UK countries without states (without postal codes)', () => {
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: mockCountryListWithoutPostalCodes,
+				countryCode: 'GB', // UK country not in the postal codes list
+			} );
+
+			expect( layout ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city' ],
+				},
+			] );
+		} );
+
+		test( 'should return US layout for countries with states (desktop, with postal codes)', () => {
 			const { useViewportMatch } = require( '@wordpress/compose' );
 			useViewportMatch.mockReturnValue( false );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
-				countryCode: CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ],
+				countryList: mockCountryListWithPostalCodes,
+				countryCode: 'US',
 			} );
 
 			expect( layout ).toEqual( [
@@ -162,13 +225,38 @@ describe( 'Region Address Fieldsets', () => {
 			] );
 		} );
 
-		test( 'should return US layout for countries with states (mobile)', () => {
+		test( 'should return US layout for countries with states (desktop, without postal codes)', () => {
+			const { useViewportMatch } = require( '@wordpress/compose' );
+			useViewportMatch.mockReturnValue( false );
+
+			const layout = RegionAddressFieldsLayout( {
+				statesList: mockStatesListUS,
+				countryList: mockCountryListWithoutPostalCodes,
+				countryCode: 'US', // US not in the no-postal-codes list
+			} );
+
+			expect( layout ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
+			] );
+		} );
+
+		test( 'should return US layout for countries with states (mobile, with postal codes)', () => {
 			const { useViewportMatch } = require( '@wordpress/compose' );
 			useViewportMatch.mockReturnValue( true );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
-				countryCode: CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ],
+				countryList: mockCountryListWithPostalCodes,
+				countryCode: 'US',
 			} );
 
 			expect( layout ).toEqual( [
@@ -183,6 +271,30 @@ describe( 'Region Address Fieldsets', () => {
 					children: [ 'city', 'state' ],
 				},
 				'postalCode',
+			] );
+		} );
+
+		test( 'should return US layout for countries with states (mobile, without postal codes)', () => {
+			const { useViewportMatch } = require( '@wordpress/compose' );
+			useViewportMatch.mockReturnValue( true );
+
+			const layout = RegionAddressFieldsLayout( {
+				statesList: mockStatesListUS,
+				countryList: mockCountryListWithoutPostalCodes,
+				countryCode: 'US', // US not in the no-postal-codes list
+			} );
+
+			expect( layout ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
 			] );
 		} );
 	} );
@@ -231,10 +343,163 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 	} );
 
+	describe( 'Postal code support logic', () => {
+		test( 'should handle empty country list gracefully', () => {
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: undefined,
+				countryCode: 'US',
+			} );
+
+			// Should default to US layout without postal code when country list is empty
+			expect( layout ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
+			] );
+		} );
+
+		test( 'should handle country not in list', () => {
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode: 'XX', // Non-existent country
+			} );
+
+			// Should default to US layout without postal code when country is not found
+			expect( layout ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
+			] );
+		} );
+
+		test( 'should respect has_postal_codes: false for specific countries', () => {
+			const countryListWithMixedSupport = [
+				{ code: 'AE', name: 'UAE', has_postal_codes: false, vat_supported: false },
+				{ code: 'US', name: 'United States', has_postal_codes: true, vat_supported: false },
+			];
+
+			const layoutAE = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: countryListWithMixedSupport,
+				countryCode: 'AE',
+			} );
+
+			const layoutUS = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: countryListWithMixedSupport,
+				countryCode: 'US',
+			} );
+
+			// AE should not have postal code
+			expect( layoutAE ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
+			] );
+
+			// US should have postal code
+			expect( layoutUS ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
+				'postalCode',
+			] );
+		} );
+
+		test( 'should handle VAT-supported countries with tax_country_codes', () => {
+			const countryListWithVAT = [
+				{
+					code: 'NL',
+					name: 'Netherlands',
+					has_postal_codes: true,
+					vat_supported: true,
+					tax_country_codes: [ 'NL', 'BE' ],
+				},
+			];
+
+			// Test with main country code (NL is EU country)
+			const layoutNL = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: countryListWithVAT,
+				countryCode: 'NL',
+			} );
+
+			// Test with tax country code (BE is not in CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, so uses default layout)
+			const layoutBE = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: countryListWithVAT,
+				countryCode: 'BE',
+			} );
+
+			// NL should use EU layout with postal codes
+			expect( layoutNL ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'postalCode', 'city' ],
+				},
+			] );
+
+			// BE should use default layout with postal codes (mobile style)
+			expect( layoutBE ).toEqual( [
+				'address1',
+				'address2',
+				{
+					id: 'location-row',
+					layout: {
+						type: 'row',
+						alignment: 'start',
+					},
+					children: [ 'city', 'state' ],
+				},
+				'postalCode',
+			] );
+		} );
+	} );
+
 	describe( 'Integration with original test scenarios', () => {
 		test( 'should handle default US behavior (equivalent to old UsAddressFieldset)', () => {
 			const fields = RegionAddressFieldsets( undefined, 'US' );
-			const layout = RegionAddressFieldsLayout( { statesList: undefined, countryCode: 'US' } );
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode: 'US',
+			} );
 
 			// Should have all standard address fields
 			expect( fields.find( ( f ) => f.id === 'address1' ) ).toBeDefined();
@@ -261,7 +526,11 @@ describe( 'Region Address Fieldsets', () => {
 
 		test( 'should handle UK region behavior (equivalent to old UkAddressFieldset)', () => {
 			const countryCode = CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ];
-			const layout = RegionAddressFieldsLayout( { statesList: undefined, countryCode } );
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode,
+			} );
 
 			// Should use UK-style layout (city before postal code)
 			expect( layout ).toEqual( [
@@ -280,7 +549,11 @@ describe( 'Region Address Fieldsets', () => {
 
 		test( 'should handle EU region behavior (equivalent to old EuAddressFieldset)', () => {
 			const countryCode = CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ];
-			const layout = RegionAddressFieldsLayout( { statesList: undefined, countryCode } );
+			const layout = RegionAddressFieldsLayout( {
+				statesList: undefined,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode,
+			} );
 
 			// Should use EU-style layout (postal code before city)
 			expect( layout ).toEqual( [
@@ -299,7 +572,11 @@ describe( 'Region Address Fieldsets', () => {
 
 		test( 'should override EU layout when country has states (equivalent to old behavior)', () => {
 			const countryCode = CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ];
-			const layout = RegionAddressFieldsLayout( { statesList: mockStatesListUS, countryCode } );
+			const layout = RegionAddressFieldsLayout( {
+				statesList: mockStatesListUS,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode,
+			} );
 
 			// Should use US-style layout even for EU country when states are present
 			expect( layout ).toEqual(
@@ -315,7 +592,11 @@ describe( 'Region Address Fieldsets', () => {
 
 		test( 'should override UK layout when country has states (equivalent to old behavior)', () => {
 			const countryCode = CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ];
-			const layout = RegionAddressFieldsLayout( { statesList: mockStatesListUS, countryCode } );
+			const layout = RegionAddressFieldsLayout( {
+				statesList: mockStatesListUS,
+				countryList: mockCountryListWithPostalCodes,
+				countryCode,
+			} );
 
 			// Should use US-style layout even for UK country when states are present
 			expect( layout ).toEqual(

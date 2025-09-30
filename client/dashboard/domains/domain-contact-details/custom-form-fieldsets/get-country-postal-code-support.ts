@@ -21,5 +21,5 @@ export function getCountryPostalCodeSupport(
 			( country.vat_supported && country.tax_country_codes.includes( countryCode.toUpperCase() ) )
 	);
 
-	return countryListItem?.has_postal_codes ?? false;
+	return countryListItem?.has_postal_codes;
 }
