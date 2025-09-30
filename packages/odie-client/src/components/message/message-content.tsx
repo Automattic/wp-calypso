@@ -20,7 +20,7 @@ export const MessageContent = ( {
 		'agenttic',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		{ 'is-sending': message.isSending },
+		{ 'is-sending': message.status === 'sending' },
 		{
 			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
 		}

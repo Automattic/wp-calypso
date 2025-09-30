@@ -124,7 +124,7 @@ export const OdieSendMessageButton = () => {
 				// Odie messages are considered sent immediately.
 				// Because it's impossible to know if the message was sent or until the response is received.
 				// Which takes north of 10 seconds.
-				isSending: chat?.provider !== 'odie',
+				status: chat?.provider !== 'odie' ? 'sending' : 'sent',
 				metadata: { temporary_id: crypto.randomUUID() },
 			} as Message;
 

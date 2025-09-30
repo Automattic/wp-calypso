@@ -173,7 +173,7 @@ export type Message = {
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
 	payload?: string;
-	isSending?: boolean;
+	status?: 'sending' | 'sent' | 'undelivered';
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';

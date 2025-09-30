@@ -40,7 +40,11 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 
 			Smooch.sendMessage( messageToSend, conversationId );
 			return new Promise< Message >( ( resolve, reject ) => {
+				const timeout = setTimeout( () => {
+					reject( new Error( 'Message not sent' ) );
+				}, 5000 );
 				function onMessageSent( message: Message ) {
+					clearTimeout( timeout );
 					// @ts-expect-error -- 'off' is not part of the def.
 					Smooch.off( 'message:sent', onMessageSent );
 					resolve( message );
@@ -51,6 +55,7 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				Smooch.on( 'message:sent', onMessageSent as any );
 			} );
 		},
+		networkMode: 'always',
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
@@ -63,7 +68,7 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				...chat,
 				messages: chat.messages.map( ( message ) =>
 					message.metadata?.temporary_id === data.metadata?.temporary_id
-						? { ...message, isSending: false }
+						? { ...message, status: 'sent' }
 						: message
 				),
 			} ) );
@@ -72,6 +77,15 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 		onError: ( error ) => {
 			if ( error instanceof Event && error.type === 'abort' ) {
 				setChatStatus( 'loaded' );
+			} else {
+				setChat( ( chat ) => ( {
+					...chat,
+					messages: chat.messages.map( ( message ) =>
+						message.metadata?.temporary_id === message.metadata?.temporary_id
+							? { ...message, status: 'undelivered' }
+							: message
+					),
+				} ) );
 			}
 		},
 	} );
