@@ -1,10 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
-import {
-	siteBySlugQuery,
-	siteSettingsQuery,
-	siteBackupActivityLogEntriesQuery,
-} from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
 import { __experimentalGrid as Grid, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -28,6 +24,7 @@ import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
+import { useActivityLog } from './use-activity-log';
 import { useBackupState } from './use-backup-state';
 import './style.scss';
 import type { ActivityLogEntry } from '@automattic/api-core';
@@ -64,6 +61,13 @@ export function BackupsListPage() {
 	} );
 	const [ selectedBackup, setSelectedBackupInState ] = useState< ActivityLogEntry | null >( null );
 
+	const { activityLog, isLoadingActivityLog } = useActivityLog( {
+		siteId: site.ID,
+		dateRange,
+		gmtOffset,
+		timezoneString,
+	} );
+
 	const setSelectedBackup = useCallback(
 		( backup?: ActivityLogEntry | null, replace = false ) => {
 			if ( backup ) {
@@ -88,10 +92,7 @@ export function BackupsListPage() {
 		[ router, siteSlug ]
 	);
 
-	// Fetch activity log if we have a rewindId to auto-select
-	const { data: activityLog } = useQuery( {
-		...siteBackupActivityLogEntriesQuery( site.ID ),
-	} );
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	// Auto-select backup based on rewindId parameter
 	useEffect( () => {
@@ -104,18 +105,22 @@ export function BackupsListPage() {
 		}
 		// if no rewindId, then it's hitting the index route
 		// let's redirect to the first found backup
+		// but no redirection if it's mobile
 		const backup = activityLog?.[ 0 ];
-		if ( ! rewindId && backup ) {
+		if ( ! rewindId && backup && ! isSmallViewport ) {
 			setSelectedBackup( backup, true );
 		}
-	}, [ rewindId, activityLog, setSelectedBackup ] );
+		// no rewind id in param, and no backup? We have an empty query
+		if ( ! rewindId && ! backup ) {
+			setSelectedBackupInState( null );
+		}
+	}, [ rewindId, activityLog, setSelectedBackup, isSmallViewport ] );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		handleDateRangeChange( next );
 		setSelectedBackup( null, false );
 	};
 	const [ showDetails, setShowDetails ] = useState( false );
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
@@ -153,10 +158,10 @@ export function BackupsListPage() {
 
 		return (
 			<BackupsList
-				site={ site }
+				activityLog={ activityLog }
+				isLoadingActivityLog={ isLoadingActivityLog }
 				selectedBackup={ selectedBackup }
 				setSelectedBackup={ handleBackupSelection }
-				autoSelect={ false }
 				dateRange={ dateRange }
 				timezoneString={ timezoneString }
 				gmtOffset={ gmtOffset }
@@ -211,7 +216,8 @@ export function BackupsListPage() {
 					) : (
 						<Grid columns={ columns } templateColumns="40% 1fr">
 							<BackupsList
-								site={ site }
+								activityLog={ activityLog }
+								isLoadingActivityLog={ isLoadingActivityLog }
 								selectedBackup={ selectedBackup }
 								setSelectedBackup={ handleBackupSelection }
 								dateRange={ dateRange }

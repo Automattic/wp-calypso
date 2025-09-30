@@ -149,7 +149,13 @@ jest.mock( '../../../app/router/sites', () => ( {
 	},
 } ) );
 
-function renderBackupsListPage() {
+function renderBackupsListPage( {
+	backupEntries = mockBackupEntries,
+	activityLogTimes = 2,
+}: {
+	backupEntries?: ActivityLogEntry[];
+	activityLogTimes?: number;
+} = {} ) {
 	nock( API_BASE ).get( '/rest/v1.1/sites/test-site' ).query( true ).reply( 200, mockSite );
 
 	nock( API_BASE )
@@ -164,12 +170,12 @@ function renderBackupsListPage() {
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity/rewindable` )
 		.query( true )
-		.times( 2 )
+		.times( activityLogTimes )
 		.reply( 200, {
 			current: {
-				orderedItems: mockBackupEntries,
+				orderedItems: backupEntries,
 			},
-			totalItems: mockBackupEntries.length,
+			totalItems: backupEntries.length,
 			totalPages: 1,
 		} );
 
@@ -199,3 +205,15 @@ test.each( summaryTestCases )(
 		} );
 	}
 );
+
+test( 'keeps the backups list stable when no entries are returned', async () => {
+	mockRouterParams.rewindId = 'missing-rewind-id';
+	renderBackupsListPage( { backupEntries: [], activityLogTimes: 2 } );
+
+	await waitFor( () => {
+		expect( screen.getByText( 'Search backups' ) ).toBeInTheDocument();
+	} );
+
+	expect( screen.queryByText( 'Daily backup completed successfully' ) ).toBeNull();
+	expect( nock.isDone() ).toBe( true );
+} );
