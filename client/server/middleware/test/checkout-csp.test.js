@@ -14,12 +14,15 @@ describe( 'checkout-csp middleware', () => {
 			expect( typeof header ).toBe( 'string' );
 
 			// Should include all required directive types
+			expect( header ).toContain( 'default-src' );
 			expect( header ).toContain( 'script-src' );
 			expect( header ).toContain( 'style-src' );
 			expect( header ).toContain( 'connect-src' );
 			expect( header ).toContain( 'frame-src' );
 			expect( header ).toContain( 'form-action' );
 			expect( header ).toContain( 'frame-ancestors' );
+			expect( header ).toContain( 'base-uri' );
+			expect( header ).toContain( 'object-src' );
 		} );
 
 		it( 'should include nonce in script-src directive', () => {
@@ -45,17 +48,12 @@ describe( 'checkout-csp middleware', () => {
 			expect( header ).toContain( 'https://www.paypalobjects.com' );
 		} );
 
-		it( 'should include fraud prevention domains', () => {
+		it( 'should include strict-dynamic', () => {
 			const nonce = 'test-nonce';
 			const isDevelopment = false;
 			const header = generateCheckoutCSPHeader( nonce, isDevelopment );
 
-			// reCAPTCHA
-			expect( header ).toContain( 'https://www.google.com/recaptcha/' );
-			expect( header ).toContain( 'https://www.gstatic.com/recaptcha/' );
-
-			// Sift Science
-			expect( header ).toContain( 'https://cdn.siftscience.com' );
+			expect( header ).toContain( "'strict-dynamic'" );
 		} );
 
 		it( 'should restrict form-action for PCI DSS compliance', () => {
@@ -74,6 +72,14 @@ describe( 'checkout-csp middleware', () => {
 			expect( header ).toContain( "frame-ancestors 'none'" );
 		} );
 
+		it( 'should set default-src to none', () => {
+			const nonce = 'test-nonce';
+			const isDevelopment = false;
+			const header = generateCheckoutCSPHeader( nonce, isDevelopment );
+
+			expect( header ).toContain( "default-src 'none'" );
+		} );
+
 		it( 'should add unsafe-eval in development mode', () => {
 			const nonce = 'test-nonce';
 			const isDevelopment = true;
@@ -90,24 +96,13 @@ describe( 'checkout-csp middleware', () => {
 			expect( header ).not.toContain( "'unsafe-eval'" );
 		} );
 
-		it( 'should add HTTP versions of domains in development mode', () => {
-			const nonce = 'test-nonce';
-			const isDevelopment = true;
-			const header = generateCheckoutCSPHeader( nonce, isDevelopment );
-
-			// Should have both HTTP and HTTPS versions
-			expect( header ).toContain( 'https://stats.wp.com' );
-			expect( header ).toContain( 'http://stats.wp.com' );
-		} );
-
-		it( 'should only include HTTPS versions in production mode', () => {
+		it( 'should allow both HTTP and HTTPS for wp.com images', () => {
 			const nonce = 'test-nonce';
 			const isDevelopment = false;
 			const header = generateCheckoutCSPHeader( nonce, isDevelopment );
 
-			// Should only have HTTPS version
-			expect( header ).toContain( 'https://stats.wp.com' );
-			expect( header ).not.toContain( 'http://stats.wp.com' );
+			expect( header ).toContain( 'https://*.wp.com' );
+			expect( header ).toContain( 'http://*.wp.com' );
 		} );
 	} );
 

@@ -8,102 +8,65 @@ import crypto from 'crypto';
  * @returns {string} The CSP policy string for checkout
  */
 export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
+	// Simple string arrays - add quotes yourself for CSP keywords like 'self', 'none', etc.
 	const directives = {
 		// Default deny everything
-		'default-src': {
-			wrapped: [ 'none' ],
-		},
+		'default-src': [ "'none'" ],
+
 		// PCI DSS 6.4.3: Nonce-based with strict-dynamic for scripts
 		// 'self' kept as fallback for browsers that don't support strict-dynamic
-		'script-src': {
-			wrapped: [ `nonce-${ nonce }`, 'strict-dynamic', 'self' ],
-			raw: [
-				// Payment processors (fallback for non-strict-dynamic browsers)
-				'https://js.stripe.com',
-				'https://checkout.stripe.com',
-			],
-		},
+		'script-src': [
+			`'nonce-${ nonce }'`,
+			"'strict-dynamic'",
+			"'self'",
+			// Payment processors (fallback for non-strict-dynamic browsers)
+			'https://js.stripe.com',
+			'https://checkout.stripe.com',
+		],
+
 		// Styles - allow self and inline (needed for dynamic styles)
-		'style-src': {
-			wrapped: [ 'self', 'unsafe-inline' ],
-			raw: [ 'https://fonts.googleapis.com' ],
-		},
+		'style-src': [ "'self'", "'unsafe-inline'", 'https://fonts.googleapis.com' ],
+
 		// EGRESS CONTROL: Tight allowlist for network connections (primary exfil gate)
-		'connect-src': {
-			wrapped: [ 'self' ],
-			raw: [
-				// Payment processors only
-				'https://api.stripe.com',
-				'https://q.stripe.com',
-				// WordPress.com API (required for checkout)
-				'https://public-api.wordpress.com',
-			],
-		},
+		'connect-src': [
+			"'self'",
+			// Payment processors only
+			'https://api.stripe.com',
+			'https://q.stripe.com',
+			// WordPress.com API (required for checkout)
+			'https://public-api.wordpress.com',
+		],
+
 		// Frame sources - payment widgets only
-		'frame-src': {
-			raw: [ 'https://js.stripe.com', 'https://checkout.stripe.com' ],
-		},
+		'frame-src': [ 'https://js.stripe.com', 'https://checkout.stripe.com' ],
+
 		// EGRESS CONTROL: Restrict form submissions
-		'form-action': {
-			wrapped: [ 'self' ],
-			raw: [ 'https://api.stripe.com', 'https://checkout.stripe.com' ],
-		},
-		// Images - self + data URIs + WordPress.com CDN
-		'img-src': {
-			wrapped: [ 'self' ],
-			raw: [ 'data:', 'https://*.wp.com' ],
-		},
+		'form-action': [ "'self'", 'https://api.stripe.com', 'https://checkout.stripe.com' ],
+
+		// Images - self + data URIs + WordPress.com CDN (both HTTP and HTTPS)
+		'img-src': [ "'self'", 'data:', 'https://*.wp.com', 'http://*.wp.com' ],
+
 		// Fonts - self + CDNs
-		'font-src': {
-			wrapped: [ 'self' ],
-			raw: [ 'https://fonts.gstatic.com', 'https://*.wp.com' ],
-		},
+		'font-src': [ "'self'", 'https://fonts.gstatic.com', 'https://*.wp.com' ],
+
 		// Prevent base tag hijacking
-		'base-uri': {
-			wrapped: [ 'none' ],
-		},
+		'base-uri': [ "'none'" ],
+
 		// Block all plugins
-		'object-src': {
-			wrapped: [ 'none' ],
-		},
+		'object-src': [ "'none'" ],
+
 		// Prevent clickjacking
-		'frame-ancestors': {
-			wrapped: [ 'none' ],
-		},
+		'frame-ancestors': [ "'none'" ],
 	};
 
 	if ( isDevelopment ) {
 		// Add 'unsafe-eval' to script-src for webpack
-		directives[ 'script-src' ].wrapped.push( 'unsafe-eval' );
-
-		// Add HTTP versions for development
-		// Allow HTTP for *.wp.com in img-src
-		directives[ 'img-src' ].raw.push( 'http://*.wp.com' );
-
-		const httpDomains = [ 'stats.wp.com', 'pixel.wp.com', 's0.wp.com', 's1.wp.com' ];
-		httpDomains.forEach( ( domain ) => {
-			if (
-				directives[ 'script-src' ] &&
-				directives[ 'script-src' ].raw.includes( `https://${ domain }` )
-			) {
-				directives[ 'script-src' ].raw.push( `http://${ domain }` );
-			}
-			if (
-				directives[ 'connect-src' ] &&
-				directives[ 'connect-src' ].raw.includes( `https://${ domain }` )
-			) {
-				directives[ 'connect-src' ].raw.push( `http://${ domain }` );
-			}
-		} );
+		directives[ 'script-src' ].push( "'unsafe-eval'" );
 	}
 
+	// Build CSP string - just join the arrays
 	const cspString = Object.entries( directives )
-		.map( ( [ key, value ] ) => {
-			const wrappedItems = ( value.wrapped ?? [] ).map( ( item ) => `'${ item }'` );
-			const rawItems = value.raw ?? [];
-			const allExpressions = [ ...wrappedItems, ...rawItems ].join( ' ' );
-			return `${ key } ${ allExpressions }`;
-		} )
+		.map( ( [ key, values ] ) => `${ key } ${ values.join( ' ' ) }` )
 		.join( '; ' );
 
 	return cspString;
