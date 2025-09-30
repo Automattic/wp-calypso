@@ -10,22 +10,8 @@ import PageLayout from '../../../components/page-layout';
 import {
 	ScheduledUpdatesForm,
 	type ScheduledUpdatesFormOnSubmit,
-	type InitialValues,
 } from '../components/schedule-form';
-
-/**
- *
- * Placeholder hook.
- */
-function useLoadScheduleById( _scheduleId: string ) {
-	// Placeholder state and derived values until hook is implemented in next task
-	void _scheduleId;
-	return {
-		loading: false,
-		error: '',
-		initial: null as unknown as InitialValues,
-	} as const;
-}
+import { useLoadScheduleById } from '../hooks/use-load-schedule-by-id';
 
 export default function PluginsScheduledUpdatesEdit() {
 	const { scheduleId } = pluginsScheduledUpdatesEditRoute.useParams();
