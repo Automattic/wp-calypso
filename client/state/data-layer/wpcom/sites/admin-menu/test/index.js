@@ -10,15 +10,23 @@ import { requestFetchAdminMenu, handleSuccess } from '../';
 describe( 'requestFetchAdminMenu', () => {
 	test( 'should create the correct http request action', () => {
 		const action = requestAdminMenu( 73738 );
-		const output = requestFetchAdminMenu( action );
+		const dispatch = jest.fn();
+		const getState = () => ( {
+			sites: {
+				items: { 73738: { jetpack: false } },
+			},
+		} );
+		const output = requestFetchAdminMenu( action )( dispatch, getState );
 		expect( output ).toEqual(
-			http(
-				{
-					method: 'GET',
-					path: '/sites/73738/admin-menu/?_locale=user',
-					apiNamespace: 'wpcom/v2',
-				},
-				action
+			dispatch(
+				http(
+					{
+						method: 'GET',
+						path: '/sites/73738/admin-menu/?_locale=user',
+						apiNamespace: 'wpcom/v2',
+					},
+					action
+				)
 			)
 		);
 	} );
