@@ -187,7 +187,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					<BulkFixThreatsModal
 						items={ scan?.threats?.filter( ( threat ) => threat.fixable ) || [] }
 						closeModal={ () => setShowBulkFixModal( false ) }
-						siteId={ site.ID }
+						site={ site }
 					/>
 				</Modal>
 			) }

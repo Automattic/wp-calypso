@@ -45,7 +45,7 @@ export function ActiveThreatsDataViews( {
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields( timezoneString, gmtOffset );
-	const actions = useActions( site.ID, selection.length );
+	const actions = useActions( site, selection.length );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
