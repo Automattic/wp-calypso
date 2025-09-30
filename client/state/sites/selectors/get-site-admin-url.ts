@@ -1,5 +1,8 @@
+import { Context } from '@automattic/calypso-router';
 import { AppState } from 'calypso/types';
 import getSiteOption from './get-site-option';
+
+const CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS = new Map( [ [ 'mediaId', 'item' ] ] );
 
 /**
  * Returns the url to the wp-admin area for a site, or null if the admin URL
@@ -13,12 +16,27 @@ import getSiteOption from './get-site-option';
 export default function getSiteAdminUrl(
 	state: AppState,
 	siteId: number | null | undefined,
-	path = ''
+	path = '',
+	params: Context[ 'params' ] = {}
 ): string | null {
 	const adminUrl = getSiteOption( state, siteId, 'admin_url' );
 	if ( ! adminUrl ) {
 		return null;
 	}
 
-	return adminUrl + path.replace( /^\//, '' );
+	const searchParams = new URLSearchParams();
+
+	Object.entries( params ).forEach( ( [ key, value ] ) => {
+		const wpAdminSearchParam = CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS.get( key );
+
+		if ( wpAdminSearchParam ) {
+			searchParams.set( wpAdminSearchParam, value );
+		}
+	} );
+
+	const searchParamsValue = searchParams.toString();
+
+	return `${ adminUrl }${ path.replace( /^\//, '' ) }${
+		searchParamsValue ? `?${ searchParamsValue }` : ''
+	}`;
 }
