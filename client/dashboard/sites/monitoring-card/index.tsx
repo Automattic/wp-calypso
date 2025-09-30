@@ -24,6 +24,7 @@ interface MonitoringCardProps {
 	isLoading?: boolean;
 	onDownloadClick?: () => void;
 	onAnchorClick?: () => void;
+	onChartClick?: () => void;
 	tracksId?: string;
 	children?: ReactNode;
 	cardLabel?: string;
@@ -36,6 +37,7 @@ export default function MonitoringCard( {
 	isLoading,
 	onDownloadClick,
 	onAnchorClick,
+	onChartClick,
 	tracksId,
 	children,
 	cardLabel,
@@ -66,14 +68,17 @@ export default function MonitoringCard( {
 						</Text>
 					</HStack>
 					<HStack spacing={ 2 } alignment="center" expanded={ false }>
-						<Button
-							icon={ chartBarIcon }
-							label={ sprintf(
-								/* translators: %s is the card title */
-								__( 'View %s chart.' ),
-								title
-							) }
-						/>
+						{ onChartClick && (
+							<Button
+								icon={ chartBarIcon }
+								label={ sprintf(
+									/* translators: %s is the card title */
+									__( 'View %s chart.' ),
+									title
+								) }
+								onClick={ onChartClick }
+							/>
+						) }
 						{ onDownloadClick && (
 							<Button
 								icon={ downloadIcon }

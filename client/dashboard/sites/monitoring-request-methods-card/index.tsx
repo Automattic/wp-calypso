@@ -89,8 +89,6 @@ export default function MonitoringRequestMethodsCard( {
 		<MonitoringCard
 			title={ __( 'HTTP request methods' ) }
 			description={ __( 'Percentage of traffic per HTTP request method.' ) }
-			onDownloadClick={ () => {} }
-			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>

@@ -94,8 +94,6 @@ export default function MonitoringResponseTypesCard( {
 		<MonitoringCard
 			title={ __( 'Response types' ) }
 			description={ __( 'Percentage of dynamic versus static responses.' ) }
-			onDownloadClick={ () => {} }
-			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
