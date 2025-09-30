@@ -9,16 +9,16 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 
+const POST_CODE_LABEL: Record< string, string > = {
+	US: __( 'ZIP code' ),
+};
+
 const STATE_SELECT_TEXT: Record< string, string > = {
 	CA: __( 'Select Province' ),
 	US: __( 'Select State' ),
 };
 
-const POST_CODE_LABEL: Record< string, string > = {
-	US: __( 'ZIP code' ),
-};
-
-const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
+const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, countryCode: string ) => {
 	const StateFieldEdit = ( {
 		field,
 		onChange,
@@ -37,11 +37,13 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 			}
 		}, [ currentValue, onChange, id ] );
 
+		const stateLabel = STATE_SELECT_TEXT[ countryCode ] || __( 'Select State' );
+
 		if ( ! statesList || statesList.length === 0 ) {
 			return (
 				<InputControl
 					__next40pxDefaultSize
-					label={ hideLabelFromVision ? '' : __( 'State' ) }
+					label={ hideLabelFromVision ? '' : stateLabel }
 					placeholder={ __( 'State' ) }
 					value={ currentValue }
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
@@ -53,7 +55,7 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 			<SelectControl
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
-				label={ hideLabelFromVision ? '' : __( 'State' ) }
+				label={ hideLabelFromVision ? '' : stateLabel }
 				value={ currentValue }
 				options={
 					statesList.map( ( state ) => ( {
@@ -73,7 +75,7 @@ export function RegionAddressFieldsets(
 	statesList: StatesListItem[] | undefined,
 	countryCode: string
 ): Field< DomainContactDetails >[] {
-	const StateFieldEdit = createStateFieldEdit( statesList );
+	const StateFieldEdit = createStateFieldEdit( statesList, countryCode );
 	const arePostalCodesSupported = true; //getCountryPostalCodeSupport( statesList, countryCode );
 
 	const fields: Field< DomainContactDetails >[] = [
@@ -100,7 +102,6 @@ export function RegionAddressFieldsets(
 		},
 		{
 			id: 'state',
-			label: STATE_SELECT_TEXT[ countryCode ] || __( 'Select State' ),
 			type: 'text',
 			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
 			Edit: StateFieldEdit,
@@ -108,9 +109,10 @@ export function RegionAddressFieldsets(
 	];
 
 	if ( arePostalCodesSupported ) {
+		const postalCodeLabel = POST_CODE_LABEL[ countryCode ] || __( 'Postal Code' );
 		fields.push( {
 			id: 'postalCode',
-			label: POST_CODE_LABEL[ countryCode ] || __( 'Postal Code' ),
+			label: postalCodeLabel,
 			type: 'text',
 			isValid: {
 				required: true,
