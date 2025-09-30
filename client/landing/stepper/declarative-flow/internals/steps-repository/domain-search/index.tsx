@@ -200,6 +200,26 @@ const DomainSearchStep: StepType< {
 	);
 
 	if ( shouldUseStepContainerV2( flow ) ) {
+		const getTopBarRightElement = () => {
+			if ( query && config.allowsUsingOwnDomain ) {
+				return (
+					<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+						{ translate( 'Use a domain I already own' ) }
+					</Step.LinkButton>
+				);
+			}
+
+			if ( isNewHostedSiteCreationFlow( flow ) ) {
+				return (
+					<Step.LinkButton onClick={ () => events.onSkip() }>
+						{ translate( 'Decide later' ) }
+					</Step.LinkButton>
+				);
+			}
+
+			return undefined;
+		};
+
 		return (
 			<Step.CenteredColumnLayout
 				topBar={
@@ -207,13 +227,7 @@ const DomainSearchStep: StepType< {
 						leftElement={
 							navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 						}
-						rightElement={
-							query && config.allowsUsingOwnDomain ? (
-								<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-									{ translate( 'Use a domain I already own' ) }
-								</Step.LinkButton>
-							) : undefined
-						}
+						rightElement={ getTopBarRightElement() }
 					/>
 				}
 				columnWidth={ 10 }
@@ -224,6 +238,20 @@ const DomainSearchStep: StepType< {
 			</Step.CenteredColumnLayout>
 		);
 	}
+
+	const getAdditionalStepContainerProps = () => {
+		if ( isAIBuilderFlow( flow ) ) {
+			return {
+				backUrl: `${ site?.URL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }&p=%2F&ai-step=edit`,
+				backLabelText: translate( 'Keep Editing' ),
+				hideSkip: false,
+				skipLabelText: translate( 'Decide later' ),
+				onSkip: () => events.onSkip(),
+			};
+		}
+
+		return {};
+	};
 
 	return (
 		<StepContainer
@@ -236,6 +264,7 @@ const DomainSearchStep: StepType< {
 			}
 			stepContent={ domainSearchElement }
 			recordTracksEvent={ recordTracksEvent }
+			{ ...getAdditionalStepContainerProps() }
 		/>
 	);
 };
