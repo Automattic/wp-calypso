@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
 
@@ -11,8 +10,8 @@ const PluginsMenu = () => {
 			<ResponsiveMenu.Item to="/plugins/scheduled-updates">
 				{ __( 'Scheduled updates' ) }
 			</ResponsiveMenu.Item>
-			<ResponsiveMenu.Item to={ localizeUrl( 'https://wordpress.com/plugins' ) }>
-				{ __( 'Browse plugins' ) }
+			<ResponsiveMenu.Item href="/plugins" target="_blank" rel="noopener noreferrer">
+				<span>{ __( 'Browse plugins' ) }</span>
 			</ResponsiveMenu.Item>
 		</ResponsiveMenu>
 	);
