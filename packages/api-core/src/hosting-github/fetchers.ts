@@ -4,6 +4,7 @@ import type {
 	GitHubInstallation,
 	GitHubRepository,
 	GitHubRepositoryChecks,
+	GitHubWorkflow,
 	GitHubWorkflowTemplate,
 	GitHubWorkflowValidation,
 } from './types';
@@ -83,6 +84,21 @@ export async function fetchGithubWorkflowTemplates(
 		path: addQueryArgs( '/hosting/github/workflow-templates', {
 			branch_name: repositoryBranch,
 			template,
+		} ),
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchGithubWorkflows(
+	repositoryOwner: string,
+	repositoryName: string,
+	branchName: string
+): Promise< GitHubWorkflow[] > {
+	return wpcom.req.get( {
+		path: addQueryArgs( '/hosting/github/workflows', {
+			repository_owner: repositoryOwner,
+			repository_name: repositoryName,
+			branch_name: branchName,
 		} ),
 		apiNamespace: 'wpcom/v2',
 	} );

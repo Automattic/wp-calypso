@@ -39,3 +39,8 @@ export interface GitHubWorkflowValidation {
 export interface GitHubWorkflowTemplate {
 	template: string;
 }
+
+export interface GitHubWorkflow {
+	file_name: string;
+	workflow_path: string;
+}

@@ -1,12 +1,15 @@
 import {
+	createGithubWorkflow,
 	fetchGithubInstallations,
 	fetchGithubRepositories,
 	fetchGithubRepositoryBranches,
 	fetchGithubRepositoryChecks,
 	fetchGithubWorkflowChecks,
+	fetchGithubWorkflows,
 	fetchGithubWorkflowTemplates,
+	type CreateWorkflowRequest,
 } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 
 export const githubInstallationsQuery = () =>
 	queryOptions( {
@@ -114,4 +117,36 @@ export const githubWorkflowTemplatesQuery = (
 	queryOptions( {
 		queryKey: [ 'github', 'repository', repositoryBranch, 'workflow', template ],
 		queryFn: () => fetchGithubWorkflowTemplates( repositoryBranch, template ),
+	} );
+
+export const githubWorkflowsQuery = (
+	repositoryOwner: string,
+	repositoryName: string,
+	branchName: string
+) =>
+	queryOptions( {
+		queryKey: [
+			'github',
+			'repository',
+			repositoryOwner,
+			repositoryName,
+			'branch',
+			branchName,
+			'workflows',
+		],
+		queryFn: () => fetchGithubWorkflows( repositoryOwner, repositoryName, branchName ),
+		select: ( workflows ) => {
+			// Filter out child workflows (lint files)
+			const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
+			return workflows.filter( ( workflow ) => ! childWorkflows.includes( workflow.file_name ) );
+		},
+		meta: {
+			persist: false,
+		},
+	} );
+
+export const createGithubWorkflowMutation = () =>
+	mutationOptions( {
+		mutationFn: ( request: CreateWorkflowRequest ) => createGithubWorkflow( request ),
+		mutationKey: [ 'github', 'workflows', 'create' ],
 	} );
