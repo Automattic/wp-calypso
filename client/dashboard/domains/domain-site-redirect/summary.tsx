@@ -5,7 +5,7 @@ import type { Domain } from '@automattic/api-core';
 export default function SiteRedirectSettingsSummary( { domain }: { domain: Domain } ) {
 	return (
 		<RouterLinkSummaryButton
-			to={ `/domains/${ domain.domain }/site-redirect` }
+			to={ `/domains/${ encodeURIComponent( domain.domain ) }/site-redirect` }
 			title={ __( 'Site redirect' ) }
 			badges={ [] }
 			density={ 'medium' as const }
