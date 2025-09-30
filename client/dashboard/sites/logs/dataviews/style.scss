@@ -51,11 +51,10 @@
 /* Scroll to top button */
 .site-logs-card .site-logs-scroll-to-top {
 	position: absolute;
-	right: 5px;
+	inset-inline-end: 5px;
 	bottom: 5px;
 	border: none;
 	border-radius: 50%;
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
-	inline-size: 34px;
 	cursor: pointer;
 }
