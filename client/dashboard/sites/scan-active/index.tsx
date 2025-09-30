@@ -11,7 +11,17 @@ import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function ActiveThreatsDataViews( { site }: { site: Site } ) {
+interface ActiveThreatsDataViewsProps {
+	site: Site;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
+export function ActiveThreatsDataViews( {
+	site,
+	timezoneString,
+	gmtOffset,
+}: ActiveThreatsDataViewsProps ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'severity', 'threat', 'first_detected', 'auto_fix' ],
@@ -34,7 +44,7 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
-	const fields = getFields();
+	const fields = getFields( timezoneString, gmtOffset );
 	const actions = useMemo(
 		() => getActions( site.ID, selection.length ),
 		[ site.ID, selection.length ]

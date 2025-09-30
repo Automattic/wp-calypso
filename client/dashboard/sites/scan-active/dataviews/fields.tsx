@@ -5,22 +5,14 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
-import { useFormattedTime } from '../../../components/formatted-time';
+import { FormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
 import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
-	const formattedTime = useFormattedTime( timestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
-	return <>{ formattedTime }</>;
-};
-
-export function getFields(): Field< Threat >[] {
+export function getFields( timezoneString?: string, gmtOffset?: number ): Field< Threat >[] {
 	return [
 		{
 			id: 'severity',
@@ -64,7 +56,13 @@ export function getFields(): Field< Threat >[] {
 				const date = new Date( item.first_detected );
 				return formatYmd( date );
 			},
-			render: ( { item } ) => <FormattedTime timestamp={ item.first_detected } />,
+			render: ( { item } ) => (
+				<FormattedTime
+					timestamp={ item.first_detected }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			),
 		},
 		{
 			id: 'auto_fix',
