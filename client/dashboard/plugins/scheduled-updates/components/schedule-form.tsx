@@ -39,9 +39,20 @@ type Props = {
 	onSubmit: ScheduledUpdatesFormOnSubmit;
 	initial?: InitialValues;
 	onSitesChange?: ( ids: string[] ) => void;
+	/**
+	 * Context about the currently edited schedule (if any) so the form
+	 * can exclude it from collision validation.
+	 */
+	editedSchedule?: { siteIds: number[]; scheduleId: string };
 };
 
-export function ScheduledUpdatesForm( { submitLabel, onSubmit, initial, onSitesChange }: Props ) {
+export function ScheduledUpdatesForm( {
+	submitLabel,
+	onSubmit,
+	initial,
+	onSitesChange,
+	editedSchedule,
+}: Props ) {
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >(
 		() => initial?.siteIds || []
@@ -63,7 +74,10 @@ export function ScheduledUpdatesForm( { submitLabel, onSubmit, initial, onSitesC
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
 		[ selectedSiteIds ]
 	);
-	const collisionsChecker = useScheduleCollisions();
+	const collisionsChecker = useScheduleCollisions(
+		undefined,
+		editedSchedule ? { exclude: editedSchedule } : undefined
+	);
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0;
 	const isPrecheckLoading = collisionsChecker.isLoading;
 

@@ -41,6 +41,10 @@ export default function PluginsScheduledUpdatesEdit() {
 					submitLabel={ __( 'Save changes' ) }
 					onSubmit={ handleSave }
 					initial={ initial }
+					editedSchedule={ {
+						siteIds: ( initial?.siteIds || [] ).map( ( id ) => Number( id ) ),
+						scheduleId,
+					} }
 				/>
 			) }
 		</PageLayout>
