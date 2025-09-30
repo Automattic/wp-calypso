@@ -58,3 +58,31 @@ export function prepareBackupDownload(
 		}
 	);
 }
+
+/**
+ * Initiate a granular backup download with specific paths to include/exclude.
+ * @param siteId - The ID of the site to download backup for.
+ * @param rewindId - The backup/rewind ID to download from.
+ * @param includePaths - Comma-separated list of paths to include.
+ * @param excludePaths - Comma-separated list of paths to exclude.
+ * @returns A promise that resolves to the download ID.
+ */
+export async function initiateGranularBackupDownload(
+	siteId: number,
+	rewindId: string,
+	includePaths: string,
+	excludePaths: string = ''
+): Promise< number > {
+	const data: DownloadStatusResponse = await wpcom.req.post( {
+		apiNamespace: 'wpcom/v2',
+		path: `/sites/${ siteId }/rewind/downloads`,
+		body: {
+			rewindId,
+			types: { paths: true },
+			include_path_list: includePaths,
+			exclude_path_list: excludePaths,
+		},
+	} );
+
+	return data.downloadId;
+}

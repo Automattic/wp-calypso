@@ -13,6 +13,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
 import ClipboardInputControl from '../../../../components/clipboard-input-control';
 import type { Field } from '@wordpress/dataviews';
@@ -22,6 +23,8 @@ type ApplicationPasswordFormData = {
 };
 
 export default function RegisterApplicationPassword( { onClose }: { onClose: () => void } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< ApplicationPasswordFormData >( {
@@ -34,7 +37,7 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
-
+		recordTracksEvent( 'calypso_dashboard_security_application_passwords_add_password_click' );
 		registerApplicationPassword(
 			{ application_name: formData.applicationName.trim() },
 			{

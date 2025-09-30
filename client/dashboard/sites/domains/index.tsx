@@ -1,5 +1,4 @@
 import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -23,7 +22,18 @@ function SiteDomains() {
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteDomains, isLoading } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: siteDomains, isLoading } = useQuery( {
+		...siteDomainsQuery( site.ID ),
+		select: ( data ) => {
+			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
+			}
+
+			return data;
+		},
+	} );
+
 	const fields = useFields( {
 		site,
 	} );
@@ -48,11 +58,7 @@ function SiteDomains() {
 					title={ __( 'Domains' ) }
 					actions={
 						<Button
-							href={
-								isEnabled( 'domain-search-rewrite' )
-									? addQueryArgs( '/setup/domain', { siteSlug: site.slug } )
-									: `/domains/add/${ site.slug }`
-							}
+							href={ addQueryArgs( '/setup/domain', { siteSlug: site.slug } ) }
 							variant="primary"
 							__next40pxDefaultSize
 						>

@@ -36,6 +36,9 @@ interface FileBrowserProps {
 	// Tracks analytics callback
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 
+	// Source context for Track events (defaults to 'calypso')
+	source?: 'calypso' | 'dashboard';
+
 	// Granular restore action callback
 	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
 }
@@ -49,6 +52,7 @@ function FileBrowser( {
 	isRestoreEnabled,
 	displayBackupDate,
 	onTrackEvent,
+	source = 'calypso',
 	onRequestGranularRestore = () => {},
 }: FileBrowserProps ) {
 	// This is the path of the node that is clicked
@@ -66,7 +70,7 @@ function FileBrowser( {
 
 	return (
 		<div>
-			{ ( fileBrowserConfig?.showHeader ?? true ) && <FileBrowserHeader /> }
+			{ ( fileBrowserConfig?.showHeader ?? true ) && <FileBrowserHeader rewindId={ rewindId } /> }
 			{ /* @TODO: remove this block once the new Staging Sync Modal is live */ }
 			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
@@ -96,6 +100,7 @@ function FileBrowser( {
 				hasCredentials={ hasCredentials }
 				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
+				source={ source }
 				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 		</div>

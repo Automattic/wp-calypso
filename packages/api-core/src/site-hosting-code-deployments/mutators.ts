@@ -1,5 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DeploymentRun, CodeDeploymentDeleteResponse } from './types';
+import {
+	CodeDeploymentDeleteResponse,
+	CreateCodeDeploymentVariables,
+	CreateCodeDeploymentResponse,
+	DeploymentRun,
+} from './types';
 
 export async function createCodeDeploymentRun(
 	siteId: number,
@@ -26,4 +31,15 @@ export async function deleteCodeDeployment(
 			remove_files: removeFiles,
 		}
 	);
+}
+
+export async function createCodeDeployment(
+	siteId: number,
+	variables: CreateCodeDeploymentVariables
+): Promise< CreateCodeDeploymentResponse > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/hosting/code-deployments`,
+		apiNamespace: 'wpcom/v2',
+		body: variables,
+	} );
 }

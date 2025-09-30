@@ -9,8 +9,9 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useState, useContext, useEffect } from 'react';
+import { SectionHeader } from '../../section-header';
 import { GuidedTourContext } from '../context';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, CSSProperties } from 'react';
 
 // This hook will return the async element matching the target selector.
 // After timeout has passed, it will return null.
@@ -54,12 +55,14 @@ export function GuidedTourStep( {
 	selector,
 	placement,
 	inline,
+	popoverStyle,
 }: {
 	id: string;
 	target?: HTMLElement | null;
 	selector?: string;
 	placement?: ComponentProps< typeof Popover >[ 'placement' ];
 	inline?: boolean;
+	popoverStyle?: CSSProperties;
 } ) {
 	const {
 		guidedTours,
@@ -109,15 +112,13 @@ export function GuidedTourStep( {
 			resize={ false }
 			focusOnMount={ false }
 			inline={ inline }
-			style={ { padding: '0 16px', zIndex: inline ? 1 : undefined } }
+			style={ { padding: '0 16px', zIndex: inline ? 1 : undefined, ...popoverStyle } }
 		>
 			<CardBody style={ { width: 'min(80vw, 350px)' } }>
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
 						<HStack justify="space-between">
-							<Text as="h2" size={ 15 } weight={ 500 } lineHeight="20px">
-								{ currentTour.title }
-							</Text>
+							<SectionHeader title={ currentTour.title } level={ 3 } />
 							{ totalSteps > 1 && currentStep + 1 < totalSteps && isSkippable && (
 								<Button icon={ closeSmall } iconSize={ 24 } onClick={ endTour } />
 							) }

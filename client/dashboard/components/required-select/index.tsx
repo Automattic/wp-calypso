@@ -16,7 +16,7 @@ export default function RequiredSelect< Item >( {
 		( newValue: any ) =>
 			onChange( {
 				[ id ]: newValue,
-			} ),
+			} as Partial< Item > ),
 		[ id, onChange ]
 	);
 

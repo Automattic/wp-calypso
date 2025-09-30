@@ -2,13 +2,13 @@ import { siteBackupDownloadProgressQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	__experimentalSpacer as Spacer,
 	ProgressBar,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
 import downloadIllustration from './backup-download-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -23,11 +23,15 @@ function SiteBackupDownloadProgress( {
 	onDownloadComplete: ( downloadUrl: string, fileSizeBytes?: string ) => void;
 	onDownloadError: () => void;
 } ) {
-	const { data: downloadProgress } = useQuery( {
+	const { data: downloadProgress, error: downloadQueryError } = useQuery( {
 		...siteBackupDownloadProgressQuery( site.ID, downloadId ),
 		enabled: !! downloadId,
 		refetchInterval: ( query ) => {
-			const { data } = query.state;
+			const { data, error } = query.state;
+			// Stop polling if there's an API error
+			if ( data?.error || error ) {
+				return false;
+			}
 
 			// Poll every 1.5 seconds if download is in progress
 			if ( ! data?.url ) {
@@ -42,7 +46,7 @@ function SiteBackupDownloadProgress( {
 	useEffect( () => {
 		if ( downloadProgress?.url ) {
 			onDownloadComplete( downloadProgress.url, downloadProgress.bytes_formatted );
-		} else if ( downloadProgress?.error ) {
+		} else if ( downloadProgress?.error || downloadQueryError ) {
 			onDownloadError();
 		}
 	}, [
@@ -51,6 +55,7 @@ function SiteBackupDownloadProgress( {
 		downloadProgress?.error,
 		onDownloadComplete,
 		onDownloadError,
+		downloadQueryError,
 	] );
 
 	return (

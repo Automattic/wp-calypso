@@ -7,7 +7,7 @@ import {
 	BackupEntryErrorStatuses,
 } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useBackupState } from '../use-backup-state';
@@ -279,6 +279,92 @@ describe( 'useBackupState', () => {
 				expect( result.current.status ).toBe( 'error' );
 				expect( result.current.backup?.period ).toBe( '1756169052' );
 				expect( result.current.hasRecentlyCompleted ).toBe( false );
+			} );
+		} );
+	} );
+
+	describe( 'enqueued state', () => {
+		it( 'should return enqueued state when setEnqueued(true) is called', async () => {
+			const { result } = renderHook( () => useBackupState( mockSiteId ), {
+				wrapper: TestWrapper,
+			} );
+
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'idle' );
+			} );
+
+			act( () => {
+				result.current.setEnqueued( true );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'enqueued' );
+				expect( result.current.backup ).toBeNull();
+				expect( result.current.hasRecentlyCompleted ).toBe( false );
+			} );
+		} );
+
+		it( 'should transition from enqueued to running when backup starts', async () => {
+			const { result } = renderHook( () => useBackupState( mockSiteId ), {
+				wrapper: TestWrapper,
+			} );
+
+			act( () => {
+				result.current.setEnqueued( true );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'enqueued' );
+			} );
+
+			const runningBackup = createBackupEntry( {
+				status: BackupEntryStatuses.STARTED,
+				period: '1756169052',
+				percent: '10',
+			} );
+			mockBackupsAPI( mockSiteId, [ runningBackup ] );
+
+			// Manually refetch to simulate the polling behavior
+			await testQueryClient.refetchQueries( {
+				queryKey: [ 'site', mockSiteId, 'backups' ],
+			} );
+
+			// Should transition from enqueued to running
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'running' );
+				expect( result.current.backup?.period ).toBe( '1756169052' );
+			} );
+		} );
+
+		it( 'should reset enqueued state when setEnqueued(false) is called', async () => {
+			const { result } = renderHook( () => useBackupState( mockSiteId ), {
+				wrapper: TestWrapper,
+			} );
+
+			act( () => {
+				result.current.setEnqueued( true );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'enqueued' );
+			} );
+
+			act( () => {
+				result.current.setEnqueued( false );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.status ).toBe( 'idle' );
+			} );
+		} );
+
+		it( 'should provide setEnqueued function in returned state', async () => {
+			const { result } = renderHook( () => useBackupState( mockSiteId ), {
+				wrapper: TestWrapper,
+			} );
+
+			await waitFor( () => {
+				expect( typeof result.current.setEnqueued ).toBe( 'function' );
 			} );
 		} );
 	} );

@@ -1,6 +1,7 @@
-import { Card, FormLabel } from '@automattic/components';
+import { Card, FormLabel, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import Banner from 'calypso/components/banner';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -30,6 +31,10 @@ export default function HostingDashboardOptInForm() {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ enabled, setEnabled ] = useState( savedPreference?.value === 'opt-in' );
 
+	// We do not want the survey banner to disappear immediately after opting out
+	// is complete. This state is used to keep it around until the component is unmounted.
+	const [ optedOutThisMount, setOptedOutThisMount ] = useState( false );
+
 	const [ wasFetching, setWasFetching ] = useState( isFetching );
 	if ( isFetching !== wasFetching ) {
 		// Preferences have finished fetching
@@ -38,6 +43,11 @@ export default function HostingDashboardOptInForm() {
 	}
 
 	const isDirty = enabled !== ( savedPreference?.value === 'opt-in' );
+
+	const showOptOutSurvey =
+		( isSaving && savedPreference?.value === 'opt-out' ) ||
+		( ! isSaving && savedPreference?.value === 'opt-out' && optedOutThisMount ) ||
+		( ! isSaving && ! enabled && savedPreference?.value === 'opt-in' );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -70,6 +80,9 @@ export default function HostingDashboardOptInForm() {
 					duration: 5000,
 				} )
 			);
+			if ( ! enabled ) {
+				setOptedOutThisMount( true );
+			}
 		}
 	};
 
@@ -93,6 +106,34 @@ export default function HostingDashboardOptInForm() {
 							<span>{ translate( 'I want to try the beta version.' ) }</span>
 						</FormLabel>
 					</FormFieldset>
+					{ showOptOutSurvey && (
+						<FormFieldset>
+							<Banner
+								title={ translate( 'Prefer the previous version?' ) }
+								showIcon={ false }
+								description={ translate(
+									'{{surveyLink}}Please complete this short survey{{/surveyLink}} to help us understand what didn’t work and how we can improve.',
+									{
+										components: {
+											surveyLink: (
+												<ExternalLink
+													href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
+													icon
+													onClick={ () =>
+														dispatch(
+															recordTracksEvent(
+																'calypso_account_new_hosting_dashboard_survey_click'
+															)
+														)
+													}
+												/>
+											),
+										},
+									}
+								) }
+							/>
+						</FormFieldset>
+					) }
 					<FormButton
 						isSubmitting={ isSaving }
 						disabled={ isFetching || isSaving || ! isDirty }

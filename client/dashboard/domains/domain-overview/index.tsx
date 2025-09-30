@@ -16,6 +16,7 @@ import Actions from './actions';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
 import DomainOverviewSettings from './settings';
+import TransferredDomainDetails from './transferred-domain-details';
 
 export default function DomainOverview() {
 	const locale = useLocale();
@@ -81,6 +82,9 @@ export default function DomainOverview() {
 				/>
 			}
 		>
+			{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
+				<TransferredDomainDetails domain={ domain } />
+			) }
 			{ domain.is_pending_icann_verification && (
 				<IcannSuspensionNotice domainName={ domain.domain } />
 			) }

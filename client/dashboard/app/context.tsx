@@ -28,10 +28,12 @@ export type AppConfig = {
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
+		themes: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
 		me: MeSupports | false;
+		commandPalette: boolean;
 	};
 };
 
@@ -47,10 +49,12 @@ const AppContext = createContext< AppConfig >( {
 		plugins: false,
 		domains: false,
 		emails: false,
+		themes: false,
 		reader: false,
 		help: false,
 		notifications: false,
 		me: false,
+		commandPalette: false,
 	},
 } );
 

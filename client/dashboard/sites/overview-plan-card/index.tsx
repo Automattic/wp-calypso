@@ -12,6 +12,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -113,7 +114,7 @@ function WpcomPlanCard( {
 		}
 
 		if ( isV2Page ) {
-			return { link: `/me/billing/purchases/purchase/${ purchase?.ID }` };
+			return { link: purchase ? getPurchaseUrlForId( purchase.ID ) : '/me/billing/purchases' };
 		}
 
 		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };

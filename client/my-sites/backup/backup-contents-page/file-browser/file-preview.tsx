@@ -2,9 +2,11 @@ import {
 	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Icon,
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { unseen } from '@wordpress/icons';
 import { useCallback } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
@@ -13,12 +15,13 @@ interface FilePreviewProps {
 	item: FileBrowserItem;
 	siteId: number;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	source: 'calypso' | 'dashboard';
 }
 
 /**
  * This component is responsible for rendering the preview of a file.
  */
-function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
+function FilePreview( { item, siteId, onTrackEvent, source }: FilePreviewProps ) {
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -43,9 +46,13 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
 		if ( onTrackEvent ) {
-			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_preview_file_sensitive_click' );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+			}
 		}
-	}, [ onTrackEvent ] );
+	}, [ onTrackEvent, source ] );
 
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
@@ -59,10 +66,11 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	if ( isSensitive && ! showSensitivePreview ) {
 		return (
 			<VStack className="file-card__preview-sensitive" alignment="center">
+				<Icon icon={ unseen } />
 				<Text as="p">
 					{ __( 'This preview is hidden because it contains sensitive information.' ) }
 				</Text>
-				<Button size="compact" variant="primary" onClick={ handleShowPreviewClick }>
+				<Button size="compact" variant="secondary" onClick={ handleShowPreviewClick }>
 					{ __( 'Show preview' ) }
 				</Button>
 			</VStack>
@@ -109,9 +117,12 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 		}
 
 		if ( onTrackEvent ) {
-			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', {
-				file_type: item.type,
-			} );
+			const trackingProps = { file_type: item.type };
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_preview_file', trackingProps );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', trackingProps );
+			}
 		}
 		return content;
 	};

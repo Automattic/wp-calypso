@@ -26,12 +26,15 @@ export function ActivityEvent( { summary, content, gridicon }: ActivityEventProp
 					size={ 24 }
 				/>
 			) }
-			<div className="site-activity-logs__event-body">
+			<HStack
+				spacing="1"
+				justify="flex-start"
+				alignment="start"
+				className="site-activity-logs__event-content"
+			>
 				<strong>{ summary }</strong>
-				{ formattedContent && (
-					<div className="site-activity-logs__event-content">{ formattedContent }</div>
-				) }
-			</div>
+				{ formattedContent && <span>{ formattedContent }</span> }
+			</HStack>
 		</HStack>
 	);
 }

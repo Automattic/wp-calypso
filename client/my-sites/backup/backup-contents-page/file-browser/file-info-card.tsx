@@ -5,11 +5,12 @@ import {
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { ButtonStack } from 'calypso/dashboard/components/button-stack';
+import { Text } from 'calypso/dashboard/components/text';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
@@ -28,6 +29,7 @@ interface FileInfoCardProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -41,6 +43,7 @@ function FileInfoCard( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	source,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const { fileBrowserState, locale, notices } = useFileBrowserContext();
@@ -85,13 +88,16 @@ function FileInfoCard( {
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
-				file_type: fileType,
-			} );
+			const trackingProps = { file_type: fileType };
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_download', trackingProps );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_download', trackingProps );
+			}
 
 			return;
 		},
-		[ onTrackEvent ]
+		[ onTrackEvent, source ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -180,19 +186,24 @@ function FileInfoCard( {
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		setNodeCheckState( '/', 'unchecked' );
+		setNodeCheckState( '/', 'unchecked', rewindId );
 
 		// Mark this file as selected
-		setNodeCheckState( path, 'checked' );
+		setNodeCheckState( path, 'checked', rewindId );
 
 		// Request granular restore
 		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+		const trackingProps = {
 			file_type: item.type,
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
-		} );
+		};
+		if ( source === 'dashboard' ) {
+			onTrackEvent( 'calypso_dashboard_backup_browser_restore_single_file', trackingProps );
+		} else {
+			onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', trackingProps );
+		}
 	}, [
 		setNodeCheckState,
 		path,
@@ -200,6 +211,7 @@ function FileInfoCard( {
 		siteSlug,
 		rewindId,
 		onTrackEvent,
+		source,
 		item.type,
 		hasCredentials,
 	] );
@@ -261,6 +273,7 @@ function FileInfoCard( {
 			disabled={ isProcessingDownload }
 			isBusy={ isProcessingDownload }
 			variant="secondary"
+			size="compact"
 		>
 			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
@@ -272,6 +285,7 @@ function FileInfoCard( {
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
 			variant="secondary"
+			size="compact"
 		>
 			{ __( 'Download file' ) }
 		</Button>
@@ -284,8 +298,9 @@ function FileInfoCard( {
 			disabled={ isProcessingDownload }
 			isBusy={ isProcessingDownload }
 			variant="secondary"
+			size="compact"
 		>
-			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Prepare and download' ) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
 	);
 
@@ -302,74 +317,82 @@ function FileInfoCard( {
 
 	const FileDetail = ( { label, value }: { label: string; value: string | number } ) => {
 		return (
-			<div className="file-card__detail">
-				<Text weight={ 700 }>{ label } </Text>
+			<HStack className="file-card__detail" justify="flex-start" spacing={ 1 }>
+				<Text weight={ 700 }>{ label }</Text>
 				<Text>{ value }</Text>
-			</div>
+			</HStack>
 		);
 	};
 
+	const hasMeta = item.type === 'table' || size || modifiedTime || fileInfo?.hash;
 	return (
-		<Card isRounded={ false } variant="secondary" isBorderless>
-			<CardBody>
+		<Card isRounded={ false } isBorderless className="file-card">
+			<CardBody className="file-card__body">
 				<VStack>
-					<VStack spacing={ 0 }>
-						{ item.type === 'table' && (
-							<FileDetail
-								label={
-									/* translators: This refers to database table rows. */
-									__( 'Rows:' )
-								}
-								value={ item.rowCount ?? 0 }
-							/>
+					<HStack wrap style={ { alignItems: 'flex-start' } }>
+						{ hasMeta && (
+							<VStack spacing={ 1 }>
+								{ item.type === 'table' && (
+									<FileDetail
+										label={
+											/* translators: This refers to database table rows. */
+											__( 'Rows:' )
+										}
+										value={ item.rowCount ?? 0 }
+									/>
+								) }
+								{ size && (
+									<FileDetail
+										label={
+											/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+											__( 'Size:' )
+										}
+										value={ `${ size.unitAmount } ${ size.unit }` }
+									/>
+								) }
+								{ modifiedTime && (
+									<FileDetail
+										label={
+											/* translators: This refers to the date when the file was modified. */
+											__( 'Modified:' )
+										}
+										value={ modifiedTime }
+									/>
+								) }
+								{ fileInfo?.hash && (
+									<FileDetail
+										label={
+											/* translators: This refers to a unique identifier or checksum. */
+											__( 'Hash:' )
+										}
+										value={ fileInfo.hash }
+									/>
+								) }
+							</VStack>
 						) }
-
-						<HStack justify="space-between">
-							{ modifiedTime && (
-								<FileDetail
-									label={
-										/* translators: This refers to the date when the file was modified. */
-										__( 'Modified:' )
-									}
-									value={ modifiedTime }
-								/>
-							) }
-
-							{ size && (
-								<FileDetail
-									label={
-										/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
-										__( 'Size:' )
-									}
-									value={ `${ size.unitAmount } ${ size.unit }` }
-								/>
-							) }
-						</HStack>
-
-						{ fileInfo?.hash && (
-							<FileDetail
-								label={
-									/* translators: This refers to a unique identifier or checksum. */
-									__( 'Hash:' )
-								}
-								value={ fileInfo.hash }
-							/>
+						{ showActions && (
+							<ButtonStack style={ { width: 'auto', flexShrink: 0 } } alignment="top">
+								{ renderDownloadButton() }
+								{ item.type !== 'wordpress' && (
+									<Button
+										disabled={ ! isRestoreEnabled }
+										onClick={ restoreFile }
+										variant="primary"
+										size="compact"
+									>
+										{ __( 'Restore' ) }
+									</Button>
+								) }
+							</ButtonStack>
 						) }
-					</VStack>
-
-					{ showActions && (
-						<HStack justify="flex-start" spacing={ 4 }>
-							{ renderDownloadButton() }
-							{ item.type !== 'wordpress' && (
-								<Button disabled={ ! isRestoreEnabled } onClick={ restoreFile } variant="secondary">
-									{ __( 'Restore' ) }
-								</Button>
-							) }
-						</HStack>
-					) }
-
+					</HStack>
 					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+						<FilePreview
+							item={ item }
+							siteId={ siteId }
+							onTrackEvent={ onTrackEvent }
+							source={ source }
+						/>
 					) }
 				</VStack>
 			</CardBody>

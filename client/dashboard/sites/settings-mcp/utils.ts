@@ -4,7 +4,7 @@ import type { SiteMcpAbilities, McpAbilities } from '@automattic/api-core';
 export type McpAbilitiesApiStructure = {
 	account?: Record< string, number >;
 	site?: Record< string | number, Record< string, number > >; // site_id => abilities mapping
-	sites?: Record< string | number, Record< string, number > >; // Custom overrides per site
+	sites?: Record< string | number, Record< string, boolean > >; // Custom overrides per site
 };
 
 /**
@@ -25,8 +25,8 @@ export function getSiteMcpAbilities(
 	// Start with default site abilities
 	const defaultSiteAbilities = mcpData.site || {};
 
-	// Apply site-specific overrides if they exist (now only contains enabled/disabled values: 0 or 1)
-	const siteOverrides: Record< string, number > = mcpData.sites?.[ siteIdStr ] || {};
+	// Apply site-specific overrides if they exist (enabled/disabled values: true/false)
+	const siteOverrides: Record< string, boolean > = ( mcpData.sites?.[ siteIdStr ] as any ) || {};
 
 	// Merge defaults with overrides
 	const mergedAbilities: SiteMcpAbilities = {};
@@ -39,13 +39,13 @@ export function getSiteMcpAbilities(
 		}
 	} );
 
-	// Then, apply any site-specific overrides (only enabled/disabled state)
+	// Then, apply any site-specific overrides (enabled/disabled state)
 	Object.entries( siteOverrides ).forEach( ( [ abilityName, enabledValue ] ) => {
-		// enabledValue is now just 0 or 1, not a full ability object
+		// enabledValue is boolean (true/false)
 		if ( mergedAbilities[ abilityName ] ) {
 			mergedAbilities[ abilityName ] = {
 				...mergedAbilities[ abilityName ],
-				enabled: ( enabledValue as number ) === 1,
+				enabled: enabledValue,
 			};
 		}
 	} );
@@ -178,13 +178,13 @@ export function createSiteSpecificApiPayload(
 	const allAbilitiesEnabled = Object.values( abilities ).every( ( ability ) => ability.enabled );
 
 	// Find only the abilities that differ from defaults
-	const siteOverrides: Record< string, number > = {};
+	const siteOverrides: Record< string, boolean > = {};
 	Object.entries( abilities ).forEach( ( [ abilityName, ability ] ) => {
 		const defaultAbility = defaultSiteAbilities[ abilityName ];
 
 		// Only store if it differs from the default
 		if ( ! defaultAbility || defaultAbility.enabled !== ability.enabled ) {
-			siteOverrides[ abilityName ] = ability.enabled ? 1 : 0;
+			siteOverrides[ abilityName ] = ability.enabled;
 		}
 	} );
 
@@ -195,9 +195,9 @@ export function createSiteSpecificApiPayload(
 	// to ensure the master toggle is properly disabled
 	if ( allAbilitiesDisabled && Object.keys( abilities ).length > 0 ) {
 		// Store all abilities as disabled overrides
-		const allDisabledOverrides: Record< string, number > = {};
+		const allDisabledOverrides: Record< string, boolean > = {};
 		Object.keys( abilities ).forEach( ( abilityName ) => {
-			allDisabledOverrides[ abilityName ] = 0;
+			allDisabledOverrides[ abilityName ] = false;
 		} );
 
 		payload.sites = {
@@ -205,9 +205,9 @@ export function createSiteSpecificApiPayload(
 		};
 	} else if ( allAbilitiesEnabled && Object.keys( abilities ).length > 0 ) {
 		// Special case: If all abilities are enabled, we need to send them to clear any existing disabled overrides
-		const allEnabledOverrides: Record< string, number > = {};
+		const allEnabledOverrides: Record< string, boolean > = {};
 		Object.keys( abilities ).forEach( ( abilityName ) => {
-			allEnabledOverrides[ abilityName ] = 1;
+			allEnabledOverrides[ abilityName ] = true;
 		} );
 
 		payload.sites = {
