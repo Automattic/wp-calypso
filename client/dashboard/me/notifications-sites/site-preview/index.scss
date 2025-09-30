@@ -1,7 +1,33 @@
-.site-notification-settings {
-	padding: 8px 0 12px 0;
-	max-height: unset;
+.site-preview {
+	width: 100%;
+	display: flex;
 
+	&__badge {
+		grid-column-start: 2;
+	}
 
+	&__url {
+		color: $gray-700;
+		display: flex;
+		flex: 1 1 100%;
+		min-width: 0;
+		width: 100%;
+
+		.components-external-link__contents {
+			max-width: 250px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+
+			@include break-small {
+				overflow: unset;
+				max-width: unset;
+			}
+		}
+
+		&:hover {
+			color: var(--wp-admin-theme-color);
+		}
+	}
 
 }

@@ -1,8 +1,11 @@
 import { Site } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
-import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	__experimentalGrid as Grid,
+	__experimentalVStack as VStack,
+	ExternalLink,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { ExternalLink } from '../../../components/external-link';
 import RouterLinkButton from '../../../components/router-link-button';
 import { isSitePlanTrial } from '../../../sites/plans';
 import { getSiteManagementUrl } from '../../../sites/site-fields';
@@ -32,7 +35,14 @@ export const SitePreview = ( { site }: Props ) => {
 	const badge = getSiteBadge( site );
 
 	return (
-		<Grid columns={ 2 } columnGap={ 12 } rowGap={ 12 } alignment="topLeft" templateColumns="none">
+		<Grid
+			className="site-preview"
+			columns={ 2 }
+			columnGap={ 12 }
+			rowGap={ badge ? 12 : 0 }
+			alignment="topLeft"
+			templateColumns="44px 1fr"
+		>
 			<SiteIcon site={ site } size={ 44 } />
 			<VStack alignment="topLeft" spacing={ 1 }>
 				{ site.name !== '' && (
@@ -44,11 +54,11 @@ export const SitePreview = ( { site }: Props ) => {
 						{ site.name }
 					</RouterLinkButton>
 				) }
-				<ExternalLink href={ site.URL } disabled={ site.is_deleted } ellipsisMode="auto">
+				<ExternalLink className="site-preview__url" href={ site.URL }>
 					{ site.URL }
 				</ExternalLink>
 			</VStack>
-			<div style={ { gridColumnStart: 2 } }>{ badge && <Badge>{ badge }</Badge> }</div>
+			<div className="site-preview__badge">{ badge && <Badge>{ badge }</Badge> }</div>
 		</Grid>
 	);
 };

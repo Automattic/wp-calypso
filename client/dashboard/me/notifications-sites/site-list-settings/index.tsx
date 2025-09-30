@@ -55,7 +55,7 @@ export const SiteListSettings = () => {
 	};
 
 	return (
-		<VStack spacing={ 8 }>
+		<VStack spacing={ 8 } className="site-list-settings">
 			<SearchControl
 				value={ search }
 				placeholder={ __( 'Search for a site' ) }
@@ -65,7 +65,7 @@ export const SiteListSettings = () => {
 			<VStack spacing={ 4 }>
 				{ filteredSites.map( ( site: Site ) => (
 					<CollapsibleCard key={ site.ID } header={ <SitePreview site={ site } /> }>
-						<SiteSettings siteId={ site.ID } />
+						<SiteSettings siteId={ site.ID } className="site-list-settings__site-settings" />
 					</CollapsibleCard>
 				) ) }
 				{ filteredSites.length === 0 && (

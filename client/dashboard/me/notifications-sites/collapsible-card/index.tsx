@@ -27,7 +27,7 @@ export const CollapsibleCard = ( { header, children }: CollapsibleCardProps ) =>
 						onClick={ handleCollapsedChange }
 					/>
 				</HStack>
-				{ ! isCollapsed && children }
+				{ ! isCollapsed && <div className="collapsible-card__content">{ children }</div> }
 			</CardBody>
 		</Card>
 	);
