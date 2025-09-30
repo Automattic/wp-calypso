@@ -9,12 +9,12 @@ import SidebarItem from '../item';
 
 const render = ( el ) => renderWithProvider( el );
 
-test( 'external links open in a new tab', () => {
+test( 'external links open in same tab', () => {
 	// Don't test external links using the traditional "example.com" domain, because that's the domain
 	// Testing Library uses as the default window.location, so they don't appear to be external.
 	render( <SidebarItem label="My Example" link="https://my-example.com" /> );
 
-	expect( screen.getByRole( 'link', { name: 'My Example' } ) ).toHaveAttribute(
+	expect( screen.getByRole( 'link', { name: 'My Example' } ) ).not.toHaveAttribute(
 		'target',
 		'_blank'
 	);
