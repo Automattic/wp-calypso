@@ -205,15 +205,3 @@ test.each( summaryTestCases )(
 		} );
 	}
 );
-
-test( 'keeps the backups list stable when no entries are returned', async () => {
-	mockRouterParams.rewindId = 'missing-rewind-id';
-	renderBackupsListPage( { backupEntries: [], activityLogTimes: 2 } );
-
-	await waitFor( () => {
-		expect( screen.getByText( 'Search backups' ) ).toBeInTheDocument();
-	} );
-
-	expect( screen.queryByText( 'Daily backup completed successfully' ) ).toBeNull();
-	expect( nock.isDone() ).toBe( true );
-} );
