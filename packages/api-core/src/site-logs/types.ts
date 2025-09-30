@@ -22,7 +22,7 @@ export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
 	id: string;
 }
 
-export interface PHPLogData extends Omit< PHPLog, 'id' | 'line' > {
+export interface PHPData extends Omit< PHPLog, 'id' | 'line' > {
 	line: string;
 }
 
