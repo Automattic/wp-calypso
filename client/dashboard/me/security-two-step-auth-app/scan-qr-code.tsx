@@ -10,16 +10,20 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { QRCodeSVG } from 'qrcode.react';
+import { useAnalytics } from '../../app/analytics';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { SectionHeader } from '../../components/section-header';
 import VerifyCodeForm from '../security-two-step-auth/common/verify-code-form';
 
 export default function ScanQRCode() {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data: appAuthSetup } = useSuspenseQuery( twoStepAuthAppSetupQuery() );
 
 	const handleCopy = () => {
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_app_scan_qr_code_copy_click' );
 		createSuccessNotice( __( 'Setup key copied to clipboard.' ), {
 			type: 'snackbar',
 		} );

@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
@@ -91,6 +92,7 @@ const DomainSearchStep: StepType< {
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
+					shouldSkipSubmitTracking: true,
 				} );
 			},
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
@@ -104,6 +106,7 @@ const DomainSearchStep: StepType< {
 						domain_name: domainItem.meta!,
 						is_free: false,
 					},
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.CUSTOM,
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
@@ -112,6 +115,9 @@ const DomainSearchStep: StepType< {
 					domainItem: undefined,
 					domainCart: [],
 					suggestion,
+					signupDomainOrigin: suggestion
+						? SIGNUP_DOMAIN_ORIGIN.FREE
+						: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
 				} );
 			},
 		};

@@ -2,7 +2,7 @@ import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
-import type { PHPLog } from '@automattic/api-core';
+import type { PHPLog, ServerLog } from '@automattic/api-core';
 
 type DateRange = { start: Date; end: Date };
 
@@ -21,8 +21,8 @@ export function buildTimeRangeInSeconds(
 	if ( timezoneString ) {
 		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
 		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = +dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString );
-		const endSec = +dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString );
+		const startSec = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString ) );
+		const endSec = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString ) );
 		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
 			return { startSec, endSec };
 		}
@@ -148,4 +148,49 @@ export function getDateTimeLabel( {
 		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
 	}
 	return dateTimeLabel;
+}
+
+// Logs helpers
+
+export type PhpLogWithId = PHPLog & { id: string };
+export type ServerLogWithId = ServerLog & { id: string };
+
+// Build a stable, readable ID by joining meaningful parts.
+const joinId = ( parts: Array< string | number | null | undefined > ): string =>
+	parts
+		.map( ( part ) => ( part === null || part === undefined ? '' : String( part ) ) )
+		.join( '|' );
+
+export function buildPhpLogsWithId( pages: Array< { logs?: PHPLog[] } > ): PhpLogWithId[] {
+	const out: PhpLogWithId[] = [];
+	pages.forEach( ( page, pageIndex ) => {
+		const suffix = `p${ pageIndex + 1 }`;
+		const items = page?.logs ?? [];
+		items.forEach( ( php, index ) => {
+			const id = joinId( [ php.timestamp, php.file, php.line, php.kind, php.name, suffix, index ] );
+			out.push( { ...php, id } );
+		} );
+	} );
+	return out;
+}
+
+export function buildServerLogsWithId( pages: Array< { logs?: ServerLog[] } > ): ServerLogWithId[] {
+	const out: ServerLogWithId[] = [];
+	pages.forEach( ( page, pageIndex ) => {
+		const suffix = `p${ pageIndex + 1 }`;
+		const items = page?.logs ?? [];
+		items.forEach( ( server, index ) => {
+			const id = joinId( [
+				server.timestamp,
+				server.request_type,
+				server.status,
+				server.request_url,
+				server.user_ip,
+				suffix,
+				index,
+			] );
+			out.push( { ...server, id } );
+		} );
+	} );
+	return out;
 }

@@ -21,6 +21,7 @@ boot( {
 		},
 		domains: true,
 		emails: true,
+		themes: false,
 		reader: false,
 		help: true,
 		notifications: false,
@@ -29,5 +30,6 @@ boot( {
 			apps: false,
 		},
 		plugins: false,
+		commandPalette: false,
 	},
 } );

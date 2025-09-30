@@ -29,6 +29,7 @@ interface FileInfoCardProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -42,6 +43,7 @@ function FileInfoCard( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	source,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const { fileBrowserState, locale, notices } = useFileBrowserContext();
@@ -86,13 +88,16 @@ function FileInfoCard( {
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
-				file_type: fileType,
-			} );
+			const trackingProps = { file_type: fileType };
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_download', trackingProps );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_download', trackingProps );
+			}
 
 			return;
 		},
-		[ onTrackEvent ]
+		[ onTrackEvent, source ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -190,10 +195,15 @@ function FileInfoCard( {
 		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+		const trackingProps = {
 			file_type: item.type,
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
-		} );
+		};
+		if ( source === 'dashboard' ) {
+			onTrackEvent( 'calypso_dashboard_backup_browser_restore_single_file', trackingProps );
+		} else {
+			onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', trackingProps );
+		}
 	}, [
 		setNodeCheckState,
 		path,
@@ -201,6 +211,7 @@ function FileInfoCard( {
 		siteSlug,
 		rewindId,
 		onTrackEvent,
+		source,
 		item.type,
 		hasCredentials,
 	] );
@@ -376,7 +387,12 @@ function FileInfoCard( {
 						) }
 					</HStack>
 					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+						<FilePreview
+							item={ item }
+							siteId={ siteId }
+							onTrackEvent={ onTrackEvent }
+							source={ source }
+						/>
 					) }
 				</VStack>
 			</CardBody>
