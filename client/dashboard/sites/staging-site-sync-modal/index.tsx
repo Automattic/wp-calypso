@@ -409,9 +409,30 @@ function StagingSiteSyncModalInner( {
 							density="medium"
 							title={ __( 'All files, folders, and database will be synced' ) }
 						>
-							{ __(
-								'Selective sync is temporarily disabled. Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime.'
-							) }
+							<VStack spacing={ 2 }>
+								<Text as="p">
+									{ __(
+										'Selective sync is temporarily disabled. Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime.'
+									) }
+								</Text>
+								{ sourceHasWoo && targetEnvironment === 'production' && (
+									<Text as="p">
+										{ createInterpolateElement(
+											__(
+												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+											),
+											{
+												a: (
+													<ExternalLink
+														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+														children={ null }
+													/>
+												),
+											}
+										) }
+									</Text>
+								) }
+							</VStack>
 						</Notice>
 					) : (
 						<VStack spacing={ 0 }>
