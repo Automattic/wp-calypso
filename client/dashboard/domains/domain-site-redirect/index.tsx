@@ -20,7 +20,9 @@ function DomainSiteRedirect() {
 				<PageHeader
 					title={ __( 'Site redirect' ) }
 					description={ createInterpolateElement(
-						__( 'Update your site redirect. <link>Learn more</link>' ),
+						__(
+							'Use a site redirect to send traffic from a .wordpress.com site address (and all your permalinks) to another site elsewhere. <link>Learn more</link>'
+						),
 						{
 							link: <InlineSupportLink supportLink={ SITE_REDIRECT } />,
 						}
