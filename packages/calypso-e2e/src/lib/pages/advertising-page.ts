@@ -1,5 +1,4 @@
 import { Locator, Page } from 'playwright';
-import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
@@ -69,11 +68,6 @@ export class AdvertisingPage {
 		name: string,
 		{ row, postTitle }: { row?: number; postTitle?: string } = {}
 	) {
-		// Wait for promote the banner to finish loading on desktop (old tests)
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.advertisingHeading.waitFor( { state: 'visible', timeout: 10_000 } );
-		}
-
 		if ( row !== undefined && row >= 0 ) {
 			await this.page
 				.getByRole( 'row' )
