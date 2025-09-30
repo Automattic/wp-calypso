@@ -69,7 +69,7 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 				/>
 			) : (
 				<>
-					<ThreatDescription threat={ items[ 0 ] } />
+					<ThreatDescription threat={ items[ 0 ] } site={ site } />
 					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" onClick={ closeModal }>
 							{ __( 'Cancel' ) }
