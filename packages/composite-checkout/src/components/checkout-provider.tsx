@@ -1,15 +1,13 @@
 import { ThemeProvider } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useMemo } from 'react';
-import CheckoutContext from '../lib/checkout-context';
+import { useCallback, useEffect } from 'react';
 import defaultTheme from '../lib/theme';
 import { validateArg, validatePaymentMethods } from '../lib/validation';
 import { CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormAndTransactionProvider } from './form-and-transaction-provider';
 import { PaymentMethodProvider } from './payment-method-provider';
-import type { CheckoutContextInterface } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -39,14 +37,6 @@ export function CheckoutProvider( {
 		initiallySelectedPaymentMethodId,
 	};
 
-	// Create a big blob of state to store in React Context for use by all this Provider's children.
-	const value: CheckoutContextInterface = useMemo(
-		() => ( {
-			onPageLoadError,
-		} ),
-		[ onPageLoadError ]
-	);
-
 	const { __ } = useI18n();
 	const errorMessage = __( 'Sorry, there was an error loading this page.' );
 	const onLoadError = useCallback(
@@ -69,11 +59,12 @@ export function CheckoutProvider( {
 						onPaymentComplete={ onPaymentComplete }
 						onPaymentRedirect={ onPaymentRedirect }
 						onPaymentError={ onPaymentError }
+						onPageLoadError={ onPageLoadError }
 						isLoading={ isLoading }
 						isValidating={ isValidating }
 						redirectToUrl={ redirectToUrl }
 					>
-						<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+						{ children }
 					</FormAndTransactionProvider>
 				</ThemeProvider>
 			</PaymentMethodProvider>
