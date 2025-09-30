@@ -96,11 +96,6 @@ export const WorkflowValidationList = ( {
 
 	const items = workflowChecks?.checked_items ?? [];
 
-	// Early return if required props are missing
-	if ( ! repository || ! branchName ) {
-		return null;
-	}
-
 	const toggleCard = ( validationName: string ) => {
 		setExpandedCards( ( prev ) => {
 			const newSet = new Set( prev );
@@ -114,14 +109,11 @@ export const WorkflowValidationList = ( {
 	};
 
 	const summaryMessage = () => {
-		if ( ! workflowChecks || ! repository || ! branchName ) {
+		if ( ! workflowChecks ) {
 			return null;
 		}
 
 		const workflowFile = workflowChecks.workflow_path || workflowPath;
-		if ( ! workflowFile ) {
-			return null;
-		}
 
 		const workflowUrl = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflowFile }`;
 		const message =

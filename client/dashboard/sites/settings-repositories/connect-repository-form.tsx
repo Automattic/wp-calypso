@@ -154,9 +154,6 @@ export const ConnectRepositoryForm = ( {
 	} );
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
-		if ( formData.selectedInstallationId === '' ) {
-			return installations[ 0 ];
-		}
 		return installations.find( ( inst ) => inst.external_id === formData.selectedInstallationId );
 	}, [ installations, formData.selectedInstallationId ] );
 
@@ -352,7 +349,6 @@ export const ConnectRepositoryForm = ( {
 					setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
 				}
 				isLoading={ isLoadingRepositories }
-				isFetching={ isLoadingBranches }
 				useComposerWorkflow={ !! repositoryChecks?.has_composer && ! repositoryChecks?.has_vendor }
 			/>
 		);
