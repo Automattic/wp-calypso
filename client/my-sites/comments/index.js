@@ -1,8 +1,17 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
-import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import { clearCommentNotices, comment, postComments, redirect, siteComments } from './controller';
+import { getSiteFragment } from 'calypso/lib/route';
+import { siteSelection, sites } from 'calypso/my-sites/controller';
+import { comment, postComments, siteComments } from './controller';
+
+export const redirect = ( { path } ) => {
+	const siteFragment = getSiteFragment( path );
+	if ( siteFragment ) {
+		return page.redirect( `/comments/all/${ siteFragment }` );
+	}
+	return page.redirect( '/comments/all' );
+};
 
 const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
 	if ( context.params.status !== 'all' ) {
@@ -24,10 +33,7 @@ export default function () {
 		'/comments/:status(all|pending|approved|spam|trash)/:site',
 		siteSelection,
 		redirectToCommentIfDuplicatedView( 'edit-comments.php' ),
-		navigation,
-		siteComments,
-		makeLayout,
-		clientRender
+		siteComments
 	);
 
 	// Post View
@@ -35,10 +41,7 @@ export default function () {
 		'/comments/:status(all|pending|approved|spam|trash)/:site/:post',
 		siteSelection,
 		redirectToCommentIfDuplicatedView( 'edit-comments.php' ),
-		navigation,
-		postComments,
-		makeLayout,
-		clientRender
+		postComments
 	);
 
 	// Comment View
@@ -46,10 +49,7 @@ export default function () {
 		'/comment/:site/:comment',
 		siteSelection,
 		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' ),
-		navigation,
-		comment,
-		makeLayout,
-		clientRender
+		comment
 	);
 
 	// Redirect
@@ -64,8 +64,4 @@ export default function () {
 	page( '/comments', siteSelection, redirect );
 	page( '/comment/*', siteSelection, redirect );
 	page( '/comment', siteSelection, redirect );
-
-	// Leaving Comment Management
-	page.exit( '/comments/*', clearCommentNotices );
-	page.exit( '/comment/*', clearCommentNotices );
 }
