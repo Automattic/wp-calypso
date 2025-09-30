@@ -82,7 +82,7 @@ export default function RecoverySMS() {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_validate_sms_click' );
 		validateSMS( formData.smsNumber, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery SMS number was saved successfully.' ), {
+				createSuccessNotice( __( 'Recovery SMS number saved.' ), {
 					type: 'snackbar',
 				} );
 			},
@@ -121,7 +121,7 @@ export default function RecoverySMS() {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_remove_sms_click' );
 		removeSMS( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery SMS number was removed successfully.' ), {
+				createSuccessNotice( __( 'Recovery SMS number removed.' ), {
 					type: 'snackbar',
 				} );
 				setFormData( initialFormData );
@@ -142,7 +142,7 @@ export default function RecoverySMS() {
 		setShowResendButton( false );
 		resendValidation( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery SMS validation was resent successfully.' ), {
+				createSuccessNotice( __( 'Recovery SMS validation resent.' ), {
 					type: 'snackbar',
 				} );
 			},
