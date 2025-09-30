@@ -199,11 +199,11 @@ export default function ActionRenderModal( {
 	const { recordTracksEvent } = useAnalytics();
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_hosting_dashboard_plugins_action_click', { action_id: actionId } );
+		recordTracksEvent( 'calypso_dashboard_plugins_action_click', { action_id: actionId } );
 	}, [ actionId, recordTracksEvent ] );
 
 	const handleCancel = () => {
-		recordTracksEvent( 'calypso_hosting_dashboard_plugins_action_cancel_click', {
+		recordTracksEvent( 'calypso_dashboard_plugins_action_cancel_click', {
 			action_id: actionId,
 		} );
 		closeModal?.();
@@ -422,7 +422,7 @@ export default function ActionRenderModal( {
 	};
 
 	const handleConfirm = async () => {
-		recordTracksEvent( 'calypso_hosting_dashboard_plugins_action_confirm_click', {
+		recordTracksEvent( 'calypso_dashboard_plugins_action_confirm_click', {
 			action_id: actionId,
 		} );
 		setIsBusy( true );

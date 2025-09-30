@@ -47,7 +47,7 @@ export default function FieldActionToggle( {
 				}
 			} }
 			onChange={ ( next ) => {
-				recordTracksEvent( 'calypso_hosting_dashboard_plugins_toggle_click', {
+				recordTracksEvent( 'calypso_dashboard_plugins_toggle_click', {
 					action_id: actionId,
 					next_state: next ? 'enable' : 'disable',
 				} );
