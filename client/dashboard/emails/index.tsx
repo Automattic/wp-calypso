@@ -9,6 +9,7 @@ import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
+import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
 import { domainHasEmail } from './utils/email-utils';
 import type { View } from '@wordpress/dataviews';
@@ -86,7 +87,13 @@ function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					empty={ domainsWithoutEmails ? <></> : <NoDomainsAvailableEmptyState /> }
+					empty={
+						domainsWithoutEmails ? (
+							<NoEmailsAvailableEmptyState />
+						) : (
+							<NoDomainsAvailableEmptyState />
+						)
+					}
 				/>
 			</DataViewsCard>
 		</PageLayout>
