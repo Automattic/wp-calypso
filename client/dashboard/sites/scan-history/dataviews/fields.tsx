@@ -5,30 +5,12 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useFormattedTime } from '../../../components/formatted-time';
+import { FormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
 import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-
-interface FormattedTimeProps {
-	timestamp: string;
-	timezoneString?: string;
-	gmtOffset?: number;
-}
-
-function FormattedTime( { timestamp, timezoneString, gmtOffset }: FormattedTimeProps ) {
-	return useFormattedTime(
-		timestamp,
-		{
-			dateStyle: 'medium',
-			timeStyle: 'short',
-		},
-		timezoneString,
-		gmtOffset
-	);
-}
 
 const getStatusLabel = ( status: string ): string => {
 	switch ( status ) {
