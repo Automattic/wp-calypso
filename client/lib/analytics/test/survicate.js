@@ -43,6 +43,21 @@ describe( 'survicate', () => {
 		// Reset all mocks
 		jest.clearAllMocks();
 
+		// Mock document.referrer and window.location
+		Object.defineProperty( document, 'referrer', {
+			value: 'https://example.com/previous-page',
+			writable: true,
+		} );
+
+		Object.defineProperty( window, 'location', {
+			value: {
+				pathname: '/current-page',
+				hostname: 'calypso.wordpress.com',
+				href: 'https://calypso.wordpress.com/current-page',
+			},
+			writable: true,
+		} );
+
 		// Set up fresh module imports
 		jest.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
@@ -227,6 +242,9 @@ describe( 'survicate', () => {
 				{
 					user_exists: false,
 					user_has_email: false,
+					referrer: 'https://example.com/previous-page',
+					pathname: '/current-page',
+					hostname: 'calypso.wordpress.com',
 				}
 			);
 		} );
@@ -269,6 +287,9 @@ describe( 'survicate', () => {
 				{
 					user_exists: true,
 					user_has_email: false,
+					referrer: 'https://example.com/previous-page',
+					pathname: '/current-page',
+					hostname: 'calypso.wordpress.com',
 				}
 			);
 		} );
