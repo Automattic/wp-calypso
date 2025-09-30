@@ -21,6 +21,22 @@
 			margin-top: -100px;
 			z-index: 2;
 			width: auto;
+			// animate the callout when it appears so that it slides down from the top
+			animation: slideDown 0.5s ease-out;
+			@keyframes slideDown {
+				from {
+					transform: translateY( -20px );
+					opacity: 0;
+				}
+				to {
+					transform: translateY( 0 );
+					opacity: 1;
+				}
+			}
+			// honor the accessibility setting to decrease motion if present
+			@media ( prefers-reduced-motion: reduce ) {
+				animation: none;
+			}
 
 			&-content {
 				pointer-events: auto; // don't ignore pointer events from the callout itself
