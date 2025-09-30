@@ -712,17 +712,21 @@ export function OtherRenewablePurchasesNotice( {
 						purchases={ renewableSitePurchases }
 					/>
 				) }
-				<Notice variant={ noticeStatus }>
+				<Notice
+					variant={ noticeStatus }
+					actions={
+						( noticeActionHref || noticeActionOnClick ) && (
+							<Button
+								variant="primary"
+								href={ noticeActionHref ?? undefined }
+								onClick={ noticeActionOnClick ?? undefined }
+							>
+								{ noticeActionText }
+							</Button>
+						)
+					}
+				>
 					{ noticeText }
-					{ ( noticeActionHref || noticeActionOnClick ) && (
-						<Button
-							variant="primary"
-							href={ noticeActionHref ?? undefined }
-							onClick={ noticeActionOnClick ?? undefined }
-						>
-							{ noticeActionText }
-						</Button>
-					) }
 				</Notice>
 			</>
 		);
