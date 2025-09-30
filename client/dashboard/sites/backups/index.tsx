@@ -110,6 +110,7 @@ export function BackupsListPage() {
 		if ( ! rewindId && backup && ! isSmallViewport ) {
 			setSelectedBackup( backup, true );
 		}
+
 		// no rewind id in param, and no backup? We have an empty query
 		if ( ! rewindId && ! backup ) {
 			setSelectedBackupInState( null );
@@ -138,6 +139,7 @@ export function BackupsListPage() {
 			icon={ isRTL() ? chevronRight : chevronLeft }
 			onClick={ () => {
 				setShowDetails( false );
+				setSelectedBackup( null );
 			} }
 		>
 			{ __( 'Backups' ) }
