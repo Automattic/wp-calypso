@@ -55,7 +55,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const scanState = useScanState( site.ID );
 	const { scan, status } = scanState;
-
+	const isScanInProgress = status === 'enqueued' || status === 'running';
 	const fixableThreatsCount = scan?.threats?.filter( ( threat ) => threat.fixable ).length || 0;
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
@@ -82,8 +82,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	};
 
 	const renderActiveTab = () => {
-		const showStatus = status === 'enqueued' || status === 'running';
-		if ( showStatus ) {
+		if ( isScanInProgress ) {
 			return <ScanStatus scanState={ scanState } />;
 		}
 		return (
@@ -121,7 +120,11 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 							<ButtonStack>
 								<ScanNowButton site={ site } scanState={ scanState } />
 								{ fixableThreatsCount > 0 && (
-									<Button variant="primary" onClick={ () => setShowBulkFixModal( true ) }>
+									<Button
+										variant="primary"
+										disabled={ isScanInProgress }
+										onClick={ () => setShowBulkFixModal( true ) }
+									>
 										{ sprintf(
 											/* translators: %d: number of threats */
 											_n(
