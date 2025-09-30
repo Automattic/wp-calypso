@@ -19,6 +19,10 @@ const form = {
 	fields: [ 'redirect' ],
 };
 
+const sanitizeRedirect = ( url: string ) => {
+	return url.replace( /^https?:\/\//, '' ).replace( /\/$/, '' );
+};
+
 interface Props {
 	siteId: number;
 	initialData: FormData;
@@ -52,7 +56,10 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 		e.preventDefault();
 		setIsLoading( true );
 
-		updateSiteRedirectMutation.mutate( formData.redirect, {
+		const redirect = sanitizeRedirect( formData.redirect );
+		setFormData( ( data ) => ( { ...data, ...{ redirect } } ) );
+
+		updateSiteRedirectMutation.mutate( redirect, {
 			onSuccess: () => {
 				setTimeout( () => {
 					setIsLoading( false );
@@ -60,7 +67,7 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 
 					navigate( {
 						to: domainSiteRedirectRoute.fullPath,
-						params: { domainName: formData.redirect },
+						params: { domainName: redirect },
 						replace: true,
 					} );
 				}, 5000 ); // Simulate a 5-second delay so the backend has time to process the change.
@@ -86,7 +93,6 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< FormData > ) => {
-								edits.redirect = withoutHttp( edits.redirect || '' );
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
