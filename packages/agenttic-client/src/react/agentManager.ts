@@ -86,6 +86,7 @@ interface ManagedAgent {
 	sessionId: string | null;
 	conversationStorageKey?: string;
 	conversationHistory: Message[];
+	currentAbortController: AbortController | null;
 }
 
 /**
@@ -111,6 +112,7 @@ export interface AgentManager {
 	) => AsyncIterable< TaskUpdate >;
 	resetConversation: ( key: string ) => Promise< void >;
 	getConversationHistory: ( key: string ) => Message[];
+	abortCurrentRequest: ( key: string ) => void;
 	clear: () => void;
 }
 
@@ -181,6 +183,7 @@ function createAgentManager(): AgentManager {
 				sessionId,
 				conversationStorageKey,
 				conversationHistory,
+				currentAbortController: null,
 			};
 
 			agents.set( key, managedAgent );
@@ -298,8 +301,23 @@ function createAgentManager(): AgentManager {
 				throw new Error( `Agent with key "${ key }" not found` );
 			}
 
-			const { withHistory = true, ...otherOptions } = options;
+			const {
+				withHistory = true,
+				abortSignal,
+				...otherOptions
+			} = options;
 			const { client } = managedAgent;
+
+			// Create our own abort controller for this stream
+			const abortController = new AbortController();
+			managedAgent.currentAbortController = abortController;
+
+			// If caller provided their own abort signal, listen to it too
+			if ( abortSignal ) {
+				abortSignal.addEventListener( 'abort', () =>
+					abortController.abort()
+				);
+			}
 
 			// Track conversation history locally to avoid race conditions
 			let currentConversationHistory = [
@@ -354,6 +372,7 @@ function createAgentManager(): AgentManager {
 			for await ( const update of client.sendMessageStream( {
 				message: messageObj,
 				withHistory,
+				abortSignal: abortController.signal,
 				...otherOptions,
 			} ) ) {
 				// Save tool interactions when input is required (this saves the agent message with tool calls)
@@ -467,6 +486,9 @@ function createAgentManager(): AgentManager {
 
 				yield update;
 			}
+
+			// Clear abort controller when stream completes
+			managedAgent.currentAbortController = null;
 		},
 
 		async resetConversation( key: string ): Promise< void > {
@@ -493,6 +515,18 @@ function createAgentManager(): AgentManager {
 			}
 
 			return [ ...managedAgent.conversationHistory ];
+		},
+
+		abortCurrentRequest( key: string ): void {
+			const managedAgent = agents.get( key );
+			if ( ! managedAgent ) {
+				throw new Error( `Agent with key "${ key }" not found` );
+			}
+
+			if ( managedAgent.currentAbortController ) {
+				managedAgent.currentAbortController.abort();
+				managedAgent.currentAbortController = null;
+			}
 		},
 
 		clear(): void {

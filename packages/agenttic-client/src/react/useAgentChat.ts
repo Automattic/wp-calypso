@@ -276,7 +276,6 @@ interface AgentChatState {
 	suggestions: Suggestion[];
 	markdownComponents: MarkdownComponents;
 	markdownExtensions: MarkdownExtensions;
-	currentAbortController: AbortController | null;
 }
 
 /**
@@ -305,7 +304,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: [],
 		markdownComponents: {},
 		markdownExtensions: {},
-		currentAbortController: null,
 	} );
 
 	// Initialize message actions
@@ -407,16 +405,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				showIcon: false,
 			};
 
-			// Create abort controller for this request
-			const abortController = new AbortController();
-
 			// Add user message to UI and set communication state
 			setState( ( prev ) => ( {
 				...prev,
 				uiMessages: [ ...prev.uiMessages, userMessage ],
 				isProcessing: true,
 				error: null,
-				currentAbortController: abortController,
 			} ) );
 
 			try {
@@ -426,10 +420,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				for await ( const update of agentManager.sendMessageStream(
 					agentKey,
-					message,
-					{
-						abortSignal: abortController.signal,
-					}
+					message
 				) ) {
 					// Handle incremental text updates during streaming
 					if ( ! update.final && update.text ) {
@@ -510,7 +501,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 									clientMessages: updatedClientHistory,
 									uiMessages: updatedMessages,
 									isProcessing: false,
-									currentAbortController: null,
 								};
 							} );
 						}
@@ -568,7 +558,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							clientMessages: updatedClientHistory,
 							uiMessages: mergedUIMessages,
 							isProcessing: false,
-							currentAbortController: null,
 						};
 					} );
 				}
@@ -580,7 +569,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						...prev,
 						isProcessing: false,
 						error: null, // Don't show error for user-initiated abort
-						currentAbortController: null,
 					} ) );
 					return; // Don't re-throw AbortError
 				}
@@ -593,7 +581,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					...prev,
 					isProcessing: false,
 					error: errorMessage,
-					currentAbortController: null,
 				} ) );
 				throw error;
 			}
@@ -764,15 +751,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		]
 	);
 
-	// Create abort function - use setState callback to access current state
+	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {
-		setState( ( currentState ) => {
-			if ( currentState.currentAbortController ) {
-				currentState.currentAbortController.abort();
-			}
-			return currentState; // No state change needed
-		} );
-	}, [] ); // Empty dependency array since we're accessing current state via setState callback
+		if ( ! isValidConfig ) {
+			return;
+		}
+		const agentManager = getAgentManager();
+		const agentKey = `${ agentConfig.agentId }-${ agentConfig.sessionId }`;
+		agentManager.abortCurrentRequest( agentKey );
+	}, [ agentConfig.agentId, agentConfig.sessionId, isValidConfig ] );
 
 	return {
 		// AgentUI props
