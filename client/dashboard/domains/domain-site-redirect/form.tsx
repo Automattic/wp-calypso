@@ -26,6 +26,7 @@ interface Props {
 
 export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 	const [ formData, setFormData ] = useState< FormData >( initialData );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 
@@ -49,18 +50,23 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		setIsLoading( true );
 
 		updateSiteRedirectMutation.mutate( formData.redirect, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Site redirect updated.' ), { type: 'snackbar' } );
+				setTimeout( () => {
+					setIsLoading( false );
+					createSuccessNotice( __( 'Site redirect updated.' ), { type: 'snackbar' } );
 
-				navigate( {
-					to: domainSiteRedirectRoute.fullPath,
-					params: { domainName: formData.redirect },
-					replace: true,
-				} );
+					navigate( {
+						to: domainSiteRedirectRoute.fullPath,
+						params: { domainName: formData.redirect },
+						replace: true,
+					} );
+				}, 5000 ); // Simulate a 5-second delay so the backend has time to process the change.
 			},
 			onError: ( error: Error ) => {
+				setIsLoading( false );
 				createErrorNotice( error.message, {
 					type: 'snackbar',
 				} );
@@ -68,7 +74,7 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 		} );
 	};
 
-	const canSubmit = ! updateSiteRedirectMutation.isPending && isItemValid( formData, fields, form );
+	const canSubmit = ! isLoading && isItemValid( formData, fields, form );
 
 	return (
 		<Card>
@@ -80,16 +86,12 @@ export default function DomainRedirectForm( { siteId, initialData }: Props ) {
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< FormData > ) => {
+								edits.redirect = withoutHttp( edits.redirect || '' );
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
 						<ButtonStack>
-							<Button
-								type="submit"
-								variant="primary"
-								isBusy={ updateSiteRedirectMutation.isPending }
-								disabled={ ! canSubmit }
-							>
+							<Button type="submit" variant="primary" isBusy={ isLoading } disabled={ ! canSubmit }>
 								{ __( 'Update' ) }
 							</Button>
 						</ButtonStack>
