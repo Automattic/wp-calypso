@@ -5,7 +5,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay } from '../utils';
-import type { ServerLog } from '@automattic/api-core';
+import type { ServerLog, ServerData } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 export default function DetailsModalServer( {
@@ -22,7 +23,7 @@ export default function DetailsModalServer( {
 	const formatted = formatLogDateTimeForDisplay( item.date, gmtOffset, locale, timezoneString );
 
 	const data = {
-		date_time: formatted,
+		date: formatted,
 		request_type: item.request_type,
 		status: item.status,
 		request_url: item.request_url,
@@ -43,9 +44,9 @@ export default function DetailsModalServer( {
 		user_ip: item.user_ip,
 	};
 
-	const fields = [
+	const fields: Field< ServerData >[] = [
 		{
-			id: 'date_time',
+			id: 'date',
 			label: sprintf(
 				/* Translators: %s: UTC offset */
 				__( 'Date & Time (%s)' ),
@@ -58,7 +59,7 @@ export default function DetailsModalServer( {
 			id: 'request_type',
 			label: __( 'Request Type' ),
 			type: 'text',
-			render: ( { item } ) => (
+			render: ( { item }: { item: ServerData } ) => (
 				<Badge intent="default" className={ `badge--${ item.request_type }` }>
 					{ item.request_type }
 				</Badge>
@@ -93,7 +94,7 @@ export default function DetailsModalServer( {
 					fields: fields.map( ( field ) => field.id ),
 					layout: {
 						type: 'panel',
-						labelPosition: 'default',
+						labelPosition: 'side',
 						openAs: 'dropdown',
 					},
 				} }

@@ -5,7 +5,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
-import type { PHPLog } from '@automattic/api-core';
+import type { PHPLog, PHPData } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 export default function DetailsModalPHP( {
@@ -27,18 +28,18 @@ export default function DetailsModalPHP( {
 	);
 
 	const data = {
-		date_time: formatted,
-		group: item.kind,
-		source: item.name,
+		timestamp: formatted,
+		kind: item.kind,
+		name: item.name,
 		severity: item.severity,
 		file: item.file,
 		line: String( item.line ),
 		message: item.message,
 	};
 
-	const fields = [
+	const fields: Field< PHPData >[] = [
 		{
-			id: 'date_time',
+			id: 'timestamp',
 			label: sprintf(
 				/* Translators: %s: UTC offset */
 				__( 'Date & Time (%s)' ),
@@ -48,13 +49,13 @@ export default function DetailsModalPHP( {
 			readOnly: true,
 		},
 		{
-			id: 'group',
+			id: 'kind',
 			label: __( 'Group' ),
 			type: 'text',
 			readOnly: true,
 		},
 		{
-			id: 'source',
+			id: 'name',
 			label: __( 'Source' ),
 			type: 'text',
 			readOnly: true,
@@ -63,7 +64,7 @@ export default function DetailsModalPHP( {
 			id: 'severity',
 			label: __( 'Severity' ),
 			type: 'text',
-			render: ( { item } ) => (
+			render: ( { item }: { item: PHPData } ) => (
 				<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
 					{ item.severity }
 				</Badge>
@@ -99,7 +100,7 @@ export default function DetailsModalPHP( {
 					fields: fields.map( ( field ) => field.id ),
 					layout: {
 						type: 'panel',
-						labelPosition: 'default',
+						labelPosition: 'side',
 						openAs: 'dropdown',
 					},
 				} }
