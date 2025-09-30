@@ -24,7 +24,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
 		onDomainAddAvailabilityPreCheck: noop,
-		onSearch: noop,
 		onSuggestionsReceive: noop,
 		onSuggestionRender: noop,
 		onSuggestionInteract: noop,

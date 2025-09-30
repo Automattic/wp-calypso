@@ -68,6 +68,18 @@ const DomainSearchWithCart = ( {
 			onQueryChange: ( query: string ) => {
 				setQuery( query );
 				setRailcarId( getNewRailcarId( 'domain-suggestion' ) );
+
+				// TODO: In the original flows, this event has a 10s timeout before triggering. Should we do the same here?
+				searchCount.current++;
+				recordTracksEvent( 'calypso_domain_search', {
+					search_box_value: query,
+					search_count: searchCount.current,
+					search_vendor: config.vendor,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					// TODO: Not sure if we still need this
+					// seconds_from_last_search:,
+					flow_name: flowName,
+				} );
 				props.events?.onQueryChange?.( query );
 			},
 			onContinue: () => {
@@ -109,18 +121,6 @@ const DomainSearchWithCart = ( {
 					root_vendor: rootVendor,
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 					unavailable_status: unavailableStatus,
-				} );
-			},
-			onSearch: ( query: string, vendor: string ) => {
-				searchCount.current++;
-				recordTracksEvent( 'calypso_domain_search', {
-					search_box_value: query,
-					search_count: searchCount.current,
-					search_vendor: vendor,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
-					// TODO: Not sure if we still need this
-					// seconds_from_last_search:,
-					flow_name: flowName,
 				} );
 			},
 			onFilterApplied: ( filter: FilterState ) => {
