@@ -33,7 +33,10 @@ const DomainSearchWithCart = ( {
 	const { onContinue, onAddDomainToCart } = props.events ?? {};
 	const [ railcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
 
-	const { query } = useQueryHandler( {} );
+	const { query, setQuery } = useQueryHandler( {
+		initialQuery: props.query,
+		currentSiteUrl,
+	} );
 
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
@@ -63,6 +66,7 @@ const DomainSearchWithCart = ( {
 		return {
 			...props.events,
 			onQueryChange: ( query: string ) => {
+				setQuery( query );
 				props.events?.onQueryChange?.( query );
 			},
 			onContinue: () => {
