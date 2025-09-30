@@ -1,11 +1,11 @@
-import { fixThreatMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
+import { useFixThreats } from '../hooks/use-fix-threats';
 import { FixThreatConfirmation } from './fix-threat-confirmation';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
@@ -18,28 +18,37 @@ interface FixThreatModalProps extends RenderModalProps< Threat > {
 
 export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalProps ) {
 	const threat = items[ 0 ];
+	const threatIds = [ threat.id ];
 
-	const fixThreat = useMutation( fixThreatMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const handleFixThreat = () => {
-		fixThreat.mutate( threat.id, {
-			onSuccess: () => {
-				closeModal?.();
-				createSuccessNotice(
-					__(
-						'We’re hard at work fixing this threat in the background. Please check back shortly.'
-					),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				closeModal?.();
-				createErrorNotice( __( 'Error fixing threat. Please contact support.' ), {
+	const { startFix, isFixing, status, error } = useFixThreats( siteId, threatIds );
+
+	useEffect( () => {
+		if ( status.isComplete && ! isFixing ) {
+			closeModal?.();
+
+			if ( status.allFixed ) {
+				createSuccessNotice( __( 'Threat fixed.' ), { type: 'snackbar' } );
+			} else {
+				createErrorNotice( __( 'Failed to fix threat. Please contact support.' ), {
 					type: 'snackbar',
 				} );
-			},
-		} );
+			}
+		}
+	}, [ status, isFixing, closeModal, createSuccessNotice, createErrorNotice ] );
+
+	useEffect( () => {
+		if ( error ) {
+			closeModal?.();
+			createErrorNotice( __( 'Failed to fix threat. Please contact support.' ), {
+				type: 'snackbar',
+			} );
+		}
+	}, [ error, closeModal, createErrorNotice ] );
+
+	const handleFixThreat = () => {
+		startFix();
 	};
 
 	const isExtensionDeleteFixer =
@@ -55,8 +64,8 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 					threat={ threat }
 					onCancel={ closeModal }
 					onConfirm={ handleFixThreat }
-					disabled={ fixThreat.isPending }
-					isLoading={ fixThreat.isPending }
+					disabled={ isFixing }
+					isLoading={ isFixing }
 				/>
 			) : (
 				<>
@@ -68,10 +77,10 @@ export function FixThreatModal( { items, closeModal, siteId }: FixThreatModalPro
 						<Button
 							variant="primary"
 							onClick={ handleFixThreat }
-							isBusy={ fixThreat.isPending }
-							disabled={ fixThreat.isPending }
+							isBusy={ isFixing }
+							disabled={ isFixing }
 						>
-							{ __( 'Fix threat' ) }
+							{ isFixing ? __( 'Fixing threat…' ) : __( 'Fix threat' ) }
 						</Button>
 					</ButtonStack>
 				</>

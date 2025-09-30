@@ -3,7 +3,6 @@ import HeaderBar from '../../components/header-bar';
 import RouterLinkButton from '../../components/router-link-button';
 import { useAppContext } from '../context';
 import PrimaryMenu from '../primary-menu';
-import PrimaryMenuMobile from '../primary-menu-mobile';
 import SecondaryMenu from '../secondary-menu';
 
 function Header() {
@@ -12,11 +11,7 @@ function Header() {
 
 	return (
 		<HeaderBar as="header">
-			{ ! isDesktop && (
-				<div>
-					<PrimaryMenuMobile />
-				</div>
-			) }
+			{ ! isDesktop && <PrimaryMenu /> }
 
 			{ Logo && (
 				<div style={ { display: 'flex', alignItems: 'center' } }>
@@ -25,7 +20,6 @@ function Header() {
 			) }
 
 			<div style={ { flexGrow: 1 } }>{ isDesktop && <PrimaryMenu /> }</div>
-
 			<div>
 				<SecondaryMenu />
 			</div>
