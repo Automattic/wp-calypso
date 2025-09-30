@@ -1,4 +1,5 @@
 import { Modal } from '@wordpress/components';
+import clsx from 'clsx';
 import React from 'react';
 
 import './style.scss';
@@ -7,12 +8,13 @@ type InfoModalProps = {
 	title: string;
 	onClose: () => void;
 	children?: React.ReactNode;
+	className?: string;
 };
 
-const InfoModal = ( { onClose, children, title }: InfoModalProps ) => {
+const InfoModal = ( { onClose, children, title, className }: InfoModalProps ) => {
 	return (
 		<Modal
-			className="consolidated-view-info-modal__wrapper"
+			className={ clsx( 'a4a-info-modal', className ) }
 			onRequestClose={ onClose }
 			title={ title }
 		>

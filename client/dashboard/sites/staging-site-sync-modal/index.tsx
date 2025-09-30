@@ -16,6 +16,7 @@ import {
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
@@ -72,11 +73,12 @@ interface EnvironmentLabelProps {
 }
 
 const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps ) => {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	return (
 		<VStack spacing={ 1 }>
 			<HStack spacing={ 2 }>
 				<Environment environmentType={ environmentType } />
-				{ siteTitle && (
+				{ siteTitle && ! isSmallViewport && (
 					<Text
 						variant="muted"
 						style={ {

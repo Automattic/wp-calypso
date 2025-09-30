@@ -3,6 +3,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
 import { useLocale } from '../../app/locale';
+import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import OverviewCard from '../../sites/overview-card';
 import { formatDate } from '../../utils/datetime';
 
@@ -29,7 +30,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 			title={ domain.auto_renewing ? __( 'Renews' ) : __( 'Expires' ) }
 			heading={ formattedDate }
 			icon={ <Icon icon={ calendar } /> }
-			link={ `/me/billing/purchases/purchase/${ domain.subscription_id }` }
+			link={ getPurchaseUrlForId( domain.subscription_id ) }
 			description={
 				domain.auto_renewing ? __( 'Auto-renew is enabled.' ) : __( 'Auto-renew is disabled.' )
 			}
