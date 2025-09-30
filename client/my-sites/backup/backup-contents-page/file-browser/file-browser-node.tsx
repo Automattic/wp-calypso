@@ -3,6 +3,7 @@ import {
 	CheckboxControl,
 	Icon,
 	Spinner,
+	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -287,7 +288,7 @@ function FileBrowserNode( {
 		if ( isSuccess && addedAnyChildren ) {
 			let childIsAlternate = isAlternate;
 
-			return backupFiles.filter( filterItems ).map( ( childItem ) => {
+			const renderedChildren = backupFiles.filter( filterItems ).map( ( childItem ) => {
 				// Let's hide archives that don't have an extension version
 				// and changed extensions item node
 				if (
@@ -325,6 +326,19 @@ function FileBrowserNode( {
 					</div>
 				);
 			} );
+
+			if ( renderedChildren.length === 0 ) {
+				return (
+					<Text
+						variant="muted"
+						style={ { marginInlineStart: showSeparateExpandButton ? 36 : 63, fontStyle: 'italic' } }
+					>
+						{ __( 'Empty' ) }
+					</Text>
+				);
+			}
+
+			return renderedChildren;
 		}
 
 		return null;

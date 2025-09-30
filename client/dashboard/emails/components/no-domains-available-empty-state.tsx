@@ -8,7 +8,7 @@ const NoDomainsAvailableEmptyState = () => {
 		<DataViewsEmptyState
 			title={ __( 'Hold up! You need a domain first.' ) }
 			description={ __(
-				"Purchase or connect a domain for your site and you'll be able to add personalised email addresses."
+				'Purchase or connect a domain for your site and you’ll be able to add personalised email addresses.'
 			) }
 			illustration={ <DomainEmptyIllustration /> }
 			actions={
