@@ -25,7 +25,6 @@ import SiteActivityLogsDataViews from '../logs-activity/dataviews';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
 import { LOG_TABS } from './utils';
-
 import './style.scss';
 
 function SiteLogs( { logType }: { logType: LogType } ) {
