@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
-import CommentView from 'calypso/my-sites/comment/main';
 import CommentsManagement from './main';
 
 const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'unapproved' : status );
@@ -8,25 +7,6 @@ const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'una
 const sanitizeInt = ( number ) => {
 	const integer = parseInt( number, 10 );
 	return ! Number.isNaN( integer ) && integer > 0 ? integer : false;
-};
-
-const sanitizeQueryAction = ( action ) => {
-	if ( ! action ) {
-		return null;
-	}
-
-	const validActions = {
-		approve: 'approved',
-		edit: 'edit',
-		unapprove: 'unapproved',
-		trash: 'trash',
-		spam: 'spam',
-		delete: 'delete',
-	};
-
-	return validActions.hasOwnProperty( action.toLowerCase() )
-		? validActions[ action.toLowerCase() ]
-		: null;
 };
 
 const changePage = ( path ) => ( pageNumber ) => {
@@ -89,24 +69,5 @@ export const postComments = ( context, next ) => {
 			status={ status }
 		/>
 	);
-	next();
-};
-
-export const comment = ( context, next ) => {
-	const { params, path, query } = context;
-	const siteFragment = getSiteFragment( path );
-	const commentId = sanitizeInt( params.comment );
-
-	if ( ! commentId ) {
-		return siteFragment
-			? page.redirect( `/comments/all/${ siteFragment }` )
-			: page.redirect( '/comments/all' );
-	}
-
-	const action = sanitizeQueryAction( query.action );
-	const redirectToPostView = ( postId ) => () =>
-		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
-
-	context.primary = <CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />;
 	next();
 };

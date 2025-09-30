@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
-import { comment, postComments, siteComments } from './controller';
+import { postComments, siteComments } from './controller';
 
 export const redirect = ( { path } ) => {
 	const siteFragment = getSiteFragment( path );
@@ -48,8 +48,7 @@ export default function () {
 	page(
 		'/comment/:site/:comment',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' ),
-		comment
+		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' )
 	);
 
 	// Redirect
