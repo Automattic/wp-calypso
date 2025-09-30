@@ -8,7 +8,7 @@ import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -30,7 +30,23 @@ function DeploymentsList() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
-	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ view, setView ] = useState< View >( () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const repositoryFilter = urlParams.get( 'repository' );
+
+		return repositoryFilter
+			? {
+					...DEFAULT_VIEW,
+					filters: [
+						{
+							field: 'repository_name',
+							operator: 'isAny',
+							value: [ repositoryFilter ],
+						},
+					],
+			  }
+			: DEFAULT_VIEW;
+	} );
 	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
 		codeDeploymentsQuery( site.ID )
 	);
@@ -103,27 +119,6 @@ function DeploymentsList() {
 		repositoryOptions,
 		userNameOptions,
 	} );
-
-	// Apply repository filter from URL search params
-	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const repositoryFilter = urlParams.get( 'repository' );
-
-		if ( repositoryFilter ) {
-			// Apply filter for the requested repository regardless of whether it exists in options
-			// This will show empty list if repository has no deployment runs
-			setView( ( prevView ) => ( {
-				...prevView,
-				filters: [
-					{
-						field: 'repository_name',
-						operator: 'isAny',
-						value: [ repositoryFilter ],
-					},
-				],
-			} ) );
-		}
-	}, [ repositoryOptions ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
