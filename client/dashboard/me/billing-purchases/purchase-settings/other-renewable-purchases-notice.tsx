@@ -80,6 +80,63 @@ export function shouldShowOtherRenewablePurchasesNotice(
 	return true;
 }
 
+function NoticeContent( {
+	purchase,
+	renewableSitePurchases,
+	isUpcomingRenewalsDialogVisible,
+	setUpcomingRenewalsDialogVisible,
+	noticeStatus,
+	noticeText,
+	noticeActionHref,
+	noticeActionOnClick,
+	noticeActionText,
+}: {
+	purchase: Purchase;
+	renewableSitePurchases: Purchase[];
+	isUpcomingRenewalsDialogVisible: boolean;
+	setUpcomingRenewalsDialogVisible: ( visible: boolean ) => void;
+	noticeStatus: NoticeVariant;
+	noticeText: React.ReactNode;
+	noticeActionHref?: string;
+	noticeActionOnClick?: () => void;
+	noticeActionText?: string;
+} ) {
+	return (
+		<>
+			{ isUpcomingRenewalsDialogVisible && (
+				<UpcomingRenewalsDialog
+					onClose={ () => setUpcomingRenewalsDialogVisible( false ) }
+					onConfirm={ ( purchases ) => {
+						if ( purchases.length < 1 ) {
+							setUpcomingRenewalsDialogVisible( false );
+							return;
+						}
+						window.location.href = getRenewUrlForPurchases( purchases );
+					} }
+					siteDomain={ purchase.meta ?? purchase.domain }
+					purchases={ renewableSitePurchases }
+				/>
+			) }
+			<Notice
+				variant={ noticeStatus }
+				actions={
+					( noticeActionHref || noticeActionOnClick ) && (
+						<Button
+							variant="primary"
+							href={ noticeActionHref ?? undefined }
+							onClick={ noticeActionOnClick ?? undefined }
+						>
+							{ noticeActionText }
+						</Button>
+					)
+				}
+			>
+				{ noticeText }
+			</Notice>
+		</>
+	);
+}
+
 export function OtherRenewablePurchasesNotice( {
 	purchase,
 	purchaseAttachedTo,
@@ -157,21 +214,16 @@ export function OtherRenewablePurchasesNotice( {
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
 	const managePurchase = <a href={ getPurchaseUrl( currentPurchase ) } />;
 
-	let noticeStatus: NoticeVariant = 'info';
-	let noticeActionHref: undefined | string;
-	let noticeActionOnClick: undefined | ( () => void );
-	let noticeActionText = '';
-	let noticeText: React.ReactNode | undefined;
-
 	// Scenario 1: current-expires-soon-others-expire-soon
 	if ( currentPurchaseNeedsToRenewSoon && currentPurchaseIsExpiring && anotherPurchaseIsExpiring ) {
-		noticeStatus =
+		let noticeText: React.ReactNode;
+		const noticeStatus =
 			suppressErrorStylingForCurrentPurchase && suppressErrorStylingForOtherPurchases
 				? 'info'
 				: 'error';
-		noticeActionOnClick = () =>
+		const noticeActionOnClick = () =>
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
-		noticeActionText = __( 'Renew all' );
+		const noticeActionText = __( 'Renew all' );
 
 		if ( isExpired( currentPurchase ) ) {
 			if ( currentPurchase.is_domain_registration ) {
@@ -316,6 +368,19 @@ export function OtherRenewablePurchasesNotice( {
 				{ link }
 			);
 		}
+
+		return (
+			<NoticeContent
+				purchase={ purchase }
+				renewableSitePurchases={ renewableSitePurchases }
+				isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+				noticeStatus={ noticeStatus }
+				noticeText={ noticeText }
+				noticeActionOnClick={ noticeActionOnClick }
+				noticeActionText={ noticeActionText }
+			/>
+		);
 	}
 
 	// Scenario 2: current-expires-soon-others-renew-soon
@@ -324,7 +389,8 @@ export function OtherRenewablePurchasesNotice( {
 		currentPurchaseIsExpiring &&
 		! anotherPurchaseIsExpiring
 	) {
-		noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
+		let noticeText: React.ReactNode;
+		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
 
 		if ( isExpired( currentPurchase ) ) {
 			if ( currentPurchase.is_domain_registration ) {
@@ -421,6 +487,17 @@ export function OtherRenewablePurchasesNotice( {
 				{ link }
 			);
 		}
+
+		return (
+			<NoticeContent
+				purchase={ purchase }
+				renewableSitePurchases={ renewableSitePurchases }
+				isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+				noticeStatus={ noticeStatus }
+				noticeText={ noticeText }
+			/>
+		);
 	}
 
 	// Scenario 3: current-renews-soon-others-expire-soon
@@ -429,10 +506,11 @@ export function OtherRenewablePurchasesNotice( {
 		! currentPurchaseIsExpiring &&
 		anotherPurchaseIsExpiring
 	) {
-		noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
-		noticeActionOnClick = () =>
+		let noticeText: React.ReactNode;
+		const noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
+		const noticeActionOnClick = () =>
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
-		noticeActionText = __( 'Renew all' );
+		const noticeActionText = __( 'Renew all' );
 
 		if ( anotherPurchaseIsExpired ) {
 			if ( currentPurchase.is_domain_registration ) {
@@ -529,6 +607,19 @@ export function OtherRenewablePurchasesNotice( {
 				{ link }
 			);
 		}
+
+		return (
+			<NoticeContent
+				purchase={ purchase }
+				renewableSitePurchases={ renewableSitePurchases }
+				isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+				noticeStatus={ noticeStatus }
+				noticeText={ noticeText }
+				noticeActionOnClick={ noticeActionOnClick }
+				noticeActionText={ noticeActionText }
+			/>
+		);
 	}
 
 	// Scenario 4: current-renews-soon-others-renew-soon and current-renews-soon-others-renew-soon-cc-expiring
@@ -538,28 +629,48 @@ export function OtherRenewablePurchasesNotice( {
 		! anotherPurchaseIsExpiring
 	) {
 		if ( ! currentPurchaseCreditCardExpiresBeforeSubscription ) {
-			noticeStatus = 'success';
-			noticeText = createInterpolateElement(
-				__( 'You have <link>other upgrades</link> on this site that are scheduled to renew soon.' ),
-				{ link }
+			return (
+				<NoticeContent
+					purchase={ purchase }
+					renewableSitePurchases={ renewableSitePurchases }
+					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+					noticeStatus="success"
+					noticeText={ createInterpolateElement(
+						__(
+							'You have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+						),
+						{ link }
+					) }
+				/>
 			);
-		} else if ( currentPurchase.payment_card_id ) {
-			noticeStatus = shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info';
-			noticeActionHref = getAddPaymentMethodUrlFor( purchase );
-			noticeActionText = __( 'Update all' );
-			noticeText = createInterpolateElement(
-				sprintf(
-					// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
-					__(
-						'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
-					),
-					{
-						cardType: purchase.payment_card_type,
-						cardNumber: purchase.payment_card_id,
-						cardExpiry: purchase.payment_expiry,
-					}
-				),
-				{ link }
+		}
+
+		if ( currentPurchase.payment_card_id ) {
+			return (
+				<NoticeContent
+					purchase={ purchase }
+					renewableSitePurchases={ renewableSitePurchases }
+					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+					noticeStatus={ shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info' }
+					noticeText={ createInterpolateElement(
+						sprintf(
+							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+							__(
+								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+							),
+							{
+								cardType: purchase.payment_card_type,
+								cardNumber: purchase.payment_card_id,
+								cardExpiry: purchase.payment_expiry,
+							}
+						),
+						{ link }
+					) }
+					noticeActionHref={ getAddPaymentMethodUrlFor( purchase ) }
+					noticeActionText={ __( 'Update all' ) }
+				/>
 			);
 		}
 	}
@@ -570,34 +681,44 @@ export function OtherRenewablePurchasesNotice( {
 		currentPurchaseIsExpiring &&
 		anotherPurchaseIsExpiring
 	) {
-		noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
-		noticeActionOnClick = () =>
+		const noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
+		const noticeActionOnClick = () =>
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
-		noticeActionText = __( 'Renew Now' );
+		const noticeActionText = __( 'Renew Now' );
+		const noticeText = anotherPurchaseIsExpired
+			? createInterpolateElement(
+					sprintf(
+						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
+						__(
+							'You have <link>other upgrades</link> on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.'
+						),
+						{ earliestOtherExpiry }
+					),
+					{ link }
+			  )
+			: createInterpolateElement(
+					sprintf(
+						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
+						__(
+							'You have <link>other upgrades</link> on this site that will expire %(earliestOtherExpiry)s unless you take action.'
+						),
+						{ earliestOtherExpiry }
+					),
+					{ link }
+			  );
 
-		if ( anotherPurchaseIsExpired ) {
-			noticeText = createInterpolateElement(
-				sprintf(
-					// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
-					__(
-						'You have <link>other upgrades</link> on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.'
-					),
-					{ earliestOtherExpiry }
-				),
-				{ link }
-			);
-		} else {
-			noticeText = createInterpolateElement(
-				sprintf(
-					// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
-					__(
-						'You have <link>other upgrades</link> on this site that will expire %(earliestOtherExpiry)s unless you take action.'
-					),
-					{ earliestOtherExpiry }
-				),
-				{ link }
-			);
-		}
+		return (
+			<NoticeContent
+				purchase={ purchase }
+				renewableSitePurchases={ renewableSitePurchases }
+				isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+				noticeStatus={ noticeStatus }
+				noticeText={ noticeText }
+				noticeActionOnClick={ noticeActionOnClick }
+				noticeActionText={ noticeActionText }
+			/>
+		);
 	}
 
 	// Scenario 6: current-expires-later-others-renew-soon
@@ -606,21 +727,31 @@ export function OtherRenewablePurchasesNotice( {
 		currentPurchaseIsExpiring &&
 		! anotherPurchaseIsExpiring
 	) {
-		noticeStatus = 'info';
-
-		if ( currentPurchase.is_plan && purchaseIsIncludedInPlan ) {
-			noticeText = createInterpolateElement(
-				__( 'You have <link>other upgrades</link> on this site that are scheduled to renew soon.' ),
-				{ link }
-			);
-		} else {
-			noticeText = (
+		const noticeText =
+			currentPurchase.is_plan && purchaseIsIncludedInPlan ? (
+				createInterpolateElement(
+					__(
+						'You have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+					),
+					{ link }
+				)
+			) : (
 				<ExpiringLaterText
 					purchase={ purchase }
 					autoRenewingUpgradesAction={ openUpcomingRenewalsDialog }
 				/>
 			);
-		}
+
+		return (
+			<NoticeContent
+				purchase={ purchase }
+				renewableSitePurchases={ renewableSitePurchases }
+				isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+				noticeStatus="info"
+				noticeText={ noticeText }
+			/>
+		);
 	}
 
 	// Scenario 7: current-renews-later-others-expire-soon
@@ -629,34 +760,44 @@ export function OtherRenewablePurchasesNotice( {
 		! currentPurchaseIsExpiring &&
 		anotherPurchaseIsExpiring
 	) {
-		noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
-		noticeActionOnClick = () =>
+		const noticeStatus = suppressErrorStylingForOtherPurchases ? 'info' : 'error';
+		const noticeActionOnClick = () =>
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
-		noticeActionText = __( 'Renew Now' );
+		const noticeActionText = __( 'Renew Now' );
+		const noticeText = anotherPurchaseIsExpired
+			? createInterpolateElement(
+					sprintf(
+						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
+						__(
+							'You have <link>other upgrades</link> on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.'
+						),
+						{ earliestOtherExpiry }
+					),
+					{ link }
+			  )
+			: createInterpolateElement(
+					sprintf(
+						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
+						__(
+							'You have <link>other upgrades</link> on this site that will expire %(earliestOtherExpiry)s unless you take action.'
+						),
+						{ earliestOtherExpiry }
+					),
+					{ link }
+			  );
 
-		if ( anotherPurchaseIsExpired ) {
-			noticeText = createInterpolateElement(
-				sprintf(
-					// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
-					__(
-						'You have <link>other upgrades</link> on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.'
-					),
-					{ earliestOtherExpiry }
-				),
-				{ link }
-			);
-		} else {
-			noticeText = createInterpolateElement(
-				sprintf(
-					// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
-					__(
-						'You have <link>other upgrades</link> on this site that will expire %(earliestOtherExpiry)s unless you take action.'
-					),
-					{ earliestOtherExpiry }
-				),
-				{ link }
-			);
-		}
+		return (
+			<NoticeContent
+				purchase={ purchase }
+				renewableSitePurchases={ renewableSitePurchases }
+				isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+				noticeStatus={ noticeStatus }
+				noticeText={ noticeText }
+				noticeActionOnClick={ noticeActionOnClick }
+				noticeActionText={ noticeActionText }
+			/>
+		);
 	}
 
 	// Scenario 8: current-renews-later-others-renew-soon and current-renews-later-others-renew-soon-cc-expiring
@@ -667,69 +808,50 @@ export function OtherRenewablePurchasesNotice( {
 		purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD
 	) {
 		if ( ! currentPurchaseCreditCardExpiresBeforeSubscription ) {
-			noticeStatus = 'success';
-			noticeText = createInterpolateElement(
-				__( 'You have <link>other upgrades</link> on this site that are scheduled to renew soon.' ),
-				{ link }
-			);
-		} else if ( currentPurchase.payment_card_id ) {
-			noticeStatus = 'info';
-			noticeActionHref = getAddPaymentMethodUrlFor( purchase );
-			noticeActionText = __( 'Update all' );
-			noticeText = createInterpolateElement(
-				sprintf(
-					// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
-					__(
-						'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
-					),
-					{
-						cardType: purchase.payment_card_type,
-						cardNumber: purchase.payment_card_id,
-						cardExpiry: purchase.payment_expiry,
-					}
-				),
-				{
-					link,
-				}
+			return (
+				<NoticeContent
+					purchase={ purchase }
+					renewableSitePurchases={ renewableSitePurchases }
+					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+					noticeStatus="success"
+					noticeText={ createInterpolateElement(
+						__(
+							'You have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+						),
+						{ link }
+					) }
+				/>
 			);
 		}
-	}
 
-	if ( noticeText ) {
-		return (
-			<>
-				{ isUpcomingRenewalsDialogVisible && (
-					<UpcomingRenewalsDialog
-						onClose={ () => setUpcomingRenewalsDialogVisible( false ) }
-						onConfirm={ ( purchases ) => {
-							if ( purchases.length < 1 ) {
-								setUpcomingRenewalsDialogVisible( false );
-								return;
+		if ( currentPurchase.payment_card_id ) {
+			return (
+				<NoticeContent
+					purchase={ purchase }
+					renewableSitePurchases={ renewableSitePurchases }
+					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+					noticeStatus="info"
+					noticeText={ createInterpolateElement(
+						sprintf(
+							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+							__(
+								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+							),
+							{
+								cardType: purchase.payment_card_type,
+								cardNumber: purchase.payment_card_id,
+								cardExpiry: purchase.payment_expiry,
 							}
-							window.location.href = getRenewUrlForPurchases( purchases );
-						} }
-						siteDomain={ purchase.meta ?? purchase.domain }
-						purchases={ renewableSitePurchases }
-					/>
-				) }
-				<Notice
-					variant={ noticeStatus }
-					actions={
-						( noticeActionHref || noticeActionOnClick ) && (
-							<Button
-								variant="primary"
-								href={ noticeActionHref ?? undefined }
-								onClick={ noticeActionOnClick ?? undefined }
-							>
-								{ noticeActionText }
-							</Button>
-						)
-					}
-				>
-					{ noticeText }
-				</Notice>
-			</>
-		);
+						),
+						{ link }
+					) }
+					noticeActionHref={ getAddPaymentMethodUrlFor( purchase ) }
+					noticeActionText={ __( 'Update all' ) }
+				/>
+			);
+		}
 	}
 
 	return null;
