@@ -69,10 +69,42 @@ function SiteLogsDataViews( {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const { startSec, endSec } = useMemo(
+	// We want to parse 'from' and 'to' from the URL.
+	const parseUrlSeconds = useMemo( () => {
+		const searchParams = new URLSearchParams( search );
+
+		const readSeconds = ( key: 'from' | 'to' ) => {
+			const raw = searchParams.get( key );
+			if ( ! raw ) {
+				return null;
+			}
+			const number = Number.parseInt( raw, 10 );
+			if ( ! Number.isFinite( number ) ) {
+				return null;
+			}
+			return number > 1e12 ? Math.floor( number / 1000 ) : number;
+		};
+
+		const from = readSeconds( 'from' );
+		const to = readSeconds( 'to' );
+		return from != null && to != null ? { from, to } : null;
+	}, [ search ] );
+
+	const computed = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
-		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
+		[ dateRange.start, dateRange.end, timezoneString, gmtOffset ]
 	);
+
+	const startSec = parseUrlSeconds ? parseUrlSeconds.from : computed.startSec;
+	const endSec = parseUrlSeconds ? parseUrlSeconds.to : computed.endSec;
+
+	// Sync URL when startSec/endSec change (due to dateRange, timezoneString, gmtOffset)
+	useEffect( () => {
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'from', String( startSec ) );
+		url.searchParams.set( 'to', String( endSec ) );
+		window.history.replaceState( null, '', url.pathname + url.search );
+	}, [ startSec, endSec, parseUrlSeconds ] );
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
