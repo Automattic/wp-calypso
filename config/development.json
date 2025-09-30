@@ -71,6 +71,7 @@
 		"help": true,
 		"help-center-menu-panel": false,
 		"help/gpt-response": true,
+		"help-center/workflow": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
 		"hosting/datacenter-picker": true,

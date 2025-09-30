@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';
@@ -193,10 +194,14 @@ export class HelpCenterComponent {
 	async startAIChat( query: string ): Promise< void > {
 		const sendMessageForm = this.popup.locator( '.odie-send-message-input-container' );
 
+		const botSlug = config.isEnabled( 'help-center/workflow' )
+			? 'wpcom-workflow-support_chat'
+			: 'wpcom-support-chat';
+
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/odie/chat/wpcom-support-chat' ) && response.status() === 200
+					response.url().includes( '/odie/chat/' + botSlug ) && response.status() === 200
 			),
 			sendMessageForm
 				.locator( 'textarea' )

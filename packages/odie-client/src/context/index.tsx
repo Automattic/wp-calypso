@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
@@ -80,9 +81,13 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
+		const defaultBotSlug = config.isEnabled( 'help-center/workflow' )
+			? 'wpcom-workflow-support_chat'
+			: 'wpcom-support-chat';
+
 		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
 			? store.getOdieBotNameSlug()
-			: 'wpcom-support-chat';
+			: defaultBotSlug;
 
 		return {
 			botNameSlug: odieBotNameSlug as OdieAllowedBots,
