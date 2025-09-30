@@ -399,7 +399,15 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 	const { getState } = context.store;
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
-	const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
+	let wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
+
+	if ( wpAdminPath === 'upload.php' && !! context.params.mediaId ) {
+		const searchParams = new URLSearchParams( {
+			item: context.params.mediaId,
+		} );
+
+		wpAdminUrl = `${ wpAdminUrl }?${ searchParams.toString() }`;
+	}
 
 	if ( wpAdminUrl ) {
 		window.location = wpAdminUrl;
