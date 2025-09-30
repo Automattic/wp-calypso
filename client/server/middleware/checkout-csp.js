@@ -51,7 +51,13 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 		'img-src': [ "'self'", 'data:', 'https://*.wp.com', 'http://*.wp.com' ],
 
 		// Fonts - self + CDNs
-		'font-src': [ "'self'", 'https://fonts.gstatic.com', 'https://*.wp.com' ],
+		'font-src': [
+			"'self'",
+			'https://fonts.gstatic.com',
+			'https://*.wp.com',
+			'https://use.typekit.net',
+			'https://woocommerce.com',
+		],
 
 		// Prevent base tag hijacking
 		'base-uri': [ "'none'" ],
