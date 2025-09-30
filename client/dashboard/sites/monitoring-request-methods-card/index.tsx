@@ -92,7 +92,11 @@ export default function MonitoringRequestMethodsCard( {
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
-			<Legend chartId="request-methods-chart" items={ mapDataForLegend( data ) } />
+			<Legend
+				chartId="request-methods-chart"
+				items={ mapDataForLegend( data ) }
+				className="dashboard-monitoring-card--legend"
+			/>
 			<HStack alignment="center">
 				<PieChart
 					chartId="request-methods-chart"
