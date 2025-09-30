@@ -5,7 +5,7 @@ import { sites, siteSelection } from 'calypso/my-sites/controller';
 
 export default function () {
 	page(
-		'/pages/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
+		'/pages/:author?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,
 		redirectIfDuplicatedView( 'edit.php?post_type=page' ),
 		sites,
