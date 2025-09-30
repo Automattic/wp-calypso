@@ -3,7 +3,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
-import { postComments, siteComments } from './controller';
 
 export const redirect = ( { path } ) => {
 	const siteFragment = getSiteFragment( path );
@@ -32,16 +31,14 @@ export default function () {
 	page(
 		'/comments/:status(all|pending|approved|spam|trash)/:site',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'edit-comments.php' ),
-		siteComments
+		redirectToCommentIfDuplicatedView( 'edit-comments.php' )
 	);
 
 	// Post View
 	page(
 		'/comments/:status(all|pending|approved|spam|trash)/:site/:post',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'edit-comments.php' ),
-		postComments
+		redirectToCommentIfDuplicatedView( 'edit-comments.php' )
 	);
 
 	// Comment View
