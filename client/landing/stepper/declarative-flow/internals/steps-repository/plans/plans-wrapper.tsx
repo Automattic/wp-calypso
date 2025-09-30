@@ -182,7 +182,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-					hidePlanTypeSelector={ isWordCampPromo }
+					hidePlanTypeSelector={ isWordCampPromo || isDomainAndPlanFlow( flowName ) }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 					coupon={ couponCode }
 				/>
