@@ -70,7 +70,7 @@ export const shouldShowCancelAction = ( domain: Domain, purchase?: Purchase ) =>
 		return false;
 	}
 
-	if ( ! purchase || ! purchase.is_cancelable ) {
+	if ( ! purchase || ! purchase.is_cancelable || purchase.is_removable ) {
 		return false;
 	}
 
