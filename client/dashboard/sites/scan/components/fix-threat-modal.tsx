@@ -27,6 +27,10 @@ export function FixThreatModal( { items, closeModal, site }: FixThreatModalProps
 	const { startFix, isFixing, status, error } = useFixThreats( site.ID, threatIds );
 
 	useEffect( () => {
+		recordTracksEvent( 'calypso_dashboard_scan_fix_threat_modal_open' );
+	}, [ recordTracksEvent ] );
+
+	useEffect( () => {
 		if ( status.isComplete && ! isFixing ) {
 			closeModal?.();
 

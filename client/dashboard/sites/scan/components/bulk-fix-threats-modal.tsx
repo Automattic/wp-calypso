@@ -31,6 +31,12 @@ export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreats
 	);
 
 	useEffect( () => {
+		recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_modal_open', {
+			threat_count: bulkFixableThreats.length,
+		} );
+	}, [ recordTracksEvent, bulkFixableThreats.length ] );
+
+	useEffect( () => {
 		if ( status.isComplete && ! isFixing ) {
 			closeModal?.();
 

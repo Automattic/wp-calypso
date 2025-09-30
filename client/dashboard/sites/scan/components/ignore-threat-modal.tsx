@@ -10,6 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
@@ -29,6 +30,10 @@ export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModa
 	const { recordTracksEvent } = useAnalytics();
 	const ignoreThreat = useMutation( ignoreThreatMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_modal_open' );
+	}, [ recordTracksEvent ] );
 
 	const handleIgnoreThreat = () => {
 		recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_click' );
