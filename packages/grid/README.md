@@ -56,14 +56,14 @@ The main component exported by this package.
 
 Child components can accept special props that affect their behavior within the grid:
 
-- `overlayActions` (optional): React content rendered above the draggable area, typically used for action buttons like close or settings. This content won't interfere with drag operations when `editMode` is enabled. Note that positioning and styling of this content is the consumer's responsibility - you'll need to use absolute positioning or similar techniques to place elements where needed within the grid tile.
+- `actionableArea` (optional): React content rendered above the draggable area that remains interactive during edit mode. Useful for controls like action buttons, inputs, or links that need to stay actionable when `editMode` is enabled. Note that positioning and styling of this content is the consumer's responsibility - you'll need to use absolute positioning or similar techniques to place elements where needed within the grid tile.
 
 ```jsx
-// Example with overlay actions in edit mode
+// Example with actionable area in edit mode
 <Grid layout={ layout } editMode onChangeLayout={ setLayout }>
-	<Card 
-		key="a" 
-		overlayActions={
+	<Card
+		key="a"
+		actionableArea={
 			<button onClick={ handleClose }>×</button>
 		}
 	>

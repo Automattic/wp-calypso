@@ -20,12 +20,12 @@ export default meta;
 function Card( {
 	color,
 	children,
-	overlayActions,
+	actionableArea,
 	...props
 }: {
 	color: string;
 	children: React.ReactNode;
-	overlayActions?: React.ReactNode;
+	actionableArea?: React.ReactNode;
 } & HTMLAttributes< HTMLDivElement > ) {
 	return (
 		<div
@@ -210,9 +210,9 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 };
 
 /**
- * Example showing the Grid component with overlay actions
+ * Example showing the Grid component with actionable area
  */
-export const WithOverlayActions: StoryObj< typeof Grid > = {
+export const WithActionableArea: StoryObj< typeof Grid > = {
 	render: function EditableGrid() {
 		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
 			{ key: 'a', width: 1, height: 1 },
@@ -239,7 +239,7 @@ export const WithOverlayActions: StoryObj< typeof Grid > = {
 				<Card
 					key="a"
 					color="#f44336"
-					overlayActions={
+					actionableArea={
 						<WidgetActions
 							onClose={ () => {
 								// eslint-disable-next-line no-console
@@ -256,7 +256,7 @@ export const WithOverlayActions: StoryObj< typeof Grid > = {
 				<Card
 					key="c"
 					color="#4caf50"
-					overlayActions={
+					actionableArea={
 						<WidgetActions
 							onClose={ () => {
 								// eslint-disable-next-line no-console
@@ -282,7 +282,7 @@ export const WithOverlayActions: StoryObj< typeof Grid > = {
 				<Card
 					key="h"
 					color="#8bc34a"
-					overlayActions={
+					actionableArea={
 						<WidgetActions
 							onClose={ () => {
 								// eslint-disable-next-line no-console
@@ -305,7 +305,8 @@ export const WithOverlayActions: StoryObj< typeof Grid > = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'This example demonstrates how to add overlay actions to the Grid component.',
+				story:
+					'This example demonstrates how to add actionable areas to grid items that remain interactive during edit mode.',
 			},
 		},
 		layout: '',

@@ -27,10 +27,10 @@ type GridItemProps = {
 	children: React.ReactNode;
 
 	/**
-	 * Content rendered above the draggable area, typically for action buttons.
-	 * This content won't interfere with drag operations.
+	 * Content rendered above the draggable area that remains interactive during edit mode.
+	 * Useful for controls like action buttons, inputs, or links that need to stay actionable.
 	 */
-	overlayActions?: React.ReactNode;
+	actionableArea?: React.ReactNode;
 
 	/**
 	 * Callback fired when the item is being resized.
@@ -49,7 +49,7 @@ export function GridItem( {
 	maxColumns,
 	disabled = false,
 	children,
-	overlayActions = null,
+	actionableArea = null,
 	onResize,
 	onResizeEnd,
 }: GridItemProps ) {
@@ -113,7 +113,7 @@ export function GridItem( {
 
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes }>
-			{ overlayActions }
+			{ actionableArea }
 
 			<div { ...listeners } style={ { height: '100%' } }>
 				<div style={ contentStyle }>

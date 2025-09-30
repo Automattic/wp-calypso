@@ -73,11 +73,11 @@ export function Grid( {
 		return [ map, rest ];
 	}, [ children, layoutMap ] );
 
-	const overlayActionsMap = useMemo( () => {
+	const actionableAreaMap = useMemo( () => {
 		const map = new Map< string, React.ReactNode >();
 		childrenMap.forEach( ( child, key ) => {
-			if ( child?.props.overlayActions ) {
-				map.set( key, child.props.overlayActions );
+			if ( child?.props.actionableArea ) {
+				map.set( key, child.props.actionableArea );
 			}
 		} );
 		return map;
@@ -175,7 +175,7 @@ export function Grid( {
 							disabled={ ! editMode }
 							onResize={ ( delta ) => handleResize( id, delta ) }
 							onResizeEnd={ persistTemporaryLayout }
-							overlayActions={ overlayActionsMap.get( id ) }
+							actionableArea={ actionableAreaMap.get( id ) }
 						>
 							{ childrenMap.get( id ) }
 						</GridItem>
