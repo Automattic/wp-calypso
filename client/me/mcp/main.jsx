@@ -15,11 +15,13 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-login/site-dropdown';
 import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from './utils';
@@ -27,6 +29,7 @@ import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from './utils';
 function McpComponent( { path } ) {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const { data: sites = [] } = useQuery( sitesQuery( { site_visibility: 'visible' } ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -37,12 +40,15 @@ function McpComponent( { path } ) {
 		onSuccess: ( newData ) => {
 			// Update the cache with the new data from the API response
 			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
+			// Show success notification using Redux dispatch with unique ID to prevent stacking
+			dispatch( successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } ) );
 		},
-		meta: {
-			snackbar: {
-				success: translate( 'MCP settings saved.' ),
-				error: translate( 'Failed to save MCP settings.' ),
-			},
+		// eslint-disable-next-line no-unused-vars
+		onError: ( error ) => {
+			// Show error notification using Redux dispatch with unique ID to prevent stacking
+			dispatch(
+				errorNotice( translate( 'Failed to save MCP settings.' ), { id: 'mcp-settings-error' } )
+			);
 		},
 	} );
 
@@ -101,7 +107,7 @@ function McpComponent( { path } ) {
 			// Enabling: remove from sites array (use defaults)
 			if ( siteIndex >= 0 ) {
 				// Remove the site entry entirely
-				newSites = currentSites.filter( ( _, index ) => index !== siteIndex );
+				newSites = currentSites.filter( ( site, index ) => index !== siteIndex );
 			} else {
 				// Site not in array, already using defaults
 				newSites = currentSites;
@@ -125,10 +131,28 @@ function McpComponent( { path } ) {
 			];
 		}
 
-		// Create payload with updated sites array (minimal structure)
+		// For the API payload, we need to send the site being toggled as an array
+		// The API expects sites to be an array with blog_id fields
+		const sitesPayload = [];
+		if ( enabled ) {
+			// Enabling: send the site with account_tools_enabled: true
+			sitesPayload.push( {
+				blog_id: parseInt( siteId ),
+				account_tools_enabled: true,
+			} );
+		} else {
+			// Disabling: send the site with account_tools_enabled: false
+			sitesPayload.push( {
+				blog_id: parseInt( siteId ),
+				account_tools_enabled: false,
+			} );
+		}
+
+		// Only include sites in payload if there are any sites to send
+		// Don't include account object - only send the sites being changed
 		const payload = {
 			mcp_abilities: {
-				sites: newSites,
+				...( sitesPayload.length > 0 && { sites: sitesPayload } ),
 			},
 		};
 		mutation.mutate( payload );
