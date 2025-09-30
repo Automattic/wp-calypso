@@ -5,6 +5,7 @@ import { type ResponseCartProduct, useShoppingCart } from '@automattic/shopping-
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -56,8 +57,17 @@ export default function DomainSearch() {
 
 	const selectedSiteSlug = selectedSite?.slug;
 
+	const initialQuery = queryArguments?.suggestion?.toString() ?? '';
+	const currentSiteUrl = selectedSite?.URL;
+
+	const { query, setQuery } = useQueryHandler( {
+		initialQuery,
+		currentSiteUrl,
+	} );
+
 	const events = useMemo( () => {
 		return {
+			onQueryChange: setQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
 			},
@@ -81,19 +91,18 @@ export default function DomainSearch() {
 				}
 			},
 		};
-	}, [ selectedSiteSlug ] );
+	}, [ selectedSiteSlug, setQuery ] );
 
 	const currentRoute = useSelector( getCurrentRoute );
-	const query = useSelector( getCurrentQueryArguments );
 
-	const isFromMyHome = query?.from === 'my-home';
+	const isFromMyHome = queryArguments?.from === 'my-home';
 
 	const getBackButtonHref = () => {
 		// If we have the from query param, we should use that as the back button href
 		if ( isFromMyHome ) {
 			return `/home/${ selectedSiteSlug }`;
-		} else if ( query?.redirect_to ) {
-			return query.redirect_to.toString();
+		} else if ( queryArguments?.redirect_to ) {
+			return queryArguments.redirect_to.toString();
 		}
 
 		return domainManagementList( selectedSiteSlug ?? undefined, currentRoute );
@@ -112,10 +121,10 @@ export default function DomainSearch() {
 			<WPCOMDomainSearch
 				className="domain-search--calypso"
 				currentSiteId={ selectedSite?.ID }
-				currentSiteUrl={ selectedSite?.URL }
+				currentSiteUrl={ currentSiteUrl }
 				flowName={ FLOW_NAME }
-				initialQuery={ queryArguments?.suggestion?.toString() ?? '' }
 				config={ config }
+				query={ query }
 				events={ events }
 				flowAllowsMultipleDomainsInCart
 			/>
