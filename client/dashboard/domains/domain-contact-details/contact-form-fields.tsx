@@ -9,11 +9,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
-import type { DomainContactDetails } from '@automattic/api-core';
+import type { CountryListItem } from './custom-form-fieldsets/constants';
+import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
 export const getContactFormFields = (
-	countryList: Array< { name: string; code: string } > | undefined,
-	statesList: Array< { name: string; code: string } > | undefined,
+	countryList: CountryListItem[] | undefined,
+	statesList: StatesListItem[] | undefined,
 	countryCode: string
 ): Field< DomainContactDetails >[] => {
 	return [

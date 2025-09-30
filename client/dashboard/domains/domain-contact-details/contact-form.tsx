@@ -110,6 +110,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 			'countryCode',
 			...RegionAddressFieldsLayout( {
 				statesList,
+				countryList,
 				countryCode: selectedCountryCode,
 			} ),
 			'optOutTransferLock',

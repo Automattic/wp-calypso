@@ -7,7 +7,9 @@ import { useEffect } from 'react';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
+	type CountryListItem,
 } from './custom-form-fieldsets/constants';
+import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 
 const POST_CODE_LABEL: Record< string, string > = {
 	US: __( 'ZIP code' ),
@@ -76,7 +78,6 @@ export function RegionAddressFieldsets(
 	countryCode: string
 ): Field< DomainContactDetails >[] {
 	const StateFieldEdit = createStateFieldEdit( statesList, countryCode );
-	const arePostalCodesSupported = true; //getCountryPostalCodeSupport( statesList, countryCode );
 
 	const fields: Field< DomainContactDetails >[] = [
 		{
@@ -106,32 +107,31 @@ export function RegionAddressFieldsets(
 			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
 			Edit: StateFieldEdit,
 		},
-	];
-
-	if ( arePostalCodesSupported ) {
-		const postalCodeLabel = POST_CODE_LABEL[ countryCode ] || __( 'Postal Code' );
-		fields.push( {
+		{
 			id: 'postalCode',
-			label: postalCodeLabel,
+			label: POST_CODE_LABEL[ countryCode ] || __( 'Postal Code' ),
 			type: 'text',
 			isValid: {
 				required: true,
 			},
-		} );
-	}
+		},
+	];
 
 	return fields;
 }
 
 export function RegionAddressFieldsLayout( {
 	statesList,
+	countryList,
 	countryCode,
 }: {
 	statesList: StatesListItem[] | undefined;
+	countryList: CountryListItem[] | undefined;
 	countryCode: string;
 } ) {
 	const hasCountryStates = countryCode ? !! statesList?.length : false;
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const arePostalCodesSupported = getCountryPostalCodeSupport( countryList ?? [], countryCode );
 
 	if ( ! hasCountryStates ) {
 		if ( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
@@ -144,7 +144,7 @@ export function RegionAddressFieldsLayout( {
 						type: 'row' as const,
 						alignment: 'start' as const,
 					},
-					children: [ 'postalCode', 'city' ],
+					children: [ ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ), 'city' ],
 				} as Field< DomainContactDetails >,
 			];
 		}
@@ -159,7 +159,7 @@ export function RegionAddressFieldsLayout( {
 						type: 'row' as const,
 						alignment: 'start' as const,
 					},
-					children: [ 'city', 'postalCode' ],
+					children: [ 'city', ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ) ],
 				} as Field< DomainContactDetails >,
 			];
 		}
@@ -174,8 +174,10 @@ export function RegionAddressFieldsLayout( {
 				type: 'row' as const,
 				alignment: 'start' as const,
 			},
-			children: isMobileViewport ? [ 'city', 'state' ] : [ 'city', 'state', 'postalCode' ],
+			children: isMobileViewport
+				? [ 'city', 'state' ]
+				: [ 'city', 'state', ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ) ],
 		} as Field< DomainContactDetails >,
-		...( isMobileViewport ? [ 'postalCode' ] : [] ),
+		...( isMobileViewport && arePostalCodesSupported ? [ 'postalCode' ] : [] ),
 	];
 }
