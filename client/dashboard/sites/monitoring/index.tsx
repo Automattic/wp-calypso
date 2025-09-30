@@ -143,6 +143,7 @@ function SiteMonitoring() {
 								onChange={ handleTimeRangeChange }
 								label={ __( 'Time period' ) }
 								hideLabelFromVision
+								style={ { textWrap: 'nowrap' } }
 							>
 								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
 								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
