@@ -6,8 +6,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { startOfMonth, subMonths } from 'date-fns';
 import { ButtonStack } from '../../components/button-stack';
-import { formatYmd } from '../../utils/datetime';
+import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 import { DateInputs } from './date-inputs';
 import { PresetsListbox } from './presets-listbox';
 import { computePresetRange, getActivePresetId, PresetId } from './utils';
@@ -109,10 +110,26 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const activePresetId = getActivePresetId( fromDraft, toDraft, today );
 
+	// Site “today” as a site-day Date
+	const siteToday =
+		parseYmdLocal( formatYmd( today, timezoneString, gmtOffset ) ) ??
+		new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+
+	// Month anchors in site time
+	const siteMonthStart = startOfMonth( siteToday );
+	const prevMonthStart = subMonths( siteMonthStart, 1 );
+
+	// Build calendar month refs
+	const makeTZMonthFromDate = ( d: Date ) =>
+		timeZoneForCalendar
+			? new TZDate( Date.UTC( d.getFullYear(), d.getMonth(), 1, 12 ), timeZoneForCalendar )
+			: new Date( d.getFullYear(), d.getMonth(), 1 );
+
 	const defaultMonth = showTwoMonths
-		? new Date( today.getFullYear(), today.getMonth() - 1, 1 )
-		: today;
-	const endMonth = new Date( today.getFullYear(), today.getMonth(), 1 );
+		? makeTZMonthFromDate( prevMonthStart )
+		: makeTZMonthFromDate( siteMonthStart );
+
+	const endMonth = makeTZMonthFromDate( siteMonthStart );
 
 	// Use TZDate for calendar selection when a valid IANA time zone is available
 	const selected =

@@ -3,6 +3,7 @@ import {
 	CheckboxControl,
 	Icon,
 	Spinner,
+	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -32,6 +33,7 @@ interface FileBrowserNodeProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -49,6 +51,7 @@ function FileBrowserNode( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	source,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
 	// Spinner styles for different positions
@@ -182,9 +185,12 @@ function FileBrowserNode( {
 			setFetchContentsOnMount( true );
 
 			if ( item.type !== 'dir' && onTrackEvent ) {
-				onTrackEvent( 'calypso_jetpack_backup_browser_view_file', {
-					file_type: item.type,
-				} );
+				const trackingProps = { file_type: item.type };
+				if ( source === 'dashboard' ) {
+					onTrackEvent( 'calypso_dashboard_backup_browser_view_file', trackingProps );
+				} else {
+					onTrackEvent( 'calypso_jetpack_backup_browser_view_file', trackingProps );
+				}
 			}
 		}
 
@@ -213,6 +219,7 @@ function FileBrowserNode( {
 		onCheckboxChange,
 		showFileCard,
 		onTrackEvent,
+		source,
 	] );
 
 	const handleExpandButtonClick = useCallback( () => {
@@ -281,7 +288,7 @@ function FileBrowserNode( {
 		if ( isSuccess && addedAnyChildren ) {
 			let childIsAlternate = isAlternate;
 
-			return backupFiles.filter( filterItems ).map( ( childItem ) => {
+			const renderedChildren = backupFiles.filter( filterItems ).map( ( childItem ) => {
 				// Let's hide archives that don't have an extension version
 				// and changed extensions item node
 				if (
@@ -311,6 +318,7 @@ function FileBrowserNode( {
 							hasCredentials={ hasCredentials }
 							isRestoreEnabled={ isRestoreEnabled }
 							onTrackEvent={ onTrackEvent }
+							source={ source }
 							onRequestGranularRestore={ onRequestGranularRestore }
 							// Hacky way to pass extensions details to the child node
 							{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
@@ -318,6 +326,19 @@ function FileBrowserNode( {
 					</div>
 				);
 			} );
+
+			if ( renderedChildren.length === 0 ) {
+				return (
+					<Text
+						variant="muted"
+						style={ { marginInlineStart: showSeparateExpandButton ? 36 : 63, fontStyle: 'italic' } }
+					>
+						{ __( 'Empty' ) }
+					</Text>
+				);
+			}
+
+			return renderedChildren;
 		}
 
 		return null;
@@ -424,6 +445,7 @@ function FileBrowserNode( {
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
 					onTrackEvent={ onTrackEvent }
+					source={ source }
 					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
 			) }

@@ -22,7 +22,18 @@ function SiteDomains() {
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteDomains, isLoading } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: siteDomains, isLoading } = useQuery( {
+		...siteDomainsQuery( site.ID ),
+		select: ( data ) => {
+			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
+			}
+
+			return data;
+		},
+	} );
+
 	const fields = useFields( {
 		site,
 	} );

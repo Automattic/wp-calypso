@@ -1,7 +1,17 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, MenuItem as WPMenuItem } from '@wordpress/components';
+import { ComponentProps, ComponentType } from 'react';
 import RouterLinkButton from '../router-link-button';
 import type { ActiveOptions } from '@tanstack/react-router';
 import './style.scss';
+
+interface MenuItemLinkProps
+	extends Omit< ComponentProps< typeof WPMenuItem >, 'href' | 'target' | 'rel' > {
+	href?: string;
+	target?: string;
+	rel?: string;
+}
+
+const MenuItemLink = WPMenuItem as ComponentType< MenuItemLinkProps >;
 
 function MenuItem( {
 	to,
@@ -34,5 +44,6 @@ function Menu( { children }: { children: React.ReactNode } ) {
 }
 
 Menu.Item = MenuItem;
+Menu.ItemLink = MenuItemLink;
 
 export default Menu;
