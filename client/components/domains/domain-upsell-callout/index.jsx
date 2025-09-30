@@ -36,14 +36,18 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	const { __ } = useI18n();
 
 	const getCtaClickHandler = useCallback( () => {
+		if ( ! site ) {
+			return;
+		}
+
 		recordTracksEvent( trackEventClick );
 
 		if ( shouldRenderRewrittenDomainSearch() ) {
-			return window.location.assign( `/setup/domain-and-plan?siteSlug=${ site?.slug }` );
+			return window.location.assign( `/setup/domain-and-plan?siteSlug=${ site.slug }` );
 		}
 
-		page( `/domains/add/${ site?.domain }?domainAndPlanPackage=true` );
-	}, [ trackEventClick, site?.domain, site?.slug ] );
+		page( `/domains/add/${ site.domain }?domainAndPlanPackage=true` );
+	}, [ trackEventClick, site ] );
 
 	const getDismissClickHandler = () => {
 		recordTracksEvent( trackEventDismiss );
