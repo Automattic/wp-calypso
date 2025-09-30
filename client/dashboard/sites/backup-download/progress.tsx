@@ -2,13 +2,13 @@ import { siteBackupDownloadProgressQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	__experimentalSpacer as Spacer,
 	ProgressBar,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
 import downloadIllustration from './backup-download-illustration.svg';
 import type { Site } from '@automattic/api-core';
 

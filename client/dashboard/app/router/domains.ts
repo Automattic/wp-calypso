@@ -43,11 +43,10 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () =>
-		Promise.all( [
-			queryClient.ensureQueryData( domainsQuery() ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] ),
+	loader: async () => {
+		queryClient.ensureQueryData( domainsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {

@@ -9,11 +9,13 @@ import {
 	smsCountryCodesQuery,
 	twoStepAuthAppSetupQuery,
 	sshKeysQuery,
-	userLoginPreferencesQuery,
+	userNotificationsSettingsQuery,
+	rawUserPreferencesQuery,
 	connectedApplicationsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
 import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -81,10 +83,7 @@ const preferencesRoute = createRoute( {
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
-			queryClient.ensureQueryData( userLoginPreferencesQuery() ),
-			queryClient.ensureQueryData(
-				sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
-			),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
 } ).lazy( () =>
@@ -151,7 +150,7 @@ export const purchaseSettingsRoute = createRoute( {
 			purchase,
 		};
 	},
-	path: '/purchases/purchase/$purchaseId',
+	path: '/purchases/$purchaseId',
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings' )( {
@@ -233,6 +232,13 @@ export const securityRoute = createRoute( {
 			},
 		],
 	} ),
+	getParentRoute: () => meRoute,
+	path: 'security',
+} );
+
+export const securityIndexRoute = createRoute( {
+	getParentRoute: () => securityRoute,
+	path: '/',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -241,13 +247,6 @@ export const securityRoute = createRoute( {
 			queryClient.ensureQueryData( sshKeysQuery() ),
 		] );
 	},
-	getParentRoute: () => meRoute,
-	path: 'security',
-} );
-
-export const securityIndexRoute = createRoute( {
-	getParentRoute: () => securityRoute,
-	path: '/',
 } ).lazy( () =>
 	import( '../../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {
@@ -537,6 +536,11 @@ export const notificationsCommentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/comments',
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+			queryClient.ensureQueryData( userNotificationsDevicesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../me/notifications-comments' ).then( ( d ) =>
 		createLazyRoute( 'notifications-comments' )( {
@@ -555,6 +559,7 @@ export const notificationsExtrasRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/extras',
+	loader: () => queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {

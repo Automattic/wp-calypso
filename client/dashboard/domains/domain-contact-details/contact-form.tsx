@@ -15,8 +15,9 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -43,6 +44,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
@@ -88,20 +90,37 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	);
 
 	const form = {
-		type: 'regular' as const,
-		labelPosition: 'top' as const,
+		layout: { type: 'regular' as const },
 		fields: [
-			'firstName',
-			'lastName',
+			{
+				id: 'name-row',
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+				},
+				children: [ 'firstName', 'lastName' ],
+			} as FormField,
 			'organization',
-			'email',
-			'phone',
+			{
+				id: 'contact-row',
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+				},
+				children: [ 'email', 'phone' ],
+			} as FormField,
 			'countryCode',
 			'address1',
 			'address2',
-			'city',
-			'state',
-			'postalCode',
+			{
+				id: 'location-row',
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+				},
+				children: isMobileViewport ? [ 'city', 'state' ] : [ 'city', 'state', 'postalCode' ],
+			} as FormField,
+			...( isMobileViewport ? [ 'postalCode' ] : [] ),
 			'optOutTransferLock',
 		],
 	};

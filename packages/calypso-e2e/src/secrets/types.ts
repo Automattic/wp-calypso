@@ -34,7 +34,6 @@ export interface Secrets {
 	testCouponCode: string;
 	wpccAuthPath: string;
 	wooSignupPath: string;
-	wooLoginPath: string;
 	calypsoOauthApplication: {
 		client_id: string;
 		client_secret: string;

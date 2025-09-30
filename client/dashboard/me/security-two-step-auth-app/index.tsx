@@ -1,7 +1,10 @@
 import { userSettingsQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import SecurityTwoStepAuthPageLayout from '../security-two-step-auth/common/page-layout';
 import PrintBackupCodes from '../security-two-step-auth/common/print-backup-codes';
@@ -21,12 +24,21 @@ export default function SecurityTwoStepAuthApp() {
 			<VStack spacing={ 8 }>
 				{ ! isTwoStepAppEnabled && (
 					<Notice variant="info" title={ __( 'Before you continue' ) }>
-						{
-							// TODO: Add link to support article
+						{ createInterpolateElement(
 							__(
-								'You‘ll need an authenticator app like Google Authenticator or Authy installed on your device to enable two-step authentication.'
-							)
-						}
+								'You‘ll need an authenticator app like Google Authenticator or Authy installed on your device to enable two-step authentication. <learnMoreLink>Learn more</learnMoreLink>'
+							),
+							{
+								learnMoreLink: (
+									<InlineSupportLink
+										supportPostId={ 58847 }
+										supportLink={ localizeUrl(
+											'https://wordpress.com/support/security/two-step-authentication/#use-an-app'
+										) }
+									/>
+								),
+							}
+						) }
 					</Notice>
 				) }
 

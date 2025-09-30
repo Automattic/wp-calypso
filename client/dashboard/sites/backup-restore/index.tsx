@@ -1,4 +1,5 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -18,9 +19,11 @@ import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import SiteBackupRestoreError from './error';
 import SiteBackupRestoreForm from './form';
 import SiteBackupGranularRestoreForm from './granular-form';
@@ -32,12 +35,22 @@ type RestoreStep = 'form' | 'progress' | 'success' | 'error';
 function SiteBackupRestore() {
 	const { siteSlug, rewindId } = siteBackupRestoreRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
+
+	const { gmtOffset, timezoneString } = siteSettings;
 	const [ currentStep, setCurrentStep ] = useState< RestoreStep >( 'form' );
 	const [ restoreId, setRestoreId ] = useState< number | null >( null );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const { fileBrowserState } = useFileBrowserContext();
-	const browserSelectedList = fileBrowserState.getSelectedList();
+	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 	const hasSelectedFiles = browserSelectedList.length > 0;
 	const hasSelectedAllFiles = browserSelectedList[ 0 ]?.path === '//';
 
@@ -72,7 +85,9 @@ function SiteBackupRestore() {
 		new Date( parseFloat( rewindId ) * 1000 ).toISOString(),
 		{
 			timeStyle: 'short',
-		}
+		},
+		timezoneString,
+		gmtOffset
 	);
 
 	const renderStep = () => {
@@ -131,10 +146,18 @@ function SiteBackupRestore() {
 									restorePointDate,
 								} ),
 								{
-									LearnMore: (
-										<ExternalLink href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/">
+									LearnMore: isSelfHostedJetpackConnected( site ) ? (
+										<ExternalLink
+											href={ localizeUrl(
+												'https://jetpack.com/support/backup/restoring-with-jetpack-backup/'
+											) }
+										>
 											{ __( 'Learn more' ) }
 										</ExternalLink>
+									) : (
+										<InlineSupportLink supportContext="backups">
+											{ __( 'Learn more' ) }
+										</InlineSupportLink>
 									),
 								}
 							) }

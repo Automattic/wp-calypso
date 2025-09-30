@@ -9,6 +9,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
 import type { Field } from '@wordpress/dataviews';
@@ -43,6 +44,7 @@ export default function VerifyCodeForm( {
 	resendButtonProps,
 }: VerifyCodeFormProps ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 
 	const [ formData, setFormData ] = useState< TwoStepAuthAppFormData >( {
 		code: '',
@@ -54,6 +56,9 @@ export default function VerifyCodeForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_verify_code_form_submit', {
+			action: actionType,
+		} );
 		validateTwoStepCode(
 			{
 				code: formData.code,

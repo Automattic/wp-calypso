@@ -1,5 +1,6 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	githubInstallationsQuery,
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
@@ -391,6 +392,13 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
@@ -402,16 +410,20 @@ export const siteBackupsRoute = createRoute( {
 export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Preload activity log backup-related entries.
-		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
+			component: d.BackupsListPage,
+		} )
+	)
+);
+
+export const siteBackupDetailRoute = createRoute( {
+	getParentRoute: () => siteBackupsRoute,
+	path: '$rewindId',
+} ).lazy( () =>
+	import( '../../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backup-detail' )( {
 			component: d.BackupsListPage,
 		} )
 	)
@@ -962,6 +974,20 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesConnectRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories/connect',
+	loader: async () => {
+		await queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-connect' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1095,6 +1121,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
 		siteSettingsRepositoriesRoute,
+		siteSettingsRepositoriesConnectRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -1135,6 +1162,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
+				siteBackupDetailRoute,
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,

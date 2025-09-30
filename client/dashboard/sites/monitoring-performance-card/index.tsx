@@ -1,22 +1,21 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
+import { GlyphDiamond, GlyphCircle } from '@visx/glyph';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
+import {
+	convertTimeRangeToUnix,
+	getLineChartTickNumber,
+	getLineChartTickLabel,
+} from '../monitoring/utils';
 import MonitoringCard from '../monitoring-card';
-import type { PeriodData, TimeRange } from '../monitoring/types';
+import type { PeriodData } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-
-function convertTimeRangeToUnix( timeRange: number ): TimeRange {
-	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
-	const end = Math.floor( new Date().getTime() / 1000 );
-
-	return { start, end };
-}
 
 type SiteMetricsData = {
 	requestsData: DataPointDate[] | undefined;
@@ -118,42 +117,13 @@ export default function MonitoringPerformanceCard( {
 	];
 
 	const lessThanMediumViewport = useViewportMatch( 'medium', '<' );
-
-	let numTicks: undefined | number;
-	switch ( timeRange ) {
-		case 168:
-			numTicks = lessThanMediumViewport ? 3 : 7;
-			break;
-		case 72:
-			numTicks = lessThanMediumViewport ? 3 : 6;
-			break;
-		case 24:
-		case 6:
-			numTicks = lessThanMediumViewport ? 4 : 12;
-			break;
-	}
-
 	const xAxisOptions = {
-		tickFormat: ( date: string ) => {
-			const d = new Date( date );
-
-			if ( timeRange <= 24 ) {
-				return `${ d.getHours() }:${ d.getMinutes().toString().padStart( 2, '0' ) }`;
-			}
-
-			if ( timeRange > 72 || ( timeRange > 24 && lessThanMediumViewport ) ) {
-				return `${ d.toLocaleDateString() }`;
-			}
-
-			return `${ d.toLocaleDateString() } ${ d.getHours() }:${ d
-				.getMinutes()
-				.toString()
-				.padStart( 2, '0' ) }`;
-		},
-		numTicks: numTicks,
+		tickFormat: ( date: string ) =>
+			getLineChartTickLabel( date, timeRange, lessThanMediumViewport ),
+		numTicks: getLineChartTickNumber( timeRange, lessThanMediumViewport ),
 	};
 
-	const getLegendIcon = ( key: string, isTooltip = false ) => {
+	const getLegendIcon = ( key: string ) => {
 		const isLegendGlyph = key.startsWith( 'legend-glyph-' );
 		if ( isLegendGlyph ) {
 			key = key.replace( 'legend-glyph-', '' );
@@ -161,24 +131,9 @@ export default function MonitoringPerformanceCard( {
 
 		switch ( key ) {
 			case requestsPerMinuteLabel:
-				return (
-					<rect
-						width="6"
-						height="6"
-						transform={ ( isTooltip ? 'translate(4, 0) ' : 'translate(3, -1) ' ) + 'rotate(45)' }
-						fill="#3858E9"
-					/>
-				);
+				return <GlyphDiamond size={ 50 } fill="#3858E9" />;
 			case averageResponseTimeLabel:
-				return (
-					<circle
-						cx={ isLegendGlyph || isTooltip ? 4 : 0 }
-						cy={ isLegendGlyph || isTooltip ? 4 : 0 }
-						r="4"
-						fill="#5BA300"
-						strokeWidth="1.5"
-					/>
-				);
+				return <GlyphCircle size={ 50 } fill="#5BA300" />;
 		}
 
 		return null;
@@ -238,8 +193,8 @@ export default function MonitoringPerformanceCard( {
 											className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
 										>
 											<Text weight="normal">
-												<svg width="8" height="8">
-													{ getLegendIcon( series.key, true ) }
+												<svg width="5" height="5">
+													{ getLegendIcon( series.key ) }
 												</svg>
 												{ series.key }
 											</Text>

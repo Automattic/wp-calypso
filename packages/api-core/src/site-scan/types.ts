@@ -30,7 +30,7 @@ export interface Threat {
 	severity: number;
 	fixer?: ThreatFixer | null;
 	fixed_on?: string;
-	status: 'current' | 'fixed' | 'ignored';
+	status: 'current' | 'fixed' | 'ignored' | 'in_progress';
 	fixable?: ThreatFixer;
 	extension?: ThreatExtension;
 	source?: string;
@@ -80,4 +80,16 @@ export interface ThreatActionOptions {
 	ignore?: boolean;
 	unignore?: boolean;
 	fix?: boolean;
+}
+
+export interface FixThreatStatus {
+	id?: number;
+	status: 'not_started' | 'in_progress' | 'fixed' | 'not_fixed';
+	last_updated?: string;
+	error?: string;
+}
+
+export interface FixThreatsStatusResponse {
+	ok: boolean;
+	threats: Record< string, FixThreatStatus >;
 }
