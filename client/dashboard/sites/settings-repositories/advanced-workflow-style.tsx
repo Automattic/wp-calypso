@@ -14,7 +14,6 @@ type AdvancedWorkflowStyleProps = {
 	workflowPath: string;
 	workflows: GitHubWorkflow[];
 	isLoading: boolean;
-	isFetching: boolean;
 	useComposerWorkflow: boolean;
 	onWorkflowCreation( path: string ): void;
 	onChooseWorkflow( path: string ): void;
@@ -22,7 +21,6 @@ type AdvancedWorkflowStyleProps = {
 
 export const AdvancedWorkflowStyle = ( {
 	isLoading,
-	isFetching,
 	repository,
 	branchName,
 	workflowPath,
@@ -53,10 +51,6 @@ export const AdvancedWorkflowStyle = ( {
 
 		return options;
 	}, [ workflows ] );
-
-	if ( ! repository ) {
-		return null;
-	}
 
 	const getContent = () => {
 		const workflow = workflows?.find( ( workflow ) => workflow.workflow_path === workflowPath );
@@ -95,7 +89,7 @@ export const AdvancedWorkflowStyle = ( {
 				label={ __( 'Deployment workflow' ) }
 				value={ workflowPath ?? '' }
 				onChange={ onChooseWorkflow }
-				disabled={ isLoading || isFetching }
+				disabled={ isLoading }
 				options={ workflowOptions }
 				__next40pxDefaultSize
 			/>
