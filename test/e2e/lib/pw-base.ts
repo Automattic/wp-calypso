@@ -22,7 +22,9 @@
  */
 /* eslint-disable no-empty-pattern */
 import {
+	AdvertisingPage,
 	AppleLoginPage,
+	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	DashboardPage,
 	DashboardVisibilitySettingsPage,
@@ -35,6 +37,7 @@ import {
 	GitHubLoginPage,
 	IncognitoPage,
 	LoginPage,
+	MediaHelper,
 	NewSiteResponse,
 	PreviewComponent,
 	RestAPIClient,
@@ -64,6 +67,10 @@ export const test = base.extend< {
 	 * Test account used for i18n locale switching.
 	 */
 	accounti18n: TestAccount;
+	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountSimpleSiteFreePlan: TestAccount;
 	/**
 	 * Test account used for SMS-based 2FA.
 	 */
@@ -101,9 +108,21 @@ export const test = base.extend< {
 	 */
 	helperData: typeof DataHelper;
 	/**
+	 * Helper for media-related tasks in tests.
+	 */
+	helperMedia: typeof MediaHelper;
+	/**
+	 * Page object representing the WordPress.com Advertising page.
+	 */
+	pageAdvertising: AdvertisingPage;
+	/**
 	 * Page object representing the Apple login page.
 	 */
 	pageAppleLogin: AppleLoginPage;
+	/**
+	 * Page object representing the Blaze campaign page.
+	 */
+	pageBlazeCampaign: BlazeCampaignPage;
 	/**
 	 * Page object representing the WordPress.com dashboard.
 	 */
@@ -158,6 +177,10 @@ export const test = base.extend< {
 		const testAccount = await getAccount( page, 'i18nUser' );
 		await use( testAccount );
 	},
+	accountSimpleSiteFreePlan: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
+		await use( testAccount );
+	},
 	accountSMS: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'smsUser' );
 		await use( testAccount );
@@ -191,6 +214,17 @@ export const test = base.extend< {
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
+	},
+	helperMedia: async ( {}, use ) => {
+		await use( MediaHelper );
+	},
+	pageBlazeCampaign: async ( { page }, use ) => {
+		const blazeCampaignPage = new BlazeCampaignPage( page );
+		await use( blazeCampaignPage );
+	},
+	pageAdvertising: async ( { page }, use ) => {
+		const advertisingPage = new AdvertisingPage( page );
+		await use( advertisingPage );
 	},
 	pageAppleLogin: async ( { page }, use ) => {
 		const appleLoginPage = new AppleLoginPage( page );

@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
@@ -39,6 +39,14 @@ export class AdvertisingPage {
 	}
 
 	/**
+	 * Get the heading for the Advertising page.
+	 * @returns The heading element for the Advertising page.
+	 */
+	get advertisingHeading(): Locator {
+		return this.page.getByRole( 'heading', { name: 'Advertising' } );
+	}
+
+	/**
 	 * Clicks on a button with the accessible name matching supplied parameter `name`,
 	 * narrowed down by either one of the following parameters.
 	 *
@@ -61,12 +69,9 @@ export class AdvertisingPage {
 		name: string,
 		{ row, postTitle }: { row?: number; postTitle?: string } = {}
 	) {
-		// Wait for promote the banner to finish loading on desktop.
+		// Wait for promote the banner to finish loading on desktop (old tests)
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.page
-				.getByRole( 'main' )
-				.locator( '.posts-list-banner__container, .tsp-banner__container' )
-				.waitFor( { timeout: 20 * 1000 } ); // Banner can be pretty slow on some sites.
+			await this.advertisingHeading.waitFor( { state: 'visible', timeout: 10_000 } );
 		}
 
 		if ( row !== undefined && row >= 0 ) {
