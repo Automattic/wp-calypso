@@ -159,12 +159,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'posts',
-		paths: [ '/posts' ],
-		module: 'calypso/my-sites/posts',
-		group: 'sites',
-	},
-	{
 		name: 'settings-performance',
 		paths: [ '/settings/performance' ],
 		module: 'calypso/my-sites/site-settings/settings-performance',
