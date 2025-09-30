@@ -11,11 +11,10 @@ import { useEffect, useRef } from 'react';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
-import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
-import { ProvidedDependencies } from '../../internals/types';
+import { AssertConditionState, ProvidedDependencies } from '../../internals/types';
 import type { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -38,8 +37,7 @@ const domainUpsell: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const backTo = useQuery().get( 'back_to' );
 		const flowName = this.name;
-		const siteSlug = useSiteSlug();
-		const siteId = useSiteIdParam();
+		const siteSlug = useSiteSlug()!;
 		const { getDomainCartItem, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
@@ -54,7 +52,6 @@ const domainUpsell: Flow = {
 
 		const returnUrl =
 			launchpadScreenOption === 'skipped' || ! backTo ? `/home/${ siteSlug }` : backTo;
-		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		const submittedDomains = useRef( false );
 
@@ -81,9 +78,8 @@ const domainUpsell: Flow = {
 					if ( ! isUsingRewrittenDomainSearch ) {
 						if ( providedDependencies?.deferDomainSelection ) {
 							try {
-								const siteIdentifier = siteSlug || siteId;
-								if ( siteIdentifier ) {
-									await updateLaunchpadSettings( siteIdentifier, {
+								if ( siteSlug ) {
+									await updateLaunchpadSettings( siteSlug, {
 										checklist_statuses: { domain_upsell_deferred: true },
 									} );
 								}
@@ -147,24 +143,34 @@ const domainUpsell: Flow = {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
 
-						if ( planCartItem && siteSlug ) {
+						if ( planCartItem ) {
 							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
 						}
 
-						if ( domainCartItem && siteSlug ) {
+						if ( domainCartItem ) {
 							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
 
 						return window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								siteSlug ?? ''
-							) }?redirect_to=${ encodedReturnUrl }`
+							`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
 						);
 					}
+
+					return window.location.assign( returnUrl );
 			}
 		}
 
 		return { submit, goBack };
+	},
+	useAssertConditions() {
+		const siteSlug = useSiteSlug();
+
+		if ( ! siteSlug ) {
+			window.location.assign( '/sites' );
+			return { state: AssertConditionState.FAILURE, message: 'siteSlug is required' };
+		}
+
+		return { state: AssertConditionState.SUCCESS };
 	},
 	useSideEffect() {
 		const { setHideFreePlan } = useDispatch( ONBOARD_STORE ) as OnboardActions;
