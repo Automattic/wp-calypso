@@ -139,6 +139,10 @@ const domainUpsell: Flow = {
 					return navigate( STEPS.PLANS.slug );
 				}
 				case STEPS.PLANS.slug:
+					await updateLaunchpadSettings( siteSlug, {
+						checklist_statuses: { plan_completed: true },
+					} );
+
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
