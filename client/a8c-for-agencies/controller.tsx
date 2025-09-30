@@ -1,10 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
-import store from 'store';
-import { requestAllBlogsAccess, reloadProxy } from 'wpcom-proxy-request';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import wpcom from 'calypso/lib/wp';
 import {
 	getActiveAgency,
 	getUserBillingType,
@@ -61,12 +58,6 @@ export const requireClientAccessContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const hasFetchedAgencies = hasFetchedAgency( state );
 	const isAgency = hasAgency( state );
-
-	const token = store.get( 'wpcom_token' );
-	wpcom.loadToken( token );
-
-	reloadProxy();
-	requestAllBlogsAccess();
 
 	if ( hasFetchedAgencies && ! isAgency ) {
 		next();
