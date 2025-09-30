@@ -63,7 +63,7 @@ function FileInfoCard( {
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
-		notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
+		notices?.showError( __( 'There was an error preparing your download. Please try again.' ) );
 	}, [ notices ] );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
@@ -83,7 +83,7 @@ function FileInfoCard( {
 
 	const handleDownloadError = useCallback( () => {
 		setIsProcessingDownload( false );
-		notices.showError( __( 'There was an error processing your download. Please try again.' ) );
+		notices?.showError( __( 'There was an error processing your download. Please try again.' ) );
 	}, [ notices ] );
 
 	const trackDownloadByType = useCallback(
@@ -177,7 +177,7 @@ function FileInfoCard( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
+			notices?.showError( __( 'There was an error preparing your download. Please try again.' ) );
 			return;
 		}
 
@@ -244,7 +244,7 @@ function FileInfoCard( {
 	// Dispatch an error notice if the file info could not be retrieved
 	useEffect( () => {
 		if ( isError ) {
-			notices.showError(
+			notices?.showError(
 				__( 'There was an error retrieving your file information. Please try again.' )
 			);
 		}
