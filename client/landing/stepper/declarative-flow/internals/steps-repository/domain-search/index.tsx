@@ -2,7 +2,7 @@ import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
 	isDomainFlow,
-	isDomainUpsellFlow,
+	isDomainAndPlanFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 	isNewHostedSiteCreationFlow,
@@ -75,7 +75,7 @@ const DomainSearchStep: StepType< {
 		return {
 			vendor: getSuggestionsVendor( {
 				isSignup:
-					! isDomainUpsellFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
+					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
 				flowName: flow,
 			} ),
@@ -88,7 +88,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
-				! isDomainUpsellFlow( flow ),
+				! isDomainAndPlanFlow( flow ),
 			allowedTlds,
 			allowsUsingOwnDomain: ! isAIBuilderFlow( flow ) && ! isNewHostedSiteCreationFlow( flow ),
 		};
@@ -186,14 +186,14 @@ const DomainSearchStep: StepType< {
 			config={ config }
 			query={ query }
 			isFirstDomainFreeForFirstYear={
-				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isDomainUpsellFlow( flow )
+				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isDomainAndPlanFlow( flow )
 			}
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
 				isDomainFlow( flow ) ||
 				isNewHostedSiteCreationFlow( flow ) ||
-				isDomainUpsellFlow( flow )
+				isDomainAndPlanFlow( flow )
 			}
 			slots={ slots }
 		/>

@@ -10,7 +10,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
-		const purchaseDomainUrl = addQueryArgs( '/setup/domain-upsell', {
+		const purchaseDomainUrl = addQueryArgs( '/setup/domain-and-plan', {
 			siteSlug,
 			back_to: `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`,
 			new: site?.name,

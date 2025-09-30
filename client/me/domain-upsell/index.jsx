@@ -130,7 +130,7 @@ export function RenderDomainUpsell( {
 					siteSlug,
 					back_to: backUrl,
 				},
-				`/setup/domain-upsell`
+				`/setup/domain-and-plan`
 		  )
 		: addQueryArgs(
 				{
@@ -148,7 +148,7 @@ export function RenderDomainUpsell( {
 	};
 
 	const plansPageLink = shouldRenderRewrittenDomainSearch()
-		? addQueryArgs( '/setup/domain-upsell/plans', {
+		? addQueryArgs( '/setup/domain-and-plan/plans', {
 				siteSlug,
 				back_to: backUrl,
 		  } )
@@ -181,7 +181,7 @@ export function RenderDomainUpsell( {
 					productSlug: domainSuggestionProductSlug,
 					domain: domainSuggestionName,
 					extra: {
-						flow_name: 'domain-upsell',
+						flow_name: 'domain-and-plan',
 					},
 				} ),
 			] );

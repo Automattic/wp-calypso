@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
 	const href = shouldRenderRewrittenDomainSearch()
-		? `/setup/domain-upsell?siteSlug=${ siteSlug }`
+		? `/setup/domain-and-plan?siteSlug=${ siteSlug }`
 		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 
 	return (

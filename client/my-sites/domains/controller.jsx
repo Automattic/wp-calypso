@@ -118,7 +118,7 @@ const redirectToDomainUpsellFlowIfRewrittenDomainSearchIsEnabled = ( context, ne
 
 	if ( shouldRenderRewrittenDomainSearch() && isBrowsingDomainAndPlanPackageFlow ) {
 		return window.location.replace(
-			addQueryArgs( '/setup/domain-upsell', { siteSlug: context.params.domain } )
+			addQueryArgs( '/setup/domain-and-plan', { siteSlug: context.params.domain } )
 		);
 	}
 

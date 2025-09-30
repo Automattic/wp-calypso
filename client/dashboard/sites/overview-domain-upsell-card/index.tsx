@@ -74,7 +74,7 @@ const DomainUpsellCardContent = ( {
 
 		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
 			if ( shouldRenderRewrittenDomainSearch() ) {
-				window.location.href = addQueryArgs( '/setup/domain-upsell/plans', {
+				window.location.href = addQueryArgs( '/setup/domain-and-plan/plans', {
 					siteSlug: site.slug,
 					back_to: backUrl,
 				} );
@@ -94,7 +94,7 @@ const DomainUpsellCardContent = ( {
 	};
 
 	const chooseYourOwnUrl = shouldRenderRewrittenDomainSearch()
-		? addQueryArgs( `${ window.location.origin }/setup/domain-upsell`, {
+		? addQueryArgs( `${ window.location.origin }/setup/domain-and-plan`, {
 				siteSlug: site.slug,
 				back_to: backUrl,
 		  } )

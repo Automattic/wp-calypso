@@ -1,10 +1,10 @@
-# domain-upsell flow
+# domain-and-plan flow
 
 ## Testing instructions
 
 Please improve the instructions on how to test this flow.
 
-1. Go to /setup/domain-upsell.
+1. Go to /setup/domain-and-plan.
 
 ## Owned by
 

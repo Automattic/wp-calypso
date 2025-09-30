@@ -39,7 +39,7 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 		recordTracksEvent( trackEventClick );
 
 		if ( shouldRenderRewrittenDomainSearch() ) {
-			return window.location.assign( `/setup/domain-upsell?siteSlug=${ site?.slug }` );
+			return window.location.assign( `/setup/domain-and-plan?siteSlug=${ site?.slug }` );
 		}
 
 		page( `/domains/add/${ site?.domain }?domainAndPlanPackage=true` );

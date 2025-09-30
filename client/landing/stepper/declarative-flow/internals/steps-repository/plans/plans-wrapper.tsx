@@ -6,7 +6,7 @@ import {
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
 	NEW_HOSTED_SITE_FLOW,
-	isDomainUpsellFlow,
+	isDomainAndPlanFlow,
 	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -91,7 +91,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
+	const isInSignup = isDomainAndPlanFlow( flowName ) ? false : true;
 	/**
 	 * isWordCampPromo is temporary
 	 */
@@ -191,7 +191,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if ( isDomainUpsellFlow( flowName ) ) {
+		if ( isDomainAndPlanFlow( flowName ) ) {
 			return __( 'Choose the perfect plan' );
 		}
 
@@ -215,7 +215,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return;
 		}
 
-		if ( isDomainUpsellFlow( flowName ) && domainCartItem?.meta ) {
+		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
 			return (
 				<>
 					<p>

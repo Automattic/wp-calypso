@@ -4,7 +4,7 @@ import {
 	updateLaunchpadSettings,
 	useLaunchpad,
 } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
+import { addPlanToCart, addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
@@ -28,7 +28,7 @@ const DOMAIN_UPSELL_STEPS = [
 ];
 
 const domainUpsell: Flow = {
-	name: DOMAIN_UPSELL_FLOW,
+	name: DOMAIN_AND_PLAN_FLOW,
 	isSignupFlow: false,
 
 	useSteps() {

@@ -132,7 +132,7 @@ export function RenderDomainUpsell( {
 					siteSlug,
 					back_to: window.location.href.replace( window.location.origin, '' ),
 				},
-				'/setup/domain-upsell'
+				'/setup/domain-and-plan'
 		  )
 		: addQueryArgs(
 				{
@@ -156,7 +156,7 @@ export function RenderDomainUpsell( {
 					siteSlug,
 					back_to: window.location.href.replace( window.location.origin, '' ),
 				},
-				'/setup/domain-upsell/plans'
+				'/setup/domain-and-plan/plans'
 		  )
 		: addQueryArgs(
 				{

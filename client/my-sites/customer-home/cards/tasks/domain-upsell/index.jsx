@@ -115,7 +115,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					siteSlug,
 					back_to: window.location.href.replace( window.location.origin, '' ),
 				},
-				'/setup/domain-upsell'
+				'/setup/domain-and-plan'
 		  )
 		: addQueryArgs(
 				{
@@ -132,7 +132,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					siteSlug,
 					back_to: window.location.href.replace( window.location.origin, '' ),
 				},
-				'/setup/domain-upsell/plans'
+				'/setup/domain-and-plan/plans'
 		  )
 		: addQueryArgs(
 				{
@@ -154,7 +154,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					productSlug: domainSuggestionProductSlug,
 					domain: domainSuggestionName,
 					extra: {
-						flow_name: 'domain-upsell',
+						flow_name: 'domain-and-plan',
 					},
 				} ),
 			] );

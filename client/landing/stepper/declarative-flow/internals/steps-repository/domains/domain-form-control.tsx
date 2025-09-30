@@ -1,6 +1,6 @@
 import {
 	COPY_SITE_FLOW,
-	DOMAIN_UPSELL_FLOW,
+	DOMAIN_AND_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	NEWSLETTER_FLOW,
@@ -96,7 +96,7 @@ export function DomainFormControl( {
 		showSkipButton = true;
 	}
 
-	if ( flow === DOMAIN_UPSELL_FLOW ) {
+	if ( flow === DOMAIN_AND_PLAN_FLOW ) {
 		includeWordPressDotCom = false;
 	}
 

@@ -172,7 +172,7 @@ const Sidebar = ( {
 
 	function getDomainUpgradeBadgeUrl() {
 		if ( shouldRenderRewrittenDomainSearch() ) {
-			return `/setup/domain-upsell?siteSlug=${ siteSlug }`;
+			return `/setup/domain-and-plan?siteSlug=${ siteSlug }`;
 		}
 		if ( isStartWritingFlow( siteIntentOption ) ) {
 			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;

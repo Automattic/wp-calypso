@@ -45,7 +45,7 @@ describe( 'getDesignEditedTask', () => {
 		expect( getDomainUpSellTask( task, 'flow', context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path:
-				'/setup/domain-upsell/domains?siteSlug=site.wordpress.com&flowToReturnTo=flow&new=paid-site',
+				'/setup/domain-and-plan/domains?siteSlug=site.wordpress.com&flowToReturnTo=flow&new=paid-site',
 		} );
 	} );
 
