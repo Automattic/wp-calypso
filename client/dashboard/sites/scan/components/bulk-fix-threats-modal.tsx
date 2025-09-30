@@ -7,14 +7,14 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import { useFixThreats } from '../hooks/use-fix-threats';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface BulkFixThreatsModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThreatsModalProps ) {
+export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreatsModalProps ) {
 	const bulkFixableThreats = items.filter(
 		( item ) => item.fixable?.extras?.is_bulk_fixable !== false
 	);
@@ -24,7 +24,7 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { startFix, isFixing, status, error } = useFixThreats(
-		siteId,
+		site.ID,
 		Array.from( bulkFixableIds )
 	);
 

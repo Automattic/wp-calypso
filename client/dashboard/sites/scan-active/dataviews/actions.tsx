@@ -22,9 +22,9 @@ export function getActions( site: Site, threatCount: number ): Action< Threat >[
 			supportsBulk: true,
 			RenderModal: ( { items, closeModal } ) => {
 				if ( items.length === 1 ) {
-					return <FixThreatModal items={ items } closeModal={ closeModal } siteId={ site.ID } />;
+					return <FixThreatModal items={ items } closeModal={ closeModal } site={ site } />;
 				}
-				return <BulkFixThreatsModal items={ items } closeModal={ closeModal } siteId={ site.ID } />;
+				return <BulkFixThreatsModal items={ items } closeModal={ closeModal } site={ site } />;
 			},
 			isEligible: ( threat: Threat ) => !! threat.fixable,
 		},
