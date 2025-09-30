@@ -34,10 +34,12 @@ export function UnignoreThreatModal( { items, closeModal, site }: UnignoreThreat
 		unignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
+				recordTracksEvent( 'calypso_dashboard_scan_unignore_threat_success' );
 				createSuccessNotice( __( 'Threat unignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
 				closeModal?.();
+				recordTracksEvent( 'calypso_dashboard_scan_unignore_threat_failed' );
 				createErrorNotice( __( 'Failed to unignore threat. Please try again.' ), {
 					type: 'snackbar',
 				} );

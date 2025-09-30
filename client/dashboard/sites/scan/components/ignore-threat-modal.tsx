@@ -35,10 +35,12 @@ export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModa
 		ignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
+				recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_success' );
 				createSuccessNotice( __( 'Threat ignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
 				closeModal?.();
+				recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_failed' );
 				createErrorNotice( __( 'Failed to ignore threat. Please try again.' ), {
 					type: 'snackbar',
 				} );

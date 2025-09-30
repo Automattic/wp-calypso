@@ -31,14 +31,16 @@ export function FixThreatModal( { items, closeModal, site }: FixThreatModalProps
 			closeModal?.();
 
 			if ( status.allFixed ) {
+				recordTracksEvent( 'calypso_dashboard_scan_fix_threat_success' );
 				createSuccessNotice( __( 'Threat fixed.' ), { type: 'snackbar' } );
 			} else {
+				recordTracksEvent( 'calypso_dashboard_scan_fix_threat_failed' );
 				createErrorNotice( __( 'Failed to fix threat. Please contact support.' ), {
 					type: 'snackbar',
 				} );
 			}
 		}
-	}, [ status, isFixing, closeModal, createSuccessNotice, createErrorNotice ] );
+	}, [ status, isFixing, closeModal, createSuccessNotice, createErrorNotice, recordTracksEvent ] );
 
 	useEffect( () => {
 		if ( error ) {

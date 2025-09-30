@@ -35,6 +35,7 @@ export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreats
 			closeModal?.();
 
 			if ( status.allFixed ) {
+				recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_success' );
 				createSuccessNotice(
 					_n( 'Threat fixed.', 'All threats were successfully fixed.', bulkFixableThreats.length ),
 					{
@@ -42,6 +43,7 @@ export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreats
 					}
 				);
 			} else {
+				recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_failed' );
 				createErrorNotice(
 					_n(
 						'Failed to fix threat. Please contact support.',
@@ -61,6 +63,7 @@ export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreats
 		createSuccessNotice,
 		createErrorNotice,
 		bulkFixableThreats.length,
+		recordTracksEvent,
 	] );
 
 	useEffect( () => {
