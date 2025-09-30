@@ -11,13 +11,24 @@ import {
 } from './custom-form-fieldsets/constants';
 import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 
-const POST_CODE_LABEL: Record< string, string > = {
-	US: __( 'ZIP code' ),
+const getPostalCodeLabel = ( countryCode: string ): string => {
+	switch ( countryCode ) {
+		case 'US':
+			return __( 'ZIP code' );
+		default:
+			return __( 'Postal Code' );
+	}
 };
 
-const STATE_SELECT_TEXT: Record< string, string > = {
-	CA: __( 'Select Province' ),
-	US: __( 'Select State' ),
+const getStateSelectLabel = ( countryCode: string ): string => {
+	switch ( countryCode ) {
+		case 'CA':
+			return __( 'Select Province' );
+		case 'US':
+			return __( 'Select State' );
+		default:
+			return __( 'Select State' );
+	}
 };
 
 const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, countryCode: string ) => {
@@ -39,7 +50,7 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 			}
 		}, [ currentValue, onChange, id ] );
 
-		const stateLabel = STATE_SELECT_TEXT[ countryCode ] || __( 'Select State' );
+		const stateLabel = getStateSelectLabel( countryCode );
 
 		if ( ! statesList || statesList.length === 0 ) {
 			return (
@@ -109,7 +120,7 @@ export function RegionAddressFieldsets(
 		},
 		{
 			id: 'postalCode',
-			label: POST_CODE_LABEL[ countryCode ] || __( 'Postal Code' ),
+			label: getPostalCodeLabel( countryCode ),
 			type: 'text',
 			isValid: {
 				required: true,
