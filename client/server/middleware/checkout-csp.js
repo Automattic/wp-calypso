@@ -48,9 +48,10 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 			wrapped: [ 'self' ],
 			raw: [ 'https://api.stripe.com', 'https://checkout.stripe.com' ],
 		},
-		// Images - self + data URIs only
+		// Images - self + data URIs + WordPress.com CDN
 		'img-src': {
 			wrapped: [ 'self', 'data:' ],
+			raw: [ 'https://*.wp.com' ],
 		},
 		// Fonts - self only
 		'font-src': {
