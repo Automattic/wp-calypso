@@ -53,10 +53,10 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 			wrapped: [ 'self', 'data:' ],
 			raw: [ 'https://*.wp.com' ],
 		},
-		// Fonts - self only
+		// Fonts - self + CDNs
 		'font-src': {
 			wrapped: [ 'self' ],
-			raw: [ 'https://fonts.gstatic.com' ],
+			raw: [ 'https://fonts.gstatic.com', 'https://*.wp.com' ],
 		},
 		// Prevent base tag hijacking
 		'base-uri': {
