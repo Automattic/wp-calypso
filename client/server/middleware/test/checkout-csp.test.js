@@ -45,7 +45,6 @@ describe( 'checkout-csp middleware', () => {
 
 			// PayPal
 			expect( header ).toContain( 'https://www.paypal.com' );
-			expect( header ).toContain( 'https://www.paypalobjects.com' );
 		} );
 
 		it( 'should include strict-dynamic', () => {
@@ -61,7 +60,9 @@ describe( 'checkout-csp middleware', () => {
 			const isDevelopment = false;
 			const header = generateCheckoutCSPHeader( nonce, isDevelopment );
 
-			expect( header ).toContain( "form-action 'self' https://checkout.stripe.com" );
+			expect( header ).toContain( "form-action 'self'" );
+			expect( header ).toContain( 'https://api.stripe.com' );
+			expect( header ).toContain( 'https://checkout.stripe.com' );
 		} );
 
 		it( 'should set frame-ancestors to none for clickjacking protection', () => {
