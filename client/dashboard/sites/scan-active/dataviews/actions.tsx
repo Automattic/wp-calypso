@@ -1,13 +1,12 @@
-import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
 import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
+import { getViewDetailsAction } from '../../scan/actions';
 import { BulkFixThreatsModal } from '../../scan/components/bulk-fix-threats-modal';
 import { FixThreatModal } from '../../scan/components/fix-threat-modal';
 import { IgnoreThreatModal } from '../../scan/components/ignore-threat-modal';
-import { ThreatDescription } from '../../scan/components/threat-description';
-import { ThreatsDetailCard } from '../../scan/components/threats-detail-card';
 import type { Threat, Site } from '@automattic/api-core';
 
 export function getActions( site: Site, threatCount: number ): Action< Threat >[] {
@@ -39,17 +38,6 @@ export function getActions( site: Site, threatCount: number ): Action< Threat >[
 				<IgnoreThreatModal items={ items } closeModal={ closeModal } site={ site } />
 			),
 		},
-		{
-			id: 'view_details',
-			label: __( 'View details' ),
-			modalHeader: __( 'View threat details' ),
-			supportsBulk: false,
-			RenderModal: ( { items } ) => (
-				<VStack spacing={ 4 }>
-					<ThreatsDetailCard threats={ items } />
-					<ThreatDescription threat={ items[ 0 ] } site={ site } />
-				</VStack>
-			),
-		},
+		getViewDetailsAction( site ),
 	];
 }
