@@ -17,9 +17,16 @@ describe( 'BrowserNotificationCard', () => {
 		queryClient.setQueryData( notificationPushPermissionStateQuery().queryKey, state );
 	};
 
+	const mockDeviceQuery = ( queryClient: QueryClient, deviceId: string ) => {
+		queryClient.setQueryData( notificationDeviceQuery().queryKey, {
+			ID: deviceId,
+		} );
+	};
+
 	beforeEach( () => {
 		nock.disableNetConnect();
 		nock.cleanAll();
+		window.scrollTo = jest.fn();
 
 		Object.defineProperty( window, 'navigator', {
 			value: {
@@ -87,6 +94,16 @@ describe( 'BrowserNotificationCard', () => {
 			},
 		};
 
+		Object.defineProperty( window.navigator.serviceWorker, 'ready', {
+			value: {
+				pushManager: {
+					permissionState: jest.fn().mockResolvedValue( 'granted' ),
+					getSubscription: jest.fn().mockResolvedValue( null ),
+					subscribe: jest.fn().mockResolvedValue( browserSubscription ),
+				},
+			},
+		} );
+
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/devices/new', {
 				device_token: JSON.stringify( browserSubscription ),
@@ -95,7 +112,7 @@ describe( 'BrowserNotificationCard', () => {
 			} )
 			.reply( 200 );
 
-		renderWithProvider( <BrowserNotificationCard /> );
+		renderWithProvider( <BrowserNotificationCard />, queryClient );
 
 		await waitFor( () => {
 			expect( screen.getByLabelText( 'Enable browser notifications' ) ).toBeEnabled();
@@ -116,9 +133,8 @@ describe( 'BrowserNotificationCard', () => {
 		const queryClient = new QueryClient();
 		const deviceId = 'device_id_2';
 
-		queryClient.setQueryData( notificationDeviceQuery().queryKey, {
-			ID: deviceId,
-		} );
+		mockServiceWorkState( queryClient, 'granted' );
+		mockDeviceQuery( queryClient, deviceId );
 
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( `/rest/v1.1/${ deviceId }/delete` )

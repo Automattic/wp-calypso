@@ -25,7 +25,10 @@ const shouldRemove = ( status: string | undefined ) => {
 };
 
 export const BrowserNotificationCard = () => {
-	const { data: status } = useQuery( notificationPushPermissionStateQuery() );
+	const { data: status } = useQuery( {
+		...notificationPushPermissionStateQuery(),
+		staleTime: Infinity,
+	} );
 
 	const {
 		mutate: registerDevice,
@@ -36,6 +39,7 @@ export const BrowserNotificationCard = () => {
 	const { mutate: removeDevice, isPending: isRemoving } = useMutation(
 		notificationDeviceRemovalMutation()
 	);
+
 	const deviceId = device?.ID;
 
 	const isPending = isLoadingDevice || isRegisteringDevice || isRemoving;
