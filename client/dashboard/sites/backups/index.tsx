@@ -61,6 +61,7 @@ export function BackupsListPage() {
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
 		gmtOffset,
+		defaultDays: 30,
 	} );
 	const [ selectedBackup, setSelectedBackupInState ] = useState< ActivityLogEntry | null >( null );
 
