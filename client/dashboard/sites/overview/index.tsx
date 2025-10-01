@@ -213,15 +213,8 @@ function SiteOverview( {
 							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 							{ shouldShowSecondaryUpsellStack && (
 								<VStack spacing={ spacing } justify="start">
-									{ ( () => {
-										if ( shouldShowDomainTransferUpsellCard ) {
-											return <DomainTransferUpsellCard />;
-										}
-										if ( shouldShowDomainUpsellCard ) {
-											return <DomainUpsellCard site={ site } />;
-										}
-										return null;
-									} )() }
+									{ shouldShowDomainTransferUpsellCard && <DomainTransferUpsellCard /> }
+									{ shouldShowDomainUpsellCard && ! shouldShowDomainTransferUpsellCard && <DomainUpsellCard site={ site } /> }
 									{ shouldShowDIFMUpsellCard && <DIFMUpsellCard /> }
 								</VStack>
 							) }
