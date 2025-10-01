@@ -1,7 +1,6 @@
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '../../components/notice';
-import { Text } from '../../components/text';
 const REFRESH_REPORT_INTERVAL = 24; // 24 hours
 
 type ReportExpiredNotice = {
@@ -39,20 +38,16 @@ export default function ReportExpiredNotice( { onRetest, reportTimestamp }: Repo
 	}
 
 	return (
-		<Notice variant="info">
-			<VStack spacing={ 4 } alignment="flex-start" expanded={ false }>
-				<VStack spacing={ 1 }>
-					<Text>
-						<b>{ __( 'These results are more than 24 hours old' ) }</b>
-					</Text>
-					<Text>
-						{ __( 'Test the page again if you have recently made updates to your site.' ) }
-					</Text>
-				</VStack>
+		<Notice
+			variant="info"
+			title={ __( 'These results are more than 24 hours old.' ) }
+			actions={
 				<Button variant="primary" onClick={ onRetest }>
 					{ __( 'Test again' ) }
 				</Button>
-			</VStack>
+			}
+		>
+			{ __( 'Test the page again if you have recently made updates to your site.' ) }
 		</Notice>
 	);
 }

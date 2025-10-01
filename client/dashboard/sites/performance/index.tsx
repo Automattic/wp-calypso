@@ -15,6 +15,7 @@ import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
 import Report from './report';
 import ReportErrorNotice from './report-error-notice';
+import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
 import SubTitle from './subtitle';
 import type { Site, PerformanceProfilerPage } from '@automattic/api-core';
@@ -93,7 +94,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 				}
 			/>
 			{ hasError && <ReportErrorNotice onRetestClick={ handleReportRefetch } /> }
-
 			{ isFetchingReport || isRunningReport || ! currentReport ? (
 				<ReportLoading
 					isSavedReport={
@@ -101,7 +101,13 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					}
 				/>
 			) : (
-				<Report report={ currentReport } />
+				<>
+					<ReportExpiredNotice
+						reportTimestamp={ currentReport.timestamp }
+						onRetest={ handleReportRefetch }
+					/>
+					<Report report={ currentReport } />
+				</>
 			) }
 		</PageLayout>
 	);
