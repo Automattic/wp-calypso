@@ -3,6 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { getRedirectUri, getSocialServiceResponse } from './utils';
 import type { SocialLoginButtonProps, AppleClient } from './types';
 
@@ -18,6 +19,8 @@ export default function AppleLogin( {
 	handleDisconnect,
 	isLoading,
 }: SocialLoginButtonProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ appleClient, setAppleClient ] = useState< AppleClient | null >( null );
 	const [ showLoading, setShowLoading ] = useState( false );
 
@@ -88,6 +91,7 @@ export default function AppleLogin( {
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		e.preventDefault();
 		setShowLoading( true );
+		recordTracksEvent( 'calypso_dashboard_security_social_logins_apple_login_click' );
 		loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
 	};
 

@@ -79,10 +79,9 @@ export const useDomainSearch = () => {
 export const useDomainSearchContextValue = (
 	props: DomainSearchProps
 ): typeof DEFAULT_CONTEXT_VALUE => {
-	const { currentSiteUrl, initialQuery, cart, events, slots, config } = props;
+	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
-	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ filter, setFilter ] = useState( {
 		exactSldMatchesOnly: false,
 		tlds: [],
@@ -158,9 +157,8 @@ export const useDomainSearchContextValue = (
 			isFullCartOpen,
 			closeFullCart,
 			openFullCart,
-			query,
+			query: externalQuery ?? '',
 			setQuery: ( query ) => {
-				setQuery( query );
 				normalizedEvents.onQueryChange( query );
 			},
 			slots,
@@ -172,8 +170,7 @@ export const useDomainSearchContextValue = (
 		isFullCartOpen,
 		closeFullCart,
 		openFullCart,
-		query,
-		setQuery,
+		externalQuery,
 		cart,
 		normalizedEvents,
 		slots,

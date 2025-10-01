@@ -161,7 +161,6 @@ export class SecretsManager {
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
 			wooSignupPath: 'FAKE_VALUE',
-			wooLoginPath: 'FAKE_VALUE',
 			calypsoOauthApplication: {
 				client_id: 'FAKE_VALUE',
 				client_secret: 'FAKE_VALUE',

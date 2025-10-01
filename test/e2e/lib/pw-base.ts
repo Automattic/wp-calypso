@@ -34,7 +34,9 @@ import {
 	getTestAccountByFeature,
 	GitHubLoginPage,
 	IncognitoPage,
+	JetpackTrafficPage,
 	LoginPage,
+	MarketingPage,
 	NewSiteResponse,
 	PreviewComponent,
 	RestAPIClient,
@@ -53,6 +55,10 @@ import { getAccount } from './get-account';
 
 export const test = base.extend< {
 	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountAtomic: TestAccount;
+	/**
 	 * Test account selected based on the current environment variables.
 	 */
 	accountGivenByEnvironment: TestAccount;
@@ -64,6 +70,10 @@ export const test = base.extend< {
 	 * Test account used for i18n locale switching.
 	 */
 	accounti18n: TestAccount;
+	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountSimpleSiteFreePlan: TestAccount;
 	/**
 	 * Test account used for SMS-based 2FA.
 	 */
@@ -125,9 +135,17 @@ export const test = base.extend< {
 	 */
 	pageIncognito: IncognitoPage;
 	/**
+	 * Page object representing the Jetpack Traffic Page
+	 */
+	pageJetpackTraffic: JetpackTrafficPage;
+	/**
 	 * Page object representing the WordPress.com login page.
 	 */
 	pageLogin: LoginPage;
+	/**
+	 * Page object representing the WordPress.com marketing page.
+	 */
+	pageMarketing: MarketingPage;
 	/**
 	 * Page object representing the WordPress.com themes detail page.
 	 */
@@ -145,6 +163,10 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	accountAtomic: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'atomicUser' );
+		await use( testAccount );
+	},
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
@@ -156,6 +178,10 @@ export const test = base.extend< {
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountSimpleSiteFreePlan: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
 		await use( testAccount );
 	},
 	accountSMS: async ( { page }, use ) => {
@@ -218,9 +244,17 @@ export const test = base.extend< {
 		await use( incognitoPage );
 		await incognitoPage.close();
 	},
+	pageJetpackTraffic: async ( { page }, use ) => {
+		const jetpackTrafficPage = new JetpackTrafficPage( page );
+		await use( jetpackTrafficPage );
+	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );
 		await use( loginPage );
+	},
+	pageMarketing: async ( { page }, use ) => {
+		const marketingPage = new MarketingPage( page );
+		await use( marketingPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
@@ -269,6 +303,7 @@ export const tags = {
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
+	DASHBOARD: '@dashboard',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',

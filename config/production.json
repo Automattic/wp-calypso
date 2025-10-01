@@ -101,6 +101,7 @@
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
+		"onboarding/import-from-substack": true,
 		"onboarding/import-from-squarespace": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,

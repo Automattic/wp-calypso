@@ -8,14 +8,14 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { next, wordpress } from '@wordpress/icons';
 import { purchasesRoute } from '../app/router/me';
-import GoogleLogo from '../sites/emails/resources/google-logo';
+import GoogleLogo from './resources/google-logo';
 import type { Action, Field, View } from '@wordpress/dataviews';
 
 // Shared fields for Emails DataViews
 export const emailFields: Field< Email >[] = [
 	{
 		id: 'emailAddress',
-		label: __( 'Email Address' ),
+		label: __( 'Email address' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Email } ) => {
 			let iconEl = <Icon icon={ wordpress } size={ 28 } className="professional-email-icon" />;

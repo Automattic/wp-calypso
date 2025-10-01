@@ -392,6 +392,13 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
@@ -403,16 +410,20 @@ export const siteBackupsRoute = createRoute( {
 export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Preload activity log backup-related entries.
-		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
+			component: d.BackupsListPage,
+		} )
+	)
+);
+
+export const siteBackupDetailRoute = createRoute( {
+	getParentRoute: () => siteBackupsRoute,
+	path: '$rewindId',
+} ).lazy( () =>
+	import( '../../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backup-detail' )( {
 			component: d.BackupsListPage,
 		} )
 	)
@@ -473,24 +484,6 @@ export const siteDomainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/domains' ).then( ( d ) =>
 		createLazyRoute( 'site-domains' )( {
-			component: d.default,
-		} )
-	)
-);
-
-export const siteEmailsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Emails' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'emails',
-} ).lazy( () =>
-	import( '../../sites/emails' ).then( ( d ) =>
-		createLazyRoute( 'site-emails' )( {
 			component: d.default,
 		} )
 	)
@@ -1151,6 +1144,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
+				siteBackupDetailRoute,
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
@@ -1172,15 +1166,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	if ( config.supports.sites.emails ) {
-		siteRoutes.push( siteEmailsRoute );
-	}
-
 	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
-	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
 }

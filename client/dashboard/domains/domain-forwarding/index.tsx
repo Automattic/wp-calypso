@@ -10,7 +10,6 @@ import {
 	domainForwardingEditRoute,
 } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
-import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -114,7 +113,7 @@ function DomainForwarding() {
 			},
 			{
 				id: 'forward_paths',
-				label: __( 'Path Forwarding' ),
+				label: __( 'Path forwarding' ),
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
@@ -124,7 +123,7 @@ function DomainForwarding() {
 			},
 			{
 				id: 'is_permanent',
-				label: __( 'Redirect Type' ),
+				label: __( 'Redirect type' ),
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
@@ -174,13 +173,7 @@ function DomainForwarding() {
 					paginationInfo={ paginationInfo }
 					getItemId={ getForwardingId }
 					defaultLayouts={ DEFAULT_LAYOUTS }
-					empty={
-						<DataViewsEmptyState
-							title=""
-							description={ __( 'No forwarding rules found for this domain.' ) }
-							mutedDescription={ false }
-						/>
-					}
+					empty={ <p>{ __( 'No forwarding rules found for this domain.' ) }</p> }
 				/>
 			</DataViewsCard>
 		</PageLayout>

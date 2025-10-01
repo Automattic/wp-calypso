@@ -96,8 +96,15 @@ export const usePaidNewsletterQuery = (
 	engine: string,
 	currentStep: StepId,
 	siteId?: number,
-	autoRefresh?: boolean
+	autoRefresh?: boolean,
+	newsletterLocation?: string
 ) => {
+	const params = {
+		engine: engine,
+		current_step: currentStep,
+		...( newsletterLocation && { newsletter_location: newsletterLocation } ),
+	};
+
 	return useQuery( {
 		enabled: !! siteId,
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -108,10 +115,7 @@ export const usePaidNewsletterQuery = (
 					path: `/sites/${ siteId }/site-importer/paid-newsletter`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{
-					engine: engine,
-					current_step: currentStep,
-				}
+				params
 			);
 		},
 		placeholderData: keepPreviousData,

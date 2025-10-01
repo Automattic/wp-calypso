@@ -18,7 +18,7 @@ import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 import './style.scss';
 
-export interface MonitoringCardProps {
+interface MonitoringCardProps {
 	title: string;
 	description?: ReactNode;
 	isLoading?: boolean;
@@ -114,7 +114,7 @@ export default function MonitoringCard( {
 	return (
 		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
-				<VStack spacing={ 4 }>
+				<VStack spacing={ 4 } className="dashboard-monitoring-card__body" justify="flex-start">
 					{ tracksId && (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_monitoring_card_impression"
@@ -123,7 +123,7 @@ export default function MonitoringCard( {
 					) }
 					{ topContent }
 					{ children && (
-						<VStack className={ contentClassNames } spacing={ 2 } justify="center">
+						<VStack className={ contentClassNames } spacing={ 2 } justify="space-between">
 							{ renderContent() }
 						</VStack>
 					) }

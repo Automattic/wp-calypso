@@ -249,7 +249,12 @@ export function getUtcOffsetDisplay( offsetHours: number ): string {
 	if ( ! offsetHours ) {
 		return 'UTC';
 	}
-	const sign = offsetHours > 0 ? '+' : '';
+	let sign = '';
+	if ( offsetHours > 0 ) {
+		sign = '+';
+	} else if ( offsetHours < 0 ) {
+		sign = '-';
+	}
 	const abs = Math.abs( offsetHours );
 	const hoursPart = String( Math.floor( abs ) ).padStart( 2, '0' );
 	const minutesPart = String( Math.round( ( abs - Math.floor( abs ) ) * 60 ) ).padStart( 2, '0' );
@@ -272,21 +277,29 @@ export function parseYmdLocal( value: string ): Date | null {
 }
 
 /**
- * Format a date as "YYYY-MM-DD" (local time).
+ * Format a date as a site calendar day (YYYY-MM-DD).
  */
 export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: number ) {
 	if ( timezoneString ) {
 		return dateI18n( 'Y-m-d', date, timezoneString );
 	}
 	if ( typeof gmtOffset === 'number' ) {
-		// site-YYYY-MM-DD via offset (DST-safe enough for offset-only)
-		const noonUtc =
-			Date.UTC( date.getFullYear(), date.getMonth(), date.getDate(), 12 ) - gmtOffset * HOUR_MS;
-		const dt = new Date( noonUtc );
-		const year = dt.getUTCFullYear();
-		const month = String( dt.getUTCMonth() + 1 ).padStart( 2, '0' );
-		const day = String( dt.getUTCDate() ).padStart( 2, '0' );
+		const shifted = new Date( date.getTime() + gmtOffset * HOUR_MS );
+		const year = shifted.getUTCFullYear();
+		const month = String( shifted.getUTCMonth() + 1 ).padStart( 2, '0' );
+		const day = String( shifted.getUTCDate() ).padStart( 2, '0' );
 		return `${ year }-${ month }-${ day }`;
 	}
 	return dateI18n( 'Y-m-d', date );
+}
+
+/**
+ * Format a Date that already represents a site calendar day.
+ * This avoids reapplying timezone math to dates coming from the picker or URL.
+ */
+export function formatSiteYmd( date: Date ) {
+	const year = date.getFullYear();
+	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+	const day = String( date.getDate() ).padStart( 2, '0' );
+	return `${ year }-${ month }-${ day }`;
 }

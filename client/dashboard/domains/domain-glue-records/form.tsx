@@ -47,7 +47,7 @@ export default function DomainGlueRecordsForm( {
 		() => [
 			{
 				id: 'nameServer',
-				label: __( 'Name Server' ),
+				label: __( 'Name server' ),
 				placeholder: 'ns1',
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
@@ -85,7 +85,7 @@ export default function DomainGlueRecordsForm( {
 			},
 			{
 				id: 'ipAddress',
-				label: __( 'IP Address' ),
+				label: __( 'IP address' ),
 				placeholder: '123.45.78.9',
 				type: 'text',
 				isValid: {

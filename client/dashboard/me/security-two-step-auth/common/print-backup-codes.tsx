@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 import { page, cloudDownload, copySmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
@@ -28,6 +29,8 @@ export default function PrintBackupCodes( {
 	username?: string;
 	hideVerifyBackupCodesHeader?: boolean;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutate: generateBackupCodes, data: backupCodes } = useMutation(
@@ -79,6 +82,8 @@ export default function PrintBackupCodes( {
 			return;
 		}
 
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_print_backup_codes_print_click' );
+
 		const popup = window.open( '', '_blank' );
 		if ( popup ) {
 			popup.document.documentElement.innerHTML = getBackupCodeHTML( backupCodes.codes );
@@ -96,6 +101,10 @@ export default function PrintBackupCodes( {
 			return;
 		}
 
+		recordTracksEvent(
+			'calypso_dashboard_security_two_step_auth_print_backup_codes_download_click'
+		);
+
 		const content = backupCodes.codes.join( '\n' );
 		const blob = new Blob( [ content ], { type: 'text/plain' } );
 		const url = URL.createObjectURL( blob );
@@ -112,6 +121,9 @@ export default function PrintBackupCodes( {
 		if ( ! backupCodes?.codes ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_print_backup_codes_copy_click' );
+
 		const codesText = backupCodes.codes.join( '\n' );
 		try {
 			navigator.clipboard.writeText( codesText );

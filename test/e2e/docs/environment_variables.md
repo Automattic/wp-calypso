@@ -20,6 +20,7 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | TEST_LOCALES          | The locales to target for I18N testing                                                                          | A long list of currently supported locales.       |
 | TEST_ON_ATOMIC        | Use a user with an Atomic site.                                                                                 | false                                             |
 | VIEWPORT_NAME         | Specify the viewport to be used.                                                                                | desktop                                           |
+| WOO_BASE_URL          | The base URL to use for WooCommerce.com marketing pages, typically accessed when not logged in                  | <https://woocommerce.com>                         |
 | WPCOM_BASE_URL        | The base URL to use for WordPress.com marketing pages, typically accessed when not logged in                    | <https://wordpress.com>                           |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:

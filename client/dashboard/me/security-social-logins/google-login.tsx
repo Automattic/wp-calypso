@@ -8,6 +8,7 @@ import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { getRedirectUri } from './utils';
 import type { SocialLoginButtonProps } from './types';
 
@@ -20,6 +21,8 @@ export default function GoogleLogin( {
 	handleDisconnect,
 	isLoading,
 }: SocialLoginButtonProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutate: postLoginRequest } = useMutation( postLoginRequestMutation() );
@@ -89,6 +92,7 @@ export default function GoogleLogin( {
 		e.preventDefault();
 		e.stopPropagation();
 		setShowLoading( true );
+		recordTracksEvent( 'calypso_dashboard_security_social_logins_google_login_click' );
 
 		// Fetch nonce
 		let nonce;
