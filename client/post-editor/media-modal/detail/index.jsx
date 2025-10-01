@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
-import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
+import { filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import preloadImage from '../preload-image';
@@ -60,7 +60,6 @@ class EditorMediaModalDetailBase extends Component {
 			site,
 			backButtonText,
 			onEditImageItem,
-			onEditVideoItem,
 			onRestoreItem,
 			onUpdateItem,
 			onReturnToList,
@@ -68,7 +67,6 @@ class EditorMediaModalDetailBase extends Component {
 		} = this.props;
 
 		const item = items[ selectedIndex ];
-		const mimePrefix = getMimePrefix( item );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -85,7 +83,7 @@ class EditorMediaModalDetailBase extends Component {
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
 					onRestore={ onRestoreItem }
-					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+					onEdit={ onEditImageItem }
 					onUpdate={ onUpdateItem }
 				/>
 			</div>
@@ -100,12 +98,11 @@ export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 // The default export is only used by the post editor, which displays the image or
 // video editor depending on Redux state, which is set by the actions below.
 // In the Media library (i.e. `/media`) OTOH, we're explicitly passing `onEditImageItem`
-// and `onEditVideoItem` as props to the _named_ export (above), and use them to set
-// component state there to conditionally display the image/video editor.
+// as props to the _named_ export (above), and use them to set
+// component state there to conditionally display the image editor.
 // (This is also the reason why we're `localize()`ing the named export.)
 // TODO: Fix this mess, rely on Redux state everywhere.
 export default connect( null, {
 	onReturnToList: () => setEditorMediaModalView( ModalViews.LIST ),
 	onEditImageItem: () => setEditorMediaModalView( ModalViews.IMAGE_EDITOR ),
-	onEditVideoItem: () => setEditorMediaModalView( ModalViews.VIDEO_EDITOR ),
 } )( EditorMediaModalDetail );
