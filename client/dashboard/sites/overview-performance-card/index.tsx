@@ -88,11 +88,11 @@ function PerformanceCardContentWithTests( {
 		page.wpcom_performance_report_hash
 	);
 
-	if ( desktopReport === undefined || mobileReport === undefined ) {
+	if ( ! desktopReport || ! mobileReport ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( desktopScore === undefined || mobileScore === undefined ) {
+	if ( ! desktopScore || ! mobileScore ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
 
