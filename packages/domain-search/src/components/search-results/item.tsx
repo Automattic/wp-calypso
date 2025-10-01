@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEvent } from '@wordpress/compose';
+import { useEffect } from 'react';
 import { usePolicyBadges } from '../../hooks/use-policy-badges';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
@@ -21,17 +22,13 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 	const { events } = useDomainSearch();
 	const suggestion = useSuggestion( domainName );
 
-	const hasTriggeredRender = useRef( false );
+	const triggerSuggestionRenderEvent = useEvent( () => {
+		events.onSuggestionRender( suggestion );
+	} );
 
 	useEffect( () => {
-		if ( hasTriggeredRender.current ) {
-			return;
-		}
-		hasTriggeredRender.current = true;
-
-		events.onSuggestionRender( suggestion );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ suggestion ] );
+		triggerSuggestionRenderEvent();
+	}, [ triggerSuggestionRenderEvent ] );
 
 	return (
 		<DomainSuggestion

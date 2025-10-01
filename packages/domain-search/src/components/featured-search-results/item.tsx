@@ -1,5 +1,6 @@
+import { useEvent } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
 import { usePolicyBadges } from '../../hooks/use-policy-badges';
@@ -66,17 +67,13 @@ export const FeaturedSearchResultsItem = ( {
 
 	const { events } = useDomainSearch();
 
-	const hasTriggeredRender = useRef( false );
+	const triggerSuggestionRenderEvent = useEvent( () => {
+		events.onSuggestionRender( suggestion, reason );
+	} );
 
 	useEffect( () => {
-		if ( hasTriggeredRender.current ) {
-			return;
-		}
-		hasTriggeredRender.current = true;
-
-		events.onSuggestionRender( suggestion, reason );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ suggestion, reason ] );
+		triggerSuggestionRenderEvent();
+	}, [ triggerSuggestionRenderEvent ] );
 
 	return (
 		<DomainSuggestion.Featured
