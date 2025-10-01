@@ -24,7 +24,7 @@ export const NotificationsEmailsSummary = () => {
 			to="/me/notifications/emails"
 			title={ __( 'Emails' ) }
 			description={ __(
-				'Manage how you receive emails. Set the frequency, choose a format, or pause all emails. To manage individual site subscriptions'
+				'Manage how you receive emails. Set the frequency, choose a format, or pause all emails. To manage individual site subscriptions, go to the Reader.'
 			) }
 			decoration={ <Icon icon={ layout } /> }
 			badges={ badges }
