@@ -22,7 +22,9 @@
  */
 /* eslint-disable no-empty-pattern */
 import {
+	AdvertisingPage,
 	AppleLoginPage,
+	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	DashboardPage,
 	DashboardVisibilitySettingsPage,
@@ -37,6 +39,7 @@ import {
 	JetpackTrafficPage,
 	LoginPage,
 	MarketingPage,
+	MediaHelper,
 	NewSiteResponse,
 	PreviewComponent,
 	RestAPIClient,
@@ -111,9 +114,21 @@ export const test = base.extend< {
 	 */
 	helperData: typeof DataHelper;
 	/**
+	 * Helper for media-related tasks in tests.
+	 */
+	helperMedia: typeof MediaHelper;
+	/**
+	 * Page object representing the WordPress.com Advertising page.
+	 */
+	pageAdvertising: AdvertisingPage;
+	/**
 	 * Page object representing the Apple login page.
 	 */
 	pageAppleLogin: AppleLoginPage;
+	/**
+	 * Page object representing the Blaze campaign page.
+	 */
+	pageBlazeCampaign: BlazeCampaignPage;
 	/**
 	 * Page object representing the WordPress.com dashboard.
 	 */
@@ -217,6 +232,17 @@ export const test = base.extend< {
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
+	},
+	helperMedia: async ( {}, use ) => {
+		await use( MediaHelper );
+	},
+	pageBlazeCampaign: async ( { page }, use ) => {
+		const blazeCampaignPage = new BlazeCampaignPage( page );
+		await use( blazeCampaignPage );
+	},
+	pageAdvertising: async ( { page }, use ) => {
+		const advertisingPage = new AdvertisingPage( page );
+		await use( advertisingPage );
 	},
 	pageAppleLogin: async ( { page }, use ) => {
 		const appleLoginPage = new AppleLoginPage( page );

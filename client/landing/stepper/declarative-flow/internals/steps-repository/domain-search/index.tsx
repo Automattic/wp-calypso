@@ -11,9 +11,11 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -51,10 +53,20 @@ type StepSubmission = {
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
+	const translate = useTranslate();
+
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
 	const tldQuery = useQuery().get( 'tld' );
+
+	// eslint-disable-next-line no-nested-ternary
+	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+
+	const { query, setQuery } = useQueryHandler( {
+		initialQuery,
+		currentSiteUrl,
+	} );
 
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
@@ -83,6 +95,7 @@ const DomainSearchStep: StepType< {
 
 	const events = useMemo( () => {
 		return {
+			onQueryChange: setQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				window.location.assign(
 					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
@@ -121,7 +134,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit ] );
+	}, [ submit, setQuery ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -165,11 +178,10 @@ const DomainSearchStep: StepType< {
 					: 'domain-search--step-container'
 			}
 			currentSiteId={ site?.ID }
-			// eslint-disable-next-line no-nested-ternary
-			currentSiteUrl={ site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined }
+			currentSiteUrl={ currentSiteUrl }
 			flowName={ flow }
 			config={ config }
-			initialQuery={ initialQuery }
+			query={ query }
 			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
@@ -186,6 +198,13 @@ const DomainSearchStep: StepType< {
 					<Step.TopBar
 						leftElement={
 							navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
+						}
+						rightElement={
+							query && config.allowsUsingOwnDomain ? (
+								<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+									{ translate( 'Use a domain I already own' ) }
+								</Step.LinkButton>
+							) : undefined
 						}
 					/>
 				}

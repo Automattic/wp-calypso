@@ -11,7 +11,6 @@ import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
-import McpSettingsSummary from '../settings-mcp/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
 import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
@@ -49,7 +48,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<PrimaryDataCenterSettingsSummary site={ site } />
 					<StaticFile404SettingsSummary site={ site } />
 					<CachingSettingsSummary site={ site } />
-					<McpSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>
 			<VStack spacing={ 3 }>
