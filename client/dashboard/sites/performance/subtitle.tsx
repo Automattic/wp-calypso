@@ -1,8 +1,8 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import InlineSupportLink from '../../components/inline-support-link';
 
 export default function SubTitle( {
 	timestamp,
@@ -13,13 +13,11 @@ export default function SubTitle( {
 } ) {
 	if ( ! timestamp ) {
 		return createInterpolateElement(
-			__( 'Optimize your site for lightning-fast performance. <link>Learn more.</link>' ),
+			__(
+				'Optimize your site for lightning-fast performance. <supportLink>Learn more.</supportLink>'
+			),
 			{
-				link: (
-					<a
-						href={ localizeUrl( 'https://wordpress.com/support/check-your-sites-performance/' ) }
-					/>
-				),
+				supportLink: <InlineSupportLink supportContext="site-performance" />,
 			}
 		);
 	}
