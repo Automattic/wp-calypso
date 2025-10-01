@@ -37,7 +37,7 @@ function getScrollableContainer( node: HTMLElement ): HTMLElement | undefined {
 
 export function navigate( path: string, openInNewTab = false, forceReload = false ): void {
 	if ( isSameOrigin( path ) ) {
-		// Force reload when navigating TO checkout to ensure proper CSP headers (PCI DSS 6.4.3)
+		// Force reload when navigating TO checkout to ensure proper CSP headers
 		const isNavigatingToCheckout =
 			path.includes( '/checkout/' ) &&
 			! path.includes( '/thank-you' ) &&

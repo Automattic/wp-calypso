@@ -232,7 +232,12 @@ describe( 'Logged In Landing Page', () => {
 		Object.defineProperty( window, 'location', {
 			value: {
 				assign: jest.fn(),
+				pathname: '/',
+				href: 'http://localhost/',
+				search: '',
+				hash: '',
 			},
+			configurable: true,
 		} );
 
 		page( '/' );

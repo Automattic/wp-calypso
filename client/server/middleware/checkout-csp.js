@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 /**
  * Generate CSP header for checkout pages
- * Provides restrictive policy for PCI DSS 6.4.3 compliance
+ * Provides restrictive policy to protect payment pages
  * @param {string} nonce - The nonce to use for inline scripts
  * @param {boolean} isDevelopment - Whether we're in development mode
  * @returns {string} The CSP policy string for checkout
@@ -13,7 +13,7 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 		// Default deny everything
 		'default-src': [ "'none'" ],
 
-		// PCI DSS 6.4.3: Nonce-based with strict-dynamic for scripts
+		// Nonce-based with strict-dynamic for secure script execution
 		// 'self' kept as fallback for browsers that don't support strict-dynamic
 		'script-src': [
 			`'nonce-${ nonce }'`,
@@ -99,7 +99,7 @@ export function generateCheckoutCSPHeader( nonce, isDevelopment ) {
 
 /**
  * Middleware to add Content Security Policy headers to checkout pages only
- * Applies restrictive policy for PCI DSS 6.4.3 compliance
+ * Applies restrictive policy to protect payment pages
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function

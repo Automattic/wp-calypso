@@ -55,7 +55,7 @@ describe( 'checkout-csp middleware', () => {
 			expect( header ).toContain( "'strict-dynamic'" );
 		} );
 
-		it( 'should restrict form-action for PCI DSS compliance', () => {
+		it( 'should restrict form-action for security', () => {
 			const nonce = 'test-nonce';
 			const isDevelopment = false;
 			const header = generateCheckoutCSPHeader( nonce, isDevelopment );
