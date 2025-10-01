@@ -153,7 +153,7 @@ export default function PersonalDetailsSection( {
 						/>
 
 						{ /* Email verification banner */ }
-						<EmailVerificationBanner />
+						<EmailVerificationBanner userData={ userSettings } />
 
 						{ /* First & last name */ }
 						<DataForm< UserSettings >

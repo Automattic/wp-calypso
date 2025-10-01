@@ -1,5 +1,5 @@
-import { userSettingsQuery, resendEmailVerificationMutation } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { resendEmailVerificationMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -8,25 +8,60 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import Notice from '../../../components/notice';
+import type { UserSettings } from '@automattic/api-core';
 
-export default function EmailVerificationBanner() {
-	const { data: userData } = useSuspenseQuery( userSettingsQuery() );
+// Get email verification params from URL
+function getEmailVerificationParams() {
+	if ( typeof window === 'undefined' ) {
+		return { newEmailResult: null, verified: null };
+	}
+	const params = new URLSearchParams( window.location.search );
+	return {
+		newEmailResult: params.get( 'new_email_result' ),
+		verified: params.get( 'verified' ),
+	};
+}
+
+// Clean up email verification params from URL
+function cleanUpEmailVerificationParams() {
+	const params = new URLSearchParams( window.location.search );
+	params.delete( 'new_email_result' );
+	params.delete( 'verified' );
+	const newUrl = window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
+	window.history.replaceState( {}, '', newUrl );
+}
+
+interface EmailVerificationBannerProps {
+	userData: UserSettings;
+}
+
+export default function EmailVerificationBanner( { userData }: EmailVerificationBannerProps ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ showResendButton, setShowResendButton ] = useState( true );
-	const [ showSuccessNotice, setShowSuccessNotice ] = useState( false );
+	const [ showSuccessNotice, setShowSuccessNotice ] = useState( () => {
+		const { newEmailResult, verified } = getEmailVerificationParams();
+
+		return newEmailResult === '1' || verified === '1';
+	} );
+
+	const [ verificationType ] = useState< 'email_change' | 'verification' | null >( () => {
+		const { newEmailResult, verified } = getEmailVerificationParams();
+
+		if ( newEmailResult === '1' ) {
+			return 'email_change';
+		}
+		if ( verified === '1' ) {
+			return 'verification';
+		}
+
+		return null;
+	} );
 
 	const isEmailPending = userData.user_email_change_pending;
 	const pendingEmail = userData.new_user_email;
 
-	// Handle verification success/error
 	useEffect( () => {
-		if ( typeof window === 'undefined' ) {
-			return;
-		}
-
-		const params = new URLSearchParams( window.location.search );
-		const newEmailResult = params.get( 'new_email_result' );
-		const verified = params.get( 'verified' );
+		const { newEmailResult, verified } = getEmailVerificationParams();
 
 		// Handle error cases
 		if ( newEmailResult === '0' || verified === '0' ) {
@@ -34,25 +69,10 @@ export default function EmailVerificationBanner() {
 				__( 'The email verification link is invalid or has expired. Please request a new one.' ),
 				{ type: 'snackbar' }
 			);
-
-			// Clean up URL params
-			params.delete( 'new_email_result' );
-			params.delete( 'verified' );
-			const newUrl =
-				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
-			window.history.replaceState( {}, '', newUrl );
 		}
 
-		// Handle success cases
-		else if ( newEmailResult === '1' || verified === '1' ) {
-			setShowSuccessNotice( true );
-
-			// Clean up URL params
-			params.delete( 'new_email_result' );
-			params.delete( 'verified' );
-			const newUrl =
-				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
-			window.history.replaceState( {}, '', newUrl );
+		if ( newEmailResult || verified ) {
+			cleanUpEmailVerificationParams();
 		}
 	}, [ createErrorNotice ] );
 
@@ -87,10 +107,8 @@ export default function EmailVerificationBanner() {
 	};
 
 	if ( showSuccessNotice ) {
-		// Check URL params to determine the message type
-		const params = new URLSearchParams( window.location.search );
-		const wasEmailChange = params.get( 'new_email_result' ) === '1'; // Users changing their email and verifying the new one
-		const wasVerification = params.get( 'verified' ) === '1'; //  New users verifying their email for the first time
+		const wasEmailChange = verificationType === 'email_change';
+		const wasVerification = verificationType === 'verification';
 
 		let title;
 		if ( wasEmailChange ) {

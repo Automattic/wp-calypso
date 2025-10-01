@@ -37,12 +37,10 @@ const mockPendingUserData = {
 };
 
 const renderWithUserData = ( userData = mockUserSettings ) => {
-	// Mock the API response
+	// Mock the API response for resend email mutation
 	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, userData );
 
-	const result = render( <EmailVerificationBanner /> );
-
-	result.queryClient.setQueryData( [ 'me', 'settings' ], userData );
+	const result = render( <EmailVerificationBanner userData={ userData } /> );
 
 	return result;
 };
@@ -100,9 +98,12 @@ describe( 'EmailVerificationBanner', () => {
 		} );
 	} );
 
-	it( 'shows error notice for failed verification', async () => {
+	it.each( [
+		{ param: 'new_email_result=0', description: 'email change verification' },
+		{ param: 'verified=0', description: 'initial email verification' },
+	] )( 'shows error notice for failed $description', async ( { param } ) => {
 		Object.defineProperty( window, 'location', {
-			value: { search: '?new_email_result=0', pathname: '/test' },
+			value: { search: `?${ param }`, pathname: '/test' },
 			writable: true,
 		} );
 
@@ -116,7 +117,7 @@ describe( 'EmailVerificationBanner', () => {
 		} );
 	} );
 
-	it( 'shows success notice for successful verification', async () => {
+	it( 'shows success notice for successful email change verification', async () => {
 		Object.defineProperty( window, 'location', {
 			value: { search: '?new_email_result=1', pathname: '/test' },
 			writable: true,
@@ -126,6 +127,29 @@ describe( 'EmailVerificationBanner', () => {
 
 		await waitFor( () => {
 			expect( screen.getByText( 'Email address updated' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Update domain contacts' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					'Make sure you update your contact information for any registered domains.'
+				)
+			).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'shows success notice for initial email verification', async () => {
+		Object.defineProperty( window, 'location', {
+			value: { search: '?verified=1', pathname: '/test' },
+			writable: true,
+		} );
+
+		renderWithUserData();
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Email verified' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Update domain contacts' ) ).not.toBeInTheDocument();
+			expect(
+				screen.getByText( 'Your email address has been verified successfully.' )
+			).toBeInTheDocument();
 		} );
 	} );
 } );
