@@ -15,25 +15,10 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	flowAllowsMultipleDomainsInCart: boolean;
 };
 
-const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
-
-const getSessionStorageQuery = () => {
-	try {
-		return sessionStorage.getItem( SESSION_STORAGE_QUERY_KEY ) ?? '';
-	} catch {
-		return '';
-	}
-};
-
-const setSessionStorageQuery = ( query: string ) => {
-	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
-};
-
 const DomainSearchWithCart = ( {
 	currentSiteId,
 	currentSiteUrl,
 	flowName,
-	initialQuery: externalInitialQuery,
 	config: externalConfig,
 	isFirstDomainFreeForFirstYear,
 	flowAllowsMultipleDomainsInCart,
@@ -45,23 +30,11 @@ const DomainSearchWithCart = ( {
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
-		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
+		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
 		onAddDomainToCart,
 	} );
-
-	const initialQuery = useMemo( () => {
-		if ( externalInitialQuery ) {
-			return externalInitialQuery;
-		}
-
-		if ( currentSiteUrl ) {
-			return new URL( currentSiteUrl ).host.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
-		}
-
-		return getSessionStorageQuery();
-	}, [ externalInitialQuery, currentSiteUrl ] );
 
 	const cartItemsLength = cart.items.length;
 
@@ -80,7 +53,7 @@ const DomainSearchWithCart = ( {
 		return {
 			...props.events,
 			onQueryChange: ( query: string ) => {
-				setSessionStorageQuery( query );
+				props.events?.onQueryChange?.( query );
 			},
 			onContinue: () => {
 				props.events?.onContinue?.( items );
@@ -95,7 +68,6 @@ const DomainSearchWithCart = ( {
 			config={ config }
 			cart={ cart }
 			events={ events }
-			initialQuery={ initialQuery }
 		/>
 	);
 };
