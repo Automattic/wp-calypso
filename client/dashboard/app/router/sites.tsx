@@ -34,6 +34,7 @@ import {
 	siteWordPressVersionQuery,
 	queryClient,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -64,7 +65,9 @@ export const sitesRoute = createRoute( {
 	path: 'sites',
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() );
+		}
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),

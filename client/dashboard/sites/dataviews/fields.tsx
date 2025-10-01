@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import SiteIcon from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
@@ -31,6 +32,7 @@ export function getDefaultFields(): Field< Site >[] {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
+			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'URL',
@@ -70,6 +72,7 @@ export function getDefaultFields(): Field< Site >[] {
 				operators: [ 'isAny' as Operator ],
 			},
 			render: ( { item } ) => <Status site={ item } />,
+			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'wp_version',
