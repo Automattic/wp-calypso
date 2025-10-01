@@ -3,7 +3,6 @@ import { performanceProfilerPagesQuery, siteBySlugQuery } from '@automattic/api-
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
@@ -77,7 +76,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	return (
 		<PageLayout>
 			<PageHeader
-				title={ __( 'Performance' ) }
 				description={
 					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
 				}
@@ -121,7 +119,7 @@ function SitePerformance() {
 		<HostingFeatureGatedWithCallout
 			site={ site }
 			feature={ HostingFeatures.PERFORMANCE }
-			overlay={ <PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> } /> }
+			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getPerformanceCalloutProps() }
 		>
 			<SitePerformanceContent site={ site } />
