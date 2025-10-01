@@ -31,7 +31,7 @@ function BackupCardFailed( { site, backup }: { site: Site; backup?: SiteActivity
 	const description = backup
 		? sprintf(
 				/* translators: %s: time since last successful backup, e.g. '2h ago' */
-				__( 'Last successful backup is %s old.' ),
+				__( 'Last successful backup was %s.' ),
 				timeSinceLastSuccessful
 		  )
 		: 'No successful backups found.';
@@ -63,7 +63,7 @@ function BackupCardSuccess( { site, lastBackup }: { site: Site; lastBackup: Site
 }
 
 function BackupCardContent( { site }: { site: Site } ) {
-	const { data: lastBackup } = useQuery( {
+	const { data: lastBackup, isLoading } = useQuery( {
 		...siteActivityLogQuery( site.ID, {
 			name: [ ...SUCCESSFUL_BACKUP_ACTIVITIES, ...FAILED_BACKUP_ACTIVITIES ],
 			number: 1,
@@ -78,7 +78,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 		enabled: !! lastBackup && FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ),
 	} );
 
-	if ( lastBackup === undefined ) {
+	if ( isLoading && lastBackup === undefined ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
