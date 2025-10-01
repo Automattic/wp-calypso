@@ -78,6 +78,8 @@ export function BackupsListPage() {
 						siteSlug,
 						rewindId: backup.rewind_id,
 					},
+					// The following preserves the existing query string.
+					search: ( query: Record< string, string > ) => query,
 					replace,
 				} );
 			} else {
@@ -86,6 +88,8 @@ export function BackupsListPage() {
 					params: {
 						siteSlug,
 					},
+					// The following preserves the existing query string.
+					search: ( query: Record< string, string > ) => query,
 					replace,
 				} );
 			}
