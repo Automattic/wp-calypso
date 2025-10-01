@@ -58,7 +58,7 @@ export default function CoreMetricsChart( {
 	const formatUnit = ( value: number | string ) => {
 		const num = parseFloat( value as string );
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return +( num / 1000 ).toFixed( 2 );
+			return Number( num / 1000 ).toFixed( 2 );
 		}
 		return num;
 	};
