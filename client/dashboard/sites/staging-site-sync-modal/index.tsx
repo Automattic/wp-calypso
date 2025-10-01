@@ -569,13 +569,9 @@ function StagingSiteSyncModalInner( {
 
 export default function StagingSiteSyncModal( props: StagingSiteSyncModalProps ) {
 	const locale = useLocale();
-	const notices = {
-		showError: () => {},
-		showSuccess: () => {},
-	};
 
 	return (
-		<FileBrowserProvider locale={ locale } notices={ notices }>
+		<FileBrowserProvider locale={ locale }>
 			<StagingSiteSyncModalInner { ...props } />
 		</FileBrowserProvider>
 	);

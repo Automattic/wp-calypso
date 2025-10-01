@@ -3135,6 +3135,29 @@ describe( 'selectors', () => {
 
 			expect( adminUrl ).toEqual( 'https://example.wordpress.com/wp-admin/customize.php' );
 		} );
+
+		test( 'should return the admin url with search params if they match a known calypso - wpadmin mapping', () => {
+			const adminUrl = getSiteAdminUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'upload.php',
+				{ mediaId: 19 }
+			);
+
+			expect( adminUrl ).toEqual( 'https://example.wordpress.com/wp-admin/upload.php?item=19' );
+		} );
 	} );
 
 	describe( 'getCustomizerUrl()', () => {

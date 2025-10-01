@@ -147,7 +147,7 @@ function DeploymentsList() {
 								variant="secondary"
 								__next40pxDefaultSize
 							>
-								{ __( 'Manage repositories' ) }
+								{ __( 'Go to repositories' ) }
 							</RouterLinkButton>
 							<Button
 								variant="primary"

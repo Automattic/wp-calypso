@@ -20,6 +20,7 @@ export default function () {
 	page(
 		'/media/:domain/:mediaId',
 		siteSelection,
+		redirectIfDuplicatedView( 'upload.php' ),
 		navigation,
 		mediaController.media,
 		makeLayout,

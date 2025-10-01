@@ -14,7 +14,6 @@ import {
 	useMemo,
 } from 'react';
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
-import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../lib/payment-methods';
@@ -36,6 +35,7 @@ import type {
 	CheckoutStepGroupStore,
 	StepChangedCallback,
 	MakeStepActive,
+	CheckoutPageErrorCallback,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -468,6 +468,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
+	onPageLoadError,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
 	const { actions } = useContext( CheckoutStepGroupContext );
@@ -480,7 +481,6 @@ export const CheckoutStep = ( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const makeStepActive = useMakeStepActive();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
@@ -650,12 +650,14 @@ export function CheckoutFormSubmit( {
 	submitButtonFooter,
 	disableSubmitButton,
 	submitButton,
+	onPageLoadError,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
 	submitButton?: ReactNode;
+	onPageLoadError?: CheckoutPageErrorCallback;
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
@@ -663,7 +665,6 @@ export function CheckoutFormSubmit( {
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
 	);
-	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
 		( error: Error ) => onPageLoadError?.( 'submit_button_load', error ),
 		[ onPageLoadError ]
@@ -1179,8 +1180,14 @@ export function CheckoutStepGroup( {
 	);
 }
 
-const paymentMethodStepProps = getDefaultPaymentMethodStep();
 export function PaymentMethodStep( props: Partial< CheckoutStepProps > ) {
+	const paymentMethodStepProps = useMemo(
+		() =>
+			getDefaultPaymentMethodStep( {
+				onPageLoadError: props.onPageLoadError,
+			} ),
+		[ props.onPageLoadError ]
+	);
 	return <CheckoutStep { ...{ ...paymentMethodStepProps, ...props } } />;
 }
 PaymentMethodStep.isCheckoutStep = true;

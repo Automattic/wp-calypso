@@ -20,6 +20,9 @@ const setSurvicateVisitorTraits = () => {
 		recordTracksEvent( 'calypso_survicate_user_not_available_error', {
 			user_exists: !! user,
 			user_has_email: !! ( user && user.email ),
+			referrer: document.referrer || '',
+			pathname: window.location.pathname || '',
+			hostname: window.location.hostname || '',
 		} );
 
 		return;
