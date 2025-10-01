@@ -3,8 +3,13 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { WPCOM_OPTION_KEYS, WPCOM_TITLES, WPCOM_DESCRIPTIONS } from '../../extras-config';
-import { ExtrasToggleCard } from '../index';
+import {
+	WPCOM_OPTION_KEYS,
+	WPCOM_TITLES,
+	WPCOM_DESCRIPTIONS,
+	WpcomOptionKey,
+} from '../../extras-config';
+import { ExtrasToggleCard, ExtrasToggleCardProps } from '../index';
 import type { WpcomNotificationSettings } from '@automattic/api-core';
 
 const mockOnMutate = jest.fn();
@@ -26,13 +31,15 @@ describe( 'ExtrasToggleCard', () => {
 		mockOnMutate.mockClear();
 	} );
 
-	const renderExtrasToggleCard = ( props = {} ) => {
+	const renderExtrasToggleCard = (
+		props: Partial< ExtrasToggleCardProps< WpcomOptionKey > > = {}
+	) => {
 		return render(
 			<ExtrasToggleCard
 				extraSettings={ defaultExtraSettings }
 				isSaving={ false }
 				onMutate={ mockOnMutate }
-				optionKeys={ WPCOM_OPTION_KEYS }
+				optionKeys={ WPCOM_OPTION_KEYS as readonly WpcomOptionKey[] }
 				titles={ WPCOM_TITLES }
 				descriptions={ WPCOM_DESCRIPTIONS }
 				sectionTitle="Test Section"
@@ -42,9 +49,9 @@ describe( 'ExtrasToggleCard', () => {
 	};
 
 	it( 'renders section title', () => {
-		renderExtrasToggleCard();
+		renderExtrasToggleCard( { sectionTitle: 'Test Section Title' } );
 
-		expect( screen.getByText( 'Test Section' ) ).toBeVisible();
+		expect( screen.getByText( 'Test Section Title' ) ).toBeVisible();
 	} );
 
 	it( 'renders section description when provided', () => {
