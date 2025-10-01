@@ -39,4 +39,9 @@
 			margin: 40px 0 20px;
 		}
 	}
+
+	// Override the opacity of the action buttons to make them always visible.
+	.dataviews-view-table .dataviews-item-actions .components-button:not(.dataviews-all-actions-button) {
+		opacity: 1;
+	}
 }
