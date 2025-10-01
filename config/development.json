@@ -117,6 +117,7 @@
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
+		"mcp-settings": true,
 		"marketing-force-facebook-display": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,

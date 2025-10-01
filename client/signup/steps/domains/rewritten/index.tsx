@@ -1,13 +1,21 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { isDomainForGravatarFlow, isEcommerceFlow, isFreeFlow } from '@automattic/onboarding';
+import {
+	isDomainForGravatarFlow,
+	isEcommerceFlow,
+	isFreeFlow,
+	isWithThemeFlow,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
-import { localize } from 'i18n-calypso';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { localize, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -15,7 +23,7 @@ import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/pa
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
 
@@ -47,13 +55,24 @@ const DomainSearchUI = (
 		queryObject,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
+		previousStepName,
+		goBack,
 	} = props;
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
+	const siteSlug = queryObject.siteSlug;
+	const currentSiteUrl = siteSlug ? `https://${ siteSlug }` : undefined;
+
+	const { query, setQuery } = useQueryHandler( {
+		initialQuery: queryObject.new,
+		currentSiteUrl,
+	} );
+
 	const events = useMemo( () => {
 		return {
+			onQueryChange: setQuery,
 			onAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -84,6 +103,7 @@ const DomainSearchUI = (
 					getStepUrl( flowName, stepName, USE_MY_DOMAIN_SECTION_NAME, locale, {
 						step: useMyDomainInputMode.domainInput,
 						initialQuery: initialQuery,
+						siteSlug,
 					} )
 				);
 			},
@@ -129,8 +149,6 @@ const DomainSearchUI = (
 				goToNextStep();
 			},
 			onSkip( suggestion?: FreeDomainSuggestion ) {
-				const siteUrl = suggestion?.domain_name.replace( '.wordpress.com', '' );
-
 				submitSignupStep(
 					{
 						...baseSubmitStepProps,
@@ -138,7 +156,7 @@ const DomainSearchUI = (
 						domainItem: undefined,
 						isPurchasingItem: false,
 						domainCart: [],
-						siteUrl,
+						siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
 					},
 					{
 						...baseSubmitProvidedDependencies,
@@ -146,7 +164,7 @@ const DomainSearchUI = (
 							? SIGNUP_DOMAIN_ORIGIN.FREE
 							: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
 						domainCart: [],
-						siteUrl,
+						siteUrl: suggestion?.domain_name,
 					}
 				);
 
@@ -156,6 +174,8 @@ const DomainSearchUI = (
 	}, [
 		flowName,
 		stepName,
+		siteSlug,
+		setQuery,
 		submitSignupStep,
 		goToNextStep,
 		locale,
@@ -182,43 +202,55 @@ const DomainSearchUI = (
 			},
 			allowedTlds,
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
-			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
+			skippable:
+				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
-			allowsUsingOwnDomain:
-				! isDomainForGravatarFlow( flowName ) &&
-				! isOnboardingWithEmailFlow &&
-				! isFreeFlow( flowName ),
+			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
+				if (
+					isDomainOnlyFlow ||
+					isDomainForGravatarFlow( flowName ) ||
+					isFreeFlow( flowName ) ||
+					isOnboardingWithEmailFlow
+				) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo />;
 			},
 			BeforeFullCartItems: () => {
-				if ( isDomainForGravatarFlow( flowName ) || isFreeFlow( flowName ) ) {
+				if (
+					isDomainOnlyFlow ||
+					isDomainForGravatarFlow( flowName ) ||
+					isFreeFlow( flowName ) ||
+					isOnboardingWithEmailFlow
+				) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
 	const headerText = useMemo( () => {
+		if ( isOnboardingWithEmailFlow ) {
+			return __( 'Choose a domain for your Professional Email' );
+		}
+
 		if ( isDomainForGravatarFlow( flowName ) ) {
 			return __( 'Choose a domain' );
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flowName ] );
+	}, [ flowName, isOnboardingWithEmailFlow ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( isDomainForGravatarFlow( flowName ) ) {
@@ -228,23 +260,90 @@ const DomainSearchUI = (
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flowName ] );
 
+	const translate = useTranslate();
+	const userSiteCount = useSelector( getCurrentUserSiteCount );
+
+	const { hideBack, backUrl, backLabelText } = useMemo( () => {
+		let backUrl;
+		let backLabelText;
+
+		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' ) && ! goBack;
+
+		const hideBack = flowName === 'domain' || shouldHideBack;
+
+		const [ sitesBackLabelText, defaultBackUrl ] =
+			userSiteCount && userSiteCount === 1
+				? [ translate( 'Back to My Home' ), '/home' ]
+				: [ translate( 'Back to sites' ), '/sites' ];
+
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			backUrl = null;
+			backLabelText = null;
+		} else if ( 'with-plugin' === flowName ) {
+			backUrl = '/plugins';
+			backLabelText = translate( 'Back to plugins' );
+		} else if ( isWithThemeFlow( flowName ) ) {
+			backUrl = '/themes';
+			backLabelText = translate( 'Back to themes' );
+		} else if ( 'plans-first' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
+		} else {
+			backUrl = defaultBackUrl;
+			backLabelText = sitesBackLabelText;
+
+			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
+			if ( backTo && isRelativeUrl( backTo ) ) {
+				backUrl = backTo;
+				backLabelText = translate( 'Back' );
+			}
+		}
+
+		return {
+			hideBack,
+			backUrl,
+			backLabelText,
+		};
+	}, [ flowName, previousStepName, goBack, userSiteCount, translate ] );
+
+	const getUseDomainIOwnLink = () => {
+		if ( ! query || ! config.allowsUsingOwnDomain ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="step-wrapper__navigation-link forward"
+				onClick={ () => events.onExternalDomainClick( query ) }
+				variant="link"
+			>
+				<span>{ __( 'Use a domain I already own' ) }</span>
+			</Button>
+		);
+	};
+
 	return (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
 			hideSkip
+			customizedActionButtons={ getUseDomainIOwnLink() }
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
+			hideBack={ hideBack }
+			backUrl={ backUrl }
+			backLabelText={ backLabelText }
 			isWideLayout
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"
 					flowName={ flowName }
-					initialQuery={ queryObject.new }
+					query={ query }
+					currentSiteUrl={ currentSiteUrl }
 					events={ events }
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
+					isFirstDomainFreeForFirstYear={ ! isFreeFlow( flowName ) }
 				/>
 			}
 		/>
@@ -282,7 +381,7 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 	const baseSubmitProvidedDependencies = useMemo( () => {
 		if ( themeSlug ) {
 			return {
-				useThemeHeadstartItem: true,
+				useThemeHeadstart: true,
 			};
 		}
 

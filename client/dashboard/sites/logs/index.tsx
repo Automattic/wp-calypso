@@ -98,20 +98,21 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	return (
 		<PageLayout
 			header={
-				<VStack as="div" spacing={ 0 } direction="row" alignment="end">
-					<PageHeader title={ __( 'Logs' ) } />
-
-					{ shouldShowDateRangePicker && (
-						<DateRangePicker
-							start={ dateRange.start }
-							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
-							timezoneString={ timezoneString }
-							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
-						/>
-					) }
-				</VStack>
+				<PageHeader
+					title={ __( 'Logs' ) }
+					actions={
+						shouldShowDateRangePicker ? (
+							<DateRangePicker
+								start={ dateRange.start }
+								end={ dateRange.end }
+								gmtOffset={ gmtOffset }
+								timezoneString={ timezoneString }
+								locale={ locale }
+								onChange={ handleDateRangeChangeWrapper }
+							/>
+						) : undefined
+					}
+				/>
 			}
 		>
 			<VStack as="div" spacing={ 3 }>

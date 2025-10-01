@@ -115,7 +115,7 @@ export interface ActivityLogParams {
 	number?: number;
 	not_group?: string;
 	group?: string[];
-	name?: string;
+	name?: string[];
 	text_search?: string;
 }
 
