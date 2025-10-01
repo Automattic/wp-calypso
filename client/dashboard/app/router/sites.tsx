@@ -489,24 +489,6 @@ export const siteDomainsRoute = createRoute( {
 	)
 );
 
-export const siteEmailsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Emails' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'emails',
-} ).lazy( () =>
-	import( '../../sites/emails' ).then( ( d ) =>
-		createLazyRoute( 'site-emails' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const sitePerformanceRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1184,15 +1166,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	if ( config.supports.sites.emails ) {
-		siteRoutes.push( siteEmailsRoute );
-	}
-
 	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
-	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
 }
