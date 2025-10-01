@@ -1,3 +1,4 @@
+import type { Site } from '@automattic/api-core';
 export type Weekday =
 	| 'Monday'
 	| 'Tuesday'
@@ -15,3 +16,13 @@ export type ScheduleCollisions = {
 	timeCollisions: { error: string; collidingSiteIds: number[] };
 	pluginCollisions: { error: string; collidingSiteIds: number[] };
 };
+
+export interface ScheduledUpdateRow {
+	id: string;
+	site: Site;
+	lastUpdate: number | null;
+	nextUpdate: number;
+	active: boolean;
+	schedule: Frequency;
+	scheduleId: string;
+}
