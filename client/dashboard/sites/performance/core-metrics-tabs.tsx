@@ -1,3 +1,4 @@
+import { Metrics } from '@automattic/api-core';
 import { Tabs } from '@automattic/components/src/tabs';
 import {
 	__experimentalText as Text,
@@ -5,7 +6,7 @@ import {
 	Card,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { metricsNames, mapThresholdsToStatus, Metrics } from '../../utils/site-performance';
+import { metricsNames, mapThresholdsToStatus } from '../../utils/site-performance';
 import { OverallScore, MetricScore } from './core-metrics-score';
 import type { PerformanceReport } from '@automattic/api-core';
 
