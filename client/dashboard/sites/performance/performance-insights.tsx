@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { PerformanceMetricsItemQueryResponse } from './core-metrics';
 import { metricsNames, Metrics } from './utils';
@@ -103,23 +103,32 @@ export default function PerformanceInsights( {
 		onFilterChange( item.key as Metrics );
 	};
 
-	const options: CustomSelectControlOption[] = Object.keys( metricsNames ).map(
-		( key: string ) => ( {
-			name: metricsNames[ key as Metrics ]?.name,
-			key: key as Metrics,
+	const options: CustomSelectControlOption[] = Object.keys( metricsNames ).map( ( key: string ) => {
+		const metricKey = key as Metrics;
+		let label = metricsNames[ metricKey ]?.name;
+
+		if ( metricKey === 'overall_score' ) {
+			label = __( 'All recommendations' );
+		}
+
+		return {
+			name: label,
+			key: metricKey,
 			hint: Object.keys( audits )
-				.filter( ( auditKey ) => filterRecommendations( key as Metrics, audits[ auditKey ] ) )
+				.filter( ( auditKey ) => filterRecommendations( metricKey, audits[ auditKey ] ) )
 				.length.toString(),
-		} )
-	);
+		};
+	} );
 
 	const getSelectedOption = useCallback( () => {
 		return options.find( ( option: CustomSelectControlOption ) => option.key === selectedFilter );
 	}, [ selectedFilter, options ] );
 
-	const filteredAudits = Object.keys( audits )
-		.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
-		.sort( sortHighImpactAudits );
+	const filteredAudits = useMemo( () => {
+		return Object.keys( audits )
+			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
+			.sort( sortHighImpactAudits );
+	}, [ audits, selectedFilter ] );
 
 	return (
 		<VStack spacing={ 4 }>
