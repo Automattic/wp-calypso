@@ -64,16 +64,6 @@ export function usePerformanceData(
 	const desktopLoaded = typeof performanceData?.pagespeed?.desktop === 'object';
 	const mobileLoaded = typeof performanceData?.pagespeed?.mobile === 'object';
 
-	const desktopScore =
-		desktopLoaded && typeof performanceData?.pagespeed.desktop === 'object'
-			? Math.round( performanceData.pagespeed.desktop.overall_score * 100 )
-			: undefined;
-
-	const mobileScore =
-		mobileLoaded && typeof performanceData?.pagespeed.mobile === 'object'
-			? Math.round( performanceData.pagespeed.mobile.overall_score * 100 )
-			: undefined;
-
 	const desktopReport =
 		typeof performanceData?.pagespeed?.desktop === 'object'
 			? performanceData.pagespeed.desktop
@@ -88,8 +78,8 @@ export function usePerformanceData(
 		hash: token,
 		mobileReport,
 		desktopReport,
-		desktopScore,
-		mobileScore,
+		desktopScore: desktopLoaded && performanceData?.pagespeed.desktop?.overall_score,
+		mobileScore: mobileLoaded && performanceData?.pagespeed.mobile?.overall_score,
 		desktopLoaded,
 		mobileLoaded,
 		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,

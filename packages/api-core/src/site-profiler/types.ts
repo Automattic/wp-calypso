@@ -37,8 +37,8 @@ export interface PerformanceProfilerPage {
 export interface UrlPerformanceInsights {
 	pagespeed: {
 		status: string;
-		mobile: PerformanceReport | string;
-		desktop: PerformanceReport | string;
+		mobile: PerformanceReport;
+		desktop: PerformanceReport;
 	};
 	wpscan: {
 		status: string;

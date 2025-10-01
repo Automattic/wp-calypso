@@ -89,3 +89,23 @@ export const getColorForStatus = ( status: Valuation ): string => {
 	}
 	return 'var(--dashboard__foreground-color-success)';
 };
+
+export const getStatusText = ( status: Valuation ): string => {
+	const statusMap: Record< Valuation, string > = {
+		bad: __( 'Poor' ),
+		needsImprovement: __( 'Needs improvement' ),
+		good: __( 'Excellent' ),
+	};
+
+	return statusMap[ status ];
+};
+
+export const getStatusIntent = ( status: Valuation ): 'error' | 'warning' | 'success' => {
+	const statusMap: Record< Valuation, 'error' | 'warning' | 'success' > = {
+		bad: 'error',
+		needsImprovement: 'warning',
+		good: 'success',
+	};
+
+	return statusMap[ status ];
+};
