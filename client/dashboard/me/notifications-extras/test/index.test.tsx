@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import Snackbars from '../../../app/snackbars';
@@ -119,19 +119,26 @@ describe( 'NotificationsExtras', () => {
 		);
 
 		await waitFor( () => {
-			expect( screen.getAllByLabelText( 'Suggestions' )[ 0 ] ).toBeVisible();
+			expect( screen.getByText( 'Email from WordPress.com' ) ).toBeVisible();
 		} );
 
-		// WordPress.com options
-		expect( screen.getAllByLabelText( 'Suggestions' )[ 0 ] ).toBeVisible();
-		expect( screen.getAllByLabelText( 'Research' )[ 0 ] ).toBeVisible();
-		expect( screen.getByLabelText( 'Community' ) ).toBeVisible();
-		expect( screen.getAllByLabelText( 'Promotions' )[ 0 ] ).toBeVisible();
-		expect( screen.getAllByLabelText( 'Newsletter' )[ 0 ] ).toBeVisible();
-		expect( screen.getByLabelText( 'Digests' ) ).toBeVisible();
-		expect( screen.getAllByLabelText( 'Reports' )[ 0 ] ).toBeVisible();
-		expect( screen.getByLabelText( 'Developer Newsletter' ) ).toBeVisible();
-		expect( screen.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
+		// Get the WordPress.com section and scope assertions within it
+		const wpcomSection = screen
+			.getByRole( 'heading', { name: 'Email from WordPress.com' } )
+			.closest( '[class*="card"]' );
+		expect( wpcomSection ).toBeInTheDocument();
+
+		// TypeScript assertion: we know this is an HTMLElement since the test above passed
+		const wpcomSectionQueries = within( wpcomSection as HTMLElement );
+		expect( wpcomSectionQueries.getByLabelText( 'Suggestions' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Research' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Community' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Promotions' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Newsletter' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Digests' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Reports' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Developer Newsletter' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
 	} );
 
 	it( 'displays all Jetpack notification options', async () => {
@@ -145,15 +152,22 @@ describe( 'NotificationsExtras', () => {
 		);
 
 		await waitFor( () => {
-			expect( screen.getAllByLabelText( 'Suggestions' ) ).toHaveLength( 2 ); // One for WordPress.com, one for Jetpack
+			expect( screen.getByText( 'Email from Jetpack' ) ).toBeVisible();
 		} );
 
-		// Jetpack options (there should be 2 of each label - one for WordPress.com section, one for Jetpack section)
-		expect( screen.getAllByLabelText( 'Suggestions' ) ).toHaveLength( 2 );
-		expect( screen.getAllByLabelText( 'Research' ) ).toHaveLength( 2 );
-		expect( screen.getAllByLabelText( 'Promotions' ) ).toHaveLength( 2 );
-		expect( screen.getAllByLabelText( 'Newsletter' ) ).toHaveLength( 2 );
-		expect( screen.getAllByLabelText( 'Reports' ) ).toHaveLength( 2 );
+		// Get the Jetpack section and scope assertions within it
+		const jetpackSection = screen
+			.getByRole( 'heading', { name: 'Email from Jetpack' } )
+			.closest( '[class*="card"]' );
+		expect( jetpackSection ).toBeInTheDocument();
+
+		// TypeScript assertion: we know this is an HTMLElement since the test above passed
+		const jetpackSectionQueries = within( jetpackSection as HTMLElement );
+		expect( jetpackSectionQueries.getByLabelText( 'Suggestions' ) ).toBeVisible();
+		expect( jetpackSectionQueries.getByLabelText( 'Research' ) ).toBeVisible();
+		expect( jetpackSectionQueries.getByLabelText( 'Promotions' ) ).toBeVisible();
+		expect( jetpackSectionQueries.getByLabelText( 'Newsletter' ) ).toBeVisible();
+		expect( jetpackSectionQueries.getByLabelText( 'Reports' ) ).toBeVisible();
 	} );
 
 	it( 'shows current settings correctly', async () => {
