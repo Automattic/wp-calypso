@@ -4,11 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 
-export type ScreenShotsTimeLine = {
-	data: string;
-	timing: number;
-};
-
 const Container = styled.div`
 	width: 100%;
 	box-sizing: border-box;
