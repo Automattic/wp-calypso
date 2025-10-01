@@ -28,6 +28,8 @@ export default function HostingDashboardOptInBanner() {
 	const savedPreference = useSelector(
 		( state ) => getPreference( state, 'hosting-dashboard-opt-in' ) as HostingDashboardOptIn | null
 	);
+	const hasOptedIn = savedPreference?.value === 'opt-in';
+	const hasOptedOut = savedPreference?.value === 'opt-out';
 
 	const isFetching = useSelector( isFetchingPreferences );
 	const isSaving = useSelector( isSavingPreference );
@@ -36,6 +38,11 @@ export default function HostingDashboardOptInBanner() {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const handleClick = async () => {
+		if ( hasOptedIn ) {
+			window.location.href = '/v2';
+			return;
+		}
+
 		setIsSubmitting( true );
 
 		dispatch( recordTracksEvent( 'calypso_hosting_dashboard_opt_in_banner_click' ) );
@@ -59,7 +66,7 @@ export default function HostingDashboardOptInBanner() {
 		}
 	};
 
-	if ( isFetching || savedPreference?.value === 'opt-out' ) {
+	if ( isFetching || hasOptedOut ) {
 		return null;
 	}
 
@@ -72,7 +79,9 @@ export default function HostingDashboardOptInBanner() {
 						<img src={ illustratioUrl } alt="illustration" />
 						<VStack spacing={ 1 }>
 							<Text as="p" weight={ 500 }>
-								{ translate( 'Your dashboard, simplified' ) }
+								{ hasOptedIn && ! isSubmitting
+									? translate( 'Looking for your new dashboard?' )
+									: translate( 'Your dashboard, simplified' ) }
 							</Text>
 							<Text as="p" variant="muted">
 								{ translate( 'Try an easier way to manage your sites and hosting features.' ) }
@@ -85,7 +94,9 @@ export default function HostingDashboardOptInBanner() {
 								isBusy={ isSubmitting && isSaving }
 								onClick={ handleClick }
 							>
-								{ translate( 'Try it out' ) }
+								{ hasOptedIn && ! isSubmitting
+									? translate( 'Go to new dashboard' )
+									: translate( 'Try it out' ) }
 							</Button>
 						</div>
 					</VStack>
