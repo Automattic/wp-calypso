@@ -63,7 +63,8 @@ const { data: currentVersion } = useSuspenseQuery( sitePHPVersionQuery( site.ID 
 as well as data that are specific to a component that you want to load dynamically:
 
 ```typescript
-const { data: siteContentSummary, isLoading } = useQuery(
-	siteResetContentSummaryQuery( site.ID )
-);
+const { data: isEdgeCacheActive } = useQuery( {
+	...siteEdgeCacheStatusQuery( site.ID ),
+	enabled: hasHostingFeature( site, HostingFeatures.CACHING ),
+} );
 ```
