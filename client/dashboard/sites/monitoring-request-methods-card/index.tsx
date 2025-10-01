@@ -89,12 +89,14 @@ export default function MonitoringRequestMethodsCard( {
 		<MonitoringCard
 			title={ __( 'HTTP request methods' ) }
 			description={ __( 'Percentage of traffic per HTTP request method.' ) }
-			onDownloadClick={ () => {} }
-			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
-			<Legend chartId="request-methods-chart" items={ mapDataForLegend( data ) } />
+			<Legend
+				chartId="request-methods-chart"
+				items={ mapDataForLegend( data ) }
+				className="dashboard-monitoring-card--legend"
+			/>
 			<HStack alignment="center">
 				<PieChart
 					chartId="request-methods-chart"
@@ -103,6 +105,7 @@ export default function MonitoringRequestMethodsCard( {
 					size={ 300 }
 					data={ data }
 					showLabels={ false }
+					withTooltips
 				/>
 			</HStack>
 		</MonitoringCard>

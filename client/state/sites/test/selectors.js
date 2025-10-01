@@ -3135,6 +3135,53 @@ describe( 'selectors', () => {
 
 			expect( adminUrl ).toEqual( 'https://example.wordpress.com/wp-admin/customize.php' );
 		} );
+
+		test( 'should return the admin url with search params if they match a known calypso - wpadmin mapping', () => {
+			const adminUrl = getSiteAdminUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'upload.php',
+				{ mediaId: 19 }
+			);
+
+			expect( adminUrl ).toEqual( 'https://example.wordpress.com/wp-admin/upload.php?item=19' );
+		} );
+		test( 'should return the admin url with any existing search params preserved', () => {
+			const adminUrl = getSiteAdminUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'edit.php?post_type=page',
+				{ status: 'drafts' }
+			);
+
+			expect( adminUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/edit.php?post_type=page&post_status=draft'
+			);
+		} );
 	} );
 
 	describe( 'getCustomizerUrl()', () => {
