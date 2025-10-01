@@ -1,5 +1,6 @@
 import { userSettingsQuery, resendEmailVerificationMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -82,11 +83,7 @@ export default function EmailVerificationBanner() {
 				variant="success"
 				title={ __( 'Email address updated' ) }
 				onClose={ () => setShowSuccessNotice( false ) }
-				actions={
-					<Button variant="link" href="/v2/domains/">
-						{ __( 'Update domain contacts' ) }
-					</Button>
-				}
+				actions={ <Link to="/domains/">{ __( 'Update domain contacts' ) }</Link> }
 			>
 				{ __( 'Make sure you update your contact information for any registered domains.' ) }
 			</Notice>
