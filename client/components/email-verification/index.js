@@ -10,12 +10,13 @@ import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-host
  */
 
 export default function emailVerification( context, next ) {
-	const showVerifiedNotice = '1' === context.query.verified;
-	const showNewEmailNotice = '1' === context.query.new_email_result;
+	const newEmailResult = context.query.new_email_result;
+	const hasValidNewEmailResult = newEmailResult === '1' || newEmailResult === '0';
 
 	// Redirect email verification to v2 for users who have opted into the new Hosting Dashboard
+	// /me/account?new_email_result=1 (or 0) --> /v2/me/profile?new_email_result=1
 	if (
-		showNewEmailNotice &&
+		hasValidNewEmailResult &&
 		( context.pathname === '/me/account' || context.pathname === '/settings/account' )
 	) {
 		let state = context.store.getState();
@@ -49,6 +50,9 @@ export default function emailVerification( context, next ) {
 			return;
 		}
 	}
+
+	const showVerifiedNotice = '1' === context.query.verified;
+	const showNewEmailNotice = '1' === context.query.new_email_result;
 
 	if ( showVerifiedNotice ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'verified' ) );
