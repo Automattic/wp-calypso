@@ -38,7 +38,7 @@ export default function getSiteAdminUrl(
 
 	Object.entries( params ).forEach( ( [ key, value ] ) => {
 		const wpAdminSearchParam = CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS.get( key );
-		if ( wpAdminSearchParam ) {
+		if ( wpAdminSearchParam && typeof value !== 'undefined' ) {
 			const mappedValue = CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_VALUES.get( value );
 			searchParams.set( wpAdminSearchParam, mappedValue ?? value );
 		}
