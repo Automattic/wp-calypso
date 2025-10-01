@@ -1,6 +1,6 @@
 import { githubInstallationsQuery, saveGitHubCredentialsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
@@ -60,6 +60,7 @@ const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
 };
 
 export const useInstallGithub = () => {
+	const { error: githubInstallationsError } = useQuery( githubInstallationsQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
@@ -81,13 +82,7 @@ export const useInstallGithub = () => {
 		}
 	};
 
-	const installGithub = ( {
-		onSuccess,
-		githubInstallationsError,
-	}: {
-		onSuccess: ( installationId: number ) => void;
-		githubInstallationsError: Error | null;
-	} ) => {
+	const installGithub = ( { onSuccess }: { onSuccess: ( installationId: number ) => void } ) => {
 		const openedPopup = openPopup( {
 			url:
 				githubInstallationsError?.name === 'UnauthorizedError'
