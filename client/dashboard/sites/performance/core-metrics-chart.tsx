@@ -76,55 +76,31 @@ export default function CoreMetricsChart( {
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		if ( valuation === 'good' ) {
 			return isOverall
-				? sprintf(
-						/* translators: %(to)s is the needs improvement threshold */
-						__( '(50–%(to)s)' ),
-						{ to: formatUnit( needsImprovement ) }
-				  )
-				: sprintf(
-						/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
-						__( '(%(from)s–%(to)s%(unit)s)' ),
-						{
-							from: formatUnit( good ),
-							to: formatUnit( needsImprovement ),
-							unit: displayUnit(),
-						}
-				  );
+				? sprintf( '(50–%(to)s)', { to: formatUnit( needsImprovement ) } )
+				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
+						from: formatUnit( good ),
+						to: formatUnit( needsImprovement ),
+						unit: displayUnit(),
+				  } );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
 			return isOverall
-				? sprintf(
-						/* translators: %(to)s is the needs improvement threshold */
-						__( '(50–%(to)s)' ),
-						{ to: formatUnit( needsImprovement ) }
-				  )
-				: sprintf(
-						/* translators: %(from)s is the good threshold, %(to)s is the needs improvement threshold, %(unit)s is the unit */
-						__( '(%(from)s–%(to)s%(unit)s)' ),
-						{
-							from: formatUnit( good ),
-							to: formatUnit( needsImprovement ),
-							unit: displayUnit(),
-						}
-				  );
+				? sprintf( '(50–%(to)s)', { to: formatUnit( needsImprovement ) } )
+				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
+						from: formatUnit( good ),
+						to: formatUnit( needsImprovement ),
+						unit: displayUnit(),
+				  } );
 		}
 
 		if ( valuation === 'bad' ) {
 			return isOverall
-				? sprintf(
-						/* translators: %(to)s is the bad threshold */
-						__( '(0-%(to)s)' ),
-						{ to: formatUnit( bad ) }
-				  )
-				: sprintf(
-						/* translators: %(from)s is the needs improvement threshold, %(unit)s is the unit */
-						__( '(Over %(from)s%(unit)s)' ),
-						{
-							from: formatUnit( needsImprovement ),
-							unit: displayUnit(),
-						}
-				  );
+				? sprintf( '(0-%(to)s)', { to: formatUnit( bad ) } )
+				: sprintf( '(Over %(from)s%(unit)s)', {
+						from: formatUnit( needsImprovement ),
+						unit: displayUnit(),
+				  } );
 		}
 
 		return '';
