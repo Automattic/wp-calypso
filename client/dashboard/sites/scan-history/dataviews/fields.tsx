@@ -5,20 +5,12 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useFormattedTime } from '../../../components/formatted-time';
+import { FormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
 import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-
-const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
-	const formattedTime = useFormattedTime( timestamp, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	} );
-	return <>{ formattedTime }</>;
-};
 
 const getStatusLabel = ( status: string ): string => {
 	switch ( status ) {
@@ -42,7 +34,7 @@ const getStatusIntent = ( status: string ): 'default' | 'success' | 'warning' =>
 	}
 };
 
-export function getFields(): Field< Threat >[] {
+export function getFields( timezoneString?: string, gmtOffset?: number ): Field< Threat >[] {
 	return [
 		{
 			id: 'status',
@@ -69,9 +61,7 @@ export function getFields(): Field< Threat >[] {
 			id: 'fixed_on',
 			label: __( 'Resolved on' ),
 			type: 'date',
-			filterBy: {
-				operators: [ 'on', 'before', 'after' ],
-			},
+			filterBy: false,
 			getValue: ( { item } ) => {
 				if ( ! item.fixed_on ) {
 					return '';
@@ -80,7 +70,15 @@ export function getFields(): Field< Threat >[] {
 				return formatYmd( date );
 			},
 			render: ( { item } ) =>
-				item.fixed_on ? <FormattedTime timestamp={ item.fixed_on } /> : <Text>—</Text>,
+				item.fixed_on ? (
+					<FormattedTime
+						timestamp={ item.fixed_on }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				) : (
+					<Text>—</Text>
+				),
 		},
 		{
 			id: 'threat',

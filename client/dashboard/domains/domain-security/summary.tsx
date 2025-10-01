@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Domain } from '@automattic/api-core';
@@ -13,10 +14,12 @@ export default function NameServersSettingsSummary( { domain }: { domain: Domain
 		badges.push( { text: __( 'SSL Disabled' ), intent: 'error' as const } );
 	}
 
-	if ( domain.is_dnssec_enabled ) {
-		badges.push( { text: __( 'DNSSEC enabled' ), intent: 'success' as const } );
-	} else {
-		badges.push( { text: __( 'DNSSEC disabled' ), intent: undefined } );
+	if ( DomainSubtype.DOMAIN_REGISTRATION === domain.subtype.id ) {
+		if ( domain.is_dnssec_enabled ) {
+			badges.push( { text: __( 'DNSSEC enabled' ), intent: 'success' as const } );
+		} else {
+			badges.push( { text: __( 'DNSSEC disabled' ), intent: undefined } );
+		}
 	}
 
 	return (

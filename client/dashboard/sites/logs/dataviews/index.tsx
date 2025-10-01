@@ -1,16 +1,24 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
-import { siteLogsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { siteLogsInfiniteQuery } from '@automattic/api-queries';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, Button } from '@wordpress/components';
+import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { LogsDownloader } from '../downloader';
-import { buildTimeRangeInSeconds } from '../utils';
+import {
+	buildTimeRangeInSeconds,
+	buildPhpLogsWithId,
+	buildServerLogsWithId,
+	type PhpLogWithId,
+	type ServerLogWithId,
+} from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
 import { getInitialFiltersFromSearch, getAllowedFields, filtersSignature } from './filters';
@@ -33,6 +41,8 @@ export type SiteLogsDataViewsProps = {
 	site: Site;
 };
 
+const DEFAULT_PER_PAGE = 50;
+
 function SiteLogsDataViews( {
 	logType,
 	dateRange,
@@ -46,9 +56,13 @@ function SiteLogsDataViews( {
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
+	const rafIdRef = useRef< number | null >( null );
+	const dataviewsRef = useRef< HTMLDivElement | null >( null );
+	const [ showScrollTop, setShowScrollTop ] = useState( false );
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -68,73 +82,72 @@ function SiteLogsDataViews( {
 		end: endSec,
 		filter,
 		sortOrder: view.sort?.direction,
-		pageSize: view.perPage,
+		pageSize: DEFAULT_PER_PAGE,
 	};
 
-	// This keeps a per-page cursor cache - page 1 has no cursor.
-	const cursorsRef = useRef< Map< number, string > >( new Map() );
+	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery(
+		siteLogsInfiniteQuery( site.ID, params )
+	);
 
-	// For the current page, use its cursor (or null/undefined on page 1).
-	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
-
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( site.ID, params, scrollId ) );
-
-	useEffect( () => {
-		if ( ! siteLogs ) {
+	const handleResize = useCallback( () => {
+		if ( ! dataviewsRef.current ) {
 			return;
 		}
-		const nextPage = ( view.page ?? 1 ) + 1;
-		const id = siteLogs.scroll_id;
 
-		if ( id ) {
-			cursorsRef.current.set( nextPage, id );
-		} else {
-			cursorsRef.current.delete( nextPage );
+		if ( rafIdRef.current ) {
+			cancelAnimationFrame( rafIdRef.current );
 		}
-	}, [ siteLogs, view.page ] );
+
+		rafIdRef.current = requestAnimationFrame( () => {
+			if ( ! dataviewsRef.current ) {
+				return;
+			}
+
+			const { top } = dataviewsRef.current.getBoundingClientRect();
+			const maxHeight = window.innerHeight - top - 32 - 1;
+			dataviewsRef.current.style.maxHeight = `${ maxHeight }px`;
+		} );
+	}, [] );
 
 	useEffect( () => {
 		setView( ( value ) => ( { ...value, page: 1 } ) );
-
-		// Reset pagination + cursors
-		cursorsRef.current.clear();
 	}, [ dateRangeVersion, setView ] );
 
-	const logs = useMemo( () => {
-		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = siteLogs?.logs ?? [];
+	useLayoutEffect( () => {
+		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
 
-		return items.map( ( log, index ) => {
-			if ( logType === LogType.PHP ) {
-				const php = log as PHPLog;
-				return {
-					...php,
-					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
-						index
-					) }`,
-				};
+		handleResize();
+		window.addEventListener( 'resize', handleResize );
+		window.addEventListener( 'orientationchange', handleResize );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+			window.removeEventListener( 'orientationchange', handleResize );
+
+			if ( rafIdRef.current ) {
+				cancelAnimationFrame( rafIdRef.current );
 			}
-			const server = log as ServerLog;
-			return {
-				...server,
-				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
-					server.request_url
-				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
-			};
-		} );
-	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
+		};
+	}, [ logType, handleResize ] );
 
-	const paginationInfo = {
-		totalItems: siteLogs?.total_results || 0,
-		totalPages:
-			!! siteLogs?.total_results && !! view.perPage
-				? Math.ceil( siteLogs.total_results / view.perPage )
-				: 0,
-	};
+	const phpLogs = useMemo< PhpLogWithId[] >( () => {
+		if ( logType !== LogType.PHP ) {
+			return [];
+		}
+		return buildPhpLogsWithId( ( data?.pages as Array< { logs?: PHPLog[] } > ) ?? [] );
+	}, [ data?.pages, logType ] );
 
-	const fields = useFields(
-		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
-	);
+	const serverLogs = useMemo< ServerLogWithId[] >( () => {
+		if ( logType !== LogType.SERVER ) {
+			return [];
+		}
+		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
+	}, [ data?.pages, logType ] );
+
+	const fields = useFields( { logType, timezoneString, gmtOffset } );
 
 	const onChangeView = ( next: View ) => {
 		// Disable auto-refresh when the user changes the page
@@ -182,9 +195,13 @@ function SiteLogsDataViews( {
 		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
 		window.history.replaceState( null, '', url.pathname + url.search );
 
-		// Apply view with only allowed filters; reset page/cursors if dataset changed
+		// Apply view with only allowed filters; reset page if dataset changed
 		if ( datasetChanged ) {
-			cursorsRef.current.clear();
+			// Clear prior infinite data for old sort/filter so we don't show an empty state.
+			queryClient.removeQueries( {
+				queryKey: [ 'site', site.ID, 'logs', 'infinite' ],
+				exact: false,
+			} );
 			setView( {
 				...next,
 				page: 1,
@@ -230,14 +247,58 @@ function SiteLogsDataViews( {
 		</>
 	);
 
+	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
+
+	const infiniteScrollHandler = useCallback( () => {
+		if ( hasNextPage && ! isFetchingNextPage ) {
+			fetchNextPage();
+		}
+	}, [ hasNextPage, isFetchingNextPage, fetchNextPage ] );
+
+	useEffect( () => {
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		const el = dataviewsRef.current;
+
+		const handleScroll = throttle( () => {
+			const scrollTop = el.scrollTop;
+			const scrollHeight = el.scrollHeight;
+			const clientHeight = el.clientHeight;
+
+			setShowScrollTop( scrollTop > clientHeight * 2 );
+
+			if ( scrollTop + clientHeight >= scrollHeight - 100 ) {
+				infiniteScrollHandler();
+			}
+		}, 100 );
+
+		el.addEventListener( 'scroll', handleScroll );
+		return () => el.removeEventListener( 'scroll', handleScroll );
+	}, [ infiniteScrollHandler ] );
+
+	const paginationInfo = {
+		totalItems: logs.length,
+		totalPages: 1,
+	};
+
+	useEffect( () => {
+		setView( ( currentView ) => ( {
+			...currentView,
+			perPage: Math.max( logs.length, currentView.perPage ?? DEFAULT_PER_PAGE ),
+		} ) );
+	}, [ logs.length, setView ] );
+
 	return (
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
-					data={ logs as PHPLog[] }
+					data={ phpLogs }
 					isLoading={ isFetching }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
+					getItemId={ ( item ) => item.id }
 					view={ view }
 					actions={ actions as Action< PHPLog >[] }
 					search={ false }
@@ -247,16 +308,26 @@ function SiteLogsDataViews( {
 				/>
 			) : (
 				<DataViews< ServerLog >
-					data={ logs as ServerLog[] }
+					data={ serverLogs }
 					isLoading={ isFetching }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
+					getItemId={ ( item ) => item.id }
 					view={ view }
 					actions={ actions as Action< ServerLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
 					header={ LogsHeader }
+				/>
+			) }
+			{ showScrollTop && (
+				<Button
+					icon={ arrowUp }
+					iconSize={ 24 }
+					size="compact"
+					className="site-logs-scroll-to-top"
+					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
 				/>
 			) }
 		</>
