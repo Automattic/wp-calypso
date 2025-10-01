@@ -59,9 +59,9 @@ export default function ReportLoading( { isSavedReport }: { isSavedReport: boole
 			return (
 				<Spinner
 					style={ {
-						margin: '7px',
-						height: '18px',
-						width: '18px',
+						margin: '6px',
+						height: '20px',
+						width: '20px',
 					} }
 				/>
 			);
