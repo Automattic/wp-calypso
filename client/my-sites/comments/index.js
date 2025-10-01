@@ -13,10 +13,15 @@ const redirect = ( { path } ) => {
 };
 
 const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
-	if ( context.params.status !== 'all' ) {
+	if ( context.params.commentStatus !== 'all' ) {
 		url = addQueryArgs( url, {
-			comment_status: context.params.status === 'pending' ? 'moderated' : context.params.status,
+			comment_status:
+				context.params.commentStatus === 'pending' ? 'moderated' : context.params.commentStatus,
 		} );
+	}
+
+	if ( context.params.post ) {
+		url = addQueryArgs( url, { p: context.params.post } );
 	}
 
 	if ( context.params.comment ) {
@@ -29,14 +34,14 @@ const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
 export default function () {
 	// Site View
 	page(
-		'/comments/:status(all|pending|approved|spam|trash)/:site',
+		'/comments/:commentStatus(all|pending|approved|spam|trash)/:site',
 		siteSelection,
 		redirectToCommentIfDuplicatedView( 'edit-comments.php' )
 	);
 
 	// Post View
 	page(
-		'/comments/:status(all|pending|approved|spam|trash)/:site/:post',
+		'/comments/:commentStatus(all|pending|approved|spam|trash)/:site/:post',
 		siteSelection,
 		redirectToCommentIfDuplicatedView( 'edit-comments.php' )
 	);
@@ -50,7 +55,7 @@ export default function () {
 
 	// Redirect
 	page(
-		'/comments/:status(all|pending|approved|spam|trash)',
+		'/comments/:commentStatus(all|pending|approved|spam|trash)',
 		siteSelection,
 		sites,
 		makeLayout,
