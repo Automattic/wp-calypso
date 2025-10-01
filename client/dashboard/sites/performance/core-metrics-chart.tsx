@@ -36,7 +36,7 @@ const MetricLabel = ( {
 	value: string;
 } ) => {
 	return (
-		<HStack justify="flex-start" alignment="center">
+		<HStack justify="flex-start" alignment="center" expanded={ false }>
 			<StatusIndicator valuation={ indicator } />
 			<Text size="small">{ label }</Text>
 			<Text>{ value }</Text>
@@ -115,27 +115,21 @@ export default function CoreMetricsChart( {
 				spacing={ isDesktop ? 5 : 2 }
 				justify="flex-start"
 			>
-				<div>
-					<MetricLabel
-						indicator="good"
-						label={ __( 'Excellent' ) }
-						value={ formatThresholdValue( isOverall, 'good' ) }
-					/>
-				</div>
-				<div>
-					<MetricLabel
-						indicator="needsImprovement"
-						label={ __( 'Needs Improvement' ) }
-						value={ formatThresholdValue( isOverall, 'needsImprovement' ) }
-					/>
-				</div>
-				<div>
-					<MetricLabel
-						indicator="bad"
-						label={ __( 'Poor' ) }
-						value={ formatThresholdValue( isOverall, 'bad' ) }
-					/>
-				</div>
+				<MetricLabel
+					indicator="good"
+					label={ __( 'Excellent' ) }
+					value={ formatThresholdValue( isOverall, 'good' ) }
+				/>
+				<MetricLabel
+					indicator="needsImprovement"
+					label={ __( 'Needs Improvement' ) }
+					value={ formatThresholdValue( isOverall, 'needsImprovement' ) }
+				/>
+				<MetricLabel
+					indicator="bad"
+					label={ __( 'Poor' ) }
+					value={ formatThresholdValue( isOverall, 'bad' ) }
+				/>
 			</HStack>
 			<Text> Not implemented yet</Text>
 		</>
