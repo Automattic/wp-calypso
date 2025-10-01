@@ -28,6 +28,7 @@
 	],
 	"oauth_client_id": 95928,
 	"features": {
+		"a4a-help-center": true,
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
 		"a8c-for-agencies/import-site-from-wpcom": true,

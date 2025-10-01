@@ -61,9 +61,7 @@ export function getFields( timezoneString?: string, gmtOffset?: number ): Field<
 			id: 'fixed_on',
 			label: __( 'Resolved on' ),
 			type: 'date',
-			filterBy: {
-				operators: [ 'on', 'before', 'after' ],
-			},
+			filterBy: false,
 			getValue: ( { item } ) => {
 				if ( ! item.fixed_on ) {
 					return '';

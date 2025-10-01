@@ -60,7 +60,7 @@ export default function RecoveryEmail() {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_email_validate_email_click' );
 		validateEmail( formData.email, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery email was saved successfully.' ), {
+				createSuccessNotice( __( 'Recovery email saved.' ), {
 					type: 'snackbar',
 				} );
 			},
@@ -76,7 +76,7 @@ export default function RecoveryEmail() {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_email_remove_email_click' );
 		removeEmail( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery email was removed successfully.' ), {
+				createSuccessNotice( __( 'Recovery email removed.' ), {
 					type: 'snackbar',
 				} );
 				setFormData( { email: '' } );
@@ -99,7 +99,7 @@ export default function RecoveryEmail() {
 		);
 		resendValidation( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery email validation was resent successfully.' ), {
+				createSuccessNotice( __( 'Recovery email validation resent.' ), {
 					type: 'snackbar',
 				} );
 			},

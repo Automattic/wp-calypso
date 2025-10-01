@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 export const DomainSslField = ( { domain }: { domain: DomainSummary } ) => {
 	const { data: sslDetails } = useQuery( sslDetailsQuery( domain.domain ) );
 
-	if ( sslDetails?.certificate_provisioned ) {
+	if ( sslDetails?.certificate_provisioned || domain.wpcom_domain ) {
 		return <Badge intent="success">{ __( 'SSL active' ) }</Badge>;
 	}
 

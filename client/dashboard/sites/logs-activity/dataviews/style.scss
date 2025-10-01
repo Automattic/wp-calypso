@@ -4,3 +4,39 @@
 		min-width: 250px; // makes the placeholder text fully visible on bigger screens
 	}
 }
+
+.site-logs-card--activity {
+	&-callout {
+		position: relative;
+		pointer-events: none; // ignore pointer events from the callout gradient
+		background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 1.13%, #fff 17.26% );
+		padding: 75px 24px 50px;
+		margin-top: -100px;
+		z-index: 2;
+		width: auto;
+		// animate the callout when it appears so that it slides down from the top
+		animation: slideDown 0.5s ease-out;
+		@keyframes slideDown {
+			from {
+				transform: translateY( -20px );
+				opacity: 0;
+			}
+			to {
+				transform: translateY( 0 );
+				opacity: 1;
+			}
+		}
+		// honor the accessibility setting to decrease motion if present
+		@media ( prefers-reduced-motion: reduce ) {
+			animation: none;
+		}
+
+		&-content {
+			pointer-events: auto; // don't ignore pointer events from the callout itself
+			max-width: 886px;
+			flex-basis: 886px;
+			padding: 50px 0;
+			margin: 40px 0 20px;
+		}
+	}
+}
