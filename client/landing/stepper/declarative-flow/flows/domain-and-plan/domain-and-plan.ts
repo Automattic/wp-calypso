@@ -56,20 +56,22 @@ const domainUpsell: Flow = {
 		const submittedDomains = useRef( false );
 
 		function goBack() {
-			if ( currentStep === 'domains' ) {
+			if ( currentStep === STEPS.DOMAINS.slug ) {
 				return window.location.assign( returnUrl );
 			}
-			if ( currentStep === 'plans' ) {
+			if ( currentStep === STEPS.PLANS.slug ) {
 				if ( ! submittedDomains.current ) {
 					return window.location.assign( returnUrl );
 				}
 
-				return navigate( 'domains' );
+				return navigate( STEPS.DOMAINS.slug );
 			}
 
-			if ( currentStep === 'use-my-domain' ) {
-				return navigate( 'domains' );
+			if ( currentStep === STEPS.USE_MY_DOMAIN.slug ) {
+				return navigate( STEPS.DOMAINS.slug );
 			}
+
+			throw new Error( `Step back button not handled: ${ currentStep }` );
 		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
