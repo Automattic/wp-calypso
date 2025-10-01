@@ -192,7 +192,7 @@ describe( 'WebSettings', () => {
 			wrapper: Wrapper,
 		} );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites' } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites?' } ) );
 
 		//modal is visible
 		await waitFor( () => {

@@ -291,7 +291,7 @@ describe( 'DevicesSettings', () => {
 
 		//modal is visible
 		await waitFor( () => {
-			expect( screen.queryByRole( 'dialog', { name: 'Apply to all sites' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'dialog', { name: 'Apply to all sites?' } ) ).toBeVisible();
 		} );
 
 		await userEvent.click(
