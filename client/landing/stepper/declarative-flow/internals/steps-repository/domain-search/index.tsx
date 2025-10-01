@@ -28,6 +28,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -91,14 +92,32 @@ const DomainSearchStep: StepType< {
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
 			allowedTlds,
-			allowsUsingOwnDomain: ! isAIBuilderFlow( flow ) && ! isNewHostedSiteCreationFlow( flow ),
+			allowsUsingOwnDomain:
+				! isAIBuilderFlow( flow ) &&
+				! isNewHostedSiteCreationFlow( flow ) &&
+				! isHundredYearPlanFlow( flow ) &&
+				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, tldQuery ] );
+	}, [ flow, tldQuery, query ] );
 
 	const { submit } = navigation;
 
 	const events = useMemo( () => {
 		return {
+			onAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
+				if ( isHundredYearDomainFlow( flow ) ) {
+					return {
+						...product,
+						extra: {
+							...product.extra,
+							is_hundred_year_domain: true,
+						},
+						volume: 100,
+					};
+				}
+
+				return product;
+			},
 			onQueryChange: setQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				window.location.assign(
@@ -106,6 +125,12 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
+				if ( domainName && isHundredYearDomainFlow( flow ) ) {
+					return window.location.assign(
+						`/setup/hundred-year-domain-transfer/domains?new=${ domainName }`
+					);
+				}
+
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
@@ -138,14 +163,26 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery ] );
+	}, [ submit, setQuery, flow ] );
 
 	const slots = useMemo( () => {
 		return {
-			BeforeResults: () => <FreeDomainForAYearPromo />,
-			BeforeFullCartItems: () => <FreeDomainForAYearPromo textOnly />,
+			BeforeResults: () => {
+				if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+					return null;
+				}
+
+				return <FreeDomainForAYearPromo />;
+			},
+			BeforeFullCartItems: () => {
+				if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+					return null;
+				}
+
+				return <FreeDomainForAYearPromo textOnly />;
+			},
 		};
-	}, [] );
+	}, [ flow ] );
 
 	const headerText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {
@@ -199,6 +236,24 @@ const DomainSearchStep: StepType< {
 			slots={ slots }
 		/>
 	);
+
+	if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+		return (
+			<HundredYearPlanStepWrapper
+				stepName="domains"
+				flowName={ flow as string }
+				stepContent={ <div className="domains__content">{ domainSearchElement }</div> }
+				formattedHeader={
+					<FormattedHeader
+						id="domains-header"
+						align="center"
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+					/>
+				}
+			/>
+		);
+	}
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const getTopBarRightElement = () => {
