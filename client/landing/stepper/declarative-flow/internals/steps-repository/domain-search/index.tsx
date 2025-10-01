@@ -278,7 +278,7 @@ const DomainSearchStep: StepType< {
 			};
 		}
 
-		if ( isAIBuilderFlow( flow ) ) {
+		if ( isAIBuilderFlow( flow ) || isNewsletterFlow( flow ) ) {
 			return {
 				hideSkip: false,
 				skipLabelText: __( 'Decide later' ),
