@@ -1,26 +1,38 @@
-import { userSettingsQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
 interface EmailSectionProps {
 	value: string;
 	onChange: ( value: string ) => void;
 	disabled?: boolean;
+	userData: UserSettings;
 }
 
-export default function EmailSection( { value, onChange, disabled = false }: EmailSectionProps ) {
-	const { data: userData } = useSuspenseQuery( userSettingsQuery() );
+export default function EmailSection( {
+	value,
+	onChange,
+	disabled = false,
+	userData,
+}: EmailSectionProps ) {
+	const mutation = cancelPendingEmailChangeMutation();
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation( {
-		...cancelPendingEmailChangeMutation(),
-		onSuccess: () => {
-			onChange( userData.user_email || '' );
+		...mutation,
+		onSuccess: ( data, variables, context ) => {
+			// Call the original onSuccess from the mutation if it exists
+			if ( mutation.onSuccess ) {
+				mutation.onSuccess( data, variables, context );
+			}
+			// Use the fresh data from the mutation response
+			onChange( data.user_email || '' );
 		},
 		meta: {
 			snackbar: {

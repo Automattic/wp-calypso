@@ -179,6 +179,7 @@ export default function PersonalDetailsSection( {
 							value={ data.user_email || '' }
 							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
 							disabled={ isSaving }
+							userData={ userSettings }
 						/>
 
 						{ /* Developer checkbox */ }

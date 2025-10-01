@@ -40,7 +40,6 @@ export const cancelPendingEmailChangeMutation = () =>
 						...newData,
 					}
 			);
-			queryClient.invalidateQueries( userSettingsQuery() );
 		},
 	} );
 

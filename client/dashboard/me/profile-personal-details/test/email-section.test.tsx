@@ -14,25 +14,24 @@ jest.mock( 'email-validator', () => ( {
 	validate: jest.fn(),
 } ) );
 
-const defaultProps = {
-	value: 'test@example.com',
-	onChange: jest.fn(),
-	disabled: false,
-};
-
 const mockPendingUserData = {
 	...mockUserSettings,
 	user_email_change_pending: true,
 	new_user_email: 'pending@example.com',
 };
 
+const defaultProps = {
+	value: 'test@example.com',
+	onChange: jest.fn(),
+	disabled: false,
+	userData: mockUserSettings,
+};
+
 const renderWithUserData = ( userData = mockUserSettings, props = defaultProps ) => {
-	// Mock the API response
+	// Mock the API response for mutations
 	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, userData );
 
-	const result = render( <EmailSection { ...props } /> );
-
-	result.queryClient.setQueryData( [ 'me', 'settings' ], userData );
+	const result = render( <EmailSection { ...props } userData={ userData } /> );
 
 	return result;
 };
