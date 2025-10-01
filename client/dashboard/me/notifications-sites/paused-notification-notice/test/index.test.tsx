@@ -20,7 +20,9 @@ describe( 'PausedNotificationNotice', () => {
 
 		render( <PausedNotificationNotice /> );
 
-		expect( await screen.findByText( 'Email notifications are currently paused!' ) ).toBeVisible();
+		expect(
+			await screen.findByText( 'Email updates are turned off until you change your settings' )
+		).toBeVisible();
 	} );
 
 	it( 'does not render the notice when the browser notifications are not blocked', async () => {
@@ -37,7 +39,7 @@ describe( 'PausedNotificationNotice', () => {
 		} );
 
 		expect(
-			screen.queryByText( 'Email notifications are currently paused!' )
+			screen.queryByText( 'Email updates are turned off until you change your settings' )
 		).not.toBeInTheDocument();
 	} );
 } );
