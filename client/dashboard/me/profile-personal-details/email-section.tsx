@@ -1,5 +1,5 @@
 import { userSettingsQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -16,14 +16,11 @@ interface EmailSectionProps {
 
 export default function EmailSection( { value, onChange, disabled = false }: EmailSectionProps ) {
 	const { data: userData } = useSuspenseQuery( userSettingsQuery() );
-	const queryClient = useQueryClient();
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation( {
 		...cancelPendingEmailChangeMutation(),
 		onSuccess: () => {
 			onChange( userData.user_email || '' );
-			// Invalidate user settings to refetch updated data on cancel
-			queryClient.invalidateQueries( userSettingsQuery() );
 		},
 		meta: {
 			snackbar: {
