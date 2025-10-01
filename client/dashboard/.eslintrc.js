@@ -19,6 +19,8 @@ module.exports = {
 							'!calypso/lib/wp',
 							// Allowed: calypso/lib/load-dev-helpers
 							'!calypso/lib/load-dev-helpers',
+							// Allowed: calypso/lib/interval/use-interval (temporary)
+							'!calypso/lib/interval',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
@@ -46,6 +48,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/components/src/tabs',
 							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
