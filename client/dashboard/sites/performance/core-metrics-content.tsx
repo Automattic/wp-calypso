@@ -1,12 +1,12 @@
 import { Metrics } from '@automattic/api-core';
 import {
-	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { Text } from '../../components/text';
 import {
 	metricsNames,
 	mapThresholdsToStatus,

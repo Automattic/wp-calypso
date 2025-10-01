@@ -1,5 +1,4 @@
 import {
-	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
@@ -9,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { Text } from '../../components/text';
 
 export type ScreenShotsTimeLine = {
 	data: string;

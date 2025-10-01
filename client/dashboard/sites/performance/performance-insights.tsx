@@ -2,13 +2,13 @@ import { Metrics } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	CustomSelectControl,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { Text } from '../../components/text';
 import { metricsNames } from '../../utils/site-performance';
 
 export interface PerformanceMetricsItemQueryResponse {

@@ -1,5 +1,6 @@
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Text } from '../../components/text';
 
 export default function ReportFooter() {
 	return (

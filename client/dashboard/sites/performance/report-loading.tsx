@@ -1,7 +1,6 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	Icon,
 	Spinner,
 } from '@wordpress/components';
@@ -9,6 +8,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { border, published } from '@wordpress/icons';
 import { useInterval } from 'calypso/lib/interval/use-interval';
+import { Text } from '../../components/text';
 
 const useLoadingSteps = ( { isSavedReport }: { isSavedReport: boolean } ) => {
 	const [ step, setStep ] = useState( 0 );

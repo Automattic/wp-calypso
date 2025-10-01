@@ -1,5 +1,6 @@
 import { Metrics } from '@automattic/api-core';
-import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Text } from '../../components/text';
 import { getColorForStatus, Valuation } from '../../utils/site-performance';
 
 const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );

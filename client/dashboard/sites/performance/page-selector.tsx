@@ -1,12 +1,9 @@
-import {
-	ComboboxControl,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { ComboboxControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { Text } from '../../components/text';
 import type { PerformanceProfilerPage } from '@automattic/api-core';
 
 import './page-selector.scss';

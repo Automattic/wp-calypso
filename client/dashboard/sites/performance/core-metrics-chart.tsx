@@ -1,6 +1,7 @@
-import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Text } from '../../components/text';
 import { Valuation, getColorForStatus } from '../../utils/site-performance';
 
 const StatusIndicator = ( { speed }: { speed: Valuation } ) => {
