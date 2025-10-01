@@ -11,7 +11,11 @@ import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import type { Site } from '@automattic/api-core';
+import type { Site, SiteDomain } from '@automattic/api-core';
+
+export function shouldShowDomainUpsellCard( siteDomains: SiteDomain[] ) {
+	return ! siteDomains.find( ( domain ) => ! domain.wpcom_domain );
+}
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];

@@ -2,7 +2,17 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import illustrationTransferDomainUrl from './upsell-illustration-transfer-domain.svg';
+import type { Site, SiteDomain } from '@automattic/api-core';
+
+export function shouldShowDomainTransferUpsellCard( site: Site, siteDomains: SiteDomain[] ) {
+	return (
+		isSelfHostedJetpackConnected( site ) &&
+		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
+	);
+}
 
 export default function DomainTransferUpsellCard() {
 	return (

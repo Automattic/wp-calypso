@@ -7,13 +7,13 @@ import type { Site } from '@automattic/api-core';
 
 const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
 
-export default function DIFMUpsellCard( { site }: { site: Site } ) {
+export function shouldShowDIFMUpsellCard( site: Site ) {
 	if ( site.launch_status !== 'unlaunched' ) {
-		return null;
+		return false;
 	}
 
 	if ( ! site.options?.created_at ) {
-		return null;
+		return false;
 	}
 
 	const siteCreatedAt = Date.parse( site.options.created_at );
@@ -21,6 +21,10 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 		return null;
 	}
 
+	return true;
+}
+
+export default function DIFMUpsellCard() {
 	return (
 		<Callout
 			title={ __( 'We’ll bring your vision to life' ) }

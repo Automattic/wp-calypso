@@ -1,5 +1,5 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, siteDomainsQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
 	__experimentalGrid as Grid,
@@ -19,8 +19,15 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
-import DIFMUpsellCard from '../overview-difm-upsell-card';
-import DomainsCard from '../overview-domains-card';
+import DIFMUpsellCard, {
+	shouldShowDIFMUpsellCard as getShouldShowDIFMUpsellCard,
+} from '../overview-difm-upsell-card';
+import DomainTransferUpsellCard, {
+	shouldShowDomainTransferUpsellCard as getShouldShowDomainTransferUpsellCard,
+} from '../overview-domain-transfer-upsell-card';
+import DomainUpsellCard, {
+	shouldShowDomainUpsellCard as getShouldShowDomainUpsellCard,
+} from '../overview-domain-upsell-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
 import PerformanceCard from '../overview-performance-card';
@@ -33,6 +40,7 @@ import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
+import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
 
@@ -70,6 +78,40 @@ function getGridLayout( {
 	};
 }
 
+function useSecondaryUpsellStack( site: Site ) {
+	const { data: domains = [], isLoading } = useQuery( {
+		...siteDomainsQuery( site.ID ),
+		select: ( data ) => {
+			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
+			}
+
+			return data;
+		},
+		enabled: ! site.is_wpcom_staging_site,
+	} );
+
+	const shouldShowDIFMUpsellCard = getShouldShowDIFMUpsellCard( site );
+	const shouldShowDomainTransferUpsellCard = getShouldShowDomainTransferUpsellCard( site, domains );
+	const shouldShowDomainUpsellCard = getShouldShowDomainUpsellCard( domains );
+
+	const isEligibleSecondaryUpsellStack = ! site.is_wpcom_staging_site;
+	const shouldShowSecondaryUpsellStack =
+		isEligibleSecondaryUpsellStack &&
+		( shouldShowDIFMUpsellCard ||
+			shouldShowDomainTransferUpsellCard ||
+			shouldShowDomainUpsellCard );
+
+	return {
+		shouldShowDIFMUpsellCard,
+		shouldShowDomainTransferUpsellCard,
+		shouldShowDomainUpsellCard,
+		shouldShowSecondaryUpsellStack,
+		isLoading,
+	};
+}
+
 function SiteOverview( {
 	siteSlug,
 	hideSitePreview = false,
@@ -80,6 +122,7 @@ function SiteOverview( {
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
 	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
@@ -93,6 +136,13 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+	const {
+		shouldShowDIFMUpsellCard,
+		shouldShowDomainTransferUpsellCard,
+		shouldShowDomainUpsellCard,
+		shouldShowSecondaryUpsellStack,
+		isLoading: isLoadingSiteDomains,
+	} = useSecondaryUpsellStack( site );
 
 	return (
 		<PageLayout
@@ -158,12 +208,24 @@ function SiteOverview( {
 					spacing={ spacing }
 					alignment="flex-start"
 				>
-					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-						<VStack spacing={ spacing } justify="start">
-							<DomainsCard site={ site } isCompact={ isSmallViewport } />
-							<DIFMUpsellCard site={ site } />
-						</VStack>
+					{ ! isLoadingSiteDomains && (
+						<>
+							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+							{ shouldShowSecondaryUpsellStack && (
+								<VStack spacing={ spacing } justify="start">
+									{ ( () => {
+										if ( shouldShowDomainTransferUpsellCard ) {
+											return <DomainTransferUpsellCard />;
+										}
+										if ( shouldShowDomainUpsellCard ) {
+											return <DomainUpsellCard site={ site } />;
+										}
+										return null;
+									} )() }
+									{ shouldShowDIFMUpsellCard && <DIFMUpsellCard /> }
+								</VStack>
+							) }
+						</>
 					) }
 				</HStack>
 			</VStack>

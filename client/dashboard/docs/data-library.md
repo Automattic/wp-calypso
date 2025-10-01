@@ -57,10 +57,7 @@ TanStack's `queryClient.ensureQueryData` checks if data is already cached before
 At the component level, we use the `useQuery` and `useSuspenseQuery` hooks to fetch data. This includes the data that we preloaded in the route loader:
 
 ```typescript
-const { data: currentVersion } = useSuspenseQuery( {
-	...sitePHPVersionQuery( site.ID ),
-	enabled: hasHostingFeature( site, HostingFeatures.PHP ),
-} );
+const { data: currentVersion } = useSuspenseQuery( sitePHPVersionQuery( site.ID ) );
 ```
 
 as well as data that are specific to a component that you want to load dynamically:
