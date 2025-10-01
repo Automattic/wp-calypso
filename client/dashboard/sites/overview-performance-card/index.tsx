@@ -18,7 +18,7 @@ const CARD_PROPS = {
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
-	const url = window?.location?.pathname?.startsWith( '/v2' )
+	const url = [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) )
 		? `/sites/${ site.slug }/performance`
 		: `/sites/performance/${ site.slug }`;
 

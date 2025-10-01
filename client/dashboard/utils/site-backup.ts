@@ -6,7 +6,7 @@ export function getBackupUrl( site: Site ) {
 		return `https://cloud.jetpack.com/backup/${ site.slug }`;
 	}
 
-	return window?.location?.pathname?.startsWith( '/v2' )
+	return [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) )
 		? `/sites/${ site.slug }/backups`
 		: `https://wordpress.com/backup/${ site.slug }`;
 }

@@ -20,7 +20,7 @@ function getScanURL( site: Site ) {
 		return `https://cloud.jetpack.com/scan/${ site.slug }`;
 	}
 
-	return window?.location?.pathname?.startsWith( '/v2' )
+	return [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) )
 		? `/sites/${ site.slug }/scan`
 		: `https://wordpress.com/scan/${ site.slug }`;
 }

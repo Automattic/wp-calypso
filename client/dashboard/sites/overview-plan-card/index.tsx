@@ -105,8 +105,10 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const isV2Page = window?.location?.pathname?.startsWith( '/v2' );
 	const isFreePlan = site.plan?.is_free;
+	const isV2Page = [ '/v2', '/ciab' ].some(
+		( path ) => window?.location?.pathname?.startsWith( path )
+	);
 
 	const getBillingLinkProps = () => {
 		if ( isFreePlan ) {

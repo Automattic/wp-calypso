@@ -21,7 +21,10 @@ export function canManageSite( site: Site ) {
 
 	// Self-hosted Jetpack-connected sites are not supported, yet.
 	// Disable this check for v2 for development purposes, as it's not yet user-facing.
-	if ( isSelfHostedJetpackConnected( site ) && ! window?.location?.pathname?.startsWith( '/v2' ) ) {
+	if (
+		isSelfHostedJetpackConnected( site ) &&
+		! [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) )
+	) {
 		return false;
 	}
 

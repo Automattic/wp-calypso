@@ -49,7 +49,7 @@ function getActivityLogUrl( site: Site ) {
 		return `https://cloud.jetpack.com/activity-log/${ site.slug }`;
 	}
 
-	if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
+	if ( [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) ) ) {
 		return `/sites/${ site.slug }/logs/activity`; // no need for the /v2 prefix since it's handled by the RouterLinkSummaryButton in the SummaryButtonCardFooter
 	}
 	return `/activity-log/${ site.slug }`;

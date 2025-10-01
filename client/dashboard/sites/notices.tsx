@@ -30,7 +30,7 @@ export const SitesNotices = () => {
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
-	if ( ! window?.location?.pathname?.startsWith( '/v2' ) ) {
+	if ( ! [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) ) ) {
 		// Notices should not appear in the backported sites list.
 		return null;
 	}

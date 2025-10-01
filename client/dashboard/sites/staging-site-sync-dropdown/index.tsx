@@ -86,7 +86,7 @@ export default function StagingSiteSyncDropdown( {
 	}
 
 	const renderModal = () => {
-		if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
+		if ( [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) ) ) {
 			return (
 				<StagingSiteSyncModal
 					onClose={ handleCloseModal }
