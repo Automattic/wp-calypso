@@ -3,7 +3,7 @@ import i18n from 'i18n-calypso';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 
 /**
  * Page middleware
@@ -18,10 +18,33 @@ export default function emailVerification( context, next ) {
 		showNewEmailNotice &&
 		( context.pathname === '/me/account' || context.pathname === '/settings/account' )
 	) {
-		const state = context.store.getState();
-		const hostingDashboardPreference = getPreference( state, 'hosting-dashboard-opt-in' );
+		let state = context.store.getState();
 
-		if ( hostingDashboardPreference === 'opt-in' ) {
+		const arePreferencesLoaded = ( storeState ) =>
+			! storeState.preferences.fetching && storeState.preferences.remoteValues !== null;
+
+		if ( ! arePreferencesLoaded( state ) ) {
+			// Wait for preferences to load
+			const unsubscribe = context.store.subscribe( () => {
+				state = context.store.getState();
+
+				// Check if preferences have loaded
+				if ( arePreferencesLoaded( state ) ) {
+					unsubscribe();
+
+					if ( hasHostingDashboardOptIn( state ) ) {
+						window.location.href = `/v2/me/profile?new_email_result=${ context.query.new_email_result }`;
+					}
+				}
+			} );
+
+			setTimeout( () => unsubscribe(), 10000 ); // 10 seconds
+
+			next();
+			return;
+		}
+
+		if ( hasHostingDashboardOptIn( state ) ) {
 			window.location.href = `/v2/me/profile?new_email_result=${ context.query.new_email_result }`;
 			return;
 		}
