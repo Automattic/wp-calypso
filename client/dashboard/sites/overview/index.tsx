@@ -94,7 +94,8 @@ function useSecondaryUpsellStack( site: Site ) {
 
 	const shouldShowDIFMUpsellCard = getShouldShowDIFMUpsellCard( site );
 	const shouldShowDomainTransferUpsellCard = getShouldShowDomainTransferUpsellCard( site, domains );
-	const shouldShowDomainUpsellCard = getShouldShowDomainUpsellCard( domains );
+	const shouldShowDomainUpsellCard =
+		! shouldShowDomainTransferUpsellCard && getShouldShowDomainUpsellCard( domains );
 
 	const isEligibleSecondaryUpsellStack = ! site.is_wpcom_staging_site;
 	const shouldShowSecondaryUpsellStack =
@@ -214,7 +215,7 @@ function SiteOverview( {
 							{ shouldShowSecondaryUpsellStack && (
 								<VStack spacing={ spacing } justify="start">
 									{ shouldShowDomainTransferUpsellCard && <DomainTransferUpsellCard /> }
-									{ shouldShowDomainUpsellCard && ! shouldShowDomainTransferUpsellCard && <DomainUpsellCard site={ site } /> }
+									{ shouldShowDomainUpsellCard && <DomainUpsellCard site={ site } /> }
 									{ shouldShowDIFMUpsellCard && <DIFMUpsellCard /> }
 								</VStack>
 							) }
