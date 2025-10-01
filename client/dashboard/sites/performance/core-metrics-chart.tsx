@@ -65,10 +65,10 @@ export default function CoreMetricsChart( {
 
 	const displayUnit = () => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return __( 's' );
+			return 's';
 		}
 		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
-			return __( 'ms' );
+			return 'ms';
 		}
 		return '';
 	};
