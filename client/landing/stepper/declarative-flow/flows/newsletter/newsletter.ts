@@ -116,18 +116,13 @@ const newsletter: Flow = {
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery: providedDependencies.lastQuery,
+						} );
 
-						const lastQueryParam = providedDependencies.lastQuery as string | undefined;
-
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
-
-						return navigate( useMyDomainURL as typeof _currentStep );
+						return navigate( useMyDomainURL );
 					}
 
 					setSiteUrl( providedDependencies.siteUrl as string );

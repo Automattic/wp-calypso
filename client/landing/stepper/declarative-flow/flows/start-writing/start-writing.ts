@@ -187,9 +187,7 @@ const startWriting: Flow = {
 						}
 
 						if ( providedDependencies?.freeDomain ) {
-							return window.location.assign(
-								`/setup/start-writing/launchpad?siteId=${ site?.ID }`
-							);
+							return navigate( addQueryArgs( 'launchpad', { siteId: site?.ID } ) );
 						}
 
 						return navigate( 'plans' );
@@ -197,18 +195,23 @@ const startWriting: Flow = {
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery: providedDependencies.lastQuery,
+						} );
 
-						const lastQueryParam = providedDependencies.lastQuery as string | undefined;
+						return navigate( useMyDomainURL );
+					}
 
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
 
-						return navigate( useMyDomainURL as typeof currentStep );
+					if ( ! providedDependencies.domainItem ) {
+						return navigate( addQueryArgs( 'launchpad', { siteId: site?.ID } ) );
 					}
 
 					setSiteUrl( providedDependencies.siteUrl as string );
