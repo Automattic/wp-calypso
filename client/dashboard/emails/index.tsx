@@ -69,11 +69,7 @@ function Emails() {
 		[ navigate, setSelection ]
 	);
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		allEmails as Email[],
-		view,
-		emailFields
-	);
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
 	return (
 		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
