@@ -61,32 +61,24 @@ export function usePerformanceData(
 		enabled: !! url && !! token,
 	} );
 
-	const desktopLoaded = typeof performanceData?.pagespeed?.desktop === 'object';
-	const mobileLoaded = typeof performanceData?.pagespeed?.mobile === 'object';
-
-	const desktopReport =
-		typeof performanceData?.pagespeed?.desktop === 'object'
-			? performanceData.pagespeed.desktop
-			: undefined;
-
-	const mobileReport =
-		typeof performanceData?.pagespeed?.mobile === 'object'
-			? performanceData.pagespeed.mobile
-			: undefined;
+	const desktop = performanceData?.pagespeed?.desktop;
+	const mobile = performanceData?.pagespeed?.mobile;
+	const desktopLoaded = typeof desktop === 'object';
+	const mobileLoaded = typeof mobile === 'object';
 
 	return {
 		hash: token,
-		mobileReport,
-		desktopReport,
-		desktopScore: performanceData?.pagespeed?.desktop?.overall_score,
-		mobileScore: performanceData?.pagespeed?.mobile?.overall_score,
+		mobileReport: mobileLoaded ? mobile : undefined,
+		desktopReport: desktopLoaded ? desktop : undefined,
+		desktopScore: desktop?.overall_score,
+		mobileScore: mobile?.overall_score,
 		desktopLoaded,
 		mobileLoaded,
 		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,
-		isDesktopReportRunning: isReportRunning( performanceData?.pagespeed?.desktop ),
-		isMobileReportRunning: isReportRunning( performanceData?.pagespeed?.mobile ),
-		isDesktopReportError: isReportFailed( performanceData?.pagespeed?.desktop ),
-		isMobileReportError: isReportFailed( performanceData?.pagespeed?.mobile ),
+		isDesktopReportRunning: isReportRunning( desktop ),
+		isMobileReportRunning: isReportRunning( mobile ),
+		isDesktopReportError: isReportFailed( desktop ),
+		isMobileReportError: isReportFailed( mobile ),
 		isError: isBasicMetricsError || isInsightsError,
 		refetch,
 	};
