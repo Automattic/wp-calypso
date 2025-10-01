@@ -78,7 +78,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 		enabled: !! lastBackup && FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ),
 	} );
 
-	if ( isLoading && lastBackup === undefined ) {
+	if ( isLoading ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
