@@ -109,12 +109,7 @@ export default function CoreMetricsChart( {
 	const isOverall = activeTab === 'overall_score';
 	return (
 		<>
-			<HStack
-				alignment={ isDesktop ? 'center' : 'flex-start' }
-				direction={ isDesktop ? 'row' : 'column' }
-				spacing={ isDesktop ? 5 : 2 }
-				justify="flex-start"
-			>
+			<HStack spacing={ isDesktop ? 5 : 2 } justify="flex-start" wrap>
 				<MetricLabel
 					indicator="good"
 					label={ __( 'Excellent' ) }
