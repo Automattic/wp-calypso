@@ -38,7 +38,7 @@ export default function HostingDashboardOptInBanner() {
 	const handleClick = async () => {
 		setIsSubmitting( true );
 
-		recordTracksEvent( 'calypso_dashboard_opt_in_banner_click' );
+		dispatch( recordTracksEvent( 'calypso_hosting_dashboard_opt_in_banner_click' ) );
 
 		const preference = {
 			value: 'opt-in',
@@ -48,6 +48,7 @@ export default function HostingDashboardOptInBanner() {
 		await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
 
 		if ( lastSaveError ) {
+			setIsSubmitting( false );
 			dispatch(
 				errorNotice( translate( 'Failed to save preference.' ), {
 					duration: 5000,
@@ -64,7 +65,7 @@ export default function HostingDashboardOptInBanner() {
 
 	return (
 		<>
-			<TrackComponentView eventName="calypso_dashboard_opt_in_banner_impression" />
+			<TrackComponentView eventName="calypso_hosting_dashboard_opt_in_banner_impression" />
 			<Card>
 				<CardBody style={ { padding: '12px' } }>
 					<VStack spacing={ 3 }>
