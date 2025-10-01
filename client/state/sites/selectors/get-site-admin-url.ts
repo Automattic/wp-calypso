@@ -34,7 +34,9 @@ export default function getSiteAdminUrl(
 		return null;
 	}
 
-	const searchParams = new URLSearchParams();
+	const [ pathWithoutQuery, queryString ] = path.split( '?' );
+
+	const searchParams = new URLSearchParams( queryString );
 
 	Object.entries( params ).forEach( ( [ key, value ] ) => {
 		const wpAdminSearchParam = CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS.get( key );
@@ -46,7 +48,7 @@ export default function getSiteAdminUrl(
 
 	const searchParamsValue = searchParams.toString();
 
-	return `${ adminUrl }${ path.replace( /^\//, '' ) }${
+	return `${ adminUrl }${ pathWithoutQuery.replace( /^\//, '' ) }${
 		searchParamsValue ? `?${ searchParamsValue }` : ''
 	}`;
 }

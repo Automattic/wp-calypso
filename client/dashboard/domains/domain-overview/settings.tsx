@@ -7,9 +7,10 @@ import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
+import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
-import DomainGlueRecordsSettingsSummary from '../overview-glue-records/summary';
+
 export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
 	const buttonListItems = [];
 

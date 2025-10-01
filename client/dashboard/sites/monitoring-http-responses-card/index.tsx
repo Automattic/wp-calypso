@@ -197,8 +197,6 @@ export default function MonitoringHttpResponsesCard( {
 			cardLabel="http-responses"
 			title={ cardLabel }
 			description={ cardDescription }
-			onDownloadClick={ () => {} }
-			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 		>
 			<LineChart

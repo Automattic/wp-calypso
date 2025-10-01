@@ -27,9 +27,7 @@ import {
 	isCurrentSitePlan,
 	isCurrentPlanPaid,
 	getSiteFrontPage,
-	getSitePostsPage,
 	getSiteFrontPageType,
-	hasStaticFrontPage,
 	canCurrentUserUseCustomerHome,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
@@ -2266,137 +2264,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'hasStaticFrontPage()', () => {
-		test( 'should return false if the site does not have a static page set as the front page', () => {
-			const hasFrontPage = hasStaticFrontPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( hasFrontPage ).toEqual( false );
-		} );
-
-		test( 'should return false if the site does not have a `page_on_front` value', () => {
-			const hasFrontPage = hasStaticFrontPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'posts',
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( hasFrontPage ).toEqual( false );
-		} );
-
-		test( 'should return false if the site is not known', () => {
-			const hasFrontPage = hasStaticFrontPage(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			expect( hasFrontPage ).toEqual( false );
-		} );
-
-		test( 'should return true if the site has a static page set as the front page', () => {
-			const hasFrontPage = hasStaticFrontPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'page',
-									page_on_front: 42,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( hasFrontPage ).toEqual( true );
-		} );
-	} );
-
-	describe( 'getSitePostsPage()', () => {
-		test( 'should return falsey if the site does not have a static page set as the posts page', () => {
-			const postsPage = getSitePostsPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-									page_for_posts: 0,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( postsPage ).toBeFalsy();
-		} );
-
-		test( 'should return falsey if the site is not known', () => {
-			const postsPage = getSitePostsPage(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			expect( postsPage ).toBeFalsy();
-		} );
-
-		test( 'should return the page ID if the site has a static page set as the posts page', () => {
-			const postsPage = getSitePostsPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'page',
-									page_on_front: 1,
-									page_for_posts: 2,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( postsPage ).toEqual( 2 );
-		} );
-	} );
-
 	describe( 'getSiteFrontPageType()', () => {
 		test( 'should return falsey if the site is not known', () => {
 			const frontPageType = getSiteFrontPageType(
@@ -3157,6 +3024,30 @@ describe( 'selectors', () => {
 			);
 
 			expect( adminUrl ).toEqual( 'https://example.wordpress.com/wp-admin/upload.php?item=19' );
+		} );
+		test( 'should return the admin url with any existing search params preserved', () => {
+			const adminUrl = getSiteAdminUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'edit.php?post_type=page',
+				{ status: 'drafts' }
+			);
+
+			expect( adminUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/edit.php?post_type=page&post_status=draft'
+			);
 		} );
 	} );
 

@@ -53,12 +53,14 @@ function RepositoriesList() {
 		{
 			id: 'see-deployment-runs',
 			label: __( 'See deployment runs' ),
-			callback: () => {
+			callback: ( items ) => {
+				const repositoryName = items[ 0 ]?.repository_name;
 				router.navigate( {
 					to: siteDeploymentsListRoute.fullPath,
 					params: {
 						siteSlug: siteSlug,
 					},
+					search: repositoryName ? { repository: repositoryName } : undefined,
 				} );
 			},
 		},
