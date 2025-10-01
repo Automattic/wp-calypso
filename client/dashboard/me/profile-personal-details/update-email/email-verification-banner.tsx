@@ -13,12 +13,22 @@ import type { UserSettings } from '@automattic/api-core';
 // Get email verification params from URL
 function getEmailVerificationParams() {
 	if ( typeof window === 'undefined' ) {
-		return { newEmailResult: null, verified: null };
+		return {
+			isEmailChangeComplete: false,
+			isEmailVerificationComplete: false,
+			emailChangeFailed: false,
+			emailVerificationFailed: false,
+		};
 	}
 	const params = new URLSearchParams( window.location.search );
+	const newEmailResult = params.get( 'new_email_result' );
+	const verified = params.get( 'verified' );
+
 	return {
-		newEmailResult: params.get( 'new_email_result' ),
-		verified: params.get( 'verified' ),
+		isEmailChangeComplete: newEmailResult === '1',
+		isEmailVerificationComplete: verified === '1',
+		emailChangeFailed: newEmailResult === '0',
+		emailVerificationFailed: verified === '0',
 	};
 }
 
@@ -39,18 +49,17 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ showResendButton, setShowResendButton ] = useState( true );
 	const [ showSuccessNotice, setShowSuccessNotice ] = useState( () => {
-		const { newEmailResult, verified } = getEmailVerificationParams();
-
-		return newEmailResult === '1' || verified === '1';
+		const { isEmailChangeComplete, isEmailVerificationComplete } = getEmailVerificationParams();
+		return isEmailChangeComplete || isEmailVerificationComplete;
 	} );
 
 	const [ verificationType ] = useState< 'email_change' | 'verification' | null >( () => {
-		const { newEmailResult, verified } = getEmailVerificationParams();
+		const { isEmailChangeComplete, isEmailVerificationComplete } = getEmailVerificationParams();
 
-		if ( newEmailResult === '1' ) {
+		if ( isEmailChangeComplete ) {
 			return 'email_change';
 		}
-		if ( verified === '1' ) {
+		if ( isEmailVerificationComplete ) {
 			return 'verification';
 		}
 
@@ -61,17 +70,28 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 	const pendingEmail = userData.new_user_email;
 
 	useEffect( () => {
-		const { newEmailResult, verified } = getEmailVerificationParams();
+		const {
+			isEmailChangeComplete,
+			isEmailVerificationComplete,
+			emailChangeFailed,
+			emailVerificationFailed,
+		} = getEmailVerificationParams();
 
 		// Handle error cases
-		if ( newEmailResult === '0' || verified === '0' ) {
+		if ( emailChangeFailed || emailVerificationFailed ) {
 			createErrorNotice(
 				__( 'The email verification link is invalid or has expired. Please request a new one.' ),
 				{ type: 'snackbar' }
 			);
 		}
 
-		if ( newEmailResult || verified ) {
+		// Clean up URL params if any verification params were present
+		if (
+			isEmailChangeComplete ||
+			isEmailVerificationComplete ||
+			emailChangeFailed ||
+			emailVerificationFailed
+		) {
 			cleanUpEmailVerificationParams();
 		}
 	}, [ createErrorNotice ] );

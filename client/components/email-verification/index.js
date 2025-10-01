@@ -9,22 +9,37 @@ import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-host
  * Page middleware
  */
 
-export default function emailVerification( context, next ) {
-	const verified = context.query.verified; // New users verifying their email for the first time
-	const newEmailResult = context.query.new_email_result; // Users changing their email and verifying the new one
+// Parse email verification params from query
+function parseVerificationParams( query ) {
+	const verified = query.verified;
+	const newEmailResult = query.new_email_result;
 
-	if ( ! newEmailResult && ! verified ) {
+	return {
+		isEmailChangeComplete: newEmailResult === '1',
+		isEmailVerificationComplete: verified === '1',
+		emailChangeFailed: newEmailResult === '0',
+		emailVerificationFailed: verified === '0',
+		hasAnyParam: !! ( newEmailResult || verified ),
+		verified,
+		newEmailResult,
+	};
+}
+
+export default function emailVerification( context, next ) {
+	const params = parseVerificationParams( context.query );
+
+	if ( ! params.hasAnyParam ) {
 		next();
 		return;
 	}
 
 	// Redirect users to v2 if they opted in to the Hosting Dashboard
-	if ( shouldRedirectToV2( context, next, verified, newEmailResult ) ) {
+	if ( shouldRedirectToV2( context, next, params ) ) {
 		return;
 	}
 
 	// Fallback to v1 logic
-	handleV1Logic( context, next, newEmailResult, verified );
+	handleV1Logic( context, next, params );
 
 	next();
 }
@@ -48,14 +63,14 @@ function buildV2RedirectUrl( verified, newEmailResult ) {
  * /me/account?verified=1 → /v2/me/profile?verified=1
  * /me/account?new_email_result=1 → /v2/me/profile?new_email_result=1
  */
-function shouldRedirectToV2( context, next, verified, newEmailResult ) {
-	const hasValidVerified = verified === '1' || verified === '0';
-	const hasValidNewEmailResult = newEmailResult === '1' || newEmailResult === '0';
+function shouldRedirectToV2( context, next, params ) {
+	const hasValidParams =
+		params.isEmailChangeComplete ||
+		params.isEmailVerificationComplete ||
+		params.emailChangeFailed ||
+		params.emailVerificationFailed;
 
-	if (
-		( ! hasValidVerified && ! hasValidNewEmailResult ) ||
-		! [ '/me/account', '/settings/account' ].includes( context.pathname )
-	) {
+	if ( ! hasValidParams || ! [ '/me/account', '/settings/account' ].includes( context.pathname ) ) {
 		return false;
 	}
 
@@ -74,7 +89,7 @@ function shouldRedirectToV2( context, next, verified, newEmailResult ) {
 				unsubscribe();
 
 				if ( hasHostingDashboardOptIn( state ) ) {
-					window.location.href = buildV2RedirectUrl( verified, newEmailResult );
+					window.location.href = buildV2RedirectUrl( params.verified, params.newEmailResult );
 				}
 			}
 		} );
@@ -86,7 +101,7 @@ function shouldRedirectToV2( context, next, verified, newEmailResult ) {
 	}
 
 	if ( hasHostingDashboardOptIn( state ) ) {
-		window.location.href = buildV2RedirectUrl( verified, newEmailResult );
+		window.location.href = buildV2RedirectUrl( params.verified, params.newEmailResult );
 		return true;
 	}
 
@@ -97,11 +112,8 @@ function shouldRedirectToV2( context, next, verified, newEmailResult ) {
  * v1
  * Show notification for success cases only
  */
-function handleV1Logic( context, next ) {
-	const showVerifiedNotice = '1' === context.query.verified;
-	const showNewEmailNotice = '1' === context.query.new_email_result;
-
-	if ( showVerifiedNotice ) {
+function handleV1Logic( context, next, params ) {
+	if ( params.isEmailVerificationComplete ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'verified' ) );
 		sendVerificationSignal();
 		setTimeout( () => {
@@ -109,7 +121,7 @@ function handleV1Logic( context, next ) {
 			const notice = successNotice( message, { duration: 10000 } );
 			context.store.dispatch( notice );
 		}, 500 ); // A delay is needed here, because the notice state seems to be cleared upon page load
-	} else if ( showNewEmailNotice ) {
+	} else if ( params.isEmailChangeComplete ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'new_email_result' ) );
 		setTimeout( () => {
 			const message = i18n.translate(
