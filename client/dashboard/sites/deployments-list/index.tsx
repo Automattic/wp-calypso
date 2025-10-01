@@ -4,12 +4,17 @@ import {
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
-import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
+import {
+	siteRoute,
+	siteSettingsRepositoriesRoute,
+	siteDeploymentsListRoute,
+} from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -27,10 +32,27 @@ import type { View } from '@wordpress/dataviews';
 
 function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
+	const navigate = useNavigate( { from: siteDeploymentsListRoute.fullPath } );
+	const currentSearchParams = siteDeploymentsListRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
-	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ view, setView ] = useState< View >( () => {
+		const repositoryFilter = currentSearchParams?.repository;
+
+		return repositoryFilter
+			? {
+					...DEFAULT_VIEW,
+					filters: [
+						{
+							field: 'repository_name',
+							operator: 'isAny',
+							value: [ repositoryFilter ],
+						},
+					],
+			  }
+			: DEFAULT_VIEW;
+	} );
 	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
 		codeDeploymentsQuery( site.ID )
 	);
@@ -110,6 +132,21 @@ function DeploymentsList() {
 		fields
 	);
 
+	const handleViewChange = ( nextView: View ) => {
+		const repositoryFilter = nextView.filters?.find(
+			( filter ) => filter.field === 'repository_name'
+		)?.value?.[ 0 ];
+
+		navigate( {
+			search: {
+				...currentSearchParams,
+				repository: repositoryFilter || undefined,
+			},
+		} );
+
+		setView( nextView );
+	};
+
 	const getTriggerDeploymentTitle = () => {
 		if ( isLoadingDeployments ) {
 			return __( 'Loading repositories…' );
@@ -173,7 +210,7 @@ function DeploymentsList() {
 					data={ filteredData }
 					fields={ fields }
 					view={ view }
-					onChangeView={ setView }
+					onChangeView={ handleViewChange }
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
