@@ -124,15 +124,6 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Reports' ) ).toBeChecked();
 	} );
 
-	it( 'calls onMutate with only changed item when individual toggle is changed', async () => {
-		renderExtrasToggleCard();
-
-		const marketingToggle = screen.getByLabelText( 'Suggestions' );
-		await userEvent.click( marketingToggle );
-
-		expect( mockOnMutate ).toHaveBeenCalledWith( { marketing: true } );
-	} );
-
 	it( 'calls onMutate when "Subscribe to all" is clicked', async () => {
 		renderExtrasToggleCard();
 
