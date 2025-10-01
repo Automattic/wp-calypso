@@ -1,5 +1,6 @@
 import { DeviceNotificationSettings } from '@automattic/api-core';
 import { userNotificationsDevicesQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -114,7 +115,12 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
 					),
 					{
-						link: <ExternalLink href="https://wordpress.org" children={ null } />,
+						link: (
+							<ExternalLink
+								href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
+								children={ null }
+							/>
+						),
 					}
 				) }
 			</Text>
