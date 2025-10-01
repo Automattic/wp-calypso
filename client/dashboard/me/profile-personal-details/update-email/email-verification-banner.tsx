@@ -49,20 +49,23 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ showResendButton, setShowResendButton ] = useState( true );
 
-	// Extract verification params once to avoid multiple URL parsing calls
-	const verificationParams = getEmailVerificationParams();
+	// Extract verification params to avoid multiple URL parsing calls
+	const {
+		isEmailChangeComplete,
+		isEmailVerificationComplete,
+		emailChangeFailed,
+		emailVerificationFailed,
+	} = getEmailVerificationParams();
 
 	const [ showSuccessNotice, setShowSuccessNotice ] = useState( () => {
-		return (
-			verificationParams.isEmailChangeComplete || verificationParams.isEmailVerificationComplete
-		);
+		return isEmailChangeComplete || isEmailVerificationComplete;
 	} );
 
 	const [ verificationType ] = useState< 'email_change' | 'verification' | null >( () => {
-		if ( verificationParams.isEmailChangeComplete ) {
+		if ( isEmailChangeComplete ) {
 			return 'email_change';
 		}
-		if ( verificationParams.isEmailVerificationComplete ) {
+		if ( isEmailVerificationComplete ) {
 			return 'verification';
 		}
 
@@ -74,7 +77,7 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 
 	useEffect( () => {
 		// Handle error cases
-		if ( verificationParams.emailChangeFailed || verificationParams.emailVerificationFailed ) {
+		if ( emailChangeFailed || emailVerificationFailed ) {
 			createErrorNotice(
 				__( 'The email verification link is invalid or has expired. Please request a new one.' ),
 				{ type: 'snackbar' }
@@ -83,14 +86,20 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 
 		// Clean up URL params if any verification params were present
 		if (
-			verificationParams.isEmailChangeComplete ||
-			verificationParams.isEmailVerificationComplete ||
-			verificationParams.emailChangeFailed ||
-			verificationParams.emailVerificationFailed
+			isEmailChangeComplete ||
+			isEmailVerificationComplete ||
+			emailChangeFailed ||
+			emailVerificationFailed
 		) {
 			cleanUpEmailVerificationParams();
 		}
-	}, [ createErrorNotice, verificationParams ] );
+	}, [
+		createErrorNotice,
+		isEmailChangeComplete,
+		isEmailVerificationComplete,
+		emailChangeFailed,
+		emailVerificationFailed,
+	] );
 
 	// Resend email
 	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
