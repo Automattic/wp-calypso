@@ -5,17 +5,14 @@ import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
-import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withUploadSiteIcon } from 'calypso/data/media/with-upload-site-icon';
 import accept from 'calypso/lib/accept';
-import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import {
 	getImageEditorCrop,
 	getImageEditorTransform,
@@ -53,7 +50,6 @@ class SiteIconSetting extends Component {
 
 	state = {
 		isModalVisible: false,
-		hasToggledModal: false,
 		isEditingSiteIcon: false,
 	};
 
@@ -62,7 +58,6 @@ class SiteIconSetting extends Component {
 
 		this.setState( {
 			isModalVisible,
-			hasToggledModal: true,
 			isEditingSiteIcon: isModalVisible ? isEditingSiteIcon : false,
 		} );
 	};
@@ -168,7 +163,6 @@ class SiteIconSetting extends Component {
 			generalOptionsUrl,
 			siteSupportsImageEditor,
 		} = this.props;
-		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 
 		let buttonProps;
 		if ( siteSupportsImageEditor ) {
@@ -244,31 +238,6 @@ class SiteIconSetting extends Component {
 					>
 						{ translate( 'Remove' ) }
 					</Button>
-				) }
-				{ hasToggledModal && (
-					<AsyncLoad
-						require="calypso/post-editor/media-modal"
-						placeholder={ <EditorMediaModalDialog isVisible /> }
-						siteId={ siteId }
-						onClose={ this.editSelectedMedia }
-						isParentReady={ this.isParentReady }
-						enabledFilters={ [ 'images' ] }
-						{ ...( isEditingSiteIcon
-							? {
-									imageEditorProps: {
-										allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-										onDone: this.setSiteIcon,
-										onCancel: this.cancelEditingSiteIcon,
-									},
-							  }
-							: {} ) }
-						visible={ isModalVisible }
-						labels={ {
-							confirm: translate( 'Continue' ),
-						} }
-						disableLargeImageSources
-						single
-					/>
 				) }
 			</FormFieldset>
 		);
