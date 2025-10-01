@@ -2,7 +2,6 @@ import { ComboboxControl, __experimentalVStack as VStack } from '@wordpress/comp
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import type { PerformanceProfilerPage } from '@automattic/api-core';
 
@@ -48,7 +47,6 @@ export default function PageSelector( {
 	currentPage: PerformanceProfilerPage | undefined;
 	onChange: ( page_id: string | null | undefined ) => void;
 } ) {
-	const { recordTracksEvent } = useAnalytics();
 	const isDesktop = useViewportMatch( 'medium' );
 
 	const currentPageOption: PageOption | undefined = currentPage
@@ -75,21 +73,7 @@ export default function PageSelector( {
 				options={ pageOptions }
 				hideLabelFromVision={ isDesktop ? false : true }
 				value={ currentPageOption?.value }
-				onChange={ ( page_id ) => {
-					recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {
-						is_home: page_id === '0',
-					} );
-
-					const url = new URL( window.location.href );
-					if ( page_id ) {
-						url.searchParams.set( 'page_id', page_id );
-					} else {
-						url.searchParams.delete( 'page_id' );
-					}
-
-					window.history.replaceState( {}, '', url.toString() );
-					onChange( page_id );
-				} }
+				onChange={ onChange }
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				__experimentalRenderItem={ ( { item } ) => {

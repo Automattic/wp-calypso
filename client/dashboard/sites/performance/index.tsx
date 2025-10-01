@@ -1,9 +1,10 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { performanceProfilerPagesQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useSearch } from '@tanstack/react-router';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
@@ -51,6 +52,8 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		isMobileReportError,
 		refetch: refetchReport,
 	} = usePerformanceData( currentPage?.link, currentPage?.wpcom_performance_report_hash );
+	const { recordTracksEvent } = useAnalytics();
+	const router = useRouter();
 
 	const handlePageChange = ( pageId: string | null | undefined ) => {
 		const page = getPageFromID( pagesData, pageId || '' );
@@ -85,7 +88,21 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 							siteUrl={ site.URL }
 							currentPage={ currentPage }
 							pages={ pagesData }
-							onChange={ handlePageChange }
+							onChange={ ( pageId ) => {
+								recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {
+									is_home: pageId === '0',
+								} );
+
+								router.navigate( {
+									to: '.',
+									search: ( prev ) => ( {
+										...prev,
+										page_id: Number( pageId ),
+									} ),
+								} );
+
+								handlePageChange( pageId );
+							} }
 						/>
 						<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
 					</HStack>
