@@ -8,7 +8,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { next, wordpress } from '@wordpress/icons';
 import { purchasesRoute } from '../app/router/me';
-import GoogleLogo from '../sites/emails/resources/google-logo';
+import GoogleLogo from './resources/google-logo';
 import type { Action, Field, View } from '@wordpress/dataviews';
 
 // Shared fields for Emails DataViews

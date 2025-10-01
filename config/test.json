@@ -69,6 +69,7 @@
 		"legal-updates-banner": true,
 		"login/last-used-method": true,
 		"mailchimp": true,
+		"mcp-settings": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,

@@ -7,4 +7,6 @@ export type StepProps = {
 	submitSignupStep: ( step: unknown, dependencies: unknown ) => void;
 	queryObject: Record< string, string | undefined >;
 	locale: string;
+	previousStepName: string | null;
+	goBack?: () => void;
 };
