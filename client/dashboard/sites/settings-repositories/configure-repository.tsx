@@ -90,6 +90,7 @@ export default function ConfigureRepository() {
 				<CardBody>
 					<VStack spacing={ 6 }>
 						<SectionHeader
+							level={ 3 }
 							title={ __( 'Update connection details' ) }
 							description={ createInterpolateElement(
 								__(

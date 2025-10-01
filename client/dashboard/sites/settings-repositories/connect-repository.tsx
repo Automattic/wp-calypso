@@ -77,6 +77,7 @@ export default function ConnectRepository() {
 			<Card>
 				<CardBody>
 					<SectionHeader
+						level={ 3 }
 						title={ __( 'Configure repository connection' ) }
 						description={ createInterpolateElement(
 							__(

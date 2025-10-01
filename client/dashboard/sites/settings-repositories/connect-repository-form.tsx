@@ -359,6 +359,7 @@ export const ConnectRepositoryForm = ( {
 			/>
 
 			<SectionHeader
+				level={ 3 }
 				title={ __( 'Pick your deployment mode' ) }
 				description={ __(
 					'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
