@@ -1,6 +1,7 @@
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -17,7 +18,7 @@ type DeviceToggleProps = {
 
 export default function DeviceToggle( { value, onChange, disabled }: DeviceToggleProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
-	const options: { value: DeviceToggleType; label: string; icon: React.ReactNode }[] = [
+	const options: { value: DeviceToggleType; label: string; icon: React.ReactElement }[] = [
 		{
 			value: 'mobile',
 			label: __( 'Mobile' ),
@@ -42,12 +43,18 @@ export default function DeviceToggle( { value, onChange, disabled }: DeviceToggl
 			onChange={ ( value ) => onChange( value as DeviceToggleType ) }
 		>
 			{ options.map( ( option ) => {
-				return (
+				return isDesktop ? (
 					<ToggleGroupControlOption
 						key={ option.value }
 						value={ option.value }
-						// @ts-expect-error - label can accept ReactNode in practice
-						label={ isDesktop ? option.label : option.icon }
+						label={ option.label }
+					/>
+				) : (
+					<ToggleGroupControlOptionIcon
+						key={ option.value }
+						value={ option.value }
+						label={ option.label }
+						icon={ option.icon }
 					/>
 				);
 			} ) }
