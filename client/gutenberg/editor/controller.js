@@ -1,8 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
@@ -10,7 +8,6 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSiteOption,
@@ -69,29 +66,6 @@ function waitForSiteIdAndSelectedEditor( context ) {
 		context.store.dispatch(
 			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
 		);
-	} );
-}
-
-function isPreferredEditorViewAvailable( state ) {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId || getIsRequestingAdminMenu( state ) ) {
-		return false;
-	}
-	return null !== getAdminMenu( state, siteId );
-}
-
-function waitForPreferredEditorView( context ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			if ( ! isPreferredEditorViewAvailable( state ) ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch( requestAdminMenu( getSelectedSiteId( context.store.getState() ) ) );
 	} );
 }
 
@@ -192,14 +166,9 @@ export const redirect = async ( context, next ) => {
 	} = context;
 	const tmpState = getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
-	const checkPromises = [];
 	if ( ! selectedEditor ) {
-		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
+		await waitForSiteIdAndSelectedEditor( context );
 	}
-	if ( ! isPreferredEditorViewAvailable( tmpState ) ) {
-		checkPromises.push( waitForPreferredEditorView( context ) );
-	}
-	await Promise.all( checkPromises );
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
@@ -211,16 +180,13 @@ export const redirect = async ( context, next ) => {
 	}
 
 	const postType = determinePostType( context );
-	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
-		const postId = getPostID( context );
+	const postId = getPostID( context );
 
-		const url = postType
-			? getEditorUrl( state, siteId, postId, postType )
-			: getSiteEditorUrl( state, siteId );
-		// pass along parameters, for example press-this
-		return window.location.replace( addQueryArgs( context.query, url ) );
-	}
-	return next();
+	const url = postType
+		? getEditorUrl( state, siteId, postId, postType )
+		: getSiteEditorUrl( state, siteId );
+	// pass along parameters, for example press-this
+	return window.location.replace( addQueryArgs( context.query, url ) );
 };
 
 export const exitPost = ( context, next ) => {
