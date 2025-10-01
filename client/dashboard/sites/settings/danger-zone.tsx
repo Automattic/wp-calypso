@@ -1,8 +1,8 @@
+import { ActionList } from '@automattic/ui';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { canTransferSite, canLeaveSite, canResetSite } from '../features';
