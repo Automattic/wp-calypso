@@ -3,7 +3,7 @@ import {
 	githubInstallationsQuery,
 	createCodeDeploymentMutation,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Card,
@@ -33,14 +33,9 @@ export default function ConnectRepository() {
 		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
 	};
 
-	const queryClient = useQueryClient();
-
 	const createMutation = useMutation( {
 		...createCodeDeploymentMutation( site.ID ),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'code-deployments' ],
-			} );
 			createSuccessNotice( __( 'Repository connected successfully.' ), {
 				type: 'snackbar',
 			} );

@@ -4,7 +4,7 @@ import {
 	updateCodeDeploymentMutation,
 	codeDeploymentQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Card,
@@ -39,17 +39,9 @@ export default function ConfigureRepository() {
 		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
 	};
 
-	const queryClient = useQueryClient();
-
 	const updateMutation = useMutation( {
 		...updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'code-deployments' ],
-			} );
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'code-deployment', deploymentId ],
-			} );
 			createSuccessNotice( __( 'Repository settings updated successfully.' ), {
 				type: 'snackbar',
 			} );

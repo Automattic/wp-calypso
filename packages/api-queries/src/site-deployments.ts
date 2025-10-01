@@ -54,12 +54,18 @@ export const createCodeDeploymentMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
 			createCodeDeployment( siteId, variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( codeDeploymentsQuery( siteId ) );
+		},
 	} );
 
 export const updateCodeDeploymentMutation = ( siteId: number, deploymentId: number ) =>
 	mutationOptions( {
 		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
 			updateCodeDeployment( siteId, deploymentId, variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( codeDeploymentRunsQuery( siteId, deploymentId ) );
+		},
 	} );
 
 export const deploymentRunLogsQuery = ( siteId: number, deploymentId: number, runId: number ) =>
