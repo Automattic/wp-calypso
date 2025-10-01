@@ -43,9 +43,9 @@ export const CoreMetricsRecommendLink = ( {
 			_n(
 				'<viewLink>View %d recommendation</viewLink>',
 				'<viewLink>View %d recommendations</viewLink>',
-				count ?? 0
+				count
 			),
-			count ?? 0
+			count
 		),
 		{
 			viewLink: (
