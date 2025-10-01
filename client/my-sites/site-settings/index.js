@@ -7,7 +7,6 @@ import {
 	deleteSite,
 	disconnectSite,
 	disconnectSiteConfirm,
-	general,
 	legacyRedirects,
 	manageConnection,
 	redirectToGeneral,
@@ -18,7 +17,6 @@ import {
 } from 'calypso/my-sites/site-settings/controller';
 import {
 	setScroll,
-	siteSettings,
 	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
 	redirectSettingsIfDuplciatedViewsEnabled,
 } from 'calypso/my-sites/site-settings/settings-controller';
@@ -33,10 +31,6 @@ export default function () {
 		'/settings/general/:site_id',
 		siteSelection,
 		redirectIfDuplicatedView( 'options-general.php' ),
-		navigation,
-		setScroll,
-		siteSettings,
-		general,
 		makeLayout,
 		clientRender
 	);
