@@ -1,24 +1,11 @@
+import { Metrics } from '@automattic/api-core';
 import { Tabs } from '@automattic/components/src/tabs';
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useState } from 'react';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
-import { Metrics } from './utils';
 import type { PerformanceReport } from '@automattic/api-core';
-
-export type PerformanceMetricsHistory = {
-	collection_period: Array< string | { year: number; month: number; day: number } >;
-	metrics: {
-		ttfb?: number[];
-		fcp?: number[];
-		lcp?: number[];
-		cls?: number[];
-		inp?: number[];
-		tbt?: number[];
-		overall?: number[];
-	};
-};
 
 export interface PerformanceMetricsItemQueryResponse {
 	id: string;
@@ -38,29 +25,6 @@ export interface PerformanceMetricsDetailsQueryResponse {
 	} >;
 	chains?: Array< { [ key: string ]: unknown } >;
 }
-
-export type ScreenshotNode = {
-	width: number;
-	right: number;
-	bottom: number;
-	top: number;
-	height: number;
-	left: number;
-};
-
-export interface FullPageScreenshot {
-	screenshot: {
-		data: string;
-		height: number;
-		width: number;
-	};
-	nodes: Record< string, ScreenshotNode >;
-}
-
-export type ScreenShotsTimeLine = {
-	data: string;
-	timing: number;
-};
 
 export default function CoreMetrics( {
 	report,

@@ -9,7 +9,11 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ScreenShotsTimeLine } from './core-metrics';
+
+export type ScreenShotsTimeLine = {
+	data: string;
+	timing: number;
+};
 
 type Props = { screenshots: ScreenShotsTimeLine[] };
 
