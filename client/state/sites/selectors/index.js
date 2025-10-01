@@ -31,7 +31,6 @@ export { default as getSiteOptions } from './get-site-options';
 export { default as getSitePlan } from './get-site-plan';
 export { default as getSitePlanName } from './get-site-plan-name';
 export { default as getSitePlanSlug } from './get-site-plan-slug';
-export { default as getSitePostsPage } from './get-site-posts-page';
 export { default as getSiteProducts } from './get-site-products';
 export { default as getSiteSlug } from './get-site-slug';
 export { default as getSiteThemeShowcasePath } from './get-site-theme-showcase-path';

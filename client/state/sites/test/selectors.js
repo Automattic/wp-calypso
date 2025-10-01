@@ -27,7 +27,6 @@ import {
 	isCurrentSitePlan,
 	isCurrentPlanPaid,
 	getSiteFrontPage,
-	getSitePostsPage,
 	getSiteFrontPageType,
 	hasStaticFrontPage,
 	canCurrentUserUseCustomerHome,
@@ -2337,63 +2336,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( hasFrontPage ).toEqual( true );
-		} );
-	} );
-
-	describe( 'getSitePostsPage()', () => {
-		test( 'should return falsey if the site does not have a static page set as the posts page', () => {
-			const postsPage = getSitePostsPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-									page_for_posts: 0,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( postsPage ).toBeFalsy();
-		} );
-
-		test( 'should return falsey if the site is not known', () => {
-			const postsPage = getSitePostsPage(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			expect( postsPage ).toBeFalsy();
-		} );
-
-		test( 'should return the page ID if the site has a static page set as the posts page', () => {
-			const postsPage = getSitePostsPage(
-				{
-					sites: {
-						items: {
-							77203074: {
-								options: {
-									show_on_front: 'page',
-									page_on_front: 1,
-									page_for_posts: 2,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( postsPage ).toEqual( 2 );
 		} );
 	} );
 
