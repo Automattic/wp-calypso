@@ -106,6 +106,7 @@ function renderActivityLogsDataViews() {
 			autoRefresh={ false }
 			setAutoRefresh={ jest.fn() }
 			logType={ 'activity' as typeof LogType.ACTIVITY }
+			hasActivityLogsAccess
 		/>
 	);
 }
