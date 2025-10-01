@@ -2,7 +2,17 @@ import { Context } from '@automattic/calypso-router';
 import { AppState } from 'calypso/types';
 import getSiteOption from './get-site-option';
 
-const CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS = new Map( [ [ 'mediaId', 'item' ] ] );
+const CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS = new Map( [
+	[ 'mediaId', 'item' ],
+	[ 'status', 'post_status' ],
+] );
+
+const CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_VALUES = new Map( [
+	[ 'scheduled', 'future' ],
+	[ 'trashed', 'trash' ],
+	[ 'published', 'publish' ],
+	[ 'drafts', 'draft' ],
+] );
 
 /**
  * Returns the url to the wp-admin area for a site, or null if the admin URL
@@ -28,9 +38,9 @@ export default function getSiteAdminUrl(
 
 	Object.entries( params ).forEach( ( [ key, value ] ) => {
 		const wpAdminSearchParam = CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_PARAMS.get( key );
-
-		if ( wpAdminSearchParam ) {
-			searchParams.set( wpAdminSearchParam, value );
+		if ( wpAdminSearchParam && typeof value !== 'undefined' ) {
+			const mappedValue = CALYPSO_PARAMS_TO_WP_ADMIN_SEARCH_VALUES.get( value );
+			searchParams.set( wpAdminSearchParam, mappedValue ?? value );
 		}
 	} );
 
