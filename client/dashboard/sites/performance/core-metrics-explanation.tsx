@@ -143,8 +143,8 @@ const metricsExplanations = {
 
 export default function CoreMetricsExplanation( { activeTab }: { activeTab: Metrics } ) {
 	return (
-		<div style={ { maxWidth: '500px' } }>
-			<Text variant="muted">{ metricsExplanations[ activeTab ].explanation }</Text>
-		</div>
+		<Text style={ { maxWidth: '500px' } } variant="muted">
+			{ metricsExplanations[ activeTab ].explanation }
+		</Text>
 	);
 }
