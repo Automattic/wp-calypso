@@ -41,7 +41,6 @@ export { default as hasAllSitesList } from './has-all-sites-list';
 export { default as hasJetpackActivePlugins } from './has-jetpack-active-plugins';
 export { default as hasJetpackSiteCustomDomain } from './has-jetpack-site-custom-domain';
 export { default as hasSiteProduct } from './has-site-product';
-export { default as hasStaticFrontPage } from './has-static-front-page';
 export { default as isAdminInterfaceWPAdmin } from './is-admin-interface-wp-admin';
 export { default as isBackupPluginActive } from './is-backup-plugin-active';
 export { default as isCurrentPlanPaid } from './is-current-plan-paid';
