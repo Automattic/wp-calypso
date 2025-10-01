@@ -132,7 +132,7 @@ function SiteMonitoring() {
 						spacing={ isSmallViewport ? 5 : 10 }
 					>
 						<VStack spacing={ 2 }>
-							<PageHeader title={ __( 'Monitoring' ) } />
+							<PageHeader />
 							<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
 						</VStack>
 
