@@ -10,7 +10,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
@@ -260,7 +260,6 @@ const DomainSearchUI = (
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flowName ] );
 
-	const translate = useTranslate();
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 
 	const { hideBack, backUrl, backLabelText } = useMemo( () => {
@@ -273,18 +272,18 @@ const DomainSearchUI = (
 
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
-				? [ translate( 'Back to My Home' ), '/home' ]
-				: [ translate( 'Back to sites' ), '/sites' ];
+				? [ __( 'Back to My Home' ), '/home' ]
+				: [ __( 'Back to sites' ), '/sites' ];
 
 		if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
 			backUrl = '/plugins';
-			backLabelText = translate( 'Back to plugins' );
+			backLabelText = __( 'Back to plugins' );
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
-			backLabelText = translate( 'Back to themes' );
+			backLabelText = __( 'Back to themes' );
 		} else if ( 'plans-first' === flowName ) {
 			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
@@ -294,7 +293,7 @@ const DomainSearchUI = (
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
 			if ( backTo && isRelativeUrl( backTo ) ) {
 				backUrl = backTo;
-				backLabelText = translate( 'Back' );
+				backLabelText = __( 'Back' );
 			}
 		}
 
@@ -303,7 +302,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ flowName, previousStepName, goBack, userSiteCount, translate ] );
+	}, [ flowName, previousStepName, goBack, userSiteCount ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {

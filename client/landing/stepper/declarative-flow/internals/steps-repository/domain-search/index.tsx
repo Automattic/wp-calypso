@@ -11,9 +11,10 @@ import {
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -22,6 +23,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -54,8 +56,7 @@ type StepSubmission = {
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
-	const translate = useTranslate();
-
+	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
@@ -204,7 +205,7 @@ const DomainSearchStep: StepType< {
 			if ( query && config.allowsUsingOwnDomain ) {
 				return (
 					<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-						{ translate( 'Use a domain I already own' ) }
+						{ __( 'Use a domain I already own' ) }
 					</Step.LinkButton>
 				);
 			}
@@ -212,7 +213,7 @@ const DomainSearchStep: StepType< {
 			if ( isNewHostedSiteCreationFlow( flow ) ) {
 				return (
 					<Step.LinkButton onClick={ () => events.onSkip() }>
-						{ translate( 'Decide later' ) }
+						{ __( 'Decide later' ) }
 					</Step.LinkButton>
 				);
 			}
@@ -239,13 +240,48 @@ const DomainSearchStep: StepType< {
 		);
 	}
 
-	const getAdditionalStepContainerProps = () => {
+	const getBackButton = () => {
 		if ( isAIBuilderFlow( flow ) ) {
 			return {
 				backUrl: `${ site?.URL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }&p=%2F&ai-step=edit`,
-				backLabelText: translate( 'Keep Editing' ),
+				backLabelText: __( 'Keep Editing' ),
+			};
+		}
+
+		const [ sitesBackLabelText, defaultBackUrl ] =
+			userSiteCount === 1
+				? [ __( 'Back to My Home' ), '/home' ]
+				: [ __( 'Back to sites' ), '/sites' ];
+
+		if ( isCopySiteFlow( flow ) ) {
+			return {
+				backUrl: defaultBackUrl,
+				backLabelText: sitesBackLabelText,
+			};
+		}
+
+		return {};
+	};
+
+	const getSkipButton = () => {
+		if ( query && config.allowsUsingOwnDomain ) {
+			return {
+				customizedActionButtons: (
+					<Button
+						className="step-container__navigation-link forward"
+						onClick={ () => events.onExternalDomainClick( query ) }
+						variant="link"
+					>
+						<span>{ __( 'Use a domain I already own' ) }</span>
+					</Button>
+				),
+			};
+		}
+
+		if ( isAIBuilderFlow( flow ) ) {
+			return {
 				hideSkip: false,
-				skipLabelText: translate( 'Decide later' ),
+				skipLabelText: __( 'Decide later' ),
 				onSkip: () => events.onSkip(),
 			};
 		}
@@ -264,7 +300,8 @@ const DomainSearchStep: StepType< {
 			}
 			stepContent={ domainSearchElement }
 			recordTracksEvent={ recordTracksEvent }
-			{ ...getAdditionalStepContainerProps() }
+			{ ...getBackButton() }
+			{ ...getSkipButton() }
 		/>
 	);
 };
