@@ -73,7 +73,7 @@ const DomainSearchUI = (
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
+			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
 						...product,

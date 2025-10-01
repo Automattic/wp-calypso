@@ -1,7 +1,5 @@
-import { DomainSuggestion } from '@automattic/api-core';
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
-import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, useRef, useState, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
@@ -14,7 +12,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	flowName: string;
 	events?: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
 		onContinue?: ( items: ResponseCartProduct[] ) => void;
-		onAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
+		beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
 	flowAllowsMultipleDomainsInCart: boolean;
@@ -30,7 +28,7 @@ const DomainSearchWithCart = ( {
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
-	const { onContinue, onAddDomainToCart } = props.events ?? {};
+	const { onContinue, beforeAddDomainToCart } = props.events ?? {};
 	const [ railcarId, setRailcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
 
 	const { query, setQuery } = useQueryHandler( {
@@ -44,7 +42,7 @@ const DomainSearchWithCart = ( {
 		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
-		onAddDomainToCart,
+		beforeAddDomainToCart,
 	} );
 
 	const cartItemsLength = cart.items.length;
@@ -62,10 +60,10 @@ const DomainSearchWithCart = ( {
 
 	const searchCount = useRef( 0 );
 
-	const events = useMemo( () => {
+	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			...props.events,
-			onQueryChange: ( query: string ) => {
+			onQueryChange: ( query ) => {
 				setQuery( query );
 				setRailcarId( getNewRailcarId( 'domain-suggestion' ) );
 
@@ -85,12 +83,7 @@ const DomainSearchWithCart = ( {
 			onContinue: () => {
 				props.events?.onContinue?.( items );
 			},
-			onAddDomainToCart: (
-				domainName: string,
-				position: number,
-				isPremium: boolean,
-				rootVendor: string
-			) => {
+			onAddDomainToCart: ( domainName, position, isPremium, rootVendor ) => {
 				recordTracksEvent( 'calypso_domain_search_add_button_click', {
 					domain: domainName,
 					position,
@@ -100,7 +93,7 @@ const DomainSearchWithCart = ( {
 					root_vendor: rootVendor,
 				} );
 			},
-			onQueryAvailabilityCheck: ( status: string, domainName: string ) => {
+			onQueryAvailabilityCheck: ( status, domainName ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
 					available_status: status,
 					flow_name: flowName,
@@ -110,11 +103,7 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
-			onDomainAddAvailabilityPreCheck: (
-				unavailableStatus: string | null,
-				domainName: string,
-				rootVendor: string
-			) => {
+			onDomainAddAvailabilityPreCheck: ( unavailableStatus, domainName, rootVendor ) => {
 				recordTracksEvent( 'calypso_domain_add_availability_precheck', {
 					domain: domainName,
 					flow_name: flowName,
@@ -123,7 +112,7 @@ const DomainSearchWithCart = ( {
 					unavailable_status: unavailableStatus,
 				} );
 			},
-			onFilterApplied: ( filter: FilterState ) => {
+			onFilterApplied: ( filter ) => {
 				recordTracksEvent( 'calypso_domain_search_filters_submit', {
 					flow_name: flowName,
 					filters_tlds: filter.tlds?.join( ',' ),
@@ -131,7 +120,7 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
-			onSuggestionsReceive: ( query: string, suggestions: string[] ) => {
+			onSuggestionsReceive: ( query, suggestions ) => {
 				recordTracksEvent( 'calypso_domain_search_results_suggestions_receive', {
 					search_query: query,
 					results: suggestions.join( ';' ),
@@ -141,7 +130,7 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
-			onSuggestionRender: ( suggestion: DomainSuggestion, reason?: string | null ) => {
+			onSuggestionRender: ( suggestion, reason ) => {
 				let resultSuffix = '';
 				if ( reason === 'recommended' ) {
 					resultSuffix = '#recommended';
@@ -170,7 +159,7 @@ const DomainSearchWithCart = ( {
 					tld: getTld( suggestion.domain_name ),
 				} );
 			},
-			onSuggestionInteract: ( suggestion: DomainSuggestion ) => {
+			onSuggestionInteract: ( suggestion ) => {
 				recordTracksEvent( 'calypso_traintracks_interact', {
 					railcar: `${ railcarId }-${ suggestion.position }`,
 					action: 'domain_added_to_cart',

@@ -4,7 +4,7 @@ import {
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
 } from '@automattic/api-queries';
-import { PriceRulesConfig } from '../hooks/use-suggestion';
+import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type {
 	DomainSuggestion,
@@ -52,9 +52,13 @@ export interface DomainSearchEvents {
 		domainName: string,
 		rootVendor: string
 	) => void;
+	onFilterApplied: ( filter: FilterState ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
-	onSuggestionRender: ( suggestion: DomainSuggestion, reason?: string | null ) => void;
-	onSuggestionInteract: ( suggestion: DomainSuggestion ) => void;
+	onSuggestionRender: (
+		suggestion: ReturnType< typeof useSuggestion >,
+		reason?: string | null
+	) => void;
+	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 }
 
 export interface DomainSearchConfig {
