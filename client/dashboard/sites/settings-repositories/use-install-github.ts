@@ -1,6 +1,6 @@
 import { githubInstallationsQuery, saveGitHubCredentialsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
@@ -63,7 +63,6 @@ export const useInstallGithub = () => {
 	const { error: githubInstallationsError } = useQuery( githubInstallationsQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const { createInfoNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: saveGitHubCredentials } = useMutation( saveGitHubCredentialsMutation() );
 
@@ -94,7 +93,6 @@ export const useInstallGithub = () => {
 
 					try {
 						await authorizeApp( { code: data.code } );
-						queryClient.invalidateQueries( githubInstallationsQuery() );
 						popup.location = INSTALLATION_URL;
 					} catch {
 						popup.close();
