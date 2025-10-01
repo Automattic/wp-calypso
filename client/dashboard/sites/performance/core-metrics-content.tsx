@@ -45,7 +45,7 @@ export default function CoreMetricsContent( {
 				<VStack spacing={ 4 }>
 					<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
 						<VStack spacing={ 4 } alignment="flex-start">
-							<HStack spacing={ 2 } alignment="left">
+							<HStack spacing={ 2 } justify="flex-start">
 								<Text size="title" weight={ 500 }>
 									{ displayName }
 								</Text>
