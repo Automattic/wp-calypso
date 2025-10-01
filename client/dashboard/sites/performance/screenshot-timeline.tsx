@@ -52,35 +52,33 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 							const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
 							return (
 								<VStack key={ index } spacing={ 2 } alignment="center">
-									<Button
-										variant="link"
-										onClick={ () =>
-											setOverlay( { isOpen: true, screenshot: screenshot, timing: timing } )
-										}
-										style={ {
-											border: 'none',
-											background: 'none',
-											padding: 0,
-											cursor: 'pointer',
-											width: '100%',
-										} }
-										aria-label={ sprintf(
-											/* translators: %s is the timing */
-											__( 'View screenshot at %s' ),
-											timing
-										) }
-									>
-										<img
+									<Card>
+										<Button
+											variant="link"
+											onClick={ () =>
+												setOverlay( { isOpen: true, screenshot: screenshot, timing: timing } )
+											}
 											style={ {
 												display: 'block',
 												width: '100%',
-												height: 'auto',
 											} }
-											alt={ timing }
-											src={ screenshot.data }
-										/>
-									</Button>
-
+											aria-label={ sprintf(
+												/* translators: %s is the timing */
+												__( 'View screenshot at %s' ),
+												timing
+											) }
+										>
+											<img
+												style={ {
+													display: 'block',
+													width: '100%',
+													borderRadius: '7px',
+												} }
+												alt={ timing }
+												src={ screenshot.data }
+											/>
+										</Button>
+									</Card>
 									<Text size="small" variant="muted">
 										{ timing }
 									</Text>
