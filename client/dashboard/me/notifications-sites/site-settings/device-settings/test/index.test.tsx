@@ -13,9 +13,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { DevicesSettings } from '../';
-import Snackbars from '../../../../app/snackbars';
-import { getFieldLabel } from '../../helpers/translations';
+import { DevicesSettings } from '..';
+import Snackbars from '../../../../../app/snackbars';
+import { getFieldLabel } from '../../../helpers/translations';
 
 const Wrapper = ( { children }: { children: React.ReactNode } ) => {
 	const queryClient = new QueryClient( {
@@ -288,6 +288,15 @@ describe( 'DevicesSettings', () => {
 		} );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites' } ) );
+
+		//modal is visible
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog', { name: 'Apply to all sites' } ) ).toBeVisible();
+		} );
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Yes, apply to all sites' } )
+		);
 
 		await waitFor( () => {
 			expect( updatedSettingsApi.isDone() ).toBe( true );

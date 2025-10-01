@@ -12,9 +12,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { WebSettings } from '../';
-import Snackbars from '../../../../app/snackbars';
-import { getFieldLabel } from '../../helpers/translations';
+import { EmailSettings } from '..';
+import Snackbars from '../../../../../app/snackbars';
+import { getFieldLabel } from '../../../helpers/translations';
 
 const Wrapper = ( { children }: { children: React.ReactNode } ) => {
 	const queryClient = new QueryClient( {
@@ -55,7 +55,7 @@ const mockUpdateSettingsApiAndReply = (
 		.reply( 200, data );
 };
 
-const buildWebNotificationSettings = (
+const buildEmailNotificationSettings = (
 	blogId: number,
 	settings: Partial< NotificationSettings > = {}
 ) => {
@@ -76,7 +76,6 @@ const buildWebNotificationSettings = (
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
-					...settings,
 				},
 				devices: [],
 				email: {
@@ -92,13 +91,14 @@ const buildWebNotificationSettings = (
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					...settings,
 				},
 			},
 		],
 	};
 };
 
-describe( 'WebSettings', () => {
+describe( 'EmailSettings', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
 		nock.cleanAll();
@@ -108,15 +108,15 @@ describe( 'WebSettings', () => {
 		window.scrollTo = jest.fn();
 	} );
 
-	it( 'renders the web settings values', async () => {
+	it( 'renders the email settings values', async () => {
 		mockGetSettingsApiAndReply(
-			buildWebNotificationSettings( 1, {
+			buildEmailNotificationSettings( 1, {
 				comment_like: true,
 				new_comment: false,
 			} )
 		);
 
-		render( <WebSettings siteId={ 1 } />, {
+		render( <EmailSettings siteId={ 1 } />, {
 			wrapper: Wrapper,
 		} );
 
@@ -131,13 +131,13 @@ describe( 'WebSettings', () => {
 
 	it( 'updates the settings when the checkbox is changed', async () => {
 		const blogId = 3;
-		const settings = buildWebNotificationSettings( blogId, {
+		const settings = buildEmailNotificationSettings( blogId, {
 			comment_like: false,
 			comment_reply: false,
 		} );
 
 		const updatedSettings = {
-			...settings.blogs[ 0 ].timeline,
+			...settings.blogs[ 0 ].email,
 			comment_like: true,
 		};
 
@@ -147,12 +147,12 @@ describe( 'WebSettings', () => {
 			blogs: [
 				{
 					blog_id: blogId,
-					timeline: updatedSettings,
+					email: updatedSettings,
 				},
 			],
 		} );
 
-		render( <WebSettings siteId={ blogId } />, {
+		render( <EmailSettings siteId={ blogId } />, {
 			wrapper: Wrapper,
 		} );
 
@@ -171,7 +171,7 @@ describe( 'WebSettings', () => {
 
 	it( 'updates all settings when the apply all button is clicked', async () => {
 		const blogId = 4;
-		const settings = buildWebNotificationSettings( blogId, {
+		const settings = buildEmailNotificationSettings( blogId, {
 			comment_like: false,
 			comment_reply: false,
 		} );
@@ -189,11 +189,20 @@ describe( 'WebSettings', () => {
 			expectedQuery
 		);
 
-		render( <WebSettings siteId={ blogId } />, {
+		render( <EmailSettings siteId={ blogId } />, {
 			wrapper: Wrapper,
 		} );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites' } ) );
+
+		//modal is visible
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog', { name: 'Apply to all sites' } ) ).toBeVisible();
+		} );
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Yes, apply to all sites' } )
+		);
 
 		await waitFor( () => {
 			expect( updatedSettingsApi.isDone() ).toBe( true );

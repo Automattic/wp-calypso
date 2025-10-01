@@ -1,9 +1,9 @@
 import { TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { DevicesSettings } from '../device-settings';
-import { EmailSettings } from '../email-settings';
-import { WebSettings } from '../web-settings';
+import { DevicesSettings } from './device-settings';
+import { EmailSettings } from './email-settings';
+import { WebSettings } from './web-settings';
 import './index.scss';
 
 interface Props {

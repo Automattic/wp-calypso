@@ -1,13 +1,15 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
-import { SettingsOption, SettingsPanel } from '../../../../components/settings-panel';
-import { getFieldLabel } from '../helpers/translations';
-import { useSiteSettings, useSettingsMutation } from '../hooks';
+import { useMemo, useState } from 'react';
+import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
+import { getFieldLabel } from '../../helpers/translations';
+import { useSiteSettings, useSettingsMutation } from '../../hooks';
+import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
 
 export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 
 	const emailSettings = blogSettings?.email ?? null;
 	const settings = emailSettings ?? null;
@@ -19,6 +21,11 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 			},
 		} );
 	};
+
+	const askForConfirmation = () => {
+		setIsConfirmDialogOpen( true );
+	};
+
 	const handleApplyAll = () => {
 		if ( ! blogSettings ) {
 			return;
@@ -83,11 +90,19 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 	}
 
 	return (
-		<VStack spacing={ 4 } alignment="start">
-			<SettingsPanel disabled={ isUpdating } options={ options } onChange={ handleChange } />
-			<Button onClick={ handleApplyAll } variant="primary" isBusy={ isUpdating }>
-				{ __( 'Apply to all sites' ) }
-			</Button>
-		</VStack>
+		<>
+			<ApplySettingsToAllSitesConfirmationModal
+				onCancel={ () => setIsConfirmDialogOpen( false ) }
+				onConfirm={ handleApplyAll }
+				isBusy={ isUpdating }
+				isOpen={ isConfirmDialogOpen }
+			/>
+			<VStack spacing={ 4 } alignment="start">
+				<SettingsPanel disabled={ isUpdating } options={ options } onChange={ handleChange } />
+				<Button onClick={ askForConfirmation } variant="primary" isBusy={ isUpdating }>
+					{ __( 'Apply to all sites' ) }
+				</Button>
+			</VStack>
+		</>
 	);
 };

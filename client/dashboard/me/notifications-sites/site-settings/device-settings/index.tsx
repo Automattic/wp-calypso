@@ -13,14 +13,16 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { SettingsOption, SettingsPanel } from '../../../../components/settings-panel';
-import { getFieldLabel } from '../helpers/translations';
-import { useSiteSettings, useSettingsMutation } from '../hooks';
+import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
+import { getFieldLabel } from '../../helpers/translations';
+import { useSiteSettings, useSettingsMutation } from '../../hooks';
+import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
 
 export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { data: devices } = useSuspenseQuery( userNotificationsDevicesQuery() );
 	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 
 	const [ selectedDeviceId, setSelectedDeviceId ] = useState< string | undefined >(
 		devices?.[ 0 ]?.device_id
@@ -46,6 +48,10 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 				],
 			},
 		} );
+	};
+
+	const askForConfirmation = () => {
+		setIsConfirmDialogOpen( true );
 	};
 
 	const options = useMemo(
@@ -108,53 +114,61 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	};
 
 	return (
-		<VStack alignment="stretch" spacing={ 4 }>
-			<Text variant="muted">
-				{ createInterpolateElement(
-					__(
-						'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
-					),
-					{
-						link: (
-							<ExternalLink
-								href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
-								children={ null }
-							/>
-						),
-					}
-				) }
-			</Text>
-			<SelectControl
-				__nextHasNoMarginBottom
-				__next40pxDefaultSize
-				label={ __( 'Select device' ) }
-				value={ selectedDeviceId?.toString() }
-				onChange={ handleDeviceChange }
-				disabled={ isUpdating || ! hasDevices }
-			>
-				{ hasDevices &&
-					devices?.map( ( device ) => (
-						<option key={ device.device_id } value={ device.device_id }>
-							{ device.device_name }
-						</option>
-					) ) }
-				{ ! hasDevices && <option value="">{ __( 'No devices found' ) }</option> }
-			</SelectControl>
-			<SettingsPanel
-				options={ options }
-				disabled={ isUpdating || ! hasDevices }
-				onChange={ handleChange }
+		<>
+			<ApplySettingsToAllSitesConfirmationModal
+				onCancel={ () => setIsConfirmDialogOpen( false ) }
+				onConfirm={ handleApplyAll }
+				isBusy={ isUpdating }
+				isOpen={ isConfirmDialogOpen }
 			/>
-			<HStack spacing={ 4 } alignment="start" justify="flex-start">
-				<Button
-					onClick={ handleApplyAll }
-					variant="primary"
-					isBusy={ isUpdating }
+			<VStack alignment="stretch" spacing={ 4 }>
+				<Text variant="muted">
+					{ createInterpolateElement(
+						__(
+							'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
+						),
+						{
+							link: (
+								<ExternalLink
+									href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
+									children={ null }
+								/>
+							),
+						}
+					) }
+				</Text>
+				<SelectControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					label={ __( 'Select device' ) }
+					value={ selectedDeviceId?.toString() }
+					onChange={ handleDeviceChange }
 					disabled={ isUpdating || ! hasDevices }
 				>
-					{ __( 'Apply to all sites' ) }
-				</Button>
-			</HStack>
-		</VStack>
+					{ hasDevices &&
+						devices?.map( ( device ) => (
+							<option key={ device.device_id } value={ device.device_id }>
+								{ device.device_name }
+							</option>
+						) ) }
+					{ ! hasDevices && <option value="">{ __( 'No devices found' ) }</option> }
+				</SelectControl>
+				<SettingsPanel
+					options={ options }
+					disabled={ isUpdating || ! hasDevices }
+					onChange={ handleChange }
+				/>
+				<HStack spacing={ 4 } alignment="start" justify="flex-start">
+					<Button
+						onClick={ askForConfirmation }
+						variant="primary"
+						isBusy={ isUpdating }
+						disabled={ isUpdating || ! hasDevices }
+					>
+						{ __( 'Apply to all sites' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</>
 	);
 };
