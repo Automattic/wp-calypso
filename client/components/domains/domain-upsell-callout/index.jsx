@@ -5,7 +5,6 @@ import { Gridicon } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { globe, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
@@ -36,22 +35,6 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const { __ } = useI18n();
 
-	const getCtaClickHandler = useCallback( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		recordTracksEvent( trackEventClick );
-
-		const domainUpsellUrl = getDomainAndPlanUpsellUrl( { siteSlug: site.slug } );
-
-		if ( shouldRenderRewrittenDomainSearch() ) {
-			return window.location.assign( domainUpsellUrl );
-		}
-
-		page( domainUpsellUrl );
-	}, [ trackEventClick, site ] );
-
 	const getDismissClickHandler = () => {
 		recordTracksEvent( trackEventDismiss );
 		dispatch( savePreference( dismissPreference, 1 ) );
@@ -68,6 +51,18 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	) {
 		return null;
 	}
+
+	const getCtaClickHandler = () => {
+		recordTracksEvent( trackEventClick );
+
+		const domainUpsellUrl = getDomainAndPlanUpsellUrl( { siteSlug: site.slug } );
+
+		if ( shouldRenderRewrittenDomainSearch() ) {
+			return window.location.assign( domainUpsellUrl );
+		}
+
+		page( domainUpsellUrl );
+	};
 
 	return (
 		<>
