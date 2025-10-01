@@ -21,6 +21,7 @@ export type OnboardingLink = {
 };
 
 export type AppConfig = {
+	context: 'dotcom' | 'a4a' | 'ciab' | '';
 	name: string;
 	basePath: string;
 	mainRoute: string;
@@ -47,6 +48,7 @@ export type AppConfig = {
 };
 
 const AppContext = createContext< AppConfig >( {
+	context: '',
 	name: '',
 	basePath: '',
 	mainRoute: '',

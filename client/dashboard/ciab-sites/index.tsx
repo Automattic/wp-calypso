@@ -14,50 +14,43 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import deepmerge from 'deepmerge';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { useAppContext } from '../app/context';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useActions } from './actions';
-import AddNewSite from './add-new-site';
-import SitesDataViews from './dataviews';
-import { getFields } from './fields';
-import noSitesIllustration from './no-sites-illustration.svg';
-import { SitesNotices } from './notices';
-import { getView, mergeViews, recordViewChanges } from './views';
-import type { ViewSearchParams } from './views';
+import { useActions } from '../sites/actions';
+import SitesDataViews from '../sites/dataviews';
+import { getFields } from '../sites/fields';
+import noSitesIllustration from '../sites/no-sites-illustration.svg';
+import { SitesNotices } from '../sites/notices';
+import { getView, mergeViews, recordViewChanges } from '../sites/views';
+import type { ViewSearchParams } from '../sites/views';
 import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
 	const filters = view.filters ?? [];
 
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned = ! filters.some(
-		( item: Filter ) => item.field === 'is_a8c' && item.value === false
-	);
-
 	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
-		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
+		return { site_visibility: 'deleted', include_a8c_owned: false };
 	}
 
 	return {
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
-		include_a8c_owned: shouldIncludeA8COwned,
+		site_visibility: view.search || isRestoringAccount ? 'all' : 'visible',
+		include_a8c_owned: false,
 	};
 };
 
 export default function Sites() {
-	const { onboardingLinkSourceQueryArg } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
@@ -67,8 +60,10 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'sites-view' ) );
-	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'sites-view' ) );
+	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
+	const { mutate: updateViewPreferences } = useMutation(
+		userPreferenceMutation( 'ciab-sites-view' )
+	);
 
 	const { defaultView, view } = getView( {
 		user,
@@ -89,8 +84,6 @@ export default function Sites() {
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
-
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.type === 'list' ) {
@@ -118,19 +111,19 @@ export default function Sites() {
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 
-	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+	const emptyTitle = hasFilterOrSearch ? __( 'No stores found' ) : __( 'No stores' );
 
-	let emptyDescription = __( 'Get started by creating a new site.' );
+	let emptyDescription = __( 'Get started by creating a new store.' );
 	if ( view.search ) {
 		emptyDescription = sprintf(
-			// Translators: %s is the search term used when looking for sites by title or domain name.
+			// Translators: %s is the search term used when looking for stores by title or domain name.
 			__(
-				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
+				'Your search for “%s” did not match any stores. Try searching by the store title or domain name.'
 			),
 			view.search
 		);
 	} else if ( hasFilterOrSearch ) {
-		emptyDescription = __( 'Your search did not match any sites.' );
+		emptyDescription = __( 'Your search did not match any stores.' );
 	}
 
 	useEffect( () => {
@@ -145,22 +138,16 @@ export default function Sites() {
 
 	return (
 		<>
-			{ isModalOpen && (
-				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context={ onboardingLinkSourceQueryArg } />
-				</Modal>
-			) }
 			<PageLayout
 				header={
 					<PageHeader
-						title={ __( 'Sites' ) }
 						actions={
 							<Button
 								variant="primary"
-								onClick={ () => setIsModalOpen( true ) }
+								href={ addQueryArgs( '/start', { context: 'ciab-sites-dashboard' } ) }
 								__next40pxDefaultSize
 							>
-								{ __( 'Add new site' ) }
+								{ __( 'Add new store' ) }
 							</Button>
 						}
 					/>
@@ -203,9 +190,9 @@ export default function Sites() {
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
-										onClick={ () => setIsModalOpen( true ) }
+										href={ addQueryArgs( '/start', { context: 'ciab-sites-dashboard' } ) }
 									>
-										{ __( 'Add new site' ) }
+										{ __( 'Add new store' ) }
 									</Button>
 								</>
 							}
