@@ -3,7 +3,6 @@ import {
 	userNotificationsSettingsMutation,
 	userNotificationsDevicesQuery,
 } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation, useIsMutating } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -98,12 +97,10 @@ export const DevicesSettings = () => {
 								),
 								{
 									link: (
-										<ExternalLink
-											href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
-											rel="noopener noreferrer"
-											//Workaround for the fact that the ExternalLink component expects a children prop
-											children={ null }
-										/>
+										<ExternalLink href="https://wordpress.org" rel="noopener noreferrer">
+											{ /* Workaround for the fact that the ExternalLink component expects a children prop */ }
+											{ null }
+										</ExternalLink>
 									),
 								}
 							) }
