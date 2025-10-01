@@ -21,7 +21,7 @@ export function useActivityActions( {
 	return useMemo( () => {
 		const backupAction: Action< SiteActivityLog > = {
 			id: 'backup',
-			label: __( 'View backup' ),
+			label: __( 'See restore point' ),
 			icon: <Icon icon={ backup } />,
 			disabled: isLoading,
 			isPrimary: true,
