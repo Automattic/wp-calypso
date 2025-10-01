@@ -46,7 +46,7 @@ const SubdomainInputControlEdit = < Item, >( {
 			label={ field.label }
 			value={ getValue( { item: data } ) }
 			suffix={ DOMAIN_SUFFIX }
-			onChange={ ( newValue ) => {
+			onChange={ ( newValue: string ) => {
 				onChange( { [ id ]: newValue } as Partial< Item > );
 			} }
 		/>
