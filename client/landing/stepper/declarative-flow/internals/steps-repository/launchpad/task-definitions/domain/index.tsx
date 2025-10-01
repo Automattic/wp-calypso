@@ -30,6 +30,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 			siteSlug,
 			backUrl,
 			suggestion: site?.name,
+			forceStepperFlow: true,
 		} );
 
 		return domainUpsellCompleted ? `/domains/manage/${ siteSlug }` : purchaseDomainUrl;

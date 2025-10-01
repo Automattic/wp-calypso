@@ -6,6 +6,12 @@ interface GetDomainUpsellUrlParams {
 	step?: 'domains' | 'plans';
 	suggestion?: string;
 	backUrl?: string;
+	domain?: boolean;
+	/**
+	 * This is necessary while we don't remove the feature flag and ?domainAndPlanPackage=true entirely.
+	 * Some entrypoints currently link to the domain and package plan flow instead of the domains/add page.
+	 */
+	forceStepperFlow?: boolean;
 }
 
 export const getDomainAndPlanUpsellUrl = ( {
@@ -13,9 +19,11 @@ export const getDomainAndPlanUpsellUrl = ( {
 	backUrl,
 	step = 'domains',
 	suggestion,
+	domain,
+	forceStepperFlow,
 }: GetDomainUpsellUrlParams ) => {
 	if ( step === 'domains' ) {
-		if ( shouldRenderRewrittenDomainSearch() ) {
+		if ( shouldRenderRewrittenDomainSearch() || forceStepperFlow ) {
 			return addQueryArgs( '/setup/domain-and-plan', {
 				siteSlug,
 				back_to: backUrl,
@@ -25,12 +33,12 @@ export const getDomainAndPlanUpsellUrl = ( {
 
 		return addQueryArgs( `/domains/add/${ siteSlug }`, {
 			domainAndPlanPackage: true,
-			domain: true,
+			domain,
 			back_to: backUrl,
 		} );
 	}
 
-	if ( shouldRenderRewrittenDomainSearch() ) {
+	if ( shouldRenderRewrittenDomainSearch() || forceStepperFlow ) {
 		return addQueryArgs( '/setup/domain-and-plan/plans', {
 			siteSlug,
 			back_to: backUrl,
@@ -38,7 +46,7 @@ export const getDomainAndPlanUpsellUrl = ( {
 	}
 
 	return addQueryArgs( `/plans/yearly/${ siteSlug }`, {
-		domain: true,
+		domain,
 		domainAndPlanPackage: true,
 		back_to: backUrl,
 	} );

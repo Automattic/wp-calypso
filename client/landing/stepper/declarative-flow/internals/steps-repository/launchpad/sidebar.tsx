@@ -175,9 +175,14 @@ const Sidebar = ( {
 			return '';
 		}
 
+		if ( isStartWritingFlow( siteIntentOption ) ) {
+			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
+		}
+
 		if ( ! site?.plan?.is_free ) {
 			return `/domains/manage/${ siteSlug }`;
 		}
+
 		return getDomainAndPlanUpsellUrl( { siteSlug } );
 	}
 
