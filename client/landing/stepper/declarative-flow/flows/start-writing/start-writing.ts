@@ -25,6 +25,7 @@ import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const startWriting: Flow = {
@@ -68,8 +69,15 @@ const startWriting: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { setSelectedSite, setHideFreePlan, setDomainCartItem, setSignupDomainOrigin } =
-			useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const {
+			setSiteUrl,
+			setSelectedSite,
+			setHideFreePlan,
+			setDomainCartItem,
+			setSignupDomainOrigin,
+			setDomain,
+			setDomainCartItems,
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { site, siteSlug, siteId } = useSiteData();
 		const { exitFlow } = useExitFlow();
 
@@ -170,18 +178,47 @@ const startWriting: Flow = {
 
 					return postFlowNavigator( { siteId, siteSlug } );
 				}
-				case 'domains':
-					if ( siteId ) {
-						await updateLaunchpadSettings( siteId, {
-							checklist_statuses: { domain_upsell_deferred: true },
-						} );
+				case 'domains': {
+					if ( ! shouldRenderRewrittenDomainSearch() ) {
+						if ( siteId ) {
+							await updateLaunchpadSettings( siteId, {
+								checklist_statuses: { domain_upsell_deferred: true },
+							} );
+						}
+
+						if ( providedDependencies?.freeDomain ) {
+							return window.location.assign(
+								`/setup/start-writing/launchpad?siteId=${ site?.ID }`
+							);
+						}
+
+						return navigate( 'plans' );
 					}
 
-					if ( providedDependencies?.freeDomain ) {
-						return window.location.assign( `/setup/start-writing/launchpad?siteId=${ site?.ID }` );
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+						currentQueryArgs.step = 'domain-input';
+
+						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
+
+						const lastQueryParam = providedDependencies.lastQuery as string | undefined;
+
+						if ( lastQueryParam !== undefined ) {
+							currentQueryArgs.initialQuery = lastQueryParam;
+							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
+						}
+
+						return navigate( useMyDomainURL as typeof currentStep );
 					}
+
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					return navigate( 'plans' );
+				}
 				case 'use-my-domain':
 					if (
 						providedDependencies &&
