@@ -5,7 +5,6 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { Text } from '../../components/text';
 import {
 	metricsNames,
@@ -31,7 +30,6 @@ export default function CoreMetricsContent( {
 } ) {
 	const { audits } = report;
 	const { name: displayName } = metricsNames[ activeTab ];
-	const isDesktop = useViewportMatch( 'medium' );
 
 	const numberOfAuditsForMetric = Object.keys( audits ).filter( ( key ) =>
 		filterRecommendations( activeTab, audits[ key ] )
@@ -45,12 +43,7 @@ export default function CoreMetricsContent( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<HStack
-						direction={ isDesktop ? 'row' : 'column' }
-						spacing={ 4 }
-						justify="space-between"
-						alignment="flex-start"
-					>
+					<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
 						<VStack spacing={ 4 } alignment="flex-start">
 							<HStack spacing={ 2 } alignment="left">
 								<Text size="title" weight={ 500 }>
