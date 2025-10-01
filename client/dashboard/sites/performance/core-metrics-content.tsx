@@ -1,3 +1,4 @@
+import { Metrics } from '@automattic/api-core';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -6,13 +7,17 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import {
+	metricsNames,
+	mapThresholdsToStatus,
+	metricsThresholds,
+} from '../../utils/site-performance';
 import CoreMetricsChart from './core-metrics-chart';
 import CoreMetricsExplanation from './core-metrics-explanation';
 import { CoreMetricsRecommendLink } from './core-metrics-recommend-link';
 import { OverallScore, MetricScore } from './core-metrics-score';
 import { CoreMetricsStatusBadge } from './core-metrics-status-badge';
 import { filterRecommendations } from './performance-insights';
-import { metricsNames, mapThresholdsToStatus, metricsThresholds, Metrics } from './utils';
 import type { PerformanceReport } from '@automattic/api-core';
 
 export default function CoreMetricsContent( {

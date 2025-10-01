@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/ui';
 import { __ } from '@wordpress/i18n';
-import { Valuation } from './utils';
+import { Valuation } from '../../utils/site-performance';
 
 type BadgeType = 'default' | 'error' | 'warning' | 'success';
 

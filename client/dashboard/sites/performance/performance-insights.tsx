@@ -1,3 +1,4 @@
+import { Metrics } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -8,8 +9,8 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { metricsNames } from '../../utils/site-performance';
 import { PerformanceMetricsItemQueryResponse } from './core-metrics';
-import { metricsNames, Metrics } from './utils';
 
 export type CustomSelectControlOption = {
 	key: Metrics;

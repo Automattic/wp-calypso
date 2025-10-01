@@ -1,8 +1,8 @@
+import { Metrics } from '@automattic/api-core';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { Metrics } from './utils';
 
 export const CoreMetricsRecommendLink = ( {
 	activeTab,

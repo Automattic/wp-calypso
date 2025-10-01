@@ -1,5 +1,6 @@
+import { Metrics } from '@automattic/api-core';
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
-import { getColorForStatus, Metrics, Valuation } from './utils';
+import { getColorForStatus, Valuation } from '../../utils/site-performance';
 
 const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
 
@@ -12,7 +13,7 @@ const getDisplayValue = ( metric: Metrics, value: number ): string => {
 		return `${ Math.floor( value ) }`;
 	}
 
-	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'fid', 'tbt' ].includes( metric ) ) {
+	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric ) ) {
 		return `${ max2Decimals( value / 1000 ) }s`;
 	}
 

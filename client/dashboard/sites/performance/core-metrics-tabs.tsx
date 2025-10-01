@@ -5,8 +5,8 @@ import {
 	Card,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { metricsNames, mapThresholdsToStatus, Metrics } from '../../utils/site-performance';
 import { OverallScore, MetricScore } from './core-metrics-score';
-import { metricsNames, mapThresholdsToStatus, Metrics } from './utils';
 import type { PerformanceReport } from '@automattic/api-core';
 
 const Tab = ( { children, tabId }: { children: React.ReactNode; tabId: string } ) => {

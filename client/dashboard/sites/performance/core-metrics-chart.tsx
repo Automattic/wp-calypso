@@ -1,7 +1,7 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
-import { Valuation, getColorForStatus } from './utils';
+import { Valuation, getColorForStatus } from '../../utils/site-performance';
 
 const StatusIndicator = ( { speed }: { speed: Valuation } ) => {
 	const innerSvg: Record< Valuation, React.ReactNode > = {

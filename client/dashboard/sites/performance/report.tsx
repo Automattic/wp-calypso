@@ -1,10 +1,10 @@
+import { Metrics } from '@automattic/api-core';
 import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
 import { useState, useRef } from 'react';
 import CoreMetrics from './core-metrics';
 import PerformanceInsights from './performance-insights';
 import ReportFooter from './report-footer';
 import ScreenshotTimeline from './screenshot-timeline';
-import { Metrics } from './utils';
 import type { PerformanceReport } from '@automattic/api-core';
 
 export default function Report( { report }: { report: PerformanceReport } ) {

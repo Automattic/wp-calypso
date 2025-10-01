@@ -2,11 +2,12 @@ export interface BasicMetricsData {
 	token?: string;
 }
 
-export interface PerformanceReport {
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall_score';
+
+export type PerformanceReport = {
 	audits: Record< string, any >;
 	crux_score: number;
 	performance: number;
-	overall_score: number;
 	fullPageScreenshot: {
 		screenshot: {
 			data: string;
@@ -20,26 +21,11 @@ export interface PerformanceReport {
 	screenshots?: Array< { data: string; timing: number } >;
 	history: {
 		collection_period: Array< string | { year: number; month: number; day: number } >;
-		metrics: {
-			ttfb?: number[];
-			fcp?: number[];
-			lcp?: number[];
-			cls?: number[];
-			inp?: number[];
-			tbt?: number[];
-			overall_score?: number[];
-		};
+		metrics: Partial< Record< Metrics, number[] > >;
 	};
 	timestamp?: string;
 	share_link: string;
-	cls: number;
-	lcp: number;
-	fcp: number;
-	ttfb: number;
-	inp: number;
-	tbt: number;
-	overall: number;
-}
+} & Record< Metrics, number >;
 
 export interface PerformanceProfilerPage {
 	id: string;

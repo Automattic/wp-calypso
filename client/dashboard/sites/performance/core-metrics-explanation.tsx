@@ -1,8 +1,8 @@
+import { Metrics } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Metrics } from './utils';
 
 const metricsExplanations = {
 	fcp: {
