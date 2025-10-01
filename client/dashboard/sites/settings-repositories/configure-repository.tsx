@@ -79,7 +79,7 @@ export default function ConfigureRepository() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Configure repository connection' ) }
+					title={ __( 'Configure Repository' ) }
 					description={ __(
 						'Update the GitHub repository connection to deploy code to your WordPress site.'
 					) }
