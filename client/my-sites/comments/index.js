@@ -4,7 +4,7 @@ import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'ca
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
 
-export const redirect = ( { path } ) => {
+const redirect = ( { path } ) => {
 	const siteFragment = getSiteFragment( path );
 	if ( siteFragment ) {
 		return page.redirect( `/comments/all/${ siteFragment }` );
