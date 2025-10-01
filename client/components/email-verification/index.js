@@ -10,47 +10,94 @@ import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-host
  */
 
 export default function emailVerification( context, next ) {
-	const newEmailResult = context.query.new_email_result;
-	const hasValidNewEmailResult = newEmailResult === '1' || newEmailResult === '0';
+	const verified = context.query.verified; // New users verifying their email for the first time
+	const newEmailResult = context.query.new_email_result; // Users changing their email and verifying the new one
 
-	// Redirect email verification to v2 for users who have opted into the new Hosting Dashboard
-	// /me/account?new_email_result=1 (or 0) --> /v2/me/profile?new_email_result=1
-	if (
-		hasValidNewEmailResult &&
-		( context.pathname === '/me/account' || context.pathname === '/settings/account' )
-	) {
-		let state = context.store.getState();
-
-		const arePreferencesLoaded = ( storeState ) =>
-			! storeState.preferences.fetching && storeState.preferences.remoteValues !== null;
-
-		if ( ! arePreferencesLoaded( state ) ) {
-			// Wait for preferences to load
-			const unsubscribe = context.store.subscribe( () => {
-				state = context.store.getState();
-
-				// Check if preferences have loaded
-				if ( arePreferencesLoaded( state ) ) {
-					unsubscribe();
-
-					if ( hasHostingDashboardOptIn( state ) ) {
-						window.location.href = `/v2/me/profile?new_email_result=${ context.query.new_email_result }`;
-					}
-				}
-			} );
-
-			setTimeout( () => unsubscribe(), 10000 ); // 10 seconds
-
-			next();
-			return;
-		}
-
-		if ( hasHostingDashboardOptIn( state ) ) {
-			window.location.href = `/v2/me/profile?new_email_result=${ context.query.new_email_result }`;
-			return;
-		}
+	if ( ! newEmailResult && ! verified ) {
+		next();
+		return;
 	}
 
+	// Redirect users to v2 if they opted in to the Hosting Dashboard
+	if ( shouldRedirectToV2( context, next, verified, newEmailResult ) ) {
+		return;
+	}
+
+	// Fallback to v1 logic
+	handleV1Logic( context, next, newEmailResult, verified );
+
+	next();
+}
+
+// Helper function to build redirect URL
+function buildV2RedirectUrl( verified, newEmailResult ) {
+	let redirectUrl = '/v2/me/profile';
+	if ( verified ) {
+		redirectUrl += `?verified=${ verified }`;
+	} else if ( newEmailResult ) {
+		redirectUrl += `?new_email_result=${ newEmailResult }`;
+	}
+	return redirectUrl;
+}
+
+/**
+ * v2
+ * Redirect to v2 for success and error cases.
+ *
+ * Examples:
+ * /me/account?verified=1 → /v2/me/profile?verified=1
+ * /me/account?new_email_result=1 → /v2/me/profile?new_email_result=1
+ */
+function shouldRedirectToV2( context, next, verified, newEmailResult ) {
+	const hasValidVerified = verified === '1' || verified === '0';
+	const hasValidNewEmailResult = newEmailResult === '1' || newEmailResult === '0';
+
+	if (
+		( ! hasValidVerified && ! hasValidNewEmailResult ) ||
+		! [ '/me/account', '/settings/account' ].includes( context.pathname )
+	) {
+		return false;
+	}
+
+	// Check user preferences to see if they opted in to the Hosting Dashboard
+	let state = context.store.getState();
+
+	const arePreferencesLoaded = ( storeState ) =>
+		! storeState.preferences.fetching && storeState.preferences.remoteValues !== null;
+
+	if ( ! arePreferencesLoaded( state ) ) {
+		// Wait for preferences to load
+		const unsubscribe = context.store.subscribe( () => {
+			state = context.store.getState();
+
+			if ( arePreferencesLoaded( state ) ) {
+				unsubscribe();
+
+				if ( hasHostingDashboardOptIn( state ) ) {
+					window.location.href = buildV2RedirectUrl( verified, newEmailResult );
+				}
+			}
+		} );
+
+		setTimeout( () => unsubscribe(), 10000 ); // 10 seconds
+
+		next();
+		return;
+	}
+
+	if ( hasHostingDashboardOptIn( state ) ) {
+		window.location.href = buildV2RedirectUrl( verified, newEmailResult );
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * v1
+ * Show notification for success cases only
+ */
+function handleV1Logic( context, next ) {
 	const showVerifiedNotice = '1' === context.query.verified;
 	const showNewEmailNotice = '1' === context.query.new_email_result;
 

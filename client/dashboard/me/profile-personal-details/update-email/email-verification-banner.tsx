@@ -26,21 +26,30 @@ export default function EmailVerificationBanner() {
 
 		const params = new URLSearchParams( window.location.search );
 		const newEmailResult = params.get( 'new_email_result' );
+		const verified = params.get( 'verified' );
 
-		if ( newEmailResult === '0' ) {
+		// Handle error cases
+		if ( newEmailResult === '0' || verified === '0' ) {
 			createErrorNotice(
 				__( 'The email verification link is invalid or has expired. Please request a new one.' ),
 				{ type: 'snackbar' }
 			);
 
+			// Clean up URL params
 			params.delete( 'new_email_result' );
+			params.delete( 'verified' );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );
-		} else if ( newEmailResult === '1' ) {
+		}
+
+		// Handle success cases
+		else if ( newEmailResult === '1' || verified === '1' ) {
 			setShowSuccessNotice( true );
 
+			// Clean up URL params
 			params.delete( 'new_email_result' );
+			params.delete( 'verified' );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );
@@ -78,14 +87,30 @@ export default function EmailVerificationBanner() {
 	};
 
 	if ( showSuccessNotice ) {
+		// Check URL params to determine the message type
+		const params = new URLSearchParams( window.location.search );
+		const wasEmailChange = params.get( 'new_email_result' ) === '1'; // Users changing their email and verifying the new one
+		const wasVerification = params.get( 'verified' ) === '1'; //  New users verifying their email for the first time
+
+		let title;
+		if ( wasEmailChange ) {
+			title = __( 'Email address updated' );
+		} else if ( wasVerification ) {
+			title = __( 'Email verified' );
+		}
+
 		return (
 			<Notice
 				variant="success"
-				title={ __( 'Email address updated' ) }
+				title={ title }
 				onClose={ () => setShowSuccessNotice( false ) }
-				actions={ <Link to="/domains/">{ __( 'Update domain contacts' ) }</Link> }
+				actions={
+					wasEmailChange ? <Link to="/domains/">{ __( 'Update domain contacts' ) }</Link> : null
+				}
 			>
-				{ __( 'Make sure you update your contact information for any registered domains.' ) }
+				{ wasEmailChange
+					? __( 'Make sure you update your contact information for any registered domains.' )
+					: __( 'Your email address has been verified successfully.' ) }
 			</Notice>
 		);
 	}
