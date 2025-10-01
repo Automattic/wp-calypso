@@ -4,9 +4,11 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import {
 	WPCOM_OPTION_KEYS,
@@ -42,6 +44,15 @@ export default function NotificationsExtras() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={
+						<RouterLinkButton
+							className="dashboard-page-header__back-button"
+							icon={ isRTL() ? chevronRight : chevronLeft }
+							to="/me/notifications"
+						>
+							{ __( 'Back' ) }
+						</RouterLinkButton>
+					}
 					title={ __( 'Extras' ) }
 					description={ __(
 						'Get curated extras like reports, digests, and community updates, so you can stay tuned for what’s happening in the WordPress ecosystem.'
