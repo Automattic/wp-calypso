@@ -7,25 +7,6 @@ import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
 import type { PerformanceReport } from '@automattic/api-core';
 
-export interface PerformanceMetricsItemQueryResponse {
-	id: string;
-	title?: string;
-	description?: string;
-	type: 'warning' | 'fail';
-	displayValue?: string;
-	details?: PerformanceMetricsDetailsQueryResponse;
-	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
-}
-
-export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
-	headings?: Array< { key: string; label: string; valueType: string } >;
-	items?: Array< {
-		[ key: string ]: string | number | { [ key: string ]: unknown };
-	} >;
-	chains?: Array< { [ key: string ]: unknown } >;
-}
-
 export default function CoreMetrics( {
 	report,
 	onRecommendationsFilterChange,

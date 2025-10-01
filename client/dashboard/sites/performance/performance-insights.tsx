@@ -10,7 +10,25 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { metricsNames } from '../../utils/site-performance';
-import { PerformanceMetricsItemQueryResponse } from './core-metrics';
+
+export interface PerformanceMetricsItemQueryResponse {
+	id: string;
+	title?: string;
+	description?: string;
+	type: 'warning' | 'fail';
+	displayValue?: string;
+	details?: PerformanceMetricsDetailsQueryResponse;
+	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
+}
+
+export interface PerformanceMetricsDetailsQueryResponse {
+	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
+	headings?: Array< { key: string; label: string; valueType: string } >;
+	items?: Array< {
+		[ key: string ]: string | number | { [ key: string ]: unknown };
+	} >;
+	chains?: Array< { [ key: string ]: unknown } >;
+}
 
 export type CustomSelectControlOption = {
 	key: Metrics;
