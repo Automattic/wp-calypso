@@ -16,7 +16,7 @@ export const CoreMetricsRecommendLink = ( {
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleClick = ( filter: Metrics ) => {
-		recordTracksEvent( 'calypso_performance_profiler_recommendations_link_click', {
+		recordTracksEvent( 'calypso_dashboard_performance_profiler_recommendations_link_click', {
 			filter,
 		} );
 		onClick( filter );

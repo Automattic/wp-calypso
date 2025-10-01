@@ -76,7 +76,7 @@ export default function PageSelector( {
 				hideLabelFromVision={ isDesktop ? false : true }
 				value={ currentPageOption?.value }
 				onChange={ ( page_id ) => {
-					recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
+					recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {
 						is_home: page_id === '0',
 					} );
 

@@ -115,7 +115,7 @@ export default function PerformanceInsights( {
 	const { recordTracksEvent } = useAnalytics();
 	const isDesktop = useViewportMatch( 'medium' );
 	const onFilter = ( item: CustomSelectControlOption ) => {
-		recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+		recordTracksEvent( 'calypso_dashboard_performance_profiler_recommendations_filter_change', {
 			filter: item.key,
 		} );
 
