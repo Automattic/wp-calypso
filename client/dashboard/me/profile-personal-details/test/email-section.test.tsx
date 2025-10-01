@@ -3,29 +3,12 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import { mockUserSettings } from '../../profile/__mocks__/user-settings';
 import EmailSection from '../email-section';
-
-const mockCancelPendingEmail = jest.fn();
-
-jest.mock( '@automattic/api-queries', () => ( {
-	userSettingsQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'settings' ],
-		queryFn: jest.fn(),
-	} ) ),
-	cancelPendingEmailChangeMutation: jest.fn( () => ( {
-		mutationFn: mockCancelPendingEmail,
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useSuspenseQuery: jest.fn(),
-	useMutation: jest.fn(),
-} ) );
 
 jest.mock( 'email-validator', () => ( {
 	validate: jest.fn(),
@@ -43,55 +26,70 @@ const mockPendingUserData = {
 	new_user_email: 'pending@example.com',
 };
 
+const renderWithUserData = ( userData = mockUserSettings, props = defaultProps ) => {
+	// Mock the API response
+	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, userData );
+
+	const result = render( <EmailSection { ...props } /> );
+
+	result.queryClient.setQueryData( [ 'me', 'settings' ], userData );
+
+	return result;
+};
+
 describe( 'EmailSection', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		nock.cleanAll();
 
-		const { useSuspenseQuery, useMutation } = require( '@tanstack/react-query' );
 		const emailValidator = require( 'email-validator' );
-
-		useSuspenseQuery.mockReturnValue( { data: mockUserSettings } );
-		useMutation.mockReturnValue( { mutate: mockCancelPendingEmail, isPending: false } );
 		emailValidator.validate.mockReturnValue( true );
 	} );
 
-	it( 'renders email input field', () => {
-		render( <EmailSection { ...defaultProps } /> );
+	afterEach( () => {
+		nock.cleanAll();
+	} );
 
-		const emailInput = screen.getByLabelText( 'Email address' );
+	it( 'renders email input field', async () => {
+		renderWithUserData();
+
+		const emailInput = await screen.findByLabelText( 'Email address' );
 		expect( emailInput ).toBeInTheDocument();
 		expect( emailInput ).toHaveValue( 'test@example.com' );
 		expect( emailInput ).toBeEnabled();
 	} );
 
-	it( 'disables input when email is pending verification', () => {
-		const { useSuspenseQuery } = require( '@tanstack/react-query' );
-		useSuspenseQuery.mockReturnValue( { data: mockPendingUserData } );
+	it( 'disables input when email is pending verification', async () => {
+		renderWithUserData( mockPendingUserData );
 
-		render( <EmailSection { ...defaultProps } /> );
-
-		expect( screen.getByLabelText( 'Email address' ) ).toBeDisabled();
+		const emailInput = await screen.findByLabelText( 'Email address' );
+		expect( emailInput ).toBeDisabled();
 		expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeInTheDocument();
 	} );
 
 	it( 'calls cancel function when cancel button is clicked', async () => {
-		const { useSuspenseQuery } = require( '@tanstack/react-query' );
-		useSuspenseQuery.mockReturnValue( { data: mockPendingUserData } );
-
 		const user = userEvent.setup();
-		render( <EmailSection { ...defaultProps } /> );
+		renderWithUserData( mockPendingUserData );
 
-		await user.click( screen.getByText( 'Cancel the pending email change.' ) );
+		// Mock the cancel API endpoint
+		const cancelScope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', { user_email_change_pending: false } )
+			.reply( 200, { ...mockPendingUserData, user_email_change_pending: false } );
 
-		expect( mockCancelPendingEmail ).toHaveBeenCalled();
+		const cancelButton = await screen.findByText( 'Cancel the pending email change.' );
+		await user.click( cancelButton );
+
+		await waitFor( () => {
+			expect( cancelScope.isDone() ).toBe( true );
+		} );
 	} );
 
 	it( 'calls onChange when input value changes', async () => {
 		const mockOnChange = jest.fn();
 		const user = userEvent.setup();
-		render( <EmailSection { ...defaultProps } onChange={ mockOnChange } /> );
+		renderWithUserData( mockUserSettings, { ...defaultProps, onChange: mockOnChange } );
 
-		const emailInput = screen.getByLabelText( 'Email address' );
+		const emailInput = await screen.findByLabelText( 'Email address' );
 		await user.type( emailInput, 'x' );
 
 		expect( mockOnChange ).toHaveBeenCalled();

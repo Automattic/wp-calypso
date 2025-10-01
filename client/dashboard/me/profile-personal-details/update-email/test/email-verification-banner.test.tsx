@@ -5,28 +5,12 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../../test-utils';
 import { mockUserSettings } from '../../../profile/__mocks__/user-settings';
 import EmailVerificationBanner from '../email-verification-banner';
 
-const mockResendEmail = jest.fn();
 const mockCreateErrorNotice = jest.fn();
-
-jest.mock( '@automattic/api-queries', () => ( {
-	userSettingsQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'settings' ],
-		queryFn: jest.fn(),
-	} ) ),
-	resendEmailVerificationMutation: jest.fn( () => ( {
-		mutationFn: mockResendEmail,
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useSuspenseQuery: jest.fn(),
-	useMutation: jest.fn(),
-} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -52,52 +36,68 @@ const mockPendingUserData = {
 	new_user_email: 'pending@example.com',
 };
 
+const renderWithUserData = ( userData = mockUserSettings ) => {
+	// Mock the API response
+	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, userData );
+
+	const result = render( <EmailVerificationBanner /> );
+
+	result.queryClient.setQueryData( [ 'me', 'settings' ], userData );
+
+	return result;
+};
+
 describe( 'EmailVerificationBanner', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		nock.cleanAll();
 		mockReplaceState.mockClear();
 
 		Object.defineProperty( window, 'location', {
 			value: { search: '', pathname: '/test' },
 			writable: true,
 		} );
-
-		const { useSuspenseQuery, useMutation } = require( '@tanstack/react-query' );
-		useSuspenseQuery.mockReturnValue( { data: mockUserSettings } );
-		useMutation.mockReturnValue( { mutate: mockResendEmail, isPending: false } );
 	} );
 
-	it( 'renders verification notice when email is pending', () => {
-		const { useSuspenseQuery } = require( '@tanstack/react-query' );
-		useSuspenseQuery.mockReturnValue( { data: mockPendingUserData } );
+	afterEach( () => {
+		nock.cleanAll();
+	} );
 
-		render( <EmailVerificationBanner /> );
+	it( 'renders verification notice when email is pending', async () => {
+		renderWithUserData( mockPendingUserData );
 
-		expect( screen.getByText( 'Verify your email' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'Verify your email' ) ).toBeInTheDocument();
+		} );
 		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'calls resend email when button is clicked', async () => {
-		const { useSuspenseQuery } = require( '@tanstack/react-query' );
-		useSuspenseQuery.mockReturnValue( { data: mockPendingUserData } );
-
 		const user = userEvent.setup();
-		render( <EmailVerificationBanner /> );
+		renderWithUserData( mockPendingUserData );
 
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
+		// Mock the resend email API endpoint
+		const resendScope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', { user_email: 'pending@example.com' } )
+			.reply( 200, mockPendingUserData );
 
-		expect( mockResendEmail ).toHaveBeenCalledWith( 'pending@example.com' );
+		const resendButton = await screen.findByRole( 'button', { name: 'Resend email' } );
+		await user.click( resendButton );
+
+		await waitFor( () => {
+			expect( resendScope.isDone() ).toBe( true );
+		} );
 	} );
 
-	it( 'does not render when pendingEmail is empty', () => {
-		const { useSuspenseQuery } = require( '@tanstack/react-query' );
-		useSuspenseQuery.mockReturnValue( {
-			data: { ...mockPendingUserData, new_user_email: '' },
+	it( 'does not render when pendingEmail is empty', async () => {
+		const { container } = renderWithUserData( {
+			...mockPendingUserData,
+			new_user_email: '',
 		} );
 
-		const { container } = render( <EmailVerificationBanner /> );
-
-		expect( container ).toBeEmptyDOMElement();
+		await waitFor( () => {
+			expect( container.firstChild ).toBeNull();
+		} );
 	} );
 
 	it( 'shows error notice for failed verification', async () => {
@@ -106,7 +106,7 @@ describe( 'EmailVerificationBanner', () => {
 			writable: true,
 		} );
 
-		render( <EmailVerificationBanner /> );
+		renderWithUserData();
 
 		await waitFor( () => {
 			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
@@ -122,7 +122,7 @@ describe( 'EmailVerificationBanner', () => {
 			writable: true,
 		} );
 
-		render( <EmailVerificationBanner /> );
+		renderWithUserData();
 
 		await waitFor( () => {
 			expect( screen.getByText( 'Email address updated' ) ).toBeInTheDocument();
