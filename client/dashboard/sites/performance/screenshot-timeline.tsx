@@ -24,7 +24,7 @@ type OverlayState = {
 };
 
 export default function ScreenshotTimeline( { screenshots }: Props ) {
-	const [ overlay, setOverlay ] = useState< OverlayState >( {
+	const [ selectedScreenshot, setSelectedScreenshot ] = useState< OverlayState >( {
 		isOpen: false,
 	} );
 	if ( ! screenshots || ! screenshots.length ) {
@@ -38,16 +38,16 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 					<Text size={ 15 } weight={ 500 }>
 						{ __( 'Page load timeline' ) }
 					</Text>
-					{ overlay.isOpen && overlay.screenshot && (
+					{ selectedScreenshot.isOpen && selectedScreenshot.screenshot && (
 						<Modal
 							__experimentalHideHeader
-							onRequestClose={ () => setOverlay( { isOpen: false } ) }
+							onRequestClose={ () => setSelectedScreenshot( { isOpen: false } ) }
 							contentLabel={ __( 'Screenshot preview' ) }
 						>
 							<img
 								style={ { width: '100%', height: 'auto' } }
-								alt={ overlay.timing }
-								src={ overlay.screenshot.data }
+								alt={ selectedScreenshot.timing }
+								src={ selectedScreenshot.screenshot.data }
 							/>
 						</Modal>
 					) }
@@ -60,7 +60,11 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 										<Button
 											variant="link"
 											onClick={ () =>
-												setOverlay( { isOpen: true, screenshot: screenshot, timing: timing } )
+												setSelectedScreenshot( {
+													isOpen: true,
+													screenshot: screenshot,
+													timing: timing,
+												} )
 											}
 											style={ {
 												display: 'block',
