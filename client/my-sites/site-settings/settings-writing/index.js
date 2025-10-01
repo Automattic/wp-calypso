@@ -5,7 +5,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
-import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
+import { setScroll } from 'calypso/my-sites/site-settings/settings-controller';
 
 const redirectIfDuplicatedView = ( context, next ) => {
 	_redirectIfDuplicatedView( `edit-tags.php?taxonomy=${ context.params.taxonomy }` )(
@@ -19,7 +19,6 @@ export default function () {
 		'/settings/writing/:site_id',
 		siteSelection,
 		_redirectIfDuplicatedView( 'options-writing.php' ),
-		siteSettings,
 		makeLayout,
 		clientRender
 	);
