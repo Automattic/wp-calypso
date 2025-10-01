@@ -48,6 +48,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							// To be replaced with @wordpress/tabs when ready.
 							'!@automattic/components/src/tabs',
 							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
