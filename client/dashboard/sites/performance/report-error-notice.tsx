@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '../../components/notice';
 
-export default function ReportErrorNotice( { onRetestClick }: { onRetestClick(): void } ) {
+export default function ReportErrorNotice( { onRetestClick }: { onRetestClick: () => void } ) {
 	return (
 		<Notice
 			variant="error"
