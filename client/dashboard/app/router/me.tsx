@@ -232,6 +232,13 @@ export const securityRoute = createRoute( {
 			},
 		],
 	} ),
+	getParentRoute: () => meRoute,
+	path: 'security',
+} );
+
+export const securityIndexRoute = createRoute( {
+	getParentRoute: () => securityRoute,
+	path: '/',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -240,13 +247,6 @@ export const securityRoute = createRoute( {
 			queryClient.ensureQueryData( sshKeysQuery() ),
 		] );
 	},
-	getParentRoute: () => meRoute,
-	path: 'security',
-} );
-
-export const securityIndexRoute = createRoute( {
-	getParentRoute: () => securityRoute,
-	path: '/',
 } ).lazy( () =>
 	import( '../../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {

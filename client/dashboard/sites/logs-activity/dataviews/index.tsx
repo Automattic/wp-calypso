@@ -2,12 +2,14 @@ import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-cor
 import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, View, Field, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useEffect } from 'react';
 import { filtersSignature } from '../../logs/dataviews/filters';
 import { syncFiltersSearchParams } from '../../logs/dataviews/url-sync';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
+import { ActivityLogsCallout } from '../activity-logs-callout';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
 import {
@@ -22,15 +24,19 @@ import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 
 import './style.scss';
 
+type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
+	logType: typeof LogType.ACTIVITY;
+	hasActivityLogsAccess: boolean;
+};
+const ACTIVITY_LOGS_DEFAULT_PAGE_SIZE = 20;
 function SiteActivityLogsDataViews( {
 	gmtOffset,
 	timezoneString,
 	site,
 	dateRange,
 	dateRangeVersion,
-}: SiteLogsDataViewsProps & {
-	logType: typeof LogType.ACTIVITY;
-} ) {
+	hasActivityLogsAccess,
+}: SiteLogsDataViewsPropsActivity ) {
 	const router = useRouter();
 	const locationSearch = router.state.location.search;
 	const [ view, setView ] = useActivityView( {
@@ -57,7 +63,7 @@ function SiteActivityLogsDataViews( {
 
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
-		number: view.perPage || 20,
+		number: view.perPage || ACTIVITY_LOGS_DEFAULT_PAGE_SIZE,
 		page: view.page,
 		after: afterIso,
 		before: beforeIso,
@@ -103,6 +109,9 @@ function SiteActivityLogsDataViews( {
 		totalItems: activityLogData?.totalItems ?? 0,
 		totalPages: activityLogData?.totalPages ?? 0,
 	};
+	if ( ! hasActivityLogsAccess ) {
+		paginationInfo.totalPages = 0; // this will hide the pagination controls in DataViews, an alternative to this approach would be to use Free Form composition, but that would require us to match the UI we have on the other log pages.
+	}
 
 	const fields = useActivityFields(
 		timezoneString
@@ -153,18 +162,33 @@ function SiteActivityLogsDataViews( {
 	}, [ dateRangeVersion, setView ] );
 
 	return (
-		<DataViews< SiteActivityLog >
-			data={ logs }
-			isLoading={ isFetching }
-			paginationInfo={ paginationInfo }
-			fields={ fields as Field< SiteActivityLog >[] }
-			view={ view }
-			actions={ actions }
-			search
-			searchLabel={ __( 'Search posts by ID, title or author' ) }
-			defaultLayouts={ { table: {} } }
-			onChangeView={ onChangeView }
-		/>
+		<>
+			<DataViews< SiteActivityLog >
+				data={ logs }
+				isLoading={ isFetching }
+				paginationInfo={ paginationInfo }
+				fields={ fields as Field< SiteActivityLog >[] }
+				view={ view }
+				actions={ actions }
+				config={
+					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
+				} // Disable changing perPage if no access
+				search
+				searchLabel={ __( 'Search posts by ID, title or author' ) }
+				defaultLayouts={ { table: {} } }
+				onChangeView={ onChangeView }
+				empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
+				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
+			/>
+
+			{ ! hasActivityLogsAccess && ! isFetching && (
+				<HStack alignment="center" className="site-logs-card--activity-callout">
+					<div className="site-logs-card--activity-callout-content">
+						<ActivityLogsCallout siteSlug={ site.slug } />
+					</div>
+				</HStack>
+			) }
+		</>
 	);
 }
 

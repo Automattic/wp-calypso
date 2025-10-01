@@ -15,6 +15,7 @@
 		// Specificity increase to override Card background color loaded later in the cascade.
 		&.domain-transfer-or-connect__content {
 			background-color: transparent;
+			box-shadow: none;
 		}
 
 		.option-content {

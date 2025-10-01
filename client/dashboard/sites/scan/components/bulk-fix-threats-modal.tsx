@@ -3,36 +3,45 @@ import { useDispatch } from '@wordpress/data';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import { useFixThreats } from '../hooks/use-fix-threats';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface BulkFixThreatsModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThreatsModalProps ) {
+export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreatsModalProps ) {
 	const bulkFixableThreats = items.filter(
 		( item ) => item.fixable?.extras?.is_bulk_fixable !== false
 	);
 	const bulkFixableIds = new Set( bulkFixableThreats.map( ( item ) => item.id ) );
 	const remainingThreats = items.filter( ( item ) => ! bulkFixableIds.has( item.id ) );
 
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { startFix, isFixing, status, error } = useFixThreats(
-		siteId,
+		site.ID,
 		Array.from( bulkFixableIds )
 	);
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_modal_open', {
+			threat_count: bulkFixableThreats.length,
+		} );
+	}, [ recordTracksEvent, bulkFixableThreats.length ] );
 
 	useEffect( () => {
 		if ( status.isComplete && ! isFixing ) {
 			closeModal?.();
 
 			if ( status.allFixed ) {
+				recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_success' );
 				createSuccessNotice(
 					_n( 'Threat fixed.', 'All threats were successfully fixed.', bulkFixableThreats.length ),
 					{
@@ -40,6 +49,7 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 					}
 				);
 			} else {
+				recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_failed' );
 				createErrorNotice(
 					_n(
 						'Failed to fix threat. Please contact support.',
@@ -59,6 +69,7 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 		createSuccessNotice,
 		createErrorNotice,
 		bulkFixableThreats.length,
+		recordTracksEvent,
 	] );
 
 	useEffect( () => {
@@ -78,6 +89,9 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	}, [ error, closeModal, createErrorNotice, bulkFixableThreats.length ] );
 
 	const handleFixThreats = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_click', {
+			threat_count: bulkFixableThreats.length,
+		} );
 		startFix();
 	};
 
