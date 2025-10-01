@@ -79,8 +79,10 @@ export default function ConfigureRepository() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Configure Connection' ) }
-					description={ __( 'Update the GitHub repository settings for your WordPress site.' ) }
+					title={ __( 'Configure repository connection' ) }
+					description={ __(
+						'Update the GitHub repository connection to deploy code to your WordPress site.'
+					) }
 				/>
 			}
 		>
@@ -88,7 +90,7 @@ export default function ConfigureRepository() {
 				<CardBody>
 					<VStack spacing={ 6 }>
 						<SectionHeader
-							title={ __( 'Repository connection details' ) }
+							title={ __( 'Update connection details' ) }
 							description={ createInterpolateElement(
 								__(
 									'Update the connection used to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
