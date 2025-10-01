@@ -1,9 +1,5 @@
-import {
-	isAutomatticianQuery,
-	sitesQuery,
-	userSettingsQuery,
-	userSettingsMutation,
-} from '@automattic/api-queries';
+import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
@@ -30,9 +26,11 @@ function McpComponent( { path } ) {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const { data: sites = [] } = useQuery( sitesQuery( { site_visibility: 'visible' } ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+
+	// Site selector state for disabling MCP access on specific sites
+	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
 
 	// Use the standard userSettingsMutation with simple auto-save
 	const mutation = useMutation( {
@@ -53,20 +51,13 @@ function McpComponent( { path } ) {
 	} );
 
 	// Get account-level tools from user settings using the new nested structure
-	const mcpAbilities = getAccountMcpAbilities( userSettings );
+	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools = Object.entries( mcpAbilities );
 	const hasTools = availableTools.length > 0;
-
-	// Site selector state for disabling MCP access on specific sites
-	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
 
 	// Check if any tools are enabled (for master toggle state)
 	const anyToolsEnabled =
 		hasTools && Object.values( mcpAbilities ).some( ( tool ) => tool.enabled );
-
-	if ( ! isAutomattician ) {
-		return null;
-	}
 
 	const handleToolChange = ( toolId, enabled ) => {
 		// Create minimal payload with only the changed tool (just boolean)
@@ -171,9 +162,7 @@ function McpComponent( { path } ) {
 						<SectionHeader
 							level={ 3 }
 							title={ translate( 'Available MCP Tools' ) }
-							description={ translate(
-								'Configure which MCP tools are available for your account.'
-							) }
+							description={ translate( 'Choose which AI tools you want to use.' ) }
 						/>
 
 						{ /* Individual tool toggles */ }
@@ -210,7 +199,7 @@ function McpComponent( { path } ) {
 								level={ 3 }
 								title={ translate( 'MCP Tool Access' ) }
 								description={ translate(
-									'Configure MCP access for your WordPress.com account. Enable access globally and control which tools are available.'
+									'Control which MCP tools can access your WordPress.com account and sites.'
 								) }
 							/>
 
@@ -255,7 +244,7 @@ function McpComponent( { path } ) {
 									level={ 3 }
 									title={ translate( 'Site-specific MCP settings' ) }
 									description={ translate(
-										'Select a site below to disable MCP access for that site only. This will override the global settings.'
+										'Choose a site to block all MCP tools for all users on that site. This overrides your account settings.'
 									) }
 								/>
 
@@ -270,12 +259,12 @@ function McpComponent( { path } ) {
 								{ selectedSiteId && anyToolsEnabled && (
 									<ToggleControl
 										__nextHasNoMarginBottom
-										checked={ getSiteAccountToolsEnabled( userSettings, selectedSiteId ) }
+										checked={ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId ) }
 										disabled={ mutation.isPending }
 										onChange={ ( enabled ) => handleSiteToggle( selectedSiteId, enabled ) }
 										label={
 											<Text weight="bold">
-												{ getSiteAccountToolsEnabled( userSettings, selectedSiteId )
+												{ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId )
 													? translate( 'Disable MCP access for this site' )
 													: translate( 'Enable MCP access for this site' ) }
 											</Text>
@@ -289,6 +278,11 @@ function McpComponent( { path } ) {
 			</VStack>
 		);
 	};
+
+	// Check if MCP settings feature is enabled
+	if ( ! config.isEnabled( 'mcp-settings' ) ) {
+		return null;
+	}
 
 	return (
 		<Main wideLayout className="mcp">
