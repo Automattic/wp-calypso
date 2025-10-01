@@ -174,6 +174,10 @@ export type Message = {
 	metadata?: Record< string, any >;
 	payload?: string;
 	status?: 'sending' | 'sent' | 'undelivered';
+	/**
+	 * Temporary id for messages that are not yet sent. Used to identify the message when resending on the client side.
+	 */
+	temporary_id?: string;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';

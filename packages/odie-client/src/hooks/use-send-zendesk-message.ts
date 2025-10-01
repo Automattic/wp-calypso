@@ -62,27 +62,27 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 		onSettled: () => {
 			setChatStatus( 'loaded' );
 		},
-		onSuccess: ( data: Message ) => {
+		onSuccess: ( serverResponseMessage: Message, sentMessage: Message ) => {
 			// Update the chat with the message that was sent
 			setChat( ( chat ) => ( {
 				...chat,
 				messages: chat.messages.map( ( message ) =>
-					message.metadata?.temporary_id === data.metadata?.temporary_id
-						? { ...message, status: 'sent' }
+					message?.temporary_id === sentMessage?.temporary_id
+						? { ...sentMessage, status: 'sent' }
 						: message
 				),
 			} ) );
 			setChatStatus( 'loaded' );
 		},
-		onError: ( error ) => {
+		onError: ( error, unsentMessage ) => {
 			if ( error instanceof Event && error.type === 'abort' ) {
 				setChatStatus( 'loaded' );
 			} else {
 				setChat( ( chat ) => ( {
 					...chat,
 					messages: chat.messages.map( ( message ) =>
-						message.metadata?.temporary_id === message.metadata?.temporary_id
-							? { ...message, status: 'undelivered' }
+						message?.temporary_id === unsentMessage?.temporary_id
+							? { ...unsentMessage, status: 'undelivered' }
 							: message
 					),
 				} ) );
