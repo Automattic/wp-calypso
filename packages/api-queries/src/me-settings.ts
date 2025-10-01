@@ -1,8 +1,4 @@
-import {
-	fetchUserSettings,
-	updateUserSettings,
-	resendEmailVerification,
-} from '@automattic/api-core';
+import { fetchUserSettings, updateUserSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
@@ -42,9 +38,9 @@ export const cancelPendingEmailChangeMutation = () =>
 		},
 	} );
 
-export const resendEmailVerificationMutation = () =>
+export const resendEmailVerificationMutation = ( email: string ) =>
 	mutationOptions( {
-		mutationFn: resendEmailVerification,
+		mutationFn: () => updateUserSettings( { user_email: email } ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
 				userSettingsQuery().queryKey,

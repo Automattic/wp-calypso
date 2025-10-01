@@ -103,7 +103,7 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 
 	// Resend email
 	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
-		...resendEmailVerificationMutation(),
+		...resendEmailVerificationMutation( pendingEmail || '' ),
 		onSuccess: () => {
 			setShowResendButton( false );
 		},
@@ -128,7 +128,7 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		if ( ! pendingEmail ) {
 			return;
 		}
-		resendEmail( pendingEmail );
+		resendEmail();
 	};
 
 	if ( showSuccessNotice ) {

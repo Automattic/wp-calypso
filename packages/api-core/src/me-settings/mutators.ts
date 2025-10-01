@@ -39,7 +39,3 @@ export async function updateUserSettings(
 	);
 	return await wpcom.req.post( '/me/settings', payload );
 }
-
-export async function resendEmailVerification( email: string ): Promise< Partial< UserSettings > > {
-	return await wpcom.req.post( '/me/settings', { user_email: email } );
-}
