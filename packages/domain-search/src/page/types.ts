@@ -6,6 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
+import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
@@ -56,7 +57,7 @@ export interface DomainSearchEvents {
 	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,
-		reason?: string | null
+		reason?: FeaturedSuggestionReason
 	) => void;
 	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 }
