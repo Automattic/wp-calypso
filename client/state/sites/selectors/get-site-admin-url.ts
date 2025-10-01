@@ -34,7 +34,7 @@ export default function getSiteAdminUrl(
 		return null;
 	}
 
-	const [ parsedPath, queryString ] = path.split( '?' );
+	const [ pathWithoutQuery, queryString ] = path.split( '?' );
 
 	const searchParams = new URLSearchParams( queryString );
 
@@ -48,7 +48,7 @@ export default function getSiteAdminUrl(
 
 	const searchParamsValue = searchParams.toString();
 
-	return `${ adminUrl }${ parsedPath.replace( /^\//, '' ) }${
+	return `${ adminUrl }${ pathWithoutQuery.replace( /^\//, '' ) }${
 		searchParamsValue ? `?${ searchParamsValue }` : ''
 	}`;
 }
