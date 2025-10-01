@@ -21,6 +21,7 @@ export * from './domains';
 export * from './emails';
 export * from './geo';
 export * from './github';
+export * from './hosting-dashboard-site-list';
 export * from './hosting-update-schedules';
 export * from './marketplace-search';
 export * from './marketing-survey';
