@@ -2,6 +2,7 @@ import {
 	type DomainConnectionSetupModeValue,
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
+	DomainInboundTransferStatus,
 } from '@automattic/api-core';
 
 export const StepType = {
@@ -68,6 +69,7 @@ export type StepComponentProps = {
 	queryError: string | null;
 	queryErrorDescription: string | null;
 	isOwnershipVerificationFlow: boolean;
+	inboundTransferStatusInfo?: DomainInboundTransferStatus;
 };
 
 export type StepDefinition = {
