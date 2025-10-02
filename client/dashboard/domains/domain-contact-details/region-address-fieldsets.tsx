@@ -4,12 +4,12 @@ import { useViewportMatch } from '@wordpress/compose';
 import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 	type CountryListItem,
-} from './custom-form-fieldsets/constants';
-import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
+} from './custom-form-fieldsets/types';
 
 const getPostalCodeLabel = ( countryCode: string ): string => {
 	switch ( countryCode ) {
@@ -20,14 +20,18 @@ const getPostalCodeLabel = ( countryCode: string ): string => {
 	}
 };
 
-const getStateSelectLabel = ( countryCode: string ): string => {
+const getStateSelectLabel = (
+	countryCode: string,
+	statesList: StatesListItem[] | undefined
+): string => {
 	switch ( countryCode ) {
 		case 'CA':
 			return __( 'Select Province' );
-		case 'US':
-			return __( 'Select State' );
 		default:
-			return __( 'Select State' );
+			if ( statesList && statesList.length > 0 ) {
+				return __( 'Select State' );
+			}
+			return __( 'State' );
 	}
 };
 
@@ -50,14 +54,13 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 			}
 		}, [ currentValue, onChange, id ] );
 
-		const stateLabel = getStateSelectLabel( countryCode );
+		const stateLabel = getStateSelectLabel( countryCode, statesList );
 
 		if ( ! statesList || statesList.length === 0 ) {
 			return (
 				<InputControl
 					__next40pxDefaultSize
 					label={ hideLabelFromVision ? '' : stateLabel }
-					placeholder={ __( 'State' ) }
 					value={ currentValue }
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
 				/>

@@ -1,10 +1,10 @@
-import { type CountryListItem } from './constants';
+import { type CountryListItem } from './types';
 
 /**
  * Returns true if postal codes are supported on the specified country code.
  *
  * NOTE: Will return false if the countries list is empty or if the country
- * code is not in the list! Always check that the countries list has lo	aded
+ * code is not in the list! Always check that the countries list has loaded
  * before calling this.
  */
 export function getCountryPostalCodeSupport(

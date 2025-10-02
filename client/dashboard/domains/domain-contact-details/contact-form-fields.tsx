@@ -9,7 +9,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
-import type { CountryListItem } from './custom-form-fieldsets/constants';
+import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
 export const getContactFormFields = (

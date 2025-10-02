@@ -6,7 +6,7 @@ import { RegionAddressFieldsets, RegionAddressFieldsLayout } from '../../region-
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
-} from '../constants';
+} from '../types';
 
 jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn( () => false ), // Default to desktop view
@@ -306,7 +306,7 @@ describe( 'Region Address Fieldsets', () => {
 
 			render( <TestFieldEdit field={ stateField } data={ { state: '' } } /> );
 
-			const stateInput = screen.getByLabelText( 'Select State' );
+			const stateInput = screen.getByLabelText( 'State' );
 			expect( stateInput ).toBeInTheDocument();
 			expect( stateInput.tagName ).toBe( 'INPUT' );
 		} );
