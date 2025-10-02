@@ -36,11 +36,11 @@ export interface GitHubWorkflowValidation {
 	checked_items: GitHubWorkflowValidationItem[];
 }
 
-export interface GitHubWorkflowTemplate {
+export interface GithubWorkflowTemplate {
 	template: string;
 }
 
-export interface GitHubWorkflow {
+export interface GithubWorkflow {
 	file_name: string;
 	workflow_path: string;
 }

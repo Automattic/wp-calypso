@@ -11,13 +11,13 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { NewWorkflowWizard } from './new-workflow-wizard';
 import { WorkflowValidationList } from './workflow-validation-list';
-import type { GitHubRepository, GitHubWorkflow } from '@automattic/api-core';
+import type { GitHubRepository, GithubWorkflow } from '@automattic/api-core';
 
 type AdvancedWorkflowStyleProps = {
 	repository: GitHubRepository;
 	branchName: string;
 	workflowPath: string;
-	workflows: GitHubWorkflow[];
+	workflows: GithubWorkflow[];
 	isLoading: boolean;
 	useComposerWorkflow: boolean;
 	onWorkflowCreation( path: string ): void;

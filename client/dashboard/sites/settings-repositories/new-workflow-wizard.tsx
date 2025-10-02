@@ -7,12 +7,12 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { CodeHighlighter } from '../../components/code-highlighter';
-import type { GitHubRepository, GitHubWorkflow } from '@automattic/api-core';
+import type { GitHubRepository, GithubWorkflow } from '@automattic/api-core';
 
 interface NewWorkflowWizardProps {
 	repository: GitHubRepository;
 	repositoryBranch: string;
-	workflows?: GitHubWorkflow[];
+	workflows?: GithubWorkflow[];
 	templateName: string;
 	exampleTemplate: string;
 	onWorkflowCreated( path: string ): void;
