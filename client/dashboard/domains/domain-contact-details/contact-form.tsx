@@ -42,20 +42,35 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	);
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
+
+	const normalizedFormData = useMemo( () => {
+		if ( ! statesList || statesList.length === 0 ) {
+			return formData;
+		}
+
+		// If current state is not in the statesList, use the first available state
+		const isValidState = statesList.some( ( state ) => state.code === formData.state );
+		if ( formData.state && ! isValidState ) {
+			return { ...formData, state: statesList[ 0 ]?.code };
+		}
+
+		return formData;
+	}, [ formData, statesList ] );
+
 	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
-	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
+	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		validateMutation.mutate( formData, {
+		validateMutation.mutate( normalizedFormData, {
 			onSuccess: ( data ) => {
 				if ( data.success ) {
 					updateMutation.mutate(
 						{
-							domainContactDetails: formData,
-							transferLock: formData.optOutTransferLock === false,
+							domainContactDetails: normalizedFormData,
+							transferLock: normalizedFormData.optOutTransferLock === false,
 						},
 						{
 							onSuccess: () => {
@@ -117,7 +132,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 		],
 	};
 
-	const canSave = isItemValid( formData, fields, form );
+	const canSave = isItemValid( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -171,7 +186,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				<CardBody>
 					<VStack spacing={ 4 }>
 						<DataForm< DomainContactDetails >
-							data={ formData }
+							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {

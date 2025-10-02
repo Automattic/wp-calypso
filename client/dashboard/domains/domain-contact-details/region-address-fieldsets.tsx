@@ -3,7 +3,6 @@ import { __experimentalInputControl as InputControl, SelectControl } from '@word
 import { useViewportMatch } from '@wordpress/compose';
 import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -44,15 +43,6 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 	}: DataFormControlProps< DomainContactDetails > ) => {
 		const { id, getValue } = field;
 		const currentValue = getValue?.( { item: data } );
-
-		// If the item data is not in the statesList, set the state to the first option
-		useEffect( () => {
-			if ( statesList && statesList.length > 0 ) {
-				if ( ! statesList.some( ( state ) => state.code === currentValue ) ) {
-					onChange( { [ id ]: statesList[ 0 ]?.code } );
-				}
-			}
-		}, [ currentValue, onChange, id ] );
 
 		const stateLabel = getStateSelectLabel( countryCode, statesList );
 
