@@ -4,12 +4,12 @@ import { useViewportMatch } from '@wordpress/compose';
 import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
-	type CountryListItem,
-} from './custom-form-fieldsets/types';
+} from './custom-form-fieldsets/constants';
+import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
+import { type CountryListItem } from './custom-form-fieldsets/types';
 
 const getPostalCodeLabel = ( countryCode: string ): string => {
 	switch ( countryCode ) {

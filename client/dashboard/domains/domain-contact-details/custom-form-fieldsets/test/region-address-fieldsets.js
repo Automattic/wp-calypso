@@ -6,7 +6,7 @@ import { RegionAddressFieldsets, RegionAddressFieldsLayout } from '../../region-
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
-} from '../types';
+} from '../constants';
 
 jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn( () => false ), // Default to desktop view
