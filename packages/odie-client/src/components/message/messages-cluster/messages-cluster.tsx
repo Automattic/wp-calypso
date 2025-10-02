@@ -3,7 +3,6 @@ import cx from 'clsx';
 import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
-import { useSendChatMessage } from '../../../hooks';
 import { isCSATMessage } from '../../../utils';
 import { hasFeedbackForm, isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
@@ -97,7 +96,6 @@ function clusterMessagesBySender( messages: Message[] ) {
 export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	const groups = clusterMessagesBySender( messages );
 	const { currentUser } = useOdieAssistantContext();
-	const { sendMessage } = useSendChatMessage();
 
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
@@ -134,9 +132,6 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 								currentUser={ currentUser }
 								header={ index === 0 ? messageHeader() : undefined }
 							/>
-							{ message.status === 'undelivered' && (
-								<button onClick={ () => sendMessage( message, true ) }>Send</button>
-							) }
 						</>
 					) ) }
 				</div>
