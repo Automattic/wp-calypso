@@ -224,7 +224,7 @@ const DomainSearchStep: StepType< {
 			config={ config }
 			query={ query }
 			isFirstDomainFreeForFirstYear={
-				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isDomainAndPlanFlow( flow )
+				! isHundredYearDomainFlow( flow ) && ! isHundredYearPlanFlow( flow )
 			}
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
