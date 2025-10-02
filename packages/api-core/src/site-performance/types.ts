@@ -27,7 +27,7 @@ export type SitePerformanceReport = {
 	share_link: string;
 } & Record< Metrics, number >;
 
-export interface UrlPerformanceInsights {
+export interface SitePerformanceInsights {
 	pagespeed: {
 		status: string;
 		mobile: SitePerformanceReport;

@@ -1,6 +1,6 @@
 import {
 	fetchBasicMetrics,
-	fetchPerformanceInsights,
+	fetchSitePerformanceInsights,
 	fetchSitePerformancePages,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
@@ -14,7 +14,7 @@ export const basicMetricsQuery = ( url: string ) =>
 export const performanceInsightsQuery = ( url: string, token: string ) =>
 	queryOptions( {
 		queryKey: [ 'performance', url, token ],
-		queryFn: () => fetchPerformanceInsights( url, token ),
+		queryFn: () => fetchSitePerformanceInsights( url, token ),
 		refetchInterval: ( query ) => {
 			if ( query.state.data?.pagespeed?.status === 'completed' ) {
 				return false;
