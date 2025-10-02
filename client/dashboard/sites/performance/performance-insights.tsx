@@ -13,7 +13,7 @@ import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import { metricsNames } from '../../utils/site-performance';
 import { PerformanceInsightTitle, PerformanceInsight } from './performance-insight';
-import type { PerformanceMetricsItemQueryResponse } from './types';
+import type { PerformanceMetricsItemQueryResponse, DeviceToggleType } from './types';
 import type { SitePerformanceReport } from '@automattic/api-core';
 
 export type CustomSelectControlOption = {
@@ -91,11 +91,15 @@ const sortHighImpactAudits = ( a: string, b: string ) =>
 
 export default function PerformanceInsights( {
 	report,
+	device,
 	selectedFilter,
+	hash,
 	onFilterChange,
 }: {
 	report: SitePerformanceReport;
+	device: DeviceToggleType;
 	selectedFilter: Metrics;
+	hash: string;
 	onFilterChange: ( filter: Metrics ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -178,9 +182,11 @@ export default function PerformanceInsights( {
 						initialOpen={ false }
 					>
 						<PerformanceInsight
+							device={ device }
 							insight={ audits[ key ] }
 							fullPageScreenshot={ fullPageScreenshot }
 							isWpcom={ is_wpcom }
+							hash={ hash }
 						/>
 					</PanelBody>
 				) ) }

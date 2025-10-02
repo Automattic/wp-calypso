@@ -1,10 +1,16 @@
 import { Badge } from '@automattic/ui';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import Markdown from 'react-markdown';
 import AILoadingIcon from 'calypso/assets/images/performance-profiler/ai-loading-icon.svg';
+import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query'; // eslint-disable-line
+import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import useLoadingSteps from './use-loading-steps';
-import type { PerformanceMetricsItemQueryResponse } from './types';
+import type { PerformanceMetricsItemQueryResponse, DeviceToggleType } from './types';
 import type { SitePerformanceReport } from '@automattic/api-core';
 import './performance-insight.scss';
 
@@ -53,7 +59,7 @@ const PerformanceInsightLoading = () => {
 	} );
 
 	return (
-		<HStack className="performance-insight__loading">
+		<HStack className="performance-insight__loading" justify="flex-start">
 			<img src={ AILoadingIcon } alt={ __( 'AI generated content icon' ) } />
 			<Text>{ steps[ step ] }</Text>
 		</HStack>
@@ -61,14 +67,47 @@ const PerformanceInsightLoading = () => {
 };
 
 export const PerformanceInsight = ( {
+	device,
 	insight,
 	fullPageScreenshot,
 	isWpcom,
+	hash,
 }: {
+	device: DeviceToggleType;
 	insight: PerformanceMetricsItemQueryResponse;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 	isWpcom: boolean;
+	hash: string;
 } ) => {
-	console.log( { insight, fullPageScreenshot, isWpcom } ); // eslint-disable-line no-console
-	return <PerformanceInsightLoading />;
+	const locale = useLocale();
+	const { data: llmAnswer } = useSupportChatLLMQuery(
+		insight,
+		hash,
+		isWpcom,
+		true,
+		locale,
+		device
+	);
+
+	console.log( { fullPageScreenshot } ); // eslint-disable-line no-console
+
+	if ( ! llmAnswer ) {
+		return <PerformanceInsightLoading />;
+	}
+
+	return (
+		<VStack style={ { padding: '0 16px' } }>
+			<div>
+				<Markdown
+					components={ {
+						a( props ) {
+							return <a target="_blank" { ...props } />;
+						},
+					} }
+				>
+					{ llmAnswer.messages }
+				</Markdown>
+			</div>
+		</VStack>
+	);
 };

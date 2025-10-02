@@ -1,3 +1,5 @@
+export type DeviceToggleType = 'mobile' | 'desktop';
+
 export interface PerformanceMetricsDetailsQueryResponse {
 	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
 	headings?: Array< { key: string; label: string; valueType: string } >;
