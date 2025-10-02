@@ -6,9 +6,11 @@ import InlineSupportLink from '../../components/inline-support-link';
 
 export default function SubTitle( {
 	timestamp,
+	timezoneString,
 	onClick,
 }: {
 	timestamp: string | undefined;
+	timezoneString?: string;
 	onClick: () => void;
 } ) {
 	if ( ! timestamp ) {
@@ -26,7 +28,7 @@ export default function SubTitle( {
 		sprintf(
 			// translators: %s is a date, e.g. March 12, 2025
 			__( 'Tested on <span>%s</span>. <button>Test again</button>' ),
-			dateI18n( 'F jS, Y g:i:s A', timestamp )
+			dateI18n( 'F jS, Y g:i:s A', timestamp, timezoneString )
 		),
 		{
 			span: (

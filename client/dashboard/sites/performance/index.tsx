@@ -1,5 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { sitePerformancePagesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	sitePerformancePagesQuery,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -31,6 +35,12 @@ const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
@@ -75,12 +85,17 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const currentReport = isDesktopSelected ? desktopReport : mobileReport;
 	const isRunningReport = isDesktopSelected ? isDesktopReportRunning : isMobileReportRunning;
 	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
+	const { timezoneString } = siteSettings;
 
 	return (
 		<PageLayout>
 			<PageHeader
 				description={
-					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
+					<SubTitle
+						timestamp={ currentReport?.timestamp }
+						timezoneString={ timezoneString }
+						onClick={ handleReportRefetch }
+					/>
 				}
 				actions={
 					<HStack>
