@@ -6,6 +6,7 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 const survicateDebug = debug( 'calypso:analytics:survicate' );
 
 let survicateScriptLoaded = false;
+const workspaceId = 'e4794374cce15378101b63de24117572';
 
 /**
  * Sets Survicate visitor traits with current user data
@@ -44,9 +45,33 @@ export function mayWeLoadSurvicateScript() {
 	return config( 'survicate_enabled' );
 }
 
-export function addSurvicate() {
-	const workspaceId = 'e4794374cce15378101b63de24117572';
+export function ensureVisitorTraitsAreSet() {
+	const user = getCurrentUser();
 
+	if ( ! user || ! user.email ) {
+		return;
+	}
+
+	let shouldSetVisitorTraits = false;
+	const visitorStorageKey = `survi::${ workspaceId }::FeedbackButton::allvisitor`;
+
+	try {
+		const visitorData = localStorage.getItem( visitorStorageKey );
+		const parsedVisitorData = visitorData ? JSON.parse( visitorData ) : null;
+		shouldSetVisitorTraits =
+			! parsedVisitorData || parsedVisitorData?.attributes?.email !== user.email;
+	} catch ( error ) {
+		survicateDebug( 'Failed to parse visitor data from localStorage:', error );
+		shouldSetVisitorTraits = true;
+	}
+
+	if ( shouldSetVisitorTraits ) {
+		survicateDebug( 'Setting Survicate visitor traits due to no visitor data found' );
+		setTimeout( setSurvicateVisitorTraits, 1000 );
+	}
+}
+
+export function addSurvicate() {
 	// Only add survicate for en languages
 	if ( ! getLocaleSlug().startsWith( 'en' ) ) {
 		survicateDebug( 'Not loading Survicate script for non-en language' );
@@ -58,8 +83,17 @@ export function addSurvicate() {
 		return;
 	}
 
-	if ( survicateScriptLoaded || ! mayWeLoadSurvicateScript() ) {
-		survicateDebug( 'Not loading Survicate script' );
+	if ( survicateScriptLoaded && mayWeLoadSurvicateScript() ) {
+		ensureVisitorTraitsAreSet();
+	}
+
+	if ( survicateScriptLoaded ) {
+		survicateDebug( 'Survicate script already loaded' );
+		return;
+	}
+
+	if ( ! mayWeLoadSurvicateScript() ) {
+		survicateDebug( 'Not loading Survicate script due to config setting' );
 		return;
 	}
 
