@@ -52,10 +52,8 @@ export default function ConnectRepository() {
 		},
 	} );
 
-	const firstInstallation = installations[ 0 ];
-	// @ts-ignore - TypeScript incorrectly infers the type, but this works at runtime
 	const initialValues: ConnectRepositoryFormData = {
-		selectedInstallationId: firstInstallation?.external_id || '',
+		selectedInstallationId: installations[ 0 ]?.external_id || '',
 		selectedRepositoryId: '',
 		branch: '',
 		targetDir: '/',
