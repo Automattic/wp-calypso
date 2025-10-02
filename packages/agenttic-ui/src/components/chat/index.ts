@@ -6,6 +6,12 @@ export { Message as ChatMessage } from './Message';
 export { Messages } from './Messages';
 export { ThinkingMessage } from './ThinkingMessage';
 export { ChatInput, type ActionButton } from './ChatInput';
+export {
+	ImageUploader,
+	type UploadedImage,
+	type UploadingImage,
+	type ImageUploaderProps,
+} from './ImageUploader';
 
 // View components
 export { CollapsedView } from '../views/CollapsedView';

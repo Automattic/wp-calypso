@@ -23,6 +23,7 @@ export type { AgentUIContextValue } from './context/AgentUIContext';
 export { Chat } from './components/chat/Chat';
 export { ChatFooter } from './components/chat/ChatFooter';
 export { ChatInput } from './components/chat/ChatInput';
+export { ImageUploader } from './components/chat/ImageUploader';
 export { ThinkingMessage } from './components/chat/ThinkingMessage';
 export { Messages } from './components/chat/Messages';
 export { MessageActions } from './components/chat/MessageActions';
