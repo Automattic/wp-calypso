@@ -18,22 +18,22 @@ import { CodeHighlighter } from '../../components/code-highlighter';
 import { SectionHeader } from '../../components/section-header';
 import type { WorkflowValidationDefinition } from './advanced-workflow-validation';
 import type {
-	GitHubWorkflowValidation,
-	GitHubWorkflowValidationItem,
-	GitHubRepository,
+	GithubWorkflowValidation,
+	GithubWorkflowValidationItem,
+	GithubRepository,
 } from '@automattic/api-core';
 interface WorkflowValidationListProps {
 	validations: Record< string, WorkflowValidationDefinition >;
-	result?: GitHubWorkflowValidation;
+	result?: GithubWorkflowValidation;
 	isLoading: boolean;
 	onVerify(): void;
 	canVerify: boolean;
-	repository?: Pick< GitHubRepository, 'owner' | 'name' >;
+	repository?: Pick< GithubRepository, 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
 }
 
-const getStatusIcon = ( status: GitHubWorkflowValidationItem[ 'status' ] | 'loading' ) => {
+const getStatusIcon = ( status: GithubWorkflowValidationItem[ 'status' ] | 'loading' ) => {
 	if ( status === 'loading' ) {
 		return <Spinner />;
 	}

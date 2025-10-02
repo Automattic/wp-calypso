@@ -10,7 +10,7 @@ import {
 	uploadArtifactExample,
 	DEFAULT_WORKFLOW_TEMPLATE,
 } from './workflow-yaml-examples';
-import type { GitHubRepository } from '@automattic/api-core';
+import type { GithubRepository } from '@automattic/api-core';
 
 export interface WorkflowValidationDefinition {
 	label: string;
@@ -20,7 +20,7 @@ export interface WorkflowValidationDefinition {
 
 interface AdvancedWorkflowValidationProps {
 	selectedInstallationId: number;
-	repository?: Pick< GitHubRepository, 'id' | 'owner' | 'name' >;
+	repository?: Pick< GithubRepository, 'id' | 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
 	onWorkflowPathChange: ( path: string | undefined ) => void;
