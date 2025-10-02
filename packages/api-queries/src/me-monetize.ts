@@ -35,10 +35,7 @@ export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 
 const updateSubscriptionCache =
 	( subscriptionId: string ) => ( data: MonetizeSubscriptionAutoRenewResponse ) => {
-		queryClient.invalidateQueries( {
-			queryKey: [ monetizeSubscriptionQuery( subscriptionId ).queryKey ],
-		} );
-
+		// We first update the list of subscriptions
 		queryClient.setQueryData(
 			monetizeSubscriptionsQuery().queryKey,
 			( oldList ) =>
@@ -46,6 +43,10 @@ const updateSubscriptionCache =
 					s.ID === subscriptionId ? { ...s, renew_interval: data.subscription.renew_interval } : s
 				) ?? []
 		);
+		// Then we invalidate the cache of the specific subscription to ensure all data is fresh
+		queryClient.invalidateQueries( {
+			queryKey: monetizeSubscriptionQuery( subscriptionId ).queryKey,
+		} );
 	};
 
 export const monetizeSubscriptionDisableAutoRenew = ( subscriptionId: string ) =>
