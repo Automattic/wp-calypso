@@ -1,6 +1,6 @@
-import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { Text } from '../../components/text';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import illustrationUrl from './performance-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';

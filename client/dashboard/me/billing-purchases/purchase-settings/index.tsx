@@ -81,6 +81,7 @@ import {
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
+import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
@@ -442,11 +443,15 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ReinstallButton( { purchase }: { purchase: Purchase } ) {
-	const {
-		mutate: reinstallPlugins,
-		error,
-		isPending: isMutationPending,
-	} = useMutation( reinstallMarketplacePluginsQuery( purchase.blog_id ) );
+	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation( {
+		...reinstallMarketplacePluginsQuery( purchase.blog_id ),
+		meta: {
+			snackbar: {
+				success: __( 'Plugins reinstalled.' ),
+				error: __( 'Failed to reinstall plugins.' ),
+			},
+		},
+	} );
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
@@ -469,14 +474,6 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 					>
 						{ __( 'Reinstall plugins' ) }
 					</Button>
-					{
-						// FIXME: there's probably a better place for this error message
-						error && (
-							<Notice status="error" isDismissible={ false }>
-								{ error.message }
-							</Notice>
-						)
-					}
 				</>
 			}
 		/>
@@ -1130,6 +1127,7 @@ export default function PurchaseSettings() {
 			}
 		>
 			<VStack spacing={ 6 }>
+				<PurchaseNotice purchase={ purchase } />
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
 					<PurchaseSettingsCard
 						icon={ calendar }
