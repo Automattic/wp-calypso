@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import passToChildren from 'calypso/lib/react-pass-to-children';
 import { setQuery } from 'calypso/state/media/actions';
 import { fetchNextMediaPage } from 'calypso/state/media/thunks';
-import getGooglePhotosPickerSession from 'calypso/state/selectors/get-google-photos-picker-session';
 import getMediaSortedByDate from 'calypso/state/selectors/get-media-sorted-by-date';
 import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
 import utils from './utils';
@@ -58,15 +57,6 @@ export class MediaListData extends Component {
 		if ( props.source ) {
 			query.source = props.source;
 			query.path = 'recent';
-
-			if ( props.source === 'google_photos' ) {
-				if ( props.googlePhotosPickerSession ) {
-					query.session_id = props.googlePhotosPickerSession.id;
-				} else {
-					// Add any query params specific to Google Photos
-					return utils.getGoogleQuery( query, props );
-				}
-			}
 		}
 
 		return query;
@@ -91,7 +81,6 @@ MediaListData.defaultProps = {
 const mapStateToProps = ( state, ownProps ) => ( {
 	media: getMediaSortedByDate( state, ownProps.siteId ),
 	hasNextPage: hasNextMediaPage( state, ownProps.siteId ),
-	googlePhotosPickerSession: getGooglePhotosPickerSession( state ),
 } );
 
 export default connect( mapStateToProps, { fetchNextMediaPage, setQuery } )( MediaListData );
