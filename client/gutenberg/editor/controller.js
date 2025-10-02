@@ -3,9 +3,7 @@ import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
-import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -45,28 +43,6 @@ function getPostID( context ) {
 
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
-}
-
-function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
-				return;
-			}
-			const selectedEditor = getSelectedEditor( state, siteId );
-			if ( ! selectedEditor ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch(
-			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
-		);
-	} );
 }
 
 /**
@@ -164,11 +140,6 @@ export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
-	const tmpState = getState();
-	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
-	if ( ! selectedEditor ) {
-		await waitForSiteIdAndSelectedEditor( context );
-	}
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
