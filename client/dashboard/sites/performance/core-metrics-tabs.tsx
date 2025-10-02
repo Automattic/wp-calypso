@@ -1,11 +1,18 @@
 import { Metrics } from '@automattic/api-core';
-import { Tabs } from '@automattic/components/src/tabs';
-import { __experimentalVStack as VStack, Card } from '@wordpress/components';
+import { __experimentalVStack as VStack, Card, privateApis } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Text } from '../../components/text';
 import { metricsNames, mapThresholdsToStatus } from '../../utils/site-performance';
 import { OverallScore, MetricScore } from './core-metrics-score';
 import type { SitePerformanceReport } from '@automattic/api-core';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Tabs } = unlock( privateApis );
 
 const Tab = ( { children, tabId }: { children: React.ReactNode; tabId: string } ) => {
 	const isDesktop = useViewportMatch( 'medium' );
