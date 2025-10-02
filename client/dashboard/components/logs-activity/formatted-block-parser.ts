@@ -6,6 +6,7 @@ export interface ActivityBlockNode {
 	children?: ActivityBlockContent[];
 	// these are all optional and depend on the type of node
 	url?: string | null;
+	// the activity field was mostly reference as a data attribute for links, but we're now checking it other places just to make sure we rely on the data if present.
 	activity?: string;
 	section?: string;
 	intent?: string;
