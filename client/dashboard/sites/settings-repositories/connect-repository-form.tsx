@@ -201,22 +201,6 @@ export const ConnectRepositoryForm = ( {
 		enabled: !! selectedRepository && !! formData.branch,
 	} );
 
-	useEffect( () => {
-		if (
-			workflows.length > 0 &&
-			! formData.workflowPath &&
-			formData.deploymentMode === 'advanced'
-		) {
-			setFormData( ( prev ) => ( { ...prev, workflowPath: workflows[ 0 ].workflow_path } ) );
-		}
-	}, [ workflows, formData.workflowPath, formData.deploymentMode ] );
-
-	useEffect( () => {
-		if ( formData.deploymentMode === 'simple' && formData.workflowPath ) {
-			setFormData( ( prev ) => ( { ...prev, workflowPath: '' } ) );
-		}
-	}, [ formData.deploymentMode, formData.workflowPath ] );
-
 	const { data: repositoryChecks } = useQuery( {
 		...githubRepositoryChecksQuery(
 			selectedInstallation?.external_id ?? 0,
@@ -228,6 +212,38 @@ export const ConnectRepositoryForm = ( {
 	} );
 
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
+
+	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
+		setFormData( ( prev ) => {
+			const newFormData = { ...prev, ...updates };
+
+			if ( 'targetDir' in updates ) {
+				const trimmedValue = updates.targetDir?.trim() || '';
+				newFormData.targetDir = trimmedValue.startsWith( '/' )
+					? trimmedValue
+					: `/${ trimmedValue }`;
+			}
+
+			if ( 'deploymentMode' in updates ) {
+				if ( updates.deploymentMode === 'simple' ) {
+					newFormData.workflowPath = '';
+				} else if (
+					updates.deploymentMode === 'advanced' &&
+					! newFormData.workflowPath &&
+					workflows.length > 0
+				) {
+					newFormData.workflowPath = workflows[ 0 ].workflow_path;
+				}
+			}
+
+			if ( 'selectedRepositoryId' in updates ) {
+				newFormData.branch = '';
+				newFormData.targetDir = '';
+			}
+
+			return newFormData;
+		} );
+	};
 
 	useEffect( () => {
 		if ( ! repositoryChecks?.suggested_directory ) {
@@ -347,12 +363,8 @@ export const ConnectRepositoryForm = ( {
 				branchName={ formData.branch }
 				workflowPath={ formData.workflowPath }
 				workflows={ workflows }
-				onWorkflowCreation={ ( workflowPath ) =>
-					setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
-				}
-				onChooseWorkflow={ ( workflowPath ) =>
-					setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
-				}
+				onWorkflowCreation={ ( workflowPath ) => handleChange( { workflowPath } ) }
+				onChooseWorkflow={ ( workflowPath ) => handleChange( { workflowPath } ) }
 				isLoading={ isLoadingRepositories }
 				useComposerWorkflow={ !! repositoryChecks?.has_composer && ! repositoryChecks?.has_vendor }
 			/>
@@ -445,17 +457,7 @@ export const ConnectRepositoryForm = ( {
 						'isAutomated',
 					],
 				} }
-				onChange={ ( edits: Partial< ConnectRepositoryFormData > ) => {
-					const newFormData = { ...formData, ...edits };
-					if ( 'targetDir' in edits ) {
-						const trimmedValue = edits.targetDir?.trim() || '';
-						newFormData.targetDir = trimmedValue.startsWith( '/' )
-							? trimmedValue
-							: `/${ trimmedValue }`;
-					}
-
-					setFormData( newFormData );
-				} }
+				onChange={ handleChange }
 			/>
 
 			<SectionHeader
@@ -467,9 +469,7 @@ export const ConnectRepositoryForm = ( {
 
 			<RadioControl
 				selected={ formData.deploymentMode }
-				onChange={ ( value ) =>
-					setFormData( ( prev ) => ( { ...prev, deploymentMode: value as 'simple' | 'advanced' } ) )
-				}
+				onChange={ ( value ) => handleChange( { deploymentMode: value } ) }
 				options={ [
 					{ label: __( 'Simple' ), value: 'simple' },
 					{ label: __( 'Advanced' ), value: 'advanced' },
