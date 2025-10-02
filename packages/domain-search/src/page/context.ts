@@ -68,8 +68,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		tlds: [],
 	},
 	setFilter: () => {},
-	railCarId: null,
-	setRailCarId: () => {},
 	resetFilter: () => {},
 };
 

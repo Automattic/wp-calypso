@@ -110,8 +110,6 @@ export interface DomainSearchContextType
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
 	config: DomainSearchConfig;
-	railCarId: string | null;
-	setRailCarId: ( railCarId: string | null ) => void;
 }
 
 export type { PriceRulesConfig };
