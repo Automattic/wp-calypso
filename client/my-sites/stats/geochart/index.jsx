@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -420,7 +419,6 @@ class StatsGeochart extends Component {
 		if ( window.google && window.google.charts ) {
 			window.google.charts.load( '45', {
 				packages: [ 'geochart' ],
-				mapsApiKey: config( 'google_maps_and_places_api_key' ),
 			} );
 			window.google.charts.setOnLoadCallback( this.drawRegionsMap );
 			clearTimeout( this.timer );
