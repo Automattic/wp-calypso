@@ -47,7 +47,7 @@ const Emphasis = ( { children }: { children: ReactNode } ) => <em>{ children }</
 const Preformatted = ( { children }: { children: ReactNode } ) => <pre>{ children }</pre>;
 
 const isWordPressDotComUrl = ( url?: string | null ) =>
-	!! url && url.startsWith( 'https://wordpress.com' );
+	!! url && url.startsWith( 'https://wordpress.com/' ); // we want the extra slash at the end because other subdomains could be used to trick this check (e.g. wordpress.com.malicious-site.com)
 
 const relativizeWordPressUrl = ( url: string ) => url.replace( /^https:\/\/wordpress\.com/, '' );
 
