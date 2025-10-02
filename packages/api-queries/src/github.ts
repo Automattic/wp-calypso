@@ -59,14 +59,11 @@ export const githubRepositoryChecksQuery = (
 	queryOptions( {
 		queryKey: [
 			'github',
-			'installation',
+			'repository-checks',
 			installationId,
-			'repository',
 			repositoryOwner,
 			repositoryName,
-			'branch',
 			repositoryBranch,
-			'checks',
 		],
 		queryFn: () =>
 			fetchGithubRepositoryChecks(
@@ -89,14 +86,11 @@ export const githubWorkflowChecksQuery = (
 	queryOptions( {
 		queryKey: [
 			'github',
-			'repository',
+			'repository-workflow-checks',
 			repositoryOwner,
 			repositoryName,
-			'branch',
 			repositoryBranch,
-			'workflow',
 			workflowFilename,
-			'checks',
 		],
 		queryFn: () =>
 			fetchGithubWorkflowChecks(
@@ -115,7 +109,7 @@ export const githubWorkflowTemplatesQuery = (
 	template: 'simple' | 'with_composer'
 ) =>
 	queryOptions( {
-		queryKey: [ 'github', 'repository', repositoryBranch, 'workflow', template ],
+		queryKey: [ 'github', 'repository-workflow-template', repositoryBranch, template ],
 		queryFn: () => fetchGithubWorkflowTemplates( repositoryBranch, template ),
 	} );
 
@@ -125,15 +119,7 @@ export const githubWorkflowsQuery = (
 	branchName: string
 ) =>
 	queryOptions( {
-		queryKey: [
-			'github',
-			'repository',
-			repositoryOwner,
-			repositoryName,
-			'branch',
-			branchName,
-			'workflows',
-		],
+		queryKey: [ 'github', 'repository-workflows', repositoryOwner, repositoryName, branchName ],
 		queryFn: () => fetchGithubWorkflows( repositoryOwner, repositoryName, branchName ),
 		meta: {
 			persist: false,
