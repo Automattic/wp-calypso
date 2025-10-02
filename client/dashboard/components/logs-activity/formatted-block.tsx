@@ -87,9 +87,9 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 };
 
 const FilePath = ( { children }: { children: ReactNode } ) => (
-	<span>
+	<div>
 		<code>{ children }</code>
-	</span>
+	</div>
 );
 
 const Post: BlockRenderer = ( { content, children, onClick } ) => {
