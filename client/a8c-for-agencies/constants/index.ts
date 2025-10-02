@@ -1,4 +1,5 @@
-export const NEW_REFERRAL_ID_QUERY_PARAM_KEY = 'new_referral_id';
+export const NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY = 'new_referral_order_id';
+export const NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY = 'flow_type';
 
 export const AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY = 'a4a_first_purchase';
 

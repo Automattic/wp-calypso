@@ -12,7 +12,10 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { NEW_REFERRAL_ID_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import {
+	NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
+} from 'calypso/a8c-for-agencies/constants';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -31,6 +34,7 @@ import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
+import { ReferralOrderFlowType } from '../../types';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
 
@@ -53,8 +57,11 @@ export default function ReferralsOverview() {
 		titleField: 'client',
 	} );
 
-	const { value: newReferralId, setValue: setNewReferralId } = useUrlQueryParam(
-		NEW_REFERRAL_ID_QUERY_PARAM_KEY
+	const { value: newReferralOrderId, setValue: setNewReferralOrderId } = useUrlQueryParam(
+		NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY
+	);
+	const { value: newReferralFlowType, setValue: setNewReferralFlowType } = useUrlQueryParam(
+		NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY
 	);
 
 	const isDesktop = useDesktopBreakpoint();
@@ -67,9 +74,15 @@ export default function ReferralsOverview() {
 
 	const hasReferrals = !! referrals?.length;
 
-	const newReferral = useMemo( () => {
-		return newReferralId ? referrals?.find( ( referral ) => referral.id === newReferralId ) : null;
-	}, [ newReferralId, referrals ] );
+	const newReferralOrder = useMemo( () => {
+		if ( ! newReferralOrderId ) {
+			return null;
+		}
+
+		return referrals
+			?.flatMap( ( referral ) => referral.referrals )
+			.find( ( referral_order ) => referral_order.id === Number( newReferralOrderId ) );
+	}, [ newReferralOrderId, referrals ] );
 
 	// To ensure the selected item is updated when the referrals list is updated
 	// as we optimistically update the referrals list
@@ -110,11 +123,15 @@ export default function ReferralsOverview() {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop isFullWidth={ hasReferrals }>
-					{ !! newReferral && (
+					{ !! newReferralOrder && (
 						<NewReferralOrderNotification
-							referral={ newReferral }
-							onClose={ () => setNewReferralId( '' ) }
+							referralOrder={ newReferralOrder }
+							onClose={ () => {
+								setNewReferralOrderId( '' );
+								setNewReferralFlowType( '' );
+							} }
 							isFullWidth={ hasReferrals }
+							flowType={ newReferralFlowType as ReferralOrderFlowType }
 						/>
 					) }
 

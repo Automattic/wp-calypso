@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ReferralAPIResponse } from '../../referrals/types';
+import { ReferralAPIResponse, ReferralOrderFlowType } from '../../referrals/types';
 
 export interface MutationRequestClientPaymentVariables {
 	client_email: string;
@@ -12,7 +12,7 @@ export interface MutationRequestClientPaymentVariables {
 		product_id: number;
 		license_id: number;
 	}[];
-	flow_type: 'send' | 'copy';
+	flow_type: ReferralOrderFlowType;
 }
 
 interface APIError {

@@ -12,7 +12,11 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { NEW_REFERRAL_ID_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import {
+	NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
+} from 'calypso/a8c-for-agencies/constants';
+import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -85,7 +89,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
 	const handleRequestPayment = useCallback(
-		( flowType: 'send' | 'copy' ) => {
+		( flowType: ReferralOrderFlowType ) => {
 			if ( ! hasCompletedForm ) {
 				return;
 			}
@@ -115,8 +119,8 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						page.redirect(
 							isFeedbackShown
 								? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
-										[ NEW_REFERRAL_ID_QUERY_PARAM_KEY ]: referral.id,
-										flowType,
+										[ NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY ]: referral.id,
+										[ NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY ]: flowType,
 								  } )
 								: addQueryArgs( A4A_FEEDBACK_LINK, {
 										args: { email },
