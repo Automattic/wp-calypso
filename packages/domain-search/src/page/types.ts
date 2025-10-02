@@ -54,7 +54,7 @@ export interface DomainSearchEvents {
 		rootVendor: string
 	) => void;
 	onFilterApplied: ( filter: FilterState ) => void;
-	onSuggestionsReceive: ( query: string, suggestions: string[] ) => void;
+	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,
 		reason?: FeaturedSuggestionReason

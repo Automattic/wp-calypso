@@ -19,15 +19,23 @@ export const useSuggestionsList = () => {
 	} );
 
 	const availabilityCheckStartTime = useRef( 0 );
+	const suggestionsReceiveStartTime = useRef( 0 );
 
 	useEffect( () => {
+		// TODO: Is FQDN search?
 		availabilityCheckStartTime.current = Date.now();
 	}, [ query ] );
 
+	useEffect( () => {
+		suggestionsReceiveStartTime.current = Date.now();
+	}, [ query ] );
+
 	const triggerSuggestionsReceiveEvent = useEvent( () => {
+		const suggestionsReceiveResponseTime = Date.now() - suggestionsReceiveStartTime.current;
 		events.onSuggestionsReceive(
 			query,
-			suggestions.map( ( suggestion ) => suggestion.domain_name )
+			suggestions.map( ( suggestion ) => suggestion.domain_name ),
+			suggestionsReceiveResponseTime
 		);
 	} );
 
