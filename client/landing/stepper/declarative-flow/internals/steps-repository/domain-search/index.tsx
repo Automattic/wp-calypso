@@ -14,6 +14,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
@@ -56,6 +57,7 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
@@ -106,7 +108,13 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
-				recordUseYourDomainButtonClick( flow === 'domain' ? 'domain-first' : 'signup', null, flow );
+				dispatch(
+					recordUseYourDomainButtonClick(
+						flow === 'domain' ? 'domain-first' : 'signup',
+						null,
+						flow
+					)
+				);
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
