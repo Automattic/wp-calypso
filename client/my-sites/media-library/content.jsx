@@ -20,7 +20,6 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import InlineConnection from 'calypso/sites/marketing/connections/inline-connection';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
@@ -343,56 +342,8 @@ export class MediaLibraryContent extends Component {
 		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
 
-	renderGooglePhotosConnect() {
-		const { translate } = this.props;
-		const connectMessage = translate(
-			'To get started, connect your site to your Google Photos library.'
-		);
-
-		return (
-			<div className="media-library__connect-message">
-				<p>
-					<img
-						src="/calypso/images/sharing/google-photos-logo-text.svg?v=20241124"
-						width="400"
-						alt={ translate( 'Google Photos' ) }
-					/>
-				</p>
-				<p>{ connectMessage }</p>
-
-				<InlineConnection serviceName="google_photos" />
-			</div>
-		);
-	}
-
-	renderConnectExternalMedia() {
-		const { source } = this.props;
-		switch ( source ) {
-			case 'google_photos':
-				return this.renderGooglePhotosConnect();
-		}
-		return null;
-	}
-
 	getThumbnailType() {
 		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
-	}
-
-	needsToBeConnected() {
-		const { source, isConnected } = this.props;
-
-		// We're on an external service and not connected - need connecting
-		if ( source !== '' && ! isConnected ) {
-			return true;
-		}
-
-		// We're think we're connected to an external service but are really expired
-		if ( source !== '' && isConnected && this.hasGoogleExpired( this.props ) ) {
-			return true;
-		}
-
-		// We're on an internal service, or an external service that is connected and not expired
-		return false;
 	}
 
 	renderMediaList() {
@@ -409,10 +360,6 @@ export class MediaLibraryContent extends Component {
 
 		if ( this.hasGoogleInvalidConnection( this.props ) ) {
 			return <GooglePhotosAuthUpgrade connection={ this.props.googleConnection } />;
-		}
-
-		if ( this.needsToBeConnected() ) {
-			return this.renderConnectExternalMedia();
 		}
 
 		const listKey = [
@@ -449,10 +396,6 @@ export class MediaLibraryContent extends Component {
 	}
 
 	renderHeader() {
-		if ( this.needsToBeConnected() ) {
-			return null;
-		}
-
 		if ( ! this.props.filterRequiresUpgrade ) {
 			return (
 				<MediaLibraryHeader
