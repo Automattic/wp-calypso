@@ -1,5 +1,5 @@
 import { Metrics } from '@automattic/api-core';
-import { __experimentalGrid as Grid, privateApis } from '@wordpress/components';
+import { __experimentalHStack as HStack, privateApis } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useState } from 'react';
@@ -30,12 +30,7 @@ export default function CoreMetrics( {
 			selectedTabId={ activeTab }
 			onSelect={ ( tabId: Metrics ) => setActiveTab( tabId ) }
 		>
-			<Grid
-				alignment="topLeft"
-				columns={ isDesktop ? 2 : 1 }
-				gap={ 6 }
-				templateColumns={ isDesktop ? '220px 1fr' : '1fr' }
-			>
+			<HStack wrap={ ! isDesktop } alignment="flex-start" justify="flex-start" spacing={ 6 }>
 				<CoreMetricsTabs compact={ ! isDesktop } report={ report } />
 				<Tabs.TabPanel tabId={ activeTab }>
 					<CoreMetricsContent
@@ -44,7 +39,7 @@ export default function CoreMetrics( {
 						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				</Tabs.TabPanel>
-			</Grid>
+			</HStack>
 		</Tabs>
 	);
 }

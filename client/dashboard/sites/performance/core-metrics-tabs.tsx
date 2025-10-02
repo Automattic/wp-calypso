@@ -36,8 +36,8 @@ const CoreMetricsTabs = ( {
 	const isSmall = useViewportMatch( 'small' );
 
 	return (
-		<Card>
-			<Tabs.TabList>
+		<Card style={ { flexGrow: compact ? 1 : 0, flexShrink: compact ? 1 : 0 } }>
+			<Tabs.TabList style={ { maxWidth: '100%' } }>
 				<Tab tabId="overall_score">
 					<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
 						{ compact ? metricsNames.overall_score.shortName : metricsNames.overall_score.name }

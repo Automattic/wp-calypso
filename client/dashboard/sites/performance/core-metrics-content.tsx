@@ -40,7 +40,7 @@ export default function CoreMetricsContent( {
 
 	const isOverall = activeTab === 'overall_score';
 	return (
-		<Card>
+		<Card style={ { width: '100%' } }>
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
