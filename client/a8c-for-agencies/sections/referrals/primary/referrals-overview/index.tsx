@@ -12,7 +12,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import { NEW_REFERRAL_ID_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -53,8 +53,8 @@ export default function ReferralsOverview() {
 		titleField: 'client',
 	} );
 
-	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
-		REFERRAL_EMAIL_QUERY_PARAM_KEY
+	const { value: newReferralId, setValue: setNewReferralId } = useUrlQueryParam(
+		NEW_REFERRAL_ID_QUERY_PARAM_KEY
 	);
 
 	const isDesktop = useDesktopBreakpoint();
@@ -66,6 +66,10 @@ export default function ReferralsOverview() {
 	const { data: referrals, isFetching: isFetchingReferrals } = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
+
+	const newReferral = useMemo( () => {
+		return newReferralId ? referrals?.find( ( referral ) => referral.id === newReferralId ) : null;
+	}, [ newReferralId, referrals ] );
 
 	// To ensure the selected item is updated when the referrals list is updated
 	// as we optimistically update the referrals list
@@ -106,10 +110,10 @@ export default function ReferralsOverview() {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop isFullWidth={ hasReferrals }>
-					{ !! referralEmail && (
+					{ !! newReferral && (
 						<NewReferralOrderNotification
-							email={ referralEmail }
-							onClose={ () => setReferralEmail( '' ) }
+							referral={ newReferral }
+							onClose={ () => setNewReferralId( '' ) }
 							isFullWidth={ hasReferrals }
 						/>
 					) }
