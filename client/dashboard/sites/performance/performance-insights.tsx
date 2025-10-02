@@ -152,9 +152,10 @@ export default function PerformanceInsights( {
 	return (
 		<VStack spacing={ 4 }>
 			<HStack
-				direction={ isDesktop ? 'row' : 'column' }
+				spacing={ 4 }
 				justify={ isDesktop ? 'space-between' : 'flex-start' }
 				alignment="flex-start"
+				wrap
 			>
 				<VStack>
 					<Text size={ 15 } weight={ 500 } as="h2">
@@ -162,7 +163,7 @@ export default function PerformanceInsights( {
 					</Text>
 					<Text variant="muted">{ getSubtitleText( selectedFilter, filteredAudits.length ) }</Text>
 				</VStack>
-				<div style={ { width: '240px' } }>
+				<div style={ { width: isDesktop ? '250px' : '100%' } }>
 					<CustomSelectControl
 						label={ __( 'Recommendations' ) }
 						value={ getSelectedOption() }
