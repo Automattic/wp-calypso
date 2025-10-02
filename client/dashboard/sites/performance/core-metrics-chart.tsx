@@ -76,10 +76,9 @@ export default function CoreMetricsChart( {
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		if ( valuation === 'good' ) {
 			return isOverall
-				? sprintf( '(50–%(to)s)', { to: formatUnit( needsImprovement ) } )
-				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
-						from: formatUnit( good ),
-						to: formatUnit( needsImprovement ),
+				? sprintf( '(90–%(to)s)', { to: formatUnit( good ) } )
+				: sprintf( '(0–%(to)s%(unit)s)', {
+						to: formatUnit( good ),
 						unit: displayUnit(),
 				  } );
 		}
