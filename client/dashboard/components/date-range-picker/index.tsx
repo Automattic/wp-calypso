@@ -53,7 +53,7 @@ export function DateRangePicker( {
 						<div className="daterange-input__toggle">
 							<Button
 								type="button"
-								variant="secondary"
+								variant="tertiary"
 								onClick={ onToggle }
 								aria-haspopup="dialog"
 								aria-expanded={ isOpen }

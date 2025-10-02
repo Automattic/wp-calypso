@@ -5,6 +5,7 @@ import { sitesRoute } from '../app/router/sites';
 import InlineSupportLink from '../components/inline-support-link';
 import Notice from '../components/notice';
 import { OptInWelcome } from '../components/opt-in-welcome';
+import { isDashboardBackport } from '../utils/is-dashboard-backport';
 
 const RestoringSitesNotices = ( { onClose }: { onClose?: () => void } ) => {
 	return (
@@ -30,7 +31,7 @@ export const SitesNotices = () => {
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
-	if ( ! window?.location?.pathname?.startsWith( '/v2' ) ) {
+	if ( isDashboardBackport() ) {
 		// Notices should not appear in the backported sites list.
 		return null;
 	}

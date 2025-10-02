@@ -710,6 +710,7 @@ export default function CheckoutMainContent( {
 						<CheckoutStep
 							className="checkout-contact-form-step"
 							stepId="contact-form"
+							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
 								// Touch the fields so they display validation errors
 								shouldShowContactDetailsValidationErrors && touchContactFields();
@@ -834,6 +835,7 @@ export default function CheckoutMainContent( {
 						) }
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
+						onPageLoadError={ onPageLoadError }
 						isCompleteCallback={ () => {
 							// We want to consider this step complete only if there is a
 							// payment method selected and it does not have required fields.

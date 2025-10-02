@@ -1,4 +1,3 @@
-import 'calypso/state/gutenberg-iframe-eligible/init';
 import versionCompare from 'calypso/lib/version-compare';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteOption } from 'calypso/state/sites/selectors';

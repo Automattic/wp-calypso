@@ -399,7 +399,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 	const { getState } = context.store;
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
-	const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
+	const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath, context.params );
 
 	if ( wpAdminUrl ) {
 		window.location = wpAdminUrl;

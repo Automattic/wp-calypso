@@ -8,6 +8,7 @@ import {
 	fetchGithubWorkflows,
 	fetchGithubWorkflowTemplates,
 	type CreateWorkflowRequest,
+	saveGitHubCredentials,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -102,6 +103,15 @@ export const githubWorkflowChecksQuery = (
 			),
 		meta: {
 			persist: false,
+		},
+	} );
+
+export const saveGitHubCredentialsMutation = () =>
+	mutationOptions( {
+		mutationFn: ( { accessToken }: { accessToken: string } ) =>
+			saveGitHubCredentials( accessToken ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( githubInstallationsQuery() );
 		},
 	} );
 

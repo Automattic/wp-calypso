@@ -8,7 +8,8 @@ import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import NoDomainsAvailableEmptyState from './components/NoDomainsAvailableEmptyState';
+import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
+import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
 import { domainHasEmail } from './utils/email-utils';
 import type { View } from '@wordpress/dataviews';
@@ -73,21 +74,29 @@ function Emails() {
 	return (
 		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
 			<DataViewsCard>
-				<DataViews
-					data={ filteredData }
-					isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }
-					fields={ emailFields }
-					view={ view }
-					onChangeView={ setView }
-					selection={ selection.map( ( item ) => item.id ) }
-					onChangeSelection={ ( ids ) =>
-						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
-					}
-					actions={ actions }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ paginationInfo }
-					empty={ domainsWithoutEmails ? <></> : <NoDomainsAvailableEmptyState /> }
-				/>
+				<div className="emails__dataviews">
+					<DataViews
+						data={ filteredData }
+						isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }
+						fields={ emailFields }
+						view={ view }
+						onChangeView={ setView }
+						selection={ selection.map( ( item ) => item.id ) }
+						onChangeSelection={ ( ids ) =>
+							setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
+						}
+						actions={ actions }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ paginationInfo }
+						empty={
+							domainsWithoutEmails ? (
+								<NoEmailsAvailableEmptyState />
+							) : (
+								<NoDomainsAvailableEmptyState />
+							)
+						}
+					/>
+				</div>
 			</DataViewsCard>
 		</PageLayout>
 	);

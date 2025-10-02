@@ -33,7 +33,6 @@ describe( 'MediaLibraryDataSource', () => {
 				</ReduxProvider>
 			);
 
-			expect( screen.getByText( 'Google Photos' ) ).toBeVisible();
 			expect( screen.getByText( 'Pexels free photos' ) ).toBeVisible();
 		} );
 
@@ -50,7 +49,6 @@ describe( 'MediaLibraryDataSource', () => {
 					/>
 				</ReduxProvider>
 			);
-			expect( screen.getByText( 'Google Photos' ) ).toBeVisible();
 			expect( screen.queryByText( 'Pexels free photos' ) ).not.toBeInTheDocument();
 		} );
 	} );

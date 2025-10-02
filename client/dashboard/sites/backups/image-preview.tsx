@@ -1,4 +1,5 @@
-import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Text } from '../../components/text';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
 interface ImagePreviewProps {

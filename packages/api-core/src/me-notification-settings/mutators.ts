@@ -8,9 +8,9 @@ import type {
 
 export async function updateUserNotificationSettings(
 	data: InputUserNotificationSettings,
-	applyAll?: boolean
+	applyToAll?: boolean
 ): Promise< UserNotificationSettings > {
-	const queryArgs = applyAll ? { applyAll } : {};
+	const queryArgs = applyToAll ? { applyToAll } : {};
 	return await wpcom.req.post( addQueryArgs( '/me/notifications/settings', queryArgs ), data );
 }
 

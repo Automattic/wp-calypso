@@ -5,9 +5,9 @@ import {
 } from '@automattic/api-core';
 import { siteBackupsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 
-export type BackupStateType = 'idle' | 'running' | 'success' | 'error';
+export type BackupStateType = 'idle' | 'enqueued' | 'running' | 'success' | 'error';
 
 export interface BackupState {
 	// Current status of the tracked backup
@@ -18,6 +18,9 @@ export interface BackupState {
 
 	// Whether the backup has recently completed successfully
 	hasRecentlyCompleted: boolean;
+
+	// Function to set enqueue state
+	setEnqueued: ( isEnqueued: boolean ) => void;
 }
 
 /**
@@ -28,10 +31,34 @@ export interface BackupState {
  */
 export function useBackupState( siteId: number ): BackupState {
 	const trackedBackupRef = useRef< BackupEntry[ 'period' ] | null >( null );
+	const [ isEnqueued, setIsEnqueued ] = useState( false );
+
+	const setEnqueued = useCallback( ( enqueued: boolean ) => {
+		setIsEnqueued( enqueued );
+	}, [] );
+
+	const { data: backups = [] } = useQuery( siteBackupsQuery( siteId ) );
+
+	const latestBackup = backups[ 0 ];
+	const isRunning = latestBackup?.status === BackupEntryStatuses.STARTED;
+
+	// Reset enqueued state when backup actually starts (similar to scan implementation)
+	useEffect( () => {
+		if ( isRunning ) {
+			setIsEnqueued( false );
+		}
+	}, [ isRunning ] );
 
 	// Get current backup status and decide what to track
 	const getBackupState = ( backups: BackupEntry[] ): BackupState => {
-		const latestBackup = backups[ 0 ];
+		if ( isEnqueued ) {
+			return {
+				status: 'enqueued',
+				backup: null,
+				hasRecentlyCompleted: false,
+				setEnqueued,
+			};
+		}
 
 		// If we have a tracked backup, check its current status
 		if ( trackedBackupRef.current ) {
@@ -43,6 +70,7 @@ export function useBackupState( siteId: number ): BackupState {
 						status: 'running',
 						backup: tracked,
 						hasRecentlyCompleted: false,
+						setEnqueued,
 					};
 				}
 
@@ -51,6 +79,7 @@ export function useBackupState( siteId: number ): BackupState {
 						status: 'success',
 						backup: tracked,
 						hasRecentlyCompleted: true,
+						setEnqueued,
 					};
 				}
 
@@ -59,6 +88,7 @@ export function useBackupState( siteId: number ): BackupState {
 						status: 'error',
 						backup: tracked,
 						hasRecentlyCompleted: false,
+						setEnqueued,
 					};
 				}
 			}
@@ -75,6 +105,7 @@ export function useBackupState( siteId: number ): BackupState {
 				status: 'running',
 				backup: latestBackup,
 				hasRecentlyCompleted: false,
+				setEnqueued,
 			};
 		}
 
@@ -83,10 +114,9 @@ export function useBackupState( siteId: number ): BackupState {
 			status: 'idle',
 			backup: null,
 			hasRecentlyCompleted: false,
+			setEnqueued,
 		};
 	};
-
-	const { data: backups = [] } = useQuery( siteBackupsQuery( siteId ) );
 
 	return getBackupState( backups );
 }

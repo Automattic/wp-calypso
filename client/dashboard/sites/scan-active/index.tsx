@@ -11,23 +11,41 @@ import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function ActiveThreatsDataViews( { site }: { site: Site } ) {
+interface ActiveThreatsDataViewsProps {
+	site: Site;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
+export function ActiveThreatsDataViews( {
+	site,
+	timezoneString,
+	gmtOffset,
+}: ActiveThreatsDataViewsProps ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'severity', 'threat', 'first_detected', 'auto_fix' ],
 		perPage: 10,
 		sort: { field: 'severity', direction: 'desc' },
+		layout: {
+			styles: {
+				threat: {
+					minWidth: '500px',
+				},
+				first_detected: {
+					maxWidth: '175px',
+					minWidth: '140px',
+				},
+			},
+		},
 	} );
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
 	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
-	const fields = getFields();
-	const actions = useMemo(
-		() => getActions( site.ID, selection.length ),
-		[ site.ID, selection.length ]
-	);
+	const fields = getFields( timezoneString, gmtOffset );
+	const actions = useMemo( () => getActions( site, selection.length ), [ site, selection.length ] );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );

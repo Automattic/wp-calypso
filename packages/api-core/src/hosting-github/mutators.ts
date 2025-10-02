@@ -1,6 +1,18 @@
 import { wpcom } from '../wpcom-fetcher';
 import { CreateWorkflowRequest, CreateWorkflowResponse } from './types';
 
+export async function saveGitHubCredentials( accessToken: string ): Promise< void > {
+	return await wpcom.req.post(
+		{
+			path: '/hosting/github/accounts',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			access_token: accessToken,
+		}
+	);
+}
+
 export async function createGithubWorkflow(
 	request: CreateWorkflowRequest
 ): Promise< CreateWorkflowResponse > {

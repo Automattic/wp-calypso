@@ -1,6 +1,5 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
-	githubInstallationsQuery,
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
@@ -489,24 +488,6 @@ export const siteDomainsRoute = createRoute( {
 	)
 );
 
-export const siteEmailsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Emails' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'emails',
-} ).lazy( () =>
-	import( '../../sites/emails' ).then( ( d ) =>
-		createLazyRoute( 'site-emails' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const sitePerformanceRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -685,54 +666,6 @@ export const siteSettingsAgencyRoute = createRoute( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
-);
-
-export const siteSettingsMcpRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Model Context Protocol (MCP) Settings' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/mcp',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-mcp' ).then( ( d ) => {
-		return createLazyRoute( 'site-settings-mcp' )( {
-			component: () => {
-				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
-			},
-		} );
-	} )
-);
-
-export const siteSettingsMcpSetupRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'MCP Setup' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/mcp-setup',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
-		return createLazyRoute( 'site-settings-mcp-setup' )( {
-			component: () => {
-				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
-			},
-		} );
-	} )
 );
 
 export const siteSettingsHundredYearPlanRoute = createRoute( {
@@ -977,9 +910,6 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/repositories/connect',
-	loader: async () => {
-		await queryClient.ensureQueryData( githubInstallationsQuery() );
-	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
@@ -1118,8 +1048,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsAgencyRoute,
-		siteSettingsMcpRoute,
-		siteSettingsMcpSetupRoute,
 		siteSettingsRepositoriesRoute,
 		siteSettingsRepositoriesConnectRoute,
 		siteSettingsHundredYearPlanRoute,
@@ -1184,15 +1112,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	if ( config.supports.sites.emails ) {
-		siteRoutes.push( siteEmailsRoute );
-	}
-
 	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
-	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
 }
