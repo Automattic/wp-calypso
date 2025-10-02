@@ -117,8 +117,8 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
-					status="is-success"
-					theme="light"
+					status="is-warning"
+					theme="dark"
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
