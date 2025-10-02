@@ -69,7 +69,7 @@ test( 'renders empty state when no glue records exist', async () => {
 	expect( screen.getByText( 'No glue records found for this domain.' ) ).toBeInTheDocument();
 } );
 
-test( 'renders actions when a row is hovered', async () => {
+test( 'renders actions when the actions menu is clicked', async () => {
 	const user = userEvent.setup();
 
 	mockFetchDomainGlueRecordsApiRequest();
