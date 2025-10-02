@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
 
@@ -31,7 +32,6 @@ const form = {
 	fields: [
 		{
 			id: 'optInForm',
-			label: __( 'Try the new Hosting Dashboard' ),
 			children: [ 'description', 'enabled' ],
 		},
 	],
@@ -119,7 +119,8 @@ export default function PreferencesLanguageForm() {
 		<Card>
 			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
 			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
+				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
+					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }
