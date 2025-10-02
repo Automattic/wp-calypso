@@ -76,17 +76,19 @@ export class SidebarComponent {
 		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
 		await this.page.dispatchEvent( itemSelector, 'click' );
 
+		// Wait for navigation after clicking the top level item.
+		await this.page.waitForNavigation( { timeout: 30 * 1000 } );
+
 		// Sub-level menu item selector.
 		if ( subitem ) {
 			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible, .wp-menu-open .wp-submenu :text-is("${ subitem }"):visible`;
-			await Promise.all( [
-				this.page.waitForNavigation( { timeout: 30 * 1000 } ),
-				this.page.dispatchEvent( subitemSelector, 'click' ),
-			] );
+			await this.page.dispatchEvent( subitemSelector, 'click' );
 		}
 
 		const currentURL = this.page.url();
 		// Do not verify selected menu items or retry if navigation takes user out of Calypso (eg. WP-Admin, Widgets editor)...
+		console.log( currentURL );
+		console.log( getCalypsoURL() );
 		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
 			return;
 		}
