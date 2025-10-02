@@ -4,7 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
 import InlineSupportLink from '../../components/inline-support-link';
 
-export default function SubTitle( {
+export default function Subtitle( {
 	timestamp,
 	timezoneString,
 	gmtOffset,

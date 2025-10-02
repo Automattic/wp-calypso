@@ -21,7 +21,7 @@ import Report from './report';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
-import SubTitle from './subtitle';
+import Subtitle from './subtitle';
 import type { Site, SitePerformancePage } from '@automattic/api-core';
 
 /**
@@ -92,7 +92,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		<PageLayout>
 			<PageHeader
 				description={
-					<SubTitle
+					<Subtitle
 						timestamp={ currentReport?.timestamp }
 						timezoneString={ timezoneString }
 						gmtOffset={ gmtOffset }
