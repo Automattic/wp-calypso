@@ -13,7 +13,8 @@ import {
 	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
-	NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
@@ -119,7 +120,8 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						page.redirect(
 							isFeedbackShown
 								? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
-										[ NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY ]: referral.id,
+										[ NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY ]: email,
+										[ NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY ]: referral.checkout_url,
 										[ NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY ]: flowType,
 								  } )
 								: addQueryArgs( A4A_FEEDBACK_LINK, {

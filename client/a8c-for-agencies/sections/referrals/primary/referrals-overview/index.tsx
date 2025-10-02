@@ -13,7 +13,8 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
-	NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
@@ -57,12 +58,16 @@ export default function ReferralsOverview() {
 		titleField: 'client',
 	} );
 
-	const { value: newReferralOrderId, setValue: setNewReferralOrderId } = useUrlQueryParam(
-		NEW_REFERRAL_ORDER_ID_QUERY_PARAM_KEY
+	const { value: newReferralOrderEmail, setValue: setNewReferralOrderEmail } = useUrlQueryParam(
+		NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY
 	);
+
 	const { value: newReferralFlowType, setValue: setNewReferralFlowType } = useUrlQueryParam(
 		NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY
 	);
+
+	const { value: newReferralOrderCheckoutUrl, setValue: setNewReferralOrderCheckoutUrl } =
+		useUrlQueryParam( NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -73,16 +78,6 @@ export default function ReferralsOverview() {
 	const { data: referrals, isFetching: isFetchingReferrals } = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
-
-	const newReferralOrder = useMemo( () => {
-		if ( ! newReferralOrderId ) {
-			return null;
-		}
-
-		return referrals
-			?.flatMap( ( referral ) => referral.referrals )
-			.find( ( referral_order ) => referral_order.id === Number( newReferralOrderId ) );
-	}, [ newReferralOrderId, referrals ] );
 
 	// To ensure the selected item is updated when the referrals list is updated
 	// as we optimistically update the referrals list
@@ -123,12 +118,14 @@ export default function ReferralsOverview() {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop isFullWidth={ hasReferrals }>
-					{ !! newReferralOrder && (
+					{ !! newReferralOrderEmail && (
 						<NewReferralOrderNotification
-							referralOrder={ newReferralOrder }
+							referralOrderEmail={ newReferralOrderEmail }
+							referralOrderCheckoutUrl={ newReferralOrderCheckoutUrl }
 							onClose={ () => {
-								setNewReferralOrderId( '' );
+								setNewReferralOrderEmail( '' );
 								setNewReferralFlowType( '' );
+								setNewReferralOrderCheckoutUrl( '' );
 							} }
 							isFullWidth={ hasReferrals }
 							flowType={ newReferralFlowType as ReferralOrderFlowType }
