@@ -14,6 +14,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -105,6 +106,7 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
+				recordUseYourDomainButtonClick( flow === 'domain' ? 'domain-first' : 'signup', null, flow );
 				submit( {
 					navigateToUseMyDomain: true,
 					lastQuery: domainName,
