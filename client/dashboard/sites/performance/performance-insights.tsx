@@ -44,6 +44,14 @@ const highImpactAudits = [
 	'largest-contentful-paint-element',
 ];
 
+const tipAudits = [
+	'uses-responsive-images',
+	'uses-long-cache-ttl',
+	'server-response-time',
+	'render-blocking-resources',
+	'unminified-css',
+];
+
 function getSubtitleText( selectedFilter: Metrics, numRecommendations: number ) {
 	if ( numRecommendations ) {
 		if ( selectedFilter === 'overall_score' ) {
@@ -183,10 +191,12 @@ export default function PerformanceInsights( {
 					>
 						<PerformanceInsight
 							device={ device }
+							auditSlug={ key }
 							insight={ audits[ key ] }
 							fullPageScreenshot={ fullPageScreenshot }
 							isWpcom={ is_wpcom }
 							hash={ hash }
+							showTip={ tipAudits.includes( key ) }
 						/>
 					</PanelBody>
 				) ) }
