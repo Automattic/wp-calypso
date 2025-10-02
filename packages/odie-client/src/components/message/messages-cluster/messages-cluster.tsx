@@ -125,14 +125,12 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 					className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
 				>
 					{ group.messages.map( ( message, index ) => (
-						<>
-							<ChatMessage
-								key={ message.message_id || index }
-								message={ message }
-								currentUser={ currentUser }
-								header={ index === 0 ? messageHeader() : undefined }
-							/>
-						</>
+						<ChatMessage
+							key={ message.message_id || index }
+							message={ message }
+							currentUser={ currentUser }
+							header={ index === 0 ? messageHeader() : undefined }
+						/>
 					) ) }
 				</div>
 				{ startingHumanSupport && (
