@@ -19,7 +19,7 @@ const defaultValues: Required< UserPreferences > = {
 	/**
 	 * CIAB Preferences.
 	 */
-	'ciab-sites-view': {},
+	'stores-view': {},
 };
 
 // Returns all user preferences, without applying any defaults.

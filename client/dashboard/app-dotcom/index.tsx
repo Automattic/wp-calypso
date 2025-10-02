@@ -3,7 +3,6 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
-	context: 'dotcom',
 	name: 'WordPress.com',
 	basePath: '/v2',
 	mainRoute: '/sites',
@@ -20,6 +19,7 @@ boot( {
 			domains: true,
 			emails: true,
 		},
+		stores: false,
 		domains: true,
 		emails: true,
 		themes: true,

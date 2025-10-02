@@ -1082,7 +1082,7 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
-export const createSiteRoutes = ( config: AppConfig ) => {
+export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.sites ) {
 		return [];
 	}
@@ -1167,15 +1167,7 @@ export const createSiteRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	return [ siteRoute.addChildren( siteRoutes ) ];
-};
-
-export const createSitesRoutes = ( config: AppConfig ) => {
-	if ( ! config.supports.sites ) {
-		return [];
-	}
-
-	return [ sitesRoute, ...createSiteRoutes( config ) ];
+	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.

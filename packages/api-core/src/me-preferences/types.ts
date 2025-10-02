@@ -38,5 +38,5 @@ export interface UserPreferences {
 	/**
 	 * CIAB Preferences.
 	 */
-	'ciab-sites-view'?: SitesViewPreferences;
+	'stores-view'?: SitesViewPreferences;
 }

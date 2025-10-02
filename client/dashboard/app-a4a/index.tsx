@@ -3,7 +3,6 @@ import { Logo, LoadingLogo } from './logo';
 import './style.scss';
 
 boot( {
-	context: 'a4a',
 	name: 'Automattic for Agencies',
 	basePath: '/v2-a4a',
 	mainRoute: '/overview',
@@ -21,6 +20,7 @@ boot( {
 			domains: false,
 			emails: false,
 		},
+		stores: false,
 		domains: false,
 		emails: false,
 		themes: false,

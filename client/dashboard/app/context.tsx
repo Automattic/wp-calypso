@@ -21,7 +21,6 @@ export type OnboardingLink = {
 };
 
 export type AppConfig = {
-	context: 'dotcom' | 'a4a' | 'ciab' | '';
 	name: string;
 	basePath: string;
 	mainRoute: string;
@@ -30,6 +29,7 @@ export type AppConfig = {
 	supports: {
 		overview: boolean;
 		sites: SiteFeatureSupports | false;
+		stores: boolean;
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
@@ -48,7 +48,6 @@ export type AppConfig = {
 };
 
 const AppContext = createContext< AppConfig >( {
-	context: '',
 	name: '',
 	basePath: '',
 	mainRoute: '',
@@ -57,6 +56,7 @@ const AppContext = createContext< AppConfig >( {
 	supports: {
 		overview: false,
 		sites: false,
+		stores: false,
 		plugins: false,
 		domains: false,
 		emails: false,

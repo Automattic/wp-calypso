@@ -1,7 +1,6 @@
 import { Router, createRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
-import { createCIABSitesRoutes } from './ciab-sites';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -9,6 +8,7 @@ import { createOverviewRoutes } from './overview';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import { createStoresRoutes } from './stores';
 import type { AppConfig } from '../context';
 
 interface RouteContext {
@@ -35,11 +35,11 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites ) {
-		if ( config.context === 'ciab' ) {
-			children.push( ...createCIABSitesRoutes( config ) );
-		} else {
-			children.push( ...createSitesRoutes( config ) );
-		}
+		children.push( ...createSitesRoutes( config ) );
+	}
+
+	if ( config.supports.stores ) {
+		children.push( ...createStoresRoutes( config ) );
 	}
 
 	if ( config.supports.plugins ) {

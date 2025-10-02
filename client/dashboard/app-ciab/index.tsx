@@ -3,23 +3,14 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
-	context: 'ciab',
 	name: 'CIAB',
 	basePath: '/ciab',
 	mainRoute: '/sites',
 	Logo,
 	supports: {
 		overview: false,
-		sites: {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: false,
-			emails: false,
-		},
+		sites: false,
+		stores: true,
 		domains: true,
 		emails: true,
 		themes: false,

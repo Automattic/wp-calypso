@@ -50,7 +50,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 	};
 };
 
-export default function Sites() {
+export default function Stores() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
@@ -60,10 +60,8 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
-	const { mutate: updateViewPreferences } = useMutation(
-		userPreferenceMutation( 'ciab-sites-view' )
-	);
+	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'stores-view' ) );
+	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'stores-view' ) );
 
 	const { defaultView, view } = getView( {
 		user,
@@ -144,7 +142,7 @@ export default function Sites() {
 						actions={
 							<Button
 								variant="primary"
-								href={ addQueryArgs( '/start', { context: 'ciab-sites-dashboard' } ) }
+								href={ addQueryArgs( '/start', { context: 'stores-dashboard' } ) }
 								__next40pxDefaultSize
 							>
 								{ __( 'Add new store' ) }
@@ -190,7 +188,7 @@ export default function Sites() {
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
-										href={ addQueryArgs( '/start', { context: 'ciab-sites-dashboard' } ) }
+										href={ addQueryArgs( '/start', { context: 'stores-dashboard' } ) }
 									>
 										{ __( 'Add new store' ) }
 									</Button>
