@@ -192,11 +192,11 @@ describe( 'WebSettings', () => {
 			wrapper: Wrapper,
 		} );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites?' } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites' } ) );
 
 		//modal is visible
 		await waitFor( () => {
-			expect( screen.queryByRole( 'dialog', { name: 'Apply to all sites' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'dialog', { name: 'Apply to all sites?' } ) ).toBeVisible();
 		} );
 
 		await userEvent.click(
