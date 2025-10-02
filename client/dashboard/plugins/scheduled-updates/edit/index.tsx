@@ -11,6 +11,7 @@ import {
 	ScheduledUpdatesForm,
 	type ScheduledUpdatesFormOnSubmit,
 } from '../components/schedule-form';
+import { useEditSchedules } from '../hooks/use-edit-schedules';
 import { useLoadScheduleById } from '../hooks/use-load-schedule-by-id';
 
 export default function PluginsScheduledUpdatesEdit() {
@@ -18,9 +19,19 @@ export default function PluginsScheduledUpdatesEdit() {
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesEditRoute.fullPath } );
 
 	const { loading, error, initial } = useLoadScheduleById( scheduleId );
+	const { mutateAsync: runEdit } = useEditSchedules(
+		scheduleId,
+		( initial?.siteIds || [] ).map( ( id ) => Number( id ) )
+	);
 
 	const handleSave: ScheduledUpdatesFormOnSubmit = async ( inputs ) => {
-		void inputs;
+		await runEdit( {
+			siteIds: inputs.siteIds.map( ( id ) => Number( id ) ),
+			plugins: inputs.plugins,
+			frequency: inputs.frequency,
+			weekday: inputs.weekday,
+			time: inputs.time,
+		} );
 		navigate( { to: pluginsScheduledUpdatesRoute.to } );
 	};
 
