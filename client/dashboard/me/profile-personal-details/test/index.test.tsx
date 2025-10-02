@@ -40,6 +40,12 @@ jest.mock( '@automattic/api-queries', () => ( {
 		mutationFn: jest.fn(),
 		onSuccess: jest.fn(),
 	} ) ),
+	cancelPendingEmailChangeMutation: jest.fn( () => ( {
+		mutationFn: jest.fn(),
+	} ) ),
+	resendEmailVerificationMutation: jest.fn( () => ( {
+		mutationFn: jest.fn(),
+	} ) ),
 } ) );
 
 // Mock WordPress notices

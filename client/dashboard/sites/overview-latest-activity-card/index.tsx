@@ -9,6 +9,7 @@ import { SummaryButtonCardFooter } from '../../components/summary-button-card-fo
 import { TextSkeleton } from '../../components/text-skeleton';
 import TimeSince from '../../components/time-since';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -49,10 +50,9 @@ function getActivityLogUrl( site: Site ) {
 		return `https://cloud.jetpack.com/activity-log/${ site.slug }`;
 	}
 
-	if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
-		return `/sites/${ site.slug }/logs/activity`; // no need for the /v2 prefix since it's handled by the RouterLinkSummaryButton in the SummaryButtonCardFooter
-	}
-	return `/activity-log/${ site.slug }`;
+	return isDashboardBackport()
+		? `/activity-log/${ site.slug }`
+		: `/sites/${ site.slug }/logs/activity`;
 }
 
 export default function LatestActivityCard( {
