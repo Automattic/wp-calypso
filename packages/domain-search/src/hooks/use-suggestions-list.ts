@@ -18,20 +18,14 @@ export const useSuggestionsList = () => {
 		refetchOnWindowFocus: false,
 	} );
 
-	const availabilityCheckStartTime = useRef( 0 );
-	const suggestionsReceiveStartTime = useRef( 0 );
+	const lastQueryChangeTime = useRef( 0 );
 
 	useEffect( () => {
-		// TODO: Is FQDN search?
-		availabilityCheckStartTime.current = Date.now();
-	}, [ query ] );
-
-	useEffect( () => {
-		suggestionsReceiveStartTime.current = Date.now();
+		lastQueryChangeTime.current = Date.now();
 	}, [ query ] );
 
 	const triggerSuggestionsReceiveEvent = useEvent( () => {
-		const suggestionsReceiveResponseTime = Date.now() - suggestionsReceiveStartTime.current;
+		const suggestionsReceiveResponseTime = Date.now() - lastQueryChangeTime.current;
 		events.onSuggestionsReceive(
 			query,
 			suggestions.map( ( suggestion ) => suggestion.domain_name ),
@@ -53,7 +47,7 @@ export const useSuggestionsList = () => {
 	} );
 
 	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
-		const availabilityCheckResponseTime = Date.now() - availabilityCheckStartTime.current;
+		const availabilityCheckResponseTime = Date.now() - lastQueryChangeTime.current;
 		events.onQueryAvailabilityCheck(
 			availabilityData!.status,
 			query,
