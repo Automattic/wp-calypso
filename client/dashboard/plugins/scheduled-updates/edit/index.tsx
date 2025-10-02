@@ -12,8 +12,8 @@ import {
 	ScheduledUpdatesForm,
 	type ScheduledUpdatesFormOnSubmit,
 } from '../components/schedule-form';
-import { useEditSchedules } from '../hooks/use-edit-schedules';
 import { useLoadScheduleById } from '../hooks/use-load-schedule-by-id';
+import { useReconcileSchedules } from '../hooks/use-reconcile-schedules';
 
 export default function PluginsScheduledUpdatesEdit() {
 	const { scheduleId } = pluginsScheduledUpdatesEditRoute.useParams();
@@ -28,14 +28,14 @@ export default function PluginsScheduledUpdatesEdit() {
 		}
 	}, [ initial?.siteIds ] );
 
-	const { mutateAsync: runEdit } = useEditSchedules(
+	const { mutateAsync: runReconcile } = useReconcileSchedules(
 		scheduleId,
 		initial?.siteIds || [],
 		selectedSiteIds
 	);
 
 	const handleSave: ScheduledUpdatesFormOnSubmit = async ( inputs ) => {
-		await runEdit( {
+		await runReconcile( {
 			plugins: inputs.plugins,
 			frequency: inputs.frequency,
 			weekday: inputs.weekday,
