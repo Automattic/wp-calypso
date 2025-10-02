@@ -10,6 +10,7 @@ import {
 	type CreateWorkflowRequest,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 export const githubInstallationsQuery = () =>
 	queryOptions( {
@@ -129,4 +130,9 @@ export const githubWorkflowsQuery = (
 export const createGithubWorkflowMutation = () =>
 	mutationOptions( {
 		mutationFn: ( request: CreateWorkflowRequest ) => createGithubWorkflow( request ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'github', 'repository-workflows' ],
+			} );
+		},
 	} );

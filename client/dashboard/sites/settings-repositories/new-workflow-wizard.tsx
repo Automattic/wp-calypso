@@ -1,5 +1,5 @@
 import { createGithubWorkflowMutation } from '@automattic/api-queries';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalText as Text,
@@ -29,16 +29,8 @@ export const NewWorkflowWizard = ( {
 	templateName,
 	exampleTemplate,
 }: NewWorkflowWizardProps ) => {
-	const queryClient = useQueryClient();
-
 	const { mutate: createWorkflow, isPending } = useMutation( {
 		...createGithubWorkflowMutation(),
-		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ 'github', 'workflows' ],
-			} );
-			onWorkflowCreated( RECOMMENDED_WORKFLOW_PATH );
-		},
 	} );
 
 	const existingWorkflow = workflows?.find(
@@ -64,14 +56,21 @@ export const NewWorkflowWizard = ( {
 				disabled={ isPending }
 				isBusy={ isPending }
 				onClick={ () =>
-					createWorkflow( {
-						repository_id: repository.id,
-						repository_owner: repository.owner,
-						repository_name: repository.name,
-						branch_name: repositoryBranch,
-						file_name: RECOMMENDED_WORKFLOW_PATH,
-						workflow_template: templateName,
-					} )
+					createWorkflow(
+						{
+							repository_id: repository.id,
+							repository_owner: repository.owner,
+							repository_name: repository.name,
+							branch_name: repositoryBranch,
+							file_name: RECOMMENDED_WORKFLOW_PATH,
+							workflow_template: templateName,
+						},
+						{
+							onSuccess: () => {
+								onWorkflowCreated( RECOMMENDED_WORKFLOW_PATH );
+							},
+						}
+					)
 				}
 			>
 				{ __( 'Install workflow for me' ) }
