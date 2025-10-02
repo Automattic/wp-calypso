@@ -95,7 +95,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 
 								router.navigate( {
 									to: '.',
-									search: ( prev ) => ( {
+									search: ( prev: Record< string, string > ) => ( {
 										...prev,
 										page_id: Number( pageId ),
 									} ),
