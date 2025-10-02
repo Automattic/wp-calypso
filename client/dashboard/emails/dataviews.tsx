@@ -2,12 +2,12 @@ import { Email } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	ExternalLink,
 	Icon,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { next, wordpress } from '@wordpress/icons';
 import { purchasesRoute } from '../app/router/me';
+import { Text } from '../components/text';
 import GoogleLogo from './resources/google-logo';
 import type { Action, Field, View } from '@wordpress/dataviews';
 
@@ -31,19 +31,17 @@ export const emailFields: Field< Email >[] = [
 				<HStack spacing={ 4 } justify="flex-start">
 					<div className="email-icon-wrapper">{ iconEl }</div>
 					{ item.type === 'mailbox' ? (
-						<ExternalLink href={ `https://mail.${ item.domainName }` }>
-							{ item.emailAddress }
-						</ExternalLink>
+						<span>{ item.emailAddress }</span>
 					) : (
-						<VStack justify="flex-start">
+						<VStack justify="flex-start" className="email-redirect-field">
 							<span>{ item.emailAddress }</span>
-							<span className="text-muted">
+							<Text variant="muted">
 								{ sprintf(
 									/* translators: %s is the email messages will be forwarded to. */
-									__( 'Forwards to %s' ),
+									__( 'forwards to %s' ),
 									item.forwardingTo
 								) }
-							</span>
+							</Text>
 						</VStack>
 					) }
 				</HStack>
@@ -72,15 +70,15 @@ export const emailFields: Field< Email >[] = [
 		label: __( 'Status' ),
 		render: ( { item }: { item: Email } ) => {
 			if ( item.status === 'active' ) {
-				return __( 'Active' );
+				return <Text intent="success">{ __( 'Active' ) }</Text>;
 			}
 			if ( item.status === 'pending' ) {
-				return __( 'Pending verification' );
+				return <Text intent="warning">{ __( 'Pending verification' ) }</Text>;
 			}
 			if ( item.status === 'suspended' ) {
-				return __( 'Expired' );
+				return <Text intent="error">{ __( 'Expired' ) }</Text>;
 			}
-			return item.status;
+			return <Text>{ item.status }</Text>;
 		},
 		getValue: ( { item }: { item: Email } ) => item.status,
 		// map to display values for filtering UI
@@ -97,13 +95,13 @@ export const DEFAULT_EMAILS_VIEW: View = {
 	page: 1,
 	perPage: 10,
 	sort: { field: 'emailAddress', direction: 'asc' },
-	fields: [ 'type', 'status' ],
+	fields: [ 'domainName', 'type', 'status' ],
 	titleField: 'emailAddress',
 };
 
 // Factory to create shared actions for Emails DataViews
 export function createEmailActions(
-	navigate: ( arg: any ) => void,
+	navigate: ( arg: { to: string } ) => void,
 	setSelection: ( items: Email[] ) => void
 ) {
 	return [
