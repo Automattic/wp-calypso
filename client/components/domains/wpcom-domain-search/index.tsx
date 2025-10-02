@@ -69,6 +69,7 @@ const DomainSearchWithCart = ( {
 				( Date.now() - lastSearchTime.current ) / 1000
 			);
 			lastSearchTime.current = Date.now();
+
 			recordTracksEvent( 'calypso_domain_search', {
 				search_box_value: query,
 				search_count: searchCount.current,
@@ -105,12 +106,11 @@ const DomainSearchWithCart = ( {
 					root_vendor: rootVendor,
 				} );
 			},
-			onQueryAvailabilityCheck: ( status, domainName ) => {
+			onQueryAvailabilityCheck: ( status, domainName, responseTime ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
 					available_status: status,
 					flow_name: flowName,
-					// TODO: Not sure if we still need this
-					// response_time: responseTime,
+					response_time: responseTime,
 					search_query: domainName,
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );

@@ -1,7 +1,7 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useEvent } from '@wordpress/compose';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
@@ -17,6 +17,12 @@ export const useSuggestionsList = () => {
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 	} );
+
+	const availabilityCheckStartTime = useRef( 0 );
+
+	useEffect( () => {
+		availabilityCheckStartTime.current = Date.now();
+	}, [ query ] );
 
 	const triggerSuggestionsReceiveEvent = useEvent( () => {
 		events.onSuggestionsReceive(
@@ -39,7 +45,12 @@ export const useSuggestionsList = () => {
 	} );
 
 	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
-		events.onQueryAvailabilityCheck( availabilityData!.status, query );
+		const availabilityCheckResponseTime = Date.now() - availabilityCheckStartTime.current;
+		events.onQueryAvailabilityCheck(
+			availabilityData!.status,
+			query,
+			availabilityCheckResponseTime
+		);
 	} );
 
 	useEffect( () => {
