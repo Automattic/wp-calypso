@@ -106,9 +106,7 @@ export const AdvancedWorkflowStyle = ( {
 					),
 					{
 						a: (
-							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/">
-								{ __( 'workflow recipes' ) }
-							</ExternalLink>
+							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/" children={ null } />
 						),
 					}
 				) }
