@@ -27,12 +27,13 @@ import type {
 	GitHubInstallation,
 	GitHubRepository,
 	CreateAndUpdateCodeDeploymentVariables,
+	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
 
 interface ConnectRepositoryFormProps {
 	onCancel: () => void;
 	mutation: UseMutationResult<
-		CreateAndUpdateCodeDeploymentVariables,
+		CreateAndUpdateCodeDeploymentResponse,
 		Error,
 		CreateAndUpdateCodeDeploymentVariables,
 		unknown
