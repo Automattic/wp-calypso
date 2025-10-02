@@ -21,7 +21,7 @@ import PluginsSelection from './plugins-selection';
 import SitesSelection from './sites-selection';
 import type { Frequency, Weekday } from '../types';
 
-const BLOCK_CREATE = true;
+const BLOCK_CREATE = false;
 
 type Inputs = {
 	siteIds: string[];
