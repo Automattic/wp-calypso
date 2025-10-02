@@ -239,6 +239,12 @@ export const ConnectRepositoryForm = ( {
 			if ( 'selectedRepositoryId' in updates ) {
 				newFormData.branch = '';
 				newFormData.targetDir = '';
+
+				// If repository is unselected, reset to simple mode since advanced requires a repo
+				if ( updates.selectedRepositoryId === '' ) {
+					newFormData.deploymentMode = 'simple';
+					newFormData.workflowPath = '';
+				}
 			}
 
 			return newFormData;
