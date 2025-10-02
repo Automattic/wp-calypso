@@ -193,6 +193,11 @@ export const ConnectRepositoryForm = ( {
 			selectedRepository?.name ?? '',
 			formData.branch
 		),
+		select: ( workflows ) => {
+			// Filter out child workflows (lint files)
+			const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
+			return workflows.filter( ( workflow ) => ! childWorkflows.includes( workflow.file_name ) );
+		},
 		enabled: !! selectedRepository && !! formData.branch,
 	} );
 

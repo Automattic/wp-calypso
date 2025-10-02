@@ -135,11 +135,6 @@ export const githubWorkflowsQuery = (
 			'workflows',
 		],
 		queryFn: () => fetchGithubWorkflows( repositoryOwner, repositoryName, branchName ),
-		select: ( workflows ) => {
-			// Filter out child workflows (lint files)
-			const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
-			return workflows.filter( ( workflow ) => ! childWorkflows.includes( workflow.file_name ) );
-		},
 		meta: {
 			persist: false,
 		},
