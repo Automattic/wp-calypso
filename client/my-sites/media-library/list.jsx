@@ -12,7 +12,6 @@ import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 import ListItem from './list-item';
 import ListNoContent from './list-no-content';
 import ListNoResults from './list-no-results';
-import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 
 const noop = () => {};
 
@@ -24,7 +23,6 @@ export class MediaLibraryList extends Component {
 		media: PropTypes.arrayOf( PropTypes.object ),
 		selectedItems: PropTypes.arrayOf( PropTypes.object ),
 		filter: PropTypes.string,
-		filterRequiresUpgrade: PropTypes.bool.isRequired,
 		search: PropTypes.string,
 		containerWidth: PropTypes.number,
 		rowPadding: PropTypes.number,
@@ -194,10 +192,6 @@ export class MediaLibraryList extends Component {
 	render() {
 		let getItemGroup = this.getItemGroup;
 		let getGroupLabel = this.getGroupLabel;
-
-		if ( this.props.filterRequiresUpgrade ) {
-			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
-		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
 			return createElement( this.props.search ? ListNoResults : ListNoContent, {

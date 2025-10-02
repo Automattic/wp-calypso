@@ -126,23 +126,6 @@ class MediaLibrary extends Component {
 		this.props.onAddMedia();
 	};
 
-	filterRequiresUpgrade() {
-		const { filter, site, source, isJetpack, hasVideoUploadFeature } = this.props;
-		if ( source ) {
-			return false;
-		}
-
-		switch ( filter ) {
-			case 'audio':
-				return ! ( site?.options?.upgraded_filetypes_enabled || isJetpack );
-
-			case 'videos':
-				return ! hasVideoUploadFeature;
-		}
-
-		return false;
-	}
-
 	renderDropZone() {
 		if ( this.props.source !== '' ) {
 			return null;
@@ -172,7 +155,6 @@ class MediaLibrary extends Component {
 				<FilterBar
 					site={ this.props.site }
 					filter={ this.props.filter }
-					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 					enabledFilters={ this.props.enabledFilters }
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
@@ -188,7 +170,6 @@ class MediaLibrary extends Component {
 				<Content
 					site={ this.props.site }
 					filter={ this.props.filter }
-					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 					search={ this.props.search }
 					source={ this.props.source }
 					isConnected={ this.props.isConnected }
