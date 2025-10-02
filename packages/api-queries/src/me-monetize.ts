@@ -64,6 +64,12 @@ export const monetizeSubscriptionStop = ( subscriptionId: string ) => {
 	return mutationOptions( {
 		mutationFn: () => requestSubscriptionStop( subscriptionId ),
 		onSuccess: ( response: MonetizeSubscriptionStopResponse ) => {
+			// We can remove the subscription from the list of subscriptions
+			queryClient.setQueryData(
+				monetizeSubscriptionsQuery().queryKey,
+				( oldList ) => oldList?.filter( ( s ) => s.ID !== subscriptionId )
+			);
+
 			queryClient.invalidateQueries( {
 				queryKey: [ monetizeSubscriptionsQuery().queryKey ],
 			} );
@@ -76,7 +82,7 @@ export const monetizeSubscriptionStop = ( subscriptionId: string ) => {
 			 * to Calypso with the query string parameter `removed=true` which can be
 			 * used to display the notification labeled "This item has been removed".
 			 */
-			if ( response.redirect ) {
+			if ( response && response.redirect ) {
 				window.location.assign( response.redirect );
 			}
 		},

@@ -1,6 +1,7 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
@@ -31,6 +32,8 @@ type SecurityPasswordFormData = {
 export default function SecurityPassword() {
 	const { recordTracksEvent } = useAnalytics();
 
+	const router = useRouter();
+
 	const mutation = useMutation( userSettingsMutation() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ isReloading, setIsReloading ] = useState( false );
@@ -49,7 +52,7 @@ export default function SecurityPassword() {
 				onSuccess: () => {
 					setIsReloading( true );
 					// Since changing a user's password invalidates the session, we reload.
-					window.location.replace( addFlashMessage( '', 'password' ) );
+					router.navigate( addFlashMessage( { to: '', replace: true }, 'password' ) );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {

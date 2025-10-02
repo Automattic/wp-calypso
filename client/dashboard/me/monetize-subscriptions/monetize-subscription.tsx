@@ -177,9 +177,11 @@ function StopSubscriptionButton( {
 					onClick={ () => {
 						stopSubscription( null, {
 							onSuccess: () => {
-								navigate( {
-									to: addFlashMessage( getMonetizeSubscriptionsUrl() ),
-								} );
+								navigate(
+									addFlashMessage( {
+										to: getMonetizeSubscriptionsUrl(),
+									} )
+								);
 							},
 							onError: () => {
 								if ( isProduct ) {

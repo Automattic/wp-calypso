@@ -1,3 +1,4 @@
+import { NavigateOptions } from '@tanstack/router-core/src/link';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
@@ -12,13 +13,13 @@ interface FlashMessageProps {
 const DEFAULT_PARAM_NAME = 'flash';
 
 export function addFlashMessage(
-	url: string,
-	value: string = 'true',
+	navigateOptions: NavigateOptions,
+	value: string | boolean = true,
 	overrideDefaultId: string = DEFAULT_PARAM_NAME
-): string {
-	const url_obj = new URL( url );
-	url_obj.searchParams.set( overrideDefaultId, value );
-	return url_obj.toString();
+): NavigateOptions {
+	navigateOptions.search = navigateOptions.search || {};
+	navigateOptions.search[ overrideDefaultId ] = value;
+	return navigateOptions;
 }
 /**
  * Allows a snackbar to be shown on page load based on a query parameter.

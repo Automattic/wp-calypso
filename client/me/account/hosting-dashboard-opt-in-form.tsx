@@ -6,7 +6,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SectionHeader from 'calypso/components/section-header';
-import { addFlashMessage } from 'calypso/dashboard/components/flash-message';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -74,7 +73,7 @@ export default function HostingDashboardOptInForm() {
 			);
 		} else if ( enabled ) {
 			setIsRedirecting( true );
-			window.location.href = addFlashMessage( '/v2/me/preferences', 'dashboard' );
+			window.location.href = '/v2/me/preferences?dashboard=true';
 		} else {
 			dispatch(
 				successNotice( translate( 'Successfully saved preference.' ), {
