@@ -110,6 +110,7 @@ export function tokenFieldRules() {
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'ebanx':
+		case 'vgs-ebanx':
 			return mergeValidationRules(
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails ),
