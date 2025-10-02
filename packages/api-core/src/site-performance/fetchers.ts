@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { BasicMetricsData, UrlPerformanceInsights } from './types';
+import type { BasicMetricsData, SitePerformanceInsights } from './types';
 
 export async function fetchBasicMetrics( url: string ): Promise< BasicMetricsData > {
 	return wpcom.req.get(
@@ -12,10 +12,10 @@ export async function fetchBasicMetrics( url: string ): Promise< BasicMetricsDat
 	);
 }
 
-export async function fetchPerformanceInsights(
+export async function fetchSitePerformanceInsights(
 	url: string,
 	token: string
-): Promise< UrlPerformanceInsights > {
+): Promise< SitePerformanceInsights > {
 	return wpcom.req.get(
 		{
 			path: '/site-profiler/metrics/advanced/insights',
