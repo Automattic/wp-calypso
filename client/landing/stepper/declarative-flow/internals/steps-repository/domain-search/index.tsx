@@ -26,6 +26,8 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
 	domainAddNew,
 	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
 	domainManagementTransferToOtherSite,
 	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
@@ -150,6 +152,11 @@ const DomainSearchStep: StepType< {
 			},
 			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
 				window.location.assign( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				window.location.assign(
+					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
+				);
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( domainName && isHundredYearDomainFlow( flow ) ) {

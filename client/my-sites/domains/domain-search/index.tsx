@@ -24,6 +24,8 @@ import {
 	domainAddEmailUpsell,
 	domainAddNew,
 	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
 	domainManagementTransferToOtherSite,
 	domainUseMyDomain,
 } from '../paths';
@@ -78,6 +80,13 @@ export default function DomainSearch() {
 			},
 			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
 				page( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				page(
+					selectedSiteSlug
+						? domainManagementTransferIn( selectedSiteSlug, domainName )
+						: domainManagementRoot()
+				);
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {
