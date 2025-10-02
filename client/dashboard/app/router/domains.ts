@@ -565,8 +565,8 @@ export const domainTransferSetupRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
-	path: 'domains/$domainName/domain-transfer-setup',
+	getParentRoute: () => domainRoute,
+	path: 'domain-transfer-setup',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainAvailabilityQuery( domainName ) ),
