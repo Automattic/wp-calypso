@@ -121,11 +121,14 @@ export const OdieSendMessageButton = () => {
 				content: inputValue,
 				role: 'user',
 				type: 'message',
-				// Odie messages are considered sent immediately.
-				// Because it's impossible to know if the message was sent or until the response is received.
-				// Which takes north of 10 seconds.
-				metadata: { temporary_id: crypto.randomUUID(), local_timestamp: Date.now() / 1000 },
 			} as Message;
+
+			if ( chat?.provider === 'zendesk' ) {
+				messageObj.metadata = {
+					temporary_id: crypto.randomUUID(),
+					local_timestamp: Date.now() / 1000,
+				};
+			}
 
 			sendMessage( messageObj ).catch( ( error ) => {
 				if ( error?.type === 'abort' ) {
