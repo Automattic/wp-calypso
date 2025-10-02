@@ -5,6 +5,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -19,7 +20,13 @@ const SidebarHelpCenter = ( { onClick }: { onClick: () => void } ) => {
 		};
 	}, [] );
 
-	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setIsMinimized, setOdieBotNameSlug } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+
+	// Configure A4A Help Center with appropriate bot settings
+	useEffect( () => {
+		setOdieBotNameSlug( 'automattic-chat-support_a4a' );
+	}, [ setOdieBotNameSlug, show ] );
 
 	const handleToggleHelpCenter = () => {
 		if ( isMinimized ) {
