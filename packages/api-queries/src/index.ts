@@ -40,7 +40,7 @@ export * from './me-username';
 export * from './meta-sms-country-codes';
 export * from './notification-devices';
 export * from './p2';
-export * from './performance';
+
 export * from './plugin';
 export * from './purchase';
 export * from './site-activity-log';
@@ -72,6 +72,7 @@ export * from './site-owner-transfer';
 export * from './site-php-version';
 export * from './site-plans';
 export * from './site-plugins';
+export * from './site-performance';
 export * from './site-preview-links';
 export * from './site-primary-data-center';
 export * from './site-purchases';

@@ -22,8 +22,8 @@ export function useActivityView( {
 		fields: [ 'published', 'event', 'actor' ],
 		layout: {
 			styles: {
-				published: { maxWidth: '175px', minWidth: '140px' },
-				published_utc: { maxWidth: '175px', minWidth: '140px' },
+				published: { maxWidth: '300px', minWidth: '175px' },
+				published_utc: { maxWidth: '200px', minWidth: '175px' },
 				actor: { maxWidth: '150px', minWidth: '75px' },
 				event: { minWidth: '500px' },
 			},

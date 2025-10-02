@@ -31,6 +31,8 @@ export const mockUserSettings: UserSettings = {
 	p2_disable_autofollow_on_comment: false,
 	email_verified: true,
 	user_login_can_be_changed: true,
+	user_email_change_pending: false,
+	new_user_email: '',
 };
 
 export const mockAutomatticianUserSettings: UserSettings = {

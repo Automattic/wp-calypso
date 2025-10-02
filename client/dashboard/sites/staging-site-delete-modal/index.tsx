@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {
@@ -49,7 +50,7 @@ export default function StagingSiteDeleteModal( {
 			},
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
-				if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
+				if ( ! isDashboardBackport() ) {
 					createSuccessNotice(
 						__( 'We are deleting your staging site. We will notify you when it is done.' ),
 						{ type: 'snackbar' }
