@@ -1,3 +1,18 @@
+/**
+ * FormattedBlock turns the structured tokens produced by formatted-block-parser into React nodes.
+ * Each token has a "type" (link, post, person...) and optional metadata that controls rendering
+ * such as tracking attributes.
+ *
+ * Example:
+ * renderFormattedContent({
+ * 	items: [
+ * 		'Updated ',
+ * 		{ type: 'post', text: 'Hello World', siteId: 123, postId: 456 },
+ * 	],
+ * 	meta: { activity: 'activity-log', intent: 'view' },
+ * });
+ * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
+ */
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';

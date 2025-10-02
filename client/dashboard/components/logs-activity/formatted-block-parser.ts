@@ -1,3 +1,22 @@
+/**
+ * formatted-block-parser rewrites activity log payloads from the API into a tree of
+ * nodes that the FormattedBlock renderer understands. It nests overlapping ranges so we can apply
+ * multiple decorators (links, emphasis, entity references) to the same slice of copy.
+ *
+ * Example:
+ * parseActivityContent({
+ * 	text: 'Site Example updated',
+ * 	ranges: [ { indices: [ 5, 12 ], type: 'site', id: 987, section: 'sites' } ],
+ * });
+ * // Returns:
+ * // [
+ * // 	'Site ',
+ * // 	{ type: 'site', id: 987, text: 'Example', children: [ 'Example' ] },
+ * // 	' updated',
+ * // ]
+ * // Rendered by FormattedBlock as:
+ * // Site <a href="/sites/987">Example</a> updated
+ */
 import type { ActivityNotificationRange } from '@automattic/api-core';
 
 export interface ActivityBlockNode {
@@ -6,7 +25,8 @@ export interface ActivityBlockNode {
 	children?: ActivityBlockContent[];
 	// these are all optional and depend on the type of node
 	url?: string | null;
-	// the activity field was mostly reference as a data attribute for links, but we're now checking it other places just to make sure we rely on the data if present.
+	// the activity field was mostly referenced as a data attribute for links.
+	// we now check it elsewhere so downstream consumers can rely on the data when present.
 	activity?: string;
 	section?: string;
 	intent?: string;
