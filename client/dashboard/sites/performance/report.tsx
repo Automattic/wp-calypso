@@ -29,7 +29,7 @@ export default function Report( { report }: { report: SitePerformanceReport } ) 
 				<Card ref={ insightsRef }>
 					<CardBody>
 						<PerformanceInsights
-							audits={ audits }
+							report={ report }
 							selectedFilter={ recommendationsFilter }
 							onFilterChange={ handleFilterChange }
 						/>
