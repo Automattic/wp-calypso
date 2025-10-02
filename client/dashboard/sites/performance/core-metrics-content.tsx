@@ -69,7 +69,7 @@ export default function CoreMetricsContent( {
 				) }
 			</HStack>
 			<CoreMetricsChart
-				data={ [] }
+				report={ report }
 				activeTab={ activeTab }
 				metricsThresholds={ metricsThresholds }
 			/>

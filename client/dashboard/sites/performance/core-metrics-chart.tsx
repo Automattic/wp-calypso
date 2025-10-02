@@ -1,8 +1,25 @@
+import { LineChart } from '@automattic/charts';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
-import { Valuation, getColorForStatus } from '../../utils/site-performance';
+import {
+	Valuation,
+	getColorForStatus,
+	mapThresholdsToStatus,
+	metricsNames,
+} from '../../utils/site-performance';
+import defaultHistory from './history';
+import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
+
+const formatUnit = ( metric: Metrics, value: number | string ) => {
+	const num = parseFloat( value as string );
+	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
+		return Number( Number( num / 1000 ).toFixed( 2 ) );
+	}
+	return num;
+};
 
 const StatusIndicator = ( { valuation }: { valuation: Valuation } ) => {
 	const innerSvg: Record< Valuation, React.ReactNode > = {
@@ -44,24 +61,66 @@ const MetricLabel = ( {
 	);
 };
 
+const useMetricData = (
+	metric: Metrics,
+	valuation: Valuation,
+	history?: SitePerformanceHistory
+) => {
+	const dates = history?.collection_period ?? [];
+	const values = history?.metrics[ metric ] ?? [];
+	if ( ! dates.length || ! values.length ) {
+		return null;
+	}
+
+	const color = getColorForStatus( valuation );
+	const weeksToShow = 8;
+	const data = [];
+	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - weeksToShow ); i-- ) {
+		const date = dates[ i ];
+		const formattedDate =
+			typeof date === 'string'
+				? date
+				: [
+						date.year,
+						date.month.toString().padStart( 2, '0' ),
+						date.day.toString().padStart( 2, '0' ),
+				  ].join( '-' );
+
+		data.push( {
+			date: new Date( formattedDate ),
+			value: formatUnit( metric, values[ i ] ),
+		} );
+	}
+
+	return [
+		{
+			label: metricsNames[ metric ].shortName,
+			data,
+			options: {
+				stroke: color,
+			},
+		},
+	];
+};
+
 export default function CoreMetricsChart( {
+	report,
 	activeTab,
 	metricsThresholds,
 }: {
-	data?: any;
-	activeTab: string;
-	metricsThresholds: any;
+	history?: SitePerformanceHistory;
+	report: SitePerformanceReport;
+	activeTab: Metrics;
+	metricsThresholds: Record< Metrics, { good: number; needsImprovement: number; bad: number } >;
 } ) {
 	const { good, needsImprovement, bad } = metricsThresholds[ activeTab ];
 	const isDesktop = useViewportMatch( 'medium' );
-
-	const formatUnit = ( value: number | string ) => {
-		const num = parseFloat( value as string );
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return Number( num / 1000 ).toFixed( 2 );
-		}
-		return num;
-	};
+	const data = useMetricData(
+		activeTab,
+		mapThresholdsToStatus( activeTab, report[ activeTab ] ),
+		defaultHistory
+		// report.history
+	);
 
 	const displayUnit = () => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
@@ -76,28 +135,28 @@ export default function CoreMetricsChart( {
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		if ( valuation === 'good' ) {
 			return isOverall
-				? sprintf( '(90–%(to)s)', { to: formatUnit( good ) } )
+				? sprintf( '(90–%(to)s)', { to: formatUnit( activeTab, good ) } )
 				: sprintf( '(0–%(to)s%(unit)s)', {
-						to: formatUnit( good ),
+						to: formatUnit( activeTab, good ),
 						unit: displayUnit(),
 				  } );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
 			return isOverall
-				? sprintf( '(50–%(to)s)', { to: formatUnit( needsImprovement ) } )
+				? sprintf( '(50–%(to)s)', { to: formatUnit( activeTab, needsImprovement ) } )
 				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
-						from: formatUnit( good ),
-						to: formatUnit( needsImprovement ),
+						from: formatUnit( activeTab, good ),
+						to: formatUnit( activeTab, needsImprovement ),
 						unit: displayUnit(),
 				  } );
 		}
 
 		if ( valuation === 'bad' ) {
 			return isOverall
-				? sprintf( '(0-%(to)s)', { to: formatUnit( bad ) } )
+				? sprintf( '(0-%(to)s)', { to: formatUnit( activeTab, bad ) } )
 				: sprintf( '(Over %(from)s%(unit)s)', {
-						from: formatUnit( needsImprovement ),
+						from: formatUnit( activeTab, needsImprovement ),
 						unit: displayUnit(),
 				  } );
 		}
@@ -106,6 +165,7 @@ export default function CoreMetricsChart( {
 	};
 
 	const isOverall = activeTab === 'overall_score';
+
 	return (
 		<>
 			<HStack spacing={ isDesktop ? 5 : 2 } justify="flex-start" wrap>
@@ -125,7 +185,15 @@ export default function CoreMetricsChart( {
 					value={ formatThresholdValue( isOverall, 'bad' ) }
 				/>
 			</HStack>
-			<Text> Not implemented yet</Text>
+			{ data ? (
+				<LineChart data={ data } withGradientFill={ false } />
+			) : (
+				<Notice title={ __( 'No history available' ) }>
+					{ __(
+						'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
+					) }
+				</Notice>
+			) }
 		</>
 	);
 }
