@@ -1,5 +1,6 @@
 import {
 	__experimentalHStack as HStack,
+	__experimentalScrollable as Scrollable,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -33,7 +34,7 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 
 	return (
 		<Card>
-			<CardBody>
+			<CardBody style={ { paddingInlineEnd: '0' } }>
 				<VStack spacing={ 4 }>
 					<Text size={ 15 } weight={ 500 } as="h2">
 						{ __( 'Page load timeline' ) }
@@ -51,49 +52,60 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 							/>
 						</Modal>
 					) }
-					<HStack spacing={ 4 }>
-						{ screenshots.map( ( screenshot, index ) => {
-							const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
-							return (
-								<VStack key={ index } spacing={ 2 } alignment="center">
-									<Card>
-										<Button
-											variant="link"
-											onClick={ () =>
-												setSelectedScreenshot( {
-													isOpen: true,
-													screenshot: screenshot,
-													timing: timing,
-												} )
-											}
-											style={ {
-												display: 'block',
-												width: '100%',
-											} }
-											aria-label={ sprintf(
-												/* translators: %s is the timing */
-												__( 'View screenshot at %s' ),
-												timing
-											) }
-										>
-											<img
+					<Scrollable scrollDirection="x">
+						<HStack spacing={ 4 } justify="flex-start">
+							{ screenshots.map( ( screenshot, index ) => {
+								const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
+								return (
+									<VStack
+										style={ {
+											width: '100px',
+											flexShrink: 0,
+											padding: '2px', // Accomodate button focus box-shadow
+										} }
+										key={ index }
+										spacing={ 2 }
+										alignment="center"
+									>
+										<Card>
+											<Button
+												variant="link"
+												onClick={ () =>
+													setSelectedScreenshot( {
+														isOpen: true,
+														screenshot: screenshot,
+														timing: timing,
+													} )
+												}
 												style={ {
 													display: 'block',
 													width: '100%',
-													borderRadius: '7px',
 												} }
-												alt={ timing }
-												src={ screenshot.data }
-											/>
-										</Button>
-									</Card>
-									<Text size="small" variant="muted">
-										{ timing }
-									</Text>
-								</VStack>
-							);
-						} ) }
-					</HStack>
+												aria-label={ sprintf(
+													/* translators: %s is the timing */
+													__( 'View screenshot at %s' ),
+													timing
+												) }
+											>
+												<img
+													style={ {
+														display: 'block',
+														width: '100%',
+														borderRadius: '7px',
+													} }
+													alt={ timing }
+													src={ screenshot.data }
+												/>
+											</Button>
+										</Card>
+										<Text size="small" variant="muted">
+											{ timing }
+										</Text>
+									</VStack>
+								);
+							} ) }
+						</HStack>
+					</Scrollable>
 				</VStack>
 			</CardBody>
 		</Card>
