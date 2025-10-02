@@ -35,13 +35,13 @@ export const emailFields: Field< Email >[] = [
 					) : (
 						<VStack justify="flex-start" className="email-redirect-field">
 							<span>{ item.emailAddress }</span>
-							<span className="text-muted">
+							<Text variant="muted">
 								{ sprintf(
 									/* translators: %s is the email messages will be forwarded to. */
 									__( 'forwards to %s' ),
 									item.forwardingTo
 								) }
-							</span>
+							</Text>
 						</VStack>
 					) }
 				</HStack>
