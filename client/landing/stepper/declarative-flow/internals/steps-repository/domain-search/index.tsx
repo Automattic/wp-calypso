@@ -24,6 +24,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
+import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -148,6 +149,8 @@ const DomainSearchStep: StepType< {
 						'dot' // this is the vendor for free WPCOM subdomains
 					)
 				);
+				// We only offer free WPCOM subdomains during signup
+				dispatch( submitDomainStepSelection( suggestion, 'signup' ) );
 
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
