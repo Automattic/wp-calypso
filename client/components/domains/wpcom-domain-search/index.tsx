@@ -180,7 +180,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
-	}, [ props.events, items, flowName, config.vendor, query, setQuery ] );
+	}, [ props.events, items, flowName, config.vendor, query, setQuery, deboucedDomainSearchEvent ] );
 
 	return (
 		<DomainSearch
