@@ -1,15 +1,16 @@
-import { HostingFeatures } from '@automattic/api-core';
-import { siteSettingsQuery } from '@automattic/api-queries';
+import { HostingFeatures, SitePerformancePage } from '@automattic/api-core';
+import { sitePerformancePagesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { useTimeSince } from '../../components/time-since';
-import { getPerformanceStatus, getPerformanceStatusText } from '../../utils/site-performance';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
-import type { PerformanceReport, Site, UrlPerformanceInsights } from '@automattic/api-core';
+import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	icon: chartBar,
@@ -18,9 +19,9 @@ const CARD_PROPS = {
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
-	const url = window?.location?.pathname?.startsWith( '/v2' )
-		? `/sites/${ site.slug }/performance`
-		: `/sites/performance/${ site.slug }`;
+	const url = isDashboardBackport()
+		? `/sites/performance/${ site.slug }`
+		: `/sites/${ site.slug }/performance`;
 
 	return device && device !== 'mobile' ? addQueryArgs( url, { initialTab: device } ) : url;
 }
@@ -37,37 +38,19 @@ function PerformanceCardContentWithoutTests( { site }: { site: Site } ) {
 }
 
 function PerformanceCardContentWithFinishedTests( {
-	site,
-	performanceData,
-	desktopScore,
-	mobileScore,
+	report,
+	score,
+	performanceUrl,
 }: {
-	site: Site;
-	performanceData: UrlPerformanceInsights;
-	desktopScore: number;
-	mobileScore: number;
+	report: SitePerformanceReport;
+	score: number;
+	performanceUrl: string;
 } ) {
-	const worseScore = Math.min( desktopScore, mobileScore );
-
-	const status = getPerformanceStatus( worseScore );
-	const statusText = getPerformanceStatusText( status );
-
-	const device = desktopScore < mobileScore ? 'desktop' : 'mobile';
-	const report = performanceData.pagespeed[ device ] as PerformanceReport;
-
-	const timeSinceLastTest = useTimeSince( report.timestamp );
-
-	let intent;
-	if ( status === 'poor' ) {
-		intent = 'error' as const;
-	} else if ( status === 'neutral' ) {
-		intent = 'warning' as const;
-	} else {
-		intent = 'success' as const;
-	}
+	const valuation = getPerformanceStatus( score );
+	const timeSinceLastTest = useTimeSince( report.timestamp ?? '' );
 
 	let description;
-	if ( status === 'good' ) {
+	if ( valuation === 'good' ) {
 		description = sprintf(
 			/* translators: %s: time since last test run */
 			__( 'Tested %s.' ),
@@ -85,39 +68,57 @@ function PerformanceCardContentWithFinishedTests( {
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			heading={ statusText }
+			heading={ getStatusText( valuation ) }
 			description={ description }
-			intent={ intent }
-			link={ getPerformanceUrl( site, device ) }
+			intent={ getStatusIntent( valuation ) }
+			link={ performanceUrl }
 		/>
 	);
 }
 
-function PerformanceCardContentWithTests( { site }: { site: Site } ) {
-	const { performanceData, desktopScore, mobileScore } = usePerformanceData( site.ID, site.URL );
+function PerformanceCardContentWithTests( {
+	site,
+	page,
+}: {
+	site: Site;
+	page: SitePerformancePage;
+} ) {
+	const { desktopReport, mobileReport, desktopScore, mobileScore } = usePerformanceData(
+		page.link,
+		page.wpcom_performance_report_hash
+	);
 
-	if ( performanceData === undefined ) {
+	if ( ! desktopReport || ! mobileReport ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( desktopScore === undefined || mobileScore === undefined ) {
+	if ( ! desktopScore || ! mobileScore ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
 
+	const report = desktopScore < mobileScore ? desktopReport : mobileReport;
+	const worseScore = Math.min( desktopScore, mobileScore );
+	const performanceUrl =
+		desktopScore < mobileScore
+			? getPerformanceUrl( site, 'desktop' )
+			: getPerformanceUrl( site, 'mobile' );
+
 	return (
 		<PerformanceCardContentWithFinishedTests
-			site={ site }
-			performanceData={ performanceData }
-			desktopScore={ desktopScore }
-			mobileScore={ mobileScore }
+			report={ report }
+			score={ worseScore }
+			performanceUrl={ performanceUrl }
 		/>
 	);
 }
 
 function PerformanceCardContent( { site }: { site: Site } ) {
-	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: pages, isLoading } = useQuery( {
+		...sitePerformancePagesQuery( site.ID ),
+		refetchOnWindowFocus: false,
+	} );
 
-	if ( settings === undefined ) {
+	if ( isLoading ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
@@ -143,11 +144,11 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 		);
 	}
 
-	if ( ! settings.wpcom_performance_report_url ) {
+	if ( ! pages || pages.length === 0 ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
 
-	return <PerformanceCardContentWithTests site={ site } />;
+	return <PerformanceCardContentWithTests site={ site } page={ pages[ 0 ] } />;
 }
 
 export default function PerformanceCard( { site }: { site: Site } ) {
