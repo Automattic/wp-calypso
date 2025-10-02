@@ -12,10 +12,6 @@ export const useSuggestionsList = () => {
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
 		enabled: true,
-		// We should just get suggestions when the query changes
-		staleTime: Infinity,
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
 	} );
 
 	const lastQueryChangeTime = useRef( 0 );

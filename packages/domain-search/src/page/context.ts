@@ -133,6 +133,9 @@ export const useDomainSearchContextValue = (
 						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
 					} ),
 					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query, {
@@ -141,10 +144,16 @@ export const useDomainSearchContextValue = (
 							: false,
 					} ),
 					enabled: normalizedConfig.skippable,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 				domainAvailability: ( domainName ) => ( {
 					...domainAvailabilityQuery( domainName ),
 					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
@@ -156,6 +165,9 @@ export const useDomainSearchContextValue = (
 						return data;
 					},
 					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 			},
 			cart,
