@@ -3,7 +3,7 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import SiteIcon from '../../sites/site-icon';
@@ -44,17 +44,9 @@ export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubs
 	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (
-		<Link
-			to={ subscription.site_url }
-			title={
-				// translators: %(siteUrl)s is the TLD of the site (e.g. example.com).
-				sprintf( __( 'Visit %(siteUrl)s' ), {
-					siteUrl: subscription.site_url,
-				} )
-			}
-		>
+		<ExternalLink href={ siteUrl } rel="noreferrer" title={ siteUrl }>
 			{ siteUrl }
-		</Link>
+		</ExternalLink>
 	);
 };
 
@@ -64,14 +56,22 @@ export const MonetizeSubscriptionType = ( {
 	subscription: MonetizeSubscription;
 } ) => {
 	if ( subscription.end_date === null ) {
-		return createInterpolateElement( __( 'Purchased from <MonetizeSiteLink/>' ), {
-			MonetizeSiteLink: <MonetizeSiteLink subscription={ subscription } />,
-		} );
+		return (
+			<div>
+				{ createInterpolateElement( __( 'Purchased from <MonetizeSiteLink/>' ), {
+					MonetizeSiteLink: <MonetizeSiteLink subscription={ subscription } />,
+				} ) }{ ' ' }
+			</div>
+		);
 	}
 
-	return createInterpolateElement( __( 'Subscription to <MonetizeSiteLink/>' ), {
-		MonetizeSiteLink: <MonetizeSiteLink subscription={ subscription } />,
-	} );
+	return (
+		<div>
+			{ createInterpolateElement( __( 'Subscription to <MonetizeSiteLink/>' ), {
+				MonetizeSiteLink: <MonetizeSiteLink subscription={ subscription } />,
+			} ) }{ ' ' }
+		</div>
+	);
 };
 
 export const MonetizeSubscriptionIcon = ( {
