@@ -38,6 +38,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
@@ -85,7 +86,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const currentReport = isDesktopSelected ? desktopReport : mobileReport;
 	const isRunningReport = isDesktopSelected ? isDesktopReportRunning : isMobileReportRunning;
 	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
-	const { timezoneString } = siteSettings;
+	const { gmtOffset, timezoneString } = siteSettings;
 
 	return (
 		<PageLayout>
@@ -94,6 +95,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					<SubTitle
 						timestamp={ currentReport?.timestamp }
 						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
 						onClick={ handleReportRefetch }
 					/>
 				}
