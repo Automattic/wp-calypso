@@ -3,7 +3,6 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainGlueRecordsForm from '../form';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -30,8 +29,6 @@ function renderForm( props: RenderFormProps = {} ) {
 
 	return render( <DomainGlueRecordsForm { ...defaultProps } /> );
 }
-
-afterEach( () => nock.cleanAll() );
 
 test( 'renders domain glue records form with correct fields', async () => {
 	renderForm();
