@@ -39,7 +39,7 @@ export interface DomainSearchEvents {
 	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
-	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
+	onMapDomainClick: ( domainName: string ) => void;
 	onQueryChange: ( query: string ) => void;
 	onAddDomainToCart: (
 		domainName: string,

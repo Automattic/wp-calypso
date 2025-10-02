@@ -20,6 +20,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
+	domainMapping,
 	domainAddNew,
 	domainManagementList,
 	domainManagementRoot,
@@ -117,6 +118,9 @@ const DomainSearchUI = (
 				page(
 					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
 				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				page( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick( initialQuery?: string ) {
 				if ( isDomainOnlyFlow ) {

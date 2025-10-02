@@ -29,7 +29,7 @@ import {
 	domainManagementRoot,
 	domainManagementTransferIn,
 	domainManagementTransferToOtherSite,
-	domainManagementList,
+	domainMapping,
 } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useQuery } from '../../../../hooks/use-query';
@@ -157,6 +157,9 @@ const DomainSearchStep: StepType< {
 				window.location.assign(
 					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
 				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				window.location.assign( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( domainName && isHundredYearDomainFlow( flow ) ) {

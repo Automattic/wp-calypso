@@ -27,6 +27,7 @@ import {
 	domainManagementRoot,
 	domainManagementTransferIn,
 	domainManagementTransferToOtherSite,
+	domainMapping,
 	domainUseMyDomain,
 } from '../paths';
 
@@ -87,6 +88,9 @@ export default function DomainSearch() {
 						? domainManagementTransferIn( selectedSiteSlug, domainName )
 						: domainManagementRoot()
 				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				page( domainMapping( selectedSiteSlug, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {

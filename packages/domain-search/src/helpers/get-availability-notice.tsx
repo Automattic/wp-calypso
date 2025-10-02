@@ -449,9 +449,7 @@ export const getAvailabilityNotice = (
 						args: { domain },
 						components: {
 							strong: <strong />,
-							button: (
-								<button onClick={ () => events.onMapDomainClick( currentSiteUrl, domain ) } />
-							),
+							button: <button onClick={ () => events.onMapDomainClick( domain ) } />,
 						},
 					}
 				);
