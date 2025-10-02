@@ -7,6 +7,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { next, wordpress } from '@wordpress/icons';
 import { purchasesRoute } from '../app/router/me';
+import { Text } from '../components/text';
 import GoogleLogo from './resources/google-logo';
 import type { Action, Field, View } from '@wordpress/dataviews';
 
@@ -69,15 +70,15 @@ export const emailFields: Field< Email >[] = [
 		label: __( 'Status' ),
 		render: ( { item }: { item: Email } ) => {
 			if ( item.status === 'active' ) {
-				return <span className="status status--active">{ __( 'Active' ) }</span>;
+				return <Text intent="success">{ __( 'Active' ) }</Text>;
 			}
 			if ( item.status === 'pending' ) {
-				return <span className="status status--pending">{ __( 'Pending verification' ) }</span>;
+				return <Text intent="warning">{ __( 'Pending verification' ) }</Text>;
 			}
 			if ( item.status === 'suspended' ) {
-				return <span className="status status--suspended">{ __( 'Expired' ) }</span>;
+				return <Text intent="error">{ __( 'Expired' ) }</Text>;
 			}
-			return <span className="status">{ item.status }</span>;
+			return <Text>{ item.status }</Text>;
 		},
 		getValue: ( { item }: { item: Email } ) => item.status,
 		// map to display values for filtering UI
