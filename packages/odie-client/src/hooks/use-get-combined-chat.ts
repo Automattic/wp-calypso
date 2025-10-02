@@ -16,6 +16,22 @@ import {
 import type { Chat, Message } from '../types';
 
 /**
+ * Deduplicate Zendesk messages by their temporary id. During connection recovery, some duplication can occur.
+ * @param messages - The messages to deduplicate.
+ * @returns The deduplicated messages.
+ */
+function deduplicateZDMessages( messages: Message[] ) {
+	return messages.filter( ( message, index, self ) => {
+		return (
+			// Old messages don't have a temporary id, so we don't need to deduplicate them.
+			! message.metadata?.temporary_id ||
+			index ===
+				self.findIndex( ( t ) => t.metadata?.temporary_id === message.metadata?.temporary_id )
+		);
+	} );
+}
+
+/**
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
@@ -113,7 +129,7 @@ export const useGetCombinedChat = (
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
 								...( odieChat ? getOdieTransferMessage() : [] ),
-								...( conversation.messages as Message[] ),
+								...( deduplicateZDMessages( conversation.messages ) as Message[] ),
 							],
 							provider: 'zendesk',
 							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',

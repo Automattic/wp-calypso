@@ -20,7 +20,8 @@ export const MessageContent = ( {
 		'agenttic',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		{ unsent: message.status === 'sending' || message.status === 'undelivered' },
+		// `received` timestamp is assigned on the server. it's existence means the message was successfully sent.
+		{ 'is-sending': message.role === 'user' && ! message.received },
 		{
 			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
 		}

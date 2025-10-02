@@ -173,11 +173,10 @@ export type Message = {
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
 	payload?: string;
-	status?: 'sending' | 'sent' | 'undelivered';
 	/**
-	 * Temporary id for messages that are not yet sent. Used to identify the message when resending on the client side.
+	 * Timestamp of the message.
 	 */
-	temporary_id?: string;
+	received?: number;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';

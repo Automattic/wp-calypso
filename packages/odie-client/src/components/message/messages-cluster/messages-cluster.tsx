@@ -27,6 +27,35 @@ function getPresentedRole( message: Message ) {
 }
 
 /**
+ * Smooch sorts the messages by `received` timestamp. This TS is assigned on the server. So it requires a successfully-sent message to be present and accurate. But for messages that are automatically resent on connection recovery, it will be too late.
+ * For that, we use the `local_timestamp` metadata to sort the messages. Which is independent of connection status.
+ * @param messages
+ * @returns
+ */
+function sortMessagesByTimestamp( messages: Message[] ) {
+	return messages.sort( ( a, b ) => {
+		// Give precedence to the local timestamp, if it exists.
+		// It's more accurate than the server timestamp because it's independent of connection status.
+		const aTimestamp = a.metadata?.local_timestamp || a.received;
+		const bTimestamp = b.metadata?.local_timestamp || b.received;
+
+		// If messages don't have a timestamp, keep them in the order they were received.
+		// This is the case for Odie messages.
+		if ( ! aTimestamp || ! bTimestamp ) {
+			return 0;
+		}
+
+		if ( aTimestamp > bTimestamp ) {
+			return 1;
+		}
+		if ( aTimestamp < bTimestamp ) {
+			return -1;
+		}
+		return 0;
+	} );
+}
+
+/**
  * Clusters messages by sender.
  * @param messages - The messages to cluster.
  * @returns The clustered messages.
@@ -49,7 +78,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 	const groups = [ currentGroup ];
 
-	for ( const message of messages ) {
+	for ( const message of sortMessagesByTimestamp( messages ) ) {
 		if ( getPresentedRole( message ) !== currentGroup.role ) {
 			currentGroup = {
 				id: ++id,
