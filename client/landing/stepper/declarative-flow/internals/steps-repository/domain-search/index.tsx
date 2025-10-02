@@ -139,18 +139,31 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
-				dispatch(
-					recordAddDomainButtonClick(
-						suggestion?.domain_name,
-						'signup',
-						0,
-						false,
-						flow,
-						'dot' // this is the vendor for free WPCOM subdomains
-					)
-				);
-				// We only offer free WPCOM subdomains during signup
-				dispatch( submitDomainStepSelection( suggestion, 'signup' ) );
+				if ( suggestion ) {
+					// Skipped by selecting a free subdomain
+					dispatch(
+						recordAddDomainButtonClick(
+							suggestion?.domain_name,
+							'signup',
+							0,
+							false,
+							flow,
+							'dot' // this is the vendor for free WPCOM subdomains
+						)
+					);
+					// We only offer free WPCOM subdomains during signup
+					dispatch( submitDomainStepSelection( suggestion, 'signup' ) );
+				} else {
+					// Skipped by clicking on "Choose a domain later"
+					const tracksProperties = {
+						section: 'signup',
+						flow: flow,
+						step: 'domains',
+						should_hide_free_plan: false,
+					};
+
+					recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
+				}
 
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
