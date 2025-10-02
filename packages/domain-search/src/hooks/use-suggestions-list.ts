@@ -1,5 +1,6 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useEvent } from '@wordpress/compose';
 import { useCallback, useEffect, useMemo } from 'react';
 import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
@@ -17,14 +18,18 @@ export const useSuggestionsList = () => {
 		refetchOnWindowFocus: false,
 	} );
 
+	const triggerSuggestionsReceiveEvent = useEvent( () => {
+		events.onSuggestionsReceive(
+			query,
+			suggestions.map( ( suggestion ) => suggestion.domain_name )
+		);
+	} );
+
 	useEffect( () => {
-		if ( ! isLoadingSuggestions && suggestions.length > 0 ) {
-			events.onSuggestionsReceive(
-				query,
-				suggestions.map( ( suggestion ) => suggestion.domain_name )
-			);
+		if ( suggestions.length > 0 ) {
+			triggerSuggestionsReceiveEvent();
 		}
-	}, [ suggestions, isLoadingSuggestions, events, query ] );
+	}, [ triggerSuggestionsReceiveEvent, suggestions ] );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
@@ -33,11 +38,15 @@ export const useSuggestionsList = () => {
 		enabled: !! getTld( query ),
 	} );
 
+	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
+		events.onQueryAvailabilityCheck( availabilityData!.status, query );
+	} );
+
 	useEffect( () => {
-		if ( availabilityData && ! isLoadingQueryAvailability ) {
-			events.onQueryAvailabilityCheck( availabilityData.status, query );
+		if ( availabilityData ) {
+			triggerQueryAvailabilityCheckEvent();
 		}
-	}, [ availabilityData, isLoadingQueryAvailability, events, query ] );
+	}, [ triggerQueryAvailabilityCheckEvent, availabilityData ] );
 
 	const premiumSuggestions = useMemo(
 		() =>
