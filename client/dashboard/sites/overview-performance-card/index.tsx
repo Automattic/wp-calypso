@@ -6,6 +6,7 @@ import { chartBar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { useTimeSince } from '../../components/time-since';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getPerformanceStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
@@ -18,9 +19,9 @@ const CARD_PROPS = {
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
-	const url = [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) )
-		? `/sites/${ site.slug }/performance`
-		: `/sites/performance/${ site.slug }`;
+	const url = isDashboardBackport()
+		? `/sites/performance/${ site.slug }`
+		: `/sites/${ site.slug }/performance`;
 
 	return device && device !== 'mobile' ? addQueryArgs( url, { initialTab: device } ) : url;
 }

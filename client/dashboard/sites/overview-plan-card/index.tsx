@@ -13,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -106,16 +107,13 @@ function WpcomPlanCard( {
 	isLoading: boolean;
 } ) {
 	const isFreePlan = site.plan?.is_free;
-	const isV2Page = [ '/v2', '/ciab' ].some(
-		( path ) => window?.location?.pathname?.startsWith( path )
-	);
 
 	const getBillingLinkProps = () => {
 		if ( isFreePlan ) {
 			return { externalLink: `/plans/${ site.slug }` };
 		}
 
-		if ( isV2Page ) {
+		if ( ! isDashboardBackport() ) {
 			return { link: purchase ? getPurchaseUrlForId( purchase.ID ) : '/me/billing/purchases' };
 		}
 
