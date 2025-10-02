@@ -6,7 +6,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
-import { renderFormattedContent, type ActivityBlockMeta } from '../formatted-block';
+import {
+	renderFormattedContent,
+	type ActivityBlockMeta,
+	createFormattedBlock,
+} from '../formatted-block';
 import type { ActivityBlockContent } from '../formatted-block-parser';
 
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
@@ -381,5 +385,78 @@ describe( 'Theme blocks', () => {
 
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'No link theme' ) ).toBeInTheDocument();
+	} );
+} );
+
+// These are previous tests that were part of the notes-formatted-block test suite
+describe( 'createFormattedBlock', () => {
+	test( 'renders string content without using a custom block if content type is undefined', () => {
+		const MockBlockMapping = createFormattedBlock( {
+			//@ts-ignore backport of previous testing suite, not typed. Added for backward compatibility
+			myBlock: ( props ) => <div { ...props }>MyFakeBlock</div>,
+		} );
+
+		const children = [
+			'example1',
+			{
+				text: 'main',
+			},
+			{
+				children: [ 'children1', 'children2' ],
+			},
+		];
+
+		render( <MockBlockMapping content={ { children } } meta={ {} } onClick={ jest.fn() } /> );
+
+		const customBlock = screen.queryByText( 'MyFakeBlock' );
+		const block = screen.getByText( /example1/ );
+
+		expect( customBlock ).not.toBeInTheDocument();
+
+		expect( block ).toBeInTheDocument();
+		expect( block ).toHaveTextContent( 'main' );
+		expect( block ).toHaveTextContent( 'children1' );
+		expect( block ).toHaveTextContent( 'children2' );
+	} );
+
+	test( 'handles a click if `onClick` prop is passed', async () => {
+		userEvent.setup();
+
+		const MockBlockMapping = createFormattedBlock( {
+			//@ts-ignore backport of previous testing suite, not typed. Added for backward compatibility
+			myBlock: ( props ) => <div { ...props }>MyFakeBlock</div>,
+		} );
+
+		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
+
+		const onClick = jest.fn();
+
+		render( <MockBlockMapping content={ content } onClick={ onClick } meta={ {} } /> );
+
+		await userEvent.click( screen.getByText( /MyFakeBlock/ ) );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'renders the correct block if the content type is supported', () => {
+		const MockBlockMapping = createFormattedBlock( {
+			myBlock: ( props ) => (
+				//@ts-ignore backport of previous testing suite, not typed. Added for backward compatibility
+				<div { ...props }>
+					MyFakeBlock
+					{ props.children }
+				</div>
+			),
+		} );
+
+		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
+
+		render( <MockBlockMapping content={ content } meta={ {} } onClick={ jest.fn() } /> );
+
+		const block = screen.getByText( /MyFakeBlock/ );
+
+		expect( block ).toBeInTheDocument();
+		expect( block ).toHaveTextContent( 'children1' );
+		expect( block ).toHaveTextContent( 'children2' );
 	} );
 } );

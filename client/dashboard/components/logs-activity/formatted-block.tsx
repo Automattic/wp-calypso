@@ -300,7 +300,8 @@ const blockTypeMapping: Record< string, BlockRenderer > = {
 	backup: Backup,
 };
 
-const createFormattedBlock = ( mapping: Record< string, BlockRenderer > ) => {
+// exported for testing only to make sure we test backward compatibility
+export const createFormattedBlock = ( mapping: Record< string, BlockRenderer > ) => {
 	const FormattedBlock = ( { content, onClick, meta }: FormattedBlockProps ): ReactNode => {
 		if ( typeof content === 'string' ) {
 			return <>{ content }</>;

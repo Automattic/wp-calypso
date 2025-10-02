@@ -9,7 +9,20 @@ import { parseActivityContent } from 'calypso/dashboard/components/logs-activity
  * Uses the recursive helper after doing some
  * prep work on the list of block ranges.
  * @see parse
- * @param {Object} block the block to parse
+ * @param {Object} segment the block to parse
  * @returns {Array} list of text and node segments with children
  */
-export const parseBlock = parseActivityContent;
+const stripTextProp = ( segment ) => {
+	if ( 'string' === typeof segment ) {
+		return segment;
+	}
+
+	if ( ! segment || 'object' !== typeof segment ) {
+		return segment;
+	}
+
+	const { text, children, ...rest } = segment;
+	return Object.assign( {}, rest, children ? { children: children.map( stripTextProp ) } : {} );
+};
+
+export const parseBlock = ( block ) => parseActivityContent( block ).map( stripTextProp );
