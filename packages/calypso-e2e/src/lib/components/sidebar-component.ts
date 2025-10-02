@@ -87,8 +87,6 @@ export class SidebarComponent {
 
 		const currentURL = this.page.url();
 		// Do not verify selected menu items or retry if navigation takes user out of Calypso (eg. WP-Admin, Widgets editor)...
-		console.log( currentURL );
-		console.log( getCalypsoURL() );
 		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
 			return;
 		}
