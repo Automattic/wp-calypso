@@ -1,5 +1,15 @@
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+
 export function useStreamlinedPriceExperiment(): [ boolean, string | null ] {
-	return [ false, 'plans_1Y_checkout_radio' ];
+	const variationName = isEligibleForExperiment() ? 'plans_1Y_checkout_radio' : null;
+
+	return [ false, variationName ];
+}
+
+function isEligibleForExperiment(): boolean {
+	// Only onboarding flow is eligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
+	return ! isAkismetCheckout() && ! isJetpackCheckout();
 }
 
 export function isStreamlinedPricePlansTreatment( variationName?: string | null ) {
