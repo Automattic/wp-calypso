@@ -46,7 +46,7 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => [
 		id: 'schedule',
 		type: 'text',
 		label: __( 'Frequency' ),
-		render: ( { item } ) => item.schedule[ 0 ].toUpperCase() + item.schedule.slice( 1 ),
+		render: ( { item } ) => ( item.schedule === 'daily' ? __( 'Daily' ) : __( 'Weekly' ) ),
 	},
 	{
 		id: 'active',

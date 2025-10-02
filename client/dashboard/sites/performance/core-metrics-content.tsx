@@ -2,8 +2,6 @@ import { Metrics } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Card,
-	CardBody,
 } from '@wordpress/components';
 import { Text } from '../../components/text';
 import {
@@ -40,45 +38,41 @@ export default function CoreMetricsContent( {
 
 	const isOverall = activeTab === 'overall_score';
 	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
-						<VStack spacing={ 4 } alignment="flex-start">
-							<HStack spacing={ 2 } justify="flex-start">
-								<Text size="title" weight={ 500 } as="h2">
-									{ displayName }
-								</Text>
-								<CoreMetricsStatusBadge value={ status } />
-							</HStack>
-
-							{ isOverall ? (
-								<OverallScore size={ 32 } status={ status } value={ value } />
-							) : (
-								<MetricScore
-									size={ 32 }
-									metric={ activeTab as Metrics }
-									status={ status }
-									value={ value }
-								/>
-							) }
-							<CoreMetricsExplanation activeTab={ activeTab } />
-						</VStack>
-						{ numberOfAuditsForMetric > 0 && (
-							<CoreMetricsRecommendLink
-								activeTab={ activeTab }
-								count={ numberOfAuditsForMetric }
-								onClick={ onRecommendationsFilterChange }
-							/>
-						) }
+		<VStack spacing={ 4 }>
+			<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
+				<VStack spacing={ 4 } alignment="flex-start">
+					<HStack spacing={ 2 } justify="flex-start">
+						<Text size="title" weight={ 500 } as="h2">
+							{ displayName }
+						</Text>
+						<CoreMetricsStatusBadge value={ status } />
 					</HStack>
-					<CoreMetricsChart
-						data={ [] }
-						activeTab={ activeTab }
-						metricsThresholds={ metricsThresholds }
-					/>
+
+					{ isOverall ? (
+						<OverallScore size={ 32 } status={ status } value={ value } />
+					) : (
+						<MetricScore
+							size={ 32 }
+							metric={ activeTab as Metrics }
+							status={ status }
+							value={ value }
+						/>
+					) }
+					<CoreMetricsExplanation activeTab={ activeTab } />
 				</VStack>
-			</CardBody>
-		</Card>
+				{ numberOfAuditsForMetric > 0 && (
+					<CoreMetricsRecommendLink
+						activeTab={ activeTab }
+						count={ numberOfAuditsForMetric }
+						onClick={ onRecommendationsFilterChange }
+					/>
+				) }
+			</HStack>
+			<CoreMetricsChart
+				data={ [] }
+				activeTab={ activeTab }
+				metricsThresholds={ metricsThresholds }
+			/>
+		</VStack>
 	);
 }

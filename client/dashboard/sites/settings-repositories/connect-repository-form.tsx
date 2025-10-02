@@ -4,7 +4,7 @@ import {
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
 } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
+import { useQuery, UseMutationResult } from '@tanstack/react-query';
 import {
 	Button,
 	ComboboxControl,
@@ -15,12 +15,14 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	ExternalLink,
+	Spinner,
 } from '@wordpress/components';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
+import { useInstallGithub } from './use-install-github';
 import type {
 	GitHubInstallation,
 	GitHubRepository,
@@ -58,8 +60,6 @@ const RepositorySelector = ( {
 	const { id, getValue } = field;
 	const currentValue = getValue?.( { item: data } );
 
-	// Get repository options from the field elements
-	const repositoryOptions = field.elements || [];
 	return (
 		<VStack spacing={ 2 }>
 			<HStack justify="space-between" alignment="center">
@@ -81,19 +81,23 @@ const RepositorySelector = ( {
 					}
 					onChange( { [ id ]: Number( value ) } );
 				} }
-				options={ repositoryOptions }
+				options={ field.elements || [] }
 				placeholder={ __( 'Select a repository' ) }
 			/>
 		</VStack>
 	);
 };
 
-// Custom GitHub account selector with add button
+type GitHubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
+	onAddGitHubAccount: () => void;
+};
+
 const GitHubAccountSelector = ( {
 	field,
 	onChange,
 	data,
-}: DataFormControlProps< ConnectRepositoryFormData > ) => {
+	onAddGitHubAccount,
+}: GitHubAccountSelectorProps ) => {
 	const { id, getValue } = field;
 
 	return (
@@ -102,7 +106,9 @@ const GitHubAccountSelector = ( {
 				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
 					{ __( 'GitHub account' ) }
 				</Text>
-				<Button variant="link">{ __( 'Add GitHub account' ) }</Button>
+				<Button variant="link" onClick={ onAddGitHubAccount }>
+					{ __( 'Add GitHub account' ) }
+				</Button>
 			</HStack>
 			<SelectControl
 				__next40pxDefaultSize
@@ -111,7 +117,11 @@ const GitHubAccountSelector = ( {
 				onChange={ ( value ) => {
 					onChange( { [ id ]: Number( value ) } );
 				} }
-				options={ field.elements || [] }
+				options={
+					field.elements?.length
+						? field.elements
+						: [ { label: __( 'Select a GitHub account' ), value: '' } ]
+				}
 			/>
 		</VStack>
 	);
@@ -141,11 +151,19 @@ export const ConnectRepositoryForm = ( {
 	initialValues,
 	submitText,
 }: ConnectRepositoryFormProps ) => {
-	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
-
+	const {
+		data: installations = [],
+		refetch: refetchGithubInstallations,
+		error: githubInstallationsError,
+		isLoading: isLoadingInstallations,
+	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
+	const { installGithub } = useInstallGithub();
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
+		if ( ! installations.length ) {
+			return;
+		}
 		if ( formData.selectedInstallationId === '' ) {
 			return installations[ 0 ];
 		}
@@ -277,13 +295,36 @@ export const ConnectRepositoryForm = ( {
 		isAdvancedValid
 	);
 
+	const handleAddGitHubAccount = useCallback( () => {
+		installGithub( {
+			onSuccess: async ( installationId: number ) => {
+				const { data: newInstallations } = await refetchGithubInstallations();
+
+				const newInstallation = newInstallations?.find(
+					( installation ) => installation.external_id === installationId
+				);
+
+				if ( newInstallation ) {
+					setFormData( ( prev ) => ( {
+						...prev,
+						selectedInstallationId: newInstallation.external_id,
+					} ) );
+				}
+			},
+		} );
+	}, [ refetchGithubInstallations, installGithub ] );
+
 	const fields: Field< ConnectRepositoryFormData >[] = useMemo( () => {
 		return [
 			{
 				id: 'selectedInstallationId',
 				label: __( 'GitHub account' ),
 				type: 'text' as const,
-				Edit: GitHubAccountSelector,
+				Edit: ( props ) => {
+					return (
+						<GitHubAccountSelector { ...props } onAddGitHubAccount={ handleAddGitHubAccount } />
+					);
+				},
 				elements: installationOptions,
 				help: installationHelpText,
 			},
@@ -328,7 +369,34 @@ export const ConnectRepositoryForm = ( {
 		branchOptions,
 		isLoadingBranches,
 		selectedRepository,
+		handleAddGitHubAccount,
 	] );
+
+	if ( isLoadingInstallations ) {
+		return (
+			<HStack alignment="center">
+				<Spinner />
+			</HStack>
+		);
+	}
+
+	if ( githubInstallationsError ) {
+		return (
+			<VStack spacing={ 6 }>
+				<SectionHeader
+					title={ __( 'Install the WordPress.com app on GitHub' ) }
+					description={ __(
+						'To access your repositories, install the WordPress.com app on your GitHub account and grant it the necessary permissions.'
+					) }
+				/>
+				<HStack alignment="center">
+					<Button variant="primary" onClick={ handleAddGitHubAccount }>
+						{ __( 'Install the WordPress.com app' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		);
+	}
 
 	return (
 		<>

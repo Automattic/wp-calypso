@@ -4,8 +4,10 @@ import {
 	fetchGithubRepositoryBranches,
 	fetchGithubRepositoryChecks,
 	fetchGithubWorkflowChecks,
+	saveGitHubCredentials,
 } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 export const githubInstallationsQuery = () =>
 	queryOptions( {
@@ -103,5 +105,14 @@ export const githubWorkflowChecksQuery = (
 			),
 		meta: {
 			persist: false,
+		},
+	} );
+
+export const saveGitHubCredentialsMutation = () =>
+	mutationOptions( {
+		mutationFn: ( { accessToken }: { accessToken: string } ) =>
+			saveGitHubCredentials( accessToken ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( githubInstallationsQuery() );
 		},
 	} );
