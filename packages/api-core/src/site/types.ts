@@ -43,6 +43,7 @@ export interface Site {
 	URL: string;
 	icon?: {
 		ico: string;
+		img: string;
 	};
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;

@@ -9,24 +9,24 @@ import './style.scss';
 
 export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
 	const dims = { width: size, height: size };
-	const ico = site.icon?.ico;
+	const img = site.icon?.img;
 	const src = useMemo( () => {
-		if ( ! ico ) {
+		if ( ! img ) {
 			return;
 		}
-		const url = new URL( ico );
+		const url = new URL( img );
 		// wordpress.com/wp-content works with w.
 		url.searchParams.set( 'w', '96' );
 		// "blavatar" works with s.
 		url.searchParams.set( 's', '96' );
 		return url.toString();
-	}, [ ico ] );
+	}, [ img ] );
 
 	const className = clsx( {
 		'is-small': size <= 16,
 	} );
 
-	if ( ico ) {
+	if ( img ) {
 		return (
 			<img
 				className={ clsx( 'site-icon', className ) }
