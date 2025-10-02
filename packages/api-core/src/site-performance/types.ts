@@ -4,7 +4,7 @@ export interface BasicMetricsData {
 
 export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall_score';
 
-export type PerformanceReport = {
+export type SitePerformanceReport = {
 	audits: Record< string, any >;
 	crux_score: number;
 	performance: number;
@@ -27,18 +27,11 @@ export type PerformanceReport = {
 	share_link: string;
 } & Record< Metrics, number >;
 
-export interface PerformanceProfilerPage {
-	id: string;
-	link: string;
-	title: { rendered: string };
-	wpcom_performance_report_hash: string;
-}
-
 export interface UrlPerformanceInsights {
 	pagespeed: {
 		status: string;
-		mobile: PerformanceReport;
-		desktop: PerformanceReport;
+		mobile: SitePerformanceReport;
+		desktop: SitePerformanceReport;
 	};
 	wpscan: {
 		status: string;

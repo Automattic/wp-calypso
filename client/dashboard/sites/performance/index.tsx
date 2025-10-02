@@ -1,5 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { performanceProfilerPagesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { sitePerformancePagesQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -18,7 +18,7 @@ import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
 import SubTitle from './subtitle';
-import type { Site, PerformanceProfilerPage } from '@automattic/api-core';
+import type { Site, SitePerformancePage } from '@automattic/api-core';
 
 /**
  * Get the initial page to display based on the page ID.
@@ -26,13 +26,13 @@ import type { Site, PerformanceProfilerPage } from '@automattic/api-core';
  * @param pageId - The ID of the page to display
  * @returns The initial page to display
  */
-const getPageFromID = ( pages: PerformanceProfilerPage[] | undefined, pageId: string ) => {
-	return pages?.find( ( page: PerformanceProfilerPage ) => Number( page.id ) === Number( pageId ) );
+const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string ) => {
+	return pages?.find( ( page: SitePerformancePage ) => Number( page.id ) === Number( pageId ) );
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
-		...performanceProfilerPagesQuery( site.ID ),
+		...sitePerformancePagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };

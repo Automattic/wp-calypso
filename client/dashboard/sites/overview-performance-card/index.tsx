@@ -1,5 +1,5 @@
-import { HostingFeatures, PerformanceProfilerPage } from '@automattic/api-core';
-import { performanceProfilerPagesQuery } from '@automattic/api-queries';
+import { HostingFeatures, SitePerformancePage } from '@automattic/api-core';
+import { sitePerformancePagesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
@@ -10,7 +10,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
-import type { PerformanceReport, Site } from '@automattic/api-core';
+import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	icon: chartBar,
@@ -42,7 +42,7 @@ function PerformanceCardContentWithFinishedTests( {
 	score,
 	performanceUrl,
 }: {
-	report: PerformanceReport;
+	report: SitePerformanceReport;
 	score: number;
 	performanceUrl: string;
 } ) {
@@ -81,7 +81,7 @@ function PerformanceCardContentWithTests( {
 	page,
 }: {
 	site: Site;
-	page: PerformanceProfilerPage;
+	page: SitePerformancePage;
 } ) {
 	const { desktopReport, mobileReport, desktopScore, mobileScore } = usePerformanceData(
 		page.link,
@@ -114,7 +114,7 @@ function PerformanceCardContentWithTests( {
 
 function PerformanceCardContent( { site }: { site: Site } ) {
 	const { data: pages, isLoading } = useQuery( {
-		...performanceProfilerPagesQuery( site.ID ),
+		...sitePerformancePagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
 	} );
 
