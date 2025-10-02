@@ -47,7 +47,6 @@ import SupportArticleDialog from 'calypso/blocks/support-article-dialog/docs/exa
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge/docs/example';
 import UserMentions from 'calypso/blocks/user-mentions/docs/example';
-import VideoEditor from 'calypso/blocks/video-editor/docs/example';
 import DocumentHead from 'calypso/components/data/document-head';
 import HappinessSupport from 'calypso/components/happiness-support/docs/example';
 import HeaderCake from 'calypso/components/header-cake';
@@ -116,7 +115,6 @@ export default class AppComponents extends Component {
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />
-					<VideoEditor readmeFilePath="video-editor" />
 					<LikeButtons readmeFilePath="like-button" />
 					<Login />
 					<PostEditButton />

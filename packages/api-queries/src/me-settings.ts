@@ -22,3 +22,33 @@ export const userSettingsMutation = () =>
 			);
 		},
 	} );
+
+export const cancelPendingEmailChangeMutation = () =>
+	mutationOptions( {
+		mutationFn: () => updateUserSettings( { user_email_change_pending: false } ),
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData(
+				userSettingsQuery().queryKey,
+				( oldData ) =>
+					oldData && {
+						...oldData,
+						...newData,
+					}
+			);
+		},
+	} );
+
+export const resendEmailVerificationMutation = ( email: string ) =>
+	mutationOptions( {
+		mutationFn: () => updateUserSettings( { user_email: email } ),
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData(
+				userSettingsQuery().queryKey,
+				( oldData ) =>
+					oldData && {
+						...oldData,
+						...newData,
+					}
+			);
+		},
+	} );

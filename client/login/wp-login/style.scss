@@ -9,6 +9,11 @@
 
 $image-height: 47px;
 
+/* Disable zoom on touch devices – this can cause login issues for apps */
+body.is-section-login {
+	touch-action: pan-x pan-y;
+}
+
 .layout.is-section-login {
 	position: relative;
 	min-height: 100%; // Needed for any screen not yet using a StepContainerV2 wireframe (e.g. magic login).

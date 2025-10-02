@@ -302,6 +302,7 @@ function StagingSiteSyncModalInner( {
 		: null;
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+
 	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 	const showWooCommerceWarning =
 		sourceHasWoo && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
@@ -370,7 +371,8 @@ function StagingSiteSyncModalInner( {
 
 	const isSubmitDisabled =
 		( showDomainConfirmation && formData.domain !== productionSiteSlug ) ||
-		( browserCheckList.totalItems === 0 &&
+		( ! shouldDisableGranularSync &&
+			browserCheckList.totalItems === 0 &&
 			browserCheckList.includeList.length === 0 &&
 			!! lastKnownBackupAttempt ) ||
 		pullMutation.isPending ||
@@ -404,120 +406,152 @@ function StagingSiteSyncModalInner( {
 				</HStack>
 				{ /* File selection and database controls */ }
 				<VStack spacing={ 5 }>
-					<VStack spacing={ 0 }>
-						<HStack
-							spacing={ 2 }
-							justify="space-between"
-							alignment="center"
-							style={ { padding: '4px 0' } }
+					{ shouldDisableGranularSync ? (
+						<Notice
+							density="medium"
+							title={ __( 'All files, folders, and database will be synced' ) }
 						>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Files and folders' ) }
-								disabled={ shouldDisableGranularSync }
-								checked={
-									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
-								}
-								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
-								onChange={ onFilesFoldersCheckboxChange }
-							/>
-							<SelectControl
-								value={ isFileBrowserVisible ? 'true' : 'false' }
-								variant="minimal"
-								disabled={ shouldDisableGranularSync }
-								options={ [
-									{ label: __( 'All files and folders' ), value: 'false' },
-									{ label: __( 'Specific files and folders' ), value: 'true' },
-								] }
-								onChange={ handleFileSelectionModeChange }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								aria-label={ __( 'Select files and folders to sync' ) }
-							/>
-						</HStack>
-
-						<div hidden={ ! isFileBrowserVisible }>
-							<VStack spacing={ 4 }>
-								<CardDivider />
-								{ displayBackupDate && (
-									<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
-										<Text variant="muted">
-											{ createInterpolateElement(
-												__( 'Content from the latest backup: <date />.' ),
-												{
-													date: <span>{ displayBackupDate }</span>,
-												}
-											) }{ ' ' }
-											<ExternalLink
-												href={ `/backup/${ querySiteSlug as string }` }
-												children={ __( 'Create new backup' ) }
-											/>
-										</Text>
-									</HStack>
-								) }
-								<HStack style={ { marginInlineStart: '14px' } }>
-									<FileBrowser
-										rewindId={ rewindId }
-										siteId={ querySiteId }
-										siteSlug={ querySiteSlug as string }
-										fileBrowserConfig={ fileBrowserConfig }
-									/>
-								</HStack>
-							</VStack>
-						</div>
-						<HStack
-							alignment="left"
-							spacing={ 2 }
-							style={ {
-								borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-								borderBottom: hasWarning
-									? 'none'
-									: '1px solid var(--wp-components-color-gray-300, #ddd)',
-								padding: '15px 0',
-								marginTop: isFileBrowserVisible ? '16px' : '0',
-							} }
-						>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Database' ) }
-								disabled={ shouldDisableGranularSync }
-								checked={ hasWarning }
-								onChange={ handleDatabaseCheckboxChange }
-							/>
-						</HStack>
-						{ hasWarning && (
-							<Notice
-								density="medium"
-								variant="warning"
-								title={ __( 'Warning! Database will be overwritten' ) }
-							>
-								<VStack spacing={ 2 }>
+							<VStack spacing={ 2 }>
+								<Text as="p">
+									{ __(
+										'Selective sync is temporarily disabled. Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime.'
+									) }
+								</Text>
+								{ sourceHasWoo && targetEnvironment === 'production' && (
 									<Text as="p">
-										{ __(
-											'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+										{ createInterpolateElement(
+											__(
+												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+											),
+											{
+												a: (
+													<ExternalLink
+														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+														children={ null }
+													/>
+												),
+											}
 										) }
 									</Text>
-									{ showWooCommerceWarning && (
+								) }
+							</VStack>
+						</Notice>
+					) : (
+						<VStack spacing={ 0 }>
+							<HStack
+								spacing={ 2 }
+								justify="space-between"
+								alignment="center"
+								style={ { padding: '4px 0' } }
+							>
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									label={ __( 'Files and folders' ) }
+									disabled={ shouldDisableGranularSync }
+									checked={
+										shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+									}
+									indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+									onChange={ onFilesFoldersCheckboxChange }
+								/>
+								<SelectControl
+									value={ isFileBrowserVisible ? 'true' : 'false' }
+									variant="minimal"
+									disabled={ shouldDisableGranularSync }
+									options={ [
+										{ label: __( 'All files and folders' ), value: 'false' },
+										{ label: __( 'Specific files and folders' ), value: 'true' },
+									] }
+									onChange={ handleFileSelectionModeChange }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									aria-label={ __( 'Select files and folders to sync' ) }
+								/>
+							</HStack>
+
+							<div hidden={ ! isFileBrowserVisible }>
+								<VStack spacing={ 4 }>
+									<CardDivider />
+									{ displayBackupDate && (
+										<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
+											<Text variant="muted">
+												{ createInterpolateElement(
+													__( 'Content from the latest backup: <date />.' ),
+													{
+														date: <span>{ displayBackupDate }</span>,
+													}
+												) }{ ' ' }
+												<ExternalLink
+													href={ `/backup/${ querySiteSlug as string }` }
+													children={ __( 'Create new backup' ) }
+												/>
+											</Text>
+										</HStack>
+									) }
+									<HStack style={ { marginInlineStart: '14px' } }>
+										<FileBrowser
+											rewindId={ rewindId }
+											siteId={ querySiteId }
+											siteSlug={ querySiteSlug as string }
+											fileBrowserConfig={ fileBrowserConfig }
+										/>
+									</HStack>
+								</VStack>
+							</div>
+							<HStack
+								alignment="left"
+								spacing={ 2 }
+								style={ {
+									borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+									borderBottom: hasWarning
+										? 'none'
+										: '1px solid var(--wp-components-color-gray-300, #ddd)',
+									padding: '15px 0',
+									marginTop: isFileBrowserVisible ? '16px' : '0',
+								} }
+							>
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									label={ __( 'Database' ) }
+									disabled={ shouldDisableGranularSync }
+									checked={ hasWarning }
+									onChange={ handleDatabaseCheckboxChange }
+								/>
+							</HStack>
+							{ hasWarning && (
+								<Notice
+									density="medium"
+									variant="warning"
+									title={ __( 'Warning! Database will be overwritten' ) }
+								>
+									<VStack spacing={ 2 }>
 										<Text as="p">
-											{ createInterpolateElement(
-												__(
-													'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-												),
-												{
-													a: (
-														<ExternalLink
-															href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-															children={ null }
-														/>
-													),
-												}
+											{ __(
+												'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
 											) }
 										</Text>
-									) }
-								</VStack>
-							</Notice>
-						) }
-					</VStack>
+										{ showWooCommerceWarning && (
+											<Text as="p">
+												{ createInterpolateElement(
+													__(
+														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+													),
+													{
+														a: (
+															<ExternalLink
+																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+																children={ null }
+															/>
+														),
+													}
+												) }
+											</Text>
+										) }
+									</VStack>
+								</Notice>
+							) }
+						</VStack>
+					) }
 
 					{ showDomainConfirmation && (
 						<DataForm< StagingSiteSyncFormData >

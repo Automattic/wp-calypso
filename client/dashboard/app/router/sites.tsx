@@ -669,54 +669,6 @@ export const siteSettingsAgencyRoute = createRoute( {
 	)
 );
 
-export const siteSettingsMcpRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Model Context Protocol (MCP) Settings' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/mcp',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-mcp' ).then( ( d ) => {
-		return createLazyRoute( 'site-settings-mcp' )( {
-			component: () => {
-				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
-			},
-		} );
-	} )
-);
-
-export const siteSettingsMcpSetupRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'MCP Setup' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/mcp-setup',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
-		return createLazyRoute( 'site-settings-mcp-setup' )( {
-			component: () => {
-				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
-			},
-		} );
-	} )
-);
-
 export const siteSettingsHundredYearPlanRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1100,8 +1052,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsAgencyRoute,
-		siteSettingsMcpRoute,
-		siteSettingsMcpSetupRoute,
 		siteSettingsRepositoriesRoute,
 		siteSettingsRepositoriesConnectRoute,
 		siteSettingsHundredYearPlanRoute,
