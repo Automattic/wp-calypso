@@ -11,8 +11,6 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui: uiReducer, media: mediaReducer } } );
 
-jest.mock( 'calypso/sites/marketing/connections/inline-connection', () => () => null );
-
 const googleConnection = {
 	service: 'google_photos',
 	status: 'ok',
