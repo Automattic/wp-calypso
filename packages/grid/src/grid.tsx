@@ -73,6 +73,16 @@ export function Grid( {
 		return [ map, rest ];
 	}, [ children, layoutMap ] );
 
+	const actionableAreaMap = useMemo( () => {
+		const map = new Map< string, React.ReactNode >();
+		childrenMap.forEach( ( child, key ) => {
+			if ( child?.props.actionableArea ) {
+				map.set( key, child.props.actionableArea );
+			}
+		} );
+		return map;
+	}, [ childrenMap ] );
+
 	const sensors = useSensors(
 		useSensor( PointerSensor ),
 		useSensor( KeyboardSensor, {
@@ -165,6 +175,7 @@ export function Grid( {
 							disabled={ ! editMode }
 							onResize={ ( delta ) => handleResize( id, delta ) }
 							onResizeEnd={ persistTemporaryLayout }
+							actionableArea={ actionableAreaMap.get( id ) }
 						>
 							{ childrenMap.get( id ) }
 						</GridItem>

@@ -1,12 +1,20 @@
-import { Threat } from '@automattic/api-core';
+import { Threat, type Site } from '@automattic/api-core';
 import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useAnalytics } from '../../../app/analytics';
 import MarkedLines from '../../../components/marked-lines';
 import { Text } from '../../../components/text';
+import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 
-export function ThreatDescription( { threat }: { threat: Threat } ) {
+export function ThreatDescription( { threat, site }: { threat: Threat; site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleCodeableClick = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_codeable_estimate_click' );
+	};
+
 	const renderFixTitle = () => {
 		switch ( threat.status ) {
 			case 'fixed':
@@ -91,7 +99,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 							) }
 						</Text>
 					) }
-					{ 'current' === threat.status && (
+					{ 'current' === threat.status && isSelfHostedJetpackConnected( site ) && (
 						<Text variant="muted">
 							{ createInterpolateElement(
 								__(
@@ -99,7 +107,12 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 								),
 								{
 									codeable: (
-										<ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>
+										<ExternalLink
+											href={ CODEABLE_JETPACK_SCAN_URL }
+											onClick={ handleCodeableClick }
+										>
+											Codeable
+										</ExternalLink>
 									),
 								}
 							) }

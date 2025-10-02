@@ -1,31 +1,28 @@
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
-import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { makeLayout, redirectIfDuplicatedView, render as clientRender } from 'calypso/controller';
+import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import {
 	acceptSiteTransfer,
-	deleteSite,
 	disconnectSite,
 	disconnectSiteConfirm,
-	general,
 	legacyRedirects,
 	manageConnection,
 	redirectToGeneral,
 	redirectToTraffic,
-	startOver,
-	startSiteOwnerTransfer,
 	renderSiteTransferredScreen,
 } from 'calypso/my-sites/site-settings/controller';
 import {
+	redirectSettingsIfDuplciatedViewsEnabled,
+	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
 	setScroll,
 	siteSettings,
-	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
-	redirectSettingsIfDuplciatedViewsEnabled,
 } from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
+
 export default function () {
 	page( '/settings', redirectSettingsIfDuplciatedViewsEnabled );
 
@@ -33,10 +30,7 @@ export default function () {
 		'/settings/general/:site_id',
 		siteSelection,
 		redirectIfDuplicatedView( 'options-general.php' ),
-		navigation,
-		setScroll,
 		siteSettings,
-		general,
 		makeLayout,
 		clientRender
 	);
@@ -64,9 +58,6 @@ export default function () {
 		siteSelection,
 		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
 		redirectIfCantDeleteSite,
-		navigation,
-		setScroll,
-		deleteSite,
 		makeLayout,
 		clientRender
 	);
@@ -94,9 +85,6 @@ export default function () {
 		siteSelection,
 		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
 		redirectIfCantDeleteSite,
-		navigation,
-		setScroll,
-		startOver,
 		makeLayout,
 		clientRender
 	);
@@ -116,9 +104,6 @@ export default function () {
 		siteSelection,
 		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
 		redirectIfCantStartSiteOwnerTransfer,
-		navigation,
-		setScroll,
-		startSiteOwnerTransfer,
 		makeLayout,
 		clientRender
 	);

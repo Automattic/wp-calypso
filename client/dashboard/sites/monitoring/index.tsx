@@ -68,8 +68,6 @@ function SiteMonitoringBody( {
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
-
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
@@ -133,7 +131,11 @@ function SiteMonitoring() {
 						wrap
 						spacing={ isSmallViewport ? 5 : 10 }
 					>
-						<PageHeader title={ __( 'Monitoring' ) } />
+						<VStack spacing={ 2 }>
+							<PageHeader />
+							<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
+						</VStack>
+
 						<div>
 							<ToggleGroupControl
 								value={ timeRange }
@@ -143,6 +145,7 @@ function SiteMonitoring() {
 								onChange={ handleTimeRangeChange }
 								label={ __( 'Time period' ) }
 								hideLabelFromVision
+								style={ { textWrap: 'nowrap' } }
 							>
 								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
 								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />

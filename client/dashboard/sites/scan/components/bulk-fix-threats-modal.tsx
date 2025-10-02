@@ -1,95 +1,108 @@
-import {
-	fixThreatsMutation,
-	fixThreatsStatusQuery,
-	siteScanQuery,
-	siteScanHistoryQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
+import { useFixThreats } from '../hooks/use-fix-threats';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface BulkFixThreatsModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThreatsModalProps ) {
+export function BulkFixThreatsModal( { items, closeModal, site }: BulkFixThreatsModalProps ) {
 	const bulkFixableThreats = items.filter(
 		( item ) => item.fixable?.extras?.is_bulk_fixable !== false
 	);
 	const bulkFixableIds = new Set( bulkFixableThreats.map( ( item ) => item.id ) );
 	const remainingThreats = items.filter( ( item ) => ! bulkFixableIds.has( item.id ) );
 
-	const queryClient = useQueryClient();
-	const bulkFixThreats = useMutation( fixThreatsMutation( siteId ) );
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const [ isBulkFixInProgress, setIsBulkFixInProgress ] = useState( false );
 
-	const { data: bulkFixStatusData } = useQuery( {
-		...fixThreatsStatusQuery( siteId, Array.from( bulkFixableIds ) ),
-		refetchInterval: isBulkFixInProgress ? 2000 : false,
-		enabled: isBulkFixInProgress,
-	} );
-
-	const handleBulkFixed = useCallback(
-		( message: string ) => {
-			queryClient.invalidateQueries( siteScanQuery( siteId ) );
-			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
-			closeModal?.();
-			createSuccessNotice( message, { type: 'snackbar' } );
-		},
-		[ closeModal, createSuccessNotice, queryClient, siteId ]
+	const { startFix, isFixing, status, error } = useFixThreats(
+		site.ID,
+		Array.from( bulkFixableIds )
 	);
 
 	useEffect( () => {
-		if ( ! bulkFixStatusData?.threats ) {
-			return;
-		}
+		recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_modal_open', {
+			threat_count: bulkFixableThreats.length,
+		} );
+	}, [ recordTracksEvent, bulkFixableThreats.length ] );
 
-		if ( isBulkFixInProgress ) {
-			const pendingThreats = bulkFixStatusData.threats.filter(
-				( threat ) => threat?.status === 'in_progress'
-			);
-			if ( pendingThreats.length > 0 ) {
-				return;
+	useEffect( () => {
+		if ( status.isComplete && ! isFixing ) {
+			closeModal?.();
+
+			if ( status.allFixed ) {
+				recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_success' );
+				createSuccessNotice(
+					_n( 'Threat fixed.', 'All threats were successfully fixed.', bulkFixableThreats.length ),
+					{
+						type: 'snackbar',
+					}
+				);
+			} else {
+				recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_failed' );
+				createErrorNotice(
+					_n(
+						'Failed to fix threat. Please contact support.',
+						'Not all threats could be fixed. Please contact support.',
+						bulkFixableThreats.length
+					),
+					{
+						type: 'snackbar',
+					}
+				);
 			}
-
-			const fixedThreats = bulkFixStatusData.threats.filter(
-				( threat ) => threat?.status === 'fixed'
-			);
-			const allFixed = fixedThreats.length === bulkFixStatusData.threats.length;
-			const message = allFixed
-				? __( 'All threats were successfully fixed.' )
-				: __( 'Not all threats could be fixed. Please contact our support.' );
-
-			setIsBulkFixInProgress( false );
-			handleBulkFixed( message );
 		}
-	}, [ bulkFixStatusData, isBulkFixInProgress, handleBulkFixed ] );
+	}, [
+		status,
+		isFixing,
+		closeModal,
+		createSuccessNotice,
+		createErrorNotice,
+		bulkFixableThreats.length,
+		recordTracksEvent,
+	] );
+
+	useEffect( () => {
+		if ( error ) {
+			closeModal?.();
+			createErrorNotice(
+				_n(
+					'Error fixing threat. Please contact support.',
+					'Error fixing threats. Please contact support.',
+					bulkFixableThreats.length
+				),
+				{
+					type: 'snackbar',
+				}
+			);
+		}
+	}, [ error, closeModal, createErrorNotice, bulkFixableThreats.length ] );
 
 	const handleFixThreats = () => {
-		setIsBulkFixInProgress( true );
-		bulkFixThreats.mutate( Array.from( bulkFixableIds ), {
-			onError: () => {
-				closeModal?.();
-				createErrorNotice( __( 'Error fixing threats. Please contact support.' ), {
-					type: 'snackbar',
-				} );
-			},
+		recordTracksEvent( 'calypso_dashboard_scan_bulk_fix_threats_click', {
+			threat_count: bulkFixableThreats.length,
 		} );
+		startFix();
 	};
 
 	const bulkFixableSection = (
 		<>
 			<Text variant="muted">
-				{ __( 'Jetpack will be fixing the selected threats and low risk items:' ) }
+				{ _n(
+					'Jetpack will be fixing the selected threat and low risk item:',
+					'Jetpack will be fixing the selected threats and low risk items:',
+					bulkFixableThreats.length
+				) }
 			</Text>
 			<ThreatsDetailCard threats={ bulkFixableThreats } />
 		</>
@@ -98,8 +111,10 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 	const remainingThreatsSection = (
 		<>
 			<Text variant="muted">
-				{ __(
-					'These threats cannot be fixed in bulk because individual confirmation is required:'
+				{ _n(
+					'This threat cannot be fixed in bulk because individual confirmation is required:',
+					'These threats cannot be fixed in bulk because individual confirmation is required:',
+					remainingThreats.length
 				) }
 			</Text>
 			<ThreatsDetailCard threats={ remainingThreats } />
@@ -119,10 +134,12 @@ export function BulkFixThreatsModal( { items, closeModal, siteId }: BulkFixThrea
 				<Button
 					variant="primary"
 					onClick={ handleFixThreats }
-					isBusy={ isBulkFixInProgress }
-					disabled={ ! canBulkFix || isBulkFixInProgress }
+					isBusy={ isFixing }
+					disabled={ ! canBulkFix || isFixing }
 				>
-					{ isBulkFixInProgress ? __( 'Fixing threats…' ) : __( 'Fix all threats' ) }
+					{ isFixing
+						? _n( 'Fixing threat…', 'Fixing threats…', bulkFixableThreats.length )
+						: _n( 'Fix threat', 'Fix all threats', bulkFixableThreats.length ) }
 				</Button>
 			</ButtonStack>
 		</VStack>

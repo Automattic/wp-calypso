@@ -397,7 +397,7 @@ export const JetpackSitesDataViews = ( {
 				openSitePreviewPane( selectedItem.site.value );
 			}
 		},
-		defaultLayouts: { table: {} },
+		defaultLayouts: { table: {}, list: {} },
 	} );
 
 	useEffect( () => {

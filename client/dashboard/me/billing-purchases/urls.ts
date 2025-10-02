@@ -10,7 +10,7 @@ export function getPurchaseUrlForId( id: number | string ) {
 		console.error( 'Cannot display manage purchase page for subscription without ID' );
 		throw new Error( 'Cannot display manage purchase page for subscription without ID' );
 	}
-	return `/me/billing/purchases/purchase/${ id }`;
+	return `/me/billing/purchases/${ id }`;
 }
 
 export function getAddPaymentMethodUrlFor( purchase: Purchase ): string {

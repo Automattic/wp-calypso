@@ -258,10 +258,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 					{
 						components: {
 							sitePrivacySettingsLink: (
-								<a
-									href={ `https://wordpress.com/settings/general/${ selectedSite.domain }#site-privacy-settings` }
-									rel="noreferrer"
-								/>
+								<a href={ `/settings/reading/${ selectedSite.domain }` } rel="noreferrer" />
 							),
 						},
 					}
