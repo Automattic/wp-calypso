@@ -44,3 +44,16 @@ export interface GithubWorkflow {
 	file_name: string;
 	workflow_path: string;
 }
+
+export interface CreateWorkflowRequest {
+	repository_id: number;
+	repository_owner: string;
+	repository_name: string;
+	branch_name: string;
+	file_name: string;
+	workflow_template: string;
+}
+
+export interface CreateWorkflowResponse {
+	message: string;
+}

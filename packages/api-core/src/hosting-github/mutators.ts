@@ -1,17 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-
-export interface CreateWorkflowRequest {
-	repository_id: number;
-	repository_owner: string;
-	repository_name: string;
-	branch_name: string;
-	file_name: string;
-	workflow_template: string;
-}
-
-export interface CreateWorkflowResponse {
-	message: string;
-}
+import { CreateWorkflowRequest, CreateWorkflowResponse } from './types';
 
 export async function createGithubWorkflow(
 	request: CreateWorkflowRequest
