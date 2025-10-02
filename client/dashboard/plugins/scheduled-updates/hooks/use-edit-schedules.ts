@@ -1,5 +1,4 @@
 import {
-	createSiteUpdateSchedule,
 	editSiteUpdateSchedule,
 	deleteSiteUpdateSchedule,
 	type CreateSiteUpdateScheduleBody,
@@ -10,18 +9,15 @@ import {
 	queryClient,
 	siteUpdateSchedulesQuery,
 	hostingUpdateSchedulesQuery,
-	siteJetpackMonitorSettingsCreateMutation,
 } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { useAnalytics } from '../../../app/analytics';
-import { CRON_CHECK_INTERVAL } from '../constants';
-import { normalizeScheduleId, prepareTimestamp, runWithConcurrency } from '../helpers';
+import { normalizeScheduleId, prepareTimestamp } from '../helpers';
+import { useCreateSchedules } from './use-create-schedules';
 import { useEligibleSites } from './use-eligible-sites';
 import type { Frequency, Weekday } from '../types';
 
 type Inputs = {
-	siteIds: string[]; // selected sites after user edits
 	plugins: string[];
 	frequency: Frequency;
 	weekday: Weekday;
@@ -31,27 +27,42 @@ type Inputs = {
 /**
  * Edits plugin update schedules across sites for a given schedule ID.
  *
- * Given the original participating sites, returns a `mutateAsync( inputs )` function that:
+ * Given the original participating sites and the current selection, returns a `mutateAsync( inputs )`
+ * function that:
  * - Diffs sites into create/edit/delete sets based on the new selection
  * - Builds the schedule timestamp from `frequency`, `weekday`, and `time`
- * - Runs per-site API calls: POST (create), PUT (edit using normalized base schedule ID), DELETE (remove)
- * - Invalidates per-site schedule queries after each operation and the hosting aggregate after all
- * - Emits Tracks analytics for created/edited/deleted schedules and creates Jetpack Monitors for created sites
+ * - Runs batch create via the existing create flow hook, and per-site edit/delete calls
+ * - Invalidates per-site schedule queries and the hosting aggregate after all
+ * - Emits Tracks analytics for edited/deleted schedules; create events/monitors are handled by the
+ *   reused create hook
  *
  * Resolves when all operations complete; rejects if any operation fails.
  * @param {string} scheduleId The (possibly suffixed) schedule identifier from the route.
  * @param {string[]} originalSiteIds The sites currently participating in the schedule.
+ * @param {string[]} selectedSiteIds The sites currently selected in the form (live state).
  * @returns {{ mutateAsync: ( inputs: Inputs ) => Promise< void > }} Hook API
  */
-export function useEditSchedules( scheduleId: string, originalSiteIds: string[] ) {
+export function useEditSchedules(
+	scheduleId: string,
+	originalSiteIds: string[],
+	selectedSiteIds: string[]
+) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: eligibleSites = [] } = useEligibleSites();
-	const { mutateAsync: createMonitorForSite } = useMutation(
-		siteJetpackMonitorSettingsCreateMutation()
-	);
+	const normalizedId = normalizeScheduleId( scheduleId );
+
+	// Compute create subset once per render for hook composition
+	const toCreate = useMemo( () => {
+		const current = new Set( selectedSiteIds.map( Number ) );
+		const original = new Set( originalSiteIds.map( Number ) );
+		return Array.from( current ).filter( ( id ) => ! original.has( id ) );
+	}, [ selectedSiteIds, originalSiteIds ] );
+
+	// Instantiate the existing batch create hook for the create subset
+	const { mutateAsync: runCreate } = useCreateSchedules( toCreate );
 
 	const mutateAsync = useCallback(
-		async ( { siteIds, plugins, frequency, weekday, time }: Inputs ) => {
+		async ( { plugins, frequency, weekday, time }: Inputs ) => {
 			const timestamp = prepareTimestamp( frequency, weekday, time );
 			const body: EditSiteUpdateScheduleBody & CreateSiteUpdateScheduleBody = {
 				plugins,
@@ -59,77 +70,28 @@ export function useEditSchedules( scheduleId: string, originalSiteIds: string[] 
 				health_check_paths: [],
 			};
 
-			const normalizedId = normalizeScheduleId( scheduleId );
-
-			const selected = new Set( siteIds.map( Number ) );
+			// Compute edit/delete sets from submitted inputs to be authoritative
+			const current = new Set( selectedSiteIds.map( Number ) );
 			const original = new Set( originalSiteIds.map( Number ) );
-
-			const toCreate: number[] = [];
-			const toEdit: number[] = [];
-			const toDelete: number[] = [];
-
-			// Determine create and edit
-			for ( const id of selected ) {
-				if ( original.has( id ) ) {
-					toEdit.push( id );
-				} else {
-					toCreate.push( id );
-				}
-			}
-
-			// Determine delete
-			for ( const id of original ) {
-				if ( ! selected.has( id ) ) {
-					toDelete.push( id );
-				}
-			}
+			const toEdit = Array.from( current ).filter( ( id ) => original.has( id ) );
+			const toDelete = Array.from( original ).filter( ( id ) => ! current.has( id ) );
 
 			const errors: string[] = [];
 
-			// Map sites for analytics and monitors
+			// Run creates via shared hook (reuse analytics + monitors)
+			if ( toCreate.length > 0 ) {
+				try {
+					await runCreate( { plugins, frequency, weekday, time } );
+				} catch ( e ) {
+					errors.push( 'Create failed for one or more sites.' );
+				}
+			}
+
+			// Map sites for edit/delete analytics
 			const siteMap = new Map( ( eligibleSites as Site[] ).map( ( s ) => [ s.ID, s ] ) );
 			const eventDate = new Date( timestamp * 1000 );
 			const hours = eventDate.getHours();
 			const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
-
-			// Run creates
-			await Promise.all(
-				toCreate.map( async ( siteId ) => {
-					try {
-						await createSiteUpdateSchedule( siteId, body );
-						await queryClient.invalidateQueries( siteUpdateSchedulesQuery( siteId ) );
-						const site = siteMap.get( siteId );
-						if ( site ) {
-							recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
-								site_slug: site.slug,
-								frequency,
-								plugins_number: plugins.length,
-								hours,
-								weekday: weekdayIndex,
-							} );
-						}
-					} catch ( e ) {
-						errors.push( `Create failed for site ${ siteId }` );
-					}
-				} )
-			);
-
-			// Create monitors for successfully scheduled sites
-			const monitorTasks = toCreate
-				.map( ( id ) => siteMap.get( id ) )
-				.filter( ( site ): site is Site => Boolean( site ) )
-				.map( ( site ) => async () => {
-					await createMonitorForSite( {
-						siteId: site.ID,
-						body: {
-							urls: [
-								{ monitor_url: site.URL, check_interval: CRON_CHECK_INTERVAL },
-								{ monitor_url: site.URL + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
-							],
-						},
-					} );
-				} );
-			await runWithConcurrency( monitorTasks, 4 );
 
 			// Run edits
 			await Promise.all(
@@ -178,7 +140,15 @@ export function useEditSchedules( scheduleId: string, originalSiteIds: string[] 
 				throw new Error( errors.join( '\n' ) );
 			}
 		},
-		[ scheduleId, originalSiteIds, eligibleSites, recordTracksEvent, createMonitorForSite ]
+		[
+			selectedSiteIds,
+			originalSiteIds,
+			toCreate,
+			runCreate,
+			eligibleSites,
+			recordTracksEvent,
+			normalizedId,
+		]
 	);
 
 	return { mutateAsync } as const;

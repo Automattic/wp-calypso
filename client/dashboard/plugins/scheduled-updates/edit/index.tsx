@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	pluginsScheduledUpdatesEditRoute,
@@ -19,14 +20,22 @@ export default function PluginsScheduledUpdatesEdit() {
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesEditRoute.fullPath } );
 
 	const { loading, error, initial } = useLoadScheduleById( scheduleId );
+	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
+
+	useEffect( () => {
+		if ( initial?.siteIds ) {
+			setSelectedSiteIds( initial.siteIds );
+		}
+	}, [ initial?.siteIds ] );
+
 	const { mutateAsync: runEdit } = useEditSchedules(
 		scheduleId,
-		( initial?.siteIds || [] ).map( ( id ) => Number( id ) )
+		initial?.siteIds || [],
+		selectedSiteIds
 	);
 
 	const handleSave: ScheduledUpdatesFormOnSubmit = async ( inputs ) => {
 		await runEdit( {
-			siteIds: inputs.siteIds.map( ( id ) => Number( id ) ),
 			plugins: inputs.plugins,
 			frequency: inputs.frequency,
 			weekday: inputs.weekday,
@@ -56,6 +65,7 @@ export default function PluginsScheduledUpdatesEdit() {
 						siteIds: ( initial?.siteIds || [] ).map( ( id ) => Number( id ) ),
 						scheduleId,
 					} }
+					onSitesChange={ setSelectedSiteIds }
 				/>
 			) }
 		</PageLayout>
