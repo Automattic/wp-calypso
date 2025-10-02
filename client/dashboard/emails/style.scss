@@ -1,16 +1,6 @@
 .emails__dataviews {
-	.emails__add-email-forwarder {
-		text-decoration: none !important;
-	}
-
 	.email-redirect-field {
 		gap: 1px;
-	}
-
-	.email-link {
-		.components-external-link__contents {
-			text-decoration: none;
-		}
 	}
 
 	.email-icon-wrapper {
@@ -32,9 +22,5 @@
 	.email-forwarder-icon {
 		stroke: none;
 		fill: #959595;
-	}
-
-	.mailbox--icon {
-		width: 16px;
 	}
 }
