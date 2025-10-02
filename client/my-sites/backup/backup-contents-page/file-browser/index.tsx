@@ -16,6 +16,10 @@ export interface FileBrowserConfig {
 	expandDirectoriesOnClick?: boolean;
 	alwaysInclude?: string[];
 	showFileCard?: boolean;
+	/**
+	 * @deprecated This prop will be removed once the new Staging Sync Modal is live.
+	 * The backup time display is now handled directly in the modal components.
+	 */
 	showBackupTime?: boolean;
 	showSeparateExpandButton?: boolean;
 	siteId?: number;
@@ -31,6 +35,10 @@ interface FileBrowserProps {
 	// Optional site data props
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	/**
+	 * @deprecated This prop will be removed once the new Staging Sync Modal is live.
+	 * The backup date display is now handled directly in the modal components.
+	 */
 	displayBackupDate?: string;
 
 	// Tracks analytics callback
