@@ -147,7 +147,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery ] );
+	}, [ submit, setQuery, dispatch, flow ] );
 
 	const slots = useMemo( () => {
 		return {
