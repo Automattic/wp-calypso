@@ -107,6 +107,17 @@ function SiteRepositories() {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
 	};
 
+	const breadcrumbs = [
+		{
+			label: __( 'Settings' ),
+			path: `/sites/${ siteSlug }/settings`,
+		},
+		{
+			label: __( 'Repositories' ),
+			path: `/sites/${ siteSlug }/settings/repositories`,
+		},
+	];
+
 	return (
 		<PageLayout
 			size="small"
@@ -114,6 +125,7 @@ function SiteRepositories() {
 				<SettingsPageHeader
 					title={ __( 'Repositories' ) }
 					description={ __( 'Connect repositories to your WordPress site.' ) }
+					breadcrumbs={ breadcrumbs }
 					actions={
 						<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
 							{ __( 'Connect repository' ) }
