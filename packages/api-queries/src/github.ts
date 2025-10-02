@@ -148,5 +148,4 @@ export const githubWorkflowsQuery = (
 export const createGithubWorkflowMutation = () =>
 	mutationOptions( {
 		mutationFn: ( request: CreateWorkflowRequest ) => createGithubWorkflow( request ),
-		mutationKey: [ 'github', 'workflows', 'create' ],
 	} );
