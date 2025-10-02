@@ -1,5 +1,5 @@
 import { Metrics } from '@automattic/api-core';
-import { __experimentalHStack as HStack, privateApis } from '@wordpress/components';
+import { __experimentalHStack as HStack, privateApis, Card, CardBody } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useState } from 'react';
@@ -31,14 +31,20 @@ export default function CoreMetrics( {
 			onSelect={ ( tabId: Metrics ) => setActiveTab( tabId ) }
 		>
 			<HStack wrap={ ! isDesktop } alignment="flex-start" justify="flex-start" spacing={ 6 }>
-				<CoreMetricsTabs compact={ ! isDesktop } report={ report } />
-				<Tabs.TabPanel tabId={ activeTab }>
-					<CoreMetricsContent
-						report={ report }
-						activeTab={ activeTab }
-						onRecommendationsFilterChange={ onRecommendationsFilterChange }
-					/>
-				</Tabs.TabPanel>
+				<Card style={ { flexGrow: ! isDesktop ? 1 : 0, flexShrink: ! isDesktop ? 1 : 0 } }>
+					<CoreMetricsTabs compact={ ! isDesktop } report={ report } />
+				</Card>
+				<Card style={ { width: '100%' } }>
+					<CardBody>
+						<Tabs.TabPanel tabId={ activeTab }>
+							<CoreMetricsContent
+								report={ report }
+								activeTab={ activeTab }
+								onRecommendationsFilterChange={ onRecommendationsFilterChange }
+							/>
+						</Tabs.TabPanel>
+					</CardBody>
+				</Card>
 			</HStack>
 		</Tabs>
 	);
