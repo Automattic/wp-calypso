@@ -9,8 +9,9 @@ import { useState } from 'react';
 import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
-import ghIconUrl from '../deployments/gh-icon.svg';
+import ghIconUrl from '../deployments/icons/gh-icon.svg';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
@@ -102,6 +103,7 @@ function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
+	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
 	const handleConnectRepository = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
@@ -115,9 +117,11 @@ function SiteRepositories() {
 					title={ __( 'Repositories' ) }
 					description={ __( 'Connect repositories to your WordPress site.' ) }
 					actions={
-						<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
-							{ __( 'Connect repository' ) }
-						</Button>
+						canConnect && (
+							<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
+								{ __( 'Connect repository' ) }
+							</Button>
+						)
 					}
 				/>
 			}
