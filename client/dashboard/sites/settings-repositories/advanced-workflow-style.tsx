@@ -59,13 +59,8 @@ export const AdvancedWorkflowStyle = ( {
 
 	const getContent = () => {
 		const workflow = workflows?.find( ( workflow ) => workflow.workflow_path === workflowPath );
-		const isCreatingNewWorkflow = workflowPath === 'CREATE_WORKFLOW_OPTION';
 
-		if ( ! workflow && ! isCreatingNewWorkflow ) {
-			return null;
-		}
-
-		if ( isCreatingNewWorkflow ) {
+		if ( ! workflow ) {
 			const templateContents = template?.template ?? '';
 			return (
 				<NewWorkflowWizard
@@ -106,7 +101,10 @@ export const AdvancedWorkflowStyle = ( {
 					),
 					{
 						a: (
-							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/" children={ null } />
+							<ExternalLink
+								href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
+								children={ null }
+							/>
 						),
 					}
 				) }
