@@ -1,5 +1,6 @@
 import {
 	domainInboundTransferStatusQuery,
+	domainQuery,
 	// domainAvailabilityQuery
 } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -24,6 +25,8 @@ import { getProgressStepList } from './utils';
 
 export default function DomainConnectionSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
+
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
 	const { data: inboundTransferStatusInfo } = useSuspenseQuery(
 		domainInboundTransferStatusQuery( domainName )
@@ -91,6 +94,7 @@ export default function DomainConnectionSetup() {
 					mode={ currentStep.mode }
 					onNextStep={ setNextStepName }
 					inboundTransferStatusInfo={ inboundTransferStatusInfo }
+					siteId={ domain.blog_id }
 				/>
 			</VStack>
 		</PageLayout>

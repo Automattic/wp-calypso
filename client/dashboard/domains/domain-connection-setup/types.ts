@@ -89,6 +89,7 @@ export type TransferStepComponentProps = {
 	mode: DomainConnectionSetupModeValue | null;
 	onNextStep: () => void;
 	inboundTransferStatusInfo?: DomainInboundTransferStatus;
+	siteId?: number;
 };
 
 export type TransferStepDefinition = {

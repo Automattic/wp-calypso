@@ -16,3 +16,8 @@ export type DomainInboundTransferStatus = {
 	transfer_restriction_status: string;
 	unlocked: boolean | null;
 };
+
+export type AuthCodeCheckResult = {
+	success: boolean;
+	error?: string;
+};

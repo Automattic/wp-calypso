@@ -106,3 +106,22 @@ export async function transferDomainToSite(
 		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-site/${ targetSiteId }`,
 	} );
 }
+
+export async function startDomainInboundTransfer(
+	siteId: number,
+	domain: string,
+	authCode: string
+): Promise< void > {
+	if ( ! domain || ! siteId ) {
+		throw new Error( 'Missing siteId or domain' );
+	}
+
+	return wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
+		},
+		{
+			auth_code: authCode,
+		}
+	);
+}
