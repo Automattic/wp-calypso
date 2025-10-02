@@ -82,7 +82,7 @@ const DomainSearchWithCart = ( {
 		[ config.vendor, flowName ]
 	);
 
-	const deboucedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10000 );
+	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10000 );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
@@ -90,7 +90,7 @@ const DomainSearchWithCart = ( {
 			onQueryChange: ( query ) => {
 				setQuery( query );
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
-				deboucedDomainSearchEvent( query );
+				debouncedDomainSearchEvent( query );
 				props.events?.onQueryChange?.( query );
 			},
 			onContinue: () => {
@@ -180,7 +180,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
-	}, [ props.events, items, flowName, config.vendor, query, setQuery, deboucedDomainSearchEvent ] );
+	}, [ props.events, items, flowName, config.vendor, query, setQuery, debouncedDomainSearchEvent ] );
 
 	return (
 		<DomainSearch
