@@ -59,7 +59,7 @@ export class MediaLibraryDataSource extends Component {
 		];
 		if ( includeExternalMedia ) {
 			sources.push( {
-				value: 'google_photos',
+				value: 'google_photos', //
 				label: translate( 'Google Photos' ),
 				icon: <GooglePhotosIcon className="gridicon" />,
 			} );
