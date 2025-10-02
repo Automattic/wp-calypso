@@ -168,9 +168,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
-		// omitting railcarId from dependencies to prevent infinite loop when `onQueryChange` updates that value
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ props.events, items, flowName, config ] );
+	}, [ props.events, items, flowName, config.vendor, query, setQuery ] );
 
 	return (
 		<DomainSearch
