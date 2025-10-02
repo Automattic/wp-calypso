@@ -15,13 +15,13 @@ type BlockClickHandler = ( event: MouseEvent< HTMLAnchorElement > ) => void;
 type BlockRenderer = ( args: {
 	content: ActivityBlockNode;
 	children: ReactNode[];
-	onClick: BlockClickHandler | null;
+	onClick: BlockClickHandler | undefined;
 	meta: ActivityBlockMeta;
 } ) => ReactNode;
 
 interface FormattedBlockProps {
 	content: ActivityBlockContent;
-	onClick: BlockClickHandler | null;
+	onClick: BlockClickHandler | undefined;
 	meta: ActivityBlockMeta;
 }
 
@@ -61,7 +61,7 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return (
 			<a
 				href={ relativizeWordPressUrl( originalUrl ) }
-				onClick={ onClick ?? undefined }
+				onClick={ onClick }
 				data-activity={ activity ?? meta.activity }
 				data-section={ section ?? meta.section }
 				data-intent={ intent ?? meta.intent }
@@ -74,7 +74,7 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	return (
 		<a
 			href={ originalUrl }
-			onClick={ onClick ?? undefined }
+			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section }
 			data-intent={ intent ?? meta.intent }
@@ -112,7 +112,7 @@ const Post: BlockRenderer = ( { content, children, onClick } ) => {
 		: `/reader/blogs/${ siteId }/posts/${ postId }`;
 
 	return (
-		<a href={ href } onClick={ onClick ?? undefined }>
+		<a href={ href } onClick={ onClick }>
 			{ children }
 		</a>
 	);
@@ -136,7 +136,7 @@ const Comment: BlockRenderer = ( { content, children, onClick } ) => {
 	return (
 		<a
 			href={ `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` }
-			onClick={ onClick ?? undefined }
+			onClick={ onClick }
 		>
 			{ children }
 		</a>
@@ -163,7 +163,7 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	return (
 		<a
 			href={ `/people/edit/${ siteId }/${ name }` }
-			onClick={ onClick ?? undefined }
+			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'users' }
 			data-intent={ intent ?? meta.intent ?? 'edit' }
@@ -193,7 +193,7 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	return (
 		<a
 			href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
-			onClick={ onClick ?? undefined }
+			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'plugins' }
 			data-intent={ intent ?? meta.intent ?? 'view' }
@@ -230,7 +230,7 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return (
 			<a
 				href={ `/theme/${ themeSlug }/${ siteSlug }` }
-				onClick={ onClick ?? undefined }
+				onClick={ onClick }
 				data-activity={ activity ?? meta.activity }
 				data-section={ section ?? meta.section ?? 'themes' }
 				data-intent={ intent ?? meta.intent ?? 'view' }
@@ -245,7 +245,7 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			href={ themeUri }
 			target="_blank"
 			rel="noopener noreferrer"
-			onClick={ onClick ?? undefined }
+			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'themes' }
 			data-intent={ intent ?? meta.intent ?? 'view' }
@@ -273,7 +273,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	return (
 		<a
 			href={ href }
-			onClick={ onClick ?? undefined }
+			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'backups' }
 			data-intent={ intent ?? meta.intent ?? 'view' }
@@ -343,7 +343,7 @@ export const renderFormattedContent = ( {
 	meta?: ActivityBlockMeta;
 } ): ReactNode[] =>
 	items.map( ( item, index ) => (
-		<FormattedBlock key={ index } content={ item } onClick={ onClick ?? null } meta={ meta } />
+		<FormattedBlock key={ index } content={ item } onClick={ onClick ?? undefined } meta={ meta } />
 	) );
 
 export default FormattedBlock;
