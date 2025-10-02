@@ -34,7 +34,7 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 6 }>
+				<VStack spacing={ 4 }>
 					<Text size={ 15 } weight={ 500 }>
 						{ __( 'Page load timeline' ) }
 					</Text>
