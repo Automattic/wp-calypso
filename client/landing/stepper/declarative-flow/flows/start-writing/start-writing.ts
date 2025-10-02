@@ -214,11 +214,14 @@ const startWriting: Flow = {
 						return navigate( addQueryArgs( 'launchpad', { siteId: site?.ID } ) );
 					}
 
+					const suggestion = providedDependencies.suggestion as DomainSuggestion;
+
 					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomain( suggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+					setHideFreePlan( ! suggestion.is_free );
 
 					return navigate( 'plans' );
 				}
