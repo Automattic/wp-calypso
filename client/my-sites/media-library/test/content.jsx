@@ -108,68 +108,6 @@ describe( 'MediaLibraryContent', () => {
 		} );
 	} );
 
-	describe( 'needsToBeConnected', () => {
-		test( 'returns false when default service and not connected', () => {
-			const props = {
-				source: '',
-				mediaValidationErrorTypes,
-				isConnected: false,
-				googleConnection: null,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( false );
-		} );
-
-		test( 'returns false when google service, connected, and not expired', () => {
-			const props = {
-				source: 'google_photos',
-				mediaValidationErrorTypes: [],
-				isConnected: true,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( false );
-		} );
-
-		test( 'returns false when not google service, is connected, and expired', () => {
-			const props = {
-				source: 'example',
-				mediaValidationErrorTypes,
-				isConnected: true,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( false );
-		} );
-
-		test( 'returns true when google service, not connected, and expired', () => {
-			const props = {
-				source: 'google_photos',
-				mediaValidationErrorTypes,
-				isConnected: false,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( true );
-		} );
-
-		test( 'returns true when google service, not connected, and not expired', () => {
-			const props = {
-				source: 'google_photos',
-				mediaValidationErrorTypes: [],
-				isConnected: false,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( true );
-		} );
-	} );
-
 	describe( 'componentDidUpdate', () => {
 		test( 'deleteKeyringConnection issued when google service goes from ok to expired', () => {
 			const deleteKeyringConnection = jest.fn();
