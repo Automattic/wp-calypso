@@ -25,7 +25,7 @@ export const performanceInsightsQuery = ( url: string, token: string ) =>
 
 export function sitePerformancePagesQuery( siteId: number ) {
 	return queryOptions( {
-		queryKey: [ 'performance-profiler-pages', siteId ],
+		queryKey: [ 'sites', siteId, 'performance-pages' ],
 		queryFn: () => fetchSitePerformancePages( siteId ),
 	} );
 }
