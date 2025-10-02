@@ -305,7 +305,7 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( query! || ! config.allowsUsingOwnDomain ) {
+			if ( ! query || ! config.allowsUsingOwnDomain ) {
 				return;
 			}
 
