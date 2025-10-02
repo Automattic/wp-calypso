@@ -36,7 +36,6 @@ const CustomSelectControl = ( { field, data, onChange }: DataFormControlProps< S
 	return (
 		<SelectControl
 			label={ field.label }
-			hideLabelFromVision
 			value={ getValue( { item: data } ) }
 			options={ field.elements ?? [] }
 			help={ field.description }
@@ -224,7 +223,8 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 				id: 'subscription_delivery_window',
 				label: 'Email delivery window',
 				layout: {
-					type: 'regular' as const,
+					type: 'row' as const,
+					alignment: 'start' as const,
 				},
 			},
 			'subscription_delivery_jabber_default',
