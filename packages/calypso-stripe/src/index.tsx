@@ -83,8 +83,8 @@ export type GetStripeSetupIntentId = () => Promise< {
 	setup_intent_id: StripeSetupIntentId | undefined;
 } >;
 export type GetStripeConfiguration = (
-	requestArgs: GetStripeConfigurationArgs & { needs_intent?: boolean }
-) => Promise< StripeConfiguration & { setup_intent_id: StripeSetupIntentId | undefined } >;
+	requestArgs: GetStripeConfigurationArgs
+) => Promise< StripeConfiguration >;
 
 export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
 
@@ -605,7 +605,7 @@ export function useStripeSetupIntentId(): StripeSetupIntentIdData {
  * details of the properties it provides.
  */
 export function withStripeProps< P >( WrappedComponent: ComponentType< P > ) {
-	return ( props: P ) => {
+	return function WithStripePropsWrapper( props: P ) {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;
