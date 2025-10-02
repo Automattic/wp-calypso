@@ -14,6 +14,11 @@ const workspaceId = 'e4794374cce15378101b63de24117572';
 const setSurvicateVisitorTraits = () => {
 	const user = getCurrentUser();
 
+	if ( isUserOnAnonymousPaths() ) {
+		survicateDebug( 'Not setting Survicate visitor traits because user is on an anonymous path' );
+		return;
+	}
+
 	if ( ! user || ! user.email ) {
 		survicateDebug( 'Not setting Survicate visitor traits because user is not logged in' );
 
@@ -45,30 +50,17 @@ export function mayWeLoadSurvicateScript() {
 	return config( 'survicate_enabled' );
 }
 
-export function ensureVisitorTraitsAreSet() {
-	const user = getCurrentUser();
-
-	if ( ! user || ! user.email ) {
-		return;
-	}
-
-	let shouldSetVisitorTraits = false;
-	const visitorStorageKey = `survi::${ workspaceId }::FeedbackButton::allvisitor`;
-
-	try {
-		const visitorData = localStorage.getItem( visitorStorageKey );
-		const parsedVisitorData = visitorData ? JSON.parse( visitorData ) : null;
-		shouldSetVisitorTraits =
-			! parsedVisitorData || parsedVisitorData?.attributes?.email !== user.email;
-	} catch ( error ) {
-		survicateDebug( 'Failed to parse visitor data from localStorage:', error );
-		shouldSetVisitorTraits = true;
-	}
-
-	if ( shouldSetVisitorTraits ) {
-		survicateDebug( 'Setting Survicate visitor traits due to no visitor data found' );
-		setTimeout( setSurvicateVisitorTraits, 1000 );
-	}
+/**
+ * Checks if the user is on an anonymous path.
+ * @returns {boolean} True if the user is on an anonymous path, false otherwise
+ */
+export function isUserOnAnonymousPaths() {
+	return [
+		'/log-in',
+		'/setup/onboarding/user',
+		'/log-in/lostpassword',
+		'/account/user-social',
+	].includes( window.location.pathname );
 }
 
 export function addSurvicate() {
@@ -84,7 +76,7 @@ export function addSurvicate() {
 	}
 
 	if ( survicateScriptLoaded && mayWeLoadSurvicateScript() ) {
-		ensureVisitorTraitsAreSet();
+		setTimeout( setSurvicateVisitorTraits, 1000 );
 	}
 
 	if ( survicateScriptLoaded ) {
