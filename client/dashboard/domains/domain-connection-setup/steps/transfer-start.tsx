@@ -8,13 +8,13 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
-import { StepComponentProps } from '../types';
+import { TransferStepComponentProps } from '../types';
 
 export function TransferStart( {
 	onNextStep,
 	inboundTransferStatusInfo,
 	domainName,
-}: StepComponentProps ) {
+}: TransferStepComponentProps ) {
 	const isDomainTransferrable =
 		! inboundTransferStatusInfo?.in_redemption &&
 		inboundTransferStatusInfo?.transfer_eligible_date === null;

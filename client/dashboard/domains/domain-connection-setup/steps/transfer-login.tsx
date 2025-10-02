@@ -1,6 +1,6 @@
-import { StepComponentProps } from '../types';
+import { TransferStepComponentProps } from '../types';
 import { Login } from './login';
 
-export function TransferLogin( props: StepComponentProps ) {
+export function TransferLogin( props: TransferStepComponentProps ) {
 	return <Login { ...props } />;
 }

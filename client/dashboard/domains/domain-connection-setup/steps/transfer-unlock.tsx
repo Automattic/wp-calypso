@@ -10,9 +10,9 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lock } from '@wordpress/icons';
-import { StepComponentProps } from '../types';
+import { TransferStepComponentProps } from '../types';
 
-export function TransferUnlock( { onNextStep }: StepComponentProps ) {
+export function TransferUnlock( { onNextStep }: TransferStepComponentProps ) {
 	return (
 		<VStack spacing={ 6 }>
 			{ /*domainStatusError && ! checkInProgress && (

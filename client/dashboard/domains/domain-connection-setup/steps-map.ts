@@ -13,7 +13,7 @@ import {
 	TransferUnlock,
 	TransferAuthCode,
 } from './steps';
-import { StepName, StepType, DomainConnectionStepsMap } from './types';
+import { StepName, StepType, DomainConnectionStepsMap, DomainTransferStepsMap } from './types';
 
 export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = {
 	// Suggested flow
@@ -199,7 +199,7 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	},
 };
 
-export const transferLockedDomainStepsDefinition: DomainConnectionStepsMap = {
+export const transferLockedDomainStepsDefinition: DomainTransferStepsMap = {
 	[ StepName.TRANSFER_START ]: {
 		mode: DomainConnectionSetupMode.TRANSFER,
 		stepType: StepType.START,
@@ -233,19 +233,19 @@ export const transferLockedDomainStepsDefinition: DomainConnectionStepsMap = {
 			return __( 'Authorize the transfer' );
 		},
 		component: TransferAuthCode,
-		next: 'unused transfer domain step',
 		prev: StepName.TRANSFER_UNLOCK,
 	},
-	[ 'unused transfer domain step' ]: {
+	[ StepName.UNUSED_TRANSFER_DOMAIN_STEP ]: {
 		mode: DomainConnectionSetupMode.TRANSFER,
 		stepType: StepType.FINALIZE,
+		component: null,
 		get name() {
 			return __( 'Finalize transfer' );
 		},
 	},
 };
 
-export const transferUnlockedDomainStepsDefinition: DomainConnectionStepsMap = {
+export const transferUnlockedDomainStepsDefinition: DomainTransferStepsMap = {
 	[ StepName.TRANSFER_START ]: {
 		mode: DomainConnectionSetupMode.TRANSFER,
 		stepType: StepType.START,
@@ -269,12 +269,12 @@ export const transferUnlockedDomainStepsDefinition: DomainConnectionStepsMap = {
 			return __( 'Authorize the transfer' );
 		},
 		component: TransferAuthCode,
-		next: 'unused transfer domain step',
 		prev: StepName.TRANSFER_LOGIN,
 	},
-	[ 'unused transfer domain step' ]: {
+	[ StepName.UNUSED_TRANSFER_DOMAIN_STEP ]: {
 		mode: DomainConnectionSetupMode.TRANSFER,
 		stepType: StepType.FINALIZE,
+		component: null,
 		get name() {
 			return __( 'Finalize transfer' );
 		},

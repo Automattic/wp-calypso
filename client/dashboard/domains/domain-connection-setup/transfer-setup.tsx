@@ -19,7 +19,7 @@ import {
 	transferLockedDomainStepsDefinition,
 	transferUnlockedDomainStepsDefinition,
 } from './steps-map';
-import { DomainConnectionStepsMap, StepName, type StepNameValue } from './types';
+import { DomainTransferStepsMap, StepName, type StepNameValue } from './types';
 import { getProgressStepList } from './utils';
 
 export default function DomainConnectionSetup() {
@@ -37,7 +37,7 @@ export default function DomainConnectionSetup() {
 		initialStepName ? ( initialStepName as StepNameValue ) : StepName.TRANSFER_START
 	);
 
-	const stepsDefinition: DomainConnectionStepsMap =
+	const stepsDefinition: DomainTransferStepsMap =
 		inboundTransferStatusInfo.unlocked === true
 			? transferUnlockedDomainStepsDefinition
 			: transferLockedDomainStepsDefinition;
@@ -64,6 +64,10 @@ export default function DomainConnectionSetup() {
 
 	const StepsComponent = currentStep.component;
 
+	if ( StepsComponent === null ) {
+		return null;
+	}
+
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain name transfer setup' ) } /> }>
 			{ currentStep.prev && (
@@ -86,13 +90,6 @@ export default function DomainConnectionSetup() {
 					stepType={ currentStep.stepType }
 					mode={ currentStep.mode }
 					onNextStep={ setNextStepName }
-					setPage={ setCurrentStepName }
-					verificationInProgress={ false }
-					isOwnershipVerificationFlow={ false }
-					showErrors={ false }
-					isFirstVisit={ false }
-					queryError={ null }
-					queryErrorDescription={ null }
 					inboundTransferStatusInfo={ inboundTransferStatusInfo }
 				/>
 			</VStack>

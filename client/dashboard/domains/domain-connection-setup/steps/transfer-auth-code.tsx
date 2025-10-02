@@ -5,11 +5,13 @@ import {
 	CardBody,
 	Button,
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { TransferStepComponentProps } from '../types';
 
-export function TransferAuthCode() {
+export function TransferAuthCode( { domainName }: TransferStepComponentProps ) {
 	// const recordTransferButtonClickInUseYourDomain = useCallback(
 	// 	() => recordTracksEvent( 'calypso_use_your_domain_transfer_click', { domain } ),
 	// 	[ domain ]
@@ -20,6 +22,13 @@ export function TransferAuthCode() {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
+						<Heading level="3">
+							{ sprintf(
+								/* translators: %s: the domain name that is being transferred (ex.: example.com) */
+								__( 'Enter the authorization code for %s.' ),
+								domainName
+							) }
+						</Heading>
 						<Text as="p">
 							{ __(
 								'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
