@@ -179,6 +179,24 @@ const DomainSearchWithCart = ( {
 					root_vendor: suggestion.vendor,
 				} );
 			},
+			onTrademarkClaimsNoticeShown: ( suggestion ) => {
+				recordTracksEvent( 'calypso_show_trademark_notice_click', {
+					domain_name: suggestion.domain_name,
+					section: 'somains',
+				} );
+			},
+			onTrademarkClaimsNoticeClosed: ( suggestion ) => {
+				recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
+					domain_name: suggestion.domain_name,
+					section: 'domains',
+				} );
+			},
+			onTrademarkClaimsNoticeAccepted: ( suggestion ) => {
+				recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
+					domain_name: suggestion.domain_name,
+					section: 'domains',
+				} );
+			},
 		};
 	}, [
 		props.events,

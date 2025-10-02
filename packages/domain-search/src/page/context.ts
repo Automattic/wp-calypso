@@ -28,6 +28,9 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onSuggestionsReceive: noop,
 		onSuggestionRender: noop,
 		onSuggestionInteract: noop,
+		onTrademarkClaimsNoticeShown: noop,
+		onTrademarkClaimsNoticeAccepted: noop,
+		onTrademarkClaimsNoticeClosed: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
