@@ -60,17 +60,21 @@ const DomainSearchWithCart = ( {
 	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
 
 	const searchCount = useRef( 0 );
+	const lastSearchTime = useRef( Date.now() );
 
 	const triggerDomainSearchEvent = useCallback(
 		( query: string ) => {
 			searchCount.current++;
+			const timeDiffFromLastSearchInSeconds = Math.floor(
+				( Date.now() - lastSearchTime.current ) / 1000
+			);
+			lastSearchTime.current = Date.now();
 			recordTracksEvent( 'calypso_domain_search', {
 				search_box_value: query,
 				search_count: searchCount.current,
 				search_vendor: config.vendor,
 				section: flowName === 'domain' ? 'domain-first' : 'signup',
-				// TODO: Not sure if we still need this
-				// seconds_from_last_search:,
+				seconds_from_last_search: timeDiffFromLastSearchInSeconds,
 				flow_name: flowName,
 			} );
 		},
