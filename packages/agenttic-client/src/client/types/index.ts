@@ -247,6 +247,7 @@ export interface ToolProvider {
 		messageId?: string,
 		toolCallId?: string
 	): Promise< any | ToolExecutionResult >;
+	abilities?: Ability[]; // Optional: WordPress Abilities being provided
 }
 
 export interface ToolCallResult {
@@ -255,6 +256,72 @@ export interface ToolCallResult {
 	result: any;
 	error?: string;
 }
+
+/**
+ * WordPress Ability interface
+ *
+ * This is a copy of the Ability interface from @wordpress/abilities.
+ * We maintain our own copy to avoid runtime dependencies. The interface is stable as part of WordPress core.
+ *
+ * @see https://github.com/WordPress/abilities-api
+ */
+export interface Ability {
+	/**
+	 * The unique name/identifier of the ability, with its namespace.
+	 * Example: 'my-plugin/my-ability'
+	 */
+	name: string;
+
+	/**
+	 * The human-readable label for the ability.
+	 */
+	label: string;
+
+	/**
+	 * The detailed description of the ability.
+	 */
+	description: string;
+
+	/**
+	 * JSON Schema for the ability's input parameters.
+	 */
+	input_schema?: Record< string, any >;
+
+	/**
+	 * JSON Schema for the ability's output format.
+	 * Note: This is not directly used by Agenttic tools but preserved for validation and used by the Ability API.
+	 */
+	output_schema?: Record< string, any >;
+
+	/**
+	 * Callback function for client-side abilities.
+	 * If present, the ability will be executed locally in the browser.
+	 * If not present, the ability will be executed via REST API on the server.
+	 */
+	callback?: ( input: any ) => any | Promise< any >;
+
+	/**
+	 * Client permission callback for abilities.
+	 * Called before executing the ability to check if it's allowed.
+	 */
+	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
+
+	/**
+	 * Metadata about the ability.
+	 */
+	meta?: {
+		type?: 'resource' | 'tool';
+		[ key: string ]: any;
+	};
+}
+
+/**
+ * Type for the executeAbility function from @wordpress/abilities
+ */
+export type ExecuteAbilityFunction = (
+	name: string,
+	input?: any
+) => Promise< any >;
 
 // Context system types
 export type ClientContext = Record< string, unknown >;

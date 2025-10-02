@@ -10,9 +10,10 @@ npm install @automattic/agenttic-client
 
 ## Key Features
 
--   React hooks for agent communication (`useAgentChat`, `useClientContext`, `useClientTools`)
+-   React hooks for agent communication (`useAgentChat`, `useClientContext`, `useClientTools`, `useClientAbilities`)
 -   Streaming and non-streaming responses
 -   Tool execution system with automatic handling
+-   Compatibility with [WordPress Abilities API](https://github.com/WordPress/abilities-api)
 -   Context injection for each message
 -   Conversation persistence and management
 -   Request cancellation with abort controllers
@@ -102,6 +103,44 @@ function AdvancedChatComponent() {
 }
 ```
 
+### With Abilities
+
+WordPress Abilities API integration allows you to expose WordPress capabilities as tools to agents.
+
+```typescript
+import { useAgentChat, useClientAbilities } from '@automattic/agenttic-client';
+import { getAbilities, executeAbility } from '@wordpress/abilities';
+
+function WordPressChat() {
+  const [abilities, setAbilities] = useState([]);
+
+  useEffect(() => {
+    getAbilities().then(setAbilities);
+  }, []);
+
+  const toolProvider = useClientAbilities(abilities, executeAbility);
+
+  const chat = useAgentChat({
+    agentId: 'wp-assistant',
+    toolProvider,
+    authProvider: async () => ({ Authorization: 'Bearer token' })
+  });
+
+  return <ChatInterface {...chat} />;
+}
+```
+
+You can also combine regular tools with abilities using `useClientToolsWithAbilities`:
+
+```typescript
+const toolProvider = useClientToolsWithAbilities({
+  getClientTools: async () => myCustomTools,
+  executeTool: async (toolId, args) => { /* execute custom tools */ },
+  abilities,
+  executeAbility
+});
+```
+
 ## Core APIs
 
 ### useAgentChat Hook
@@ -187,6 +226,44 @@ const toolProvider = useClientTools(
 		throw new Error( `Unknown tool: ${ toolId }` );
 	}
 );
+```
+
+### useClientAbilities Hook
+
+Converts WordPress Abilities to Agenttic tools automatically.
+
+```typescript
+import { getAbilities, executeAbility } from '@wordpress/abilities';
+
+const abilities = await getAbilities();
+const toolProvider = useClientAbilities( abilities, executeAbility );
+```
+
+WordPress Abilities can be:
+- **Server-side**: Executed via REST API (no `callback` property)
+- **Client-side**: Executed in browser (has `callback` function)
+
+The API handles both types automatically, routing execution appropriately.
+
+### useClientToolsWithAbilities Hook
+
+Combines regular tools and WordPress Abilities in a single provider.
+
+```typescript
+import { getAbilities, executeAbility } from '@wordpress/abilities';
+
+const abilities = await getAbilities();
+const toolProvider = useClientToolsWithAbilities( {
+	getClientTools: async () => [
+		// Your regular tools
+		{ id: 'calculator', name: 'Calculator', /* ... */ },
+	],
+	executeTool: async ( toolId, args ) => {
+		// Handle regular tool execution
+	},
+	abilities,
+	executeAbility,
+} );
 ```
 
 ### createClient Function

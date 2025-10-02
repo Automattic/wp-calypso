@@ -6,7 +6,12 @@
 
 // PRIMARY PUBLIC API - React hooks for external consumers
 export { useClientContext } from './react/useClientContext';
-export { useClientTools } from './react/useClientTools';
+export {
+	useClientTools,
+	useClientAbilities,
+	useClientToolsWithAbilities,
+	type UseClientToolsWithAbilitiesConfig,
+} from './react/useClientTools';
 export { useAgentChat } from './react/useAgentChat';
 
 // Essential utilities for external consumers
@@ -57,6 +62,10 @@ export type {
 	ToolProvider,
 	ToolCallResult,
 
+	// WordPress Abilities types
+	Ability,
+	ExecuteAbilityFunction,
+
 	// Context types
 	ClientContext,
 	ContextProvider,
@@ -100,3 +109,10 @@ export {
 	type JetpackErrorHandler,
 	type JetpackApiError,
 } from './auth/jetpack';
+
+// WordPress Abilities API integration utilities
+export {
+	convertAbilityToTool,
+	convertAbilitiesToTools,
+	isWordPressAbility,
+} from './utils/wordpressAbilities';
