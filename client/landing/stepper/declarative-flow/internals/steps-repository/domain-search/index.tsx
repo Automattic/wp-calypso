@@ -19,6 +19,7 @@ import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-searc
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -62,6 +63,8 @@ const DomainSearchStep: StepType< {
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
 	const tldQuery = useQuery().get( 'tld' );
+	const source = useQuery().get( 'source' );
+	const backTo = useQuery().get( 'back_to' );
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -237,6 +240,11 @@ const DomainSearchStep: StepType< {
 		/>
 	);
 
+	const [ sitesBackLabelText, defaultBackUrl ] =
+		userSiteCount === 1
+			? [ __( 'Back to My Home' ), '/home' ]
+			: [ __( 'Back to sites' ), '/sites' ];
+
 	if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
 		return (
 			<HundredYearPlanStepWrapper
@@ -256,6 +264,46 @@ const DomainSearchStep: StepType< {
 	}
 
 	if ( shouldUseStepContainerV2( flow ) ) {
+		const getTopBarLeftElement = () => {
+			if ( isNewHostedSiteCreationFlow( flow ) ) {
+				return;
+			}
+
+			let backDestination: string | typeof navigation.goBack = '';
+			let backLabelText = '';
+
+			if ( 'site' === source && site?.URL ) {
+				backDestination = site.URL;
+				backLabelText = __( 'Back to My Site' );
+			} else if ( 'my-home' === source && siteSlug ) {
+				backDestination = `/home/${ siteSlug }`;
+				backLabelText = __( 'Back to My Home' );
+			} else if ( 'general-settings' === source && siteSlug ) {
+				backDestination = `/settings/general/${ siteSlug }`;
+				backLabelText = __( 'Back to General Settings' );
+			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+				backDestination = navigation.goBack;
+				backLabelText = __( 'Back' );
+			} else {
+				backDestination = defaultBackUrl;
+				backLabelText = sitesBackLabelText;
+
+				if ( backTo && isRelativeUrl( backTo ) ) {
+					backDestination = backTo;
+					backLabelText = __( 'Back' );
+				}
+			}
+
+			return (
+				<Step.BackButton
+					href={ typeof backDestination === 'string' ? backDestination : undefined }
+					onClick={ typeof backDestination === 'function' ? backDestination : undefined }
+				>
+					{ backLabelText }
+				</Step.BackButton>
+			);
+		};
+
 		const getTopBarRightElement = () => {
 			if ( query! || ! config.allowsUsingOwnDomain ) {
 				return;
@@ -272,9 +320,7 @@ const DomainSearchStep: StepType< {
 			<Step.CenteredColumnLayout
 				topBar={
 					<Step.TopBar
-						leftElement={
-							navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
-						}
+						leftElement={ getTopBarLeftElement() }
 						rightElement={ getTopBarRightElement() }
 					/>
 				}
@@ -294,11 +340,6 @@ const DomainSearchStep: StepType< {
 				backLabelText: __( 'Keep Editing' ),
 			};
 		}
-
-		const [ sitesBackLabelText, defaultBackUrl ] =
-			userSiteCount === 1
-				? [ __( 'Back to My Home' ), '/home' ]
-				: [ __( 'Back to sites' ), '/sites' ];
 
 		if ( isCopySiteFlow( flow ) ) {
 			return {
