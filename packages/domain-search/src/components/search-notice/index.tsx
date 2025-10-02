@@ -17,7 +17,6 @@ const AVAILABLE_DOMAIN_STATUSES = [
 
 /**
  * Determines whether the availability notice should be hidden for a given domain availability
- *
  * @param availability - Domain availability returned from the availability endpoint
  * @returns True if the availability notice should be hidden, false otherwise.
  */
@@ -89,6 +88,7 @@ export const SearchNotice = () => {
 
 		if (
 			isDomainMapped &&
+			availability.status !== DomainAvailabilityStatus.REGISTERED_SAME_SITE &&
 			availability.status !== DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER &&
 			availability.status !== DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
 			availability.status !== DomainAvailabilityStatus.MAPPED_SAME_SITE_REGISTRABLE

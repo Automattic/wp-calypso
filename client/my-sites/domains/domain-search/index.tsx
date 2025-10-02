@@ -59,6 +59,7 @@ export default function DomainSearch() {
 
 	const initialQuery = queryArguments?.suggestion?.toString() ?? '';
 	const currentSiteUrl = selectedSite?.URL;
+	const currentSiteId = selectedSite?.ID;
 
 	const { query, setQuery } = useQueryHandler( {
 		initialQuery,
@@ -70,6 +71,9 @@ export default function DomainSearch() {
 			onQueryChange: setQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
+			},
+			onMakePrimaryAddressClick: () => {
+				page( domainManagementList( selectedSiteSlug ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {
@@ -120,7 +124,7 @@ export default function DomainSearch() {
 			{ ! hasPlan( cart.responseCart ) && <NewDomainsRedirectionNoticeUpsell /> }
 			<WPCOMDomainSearch
 				className="domain-search--calypso"
-				currentSiteId={ selectedSite?.ID }
+				currentSiteId={ currentSiteId }
 				currentSiteUrl={ currentSiteUrl }
 				flowName={ FLOW_NAME }
 				config={ config }
@@ -131,7 +135,7 @@ export default function DomainSearch() {
 			/>
 			<QueryProductsList />
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ selectedSite?.ID && <QuerySiteDomains siteId={ selectedSite?.ID } /> }
+			{ selectedSite?.ID && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 		</Main>
 	);
 }

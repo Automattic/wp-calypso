@@ -89,6 +89,7 @@ export interface DomainSearchProps {
 	query?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
+	currentSiteId?: number;
 	config?: Partial< DomainSearchConfig >;
 }
 
