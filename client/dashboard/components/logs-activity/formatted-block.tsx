@@ -37,17 +37,7 @@ const isWordPressDotComUrl = ( url?: string | null ) =>
 const relativizeWordPressUrl = ( url: string ) => url.replace( /^https:\/\/wordpress\.com/, '' );
 
 const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
-	const {
-		url: originalUrl,
-		activity,
-		section,
-		intent,
-	} = content as ActivityBlockNode & {
-		url?: string;
-		activity?: string;
-		section?: string;
-		intent?: string;
-	};
+	const { url: originalUrl, activity, section, intent } = content;
 
 	if ( ! originalUrl ) {
 		return <Fragment>{ children }</Fragment>;
@@ -97,11 +87,7 @@ const Post: BlockRenderer = ( { content, children, onClick } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	const { siteId, postId, isTrashed } = content as ActivityBlockNode & {
-		siteId?: number | string;
-		postId?: number | string;
-		isTrashed?: boolean;
-	};
+	const { siteId, postId, isTrashed } = content;
 
 	if ( ! siteId ) {
 		return <Fragment>{ children }</Fragment>;
@@ -123,11 +109,7 @@ const Comment: BlockRenderer = ( { content, children, onClick } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	const { siteId, postId, commentId } = content as ActivityBlockNode & {
-		siteId?: number | string;
-		postId?: number | string;
-		commentId?: number | string;
-	};
+	const { siteId, postId, commentId } = content;
 
 	if ( ! siteId || ! postId || ! commentId ) {
 		return <Fragment>{ children }</Fragment>;
@@ -148,13 +130,7 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <strong>{ children }</strong>;
 	}
 
-	const { siteId, name, activity, intent, section } = content as ActivityBlockNode & {
-		siteId?: number | string;
-		name?: string;
-		activity?: string;
-		intent?: string;
-		section?: string;
-	};
+	const { siteId, name, activity, intent, section } = content;
 
 	if ( ! siteId || ! name ) {
 		return <strong>{ children }</strong>;
@@ -178,13 +154,7 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <Fragment>{ children }</Fragment>;
 	}
 
-	const { siteSlug, pluginSlug, activity, section, intent } = content as ActivityBlockNode & {
-		siteSlug?: string;
-		pluginSlug?: string;
-		activity?: string;
-		section?: string;
-		intent?: string;
-	};
+	const { siteSlug, pluginSlug, activity, section, intent } = content;
 
 	if ( ! siteSlug || ! pluginSlug ) {
 		return <Fragment>{ children }</Fragment>;
@@ -204,15 +174,7 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 };
 
 const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
-	const { themeUri, themeSlug, siteSlug, activity, intent, section } =
-		content as ActivityBlockNode & {
-			themeUri?: string;
-			themeSlug?: string;
-			siteSlug?: string;
-			activity?: string;
-			intent?: string;
-			section?: string;
-		};
+	const { themeUri, themeSlug, siteSlug, activity, intent, section } = content;
 
 	if ( ! themeUri ) {
 		return <Fragment>{ children }</Fragment>;
@@ -256,13 +218,7 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 };
 
 const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
-	const { url, siteSlug, activity, intent, section } = content as ActivityBlockNode & {
-		url?: string;
-		siteSlug?: string;
-		activity?: string;
-		intent?: string;
-		section?: string;
-	};
+	const { url, siteSlug, activity, intent, section } = content;
 
 	const href = url ?? ( siteSlug ? `/backup/${ siteSlug }` : null );
 
