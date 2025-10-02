@@ -10,6 +10,7 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from '@automattic/wpcom-checkout';
+import { VGSCollectProvider } from '@vgs/collect-js-react';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
@@ -414,7 +415,6 @@ export default function CheckoutMain( {
 				paymentMethodObjects,
 				allowedPaymentMethods,
 		  } );
-	debug( 'filtered payment method objects', paymentMethods );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
@@ -821,52 +821,56 @@ export default function CheckoutMain( {
 					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
 				} }
 			/>
-			<CheckoutProvider
-				onPaymentComplete={ handlePaymentSubmitted }
-				onPaymentError={ handlePaymentError }
-				onPaymentRedirect={ handlePaymentRedirect }
-				onPageLoadError={ onPageLoadError }
-				onPaymentMethodChanged={ handlePaymentMethodChanged }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				isLoading={ isCheckoutPageLoading }
-				isValidating={ isCartPendingUpdate }
-				theme={ theme }
-				selectFirstAvailablePaymentMethod
-				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
-			>
-				<CheckoutMainContent
-					loadingHeader={
-						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-					}
-					onStepChanged={ handleStepChanged }
-					customizedPreviousPath={ customizedPreviousPath }
-					isRemovingProductFromCart={ isRemovingProductFromCart }
-					areThereErrors={ areThereErrors }
-					isInitialCartLoading={ isInitialCartLoading }
-					addItemToCart={ addItemAndLog }
-					changeSelection={ changeSelection }
-					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
-					isLoggedOutCart={ !! isLoggedOutCart }
+			<VGSCollectProvider>
+				<CheckoutProvider
+					onPaymentComplete={ handlePaymentSubmitted }
+					onPaymentError={ handlePaymentError }
+					onPaymentRedirect={ handlePaymentRedirect }
 					onPageLoadError={ onPageLoadError }
+					onPaymentMethodChanged={ handlePaymentMethodChanged }
 					paymentMethods={ paymentMethods }
-					areStoredCardsFiltered={ areStoredCardsFiltered }
-					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-				/>
-				{
-					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-					<JetpackProRedirectModal
-						redirectTo={ redirectTo }
-						productSourceFromUrl={ productSourceFromUrl }
+					paymentProcessors={ paymentProcessors }
+					isLoading={ isCheckoutPageLoading }
+					isValidating={ isCartPendingUpdate }
+					theme={ theme }
+					selectFirstAvailablePaymentMethod
+					initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+				>
+					<CheckoutMainContent
+						loadingHeader={
+							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+						}
+						onStepChanged={ handleStepChanged }
+						customizedPreviousPath={ customizedPreviousPath }
+						isRemovingProductFromCart={ isRemovingProductFromCart }
+						areThereErrors={ areThereErrors }
+						isInitialCartLoading={ isInitialCartLoading }
+						addItemToCart={ addItemAndLog }
+						changeSelection={ changeSelection }
+						countriesList={ countriesList }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						infoMessage={
+							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+						}
+						isLoggedOutCart={ !! isLoggedOutCart }
+						onPageLoadError={ onPageLoadError }
+						paymentMethods={ paymentMethods }
+						areStoredCardsFiltered={ areStoredCardsFiltered }
+						isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						siteId={ updatedSiteId }
+						siteUrl={ updatedSiteSlug }
 					/>
-				}
-			</CheckoutProvider>
+					{
+						// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+						<JetpackProRedirectModal
+							redirectTo={ redirectTo }
+							productSourceFromUrl={ productSourceFromUrl }
+						/>
+					}
+				</CheckoutProvider>
+			</VGSCollectProvider>
 		</Fragment>
 	);
 }
