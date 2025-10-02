@@ -1,4 +1,5 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
@@ -21,7 +22,7 @@ export function canManageSite( site: Site ) {
 
 	// Self-hosted Jetpack-connected sites are not supported, yet.
 	// Disable this check for v2 for development purposes, as it's not yet user-facing.
-	if ( isSelfHostedJetpackConnected( site ) && ! window?.location?.pathname?.startsWith( '/v2' ) ) {
+	if ( isSelfHostedJetpackConnected( site ) && isDashboardBackport() ) {
 		return false;
 	}
 

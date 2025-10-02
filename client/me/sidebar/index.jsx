@@ -1,8 +1,6 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useQuery } from '@tanstack/react-query';
 import {
 	bell,
 	category,
@@ -202,11 +200,11 @@ class MeSidebar extends Component {
 						preloadSectionName="developer"
 					/>
 
-					{ this.props.isAutomattician && (
+					{ config.isEnabled( 'mcp-settings' ) && (
 						<SidebarItem
 							selected={ path.startsWith( '/mcp' ) }
 							link="/me/mcp"
-							label={ translate( 'MCP' ) + ' (' + translate( 'A8C Only' ) + ')' }
+							label={ translate( 'MCP' ) }
 							customIcon={ <McpIcon style={ { padding: '2px', boxSizing: 'border-box' } } /> }
 							onNavigate={ this.onNavigate }
 							preloadSectionName="mcp"
@@ -293,10 +291,4 @@ const ConnectedMeSidebar = withCurrentRoute(
 	)( localize( MeSidebar ) )
 );
 
-// Wrapper component to add React Query support
-function MeSidebarWithQuery( props ) {
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
-	return <ConnectedMeSidebar { ...props } isAutomattician={ isAutomattician } />;
-}
-
-export default MeSidebarWithQuery;
+export default ConnectedMeSidebar;
