@@ -1,11 +1,11 @@
-import { basicMetricsQuery, performanceInsightsQuery } from '@automattic/api-queries';
+import { basicMetricsQuery, sitePerformanceInsightsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import type { PerformanceReport } from '@automattic/api-core';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
 interface PerformanceData {
 	hash: string | undefined;
-	mobileReport: PerformanceReport | undefined;
-	desktopReport: PerformanceReport | undefined;
+	mobileReport: SitePerformanceReport | undefined;
+	desktopReport: SitePerformanceReport | undefined;
 	desktopScore: number | undefined;
 	mobileScore: number | undefined;
 	desktopLoaded: boolean;
@@ -55,7 +55,7 @@ export function usePerformanceData(
 		isLoading: isLoadingPerformanceInsights,
 		isError: isInsightsError,
 	} = useQuery( {
-		...performanceInsightsQuery( url as string, token || '' ),
+		...sitePerformanceInsightsQuery( url as string, token || '' ),
 		refetchOnWindowFocus: false,
 		retry: false,
 		enabled: !! url && !! token,

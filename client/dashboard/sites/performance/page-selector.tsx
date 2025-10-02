@@ -3,7 +3,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { Text } from '../../components/text';
-import type { PerformanceProfilerPage } from '@automattic/api-core';
+import type { SitePerformancePage } from '@automattic/api-core';
 
 import './page-selector.scss';
 
@@ -22,7 +22,7 @@ interface PageOption {
  * @param siteUrl - The URL of the site
  * @returns The PageReport
  */
-function mapPageToPageOption( page: PerformanceProfilerPage, siteUrl: string ): PageOption {
+function mapPageToPageOption( page: SitePerformancePage, siteUrl: string ): PageOption {
 	let path = page.link.replace( siteUrl ?? '', '' );
 	path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
 
@@ -43,8 +43,8 @@ export default function PageSelector( {
 	onChange,
 }: {
 	siteUrl: string;
-	pages: PerformanceProfilerPage[];
-	currentPage: PerformanceProfilerPage | undefined;
+	pages: SitePerformancePage[];
+	currentPage: SitePerformancePage | undefined;
 	onChange: ( page_id: string | null | undefined ) => void;
 } ) {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -58,7 +58,7 @@ export default function PageSelector( {
 			return [];
 		}
 
-		const mappedPages: PageOption[] = pages.map( ( page: PerformanceProfilerPage ) =>
+		const mappedPages: PageOption[] = pages.map( ( page: SitePerformancePage ) =>
 			mapPageToPageOption( page, siteUrl )
 		);
 

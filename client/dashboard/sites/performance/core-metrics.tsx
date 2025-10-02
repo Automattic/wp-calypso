@@ -5,13 +5,13 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useState } from 'react';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
-import type { PerformanceReport } from '@automattic/api-core';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
 export default function CoreMetrics( {
 	report,
 	onRecommendationsFilterChange,
 }: {
-	report: PerformanceReport;
+	report: SitePerformanceReport;
 	onRecommendationsFilterChange: ( filter: Metrics ) => void;
 } ) {
 	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall_score' );

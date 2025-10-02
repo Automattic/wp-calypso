@@ -11,7 +11,7 @@ export const basicMetricsQuery = ( url: string ) =>
 		queryFn: () => fetchBasicMetrics( url ),
 	} );
 
-export const performanceInsightsQuery = ( url: string, token: string ) =>
+export const sitePerformanceInsightsQuery = ( url: string, token: string ) =>
 	queryOptions( {
 		queryKey: [ 'performance', url, token ],
 		queryFn: () => fetchSitePerformanceInsights( url, token ),

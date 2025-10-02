@@ -17,14 +17,14 @@ import { CoreMetricsRecommendLink } from './core-metrics-recommend-link';
 import { OverallScore, MetricScore } from './core-metrics-score';
 import { CoreMetricsStatusBadge } from './core-metrics-status-badge';
 import { filterRecommendations } from './performance-insights';
-import type { PerformanceReport } from '@automattic/api-core';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
 export default function CoreMetricsContent( {
 	report,
 	activeTab,
 	onRecommendationsFilterChange,
 }: {
-	report: PerformanceReport;
+	report: SitePerformanceReport;
 	activeTab: Metrics;
 	onRecommendationsFilterChange: ( filter: Metrics ) => void;
 } ) {

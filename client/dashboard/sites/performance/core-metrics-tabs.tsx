@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { Text } from '../../components/text';
 import { metricsNames, mapThresholdsToStatus } from '../../utils/site-performance';
 import { OverallScore, MetricScore } from './core-metrics-score';
-import type { PerformanceReport } from '@automattic/api-core';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
 const Tab = ( { children, tabId }: { children: React.ReactNode; tabId: string } ) => {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -23,7 +23,7 @@ const CoreMetricsTabs = ( {
 	report,
 	compact,
 }: {
-	report: PerformanceReport;
+	report: SitePerformanceReport;
 	compact?: boolean;
 } ) => {
 	const isSmall = useViewportMatch( 'small' );
@@ -50,8 +50,8 @@ const CoreMetricsTabs = ( {
 						}
 
 						if (
-							report[ key as keyof PerformanceReport ] === undefined ||
-							report[ key as keyof PerformanceReport ] === null
+							report[ key as keyof SitePerformanceReport ] === undefined ||
+							report[ key as keyof SitePerformanceReport ] === null
 						) {
 							return null;
 						}

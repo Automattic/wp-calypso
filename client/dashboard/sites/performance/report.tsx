@@ -5,9 +5,9 @@ import CoreMetrics from './core-metrics';
 import PerformanceInsights from './performance-insights';
 import ReportFooter from './report-footer';
 import ScreenshotTimeline from './screenshot-timeline';
-import type { PerformanceReport } from '@automattic/api-core';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
-export default function Report( { report }: { report: PerformanceReport } ) {
+export default function Report( { report }: { report: SitePerformanceReport } ) {
 	const [ recommendationsFilter, setRecommendationsFilter ] =
 		useState< Metrics >( 'overall_score' );
 	const insightsRef = useRef< HTMLDivElement >( null );
