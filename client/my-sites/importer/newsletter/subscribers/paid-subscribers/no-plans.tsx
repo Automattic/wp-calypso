@@ -5,7 +5,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState, useEffect } from 'react';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
-import { navigate } from 'calypso/lib/navigate';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { useDispatch } from 'calypso/state';
@@ -18,9 +17,10 @@ type NoPlansProps = {
 	selectedSite: SiteDetails;
 	engine: string;
 	siteSlug: string;
+	onStartImport: () => void;
 };
 
-export default function NoPlans( { cardData, selectedSite, engine, siteSlug }: NoPlansProps ) {
+export default function NoPlans( { cardData, selectedSite, engine, onStartImport }: NoPlansProps ) {
 	const { __ } = useI18n();
 	const currentStep = 'subscribers';
 	const [ showDisconnectStripeDialog, setShowDisconnectStripeDialog ] = useState( false );
@@ -86,9 +86,7 @@ export default function NoPlans( { cardData, selectedSite, engine, siteSlug }: N
 					primary={ false }
 					step={ currentStep }
 					label={ __( 'Only import free subscribers' ) }
-					navigate={ () => {
-						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
-					} }
+					navigate={ onStartImport }
 				/>
 			</ImporterActionButtonContainer>
 			<Dialog

@@ -68,7 +68,9 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_MEDIUM,
 			STEPS.IMPORTER_PLAYGROUND,
 			STEPS.IMPORTER_SQUARESPACE,
+			STEPS.IMPORTER_SUBSTACK,
 			STEPS.IMPORTER_WORDPRESS,
+			STEPS.SUBSCRIBERS,
 			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
@@ -418,7 +420,7 @@ const siteSetupFlow: Flow = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga', 'substack' ].indexOf(
+						[ 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
 							providedDependencies?.platform as ImporterMainPlatform
 						) !== -1
 					) {
@@ -437,6 +439,7 @@ const siteSetupFlow: Flow = {
 
 				case 'importerWix':
 				case 'importerBlogger':
+				case 'importerSubstack':
 				case 'importerMedium':
 				case 'importerSquarespace': {
 					if ( providedDependencies?.type === 'redirect' ) {
@@ -540,6 +543,7 @@ const siteSetupFlow: Flow = {
 
 				case 'importerBlogger':
 				case 'importerMedium':
+				case 'importerSubstack':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
 						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );

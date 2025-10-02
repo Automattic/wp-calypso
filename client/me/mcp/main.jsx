@@ -1,285 +1,288 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	ToggleControl,
 	Card,
 	CardBody,
-	CardHeader,
-	ToggleControl,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, createElement } from 'react';
-import { connect, useDispatch as useReduxDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormButton from 'calypso/components/forms/form-button';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { saveUserSettings } from 'calypso/state/user-settings/actions';
-import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
-import { getAccountMcpAbilities, createAccountApiPayload } from './utils';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { SectionHeader } from '../../dashboard/components/section-header';
+import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-login/site-dropdown';
+import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from './utils';
 
-function McpComponent( { path, userSettings, isUpdating } ) {
+function McpComponent( { path } ) {
 	const translate = useTranslate();
-	const reduxDispatch = useReduxDispatch();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+	const { data: sites = [] } = useQuery( sitesQuery( { site_visibility: 'visible' } ) );
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+
+	// Site selector state for disabling MCP access on specific sites
+	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
+
+	// Use the standard userSettingsMutation with simple auto-save
+	const mutation = useMutation( {
+		...userSettingsMutation(),
+		onSuccess: ( newData ) => {
+			// Update the cache with the new data from the API response
+			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
+			// Show success notification using Redux dispatch with unique ID to prevent stacking
+			dispatch( successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } ) );
+		},
+		// eslint-disable-next-line no-unused-vars
+		onError: ( error ) => {
+			// Show error notification using Redux dispatch with unique ID to prevent stacking
+			dispatch(
+				errorNotice( translate( 'Failed to save MCP settings.' ), { id: 'mcp-settings-error' } )
+			);
+		},
+	} );
 
 	// Get account-level tools from user settings using the new nested structure
-	const mcpAbilities = getAccountMcpAbilities( userSettings );
+	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools = Object.entries( mcpAbilities );
 	const hasTools = availableTools.length > 0;
 
-	const [ formData, setFormData ] = useState( {
-		mcp_abilities: mcpAbilities,
-	} );
-
-	// Calculate if any tools are enabled (for master toggle and individual toggle disabled state)
+	// Check if any tools are enabled (for master toggle state)
 	const anyToolsEnabled =
-		hasTools && Object.values( formData.mcp_abilities ).some( ( tool ) => tool.enabled );
-
-	// Check if form data has changed from original user settings
-	const hasUnsavedChanges = ( () => {
-		const originalAbilities = getAccountMcpAbilities( userSettings );
-		if ( ! originalAbilities || ! formData.mcp_abilities ) {
-			return false;
-		}
-
-		return Object.keys( originalAbilities ).some( ( toolId ) => {
-			const originalEnabled = originalAbilities[ toolId ]?.enabled;
-			const currentEnabled = formData.mcp_abilities[ toolId ]?.enabled;
-			return originalEnabled !== currentEnabled;
-		} );
-	} )();
-
-	// Update form data when userSettings changes
-	useEffect( () => {
-		const accountAbilities = getAccountMcpAbilities( userSettings );
-		setFormData( {
-			mcp_abilities: accountAbilities,
-		} );
-	}, [ userSettings ] );
-
-	if ( ! isAutomattician ) {
-		return null;
-	}
-
-	const handleSubmit = ( e ) => {
-		e.preventDefault();
-
-		// Create the new nested API payload for account-level settings
-		const settingsData = createAccountApiPayload( userSettings, formData.mcp_abilities );
-
-		// Save using the new nested structure
-		reduxDispatch( saveUserSettings( settingsData ) );
-	};
+		hasTools && Object.values( mcpAbilities ).some( ( tool ) => tool.enabled );
 
 	const handleToolChange = ( toolId, enabled ) => {
-		setFormData( ( prev ) => ( {
-			...prev,
+		// Create minimal payload with only the changed tool (just boolean)
+		const payload = {
 			mcp_abilities: {
-				...prev.mcp_abilities,
-				[ toolId ]: {
-					...prev.mcp_abilities[ toolId ],
-					enabled,
+				account: {
+					[ toolId ]: enabled,
 				},
 			},
-		} ) );
+		};
+		mutation.mutate( payload );
 	};
 
 	const handleMasterToggle = ( enabled ) => {
-		setFormData( ( prev ) => ( {
-			...prev,
-			mcp_abilities: Object.keys( prev.mcp_abilities ).reduce( ( acc, toolId ) => {
-				acc[ toolId ] = {
-					...prev.mcp_abilities[ toolId ],
-					enabled,
-				};
-				return acc;
-			}, {} ),
-		} ) );
+		// Create payload with all tools set to the same state (just booleans)
+		const accountAbilities = {};
+		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
+			accountAbilities[ toolId ] = enabled;
+		} );
+
+		const payload = {
+			mcp_abilities: {
+				account: accountAbilities,
+			},
+		};
+		mutation.mutate( payload );
+	};
+
+	const handleSiteToggle = ( siteId, enabled ) => {
+		// Get current sites array from nested structure
+		const currentSites = userSettings?.mcp_abilities?.sites || [];
+
+		// Find existing site entry
+		const siteIndex = currentSites.findIndex( ( site ) => site.blog_id === parseInt( siteId ) );
+
+		let newSites;
+		if ( enabled ) {
+			// Enabling: remove from sites array (use defaults)
+			if ( siteIndex >= 0 ) {
+				// Remove the site entry entirely
+				newSites = currentSites.filter( ( site, index ) => index !== siteIndex );
+			} else {
+				// Site not in array, already using defaults
+				newSites = currentSites;
+			}
+		} else if ( siteIndex >= 0 ) {
+			// Disabling: update existing site entry
+			newSites = [ ...currentSites ];
+			newSites[ siteIndex ] = {
+				...newSites[ siteIndex ],
+				account_tools_enabled: false,
+			};
+		} else {
+			// Disabling: add new site entry with override
+			newSites = [
+				...currentSites,
+				{
+					blog_id: parseInt( siteId ),
+					account_tools_enabled: false,
+					abilities: {},
+				},
+			];
+		}
+
+		// For the API payload, we need to send the site being toggled as an array
+		// The API expects sites to be an array with blog_id fields
+		const sitesPayload = [];
+		if ( enabled ) {
+			// Enabling: send the site with account_tools_enabled: true
+			sitesPayload.push( {
+				blog_id: parseInt( siteId ),
+				account_tools_enabled: true,
+			} );
+		} else {
+			// Disabling: send the site with account_tools_enabled: false
+			sitesPayload.push( {
+				blog_id: parseInt( siteId ),
+				account_tools_enabled: false,
+			} );
+		}
+
+		// Only include sites in payload if there are any sites to send
+		// Don't include account object - only send the sites being changed
+		const payload = {
+			mcp_abilities: {
+				...( sitesPayload.length > 0 && { sites: sitesPayload } ),
+			},
+		};
+		mutation.mutate( payload );
+	};
+
+	// Helper function to render tools section using ExtrasToggleCard pattern
+	const renderToolsSection = ( tools ) => {
+		if ( ! tools || tools.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<Card isRounded={ false }>
+				<CardBody>
+					<VStack spacing={ 8 }>
+						<SectionHeader
+							level={ 3 }
+							title={ translate( 'Available MCP Tools' ) }
+							description={ translate( 'Choose which AI tools you want to use.' ) }
+						/>
+
+						{ /* Individual tool toggles */ }
+						<VStack>
+							{ tools.map( ( [ toolId, tool ] ) => (
+								<ToggleControl
+									key={ toolId }
+									__nextHasNoMarginBottom
+									checked={ tool.enabled }
+									disabled={ mutation.isPending }
+									label={ tool.title }
+									help={ tool.description }
+									onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+								/>
+							) ) }
+						</VStack>
+					</VStack>
+				</CardBody>
+			</Card>
+		);
 	};
 
 	const renderContent = () => {
-		// Get tools from user settings, but use form data for current state
-		const tools = availableTools.map( ( [ toolId, tool ] ) => [
-			toolId,
-			{
-				...tool,
-				enabled: formData.mcp_abilities?.[ toolId ]?.enabled ?? tool.enabled,
-			},
-		] );
-
-		// Group tools by type first, then by category
-		const groupedByType = tools.reduce( ( typeGroups, [ toolId, tool ] ) => {
-			const type = tool.type || 'tool'; // Default to 'tool' instead of 'other'
-			const category = tool.category || 'General';
-
-			// Only include the three main types
-			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
-				return typeGroups;
-			}
-
-			if ( ! typeGroups[ type ] ) {
-				typeGroups[ type ] = {};
-			}
-			if ( ! typeGroups[ type ][ category ] ) {
-				typeGroups[ type ][ category ] = [];
-			}
-			typeGroups[ type ][ category ].push( [ toolId, tool ] );
-			return typeGroups;
-		}, {} );
-
-		// Type descriptions
-		const typeDescriptions = {
-			tool: translate(
-				'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
-			),
-			resource: translate(
-				'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
-			),
-			prompt: translate(
-				'Prompts help AI assistants understand context and provide better responses to your queries.'
-			),
-		};
-
-		// Type display names
-		const typeDisplayNames = {
-			tool: translate( 'Tools' ),
-			resource: translate( 'Resources' ),
-			prompt: translate( 'Prompts' ),
-		};
+		// Use mcpAbilities directly since we're using auto-save
+		const accountToolsToShow = availableTools;
 
 		return (
-			<form onSubmit={ handleSubmit }>
-				<Card style={ { borderRadius: '0' } }>
-					<CardHeader size="small">
-						<VStack spacing={ 2 }>
-							<Text as="h1">{ translate( 'Account-level MCP tools' ) }</Text>
-							<Text as="p" variant="muted">
-								{ translate(
-									'These tools are available across all your sites. You can enable or disable them here to control access globally.'
-								) }
-							</Text>
-						</VStack>
-					</CardHeader>
+			<VStack spacing={ 8 }>
+				{ /* MCP Tool Access Master Toggle */ }
+				<Card isRounded={ false }>
 					<CardBody>
-						{ hasTools ? (
-							<VStack spacing={ 3 }>
-								<div
-									style={ {
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-									} }
-								>
-									<ToggleControl
-										checked={ anyToolsEnabled }
-										onChange={ handleMasterToggle }
-										label={ translate( 'Allow MCP access' ) }
-									/>
-									{ anyToolsEnabled && (
-										<Button variant="secondary" href="/me/mcp-setup">
-											{ translate( 'Configure MCP Client' ) }
-										</Button>
-									) }
-								</div>
-							</VStack>
-						) : (
-							<Text as="p" variant="muted">
-								{ translate( 'No MCP tools are currently available.' ) }
-							</Text>
-						) }
+						<VStack spacing={ 8 }>
+							<SectionHeader
+								level={ 3 }
+								title={ translate( 'MCP Tool Access' ) }
+								description={ translate(
+									'Control which MCP tools can access your WordPress.com account and sites.'
+								) }
+							/>
+
+							<div
+								style={ {
+									display: 'flex',
+									justifyContent: 'space-between',
+									alignItems: 'center',
+								} }
+							>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ anyToolsEnabled }
+									onChange={ handleMasterToggle }
+									label={
+										<Text weight="bold">
+											{ anyToolsEnabled
+												? translate( 'Disable MCP Tool Access' )
+												: translate( 'Enable MCP Tool Access' ) }
+										</Text>
+									}
+								/>
+								{ anyToolsEnabled && (
+									<Button variant="secondary" href="/me/mcp-setup">
+										{ translate( 'Configure MCP Client' ) }
+									</Button>
+								) }
+							</div>
+						</VStack>
 					</CardBody>
 				</Card>
 
+				{ /* Account Tools Sections */ }
+				{ hasTools && renderToolsSection( accountToolsToShow ) }
+
+				{ /* Site-Specific Settings */ }
 				{ hasTools && anyToolsEnabled && (
-					<>
-						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-							<div key={ type } style={ { marginTop: '24px' } }>
-								<Card style={ { borderRadius: '0' } }>
-									<CardHeader size="small">
-										<VStack spacing={ 2 }>
-											<Text as="h1">{ typeDisplayNames[ type ] }</Text>
-											<Text as="p" variant="muted">
-												{ typeDescriptions[ type ] }
+					<Card isRounded={ false }>
+						<CardBody>
+							<VStack spacing={ 8 }>
+								<SectionHeader
+									level={ 3 }
+									title={ translate( 'Site-specific MCP settings' ) }
+									description={ translate(
+										'Choose a site to block all MCP tools for all users on that site. This overrides your account settings.'
+									) }
+								/>
+
+								<PreferencesLoginSiteDropdown
+									sites={ sites }
+									value={ selectedSiteId }
+									onChange={ setSelectedSiteId }
+									label={ translate( 'Select a site to disable MCP access' ) }
+									isLoading={ false }
+								/>
+
+								{ selectedSiteId && anyToolsEnabled && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId ) }
+										disabled={ mutation.isPending }
+										onChange={ ( enabled ) => handleSiteToggle( selectedSiteId, enabled ) }
+										label={
+											<Text weight="bold">
+												{ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId )
+													? translate( 'Disable MCP access for this site' )
+													: translate( 'Enable MCP access for this site' ) }
 											</Text>
-										</VStack>
-									</CardHeader>
-									<CardBody>
-										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
-												<VStack key={ category } spacing={ 4 }>
-													<Text as="h3" style={ { textTransform: 'capitalize' } }>
-														{ category }
-													</Text>
-													<VStack spacing={ 4 }>
-														{ categoryTools.map( ( [ toolId, tool ] ) => (
-															<VStack key={ toolId } spacing={ 3 }>
-																<ToggleControl
-																	checked={ tool.enabled }
-																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-																	label={ tool.title }
-																	help={ tool.description }
-																	disabled={ ! anyToolsEnabled }
-																/>
-															</VStack>
-														) ) }
-													</VStack>
-												</VStack>
-											) ) }
-										</VStack>
-									</CardBody>
-								</Card>
-							</div>
-						) ) }
-					</>
+										}
+									/>
+								) }
+							</VStack>
+						</CardBody>
+					</Card>
 				) }
-
-				{ hasTools && anyToolsEnabled && (
-					<>
-						<div style={ { marginTop: '24px' } }>
-							<Card>
-								<CardBody>
-									<VStack spacing={ 3 }>
-										<Text as="h4" style={ { margin: 0 } }>
-											{ translate( 'Site-specific MCP settings' ) }
-										</Text>
-										<Text as="p" variant="muted" style={ { margin: 0 } }>
-											{ createInterpolateElement(
-												translate(
-													'Account-level MCP tools are available on all your sites. You can manage site-specific MCP access and overrides in <a>individual site settings</a>.'
-												),
-												{
-													a: createElement( 'a', {
-														href: '/sites',
-														target: '_blank',
-														style: { textDecoration: 'underline' },
-													} ),
-												}
-											) }
-										</Text>
-									</VStack>
-								</CardBody>
-							</Card>
-						</div>
-					</>
-				) }
-
-				{ hasTools && (
-					<div style={ { marginTop: '24px' } }>
-						<FormButton isSubmitting={ isUpdating } disabled={ isUpdating || ! hasUnsavedChanges }>
-							{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP tools' ) }
-						</FormButton>
-					</div>
-				) }
-			</form>
+			</VStack>
 		);
 	};
+
+	// Check if MCP settings feature is enabled
+	if ( ! config.isEnabled( 'mcp-settings' ) ) {
+		return null;
+	}
 
 	return (
 		<Main wideLayout className="mcp">
@@ -302,10 +305,4 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		userSettings: getUserSettings( state ),
-		isUpdating: isUpdatingUserSettings( state ),
-	} ),
-	{}
-)( McpComponent );
+export default McpComponent;

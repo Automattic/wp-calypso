@@ -3,27 +3,18 @@ import {
 	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Button,
 	Spinner,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import {
-	chartBar as chartBarIcon,
-	download as downloadIcon,
-	link as linkIcon,
-} from '@wordpress/icons';
 import clsx from 'clsx';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 import './style.scss';
 
-export interface MonitoringCardProps {
+interface MonitoringCardProps {
 	title: string;
 	description?: ReactNode;
 	isLoading?: boolean;
-	onDownloadClick?: () => void;
-	onAnchorClick?: () => void;
 	tracksId?: string;
 	children?: ReactNode;
 	cardLabel?: string;
@@ -34,8 +25,6 @@ export default function MonitoringCard( {
 	title,
 	description,
 	isLoading,
-	onDownloadClick,
-	onAnchorClick,
 	tracksId,
 	children,
 	cardLabel,
@@ -57,51 +46,11 @@ export default function MonitoringCard( {
 	};
 
 	const topContent = (
-		<HStack
-			className="dashboard-monitoring-card__content"
-			justify="space-between"
-			alignment="flex-start"
-		>
+		<HStack justify="space-between" alignment="flex-start">
 			<VStack spacing={ 4 } className="dashboard-monitoring-card__header">
-				<HStack justify="space-between">
-					<HStack spacing={ 1 } alignment="center" expanded={ false }>
-						<Text weight="bold" size="15px">
-							{ title }
-						</Text>
-					</HStack>
-					<HStack spacing={ 2 } alignment="center" expanded={ false }>
-						<Button
-							icon={ chartBarIcon }
-							label={ sprintf(
-								/* translators: %s is the card title */
-								__( 'View %s chart.' ),
-								title
-							) }
-						/>
-						{ onDownloadClick && (
-							<Button
-								icon={ downloadIcon }
-								label={ sprintf(
-									/* translators: %s is the card title */
-									__( 'Download %s data.' ),
-									title
-								) }
-								onClick={ onDownloadClick }
-							/>
-						) }
-						{ onAnchorClick && (
-							<Button
-								icon={ linkIcon }
-								label={ sprintf(
-									/* translators: %s is the card title */
-									__( 'Permalink: %s.' ),
-									title
-								) }
-								onClick={ onAnchorClick }
-							/>
-						) }
-					</HStack>
-				</HStack>
+				<Text weight="bold" size="15px">
+					{ title }
+				</Text>
 				<HStack justify="flex-start" alignment="baseline">
 					<Text variant="muted">{ renderDescription() }</Text>
 				</HStack>
@@ -118,7 +67,7 @@ export default function MonitoringCard( {
 	return (
 		<Card className={ clsx( 'dashboard-monitoring-card', className ) }>
 			<CardBody>
-				<VStack spacing={ 4 }>
+				<VStack spacing={ 4 } className="dashboard-monitoring-card__body" justify="flex-start">
 					{ tracksId && (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_monitoring_card_impression"
@@ -127,7 +76,7 @@ export default function MonitoringCard( {
 					) }
 					{ topContent }
 					{ children && (
-						<VStack className={ contentClassNames } spacing={ 2 } justify="center">
+						<VStack className={ contentClassNames } spacing={ 2 } justify="space-between">
 							{ renderContent() }
 						</VStack>
 					) }

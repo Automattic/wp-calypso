@@ -85,11 +85,6 @@ export interface CheckoutMainProps {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
-	isInModal?: boolean;
-	// IMPORTANT NOTE: This will not be called for redirect payment methods like
-	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
 	akismetSiteSlug?: string;
@@ -125,8 +120,6 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	isInModal,
-	onAfterPaymentComplete,
 	disabledThankYouPage,
 	sitelessCheckoutType,
 	akismetSiteSlug,
@@ -214,7 +207,6 @@ export default function CheckoutMain( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInModal,
 		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -285,7 +277,6 @@ export default function CheckoutMain( {
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
 		sitelessCheckoutType,
-		isInModal,
 		domains,
 		connectAfterCheckout,
 		adminUrl,
@@ -687,14 +678,15 @@ export default function CheckoutMain( {
 
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	const onPaymentComplete = useCreatePaymentCompleteCallback( {
+	// `getThankYouUrl` after passing through the pending page.
+	//
+	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
+	const onPaymentSubmittedAndProcessing = useCreatePaymentCompleteCallback( {
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
 		redirectTo,
 		purchaseId,
 		feature,
-		isInModal,
 		isComingFromUpsell,
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
@@ -746,11 +738,12 @@ export default function CheckoutMain( {
 
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	const handlePaymentComplete = useCallback(
+	// `getThankYouUrl` after passing through the pending page.
+	//
+	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
+	const handlePaymentSubmitted = useCallback(
 		( args: PaymentEventCallbackArguments ) => {
-			onPaymentComplete?.( args );
-			onAfterPaymentComplete?.();
+			onPaymentSubmittedAndProcessing?.( args );
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 					step: 2,
@@ -758,7 +751,7 @@ export default function CheckoutMain( {
 				} )
 			);
 		},
-		[ onPaymentComplete, onAfterPaymentComplete, reduxDispatch ]
+		[ onPaymentSubmittedAndProcessing, reduxDispatch ]
 	);
 
 	const handlePaymentError = useCallback(
@@ -821,7 +814,7 @@ export default function CheckoutMain( {
 				} }
 			/>
 			<CheckoutProvider
-				onPaymentComplete={ handlePaymentComplete }
+				onPaymentComplete={ handlePaymentSubmitted }
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
 				onPageLoadError={ onPageLoadError }

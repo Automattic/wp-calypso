@@ -12,6 +12,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
 import type { Field } from '@wordpress/dataviews';
 
@@ -20,18 +21,23 @@ type SecurityKeyFormData = {
 };
 
 export default function RegisterKey( { onClose }: { onClose: () => void } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ formData, setFormData ] = useState< SecurityKeyFormData >( {
 		keyName: '',
 	} );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
 		registerTwoStepAuthSecurityKeyMutation()
 	);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
-
+		recordTracksEvent(
+			'calypso_dashboard_security_two_step_auth_security_keys_register_key_click'
+		);
 		registerSecurityKey( formData.keyName.trim(), {
 			onSuccess: () => {
 				createSuccessNotice(

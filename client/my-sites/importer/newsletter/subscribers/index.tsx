@@ -1,45 +1,31 @@
+import { useI18n } from '@wordpress/react-i18n';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
 import { SubscribersStepProps } from '../types';
 import StepDone from './step-done';
 import StepImporting from './step-importing';
 import StepInitial from './step-initial';
 import StepPending from './step-pending';
 
-export default function Subscribers( {
-	nextStepUrl,
-	selectedSite,
-	fromSite,
-	status,
-	siteSlug,
-	skipNextStep,
-	cardData,
-	engine,
-	setAutoFetchData,
-}: SubscribersStepProps ) {
-	// The default step
-	let Step = StepInitial;
-	switch ( status ) {
+export default function Subscribers( stepProps: SubscribersStepProps ) {
+	const { __ } = useI18n();
+
+	const actionButton = (
+		<ImporterActionButton
+			onClick={ () => stepProps.onViewSummaryClick?.() }
+			{ ...( stepProps.nextStepUrl && { href: stepProps.nextStepUrl } ) }
+		>
+			{ __( 'View summary' ) }
+		</ImporterActionButton>
+	);
+
+	switch ( stepProps.status ) {
 		case 'pending':
-			Step = StepPending;
-			break;
+			return <StepPending { ...stepProps } onStartImport={ stepProps.skipNextStep } />;
 		case 'importing':
-			Step = StepImporting;
-			break;
+			return <StepImporting { ...stepProps } actionButton={ actionButton } />;
 		case 'done':
-			Step = StepDone;
-			break;
+			return <StepDone { ...stepProps } actionButton={ actionButton } />;
 	}
 
-	return (
-		<Step
-			cardData={ cardData }
-			engine={ engine }
-			fromSite={ fromSite }
-			nextStepUrl={ nextStepUrl }
-			selectedSite={ selectedSite }
-			setAutoFetchData={ setAutoFetchData }
-			siteSlug={ siteSlug }
-			skipNextStep={ skipNextStep }
-			status={ status }
-		/>
-	);
+	return <StepInitial { ...stepProps } />;
 }

@@ -16,6 +16,7 @@ export interface ActivityLogEntry {
 	last_published: string;
 	name: string;
 	generator?: ActivityGenerator;
+	is_rewindable: boolean;
 	object?: {
 		backup_type?: string;
 		rewind_id?: string;
@@ -114,7 +115,7 @@ export interface ActivityLogParams {
 	number?: number;
 	not_group?: string;
 	group?: string[];
-	name?: string;
+	name?: string[];
 	text_search?: string;
 }
 

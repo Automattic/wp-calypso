@@ -25,6 +25,7 @@
 		}
 	],
 	"features": {
+		"a4a-help-center": true,
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
 		"cookie-banner": false,

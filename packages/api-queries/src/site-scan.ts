@@ -1,5 +1,7 @@
 import {
+	fixThreats,
 	enqueueSiteScan,
+	fetchFixThreatsStatus,
 	fetchSiteScan,
 	fetchSiteScanHistory,
 	ignoreThreat,
@@ -8,6 +10,12 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+
+export const fixThreatsStatusQuery = ( siteId: number, threatIds: number[] ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'fix-threats', 'status', threatIds ],
+		queryFn: () => fetchFixThreatsStatus( siteId, threatIds ),
+	} );
 
 export const siteScanQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -54,4 +62,9 @@ export const fixThreatMutation = ( siteId: number ) =>
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
 			queryClient.invalidateQueries( siteScanHistoryQuery( siteId ) );
 		},
+	} );
+
+export const fixThreatsMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( threatIds: number[] ) => fixThreats( siteId, threatIds ),
 	} );

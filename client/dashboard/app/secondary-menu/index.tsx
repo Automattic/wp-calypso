@@ -63,6 +63,7 @@ function Help() {
 // User profile dropdown component
 function UserProfile() {
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 	const openCommandPalette = useOpenCommandPalette();
 
 	return (
@@ -99,22 +100,24 @@ function UserProfile() {
 							{ __( 'Account' ) }
 						</RouterLinkMenuItem>
 					</MenuGroup>
-					<MenuGroup>
-						<MenuItem
-							onClick={ () => {
-								// First close the dropdown
-								onClose();
-								// Then open the command palette after a tiny delay
-								// to ensure the dropdown is fully closed
-								requestAnimationFrame( () => {
-									openCommandPalette();
-								} );
-							} }
-							shortcut="⌘K"
-						>
-							{ __( 'Command palette' ) }
-						</MenuItem>
-					</MenuGroup>
+					{ supports.commandPalette && (
+						<MenuGroup>
+							<MenuItem
+								onClick={ () => {
+									// First close the dropdown
+									onClose();
+									// Then open the command palette after a tiny delay
+									// to ensure the dropdown is fully closed
+									requestAnimationFrame( () => {
+										openCommandPalette();
+									} );
+								} }
+								shortcut="⌘K"
+							>
+								{ __( 'Command palette' ) }
+							</MenuItem>
+						</MenuGroup>
+					) }
 					<MenuGroup>
 						<MenuItem onClick={ () => {} }>{ __( 'Log out' ) }</MenuItem>
 					</MenuGroup>

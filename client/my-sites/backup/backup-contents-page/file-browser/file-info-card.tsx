@@ -29,6 +29,7 @@ interface FileInfoCardProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
@@ -42,6 +43,7 @@ function FileInfoCard( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	source,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const { fileBrowserState, locale, notices } = useFileBrowserContext();
@@ -61,7 +63,7 @@ function FileInfoCard( {
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
-		notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
+		notices?.showError( __( 'There was an error preparing your download. Please try again.' ) );
 	}, [ notices ] );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
@@ -81,18 +83,21 @@ function FileInfoCard( {
 
 	const handleDownloadError = useCallback( () => {
 		setIsProcessingDownload( false );
-		notices.showError( __( 'There was an error processing your download. Please try again.' ) );
+		notices?.showError( __( 'There was an error processing your download. Please try again.' ) );
 	}, [ notices ] );
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
-				file_type: fileType,
-			} );
+			const trackingProps = { file_type: fileType };
+			if ( source === 'dashboard' ) {
+				onTrackEvent( 'calypso_dashboard_backup_browser_download', trackingProps );
+			} else {
+				onTrackEvent( 'calypso_jetpack_backup_browser_download', trackingProps );
+			}
 
 			return;
 		},
-		[ onTrackEvent ]
+		[ onTrackEvent, source ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -172,7 +177,7 @@ function FileInfoCard( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
+			notices?.showError( __( 'There was an error preparing your download. Please try again.' ) );
 			return;
 		}
 
@@ -181,19 +186,24 @@ function FileInfoCard( {
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		setNodeCheckState( '/', 'unchecked' );
+		setNodeCheckState( '/', 'unchecked', rewindId );
 
 		// Mark this file as selected
-		setNodeCheckState( path, 'checked' );
+		setNodeCheckState( path, 'checked', rewindId );
 
 		// Request granular restore
 		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+		const trackingProps = {
 			file_type: item.type,
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
-		} );
+		};
+		if ( source === 'dashboard' ) {
+			onTrackEvent( 'calypso_dashboard_backup_browser_restore_single_file', trackingProps );
+		} else {
+			onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', trackingProps );
+		}
 	}, [
 		setNodeCheckState,
 		path,
@@ -201,6 +211,7 @@ function FileInfoCard( {
 		siteSlug,
 		rewindId,
 		onTrackEvent,
+		source,
 		item.type,
 		hasCredentials,
 	] );
@@ -233,7 +244,7 @@ function FileInfoCard( {
 	// Dispatch an error notice if the file info could not be retrieved
 	useEffect( () => {
 		if ( isError ) {
-			notices.showError(
+			notices?.showError(
 				__( 'There was an error retrieving your file information. Please try again.' )
 			);
 		}
@@ -376,7 +387,12 @@ function FileInfoCard( {
 						) }
 					</HStack>
 					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+						<FilePreview
+							item={ item }
+							siteId={ siteId }
+							onTrackEvent={ onTrackEvent }
+							source={ source }
+						/>
 					) }
 				</VStack>
 			</CardBody>

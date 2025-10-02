@@ -19,6 +19,8 @@ module.exports = {
 							'!calypso/lib/wp',
 							// Allowed: calypso/lib/load-dev-helpers
 							'!calypso/lib/load-dev-helpers',
+							// Allowed: calypso/lib/interval/use-interval (temporary)
+							'!calypso/lib/interval',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',

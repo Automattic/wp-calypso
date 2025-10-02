@@ -22,11 +22,7 @@ export function DataViewsEmptyState( {
 			{ illustration }
 			<VStack spacing={ 2 } alignment="center">
 				<div className="dashboard-dataviews-empty-state__heading">{ title }</div>
-				<Text
-					variant="muted"
-					align="center"
-					className="dashboard-dataviews-empty-state__sub-heading"
-				>
+				<Text align="center" className="dashboard-dataviews-empty-state__sub-heading">
 					{ description }
 				</Text>
 			</VStack>

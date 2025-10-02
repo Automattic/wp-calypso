@@ -17,6 +17,7 @@ export interface User {
 	email_verified: boolean;
 	has_unseen_notes: boolean;
 	site_count: number;
+	visible_site_count: number;
 	meta: {
 		data: {
 			flags: {

@@ -191,7 +191,7 @@ export function backupContents( context, next ) {
 	const siteId = getSelectedSiteId( state );
 
 	context.featurePreview = (
-		<BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />
+		<BackupContentsPage siteId={ siteId } rewindId={ Number( context.params.rewindId ) } />
 	);
 	next();
 }
