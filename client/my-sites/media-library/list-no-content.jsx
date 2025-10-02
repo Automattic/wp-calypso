@@ -19,17 +19,6 @@ class MediaLibraryListNoContent extends Component {
 		const { filter, source, translate } = this.props;
 
 		//TODO: handle each service with individual messages
-		if ( 'google_photos' === source ) {
-			if ( 'videos' === filter ) {
-				return translate( "You don't have any videos in your Google Photos library.", {
-					comment: 'Media no results',
-				} );
-			}
-			return translate( "You don't have any images in your Google Photos library.", {
-				comment: 'Media no results',
-			} );
-		}
-
 		if ( 'pexels' === source || 'openverse' === source ) {
 			return translate( 'Use the search above to find free photos!', {
 				comment: 'Media no results',
