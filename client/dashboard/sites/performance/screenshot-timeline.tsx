@@ -35,7 +35,7 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<Text size={ 15 } weight={ 500 }>
+					<Text size={ 15 } weight={ 500 } as="h2">
 						{ __( 'Page load timeline' ) }
 					</Text>
 					{ selectedScreenshot.isOpen && selectedScreenshot.screenshot && (

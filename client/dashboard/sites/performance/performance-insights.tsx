@@ -157,7 +157,7 @@ export default function PerformanceInsights( {
 				alignment="flex-start"
 			>
 				<VStack>
-					<Text size={ 15 } weight={ 500 }>
+					<Text size={ 15 } weight={ 500 } as="h2">
 						{ __( 'Personalized recommendations' ) }
 					</Text>
 					<Text variant="muted">{ getSubtitleText( selectedFilter, filteredAudits.length ) }</Text>

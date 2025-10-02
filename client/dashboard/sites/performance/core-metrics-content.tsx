@@ -46,7 +46,7 @@ export default function CoreMetricsContent( {
 					<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
 						<VStack spacing={ 4 } alignment="flex-start">
 							<HStack spacing={ 2 } justify="flex-start">
-								<Text size="title" weight={ 500 }>
+								<Text size="title" weight={ 500 } as="h2">
 									{ displayName }
 								</Text>
 								<CoreMetricsStatusBadge value={ status } />
