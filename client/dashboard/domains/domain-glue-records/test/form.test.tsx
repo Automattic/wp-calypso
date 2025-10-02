@@ -43,7 +43,7 @@ test( 'renders domain glue records form with correct fields', async () => {
 
 test( 'pre-fills form with initial data when provided', async () => {
 	const initialData = {
-		nameserver: 'give-me-cat-memes',
+		nameserver: 'ns1',
 		ip_addresses: [ '1.2.3.4' ],
 	};
 
@@ -51,7 +51,7 @@ test( 'pre-fills form with initial data when provided', async () => {
 		initialData,
 	} );
 
-	expect( screen.getByDisplayValue( 'give-me-cat-memes' ) ).toBeInTheDocument();
+	expect( screen.getByDisplayValue( 'ns1' ) ).toBeInTheDocument();
 	expect( screen.getByDisplayValue( '1.2.3.4' ) ).toBeInTheDocument();
 } );
 
@@ -63,7 +63,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 
 	// Fill in valid nameserver
 	const nameserverInput = screen.getByRole( 'textbox', { name: /Name server/ } );
-	await user.type( nameserverInput, 'give-me-cat-memes' );
+	await user.type( nameserverInput, 'ns1' );
 
 	// Fill in valid IP address
 	const ipAddressInput = screen.getByRole( 'textbox', { name: /IP address/ } );
@@ -74,9 +74,19 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 	await user.click( submitButton );
 
 	expect( mockOnSubmit ).toHaveBeenCalledWith( {
-		nameserver: `give-me-cat-memes.${ domainName }`,
+		nameserver: `ns1.${ domainName }`,
 		ip_addresses: [ '1.2.3.4' ],
 	} );
+} );
+
+test( 'nameserver is read only when isEdit is true', async () => {
+	renderForm( { isEdit: true, initialData: { nameserver: 'ns1', ip_addresses: [ '1.2.3.4' ] } } );
+
+	// Check that the nameserver value is rendered as text
+	expect( screen.getByText( 'ns1' ) ).toBeInTheDocument();
+
+	// There should be no textbox for nameserver
+	expect( screen.queryByRole( 'textbox', { name: /Name server/ } ) ).toBeNull();
 } );
 
 test( 'disables submit button when isSubmitting is true', async () => {
