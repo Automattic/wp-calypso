@@ -74,27 +74,29 @@ function Emails() {
 	return (
 		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
 			<DataViewsCard>
-				<DataViews
-					data={ filteredData }
-					isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }
-					fields={ emailFields }
-					view={ view }
-					onChangeView={ setView }
-					selection={ selection.map( ( item ) => item.id ) }
-					onChangeSelection={ ( ids ) =>
-						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
-					}
-					actions={ actions }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ paginationInfo }
-					empty={
-						domainsWithoutEmails ? (
-							<NoEmailsAvailableEmptyState />
-						) : (
-							<NoDomainsAvailableEmptyState />
-						)
-					}
-				/>
+				<div className="emails__dataviews">
+					<DataViews
+						data={ filteredData }
+						isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }
+						fields={ emailFields }
+						view={ view }
+						onChangeView={ setView }
+						selection={ selection.map( ( item ) => item.id ) }
+						onChangeSelection={ ( ids ) =>
+							setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
+						}
+						actions={ actions }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ paginationInfo }
+						empty={
+							domainsWithoutEmails ? (
+								<NoEmailsAvailableEmptyState />
+							) : (
+								<NoDomainsAvailableEmptyState />
+							)
+						}
+					/>
+				</div>
 			</DataViewsCard>
 		</PageLayout>
 	);

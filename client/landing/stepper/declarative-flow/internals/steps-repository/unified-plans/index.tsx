@@ -64,11 +64,24 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
+			if ( search.has( 'intent' ) ) {
+				return getVisualSplitPlansIntent( search.get( 'intent' )! );
+			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		default:
 			return null;
+	}
+	return null;
+}
+
+function getVisualSplitPlansIntent( intent: string ): PlansIntent | null {
+	if ( intent === 'default_websitebuilder' ) {
+		return 'plans-website-builder';
+	}
+	if ( intent === 'default_hosting' ) {
+		return 'plans-wordpress-hosting';
 	}
 	return null;
 }
@@ -141,7 +154,7 @@ const PlansStepAdaptor: StepType< {
 
 	// Update plansIntent when the experiment loads
 	useEffect( () => {
-		if ( ! isVisualSplitLoading && props.flow === ONBOARDING_FLOW ) {
+		if ( ! isVisualSplitLoading && props.flow === ONBOARDING_FLOW && ! defaultPlansIntent ) {
 			if ( visualSplitVariation === 'default_websitebuilder' ) {
 				setPlansIntent( 'plans-website-builder' );
 			} else if ( visualSplitVariation === 'default_hosting' ) {
