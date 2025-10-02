@@ -257,23 +257,15 @@ const DomainSearchStep: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const getTopBarRightElement = () => {
-			if ( query && config.allowsUsingOwnDomain ) {
-				return (
-					<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-						{ __( 'Use a domain I already own' ) }
-					</Step.LinkButton>
-				);
+			if ( query! || ! config.allowsUsingOwnDomain ) {
+				return;
 			}
 
-			if ( isNewHostedSiteCreationFlow( flow ) ) {
-				return (
-					<Step.LinkButton onClick={ () => events.onSkip() }>
-						{ __( 'Decide later' ) }
-					</Step.LinkButton>
-				);
-			}
-
-			return undefined;
+			return (
+				<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+					{ __( 'Use a domain I already own' ) }
+				</Step.LinkButton>
+			);
 		};
 
 		return (
@@ -319,29 +311,19 @@ const DomainSearchStep: StepType< {
 	};
 
 	const getSkipButton = () => {
-		if ( query && config.allowsUsingOwnDomain ) {
-			return {
-				customizedActionButtons: (
-					<Button
-						className="step-container__navigation-link forward"
-						onClick={ () => events.onExternalDomainClick( query ) }
-						variant="link"
-					>
-						<span>{ __( 'Use a domain I already own' ) }</span>
-					</Button>
-				),
-			};
+		if ( ! query || ! config.allowsUsingOwnDomain ) {
+			return;
 		}
 
-		if ( isAIBuilderFlow( flow ) || isNewsletterFlow( flow ) ) {
-			return {
-				hideSkip: false,
-				skipLabelText: __( 'Decide later' ),
-				onSkip: () => events.onSkip(),
-			};
-		}
-
-		return {};
+		return (
+			<Button
+				className="step-container__navigation-link forward"
+				onClick={ () => events.onExternalDomainClick( query ) }
+				variant="link"
+			>
+				<span>{ __( 'Use a domain I already own' ) }</span>
+			</Button>
+		);
 	};
 
 	return (
@@ -356,7 +338,7 @@ const DomainSearchStep: StepType< {
 			stepContent={ domainSearchElement }
 			recordTracksEvent={ recordTracksEvent }
 			{ ...getBackButton() }
-			{ ...getSkipButton() }
+			customizedActionButtons={ getSkipButton() }
 		/>
 	);
 };
