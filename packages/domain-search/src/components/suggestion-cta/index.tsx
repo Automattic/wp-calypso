@@ -35,7 +35,8 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 	} = useMutation( {
 		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
 			if ( acceptedTrademarkClaim ) {
-				return cart.onAddItem( suggestion );
+				await cart.onAddItem( suggestion );
+				return { addedToCart: true };
 			}
 
 			const availability = await queryClient.ensureQueryData(
@@ -54,14 +55,14 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			}
 
 			if ( ! availability?.trademark_claims_notice_info ) {
-				return cart.onAddItem( suggestion );
+				await cart.onAddItem( suggestion );
+				return { addedToCart: true };
 			}
 
 			setTrademarkClaimModalOpen( true );
 		},
 		onSuccess: ( data ) => {
-			// If `data` is undefined, the domain was not added to the cart yet
-			if ( data ) {
+			if ( data?.addedToCart ) {
 				events.onAddDomainToCart(
 					domainName,
 					suggestion.position,
