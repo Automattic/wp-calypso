@@ -24,6 +24,8 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
+	domainAddNew,
+	domainManagementList,
 	domainManagementTransferToOtherSite,
 	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
@@ -145,6 +147,9 @@ const DomainSearchStep: StepType< {
 				}
 
 				window.location.assign( domainManagementList( siteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				window.location.assign( domainAddNew( otherSiteDomain, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( domainName && isHundredYearDomainFlow( flow ) ) {

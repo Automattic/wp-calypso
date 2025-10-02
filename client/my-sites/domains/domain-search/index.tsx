@@ -22,6 +22,7 @@ import useCartKey from '../../checkout/use-cart-key';
 import NewDomainsRedirectionNoticeUpsell from '../domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
+	domainAddNew,
 	domainManagementList,
 	domainManagementTransferToOtherSite,
 	domainUseMyDomain,
@@ -74,6 +75,9 @@ export default function DomainSearch() {
 			},
 			onMakePrimaryAddressClick: () => {
 				page( domainManagementList( selectedSiteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				page( domainAddNew( otherSiteDomain, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {
