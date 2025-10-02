@@ -9,6 +9,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
@@ -86,30 +87,30 @@ export default function StagingSiteSyncDropdown( {
 	}
 
 	const renderModal = () => {
-		if ( [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) ) ) {
+		if ( isDashboardBackport() ) {
 			return (
-				<StagingSiteSyncModal
-					onClose={ handleCloseModal }
-					syncType={ syncDirection }
-					environment={ environment }
-					productionSiteId={ productionSiteId }
-					stagingSiteId={ stagingSiteId }
-					onSyncStart={ handleSyncStart }
-				/>
+				<Suspense fallback={ null }>
+					<StagingSiteSyncModalV1
+						onClose={ handleCloseModal }
+						syncType={ syncDirection }
+						environment={ environment }
+						productionSiteId={ productionSiteId }
+						stagingSiteId={ stagingSiteId }
+						onSyncStart={ handleSyncStart }
+					/>
+				</Suspense>
 			);
 		}
 
 		return (
-			<Suspense fallback={ null }>
-				<StagingSiteSyncModalV1
-					onClose={ handleCloseModal }
-					syncType={ syncDirection }
-					environment={ environment }
-					productionSiteId={ productionSiteId }
-					stagingSiteId={ stagingSiteId }
-					onSyncStart={ handleSyncStart }
-				/>
-			</Suspense>
+			<StagingSiteSyncModal
+				onClose={ handleCloseModal }
+				syncType={ syncDirection }
+				environment={ environment }
+				productionSiteId={ productionSiteId }
+				stagingSiteId={ stagingSiteId }
+				onSyncStart={ handleSyncStart }
+			/>
 		);
 	};
 
