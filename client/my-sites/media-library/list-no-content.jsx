@@ -37,28 +37,8 @@ class MediaLibraryListNoContent extends Component {
 		}
 
 		switch ( filter ) {
-			case 'this-post':
-				return translate( 'There are no media items uploaded to this post.', {
-					comment: 'Media no results',
-				} );
-
 			case 'images':
 				return translate( "You don't have any images.", {
-					comment: 'Media no results',
-				} );
-
-			case 'videos':
-				return translate( "You don't have any videos.", {
-					comment: 'Media no results',
-				} );
-
-			case 'audio':
-				return translate( "You don't have any audio files.", {
-					comment: 'Media no results',
-				} );
-
-			case 'documents':
-				return translate( "You don't have any documents.", {
 					comment: 'Media no results',
 				} );
 
