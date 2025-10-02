@@ -1,7 +1,7 @@
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { useMemo, useRef, useState, type ComponentProps } from 'react';
+import { useMemo, useRef, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useQueryHandler } from './use-query-handler';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
@@ -29,7 +29,7 @@ const DomainSearchWithCart = ( {
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
 	const { onContinue, beforeAddDomainToCart } = props.events ?? {};
-	const [ railcarId, setRailcarId ] = useState< string >( getNewRailcarId( 'domain-suggestion' ) );
+	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 
 	const { query, setQuery } = useQueryHandler( {
 		initialQuery: props.query,
@@ -65,7 +65,7 @@ const DomainSearchWithCart = ( {
 			...props.events,
 			onQueryChange: ( query ) => {
 				setQuery( query );
-				setRailcarId( getNewRailcarId( 'domain-suggestion' ) );
+				railcarId.current = getNewRailcarId( 'domain-suggestion' );
 
 				// TODO: In the original flows, this event has a 10s timeout before triggering. Should we do the same here?
 				searchCount.current++;
@@ -150,7 +150,7 @@ const DomainSearchWithCart = ( {
 				recordTracksEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
-					railcar: `${ railcarId }-${ suggestion.position }`,
+					railcar: `${ railcarId.current }-${ suggestion.position }`,
 					fetch_algo: `${ fetchAlgo }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
 					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
@@ -161,7 +161,7 @@ const DomainSearchWithCart = ( {
 			},
 			onSuggestionInteract: ( suggestion ) => {
 				recordTracksEvent( 'calypso_traintracks_interact', {
-					railcar: `${ railcarId }-${ suggestion.position }`,
+					railcar: `${ railcarId.current }-${ suggestion.position }`,
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
 					root_vendor: suggestion.vendor,
