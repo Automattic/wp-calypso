@@ -1,18 +1,23 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useNavigate } from '@tanstack/react-router';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
+import { getChangePaymentMethodUrlFor, getAddPaymentMethodUrlFor } from './urls';
 import type { Purchase } from '@automattic/api-core';
+
+import './style.scss';
 
 export function PurchasePaymentMethod( {
 	purchase,
 	isDisconnectedSite,
-	getAddPaymentMethodUrlFor,
+	showUpdateButton,
 }: {
 	purchase: Purchase;
 	isDisconnectedSite?: boolean;
-	getAddPaymentMethodUrlFor: ( purchase: Purchase ) => string;
+	showUpdateButton?: boolean;
 } ) {
+	const navigate = useNavigate();
 	if ( purchase.expiry_status === 'included' ) {
 		return __( 'Included with Plan' );
 	}
@@ -59,9 +64,24 @@ export function PurchasePaymentMethod( {
 				: purchase.payment_card_type || purchase.payment_card_processor || '';
 
 			return (
-				<HStack justify="flex-start">
-					<PaymentMethodImage paymentMethodType={ paymentMethodType } />
-					<span>{ purchase.payment_details }</span>
+				<HStack>
+					<HStack justify="flex-start">
+						<PaymentMethodImage paymentMethodType={ paymentMethodType } />
+						<span>{ purchase.payment_details }</span>
+					</HStack>
+					{ showUpdateButton && (
+						<Button
+							className="purchase-payment-method__update"
+							aria-label={ __( 'Update payment method' ) }
+							variant="secondary"
+							size="compact"
+							onClick={ () => {
+								navigate( { to: getChangePaymentMethodUrlFor( purchase ) } );
+							} }
+						>
+							{ __( 'Update' ) }
+						</Button>
+					) }
 				</HStack>
 			);
 		}

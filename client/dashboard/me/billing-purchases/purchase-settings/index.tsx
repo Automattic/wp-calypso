@@ -80,7 +80,7 @@ import {
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
-import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
+import { getPurchaseUrlForId } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -649,10 +649,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 						</Notice>
 					) }
 
-					<PurchasePaymentMethod
-						purchase={ purchase }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-					/>
+					<PurchasePaymentMethod purchase={ purchase } showUpdateButton />
 				</VStack>
 			</CardBody>
 		</Card>

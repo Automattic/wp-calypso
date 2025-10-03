@@ -20,7 +20,7 @@ import {
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
-import { getPurchaseUrl, getAddPaymentMethodUrlFor } from './urls';
+import { getPurchaseUrl } from './urls';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
@@ -415,11 +415,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<div>
-						<PurchasePaymentMethod
-							purchase={ item }
-							isDisconnectedSite={ ! site }
-							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-						/>
+						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
 					</div>
 				);
