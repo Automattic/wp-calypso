@@ -1,7 +1,7 @@
-import { NavigateOptions } from '@tanstack/router-core/src/link';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import type { NavigateOptions } from '@tanstack/react-router';
 
 interface FlashMessageProps {
 	id?: string;
