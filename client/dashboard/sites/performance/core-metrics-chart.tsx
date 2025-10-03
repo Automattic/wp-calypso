@@ -13,7 +13,6 @@ import {
 	getStatusText,
 	mapThresholdsToStatus,
 } from '../../utils/site-performance';
-import defaultHistory from './history';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
 import '@automattic/charts/line-chart/style.css';
 
@@ -118,12 +117,7 @@ export default function CoreMetricsChart( {
 	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
 	const currentValuation = mapThresholdsToStatus( metric, report[ metric ] );
-	const data = useMetricData(
-		metric,
-		currentValuation,
-		defaultHistory
-		// report.history
-	);
+	const data = useMetricData( metric, currentValuation, report.history );
 
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		const unit = getDisplayUnit( metric );
