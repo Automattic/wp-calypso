@@ -51,18 +51,16 @@ export default function NotificationsExtras() {
 				} );
 			}
 
-			if ( origin === 'single' ) {
-				recordTracksEvent( 'calypso_dashboard_notifications_extras_single', {
-					...Object.keys( payload ).reduce( ( acc, key ) => {
-						return {
-							...acc,
-							settings_name: key,
-							settings_value: payload[ key as keyof WpcomNotificationSettings ] as boolean,
-							settings_group: group,
-						};
-					}, {} ),
-				} );
-			}
+			recordTracksEvent( 'calypso_dashboard_notifications_extras_single', {
+				...Object.keys( payload ).reduce( ( acc, key ) => {
+					return {
+						...acc,
+						settings_name: key,
+						settings_value: payload[ key as keyof WpcomNotificationSettings ] as boolean,
+						settings_group: group,
+					};
+				}, {} ),
+			} );
 
 			mutation.mutate( payload );
 		};
