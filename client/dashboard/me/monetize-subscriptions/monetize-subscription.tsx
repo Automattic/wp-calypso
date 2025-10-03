@@ -255,7 +255,7 @@ export default function MonetizeSubscriptionDetails() {
 	);
 
 	const isRenewable = subscription?.is_renewable ?? false;
-	const isAutoRenewing = isRenewable && !! subscription.renew_interval;
+	const isAutoRenewing = isRenewable && !! subscription?.renew_interval;
 	const isProduct = ! isRenewable;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 	const formattedExpiry = useFormattedTime( subscription?.end_date ?? '' );

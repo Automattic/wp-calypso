@@ -4,6 +4,7 @@ export interface MonetizeSubscription {
 	end_date: string | null;
 	product_id: string;
 	renew_interval: string | null;
+	is_renewable: boolean | null;
 	renewal_price: string;
 	site_id: string;
 	site_title: string;
