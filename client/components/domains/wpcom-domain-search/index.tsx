@@ -131,6 +131,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 			onFilterApplied: ( filter ) => {
+				debouncedDomainSearchEvent( query ?? '' );
 				recordTracksEvent( 'calypso_domain_search_filters_submit', {
 					flow_name: flowName,
 					filters_tlds: filter.tlds?.join( ',' ),
@@ -139,6 +140,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 			onFilterReset: ( filter, keysToReset ) => {
+				debouncedDomainSearchEvent( query ?? '' );
 				recordTracksEvent( 'calypso_domain_search_filters_reset', {
 					keys_to_reset: keysToReset?.join( ',' ),
 					filter_exact_sld_matches_only: filter.exactSldMatchesOnly,
