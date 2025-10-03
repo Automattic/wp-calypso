@@ -1,6 +1,6 @@
 import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet, notFound, useLocation } from '@tanstack/react-router';
+import { Outlet, notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	MenuGroup,
@@ -12,6 +12,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
+import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import HeaderBar from '../../components/header-bar';
@@ -33,7 +34,7 @@ function Site() {
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const location = useLocation();
+	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	if ( ! canManageSite( site ) ) {
 		throw notFound();
@@ -49,16 +50,9 @@ function Site() {
 							items={ sites }
 							value={ site }
 							getItemName={ getSiteDisplayName }
-							getItemUrl={ ( site ) => {
-								const currentPath = location.pathname;
-								const sitePattern = `/sites/${ siteSlug }`;
-
-								if ( currentPath.includes( sitePattern ) ) {
-									return currentPath.replace( sitePattern, `/sites/${ site.slug }` );
-								}
-
-								return `/sites/${ site.slug }`;
-							} }
+							getItemUrl={ ( site ) =>
+								buildCurrentRouteLink( { params: { siteSlug: site.slug } } )
+							}
 							renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
 							open={ isSwitcherOpen }
 							onToggle={ setIsSwitcherOpen }
