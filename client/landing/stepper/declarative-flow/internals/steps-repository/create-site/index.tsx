@@ -79,7 +79,7 @@ async function pollForGardenProvisioning( siteId: number, maxAttempts = 10, dela
 
 	// Throw an error to trigger the processing step's error handling
 	const error = new Error(
-		`Garden site provisioning failed to complete after ${ maxAttempts } attempts. Please try again or contact support.`
+		'We were unable to create your site. Please try again or contact support.'
 	) as Error & { code: string };
 	error.code = 'garden_provisioning_timeout';
 	throw error;
