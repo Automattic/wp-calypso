@@ -1,20 +1,32 @@
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import type { NavigateOptions } from '@tanstack/react-router';
 
 interface FlashMessageProps {
-	queryParam?: string;
+	id?: string;
 	value: string;
 	message: string;
 	type?: 'success' | 'error';
 }
 
+const DEFAULT_PARAM_NAME = 'flash';
+
+export function addFlashMessage(
+	navigateOptions: NavigateOptions,
+	value: string | boolean = true,
+	overrideDefaultId: string = DEFAULT_PARAM_NAME
+): NavigateOptions {
+	navigateOptions.search = navigateOptions.search || {};
+	navigateOptions.search[ overrideDefaultId ] = value;
+	return navigateOptions;
+}
 /**
  * Allows a snackbar to be shown on page load based on a query parameter.
  * Clears the query parameter when done.
  */
 export default function FlashMessage( {
-	queryParam = 'updated',
+	id = DEFAULT_PARAM_NAME,
 	value,
 	message,
 	type = 'success',
@@ -26,7 +38,7 @@ export default function FlashMessage( {
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( queryParam ) === value ) {
+		if ( params.get( id ) === value ) {
 			switch ( type ) {
 				case 'error':
 					createErrorNotice( message, { type: 'snackbar' } );
@@ -36,7 +48,7 @@ export default function FlashMessage( {
 					break;
 			}
 
-			params.delete( queryParam );
+			params.delete( id );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );

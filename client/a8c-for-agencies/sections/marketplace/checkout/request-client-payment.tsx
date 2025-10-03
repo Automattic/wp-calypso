@@ -1,18 +1,23 @@
 import page from '@automattic/calypso-router';
 import { Button, FormLabel, Tooltip } from '@automattic/components';
-import { Icon, warning } from '@wordpress/icons';
+import { customLink, Icon, send, warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import {
+	NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
+} from 'calypso/a8c-for-agencies/constants';
+import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -65,7 +70,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		setMessage( event.currentTarget.value );
 	}, [] );
 
-	const { mutate: requestPayment, isPending, isSuccess } = useRequestClientPaymentMutation();
+	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
 
 	const hasCompletedForm = !! email && !! message;
 
@@ -82,78 +87,90 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		[ checkoutItems ]
 	);
 
-	const handleRequestPayment = useCallback( () => {
-		if ( ! hasCompletedForm ) {
-			return;
-		}
-		if ( ! emailValidator.validate( email ) ) {
-			setValidationError( { email: translate( 'Please provide correct email address' ) } );
-			return;
-		}
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
-		);
-		requestPayment(
-			{
-				client_email: email,
-				client_message: message,
-				product_ids: productIds,
-				licenses: licenses,
-			},
-			{
-				onError: ( error ) => {
-					dispatch(
-						errorNotice(
-							error.code === 'cannot_refer_to_client'
-								? translate(
-										'Referring products to your own company is not allowed and against our {{a}}terms of service{{/a}}.',
-										{
-											components: {
-												a: (
-													<a
-														href="https://automattic.com/for-agencies/program-incentives/"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-											},
-										}
-								  )
-								: error.message
-						)
-					);
-				},
-			}
-		);
-	}, [
-		dispatch,
-		email,
-		hasCompletedForm,
-		licenses,
-		message,
-		productIds,
-		requestPayment,
-		translate,
-	] );
-
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
-	useEffect( () => {
-		if ( isSuccess && !! email ) {
-			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
-			page.redirect(
-				isFeedbackShown
-					? addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
-					: addQueryArgs( A4A_FEEDBACK_LINK, {
-							args: { email },
-							type: FeedbackType.ReferralCompleted,
-					  } )
+	const handleRequestPayment = useCallback(
+		( flowType: ReferralOrderFlowType ) => {
+			if ( ! hasCompletedForm ) {
+				return;
+			}
+			if ( ! emailValidator.validate( email ) ) {
+				setValidationError( { email: translate( 'Please provide correct email address' ) } );
+				return;
+			}
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 			);
-			setEmail( '' );
-			setMessage( '' );
-			onClearCart();
-		}
-	}, [ email, isSuccess, onClearCart, isFeedbackShown ] );
+			requestPayment(
+				{
+					client_email: email,
+					client_message: message,
+					product_ids: productIds,
+					licenses: licenses,
+					flow_type: flowType,
+				},
+				{
+					onSuccess: ( referral ) => {
+						navigator.clipboard.writeText( referral.checkout_url );
+
+						sessionStorage.setItem(
+							MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
+							MARKETPLACE_TYPE_REGULAR
+						);
+						page.redirect(
+							isFeedbackShown
+								? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
+										[ NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY ]: email,
+										[ NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY ]: referral.checkout_url,
+										[ NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY ]: flowType,
+								  } )
+								: addQueryArgs( A4A_FEEDBACK_LINK, {
+										args: { email },
+										type: FeedbackType.ReferralCompleted,
+								  } )
+						);
+						setEmail( '' );
+						setMessage( '' );
+						onClearCart();
+					},
+					onError: ( error ) => {
+						dispatch(
+							errorNotice(
+								error.code === 'cannot_refer_to_client'
+									? translate(
+											'Referring products to your own company is not allowed and against our {{a}}terms of service{{/a}}.',
+											{
+												components: {
+													a: (
+														<a
+															href="https://automattic.com/for-agencies/program-incentives/"
+															target="_blank"
+															rel="noopener noreferrer"
+														/>
+													),
+												},
+											}
+									  )
+									: error.message
+							)
+						);
+					},
+				}
+			);
+		},
+		[
+			dispatch,
+			email,
+			hasCompletedForm,
+			isFeedbackShown,
+			licenses,
+			message,
+			onClearCart,
+			productIds,
+			requestPayment,
+			translate,
+		]
+	);
 
 	return (
 		<>
@@ -196,7 +213,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 			<NoticeSummary type="request-client-payment" />
 
 			<div
-				className="checkout__aside-actions"
+				className="checkout__aside-actions is-row"
 				role="button"
 				tabIndex={ 0 }
 				onMouseEnter={ () => setShowVerifyAccountToolip( true ) }
@@ -206,12 +223,25 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				<Button
 					ref={ ctaButtonRef }
 					primary
-					onClick={ handleRequestPayment }
+					onClick={ () => handleRequestPayment( 'send' ) }
 					disabled={ ! hasCompletedForm || isUserUnverified }
 					busy={ isPending }
 				>
-					{ translate( 'Request payment from client' ) }
+					<Icon icon={ send } />
+					{ translate( 'Send to Client' ) }
 					{ isUserUnverified && <Icon icon={ warning } /> }
+				</Button>
+
+				{ translate( 'or' ) }
+
+				<Button
+					primary
+					onClick={ () => handleRequestPayment( 'copy' ) }
+					disabled={ ! hasCompletedForm || isUserUnverified }
+					busy={ isPending }
+				>
+					<Icon icon={ customLink } />
+					{ translate( 'Copy referral link' ) }
 				</Button>
 
 				<Tooltip
@@ -229,18 +259,6 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						}
 					) }
 				</Tooltip>
-			</div>
-
-			<div className="checkout__summary-notice-item">
-				{ translate(
-					'{{b}}Important:{{/b}} Your referral order link is only valid for {{u}}7 days{{/u}}. Please notify your client to complete the payment within this timeframe to avoid expiration.',
-					{
-						components: {
-							b: <b />,
-							u: <u />,
-						},
-					}
-				) }
 			</div>
 		</>
 	);

@@ -143,11 +143,8 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
-
-						const lastQueryParam =
+						const initialQuery =
 							// eslint-disable-next-line no-nested-ternary
 							'lastQuery' in providedDependencies
 								? providedDependencies.lastQuery
@@ -155,10 +152,10 @@ const onboarding: FlowV2< typeof initialize > = {
 								? providedDependencies.domainForm?.lastQuery
 								: undefined;
 
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery,
+						} );
 
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
