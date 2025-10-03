@@ -5,6 +5,7 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -21,6 +22,8 @@ import type { WpcomNotificationSettings } from '@automattic/api-core';
 
 export default function NotificationsExtras() {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
+	const { recordTracksEvent } = useAnalytics();
+
 	const mutation = useMutation( {
 		...userNotificationsExtrasSettingsMutation(),
 		meta: {
@@ -33,9 +36,36 @@ export default function NotificationsExtras() {
 
 	const extraSettings: Partial< WpcomNotificationSettings > | undefined = data?.wpcom;
 	const isSaving = mutation.isPending;
-	const onMutate = ( payload: Partial< WpcomNotificationSettings > ) => {
-		mutation.mutate( payload );
-	};
+	const onMutate =
+		( group: 'wpcom' | 'jetpack' ) =>
+		( payload: Partial< WpcomNotificationSettings >, origin: string ) => {
+			if ( origin === 'subscribe-all' ) {
+				recordTracksEvent( 'calypso_dashboard_notifications_extras_subscribe_all', {
+					settings_group: group,
+				} );
+			}
+
+			if ( origin === 'unsubscribe-all' ) {
+				recordTracksEvent( 'calypso_dashboard_notifications_extras_unsubscribe_all', {
+					settings_group: group,
+				} );
+			}
+
+			if ( origin === 'single' ) {
+				recordTracksEvent( 'calypso_dashboard_notifications_extras_single', {
+					...Object.keys( payload ).reduce( ( acc, key ) => {
+						return {
+							...acc,
+							settings_name: key,
+							settings_value: payload[ key as keyof WpcomNotificationSettings ] as boolean,
+							settings_group: group,
+						};
+					}, {} ),
+				} );
+			}
+
+			mutation.mutate( payload );
+		};
 
 	return (
 		<PageLayout
@@ -53,7 +83,7 @@ export default function NotificationsExtras() {
 				<ExtrasToggleCard
 					extraSettings={ extraSettings }
 					isSaving={ isSaving }
-					onMutate={ onMutate }
+					onMutate={ onMutate( 'wpcom' ) }
 					optionKeys={ WPCOM_OPTION_KEYS }
 					titles={ WPCOM_TITLES }
 					descriptions={ WPCOM_DESCRIPTIONS }
@@ -63,7 +93,7 @@ export default function NotificationsExtras() {
 				<ExtrasToggleCard
 					extraSettings={ extraSettings }
 					isSaving={ isSaving }
-					onMutate={ onMutate }
+					onMutate={ onMutate( 'jetpack' ) }
 					optionKeys={ JETPACK_OPTION_KEYS }
 					titles={ JETPACK_TITLES }
 					descriptions={ JETPACK_DESCRIPTIONS }
