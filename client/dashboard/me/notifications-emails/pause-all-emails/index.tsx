@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useCallback } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ConfirmationModal } from './confirmation-modal';
 
 const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
@@ -18,6 +19,7 @@ const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 
 export const PauseAllEmails = () => {
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
+	const { recordTracksEvent } = useAnalytics();
 	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
 
 	const {
@@ -36,13 +38,15 @@ export const PauseAllEmails = () => {
 
 	const originalState = isAllWpcomEmailsDisabled( settings );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
-	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
 
 	useEffect( () => {
 		if ( isSettingsUpdated ) {
 			setIsConfirmDialogOpen( false );
+			recordTracksEvent( 'calypso_dashboard_notifications_pause_all_emails', {
+				all_emails_paused: enabled,
+			} );
 		}
-	}, [ createSuccessNotice, enabled, isSettingsUpdated, setIsConfirmDialogOpen ] );
+	}, [ enabled, isSettingsUpdated, setIsConfirmDialogOpen, recordTracksEvent ] );
 
 	const handleChange = ( checked: boolean ) => {
 		setEnabled( checked );
