@@ -15,10 +15,6 @@ const useBuildCurrentRouteLink = () => {
 					...lastMatch.params,
 					...options.params,
 				},
-				search: {
-					...lastMatch.search,
-					...options.search,
-				},
 			} ).href;
 		},
 		[ router, lastMatch ]
