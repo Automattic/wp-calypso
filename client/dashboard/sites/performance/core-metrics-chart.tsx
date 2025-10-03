@@ -7,19 +7,14 @@ import { Text } from '../../components/text';
 import {
 	Valuation,
 	getColorForStatus,
+	getDisplayUnit,
+	getFormattedValue,
 	mapThresholdsToStatus,
 	metricsNames,
 } from '../../utils/site-performance';
 import defaultHistory from './history';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
-
-const formatUnit = ( metric: Metrics, value: number | string ) => {
-	const num = parseFloat( value as string );
-	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return Number( Number( num / 1000 ).toFixed( 2 ) );
-	}
-	return num;
-};
+import '@automattic/charts/line-chart/style.css';
 
 const StatusIndicator = ( { valuation }: { valuation: Valuation } ) => {
 	const innerSvg: Record< Valuation, React.ReactNode > = {
@@ -88,7 +83,7 @@ const useMetricData = (
 
 		data.push( {
 			date: new Date( formattedDate ),
-			value: formatUnit( metric, values[ i ] ),
+			value: getFormattedValue( metric, values[ i ] ),
 		} );
 	}
 
@@ -105,66 +100,57 @@ const useMetricData = (
 
 export default function CoreMetricsChart( {
 	report,
-	activeTab,
+	metric,
 	metricsThresholds,
 }: {
 	history?: SitePerformanceHistory;
 	report: SitePerformanceReport;
-	activeTab: Metrics;
+	metric: Metrics;
 	metricsThresholds: Record< Metrics, { good: number; needsImprovement: number; bad: number } >;
 } ) {
-	const { good, needsImprovement, bad } = metricsThresholds[ activeTab ];
+	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
 	const data = useMetricData(
-		activeTab,
-		mapThresholdsToStatus( activeTab, report[ activeTab ] ),
+		metric,
+		mapThresholdsToStatus( metric, report[ metric ] ),
 		defaultHistory
 		// report.history
 	);
 
-	const displayUnit = () => {
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return 's';
-		}
-		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
-			return 'ms';
-		}
-		return '';
-	};
-
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
+		const unit = getDisplayUnit( metric );
 		if ( valuation === 'good' ) {
 			return isOverall
-				? sprintf( '(90–%(to)s)', { to: formatUnit( activeTab, good ) } )
+				? sprintf( '(90–%(to)s)', { to: getFormattedValue( metric, good ) } )
 				: sprintf( '(0–%(to)s%(unit)s)', {
-						to: formatUnit( activeTab, good ),
-						unit: displayUnit(),
+						to: getFormattedValue( metric, good ),
+						unit,
 				  } );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
 			return isOverall
-				? sprintf( '(50–%(to)s)', { to: formatUnit( activeTab, needsImprovement ) } )
+				? sprintf( '(50–%(to)s)', { to: getFormattedValue( metric, needsImprovement ) } )
 				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
-						from: formatUnit( activeTab, good ),
-						to: formatUnit( activeTab, needsImprovement ),
-						unit: displayUnit(),
+						from: getFormattedValue( metric, good ),
+						to: getFormattedValue( metric, needsImprovement ),
+						unit,
 				  } );
 		}
 
 		if ( valuation === 'bad' ) {
 			return isOverall
-				? sprintf( '(0-%(to)s)', { to: formatUnit( activeTab, bad ) } )
+				? sprintf( '(0-%(to)s)', { to: getFormattedValue( metric, bad ) } )
 				: sprintf( '(Over %(from)s%(unit)s)', {
-						from: formatUnit( activeTab, needsImprovement ),
-						unit: displayUnit(),
+						from: getFormattedValue( metric, needsImprovement ),
+						unit,
 				  } );
 		}
 
 		return '';
 	};
 
-	const isOverall = activeTab === 'overall_score';
+	const isOverall = metric === 'overall_score';
 
 	return (
 		<>
