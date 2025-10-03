@@ -27,9 +27,7 @@
 		"test": "vitest run",
 		"prepublishOnly": "pnpm run build",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build -o storybook-static",
-		"i18n:extract": "npx --no-install @wordpress/i18n-command make-pot src --output=languages/a8c-agenttic.pot --domain=a8c-agenttic",
-		"i18n:update": "npx --no-install @wordpress/i18n-command make-json languages --domain=a8c-agenttic"
+		"build-storybook": "storybook build -o storybook-static"
 	},
 	"keywords": [
 		"agenttic",

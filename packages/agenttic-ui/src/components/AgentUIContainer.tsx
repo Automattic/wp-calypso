@@ -7,6 +7,7 @@ import {
 	useDragControls,
 	useMotionValue,
 } from 'framer-motion';
+import { loadAgentticTranslations } from '@automattic/agenttic-client';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
 import type { AgentUIProps } from '../types';
@@ -92,6 +93,7 @@ export function AgentUIContainer( {
 	inputValue: controlledInputValue,
 	onInputChange: controlledOnInputChange,
 	draggableStates = [ 'expanded' ], // Default to only expanded for backward compatibility
+	locale = 'en',
 	...props
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
@@ -120,6 +122,20 @@ export function AgentUIContainer( {
 	const [ isAnimating, setIsAnimating ] = useState( false );
 
 	const [ isDragging, setIsDragging ] = useState( false );
+
+	// Load translations when locale changes
+	useEffect( () => {
+		const translationsLoaded = loadAgentticTranslations( locale, {
+			domain: 'a8c-agenttic',
+		} );
+
+		if ( ! translationsLoaded ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				`Translations could not be loaded for locale: ${ locale }, defaulting to English`
+			);
+		}
+	}, [ locale ] );
 
 	useEffect( () => {
 		// Reset flags when chat state changes.

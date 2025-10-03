@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect, memo } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import styles from './ImageUploader.module.css';
 
@@ -59,61 +59,66 @@ interface ImagePreviewItemProps {
 	onRemove: ( e: React.MouseEvent, image: UploadedImage ) => void;
 }
 
-const ImagePreviewItem = memo( ( {
-	image,
-	allowDragToInsert,
-	showFileMetadata,
-	onDragStart,
-	onDragEnd,
-	onRemove,
-}: ImagePreviewItemProps ) => {
-	const fileType = image.mime_type
-		? image.mime_type.split( '/' )[ 1 ].toUpperCase()
-		: '';
-	const fileName =
-		image.title || image.name || image.url.split( '/' ).pop() || 'image';
+const ImagePreviewItem = memo(
+	( {
+		image,
+		allowDragToInsert,
+		showFileMetadata,
+		onDragStart,
+		onDragEnd,
+		onRemove,
+	}: ImagePreviewItemProps ) => {
+		const fileType = image.mime_type
+			? image.mime_type.split( '/' )[ 1 ].toUpperCase()
+			: '';
+		const fileName =
+			image.title ||
+			image.name ||
+			image.url.split( '/' ).pop() ||
+			'image';
 
-	return (
-		<div
-			key={ image.id }
-			className={ styles.previewItem }
-			draggable={ allowDragToInsert }
-			onDragStart={ ( e ) => onDragStart( image, e ) }
-			onDragEnd={ ( e ) => onDragEnd( image, e ) }
-		>
-			<button
-				className={ styles.removeButton }
-				onClick={ ( e ) => onRemove( e, image ) }
-				aria-label={ __( 'Remove image', 'a8c-agenttic' ) }
-				type="button"
+		return (
+			<div
+				key={ image.id }
+				className={ styles.previewItem }
+				draggable={ allowDragToInsert }
+				onDragStart={ ( e ) => onDragStart( image, e ) }
+				onDragEnd={ ( e ) => onDragEnd( image, e ) }
 			>
-				×
-			</button>
-			<img
-				src={ image.url }
-				alt={ image.alt || fileName }
-				className={ styles.previewImage }
-				loading="lazy"
-			/>
-			{ showFileMetadata && (
-				<div className={ styles.previewMeta }>
-					<span
-						className={ styles.previewFilename }
-						title={
-							fileName +
-							( image.alt ? ` - ${ image.alt }` : '' )
-						}
-					>
-						{ fileName }
-					</span>
-					<span className={ styles.previewType }>
-						{ fileType }
-					</span>
-				</div>
-			) }
-		</div>
-	);
-} );
+				<button
+					className={ styles.removeButton }
+					onClick={ ( e ) => onRemove( e, image ) }
+					aria-label={ __( 'Remove image', 'a8c-agenttic' ) }
+					type="button"
+				>
+					×
+				</button>
+				<img
+					src={ image.url }
+					alt={ image.alt || fileName }
+					className={ styles.previewImage }
+					loading="lazy"
+				/>
+				{ showFileMetadata && (
+					<div className={ styles.previewMeta }>
+						<span
+							className={ styles.previewFilename }
+							title={
+								fileName +
+								( image.alt ? ` - ${ image.alt }` : '' )
+							}
+						>
+							{ fileName }
+						</span>
+						<span className={ styles.previewType }>
+							{ fileType }
+						</span>
+					</div>
+				) }
+			</div>
+		);
+	}
+);
 
 export function ImageUploader( {
 	images = [],
@@ -218,7 +223,10 @@ export function ImageUploader( {
 				onError?.(
 					sprintf(
 						/* translators: %s: allowed file types (e.g., "JPEG or PNG") */
-						__( 'Only %s image files are allowed.', 'a8c-agenttic' ),
+						__(
+							'Only %s image files are allowed.',
+							'a8c-agenttic'
+						),
 						allowedTypes
 					)
 				);
@@ -443,7 +451,7 @@ export function ImageUploader( {
 											) ) }
 									</div>
 								) }
-						</div>
+							</div>
 						</>
 					) }
 					{ showInvalidFileMessage && (

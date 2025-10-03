@@ -116,3 +116,6 @@ export {
 	convertAbilitiesToTools,
 	isWordPressAbility,
 } from './utils/wordpressAbilities';
+
+// Translation utilities
+export { loadAgentticTranslations } from './utils/translation-loader';

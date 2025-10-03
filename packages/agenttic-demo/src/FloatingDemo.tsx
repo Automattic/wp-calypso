@@ -328,6 +328,7 @@ const FloatingDemo: React.FC = () => {
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }
 				messageRenderer={ messageRenderer }
+				locale="en"
 			/>
 		</div>
 	);

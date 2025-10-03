@@ -28,9 +28,7 @@
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
 		"lint:fix": "wp-scripts lint-js src --ext .ts,.tsx --fix",
 		"test": "vitest run",
-		"prepublishOnly": "pnpm run build",
-		"i18n:extract": "npx --no-install @wordpress/i18n-command make-pot src --output=languages/a8c-agenttic.pot --domain=a8c-agenttic",
-		"i18n:update": "npx --no-install @wordpress/i18n-command make-json languages --domain=a8c-agenttic"
+		"prepublishOnly": "pnpm run build"
 	},
 	"keywords": [
 		"a2a",
