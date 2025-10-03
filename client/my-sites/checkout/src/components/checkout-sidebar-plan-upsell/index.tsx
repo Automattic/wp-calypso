@@ -267,9 +267,7 @@ export function CheckoutSidebarPlanUpsell() {
 				{ isStreamlinedPrice && (
 					<CheckoutSummaryFeaturedList
 						responseCart={ responseCart }
-						siteId={ undefined }
 						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-						isStreamlinedPrice={ isStreamlinedPrice }
 					/>
 				) }
 				<PromoCardCTA

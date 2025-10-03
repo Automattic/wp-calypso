@@ -280,11 +280,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 								defaultCartKey: 123456,
 							} }
 						>
-							<WPCheckoutOrderSummary
-								siteId={ undefined }
-								onChangeSelection={ () => null }
-								showFeaturesList
-							/>
+							<WPCheckoutOrderSummary onChangeSelection={ () => null } showFeaturesList />
 						</ShoppingCartProvider>
 					</ThemeProvider>
 				</ReduxProvider>
