@@ -51,12 +51,14 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function InfoPopover( { children }: { children: ReactNode } ) {
+function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	return (
 		<span>
 			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
-			{ isTooltipVisible && <Popover>{ children }</Popover> }
+			{ isTooltipVisible && (
+				<Popover className="billing-purchase-info-popover">{ children }</Popover>
+			) }
 		</span>
 	);
 }
@@ -134,7 +136,7 @@ function BackupPaymentMethodNotice() {
 			link: <a href="/me/purchases/payment-methods" />,
 		}
 	);
-	return <InfoPopover>{ noticeText }</InfoPopover>;
+	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
 }
 
 function OwnerInfo( {
@@ -170,7 +172,7 @@ function OwnerInfo( {
 		</span>
 	);
 
-	return <InfoPopover>{ tooltipContent }</InfoPopover>;
+	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
 }
 
 export function getFields( {
