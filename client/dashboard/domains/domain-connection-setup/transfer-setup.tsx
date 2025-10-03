@@ -1,8 +1,4 @@
-import {
-	domainInboundTransferStatusQuery,
-	domainQuery,
-	// domainAvailabilityQuery
-} from '@automattic/api-queries';
+import { domainInboundTransferStatusQuery, domainQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -23,7 +19,7 @@ import {
 import { DomainTransferStepsMap, StepName, type StepNameValue } from './types';
 import { getProgressStepList } from './utils';
 
-export default function DomainConnectionSetup() {
+export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
@@ -32,18 +28,17 @@ export default function DomainConnectionSetup() {
 		domainInboundTransferStatusQuery( domainName )
 	);
 
-	// const { data: availabilityData } = useSuspenseQuery( domainAvailabilityQuery( domainName ) );
-
 	const { step: initialStepName } = domainTransferSetupRoute.useSearch();
 
 	const [ currentStepName, setCurrentStepName ] = useState< StepNameValue >( () =>
 		initialStepName ? ( initialStepName as StepNameValue ) : StepName.TRANSFER_START
 	);
 
-	const stepsDefinition: DomainTransferStepsMap =
+	const [ stepsDefinition ] = useState< DomainTransferStepsMap >( () =>
 		inboundTransferStatusInfo.unlocked === true
 			? transferUnlockedDomainStepsDefinition
-			: transferLockedDomainStepsDefinition;
+			: transferLockedDomainStepsDefinition
+	);
 
 	const currentStep = stepsDefinition[ currentStepName as StepNameValue ];
 	if ( ! currentStep ) {
