@@ -8,8 +8,11 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.slackNotifier
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.verboseMessageFormat
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
@@ -232,6 +235,25 @@ object BuildBaseImages : BuildType({
 		}
 		dockerSupport {
 			cleanupPushedImages = true
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#calypso"
+				messageFormat = verboseMessageFormat {
+					addChanges = true
+					addStatusText = true
+					addBranch = true
+				}
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
 		}
 	}
 })
