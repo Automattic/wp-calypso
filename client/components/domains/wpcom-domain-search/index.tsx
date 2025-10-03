@@ -75,7 +75,7 @@ const DomainSearchWithCart = ( {
 				search_count: searchCount.current,
 				search_vendor: config.vendor,
 				section: flowName === 'domain' ? 'domain-first' : 'signup',
-				seconds_from_last_search: timeDiffFromLastSearchInSeconds,
+				seconds_from_last_search: searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
 				flow_name: flowName,
 			} );
 		},
