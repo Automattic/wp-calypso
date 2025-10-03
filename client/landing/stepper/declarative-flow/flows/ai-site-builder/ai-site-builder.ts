@@ -165,11 +165,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
 							];
 
-							// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback
-							addBlogSticker( siteId, 'big-sky-free-trial' );
-
-							// Create a new home page if one is not set yet (only for non-garden sites)
 							if ( ! gardenName ) {
+								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
+								addBlogSticker( siteId, 'big-sky-free-trial' );
+
+								// Create a new home page if one is not set yet (only for non-garden sites)
 								pendingActions.push(
 									wpcomRequest( {
 										path: '/sites/' + siteId + '/pages',
