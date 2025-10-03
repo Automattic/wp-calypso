@@ -14,6 +14,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
 const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
@@ -30,6 +31,7 @@ export const SubscriptionSettings = () => {
 	const { data: rawSettings } = useSuspenseQuery( userSettingsQuery() );
 	const originalSettings = getSettings( rawSettings );
 	const [ dataState, setDataState ] = useState< SettingsData >( originalSettings );
+	const { recordTracksEvent } = useAnalytics();
 
 	const { mutate: saveSettings, isPending: isSaving } = useMutation( {
 		...userSettingsMutation(),
@@ -64,9 +66,15 @@ export const SubscriptionSettings = () => {
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
+			Object.keys( dataState ).forEach( ( key ) => {
+				recordTracksEvent( `calypso_dashboard_notifications_emails_settings_${ key }_updated`, {
+					setting_name: key,
+					setting_value: dataState[ key as keyof SettingsData ],
+				} );
+			} );
 			saveSettings( dataState );
 		},
-		[ dataState, saveSettings ]
+		[ dataState, recordTracksEvent, saveSettings ]
 	);
 
 	const handleChange = useCallback(
