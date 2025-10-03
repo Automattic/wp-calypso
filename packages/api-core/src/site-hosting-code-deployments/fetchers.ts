@@ -29,6 +29,16 @@ export async function fetchCodeDeploymentRunLogs(
 	} );
 }
 
+export async function fetchCodeDeployment(
+	siteId: number,
+	deploymentId: number
+): Promise< CodeDeploymentData > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/hosting/code-deployments/${ deploymentId }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
 export async function fetchCodeDeploymentRunLogDetail(
 	siteId: number,
 	deploymentId: number,

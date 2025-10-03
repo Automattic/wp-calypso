@@ -47,9 +47,17 @@ function RepositoriesList() {
 			modalSize: 'medium',
 		},
 		{
-			id: 'configure-connection',
-			label: __( 'Configure connection' ),
-			callback: () => {},
+			id: 'configure-repository',
+			label: __( 'Configure repository' ),
+			callback: ( items ) => {
+				router.navigate( {
+					to: '/sites/$siteSlug/settings/repositories/manage/$deploymentId',
+					params: {
+						siteSlug: siteSlug,
+						deploymentId: items[ 0 ].id,
+					},
+				} );
+			},
 		},
 		{
 			id: 'see-deployment-runs',

@@ -1,0 +1,37 @@
+.site-preview {
+	width: 100%;
+	overflow: hidden;
+
+	&__badge {
+		grid-column-start: 2;
+	}
+
+	&__url {
+		color: $gray-700;
+		display: flex;
+		flex: 1 1 100%;
+		min-width: 0;
+		width: 100%;
+
+		.components-external-link__contents {
+			max-width: 170px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+
+			@include break-mobile {
+				overflow: unset;
+				max-width: unset;
+				max-width: 250px;
+			}
+			@include break-small {
+				max-width: unset;
+			}
+		}
+
+		&:hover {
+			color: var(--wp-admin-theme-color);
+		}
+	}
+
+}

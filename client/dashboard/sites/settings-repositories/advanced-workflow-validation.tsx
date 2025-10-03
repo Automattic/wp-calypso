@@ -51,7 +51,7 @@ export const AdvancedWorkflowValidation = ( {
 			},
 			upload_artifact_with_required_name: {
 				label: __( 'The uploaded artifact has the required name' ),
-				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
+				description: __( 'Ensure that your workflow uploads an artifact named ‘wpcom’. Example:' ),
 				content: uploadArtifactExample(),
 			},
 		};

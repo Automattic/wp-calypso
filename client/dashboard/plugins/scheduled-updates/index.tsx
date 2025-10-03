@@ -46,7 +46,7 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => [
 		id: 'schedule',
 		type: 'text',
 		label: __( 'Frequency' ),
-		render: ( { item } ) => item.schedule[ 0 ].toUpperCase() + item.schedule.slice( 1 ),
+		render: ( { item } ) => ( item.schedule === 'daily' ? __( 'Daily' ) : __( 'Weekly' ) ),
 	},
 	{
 		id: 'active',
@@ -126,11 +126,13 @@ export default function PluginsScheduledUpdates() {
 					onChangeView={ setView }
 					isLoading={ isLoading }
 					empty={
-						scheduledUpdates.length === 0
-							? __( 'No scheduled updates yet.' )
-							: __(
-									"We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-							  )
+						<p>
+							{ scheduledUpdates.length === 0
+								? __( 'No scheduled updates yet.' )
+								: __(
+										'We couldn’t find any schedules based on your search criteria. You might want to check your search terms and try again.'
+								  ) }
+						</p>
 					}
 					actions={ [
 						{

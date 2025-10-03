@@ -83,7 +83,7 @@ export interface LogEntryDetail {
 	stderr: Array< string >;
 }
 
-export interface CreateCodeDeploymentVariables {
+export interface CreateAndUpdateCodeDeploymentVariables {
 	external_repository_id: number;
 	branch_name: string;
 	target_dir: string;
@@ -92,7 +92,7 @@ export interface CreateCodeDeploymentVariables {
 	workflow_path?: string;
 }
 
-export interface CreateCodeDeploymentResponse {
+export interface CreateAndUpdateCodeDeploymentResponse {
 	message: string;
 	target_dir: string;
 	workflow_path?: string;

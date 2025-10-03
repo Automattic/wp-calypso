@@ -1,5 +1,6 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	githubInstallationsQuery,
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
@@ -918,6 +919,23 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesManageRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories/manage/$deploymentId',
+	parseParams: ( params ) => ( {
+		deploymentId: Number( params.deploymentId ),
+	} ),
+	loader: async () => {
+		await queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-manage' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1050,6 +1068,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsRepositoriesRoute,
 		siteSettingsRepositoriesConnectRoute,
+		siteSettingsRepositoriesManageRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,

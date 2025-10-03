@@ -18,10 +18,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalContent from '../content';
 import EditorMediaModalDetailFields from './detail-fields';
 import EditorMediaModalDetailFileInfo from './detail-file-info';
-import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import EditorMediaModalDetailPreviewImage from './detail-preview-image';
-import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 
 const noop = () => {};
 
@@ -251,12 +249,6 @@ export class EditorMediaModalDetailItem extends Component {
 		switch ( mimePrefix ) {
 			case 'image':
 				Item = EditorMediaModalDetailPreviewImage;
-				break;
-			case 'video':
-				Item = EditorMediaModalDetailPreviewVideo;
-				break;
-			case 'audio':
-				Item = EditorMediaModalDetailPreviewAudio;
 				break;
 			default:
 				Item = EditorMediaModalDetailPreviewDocument;

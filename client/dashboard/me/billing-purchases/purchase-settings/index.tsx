@@ -282,7 +282,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Downgrade or cancel your subscription' ) }
-				description={ __( "We'll be sorry to see you go!" ) }
+				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
 						variant="secondary"
@@ -301,7 +301,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Remove subscription' ) }
-				description={ __( "We'll be sorry to see you go!" ) }
+				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
 						variant="secondary"
