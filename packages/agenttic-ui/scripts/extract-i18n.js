@@ -45,21 +45,9 @@ const parser = extractor.createJsParser( [
 	} ),
 ] );
 
-// Parse both packages
-parser.parseFilesGlob(
-	path.join(
-		__dirname,
-		'..',
-		'packages/agenttic-client/src/**/*.{ts,tsx,js,jsx}'
-	)
-);
-parser.parseFilesGlob(
-	path.join(
-		__dirname,
-		'..',
-		'packages/agenttic-ui/src/**/*.{ts,tsx,js,jsx}'
-	)
-);
+// Parse both packages using relative paths
+parser.parseFilesGlob( 'packages/agenttic-client/src/**/*.{ts,tsx,js,jsx}' );
+parser.parseFilesGlob( 'packages/agenttic-ui/src/**/*.{ts,tsx,js,jsx}' );
 
 // Save POT file with proper WordPress headers
 extractor.savePotFile( outputFile, {
