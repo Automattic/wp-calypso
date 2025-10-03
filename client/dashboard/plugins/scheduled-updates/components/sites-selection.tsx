@@ -1,11 +1,11 @@
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { DataViewsCard } from '../../../../components/dataviews-card';
-import { Name, URL, SiteIconLink } from '../../../../sites/site-fields';
-import { getSiteDisplayName } from '../../../../utils/site-name';
-import { getSiteDisplayUrl } from '../../../../utils/site-url';
-import { useEligibleSites } from '../../hooks/use-eligible-sites';
+import { DataViewsCard } from '../../../components/dataviews-card';
+import { Name, URL, SiteIconLink } from '../../../sites/site-fields';
+import { getSiteDisplayName } from '../../../utils/site-name';
+import { getSiteDisplayUrl } from '../../../utils/site-url';
+import { useEligibleSites } from '../hooks/use-eligible-sites';
 import type { Site } from '@automattic/api-core';
 
 const siteFields: Field< Site >[] = [
@@ -50,7 +50,7 @@ type Props = {
 };
 
 function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props ) {
-	const { data: sites = [] } = useEligibleSites();
+	const { data: sites = [], isLoading } = useEligibleSites();
 	const [ view, setView ] = useState< View >( defaultView );
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( sites, view, siteFields );
@@ -80,6 +80,7 @@ function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props
 				onChangeSelection={ ( ids ) => onChangeSelection( ids as string[] ) }
 				getItemId={ ( item: Site ) => String( item.ID ) }
 				actions={ actions }
+				isLoading={ isLoading }
 				defaultLayouts={ {
 					table: {
 						showMedia: true,

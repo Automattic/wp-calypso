@@ -89,7 +89,7 @@
 		"login/magic-login": true,
 		"login/use-magic-code": true,
 		"mailchimp": true,
-		"mcp-settings": false,
+		"mcp-settings": true,
 		"marketplace-fetch-all-dynamic-products": false,
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,

@@ -2,7 +2,7 @@ import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -141,15 +141,9 @@ function SiteRepositories() {
 				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
 				upsellImage={ illustrationUrl }
 				upsellTitle={ __( 'Deploy from GitHub' ) }
-				upsellDescription={
-					<>
-						<Text as="p" variant="muted">
-							{ __(
-								'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-							) }
-						</Text>
-					</>
-				}
+				upsellDescription={ __(
+					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+				) }
 			>
 				<RepositoriesList />
 			</HostingFeatureGatedWithCallout>

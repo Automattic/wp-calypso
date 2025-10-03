@@ -2,15 +2,7 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	Button,
-	Modal,
-	TabPanel,
-	Card,
-	CardHeader,
-	CardBody,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Button, Modal, TabPanel, Card, CardHeader, CardBody } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
@@ -105,13 +97,9 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }
 			upsellImage={ illustrationUrl }
-			upsellDescription={
-				<Text as="p" variant="muted">
-					{ __(
-						'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
-					) }
-				</Text>
-			}
+			upsellDescription={ __(
+				'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
+			) }
 		>
 			<PageLayout
 				header={
