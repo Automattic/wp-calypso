@@ -52,7 +52,7 @@ export default function SecurityPassword() {
 				onSuccess: () => {
 					setIsReloading( true );
 					// Since changing a user's password invalidates the session, we reload.
-					router.navigate( addFlashMessage( { to: '', replace: true }, 'password' ) );
+					router.navigate( addFlashMessage( { to: '', replace: true }, 'password', 'updated' ) );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {
@@ -129,7 +129,11 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<FlashMessage value="password" message={ __( 'Your password was saved successfully.' ) } />
+			<FlashMessage
+				value="password"
+				id="updated"
+				message={ __( 'Your password was saved successfully.' ) }
+			/>
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
