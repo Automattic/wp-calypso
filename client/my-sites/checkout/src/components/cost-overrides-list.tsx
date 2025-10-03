@@ -53,6 +53,16 @@ const CostOverridesListStyle = styled.div`
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
+	position: relative;
+
+	&:has( svg ) {
+		padding-left: 24px;
+	}
+
+	.rtl &:has( svg ) {
+		padding-right: 24px;
+		padding-left: 0;
+	}
 
 	& .cost-overrides-list-item {
 		display: grid;
@@ -77,6 +87,11 @@ const CostOverridesListStyle = styled.div`
 
 	& .cost-overrides-list-item__discount {
 		white-space: nowrap;
+	}
+
+	&:has( svg ) .cost-overrides-list-item__discount {
+		color: ${ COLOR_GREEN_60 };
+		font-weight: 500;
 	}
 `;
 
@@ -456,7 +471,6 @@ export function CouponCostOverride( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -470,14 +484,8 @@ export function CouponCostOverride( {
 	const label =
 		isOnboardingAffiliateFlow || isOnboardingUnifiedFlow ? getAffiliateCouponLabel() : couponLabel;
 	return (
-		<CostOverridesListStyle
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
-		>
-			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-				<WPCheckoutCheckIcon />
-			) }
+		<CostOverridesListStyle>
+			<WPCheckoutCheckIcon />
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }
