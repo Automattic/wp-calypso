@@ -4,7 +4,6 @@ import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useDebounce } from '@wordpress/compose';
 import { useCallback, useMemo, useRef, type ComponentProps } from 'react';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
-import { useQueryHandler } from './use-query-handler';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -29,21 +28,17 @@ const DomainSearchWithCart = ( {
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
-	const { onContinue, beforeAddDomainToCart } = props.events ?? {};
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 
-	const { query, setQuery } = useQueryHandler( {
-		initialQuery: props.query,
-		currentSiteUrl,
-	} );
+	const { query } = props;
 
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
 		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
 		flowAllowsMultipleDomainsInCart,
-		onContinue,
-		beforeAddDomainToCart,
+		onContinue: props.events?.onContinue,
+		beforeAddDomainToCart: props.events?.beforeAddDomainToCart,
 	} );
 
 	const cartItemsLength = cart.items.length;
@@ -94,7 +89,6 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 			onQueryChange: ( query ) => {
-				setQuery( query );
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
 				debouncedDomainSearchEvent( query );
 				props.events?.onQueryChange?.( query );
@@ -224,15 +218,7 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
-	}, [
-		props.events,
-		items,
-		flowName,
-		config.vendor,
-		query,
-		setQuery,
-		debouncedDomainSearchEvent,
-	] );
+	}, [ props.events, items, flowName, config.vendor, query, debouncedDomainSearchEvent ] );
 
 	return (
 		<DomainSearch
