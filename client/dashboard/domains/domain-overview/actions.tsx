@@ -137,7 +137,7 @@ export default function Actions() {
 				) }
 				{ availableActions.transferIn && (
 					<ActionList.ActionItem
-						title={ __( 'Transfer your domain to WordPress.com' ) }
+						title={ __( 'Bring your domain to WordPress.com' ) }
 						description={ __( 'Manage your site and domain all in one place.' ) }
 						actions={
 							<RouterLinkButton
