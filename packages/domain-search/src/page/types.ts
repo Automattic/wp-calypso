@@ -79,6 +79,7 @@ export interface DomainSearchContextType
 	setQuery: ( query: string ) => void;
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
+	resetFilter: () => void;
 	queries: {
 		availableTlds: ( query?: string, vendor?: string ) => ReturnType< typeof availableTldsQuery >;
 		domainSuggestions: (

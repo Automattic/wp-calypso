@@ -5,7 +5,7 @@ import {
 	freeSuggestionQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { FilterState } from '../components/search-bar/types';
+import { DEFAULT_FILTER } from './constants';
 import { type DomainSearchProps, type DomainSearchContextType } from './types';
 
 const noop = () => {};
@@ -61,6 +61,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		tlds: [],
 	},
 	setFilter: () => {},
+	resetFilter: () => {},
 };
 
 export const DomainSearchContext =
@@ -82,10 +83,7 @@ export const useDomainSearchContextValue = (
 	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
-	const [ filter, setFilter ] = useState( {
-		exactSldMatchesOnly: false,
-		tlds: [],
-	} as FilterState );
+	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -165,6 +163,7 @@ export const useDomainSearchContextValue = (
 			currentSiteUrl,
 			filter,
 			setFilter,
+			resetFilter: () => setFilter( DEFAULT_FILTER ),
 		};
 	}, [
 		isFullCartOpen,
