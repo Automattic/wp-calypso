@@ -521,6 +521,9 @@ export const ConnectRepositoryForm = ( {
 			/>
 
 			<DataForm< ConnectRepositoryFormData >
+				// Force a re-render when the repository changes
+				// Otherwise, the fields that have validation errors will not be reset
+				key={ formData.selectedRepositoryId }
 				data={ formData }
 				fields={ fields }
 				form={ {
