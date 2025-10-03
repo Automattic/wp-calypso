@@ -254,12 +254,9 @@ export default function MonetizeSubscriptionDetails() {
 		monetizeSubscriptionResumeAutoRenew( subscriptionId )
 	);
 
-	const isRenewable = !! (
-		subscription &&
-		( subscription.renew_interval || subscription.is_renewable )
-	); // can remove renew_interval once backend is deployed
+	const isRenewable = subscription?.is_renewable ?? false;
 	const isAutoRenewing = isRenewable && !! subscription.renew_interval;
-	const isProduct = !! subscription && ! isRenewable;
+	const isProduct = ! isRenewable;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 	const formattedExpiry = useFormattedTime( subscription?.end_date ?? '' );
 	const formattedRenewal = useFormattedTime( subscription?.end_date ?? '' );
