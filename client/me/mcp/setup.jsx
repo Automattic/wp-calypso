@@ -9,6 +9,7 @@ import {
 	__experimentalText as Text,
 	Card,
 	CardBody,
+	CardHeader,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -212,8 +213,70 @@ function McpSetupComponent( { path } ) {
 								) }
 							/>
 
+							{ /* Quick Setup for Claude Desktop */ }
+							{ selectedMcpClient === 'claude' && (
+								<VStack spacing={ 4 }>
+									<CardHeader size={ 20 }>{ translate( 'Quick Setup' ) }</CardHeader>
+									<Text as="p" size="small">
+										{ translate(
+											'For Claude Desktop users, we provide a one-click setup option using our pre-configured MCPB file.'
+										) }
+									</Text>
+									<Button
+										variant="primary"
+										href="https://github.com/Automattic/wpcom-mcp-bundle/raw/refs/heads/trunk/wordpress-com-mcp.mcpb"
+										target="_blank"
+										style={ { alignSelf: 'flex-start' } }
+									>
+										{ translate( 'Download MCPB File' ) }
+									</Button>
+									<VStack spacing={ 2 }>
+										<CardHeader size={ 16 }>{ translate( 'Installation steps:' ) }</CardHeader>
+										<ol style={ { fontSize: 'small' } }>
+											<li>
+												<Text as="p" size="small">
+													{ translate( 'Download the MCPB file using the button above.' ) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" size="small">
+													{ translate( 'Open the downloaded file by double-clicking it.' ) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" size="small">
+													{ translate(
+														'Follow the setup instructions from Claude Desktop to install locally.'
+													) }
+												</Text>
+											</li>
+										</ol>
+									</VStack>
+								</VStack>
+							) }
+
+							{ /* Quick Setup for Cursor */ }
+							{ selectedMcpClient === 'cursor' && (
+								<VStack spacing={ 4 }>
+									<CardHeader size={ 20 }>{ translate( 'Quick Setup' ) }</CardHeader>
+									<Text as="p" size="small">
+										{ translate(
+											'For Cursor users, we provide a one-click setup option that will automatically configure the MCP server.'
+										) }
+									</Text>
+									<Button
+										variant="primary"
+										href="https://cursor.com/en/install-mcp?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBhdXRvbWF0dGljL21jcC13cGNvbS1yZW1vdGVAbGF0ZXN0Il19"
+										target="_blank"
+										style={ { alignSelf: 'flex-start' } }
+									>
+										{ translate( 'Install in Cursor' ) }
+									</Button>
+								</VStack>
+							) }
+
 							<VStack spacing={ 4 }>
-								<Text as="h3">{ translate( 'MCP Server Configuration' ) }</Text>
+								<CardHeader size={ 20 }>{ translate( 'MCP Server Configuration' ) }</CardHeader>
 
 								<VStack spacing={ 3 }>
 									<div
