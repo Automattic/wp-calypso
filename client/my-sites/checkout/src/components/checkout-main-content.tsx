@@ -963,7 +963,7 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				max-width: 100%;
 			}
 
-			.checkout-sidebar-plan-upsell {
+			.checkout-sidebar-plan-upsell.promo-card {
 				margin: 0;
 				max-width: 100%;
 			}

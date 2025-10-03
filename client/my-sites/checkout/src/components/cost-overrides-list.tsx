@@ -379,7 +379,7 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
 	position: absolute;
-	top: 1px;
+	top: 0;
 	left: 0;
 
 	.rtl & {
