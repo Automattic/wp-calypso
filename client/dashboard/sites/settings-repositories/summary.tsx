@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import BranchIcon from '../deployments/icons/branch';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
@@ -11,6 +12,9 @@ export default function RepositoriesSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
+	if ( isDashboardBackport() ) {
+		return null;
+	}
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/repositories` }
