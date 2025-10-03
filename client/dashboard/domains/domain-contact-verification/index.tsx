@@ -141,7 +141,7 @@ export default function DomainContactVerification() {
 					) }
 				</Text>
 				<ul>
-					<li>{ __( "Valid drivers' license" ) }</li>
+					<li>{ __( 'Valid drivers’ license' ) }</li>
 					<li>{ __( 'Valid national ID cards (for non-UK residents)' ) }</li>
 					<li>{ __( 'Utility bills (last 3 months)' ) }</li>
 					<li>{ __( 'Bank statement (last 3 months)' ) }</li>

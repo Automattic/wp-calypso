@@ -144,8 +144,6 @@ export default function MonitoringPerformanceCard( {
 			cardLabel="server-performance"
 			title={ __( 'Server performance' ) }
 			description={ __( 'Requests per minute and average server response time.' ) }
-			onDownloadClick={ () => {} }
-			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 		>
 			{ isLoading || requestsData || responseTimeData ? (

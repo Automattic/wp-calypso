@@ -1,10 +1,13 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Suspense } from 'react';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { BrowserNotificationCard } from './browser-notification-card';
 import { BrowserNotificationNotice } from './browser-notification-notice';
+import { Loading } from './loading';
 import { PausedNotificationNotice } from './paused-notification-notice';
+import { SiteListSettings } from './site-list-settings';
 
 export default function NotificationsSites() {
 	return (
@@ -22,8 +25,11 @@ export default function NotificationsSites() {
 			<BrowserNotificationNotice />
 			<PausedNotificationNotice />
 
-			<VStack spacing={ 4 }>
-				<BrowserNotificationCard />
+			<VStack spacing={ 8 }>
+				<BrowserNotificationCard status={ status } />
+				<Suspense fallback={ <Loading /> }>
+					<SiteListSettings />
+				</Suspense>
 			</VStack>
 		</PageLayout>
 	);

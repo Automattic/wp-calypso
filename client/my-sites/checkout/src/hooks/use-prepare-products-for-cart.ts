@@ -41,7 +41,6 @@ const initialPreparedProductsState: PreparedProductsForCart = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	isInModal,
 	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
@@ -56,7 +55,6 @@ export default function usePrepareProductsForCart( {
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	isInModal?: boolean;
 	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
@@ -138,7 +136,7 @@ export default function usePrepareProductsForCart( {
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
-	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
+	const areProductsRetrievedFromUrl = ! state.isLoading;
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
 			sitelessCheckoutType === 'jetpack' ||

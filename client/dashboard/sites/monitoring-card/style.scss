@@ -29,10 +29,19 @@
 	.dashboard-monitoring-card__header {
 		flex-grow: 1;
 	}
+
+	.dashboard-monitoring-card--legend,
+	.dashboard-monitoring-card__line-chart > div[role="list"] {
+		display: flex;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
 }
 
 .dashboard-monitoring-card__line-chart {
 	flex-direction: column-reverse !important;
+	gap: 20px;
+	justify-content: start;
 
 	svg {
 		/* Ensure the chart numbers are not clipped. */
@@ -73,13 +82,24 @@
 }
 
 .dashboard-monitoring-card--row-layout {
-	.visx-legend-label > span {
-		margin-inline-start: 5px;
-	}
+	.pie-chart {
+		position: relative;
 
-	.pie-chart > svg {
-		/* Prevent the chart from overflowing its container. */
-		max-width: 100%;
+		> svg {
+			/* Prevent the chart from overflowing its container. */
+			max-width: 100%;
+		}
+
+		> div[role="tooltip"] {
+			position: absolute;
+			margin-top: 20px;
+			margin-inline-start: 20px;
+			border-radius: 4px;
+			border: 1px solid #DDD;
+			background: #FFF;
+			padding: 16px;
+			text-wrap: nowrap;
+		}
 	}
 
 	.dashboard-monitoring-card__content {

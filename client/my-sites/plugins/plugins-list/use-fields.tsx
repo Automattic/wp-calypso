@@ -149,6 +149,8 @@ export function useFields(
 							</Button>
 						);
 					}
+
+					return translate( 'No' );
 				},
 			},
 		],

@@ -2,39 +2,23 @@ import page from '@automattic/calypso-router';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
 import {
-	authenticate,
 	redirect,
 	exitPost,
 	redirectSiteEditor,
 	redirectToPermalinkIfLoggedOut,
-	redirectPostEditor,
 } from './controller';
 
 export default function () {
 	page( '/site-editor/:site?', redirectLoggedOut, siteSelection, redirectSiteEditor );
 	page( '/post', redirectLoggedOut, siteSelection, sites, makeLayout, clientRender );
 	page( '/post/new', '/post' ); // redirect from beep-beep-boop
-	page(
-		'/post/:site/:post?',
-		redirectToPermalinkIfLoggedOut,
-		siteSelection,
-		redirect,
-		authenticate,
-		redirectPostEditor
-	);
+	page( '/post/:site/:post?', redirectToPermalinkIfLoggedOut, siteSelection, redirect );
 	page.exit( '/post/:site?/:post?', exitPost );
 	page( '/post/:site?', redirectLoggedOut, siteSelection, redirect, makeLayout, clientRender );
 
 	page( '/page', redirectLoggedOut, siteSelection, sites, makeLayout, clientRender );
 	page( '/page/new', '/page' ); // redirect from beep-beep-boop
-	page(
-		'/page/:site/:post?',
-		redirectToPermalinkIfLoggedOut,
-		siteSelection,
-		redirect,
-		authenticate,
-		redirectPostEditor
-	);
+	page( '/page/:site/:post?', redirectToPermalinkIfLoggedOut, siteSelection, redirect );
 	page.exit( '/page/:site?/:post?', exitPost );
 	page( '/page/:site?', redirectLoggedOut, siteSelection, redirect, makeLayout, clientRender );
 
@@ -50,9 +34,7 @@ export default function () {
 		'/edit/:customPostType/:site/:post?',
 		redirectToPermalinkIfLoggedOut,
 		siteSelection,
-		redirect,
-		authenticate,
-		redirectPostEditor
+		redirect
 	);
 	page(
 		'/edit/:customPostType/:site?',

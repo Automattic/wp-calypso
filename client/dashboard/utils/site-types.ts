@@ -11,3 +11,7 @@ export function isP2( site: Site ) {
 export function isSimple( site: Site ) {
 	return ! site.jetpack && ! site.is_wpcom_atomic;
 }
+
+export function isStagingSite( site: Site ) {
+	return site.is_wpcom_staging_site;
+}

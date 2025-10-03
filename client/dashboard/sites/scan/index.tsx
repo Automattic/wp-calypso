@@ -2,18 +2,11 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	Button,
-	Modal,
-	TabPanel,
-	Card,
-	CardHeader,
-	CardBody,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Button, Modal, TabPanel, Card, CardHeader, CardBody } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
@@ -40,6 +33,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 
+	const { recordTracksEvent } = useAnalytics();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ showBulkFixModal, setShowBulkFixModal ] = useState( false );
 
@@ -55,7 +49,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const scanState = useScanState( site.ID );
 	const { scan, status } = scanState;
-
+	const isScanInProgress = status === 'enqueued' || status === 'running';
 	const fixableThreatsCount = scan?.threats?.filter( ( threat ) => threat.fixable ).length || 0;
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
@@ -82,8 +76,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	};
 
 	const renderActiveTab = () => {
-		const showStatus = status === 'enqueued' || status === 'running';
-		if ( showStatus ) {
+		if ( isScanInProgress ) {
 			return <ScanStatus scanState={ scanState } />;
 		}
 		return (
@@ -104,13 +97,9 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }
 			upsellImage={ illustrationUrl }
-			upsellDescription={
-				<Text as="p" variant="muted">
-					{ __(
-						'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
-					) }
-				</Text>
-			}
+			upsellDescription={ __(
+				'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
+			) }
 		>
 			<PageLayout
 				header={
@@ -121,7 +110,16 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 							<ButtonStack>
 								<ScanNowButton site={ site } scanState={ scanState } />
 								{ fixableThreatsCount > 0 && (
-									<Button variant="primary" onClick={ () => setShowBulkFixModal( true ) }>
+									<Button
+										variant="primary"
+										disabled={ isScanInProgress }
+										onClick={ () => {
+											recordTracksEvent( 'calypso_dashboard_scan_fix_threats_cta_click', {
+												threat_count: fixableThreatsCount,
+											} );
+											setShowBulkFixModal( true );
+										} }
+									>
 										{ sprintf(
 											/* translators: %d: number of threats */
 											_n(
@@ -177,7 +175,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					<BulkFixThreatsModal
 						items={ scan?.threats?.filter( ( threat ) => threat.fixable ) || [] }
 						closeModal={ () => setShowBulkFixModal( false ) }
-						siteId={ site.ID }
+						site={ site }
 					/>
 				</Modal>
 			) }

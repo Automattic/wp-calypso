@@ -1,5 +1,6 @@
+import { useDebounce } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 
@@ -10,13 +11,8 @@ export const Input = () => {
 	const { query, setQuery } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 
-	useEffect( () => {
-		const timeout = setTimeout( () => {
-			setQuery( localQuery );
-		}, DELAY_TIMEOUT );
+	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
 
-		return () => clearTimeout( timeout );
-	}, [ localQuery, setQuery ] );
 	return (
 		<DomainSearchControls.Input
 			value={ localQuery }
@@ -25,6 +21,7 @@ export const Input = () => {
 
 				if ( trimmedValue ) {
 					setLocalQuery( trimmedValue );
+					debouncedPropagateQuery( trimmedValue );
 				}
 			} }
 			label={ __( 'Search for a domain' ) }
