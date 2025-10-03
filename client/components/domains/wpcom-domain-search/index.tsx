@@ -3,6 +3,10 @@ import { DomainSearch, getTld } from '@automattic/domain-search';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useDebounce } from '@wordpress/compose';
 import { useCallback, useMemo, useRef, type ComponentProps } from 'react';
+import { useDispatch } from 'react-redux';
+import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
+import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
+import { recordUseYourDomainButtonClick } from '../../domain-search-v2/register-domain-step/analytics';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -16,6 +20,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
 	flowAllowsMultipleDomainsInCart: boolean;
+	analyticsSection: string;
 };
 
 const DomainSearchWithCart = ( {
@@ -25,8 +30,10 @@ const DomainSearchWithCart = ( {
 	config: externalConfig,
 	isFirstDomainFreeForFirstYear,
 	flowAllowsMultipleDomainsInCart,
+	analyticsSection,
 	...props
 }: DomainSearchProps ) => {
+	const dispatch = useDispatch();
 	const cartKey = currentSiteId ?? 'no-site';
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 
@@ -84,7 +91,7 @@ const DomainSearchWithCart = ( {
 			...props.events,
 			onPageView: () => {
 				recordTracksEvent( 'calypso_domain_search_pageview', {
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 					flow_name: flowName,
 				} );
 			},
@@ -96,15 +103,49 @@ const DomainSearchWithCart = ( {
 			onContinue: () => {
 				props.events?.onContinue?.( items );
 			},
+			onSkip: ( suggestion ) => {
+				if ( suggestion ) {
+					// Skipped by selecting a free subdomain
+					dispatch(
+						recordAddDomainButtonClick(
+							suggestion?.domain_name,
+							analyticsSection,
+							0,
+							false,
+							flowName,
+							'dot' // this is the vendor for free WPCOM subdomains
+						)
+					);
+					// We only offer free WPCOM subdomains during signup
+					dispatch( submitDomainStepSelection( suggestion, analyticsSection ) );
+				} else {
+					// Skipped by clicking on "Choose a domain later"
+					const tracksProperties = {
+						section: analyticsSection,
+						flow: flowName,
+						step: 'domains',
+						should_hide_free_plan: false,
+					};
+
+					recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
+				}
+
+				props.events?.onSkip?.( suggestion );
+			},
 			onAddDomainToCart: ( domainName, position, isPremium, rootVendor ) => {
 				recordTracksEvent( 'calypso_domain_search_add_button_click', {
 					domain: domainName,
 					position,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 					is_premium: isPremium,
 					flow_name: flowName,
 					root_vendor: rootVendor,
 				} );
+			},
+			onExternalDomainClick: ( domainName ) => {
+				dispatch( recordUseYourDomainButtonClick( analyticsSection, null, flowName ) );
+
+				props.events?.onExternalDomainClick?.( domainName );
 			},
 			onQueryAvailabilityCheck: ( status, domainName, responseTime ) => {
 				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
@@ -112,7 +153,7 @@ const DomainSearchWithCart = ( {
 					flow_name: flowName,
 					response_time: responseTime,
 					search_query: domainName,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 				} );
 			},
 			onDomainAddAvailabilityPreCheck: ( unavailableStatus, domainName, rootVendor ) => {
@@ -120,7 +161,7 @@ const DomainSearchWithCart = ( {
 					domain: domainName,
 					flow_name: flowName,
 					root_vendor: rootVendor,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 					unavailable_status: unavailableStatus,
 				} );
 			},
@@ -130,7 +171,7 @@ const DomainSearchWithCart = ( {
 					flow_name: flowName,
 					filters_tlds: filter.tlds?.join( ',' ),
 					filters_exact_sld_matches_only: filter.exactSldMatchesOnly,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 				} );
 			},
 			onFilterReset: ( filter, keysToReset ) => {
@@ -140,7 +181,7 @@ const DomainSearchWithCart = ( {
 					filter_exact_sld_matches_only: filter.exactSldMatchesOnly,
 					filter_tlds: filter.tlds?.join( ',' ),
 					flow_name: flowName,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 				} );
 			},
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
@@ -150,7 +191,7 @@ const DomainSearchWithCart = ( {
 					response_time_ms: responseTime,
 					result_count: suggestions.length,
 					flow_name: flowName,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 				} );
 			},
 			onSuggestionRender: ( suggestion, reason ) => {
@@ -193,7 +234,7 @@ const DomainSearchWithCart = ( {
 			onSuggestionNotFound: ( domainName ) => {
 				recordTracksEvent( 'calypso_domain_click_missing_from_results', {
 					domain: domainName,
-					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					section: analyticsSection,
 					flow_name: flowName,
 					search_query: query,
 					type: 'domain',
@@ -218,7 +259,16 @@ const DomainSearchWithCart = ( {
 				} );
 			},
 		};
-	}, [ props.events, items, flowName, config.vendor, query, debouncedDomainSearchEvent ] );
+	}, [
+		props.events,
+		items,
+		flowName,
+		config.vendor,
+		query,
+		debouncedDomainSearchEvent,
+		analyticsSection,
+		dispatch,
+	] );
 
 	return (
 		<DomainSearch

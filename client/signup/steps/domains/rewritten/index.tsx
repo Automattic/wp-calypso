@@ -12,7 +12,6 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -23,7 +22,7 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
@@ -60,8 +59,6 @@ const DomainSearchUI = (
 		goBack,
 	} = props;
 
-	const dispatch = useDispatch();
-
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
@@ -93,14 +90,6 @@ const DomainSearchUI = (
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
 			},
 			onExternalDomainClick( initialQuery?: string ) {
-				dispatch(
-					recordUseYourDomainButtonClick(
-						isDomainOnlyFlow ? 'domain-first' : 'signup',
-						null,
-						flowName
-					)
-				);
-
 				if ( isDomainOnlyFlow ) {
 					return page(
 						addQueryArgs( '/setup/domain-transfer/intro', {
@@ -193,7 +182,6 @@ const DomainSearchUI = (
 		isDomainOnlyFlow,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
-		dispatch,
 	] );
 
 	const allowedTldParam = queryObject.tld;
@@ -356,6 +344,7 @@ const DomainSearchUI = (
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
 					isFirstDomainFreeForFirstYear={ ! isFreeFlow( flowName ) }
+					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}
 		/>

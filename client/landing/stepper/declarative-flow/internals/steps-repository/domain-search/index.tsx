@@ -12,10 +12,8 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useDispatch } from 'react-redux';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domain-search-v2/register-domain-step/analytics';
+import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -24,8 +22,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
-import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
-import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -58,9 +55,7 @@ type StepSubmission = {
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-
+	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
@@ -124,13 +119,11 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
-				dispatch(
-					recordUseYourDomainButtonClick(
-						flow === 'domain' ? 'domain-first' : 'signup',
-						null,
-						flow
-					)
-				);
+				if ( domainName && isHundredYearDomainFlow( flow ) ) {
+					return window.location.assign(
+						`/setup/hundred-year-domain-transfer/domains?new=${ domainName }`
+					);
+				}
 
 				submit( {
 					navigateToUseMyDomain: true,
@@ -153,32 +146,6 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
-				if ( suggestion ) {
-					// Skipped by selecting a free subdomain
-					dispatch(
-						recordAddDomainButtonClick(
-							suggestion?.domain_name,
-							'signup',
-							0,
-							false,
-							flow,
-							'dot' // this is the vendor for free WPCOM subdomains
-						)
-					);
-					// We only offer free WPCOM subdomains during signup
-					dispatch( submitDomainStepSelection( suggestion, 'signup' ) );
-				} else {
-					// Skipped by clicking on "Choose a domain later"
-					const tracksProperties = {
-						section: 'signup',
-						flow: flow,
-						step: 'domains',
-						should_hide_free_plan: false,
-					};
-
-					recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
-				}
-
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
 					domainItem: undefined,
@@ -190,7 +157,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, dispatch, flow ] );
+	}, [ submit, setQuery, flow ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -249,6 +216,7 @@ const DomainSearchStep: StepType< {
 				isDomainAndPlanFlow( flow )
 			}
 			slots={ slots }
+			analyticsSection="signup"
 		/>
 	);
 
@@ -263,7 +231,7 @@ const DomainSearchStep: StepType< {
 						rightElement={
 							query && config.allowsUsingOwnDomain ? (
 								<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-									{ translate( 'Use a domain I already own' ) }
+									{ __( 'Use a domain I already own' ) }
 								</Step.LinkButton>
 							) : undefined
 						}
