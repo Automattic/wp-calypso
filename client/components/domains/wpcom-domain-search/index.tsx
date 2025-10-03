@@ -152,7 +152,7 @@ const DomainSearchWithCart = ( {
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
 				recordTracksEvent( 'calypso_domain_search_results_suggestions_receive', {
 					search_query: query,
-					results: suggestions.join( ';' ),
+					results: suggestions.length > 0 ? suggestions.join( ';' ) : 'empty_results',
 					response_time_ms: responseTime,
 					result_count: suggestions.length,
 					flow_name: flowName,

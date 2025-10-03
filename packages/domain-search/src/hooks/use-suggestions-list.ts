@@ -30,9 +30,7 @@ export const useSuggestionsList = () => {
 	} );
 
 	useEffect( () => {
-		if ( suggestions.length > 0 ) {
-			triggerSuggestionsReceiveEvent();
-		}
+		triggerSuggestionsReceiveEvent();
 	}, [ triggerSuggestionsReceiveEvent, suggestions ] );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
