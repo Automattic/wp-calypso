@@ -9,10 +9,6 @@ import debugFactory from 'debug';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
@@ -41,8 +37,7 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 function getUpsellTextForVariant(
 	upsellVariant: WPCOMProductVariant,
 	percentSavings: number,
-	__: any,
-	isStreamlinedPrice: boolean
+	__: any
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
 		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
@@ -57,11 +52,10 @@ function getUpsellTextForVariant(
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 24 ) {
-		const cardTitle = isStreamlinedPrice
-			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying for two years' )
-			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' );
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		const cardTitle = __(
+			'<strong>Save %(percentSavings)d%% extra</strong> by paying for two years'
+		);
 		return {
 			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
 				strong: createElement( 'strong' ),
@@ -72,11 +66,10 @@ function getUpsellTextForVariant(
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 36 ) {
-		const cardTitle = isStreamlinedPrice
-			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying for three years' )
-			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%%</strong> by paying for three years' );
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		const cardTitle = __(
+			'<strong>Save %(percentSavings)d%% extra</strong> by paying for three years'
+		);
 		return {
 			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
 				strong: createElement( 'strong' ),
@@ -110,10 +103,6 @@ export function CheckoutSidebarPlanUpsell() {
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
-	);
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
-		streamlinedPriceExperimentAssignment
 	);
 
 	const variants = useGetProductVariants( plan );
@@ -201,33 +190,18 @@ export function CheckoutSidebarPlanUpsell() {
 		currentVariant.introductoryInterval === 1 &&
 		currentVariant.introductoryTerm === 'year';
 
-	const upsellText = getUpsellTextForVariant(
-		upsellVariant,
-		percentSavings,
-		__,
-		isStreamlinedPrice
-	);
+	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
 
 	if ( ! upsellText ) {
 		return;
 	}
 
-	const { cardTitle, cellLabel, ctaText } = upsellText;
+	const { cardTitle, ctaText } = upsellText;
 
 	return (
 		<>
 			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					{ ! isStreamlinedPrice && (
-						<>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-								<strong>{ __( 'Plan' ) }</strong>
-							</div>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-								<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
-							</div>
-						</>
-					) }
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ currentVariant.variantLabel.adjective }
 					</div>
@@ -260,12 +234,10 @@ export function CheckoutSidebarPlanUpsell() {
 						} ) }
 					</div>
 				</div>
-				{ isStreamlinedPrice && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-					/>
-				) }
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					isCartUpdating={ FormStatus.VALIDATING === formStatus }
+				/>
 				<PromoCardCTA
 					cta={ {
 						disabled: isFormLoading,
