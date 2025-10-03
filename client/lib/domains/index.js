@@ -34,3 +34,4 @@ export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
 export { getTransferredInDomains, isTransferredInDomain } from './transferred-domains';
 export { extractDomainFromInput } from './get-domain-from-input';
+export { getDomainAndPlanUpsellUrl } from './get-domain-and-plan-upsell-url';

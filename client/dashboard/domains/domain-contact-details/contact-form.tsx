@@ -15,7 +15,6 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -27,6 +26,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { getContactFormFields } from './contact-form-fields';
 import ContactFormPrivacy from './contact-form-privacy';
+import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 
 interface ContactFormProps {
 	domainName: string;
@@ -42,22 +42,35 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	);
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
+
+	const normalizedFormData = useMemo( () => {
+		if ( ! statesList || statesList.length === 0 ) {
+			return formData;
+		}
+
+		// If current state is not in the statesList, use the first available state
+		const isValidState = statesList.some( ( state ) => state.code === formData.state );
+		if ( formData.state && ! isValidState ) {
+			return { ...formData, state: statesList[ 0 ]?.code };
+		}
+
+		return formData;
+	}, [ formData, statesList ] );
+
 	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
-	const isMobileViewport = useViewportMatch( 'small', '<' );
-
-	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
+	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		validateMutation.mutate( formData, {
+		validateMutation.mutate( normalizedFormData, {
 			onSuccess: ( data ) => {
 				if ( data.success ) {
 					updateMutation.mutate(
 						{
-							domainContactDetails: formData,
-							transferLock: formData.optOutTransferLock === false,
+							domainContactDetails: normalizedFormData,
+							transferLock: normalizedFormData.optOutTransferLock === false,
 						},
 						{
 							onSuccess: () => {
@@ -85,8 +98,8 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	};
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() => getContactFormFields( countryList ?? [], statesList ?? [] ),
-		[ countryList, statesList ]
+		() => getContactFormFields( countryList ?? [], statesList ?? [], selectedCountryCode ),
+		[ countryList, statesList, selectedCountryCode ]
 	);
 
 	const form = {
@@ -110,22 +123,16 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				children: [ 'email', 'phone' ],
 			} as FormField,
 			'countryCode',
-			'address1',
-			'address2',
-			{
-				id: 'location-row',
-				layout: {
-					type: 'row' as const,
-					alignment: 'start' as const,
-				},
-				children: isMobileViewport ? [ 'city', 'state' ] : [ 'city', 'state', 'postalCode' ],
-			} as FormField,
-			...( isMobileViewport ? [ 'postalCode' ] : [] ),
+			...RegionAddressFieldsLayout( {
+				statesList,
+				countryList,
+				countryCode: selectedCountryCode,
+			} ),
 			'optOutTransferLock',
 		],
 	};
 
-	const canSave = isItemValid( formData, fields, form );
+	const canSave = isItemValid( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -179,7 +186,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				<CardBody>
 					<VStack spacing={ 4 }>
 						<DataForm< DomainContactDetails >
-							data={ formData }
+							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {

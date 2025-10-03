@@ -109,3 +109,37 @@ export const getStatusIntent = ( status: Valuation ): 'error' | 'warning' | 'suc
 
 	return statusMap[ status ];
 };
+
+export const getDisplayUnit = ( metric: Metrics ) => {
+	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric ) ) {
+		return 's';
+	}
+
+	return '';
+};
+
+const max2Decimals = ( val: number ) => Number( Number( val ).toFixed( 2 ) );
+
+export const getFormattedValue = ( metric: Metrics, value: number ): number => {
+	if ( value === null || value === undefined ) {
+		return 0;
+	}
+
+	if ( metric === 'overall_score' ) {
+		return Math.floor( value );
+	}
+
+	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric ) ) {
+		return max2Decimals( value / 1000 );
+	}
+
+	return max2Decimals( value );
+};
+
+export const getDisplayValue = ( metric: Metrics, value: number ): string => {
+	if ( value === null || value === undefined ) {
+		return '';
+	}
+
+	return [ getFormattedValue( metric, value ), getDisplayUnit( metric ) ].join( '' );
+};

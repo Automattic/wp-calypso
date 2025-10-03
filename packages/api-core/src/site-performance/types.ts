@@ -4,6 +4,11 @@ export interface BasicMetricsData {
 
 export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall_score';
 
+export type SitePerformanceHistory = {
+	collection_period: Array< string | { year: number; month: number; day: number } >;
+	metrics: Partial< Record< Metrics, number[] > >;
+};
+
 export type SitePerformanceReport = {
 	audits: Record< string, any >;
 	crux_score: number;
@@ -19,10 +24,7 @@ export type SitePerformanceReport = {
 	is_wpcom: boolean;
 	is_wordpress: boolean;
 	screenshots?: Array< { data: string; timing: number } >;
-	history: {
-		collection_period: Array< string | { year: number; month: number; day: number } >;
-		metrics: Partial< Record< Metrics, number[] > >;
-	};
+	history?: SitePerformanceHistory;
 	timestamp?: string;
 	share_link: string;
 } & Record< Metrics, number >;
