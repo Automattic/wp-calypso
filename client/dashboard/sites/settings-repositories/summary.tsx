@@ -14,7 +14,7 @@ export default function RepositoriesSettingsSummary( {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/repositories` }
-			title={ __( 'Repositories' ) }
+			title={ __( 'GitHub repositories' ) }
 			density={ density }
 			decoration={ <BranchIcon width={ 22 } height={ 22 } style={ { opacity: 0.95 } } /> }
 		/>
