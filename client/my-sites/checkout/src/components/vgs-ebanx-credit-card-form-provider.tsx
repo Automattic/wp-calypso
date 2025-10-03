@@ -1,11 +1,9 @@
-import { loadVGSCollect } from '@vgs/collect-js';
+import { loadVGSCollect, VGS } from '@vgs/collect-js';
 import {
-	VGSCollectFormState,
 	VGSCollectHttpStatusCode,
 	VGSCollectVaultEnvironment,
 	useVGSCollectState,
 	useVGSCollectFormInstance,
-	IVGSCollectForm,
 	VGSCollectProvider,
 } from '@vgs/collect-js-react';
 import { __ } from '@wordpress/i18n';
@@ -21,11 +19,13 @@ import {
 import { useVaultId } from '../hooks/use-vault-id';
 
 export interface VgsEbanxCreditCardFormContextType {
-	formData: VGSCollectFormState | undefined;
-	form: IVGSCollectForm | null;
+	formData: VGS.FormData;
+	setFormData: React.Dispatch< React.SetStateAction< VGS.FormData > >;
+	setFormSubmitAttempted: React.Dispatch< React.SetStateAction< boolean > >;
+	setForm: React.Dispatch< React.SetStateAction< VGS.FormObject | undefined > >;
+	form: VGS.FormObject | undefined;
 	formSubmitAttempted: boolean;
-	setFormSubmitAttempted: ( attempted: boolean ) => void;
-	submitForm: () => Promise< unknown >;
+	submitForm: () => Promise< VGS.TokenizedCardData >;
 	formLoadingError: boolean;
 	isVGSCollectScriptLoaded: boolean;
 	vaultId: string;
@@ -74,20 +74,20 @@ export const VgsEbanxCreditCardFormProvider = ( {
 		};
 
 		initializeVGS();
-	}, [ data, isSuccess ] );
+	}, [ form, data, isSuccess ] );
 
 	const submitForm = useCallback( () => {
 		if ( ! form ) {
 			return Promise.reject( new Error( 'Form is undefined' ) );
 		}
 
-		return new Promise< unknown >( ( resolve, reject ) => {
+		return new Promise< VGS.TokenizedCardData >( ( resolve, reject ) => {
 			form.submit(
 				'/post',
 				{},
 				( status: VGSCollectHttpStatusCode, response: unknown ) => {
 					if ( status === 200 ) {
-						resolve( response );
+						resolve( response.json );
 					} else {
 						reject(
 							new Error(
