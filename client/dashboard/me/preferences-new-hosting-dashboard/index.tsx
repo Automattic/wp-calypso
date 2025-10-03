@@ -27,14 +27,8 @@ interface OptInFormData {
 const form = {
 	layout: {
 		type: 'regular' as const,
-		labelPosition: 'top' as const,
 	},
-	fields: [
-		{
-			id: 'optInForm',
-			children: [ 'description', 'enabled' ],
-		},
-	],
+	fields: [ 'enabled' ],
 };
 
 const fields: Field< OptInFormData >[] = [
@@ -53,16 +47,6 @@ const fields: Field< OptInFormData >[] = [
 				/>
 			);
 		},
-	},
-	{
-		id: 'description',
-		Edit: () => (
-			<Text as="p" variant="muted">
-				{ __(
-					'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
-				) }
-			</Text>
-		),
 	},
 ];
 
@@ -121,6 +105,11 @@ export default function PreferencesLanguageForm() {
 			<CardBody>
 				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
 					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />
+					<Text as="p" variant="muted">
+						{ __(
+							'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
+						) }
+					</Text>
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }
