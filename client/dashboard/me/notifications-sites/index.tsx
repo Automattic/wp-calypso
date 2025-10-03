@@ -26,7 +26,7 @@ export default function NotificationsSites() {
 			<PausedNotificationNotice />
 
 			<VStack spacing={ 8 }>
-				<BrowserNotificationCard status={ status } />
+				<BrowserNotificationCard />
 				<Suspense fallback={ <Loading /> }>
 					<SiteListSettings />
 				</Suspense>
