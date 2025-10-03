@@ -1,4 +1,5 @@
 import { LineChart } from '@automattic/charts';
+import { GlyphCircle, GlyphSquare, GlyphTriangle } from '@visx/glyph';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
@@ -9,12 +10,18 @@ import {
 	getColorForStatus,
 	getDisplayUnit,
 	getFormattedValue,
+	getStatusText,
 	mapThresholdsToStatus,
-	metricsNames,
 } from '../../utils/site-performance';
 import defaultHistory from './history';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
 import '@automattic/charts/line-chart/style.css';
+
+const StatusGlyph = {
+	good: GlyphCircle,
+	needsImprovement: GlyphTriangle,
+	bad: GlyphSquare,
+};
 
 const StatusIndicator = ( { valuation }: { valuation: Valuation } ) => {
 	const innerSvg: Record< Valuation, React.ReactNode > = {
@@ -89,7 +96,7 @@ const useMetricData = (
 
 	return [
 		{
-			label: metricsNames[ metric ].shortName,
+			label: getStatusText( valuation ),
 			data,
 			options: {
 				stroke: color,
@@ -110,9 +117,10 @@ export default function CoreMetricsChart( {
 } ) {
 	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
+	const currentValuation = mapThresholdsToStatus( metric, report[ metric ] );
 	const data = useMetricData(
 		metric,
-		mapThresholdsToStatus( metric, report[ metric ] ),
+		currentValuation,
 		defaultHistory
 		// report.history
 	);
@@ -171,15 +179,33 @@ export default function CoreMetricsChart( {
 					value={ formatThresholdValue( isOverall, 'bad' ) }
 				/>
 			</HStack>
-			{ data ? (
-				<LineChart data={ data } withGradientFill={ false } />
-			) : (
-				<Notice title={ __( 'No history available' ) }>
-					{ __(
-						'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
-					) }
-				</Notice>
-			) }
+			<div style={ { maxWidth: '500px' } }>
+				{ data ? (
+					<LineChart
+						data={ data }
+						withGradientFill={ false }
+						smoothing={ false }
+						renderGlyph={ ( { color, x, y } ) => {
+							const GlyphComponent = StatusGlyph[ currentValuation ];
+							return <GlyphComponent top={ y } left={ x } size={ 100 } fill={ color } />;
+						} }
+						renderTooltip={ ( { tooltipData } ) => {
+							const nearestDatum = tooltipData?.nearestDatum?.datum;
+							if ( ! nearestDatum ) {
+								return null;
+							}
+
+							return nearestDatum.value;
+						} }
+					/>
+				) : (
+					<Notice title={ __( 'No history available' ) }>
+						{ __(
+							'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
+						) }
+					</Notice>
+				) }
+			</div>
 		</>
 	);
 }
