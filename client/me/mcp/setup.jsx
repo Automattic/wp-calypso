@@ -1,5 +1,5 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { userSettingsQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -15,19 +15,17 @@ import { sprintf } from '@wordpress/i18n';
 import { copy, check, error } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { hasEnabledAccountTools } from './utils';
 
-function McpSetupComponent( { path, userSettings } ) {
+function McpSetupComponent( { path } ) {
 	const translate = useTranslate();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	// MCP client selection for configuration format
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState( 'claude' );
@@ -127,10 +125,6 @@ function McpSetupComponent( { path, userSettings } ) {
 	// Check if any account-level tools are enabled using the new nested structure
 	const hasEnabledTools = hasEnabledAccountTools( userSettings );
 
-	if ( ! isAutomattician ) {
-		return null;
-	}
-
 	if ( ! hasEnabledTools ) {
 		return (
 			<Main wideLayout className="mcp-setup">
@@ -138,7 +132,7 @@ function McpSetupComponent( { path, userSettings } ) {
 				<DocumentHead title={ translate( 'MCP Setup' ) } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
 				<SectionHeader label={ translate( 'Setup Required' ) } />
-				<Card style={ { borderRadius: '0' } }>
+				<Card isRounded={ false }>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<Text as="p" variant="muted">
@@ -205,7 +199,7 @@ function McpSetupComponent( { path, userSettings } ) {
 
 			<div style={ { marginTop: '24px' } }>
 				<SectionHeader label={ translate( 'Client Configuration' ) } />
-				<Card style={ { borderRadius: '0' } }>
+				<Card isRounded={ false }>
 					<CardBody>
 						<VStack spacing={ 6 }>
 							<SelectControl
@@ -320,9 +314,4 @@ function McpSetupComponent( { path, userSettings } ) {
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		userSettings: getUserSettings( state ),
-	} ),
-	{}
-)( McpSetupComponent );
+export default McpSetupComponent;
