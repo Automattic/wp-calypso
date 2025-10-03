@@ -179,6 +179,15 @@ const DomainSearchWithCart = ( {
 					root_vendor: suggestion.vendor,
 				} );
 			},
+			onSuggestionNotFound: ( domainName ) => {
+				recordTracksEvent( 'calypso_domain_click_missing_from_results', {
+					domain: domainName,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					flow_name: flowName,
+					search_query: query,
+					type: 'domain',
+				} );
+			},
 			onTrademarkClaimsNoticeShown: ( suggestion ) => {
 				recordTracksEvent( 'calypso_show_trademark_notice_click', {
 					domain_name: suggestion.domain_name,

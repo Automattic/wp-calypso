@@ -60,6 +60,7 @@ export interface DomainSearchEvents {
 		reason?: FeaturedSuggestionReason
 	) => void;
 	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
+	onSuggestionNotFound: ( domainName: string ) => void;
 	onTrademarkClaimsNoticeShown: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;

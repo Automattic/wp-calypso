@@ -49,7 +49,7 @@ const getPriceRuleForSuggestion = ( {
 };
 
 export const useSuggestion = ( domainName: string ) => {
-	const { query, queries, config } = useDomainSearch();
+	const { query, queries, config, events } = useDomainSearch();
 
 	const { data: suggestion } = useQuery( {
 		...queries.domainSuggestions( query ),
@@ -59,6 +59,7 @@ export const useSuggestion = ( domainName: string ) => {
 			);
 
 			if ( suggestionPosition === -1 ) {
+				events.onSuggestionNotFound( domainName );
 				throw new Error( `Suggestion not found for domain: ${ domainName }` );
 			}
 
