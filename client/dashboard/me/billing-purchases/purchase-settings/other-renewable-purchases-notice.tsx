@@ -2,9 +2,14 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { isBefore } from 'date-fns';
 import { useState } from 'react';
 import Notice from '../../../components/notice';
-import { getRelativeTimeString, isWithinNext } from '../../../utils/datetime';
+import {
+	getDateFromCreditCardExpiry,
+	getRelativeTimeString,
+	isWithinNext,
+} from '../../../utils/datetime';
 import {
 	isExpired,
 	isExpiring,
@@ -21,6 +26,23 @@ import { shouldShowCardExpiringWarning } from './purchase-notice';
 import { UpcomingRenewalsDialog } from './upcoming-renewals-dialog';
 import type { NoticeVariant } from '../../../components/notice/types';
 import type { Purchase } from '@automattic/api-core';
+
+function getCardExpirationTense( purchase: Purchase ): string {
+	if ( ! purchase.payment_expiry ) {
+		return 'expires';
+	}
+
+	try {
+		// Use existing utility that returns the last day of the expiry month
+		const cardExpiryDate = getDateFromCreditCardExpiry( purchase.payment_expiry );
+		const now = new Date();
+
+		return isBefore( cardExpiryDate, now ) ? 'expired' : 'expires';
+	} catch {
+		// Fallback for invalid dates
+		return 'expires';
+	}
+}
 
 export function shouldShowOtherRenewablePurchasesNotice(
 	purchase: Purchase,
@@ -656,13 +678,14 @@ export function OtherRenewablePurchasesNotice( {
 					noticeStatus={ shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info' }
 					noticeText={ createInterpolateElement(
 						sprintf(
-							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, tense is 'expires' or 'expired', and cardExpiry is the card expiration date.
 							__(
-								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+								'Your %(cardType)s ending in %(cardNumber)d %(tense)s %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 							),
 							{
 								cardType: purchase.payment_card_type,
 								cardNumber: purchase.payment_card_id,
+								tense: getCardExpirationTense( purchase ),
 								cardExpiry: purchase.payment_expiry,
 							}
 						),
@@ -835,13 +858,14 @@ export function OtherRenewablePurchasesNotice( {
 					noticeStatus="info"
 					noticeText={ createInterpolateElement(
 						sprintf(
-							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, tense is 'expires' or 'expired', and cardExpiry is the card expiration date.
 							__(
-								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+								'Your %(cardType)s ending in %(cardNumber)d %(tense)s %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 							),
 							{
 								cardType: purchase.payment_card_type,
 								cardNumber: purchase.payment_card_id,
+								tense: getCardExpirationTense( purchase ),
 								cardExpiry: purchase.payment_expiry,
 							}
 						),

@@ -5,10 +5,11 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, isBefore } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Notice from '../../../components/notice';
+import { getDateFromCreditCardExpiry } from '../../../utils/datetime';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -335,21 +336,42 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 	);
 }
 
+function getCardExpirationTense( purchase: Purchase ): string {
+	if ( ! purchase.payment_expiry ) {
+		return 'expires';
+	}
+
+	try {
+		// Use existing utility that returns the last day of the expiry month
+		const cardExpiryDate = getDateFromCreditCardExpiry( purchase.payment_expiry );
+		const now = new Date();
+
+		return isBefore( cardExpiryDate, now ) ? 'expired' : 'expires';
+	} catch {
+		// Fallback for invalid dates
+		return 'expires';
+	}
+}
+
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	const changePaymentMethodPath = purchase.payment_card_id
 		? getChangePaymentMethodUrlFor( purchase )
 		: getAddPaymentMethodUrlFor( purchase );
+
+	const tense = getCardExpirationTense( purchase );
+
 	return (
 		<Notice variant={ shouldShowCardExpiringWarning( purchase ) ? 'error' : 'info' }>
 			{ createInterpolateElement(
 				sprintf(
-					// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+					// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, tense is 'expires' or 'expired', and cardExpiry is the card expiration date.
 					__(
-						'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
+						'Your %(cardType)s ending in %(cardNumber)d %(tense)s %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
 					),
 					{
 						cardType: purchase.payment_card_type,
 						cardNumber: purchase.payment_card_id,
+						tense: tense,
 						cardExpiry: purchase.payment_expiry,
 					}
 				),
