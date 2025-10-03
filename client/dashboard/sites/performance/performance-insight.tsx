@@ -3,19 +3,16 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	Card,
-	CardBody,
 	ExternalLink,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
 import Markdown from 'react-markdown';
-import AIIcon from 'calypso/assets/images/performance-profiler/ai-icon.svg';
-import AILoadingIcon from 'calypso/assets/images/performance-profiler/ai-loading-icon.svg';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query'; // eslint-disable-line
 import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
+import LLMNotice from './llm-notice';
 import useLoadingSteps from './use-loading-steps';
 import type {
 	PerformanceMetricsItemQueryResponse,
@@ -23,7 +20,6 @@ import type {
 	DeviceToggleType,
 } from './types';
 import type { SitePerformanceReport } from '@automattic/api-core';
-import './performance-insight.scss';
 
 export const PerformanceInsightTitle = ( {
 	insight,
@@ -69,22 +65,7 @@ const PerformanceInsightLoading = () => {
 		],
 	} );
 
-	return (
-		<Card
-			size="xSmall"
-			style={ {
-				background:
-					'linear-gradient(0deg,#fffffff2,#fffffff2),linear-gradient(90deg,#4458e4,#069e08)',
-			} }
-		>
-			<CardBody>
-				<HStack className="performance-insight__loading" justify="flex-start">
-					<img src={ AILoadingIcon } alt={ __( 'AI generated content icon' ) } />
-					<Text>{ steps[ step ] }</Text>
-				</HStack>
-			</CardBody>
-		</Card>
-	);
+	return <LLMNotice isLoading>{ steps[ step ] }</LLMNotice>;
 };
 
 const PerformanceInsightTip = () => {
@@ -109,41 +90,31 @@ const PerformanceInsightTip = () => {
 // TODO: Implement click behavior.
 const PerformanceInsightFeedback = () => {
 	return (
-		<Card
-			size="xSmall"
-			style={ {
-				background:
-					'linear-gradient(0deg,#fffffff2,#fffffff2),linear-gradient(90deg,#4458e4,#069e08)',
-			} }
+		<LLMNotice
+			actions={
+				<>
+					<Text>{ __( 'How did we do?' ) }</Text>
+					<Button
+						icon={ thumbsUp }
+						iconSize={ 16 }
+						size="compact"
+						style={ { padding: '2px', color: 'var(--dashboard__foreground-color-success)' } }
+					>
+						{ __( 'Good, it‘s helpful' ) }
+					</Button>
+					<Button
+						icon={ thumbsDown }
+						iconSize={ 16 }
+						size="compact"
+						style={ { padding: '2px', color: 'var(--dashboard__foreground-color-error)' } }
+					>
+						{ __( 'Not helpful' ) }
+					</Button>
+				</>
+			}
 		>
-			<CardBody>
-				<HStack justify="flex-start">
-					<HStack justify="flex-start">
-						<img src={ AIIcon } alt={ __( 'AI generated content icon' ) } />
-						<span className="message">{ __( 'Generated with AI' ) }</span>
-					</HStack>
-					<HStack justify="flex-end" alignment="center">
-						<Text>{ __( 'How did we do?' ) }</Text>
-						<Button
-							icon={ thumbsUp }
-							iconSize={ 16 }
-							size="compact"
-							style={ { padding: 0, color: 'var(--dashboard__foreground-color-success)' } }
-						>
-							{ __( 'Good, it‘s helpful' ) }
-						</Button>
-						<Button
-							icon={ thumbsDown }
-							iconSize={ 16 }
-							size="compact"
-							style={ { padding: 0, color: 'var(--dashboard__foreground-color-error)' } }
-						>
-							{ __( 'Not helpful' ) }
-						</Button>
-					</HStack>
-				</HStack>
-			</CardBody>
-		</Card>
+			{ __( 'Generated with AI' ) }
+		</LLMNotice>
 	);
 };
 
