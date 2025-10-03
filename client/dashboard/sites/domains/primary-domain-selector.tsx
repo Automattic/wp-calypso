@@ -19,7 +19,7 @@ import { userHasFlag } from '../../utils/user';
 import type { Field } from '@wordpress/dataviews';
 
 interface PrimaryDomainSelectorProps {
-	domains: SiteDomain[];
+	domains: SiteDomain[] | undefined;
 	site: Site;
 	user: User;
 }

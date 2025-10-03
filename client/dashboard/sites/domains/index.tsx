@@ -69,7 +69,9 @@ function SiteDomains() {
 				/>
 			}
 		>
-			<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
+			{ ! isLoading && siteDomains && (
+				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
+			) }
 			<DataViewsCard>
 				<DataViews< SiteDomain >
 					data={ filteredData || [] }
