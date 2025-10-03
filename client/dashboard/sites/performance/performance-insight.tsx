@@ -2,6 +2,7 @@ import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
 	Button,
 	ExternalLink,
 } from '@wordpress/components';
@@ -14,6 +15,7 @@ import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import LLMNotice from './llm-notice';
+import PerformanceInsightTable from './performance-insight-table';
 import useLoadingSteps from './use-loading-steps';
 import type {
 	PerformanceMetricsItemQueryResponse,
@@ -119,7 +121,6 @@ const PerformanceInsightFeedback = () => {
 	);
 };
 
-// TODO: Implement detail.
 const PerformanceInsightDetail = ( {
 	details,
 	fullPageScreenshot,
@@ -127,9 +128,30 @@ const PerformanceInsightDetail = ( {
 	details: PerformanceMetricsDetailsQueryResponse;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 } ) => {
-	console.log( { details, fullPageScreenshot } ); // eslint-disable-line no-console
+	if ( details.type === 'table' || details.type === 'opportunity' ) {
+		return (
+			<PerformanceInsightTable details={ details } fullPageScreenshot={ fullPageScreenshot } />
+		);
+	}
 
-	return <>Performance Insight Detail</>;
+	if ( details.type === 'list' ) {
+		const tables = details.items ?? [];
+
+		return tables.map( ( item, index ) => (
+			<PerformanceInsightTable
+				key={ index }
+				details={ item as unknown as PerformanceMetricsDetailsQueryResponse }
+				fullPageScreenshot={ fullPageScreenshot }
+			/>
+		) );
+	}
+
+	if ( details.type === 'criticalrequestchain' ) {
+		// TODO: We should render the insight tree but I cannot find any sample data...
+		return null;
+	}
+
+	return null;
 };
 
 export const PerformanceInsight = ( {
@@ -150,7 +172,8 @@ export const PerformanceInsight = ( {
 	const locale = useLocale();
 	const isDesktop = useViewportMatch( 'medium' );
 	const { data: llmAnswer } = useSupportChatLLMQuery(
-		insight,
+		// TODO: Fix types
+		insight as any,
 		hash,
 		isWpcom,
 		true,
@@ -182,10 +205,13 @@ export const PerformanceInsight = ( {
 					</HStack>
 					<PerformanceInsightFeedback />
 					{ insight.details?.type && (
-						<PerformanceInsightDetail
-							details={ insight.details }
-							fullPageScreenshot={ fullPageScreenshot }
-						/>
+						<>
+							<Spacer marginBottom={ 0 } />
+							<PerformanceInsightDetail
+								details={ insight.details }
+								fullPageScreenshot={ fullPageScreenshot }
+							/>
+						</>
 					) }
 				</>
 			) : (
