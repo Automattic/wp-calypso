@@ -191,7 +191,6 @@ export default function PerformanceInsights( {
 					>
 						<PerformanceInsight
 							device={ device }
-							auditSlug={ key }
 							insight={ audits[ key ] }
 							fullPageScreenshot={ fullPageScreenshot }
 							isWpcom={ is_wpcom }
