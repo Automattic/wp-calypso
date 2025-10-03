@@ -74,7 +74,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 			label: __( 'Primary domain' ),
 			elements: [
 				{
-					label: 'Select a domain',
+					label: __( 'Select a domain name' ),
 					value: '',
 				},
 				...domainsList.map( ( domain ) => {
@@ -132,7 +132,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s is domain */
-							__( 'Primary domain changed: all domains will redirect to %s.' ),
+							__( 'Primary site address changed: all domains will redirect to %s.' ),
 							formData.primaryDomain
 						),
 						{
@@ -144,7 +144,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 				},
 				onError: () => {
 					createErrorNotice(
-						__( 'Something went wrong and we couldn’t change your primary domain.' ),
+						__( 'Something went wrong and we couldn’t change your primary site address.' ),
 						{
 							type: 'snackbar',
 						}
