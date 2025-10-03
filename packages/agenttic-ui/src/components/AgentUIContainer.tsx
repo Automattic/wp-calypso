@@ -12,6 +12,7 @@ import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
 import type { AgentUIProps } from '../types';
 import { cn } from '../utils/classNames';
+import { getChatPosition, setChatPosition } from '../utils/chatStorage';
 import { morphSpring } from './animations';
 import {
 	type AgentUIContextValue,
@@ -169,14 +170,21 @@ export function AgentUIContainer( {
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
 	const [ currentSide, setCurrentSide ] = useState< 'left' | 'right' >(
-		'left'
+		getChatPosition
 	);
 	const compactRef = useRef< HTMLDivElement >( null );
 	const constraintsRef = useRef< HTMLDivElement >( null );
 	const chatRef = useRef< HTMLDivElement >( null );
 
 	// Motion values for programmatic control
-	const x = useMotionValue( 0 );
+	// Initialize position based on saved side (right-aligned needs offset)
+	const initialX =
+		currentSide === 'right'
+			? window.innerWidth -
+			  STYLE_CONSTANTS.COMPACT_WIDTH -
+			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
+			: 0;
+	const x = useMotionValue( initialX );
 	const y = useMotionValue( 0 );
 	const dragControls = useDragControls();
 
@@ -382,6 +390,7 @@ export function AgentUIContainer( {
 			const isLeft = dropX < viewportMidpointX;
 			const newSide = isLeft ? 'left' : 'right';
 			setCurrentSide( newSide );
+			setChatPosition( newSide );
 
 			// Calculate snap position using the new side immediately
 			const position = calculateSnapPosition( newSide );
