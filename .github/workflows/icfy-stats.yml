@@ -7,7 +7,7 @@ jobs:
     name: Build ICFY stats
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --max-old-space-size=4096
+      NODE_OPTIONS: --max-old-space-size=6144
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

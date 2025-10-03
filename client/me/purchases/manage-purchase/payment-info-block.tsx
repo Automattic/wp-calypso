@@ -12,7 +12,7 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactNode } from 'react';
 

@@ -15,10 +15,6 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/help-center/src/hooks/use-reset-support-interaction', () => ( {
-	useResetSupportInteraction: () => jest.fn().mockResolvedValue( undefined ),
-} ) );
-
 jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
 		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
@@ -28,10 +24,6 @@ jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useGetZendeskConversation: jest.fn(),
 	useOdieChat: jest.fn(),
 	broadcastOdieMessage: jest.fn(),
-} ) );
-
-jest.mock( '@automattic/odie-client/src/utils/storage-utils', () => ( {
-	clearHelpCenterZendeskConversationStarted: jest.fn(),
 } ) );
 
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
@@ -130,12 +122,13 @@ describe( '<EligibilityWarnings>', () => {
 				{
 					name: 'Warning 2',
 					description: 'Describes warning 2',
+					supportPostId: 123,
 					supportUrl: 'https://helpme.com',
 				},
 			],
 		} );
 
-		const { getByText } = renderWithStore(
+		const { getByRole, getByText } = renderWithStore(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -145,7 +138,7 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Warning 2' ) ).toBeVisible();
 		expect( getByText( 'Describes warning 2' ) ).toBeVisible();
 
-		expect( getByText( 'Learn more.' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
+		expect( getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {

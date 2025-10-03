@@ -200,10 +200,12 @@ export function requestSite( siteFragment ) {
 					 * endpoint returns accurate data.
 					 */
 					if ( hasSiteTransferredToAtomic && hasMismatchingCapabilities ) {
-						setTimeout( () => dispatch( requestSite( siteFragment ) ), 2000 );
-					} else {
-						dispatch( receiveSite( omit( site, '_headers' ) ) );
+						return new Promise( ( resolve ) => {
+							setTimeout( () => resolve( dispatch( requestSite( siteFragment ) ) ), 2000 );
+						} );
 					}
+
+					dispatch( receiveSite( omit( site, '_headers' ) ) );
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );

@@ -36,7 +36,6 @@ import { getFeaturedImageId } from 'calypso/state/posts/utils';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
-import revisions from './revisions/reducer';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
 	appendToPostEditsLog,
@@ -460,5 +459,4 @@ export default combineReducers( {
 	allSitesQueries,
 	edits,
 	likes,
-	revisions,
 } );

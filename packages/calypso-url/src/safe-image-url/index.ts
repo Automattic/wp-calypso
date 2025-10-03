@@ -82,8 +82,8 @@ export function safeImageUrl( url?: string | null ) {
 		url = getUrlFromParts( parsedUrl ).toString();
 	}
 
-	// Photon doesn't support SVGs
-	if ( parsedUrl.pathname.endsWith( '.svg' ) ) {
+	// Photon doesn't support SVGs or AVIF
+	if ( parsedUrl.pathname.endsWith( '.svg' ) || parsedUrl.pathname.endsWith( '.avif' ) ) {
 		return null;
 	}
 

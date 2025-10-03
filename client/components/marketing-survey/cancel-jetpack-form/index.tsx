@@ -39,10 +39,12 @@ interface Props {
 	purchaseListUrl: string; // The URL of the purchase page to redirect to.
 	isVisible: boolean;
 	onClose: () => void;
-	onClickFinalConfirm: () => void;
+	onSurveyComplete: () => void;
 	flowType: string;
 	translate?: () => void;
 	isAkismet?: boolean;
+	cancellationInProgress?: boolean;
+	cancellationCompleted?: boolean;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -60,17 +62,23 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return steps.CANCEL_CONFIRM_STEP;
 		}
 
-		// In these cases, the subscription is getting removed.
-		// Show the benefits step first.
-		if (
-			flowType === CANCEL_FLOW_TYPE.REMOVE ||
-			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-		) {
+		// If cancellation is already completed, skip benefits step and go directly to survey
+		if ( props.cancellationCompleted ) {
+			return steps.CANCELLATION_REASON_STEP;
+		}
+
+		// For refundable plans, go directly to survey (no intermediate confirmation needed)
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+			return steps.CANCELLATION_REASON_STEP;
+		}
+
+		// For non-refundable plans (REMOVE), show the benefits step first
+		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			return steps.FEATURES_LOST_STEP;
 		}
 
 		return steps.CANCELLATION_REASON_STEP;
-	}, [ flowType ] );
+	}, [ flowType, purchase, props.cancellationCompleted ] );
 	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
@@ -148,44 +156,47 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const availableSteps = [];
 
 		// If the plan is already expired or is a temporary Jetpack purchase (license),
-		// we only need one "confirm" step for the user to click to confirm.
+		// we only need one "confirm" step for the survey is the removal confirmation
 		// A product that is not in use does not need to collect the survey or show benefits
 		if ( isExpired( purchase ) || isJetpackTemporarySitePurchase( purchase ) ) {
 			return [ steps.CANCEL_CONFIRM_STEP ];
 		}
 
+		// Don't show benefits step if cancellation is already completed
 		if (
-			CANCEL_FLOW_TYPE.REMOVE === flowType ||
-			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
+			! props.cancellationCompleted &&
+			( CANCEL_FLOW_TYPE.REMOVE === flowType || CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType )
 		) {
 			availableSteps.push( steps.FEATURES_LOST_STEP );
 		}
 
+		// Always include the survey step if cancellation is completed, or if it's a normal cancellation flow
 		if (
-			// A purchase that is currently set to auto-renew ( has not been cancelled yet ).
-			// If a purchase that meets these criteria is being removed, present the survey step.
+			props.cancellationCompleted ||
 			CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
 			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
 		) {
 			availableSteps.push( steps.CANCELLATION_REASON_STEP );
-
-			// During the cancellation decision, potentially show an offer
-			if (
-				shouldProvideCancellationOffer &&
-				cancellationOffer &&
-				isOfferPriceSameOrLowerThanPurchasePrice &&
-				offerDiscountBasedFromPurchasePrice >= 10
-			) {
-				availableSteps.push( steps.CANCELLATION_OFFER_STEP );
-				availableSteps.push( steps.OFFER_ACCEPTED_STEP );
-			}
 		}
+
+		if (
+			CANCEL_FLOW_TYPE.REMOVE === flowType &&
+			shouldProvideCancellationOffer &&
+			cancellationOffer &&
+			isOfferPriceSameOrLowerThanPurchasePrice &&
+			offerDiscountBasedFromPurchasePrice >= 10
+		) {
+			availableSteps.push( steps.CANCELLATION_OFFER_STEP );
+			availableSteps.push( steps.OFFER_ACCEPTED_STEP );
+		}
+
 		return availableSteps;
 	}, [
-		flowType,
 		purchase,
-		cancellationOffer,
+		props.cancellationCompleted,
+		flowType,
 		shouldProvideCancellationOffer,
+		cancellationOffer,
 		isOfferPriceSameOrLowerThanPurchasePrice,
 		offerDiscountBasedFromPurchasePrice,
 	] );
@@ -252,7 +263,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		setSurveyStep( nextStep );
 	};
 
-	// When an offer is successfully applied, move to the offer accepted step.
 	useEffect( () => {
 		if ( true === cancellationOfferApplySuccess ) {
 			setSurveyStep( () => {
@@ -262,7 +272,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	}, [ cancellationOfferApplySuccess, setSurveyStep ] );
 
 	const onSubmit = () => {
-		// If applying an offer, don't attempt cancellation.
 		if ( applyingCancellationOffer ) {
 			return;
 		}
@@ -285,8 +294,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			);
 		}
 
-		// call back to the parent component to actually cancel the subscription
-		props.onClickFinalConfirm();
+		if ( props.onSurveyComplete ) {
+			props.onSurveyComplete();
+		}
 
 		// record tracks event
 		// this uses the same event name as the main product cancellation form
@@ -316,38 +326,44 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 * Render the dialog buttons for the current step
 	 */
 	const renderStepButtons = () => {
-		const { disableButtons } = props;
+		const { disableButtons, cancellationCompleted, cancellationInProgress } = props;
 		const disabled = disableButtons;
+
+		// Determine button text based on cancellation state and flow type
+		const getButtonText = () => {
+			if ( cancellationCompleted ) {
+				return translate( 'Submit' );
+			}
+			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+				return translate( 'Remove subscription' );
+			}
+			return translate( 'Cancel subscription' );
+		};
 		const loadingOffers = shouldProvideCancellationOffer && fetchingCancellationOffers;
 		const applyingOffer = shouldProvideCancellationOffer && applyingCancellationOffer;
 		const close = {
 			action: 'close',
 			disabled: disabled || applyingOffer,
-			isPrimary:
-				lastStep !== cancellationStep && steps.CANCELLATION_OFFER_STEP !== cancellationStep,
-			label: translate( "I'll keep it" ),
+			isPrimary: cancellationCompleted ? false : lastStep !== cancellationStep,
+			label: translate( 'Close' ),
 		};
 		const next = {
 			action: 'next',
 			disabled: disabled || disableContinuation,
+			isPrimary: cancellationCompleted,
 			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
-		const cancelText =
-			flowType === CANCEL_FLOW_TYPE.REMOVE
-				? translate( 'Remove subscription' )
-				: translate( 'Cancel subscription' );
-		const cancellingText =
-			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
+
 		const cancel = (
 			<Button
-				disabled={ disabled || applyingOffer || disableContinuation }
-				busy={ disabled }
+				disabled={ disabled || disableContinuation || applyingOffer }
+				busy={ cancellationInProgress }
 				onClick={ onSubmit }
 				primary
-				scary
+				scary={ ! cancellationCompleted }
 			>
-				{ disabled ? cancellingText : cancelText }
+				{ getButtonText() }
 			</Button>
 		);
 		const loading = (
@@ -355,14 +371,14 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				{ translate( 'Loading' ) }
 			</Button>
 		);
+		const firstButtons: ( BaseButton | React.ReactElement )[] = [ close ];
+
 		const backToPurchases = {
 			action: 'close',
 			isPrimary: true,
 			disabled: disabled,
 			label: translate( 'Back to my purchases' ),
 		};
-
-		const firstButtons: ( BaseButton | React.ReactElement )[] = [ close ];
 
 		// Offer accepted screen only provides back to site button.
 		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
@@ -376,13 +392,35 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		// on the last step or the offer step
 		// show the cancel button here
-		if ( lastStep === cancellationStep || steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
+		if ( lastStep === cancellationStep ) {
 			// If loading offers, show a "loading" button in place of the remove button.
 			// The steps may change if an offer is available and this may no longer be the last step.
 			if ( loadingOffers ) {
 				return firstButtons.concat( [ loading ] );
 			}
 			return firstButtons.concat( [ cancel ] );
+		}
+
+		// For the offer step, show a single "No, thanks" button instead of close + cancel
+		if ( steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
+			// If loading offers, show a "loading" button
+			if ( loadingOffers ) {
+				return [ loading ];
+			}
+
+			const noThanksButton = (
+				<Button
+					disabled={ disabled || disableContinuation || applyingOffer }
+					busy={ cancellationInProgress }
+					onClick={ onSubmit }
+					primary
+					scary={ ! cancellationCompleted }
+				>
+					{ translate( 'No, thanks' ) }
+				</Button>
+			);
+
+			return [ noThanksButton ];
 		}
 
 		return firstButtons.concat( [ next ] );
@@ -398,8 +436,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return (
-				<>
+				<div className="cancel-jetpack-form__confirm-step">
 					<FormattedHeader
+						brandFont
 						headerText={ translate( 'Confirm removal' ) }
 						subHeaderText={
 							/* Translators: productName is the name of a Jetpack product. */
@@ -412,10 +451,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 								}
 							)
 						}
-						align="center"
-						isSecondary
 					/>
-				</>
+				</div>
 			);
 		}
 

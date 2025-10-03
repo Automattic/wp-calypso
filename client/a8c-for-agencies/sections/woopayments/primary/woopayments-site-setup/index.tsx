@@ -143,7 +143,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 						hideOnMobile
 						items={ [
 							{
-								label: translate( 'WooPayments Commissions' ),
+								label: translate( 'WooPayments commissions' ),
 								href: A4A_WOOPAYMENTS_DASHBOARD_LINK,
 							},
 							{
@@ -244,7 +244,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 											} }
 											href={ A4A_WOOPAYMENTS_DASHBOARD_LINK }
 										>
-											{ translate( 'View WooPayments Commissions' ) }
+											{ translate( 'View WooPayments commissions' ) }
 										</Button>
 									</>
 								}

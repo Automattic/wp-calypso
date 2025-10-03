@@ -22,6 +22,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'lang',
 	'site_owner',
 	'is_a8c',
+	'capabilities',
 ] as const;
 
 export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;

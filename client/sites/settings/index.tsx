@@ -16,6 +16,7 @@ import {
 	SETTINGS_SFTP_SSH,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
+import { redirectToHostingDashboardBackportIfEnabled } from '../v2/site-settings/controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
@@ -31,6 +32,7 @@ import {
 	performanceSettings,
 	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 	redirectToSiteSettingsIfHostingFeaturesNotSupported,
+	redirectToSiteSettingsNewUrl,
 } from './controller';
 
 export default function () {
@@ -40,6 +42,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectToHostingDashboardBackportIfEnabled,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -81,6 +84,7 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -93,6 +97,7 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -105,6 +110,7 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -117,11 +123,23 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,
 		siteDashboard( SETTINGS_PERFORMANCE ),
 		makeLayout,
 		clientRender
+	);
+
+	/**
+	 * Settings V2
+	 */
+	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/settings/v2/:site/:feature?',
+		siteSelection,
+		navigation,
+		redirectToSiteSettingsNewUrl
 	);
 }

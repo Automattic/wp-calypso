@@ -32,6 +32,7 @@ export default function useGetThankYouUrl( {
 	cart,
 	sitelessCheckoutType,
 	isJetpackNotAtomic,
+	isGravatarDomain,
 	productAliasFromUrl,
 	hideNudge,
 	isInModal,
@@ -54,6 +55,7 @@ export default function useGetThankYouUrl( {
 			cart,
 			sitelessCheckoutType,
 			isJetpackNotAtomic,
+			isGravatarDomain,
 			productAliasFromUrl,
 			hideNudge,
 			isInModal,
@@ -71,6 +73,7 @@ export default function useGetThankYouUrl( {
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
+		isGravatarDomain,
 		productAliasFromUrl,
 		redirectTo,
 		feature,
@@ -96,6 +99,7 @@ export interface GetThankYouUrlProps {
 	hideNudge?: boolean;
 	isInModal?: boolean;
 	isJetpackNotAtomic?: boolean;
+	isGravatarDomain?: boolean;
 	domains: ResponseDomain[] | undefined;
 	connectAfterCheckout?: boolean;
 	adminUrl?: string;

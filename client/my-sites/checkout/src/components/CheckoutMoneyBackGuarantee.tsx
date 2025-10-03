@@ -9,8 +9,7 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 	align-items: center;
 	margin: 1.5em 0 0;
 
-	& li {
-		list-style: none;
+	& p {
 		font-size: 14px;
 		margin: 0 0 0 0.5rem;
 		padding: 0;

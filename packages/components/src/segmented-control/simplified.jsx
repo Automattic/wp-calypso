@@ -15,6 +15,10 @@ function SimplifiedSegmentedControl( {
 			index={ index }
 			key={ index }
 			onClick={ () => {
+				if ( option.disabled ) {
+					return;
+				}
+
 				setSelected( option.value );
 
 				if ( typeof onSelect === 'function' ) {
@@ -24,6 +28,7 @@ function SimplifiedSegmentedControl( {
 			path={ option.path }
 			selected={ selected === option.value }
 			value={ option.value }
+			disabled={ option.disabled }
 		>
 			{ option.label }
 		</SegmentedControl.Item>

@@ -131,14 +131,14 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		);
 
 	return (
-		<Dropdown
-			className={ isJetpackCheckout() ? 'is-jetpack' : '' }
-			aria-expanded={ isOpen }
-			aria-haspopup="listbox"
-			onKeyDown={ handleKeyDown }
-		>
+		<Dropdown className={ isJetpackCheckout() ? 'is-jetpack' : '' } onKeyDown={ handleKeyDown }>
 			<CurrentOption
 				aria-label={ translate( 'Pick a product term' ) }
+				aria-expanded={ isOpen }
+				{ ...( isOpen && {
+					'aria-controls': `item-variant-listbox-${ selectedItem.uuid }`,
+					'aria-haspopup': 'listbox',
+				} ) }
 				disabled={ isDisabled }
 				onClick={ () => toggle( id ) }
 				open={ isOpen }
@@ -176,7 +176,7 @@ function ItemVariantOptionList( {
 } ) {
 	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
-		<OptionList role="listbox" tabIndex={ -1 }>
+		<OptionList id={ `item-variant-listbox-${ selectedItem.uuid }` } role="listbox" tabIndex={ -1 }>
 			{ variants.map( ( variant, index ) => (
 				<ItemVariantOption
 					key={ variant.productSlug + variant.variantLabel.noun }
@@ -220,6 +220,7 @@ function ItemVariantOption( {
 			id={ productId.toString() }
 			className={ isSelected ? 'item-variant-option--selected' : undefined }
 			aria-label={ variantLabel.noun }
+			aria-selected={ isSelected }
 			data-product-slug={ productSlug }
 			role="option"
 			onClick={ onSelect }

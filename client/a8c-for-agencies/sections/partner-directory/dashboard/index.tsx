@@ -261,7 +261,7 @@ const PartnerDirectoryDashboard = () => {
 						{
 							// Application approved, but the Directory page is not available yet
 							application.key === 'approved' && ! brandMeta.isAvailable
-								? translate( 'This partner directory is launching soon.' )
+								? translate( 'This Partner Directory is launching soon.' )
 								: ''
 						}
 					</div>

@@ -16,6 +16,7 @@ import {
 	COMMENTS_TOGGLE_INLINE_EXPANDED,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
+	COMMENTS_API_DISABLED,
 } from 'calypso/state/action-types';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
@@ -376,4 +377,21 @@ export const toggleInlineCommentsExpanded = ( { siteId, postId, streamKey } ) =>
 		postId,
 		streamKey,
 	},
+} );
+
+/**
+ * Creates an action that sets comments API disabled state for a site
+ *
+ * @deprecated This is a temporary workaround for authentication issues with the comments API.
+ * The proper solution would be to use wpcom.js for authentication handling, similar to how
+ * Notifications handles it. See:
+ * - https://github.com/Automattic/wp-calypso/blob/021c5391e1051195862d786bd49ad6926d8c8e5f/packages/wpcom.js/src/lib/site.comment.js#L46-L69
+ * - https://github.com/Automattic/wp-calypso/blob/b6b0ad16b00ecb6338d39973bf014c1216d474d4/apps/notifications/src/panel/templates/comment-reply-input.jsx#L173-L177
+ *
+ * @param {number} siteId Site identifier
+ * @returns {Object} Action that sets comments API disabled state
+ */
+export const setCommentsApiDisabled = ( siteId ) => ( {
+	type: COMMENTS_API_DISABLED,
+	siteId,
 } );

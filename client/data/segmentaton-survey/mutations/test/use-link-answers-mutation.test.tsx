@@ -32,7 +32,7 @@ describe( 'useLinkAnswersMutation', () => {
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
-		( wpcom.req.post as jest.MockedFunction< typeof wpcom.req.post > ).mockReset();
+		jest.mocked( wpcom.req.post ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {

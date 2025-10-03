@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { HumanAvatar, WapuuAvatar } from '../../assets';
 import { useOdieAssistantContext } from '../../context';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types';
@@ -13,8 +11,8 @@ export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
 	displayChatWithSupportLabel?: boolean;
-	displayChatWithSupportEndedLabel?: boolean;
-	isNextMessageFromSameSender: boolean;
+	displayCSAT?: boolean;
+	header?: React.ReactNode;
 };
 
 export type MessageIndicators = {
@@ -24,27 +22,9 @@ export type MessageIndicators = {
 	isLastMessage: boolean;
 };
 
-const MessageAvatarHeader = ( { message }: { message: Message } ) => {
-	return message.role === 'bot' ? (
-		<WapuuAvatar />
-	) : (
-		message.role === 'business' && (
-			<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
-		)
-	);
-};
-
-const ChatMessage = ( {
-	message,
-	currentUser,
-	displayChatWithSupportLabel,
-	displayChatWithSupportEndedLabel,
-	isNextMessageFromSameSender,
-}: ChatMessageProps ) => {
-	const isBot = message.role === 'bot';
+const ChatMessage = ( { message, currentUser, header }: ChatMessageProps ) => {
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
-	const [ isDisliked ] = useState( false );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -58,21 +38,11 @@ const ChatMessage = ( {
 		return null;
 	}
 
-	const messageHeader = (
-		<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
-			<MessageAvatarHeader message={ message } />
-		</div>
-	);
-
 	const fullscreenContent = (
 		<div className="help-center-experience-disabled">
 			<div className="odie-fullscreen" onClick={ handleBackdropClick }>
 				<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
-					<MessageContent
-						message={ message }
-						messageHeader={ messageHeader }
-						isDisliked={ isDisliked }
-					/>
+					<MessageContent message={ message } />
 				</div>
 			</div>
 		</div>
@@ -80,14 +50,7 @@ const ChatMessage = ( {
 
 	return (
 		<>
-			<MessageContent
-				message={ message }
-				messageHeader={ messageHeader }
-				isDisliked={ isDisliked }
-				displayChatWithSupportLabel={ displayChatWithSupportLabel }
-				displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
-				isNextMessageFromSameSender={ isNextMessageFromSameSender }
-			/>
+			<MessageContent message={ message } header={ header } />
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>
 	);

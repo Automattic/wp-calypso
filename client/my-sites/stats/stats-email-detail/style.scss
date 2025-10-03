@@ -75,34 +75,36 @@ $break-large-stats-countries: 1280px;
 
 	.list-countries {
 		grid-area: country;
-		display: grid;
-		gap: 0 24px;
-		grid-template-columns: 7fr 5fr;
-		grid-template-areas:
-			"map list"
-			"more more";
 
-		@media (max-width: $break-large-stats-countries) {
-			grid-template-columns: 100%;
-			grid-template-areas:
-				"map"
-				"list"
-				"more";
-		}
-
-		.stats-card--hero {
-			grid-area: map;
-			padding-bottom: 0;
-		}
-		.stats-card--header-and-body {
-			grid-area: list;
-		}
-		.stats-card--body {
-			max-height: 400px;
-			overflow: auto;
-		}
-		.stats-card--footer {
-			grid-area: more;
+		.stats-card__content {
+			width: 100%;
+			display: grid;
+			gap: 0 24px;
+			grid-template-columns: 7fr 5fr;
+			grid-template-areas: "map list" "more more";
+	
+			@media (max-width: $break-large-stats-countries) {
+				grid-template-columns: 100%;
+				grid-template-areas:
+					"map"
+					"list"
+					"more";
+			}
+	
+			.stats-card--hero {
+				grid-area: map;
+				padding-bottom: 0;
+			}
+			.stats-card--header-and-body {
+				grid-area: list;
+			}
+			.stats-card--body {
+				max-height: 400px;
+				overflow: auto;
+			}
+			.stats-card--footer {
+				grid-area: more;
+			}
 		}
 	}
 

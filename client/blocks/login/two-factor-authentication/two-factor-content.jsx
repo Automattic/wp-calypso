@@ -30,7 +30,7 @@ function TwoFactorContent( {
 		poller = <PushNotificationApprovalPoller onSuccess={ rebootAfterLogin } />;
 	}
 
-	if ( [ 'authenticator', 'sms', 'backup' ].includes( twoFactorAuthType ) ) {
+	if ( [ 'authenticator', 'email', 'sms', 'backup' ].includes( twoFactorAuthType ) ) {
 		let verificationCodeInputPlaceholder = '';
 
 		if ( isGravPoweredClient ) {

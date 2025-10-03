@@ -39,12 +39,10 @@ export const Promo = ( { adminUrl, pluginInstallUrl, translate, siteId } ) => {
 		[ dispatch ]
 	);
 
-	const { hasPaidFeatures, isLoadingFeatures } = useSelector( ( state ) => {
-		return {
-			isLoadingFeatures: isRequestingSiteFeatures( state, siteId ),
-			hasPaidFeatures: siteHasFeature( state, siteId, FEATURE_SOCIAL_ENHANCED_PUBLISHING ),
-		};
-	} );
+	const isLoadingFeatures = useSelector( ( state ) => isRequestingSiteFeatures( state, siteId ) );
+	const hasPaidFeatures = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_SOCIAL_ENHANCED_PUBLISHING )
+	);
 
 	const product = slugToSelectorProduct( PRODUCT_JETPACK_SOCIAL_V1_YEARLY );
 

@@ -17,14 +17,12 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 			className="is-user-profile"
 			listName={ translate( 'User Posts' ) }
 			showFollowButton={ false }
-			showBack={ false }
 			showSiteNameOnCards
 			sidebarTabTitle={ translate( 'Related' ) }
 			useCompactCards
 			trackScrollPage={ () => {} }
 			emptyContent={ () => (
 				<EmptyContent
-					illustration={ null }
 					icon={ <Icon icon={ postList } size={ 48 } /> }
 					title={ null }
 					line={ translate( 'No posts yet.' ) }

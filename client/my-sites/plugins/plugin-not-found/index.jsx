@@ -1,5 +1,5 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -16,11 +16,14 @@ export default function PluginNotFound() {
 	return (
 		<Main wideLayout>
 			<EmptyContent
-				title={ translate( "Oops! We can't find this plugin!" ) }
+				title={ fixMe( {
+					text: "We can't find this plugin!",
+					newCopy: translate( "We can't find this plugin!" ),
+					oldCopy: translate( "Oops! We can't find this plugin!" ),
+				} ) }
 				line={ translate( "The plugin you are looking for doesn't exist." ) }
 				action={ translate( 'Browse all plugins' ) }
 				actionURL={ isLoggedIn ? actionUrl : addLocaleToPathLocaleInFront( actionUrl ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</Main>
 	);

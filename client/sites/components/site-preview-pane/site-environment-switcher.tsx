@@ -19,17 +19,6 @@ export default function SiteEnvironmentSwitcher( {
 }: SiteEnvironmentSwitcherProps ) {
 	const { __ } = useI18n();
 
-	if (
-		! site.is_wpcom_staging_site &&
-		! (
-			site.is_wpcom_atomic &&
-			site.options?.wpcom_staging_blog_ids &&
-			site.options?.wpcom_staging_blog_ids.length > 0
-		)
-	) {
-		return;
-	}
-
 	const productionSiteId = site.is_wpcom_staging_site
 		? site.options?.wpcom_production_blog_id
 		: site.ID;
@@ -56,7 +45,7 @@ export default function SiteEnvironmentSwitcher( {
 				),
 			} }
 			popoverProps={ {
-				position: 'bottom',
+				placement: 'bottom-start',
 				className: 'site-preview-pane__site-switcher-dropdown-menu',
 			} }
 			controls={ [

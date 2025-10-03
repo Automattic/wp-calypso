@@ -31,8 +31,7 @@ const HundredYearPlanDIYOrDIFM: Step< {
 		hideGdprBanner: true,
 		onSchedule: () => {
 			submit?.( { nextStep: 'thank-you' } );
-			// Close the Calendly popup after 1 second, to improve the user experience
-			setTimeout( closeCalendlyPopup, 1000 );
+			closeCalendlyPopup();
 		},
 	} );
 

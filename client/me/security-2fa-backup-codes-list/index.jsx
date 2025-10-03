@@ -264,67 +264,70 @@ class Security2faBackupCodesList extends Component {
 						</span>
 					</FormLabel>
 
-					<FormButton
-						className="security-2fa-backup-codes-list__next"
-						onClick={ this.onNextStep }
-						disabled={ this.isSubmitDisabled() }
-					>
-						{ this.props.translate( 'All finished!', {
-							context: 'The user presses the All Finished button at the end of Two-Step setup.',
-						} ) }
-					</FormButton>
-					<ButtonGroup>
-						<Button
-							className="security-2fa-backup-codes-list__copy"
-							disabled={ ! this.props.backupCodes.length }
-							onMouseEnter={ this.enableCopyCodesTooltip }
-							onMouseLeave={ this.disableCopyCodesTooltip }
-							ref={ this.copyCodesButtonRef }
+					<div className="security-2fa-backup-codes-list__buttons">
+						<ButtonGroup>
+							<Button
+								className="security-2fa-backup-codes-list__copy"
+								disabled={ ! this.props.backupCodes.length }
+								onMouseEnter={ this.enableCopyCodesTooltip }
+								onMouseLeave={ this.disableCopyCodesTooltip }
+								ref={ this.copyCodesButtonRef }
+							>
+								<Gridicon icon="clipboard" />
+							</Button>
+							<Button
+								className="security-2fa-backup-codes-list__print"
+								disabled={ ! this.props.backupCodes.length }
+								onClick={ this.onPrint }
+								onMouseEnter={ this.enablePrintCodesTooltip }
+								onMouseLeave={ this.disablePrintCodesTooltip }
+								ref={ this.printCodesButtonRef }
+							>
+								<Gridicon icon="print" />
+							</Button>
+							<Button
+								className="security-2fa-backup-codes-list__download"
+								disabled={ ! this.props.backupCodes.length }
+								onClick={ this.saveCodesToFile }
+								onMouseEnter={ this.enableDownloadCodesTooltip }
+								onMouseLeave={ this.disableDownloadCodesTooltip }
+								ref={ this.downloadCodesButtonRef }
+							>
+								<Gridicon icon="cloud-download" />
+							</Button>
+						</ButtonGroup>
+						<Tooltip
+							context={ this.copyCodesButtonRef.current }
+							isVisible={ this.state.copyCodesTooltip }
+							position="top"
 						>
-							<Gridicon icon="clipboard" />
-						</Button>
-						<Button
-							className="security-2fa-backup-codes-list__print"
-							disabled={ ! this.props.backupCodes.length }
-							onClick={ this.onPrint }
-							onMouseEnter={ this.enablePrintCodesTooltip }
-							onMouseLeave={ this.disablePrintCodesTooltip }
-							ref={ this.printCodesButtonRef }
+							{ this.props.translate( 'Copy Codes' ) }
+						</Tooltip>
+						<Tooltip
+							context={ this.printCodesButtonRef.current }
+							isVisible={ this.state.printCodesTooltip }
+							position="top"
 						>
-							<Gridicon icon="print" />
-						</Button>
-						<Button
-							className="security-2fa-backup-codes-list__download"
-							disabled={ ! this.props.backupCodes.length }
-							onClick={ this.saveCodesToFile }
-							onMouseEnter={ this.enableDownloadCodesTooltip }
-							onMouseLeave={ this.disableDownloadCodesTooltip }
-							ref={ this.downloadCodesButtonRef }
+							{ this.props.translate( 'Print Codes' ) }
+						</Tooltip>
+						<Tooltip
+							context={ this.downloadCodesButtonRef.current }
+							isVisible={ this.state.downloadCodesTooltip }
+							position="top"
 						>
-							<Gridicon icon="cloud-download" />
-						</Button>
-					</ButtonGroup>
-					<Tooltip
-						context={ this.copyCodesButtonRef.current }
-						isVisible={ this.state.copyCodesTooltip }
-						position="top"
-					>
-						{ this.props.translate( 'Copy Codes' ) }
-					</Tooltip>
-					<Tooltip
-						context={ this.printCodesButtonRef.current }
-						isVisible={ this.state.printCodesTooltip }
-						position="top"
-					>
-						{ this.props.translate( 'Print Codes' ) }
-					</Tooltip>
-					<Tooltip
-						context={ this.downloadCodesButtonRef.current }
-						isVisible={ this.state.downloadCodesTooltip }
-						position="top"
-					>
-						{ this.props.translate( 'Download Codes' ) }
-					</Tooltip>
+							{ this.props.translate( 'Download Codes' ) }
+						</Tooltip>
+
+						<FormButton
+							className="security-2fa-backup-codes-list__next"
+							onClick={ this.onNextStep }
+							disabled={ this.isSubmitDisabled() }
+						>
+							{ this.props.translate( 'All finished!', {
+								context: 'The user presses the All Finished button at the end of Two-Step setup.',
+							} ) }
+						</FormButton>
+					</div>
 				</div>
 			</div>
 		);

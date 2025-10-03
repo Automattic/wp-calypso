@@ -1,9 +1,10 @@
-import page from '@automattic/calypso-router';
 import { useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	PRODUCT_BRAND_FILTER_JETPACK,
 	PRODUCT_BRAND_FILTER_WOOCOMMERCE,
@@ -13,8 +14,6 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 import './style.scss';
-
-const A4A_PRODUCTS_MARKETPLACE_LINK = '/marketplace/products';
 
 const OverviewBodyProducts = () => {
 	const translate = useTranslate();
@@ -52,8 +51,10 @@ const OverviewBodyProducts = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'jetpack' );
-			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }/${ PRODUCT_BRAND_FILTER_JETPACK }` );
 		},
+		href: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
+			category: PRODUCT_BRAND_FILTER_JETPACK,
+		} ),
 	};
 
 	const woo: OfferingItemProps = {
@@ -95,8 +96,10 @@ const OverviewBodyProducts = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'woocommerce' );
-			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }/${ PRODUCT_BRAND_FILTER_WOOCOMMERCE }` );
 		},
+		href: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
+			category: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
+		} ),
 	};
 
 	return (

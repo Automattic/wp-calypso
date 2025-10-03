@@ -1,6 +1,6 @@
 import { TextareaControl, TextControl, SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { toSelectOption } from '../to-select-options';
 
@@ -10,10 +10,12 @@ interface Props {
 	onChangeText?: ( text: string ) => void;
 	onSelectNextAdventure?: ( nextAdventure: string ) => void;
 	onChangeNextAdventureDetails?: ( details: string ) => void;
+	onValidationChange?: ( isValid: boolean ) => void;
 }
 
 export default function NextAdventureStep( props: Props ) {
 	const translate = useTranslate();
+	const { isPlan, onValidationChange } = props;
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
 	const [ nextAdventureDetails, setNextAdventureDetails ] = useState( '' );
@@ -70,6 +72,15 @@ export default function NextAdventureStep( props: Props ) {
 		props.onChangeNextAdventureDetails?.( details );
 	};
 
+	// Validation logic for plan cancellations
+	useEffect( () => {
+		if ( isPlan && onValidationChange ) {
+			// For plans, require a selection from the adventure dropdown (not the placeholder)
+			const isValid = nextAdventure !== '';
+			onValidationChange( isValid );
+		}
+	}, [ nextAdventure, isPlan, onValidationChange ] );
+
 	return (
 		<div className="cancel-purchase-form__feedback">
 			<FormattedHeader
@@ -93,7 +104,7 @@ export default function NextAdventureStep( props: Props ) {
 						id="improvementInput"
 					/>
 				</div>
-				{ props.isPlan && (
+				{ isPlan && (
 					<div className="cancel-purchase-form__feedback-question">
 						<SelectControl
 							label={ translate( 'Where is your next adventure taking you?' ) }

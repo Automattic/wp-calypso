@@ -10,6 +10,7 @@ import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import Gravatar from 'calypso/components/gravatar';
+import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
@@ -28,7 +29,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 	return (
 		<div className="reader-related-card__meta">
 			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
-				<Gravatar user={ post.author } />
+				<GravatarWithHovercards user={ post.author } />
 			</a>
 			<div className="reader-related-card__byline">
 				<span className="reader-related-card__byline-site">

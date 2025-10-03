@@ -1,7 +1,7 @@
+import { useWindowDimensions } from '@automattic/viewport';
 import { memo, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { MShotParams } from '../types';
-import useWindowDimensions from '../windowDimensions.effect';
 import type { FunctionComponent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

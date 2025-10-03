@@ -1,5 +1,4 @@
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { preventWidows } from 'calypso/lib/formatting';
 
 import './sidebar-banner.scss';
 
@@ -32,7 +31,7 @@ export default function SidebarBannerTemplate( {
 				href={ CTA.link }
 				onClick={ onClick }
 				onDismissClick={ onDismiss }
-				title={ preventWidows( message ) }
+				title={ message }
 			/>
 			{ trackImpression && trackImpression() }
 		</>

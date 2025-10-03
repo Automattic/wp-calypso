@@ -1,4 +1,5 @@
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -58,29 +59,14 @@ class InviteAcceptLoggedIn extends Component {
 
 	getJoinAsText = () => {
 		const { user } = this.props;
-		let text = '';
-
-		if ( 'follower' === this.props.invite.role ) {
-			text = this.props.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
-				components: {
-					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
-				},
-				args: {
-					username: user && user.display_name,
-				},
-			} );
-		} else {
-			text = this.props.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
-				components: {
-					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
-				},
-				args: {
-					username: user && user.display_name,
-				},
-			} );
-		}
-
-		return text;
+		const userName = user && user.display_name;
+		const userEmail = user && user.email;
+		return (
+			<>
+				<div className="invite-accept-logged-in__join-as-username">{ userName }</div>
+				<p className="invite-accept-logged-in__join-as-email">{ userEmail }</p>
+			</>
+		);
 	};
 
 	renderMatchEmailError = () => {
@@ -118,18 +104,18 @@ class InviteAcceptLoggedIn extends Component {
 		}
 
 		return (
-			<div>
+			<>
 				<Card>
 					<InviteFormHeader { ...this.props.invite } user={ this.props.user } />
 					<div className="invite-accept-logged-in__join-as">
-						<Gravatar user={ this.props.user } size={ 72 } />
+						<Gravatar user={ this.props.user } size={ 110 } imgSize={ 220 } />
 						{ this.getJoinAsText() }
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
-						<Button onClick={ this.decline } disabled={ this.state.submitting }>
+						<Button variant="secondary" onClick={ this.decline } disabled={ this.state.submitting }>
 							{ this.props.translate( 'Cancel', { context: 'button' } ) }
 						</Button>
-						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
+						<Button variant="primary" onClick={ this.accept } disabled={ this.state.submitting }>
 							{ this.getButtonText() }
 						</Button>
 					</div>
@@ -137,10 +123,10 @@ class InviteAcceptLoggedIn extends Component {
 
 				<LoggedOutFormLinks>
 					<LoggedOutFormLinkItem onClick={ this.signInLink } href={ this.props.signInLink }>
-						{ this.props.translate( 'Sign in as a different user' ) }
+						{ this.props.translate( 'Log in with another account' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
-			</div>
+			</>
 		);
 	};
 

@@ -26,15 +26,30 @@ class PremiumBadge extends Component {
 	}
 
 	render() {
-		const { restrictedPremium } = this.props;
+		const { restrictedPremium, domainName, translate } = this.props;
 		const { text, description } = this.getPopoverText( restrictedPremium );
 		const badgeClassNames = clsx( 'premium-badge', {
 			'restricted-premium': restrictedPremium,
 		} );
+
+		const popoverAriaLabel = restrictedPremium
+			? translate( '%(domainName)s is a restricted premium domain. Learn more', {
+					args: { domainName },
+					comment:
+						'Accessible label for premium badge when a domain is restricted. %(domainName)s is the domain name',
+			  } )
+			: translate( '%(domainName)s is a premium domain. Learn more', {
+					args: { domainName },
+					comment:
+						'Accessible label for premium badge when a domain is not restricted. %(domainName)s is the domain name',
+			  } );
+
 		return (
 			<Badge className={ badgeClassNames }>
 				{ text }
-				<InfoPopover iconSize={ 16 }>{ description }</InfoPopover>
+				<InfoPopover iconSize={ 16 } aria-label={ popoverAriaLabel }>
+					{ description }
+				</InfoPopover>
 			</Badge>
 		);
 	}

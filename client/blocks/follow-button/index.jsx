@@ -71,6 +71,7 @@ function FollowButtonContainer( props ) {
 			followIcon={ props.followIcon }
 			followingIcon={ props.followingIcon }
 			hasButtonStyle={ props.hasButtonStyle }
+			isButtonOnly={ props.isButtonOnly }
 		/>
 	);
 }

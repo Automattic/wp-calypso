@@ -1,4 +1,4 @@
-import { Button, Gridicon, Gravatar } from '@automattic/components';
+import { Button, Gravatar } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -35,6 +35,11 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 	const onProvideFeedback = useCallback( () => {
 		setMenuExpanded( false );
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_provide_feedback' ) );
+	}, [ dispatch, setMenuExpanded ] );
+
+	const onPlatformAgreement = useCallback( () => {
+		setMenuExpanded( false );
+		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_platform_agreement' ) );
 	}, [ dispatch, setMenuExpanded ] );
 
 	const onSignOut = useCallback( () => {
@@ -74,7 +79,7 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'View Knowledge Base' ) } <Gridicon icon="external" size={ 18 } />
+					{ translate( 'View Knowledge Base ↗' ) }
 				</Button>
 			</li>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
@@ -84,7 +89,18 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Manage your profile' ) } <Gridicon icon="external" size={ 18 } />
+					{ translate( 'Manage your profile ↗' ) }
+				</Button>
+			</li>
+			<li className="a4a-sidebar__profile-dropdown-menu-item">
+				<Button
+					borderless
+					onClick={ onPlatformAgreement }
+					href="https://automattic.com/for-agencies/platform-agreement/"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Platform Agreement ↗' ) }
 				</Button>
 			</li>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">

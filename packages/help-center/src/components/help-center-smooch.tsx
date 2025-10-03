@@ -4,13 +4,14 @@ import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
+	fetchMessagingAuth,
 	isTestModeEnvironment,
-} from '@automattic/zendesk-client';
-import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
-} from '@automattic/zendesk-client/src/constants';
-import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
+	useCanConnectToZendeskMessaging,
+} from '@automattic/zendesk-client';
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
@@ -22,18 +23,36 @@ const destroy = () => {
 	Smooch.destroy();
 };
 
-const initSmooch = ( {
-	jwt,
-	externalId,
-}: {
-	isLoggedIn: boolean;
-	jwt: string;
-	externalId: string | undefined;
-} ) => {
+const initSmooch = (
+	{
+		jwt,
+		externalId,
+	}: {
+		isLoggedIn: boolean;
+		jwt: string;
+		externalId: string | undefined;
+	},
+	queryClient: QueryClient
+) => {
 	const isTestMode = isTestModeEnvironment();
 
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		delegate: {
+			async onInvalidAuth() {
+				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+
+				await queryClient.invalidateQueries( {
+					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+				} );
+				const authData = await queryClient.fetchQuery( {
+					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+					queryFn: () => fetchMessagingAuth( 'zendesk' ),
+				} );
+
+				return authData.jwt;
+			},
+		},
 		embedded: true,
 		soundNotificationEnabled: false,
 		externalId,
@@ -66,7 +85,9 @@ const playNotificationSound = () => {
 
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
 	const { isEligibleForChat } = useChatStatus();
+	const queryClient = useQueryClient();
 	const smoochRef = useRef< HTMLDivElement >( null );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled, allowPremiumSupport } =
 		useSelect( ( select ) => {
 			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -78,12 +99,18 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			};
 		}, [] );
 
-	const allowChat = enableAuth && ( isEligibleForChat || allowPremiumSupport );
+	const allowChat =
+		canConnectToZendesk && enableAuth && ( isEligibleForChat || allowPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const {
+		setIsChatLoaded,
+		setZendeskClientId,
+		setZendeskConnectionStatus,
+		setSupportTypingStatus,
+	} = useDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -98,8 +125,36 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown, areSoundNotificationsEnabled ]
+		[ isHelpCenterShown, areSoundNotificationsEnabled, getUnreadNotifications ]
 	);
+
+	const disconnectedListener = useCallback( () => {
+		setZendeskConnectionStatus( 'disconnected' );
+		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
+	}, [ setZendeskConnectionStatus ] );
+
+	const reconnectingListener = useCallback( () => {
+		setZendeskConnectionStatus( 'reconnecting' );
+		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
+	}, [ setZendeskConnectionStatus ] );
+
+	const typingStartListener = useCallback(
+		( { conversation }: ConversationData ) => {
+			setSupportTypingStatus( conversation.id, true );
+		},
+		[ setSupportTypingStatus ]
+	);
+	const typingStopListener = useCallback(
+		( { conversation }: ConversationData ) => {
+			setSupportTypingStatus( conversation.id, false );
+		},
+		[ setSupportTypingStatus ]
+	);
+
+	const connectedListener = useCallback( () => {
+		setZendeskConnectionStatus( 'connected' );
+		recordTracksEvent( 'calypso_smooch_messenger_connected' );
+	}, [ setZendeskConnectionStatus ] );
 
 	const clientIdListener = useCallback(
 		( message: ZendeskMessage ) => {
@@ -127,7 +182,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
 
 		const initializeSmooch = async () => {
-			initSmooch( authData )
+			initSmooch( authData, queryClient )
 				.then( () => {
 					setIsChatLoaded( true );
 					recordTracksEvent( 'calypso_smooch_messenger_init', {
@@ -155,7 +210,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			clearTimeout( retryTimeout );
 			destroy();
 		};
-	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded ] );
+	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded, queryClient ] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations ) {
@@ -164,6 +219,11 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
+			Smooch.on( 'disconnected', disconnectedListener );
+			Smooch.on( 'reconnecting', reconnectingListener );
+			Smooch.on( 'connected', connectedListener );
+			Smooch.on( 'typing:start', typingStartListener );
+			Smooch.on( 'typing:stop', typingStopListener );
 		}
 
 		return () => {
@@ -171,8 +231,30 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch?.off?.( 'message:received', getUnreadListener );
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:sent', clientIdListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'disconnected', disconnectedListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'reconnecting', reconnectingListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'connected', connectedListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'typing:stop', typingStopListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
-	}, [ getUnreadListener, isChatLoaded, getUnreadNotifications, setZendeskClientId ] );
+	}, [
+		getUnreadListener,
+		setZendeskConnectionStatus,
+		clientIdListener,
+		isChatLoaded,
+		typingStartListener,
+		typingStopListener,
+		getUnreadNotifications,
+		setZendeskClientId,
+		disconnectedListener,
+		reconnectingListener,
+		connectedListener,
+	] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
 };

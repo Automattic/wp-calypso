@@ -130,7 +130,7 @@ class InfoStep extends Component {
 
 				<CompactCard>
 					<FormFieldset>
-						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
+						<FormLabel htmlFor="firstname">{ translate( 'First name' ) }</FormLabel>
 						<FormTextInput
 							name="firstname"
 							placeholder={ translate( 'What may we call you?' ) }
@@ -139,7 +139,7 @@ class InfoStep extends Component {
 						/>
 					</FormFieldset>
 					<FormFieldset>
-						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
+						<FormLabel htmlFor="lastname">{ translate( 'Last name' ) }</FormLabel>
 						<FormTextInput
 							name="lastname"
 							placeholder={ translate( 'Optionally, please tell us your last name.' ) }

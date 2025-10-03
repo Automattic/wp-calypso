@@ -83,7 +83,7 @@
 
 .notification-settings-form-stream-options {
 	color: var(--color-neutral-light);
-	margin: 20px 0 10px;
+	margin: 15px 0 10px;
 	display: block;
 }
 
@@ -91,4 +91,10 @@
 	display: flex;
 	height: 40px;
 	justify-content: center;
+	align-items: center;
+
+	// wp component override: margin originally designed for spacing the label to the right of the checkbox
+	& .components-checkbox-control__input-container {
+		margin-right: 0;
+	}
 }

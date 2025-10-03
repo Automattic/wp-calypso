@@ -1,4 +1,4 @@
-import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';

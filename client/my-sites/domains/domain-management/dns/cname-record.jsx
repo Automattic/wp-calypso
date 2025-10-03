@@ -37,11 +37,11 @@ class CnameRecord extends Component {
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Alias Of (Points To)' ) }</FormLabel>
+					<FormLabel>{ translate( 'Alias of (points to)' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
@@ -50,7 +50,7 @@ class CnameRecord extends Component {
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'example.com' } } ) }
 					/>
 					{ ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid target host' ) } isError />
 					) }
 				</FormFieldset>
 

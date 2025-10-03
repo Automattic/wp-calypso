@@ -1,4 +1,4 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useMobileBreakpoint, useDesktopBreakpoint } from '@automattic/viewport-react';
 import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -12,8 +12,10 @@ import {
 	FILTER_TYPE_VISITS,
 	PLAN_CATEGORY_STANDARD,
 	PLAN_CATEGORY_ENTERPRISE,
-	PLAN_CATEGORY_HIGH_RESOURCE,
 	FILTER_TYPE_STORAGE,
+	PLAN_CATEGORY_SIGNATURE,
+	PLAN_CATEGORY_SIGNATURE_HIGH,
+	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
@@ -30,7 +32,9 @@ type Props = {
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
-	showHighResourceTab?: boolean;
+	areSignaturePlans?: boolean;
+	selectedTab: string;
+	setSelectedTab: ( tab: string ) => void;
 };
 
 export default function PlanSelectionFilter( {
@@ -39,37 +43,41 @@ export default function PlanSelectionFilter( {
 	onSelectPlan,
 	pressablePlan,
 	isLoading,
-	showHighResourceTab = false,
+	areSignaturePlans: areSignaturePlans = false,
+	selectedTab,
+	setSelectedTab,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
-	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
 	const isMobile = useMobileBreakpoint();
+	const isDesktop = useDesktopBreakpoint();
 
-	const standardOptions = useMemo(
+	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
+
+	const lowPlanOptions = useMemo(
 		() =>
 			getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_STANDARD,
+				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
 				isMobile
 			),
-		[ filterType, isMobile, plans ]
+		[ filterType, isMobile, plans, areSignaturePlans ]
 	);
 
-	const enterpriseOptions = useMemo(
+	const highPlanOptions = useMemo(
 		() => [
 			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_ENTERPRISE,
+				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
 				isMobile
 			),
-			...( showHighResourceTab
+			...( isPremiumPlanTab
 				? []
 				: [
 						{
@@ -79,7 +87,7 @@ export default function PlanSelectionFilter( {
 						},
 				  ] ),
 		],
-		[ filterType, isMobile, plans, showHighResourceTab, translate ]
+		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
 	);
 
 	const onSelectOption = useCallback(
@@ -96,7 +104,9 @@ export default function PlanSelectionFilter( {
 	);
 
 	const selectedOptionIndex = (
-		PLAN_CATEGORY_STANDARD === selectedTab ? standardOptions : enterpriseOptions
+		PLAN_CATEGORY_STANDARD === selectedTab || PLAN_CATEGORY_SIGNATURE === selectedTab
+			? lowPlanOptions
+			: highPlanOptions
 	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
 
 	const onSelectFilterType = useCallback(
@@ -122,15 +132,20 @@ export default function PlanSelectionFilter( {
 			}
 
 			// Depending on the category of the existing plan, we might want to show other category slider at the most min or max
-			if (
-				PLAN_CATEGORY_STANDARD === category &&
-				PLAN_CATEGORY_STANDARD !== pressablePlan?.category
-			) {
+			const isStandardCategory =
+				PLAN_CATEGORY_STANDARD === category || PLAN_CATEGORY_SIGNATURE === category;
+			const isEnterpriseCategory =
+				PLAN_CATEGORY_ENTERPRISE === category || PLAN_CATEGORY_SIGNATURE_HIGH === category;
+			const isPlanStandardCategory =
+				PLAN_CATEGORY_STANDARD === pressablePlan?.category ||
+				PLAN_CATEGORY_SIGNATURE === pressablePlan?.category;
+			const isPlanEnterpriseCategory =
+				PLAN_CATEGORY_ENTERPRISE === pressablePlan?.category ||
+				PLAN_CATEGORY_SIGNATURE_HIGH === pressablePlan?.category;
+
+			if ( isStandardCategory && ! isPlanStandardCategory ) {
 				return categoryOptions.length - 1;
-			} else if (
-				PLAN_CATEGORY_ENTERPRISE === category &&
-				PLAN_CATEGORY_ENTERPRISE !== pressablePlan?.category
-			) {
+			} else if ( isEnterpriseCategory && ! isPlanEnterpriseCategory ) {
 				return 0;
 			}
 
@@ -146,26 +161,62 @@ export default function PlanSelectionFilter( {
 	);
 
 	useEffect( () => {
+		// Ensure standard tab is not disabled if no existing plan
 		if ( ! pressablePlan ) {
+			setDisableStandardTab( false );
 			return;
 		}
 
-		setSelectedTab( pressablePlan.category ?? PLAN_CATEGORY_STANDARD );
-
 		// Disable the standard tab if the existing plan is the highest standard plan or higher
+		const isStandardCategory =
+			pressablePlan.category === PLAN_CATEGORY_STANDARD ||
+			pressablePlan.category === PLAN_CATEGORY_SIGNATURE;
 		if (
-			pressablePlan.category !== PLAN_CATEGORY_STANDARD ||
-			pressablePlan.slug === standardOptions[ standardOptions.length - 1 ]?.value
+			! isStandardCategory ||
+			pressablePlan.slug === lowPlanOptions[ lowPlanOptions.length - 1 ]?.value
 		) {
 			setDisableStandardTab( true );
+		} else {
+			setDisableStandardTab( false );
 		}
-	}, [ pressablePlan, standardOptions ] );
+	}, [ pressablePlan, lowPlanOptions, areSignaturePlans ] );
 
-	useEffect( () => {
-		if ( selectedTab === PLAN_CATEGORY_HIGH_RESOURCE ) {
-			onSelectPlan( null );
-		}
-	}, [ onSelectPlan, selectedTab ] );
+	const tabs = useMemo(
+		() => [
+			...( areSignaturePlans
+				? [
+						{
+							name: PLAN_CATEGORY_SIGNATURE,
+							title: isDesktop
+								? translate( 'Signature Plans 1-10' )
+								: translate( 'Signature 1-10' ),
+							disabled: disableStandardTab,
+						},
+						{
+							name: PLAN_CATEGORY_SIGNATURE_HIGH,
+							title: isDesktop
+								? translate( 'Signature Plans 11-17' )
+								: translate( 'Signature 11-17' ),
+						},
+				  ]
+				: [
+						{
+							name: PLAN_CATEGORY_STANDARD,
+							title: isDesktop ? translate( 'Signature Plans' ) : translate( 'Signature' ),
+							disabled: disableStandardTab,
+						},
+						{
+							name: PLAN_CATEGORY_ENTERPRISE,
+							title: isDesktop ? translate( 'Enterprise Plans' ) : translate( 'Enterprise' ),
+						},
+				  ] ),
+			{
+				name: PLAN_CATEGORY_PREMIUM,
+				title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
+			},
+		],
+		[ areSignaturePlans, disableStandardTab, translate, isDesktop ]
+	);
 
 	if ( isLoading ) {
 		return (
@@ -206,49 +257,49 @@ export default function PlanSelectionFilter( {
 				activeClass="pressable-overview-plan-selection__plan-category-tab-is-active"
 				onSelect={ setSelectedTab }
 				initialTabName={ selectedTab }
-				tabs={ [
-					{
-						name: PLAN_CATEGORY_STANDARD,
-						title: translate( 'Signature Plans' ),
-						disabled: disableStandardTab,
-					},
-					{
-						name: PLAN_CATEGORY_ENTERPRISE,
-						title: translate( 'Enterprise Plans' ),
-					},
-					...( showHighResourceTab
-						? [
-								{
-									name: PLAN_CATEGORY_HIGH_RESOURCE,
-									title: translate( 'High Resource Plans' ),
-								},
-						  ]
-						: [] ),
-				] }
+				tabs={ tabs }
 			>
 				{ ( tab ) => {
 					switch ( tab.name ) {
 						case PLAN_CATEGORY_STANDARD:
+						case PLAN_CATEGORY_SIGNATURE:
 							return (
 								<>
 									<FilterByPicker />
 									<A4ASlider
-										value={ PLAN_CATEGORY_STANDARD === selectedTab ? selectedOptionIndex : 0 }
+										value={
+											PLAN_CATEGORY_STANDARD === selectedTab ||
+											PLAN_CATEGORY_SIGNATURE === selectedTab
+												? selectedOptionIndex
+												: 0
+										}
 										onChange={ onSelectOption }
-										options={ standardOptions }
-										minimum={ getSliderMinimum( PLAN_CATEGORY_STANDARD, standardOptions ) }
+										options={ lowPlanOptions }
+										minimum={ getSliderMinimum(
+											areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
+											lowPlanOptions
+										) }
 									/>
 								</>
 							);
 						case PLAN_CATEGORY_ENTERPRISE:
+						case PLAN_CATEGORY_SIGNATURE_HIGH:
 							return (
 								<>
 									<FilterByPicker />
 									<A4ASlider
-										value={ PLAN_CATEGORY_ENTERPRISE === selectedTab ? selectedOptionIndex : 0 }
+										value={
+											PLAN_CATEGORY_ENTERPRISE === selectedTab ||
+											PLAN_CATEGORY_SIGNATURE_HIGH === selectedTab
+												? selectedOptionIndex
+												: 0
+										}
 										onChange={ onSelectOption }
-										options={ enterpriseOptions }
-										minimum={ getSliderMinimum( PLAN_CATEGORY_ENTERPRISE, enterpriseOptions ) }
+										options={ highPlanOptions }
+										minimum={ getSliderMinimum(
+											areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
+											highPlanOptions
+										) }
 									/>
 								</>
 							);

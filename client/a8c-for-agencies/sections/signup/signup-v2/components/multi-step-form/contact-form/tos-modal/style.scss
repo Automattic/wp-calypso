@@ -7,12 +7,12 @@
 }
 
 .a4a-tos-modal-list {
-    @include body-medium;
-    color: var(--color-neutral-50);
-    margin-block: 16px;
-    line-height: 1.6;
+	@include body-medium;
+	color: var(--color-neutral-50);
+	margin-block: 16px;
+	line-height: 1.6;
 }
 
 .a4a-tos-modal-content {
-    padding-block-end: 70px;
+	padding-block-end: 70px;
 }

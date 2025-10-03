@@ -17,19 +17,17 @@ export interface CodeDeploymentData {
 	target_dir: string;
 	is_automated: boolean;
 	installation_id: number;
-	created_by: CreatedBy;
+	created_by: {
+		id: number;
+		name: string;
+	};
 	current_deployed_run?: DeploymentRun;
 	current_deployment_run?: DeploymentRun;
 	workflow_path?: string; // @todo The actual value here is string | null
 }
 
-export interface CreatedBy {
-	id: number;
-	name: string;
-}
-
 export const useCodeDeploymentsQuery = (
-	siteId: number | null,
+	siteId?: number | null,
 	options?: UseQueryOptions< CodeDeploymentData[] >
 ) => {
 	return useQuery< CodeDeploymentData[] >( {

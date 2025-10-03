@@ -4,10 +4,10 @@ import { useMemo, useState } from 'react';
 import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard/item-view';
 import SubscriptionStatus from '../referrals-list/subscription-status';
 import ReferralCommissions from './commissions';
-import ArchivedStatus from './components/archived-status';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
-import type { Referral } from '../types';
+import ReferralDetailsReferrals from './referrals';
+import type { Referral, ReferralPurchase } from '../types';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './style.scss';
@@ -15,20 +15,16 @@ import './style.scss';
 interface Props {
 	referral: Referral;
 	closeSitePreviewPane: () => void;
-	isArchiveView: boolean;
 }
 
+const REFERRALS_ID = 'referrals';
 const REFERRAL_PURCHASES_ID = 'referral-purchases';
 const REFERRAL_COMMISSIONS_ID = 'referral-commissions';
 
-export default function ReferralDetails( {
-	referral,
-	closeSitePreviewPane,
-	isArchiveView,
-}: Props ) {
+export default function ReferralDetails( { referral, closeSitePreviewPane }: Props ) {
 	const translate = useTranslate();
 
-	const [ selectedReferralTab, setSelectedReferralTab ] = useState( REFERRAL_PURCHASES_ID );
+	const [ selectedReferralTab, setSelectedReferralTab ] = useState( REFERRALS_ID );
 
 	const itemData: ItemData = {
 		title: referral.client.email,
@@ -40,7 +36,7 @@ export default function ReferralDetails( {
 					},
 					comment: '%(status) is subscription status',
 					components: {
-						badge: ! isArchiveView ? <SubscriptionStatus item={ referral } /> : <ArchivedStatus />,
+						badge: <SubscriptionStatus item={ referral } />,
 					},
 				} ) }
 			</div>
@@ -51,8 +47,47 @@ export default function ReferralDetails( {
 
 	const isDesktop = useDesktopBreakpoint();
 
+	const purchases = useMemo( () => {
+		return referral.referrals.reduce( ( acc: ReferralPurchase[], ref ) => {
+			// If the referral is archived, we don't want to show it in the purchases tab
+			if ( ref.status === 'archived' ) {
+				return acc;
+			}
+			// This is a workaround to ensure the purchases match the previous purchases
+			// data type. We should refactor the component to use the new data type.
+			return [
+				...acc,
+				...ref.products.map( ( product ) => ( {
+					...product,
+					referral_id: ref.id,
+				} ) ),
+			];
+		}, [] );
+	}, [ referral.referrals ] );
+
+	// Show the archived and canceled referrals at the bottom of the list
+	const sortedReferrals = useMemo( () => {
+		return referral.referrals.sort( ( a, b ) => {
+			if ( a.status === 'archived' || a.status === 'canceled' ) {
+				return 1;
+			}
+			if ( b.status === 'archived' || b.status === 'canceled' ) {
+				return -1;
+			}
+			return 0;
+		} );
+	}, [ referral.referrals ] );
+
 	const features = useMemo(
 		() => [
+			createFeaturePreview(
+				REFERRALS_ID,
+				translate( 'Referrals' ),
+				true,
+				selectedReferralTab,
+				setSelectedReferralTab,
+				<ReferralDetailsReferrals referrals={ sortedReferrals } />
+			),
 			createFeaturePreview(
 				REFERRAL_PURCHASES_ID,
 				translate( 'Purchases' ),
@@ -60,9 +95,9 @@ export default function ReferralDetails( {
 				selectedReferralTab,
 				setSelectedReferralTab,
 				! isDesktop ? (
-					<ReferralPurchasesMobile purchases={ referral.purchases } />
+					<ReferralPurchasesMobile purchases={ purchases } />
 				) : (
-					<ReferralPurchases purchases={ referral.purchases } />
+					<ReferralPurchases purchases={ purchases } />
 				)
 			),
 			createFeaturePreview(
@@ -74,7 +109,7 @@ export default function ReferralDetails( {
 				<ReferralCommissions referral={ referral } />
 			),
 		],
-		[ translate, selectedReferralTab, isDesktop, referral ]
+		[ translate, selectedReferralTab, isDesktop, sortedReferrals, purchases, referral ]
 	);
 
 	return (

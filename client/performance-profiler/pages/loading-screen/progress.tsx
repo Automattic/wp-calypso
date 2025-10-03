@@ -103,7 +103,7 @@ const useLoadingSteps = ( {
 	pageTitle,
 	isLoadingPages,
 }: {
-	isSavedReport: boolean;
+	isSavedReport?: boolean;
 	pageTitle?: string;
 	isLoadingPages?: boolean;
 } ) => {
@@ -161,7 +161,7 @@ export const PerformanceReportLoadingProgress = ( {
 	isLoadingPages,
 	className,
 }: {
-	isSavedReport: boolean;
+	isSavedReport?: boolean;
 	pageTitle?: string;
 	className?: string;
 	isLoadingPages?: boolean;

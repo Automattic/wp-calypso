@@ -3,10 +3,7 @@ import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import type { StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
-import type {
-	StoredPaymentMethod,
-	StoredPaymentMethodCard,
-} from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod, StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
 export const existingCardPrefix = 'existingCard-';
 

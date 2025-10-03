@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -7,6 +7,7 @@ import QueryAccountRecoverySettings from 'calypso/components/data/query-account-
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -61,7 +62,7 @@ const SecurityAccountRecovery = ( props ) => (
 
 		<DocumentHead title={ props.translate( 'Account Recovery' ) } />
 
-		<CompactCard>
+		<Card>
 			<p className="security-account-recovery__text">
 				{ props.translate(
 					'Keep your account safe by adding a backup email address and phone number. ' +
@@ -69,40 +70,47 @@ const SecurityAccountRecovery = ( props ) => (
 						'you enter here to verify your identity.'
 				) }
 			</p>
-		</CompactCard>
+		</Card>
 
-		<CompactCard>
-			<RecoveryEmail
-				primaryEmail={ props.primaryEmail }
-				email={ props.accountRecoveryEmail }
-				updateEmail={ props.updateAccountRecoveryEmail }
-				deleteEmail={ props.deleteAccountRecoveryEmail }
-				isLoading={ props.accountRecoveryEmailActionInProgress }
-			/>
-			{ props.shouldPromptEmailValidationNotice && ! props.hasSentEmailValidation && (
-				<RecoveryEmailValidationNotice
-					onResend={ props.resendAccountRecoveryEmailValidation }
-					hasSent={ props.hasSentEmailValidation }
+		<div className="security-account-recovery__recovery-email">
+			<SectionHeader label={ props.translate( 'Recovery email address' ) } />
+			<Card>
+				{ props.shouldPromptEmailValidationNotice && ! props.hasSentEmailValidation && (
+					<RecoveryEmailValidationNotice
+						onResend={ props.resendAccountRecoveryEmailValidation }
+						hasSent={ props.hasSentEmailValidation }
+					/>
+				) }
+				<RecoveryEmail
+					primaryEmail={ props.primaryEmail }
+					email={ props.accountRecoveryEmail }
+					updateEmail={ props.updateAccountRecoveryEmail }
+					deleteEmail={ props.deleteAccountRecoveryEmail }
+					isLoading={ props.accountRecoveryEmailActionInProgress }
 				/>
-			) }
-		</CompactCard>
+			</Card>
+		</div>
 
-		<CompactCard>
-			<RecoveryPhone
-				phone={ props.accountRecoveryPhone }
-				updatePhone={ props.updateAccountRecoveryPhone }
-				deletePhone={ props.deleteAccountRecoveryPhone }
-				isLoading={ props.accountRecoveryPhoneActionInProgress }
-			/>
-			{ props.shouldPromptPhoneValidationNotice && (
-				<RecoveryPhoneValidationNotice
-					onResend={ props.resendAccountRecoveryPhoneValidation }
-					onValidate={ props.validateAccountRecoveryPhone }
-					hasSent={ props.hasSentPhoneValidation }
-					isValidating={ props.validatingAccountRecoveryPhone }
+		<div className="security-account-recovery__recovery-sms-number">
+			<SectionHeader label={ props.translate( 'Recovery SMS number' ) } />
+			<Card>
+				<RecoveryPhone
+					phone={ props.accountRecoveryPhone }
+					updatePhone={ props.updateAccountRecoveryPhone }
+					deletePhone={ props.deleteAccountRecoveryPhone }
+					isLoading={ props.accountRecoveryPhoneActionInProgress }
+					isUpdateMode={ props.shouldPromptPhoneValidationNotice }
 				/>
-			) }
-		</CompactCard>
+				{ props.shouldPromptPhoneValidationNotice && (
+					<RecoveryPhoneValidationNotice
+						onResend={ props.resendAccountRecoveryPhoneValidation }
+						onValidate={ props.validateAccountRecoveryPhone }
+						hasSent={ props.hasSentPhoneValidation }
+						isValidating={ props.validatingAccountRecoveryPhone }
+					/>
+				) }
+			</Card>
+		</div>
 	</Main>
 );
 

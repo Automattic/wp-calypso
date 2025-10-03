@@ -1,44 +1,81 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+$recoleta-font-family: "Recoleta", sans-serif;
+$font-sf-pro-text: "SF Pro Text", $sans;
+
 .invite-accept-logged-in__join-as {
 	color: var(--color-neutral-60);
 	font-size: $font-title-small;
 	line-height: 24px;
-	margin-bottom: 16px;
 	text-align: center;
 }
 
-.invite-accept-logged-in .card {
-	margin-bottom: 0;
+.invite-accept-logged-in {
+	width: 100%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+	font-family: $font-sf-pro-text;
 
 	.invite-form-header__title {
-		color: var(--color-text);
-		font-size: $font-title-small;
-		line-height: 24px;
-		margin-bottom: 16px;
+		color: var(--studio-gray-100, #2c3338);
+		text-align: center;
+		font-family: $recoleta-font-family;
+		font-size: 2rem;
+		line-height: 1.26;
 	}
 
 	.invite-form-header__explanation {
-		font-size: $font-body-small;
+		color: var(--studio-gray-50, #2c3338);
+		text-align: center;
+		margin-top: 6px;
+		font-size: 14px;
+	}
+
+	.card {
+		box-shadow: none;
+		padding: 0;
+		margin: 0;
+		background: none;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		max-height: 768px;
 	}
 }
 
 .invite-accept-logged-in__join-as-username {
+	color: var(--studio-gray-100, #2c3338);
 	font-weight: 600;
+	font-size: 16px;
+	line-height: 1.3;
+}
+
+.invite-accept-logged-in__join-as-email {
+	font-size: 12px;
 }
 
 .invite-accept-logged-in__join-as .gravatar {
 	display: block;
-	margin: 0 auto 8px;
+	margin: 2px auto 12px;
+	border: 1px solid var(--studio-gray-5);
 }
 
 .invite-accept-logged-in__button-bar {
 	display: flex;
+	width: 340px;
 }
 
-.invite-accept-logged-in__button-bar .button {
+.invite-accept-logged-in__button-bar .components-button {
 	flex-basis: 0;
 	flex-grow: 1;
-	margin: 0 4px;
-	text-align: center;
+	margin: 4px;
+	justify-content: center;
 
 	&:first-child {
 		margin-left: 0;
@@ -47,4 +84,9 @@
 	&:last-child {
 		margin-right: 0;
 	}
+}
+
+.logged-out-form__link-item {
+	color: var(--color-link);
+	font-size: 12px;
 }

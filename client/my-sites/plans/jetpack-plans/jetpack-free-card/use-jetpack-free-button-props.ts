@@ -4,9 +4,9 @@ import { useCallback, useMemo } from 'react';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { shouldUseDashboardPage } from 'calypso/lib/jetpack/jetpack-version-utils';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useSelector } from 'calypso/state';
-import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
@@ -20,7 +20,9 @@ interface Props {
 const buildHref = (
 	wpAdminUrl: string | undefined,
 	siteId: SiteId,
-	urlQueryArgs: QueryArgs
+	urlQueryArgs: QueryArgs,
+	isMultisite?: boolean,
+	jetpackVersion?: string
 ): string => {
 	const { site } = urlQueryArgs;
 
@@ -38,10 +40,19 @@ const buildHref = (
 		} catch ( e ) {}
 
 		if ( wpAdminUrlFromQuery ) {
+			const redirectToContainsDashboard = urlQueryArgs.redirect_to
+				?.toLowerCase()
+				.includes( 'wp-admin/admin.php?page=jetpack' );
+
+			const useDashboard = shouldUseDashboardPage(
+				isMultisite,
+				jetpackVersion,
+				redirectToContainsDashboard
+			);
+
 			jetpackAdminUrlFromQuery = getUrlFromParts( {
 				...getUrlParts( wpAdminUrlFromQuery.href ),
-				search: '?page=jetpack',
-				hash: '/recommendations',
+				search: useDashboard ? '?page=jetpack' : '?page=my-jetpack',
 			} ).href;
 		}
 	}
@@ -68,27 +79,25 @@ export default function useJetpackFreeButtonProps(
 	urlQueryArgs: QueryArgs = {}
 ): Props {
 	const site = useSelector( getSelectedSite );
-	const recommendationsUrl = useSelector( getJetpackRecommendationsUrl );
+	const adminUrlBase = urlQueryArgs?.admin_url || site?.options?.admin_url || undefined;
 
-	let siteWpAdminUrl = urlQueryArgs?.admin_url
-		? getUrlFromParts( {
-				...getUrlParts( urlQueryArgs.admin_url + 'admin.php' ),
-				search: '?page=jetpack',
-				hash: '/recommendations',
-		  } ).href
-		: recommendationsUrl;
+	const redirectToContainsDashboard = urlQueryArgs.redirect_to
+		?.toLowerCase()
+		.includes( 'wp-admin/admin.php?page=jetpack' );
 
-	if (
-		urlQueryArgs?.redirect_to &&
-		urlQueryArgs.redirect_to.toLowerCase().includes( 'wp-admin/admin.php?page=my-jetpack' )
-	) {
-		if ( site?.options?.admin_url ) {
-			siteWpAdminUrl = getUrlFromParts( {
-				...getUrlParts( site.options.admin_url + 'admin.php' ),
-				search: '?page=my-jetpack',
-			} ).href;
-		}
-	}
+	const useDashboard = shouldUseDashboardPage(
+		site?.is_multisite,
+		site?.options?.jetpack_version,
+		redirectToContainsDashboard
+	);
+
+	const siteWpAdminUrl =
+		adminUrlBase && site?.jetpack !== false
+			? getUrlFromParts( {
+					...getUrlParts( adminUrlBase + 'admin.php' ),
+					search: useDashboard ? '?page=jetpack' : '?page=my-jetpack',
+			  } ).href
+			: undefined;
 
 	const trackCallback = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
 		site_id: siteId || undefined,
@@ -98,8 +107,15 @@ export default function useJetpackFreeButtonProps(
 		trackCallback();
 	}, [ trackCallback ] );
 	const href = useMemo(
-		() => buildHref( siteWpAdminUrl, siteId, urlQueryArgs ),
-		[ siteWpAdminUrl, siteId, urlQueryArgs ]
+		() =>
+			buildHref(
+				siteWpAdminUrl,
+				siteId,
+				urlQueryArgs,
+				site?.is_multisite,
+				site?.options?.jetpack_version
+			),
+		[ siteWpAdminUrl, siteId, urlQueryArgs, site?.is_multisite, site?.options?.jetpack_version ]
 	);
 
 	return {

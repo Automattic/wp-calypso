@@ -4,8 +4,11 @@ button.conversation-follow-button {
 	padding: 0;
 
 	.reader-follow-conversation {
-		fill: var(--color-primary);
 		pointer-events: auto;
+
+		path {
+			fill: var(--color-primary);
+		}
 	}
 
 	.conversation-follow-button__label {
@@ -16,10 +19,6 @@ button.conversation-follow-button {
 	&:hover,
 	&:focus {
 		color: var(--color-primary);
-
-		.reader-follow-conversation {
-			fill: var(--color-primary);
-		}
 	}
 
 	&.popover__menu-item {
@@ -29,9 +28,7 @@ button.conversation-follow-button {
 				color: var(--color-text-inverted);
 			}
 
-			.gridicon,
-			.reader-follow-conversation,
-			.reader-following-conversation {
+			.gridicon {
 				fill: var(--color-text-inverted);
 				g {
 					fill: var(--studio-white);
@@ -56,10 +53,6 @@ button.conversation-follow-button {
 			display: inline-block;
 			pointer-events: auto;
 			fill: var(--color-success);
-			g {
-				fill: var(--studio-white);
-				stroke: var(--color-success);
-			}
 		}
 
 		.conversation-follow-button__label {
@@ -78,10 +71,6 @@ button.conversation-follow-button {
 
 			.reader-following-conversation {
 				fill: var(--color-success);
-				g {
-					fill: var(--studio-white);
-					stroke: var(--color-success);
-				}
 			}
 		}
 
@@ -102,12 +91,10 @@ button.conversation-follow-button {
 
 				svg.reader-follow-conversation path,
 				svg.reader-following-conversation path {
-					fill: none;
-					stroke: var(--color-text-inverted);
+					fill: var(--color-text-inverted);
 
 					&.status {
-						fill: var(--color-primary);
-						stroke: none;
+						fill: none;
 					}
 				}
 			}

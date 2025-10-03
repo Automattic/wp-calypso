@@ -1,3 +1,4 @@
+import { fetchDomainSuggestions } from '@automattic/api-core';
 import {
 	getPlan,
 	isFreePlanProduct,
@@ -5,9 +6,9 @@ import {
 	domainProductSlugs,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -18,8 +19,8 @@ import editorPreviewIllustration from 'calypso/assets/images/customer-home/illus
 import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { TASK_DOMAIN_UPSELL } from 'calypso/my-sites/customer-home/cards/constants';
@@ -72,20 +73,22 @@ export default function DomainUpsell() {
 	);
 }
 
-const domainSuggestionOptions = {
-	vendor: 'domain-upsell',
-	include_wordpressdotcom: false,
-};
-
 export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, siteSlug } ) {
 	const translate = useTranslate();
 
 	const locale = useLocale();
 
-	// Note: domainSuggestionOptions must be equal by reference upon each render
-	// to avoid a render loop, since it's used to memoize a selector.
-	const { allDomainSuggestions } =
-		useDomainSuggestions( searchTerm, 3, undefined, locale, domainSuggestionOptions ) || {};
+	const options = {
+		include_wordpressdotcom: false,
+		quantity: 3,
+		locale,
+		vendor: 'domain-upsell',
+	};
+
+	const { data: allDomainSuggestions } = useQuery( {
+		queryKey: [ 'domains-suggestions', searchTerm, options ],
+		queryFn: () => fetchDomainSuggestions( searchTerm, options ),
+	} );
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -105,24 +108,18 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const backUrl = window.location.href.replace( window.location.origin, '' );
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, domain: true } );
+
+	const plansPageLink = getDomainAndPlanUpsellUrl( {
+		siteSlug,
+		backUrl,
+		step: 'plans',
+		domain: true,
+	} );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
@@ -133,6 +130,9 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 				domainRegistration( {
 					productSlug: domainSuggestionProductSlug,
 					domain: domainSuggestionName,
+					extra: {
+						flow_name: 'domain-and-plan',
+					},
 				} ),
 			] );
 		} catch {
@@ -151,7 +151,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 		'{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It’s available, easy to find, share, and follow. Get it now and claim a corner of the web.',
 		{
 			components: {
-				strong: <strong />,
+				strong: <strong data-testid="domain-upsell-domain-name" />,
 			},
 			args: {
 				domainSuggestion: domainSuggestionName,
@@ -166,7 +166,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
 					{
 						components: {
-							strong: <strong />,
+							strong: <strong data-testid="domain-upsell-domain-name" />,
 						},
 						args: {
 							domainSuggestion: domainSuggestionName,

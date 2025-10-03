@@ -31,7 +31,7 @@ exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
       <span
         class="calypso-notice__text"
       >
-        This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
+        This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
       </span>
     </span>
     <button

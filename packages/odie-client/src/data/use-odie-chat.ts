@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
+import { generateUUID } from '../utils';
 import type { OdieChat, ReturnedChat } from '../types';
 
 /**
@@ -34,7 +35,10 @@ export const useOdieChat = ( chatId: number | null ) => {
 			) as ReturnedChat;
 
 			return {
-				messages: data.messages || [],
+				messages: ( data.messages || [] ).map( ( message ) => ( {
+					...message,
+					internal_message_id: generateUUID(),
+				} ) ),
 				odieId: Number( data.chat_id ) || chatId,
 				wpcomUserId: data.wpcom_user_id,
 			};

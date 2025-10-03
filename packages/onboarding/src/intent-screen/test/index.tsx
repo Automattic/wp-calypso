@@ -78,7 +78,7 @@ const intentsAlt: SelectItemAlt< string >[] = [
 describe( 'IntentScreen', () => {
 	describe( 'SelectItem', () => {
 		it( 'should render H2 titles', () => {
-			render(
+			const { container } = render(
 				<IntentScreen
 					intents={ intents }
 					intentsAlt={ intentsAlt }
@@ -87,13 +87,13 @@ describe( 'IntentScreen', () => {
 				/>
 			);
 
-			expect( screen.getAllByRole( 'heading', { level: 2 } ) ).toHaveLength( 2 );
+			const titles = container.querySelectorAll( '.select-items__item-title' );
+			expect( titles ).toHaveLength( 2 );
 		} );
 
 		it( 'should render a working button', async () => {
 			const user = userEvent.setup();
-
-			render(
+			const { container } = render(
 				<IntentScreen
 					intents={ intents }
 					intentsAlt={ intentsAlt }
@@ -102,11 +102,14 @@ describe( 'IntentScreen', () => {
 				/>
 			);
 
-			const button = screen.getAllByRole( 'button', { name: 'Action Text' } )[ 0 ];
-
+			const button = container.querySelector( '.select-items__item-button' );
+			expect( button ).not.toBeNull();
 			expect( button ).toBeVisible();
+			expect( button ).toHaveTextContent( 'Action Text' );
 
-			await user.click( button );
+			if ( button ) {
+				await user.click( button );
+			}
 
 			expect( onSelect ).toHaveBeenCalledTimes( 1 );
 			expect( onSelect ).toHaveBeenCalledWith( 'value' );

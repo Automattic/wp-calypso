@@ -13,11 +13,13 @@ export class ReaderSidebarOrganizations extends Component {
 	renderItems() {
 		const { organizations, path } = this.props;
 		return map( organizations, ( organization ) => (
-			<ReaderSidebarOrganizationsList
-				key={ organization.id }
-				path={ path }
-				organization={ organization }
-			/>
+			<li key={ organization.id }>
+				<ReaderSidebarOrganizationsList
+					key={ organization.id }
+					path={ path }
+					organization={ organization }
+				/>
+			</li>
 		) );
 	}
 

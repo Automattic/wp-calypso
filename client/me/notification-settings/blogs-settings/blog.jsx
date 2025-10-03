@@ -62,6 +62,7 @@ class BlogSettings extends Component {
 			'new_comment',
 			'comment_like',
 			'post_like',
+			'recommended_blog',
 			'follow',
 			'achievement',
 			'mentions',

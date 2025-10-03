@@ -67,12 +67,16 @@ function Card( { children }: BaseProps ) {
 
 type DetailsProps = BaseProps & {
 	heading: TranslateResult;
+	subheading?: TranslateResult;
 };
 
-function Details( { children, heading }: DetailsProps ) {
+function Details( { children, heading, subheading }: DetailsProps ) {
 	return (
 		<div className="hosting-plan-section__details">
 			{ heading && <h3 className="hosting-plan-section__details-heading">{ heading }</h3> }
+			{ subheading && (
+				<div className="hosting-plan-section__details-subheading">{ subheading }</div>
+			) }
 			<div className="hosting-plan-section__details-content">{ children }</div>
 		</div>
 	);

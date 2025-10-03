@@ -1,6 +1,6 @@
-import pick from 'component-file-picker';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import pick from './component-file-picker';
 
 const noop = () => {};
 

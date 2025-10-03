@@ -43,7 +43,6 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 			}
 		}
 
-
 	}
 
 	.segmented-control {
@@ -144,6 +143,26 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 	.notouch .segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link:hover {
 		background-color: #fff; // Remove hover from active filter item
+	}
+}
+
+.accessible-focus .promote-post-i2__search-bar-wrapper {
+	.select-dropdown:not(.is-open) .select-dropdown__container:focus .select-dropdown__header {
+		box-shadow: inset 0 0 0 2px var(--color-primary-light);
+	}
+	.segmented-control__item.is-selected{
+		.segmented-control__link:focus {
+			background-color: var(--color-primary) !important;
+			.segmented-control__text {
+				color: var(--color-surface);
+			}
+		}
+	}
+
+	.segmented-control__item .segmented-control__link {
+		&:focus {
+			box-shadow: inset 0 0 0 2px var(--color-primary-light);
+		}
 	}
 }
 

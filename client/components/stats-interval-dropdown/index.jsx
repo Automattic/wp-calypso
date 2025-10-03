@@ -7,7 +7,9 @@ import { capitalize } from 'lodash';
 import qs from 'qs';
 import { useRef } from 'react';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
+import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import './style.scss';
 
@@ -114,6 +116,10 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 
 	// Check if the selected period is in the intervals list.
 	const selectedPeriod = intervals[ period ];
+	const isSiteJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
+	);
+	const customTheme = useWPAdminTheme( isSiteJetpack );
 
 	return selectedPeriod ? (
 		<Dropdown
@@ -125,7 +131,7 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 				</Button>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<div className="stats-interval-dropdown__container">
+				<div className={ clsx( 'stats-interval-dropdown__container color-scheme', customTheme ) }>
 					<StatsIntervalDropdownListing
 						selected={ period }
 						onSelection={ onSelectionHandler }

@@ -12,8 +12,7 @@ export function useRtl() {
 				return i18n.isRtl();
 			},
 			subscribe( callback ) {
-				i18n.on( 'change', callback );
-				return () => i18n.off( 'change', callback );
+				return i18n.subscribe( callback );
 			},
 		} ),
 		[ i18n ]
@@ -24,7 +23,7 @@ export function useRtl() {
 
 export const withRtl = createHigherOrderComponent(
 	( WrappedComponent ) =>
-		forwardRef( ( props, ref ) => {
+		forwardRef( function WrappedRtlComponent( props, ref ) {
 			const isRtl = useRtl();
 			return <WrappedComponent { ...props } isRtl={ isRtl } ref={ ref } />;
 		} ),

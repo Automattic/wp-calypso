@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -67,7 +68,9 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_MEDIUM,
 			STEPS.IMPORTER_PLAYGROUND,
 			STEPS.IMPORTER_SQUARESPACE,
+			STEPS.IMPORTER_SUBSTACK,
 			STEPS.IMPORTER_WORDPRESS,
+			STEPS.SUBSCRIBERS,
 			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
@@ -417,7 +420,7 @@ const siteSetupFlow: Flow = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga', 'substack' ].indexOf(
+						[ 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
 							providedDependencies?.platform as ImporterMainPlatform
 						) !== -1
 					) {
@@ -436,6 +439,7 @@ const siteSetupFlow: Flow = {
 
 				case 'importerWix':
 				case 'importerBlogger':
+				case 'importerSubstack':
 				case 'importerMedium':
 				case 'importerSquarespace': {
 					if ( providedDependencies?.type === 'redirect' ) {
@@ -497,6 +501,10 @@ const siteSetupFlow: Flow = {
 		}
 
 		const goBack = () => {
+			if ( get( 'flow' )?.entryPoint === SITE_MIGRATION_FLOW ) {
+				return history.back();
+			}
+
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
@@ -535,15 +543,25 @@ const siteSetupFlow: Flow = {
 
 				case 'importerBlogger':
 				case 'importerMedium':
+				case 'importerSubstack':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
 						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );
 					}
+
+					if ( entryPoint === 'wp-admin-importers-list-direct-importer' ) {
+						return window.location.assign( `${ adminUrl }import.php` );
+					}
+
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
 
 				case 'importerWordpress':
 					if ( backToFlow ) {
 						return goToFlow( backToFlow );
+					}
+
+					if ( entryPoint === 'wp-admin-importers-list-direct-importer' ) {
+						return window.location.assign( `${ adminUrl }import.php` );
 					}
 
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
@@ -552,6 +570,7 @@ const siteSetupFlow: Flow = {
 
 					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importerWix':
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':

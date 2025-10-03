@@ -1,0 +1,13 @@
+.site-activity-logs__actor {
+    > [class^="site-activity-logs__actor-icon-"] {
+        border-radius: 50%;
+        height: 24px;
+        width: 24px;
+    }
+
+    .site-activity-logs__actor-icon-server,
+    .site-activity-logs__actor-icon-default {
+        background-color: $gray-300;
+        fill: $gray-700;
+    }
+}

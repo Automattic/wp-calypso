@@ -1,11 +1,12 @@
-import { FormLabel } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLegend from 'calypso/components/forms/form-legend';
-import { toggleWPcomEmailSetting } from 'calypso/state/notification-settings/actions';
+import { toggleWPcomEmailSetting, saveSettings } from 'calypso/state/notification-settings/actions';
+import {
+	getNotificationSettings,
+	isFetchingNotificationsSettings,
+} from 'calypso/state/notification-settings/selectors';
 
 class EmailCategory extends Component {
 	static propTypes = {
@@ -15,21 +16,35 @@ class EmailCategory extends Component {
 		description: PropTypes.string,
 	};
 
-	toggleSetting = () => {
+	toggleSetting = ( toggleValue ) => {
 		this.props.toggleWPcomEmailSetting( this.props.name );
+		// settings is not updated immediately, so we need to save the settings manually
+		this.props.saveSettings( 'wpcom', {
+			...this.props.settings,
+			[ this.props.name ]: toggleValue,
+		} );
 	};
 
 	render() {
+		const { isEnabled, description, title } = this.props;
 		return (
-			<FormFieldset>
-				<FormLegend>{ this.props.title }</FormLegend>
-				<FormLabel>
-					<FormCheckbox checked={ this.props.isEnabled } onChange={ this.toggleSetting } />
-					<span>{ this.props.description }</span>
-				</FormLabel>
-			</FormFieldset>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				checked={ isEnabled }
+				className="wpcom-settings__notification-settings-emailcategory"
+				help={ description }
+				label={ title }
+				onChange={ this.toggleSetting }
+				disabled={ this.props.isFetching }
+			/>
 		);
 	}
 }
 
-export default connect( null, { toggleWPcomEmailSetting } )( EmailCategory );
+export default connect(
+	( state ) => ( {
+		settings: getNotificationSettings( state, 'wpcom' ),
+		isFetching: isFetchingNotificationsSettings( state ),
+	} ),
+	{ toggleWPcomEmailSetting, saveSettings }
+)( EmailCategory );

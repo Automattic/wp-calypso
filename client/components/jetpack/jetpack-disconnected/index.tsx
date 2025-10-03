@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
 import Upsell from 'calypso/components/jetpack/upsell';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -24,22 +23,18 @@ const JetpackDisconnected: FunctionComponent = () => {
 	const reconnectUrl = `https://wordpress.com/settings/disconnect-site/${ siteSlug }?type=down`;
 	const body = [
 		<span className="jetpack-disconnected__paragraph" key="paragraph-1">
-			{ preventWidows(
-				translate( 'Jetpack is unable to reach your site {{siteName/}} at this moment.', {
-					components: { siteName: <strong>{ siteName }</strong> },
-				} )
-			) }
+			{ translate( 'Jetpack is unable to reach your site {{siteName/}} at this moment.', {
+				components: { siteName: <strong>{ siteName }</strong> },
+			} ) }
 		</span>,
 		<span className="jetpack-disconnected__paragraph" key="paragraph-2">
-			{ preventWidows(
-				translate(
-					'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
-					{
-						components: {
-							siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
-						},
-					}
-				)
+			{ translate(
+				'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
+				{
+					components: {
+						siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
+					},
+				}
 			) }
 		</span>,
 	];

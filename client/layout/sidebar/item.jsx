@@ -84,9 +84,10 @@ export default function SidebarItem( props ) {
 						</Badge>
 					) }
 				</span>
-				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
-					<Icon icon={ external } size={ 18 } />
-				) }
+				{ ( showAsExternal || props.forceShowExternalIcon ) &&
+					! ( sidebarIsCollapsed || props.sidebarIsCollapsed ) && (
+						<Icon icon={ external } size={ 18 } />
+					) }
 				{ props.forceChevronIcon && <Icon icon={ chevronRightSmall } size={ 24 } /> }
 				{ props.children }
 			</a>
@@ -100,7 +101,7 @@ SidebarItem.propTypes = {
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
 	onNavigate: PropTypes.func,
-	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func, PropTypes.object ] ),
 	customIcon: PropTypes.object,
 	selected: PropTypes.bool,
 	expandSection: PropTypes.func,
@@ -112,4 +113,5 @@ SidebarItem.propTypes = {
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,
 	badge: PropTypes.string,
+	sidebarIsCollapsed: PropTypes.bool,
 };

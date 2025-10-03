@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import ListStep from 'calypso/blocks/import/list';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ImportWrapper } from '../import';
@@ -19,13 +20,18 @@ const ImportList: Step< {
 	const siteSlug = useSiteSlug();
 	const { navigation } = props;
 
+	const text = __( 'Import content from another platform or file' );
+	const subText = __( "Select the platform you're coming from" );
+
 	return (
-		<ImportWrapper { ...props }>
+		<ImportWrapper { ...props } text={ text } subText={ subText }>
 			<ListStep
 				siteSlug={ siteSlug }
 				submit={ navigation.submit }
 				getFinalImporterUrl={ getFinalImporterUrl }
 				{ ...props }
+				title={ text }
+				subTitle={ subText }
 			/>
 		</ImportWrapper>
 	);

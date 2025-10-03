@@ -76,7 +76,7 @@ See the [list of groups](tests_ci.md#featuretest-groups).
 
 Specified accounts will be pre-authenticated prior to the main test suite executions and their cookies saved to be re-used until expiry (typically 3 days).
 
-Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
+Specify a list of user accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
@@ -103,13 +103,13 @@ b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn je
 
 ### Target a different environment
 
-To target a webapp running in a different environment:
+By default these tests target <http://calypso.localhost:3000>. To target a webapp running in a different environment:
 
 1. determine the base URL to use for the appropriate environment.
 
-   - for local webapp: `http://calypso.localhost:3000`
-   - for staging webapp: `https://wordpress.com`
+   - for staging/production webapp: `https://wordpress.com`
    - for wpcalypso webapp: `https://wpcalypso.wordpress.com`
+   - for horizon webapp: `https://horizon.wordpress.com`
 
 2. set the `CALYPSO_BASE_URL` environment variable:
 

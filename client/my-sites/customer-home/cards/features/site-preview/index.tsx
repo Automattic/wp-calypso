@@ -91,7 +91,7 @@ const SitePreview = ( {
 
 	// We use an iframe rather than mShot to not cache changes.
 	const iframeSrcKeepHomepage = selectedSite
-		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true`
+		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true&iframe=true`
 		: '#';
 
 	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
@@ -108,11 +108,17 @@ const SitePreview = ( {
 				<div className="home-site-preview__thumbnail">
 					{ selectedSite ? (
 						<iframe
+							// Enabling sandbox disables most features, such as autoplay,
+							// alerts, popups, fullscreen, etc.
+							sandbox="allow-scripts allow-same-origin"
+							// Officially deprecated, but still widely supported. Hides
+							// scrollbars in case they are set to always visible.
 							scrolling="no"
 							loading="lazy"
+							// @ts-expect-error For some reason there's no inert type.
+							inert="true"
 							title={ __( 'Site Preview' ) }
 							src={ iframeSrcKeepHomepage }
-							tabIndex={ -1 }
 						/>
 					) : (
 						<div className="home-site-preview__thumbnail-placeholder" />

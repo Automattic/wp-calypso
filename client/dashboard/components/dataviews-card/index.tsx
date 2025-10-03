@@ -1,11 +1,15 @@
 import { Card, CardBody } from '@wordpress/components';
+import { forwardRef } from 'react';
 
-function DataViewsCard( { children }: { children: React.ReactNode } ) {
+function UnforwardedDataViewsCard(
+	{ className, children }: { className?: string; children: React.ReactNode },
+	ref: React.ForwardedRef< HTMLDivElement >
+) {
 	return (
-		<Card>
-			<CardBody style={ { paddingLeft: 0, paddingRight: 0 } }>{ children }</CardBody>
+		<Card ref={ ref } className={ className }>
+			<CardBody>{ children }</CardBody>
 		</Card>
 	);
 }
 
-export default DataViewsCard;
+export const DataViewsCard = forwardRef( UnforwardedDataViewsCard );

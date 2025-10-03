@@ -1,10 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	isAkismetProduct,
-	isJetpackPurchasableItem,
-	AKISMET_PRO_500_PRODUCTS,
-	isWpComPlan,
-} from '@automattic/calypso-products';
+import { AKISMET_PRO_500_PRODUCTS, isWpComPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
@@ -17,27 +12,37 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
+	useRestorableProducts,
+	RemovedFromCartItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
+import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import {
+	getIsOnboardingAffiliateFlow,
+	getIsOnboardingUnifiedFlow,
+} from 'calypso/state/signup/flow/selectors';
 import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
-import type { OnChangeItemVariant } from './item-variation-picker';
+import type { OnChangeItemVariant, WPCOMProductVariant } from './item-variation-picker';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
 	ReplaceProductInCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren, RefObject } from 'react';
 
@@ -68,6 +73,7 @@ export function WPOrderReviewLineItems( {
 	isSummary,
 	removeProductFromCart,
 	replaceProductInCart,
+	addProductsToCart,
 	removeCoupon,
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
@@ -79,8 +85,9 @@ export function WPOrderReviewLineItems( {
 }: {
 	className?: string;
 	isSummary?: boolean;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	replaceProductInCart: ReplaceProductInCart;
+	addProductsToCart: AddProductsToCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -94,11 +101,14 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
+	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
-		couponLineItem.label = isOnboardingAffiliateFlow
-			? getAffiliateCouponLabel()
-			: couponLineItem.label;
+		couponLineItem.label =
+			isOnboardingAffiliateFlow || isOnboardingUnifiedFlow
+				? getAffiliateCouponLabel()
+				: couponLineItem.label;
 	}
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -219,6 +229,13 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
+			{ restorableProducts.map( ( product ) => (
+				<RemovedFromCartItem
+					key={ product.uuid }
+					product={ product }
+					addProductsToCart={ addProductsToCart }
+				/>
+			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
@@ -233,12 +250,14 @@ export function WPOrderReviewLineItems( {
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
+				<WPOrderReviewListItem>
+					<NonProductLineItem
+						subtotal
+						lineItem={ creditsLineItem }
+						isSummary={ isSummary }
+						isPwpoUser={ isPwpoUser }
+					/>
+				</WPOrderReviewListItem>
 			) }
 		</WPOrderReviewList>
 	);
@@ -291,11 +310,19 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown: ( key: string | null ) => void;
 	akQuantityOpenId: string | null;
 } ) {
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+	const isStreamlinedPrice =
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
+		isWpComPlan( product.product_slug );
+
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
 	}
@@ -373,32 +400,30 @@ function LineItemWrapper( {
 		return true;
 	} )();
 
-	const isJetpack = responseCart.products.some( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
-
-	const variants = useGetProductVariants( product, ( variant ) => {
-		// Only show term variants which are equal to or longer than the variant that
-		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
-		// See https://github.com/Automattic/wp-calypso/issues/69633
-		if ( ! initialVariantTerm ) {
-			return true;
-		}
-		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
-		const isMarketplace = product.extra?.is_marketplace_product;
-
-		if ( isJetpack || isAkismet || isMarketplace ) {
-			return true;
+	const variantsFilterCallback: ( variant: WPCOMProductVariant ) => boolean = ( variant ) => {
+		if ( signupFlowName === 'onboarding-pm' && isWpComPlan( product.product_slug ) ) {
+			const domainRegistrations = getDomainRegistrations( responseCart );
+			// Hide monthly variant when a paid domain is in the cart
+			if (
+				variant.termIntervalInMonths === 1 &&
+				variant.termIntervalInMonths !== initialVariantTerm &&
+				domainRegistrations.length > 0
+			) {
+				return false;
+			}
 		}
 
-		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+		return true;
+	};
+	const variants = useGetProductVariants( product, variantsFilterCallback );
 
 	const areThereVariants = variants.length > 1;
 
 	const finalShouldShowVariantSelector =
 		areThereVariants && shouldShowVariantSelector && onChangeSelection;
+
+	const firstVariant = variants[ 0 ];
+	const compareToPrice = firstVariant?.priceBeforeDiscounts / firstVariant?.termIntervalInMonths;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -406,15 +431,20 @@ function LineItemWrapper( {
 				product={ product }
 				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
+				isRestorable
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }
+				restorableProducts={ restorableProducts }
+				setRestorableProducts={ setRestorableProducts }
 				isPwpoUser={ isPwpoUser }
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
+				shouldShowComparison={ isStreamlinedPrice }
+				compareToPrice={ compareToPrice }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

@@ -1,6 +1,7 @@
 
 import _self.bashNodeScript
 import _self.yarn_install_cmd
+import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
@@ -55,6 +56,7 @@ project {
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 	buildType(SmartBuildLauncher)
+	template(CalypsoE2ETestsBuildTemplate)
 
 	params {
 		// Force color support in chalk. For some reason it doesn't detect TeamCity

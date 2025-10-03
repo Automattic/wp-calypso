@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
@@ -9,6 +10,28 @@ import type { PricedAPIPlan, PlanNext } from '../types';
 interface PlansIndex {
 	[ planSlug: string ]: PlanNext;
 }
+
+type RequestFunction = ( params: {
+	path: string;
+	apiVersion: string;
+	query: string;
+} ) => Promise< PricedAPIPlan[] >;
+
+/**
+ * Request function for Jetpack that bypasses proxy and goes directly to WordPress.com
+ */
+const jetpackRequestFunction: RequestFunction = async ( params ) => {
+	const queryParams = params.query ? `?${ params.query }` : '';
+	const url = `https://public-api.wordpress.com/rest/v${ params.apiVersion }${ params.path }${ queryParams }`;
+	const response = await fetch( url, {
+		method: 'GET',
+		credentials: 'omit', // Don't send cookies to avoid CORS issues
+	} );
+	if ( ! response.ok ) {
+		throw new Error( `API request failed: ${ response.status }` );
+	}
+	return response.json();
+};
 
 /**
  * Plans from `/plans` endpoint, transformed into a map of planSlug => PlanNext
@@ -27,10 +50,15 @@ function usePlans( {
 	coupon && params.append( 'coupon_code', coupon );
 	params.append( 'locale', locale );
 
+	// Auto-detect Jetpack context and use appropriate request function
+	const isJetpack = isEnabled( 'is_running_in_jetpack_site' );
+
+	const requestFn = isJetpack ? jetpackRequestFunction : wpcomRequest;
+
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),
 		queryFn: async (): Promise< PlansIndex > => {
-			const data: PricedAPIPlan[] = await wpcomRequest( {
+			const data: PricedAPIPlan[] = await requestFn( {
 				path: '/plans',
 				apiVersion: '1.5',
 				query: params.toString(),

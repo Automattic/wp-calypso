@@ -1,0 +1,37 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.theme__sheet-card-support {
+	align-items: center;
+	display: grid;
+	gap: 0 20px;
+	grid-template-columns: 48px 1fr;
+
+	.gridicon {
+		color: var(--color-neutral-10);
+	}
+
+	.theme__sheet-card-support-details {
+		text-wrap: pretty;
+
+		small {
+			display: block;
+		}
+	}
+
+	.components-button {
+		grid-column: 2;
+		justify-self: start;
+		margin-top: 20px;
+	}
+
+	@media (min-width: #{ ($break-small) }) and (max-width: #{ ($break-medium) }), (min-width: #{ ($break-wide) }) {
+		grid-template-columns: 48px 1fr auto;
+
+		.components-button {
+			grid-column: 3;
+			justify-self: end;
+			margin-top: 0;
+		}
+	}
+}

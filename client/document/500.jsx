@@ -20,10 +20,7 @@ function ServerError( { entrypoint } ) {
 					<div className="wp has-no-sidebar">
 						<div className="layout__content" id="content">
 							<div className="layout__primary" id="primary">
-								<EmptyContent
-									illustration="/calypso/images/illustrations/error.svg"
-									title="We're sorry, but an unexpected error has occurred"
-								/>
+								<EmptyContent title="We're sorry, but an unexpected error has occurred" />
 							</div>
 						</div>
 					</div>

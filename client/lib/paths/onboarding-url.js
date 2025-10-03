@@ -9,5 +9,5 @@ export function onboardingUrl() {
 	if ( isJetpackCloud() ) {
 		return config( 'jetpack_connect_url' );
 	}
-	return config( 'signup_url' );
+	return '/start';
 }

@@ -56,6 +56,8 @@ export type CampaignStats = {
 	impressions_total: number;
 	clicks_total: number;
 	spent_budget_cents: number;
+	total_budget_used: number;
+	weekly_budget_used: number;
 	deliver_margin_multiplier: number;
 	conversions_total?: Record< string, number >;
 	conversion_value?: Record< string, number >;

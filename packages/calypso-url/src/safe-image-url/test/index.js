@@ -135,6 +135,11 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( 'https://example.com/foo.svg' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.svg?ssl=1' ) ).toBeNull();
 		} );
+
+		test( 'should return null for AVIF images', () => {
+			expect( safeImageUrl( 'https://example.com/foo.avif' ) ).toBeNull();
+			expect( safeImageUrl( 'https://example.com/foo.avif?ssl=1' ) ).toBeNull();
+		} );
 	}
 
 	describe( 'browser', () => {

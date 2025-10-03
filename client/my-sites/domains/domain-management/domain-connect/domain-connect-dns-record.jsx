@@ -53,6 +53,14 @@ class DomainConnectDnsRecord extends Component {
 					},
 				} );
 
+			case 'CAA':
+				return translate( '%(tag)s %(value)s', {
+					args: {
+						value: record.value,
+						tag: record.tag,
+					},
+				} );
+
 			case 'CNAME':
 				return translate( 'Alias of %(data)s', {
 					args: {

@@ -50,12 +50,10 @@
 
 		svg.reader-follow-conversation path,
 		svg.reader-following-conversation path {
-			fill: none;
-			stroke: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
 
 			&.status {
-				fill: var(--color-primary);
-				stroke: none;
+				fill: none;
 			}
 		}
 	}
@@ -93,14 +91,6 @@
 		top: 2px;
 	}
 
-	.reader-external,
-	.reader-follow-conversation,
-	.reader-following-conversation {
-		margin: 0 6px -2px 0;
-		vertical-align: middle;
-		position: static;
-	}
-
 	&.reader-post-options-menu__blog-sticker-menu-item {
 		width: 100%;
 	}
@@ -109,4 +99,13 @@
 .popover__menu-separator {
 	margin: 4px 0;
 	background: var(--color-neutral-0);
+}
+
+.reader-post-options-menu__blog-stickers h3 {
+	font-size: 13px;
+	color: var(--color-neutral-40);
+	margin: 0;
+	padding: 6px 20px 9px;
+	text-align: left;
+	text-transform: uppercase;
 }

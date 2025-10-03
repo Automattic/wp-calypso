@@ -164,18 +164,7 @@
 			}
 		}
 
-		&__upgrade-required {
-			font-size: 0.875rem;
-			font-weight: 400;
-			color: var(--studio-red-50);
-			margin-bottom: 8px;
-			visibility: hidden;
-			&.is-visible {
-				visibility: visible;
-			}
-		}
-
-		&__current-plan {
+		&__highlight-badge {
 			background: var(--studio-green-5);
 			border-radius: 2px;
 			color: var(--studio-green-60);
@@ -185,6 +174,12 @@
 			line-height: 24px;
 			padding: 0 8px;
 			visibility: hidden;
+
+			.icon {
+				fill: var(--studio-green-60);
+				vertical-align: text-bottom;
+			}
+
 			&.is-visible {
 				visibility: visible;
 			}

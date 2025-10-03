@@ -1,71 +1,19 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
-import FormButton from 'calypso/components/forms/form-button';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const views = {
-	VIEWING: 'VIEWING',
-	EDITING: 'EDITING',
-};
-
 class ManageContact extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			currentView: views.VIEWING,
-		};
-	}
-
-	renderHeader() {
-		const isEditing = views.EDITING === this.state.currentView;
-		const { translate } = this.props;
-
+	renderEdit() {
 		return (
-			<div className="security-account-recovery-contact__header">
-				<div className="security-account-recovery-contact__header-info">
-					<span className="security-account-recovery-contact__header-title">
-						{ this.props.title }
-					</span>
-					{ isEditing ? null : (
-						<span className="security-account-recovery-contact__header-subtitle">
-							{ this.props.subtitle }
-						</span>
-					) }
-				</div>
-
-				{ isEditing ? null : (
-					<div className="security-account-recovery-contact__header-action">
-						<FormButton
-							disabled={ this.props.disabled }
-							isPrimary={ false }
-							onClick={ this.onEdit }
-						>
-							{ this.props.hasValue ? translate( 'Edit' ) : translate( 'Add' ) }
-						</FormButton>
-					</div>
-				) }
+			<div className="security-account-recovery-contact__detail">
+				{ cloneElement( this.props.children, {
+					onSave: this.onSave,
+					onDelete: this.props.onDelete && this.onDelete,
+					onCancel: this.props.onCancel && this.onCancel,
+				} ) }
 			</div>
 		);
-	}
-
-	renderEdit() {
-		let view = null;
-
-		if ( views.EDITING === this.state.currentView ) {
-			view = (
-				<div className="security-account-recovery-contact__detail">
-					{ cloneElement( this.props.children, {
-						onCancel: this.onCancel,
-						onSave: this.onSave,
-						onDelete: this.onDelete,
-					} ) }
-				</div>
-			);
-		}
-
-		return view;
 	}
 
 	renderLoading() {
@@ -82,38 +30,22 @@ class ManageContact extends Component {
 			return this.renderLoading();
 		}
 
-		return (
-			<div className="security-account-recovery-contact">
-				{ this.renderHeader() }
-				{ this.renderEdit() }
-			</div>
-		);
+		return <div className="security-account-recovery-contact">{ this.renderEdit() }</div>;
 	}
 
-	onEdit = () => {
-		this.setState( { currentView: views.EDITING }, function () {
-			this.recordEvent( this.props.hasValue ? 'edit' : 'add' );
-		} );
-	};
-
-	onCancel = () => {
-		this.setState( { currentView: views.VIEWING }, function () {
-			this.recordEvent( 'cancel' );
-		} );
-	};
-
 	onSave = ( data ) => {
-		this.setState( { currentView: views.VIEWING }, function () {
-			this.props.onSave( data );
-			this.recordEvent( 'save' );
-		} );
+		this.props.onSave( data );
+		this.recordEvent( 'save' );
 	};
 
 	onDelete = () => {
-		this.setState( { currentView: views.VIEWING }, function () {
-			this.props.onDelete();
-			this.recordEvent( 'delete' );
-		} );
+		this.props.onDelete();
+		this.recordEvent( 'delete' );
+	};
+
+	onCancel = () => {
+		this.props.onCancel();
+		this.recordEvent( 'cancel' );
 	};
 
 	recordEvent( action ) {

@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations */
 
 import page from '@automattic/calypso-router';
+import { getTld } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	CALYPSO_HELP_WITH_HELP_CENTER,
@@ -11,7 +12,6 @@ import {
 } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import SetAsPrimaryLink from 'calypso/my-sites/domains/domain-management/settings/set-as-primary/link';
 import {
@@ -410,17 +410,6 @@ function getAvailabilityNotice(
 				message = translate( 'Sorry, WordPress.com does not support the %(tld)s TLD.', {
 					args: { tld },
 				} );
-			} else {
-				/* translators: %s: TLD (eg .com, .pl) */
-				message = translate(
-					'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
-					{
-						args: { tld },
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
 			}
 			break;
 		case domainAvailability.UNKNOWN:

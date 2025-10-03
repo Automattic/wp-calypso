@@ -1,6 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import Illustration from 'calypso/assets/images/domains/domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordEmailUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
@@ -62,7 +61,6 @@ const EmailNoDomain = ( {
 				secondaryAction={ translate( 'Just search for a domain' ) }
 				secondaryActionCallback={ trackEventForDomain }
 				secondaryActionURL={ `/domains/add/${ selectedSite.slug }` }
-				illustration={ Illustration }
 				line={ translate(
 					'Upgrade to a plan now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
 				) }
@@ -79,7 +77,6 @@ const EmailNoDomain = ( {
 				action={ translate( 'Add a Domain' ) }
 				actionCallback={ trackEventForDomain }
 				actionURL={ `/domains/add/${ selectedSite.slug }` }
-				illustration={ Illustration }
 				line={ translate(
 					'Claim your domain, pick from one of our flexible options to connect your domain with email and start getting emails today.'
 				) }
@@ -95,7 +92,6 @@ const EmailNoDomain = ( {
 			action={ translate( 'Add a Domain' ) }
 			actionURL={ `/domains/add/${ selectedSite.slug }` }
 			actionCallback={ trackEventForDomain }
-			illustration={ Illustration }
 			line={ translate(
 				'Set up or buy your domain, pick from one of our flexible email options, and start getting emails today.'
 			) }

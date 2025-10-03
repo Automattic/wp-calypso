@@ -21,8 +21,7 @@ function NotFound( { entrypoint } ) {
 						<div className="layout__content" id="content">
 							<div className="layout__primary" id="primary">
 								<EmptyContent
-									illustration="/calypso/images/illustrations/illustration-404.svg"
-									title="Uh oh. Page not found."
+									title="Page not found."
 									line="Sorry, the page you were looking for doesn't exist or has been moved."
 									action="Return Home"
 									actionURL="/"

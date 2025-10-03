@@ -66,7 +66,7 @@ class PodcastingDetails extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="podcasting_explicit">{ translate( 'Explicit Content' ) }</FormLabel>
+				<FormLabel htmlFor="podcasting_explicit">{ translate( 'Explicit content' ) }</FormLabel>
 				<FormSelect
 					id="podcasting_explicit"
 					name="podcasting_explicit"
@@ -154,7 +154,7 @@ class PodcastingDetails extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast Topics' ) }</FormLabel>
+				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast topics' ) }</FormLabel>
 				<FormSettingExplanation>
 					{ translate(
 						'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
@@ -276,7 +276,7 @@ class PodcastingDetails extends Component {
 							</Button>
 						</div>
 					) }
-					<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
+					<FormLabel>{ translate( 'Podcast category' ) }</FormLabel>
 					<FormSettingExplanation>
 						{ translate(
 							'Posts published in this category will be included in your podcast feed.'

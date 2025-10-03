@@ -40,9 +40,9 @@ $blueberry-color: #3858e9;
 		outline: 3px solid transparent;
 
 		&.metric-tab-bar__performance {
-			border-inline-width: 0;
+			border-width: 0;
 			margin-inline: -1px;
-			padding-inline: 24px;
+			padding: 17px 24px;
 			width: calc(100% + 2px);
 			box-shadow: $metric-tab-shadow inset;
 		}
@@ -97,4 +97,5 @@ $blueberry-color: #3858e9;
 	border: 1px solid var(--studio-gray-5);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
+	background: var(--studio-white);
 }

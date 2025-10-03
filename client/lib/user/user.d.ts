@@ -21,8 +21,10 @@ export type OptionalUserData = {
 	email: string;
 	email_verified: boolean;
 	has_unseen_notes: boolean;
+	i18n_empathy_mode: boolean;
 	is_new_reader: boolean;
 	is_valid_google_apps_country: boolean;
+	lasagna_jwt: string;
 	localeSlug: string;
 	localeVariant: string;
 	logout_URL: string;
@@ -39,6 +41,7 @@ export type OptionalUserData = {
 	has_jetpack_partner_access?: boolean;
 	jetpack_partner_types?: string[];
 	social_login_connections: unknown;
+	use_fallback_for_incomplete_languages: boolean;
 	user_login: string;
 	user_ip_country_code: string;
 	user_URL: string;

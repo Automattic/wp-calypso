@@ -17,6 +17,7 @@ import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-doma
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -46,6 +47,7 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
@@ -69,6 +71,7 @@ const HomeContent = ( {
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
 	isAdmin,
+	hostingDashboardOptIn,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -101,6 +104,8 @@ const HomeContent = ( {
 	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
+
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
@@ -145,12 +150,7 @@ const HomeContent = ( {
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
-		return (
-			<EmptyContent
-				title={ preventWidows( title ) }
-				illustration="/calypso/images/illustrations/error.svg"
-			/>
-		);
+		return <EmptyContent title={ preventWidows( title ) } />;
 	}
 
 	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
@@ -185,8 +185,13 @@ const HomeContent = ( {
 				{ translate( 'View site' ) }
 			</Button>
 			{ isAdmin && ! isP2 && (
-				<Button primary href={ `/overview/${ site.slug }` }>
-					{ translate( 'Hosting Overview' ) }
+				<Button
+					primary
+					href={ hostingDashboardOptIn ? `/v2/sites/${ site.slug }` : `/overview/${ site.slug }` }
+				>
+					{ hostingDashboardOptIn
+						? translate( 'Hosting Dashboard' )
+						: translate( 'Hosting Overview' ) }
 				</Button>
 			) }
 		</>
@@ -377,6 +382,7 @@ const mapStateToProps = ( state ) => {
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
+		hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
 	};
 };
 

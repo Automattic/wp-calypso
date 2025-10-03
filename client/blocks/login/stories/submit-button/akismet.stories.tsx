@@ -4,6 +4,7 @@ import {
 	LoginFormAction,
 	type SubmitButtonStory,
 	AkismetWrapper,
+	LoginFormWrapper,
 } from '../shared';
 import type { Meta } from '@storybook/react';
 
@@ -16,5 +17,5 @@ const meta: Meta = {
 export default meta;
 
 export const Akismet: SubmitButtonStory = {
-	decorators: [ LoginFormAction, AkismetWrapper ],
+	decorators: [ LoginFormAction, LoginFormWrapper, AkismetWrapper ],
 };

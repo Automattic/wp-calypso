@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_BUSINESS, isFreePlan, isBusinessTrial } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useWindowDimensions } from '@automattic/viewport';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { MShotParams } from 'calypso/blocks/import/types';
-import useWindowDimensions from 'calypso/blocks/import/windowDimensions.effect';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import Main from 'calypso/components/main';

@@ -1,6 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables";
+@import "calypso/my-sites/stats/components/highlight-cards/variables";
 @import "@automattic/components/src/styles/typography";
 
 $custom-stats-tab-mobile-break: $break-medium;

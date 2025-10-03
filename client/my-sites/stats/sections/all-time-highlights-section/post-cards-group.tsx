@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { ComponentSwapper, DotPager } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -17,6 +16,7 @@ import {
 	isRequestingPostsForQuery,
 	countPostLikes,
 } from 'calypso/state/posts/selectors';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getTopPostAndPage,
@@ -72,7 +72,6 @@ export default function PostCardsGroup( {
 } ) {
 	const translate = useTranslate();
 	const userLocale = useSelector( getCurrentUserLocale );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Prepare the latest post card.
 	const posts = useSelector( ( state ) =>
@@ -127,6 +126,10 @@ export default function PostCardsGroup( {
 
 	const cards = [];
 
+	const popularPostLink = useSelector( ( state ) =>
+		getEditorUrl( state, siteId, mostPopularPost?.ID )
+	);
+
 	// Show two cards when the latest post is not the most popular post or both cards are loading.
 	if ( isRequestingPosts || isPreparingMostPopularPost || latestPost?.ID !== mostPopularPost?.ID ) {
 		cards.push(
@@ -151,7 +154,7 @@ export default function PostCardsGroup( {
 				viewCount={ mostPopularPostData?.viewCount }
 				commentCount={ mostPopularPostData?.commentCount }
 				titleLink={ `/stats/post/${ mostPopularPost?.ID }/${ siteSlug }` }
-				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost?.ID }` : undefined }
+				uploadHref={ popularPostLink }
 				locale={ userLocale }
 				isLoading={ isPreparingMostPopularPost }
 			/>

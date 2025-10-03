@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -141,23 +142,13 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 				<p>
 					{ getMetricValuations( translate )[ activeTab ].explanation }
 					&nbsp;
-					{ isPerformanceScoreSelected ? (
-						<a
-							href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ translate( 'See calculator ↗' ) }
-						</a>
-					) : (
-						<a
-							href={ `https://web.dev/articles/${ encodeURIComponent( activeTab ) }` }
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ translate( 'Learn more ↗' ) }
-						</a>
-					) }
+					<a
+						href={ localizeUrl( getMetricValuations( translate )[ activeTab ].docsUrl ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Learn more ↗' ) }
+					</a>
 				</p>
 				<div className="core-web-vitals-display__ranges">
 					<div className="range">

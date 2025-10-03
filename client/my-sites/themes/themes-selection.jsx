@@ -146,9 +146,8 @@ class ThemesSelection extends Component {
 			}
 
 			this.trackScrollPage();
+			this.props.incrementPage();
 		}
-
-		this.props.incrementPage();
 	};
 
 	//intercept preview and add primary and secondary

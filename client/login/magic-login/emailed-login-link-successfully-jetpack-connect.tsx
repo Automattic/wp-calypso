@@ -9,6 +9,7 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
+import { useLoginContext } from '../login-context';
 
 interface Props {
 	emailAddress: string;
@@ -23,11 +24,31 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { setHeaders } = useLoginContext();
 
 	useEffect( () => {
 		const enhancedRecordPageView = withEnhancers( recordPageView, [ enhanceWithSiteType ] );
 		dispatch( enhancedRecordPageView( '/log-in/jetpack/link', 'Login > Link > Emailed' ) );
 	}, [] );
+
+	useEffect( () => {
+		setHeaders( {
+			heading: translate( 'Check your email' ),
+			subHeading: emailAddress
+				? translate(
+						'We sent a message to {{strong}}%(emailAddress)s{{/strong}} with a link to log in to WordPress.com.',
+						{
+							args: {
+								emailAddress,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+				  )
+				: translate( 'We sent a message to log in to WordPress.com' ),
+		} );
+	}, [ setHeaders, translate, emailAddress ] );
 
 	return (
 		<div className="magic-login__successfully-jetpack">
@@ -38,24 +59,6 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 					waitForEmailAddress={ emailAddress }
 				/>
 			) }
-
-			<h1 className="magic-login__form-header">{ translate( 'Check your inbox' ) }</h1>
-
-			<p>
-				{ emailAddress
-					? translate(
-							'We sent a message to {{strong}}%(emailAddress)s{{/strong}} with a link to log in to WordPress.com.',
-							{
-								args: {
-									emailAddress,
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-					  )
-					: translate( 'We sent a message to log in to WordPress.com' ) }
-			</p>
 			<p>{ preventWidows( translate( "Only one step left—we'll connect your site next." ) ) }</p>
 			<div className="magic-login__successfully-jetpack-actions">
 				<p>

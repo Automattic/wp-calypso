@@ -1,13 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
-import config, { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import React from 'react';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -57,27 +53,14 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
 const getInput = () => screen.getByLabelText( /Enter your site address/ );
 
-const isMigrationExperimentEnabled = isEnabled( 'migration-flow/experiment' );
-
-const restoreIsMigrationExperimentEnabled = () => {
-	if ( isMigrationExperimentEnabled ) {
-		config.enable( 'migration-flow/experiment' );
-	} else {
-		config.disable( 'migration-flow/experiment' );
-	}
-};
-
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
-	afterEach( () => {
-		restoreIsMigrationExperimentEnabled();
-	} );
 
 	it( 'continues the flow when the platform is wordpress', async () => {
-		useSiteSlug.mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
+		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
@@ -177,8 +160,6 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'shows why host with us points', async () => {
-		config.disable( 'migration-flow/experiment' );
-
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
@@ -196,12 +177,7 @@ describe( 'SiteMigrationIdentify', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows the back link when the entrypoint is "goals"', () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( { entryPoint: 'goals' } ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
+	it( 'shows the back link when the "ref" param is set', () => {
 		render(
 			{
 				navigation: {
@@ -215,49 +191,11 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
 	} );
 
-	it( 'shows the back button when the "back_to" param is defined', () => {
-		render(
-			{
-				navigation: {
-					goBack: jest.fn(),
-					submit: jest.fn(),
-				},
-			},
-			{ initialEntry: '/some-path?back_to=https://example.com' }
-		);
-
-		expect( screen.getByRole( 'link', { name: /Back/ } ) ).toBeVisible();
-	} );
-
-	it( 'shows the back button when the entrypoint is "wp-admin-importers-list"', () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
-		render(
-			{
-				navigation: {
-					goBack: jest.fn(),
-					submit: jest.fn(),
-				},
-			},
-			{ initialEntry: '/some-path?ref=wp-admin-importers-list' }
-		);
-
-		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
-	} );
-
 	it( 'hides the back button and link by default', async () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( {} ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
 		render(
 			{
 				navigation: {
-					goBack: jest.fn(),
+					goBack: undefined,
 					submit: jest.fn(),
 				},
 			},

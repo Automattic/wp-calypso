@@ -13,39 +13,67 @@ import type { CalypsoDispatch } from '../types';
 import 'calypso/state/billing-transactions/init';
 
 export const requestBillingTransactions = ( transactionType?: BillingTransactionsType ) => {
-	return ( dispatch: CalypsoDispatch ) => {
+	return async ( dispatch: CalypsoDispatch ) => {
 		dispatch( {
 			type: BILLING_TRANSACTIONS_REQUEST,
 		} );
 
-		return wp.req
-			.get( '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' ), {
+		const limit = 600;
+		let url = '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' );
+		if ( transactionType !== 'upcoming' ) {
+			url = url + '?limit=' + limit;
+		}
+
+		try {
+			const {
+				billing_history,
+				upcoming_charges,
+				billing_history_total,
+			}: {
+				billing_history?: BillingTransaction[];
+				upcoming_charges?: UpcomingCharge[];
+				billing_history_total?: number;
+			} = await wp.req.get( url, {
 				apiVersion: '1.3',
-			} )
-			.then(
-				( {
-					billing_history,
-					upcoming_charges,
-				}: {
-					billing_history: BillingTransaction[];
-					upcoming_charges: UpcomingCharge[];
-				} ) => {
-					dispatch( {
-						type: BILLING_TRANSACTIONS_RECEIVE,
-						past: billing_history,
-						upcoming: upcoming_charges,
-					} );
-					dispatch( {
-						type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-					} );
-				}
-			)
-			.catch( ( error: Error ) => {
-				dispatch( {
-					type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
-					error,
-				} );
 			} );
+			let billingHistoryTotal = billing_history_total ?? 0;
+			const fullBillingHistory = billing_history ?? [];
+			if ( fullBillingHistory.length === limit && billingHistoryTotal !== limit ) {
+				// If we have exactly the limit number of transactions (and this is not the full total), it means there are more transactions to fetch.
+				while ( fullBillingHistory.length < billingHistoryTotal ) {
+					// Fetch the next page of transactions.
+					const offset_url = url + '&offset=' + fullBillingHistory.length;
+
+					const res = await wp.req.get( offset_url, {
+						apiVersion: '1.3',
+					} );
+
+					const newBillingHistoryChunk = res.billing_history ?? [];
+					if ( newBillingHistoryChunk.length === 0 ) {
+						// Prevent potential infinite loop if no more transactions are returned.
+						break;
+					}
+					fullBillingHistory.push( ...newBillingHistoryChunk );
+
+					// Value is updated in case the value changes in the back-end
+					billingHistoryTotal = res.billing_history_total ?? 0;
+				}
+			}
+
+			dispatch( {
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				past: fullBillingHistory,
+				upcoming: upcoming_charges,
+			} );
+			dispatch( {
+				type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
+			} );
+		} catch ( error: any ) {
+			dispatch( {
+				type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
+				error,
+			} );
+		}
 	};
 };
 

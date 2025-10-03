@@ -1,7 +1,7 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isBillingInfoEmpty } from '@automattic/wpcom-checkout';
+import { isBillingInfoEmpty, RestorableProductsProvider } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -145,8 +145,14 @@ export function MiniCart( {
 	checkoutLabel?: string;
 	emptyCart?: React.ReactNode;
 } ) {
-	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
-		useShoppingCart( cartKey ? cartKey : undefined );
+	const {
+		responseCart,
+		removeCoupon,
+		removeProductFromCart,
+		addProductsToCart,
+		isLoading,
+		isPendingUpdate,
+	} = useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();
 
 	const shouldRenderEmptyCart = emptyCart && responseCart.products.length <= 0;
@@ -171,47 +177,52 @@ export function MiniCart( {
 			paymentMethods={ emptyPaymentMethods }
 			paymentProcessors={ emptyPaymentProcessors }
 		>
-			<MiniCartWrapper className="mini-cart">
-				<MiniCartHeader className="mini-cart__header">
-					<MiniCartTitle className="mini-cart__title">{ __( 'Cart' ) }</MiniCartTitle>
-					<MiniCartCloseButton className="mini-cart__close-button" onClick={ closeCart }>
-						<CloseIcon />
-						<HiddenText>{ __( 'Close cart' ) }</HiddenText>
-					</MiniCartCloseButton>
-					<MiniCartSiteTitle className="mini-cart__site-title">
-						{ sprintf(
-							/* translators: %s is the site slug */
-							__( 'For %s' ),
-							selectedSiteSlug
-						) }
-					</MiniCartSiteTitle>
-				</MiniCartHeader>
-				<MiniCartLineItems
-					removeCoupon={ handleRemoveCoupon }
-					removeProductFromCart={ handleRemoveProduct }
-					responseCart={ responseCart }
-				/>
-				{ shouldRenderEmptyCart && emptyCart }
-				{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }
-				{ ! shouldRenderEmptyCart && isBillingInfoEmpty( responseCart ) && (
-					<TaxNotCalculatedLineItem />
-				) }
-				{ ! shouldRenderEmptyCart && ! isBillingInfoEmpty( responseCart ) && <TaxAddedLineItem /> }
-				<MiniCartFooter className="mini-cart__footer">
-					{ ! shouldRenderEmptyCart && (
-						<Button
-							className="mini-cart__checkout"
-							buttonType="primary"
-							fullWidth
-							disabled={ isDisabled }
-							isBusy={ isDisabled }
-							onClick={ () => goToCheckout( selectedSiteSlug ) }
-						>
-							{ checkoutLabel || __( 'Checkout' ) }
-						</Button>
+			<RestorableProductsProvider>
+				<MiniCartWrapper className="mini-cart">
+					<MiniCartHeader className="mini-cart__header">
+						<MiniCartTitle className="mini-cart__title">{ __( 'Cart' ) }</MiniCartTitle>
+						<MiniCartCloseButton className="mini-cart__close-button" onClick={ closeCart }>
+							<CloseIcon />
+							<HiddenText>{ __( 'Close cart' ) }</HiddenText>
+						</MiniCartCloseButton>
+						<MiniCartSiteTitle className="mini-cart__site-title">
+							{ sprintf(
+								/* translators: %s is the site slug */
+								__( 'For %s' ),
+								selectedSiteSlug
+							) }
+						</MiniCartSiteTitle>
+					</MiniCartHeader>
+					<MiniCartLineItems
+						removeCoupon={ handleRemoveCoupon }
+						removeProductFromCart={ handleRemoveProduct }
+						addProductsToCart={ addProductsToCart }
+						responseCart={ responseCart }
+					/>
+					{ shouldRenderEmptyCart && emptyCart }
+					{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }
+					{ ! shouldRenderEmptyCart && isBillingInfoEmpty( responseCart ) && (
+						<TaxNotCalculatedLineItem />
 					) }
-				</MiniCartFooter>
-			</MiniCartWrapper>
+					{ ! shouldRenderEmptyCart && ! isBillingInfoEmpty( responseCart ) && (
+						<TaxAddedLineItem />
+					) }
+					<MiniCartFooter className="mini-cart__footer">
+						{ ! shouldRenderEmptyCart && (
+							<Button
+								className="mini-cart__checkout"
+								buttonType="primary"
+								fullWidth
+								disabled={ isDisabled }
+								isBusy={ isDisabled }
+								onClick={ () => goToCheckout( selectedSiteSlug ) }
+							>
+								{ checkoutLabel || __( 'Checkout' ) }
+							</Button>
+						) }
+					</MiniCartFooter>
+				</MiniCartWrapper>
+			</RestorableProductsProvider>
 		</CheckoutProvider>
 	);
 }

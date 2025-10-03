@@ -1,12 +1,14 @@
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import AutoDirection from 'calypso/components/auto-direction';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
+import { MenuItem, MenuItemLink } from '../menu';
 
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {
@@ -14,6 +16,7 @@ export class ReaderSidebarListsListItem extends Component {
 		path: PropTypes.string.isRequired,
 		currentListOwner: PropTypes.string,
 		currentListSlug: PropTypes.string,
+		currentUser: PropTypes.object,
 	};
 
 	componentDidMount() {
@@ -36,7 +39,7 @@ export class ReaderSidebarListsListItem extends Component {
 	};
 
 	render() {
-		const { list, translate } = this.props;
+		const { list, translate, currentUser } = this.props;
 		const listRelativeUrl = `/reader/list/${ list.owner }/${ list.slug }`;
 		const listManagementUrls = [
 			listRelativeUrl + '/items',
@@ -58,14 +61,15 @@ export class ReaderSidebarListsListItem extends Component {
 			this.props.path
 		);
 
-		const classes = clsx( 'sidebar__menu-item--reader-list', {
-			selected: isCurrentList || isCurrentListManage,
-		} );
+		const selected = isCurrentList || isCurrentListManage;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		// Show author name in parentheses if the list is owned by someone other than the current user
+		const isOwnedByCurrentUser = currentUser && list.owner === currentUser.username;
+		const displayTitle = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
+
 		return (
-			<li className={ classes } key={ list.ID }>
-				<a
+			<MenuItem className="sidebar__menu-item--reader-list" key={ list.ID } selected={ selected }>
+				<MenuItemLink
 					className="sidebar__menu-link"
 					href={ listRelativeUrl }
 					onClick={ this.handleListSidebarClick }
@@ -75,14 +79,22 @@ export class ReaderSidebarListsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-title">{ list.title }</div>
-				</a>
-			</li>
+					<AutoDirection>
+						<div className="sidebar__menu-item-title" title={ displayTitle }>
+							{ displayTitle }
+						</div>
+					</AutoDirection>
+				</MenuItemLink>
+			</MenuItem>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default connect( null, {
-	recordReaderTracksEvent,
-} )( localize( ReaderSidebarListsListItem ) );
+export default connect(
+	( state ) => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{
+		recordReaderTracksEvent,
+	}
+)( localize( ReaderSidebarListsListItem ) );

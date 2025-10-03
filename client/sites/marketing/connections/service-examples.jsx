@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import nextdoorExample from 'calypso/assets/images/connections/connections-nextdoor.png';
 import threadsExample from 'calypso/assets/images/connections/connections-threads.png';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -267,8 +268,10 @@ class SharingServiceExamples extends Component {
 					{
 						components: {
 							link: (
-								<a
-									href={ localizeUrl(
+								<InlineSupportLink
+									showIcon={ false }
+									supportPostId={ 77589 }
+									supportLink={ localizeUrl(
 										'https://wordpress.com/support/instagram/#embed-a-feed-of-instagram-posts'
 									) }
 								/>

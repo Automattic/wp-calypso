@@ -49,6 +49,7 @@ import {
 	resolveFeatureGroupsForComparisonGrid,
 	resolveFeatureGroupsForFeaturesGrid,
 	resolveWooExpressFeatureGroupsForComparisonGrid,
+	resolveWordPressHostingFeatureGroupsForFeaturesGrid,
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
@@ -79,12 +80,23 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
-	return resolveFeatureGroupsForFeaturesGrid( { showSimplifiedFeatures: true } );
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
+	isSummerSpecial?: boolean;
+} ) {
+	const { isSummerSpecial } = props || {};
+	return resolveFeatureGroupsForFeaturesGrid( {
+		showSimplifiedFeatures: true,
+		isSummerSpecial,
+	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForFeaturesGrid();
+export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
+	isSummerSpecial?: boolean;
+} ): Partial< FeatureGroupMap > {
+	const { isSummerSpecial } = props || {};
+	return resolveFeatureGroupsForFeaturesGrid( {
+		isSummerSpecial,
+	} );
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
@@ -94,6 +106,10 @@ export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroup
 export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
 	return getPlanFeaturesGroupedForFeaturesGrid();
+}
+
+export function getWordPressHostingFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveWordPressHostingFeatureGroupsForFeaturesGrid();
 }
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
@@ -710,6 +726,8 @@ export type FilteredPlan = Plan &
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
 		| 'getBlogOnboardingTagLine'
+		| 'getVisualSplitBusinessFeatures'
+		| 'getVisualSplitCommerceFeatures'
 	>;
 
 export function applyTestFiltersToPlansList(

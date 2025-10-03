@@ -14,42 +14,11 @@ export class JetpackHeader extends PureComponent {
 		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
-		isWooJPC: PropTypes.bool,
-		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
 	};
 
 	renderLogo() {
-		const {
-			darkColorScheme,
-			partnerSlug,
-			width,
-			isFromAutomatticForAgenciesPlugin,
-			isWooJPC,
-			isWooDna,
-			translate,
-		} = this.props;
-
-		if ( isWooJPC ) {
-			return null;
-		}
-
-		if ( isWooDna ) {
-			return (
-				<svg width={ width } viewBox="0 0 1270 170">
-					<title>{ translate( 'WooCommerce logo' ) }</title>
-					<g fill="none" fillRule="evenodd">
-						<g transform="translate(125 25)">
-							<AsyncLoad
-								require="calypso/components/jetpack-header/woocommerce"
-								darkColorScheme={ darkColorScheme }
-								placeholder={ null }
-							/>
-						</g>
-					</g>
-				</svg>
-			);
-		}
+		const { darkColorScheme, partnerSlug, width, isFromAutomatticForAgenciesPlugin } = this.props;
 
 		if ( isFromAutomatticForAgenciesPlugin ) {
 			return (

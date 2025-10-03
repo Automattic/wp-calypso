@@ -69,7 +69,6 @@ import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -167,12 +166,14 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
 import type { FilteredPlan, PlanSlug } from '@automattic/calypso-products';
+import type { SupportedSlugs } from '@automattic/components/src/product-icon/config';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TracksProps } from 'calypso/lib/purchases';
 import type {
@@ -858,7 +859,7 @@ class ManagePurchase extends Component<
 				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
-				onClickFinalConfirm={ this.cancelSubscription }
+				onSurveyComplete={ this.cancelSubscription }
 				flowType={ getPurchaseCancellationFlowType( purchase ) }
 			/>
 		);
@@ -884,7 +885,11 @@ class ManagePurchase extends Component<
 	renderReinstall() {
 		const { purchase, productsList, translate } = this.props;
 		const { isReinstalling } = this.state;
-		if ( ! ( purchase?.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( ! hasMarketplaceProduct( productsList, purchase.productSlug ) ) {
 			return null;
 		}
 
@@ -1155,7 +1160,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		if (
+			isMarketplaceTemporarySitePurchase( purchase ) ||
+			isA4ATemporarySitePurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -1254,7 +1262,7 @@ class ManagePurchase extends Component<
 						}
 					/>
 				</Card>
-				<PurchasePlanDetails isPlaceholder />
+				<PurchasePlanDetails isPlaceholder purchaseId={ 0 } />
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 			</Fragment>
@@ -1296,9 +1304,8 @@ class ManagePurchase extends Component<
 			return [];
 		}
 
-		return purchases.filter(
-			( _purchase ) =>
-				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+		return purchases.filter( ( _purchase ) =>
+			hasMarketplaceProduct( productsList, _purchase.productSlug )
 		);
 	}
 
@@ -1398,7 +1405,7 @@ class ManagePurchase extends Component<
 				{ ! isPartnerPurchase( purchase ) && (
 					<PurchasePlanDetails
 						purchaseId={ this.props.purchaseId }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? undefined }
 					/>
 				) }
 				{ isProductOwner && ! purchase.isLocked && (

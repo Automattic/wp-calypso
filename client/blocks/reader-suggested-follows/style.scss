@@ -1,20 +1,57 @@
 .reader-recommended-follows-dialog {
+	--feed-height: 90px;
 	border-radius: 6px; /* stylelint-disable scales/radii */
 
+	overflow-y: hidden;
 	.dialog__action-buttons-close {
 		padding: 28px 28px 5px 5px;
 	}
 	.dialog__content {
-		padding: 24px 32px 8px;
+		padding: 0;
+		padding: 24px 0 0 0;
+		overflow-y: hidden;
 	}
+	&.is-loading {
+		padding: 0 24px 0 24px;
+	}
+}
+
+.reader-recommended-follows-dialog__header {
+	padding: 0 32px 10px 32px;
+}
+
+;
+.reader-recommended-follows-dialog__body {
+	scrollbar-width: thin;
+	scrollbar-gutter: stable;
+	padding: 0 32px;
+	overflow-y: auto;
+	max-height: calc(var(--feed-height) * 5 + 16px);
 }
 
 .reader-recommended-follows-dialog__content {
 	width: 534px;
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+
+	&.has-scrolled-content {
+		.reader-recommended-follows-dialog__header {
+			position: sticky;
+			top: 0;
+			border-bottom-color:var(--color-neutral-5);
+		}
+	}
+	&:not(.has-scrolled-content) {
+		.reader-recommended-follows-dialog__header {
+			position: relative;
+			border-bottom-color: transparent;
+		}
+	}
 
 	.reader-recommended-follows-dialog__header {
-		margin-bottom: 30px;
-
+		border-bottom: 1px solid transparent;
+		transition: border-bottom-color 0.3s ease-in-out;
 		h2 {
 			color: var(--color-neutral-70);
 			font-size: $font-title-large;
@@ -30,11 +67,10 @@
 	}
 
 	.reader-recommended-follows-dialog__follow-list {
-		ul {
-			margin: 0;
-			width: 100%;
-			list-style: none;
-		}
+		margin: 0;
+		width: 100%;
+		list-style: none;
+		padding-bottom: 12px;
 
 		.reader-suggested-follow-item {
 			display: flex;
@@ -48,7 +84,6 @@
 			flex-wrap: nowrap;
 			gap: 11px;
 			justify-content: flex-start;
-			margin-bottom: 24px;
 
 			.count {
 				position: relative;
@@ -108,7 +143,7 @@
 	}
 
 	.reader-recommended-follows-dialog__follow-item {
-		margin: 20px 0;
+		padding: 20px 0;
 		border-bottom: 1px solid var(--color-neutral-5);
 
 		.reader-related-card__meta {
@@ -128,10 +163,28 @@
 				margin-bottom: 0;
 			}
 		}
+	}
 
-		&.is-placeholder {
+	.reader-recommended-follows-dialog__loading-placeholder {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		width: 100%;
+		padding-bottom: 20px;
+
+		.is-placeholder {
 			@include placeholder();
-			margin: 20px 0;
+			background-color: var(--color-neutral-0);
+			height: 60px;
+			border-radius: 6px;
+		}
+
+		.is-placeholder.placeholder-title {
+			width: 50%;
+			height: 48
+		}
+		.is-placeholder.placeholder-description {
+			height: 24px;
 		}
 	}
 }

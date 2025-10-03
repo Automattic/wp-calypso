@@ -100,6 +100,7 @@ export default function AgencyDetailsForm( {
 			userType,
 			servicesOffered,
 			productsOffered,
+			productsToOffer: [],
 			city,
 			line1,
 			line2,

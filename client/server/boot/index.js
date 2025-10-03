@@ -10,6 +10,7 @@ import analytics from 'calypso/server/lib/analytics';
 import loggerMiddleware from 'calypso/server/middleware/logger';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
+import geoipHeaderMiddleware from '../middleware/geoip-header.ts';
 
 /**
  * Returns the server HTTP request handler "app".
@@ -35,6 +36,10 @@ export default function setup() {
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'calypso/server/bundler' )( app );
+
+		// Production servers forward a request header with the user's country code. To ensure a
+		// consistent experience, we simulate this in local development with a custom middleware.
+		app.use( geoipHeaderMiddleware() );
 
 		// When mocking WordPress.com to point locally, wordpress.com/wp-login.php will hit Calypso creating an infinite loop.
 		// redirect traffic to de.wordpress.com to hit the real backend and prevent a loop.

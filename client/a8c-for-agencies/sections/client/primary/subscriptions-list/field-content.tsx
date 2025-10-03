@@ -42,16 +42,29 @@ export function SubscriptionPurchase( {
 	);
 }
 
-export function SubscriptionPrice( { isFetching, amount }: Props & { amount?: string } ) {
+export function SubscriptionPrice( {
+	isFetching,
+	amount,
+	currency = 'USD',
+	interval = 'month',
+}: Props & { amount?: string; currency?: string; interval?: string } ) {
 	const translate = useTranslate();
 
-	return isFetching ? (
-		<TextPlaceholder />
-	) : (
-		translate( '%(total)s/mo', {
-			args: { total: formatCurrency( Number( amount ?? 0 ), 'USD' ) },
-		} )
-	);
+	if ( isFetching ) {
+		return <TextPlaceholder />;
+	}
+
+	const formatted = formatCurrency( Number( amount ?? 0 ), currency );
+
+	return interval === 'year'
+		? /* translators: %(total)s is the price of the subscription per year */
+		  translate( '%(total)s/yr', {
+				args: { total: formatted },
+		  } )
+		: /* translators: %(total)s is the price of the subscription per month */
+		  translate( '%(total)s/mo', {
+				args: { total: formatted },
+		  } );
 }
 
 export function SubscriptionStatus( {

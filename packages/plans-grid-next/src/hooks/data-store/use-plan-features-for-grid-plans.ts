@@ -23,6 +23,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
+	isSummerSpecial,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -31,6 +32,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
+	isSummerSpecial?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -46,6 +48,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
+	isSummerSpecial,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -66,7 +69,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-p2' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isSummerSpecial,
+						} ) ?? []
 					);
 				} else if ( 'plans-blog-onboarding' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -81,7 +86,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-woocommerce' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isSummerSpecial,
+						} ) ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -103,10 +110,38 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							return true;
 						} );
 					}
+				} else if ( 'plans-wordpress-hosting' === intent ) {
+					// Use visual split features for WordPress hosting intent
+					if ( planConstantObj?.getVisualSplitBusinessFeatures ) {
+						wpcomFeatures = getPlanFeaturesObject(
+							allFeaturesList,
+							planConstantObj.getVisualSplitBusinessFeatures() ?? []
+						);
+					} else if ( planConstantObj?.getVisualSplitCommerceFeatures ) {
+						wpcomFeatures = getPlanFeaturesObject(
+							allFeaturesList,
+							planConstantObj.getVisualSplitCommerceFeatures() ?? []
+						);
+					} else {
+						// Fallback to default features if visual split features aren't available
+						wpcomFeatures = getPlanFeaturesObject(
+							allFeaturesList,
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+								isSummerSpecial,
+							} ) ?? []
+						);
+					}
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+					);
 				} else {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isSummerSpecial,
+						} ) ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -213,6 +248,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
+		isSummerSpecial,
 	] );
 };
 

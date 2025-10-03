@@ -1,3 +1,4 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import { StepContainer, DIFM_FLOW, Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -34,7 +35,7 @@ const DIFMStartingPoint: StepType< {
 	const helpCenterButtonLink = translate( 'Contact our site-building team' );
 	const shouldRenderHelpCenter = useShouldRenderHelpCenterButton( {
 		flowName: DIFM_FLOW,
-		enabledGeos: [ 'US' ],
+		enabledLocales: englishLocales,
 	} );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
@@ -65,13 +66,13 @@ const DIFMStartingPoint: StepType< {
 								shouldRenderHelpCenter ? (
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }
-										enabledGeos={ [ 'US' ] }
+										enabledLocales={ englishLocales }
 										helpCenterButtonCopy={ helpCenterButtonCopy }
 										helpCenterButtonLink={ helpCenterButtonLink }
 									/>
 								) : (
 									<Step.SkipButton onClick={ goNext }>
-										{ translate( 'No Thanks, I’ll Build It' ) }
+										{ translate( 'No thanks, I’ll build it' ) }
 									</Step.SkipButton>
 								)
 							}
@@ -99,14 +100,14 @@ const DIFMStartingPoint: StepType< {
 				isWideLayout
 				isLargeSkipLayout={ false }
 				skipLabelText={
-					shouldRenderHelpCenter ? undefined : translate( 'No Thanks, I’ll Build It' )
+					shouldRenderHelpCenter ? undefined : translate( 'No thanks, I’ll build it' )
 				}
 				hideSkip={ shouldRenderHelpCenter }
 				customizedActionButtons={
 					shouldRenderHelpCenter ? (
 						<HelpCenterStepButton
 							flowName={ DIFM_FLOW }
-							enabledGeos={ [ 'US' ] }
+							enabledLocales={ englishLocales }
 							helpCenterButtonCopy={ helpCenterButtonCopy }
 							helpCenterButtonLink={ helpCenterButtonLink }
 						/>

@@ -66,14 +66,34 @@ skipDescribeIf(
 			it( 'Handle 2FA challenge', async function () {
 				const url = page.url();
 
+				// Check for rate limit message
+				const hasRateLimit = await appleLoginPage.hasRateLimitMessage();
+
+				if ( hasRateLimit ) {
+					// For now, we'll mark the test as skipped with a meaningful message
+					// @ts-ignore - this is a valid Jest context property
+					this.skip();
+					return;
+				}
+
 				// Handle potential 2FA challenge.
 				if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
+					const sendCodeVisible = await appleLoginPage.hasButtonWithExactText( 'Send code' );
+
+					// Only click 'Send code' if the button is visible
+					if ( sendCodeVisible ) {
+						await appleLoginPage.clickButtonWithExactText( 'Send code' );
+					}
+
+					// Wait a bit after clicking to ensure the SMS is sent
+					await page.waitForTimeout( 5000 );
+
 					const emailClient = new EmailClient();
 					const message = await emailClient.getLastMatchingMessage( {
 						inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 						receivedAfter: timestamp,
 						subject: 'SMS',
-						body: 'Your Apple ID Code is',
+						body: 'Your Apple Account code is',
 					} );
 
 					const code = emailClient.get2FACodeFromMessage( message );
@@ -87,8 +107,8 @@ skipDescribeIf(
 				await appleLoginPage.clickButtonContainingText( 'Continue' );
 			} );
 
-			it( 'Redirected to woo.com upon successful login', async function () {
-				await page.waitForURL( /.*woo\.com*/ );
+			it( 'Redirected to WordPress.com OAuth2 user page', async function () {
+				await page.waitForURL( /.*\/start\/wpcc\/oauth2-user.*/ );
 			} );
 		} );
 	}

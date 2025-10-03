@@ -1,9 +1,11 @@
-type Density = 'low' | 'medium';
+import type { Badge } from '@automattic/ui';
+
+export type Density = 'low' | 'medium';
 
 /**
- * `badges` property of `SummaryButton` component is used to display `CoreBadge`
+ * `badges` property of `SummaryButton` component is used to display `Badge`
  * instances for each array item. For this reason we need to define the props
- * that match the `CoreBadge` component (intent and text).
+ * that match the `Badge` component (intent and text).
  */
 export type SummaryButtonBadgeProps = {
 	/**
@@ -14,7 +16,7 @@ export type SummaryButtonBadgeProps = {
 	 * Optional property to specify the intent of the badge.
 	 * @default 'default'
 	 */
-	intent?: 'default' | 'info' | 'success' | 'warning' | 'error';
+	intent?: React.ComponentProps< typeof Badge >[ 'intent' ];
 };
 
 export interface SummaryButtonProps {
@@ -41,7 +43,7 @@ export interface SummaryButtonProps {
 	 * For now, this property is only rendered in `low` density variant.
 	 * We might revisit adding this in more variants in the future.
 	 */
-	description?: string;
+	description?: React.ReactNode;
 	/**
 	 * A brief, optional line of text used to highlight important information,
 	 * such as a warning or status.
@@ -55,8 +57,8 @@ export interface SummaryButtonProps {
 	 */
 	decoration?: React.ReactElement;
 	/**
-	 * This property is used to display `CoreBadge` instances per item. For
-	 * this reason we need to define the props that match the `CoreBadge`
+	 * This property is used to display `Badge` instances per item. For
+	 * this reason we need to define the props that match the `Badge`
 	 * component (intent and text).
 	 */
 	badges?: SummaryButtonBadgeProps[];
@@ -71,4 +73,8 @@ export interface SummaryButtonProps {
 	 * @default false
 	 */
 	disabled?: boolean;
+	/**
+	 * Optional class name to be applied to the component.
+	 */
+	className?: string;
 }

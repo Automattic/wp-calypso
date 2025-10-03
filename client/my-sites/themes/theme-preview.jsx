@@ -59,10 +59,16 @@ class ThemePreview extends Component {
 	};
 
 	render() {
-		const { themeId, siteId, demoUrl, children, isWPForTeamsSite, themeOptions } = this.props;
+		const { themeId, siteId, demoUrl, children, isWPForTeamsSite, themeOptions, locale } =
+			this.props;
 
 		if ( ! themeId || isWPForTeamsSite ) {
 			return null;
+		}
+
+		let previewUrl = demoUrl + '?demo=true&iframe=true&theme_preview=true';
+		if ( locale && locale.length > 0 && locale !== 'en' ) {
+			previewUrl += '&language=' + locale;
 		}
 
 		return (
@@ -77,10 +83,7 @@ class ThemePreview extends Component {
 						showEditHeaderLink
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }
-						previewUrl={ this.appendStyleVariationOptionToUrl(
-							demoUrl + '?demo=true&iframe=true&theme_preview=true',
-							'title'
-						) }
+						previewUrl={ this.appendStyleVariationOptionToUrl( previewUrl, 'title' ) }
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }
 						themeOptions={ themeOptions }

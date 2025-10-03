@@ -15,7 +15,11 @@ export const Disclaimer = () => {
 					) }
 				</div>
 				<div className="link">
-					<a href="https://developer.chrome.com/docs/crux" target="_blank" rel="noreferrer">
+					<a
+						href="https://developer.wordpress.com/docs/site-performance/speed-test/#accessing-the-speed-test-tool"
+						target="_blank"
+						rel="noreferrer"
+					>
 						{ translate( 'Learn more about the Chrome UX Report ↗' ) }
 					</a>
 				</div>

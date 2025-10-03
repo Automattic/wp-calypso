@@ -3,7 +3,9 @@ import SitesLaunchStatusBadge from 'calypso/sites-dashboard/components/sites-lau
 
 const SitesProductionBadge = styled( SitesLaunchStatusBadge )`
 	color: var( --studio-gray-80 );
-	background-color: var( --studio-gray-5 );
+
+	color: var( --studio-gray-90 );
+	background-color: var( --studio-green-5 );
 `;
 
 export default SitesProductionBadge;

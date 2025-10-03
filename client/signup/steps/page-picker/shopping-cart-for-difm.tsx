@@ -1,10 +1,10 @@
-import { BraveTick } from '@automattic/components/src/icons';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import LoadingLine from './loading-content';
 import useCartForDIFM, { CartItem } from './use-cart-for-difm';
+import type { ReactNode } from 'react';
 
 const CartContainer = styled.div`
 	position: relative;
@@ -20,7 +20,6 @@ const CartContainer = styled.div`
 		align-items: center;
 		justify-content: center;
 	}
-	margin-bottom: 48px;
 `;
 
 const LoadingContainer = styled.div`
@@ -46,14 +45,6 @@ const Cart = styled.div`
 		padding: 5px 15px 5px;
 		width: 100%;
 		border-top: 1px solid var( --studio-gray-5 );
-	}
-	.page-picker__disclaimer {
-		color: var( --studio-gray-50 );
-		font-size: 12px;
-
-		@media ( max-width: 600px ) {
-			padding: 5px 0;
-		}
 	}
 `;
 const DummyLineItemContainer = styled.div`
@@ -110,7 +101,6 @@ const LineItemsWrapper = styled.div`
 	max-height: 75vh;
 	width: 100%;
 	max-width: 365px;
-	border-bottom: 1px solid var( --studio-gray-5 );
 	@media ( max-width: 600px ) {
 		margin: 0 0px;
 		border: none;
@@ -123,16 +113,15 @@ const Total = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	padding: 30px 0;
+	padding: 16px 0;
 	div {
 		display: flex;
-		align-items: center;
 		&.page-picker__value {
 			font-family: Recoleta;
 			font-size: 32px;
 			font-weight: 400;
 			@media ( max-width: 600px ) {
-				font-size: 16px;
+				font-size: 20px;
 			}
 		}
 	}
@@ -141,25 +130,6 @@ const Total = styled.div`
 		font-size: 16px;
 		margin-top: 6px;
 		padding: 5px 0px;
-		border-bottom: 1px solid var( --studio-gray-5 );
-	}
-`;
-
-const StyledBraveTickIcon = styled( BraveTick )`
-	margin-inline-end: 6px;
-	path {
-		fill: var( --color-accent );
-	}
-`;
-
-const RefundText = styled.div`
-	display: flex;
-	width: 100%;
-	justify-content: flex-end;
-	margin-top: 8px;
-
-	@media ( max-width: 600px ) {
-		font-size: smaller;
 	}
 `;
 
@@ -184,10 +154,12 @@ export default function ShoppingCartForDIFM( {
 	selectedPages,
 	isStoreFlow,
 	currentPlanSlug,
+	children,
 }: {
 	selectedPages: string[];
 	isStoreFlow: boolean;
 	currentPlanSlug?: string | null;
+	children?: ReactNode;
 } ) {
 	const translate = useTranslate();
 	const { items, total, isProductsLoading } = useCartForDIFM( {
@@ -212,19 +184,12 @@ export default function ShoppingCartForDIFM( {
 					) ) }
 
 					<Total>
-						<div>{ translate( 'Total' ) }</div>
-						<div className="page-picker__value">{ total }*</div>
-						<RefundText>
-							<StyledBraveTickIcon />
-							{ translate( '%(days)d-day money-back guarantee', {
-								args: { days: 14 },
-							} ) }
-						</RefundText>
+						<div>{ translate( 'Subtotal' ) }</div>
+						<div className="page-picker__value">{ total }</div>
 					</Total>
 				</LineItemsWrapper>
-				<div className="page-picker__disclaimer">
-					{ translate( '*Final price will be calculated at checkout.' ) }
-				</div>
+
+				{ children }
 			</Cart>
 		</CartContainer>
 	);

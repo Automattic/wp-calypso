@@ -50,7 +50,7 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, act
 				</span>
 			</div>
 			<div className="threat-fix-header__autofix-checkbox">
-				{ fixAllDialog && (
+				{ fixAllDialog && threat.fixable && threat.fixable.extras?.is_bulk_fixable !== false && (
 					<FormInputCheckbox checked={ checkedFix } onChange={ checkFix } value={ threat.id } />
 				) }
 			</div>

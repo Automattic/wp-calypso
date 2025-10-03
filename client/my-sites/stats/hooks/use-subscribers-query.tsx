@@ -75,7 +75,7 @@ export default function useSubscribersQuery(
 	const queryDate = date ? date.toISOString() : new Date().toISOString();
 
 	return useQuery( {
-		...getDefaultQueryParams< SubscriberPayload >(),
+		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, queryDate ],
 		queryFn: () => querySubscribers( siteId, period, quantity, queryDate ),
 		select: selectSubscribers,
@@ -90,7 +90,7 @@ export function useSubscribersQueries(
 	dates: string[]
 ): { isLoading: boolean; isError: boolean; subscribersData: SubscribersData[] } {
 	const queryConfigs = dates.map( ( date, index ) => ( {
-		...getDefaultQueryParams< SubscriberPayload >(),
+		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'subscribers', index, siteId, period, quantity, date ],
 		queryFn: () => querySubscribers( siteId, period, quantity, date ),
 		select: selectSubscribers,

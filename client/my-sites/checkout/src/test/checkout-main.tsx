@@ -82,8 +82,14 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 		} );
 	} );
 
@@ -103,8 +109,14 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 		} );
 	} );
 
@@ -112,8 +124,12 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'Tax' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
+				.getAllByText( 'Tax' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$7' );
+				} );
 		} );
 	} );
 
@@ -121,8 +137,12 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'Total' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
+				.getAllByText( 'Total' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$156' );
+				} );
 		} );
 	} );
 
@@ -140,8 +160,12 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ cart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'Total' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
+				.getAllByText( 'Total' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$156' );
+				} );
 		} );
 	} );
 
@@ -165,13 +189,18 @@ describe( 'CheckoutMain', () => {
 			'Remove WordPress.com Personal from cart'
 		);
 		const user = userEvent.setup();
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
+
+		screen
+			.getAllByText( 'WordPress.com Personal' )
+			.map( ( element ) => element.closest( '.checkout-line-item' ) )
+			.filter( ( container ): container is Element => container !== null )
+			.forEach( ( container ) => {
+				expect( container ).toBeInTheDocument();
+			} );
+
 		await user.click( removeProductButton );
-		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await user.click( confirmButton );
 		await waitFor( async () => {
-			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -190,15 +219,12 @@ describe( 'CheckoutMain', () => {
 		);
 		const user = userEvent.setup();
 		await user.click( removeProductButton );
-		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await user.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
-	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
+	it( 'does not redirect to the plans page after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render(
 			<MockCheckout
@@ -213,11 +239,60 @@ describe( 'CheckoutMain', () => {
 		);
 		const user = userEvent.setup();
 		await user.click( removeProductButton );
-		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
+		} );
+	} );
+
+	it( 'does show the option to restore a removed product', async () => {
+		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
+		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
+		const removeProductButton = await within( activeSection ).findByLabelText(
+			'Remove foo.cash from cart'
+		);
+		const user = userEvent.setup();
+		await user.click( removeProductButton );
+
+		const restoreButton = await screen.findByText( 'Restore' );
+		expect( restoreButton ).toBeInTheDocument();
+	} );
+
+	it( 'does restore a removed product when clicking on the `Restore` button', async () => {
+		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
+		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
+		const removeProductButton = await within( activeSection ).findByLabelText(
+			'Remove foo.cash from cart'
+		);
+		const user = userEvent.setup();
+		await user.click( removeProductButton );
+
+		const restoreButton = await screen.findByText( 'Restore' );
+		expect( screen.queryByText( 'foo.cash' ) ).not.toBeInTheDocument();
+
+		await user.click( restoreButton );
+
+		await waitFor( () => {
+			screen
+				.getAllByText( 'foo.cash' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toBeInTheDocument();
+				} );
 		} );
 	} );
 
@@ -264,8 +339,14 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 		} );
 	} );
 
@@ -285,8 +366,12 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'Jetpack Scan Daily' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$41' ) );
+				.getAllByText( 'Jetpack Scan Daily' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$41' );
+				} );
 		} );
 	} );
 
@@ -306,11 +391,19 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'Jetpack Scan Daily' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$41' ) );
+				.getAllByText( 'Jetpack Scan Daily' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$41' );
+				} );
 			screen
-				.getAllByLabelText( 'Jetpack Backup (Daily)' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$42' ) );
+				.getAllByText( 'Jetpack Backup (Daily)' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$42' );
+				} );
 		} );
 	} );
 
@@ -333,8 +426,12 @@ describe( 'CheckoutMain', () => {
 
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'Akismet Plus (10K requests/month)' )
-				.map( ( element ) => expect( element ).toHaveTextContent( '$100' ) );
+				.getAllByText( 'Akismet Plus (10K requests/month)' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( '$100' );
+				} );
 		} );
 	} );
 
@@ -357,8 +454,12 @@ describe( 'CheckoutMain', () => {
 
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'Akismet Plus (20K requests/month)' )
-				.map( ( element ) => expect( element ).toHaveTextContent( '$200' ) );
+				.getAllByText( 'Akismet Plus (20K requests/month)' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( '$200' );
+				} );
 		} );
 	} );
 
@@ -391,11 +492,21 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 			screen
-				.getAllByLabelText( 'Support Session' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$49' ) );
+				.getAllByText( 'Support Session' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$49' );
+				} );
 		} );
 	} );
 
@@ -428,11 +539,21 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 			screen
-				.getAllByLabelText( 'Premium Theme: Ovation' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$69' ) );
+				.getAllByText( 'Premium Theme: Ovation' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$69' );
+				} );
 		} );
 	} );
 
@@ -450,11 +571,15 @@ describe( 'CheckoutMain', () => {
 				additionalProps={ additionalProps }
 			/>
 		);
-		expect(
-			await screen.findByLabelText(
-				`Google Workspace for '${ domainName }' and quantity '${ quantity }'`
-			)
-		).toBeInTheDocument();
+		await waitFor( () => {
+			screen
+				.getAllByText( `Google Workspace for '${ domainName }' and quantity '${ quantity }'` )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toBeInTheDocument();
+				} );
+		} );
 	} );
 
 	it( 'adds the product quantity to the cart when the url has a product with a quantity but no domain', async () => {
@@ -470,9 +595,15 @@ describe( 'CheckoutMain', () => {
 				additionalProps={ additionalProps }
 			/>
 		);
-		expect(
-			await screen.findByLabelText( `Google Workspace for '' and quantity '${ quantity }'` )
-		).toBeInTheDocument();
+		await waitFor( () => {
+			screen
+				.getAllByText( `Google Workspace for '' and quantity '${ quantity }'` )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toBeInTheDocument();
+				} );
+		} );
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
@@ -504,12 +635,22 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			screen
-				.getAllByLabelText( 'bar.com' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$0' ) );
+				.getAllByText( 'bar.com' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$0' );
+				} );
 		} );
 	} );
 
@@ -526,8 +667,14 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 		} );
 	} );
 
@@ -544,7 +691,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -561,7 +708,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -582,7 +729,7 @@ describe( 'CheckoutMain', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
 	} );
 
@@ -678,11 +825,21 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'WordPress.com Personal' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+				.getAllByText( 'WordPress.com Personal' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
+				} );
 			screen
-				.getAllByLabelText( 'Coupon: MYCOUPONCODE' )
-				.map( ( element ) => expect( element ).toHaveTextContent( 'R$10' ) );
+				.getAllByText( 'Coupon: MYCOUPONCODE' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toHaveTextContent( 'R$10' );
+				} );
 		} );
 	} );
 

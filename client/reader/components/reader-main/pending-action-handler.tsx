@@ -6,12 +6,12 @@ import { like } from 'calypso/state/posts/likes/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
+import { getPersistedLastActionPriorToLogin } from 'calypso/state/reader-ui/selectors';
 
 export const ReaderPendingActionHandler = () => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const pendingAction = useSelector( getLastActionRequiresLogin );
+	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
 
 	useEffect( () => {
 		if ( ! isLoggedIn || ! pendingAction ) {

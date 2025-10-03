@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { preventWidows } from 'calypso/lib/formatting';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
@@ -19,6 +19,7 @@ export default class PurchaseDetail extends PureComponent {
 		isPlaceholder: PropTypes.bool,
 		isRequired: PropTypes.bool,
 		isSubmitting: PropTypes.bool,
+		supportContext: PropTypes.string,
 		onClick: PropTypes.func,
 		primaryButton: PropTypes.bool,
 		requiredText: PropTypes.string,
@@ -33,13 +34,29 @@ export default class PurchaseDetail extends PureComponent {
 	};
 
 	renderPurchaseButton() {
-		const { buttonText, isPlaceholder, isSubmitting, href, onClick, primaryButton, target, rel } =
-			this.props;
+		const {
+			buttonText,
+			isPlaceholder,
+			isSubmitting,
+			href,
+			onClick,
+			primaryButton,
+			target,
+			rel,
+			supportContext,
+		} = this.props;
 
 		if ( ! buttonText && ! isPlaceholder ) {
 			return null;
 		}
 
+		if ( supportContext ) {
+			return (
+				<InlineSupportLink className="button" showIcon={ false } supportContext={ supportContext }>
+					{ buttonText }
+				</InlineSupportLink>
+			);
+		}
 		return (
 			<PurchaseButton
 				disabled={ isSubmitting }
@@ -99,7 +116,7 @@ export default class PurchaseDetail extends PureComponent {
 					<div className="purchase-detail__image">{ this.renderIcon() }</div>
 					<div className="purchase-detail__text">
 						<h3 className="purchase-detail__title">{ title }</h3>
-						<div className="purchase-detail__description">{ preventWidows( description ) }</div>
+						<div className="purchase-detail__description">{ description }</div>
 						{ this.renderBody() }
 					</div>
 				</div>

@@ -50,7 +50,7 @@ class SrvRecord extends Component {
 						value={ name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -63,7 +63,7 @@ class SrvRecord extends Component {
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'sip' } } ) }
 					/>
 					{ ! isServiceValid && (
-						<FormInputValidation text={ translate( 'Invalid Service' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid service' ) } isError />
 					) }
 				</FormFieldset>
 
@@ -79,7 +79,7 @@ class SrvRecord extends Component {
 					<FormLabel>{ translate( 'Priority', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInput name="aux" isError={ ! isAuxValid } onChange={ onChange } value={ aux } />
 					{ ! isAuxValid && (
-						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid priority' ) } isError />
 					) }
 				</FormFieldset>
 
@@ -92,12 +92,12 @@ class SrvRecord extends Component {
 						value={ weight }
 					/>
 					{ ! isWeightValid && (
-						<FormInputValidation text={ translate( 'Invalid Weight' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid weight' ) } isError />
 					) }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Target Host', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Target host', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInput
 						name="target"
 						isError={ ! isTargetValid }
@@ -108,12 +108,12 @@ class SrvRecord extends Component {
 						} ) }
 					/>
 					{ ! isTargetValid && (
-						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid target host' ) } isError />
 					) }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Target Port', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Target port', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInput
 						name="port"
 						isError={ ! isPortValid }
@@ -122,7 +122,7 @@ class SrvRecord extends Component {
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: '5060' } } ) }
 					/>
 					{ ! isPortValid && (
-						<FormInputValidation text={ translate( 'Invalid Target Port' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid target port' ) } isError />
 					) }
 				</FormFieldset>
 

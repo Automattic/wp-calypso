@@ -1,4 +1,4 @@
-import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -47,13 +47,13 @@ const QuickLinksForHostedSites = ( props ) => {
 	const quickLinks = (
 		<div className="quick-links-for-hosted-sites__boxes quick-links__boxes">
 			<ActionBox
-				href={ `/hosting-config/${ siteSlug }#sftp-credentials` }
+				href={ `/sites/${ siteSlug }/settings/sftp-ssh` }
 				hideLinkIndicator
 				label={ translate( 'Set up SSH' ) }
 				materialIcon="key"
 			/>
 			<ActionBox
-				href={ `/hosting-config/${ siteSlug }#staging-site` }
+				href={ `/staging-site/${ siteSlug }` }
 				hideLinkIndicator
 				label={ translate( 'Create staging site' ) }
 				gridicon="science"

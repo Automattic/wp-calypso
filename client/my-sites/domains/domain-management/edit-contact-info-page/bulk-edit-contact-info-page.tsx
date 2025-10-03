@@ -7,6 +7,7 @@ import {
 	getSiteDomainsQueryObject,
 } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { useQueries } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -286,14 +287,7 @@ export default function BulkEditContactInfoPage( {
 	};
 
 	const renderSidebar = () => {
-		const supportLink = (
-			<ExternalLink
-				href={ localizeUrl(
-					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
-				) }
-				target="_blank"
-			/>
-		);
+		const supportLink = <ExternalLink href={ localizeUrl( PRIVACY_PROTECTION ) } target="_blank" />;
 		const icannLink = (
 			<ExternalLink
 				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"

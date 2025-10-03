@@ -14,8 +14,8 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
+import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type { AnyAction } from 'redux';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */

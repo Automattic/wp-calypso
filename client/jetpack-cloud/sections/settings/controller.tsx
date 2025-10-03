@@ -76,7 +76,14 @@ export const advancedCredentials: Callback = ( context, next ) => {
 				falseComponent={ null }
 				loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
 			/>
-			{ config.isEnabled( 'jetpack/backup-schedule-setting' ) ? <BackupScheduleSetting /> : null }
+			{ config.isEnabled( 'jetpack/backup-schedule-setting' ) ? (
+				<HasSitePurchasesSwitch
+					siteId={ siteId }
+					trueComponent={ <BackupScheduleSetting /> }
+					falseComponent={ null }
+					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
+				/>
+			) : null }
 		</Main>
 	);
 

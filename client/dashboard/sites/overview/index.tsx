@@ -1,97 +1,193 @@
-import { useQuery } from '@tanstack/react-query';
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalVStack as VStack,
+	__experimentalDivider as Divider,
+	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	ExternalLink,
+	__experimentalVStack as VStack,
 	Button,
-	Card,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteQuery } from '../../app/queries';
-import { siteRoute } from '../../app/router';
+import clsx from 'clsx';
+import { useRef } from 'react';
+import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import CommentsCard from './comments-card';
-import LikesCard from './likes-card';
-import OverviewSection from './overview-section';
-import PerformanceCards from './performance-cards';
-import Sidebar from './sidebar';
-import StorageCard from './storage-card';
-import SubscribersCard from './subscribers-card';
-import UptimeCard from './uptime-card';
-import ViewsCard from './views-card';
-import VisitorsCard from './visitors-card';
-
+import { getSiteDisplayName } from '../../utils/site-name';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import AgencySiteShareCard from '../overview-agency-site-share-card';
+import BackupCard from '../overview-backup-card';
+import DIFMUpsellCard from '../overview-difm-upsell-card';
+import DomainsCard from '../overview-domains-card';
+import LatestActivityCard from '../overview-latest-activity-card';
+import MigrateSiteCard from '../overview-migrate-site-card';
+import PerformanceCard from '../overview-performance-card';
+import PlanCard from '../overview-plan-card';
+import ScanCard from '../overview-scan-card';
+import SiteActionMenu from '../overview-site-action-menu';
+import SiteOverviewFields from '../overview-site-fields';
+import SitePreviewCard from '../overview-site-preview-card';
+import SubscribersCard from '../overview-subscribers-card';
+import VisibilityCard from '../overview-visibility-card';
+import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { StorageWarningBanner } from './storage-warning-banner';
+import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
 
-function SiteOverview() {
-	const { siteSlug } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteSlug ) );
+const SPACING = {
+	DEFAULT: 6,
+	SMALL: 4,
+};
 
-	if ( ! data ) {
-		return;
+function getGridLayout( {
+	count,
+	isLargeViewport,
+	isSmallViewport,
+}: {
+	count: number;
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
+} ) {
+	if ( isLargeViewport ) {
+		return {
+			columns: count,
+			rows: 1,
+		};
 	}
-	const {
-		site,
-		mediaStorage,
-		siteMonitorUptime,
-		phpVersion,
-		currentPlan,
-		primaryDomain,
-		engagementStats,
-	} = data;
+
+	if ( isSmallViewport ) {
+		return {
+			columns: 1,
+			rows: count,
+		};
+	}
+
+	return {
+		columns: 2,
+		rows: Math.ceil( count / 2 ),
+	};
+}
+
+function SiteOverview( {
+	siteSlug,
+	hideSitePreview = false,
+	breakpoints,
+}: {
+	siteSlug: string;
+	hideSitePreview?: boolean;
+	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
+} ) {
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
+	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
+	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const gridLayout = getGridLayout( {
+		count: showSitePreview ? 4 : 3,
+		isLargeViewport,
+		isSmallViewport,
+	} );
+
+	const wpAdminButtonRef = useRef( null );
+
+	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+
 	return (
 		<PageLayout
-			title={ site.name }
-			actions={
-				<>
-					<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
-					{ site.options?.admin_url && (
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							href={ site.options.admin_url }
-							icon={ wordpress }
-						>
-							{ __( 'WP Admin' ) }
-						</Button>
-					) }
-				</>
+			header={
+				<VStack>
+					<PageHeader
+						title={ getSiteDisplayName( site ) }
+						actions={
+							site.options?.admin_url && (
+								<>
+									<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+									<Button
+										ref={ wpAdminButtonRef }
+										__next40pxDefaultSize
+										variant="primary"
+										href={ site.options.admin_url }
+										icon={ wordpress }
+									>
+										{ __( 'WP Admin' ) }
+									</Button>
+									<SiteActionMenu site={ site } />
+								</>
+							)
+						}
+					/>
+					<SiteOverviewFields site={ site } />
+				</VStack>
 			}
 		>
-			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar
-					site={ site }
-					phpVersion={ phpVersion }
-					primaryDomain={ primaryDomain }
-					currentPlan={ currentPlan }
+			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+				<StorageWarningBanner site={ site } />
+				<Grid { ...gridLayout } gap={ spacing }>
+					{ showSitePreview && <SitePreviewCard site={ site } /> }
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+						<VisibilityCard site={ site } />
+						<BackupCard site={ site } />
+					</Grid>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+						{ ( () => {
+							if ( site.is_a4a_dev_site ) {
+								return <AgencySiteShareCard site={ site } />;
+							}
+							if ( isSelfHostedJetpackConnectedSite ) {
+								return <SubscribersCard site={ site } />;
+							}
+							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
+								return <MigrateSiteCard site={ site } />;
+							}
+							return <PerformanceCard site={ site } />;
+						} )() }
+						<ScanCard site={ site } />
+					</Grid>
+					<PlanCard site={ site } />
+				</Grid>
+				<Divider
+					orientation="horizontal"
+					style={ { color: 'var(--dashboard-overview__divider-color)' } }
 				/>
-				<VStack spacing={ 8 }>
-					<Card style={ { padding: '16px' } }>
-						<VStack>
-							<Text>
-								{ __(
-									'Your site is secure with excellent desktop performance and growing subscribers; now focus on boosting mobile speed and investigating recent drops in views and likes.'
-								) }
-							</Text>
-							<Text variant="muted">{ __( 'WordPress with AI' ) }</Text>
+				<HStack
+					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
+						'is-large': isLargeViewport,
+					} ) }
+					spacing={ spacing }
+					alignment="flex-start"
+				>
+					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+						<VStack spacing={ spacing } justify="start">
+							<DomainsCard site={ site } isCompact={ isSmallViewport } />
+							<DIFMUpsellCard site={ site } />
 						</VStack>
-					</Card>
-					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
-						<VisitorsCard engagementStats={ engagementStats } />
-						<ViewsCard engagementStats={ engagementStats } />
-						<LikesCard engagementStats={ engagementStats } />
-						<CommentsCard engagementStats={ engagementStats } />
-						<SubscribersCard subscribers={ site.subscribers_count } />
-					</OverviewSection>
-					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
-						<PerformanceCards site={ site } />
-						<UptimeCard siteMonitorUptime={ siteMonitorUptime } />
-						<StorageCard mediaStorage={ mediaStorage } />
-					</OverviewSection>
-				</VStack>
-			</HStack>
+					) }
+				</HStack>
+			</VStack>
+			<GuidedTourContextProvider
+				tourId="hosting-dashboard-tours-site-overview"
+				guidedTours={ [
+					{
+						id: 'hosting-dashboard-tours-site-overview-wp-admin',
+						title: __( 'Go to WP Admin' ),
+						description: __(
+							'Use this button to quickly switch from the Hosting Dashboard to your WP Admin.'
+						),
+					},
+				] }
+			>
+				{ wpAdminButtonRef.current && (
+					<GuidedTourStep
+						id="hosting-dashboard-tours-site-overview-wp-admin"
+						target={ wpAdminButtonRef.current }
+						placement="bottom"
+						inline
+					/>
+				) }
+			</GuidedTourContextProvider>
 		</PageLayout>
 	);
 }

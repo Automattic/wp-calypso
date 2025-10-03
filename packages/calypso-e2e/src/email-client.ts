@@ -66,6 +66,7 @@ export class EmailClient {
 		const message = await this.client.messages.get( inboxId, searchCriteria, {
 			receivedAfter: receivedAfter !== undefined ? receivedAfter : this.startTimestamp,
 			timeout: 120 * 1000, // Sometimes email is slow to be received.
+			suppressError: true, // Don't throw if no messages are found.
 		} );
 		return message;
 	}
@@ -136,7 +137,7 @@ export class EmailClient {
 	 * @throws {Error} IF the message did not have any links.
 	 */
 	getMagicLink( message: Message ): URL {
-		const link = message.text?.links?.pop();
+		const link = message.text?.links?.shift();
 
 		if ( ! link ) {
 			throw new Error( 'Message did not contain text links. ' );

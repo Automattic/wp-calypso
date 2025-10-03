@@ -13,8 +13,8 @@ export default function ReauthRequired() {
 
 			if ( typeof redirectTo === 'string' && redirectTo ) {
 				// Prevent open redirect vulnerabilities by ensuring the redirect URL is relative
-				// or points to a trusted domain (e.g., *.wordpress.com, *.wpcomstaging.com).
-				// For simplicity here, we'll just check if it's a relative path.
+				// or points to a trusted domain (e.g. wordpress.com).
+				// For simplicity here, we'll just check if it's an internal path.
 				// A more robust check might be needed depending on security requirements.
 				try {
 					// Use window.location.origin as the base URL for relative paths

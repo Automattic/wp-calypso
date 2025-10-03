@@ -1,6 +1,7 @@
 import { REBLOGGING_FLOW } from '@automattic/onboarding';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	setSignupCompleteSlug,
@@ -20,7 +21,7 @@ const reblogging: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
-			STEPS.DOMAINS,
+			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
 			STEPS.PLANS,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,

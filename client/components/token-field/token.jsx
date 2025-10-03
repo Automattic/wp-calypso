@@ -1,5 +1,6 @@
 import { Gridicon, Tooltip } from '@automattic/components';
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -32,12 +33,23 @@ export default class extends PureComponent {
 			'is-disabled': this.props.disabled,
 		} );
 
+		/* translators: %(item)s is the selected item */
+		const ariaLabel = translate( 'Deselect %(item)s', {
+			args: {
+				item: displayTransform( value ),
+			},
+		} );
+
 		return (
-			<span
+			<button
+				type="button"
 				className={ tokenClasses }
-				tabIndex="-1"
 				onMouseEnter={ this.props.onMouseEnter }
 				onMouseLeave={ this.props.onMouseLeave }
+				onClick={ ! this.props.disabled ? this._onClickRemove : null }
+				tabIndex={ 0 }
+				disabled={ this.props.disabled }
+				aria-label={ ariaLabel }
 			>
 				<span className="token-field__token-text">{ displayTransform( value ) }</span>
 				<Gridicon
@@ -51,7 +63,7 @@ export default class extends PureComponent {
 						{ tooltip }
 					</Tooltip>
 				) }
-			</span>
+			</button>
 		);
 	}
 

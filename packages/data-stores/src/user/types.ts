@@ -13,8 +13,9 @@ export interface CurrentUser {
 
 	/**
 	 * The bootstraped user's locale slug, e.g. `es`.
+	 * @deprecated Use `language` instead.
 	 */
-	localeSlug: string;
+	localeSlug?: string;
 
 	/**
 	 * The user's locale variant, e.g. `es-mx`.
@@ -24,8 +25,9 @@ export interface CurrentUser {
 
 	/**
 	 * The bootstrapped user's locale variant, e.g. `es-mx`.
+	 * @deprecated Use `locale_variant` instead.
 	 */
-	localeVariant: string;
+	localeVariant?: string;
 
 	/**
 	 * The user's existing sites count.

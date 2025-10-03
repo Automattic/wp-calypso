@@ -19,10 +19,7 @@ import type { ReactElement } from 'react';
 const globalOverrides = css`
 	.is-section-add-ons {
 		height: 100%;
-		#content.layout__content {
-			background: #fdfdfd;
-			height: 100%;
-		}
+		--color-surface-backdrop: #fdfdfd;
 	}
 	.layout__primary {
 		height: 100%;
@@ -36,7 +33,7 @@ const globalOverrides = css`
 const mobileBreakpoint = 660;
 
 const ContainerMain = styled.div`
-	height: 100%;
+	min-height: 100%;
 	.add-ons__main {
 		.add-ons__formatted-header {
 			text-align: center;
@@ -86,10 +83,7 @@ const NoAccess = () => {
 
 	return (
 		<ContentWithHeader>
-			<EmptyContent
-				title={ translate( 'You are not authorized to view this page' ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
+			<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 		</ContentWithHeader>
 	);
 };

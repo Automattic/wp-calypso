@@ -24,12 +24,6 @@ jest.mock( 'calypso/sites/hooks/use-restore-site-mutation', () =>
 	} ) )
 );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	useQueryClient: jest.fn( () => ( {
-		invalidateQueries: jest.fn(),
-	} ) ),
-} ) );
-
 describe( 'isActionEligible', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();

@@ -27,6 +27,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		startImport,
 		resetImport,
 		stepNavigator,
+		renderHeading,
 	} = props;
 
 	/**
@@ -118,6 +119,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 							site={ site }
 							importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 							importerStatus={ job }
+							renderHeading={ renderHeading }
 						/>
 					);
 				} )() }

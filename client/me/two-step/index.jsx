@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -137,8 +136,7 @@ class TwoStep extends Component {
 					</HeaderCake>
 				) }
 
-				<Card>{ this.renderTwoStepSection() }</Card>
-
+				{ this.renderTwoStepSection() }
 				{ this.renderEnhancedSecuritySetting() }
 				{ this.render2faKey() }
 				{ this.renderBackupCodes() }

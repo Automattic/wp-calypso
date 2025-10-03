@@ -79,7 +79,7 @@ export default function LicensesOverview( {
 								onClick={ onIssueNewLicenseClick }
 								primary
 							>
-								{ translate( 'Issue New License' ) }
+								{ translate( 'Issue new license' ) }
 							</Button>
 						</Actions>
 					</LayoutHeader>

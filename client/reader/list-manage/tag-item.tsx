@@ -32,18 +32,15 @@ export default function TagItem( props: {
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () =>
-		dispatch( addReaderListTag( list.ID, owner, list.slug, item.meta?.data?.tag?.tag.slug ) );
+		item.meta?.data?.tag?.tag.slug &&
+		dispatch( addReaderListTag( list.ID, owner, list.slug, item.meta.data.tag.tag.slug ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
 		shouldDelete &&
+			item.tag_ID &&
+			item.meta?.data?.tag?.tag.slug &&
 			dispatch(
-				deleteReaderListTag(
-					list.ID,
-					owner,
-					list.slug,
-					item.tag_ID,
-					item.meta?.data?.tag?.tag.slug
-				)
+				deleteReaderListTag( list.ID, owner, list.slug, item.tag_ID, item.meta.data.tag.tag.slug )
 			);
 	};
 

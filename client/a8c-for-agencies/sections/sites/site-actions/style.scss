@@ -78,3 +78,9 @@
 		top: unset;
 	}
 }
+
+form.remove-site-action-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}

@@ -1,3 +1,4 @@
+import domReady from '@wordpress/dom-ready';
 import { removeFilter } from '@wordpress/hooks';
 import { isEditorReadyWithBlocks } from '../../utils';
 
@@ -14,10 +15,17 @@ import { isEditorReadyWithBlocks } from '../../utils';
  * so we can't remove the filter for just the font styles.
  * @see https://github.com/godaddy-wordpress/coblocks/issues/2475
  */
-async function removeCoBlocksFontStyles() {
-	await isEditorReadyWithBlocks();
-
+function removeCoBlocksFontStyles() {
 	removeFilter( 'blocks.getSaveContent.extraProps', 'coblocks/applyFontSettings' );
 }
 
-removeCoBlocksFontStyles();
+domReady( () => {
+	// Remove the filter immediately when the dom is ready.
+	removeCoBlocksFontStyles();
+
+	// For backward compatibility, this ensures that the filter can be removed
+	// even if it was registered between the DOM ready and editor ready events.
+	isEditorReadyWithBlocks().then( () => {
+		removeCoBlocksFontStyles();
+	} );
+} );

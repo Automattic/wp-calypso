@@ -209,7 +209,7 @@ function useRedirectOnTransactionSuccess( {
 		searchParams.get( 'from' ) === 'connect-after-checkout' &&
 		searchParams.get( 'connect_url_redirect' ) === 'true';
 
-	const defaultPendingText = translate( "Almost there – we're currently finalizing your order." );
+	const defaultPendingText = translate( 'Almost there—we’re currently finalizing your order.' );
 	const connectingJetpackText = translate(
 		"Transaction finalized – we're now connecting Jetpack."
 	);

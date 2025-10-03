@@ -6,13 +6,12 @@ import {
 	DataHelper,
 	BrowserManager,
 	SignupPickPlanPage,
-	StartSiteFlow,
 	SidebarComponent,
 	RestAPIClient,
 	CartCheckoutPage,
 	TestAccount,
-	SignupDomainPage,
 	NewSiteResponse,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiDeleteSite } from '../shared';
@@ -48,9 +47,9 @@ describe(
 			} );
 
 			it( 'Skip domain selection', async function () {
-				const signupDomainPage = new SignupDomainPage( page );
-				await signupDomainPage.searchForFooDomains();
-				await signupDomainPage.skipDomainSelection();
+				const signupDomainPage = new RewrittenDomainSearchComponent( page );
+				await signupDomainPage.search( 'foo' );
+				await signupDomainPage.skipPurchase();
 			} );
 
 			it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -71,12 +70,6 @@ describe(
 
 			it( 'Make purchase', async function () {
 				await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
-			} );
-
-			it( 'Skip Onboarding', async function () {
-				await page.waitForURL( /setup\/site-setup\/goals/ );
-				const startSiteFlow = new StartSiteFlow( page );
-				await startSiteFlow.clickButton( 'Skip to dashboard' );
 			} );
 
 			it( 'See Home', async function () {

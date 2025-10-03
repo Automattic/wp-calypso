@@ -48,7 +48,7 @@
 
 .cancel-purchase__domain-options {
 	.card {
-		margin: 16px 8px;
+		margin: 16px 0;
 	}
 
 	.cancel-purchase__refund-domain-info {
@@ -74,34 +74,42 @@
 	display: flex;
 	flex-direction: column-reverse;
 	margin-bottom: 24px;
+	font-size: $font-body-small;
 
 	@include break-large {
 		display: grid;
 		grid-template-columns: 7fr 3fr;
 		gap: 32px;
 	}
+
+	.formatted-header__title--cancellation-flow {
+		margin-bottom: 8px;
+		padding: 0;
+	}
 }
 
 .confirm-cancel-domain__formatted-header.formatted-header,
 .cancel-purchase__formatted-header.formatted-header {
-	margin: 16px 0;
+	margin: 16px 0 8px;
 }
 
 .cancel-purchase__features {
+	line-height: 1.4;
+
+	p {
+		margin: 16px 0 8px 0;
+		font-size: $font-body-small;
+		line-height: 1.4;
+	}
+
 	ul.cancel-purchase__features-list {
 		list-style: none;
-		margin: 1.5em;
-		margin-bottom: 0;
-
-		@include break-mobile {
-			column-count: 2;
-			column-gap: 20px;
-		}
+		margin: 0 0 1.5em;
+		padding: 0;
 
 		li {
 			list-style: none;
 			display: flex;
-			margin-bottom: 12px;
 			font-size: $font-body-small;
 
 			span {
@@ -110,6 +118,9 @@
 			}
 
 			.gridicon {
+				flex-shrink: 0;
+				margin-inline-end: 8px;
+				margin-top: 2px;
 				color: var(--color-error-40);
 			}
 		}
@@ -160,7 +171,7 @@
 	font-size: $font-body-small;
 }
 
-.cancel-purchase__footer {
+.cancel-purchase__footer-text-wrapper {
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
@@ -219,3 +230,49 @@
 	margin-bottom: 10px;
 	width: 50%;
 }
+
+.cancel-purchase__atomic-revert-changes {
+	line-height: 1.4;
+
+	p {
+		margin: 16px 0 8px 0;
+		font-size: $font-body-small;
+		line-height: 1.4;
+	}
+
+	ul.cancel-purchase__atomic-revert-changes-list {
+		list-style: none;
+		margin: 0 0 1.5em;
+		padding: 0;
+
+		li {
+			list-style: none;
+			display: flex;
+			font-size: $font-body-small;
+
+			span {
+				margin: auto 0;
+				flex: 1;
+			}
+
+			.gridicon {
+				flex-shrink: 0;
+				margin-inline-end: 8px;
+				margin-top: 2px;
+				color: var(--color-warning);
+			}
+		}
+	}
+
+	.cancel-purchase__atomic-revert-checkbox-label {
+		display: inline-block;
+		font-size: $font-body-small;
+		line-height: 1.4;
+		margin-bottom: 8px;
+
+		.form-label {
+			margin: 1.5em 0;
+		}
+	}
+}
+

@@ -22,7 +22,7 @@ const purchase = {
 	product_id: '1008',
 	subscribed_date: '2022-11-27T03:37:13+00:00',
 	renew: '1',
-	auto_renew: '1',
+	is_auto_renew_enabled: true,
 	renew_date: '',
 	active: '1',
 	meta: '',
@@ -132,7 +132,7 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 1 } );
+		const store = createMockReduxStoreForPurchase( { ...purchase, is_auto_renew_enabled: true } );
 
 		render(
 			<QueryClientProvider client={ queryClient }>
@@ -154,7 +154,7 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 0 } );
+		const store = createMockReduxStoreForPurchase( { ...purchase, is_auto_renew_enabled: false } );
 
 		render(
 			<QueryClientProvider client={ queryClient }>
@@ -181,7 +181,7 @@ describe( 'Purchase Management Buttons', () => {
 			domain: 'siteless.akismet.com',
 			product_id: 2311, // Akismet Plus Plan
 			product_slug: 'ak_plus_yearly_1',
-			auto_renew: 0,
+			is_auto_renew_enabled: false,
 		} );
 
 		render(

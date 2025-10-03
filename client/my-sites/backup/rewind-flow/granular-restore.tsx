@@ -12,6 +12,11 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { useFileBrowserContext } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import {
+	FileBrowserCheckListInfo,
+	FileBrowserNodeType,
+} from 'calypso/my-sites/backup/backup-contents-page/file-browser/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindGranularRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -22,18 +27,12 @@ import {
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import {
-	BackupBrowserSelectedItem,
-	BackupBrowserItemType,
-} from 'calypso/state/rewind/browser/types';
-import {
 	useEnqueuePreflightCheck,
 	usePreflightStatusQuery,
 } from 'calypso/state/rewind/preflight/hooks';
 import { getPreflightStatus } from 'calypso/state/rewind/preflight/selectors';
 import { PreflightTestStatus } from 'calypso/state/rewind/preflight/types';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getBackupBrowserSelectedList from 'calypso/state/rewind/selectors/get-backup-browser-selected-list';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
@@ -84,7 +83,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const [ showAllThemes, setShowAllThemes ] = useState( false );
 	const [ showPlugins, setShowPlugins ] = useState( true );
 	const [ showAllPlugins, setShowAllPlugins ] = useState( false );
-	const expandClick = ( type: BackupBrowserItemType, toggleAll: boolean ) => {
+	const expandClick = ( type: FileBrowserNodeType, toggleAll: boolean ) => {
 		if ( toggleAll ) {
 			switch ( type ) {
 				case 'file':
@@ -133,7 +132,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 		}
 	};
-	const renderExpandIcon = ( type: BackupBrowserItemType ) => {
+	const renderExpandIcon = ( type: FileBrowserNodeType ) => {
 		switch ( type ) {
 			case 'table':
 				return <Icon icon={ showTables ? chevronDown : chevronRight } />;
@@ -154,19 +153,24 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState( false );
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
+	const [ isFinished, setIsFinished ] = useState( false );
+	const [ percent, setPercent ] = useState( 0 );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
-	const { message, percent, currentEntry, status } = useSelector(
-		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
-	);
+	const {
+		message,
+		percent: restorePercent,
+		currentEntry,
+		status,
+	} = useSelector( ( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress ) );
 
-	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
-	const browserSelectedList = useSelector( ( state ) =>
-		getBackupBrowserSelectedList( state, siteId )
-	);
+	const { fileBrowserState } = useFileBrowserContext();
+	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
+	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
+
 	const [ loading, setLoading ] = useState( true );
 
 	const requestRestore = useCallback( () => {
@@ -233,6 +237,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
+		setIsFinished( false );
+		setPercent( 0 );
 
 		// Track the restore confirmation event.
 		dispatch(
@@ -282,7 +288,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const goBackUrl = backupContentsPath( siteSlug as string, rewindId );
 
-	const showAllType = ( type: BackupBrowserItemType ): boolean => {
+	const showAllType = ( type: FileBrowserNodeType ): boolean => {
 		switch ( type ) {
 			case 'file':
 				return showAllFiles;
@@ -292,10 +298,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				return showAllPlugins;
 			case 'table':
 				return showAllTables;
+			default:
+				return false;
 		}
 	};
 
-	const showType = ( type: BackupBrowserItemType ): boolean => {
+	const showType = ( type: FileBrowserNodeType ): boolean => {
 		switch ( type ) {
 			case 'file':
 				return showFiles;
@@ -305,10 +313,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				return showPlugins;
 			case 'table':
 				return showTables;
+			default:
+				return false;
 		}
 	};
 
-	const getTypeLabel = ( type: BackupBrowserItemType, allSelected: boolean ) => {
+	const getTypeLabel = ( type: FileBrowserNodeType, allSelected: boolean ) => {
 		switch ( type ) {
 			case 'file':
 				return translate( 'Files and directories that will be restored' );
@@ -327,7 +337,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		}
 	};
 
-	const renderSection = ( type: BackupBrowserItemType ) => {
+	const renderSection = ( type: FileBrowserNodeType ) => {
 		// Trim the list down to only the specified type
 		// For files, exclude the directories for the other types
 		const items = browserSelectedList.filter( ( item ) => {
@@ -371,8 +381,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 			return null;
 		}
-		let displayItems: BackupBrowserSelectedItem[] = [];
-		let extendedItems: BackupBrowserSelectedItem[] = [];
+		let displayItems: FileBrowserCheckListInfo[] = [];
+		let extendedItems: FileBrowserCheckListInfo[] = [];
 		if ( items.length > fileDisplayLimit ) {
 			displayItems = items.slice( 0, fileDisplayLimit );
 			extendedItems = items.slice( fileDisplayLimit );
@@ -589,13 +599,22 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
-	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
 		( restoreInitiated && userHasRequestedRestore );
 
 	const shouldRenderConfirmation = ( ! isInProgress || ! isFinished ) && ! restoreInitiated;
+
+	useEffect( () => {
+		if ( inProgressRewindStatus === 'finished' ) {
+			setIsFinished( true );
+		}
+	}, [ dispatch, inProgressRewindStatus ] );
+
+	useEffect( () => {
+		setPercent( restorePercent );
+	}, [ dispatch, restorePercent ] );
 
 	useEffect( () => {
 		if ( isInProgress && ! userHasRequestedRestore ) {

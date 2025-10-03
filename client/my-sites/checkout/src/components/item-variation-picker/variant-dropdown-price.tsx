@@ -14,7 +14,7 @@ import {
 	PriceTextContainer,
 	Variant,
 } from './styles';
-import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
+import { getItemVariantDiscount, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -38,7 +38,8 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 } > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
-	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
+	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
 		stripZeros: true,
 		isSmallestUnit: true,

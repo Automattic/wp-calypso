@@ -1,12 +1,12 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { PartialDomainData, SiteDetails } from '@automattic/data-stores';
+import { isFreeUrlDomainName } from '@automattic/domains-table';
 import { canSetAsPrimary } from '@automattic/domains-table/src/utils/can-set-as-primary';
 import {
 	type as domainTypes,
 	transferStatus,
 	useMyDomainInputMode,
 } from '@automattic/domains-table/src/utils/constants';
-import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { isDomainInGracePeriod } from '@automattic/domains-table/src/utils/is-in-grace-period';
 import { isRecentlyRegistered } from '@automattic/domains-table/src/utils/is-recently-registered';
 import { isDomainRenewable } from '@automattic/domains-table/src/utils/is-renewable';
@@ -26,7 +26,10 @@ import { navigate } from 'calypso/lib/navigate';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
 
-export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () => void ) {
+export function useActions(
+	viewType: 'table' | 'list' | 'grid' | 'pickerGrid',
+	onClose?: () => void
+) {
 	const translate = useTranslate();
 	const {
 		getFullDomain,

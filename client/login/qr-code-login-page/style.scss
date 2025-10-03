@@ -5,9 +5,13 @@
 	margin: 0 auto;
 	max-width: 700px;
 	text-align: center;
+
+	&.is-jetpack {
+		max-width: 450px;
+	}
 }
 
-.layout:has(.qr-code-login-page) {
+.layout:has(.qr-code-login-page:not(.is-jetpack)) {
 	display: flex;
 	align-items: center;
 	justify-content: center;

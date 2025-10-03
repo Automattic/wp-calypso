@@ -130,12 +130,29 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			) }&receiptId=${ receiptId }`
 		);
 	} );
+
+	it( 'returns a URL with Gravatar domain parameter', () => {
+		const finalUrl = '/foo/bar/baz';
+		const siteSlug = 'no-site';
+		const orderId = '12345';
+		const actual = addUrlToPendingPageRedirect( finalUrl, {
+			siteSlug,
+			orderId,
+			urlType: 'relative',
+			isGravatarDomain: true,
+		} );
+		expect( actual ).toEqual(
+			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
+				finalUrl
+			) }&receiptId=${ encodedReceiptPlaceholder }&isGravatarDomain=1`
+		);
+	} );
 } );
 
 describe( 'redirectThroughPending', () => {
 	it( 'navigates to a relative URL when source is relative', () => {
 		const redirectSpy = jest.fn();
-		( page as jest.MockedFunction< typeof page > ).mockImplementation( redirectSpy );
+		jest.mocked( page ).mockImplementation( redirectSpy );
 		const finalUrl = '/foo/bar/baz';
 		const siteSlug = 'example2.com';
 		const orderId = '12345';

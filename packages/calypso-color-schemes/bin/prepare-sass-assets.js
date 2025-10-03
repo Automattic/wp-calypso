@@ -1,4 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
 const { copyFileSync, existsSync, mkdirSync } = require( 'fs' );
 const { basename, dirname, join } = require( 'path' );
 

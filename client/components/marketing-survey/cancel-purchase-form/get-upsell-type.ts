@@ -48,7 +48,7 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 
 	switch ( reason ) {
 		case 'tooExpensive':
-		case 'wantCheaperPlan':
+		case 'budgetConstraints':
 			if ( ! canDowngrade ) {
 				return '';
 			}
@@ -67,43 +67,40 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 
 			break;
 
-		case 'noTime':
-		case 'siteIsNotReady':
+		case 'freeIsGoodEnough':
+		case 'foundBetterValue':
+		case 'tooMuchTimeToLearn':
+		case 'inadequateOnboarding':
 			if ( isWpComMonthlyPlan( productSlug ) && canOfferFreeMonth ) {
 				return 'free-month-offer';
 			}
 			return 'built-by';
 
-		case 'needProfessionalHelp':
-		case 'tooComplicated':
+		case 'limitedCustomization':
+		case 'lackOfCustomization':
 		case 'customization':
 			return 'built-by';
 
-		case 'eCommerceFeatures':
-			return liveChatSupported ? 'live-chat:plugins' : '';
-
-		case 'cannotFindWhatIWanted':
-		case 'otherFeatures':
+		case 'missingFunctionality':
+		case 'coreFeaturesMissing':
+		case 'otherMissingFeatures':
 			return liveChatSupported ? 'live-chat:plans' : '';
 
-		case 'cannotUsePlugin':
-		case 'cannotUseTheme':
+		case 'cannotInstallPlugins':
+		case 'cannotUploadThemes':
 			if ( isWpComBusinessPlan( productSlug ) || isWpComEcommercePlan( productSlug ) ) {
 				if ( liveChatSupported ) {
-					return reason === 'cannotUsePlugin' ? 'live-chat:plugins' : 'live-chat:themes';
+					return reason === 'cannotInstallPlugins' ? 'live-chat:plugins' : 'live-chat:themes';
 				}
 				return '';
 			}
 			return 'upgrade-atomic';
-		case 'seoIssues':
-			return 'education:seo';
-		case 'loadingTime':
+		case 'tooSlow':
+		case 'downtime':
 			return 'education:loading-time';
-		case 'didNotGetFreeDomain':
-			return 'education:free-domain';
-		case 'domainConnection':
+		case 'troubleConnectingOrTransferring':
 			return 'education:domain-connection';
-		case 'otherDomainIssues':
+		case 'otherDomain':
 			return liveChatSupported ? 'live-chat:domains' : '';
 	}
 

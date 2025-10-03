@@ -21,9 +21,6 @@ const INITIAL_STATE = {
 	ui: { selectedSiteId: 1 },
 	currentUser: { id: 1 },
 	sites: {},
-	explatExperiments: {
-		experimentAssignments: {},
-	},
 };
 
 const mockStore = configureStore();

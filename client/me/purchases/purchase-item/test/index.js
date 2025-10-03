@@ -51,7 +51,7 @@ describe( 'PurchaseItem', () => {
 		} );
 	} );
 
-	test( 'should display warning if auto-renew is enabled but no payment method', () => {
+	test( 'should display "Add payment method" button if auto-renew is enabled but no payment method', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
 			isAutoRenewEnabled: true,
@@ -59,9 +59,7 @@ describe( 'PurchaseItem', () => {
 
 		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
 
-		expect(
-			screen.getByText( 'You don’t have a payment method to renew this subscription' )
-		).toBeInTheDocument();
+		expect( screen.getByText( 'Add payment method' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should not display warning if auto-renew is disabled with no payment method', () => {

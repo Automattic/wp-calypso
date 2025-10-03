@@ -20,3 +20,4 @@ export { TwoColumnLayout } from './wireframes/TwoColumnLayout/TwoColumnLayout';
 export { WideLayout } from './wireframes/WideLayout/WideLayout';
 export { Loading } from './wireframes/Loading/Loading';
 export { PlaygroundLayout } from './wireframes/PlaygroundLayout/PlaygroundLayout';
+export { FixedColumnOnTheLeftLayout } from './wireframes/FixedColumnOnTheLeftLayout/FixedColumnOnTheLeftLayout';

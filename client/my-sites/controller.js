@@ -324,6 +324,10 @@ function onSelectedSiteAvailable( context ) {
 		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
+		const isDeleteSitePath = /^\/sites\/settings\/site\/[^/]+\/delete-site\?options=noCrumbs$/.test(
+			context.path
+		);
+
 		const permittedPathPrefixes = [
 			'/checkout/',
 			'/domains/',
@@ -334,7 +338,11 @@ function onSelectedSiteAvailable( context ) {
 			'/settings/delete-site/',
 		];
 
-		if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+		const isPermittedPath = permittedPathPrefixes.some( ( prefix ) =>
+			context.pathname.startsWith( prefix )
+		);
+
+		if ( ! isDeleteSitePath && ! isPermittedPath ) {
 			page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
 			return false;
 		}
@@ -484,6 +492,7 @@ export function noSite( context, next ) {
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
+	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -493,6 +502,7 @@ export function noSite( context, next ) {
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
+		! isUnifiedCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these
@@ -927,7 +937,11 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) ) {
+	const selectedSite = getSelectedSite( state );
+	const shouldShowNavigation = config.isEnabled( 'themes/universal-header' )
+		? selectedSite
+		: isUserLoggedIn( state );
+	if ( shouldShowNavigation ) {
 		navigation( context, next );
 	}
 	next();

@@ -8,6 +8,7 @@ import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';
 
+// TODO: remove this after discussing the design after unification.
 const WooOauthMasterbar = () => {
 	function goBack() {
 		window.history.back();
@@ -51,7 +52,11 @@ const WooOauthMasterbar = () => {
 				<nav className="masterbar__woo-nav-wrapper">
 					<ul className="masterbar__woo-nav">
 						<li className="masterbar__woo-nav-item">
-							<a href="https://woocommerce.com" className="masterbar__woo-link">
+							<a
+								href="https://woocommerce.com"
+								className="masterbar__woo-link"
+								aria-label="WooCommerce"
+							>
 								<SVGIcon
 									name="woocommerce-logo"
 									icon={ WooLogo }

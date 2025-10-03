@@ -1,0 +1,25 @@
+/**
+ * TODO: Remove this once we start to use follow-button.jsx use the core components.
+ * It was decided to support the old button styles for the recommend button
+ * to avoid having buttons with different styles in the same page.
+ */
+$support-old-button-styles: true;
+.reader-recommend-button.is-secondary:not(.is-destructive) {
+	@if $support-old-button-styles {
+		--wp-components-color-accent: initial;
+		--wp-components-color-accent-darker-20: initial;
+		--wp-admin-theme-color: var(--color-neutral-10);
+		--wp-admin-theme-color-darker-20: var(--color-neutral-10);
+		font-weight: 500;
+
+		&:hover {
+			color: var(--color-text);
+		}
+		color: var(--color-text);
+	}
+	gap: 8px;
+	padding: 12px 24px 12px 20px;
+	font-size: 14px;
+	line-height: 24px;
+	height: 48px;
+}

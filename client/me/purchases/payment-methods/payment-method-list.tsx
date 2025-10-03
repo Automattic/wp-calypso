@@ -16,7 +16,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
 

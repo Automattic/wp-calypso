@@ -29,7 +29,6 @@ import {
 import {
 	createSiteConnection,
 	deleteSiteConnection,
-	failCreateConnection,
 	fetchConnection,
 	updateSiteConnection,
 } from 'calypso/state/sharing/publicize/actions';
@@ -66,7 +65,6 @@ export class SharingService extends Component {
 		createSiteConnection: PropTypes.func,
 		deleteSiteConnection: PropTypes.func,
 		errorNotice: PropTypes.func,
-		failCreateConnection: PropTypes.func,
 		fetchConnection: PropTypes.func,
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
@@ -91,7 +89,6 @@ export class SharingService extends Component {
 		createSiteConnection: () => {},
 		deleteSiteConnection: () => {},
 		errorNotice: () => {},
-		failCreateConnection: () => {},
 		fetchConnection: () => {},
 		isFetching: false,
 		keyringConnections: [],
@@ -450,27 +447,29 @@ export class SharingService extends Component {
 			// At this point, if there are no available accounts to
 			// select, we must assume the user closed the popup
 			// before completing the authorization step.
-			this.props.failCreateConnection( {
-				message: this.props.translate(
+			this.props.warningNotice(
+				this.props.translate(
 					'The %(service)s connection could not be made because no account was selected.',
 					{
 						args: { service: this.props.service.label },
 						context: 'Sharing: Publicize connection confirmation',
 					}
 				),
-			} );
+				{ id: 'publicize' }
+			);
 			this.setState( { isConnecting: false } );
 		} else if ( ! hasAnyConnectionOptions ) {
 			// Similarly warn user if all options are connected
-			this.props.failCreateConnection( {
-				message: this.props.translate(
+			this.props.warningNotice(
+				this.props.translate(
 					'The %(service)s connection could not be made because all available accounts are already connected.',
 					{
 						args: { service: this.props.service.label },
 						context: 'Sharing: Publicize connection confirmation',
 					}
 				),
-			} );
+				{ id: 'publicize' }
+			);
 			this.setState( { isConnecting: false } );
 		}
 		this.setState( { justConnected: true } );
@@ -753,7 +752,6 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			deleteSiteConnection,
 			successNotice,
 			errorNotice,
-			failCreateConnection,
 			fetchConnection,
 			recordGoogleEvent,
 			recordTracksEvent,

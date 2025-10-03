@@ -1,3 +1,5 @@
+import { ReferralProduct } from '../client/types';
+
 interface ReferralPurchaseAPIResponse {
 	status: string;
 	product_id: number;
@@ -9,6 +11,11 @@ interface ReferralPurchaseAPIResponse {
 		revoked_at: string | null;
 	};
 	site_assigned: string;
+	subscription?: ReferralProduct[ 'subscription' ];
+	commissions?: {
+		estimated_commission_current_quarter: number;
+		estimated_commission_previous_quarter: number;
+	};
 }
 export interface ReferralPurchase extends ReferralPurchaseAPIResponse {
 	status: string;
@@ -24,12 +31,13 @@ export interface Referral {
 	purchases: ReferralPurchase[];
 	purchaseStatuses: string[];
 	referralStatuses: string[];
-	referralId: number;
+	referrals: ReferralAPIResponse[];
 }
 
 export interface ReferralAPIResponse {
 	id: number;
 	client: ReferralClient;
-	products: ReferralPurchaseAPIResponse[];
+	products: ReferralPurchase[];
 	status: string;
+	checkout_url: string;
 }

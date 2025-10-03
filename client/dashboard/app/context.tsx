@@ -1,23 +1,44 @@
 import { createContext, useContext } from 'react';
 
+export type SiteFeatureSupports = {
+	deployments: boolean;
+	performance: boolean;
+	monitoring: boolean;
+	logs: boolean;
+	backups: boolean;
+	scan: boolean;
+	domains: boolean;
+	emails: boolean;
+};
+
+export type MeSupports = {
+	privacy: boolean;
+	apps: boolean;
+};
+
 export type AppConfig = {
+	name: string;
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
 		overview: boolean;
-		sites: boolean;
+		sites: SiteFeatureSupports | false;
+		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
+		themes: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
-		me: boolean;
+		me: MeSupports | false;
+		commandPalette: boolean;
 	};
 };
 
 const AppContext = createContext< AppConfig >( {
+	name: '',
 	basePath: '',
 	mainRoute: '',
 	Logo: null,
@@ -25,12 +46,15 @@ const AppContext = createContext< AppConfig >( {
 	supports: {
 		overview: false,
 		sites: false,
+		plugins: false,
 		domains: false,
 		emails: false,
+		themes: false,
 		reader: false,
 		help: false,
 		notifications: false,
 		me: false,
+		commandPalette: false,
 	},
 } );
 

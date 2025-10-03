@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
@@ -45,6 +45,7 @@ class EmailedLoginLinkExpired extends Component {
 		token: PropTypes.string,
 		emailAddress: PropTypes.string,
 		activate: PropTypes.string,
+		isJetpack: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -118,12 +119,21 @@ class EmailedLoginLinkExpired extends Component {
 	setLoggingExpiredText = () => {
 		const { translate } = this.props;
 		this.setState( {
-			title: translate( 'Login link is expired or invalid' ),
-			actionUrl: login( { twoFactorAuthType: 'link' } ),
-			secondaryAction: translate( 'Reset my password' ),
-			secondaryActionURL: lostPassword(),
-			line: translate( 'Maybe try resetting your password instead' ),
-			action: translate( 'Try again' ),
+			title: translate( 'Link expired or invalid' ),
+			actionUrl: login( {
+				twoFactorAuthType: 'link',
+				emailAddress: this.props.emailAddress,
+				isJetpack: this.props.isJetpack,
+			} ),
+			secondaryAction: translate( 'Enter a password instead' ),
+			secondaryActionURL: login( {
+				emailAddress: this.props.emailAddress,
+				isJetpack: this.props.isJetpack,
+			} ),
+			line: translate(
+				'The login link you used has either expired or is no longer valid. No worries - it happens! You can request a new link to log in.'
+			),
+			action: translate( 'Send new login link' ),
 		} );
 	};
 
@@ -166,13 +176,11 @@ class EmailedLoginLinkExpired extends Component {
 		return (
 			<div>
 				<RedirectWhenLoggedIn delayAtMount={ 3500 } redirectTo="/" replaceCurrentLocation />
-
 				<EmptyContent
 					action={ action }
 					actionCallback={ this.onClickTryAgainLink }
 					actionURL={ actionUrl }
 					className="magic-login__link-expired"
-					illustration=""
 					line={ line }
 					secondaryAction={ secondaryAction }
 					secondaryActionURL={ secondaryActionURL }

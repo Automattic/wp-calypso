@@ -26,7 +26,6 @@ interface Props {
 
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
-	const state = useSelector( ( state ) => state );
 	const showPluginActionDialog = useShowPluginActionDialog();
 
 	const onShowUpdateConfirmationModal = useCallback( () => {
@@ -44,11 +43,11 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 		selectedSite?.ID
 	);
 
-	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
+	const allowedActions = useSelector( ( state ) =>
+		getAllowedPluginActions( state, plugin, selectedSite )
+	);
 
-	let content;
-
-	const allStatuses = getPluginActionStatuses( state );
+	const allStatuses = useSelector( getPluginActionStatuses );
 
 	const updateStatuses = allStatuses.filter(
 		( status ) =>
@@ -59,8 +58,10 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 	);
 
 	const onUpdatePlugin = useCallback( () => {
-		updatePlugin && updatePlugin( plugin );
+		updatePlugin?.( plugin );
 	}, [ plugin, updatePlugin ] );
+
+	let content;
 
 	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;

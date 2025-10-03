@@ -345,7 +345,6 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 							</div>
 						) }
 						<RetentionOptionsControl
-							currentRetentionPlan={ currentRetentionPlan }
 							onChange={ onRetentionSelectionChange }
 							retentionSelected={ retentionSelected }
 							retentionOptions={ retentionOptionsCards }

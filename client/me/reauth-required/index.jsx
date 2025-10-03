@@ -187,7 +187,7 @@ class ReauthRequired extends Component {
 
 				<form onSubmit={ this.submitForm }>
 					<FormFieldset>
-						<FormLabel htmlFor="code">{ this.props.translate( 'Verification Code' ) }</FormLabel>
+						<FormLabel htmlFor="code">{ this.props.translate( 'Verification code' ) }</FormLabel>
 						<FormVerificationCodeInput
 							autoFocus
 							id="code"

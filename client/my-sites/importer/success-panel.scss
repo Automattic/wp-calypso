@@ -1,7 +1,12 @@
 .importer__success-panel {
-	.importer__success-panel-message {
-		margin: 24px 0 32px 0 ;
+	padding-bottom: 16px;
+	&-message {
+		margin: 24px 0 32px 0;
 		font-size: $font-body-small;
 		color: var(--color-text-subtle);
+	}
+	&-buttons {
+		display: flex;
+		gap: 8px;
 	}
 }

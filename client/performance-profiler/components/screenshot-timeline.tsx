@@ -12,6 +12,7 @@ const Container = styled.div`
 	padding: 24px;
 	border-radius: 4px;
 	overflow: hidden;
+	background: var( --studio-white );
 `;
 
 const Timeline = styled.div`

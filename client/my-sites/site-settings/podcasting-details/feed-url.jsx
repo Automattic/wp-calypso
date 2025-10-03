@@ -15,7 +15,7 @@ function PodcastFeedUrl( { feedUrl, translate } ) {
 
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'RSS Feed' ) }</FormLabel>
+			<FormLabel>{ translate( 'RSS feed' ) }</FormLabel>
 			<ClipboardButtonInput value={ feedUrl } />
 			<FormSettingExplanation>
 				{ translate(

@@ -30,7 +30,7 @@ const selectors = {
 	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
 
 	// Plugin view
-	installButton: 'button:text("Install and activate")',
+	installButton: '.plugin-details-cta__install-button',
 	deactivateButton: 'button:text("Deactivate")',
 	activateButton: 'button:text("Activate")',
 	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
@@ -285,23 +285,16 @@ export class PluginsPage {
 	 * modal that appears prompting the user to purchase a plan upgrade.
 	 */
 	async clickInstallPlugin(): Promise< void > {
-		const needsPlanUpgrade = await this.page.locator( selectors.planUpgradeRequiredIcon ).count();
+		const button = await this.page.locator( selectors.installButton );
 
-		if ( needsPlanUpgrade ) {
-			await Promise.all( [
-				this.page.waitForResponse( /eligibility/ ),
-				// Depending on whethe the plugin is free or requires a monthly subscription,
-				// the text shown on the install button is slightly different.
-				this.page.getByRole( 'button', { name: /(Purchase|Upgrade) and activate/ } ).click(),
-			] );
+		const text = await button.innerText();
+		if ( /^(Purchase|Upgrade) and activate$/.test( text ) ) {
+			await Promise.all( [ this.page.waitForResponse( /eligibility/ ), button.click() ] );
 			// Modal will appear to re-confirm to the user that an upgrade is necessary.
 			// Accept the confirmation.
 			await this.page.getByRole( 'button', { name: 'Upgrade and activate plugin' } ).click();
 		} else {
-			await Promise.all( [
-				this.page.waitForResponse( /.*install\?.*/ ),
-				this.page.getByRole( 'button', { name: 'Install and activate' } ).click(),
-			] );
+			await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), button.click() ] );
 		}
 	}
 

@@ -9,7 +9,7 @@ import {
 import './style.scss';
 
 interface Props {
-	title?: string;
+	title?: React.ReactNode;
 	description?: string;
 	backButtonProps?: {
 		icon: JSX.Element;

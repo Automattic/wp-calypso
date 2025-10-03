@@ -20,10 +20,10 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"peerDependencies": {
-		"webpack": "^5.97.1"
+		"webpack": "^5.99.8"
 	},
 	"dependencies": {
-		"semver": "^7.7.1"
+		"semver": "^7.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

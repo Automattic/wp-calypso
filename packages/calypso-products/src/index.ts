@@ -10,3 +10,4 @@ export * from './get-price-tier-for-units';
 export * from './is-tiered-volume-space-addon';
 export * from './is-multi-year-domain-product';
 export * from './get-storage-addon-display-name';
+export * from './is-summer-special-enabled';

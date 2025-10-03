@@ -1,7 +1,8 @@
-import { NoticeBanner } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/dashboard/components/notice';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './styles.scss';
@@ -29,27 +30,26 @@ export function useRestoreSitesBanner() {
 		},
 		render() {
 			return (
-				<NoticeBanner
-					title={ translate( 'Choose which sites you’d like to restore' ) }
-					onClose={ dismissNotice }
-					level="info"
-				>
-					<div>
-						{ translate(
-							"{{restoreSiteLink}}Restore sites{{/restoreSiteLink}} from the action menu. You'll also need to {{invitePeopleLink}}invite any users{{/invitePeopleLink}} that previously had access to your sites.",
+				<div style={ { width: '100%' } }>
+					<Notice
+						title={ __( 'Choose which sites you’d like to restore' ) }
+						onClose={ dismissNotice }
+					>
+						{ createInterpolateElement(
+							__(
+								'<restoreSiteLink>Restore sites</restoreSiteLink> from the action menu. You’ll also need to <invitePeopleLink>invite any users</invitePeopleLink> that previously had access to your sites.'
+							),
 							{
-								components: {
-									restoreSiteLink: (
-										<InlineSupportLink showIcon={ false } supportContext="restore-site" />
-									),
-									invitePeopleLink: (
-										<InlineSupportLink showIcon={ false } supportContext="invite-people" />
-									),
-								},
+								restoreSiteLink: (
+									<InlineSupportLink showIcon={ false } supportContext="restore-site" />
+								),
+								invitePeopleLink: (
+									<InlineSupportLink showIcon={ false } supportContext="invite-people" />
+								),
 							}
 						) }
-					</div>
-				</NoticeBanner>
+					</Notice>
+				</div>
 			);
 		},
 	};

@@ -60,8 +60,14 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*', 'test/**/*' ],
+			files: [ '**/bin/**/*', '**/test/**/*', 'webpack.config.js' ],
 			...nodeConfig,
+		},
+		{
+			files: [ '**/test/**/*' ],
+			rules: {
+				'react/display-name': 'off',
+			},
 		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
@@ -497,10 +503,17 @@ module.exports = {
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [
+					'__experimentalConfirmDialog',
 					'__experimentalDivider',
+					'__experimentalGrid',
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',
+					'__experimentalText',
+					'__experimentalHeading',
+					'__experimentalInputControl',
+					'__experimentalInputControlPrefixWrapper',
+					'__experimentalInputControlSuffixWrapper',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',

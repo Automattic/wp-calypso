@@ -4,7 +4,7 @@ import { STATS_FEATURE_UTM_STATS } from 'calypso/my-sites/stats/constants';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
-import statsStrings from '../../../stats-strings';
+import useStatsStrings from '../../../hooks/use-stats-strings';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
@@ -20,7 +20,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	summaryUrl,
 	context,
 } ) => {
-	const moduleStrings = statsStrings();
+	const moduleStrings = useStatsStrings();
 	const shouldGateStats = useShouldGateStats( STATS_FEATURE_UTM_STATS );
 
 	// Check if blog is internal.

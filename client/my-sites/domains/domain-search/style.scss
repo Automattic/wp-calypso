@@ -1,74 +1,48 @@
-@import "@automattic/onboarding/styles/mixins";
-// domain search
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
-.domain-search__content {
-	overflow: visible;
-	padding: 0 0 20px;
-	position: static;
+.domain-search--calypso {
+	--domain-search-content-max-width: 1040px;
+
+	@include break-small {
+		--domain-search-mini-cart-inline-padding: 24px;
+	}
+
+	@include break-large {
+		--domain-search-mini-cart-inline-padding: 32px;
+	}
+
+	.domains-mini-cart__container {
+		@include break-medium {
+			width: calc( 100% - var( --sidebar-width-min ) );
+			left: var( --sidebar-width-min );
+		}
+	}
+}
+
+body:has( .calypso-domain-search ) {
 	.domain-search__go-back {
+		color: var( --studio-gray-50 );
+		font-size: 0.875rem;
+		line-height: 17px;
+		text-decoration: none;
 		margin-bottom: 18px;
-		&.is-link {
-			@include onboarding-medium-text;
-			text-decoration: none;
-			color: var(--studio-gray-50);
+	}
+
+	@media ( max-width: #{$break-small} ) {
+		.layout__content {
+			padding-inline: 16px !important;
+		}
+
+		.new-domains-redirection-notice-upsell__banner {
+			margin-bottom: 24px;
 		}
 	}
-	.domain-search-results {
-		.domain-suggestion__content {
-			gap: 8px;
-		}
-		.featured-domain-suggestion {
-			flex-direction: column-reverse;
-			.domain-registration-suggestion__match-reasons {
-				order: 1;
-				flex-grow: 1;
-			}
-			.domain-suggestion__price-container {
-				order: 2;
-			}
-			.domain-suggestion__action-container {
-				order: 3;
-			}
-			.domain-product-price {
-				padding-right: 0;
-				align-items: flex-end;
-			}
-		}
-		.domain-suggestion:not(.featured-domain-suggestion) {
-			flex-direction: column;
-		}
-		.domain-product-price {
-			flex-grow: 1;
-		}
-		.domain-registration-suggestion__badges {
+
+	@media ( max-width: #{$break-medium} ) {
+		.formatted-header {
+			margin-top: 0;
 			margin-left: 0;
-			margin-bottom: 4px;
-
-			.badge {
-				border-radius: 4px;
-				font-size: 0.75rem;
-				font-weight: 500;
-				white-space: nowrap;
-			}
-
-			@include break-wide {
-				flex: 1;
-			}
 		}
-	}
-}
-
-.domain-search-page-wrapper h2 {
-	@include heading;
-	margin: 0 0 10px;
-}
-
-.domain-search-page-wrapper h3 {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
-	word-wrap: break-word;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		font-size: 17px;
 	}
 }

@@ -1,259 +1,267 @@
-import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
-import { useQuery } from '@tanstack/react-query';
+import {
+	isAutomatticianQuery,
+	userPreferenceQuery,
+	userPreferenceMutation,
+	sitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import {
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+	useMutation,
+	keepPreviousData,
+} from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
-import { useMemo } from 'react';
-import { sitesQuery } from '../app/queries';
-import { sitesRoute } from '../app/router';
-import DataViewsCard from '../components/dataviews-card';
+import { Button, Modal } from '@wordpress/components';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { __, sprintf } from '@wordpress/i18n';
+import deepmerge from 'deepmerge';
+import { useState, useEffect } from 'react';
+import { useAnalytics } from '../app/analytics';
+import { useAuth } from '../app/auth';
+import { sitesRoute } from '../app/router/sites';
+import { DataViewsCard } from '../components/dataviews-card';
+import { DataViewsEmptyState } from '../components/dataviews-empty-state';
+import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
-import SiteIcon from './site-icon';
-import SitePreview from './site-preview';
-import type { Site } from '../data/types';
-import type { Field, Operator, SortDirection, ViewTable, ViewGrid } from '@automattic/dataviews';
+import { useActions } from './actions';
+import AddNewSite from './add-new-site';
+import { getFields } from './fields';
+import noSitesIllustration from './no-sites-illustration.svg';
+import { SitesNotices } from './notices';
+import {
+	getView,
+	mergeViews,
+	DEFAULT_LAYOUTS,
+	recordViewChanges,
+	DEFAULT_PER_PAGE_SIZES,
+} from './views';
+import type { ViewSearchParams } from './views';
+import type { FetchSitesOptions, Site } from '@automattic/api-core';
+import type { View, Filter } from '@wordpress/dataviews';
 
-const actions = [
-	{
-		id: 'admin',
-		isPrimary: true,
-		label: __( 'WP Admin' ),
-		callback: ( sites: Site[] ) => {
-			const site = sites[ 0 ];
-			if ( site.options?.admin_url ) {
-				window.location.href = site.options.admin_url;
-			}
-		},
-		isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
-	},
-];
+const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
+	const filters = view.filters ?? [];
 
-const DEFAULT_FIELDS: Field< Site >[] = [
-	{
-		id: 'name',
-		label: __( 'Site' ),
-		enableGlobalSearch: true,
-	},
-	{
-		id: 'URL',
-		label: __( 'URL' ),
-		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
-				{ new URL( item.URL ).hostname }
-			</ExternalLink>
-		),
-	},
-	{
-		id: 'icon.ico',
-		label: __( 'Media' ),
-		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
-		enableSorting: false,
-	},
-	{
-		id: 'subscribers_count',
-		label: __( 'Subscribers' ),
-	},
-	{
-		id: 'backups',
-		type: 'boolean',
-		label: __( 'Backups' ),
-		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		render: ( { item }: { item: Site } ) =>
-			item.plan?.features?.active?.includes( 'backups' ) ? (
-				<Icon icon={ check } />
-			) : (
-				__( 'Disabled' )
-			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
-		id: 'protect',
-		type: 'boolean',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
-		id: 'status',
-		label: __( 'Status' ),
-		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
-		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
-		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
-	},
-	{
-		id: 'is_a8c',
-		type: 'boolean',
-		label: __( 'A8C Owned' ),
-		elements: [
-			{ value: true, label: __( 'Yes' ) },
-			{ value: false, label: __( 'No' ) },
-		],
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-	},
-	{
-		id: 'preview',
-		label: __( 'Preview' ),
-		render: function PreviewRender( { item }: { item: Site } ) {
-			const [ resizeListener, { width } ] = useResizeObserver();
-			const { is_deleted, is_private, URL: url } = item;
-			// If the site is a private A8C site, X-Frame-Options is set to same
-			// origin.
-			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
-			return (
-				<>
-					{ resizeListener }
-					{ iframeDisabled && (
-						<div
-							style={ {
-								fontSize: '24px',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								height: '100%',
-							} }
-						>
-							<SiteIcon site={ item } />
-						</div>
-					) }
-					{ width && ! iframeDisabled && (
-						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
-					) }
-				</>
-			);
-		},
-		enableSorting: false,
-	},
-];
+	// Include A8C sites unless explicitly excluded from the filter.
+	const shouldIncludeA8COwned = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
 
-const DEFAULT_LAYOUTS = {
-	table: {
-		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
-		titleField: 'name',
-		descriptionField: 'URL',
-	},
-	grid: {
-		mediaField: 'preview',
-		fields: [],
-		titleField: 'name',
-		descriptionField: 'URL',
-	},
-};
+	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
+		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
+	}
 
-const DEFAULT_VIEW = {
-	...DEFAULT_LAYOUTS.grid,
-	type: 'grid' as const,
-	page: 1,
-	perPage: 10,
-	sort: { field: 'name', direction: 'asc' as SortDirection },
-	search: '',
+	return {
+		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
+		// See: https://github.com/Automattic/wp-calypso/pull/104220.
+		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		include_a8c_owned: shouldIncludeA8COwned,
+	};
 };
 
 export default function Sites() {
+	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const sites = useQuery( sitesQuery() ).data;
-	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
-	const defaultView = useMemo(
-		() =>
-			hasA8CSites
-				? {
-						...DEFAULT_VIEW,
-						filters: [
-							{
-								field: 'is_a8c',
-								operator: 'is' as Operator,
-								value: false,
-							},
-						],
-				  }
-				: DEFAULT_VIEW,
-		[ hasA8CSites ]
-	);
-	const search: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
-	const view = useMemo(
-		() => ( {
-			...defaultView,
-			...DEFAULT_LAYOUTS[ search?.type ?? DEFAULT_VIEW.type ],
-			...( search
-				? Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) )
-				: {} ),
-		} ),
-		[ defaultView, search ]
-	);
-	const fields = useMemo(
-		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
-		[ hasA8CSites ]
-	);
+	const queryClient = useQueryClient();
+	const currentSearchParams = sitesRoute.useSearch();
+	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
+	const isRestoringAccount = !! currentSearchParams.restored;
 
-	if ( ! sites ) {
-		return;
+	const { user } = useAuth();
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'sites-view' ) );
+	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'sites-view' ) );
+
+	const { defaultView, view } = getView( {
+		user,
+		isAutomattician,
+		isRestoringAccount,
+		viewPreferences,
+		viewSearchParams,
+	} );
+
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isPlaceholderData,
+	} = useQuery( {
+		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		placeholderData: keepPreviousData,
+	} );
+
+	const fields = getFields( { isAutomattician, viewType: view.type } );
+	const actions = useActions();
+
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
+	const handleViewChange = ( nextView: View ) => {
+		if ( nextView.type === 'list' ) {
+			return;
+		}
+
+		recordViewChanges( view, nextView, recordTracksEvent );
+
+		const { updatedViewPreferences, updatedViewSearchParams } = mergeViews( {
+			defaultView,
+			view,
+			viewPreferences,
+			nextView,
+		} );
+
+		navigate( {
+			search: {
+				...currentSearchParams,
+				view: updatedViewSearchParams,
+			},
+		} );
+
+		updateViewPreferences( updatedViewPreferences );
+	};
+
+	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+
+	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+
+	let emptyDescription = __( 'Get started by creating a new site.' );
+	if ( view.search ) {
+		emptyDescription = sprintf(
+			// Translators: %s is the search term used when looking for sites by title or domain name.
+			__(
+				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
+			),
+			view.search
+		);
+	} else if ( hasFilterOrSearch ) {
+		emptyDescription = __( 'Your search did not match any sites.' );
 	}
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
-
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
+	useEffect( () => {
+		if ( sites ) {
+			sites.forEach( ( site ) => {
+				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
+				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
+				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
+			} );
+		}
+	}, [ sites ] );
 
 	return (
 		<>
+			{ isModalOpen && (
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+					<AddNewSite context="sites-dashboard" />
+				</Modal>
+			) }
 			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
+				header={
+					<PageHeader
+						title={ __( 'Sites' ) }
+						actions={
+							<Button
+								variant="primary"
+								onClick={ () => setIsModalOpen( true ) }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add new site' ) }
+							</Button>
+						}
+					/>
 				}
+				notices={ <SitesNotices /> }
 			>
 				<DataViewsCard>
-					<DataViews
-						getItemId={ ( item ) => item.ID }
+					<DataViews< Site >
+						getItemId={ ( item ) => item.ID.toString() }
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						onChangeView={ ( view ) => {
-							if ( view.type === 'list' ) {
-								return;
-							}
-							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
-							navigate( {
-								search: {
-									view: Object.fromEntries(
-										Object.entries( view ).filter( ( [ key, value ] ) => {
-											return value !== _defaultView[ key as keyof typeof _defaultView ];
-										} )
-									),
-								},
-							} );
-						} }
-						onClickItem={ onClickItem }
+						isLoading={ isLoadingSites || ( isPlaceholderData && filteredData.length === 0 ) }
+						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
+						config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
+						empty={
+							<DataViewsEmptyState
+								title={ emptyTitle }
+								description={ emptyDescription }
+								illustration={
+									<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
+								}
+								actions={
+									<>
+										{ view.search && (
+											<Button
+												__next40pxDefaultSize
+												variant="secondary"
+												onClick={ () => {
+													navigate( {
+														search: {
+															...currentSearchParams,
+															view: Object.fromEntries(
+																Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+															),
+														},
+													} );
+												} }
+											>
+												{ __( 'Clear search' ) }
+											</Button>
+										) }
+										<Button
+											__next40pxDefaultSize
+											variant="primary"
+											onClick={ () => setIsModalOpen( true ) }
+										>
+											{ __( 'Add new site' ) }
+										</Button>
+									</>
+								}
+							/>
+						}
 					/>
 				</DataViewsCard>
+				<GuidedTourContextProvider
+					tourId="hosting-dashboard-tours-sites"
+					isSkippable
+					guidedTours={ [
+						{
+							id: 'hosting-dashboard-tours-sites-switch-layouts',
+							title: __( 'Switch layouts' ),
+							description: __(
+								'Choose between a visual grid view and a more compact table view of your sites.'
+							),
+						},
+						{
+							id: 'hosting-dashboard-tours-sites-appearance-options',
+							title: __( 'Appearance options' ),
+							description: __(
+								'Choose which site properties you see as well as sorting, density, and the number of sites displayed on each page.'
+							),
+						},
+					] }
+				>
+					<GuidedTourStep
+						id="hosting-dashboard-tours-sites-switch-layouts"
+						selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
+						placement="bottom"
+						inline
+						// The footer in DataViews uses a z-index of 2, so we need to apply the same value to ensure our element does not appear behind it.
+						popoverStyle={ { zIndex: 2 } }
+					/>
+					<GuidedTourStep
+						id="hosting-dashboard-tours-sites-appearance-options"
+						selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
+						placement="bottom"
+						inline
+						popoverStyle={ { zIndex: 2 } }
+					/>
+				</GuidedTourContextProvider>
 			</PageLayout>
 		</>
 	);

@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { SiteDetails } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -34,8 +34,11 @@ export default function PeopleInvitesPending( props: Props ) {
 			<TeamInvites />
 			{ ! pendingInvites?.length && (
 				<EmptyContent
-					title={ translate( 'Oops, the invites list is empty' ) }
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+					title={ fixMe( {
+						text: 'The invites list is empty',
+						newCopy: translate( 'The invites list is empty' ),
+						oldCopy: translate( 'Oops, the invites list is empty' ),
+					} ) }
 				/>
 			) }
 		</Main>

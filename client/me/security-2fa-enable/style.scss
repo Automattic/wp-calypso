@@ -1,11 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .security-2fa-enable__code-block {
 	margin-bottom: 16px;
 }
 
 .security-2fa-enable__qr-code {
-	height: 150px;
-	width: 150px;
-	margin: 0 auto;
+	flex-direction: column;
+	display: flex;
+	align-items: center;
 
 	&.is-placeholder {
 		@include placeholder( --color-neutral-10 );
@@ -27,13 +29,13 @@
 
 .security-2fa-enable__one-time-code {
 	font-weight: 600;
-	font-size: $font-body;
+	font-size: $font-body-extra-small;
 	margin-right: 8px;
 }
 
 .security-2fa-enable__clipboard-button {
 	color: var(--color-text-subtle);
-	
+
 	&:hover {
 		color: var(--color-primary);
 	}
@@ -52,4 +54,42 @@
 
 .security-2fa-enable__buttons-bar {
 	margin-top: 16px;
+	margin-left: 16px;
+	display: flex;
+	justify-content: flex-end;
+
+	.button {
+		margin-right: 0;
+	}
+
+	.security-2fa-enable__cancel {
+		margin-right: 10px;
+	}
+
+	.security-2fa-enable__resend {
+		margin-right: 10px;
+	}
+}
+
+.security-2fa-enable__qr-code-block {
+	display: flex;
+	justify-content: space-between;
+
+	@media (max-width: $break-xlarge) {
+		flex-direction: column;
+	}
+}
+
+.security-2fa-enable__steps {
+	margin-left: 16px;
+
+	li {
+		padding-bottom: 12px;
+	}
+}
+
+.security-2fa-enable__copy-description {
+	margin-top: 8px;
+	margin-bottom: 0;
+	font-size: $font-body-small;
 }

@@ -17,7 +17,11 @@ const StepProgress = ( { steps }: Props ) => {
 	return (
 		<div className="step-progress">
 			<div className="step-progress__steps">
-				<div className="step-progress__steps-container">
+				<div
+					className={ clsx( 'step-progress__steps-container', {
+						'is-two-columns': steps.length < 3,
+					} ) }
+				>
 					{ steps.map( ( step ) => (
 						<div
 							key={ step.label }

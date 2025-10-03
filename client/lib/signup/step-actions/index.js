@@ -1065,11 +1065,12 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	let fulfilledDependencies = [];
 	const domainItem = undefined;
+	const domainCart = undefined;
 
-	submitSignupStep( { stepName, domainItem }, { domainItem } );
+	submitSignupStep( { stepName, domainItem }, { domainItem, domainCart } );
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
-	fulfilledDependencies = [ 'domainItem', 'siteId', 'siteSlug', 'themeItem' ];
+	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
@@ -1077,7 +1078,16 @@ function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 }
 
 export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep } = nextProps;
+	const { siteDomains, submitSignupStep, flowName } = nextProps;
+
+	// Prevent duplicate processing for launch-site flow's domains-launch step
+	if (
+		flowName === 'launch-site' &&
+		stepName === 'domains-launch' &&
+		includes( flows.excludedSteps, stepName )
+	) {
+		return;
+	}
 
 	if ( siteDomains && siteDomains.length > 1 ) {
 		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );

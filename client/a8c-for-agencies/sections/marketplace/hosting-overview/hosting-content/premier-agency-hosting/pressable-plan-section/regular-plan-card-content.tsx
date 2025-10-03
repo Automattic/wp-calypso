@@ -35,7 +35,7 @@ export default function PressablePlanSelectorCard( {
 		if ( isReferralMode ) {
 			return translate( 'Add %(planName)s to referral', {
 				args: {
-					planName: plan.name,
+					planName: plan.name.replace( /Pressable/g, '' ),
 				},
 				comment: '%(planName)s is the name of the plan.',
 			} );
@@ -43,7 +43,7 @@ export default function PressablePlanSelectorCard( {
 
 		return translate( 'Add %(planName)s to cart', {
 			args: {
-				planName: plan.name,
+				planName: plan.name.replace( /Pressable/g, '' ),
 			},
 			comment: '%(planName)s is the name of the plan.',
 		} );

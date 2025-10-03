@@ -56,9 +56,6 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: isGoogleDomainsTransferFlow
-							? __( 'We pay the first year' )
-							: __( 'We pay the first year for Google domains' ),
 						description: (
 							<p>
 								{ __(

@@ -6,12 +6,12 @@ import {
 	DataHelper,
 	StartSiteFlow,
 	RestAPIClient,
-	DomainSearchComponent,
 	SignupPickPlanPage,
 	NewUserResponse,
 	LoginPage,
 	UserSignupPage,
 	EditorPage,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount, fixme_retry } from '../shared';
@@ -50,9 +50,9 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		} );
 
 		it( 'Select a .wordpress.com domain name', async function () {
-			const domainSearchComponent = new DomainSearchComponent( page );
+			const domainSearchComponent = new RewrittenDomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
-			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
+			selectedFreeDomain = await domainSearchComponent.skipPurchase();
 		} );
 
 		it( 'Select WordPress.com Free plan', async function () {

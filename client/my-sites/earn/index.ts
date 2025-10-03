@@ -13,7 +13,8 @@ const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
 export default function () {
 	page( earnPath, siteSelection, sites, makeLayout, clientRender );
-	page( earnPath + '/supporters', siteSelection, sites, makeLayout, clientRender );
+	page( earnPath + '/paid-subscriptions', siteSelection, sites, makeLayout, clientRender );
+	page( earnPath + '/supporters', siteSelection, sites, makeLayout, clientRender ); // Old path for /paid-subscriptions, we keep it for backwards compatibility, it can be removed later
 	page( earnPath + '/payments', siteSelection, sites, makeLayout, clientRender );
 	// This is legacy, we are leaving it here because it may have been public
 	page(

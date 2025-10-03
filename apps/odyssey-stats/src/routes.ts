@@ -14,6 +14,7 @@ import {
 	emailStats,
 	emailSummary,
 	redirectToDaySummary,
+	statsMoved,
 } from 'calypso/my-sites/stats/controller';
 import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
@@ -50,9 +51,12 @@ export default function ( pageBase = '/' ) {
 
 	page.base( pageBase );
 
-	// Redirect this to default /stats/day view in order to keep
-	// the paths and page view reporting consistent.
-	page( '/', '/stats/day/:site' );
+	// temporary hack until we remove the callout-stats page.
+	if ( pageBase !== '/wp-admin/admin.php?page=callout-stats' ) {
+		// Redirect this to default /stats/day view in order to keep
+		// the paths and page view reporting consistent.
+		page( '/', '/stats/day/:site' );
+	}
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
@@ -96,8 +100,13 @@ export default function ( pageBase = '/' ) {
 	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
 	statsPage( '/stats/day/emails/:site', emailSummary );
 
-	// Anything else should redirect to default stats page
-	statsPage( '*', redirectToSiteTrafficPage );
+	statsPage( '/stats/moved', statsMoved );
+
+	// temporary hack until we remove the callout-stats page.
+	if ( pageBase !== '/wp-admin/admin.php?page=callout-stats' ) {
+		// Anything else should redirect to default stats page
+		statsPage( '*', redirectToSiteTrafficPage );
+	}
 
 	// Enable hashbang for routing in Jetpack.
 	page( { hashbang: true } );

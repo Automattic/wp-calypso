@@ -8,8 +8,6 @@ export const getSavedWPCOMSubscription = ( state ) =>
 
 // `getState().pushNotifications.settings`
 export const isEnabled = ( state ) => !! state.pushNotifications.settings.enabled;
-export const isShowingUnblockInstructions = ( state ) =>
-	!! state.pushNotifications.settings.showingUnblockInstructions;
 
 export function getDeviceId( state ) {
 	const subscription = getSavedWPCOMSubscription( state );

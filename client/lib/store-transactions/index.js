@@ -1,5 +1,5 @@
+import { translatedEbanxError } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import { translatedEbanxError } from 'calypso/lib/checkout/processor-specific';
 import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
 import wp from 'calypso/lib/wp';
 

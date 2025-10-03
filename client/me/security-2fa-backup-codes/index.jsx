@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Notice from 'calypso/components/notice';
+import { Banner } from 'calypso/components/banner';
 import SectionHeader from 'calypso/components/section-header';
 import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
 import wp from 'calypso/lib/wp';
@@ -65,32 +65,33 @@ class Security2faBackupCodes extends Component {
 	};
 
 	renderStatus() {
+		const { translate } = this.props;
 		if ( ! this.state.printed ) {
 			return (
-				<Notice
-					isCompact
-					status="is-error"
-					text={ this.props.translate( 'Backup codes have not been verified.' ) }
+				<Banner
+					className="warning"
+					title={ translate( 'Backup codes have not been verified.' ) }
+					icon="info-outline"
 				/>
 			);
 		}
 
 		if ( ! this.state.verified ) {
 			return (
-				<Notice
-					isCompact
-					text={ this.props.translate(
+				<Banner
+					title={ translate(
 						'New backup codes have just been generated, but need to be verified.'
 					) }
+					icon="info-outline"
 				/>
 			);
 		}
 
 		return (
-			<Notice
-				isCompact
-				status="is-success"
-				text={ this.props.translate( 'Backup codes have been verified' ) }
+			<Banner
+				className="success"
+				title={ translate( 'Backup codes have been verified.' ) }
+				icon="checkmark"
 			/>
 		);
 	}

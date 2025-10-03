@@ -1,10 +1,12 @@
-import { Card, Button, FormLabel, Gridicon, Spinner } from '@automattic/components';
+import { Card, Button, FormLabel, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SuggestionSearch from 'calypso/components/suggestion-search';
+import { isValidUrl } from 'calypso/lib/importer/url-validation';
+import { NOT_EXISTS } from './connection-notice-types';
 
 const noop = () => {};
 
@@ -27,6 +29,10 @@ class JetpackConnectSiteUrlInput extends Component {
 		onChange: noop,
 		url: '',
 		autoFocus: true,
+	};
+
+	state = {
+		errorMessage: null,
 	};
 
 	focusInput = noop;
@@ -57,15 +63,23 @@ class JetpackConnectSiteUrlInput extends Component {
 		window.removeEventListener( 'beforeunload', this.beforeUnloadHandler );
 	}
 
-	handleKeyPress = ( event ) => {
-		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() && ! this.isFormSubmitBusy() ) {
-			this.props.onSubmit();
+	handleFormSubmit = ( event ) => {
+		if ( event ) {
+			event.preventDefault();
+		}
+		const { onSubmit } = this.props;
+
+		const isFormValid = this.validateForm();
+
+		if ( isFormValid ) {
+			onSubmit();
 		}
 	};
 
 	renderButtonLabel() {
 		const { isSearch, translate } = this.props;
-		if ( ! this.props.isFetching ) {
+
+		if ( ! this.props.isFetching && ! this.state.isUnloading ) {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
@@ -85,7 +99,7 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	isFormSubmitDisabled() {
 		const { isError, url } = this.props;
-		const hasError = isError && 'notExists' !== isError;
+		const hasError = isError && NOT_EXISTS !== isError;
 
 		return ! url || hasError;
 	}
@@ -95,6 +109,37 @@ class JetpackConnectSiteUrlInput extends Component {
 		const { isUnloading } = this.state ?? {};
 
 		return isFetching || isUnloading;
+	}
+
+	validateForm() {
+		const { url, translate } = this.props;
+		let errorMessage;
+
+		if ( ! isValidUrl( url ) ) {
+			errorMessage = translate( 'Please enter a valid URL.' );
+		}
+
+		if ( errorMessage ) {
+			this.setState( { errorMessage } );
+			return false;
+		}
+
+		return true;
+	}
+
+	handleChange = ( event ) => {
+		const { onChange } = this.props;
+
+		this.setState( { errorMessage: null } );
+		onChange( event );
+	};
+
+	renderError() {
+		const { errorMessage } = this.state;
+
+		if ( errorMessage ) {
+			return <FormInputValidation isError text={ errorMessage } />;
+		}
 	}
 
 	renderTermsOfServiceLink() {
@@ -131,11 +176,13 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	render() {
-		const { candidateSites, isFetching, onChange, onSubmit, isSearch, translate, url, autoFocus } =
-			this.props;
+		const { candidateSites, isSearch, translate, url, autoFocus } = this.props;
+
+		const isDisabled = this.isFormSubmitDisabled();
+		const isBusy = this.isFormSubmitBusy();
 
 		return (
-			<div>
+			<form onSubmit={ this.handleFormSubmit }>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon className="jetpack-connect__site-address-icon" size={ 24 } icon="domains" />
@@ -145,10 +192,9 @@ class JetpackConnectSiteUrlInput extends Component {
 							id="siteUrl"
 							autoCapitalize="off"
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							onChange={ onChange }
-							disabled={ isFetching }
+							onChange={ this.handleChange }
+							disabled={ isBusy }
 							placeholder="https://yourjetpack.blog"
-							onKeyUp={ this.handleKeyPress }
 							value={ url }
 						/>
 					) }
@@ -156,26 +202,26 @@ class JetpackConnectSiteUrlInput extends Component {
 						<SuggestionSearch
 							id="siteSelection"
 							placeholder="Type your site"
-							onChange={ onChange }
+							onChange={ this.handleChange }
 							suggestions={ candidateSites }
 							value={ url }
 						/>
 					) }
-					{ isFetching ? <Spinner /> : null }
+					{ this.renderError() }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
 					<Button
+						type="submit"
 						className="jetpack-connect__connect-button"
 						primary
-						disabled={ this.isFormSubmitDisabled() }
-						busy={ this.isFormSubmitBusy() }
-						onClick={ onSubmit }
+						disabled={ isDisabled && ! isBusy }
+						busy={ isBusy }
 					>
 						{ this.renderButtonLabel() }
 					</Button>
 				</Card>
-			</div>
+			</form>
 		);
 	}
 }

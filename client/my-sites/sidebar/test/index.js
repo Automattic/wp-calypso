@@ -63,7 +63,7 @@ describe( 'MySitesSidebar', () => {
 		test( 'clicking a marketing panel should activate the marketing/tools menu', () => {
 			const isSelected = itemLinkMatches(
 				'/marketing/tools/example.wordpress.com',
-				'/marketing/traffic/cpapfree.wordpress.com'
+				'/marketing/connections/cpapfree.wordpress.com'
 			);
 
 			expect( isSelected ).toBe( true );

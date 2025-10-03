@@ -17,7 +17,11 @@ type ValidationState = {
 	email?: string;
 };
 
-const useContactFormValidation = () => {
+type Props = {
+	withEmail: boolean;
+};
+
+const useContactFormValidation = ( { withEmail }: Props ) => {
 	const translate = useTranslate();
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ isValidating, setIsValidating ] = useState( false );
@@ -41,10 +45,12 @@ const useContactFormValidation = () => {
 				newValidationError.agencyName = translate( "Agency name can't be empty" );
 			}
 
-			if ( payload.email?.trim() === '' || typeof payload.email !== 'string' ) {
-				newValidationError.email = translate( "Email address can't be empty" );
-			} else if ( ! emailValidator.validate( payload.email ) ) {
-				newValidationError.email = translate( 'Please provide correct email address' );
+			if ( withEmail ) {
+				if ( payload.email?.trim() === '' || typeof payload.email !== 'string' ) {
+					newValidationError.email = translate( "Email address can't be empty" );
+				} else if ( ! emailValidator.validate( payload.email ) ) {
+					newValidationError.email = translate( 'Please provide correct email address' );
+				}
 			}
 
 			if ( payload.agencyUrl?.trim() === '' || typeof payload.agencyUrl !== 'string' ) {
@@ -71,7 +77,7 @@ const useContactFormValidation = () => {
 
 			return null;
 		},
-		[ setValidationError, translate ]
+		[ translate, withEmail ]
 	);
 
 	return { validate, validationError, updateValidationError, isValidating };

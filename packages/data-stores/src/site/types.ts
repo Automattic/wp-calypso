@@ -122,7 +122,7 @@ export interface DifmLiteSiteOptions {
 export interface SiteDetails {
 	ID: number;
 	URL: string;
-	capabilities: SiteDetailsCapabilities;
+	capabilities?: SiteDetailsCapabilities;
 	description: string;
 	domain: string;
 	icon?: { ico: string; img: string; media_id: number };
@@ -258,6 +258,7 @@ export interface SiteDetailsOptions {
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
+	is_summer_special_2025?: boolean;
 	is_domain_only?: boolean;
 	is_mapped_domain?: boolean;
 	is_pending_plan?: boolean;
@@ -631,6 +632,8 @@ export interface SourceSiteMigrationBase {
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
 	migration_status?: string;
+	is_complete?: boolean;
+	in_progress?: boolean;
 }
 
 export interface Page {

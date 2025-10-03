@@ -1,9 +1,9 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getProcessedText, truncateWithLimit } from '../../text-utils';
 
@@ -35,7 +35,6 @@ export default function LatestPostCard( {
 } ) {
 	const translate = useTranslate();
 	const userLocale = useSelector( getCurrentUserLocale );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const lastesPostViewCount = useSelector( ( state ) =>
 		getPostStat( state, siteId, latestPost?.ID, 'views' )
@@ -55,6 +54,10 @@ export default function LatestPostCard( {
 		commentCount: latestPost?.discussion?.comment_count,
 	};
 
+	const latestPostEditLink = useSelector( ( state ) =>
+		getEditorUrl( state, siteId, latestPost?.ID )
+	);
+
 	return (
 		<>
 			{ siteId && latestPost && (
@@ -69,7 +72,7 @@ export default function LatestPostCard( {
 					viewCount={ latestPostData?.viewCount }
 					commentCount={ latestPostData?.commentCount }
 					titleLink={ `/stats/post/${ latestPost?.ID }/${ siteSlug }` }
-					uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ latestPost?.ID }` : undefined }
+					uploadHref={ latestPostEditLink }
 					locale={ userLocale }
 					isLoading={ isLoadingLatestPost }
 				/>

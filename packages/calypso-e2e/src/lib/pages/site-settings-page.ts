@@ -24,7 +24,8 @@ export class SiteSettingsPage {
 	 * @param {string} tab      Settings tab.
 	 */
 	async visit( siteSlug: string, tab: string = 'site' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `sites/settings/${ tab }/${ siteSlug }` ), {
+		// Patch for redirectToHostingDashboardBackportIfEnabled bug that doesn't account for tabs.
+		await this.page.goto( getCalypsoURL( `sites/settings/v2/${ siteSlug }/${ tab }` ), {
 			timeout: 20 * 1000,
 		} );
 	}

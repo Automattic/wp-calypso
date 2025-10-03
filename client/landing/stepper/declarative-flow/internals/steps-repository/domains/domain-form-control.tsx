@@ -1,17 +1,19 @@
 import {
-	DOMAIN_UPSELL_FLOW,
+	COPY_SITE_FLOW,
+	DOMAIN_AND_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
-	isDomainUpsellFlow,
+	NEWSLETTER_FLOW,
+	READYMADE_TEMPLATE_FLOW,
+	REBLOGGING_FLOW,
+	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
-import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -26,11 +28,13 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/api-core';
+import type { DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
+	onContinue: () => void;
 	analyticsSection: string;
-	flow: string | null;
+	flow: string;
 	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
@@ -42,6 +46,7 @@ interface DomainFormControlProps {
 }
 
 export function DomainFormControl( {
+	onContinue,
 	analyticsSection,
 	flow,
 	onAddDomain,
@@ -91,7 +96,7 @@ export function DomainFormControl( {
 		showSkipButton = true;
 	}
 
-	if ( flow === DOMAIN_UPSELL_FLOW ) {
+	if ( flow === DOMAIN_AND_PLAN_FLOW ) {
 		includeWordPressDotCom = false;
 	}
 
@@ -105,44 +110,22 @@ export function DomainFormControl( {
 		shouldQuerySubdomains = false;
 	}
 
+	if ( flow === COPY_SITE_FLOW ) {
+		showSkipButton = true;
+	}
+
+	if (
+		[ NEWSLETTER_FLOW, READYMADE_TEMPLATE_FLOW, REBLOGGING_FLOW, START_WRITING_FLOW ].includes(
+			flow ?? ''
+		)
+	) {
+		includeWordPressDotCom = true;
+		showSkipButton = true;
+	}
+
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
-
-	const handleUseYourDomainClick = () => {
-		recordUseYourDomainButtonClick( analyticsSection );
-		onUseYourDomainClick();
-	};
-
-	const handleDomainExplainerClick = () => {
-		const hideFreePlan = true;
-		onSkip( undefined, hideFreePlan );
-	};
-
-	const getSideContent = () => {
-		if ( HUNDRED_YEAR_PLAN_FLOW === flow ) {
-			return null;
-		}
-
-		const useYourDomain = (
-			<div className="domains__domain-side-content">
-				<SideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
-			</div>
-		);
-
-		return (
-			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content domains__free-domain">
-					<SideExplainer
-						onClick={ handleDomainExplainerClick }
-						type="free-domain-explainer"
-						flowName={ flow }
-					/>
-				</div>
-				{ useYourDomain }
-			</div>
-		);
-	};
 
 	const shouldIncludeDotBlogSubdomain = () => {
 		// 'subdomain' flow coming from .blog landing pages
@@ -205,7 +188,7 @@ export function DomainFormControl( {
 
 		return (
 			<CalypsoShoppingCartProvider>
-				<RegisterDomainStep
+				<RegisterDomainStepV2
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					analyticsSection={ analyticsSection }
@@ -218,7 +201,6 @@ export function DomainFormControl( {
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
 					isOnboarding
-					sideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
 					offerUnavailableOption
@@ -238,30 +220,24 @@ export function DomainFormControl( {
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: false,
-						flowName: flow || undefined,
+						flowName: flow,
 					} ) }
+					// RegisterDomainStepComponentV2 props below
+					onContinue={ onContinue }
+					shouldRenderUseYourDomain
+					showFreeDomainPromo={
+						! [ HUNDRED_YEAR_DOMAIN_FLOW, HUNDRED_YEAR_PLAN_FLOW ].includes( flow ?? '' )
+					}
 				/>
 			</CalypsoShoppingCartProvider>
 		);
 	};
 
-	let content;
-	let sideContent;
-	if ( showUseYourDomain ) {
-		content = renderYourDomainForm();
-	} else {
-		content = renderDomainForm();
-	}
-
-	if ( isDomainUpsellFlow( flow ) && ! showUseYourDomain ) {
-		sideContent = getSideContent();
-	}
-
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }
 			<div className="domains__step-content domains__step-content-domain-step">
-				{ content } { sideContent }
+				{ showUseYourDomain ? renderYourDomainForm() : renderDomainForm() }
 			</div>
 		</>
 	);

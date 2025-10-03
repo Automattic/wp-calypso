@@ -1,4 +1,5 @@
 import { find } from 'lodash';
+import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 
 import 'calypso/state/reader/init';
 
@@ -15,7 +16,8 @@ export function shouldSiteBeFetched( state, siteId ) {
 	const isNotQueued = ! state.reader.sites.queuedRequests[ siteId ];
 	const isMissing = ! getSite( state, siteId );
 	const staleWithoutError = isStale( state, siteId ) && ! isError( state, siteId );
-	return isNotQueued && ( isMissing || staleWithoutError );
+	const needsFollowsSync = needsFollowsStateSync( state, siteId );
+	return isNotQueued && ( isMissing || staleWithoutError || needsFollowsSync );
 }
 
 function isStale( state, siteId ) {
@@ -29,6 +31,27 @@ function isStale( state, siteId ) {
 function isError( state, siteId ) {
 	const site = getSite( state, siteId );
 	return site && site.is_error;
+}
+
+/**
+ * Checks if a site needs to be synced with the follows state
+ * @param  {Object}  state  Global state tree
+ * @param  {number}  siteId The site ID
+ * @returns {boolean}        Whether the site needs follows sync
+ */
+function needsFollowsStateSync( state, siteId ) {
+	const site = getSite( state, siteId );
+	if ( ! site || ! site.feed_URL || ! site.is_following ) {
+		return false;
+	}
+
+	// Check if the site exists in follows state
+	const followsState = state.reader.follows.items;
+	const urlKey = prepareComparableUrl( site.feed_URL );
+	const existingFollow = followsState[ urlKey ];
+
+	// If no follow exists for this site's feed URL, we need to sync
+	return ! existingFollow;
 }
 
 /**

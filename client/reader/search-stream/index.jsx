@@ -15,7 +15,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
-import ReaderBackButton from 'calypso/reader/components/back-button';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -173,7 +172,6 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
-				<ReaderBackButton />
 				<NavigationHeader
 					title={ translate( 'Search' ) }
 					subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }

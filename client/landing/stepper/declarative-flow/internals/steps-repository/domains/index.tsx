@@ -4,9 +4,8 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
-	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
-	isDomainUpsellFlow,
+	isDomainAndPlanFlow,
 	isHundredYearDomainFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
@@ -36,7 +35,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
 import type { Step } from '../../types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/api-core';
 import './style.scss';
 
 const DomainsStep: Step< {
@@ -86,9 +85,11 @@ const DomainsStep: Step< {
 			section,
 			type: domainType,
 		};
+		// @ts-expect-error - isRecommended is injected by register-domain-step/utility.js
 		if ( suggestion.isRecommended ) {
 			tracksObjects.label = 'recommended';
 		}
+		// @ts-expect-error - isRecommended is injected by register-domain-step/utility.js
 		if ( suggestion.isBestAlternative ) {
 			tracksObjects.label = 'best-alternative';
 		}
@@ -128,6 +129,7 @@ const DomainsStep: Step< {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
+				extra: { flow_name: flow },
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
@@ -159,7 +161,7 @@ const DomainsStep: Step< {
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return submit?.( { deferDomainSelection: true } );
 		}
 
@@ -192,18 +194,11 @@ const DomainsStep: Step< {
 				);
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
-			case DOMAIN_UPSELL_FLOW:
-				return __( 'Enter some descriptive keywords to get started.' );
 			case HUNDRED_YEAR_PLAN_FLOW:
 			case HUNDRED_YEAR_DOMAIN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
-				return createInterpolateElement(
-					__(
-						'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
-					),
-					decideLaterComponent
-				);
+				return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 		}
 	};
 
@@ -220,7 +215,7 @@ const DomainsStep: Step< {
 			return __( 'Find the perfect domain' );
 		}
 
-		return __( 'Choose a domain' );
+		return __( 'Claim your space on the web' );
 	};
 
 	function getAnalyticsSection() {
@@ -279,6 +274,8 @@ const DomainsStep: Step< {
 
 	const renderContent = () => (
 		<DomainFormControl
+			// TODO: Implement this in DOTOBRD-233.
+			onContinue={ () => {} }
 			analyticsSection={ getAnalyticsSection() }
 			flow={ flow }
 			onAddDomain={ handleAddDomain }
@@ -297,21 +294,21 @@ const DomainsStep: Step< {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

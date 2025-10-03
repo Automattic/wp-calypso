@@ -123,6 +123,7 @@ const Placeholders = () => (
 const ConfirmationModal = ( {
 	isFetching,
 	siteTitle,
+	siteUrl,
 	siteDomain,
 	siteId,
 	onConfirm,
@@ -131,6 +132,7 @@ const ConfirmationModal = ( {
 	isFetching: boolean;
 	siteTitle?: string;
 	siteDomain?: string;
+	siteUrl?: string;
 	siteId?: number;
 	onConfirm: () => void;
 	closeModal: () => void;
@@ -147,7 +149,7 @@ const ConfirmationModal = ( {
 		setNewMessagingChat( {
 			initialMessage,
 			section: '100-year-plan',
-			siteUrl: siteDomain,
+			siteUrl,
 			siteId: siteId,
 		} );
 		setShowHelpCenter( true, true );
@@ -245,6 +247,7 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 				undefined,
 			[ selectedSiteId ]
 		);
+
 		const siteTitle = useSelect(
 			( select ) =>
 				( selectedSiteId &&
@@ -252,6 +255,7 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 				'',
 			[ selectedSiteId ]
 		);
+
 		const site = useSelect(
 			( select ) =>
 				( selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ) ) ||
@@ -315,6 +319,7 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 						onConfirm={ selectSite }
 						closeModal={ closeModal }
 						siteTitle={ siteTitle }
+						siteUrl={ site?.URL }
 						siteDomain={ siteDomain?.domain }
 						siteId={ site?.ID }
 					/>

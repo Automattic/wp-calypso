@@ -1,9 +1,28 @@
+import { useArgs } from '@storybook/preview-api';
 import { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import { ExperienceControl } from './index';
 
 const meta: Meta< typeof ExperienceControl > = {
-	title: 'Unaudited/ExperienceControl',
+	title: 'packages/components/ExperienceControl',
 	component: ExperienceControl,
+	args: {
+		onChange: fn(),
+	},
+	render: function Render( args ) {
+		const [ { value }, updateArgs ] = useArgs();
+
+		return (
+			<ExperienceControl
+				{ ...args }
+				value={ value }
+				onChange={ ( newValue ) => {
+					updateArgs( { value: newValue } );
+					args.onChange?.( newValue );
+				} }
+			/>
+		);
+	},
 };
 
 export default meta;
@@ -12,35 +31,6 @@ type Story = StoryObj< typeof ExperienceControl >;
 export const Default: Story = {
 	args: {
 		label: 'How was your experience?',
-		selectedExperience: 'good',
-		onChange: () => {},
+		value: 'good',
 	},
-};
-
-export const WithHelpText: Story = {
-	args: {
-		label: 'Rate your satisfaction',
-		selectedExperience: 'good',
-		helpText: 'Please select an option that best describes your experience',
-		onChange: () => {},
-	},
-};
-
-export const PreSelectedBad: Story = {
-	args: {
-		label: 'How was the support?',
-		selectedExperience: 'bad',
-		onChange: () => {},
-	},
-};
-
-// Example of using the Base component directly
-export const CustomBase: Story = {
-	render: () => (
-		<ExperienceControl.Base label="Custom Experience Control">
-			<ExperienceControl.Option isSelected onClick={ () => {} }>
-				1
-			</ExperienceControl.Option>
-		</ExperienceControl.Base>
-	),
 };

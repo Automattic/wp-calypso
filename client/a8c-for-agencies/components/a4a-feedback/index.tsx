@@ -13,7 +13,8 @@ import './style.scss';
 
 export function A4AFeedback( { type }: { type: FeedbackType } ) {
 	const translate = useTranslate();
-	const [ experience, setExperience ] = useState< string >( 'good' );
+	const [ experience, setExperience ] =
+		useState< React.ComponentProps< typeof ExperienceControl >[ 'value' ] >( 'good' );
 	const [ comments, setComments ] = useState< string >( '' );
 	const [ suggestions, setSuggestions ] = useState< FeedbackSuggestion[] >( [] );
 
@@ -46,7 +47,8 @@ export function A4AFeedback( { type }: { type: FeedbackType } ) {
 							<ExperienceControl
 								label={ translate( 'What was your experience like?' ) }
 								onChange={ ( experience ) => setExperience( experience ) }
-								selectedExperience={ experience }
+								value={ experience }
+								name="a4a-feedback-experience"
 							/>
 							{ suggestion && (
 								<FormFieldset>

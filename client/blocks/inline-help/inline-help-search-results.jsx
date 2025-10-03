@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
@@ -178,7 +178,7 @@ function HelpSearchResults( {
 							{ /* Old stuff - leaving this incase we need to quick revert
 							{ icon && <Gridicon icon={ icon } size={ 18 } /> } */ }
 							<LinkIcon />
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<span>{ decodeEntities( title ) }</span>
 						</a>
 					</div>
 				</li>
@@ -207,13 +207,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Recommended Resources' ),
+				title: translate( 'Recommended guides' ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'Recommended Resources' ) : '',
+				title: ! searchQuery.length ? translate( 'Recommended guides' ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},

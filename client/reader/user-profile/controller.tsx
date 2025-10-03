@@ -2,25 +2,31 @@ import { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
-import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
 
-interface UserPostsContext extends Context {
+interface UserProfileContext extends Context {
 	params: {
 		user_login?: string;
 		user_id?: string;
+		view?: string;
 	};
 	primary: ReactElement;
 }
 
 const analyticsPageTitle = 'Reader';
 
-export function userPosts( ctx: Context, next: () => void ): void {
-	const context = ctx as UserPostsContext;
+export function userProfile( ctx: Context, next: () => void ): void {
+	const context = ctx as UserProfileContext;
+	const view = context.params.view || 'posts';
 	const userLogin = context.params.user_login;
 	const userId = context.params.user_id;
-	const basePath = getUserProfileBasePath();
-	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userLogin + ' > Posts';
-	const mcKey = 'user_posts';
+	const basePath = context.pathname;
+	const fullAnalyticsPageTitle =
+		analyticsPageTitle +
+		' > User > ' +
+		userLogin +
+		// Keep the view sentance cased for backward consistency.
+		` > ${ view[ 0 ].toUpperCase() + view.slice( 1 ) }`;
+	const mcKey = `user_${ view }`;
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -38,28 +44,8 @@ export function userPosts( ctx: Context, next: () => void ): void {
 				mcKey
 			) }
 			path={ context.path }
+			view={ view }
 		/>
 	);
-	next();
-}
-
-export function userLists( ctx: Context, next: () => void ): void {
-	const context = ctx as UserPostsContext;
-	const userLogin = context.params.user_login;
-	const basePath = getUserProfileBasePath( 'lists' );
-	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userLogin + ' > Lists';
-	const mcKey = 'user_lists';
-
-	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-
-	context.primary = (
-		<AsyncLoad
-			require="calypso/reader/user-profile"
-			key={ 'user-lists-' + userLogin }
-			userLogin={ userLogin }
-			path={ context.path }
-		/>
-	);
-
 	next();
 }

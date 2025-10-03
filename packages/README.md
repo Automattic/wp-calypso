@@ -6,20 +6,4 @@ For projects that can produce independent, binary-like outputs deployed elsewher
 
 ## Adding a new package?
 
-If you want to add a new project or package into this directory, then add a new directory and follow [monorepo -documentation](../docs/monorepo.md).
-
-## Building
-
-Packages are built on Calypso's `yarn` so you don't need to build them manually, unless you are working directly on them.
-
-If you must manually build a single package, run:
-
-```bash
-yarn workspace @automattic/package-name run prepare
-```
-
-## Validating package.json
-
-`package.json` is linted using ESLint. Run `yarn eslint packages/*/package.json` to validate them.
-
-If you need exceptions to linting rules, add a `./eslintrc.js` file to your package and disable the relevant rules.
+If you want to add a new project or package into this directory, Check the guidelines in the [monorepo documentation](../docs/guide/monorepo.md).

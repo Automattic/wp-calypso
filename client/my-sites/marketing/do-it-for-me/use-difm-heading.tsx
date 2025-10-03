@@ -39,7 +39,6 @@ export const useDIFMHeading = ( {
 	const headerTextTranslateArgs = {
 		components: {
 			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-			sup: <sup />,
 		},
 		args: {
 			displayCost,
@@ -49,35 +48,29 @@ export const useDIFMHeading = ( {
 
 	const headerText = isStoreFlow
 		? translate(
-				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
 				headerTextTranslateArgs
 		  )
 		: translate(
-				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
 				headerTextTranslateArgs
 		  );
 
 	const subHeaderText = hasCurrentPlanOrHigherPlan
 		? translate(
-				'{{sup}}*{{/sup}}One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				"It's a one time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:",
 				{
 					args: {
 						freePages: 5,
-					},
-					components: {
-						sup: <sup />,
 					},
 				}
 		  )
 		: translate(
-				'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				"It's a one time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:",
 				{
 					args: {
 						plan: planTitle ?? '',
 						freePages: 5,
-					},
-					components: {
-						sup: <sup />,
 					},
 				}
 		  );

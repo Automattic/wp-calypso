@@ -1,9 +1,12 @@
 import config from '@automattic/calypso-config';
-import { debounce } from 'lodash';
+import { debounce } from '@wordpress/compose';
 
 export default function loadDevHelpers( reduxStore ) {
 	const badge = document.querySelector( '.environment-badge' );
 	if ( badge ) {
+		// goofy import for environment badge, which is SSR'd
+		asyncRequire( 'calypso/components/environment-badge/style.scss' );
+
 		// Show/hide Dev Tools menu as mouse enters/leaves
 		const remove = debounce( () => {
 			badge.classList.remove( 'hovered' );

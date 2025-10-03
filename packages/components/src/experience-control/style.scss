@@ -26,61 +26,55 @@ $experience-types: (
 	)
 );
 
-.experience-control {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.experience-control__help-text {
-	@include body-small;
-	color: rgb(117, 117, 117);
-}
-
-.experience-control__label {
-	@include heading-medium;
-	padding-block-end: 12px;
-	text-transform: uppercase;
-}
-
-.experience-control__buttons {
+.a8c-experience-control__fieldset {
 	display: flex;
 	gap: 8px;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
 
-	button.experience-control__button {
-		border-radius: 50%;
-		height: 32px;
-		width: 32px;
-		border-width: 1px;
-		border-style: solid;
-		justify-content: center;
+.a8c-experience-control__option {
+	display: inline-flex;
+	border-radius: 50%;
+	height: 32px;
+	width: 32px;
+	border-width: 1px;
+	border-style: solid;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	position: relative;
 
-		&:focus {
-			box-shadow: none;
-		}
+	&:focus-within {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2* var(--wp-admin-border-width-focus)) var(--color-primary-50);
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
 
-		@each $type, $colors in $experience-types {
-			&.#{$type} {
-				border-color: map-get($colors, 'border');
+	@each $type, $colors in $experience-types {
+		&.#{$type} {
+			border-color: map-get($colors, 'border');
 
-				&.is-selected {
-					background-color: map-get($colors, 'background');
-				}
+			&:has(input[type="radio"]:checked) {
+				background-color: map-get($colors, 'background');
+			}
 
-				&:hover:not(.is-selected), &:focus:not(.is-selected) {
+			&:hover, &:focus-within {
+				&:not(:has(input[type="radio"]:checked)) {
 					background-color: map-get($colors, 'hover');
 				}
 			}
 		}
+	}
 
-		&.is-selected {
-			svg path {
-				fill: var(--color-text-inverted);
-			}
+	&:has(input[type="radio"]:checked) {
+		svg path {
+			fill: var(--color-text-inverted);
 		}
 	}
 }
 
-.experience-control__button-content {
+.a8c-experience-control__option-icon {
 	display: flex;
 }

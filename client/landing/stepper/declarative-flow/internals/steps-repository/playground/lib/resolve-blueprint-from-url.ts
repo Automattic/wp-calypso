@@ -176,7 +176,7 @@ export async function resolveBlueprintFromURL( url: URL ) {
 
 	if ( query.has( 'core-pr' ) ) {
 		const prNumber = query.get( 'core-pr' );
-		blueprint.preferredVersions!.wp = `https://wordpress-playground.atomicsites.blog/plugin-proxy.php?org=WordPress&repo=wordpress-develop&workflow=Test%20Build%20Processes&artifact=wordpress-build-${ prNumber }&pr=${ prNumber }`;
+		blueprint.preferredVersions!.wp = `https://playground.wordpress.net/plugin-proxy.php?org=WordPress&repo=wordpress-develop&workflow=Test%20Build%20Processes&artifact=wordpress-build-${ prNumber }&pr=${ prNumber }`;
 	}
 
 	if ( query.has( 'gutenberg-pr' ) ) {

@@ -6,7 +6,7 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { Fragment, useMemo, useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { hasTouch } from 'calypso/lib/touch-detect';
@@ -17,7 +17,7 @@ import {
 	formatCents,
 	formatNumber,
 	getAdvertisingDashboardPath,
-	getCampaignBudgetData,
+	getCampaignDurationDays,
 	getCampaignStartDateFormatted,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
@@ -46,7 +46,6 @@ export default function CampaignItem( props: Props ) {
 		content_config,
 		ui_status,
 		end_date,
-		budget_cents,
 		start_date,
 		campaign_stats,
 		type,
@@ -54,7 +53,6 @@ export default function CampaignItem( props: Props ) {
 	} = campaign;
 
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
-	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
 	const conversion_rate_percentage = campaign_stats?.conversion_rate
 		? campaign_stats.conversion_rate * 100
 		: 0;
@@ -67,19 +65,24 @@ export default function CampaignItem( props: Props ) {
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
-	const { totalBudgetUsed, campaignDays } = useMemo(
-		() =>
-			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
-		[ budget_cents, end_date, spent_budget_cents, start_date, is_evergreen ]
-	);
+	const campaignDays = is_evergreen ? 7 : getCampaignDurationDays( start_date, end_date );
 
-	const formattedTotalSpend = `$${ formatCents( totalBudgetUsed || 0, 2 ) }`;
+	const budgetUsed = is_evergreen
+		? campaign_stats?.weekly_budget_used
+		: campaign_stats?.total_budget_used;
+
+	const formattedTotalSpend = `$${ formatCents( budgetUsed || 0, 2 ) }`;
 
 	let spendString = '-';
 	let spendStringMobile = '';
 	if ( campaignDays && ui_status !== campaignStatus.REJECTED ) {
-		/* translators: Daily average spend. dailyAverageSpending is the budget */
-		spendString = formattedTotalSpend;
+		spendString = is_evergreen
+			? sprintf(
+					/* translators: %s is a formatted amount */
+					translate( '%s weekly' ),
+					formattedTotalSpend
+			  )
+			: formattedTotalSpend;
 		spendStringMobile = sprintf(
 			/* translators: %s is a formatted amount */
 			translate( '%s spend' ),
@@ -156,10 +159,14 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
 						{ adCreativeUrl && (
-							<div
-								className="campaign-item__header-image"
-								style={ { backgroundImage: `url(${ adCreativeUrl })` } }
-							></div>
+							<div className="campaign-item__header-image">
+								<img
+									src={ adCreativeUrl }
+									alt={ translate( 'For campaign %(name)s', {
+										args: { name },
+									} ).toString() }
+								/>
+							</div>
 						) }
 						<div className="campaign-item__title-row">
 							<div className="campaign-item__post-type">{ getPostType( type ) }</div>
@@ -176,7 +183,12 @@ export default function CampaignItem( props: Props ) {
 							variant="primary"
 							className="campaign-item__view-link"
 						>
-							{ __( 'Details' ) }
+							<span aria-hidden="true">{ __( 'Details' ) }</span>
+							<span className="sr-only">
+								{ translate( 'View details for %(name)s', {
+									args: { name },
+								} ) }
+							</span>
 						</Button>
 					</div>
 				</div>
@@ -229,7 +241,12 @@ export default function CampaignItem( props: Props ) {
 					onClick={ navigateToDetailsPage }
 					className="campaign-item__post-details-button"
 				>
-					{ __( 'Details' ) }
+					<span aria-hidden="true">{ __( 'Details' ) }</span>
+					<span className="sr-only">
+						{ translate( 'View details for %(name)s', {
+							args: { name },
+						} ) }
+					</span>
 				</Button>
 			</td>
 		</tr>

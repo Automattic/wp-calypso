@@ -1,5 +1,4 @@
 /**
- * @group calypso-pr
  * @group jetpack-wpcom-integration
  */
 
@@ -99,8 +98,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		it( 'Enter title and snippet', async function () {
-			await blazeCampaignPage.enterText( 'Page title', pageTitle );
-			await blazeCampaignPage.enterText( 'Ad text', snippet );
+			await blazeCampaignPage.enterText( 'Site title', pageTitle );
+			await blazeCampaignPage.enterText( 'Snippet', snippet );
 		} );
 
 		it( 'Validate preview', async function () {

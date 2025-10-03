@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import mediaImage from 'calypso/assets/images/illustrations/media.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import { userCan } from 'calypso/lib/site/utils';
 import UploadButton from './upload-button';
@@ -20,17 +19,6 @@ class MediaLibraryListNoContent extends Component {
 		const { filter, source, translate } = this.props;
 
 		//TODO: handle each service with individual messages
-		if ( 'google_photos' === source ) {
-			if ( 'videos' === filter ) {
-				return translate( "You don't have any videos in your Google Photos library.", {
-					comment: 'Media no results',
-				} );
-			}
-			return translate( "You don't have any images in your Google Photos library.", {
-				comment: 'Media no results',
-			} );
-		}
-
 		if ( 'pexels' === source || 'openverse' === source ) {
 			return translate( 'Use the search above to find free photos!', {
 				comment: 'Media no results',
@@ -38,28 +26,8 @@ class MediaLibraryListNoContent extends Component {
 		}
 
 		switch ( filter ) {
-			case 'this-post':
-				return translate( 'There are no media items uploaded to this post.', {
-					comment: 'Media no results',
-				} );
-
 			case 'images':
 				return translate( "You don't have any images.", {
-					comment: 'Media no results',
-				} );
-
-			case 'videos':
-				return translate( "You don't have any videos.", {
-					comment: 'Media no results',
-				} );
-
-			case 'audio':
-				return translate( "You don't have any audio files.", {
-					comment: 'Media no results',
-				} );
-
-			case 'documents':
-				return translate( "You don't have any documents.", {
 					comment: 'Media no results',
 				} );
 
@@ -96,8 +64,6 @@ class MediaLibraryListNoContent extends Component {
 				action={ action }
 				secondaryAction={ showFreeLibraryButton && this.props.translate( 'Browse free images' ) }
 				secondaryActionCallback={ this.changeSource }
-				illustration={ mediaImage }
-				illustrationWidth={ 150 }
 			/>
 		);
 	}

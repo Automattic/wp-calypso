@@ -6,7 +6,7 @@ export default [
 		product_id: '2451',
 		subscribed_date: '2024-05-01T00:53:22+00:00',
 		renew: '1',
-		auto_renew: '1',
+		is_auto_renew_enabled: true,
 		renew_date: '2025-05-01T00:00:00+00:00',
 		inactive_date: null,
 		active: '1',

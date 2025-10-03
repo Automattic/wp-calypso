@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
+import { defaultSortField } from 'calypso/me/purchases/billing-history/constants';
 import { BillingTransaction } from 'calypso/state/billing-transactions/types';
-import type { ViewState, SortableField } from '../data-views-types';
+import type { SortableField } from '../data-views-types';
+import type { View } from '@wordpress/dataviews';
 
 function compareTransactions(
 	a: BillingTransaction,
@@ -27,11 +29,11 @@ function compareTransactions(
 	}
 }
 
-export function useTransactionsSorting( transactions: BillingTransaction[], view: ViewState ) {
+export function useTransactionsSorting( transactions: BillingTransaction[], view: View ) {
 	return useMemo( () => {
 		return [ ...transactions ].sort( ( a, b ) => {
-			const comparison = compareTransactions( a, b, view.sort.field );
-			return view.sort.direction === 'desc' ? -comparison : comparison;
+			const comparison = compareTransactions( a, b, view.sort?.field ?? defaultSortField );
+			return view.sort?.direction === 'desc' ? -comparison : comparison;
 		} );
 	}, [ transactions, view.sort ] );
 }

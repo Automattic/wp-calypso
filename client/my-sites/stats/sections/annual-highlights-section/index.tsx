@@ -1,6 +1,6 @@
-import { AnnualHighlightCards } from '@automattic/components';
 import { useEffect, useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import AnnualHighlightCards from 'calypso/my-sites/stats/components/highlight-cards/annual-highlight-cards';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';

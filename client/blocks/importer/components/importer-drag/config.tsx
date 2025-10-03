@@ -47,7 +47,26 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 				options
 			),
 		},
+		wix: {
+			description: translate(
+				'Import your posts, tags, images, and videos from your %(importerName)s site',
+				options
+			),
+		},
 		squarespace: {
+			description: translate(
+				'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
+				options
+			),
+			uploadDescription: translate(
+				'A %(importerName)s export is ' +
+					'an XML file with your page and post content, or a zip archive ' +
+					'containing several XML files. ' +
+					'{{supportLink/}}',
+				options
+			),
+		},
+		substack: {
 			description: translate(
 				'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
 				options

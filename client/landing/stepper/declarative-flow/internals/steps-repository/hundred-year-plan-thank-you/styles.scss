@@ -31,8 +31,17 @@
 		max-height: 460px;
 	}
 
-	.components-button {
+	.hundred-year-plan-step-wrapper__step-container {
+		text-align: center;
+	}
+
+	.components-button.is-secondary:not( .is-destructive ) {
 		box-shadow: none;
-		margin-bottom: 1rem;
+		margin: 2rem auto ;
+		--wp-components-color-accent: var( --studio-gray-100 );
+		--wp-components-color-accent-darker-20: var( --studio-gray-100 );
+		background: var( --studio-white );
+		font-weight: 500;
+		border: none;
 	}
 }

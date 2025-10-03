@@ -1,0 +1,56 @@
+@mixin tooltip-base($opacity: 1) {
+	position: relative;
+	overflow: visible;
+
+	&::after {
+		height: 20px;
+		line-height: 20px;
+		background: var(--color-sidebar-tooltip-background);
+		border-radius: 4px;
+		color: var(--color-sidebar-tooltip-text);
+		content: attr(data-tooltip);
+		display: none;
+		font-size: $font-body-extra-small;
+		opacity: $opacity;
+		padding: 3px 6px;
+		position: absolute;
+		white-space: nowrap;
+		z-index: 8;
+	}
+
+	&:hover::after {
+		display: block;
+	}
+}
+
+@mixin tooltip-top {
+	&::after {
+		top: -29px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+@mixin tooltip-bottom {
+	&::after {
+		bottom: -24px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+@mixin tooltip-right {
+	&::after {
+		top: 50%;
+		transform: translateY(-50%);
+		left: calc(100% + 8px);
+	}
+}
+
+@mixin tooltip-left {
+	&::after {
+		top: 50%;
+		transform: translateY(-50%);
+		right: calc(100% + 8px);
+	}
+}

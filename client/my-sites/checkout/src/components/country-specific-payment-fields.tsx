@@ -1,3 +1,4 @@
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -5,7 +6,6 @@ import { useState } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { paymentMethodName } from 'calypso/lib/cart-values';
-import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
 import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';

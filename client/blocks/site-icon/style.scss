@@ -6,15 +6,24 @@
 	text-align: center;
 
 	// Globe icon for sites without an icon
-	&.is-blank {
-		background: var(--color-neutral-10);
+	&.is-blank,
+	&.is-primary {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
 		.gridicon {
 			color: var(--color-surface);
 			z-index: z-index("root", ".site-icon.is-blank .gridicon");
 		}
+	}
+
+	&.is-blank {
+		background: var(--color-neutral-10);
+	}
+
+	&.is-primary {
+		background: var(--color-primary);
 	}
 }
 
@@ -28,6 +37,9 @@
 }
 
 .site-icon__img {
-	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
+	background: var(--color-surface);
+	border-radius: 4px;
+	outline: 1px solid rgba(0, 0, 0, 0.04);
+	outline-offset: -1px;
 	position: relative;
 }

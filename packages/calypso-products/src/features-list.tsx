@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
@@ -40,7 +41,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
@@ -124,6 +124,7 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_VIDEO_HOSTING_V2,
@@ -168,6 +169,7 @@ import {
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_THE_READER,
 	WPCOM_FEATURES_NO_ADVERTS,
+	WPCOM_FEATURES_BACKUPS_RESTORE,
 	FEATURE_BEAUTIFUL_THEMES,
 	FEATURE_PAGES,
 	FEATURE_USERS,
@@ -176,6 +178,7 @@ import {
 	FEATURE_SECURITY_BRUTE_FORCE,
 	FEATURE_SMART_REDIRECTS,
 	FEATURE_ALWAYS_ONLINE,
+	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_DESIGN_TOOLS,
@@ -337,6 +340,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -443,10 +447,10 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => {
 			return isEnabled( 'themes/premium' )
 				? i18n.translate(
-						'Including premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including premium themes, advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
 				  )
 				: i18n.translate(
-						'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
 				  );
 		},
 	},
@@ -544,11 +548,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-
-	[ FEATURE_CLOUDFLARE_ANALYTICS ]: {
-		getSlug: () => FEATURE_CLOUDFLARE_ANALYTICS,
-		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
@@ -767,7 +766,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
-		getTitle: () => i18n.translate( 'Pay with PayPal' ),
+		getTitle: () => i18n.translate( 'PayPal Payment Buttons' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ FEATURE_NO_BRANDING ]: {
@@ -791,6 +790,15 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_UPLOAD_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
+		getTitle: () => i18n.translate( 'Install plugins' ),
+		getDescription: () =>
+			i18n.translate(
+				'Plugins extend the functionality of your site and ' +
+					'open up endless possibilities for presenting your content and interacting with visitors.'
+			),
+	},
+	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
+		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 		getTitle: () => i18n.translate( 'Install plugins' ),
 		getDescription: () =>
 			i18n.translate(
@@ -1340,6 +1348,15 @@ const FEATURES_LIST: FeatureList = {
 			),
 	},
 
+	[ WPCOM_FEATURES_BACKUPS_RESTORE ]: {
+		getSlug: () => WPCOM_FEATURES_BACKUPS_RESTORE,
+		getTitle: () => i18n.translate( 'Real time full-site backup/restore' ),
+		getDescription: () =>
+			i18n.translate(
+				'Comprehensive real-time backups of your entire site with instant one-click restore capabilities.'
+			),
+	},
+
 	[ FEATURE_ONE_CLICK_FIX_V2 ]: {
 		getSlug: () => FEATURE_ONE_CLICK_FIX_V2,
 		getTitle: () => i18n.translate( 'One-click fixes for most issues' ),
@@ -1808,6 +1825,25 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Online forever' ),
 		getDescription: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
 	},
+
+	[ FEATURE_99_999_UPTIME ]: {
+		getSlug: () => FEATURE_99_999_UPTIME,
+		getTitle: () => {
+			const title = i18n.translate( '%(uptimePercent)s uptime', {
+				args: {
+					uptimePercent: formatNumber( 0.99999, {
+						numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+					} ),
+				},
+				comment: '99.999% uptime',
+			} );
+			return i18n.hasTranslation( '%(uptimePercent)s uptime' )
+				? title
+				: i18n.translate( '99.999% uptime' );
+		},
+		getDescription: () =>
+			i18n.translate( 'Exceptional reliability with industry-leading uptime guarantee.' ),
+	},
 	[ FEATURE_FAST_DNS ]: {
 		getSlug: () => FEATURE_FAST_DNS,
 		getTitle: () => i18n.translate( 'Extremely fast DNS with SSL' ),
@@ -2202,9 +2238,19 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
-		getTitle: () => i18n.translate( 'Contact form' ),
+		getTitle: () => i18n.translate( 'Forms' ),
 		getDescription: () =>
-			i18n.translate( 'Make it easy for your visitors to get in touch, right from your site.' ),
+			i18n.translate(
+				'Make it easy for your visitors to get in touch and create beautiful forms for any need.'
+			),
+	},
+	[ FEATURE_ADVANCED_FORM_FEATURES_JP ]: {
+		getSlug: () => FEATURE_ADVANCED_FORM_FEATURES_JP,
+		getTitle: () => i18n.translate( 'Advanced form features' ),
+		getDescription: () =>
+			i18n.translate(
+				'Build smarter forms with features like file uploads, multi-step logic, and seamless integrations.'
+			),
 	},
 	[ FEATURE_PAID_SUBSCRIBERS_JP ]: {
 		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,

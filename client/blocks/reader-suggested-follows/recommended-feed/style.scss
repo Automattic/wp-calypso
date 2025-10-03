@@ -1,0 +1,39 @@
+.reader-recommended-follows-dialog {
+	&__recommended-blog-item {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: anchor-center;
+		gap: 11px;
+		flex-wrap: nowrap;
+	}
+
+	&__recommended-blog-site-info {
+		width: 100%;
+	}
+
+	&__recommended-blog-site-name {
+		color: var(--color-neutral-100);
+		font-weight: 600;
+		font-size: $font-body;
+		&:visited {
+			color: var(--color-neutral-100);
+		}
+	}
+
+	&__recommended-blog-site-description {
+		color: var(--color-text-subtle);
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 18px;
+		overflow: hidden;
+		width: auto;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		display: -webkit-box;
+	}
+
+	&__recommended-blog-subscribe-button {
+		flex-shrink: 0;
+	}
+}

@@ -17,7 +17,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -36,7 +35,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -55,7 +53,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -75,7 +72,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -95,7 +91,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -114,7 +109,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -133,7 +127,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -152,7 +145,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -171,7 +163,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 
@@ -188,7 +179,6 @@ describe( 'useTransactionsSorting', () => {
 				page: 0,
 				perPage: 0,
 				fields: [],
-				hiddenFields: [],
 			} )
 		);
 

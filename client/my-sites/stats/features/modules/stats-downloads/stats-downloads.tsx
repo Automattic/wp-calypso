@@ -1,11 +1,10 @@
 import { StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
-import { DOWNLOADS_SUPPORT_URL } from 'calypso/my-sites/stats/const';
 import StatsCardSkeleton from 'calypso/my-sites/stats/features/modules/shared/stats-card-skeleton';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
@@ -66,13 +65,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 							{ translate( 'Most {{link}}downloaded files{{/link}} from your site.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
-									link: (
-										<a
-											target="_blank"
-											rel="noreferrer"
-											href={ localizeUrl( DOWNLOADS_SUPPORT_URL ) }
-										/>
-									),
+									link: <InlineSupportLink supportContext="stats-downloads" showIcon={ false } />,
 								},
 								context: 'Stats: Info popover content when the file downloads module has data.',
 							} ) }
@@ -105,13 +98,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( DOWNLOADS_SUPPORT_URL ) }
-											/>
-										),
+										link: <InlineSupportLink supportContext="stats-downloads" showIcon={ false } />,
 									},
 									context: 'Stats: Info box label when the file downloads module is empty',
 								}

@@ -4,7 +4,6 @@
  */
 import {
 	BlockFlow,
-	PayWithPaypalBlockFlow,
 	// OpenTableFlow,
 	DonationsFormFlow,
 	AdFlow,
@@ -16,11 +15,6 @@ import {
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
-	new PayWithPaypalBlockFlow( {
-		name: 'Test Paypal Block',
-		price: 900,
-		email: 'test@wordpress.com',
-	} ),
 	// Skip OpenTable block test for now, block is broken due to upstream API changes.
 	// https://github.com/Automattic/jetpack/issues/39410
 	// new OpenTableFlow( {

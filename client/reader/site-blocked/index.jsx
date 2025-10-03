@@ -45,7 +45,6 @@ class SiteBlocked extends Component {
 						},
 						comment: '%s is a site name - for example, "Discover"',
 					} ) }
-					illustration=""
 				/>
 			</ReaderMain>
 		);

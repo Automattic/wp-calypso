@@ -18,13 +18,14 @@ import './style.scss';
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	withEmail?: boolean;
 };
 
-const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
+const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
-		useContactFormValidation();
+		useContactFormValidation( { withEmail } );
 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
@@ -75,7 +76,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 			) }
 			description={ preventWidows(
 				translate(
-					'Join 5000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}}',
+					'Join 6000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
 					{
 						components: {
 							span: <span className="signup-contact-form__a4a-span" />,
@@ -91,9 +92,11 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				<FormField
 					error={ validationError.firstName }
 					label={ translate( 'Your first name' ) }
+					labelFor="firstName"
 					isRequired
 				>
 					<FormTextInput
+						id="firstName"
 						name="firstName"
 						value={ formData.firstName }
 						onChange={ handleInputChange( 'firstName' ) }
@@ -101,8 +104,14 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 					/>
 				</FormField>
 
-				<FormField error={ validationError.lastName } label={ translate( 'Last name' ) } isRequired>
+				<FormField
+					error={ validationError.lastName }
+					label={ translate( 'Last name' ) }
+					labelFor="lastName"
+					isRequired
+				>
 					<FormTextInput
+						id="lastName"
 						name="lastName"
 						value={ formData.lastName }
 						onChange={ handleInputChange( 'lastName' ) }
@@ -111,22 +120,32 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				</FormField>
 			</div>
 
-			<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
-				<FormTextInput
-					name="email"
-					type="email"
-					value={ formData.email }
-					onChange={ handleInputChange( 'email' ) }
-					placeholder={ translate( 'Your email' ) }
-				/>
-			</FormField>
+			{ withEmail && (
+				<FormField
+					error={ validationError.email }
+					label={ translate( 'Email' ) }
+					labelFor="email"
+					isRequired
+				>
+					<FormTextInput
+						id="email"
+						name="email"
+						type="email"
+						value={ formData.email }
+						onChange={ handleInputChange( 'email' ) }
+						placeholder={ translate( 'Your email' ) }
+					/>
+				</FormField>
+			) }
 
 			<FormField
 				error={ validationError.agencyName }
 				label={ translate( 'Agency name' ) }
+				labelFor="agencyName"
 				isRequired
 			>
 				<FormTextInput
+					id="agencyName"
 					name="agencyName"
 					value={ formData.agencyName }
 					onChange={ handleInputChange( 'agencyName' ) }
@@ -137,9 +156,11 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 			<FormField
 				error={ validationError.agencyUrl }
 				label={ translate( 'Business URL' ) }
+				labelFor="agencyUrl"
 				isRequired
 			>
 				<FormTextInput
+					id="agencyUrl"
 					name="agencyUrl"
 					value={ formData.agencyUrl }
 					onChange={ handleInputChange( 'agencyUrl' ) }
@@ -155,7 +176,11 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				onChange={ handlePhoneInputChange }
 				className="contact-form__phone-input"
 				phoneInputProps={ {
+					id: 'phone_number',
 					placeholder: translate( 'Phone number' ),
+				} }
+				countrySelectProps={ {
+					id: 'country_code',
 				} }
 				initialCountryCode="US"
 			/>
@@ -193,7 +218,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 					variant="primary"
 					onClick={ handleSubmit }
 				>
-					{ translate( 'Continue' ) }
+					{ translate( 'Continue for free' ) }
 				</Button>
 			</FormFooter>
 		</Form>

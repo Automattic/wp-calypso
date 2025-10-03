@@ -42,6 +42,7 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 
 	return (
 		<Banner
+			horizontal
 			callToAction={
 				notActivelySubscribing ? translate( 'Subscribe' ) : `${ translate( 'Subscribing' ) }...`
 			}

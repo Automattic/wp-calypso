@@ -9,6 +9,7 @@ import {
 	COMMENTS_SET_ACTIVE_REPLY,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_TOGGLE_INLINE_EXPANDED,
+	COMMENTS_API_DISABLED,
 } from '../../action-types';
 import {
 	requestPostComments,
@@ -20,6 +21,7 @@ import {
 	setActiveReply,
 	changeCommentStatus,
 	toggleInlineCommentsExpanded,
+	setCommentsApiDisabled,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 
@@ -240,6 +242,18 @@ describe( 'actions', () => {
 					streamKey,
 				},
 			} );
+		} );
+	} );
+
+	describe( '#setCommentsApiDisabled()', () => {
+		test( 'should create an action to disable comments API for a site', () => {
+			const siteId = 123;
+			const expectedAction = {
+				type: COMMENTS_API_DISABLED,
+				siteId,
+			};
+
+			expect( setCommentsApiDisabled( siteId ) ).toEqual( expectedAction );
 		} );
 	} );
 } );

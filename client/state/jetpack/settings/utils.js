@@ -63,6 +63,9 @@ export const sanitizeSettings = ( settings ) => {
 					memo[ key ] = settings[ key ];
 				}
 				break;
+			// WordPress.com specific settings that should not be sent to Jetpack
+			case 'newsletter_has_active_plan':
+				break;
 			case 'infinite_scroll':
 				if ( settings[ key ] === 'default' ) {
 					memo[ 'infinite-scroll' ] = false;

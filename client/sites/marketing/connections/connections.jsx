@@ -3,7 +3,6 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryP2Connections from 'calypso/components/data/query-p2-connections';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import GoogleAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
@@ -29,17 +28,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 			{ ! isP2Hub && (
 				<SharingServicesGroup
 					type="publicize"
-					title={ translate( 'Share posts with Jetpack Social {{learnMoreLink/}}', {
-						components: {
-							learnMoreLink: (
-								<InlineSupportLink
-									linkTitle={ translate( 'Learn more about sharing posts with Jetpack Social' ) }
-									supportContext="publicize"
-									showText={ false }
-								/>
-							),
-						},
-					} ) }
+					title={ translate( 'Share posts with Jetpack Social' ) }
 				/>
 			) }
 

@@ -1,0 +1,15 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.reports-survey-modal {
+	width: 30%;
+}
+
+.reports-survey-modal__text {
+	@include body-medium;
+}
+
+.reports-survey-modal__buttons {
+	display: flex;
+	justify-content: flex-end;
+}

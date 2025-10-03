@@ -266,7 +266,9 @@ describe( 'StepContent', () => {
 			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Add subscribers' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Confirm email (check your inbox)' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Start writing' } ) ).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', { name: /Completed: Start writing/ } )
+			).toBeInTheDocument();
 		} );
 
 		it( 'renders correct status for each task', () => {
@@ -279,7 +281,7 @@ describe( 'StepContent', () => {
 				.getByText( 'Confirm email (check your inbox)' )
 				.closest( 'li' );
 			const firstPostListItem = screen
-				.getByRole( 'button', { name: 'Start writing' } )
+				.getByRole( 'button', { name: /Completed: Start writing/ } )
 				.closest( 'li' );
 
 			expect( personalizeListItem ).toHaveClass( 'completed' );

@@ -1,0 +1,82 @@
+import { siteBackupRestoreProgressQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import {
+	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
+	ProgressBar,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { useEffect } from 'react';
+import Notice from '../../components/notice';
+import { Text } from '../../components/text';
+import progressIllustration from './restore-progress-illustration.svg';
+import type { Site } from '@automattic/api-core';
+
+function SiteBackupRestoreProgress( {
+	site,
+	restoreId,
+	onRestoreComplete,
+	onRestoreError,
+}: {
+	site: Site;
+	restoreId: number;
+	onRestoreComplete: () => void;
+	onRestoreError: () => void;
+} ) {
+	const { data: restoreProgress } = useQuery( {
+		...siteBackupRestoreProgressQuery( site.ID, restoreId ),
+		enabled: !! restoreId,
+		refetchInterval: ( query ) => {
+			const { data } = query.state;
+
+			// Poll every 1.5 seconds if restore is in progress
+			if ( data?.status === 'queued' || data?.status === 'running' ) {
+				return 1500;
+			}
+
+			// Stop polling if finished or failed
+			return false;
+		},
+	} );
+
+	useEffect( () => {
+		if ( restoreProgress?.status === 'finished' ) {
+			onRestoreComplete();
+		} else if ( restoreProgress?.status === 'fail' ) {
+			onRestoreError();
+		}
+	}, [ restoreProgress?.status, onRestoreComplete, onRestoreError ] );
+
+	const isRunning = restoreProgress?.status === 'running';
+
+	return (
+		<>
+			<VStack spacing={ 4 } alignment="center">
+				<img src={ progressIllustration } alt="" width={ 408 } height={ 280 } />
+				<Text size={ 20 }>
+					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
+				</Text>
+				<Text size={ 13 } variant="muted">
+					{ sprintf(
+						/* translators: %d is the restore completion percentage. */
+						__( '%d%% completed' ),
+						restoreProgress?.percent ?? 0
+					) }
+				</Text>
+				<ProgressBar
+					className="dashboard-backups__progress-bar"
+					value={ restoreProgress?.percent ?? 0 }
+				/>
+			</VStack>
+			<Spacer marginTop={ 12 }>
+				<Notice variant="info" title={ __( 'Check your email' ) }>
+					{ __(
+						'Don’t want to wait? For your convenience, we’ll email you when your site has been fully restored.'
+					) }
+				</Notice>
+			</Spacer>
+		</>
+	);
+}
+
+export default SiteBackupRestoreProgress;

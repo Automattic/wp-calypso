@@ -61,10 +61,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 		handleFieldChange( 'code', code );
 	};
 
-	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_google_support_click' );
-	};
-
 	const handleFieldFocus = () => {
 		trackTracksEvent( 'calypso_google_analytics_key_field_focused', { path } );
 		eventTracker( 'Focused Analytics Key Field' )();
@@ -88,7 +84,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 		isCodeValid,
 		isSubmitButtonDisabled,
 		placeholderText,
-		recordSupportLinkClick,
 		setDisplayForm,
 		isAtomic,
 		enableForm,

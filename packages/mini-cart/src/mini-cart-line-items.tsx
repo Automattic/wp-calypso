@@ -4,6 +4,8 @@ import {
 	NonProductLineItem,
 	LineItem,
 	canItemBeRemovedFromCart,
+	useRestorableProducts,
+	RemovedFromCartItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import type { Theme } from '@automattic/composite-checkout';
@@ -11,6 +13,7 @@ import type {
 	ResponseCart,
 	RemoveProductFromCart,
 	RemoveCouponFromCart,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 
 const MiniCartLineItemsWrapper = styled.ul< { theme?: Theme } >`
@@ -32,17 +35,20 @@ const MiniCartLineItemWrapper = styled.li`
 
 export function MiniCartLineItems( {
 	removeProductFromCart,
+	addProductsToCart,
 	removeCoupon,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
+	addProductsToCart: AddProductsToCart;
 	removeCoupon: RemoveCouponFromCart;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 
 	return (
 		<MiniCartLineItemsWrapper className="mini-cart-line-items">
@@ -55,10 +61,20 @@ export function MiniCartLineItems( {
 							removeProductFromCart={ removeProductFromCart }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
+							isRestorable
+							restorableProducts={ restorableProducts }
+							setRestorableProducts={ setRestorableProducts }
 						/>
 					</MiniCartLineItemWrapper>
 				);
 			} ) }
+			{ restorableProducts.map( ( product ) => (
+				<RemovedFromCartItem
+					key={ product.uuid }
+					product={ product }
+					addProductsToCart={ addProductsToCart }
+				/>
+			) ) }
 			{ couponLineItem && (
 				<MiniCartLineItemWrapper key={ couponLineItem.id }>
 					<NonProductLineItem

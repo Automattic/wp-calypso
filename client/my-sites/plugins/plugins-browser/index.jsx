@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -37,9 +38,6 @@ import SearchCategories from '../search-categories';
 
 import './style.scss';
 
-const THRESHOLD = 10;
-const SEARCH_CATEGORIES_HEIGHT = 36;
-const LAYOUT_PADDING = 16;
 const MASTERBAR_HEIGHT = 32;
 
 // If adding new, longer search terms, ensure that the search input field is wide enough to accommodate it.
@@ -83,12 +81,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const loggedInSearchBoxRef = useRef( null );
 	const isLoggedInSearchBoxSticky =
 		useIsVisible( loggedInSearchBoxRef, {
-			rootMargin: `${
-				-1 *
-				( THRESHOLD +
-					SEARCH_CATEGORIES_HEIGHT +
-					( selectedSite ? MASTERBAR_HEIGHT : LAYOUT_PADDING ) )
-			}px 0px 0px 0px`,
+			rootMargin: selectedSite ? `${ -1 * MASTERBAR_HEIGHT }px 0px 0px 0px` : '0px',
 		} ) === false;
 
 	const jetpackNonAtomic = useSelector(
@@ -116,6 +109,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
+	const shouldUseLoggedInView = isEnabled( 'plugins/universal-header' ) ? siteId : isLoggedIn;
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -159,7 +153,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
 			wideLayout
-			isLoggedOut={ ! isLoggedIn }
+			isLoggedOut={ ! shouldUseLoggedInView }
 		>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
@@ -188,15 +182,18 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				{ isLoggedIn ? (
-					<SearchCategories
-						category={ category }
-						isSearching={ isFetchingPluginsBySearchTerm }
-						isSticky={ isLoggedInSearchBoxSticky }
-						searchRef={ searchRef }
-						searchTerm={ search }
-						searchTerms={ searchTerms }
-					/>
+				{ shouldUseLoggedInView ? (
+					<>
+						<div ref={ loggedInSearchBoxRef } />
+						<SearchCategories
+							category={ category }
+							isSearching={ isFetchingPluginsBySearchTerm }
+							isSticky={ isLoggedInSearchBoxSticky }
+							searchRef={ searchRef }
+							searchTerm={ search }
+							searchTerms={ searchTerms }
+						/>
+					</>
 				) : (
 					<>
 						<SearchBoxHeader
@@ -207,12 +204,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 							searchTerm={ search }
 							isSearching={ isFetchingPluginsBySearchTerm }
 							title={ __( 'Flex your site’s features with plugins' ) }
-							subtitle={
-								! isLoggedIn &&
-								__(
-									'Add new functionality and integrations to your site with thousands of plugins.'
-								)
-							}
+							subtitle={ __(
+								'Add new functionality and integrations to your site with thousands of plugins.'
+							) }
 							searchTerms={ searchTerms }
 							renderTitleInH1={ ! category }
 						/>
@@ -222,7 +216,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</div>
 					</>
 				) }
-				{ isLoggedIn && <div ref={ loggedInSearchBoxRef } /> }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">

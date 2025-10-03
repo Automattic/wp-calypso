@@ -1,154 +1,122 @@
-import { ExternalLink } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
-import Markdown from 'react-markdown';
+import { ReactNode } from 'react';
 import {
-	ODIE_FORWARD_TO_FORUMS_MESSAGE,
-	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
-	ODIE_THIRD_PARTY_MESSAGE,
+	getOdieForwardToForumsMessage,
+	getOdieForwardToZendeskMessage,
+	getOdieThirdPartyMessageContent,
+	getOdieEmailFallbackMessageContent,
+	getOdieErrorMessage,
+	getOdieErrorMessageNonEligible,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { userProvidedEnoughInformation } from '../../utils';
+import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
+import { interactionHasZendeskEvent, getIsRequestingHumanSupport } from '../../utils';
+import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
-import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
+import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
-import { uriTransformer } from './uri-transformer';
-import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
 
 const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
-	isRequestingHumanSupport: boolean,
-	messageContent: string,
-	forwardMessage: string,
-	hasCannedResponse?: boolean
+	messageContent: ReactNode,
+	hasCannedResponse?: boolean,
+	forceEmailSupport?: boolean,
+	isErrorMessage?: boolean
 ) => {
-	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
-		return ODIE_THIRD_PARTY_MESSAGE;
+	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
+		return getOdieThirdPartyMessageContent();
 	}
+
 	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
 		return messageContent;
 	}
-	return forwardMessage;
+
+	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
+		return getOdieEmailFallbackMessageContent();
+	}
+
+	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
+		return getOdieErrorMessageNonEligible();
+	}
+
+	const forwardMessage = isUserEligibleForPaidSupport
+		? getOdieForwardToZendeskMessage()
+		: getOdieForwardToForumsMessage();
+
+	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
 };
 
 export const UserMessage = ( {
 	message,
-	isDisliked = false,
-	isMessageWithoutEscalationOption = false,
+	isMessageWithEscalationOption = false,
 }: {
-	isDisliked?: boolean;
 	message: Message;
-	isMessageWithoutEscalationOption?: boolean;
+	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk } =
+	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+
 	const hasCannedResponse = message.context?.flags?.canned_response;
-	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-	const hasFeedback = !! message?.rating_value;
-	const isBot = message.role === 'bot';
-	const isConnectedToZendesk = chat?.provider === 'zendesk';
-	const isPositiveFeedback =
-		hasFeedback && message && message.rating_value && +message.rating_value === 1;
-
-	const showExtraContactOptions =
-		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
-
-	const showDirectEscalationLink = userProvidedEnoughInformation( chat?.messages );
-
-	const forwardMessage = isUserEligibleForPaidSupport
-		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
-		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
-
-	const displayMessage = getDisplayMessage(
-		isUserEligibleForPaidSupport,
-		canConnectToZendesk,
-		isRequestingHumanSupport,
-		message.content,
-		forwardMessage,
-		hasCannedResponse
-	);
-
-	const displayingThirdPartyMessage =
-		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
-
-	const handleContactSupportClick = ( destination: string ) => {
-		trackEvent( 'chat_get_support', {
-			location: 'user-message',
-			destination,
-		} );
-	};
-
-	const renderExtraContactOptions = () => {
-		return (
-			chat.provider === 'odie' && (
-				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
-			)
-		);
-	};
+	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const handleGuidelinesClick = () => {
-		trackEvent?.( 'ai_guidelines_link_clicked' );
-	};
-
-	const renderDisclaimers = () => (
-		<>
-			<div className="disclaimer">
-				{ createInterpolateElement(
-					__(
-						'Powered by Support AI. Some responses may be inaccurate. <a>Learn more</a>.',
-						__i18n_text_domain__
-					),
-					{
-						a: (
-							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
-							<ExternalLink
-								href="https://automattic.com/ai-guidelines"
-								onClick={ handleGuidelinesClick }
-							/>
-						),
-					}
-				) }
-			</div>
-			{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-			{ ! isConnectedToZendesk && (
-				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
-			) }
-		</>
-	);
+	const messageContent = isRequestingHumanSupport
+		? getDisplayMessage(
+				isUserEligibleForPaidSupport,
+				canConnectToZendesk,
+				message.content,
+				hasCannedResponse,
+				forceEmailSupport,
+				message?.context?.flags?.is_error_message
+		  )
+		: message.content;
 
 	return (
 		<>
 			<div className="odie-chatbox-message__content">
-				<Markdown
-					urlTransform={ uriTransformer }
+				<MarkdownOrChildren
+					messageContent={ messageContent }
 					components={ {
 						a: ( props: React.ComponentProps< 'a' > ) => (
 							<CustomALink { ...props } target="_blank" />
 						),
 					} }
-				>
-					{ isRequestingHumanSupport ? displayMessage : message.content }
-				</Markdown>
+				/>
 			</div>
-			{ ! isMessageWithoutEscalationOption && isBot && (
-				<div
-					className={ clsx( 'chat-feedback-wrapper', {
-						'chat-feedback-wrapper-no-extra-contact': ! showExtraContactOptions,
-						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
-					} ) }
-				>
-					<Sources message={ message } />
-					{ showExtraContactOptions && renderExtraContactOptions() }
-					{ isMessageShowingDisclaimer && renderDisclaimers() }
-				</div>
+			{ isMessageWithEscalationOption && (
+				<>
+					{ ! isRequestingHumanSupport && (
+						<>
+							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
+								<BotMessageActions message={ message } />
+							) }
+							<div className="chat-feedback-wrapper">
+								<Sources
+									message={ message }
+									isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+								/>
+							</div>
+						</>
+					) }
+					<div>
+						{ isRequestingHumanSupport && (
+							<GetSupport
+								onClickAdditionalEvent={ ( destination ) => {
+									trackEvent( 'chat_get_support', {
+										location: 'user-message',
+										destination,
+									} );
+								} }
+							/>
+						) }
+					</div>
+				</>
 			) }
 		</>
 	);

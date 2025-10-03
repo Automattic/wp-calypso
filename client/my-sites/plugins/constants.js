@@ -13,6 +13,7 @@ export const PREINSTALLED_PLUGINS = [
 	'full-site-editing',
 	'layout-grid',
 	'page-optimize',
+	'paypal-payment-buttons',
 ]; // These plugins auto update but shouldn't be deactivated.
 
 export const PREINSTALLED_PREMIUM_PLUGINS = {
@@ -81,7 +82,12 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 	'mailpoet-business',
 ];
 
-export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping', 'wp-fusion-lite' ];
+export const UNLISTED_PLUGINS = [
+	'automated-db-schenker-shipping',
+	'social-blend',
+	'wp-fusion-lite',
+	'wp-persistent-login',
+];
 
 export const WPBEGINNER_PLUGINS = [
 	'optinmonster',

@@ -1,10 +1,11 @@
-import { ComponentSwapper, MobileHighlightCardListing, Popover } from '@automattic/components';
-import CountCard from '@automattic/components/src/highlight-cards/count-card';
+import { ComponentSwapper, Popover } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
+import MobileHighlightCardListing from 'calypso/my-sites/stats/components/highlight-cards/mobile-highlight-cards';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import './highlights-section.scss';
 

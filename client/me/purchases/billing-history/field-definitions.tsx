@@ -1,6 +1,7 @@
-import { type Operator } from '@wordpress/dataviews';
+import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
+import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -21,10 +22,12 @@ function renderServiceNameDescription(
 ) {
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
+
+	const shouldShowDomain = transaction.domain && ! isInternalA4AAgencyDomain( transaction.domain );
 	return (
 		<div>
 			<strong>{ plan }</strong>
-			{ transaction.domain && <small>{ transaction.domain }</small> }
+			{ shouldShowDomain && <small>{ transaction.domain }</small> }
 			{ termLabel && <small>{ termLabel }</small> }
 			{ transaction.licensed_quantity && (
 				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>
@@ -108,14 +111,14 @@ function getUniqueTransactionTypes(
 
 export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
-	translate: ReturnType< typeof useTranslate >
-) {
-	return {
-		date: {
+	translate: ReturnType< typeof useTranslate >,
+	getReceiptUrlFor: ( receiptId: string ) => string
+): Fields< BillingTransaction > {
+	return [
+		{
 			id: 'date',
 			label: translate( 'Date' ),
 			type: 'text' as const,
-			width: '15%',
 			elements: getUniqueMonths( transactions ?? [] ),
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -130,11 +133,10 @@ export function getFieldDefinitions(
 				return <time>{ formatDisplayDate( new Date( item.date ) ) }</time>;
 			},
 		},
-		service: {
+		{
 			id: 'service',
 			label: translate( 'App' ),
 			type: 'text' as const,
-			width: '45%',
 			elements: getUniqueServices( transactions ?? [] ),
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -143,7 +145,16 @@ export function getFieldDefinitions(
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item }: { item: BillingTransaction } ) => {
-				return <div>{ renderServiceName( item, translate ) }</div>;
+				return (
+					<div className="billing-history__item-service">
+						<a
+							title={ translate( 'View receipt', { textOnly: true } ) }
+							href={ getReceiptUrlFor( item.id ) }
+						>
+							{ renderServiceName( item, translate ) }
+						</a>
+					</div>
+				);
 			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );
@@ -153,11 +164,10 @@ export function getFieldDefinitions(
 				return capitalPDangit( transactionItem.variation );
 			},
 		},
-		type: {
+		{
 			id: 'type',
 			label: translate( 'Type' ),
 			type: 'text' as const,
-			width: '20%',
 			elements: getUniqueTransactionTypes( transactions ?? [] ),
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -174,17 +184,14 @@ export function getFieldDefinitions(
 				return transactionItem.type;
 			},
 		},
-		amount: {
+		{
 			id: 'amount',
 			label: translate( 'Amount' ),
 			type: 'text' as const,
-			width: '20%',
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
+			filterBy: false,
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				return item.amount_integer;
 			},
@@ -192,5 +199,5 @@ export function getFieldDefinitions(
 				return <TransactionAmount transaction={ item } />;
 			},
 		},
-	};
+	];
 }

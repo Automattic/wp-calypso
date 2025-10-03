@@ -15,7 +15,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import FeatureExample from 'calypso/components/feature-example';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -73,10 +72,8 @@ export const SeoPreviewNudge = ( {
 								className="preview-upgrade-nudge__features-list-item-checkmark"
 								icon="checkmark"
 							/>
-							{ preventWidows(
-								translate(
-									"Preview your site's content as it will appear on Facebook, Twitter, and the WordPress.com Reader."
-								)
+							{ translate(
+								"Preview your site's content as it will appear on Facebook, Twitter, and the WordPress.com Reader."
 							) }
 						</li>
 						<li className="preview-upgrade-nudge__features-list-item">
@@ -84,10 +81,8 @@ export const SeoPreviewNudge = ( {
 								className="preview-upgrade-nudge__features-list-item-checkmark"
 								icon="checkmark"
 							/>
-							{ preventWidows(
-								translate(
-									'Control how page titles will appear on Google search results and social networks.'
-								)
+							{ translate(
+								'Control how page titles will appear on Google search results and social networks.'
 							) }
 						</li>
 						<li className="preview-upgrade-nudge__features-list-item">
@@ -95,10 +90,8 @@ export const SeoPreviewNudge = ( {
 								className="preview-upgrade-nudge__features-list-item-checkmark"
 								icon="checkmark"
 							/>
-							{ preventWidows(
-								translate(
-									'Customize your front page meta data to change how your site appears to search engines.'
-								)
+							{ translate(
+								'Customize your front page meta data to change how your site appears to search engines.'
 							) }
 						</li>
 					</ul>

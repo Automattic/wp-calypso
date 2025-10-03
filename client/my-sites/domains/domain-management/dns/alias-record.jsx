@@ -23,7 +23,7 @@ class AliasRecord extends Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Alias Of (Points To)' ) }</FormLabel>
+					<FormLabel>{ translate( 'Alias of (points to)' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
@@ -32,7 +32,7 @@ class AliasRecord extends Component {
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'example.com' } } ) }
 					/>
 					{ ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid target host' ) } isError />
 					) }
 				</FormFieldset>
 

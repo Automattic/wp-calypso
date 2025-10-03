@@ -30,8 +30,6 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
 const excludedPackages = [
-	/^calypso\/components\/inline-support-link$/,
-	/^calypso\/components\/web-preview.*$/,
 	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
 	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
 	/^calypso\/components\/data\/query-keyring-connections$/,
@@ -111,6 +109,10 @@ module.exports = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
+		alias: {
+			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
+			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
+		},
 	},
 	node: false,
 	plugins: [
@@ -161,6 +163,7 @@ module.exports = {
 		! isDevelopment &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( outBasePath, 'dist/chunks-map.json' ),
+				base_dir: '../../',
 			} ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser

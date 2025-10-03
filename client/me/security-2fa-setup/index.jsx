@@ -1,3 +1,4 @@
+import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,6 +9,12 @@ import Security2faSetupBackupCodes from 'calypso/me/security-2fa-setup-backup-co
 import Security2faSMSSettings from 'calypso/me/security-2fa-sms-settings';
 import { successNotice } from 'calypso/state/notices/actions';
 
+export const SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP = 'sms-settings';
+export const SMS_BASED_2FA_SETUP_VALIDATE_CODE_STEP = 'sms-based';
+export const APP_BASED_2FA_VALIDATE_STEP = 'app-based';
+export const DISPLAY_BACKUP_CODES_STEP = 'backup-codes';
+export const INITIAL_SETUP_STEP = 'initial-setup';
+
 class Security2faSetup extends Component {
 	static propTypes = {
 		onFinished: PropTypes.func.isRequired,
@@ -15,13 +22,13 @@ class Security2faSetup extends Component {
 	};
 
 	state = {
-		step: 'initial-setup',
-		authMethod: 'app-based',
+		step: INITIAL_SETUP_STEP,
+		authMethod: APP_BASED_2FA_VALIDATE_STEP,
 	};
 
 	onCancelSetup = ( event ) => {
 		event.preventDefault();
-		this.setState( { step: 'initial-setup' } );
+		this.setState( { step: INITIAL_SETUP_STEP } );
 	};
 
 	onInitialSetupSuccess = ( event, authMethod ) => {
@@ -29,7 +36,7 @@ class Security2faSetup extends Component {
 	};
 
 	onSetupSuccess = () => {
-		this.setState( { step: 'backup-codes' } );
+		this.setState( { step: DISPLAY_BACKUP_CODES_STEP } );
 	};
 
 	onFinished = () => {
@@ -43,49 +50,83 @@ class Security2faSetup extends Component {
 	};
 
 	onVerifyByApp = () => {
-		this.setState( { step: 'app-based' } );
+		this.setState( { step: APP_BASED_2FA_VALIDATE_STEP } );
 	};
 
 	onVerifyBySMS = () => {
-		this.setState( { step: 'sms-based' } );
+		this.setState( { step: SMS_BASED_2FA_SETUP_VALIDATE_CODE_STEP } );
 	};
 
 	render() {
-		const isSmsFlow = [ 'sms-based', 'sms-settings' ].includes( this.state.authMethod );
-		return (
-			<div className="security-2fa-setup__steps-container">
-				{ 'initial-setup' === this.state.step ? (
-					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
-				) : null }
+		const { step, authMethod } = this.state;
+		const { translate } = this.props;
 
-				{ 'sms-settings' === this.state.step ? (
+		const isSmsFlow = [
+			SMS_BASED_2FA_SETUP_VALIDATE_CODE_STEP,
+			SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP,
+		].includes( authMethod );
+
+		if ( step === INITIAL_SETUP_STEP ) {
+			return (
+				<div className="security-2fa-setup__steps-container">
+					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
+				</div>
+			);
+		}
+
+		let title = '';
+		let content = null;
+
+		switch ( step ) {
+			case SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP:
+				title = translate( 'Enter phone number' );
+				content = (
 					<Security2faSMSSettings
 						onCancel={ this.onCancelSetup }
 						onVerifyByApp={ this.onVerifyByApp }
 						onVerifyBySMS={ this.onVerifyBySMS }
 					/>
-				) : null }
+				);
+				break;
 
-				{ 'app-based' === this.state.step ? (
+			case APP_BASED_2FA_VALIDATE_STEP:
+				title = translate( 'Verify code' );
+				content = (
 					<Security2faEnable
 						isSmsFlow={ false }
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
 					/>
-				) : null }
+				);
+				break;
 
-				{ 'sms-based' === this.state.step ? (
+			case SMS_BASED_2FA_SETUP_VALIDATE_CODE_STEP:
+				title = translate( 'Verify code' );
+				content = (
 					<Security2faEnable
 						isSmsFlow
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
 					/>
-				) : null }
+				);
+				break;
 
-				{ 'backup-codes' === this.state.step ? (
+			case DISPLAY_BACKUP_CODES_STEP:
+				title = translate( 'Generate backup codes' );
+				content = (
 					<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
-				) : null }
-			</div>
+				);
+				break;
+
+			default:
+				return null;
+		}
+
+		return (
+			<>
+				<CompactCard>{ title }</CompactCard>
+				<Card>{ content }</Card>
+			</>
 		);
 	}
 }

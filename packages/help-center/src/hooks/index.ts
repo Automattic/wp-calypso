@@ -1,4 +1,3 @@
-export { useContactFormTitle } from './use-contact-form-title';
 export { useShouldRenderEmailOption } from './use-should-render-email-option';
 export { useStillNeedHelpURL } from './use-still-need-help-url';
 export { default as useTyper } from './use-typer';
@@ -13,3 +12,4 @@ export { useProductsWithPremiumSupport } from './use-products-with-premium-suppo
 export { useProductsCustomOptions } from './use-products-custom-options';
 export { useFlowCustomOptions } from './use-flow-custom-options';
 export { useFlowZendeskUserFields } from './use-flow-zendesk-user-fields';
+export { useGetHistoryChats } from './use-get-history-chats';

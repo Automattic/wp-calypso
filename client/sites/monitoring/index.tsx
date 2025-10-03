@@ -2,8 +2,8 @@ import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { MONITORING } from 'calypso/sites/components/site-preview-pane/constants';
-import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
-import { siteMonitoring } from './controller';
+import { siteDashboard } from 'calypso/sites/controller';
+import { siteMonitoring, siteMonitoringCallout } from './controller';
 
 export default function () {
 	page( '/site-monitoring', siteSelection, sites, makeLayout, clientRender );
@@ -11,9 +11,9 @@ export default function () {
 	page(
 		'/site-monitoring/:site',
 		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		siteMonitoring,
+		siteMonitoringCallout,
 		siteDashboard( MONITORING ),
 		makeLayout,
 		clientRender

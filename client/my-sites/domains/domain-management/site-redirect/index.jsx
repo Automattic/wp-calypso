@@ -127,7 +127,7 @@ class SiteRedirect extends Component {
 					<Card className={ classes }>
 						<form>
 							<FormFieldset>
-								<FormLabel htmlFor="site-redirect__input">{ translate( 'Redirect To' ) }</FormLabel>
+								<FormLabel htmlFor="site-redirect__input">{ translate( 'Redirect to' ) }</FormLabel>
 
 								<FormTextInputWithAffixes
 									disabled={ isFetching || isUpdating }
@@ -225,6 +225,7 @@ const recordUpdateSiteRedirectClick = ( domainName, location, success ) =>
 		} )
 	);
 
+// eslint-disable-next-line react/display-name
 const withLocationAsKey = createHigherOrderComponent( ( Wrapped ) => ( props ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const location = useSelector( ( state ) =>

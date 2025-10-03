@@ -1,10 +1,10 @@
 import { Gridicon, Button, Dialog } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { PaymentMethodSummary } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
-import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import TaxFields from 'calypso/my-sites/checkout/src/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { usePaymentMethodTaxInfo } from './use-payment-method-tax-info';

@@ -1,51 +1,34 @@
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import type { CSSProperties } from 'react';
 import './style.scss';
 
-const sizes = {
-	large: {
-		maxWidth: '1200px',
-	},
-	small: {
-		maxWidth: '600px',
-	},
+const PAGE_LAYOUT_SIZES = {
+	large: { '--page-layout-max-width': '1344px' },
+	small: { '--page-layout-max-width': '660px' },
 };
 
 function PageLayout( {
-	title,
-	description,
-	actions,
 	children,
+	header,
+	notices,
 	size = 'large',
 }: {
-	title: string;
-	description?: React.ReactNode;
-	actions?: React.ReactNode;
 	children?: React.ReactNode;
+	header?: React.ReactNode;
+	notices?: React.ReactNode;
 	size?: 'large' | 'small';
 } ) {
 	return (
-		<VStack spacing={ 8 } className="dashboard-page-layout" style={ sizes[ size ] }>
-			<VStack spacing={ 4 }>
-				<HStack justify="space-between" alignment="center">
-					<Heading level={ 1 } style={ { flexShrink: 0 } }>
-						{ title }
-					</Heading>
-					{ !! actions && (
-						<HStack spacing={ 4 } justify="flex-end">
-							{ actions }
-						</HStack>
-					) }
-				</HStack>
-				{ !! description && (
-					<Text className="dasboard-page-layout__description">{ description } </Text>
-				) }
+		<VStack
+			spacing={ 8 }
+			className={ `dashboard-page-layout is-${ size }` }
+			style={ PAGE_LAYOUT_SIZES[ size ] as CSSProperties }
+		>
+			{ header }
+			{ notices }
+			<VStack spacing={ 6 } className="dashboard-page-layout__content">
+				{ children }
 			</VStack>
-			{ !! children && <VStack spacing={ 8 }>{ children }</VStack> }
 		</VStack>
 	);
 }

@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
-import { isOdieAllowedBot, getHelpCenterZendeskConversationStarted } from '../utils';
+import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
 	Chat,
 	Message,
@@ -35,6 +35,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: emptyChat,
 	canConnectToZendesk: false,
+	isLoadingCanConnectToZendesk: false,
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
@@ -47,9 +48,9 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
 	setMessageLikedStatus: noop,
-	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	trackEvent: noop,
-	waitAnswerToFirstMessageFromHumanSupport: false,
+	forceEmailSupport: false,
+	sectionName: '',
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -65,14 +66,16 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
-	extraContactOptions,
+	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
 	selectedSiteURL,
 	userFieldMessage,
 	userFieldFlowName,
 	version = null,
 	currentUser,
+	forceEmailSupport = false,
 	children,
+	sectionName,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -88,6 +91,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		};
 	}, [] );
 
+	const navigate = useNavigate();
+
 	const [ experimentVariationName, setExperimentVariationName ] = useState<
 		string | null | undefined
 	>( null );
@@ -97,14 +102,15 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk
+		isUserEligibleForPaidSupport && canConnectToZendesk,
+		isLoadingCanConnectToZendesk
 	);
 
 	/**
 	 * Has the user ever escalated to get human support?
 	 */
-	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some(
-		( message ) => message.context?.flags?.forward_to_human_support
+	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some( ( message ) =>
+		getIsRequestingHumanSupport( message )
 	);
 
 	/**
@@ -122,18 +128,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		[ botNameSlug, mainChatState ]
 	);
 
-	/**
-	 * Reset the support interaction and clear the chat.
-	 */
-	const resetSupportInteraction = useResetSupportInteraction();
 	const clearChat = useCallback( () => {
 		trackEvent( 'chat_cleared', {} );
-		setMainChatState( emptyChat );
-		resetSupportInteraction();
-	}, [ trackEvent, resetSupportInteraction, setMainChatState ] );
-
-	const [ waitAnswerToFirstMessageFromHumanSupport, setWaitAnswerToFirstMessageFromHumanSupport ] =
-		useState( getHelpCenterZendeskConversationStarted() !== null );
+		navigate( '/odie' );
+	}, [ trackEvent, navigate ] );
 
 	/**
 	 * Add a new message to the chat.
@@ -170,7 +168,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		} );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
+	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
 
 	/**
 	 * Version for Odie API.
@@ -184,18 +182,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		<OdieAssistantContext.Provider
 			value={ {
 				addMessage,
+				sectionName,
 				botName,
 				botNameSlug,
 				chat: mainChatState,
 				setChat: setMainChatState,
 				clearChat,
 				currentUser,
-				extraContactOptions,
 				isChatLoaded,
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
+				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
 				selectedSiteId,
@@ -205,10 +204,9 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChatStatus,
 				setExperimentVariationName,
 				setMessageLikedStatus,
-				setWaitAnswerToFirstMessageFromHumanSupport,
 				trackEvent,
 				version: overriddenVersion,
-				waitAnswerToFirstMessageFromHumanSupport,
+				forceEmailSupport,
 			} }
 		>
 			{ children }

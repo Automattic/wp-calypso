@@ -1,14 +1,60 @@
-import { useState } from '@wordpress/element';
-import { FunctionComponent } from 'react';
+import {
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	ExternalLink,
+} from '@wordpress/components';
+import { createInterpolateElement, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
 
-interface FileBrowserProps {
-	rewindId: number;
+export interface FileBrowserConfig {
+	restrictedPaths?: string[];
+	restrictedTypes?: string[];
+	excludeTypes?: string[];
+	expandDirectoriesOnClick?: boolean;
+	alwaysInclude?: string[];
+	showFileCard?: boolean;
+	showBackupTime?: boolean;
+	showSeparateExpandButton?: boolean;
+	siteId?: number;
+	showHeader?: boolean;
 }
 
-const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
+interface FileBrowserProps {
+	rewindId: number;
+	siteId: number;
+	siteSlug: string;
+	fileBrowserConfig?: FileBrowserConfig;
+
+	// Optional site data props
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+	displayBackupDate?: string;
+
+	// Tracks analytics callback
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+
+	// Source context for Track events (defaults to 'calypso')
+	source?: 'calypso' | 'dashboard';
+
+	// Granular restore action callback
+	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
+}
+
+function FileBrowser( {
+	rewindId,
+	fileBrowserConfig,
+	siteId,
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	displayBackupDate,
+	onTrackEvent,
+	source = 'calypso',
+	onRequestGranularRestore = () => {},
+}: FileBrowserProps ) {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 
@@ -24,7 +70,23 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 
 	return (
 		<div>
-			<FileBrowserHeader rewindId={ rewindId } />
+			{ ( fileBrowserConfig?.showHeader ?? true ) && <FileBrowserHeader rewindId={ rewindId } /> }
+			{ /* @TODO: remove this block once the new Staging Sync Modal is live */ }
+			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
+				<HStack alignment="left" spacing={ 1 }>
+					<Text
+						color="var(--studio-gray-40)"
+						style={ { marginInlineStart: '14px', marginTop: '10px' } }
+					>
+						{ displayBackupDate
+							? createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
+									date: <span>{ displayBackupDate }</span>,
+							  } )
+							: __( 'There are no backups.' ) }{ ' ' }
+						<ExternalLink href={ `/backup/${ siteSlug }` } children={ __( 'Create new backup' ) } />
+					</Text>
+				</HStack>
+			) }
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }
@@ -32,9 +94,17 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 				isAlternate
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
+				fileBrowserConfig={ fileBrowserConfig }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				hasCredentials={ hasCredentials }
+				isRestoreEnabled={ isRestoreEnabled }
+				onTrackEvent={ onTrackEvent }
+				source={ source }
+				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 		</div>
 	);
-};
+}
 
 export default FileBrowser;

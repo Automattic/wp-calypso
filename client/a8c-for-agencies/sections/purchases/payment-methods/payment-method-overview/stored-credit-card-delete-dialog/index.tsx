@@ -1,7 +1,7 @@
+import { PaymentMethodSummary } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, type FunctionComponent } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
-import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import { PaymentMethodOverviewContext } from '../../context';
 import useStoredCards from '../../hooks/use-stored-cards';
 import DeletePrimaryCardConfirmation from './delete-primary-confirmation';

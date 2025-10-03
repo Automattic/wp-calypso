@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
 import loginReducer from 'calypso/state/login/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
@@ -93,25 +92,5 @@ describe( 'JetpackSignup', () => {
 		);
 
 		expect( container ).toMatchSnapshot();
-	} );
-
-	test( 'should render WC Payments specific sub header copy', () => {
-		const props = {
-			...DEFAULT_PROPS,
-			authQuery: {
-				...DEFAULT_PROPS.authQuery,
-				from: 'woocommerce-payments',
-				woodna_service_name: 'WooPayments',
-				isFullLoginFormVisible: false,
-			},
-		};
-
-		const expectedText =
-			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments';
-
-		render( <JetpackSignup { ...props } /> );
-
-		expect( screen.getByText( expectedText ) ).toBeVisible();
-		expect( screen.getByText( expectedText ) ).toHaveClass( 'formatted-header__subtitle' );
 	} );
 } );

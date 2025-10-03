@@ -1,4 +1,4 @@
-import { Subscriber } from '@automattic/data-stores/src';
+import { Subscriber } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import { useInProgressState } from './use-in-progress-state';

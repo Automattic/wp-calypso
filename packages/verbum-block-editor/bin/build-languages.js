@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable import/no-nodejs-modules */
 /**
  * Build a single language file for each language to `dist/languages` folder.
  */

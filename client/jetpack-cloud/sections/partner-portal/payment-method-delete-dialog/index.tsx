@@ -1,8 +1,8 @@
 import { Button, Dialog } from '@automattic/components';
+import { PaymentMethodSummary } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import PaymentMethodDeletePrimaryConfirmation from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-primary-confirmation';
-import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { FunctionComponent } from 'react';
 

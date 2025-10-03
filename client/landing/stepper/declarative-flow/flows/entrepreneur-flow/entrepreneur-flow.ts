@@ -1,9 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
+import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { useSelector } from 'calypso/state';
@@ -83,6 +85,24 @@ const entrepreneurFlow: Flow = {
 						setlastQuestionPath( providedDependencies.lastQuestionPath as string );
 					}
 
+					if (
+						isEnabled( 'entrepreneur/skip-trial-for-migration' ) &&
+						providedDependencies.isMigrationFlow
+					) {
+						const migrationFlowUrl = addQueryArgs(
+							`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_CREATION_STEP.slug }`,
+							{
+								siteSlug: siteSlug || siteSlugDependency,
+								siteId: siteId || siteIdDependency,
+								ref: 'entrepreneur-signup',
+								how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+								action: 'migrate',
+							}
+						);
+
+						return window.location.assign( migrationFlowUrl );
+					}
+
 					return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 				}
 
@@ -117,11 +137,12 @@ const entrepreneurFlow: Flow = {
 						if ( isMigrationFlow ) {
 							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
 							const migrationFlowUrl = addQueryArgs(
-								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }`,
+								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_CREATION_STEP.slug }`,
 								{
 									siteSlug: siteSlug || siteSlugDependency,
 									siteId: siteId || siteIdDependency,
 									ref: 'entrepreneur-signup',
+									how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 								}
 							);
 

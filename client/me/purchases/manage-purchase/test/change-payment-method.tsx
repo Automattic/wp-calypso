@@ -14,7 +14,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ChangePaymentMethod from '../change-payment-method';
-import type { StoredPaymentMethod } from '../../../../lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 jest.mock( '@stripe/react-stripe-js', () => {
 	const stripe = jest.requireActual( '@stripe/react-stripe-js' );
@@ -125,7 +125,7 @@ const initialPurchases = [
 		tax_text: undefined,
 		renewal_price_tier_usage_quantity: undefined,
 		user_id: 1,
-		auto_renew: '1',
+		is_auto_renew_enabled: true,
 		payment_card_id: 1,
 		payment_card_type: 'visa',
 		payment_card_processor: 'stripe',

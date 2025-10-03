@@ -179,6 +179,7 @@ class HandleEmailedLinkForm extends Component {
 			wccomFrom,
 			isWCCOM,
 			isA4A,
+			isJetpack,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
@@ -194,6 +195,7 @@ class HandleEmailedLinkForm extends Component {
 					emailAddress={ emailAddress }
 					postId={ postId }
 					activate={ activate }
+					isJetpack={ isJetpack }
 				/>
 			);
 		}
@@ -261,9 +263,6 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
-		const illustration =
-			isWCCOM || isWooDna ? '/calypso/images/illustrations/illustration-woo-magic-link.svg' : '';
-
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		if ( isGravPoweredClient ) {
@@ -276,7 +275,6 @@ class HandleEmailedLinkForm extends Component {
 					<img src={ oauth2Client.icon } width={ 32 } height={ 32 } alt={ oauth2Client.title } />
 					<EmptyContent
 						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
-						illustration=""
 						title=""
 					/>
 				</div>
@@ -300,8 +298,6 @@ class HandleEmailedLinkForm extends Component {
 					className={ clsx( 'magic-login__handle-link', {
 						'magic-login__is-fetching-auth': isFetching,
 					} ) }
-					illustration={ illustration }
-					illustrationWidth={ 500 }
 					line={ line }
 					title={ title }
 				/>

@@ -60,7 +60,7 @@ export default function CreditCardPayButton( {
 	useEffect( () => {
 		if ( displayFieldsError ) {
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
-			reduxDispatch( errorNotice( displayFieldsError ) );
+			reduxDispatch( errorNotice( displayFieldsError, { ariaLive: 'assertive', role: 'alert' } ) );
 			setDisplayFieldsError( '' );
 		}
 	}, [ displayFieldsError, reduxDispatch ] );

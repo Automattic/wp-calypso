@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import BlogStickers from 'calypso/blocks/blog-stickers';
 import SiteIcon from 'calypso/blocks/site-icon';
+import AutoDirection from 'calypso/components/auto-direction';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import withDimensions from 'calypso/lib/with-dimensions';
 import {
@@ -83,34 +84,42 @@ class FeedHeader extends Component {
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
-				<Card className="reader-feed-header__site">
-					{ ! narrowDisplay && siteIconElement }
-					<div className="reader-feed-header__details">
-						<div className="reader-feed-header__site-title">
-							{ narrowDisplay && siteIconElement }
-							<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-								{ siteTitle }
-							</a>
-							{ site && (
-								<span className="reader-feed-header__site-badge">
-									<ReaderFeedHeaderSiteBadge site={ site } />
-									<BlogStickers blogId={ site.ID } />
-								</span>
+				<AutoDirection>
+					<Card className="reader-feed-header__site">
+						{ ! narrowDisplay && siteIconElement }
+						<div className="reader-feed-header__details">
+							<div className="reader-feed-header__site-title">
+								{ narrowDisplay && siteIconElement }
+
+								<h1>
+									<a className="reader-feed-header__site-title-link" href={ siteUrl }>
+										{ siteTitle }
+									</a>
+								</h1>
+
+								{ site && (
+									<span className="reader-feed-header__site-badge">
+										<ReaderFeedHeaderSiteBadge site={ site } />
+										<BlogStickers blogId={ site.ID } />
+									</span>
+								) }
+							</div>
+
+							<div className="reader-feed-header__description">{ description }</div>
+
+							{ ! wideDisplay && followerCount && (
+								<div className="reader-feed-header__follow-count">
+									{ ' ' }
+									{ translate( '%s subscriber', '%s subscribers', {
+										count: followerCount,
+										args: [ formatNumber( followerCount ) ],
+										comment: '%s is the number of subscribers. For example: "12,000,000"',
+									} ) }
+								</div>
 							) }
 						</div>
-						<div className="reader-feed-header__description">{ description }</div>
-						{ ! wideDisplay && followerCount && (
-							<div className="reader-feed-header__follow-count">
-								{ ' ' }
-								{ translate( '%s subscriber', '%s subscribers', {
-									count: followerCount,
-									args: [ formatNumber( followerCount ) ],
-									comment: '%s is the number of subscribers. For example: "12,000,000"',
-								} ) }
-							</div>
-						) }
-					</div>
-				</Card>
+					</Card>
+				</AutoDirection>
 				{ ! wideDisplay && (
 					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
 				) }

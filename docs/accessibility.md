@@ -78,9 +78,3 @@ Find tools that will help you bring accessibility into your workflow.
 - [WCAG 2.0 Cheat Sheet](http://www.w3.org/2009/cheatsheet/#wcag2) A simplified look at WCAG 2.0.
 - [An Alt Text Decision Tree](http://dev.w3.org/html5/alt-techniques/developer.html#tree): A decision tree for deciding when and how to implement alt text in your work on the web. This is a work in progress by the editors of the HTML5 spec, but it's extremely useful in its current form.
 
-## Utilities in Calypso
-
-As we work to make Calypso more accessible, we'll probably add more things here.
-
-- [accessible-focus](https://github.com/Automattic/wp-calypso/tree/HEAD/packages/accessible-focus/README.md): A small module which is run at client startup and adds an `accessible-focus` class to the document's html element when keyboard navigation is detected, so that obvious focus styles can be added without being distracting for non-keyboard users.
-- [ScreenReaderText](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/screen-reader-text): A component that adds text which is invisible on normal displays, but "visible" to screen readers.

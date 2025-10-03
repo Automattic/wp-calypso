@@ -35,9 +35,10 @@ export class PurchasesPage {
 	 */
 	async clickOnPurchase( name: string, siteSlug: string ) {
 		await this.page
-			.locator( '.card.purchase-item' )
+			.locator( '#purchases-list .dataviews-view-table__row' )
 			.filter( { hasText: name } )
 			.filter( { hasText: siteSlug } )
+			.locator( '.purchase-item__title-link' )
 			.click();
 	}
 

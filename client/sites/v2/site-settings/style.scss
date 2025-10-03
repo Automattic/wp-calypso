@@ -1,0 +1,36 @@
+@import '@automattic/typography/styles/variables';
+@import 'calypso/dashboard/app/dataforms-overrides.scss';
+@import 'calypso/dashboard/app/dataviews-overrides.scss';
+@import 'calypso/dashboard/app-dotcom/style.scss';
+
+.dashboard-backport-site-settings-root {
+	.dashboard-page-layout {
+		align-self: center;
+		margin: 0;
+		padding: 0;
+	}
+
+	.dashboard-section-header.is-level-1 .dashboard-section-header__heading {
+		font-family: $sans;
+		font-size: 1.5rem;
+		font-weight: 500 !important;
+		line-height: 1;
+	}
+
+	.dashboard-section-header.is-level-2 .dashboard-section-header__heading {
+		font-size: 15px;
+		line-height: 20px;
+	}
+
+	.dataforms-layouts-regular__field {
+		min-height: 0;
+	}
+
+	.components-panel__body-toggle {
+		justify-content: unset;
+	}
+
+	.site-preview-pane:has( & .dashboard-snackbars ) {
+		z-index: 176;
+	}
+}

@@ -1,8 +1,8 @@
 import { usePaymentMethod } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
 export function EbanxTermsOfService() {

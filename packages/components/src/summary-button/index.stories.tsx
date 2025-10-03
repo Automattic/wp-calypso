@@ -19,7 +19,7 @@ const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 	'No Badges': [],
 };
 
-const meta = {
+const meta: Meta< typeof SummaryButton > = {
 	title: 'SummaryButton',
 	component: SummaryButton,
 	argTypes: {
@@ -43,10 +43,11 @@ const meta = {
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
-} satisfies Meta< typeof SummaryButton >;
+};
 
 export default meta;
-type Story = StoryObj< typeof meta >;
+
+type Story = StoryObj< typeof SummaryButton >;
 
 export const Default: Story = {
 	args: {

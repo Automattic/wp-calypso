@@ -1,14 +1,15 @@
 import config from '@automattic/calypso-config';
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
+import { ProgressBar } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
-import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
@@ -62,7 +63,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
-		const { importer, customizedActionButtons, navigation, flow } = props;
+		const { importer, navigation, flow } = props;
 		const currentSearchParams = useQuery();
 		/**
 	 	↓ Fields
@@ -86,6 +87,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const isLoading = useMemo( () => {
 			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
 		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
+
+		const skipToDashboardAction = useCallback( () => {
+			recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+				from: 'success-step',
+			} );
+			stepNavigator?.goToDashboardPage?.();
+		}, [ stepNavigator ] );
 
 		useSaveHostingFlowPathStep( flow, currentPath );
 
@@ -184,8 +192,8 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const renderStepContent = () => {
 			if ( isLoading ) {
 				return (
-					<div className="import-layout__center">
-						<Loading />
+					<div className="step-container-v2--loading import-layout__center">
+						<ProgressBar className="step-container-v2--loading__progress-bar" />
 					</div>
 				);
 			}
@@ -213,18 +221,33 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					fromSite={ fromSite }
 					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
+					renderHeading={ false }
 				/>
 			);
 		};
 
 		const importJob = getImportJob( importer );
+
+		const importerData = getImportDragConfig( importer, stepNavigator?.supportLinkModal );
+		const statesToShowHeading: string[] = [
+			appStates.MAP_AUTHORS,
+			appStates.READY_FOR_UPLOAD,
+			appStates.UPLOAD_PROCESSING,
+			appStates.UPLOAD_SUCCESS,
+			appStates.UPLOADING,
+			appStates.IMPORTING,
+		];
+		const showHeading = statesToShowHeading.includes( importJob?.importerState ?? '' );
+		const showBackButton = importJob?.importerState !== appStates.IMPORT_SUCCESS;
+		const showSkipButton = importJob?.importerState === appStates.IMPORT_SUCCESS;
+		const title =
+			importJob?.importerState === appStates.IMPORTING ? __( 'Importing' ) : importerData.title;
 		return (
 			<>
 				<QuerySites siteId={ siteId } />
 				<DocumentHead title={ __( 'Import your site content' ) } />
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
-
-				<StepContainer
+				<Step.CenteredColumnLayout
 					className={ clsx(
 						'import__onboarding-page',
 						'importer-wrapper',
@@ -233,23 +256,25 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 							[ `importer-wrapper__${ importer }` ]: !! importer,
 						}
 					) }
-					stepName="importer-step"
-					customizedActionButtons={ customizedActionButtons }
-					hideSkip={ importJob?.importerState !== appStates.IMPORT_SUCCESS }
-					skipLabelText={ __( 'Skip to dashboard' ) }
-					onSkip={ () => {
-						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-							from: 'success-step',
-						} );
-						stepNavigator?.goToDashboardPage?.();
-					} }
-					hideBack={ importJob?.importerState === appStates.IMPORT_SUCCESS }
-					hideFormattedHeader
-					goBack={ onGoBack }
-					isWideLayout
-					stepContent={ renderStepContent() }
-					recordTracksEvent={ recordTracksEvent }
-				/>
+					columnWidth={ 6 }
+					topBar={
+						<Step.TopBar
+							leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
+							rightElement={
+								showSkipButton ? (
+									<Step.SkipButton onClick={ skipToDashboardAction }>
+										{ __( 'Skip to dashboard' ) }
+									</Step.SkipButton>
+								) : null
+							}
+						/>
+					}
+					heading={
+						showHeading && <Step.Heading text={ title } subText={ importerData.description } />
+					}
+				>
+					{ renderStepContent() }
+				</Step.CenteredColumnLayout>
 			</>
 		);
 	};

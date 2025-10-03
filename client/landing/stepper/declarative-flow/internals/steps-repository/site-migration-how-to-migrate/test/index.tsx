@@ -59,7 +59,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 
 		render( { navigation } );
 
-		expect( screen.queryByText( /Plus it’s included in your/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Plus it's included in your/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render step content', () => {

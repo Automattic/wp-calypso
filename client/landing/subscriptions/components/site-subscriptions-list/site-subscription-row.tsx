@@ -1,12 +1,13 @@
 import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, FormToggle } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
+import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -17,9 +18,11 @@ import {
 	useRecordPostEmailsToggle,
 	useRecordCommentEmailsToggle,
 	useRecordPostEmailsSetFrequency,
+	useRecordRecommendToggle,
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
@@ -64,7 +67,9 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscriptionsResponseItem;
+type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
+	layout?: 'full' | 'compact';
+};
 
 const scrollToFirstRow = () => {
 	const firstRow = document.querySelector( '.site-subscriptions-list li.site-subscription-row' );
@@ -91,9 +96,16 @@ const SiteSubscriptionRow = ( {
 	isDeleted,
 	is_rss,
 	resubscribed,
+	layout = 'full',
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const currentUserName = useSelector( getCurrentUserName );
+
+	// Use custom hook for recommended site functionality
+	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( Number( feed_id ) );
+
+	const isCompactLayout = layout === 'compact';
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -133,6 +145,7 @@ const SiteSubscriptionRow = ( {
 	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
+	const recordRecommendToggle = useRecordRecommendToggle();
 
 	const unsubscribeCallback = () => {
 		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
@@ -161,6 +174,35 @@ const SiteSubscriptionRow = ( {
 				}
 			)
 		);
+	};
+
+	const onUnsubscribe = () => {
+		unsubscribeInProgress.current = true;
+		unsubscribeCallback();
+		unsubscribe( {
+			blog_id,
+			subscriptionId: Number( subscriptionId ),
+			url,
+			doNotInvalidateSiteSubscriptions: true,
+			onSuccess: () => {
+				unsubscribeInProgress.current = false;
+
+				if ( resubscribePending.current ) {
+					resubscribePending.current = false;
+					resubscribe( {
+						blog_id,
+						url,
+						doNotInvalidateSiteSubscriptions: true,
+						resubscribed: true,
+					} );
+					recordSiteResubscribed( {
+						blog_id,
+						url,
+						source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+					} );
+				}
+			},
+		} );
 	};
 
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
@@ -231,6 +273,14 @@ const SiteSubscriptionRow = ( {
 		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
 	};
 
+	const handleRecommendToggle = () => {
+		const newRecommendedState = ! isRecommended;
+		toggleRecommended();
+
+		// Record tracks event
+		recordRecommendToggle( newRecommendedState, { blog_id } );
+	};
+
 	return ! isDeleted ? (
 		<HStack as="li" alignment="center" className="row site-subscription-row" role="row">
 			<span className="title-cell" role="cell">
@@ -292,7 +342,7 @@ const SiteSubscriptionRow = ( {
 					}
 				/>
 			</span>
-			{ isLoggedIn && (
+			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-posts-cell" role="cell">
 					<SelectedNewPostDeliveryMethods
 						isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
@@ -300,7 +350,7 @@ const SiteSubscriptionRow = ( {
 					/>
 				</span>
 			) }
-			{ isLoggedIn && (
+			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-comments-cell" role="cell">
 					<InfoPopover
 						position="top"
@@ -319,6 +369,22 @@ const SiteSubscriptionRow = ( {
 			) }
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
+			</span>
+			{ isLoggedIn && ! isCompactLayout && (
+				<span className="recommend-cell" role="cell">
+					<FormToggle
+						aria-label={ translate( 'Recommend this site to other users.' ) }
+						id={ `recommend-toggle-${ blog_id }` }
+						checked={ isRecommended }
+						onChange={ handleRecommendToggle }
+						disabled={ ! currentUserName || typeof currentUserName !== 'string' }
+					/>
+				</span>
+			) }
+			<span className="unsubscribe-action-cell" role="cell">
+				<Button variant="secondary" onClick={ onUnsubscribe }>
+					{ translate( 'Unsubscribe' ) }
+				</Button>
 			</span>
 			<span className="actions-cell" role="cell">
 				<SiteSettingsPopover
@@ -341,38 +407,7 @@ const SiteSubscriptionRow = ( {
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
 					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => {
-						unsubscribeInProgress.current = true;
-						unsubscribeCallback();
-						unsubscribe(
-							{
-								blog_id,
-								subscriptionId: Number( subscriptionId ),
-								url,
-								doNotInvalidateSiteSubscriptions: true,
-							},
-							{
-								onSuccess: () => {
-									unsubscribeInProgress.current = false;
-
-									if ( resubscribePending.current ) {
-										resubscribePending.current = false;
-										resubscribe( {
-											blog_id,
-											url,
-											doNotInvalidateSiteSubscriptions: true,
-											resubscribed: true,
-										} );
-										recordSiteResubscribed( {
-											blog_id,
-											url,
-											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-										} );
-									}
-								},
-							}
-						);
-					} }
+					onUnsubscribe={ onUnsubscribe }
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
 					feedId={ Number( feed_id ) }

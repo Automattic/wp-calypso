@@ -8,24 +8,35 @@ import { toSelectOption } from '../to-select-options';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type ChangeCallback = ( value: string ) => void;
+type DetailsChangeCallback = ( value: string, details?: string ) => void;
 
 type CancellationReasonProps = {
 	purchase: Purchase;
 	reasonCodes: string[];
 	onChange: ChangeCallback;
-	onDetailsChange: ChangeCallback;
+	onDetailsChange: DetailsChangeCallback;
 };
 
 function CancellationReason( { purchase, reasonCodes, ...props }: CancellationReasonProps ) {
 	const translate = useTranslate();
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
+	const [ feedbackValue, setFeedbackValue ] = useState( '' );
 	const reasons = getCancellationReasons( reasonCodes, { productSlug: purchase.productSlug } );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
+	const selectedSubOption = selectedReason?.selectOptions?.find(
+		( option ) => option.value === details
+	);
 
 	const onDetailsChange = ( val: string ) => {
 		setDetails( val );
+		setFeedbackValue( '' );
 		props.onDetailsChange( val );
+	};
+
+	const onTextAreaChange = ( val: string ) => {
+		setFeedbackValue( val );
+		props.onDetailsChange( val, details );
 	};
 
 	return (
@@ -59,6 +70,16 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 						value={ details }
 						options={ selectedReason.selectOptions.map( toSelectOption ) }
 						onChange={ onDetailsChange }
+					/>
+				</div>
+			) }
+			{ selectedSubOption?.textPlaceholder && (
+				<div className="cancel-purchase-form__feedback-question">
+					<TextareaControl
+						label={ translate( 'Can you please specify?' ) }
+						placeholder={ String( selectedSubOption.textPlaceholder ) }
+						value={ feedbackValue }
+						onChange={ onTextAreaChange }
 					/>
 				</div>
 			) }

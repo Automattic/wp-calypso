@@ -1,7 +1,7 @@
 import { WordPressLogo } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import SiteIcon from 'calypso/blocks/site-icon';
+import SiteIcon, { type SiteIconVariant } from 'calypso/blocks/site-icon';
 import { getFirstGrapheme } from 'calypso/lib/string';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -17,6 +17,8 @@ interface SiteFaviconProps {
 	size?: number;
 	className?: string;
 	fallback?: SiteFaviconFallback;
+	lazy?: boolean;
+	variant?: SiteIconVariant;
 }
 
 const SiteFavicon = ( {
@@ -25,6 +27,8 @@ const SiteFavicon = ( {
 	size = 40,
 	className = '',
 	fallback = 'color',
+	lazy = false,
+	variant,
 }: SiteFaviconProps ) => {
 	const { __ } = useI18n();
 	const siteColor = color ?? 'linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4)';
@@ -59,7 +63,13 @@ const SiteFavicon = ( {
 
 	return (
 		<div className={ clsx( 'site-favicon', className, defaultFaviconClass ) }>
-			<SiteIcon siteId={ blogId } size={ size } defaultIcon={ defaultFavicon } />
+			<SiteIcon
+				siteId={ blogId }
+				size={ size }
+				defaultIcon={ defaultFavicon }
+				lazy={ lazy }
+				variant={ variant }
+			/>
 		</div>
 	);
 };

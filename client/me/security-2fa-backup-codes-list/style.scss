@@ -118,3 +118,12 @@ button.security-2fa-backups-codes-list__generate-button {
 		}
 	}
 }
+
+.security-2fa-backup-codes-list__buttons {
+	display: flex;
+	justify-content: flex-end;
+
+	.security-2fa-backup-codes-list__next {
+		margin-left: 10px;
+	}
+}

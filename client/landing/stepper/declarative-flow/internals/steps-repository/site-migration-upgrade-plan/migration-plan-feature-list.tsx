@@ -25,10 +25,16 @@ export const MigrationPlanFeatureList = ( {
 	}
 
 	const selectedPlanPricing = pricing.originalPrice?.monthly;
+	const selectedPlanDiscountedPrice = pricing.introOffer?.rawPrice?.monthly;
 
-	const savingsDecimal =
+	const annualSavingsDecimal =
 		fullMonthlyPrice && selectedPlanPricing
 			? ( fullMonthlyPrice - selectedPlanPricing ) / fullMonthlyPrice
+			: 0;
+
+	const discountedPriceDecimal =
+		selectedPlanPricing && selectedPlanDiscountedPrice
+			? ( selectedPlanPricing - selectedPlanDiscountedPrice ) / selectedPlanPricing
 			: 0;
 
 	const jetpackFeatures = [
@@ -48,7 +54,7 @@ export const MigrationPlanFeatureList = ( {
 		// translators: %(percentage)s is the percentage of annual savings formatted like '50%'
 		translate( '{{strong}}%(percentage)s{{/strong}} annual savings', {
 			args: {
-				percentage: formatNumber( savingsDecimal, {
+				percentage: formatNumber( annualSavingsDecimal, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
@@ -71,15 +77,17 @@ export const MigrationPlanFeatureList = ( {
 	} = {
 		wpcomFeatures: {
 			[ PLAN_BUSINESS ]: [
-				translate( '{{strong}}%(percentage)s off{{/strong}} your first year', {
-					args: {
-						percentage: formatNumber( 0.5, {
-							numberFormatOptions: { style: 'percent' },
-						} ),
-						comment: 'percentage like 50% off',
-					},
-					components: { strong: <strong /> },
-				} ),
+				discountedPriceDecimal
+					? translate( '{{strong}}%(percentage)s off{{/strong}} your first year', {
+							args: {
+								percentage: formatNumber( discountedPriceDecimal, {
+									numberFormatOptions: { style: 'percent' },
+								} ),
+								comment: 'percentage like 50% off',
+							},
+							components: { strong: <strong /> },
+					  } )
+					: translate( 'No first year discount' ),
 				...commonDiscountedFeatures,
 				...businessFeatures,
 			],
@@ -96,15 +104,17 @@ export const MigrationPlanFeatureList = ( {
 				...businessFeatures,
 			],
 			[ PLAN_BUSINESS_2_YEARS ]: [
-				translate( '{{strong}}%(percentage)s off{{/strong}} your first two years', {
-					args: {
-						percentage: formatNumber( 0.5, {
-							numberFormatOptions: { style: 'percent' },
-						} ),
-						comment: 'percentage like 50% off',
-					},
-					components: { strong: <strong /> },
-				} ),
+				discountedPriceDecimal
+					? translate( '{{strong}}%(percentage)s off{{/strong}} your first two years', {
+							args: {
+								percentage: formatNumber( discountedPriceDecimal, {
+									numberFormatOptions: { style: 'percent' },
+								} ),
+								comment: 'percentage like 50% off',
+							},
+							components: { strong: <strong /> },
+					  } )
+					: translate( 'No discount on your first two years' ),
 				...commonDiscountedFeatures,
 				...businessFeatures,
 			],

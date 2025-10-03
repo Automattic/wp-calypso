@@ -7,11 +7,20 @@ const meta: Meta< typeof Breadcrumbs > = {
 	tags: [ 'autodocs' ],
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
+		// Prevent flickering + automatic menu closing in compact mode.
+		layout: 'fullscreen',
 	},
+	decorators: [
+		( Story ) => (
+			<div style={ { paddingInlineStart: '1rem', paddingBlockStart: '1rem' } }>
+				<Story />
+			</div>
+		),
+	],
 };
 
 export default meta;
-type Story = StoryObj< typeof meta >;
+type Story = StoryObj< typeof Breadcrumbs >;
 
 export const Default: Story = {
 	args: {
@@ -47,5 +56,25 @@ export const WithLongPath: Story = {
 				href: 'javascript:void(0)',
 			},
 		],
+	},
+};
+
+export const WithCustomItem: Story = {
+	args: {
+		...Default.args,
+		renderItemLink: ( { label, href, ...props } ) => {
+			const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+				props.onClick?.( event );
+				event.preventDefault();
+				// eslint-disable-next-line no-console
+				console.log( `Router navigation to ${ label }` );
+			};
+
+			return (
+				<a href={ href } { ...props } onClick={ onClick }>
+					{ label }
+				</a>
+			);
+		},
 	},
 };

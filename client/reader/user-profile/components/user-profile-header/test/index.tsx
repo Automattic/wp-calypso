@@ -43,6 +43,10 @@ describe( 'UserProfileHeader', () => {
 		bio: undefined,
 	};
 
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'should render the avatar with correct user information', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
@@ -67,7 +71,7 @@ describe( 'UserProfileHeader', () => {
 		expect( displayNameEl ).toBeInTheDocument();
 	} );
 
-	test( 'should render navigation tabs with Posts and Lists options', () => {
+	test( 'should render navigation tabs with Posts, Lists, and Recommended Blogs options', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
 		// Check if navigation section is rendered
@@ -76,12 +80,13 @@ describe( 'UserProfileHeader', () => {
 
 		// Check for navigation items
 		const navItems = screen.getAllByTestId( 'nav-item' );
-		expect( navItems.length ).toBe( 2 ); // Posts and Lists
+		expect( navItems.length ).toBe( 3 ); // Posts, Lists, and Recommended Blogs
 
-		// Check nav item content - should have Posts and Lists
+		// Check nav item content - should have Posts, Lists, and Recommended Blogs
 		const navTexts = navItems.map( ( item ) => item.textContent );
 		expect( navTexts ).toContain( 'Posts' );
 		expect( navTexts ).toContain( 'Lists' );
+		expect( navTexts ).toContain( 'Recommended Blogs' );
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {

@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { LegacyRef, RefObject } from 'react';
-import illustrationEmptyResults from 'calypso/assets/images/illustrations/illustration-empty-results.svg';
 import './style.scss';
 
 interface EmptyContentProps {
@@ -17,7 +16,6 @@ interface EmptyContentProps {
 	actionURL?: string;
 	actionCallback?: () => void;
 	actionTarget?: string;
-	actionHoverCallback?: () => void;
 	actionDisabled?: boolean;
 	actionRef?: RefObject< HTMLElement > | LegacyRef< HTMLButtonElement >;
 	secondaryAction?: React.ReactNode;
@@ -49,8 +47,6 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 					target={ props.actionTarget }
 					disabled={ props.actionDisabled }
 					ref={ props.actionRef as LegacyRef< HTMLButtonElement > }
-					onMouseEnter={ props.actionHoverCallback }
-					onTouchStart={ props.actionHoverCallback }
 				>
 					{ props.action }
 				</Button>
@@ -66,7 +62,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 		if ( props.secondaryActionURL || props.secondaryActionCallback ) {
 			return (
 				<Button
-					className="empty-content__action button"
+					className="empty-content__action"
 					onClick={ props.secondaryActionCallback }
 					href={ props.secondaryActionURL }
 					target={ props.secondaryActionTarget }
@@ -77,9 +73,20 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 		}
 	}
 
-	const { line, illustration = illustrationEmptyResults, isCompact = false } = props;
+	function renderLine(): React.ReactNode {
+		if ( typeof props.line === 'string' ) {
+			return <h3 className="empty-content__line">{ props.line }</h3>;
+		}
+		if ( React.isValidElement( props.line ) && props.line.type === React.Fragment ) {
+			return <div className="empty-content__line">{ props.line }</div>;
+		}
+		return props.line ?? null;
+	}
+
+	const { illustration, isCompact = false } = props;
 	const translate = useTranslate();
 	const action = props.action && primaryAction();
+	const line = props.line && renderLine();
 	const secondaryActionEl = props.secondaryAction && secondaryAction();
 	const title =
 		props.title !== undefined ? props.title : translate( "You haven't created any content yet." );
@@ -107,11 +114,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 			) : (
 				title ?? null
 			) }
-			{ typeof line === 'string' ? (
-				<h3 className="empty-content__line">{ props.line }</h3>
-			) : (
-				line ?? null
-			) }
+			{ line }
 			{ action }
 			{ secondaryActionEl }
 			{ props.children }

@@ -1,18 +1,23 @@
-import { Button, CheckboxControl, Icon } from '@wordpress/components';
+import {
+	Button,
+	CheckboxControl,
+	Icon,
+	Spinner,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
-import { chevronDown, chevronRight } from '@wordpress/icons';
+import { __, sprintf, isRTL } from '@wordpress/i18n';
+import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { FunctionComponent } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useFileBrowserContext } from './file-browser-context';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem, FileBrowserCheckState } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
+import type { FileBrowserConfig } from './index';
 
 interface FileBrowserNodeProps {
 	item: FileBrowserItem;
@@ -22,9 +27,17 @@ interface FileBrowserNodeProps {
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
+	fileBrowserConfig?: FileBrowserConfig;
+	siteId: number;
+	siteSlug: string;
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	source: 'calypso' | 'dashboard';
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
-const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
+function FileBrowserNode( {
 	item,
 	path,
 	rewindId,
@@ -32,19 +45,47 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	setActiveNodePath,
 	activeNodePath,
 	parentItem,
-} ) => {
+	fileBrowserConfig,
+	siteId,
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	onTrackEvent,
+	source,
+	onRequestGranularRestore,
+}: FileBrowserNodeProps ) {
+	// Spinner styles for different positions
+	const spinnerStyles = {
+		left: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+			padding: '0 6px',
+		},
+		right: {
+			width: '12px',
+			height: '12px',
+			margin: 0,
+		},
+	};
+
+	const { fileBrowserState } = useFileBrowserContext();
 	const isRoot = path === '/';
-	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
+	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
+	const showSeparateExpandButton = fileBrowserConfig?.showSeparateExpandButton ?? false;
+	const applyFiltering = !! fileBrowserConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
-	const siteId = useSelector( getSelectedSiteId ) as number;
-	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
+	const { getNode, addChildNodes, setNodeCheckState } = fileBrowserState;
+	const browserNodeItem = getNode( path, rewindId );
+	const expandIcon = isRTL() ? chevronLeft : chevronRight;
+	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
 	const {
 		isSuccess,
-		isInitialLoading,
+		isLoading,
 		data: backupFiles,
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
@@ -74,35 +115,35 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		[ item.extensionVersion ]
 	);
 
+	const shouldRestrictChildren = useCallback(
+		( childItem: FileBrowserItem ) => {
+			if (
+				fileBrowserConfig?.restrictedTypes &&
+				fileBrowserConfig?.restrictedTypes.includes( childItem.type )
+			) {
+				return true;
+			}
+			return false;
+		},
+		[ fileBrowserConfig?.restrictedTypes ]
+	);
+
 	// When we load the children from the API we'll add their check status info to the state
 	const addChildrenWhenLoaded = useCallback(
-		( siteId: number, path: string, backupFiles: FileBrowserItem[] ) => {
+		( path: string, backupFiles: FileBrowserItem[] ) => {
 			if ( backupFiles ) {
-				dispatch(
-					addChildNodes(
-						siteId,
-						path,
-						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
-							return {
-								id: childItem.id ?? '',
-								path: childItem.name,
-								type: childItem.type,
-								totalItems: childItem.totalItems,
-							};
-						} )
-					)
-				);
+				addChildNodes( path, backupFiles.filter( shouldAddChildNode ), rewindId );
 			}
 		},
-		[ dispatch, shouldAddChildNode ]
+		[ addChildNodes, rewindId, shouldAddChildNode ]
 	);
 
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
-		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
-			dispatch( setNodeCheckState( siteId, path, checkState ) );
+		( path: string, checkState: FileBrowserCheckState ) => {
+			setNodeCheckState( path, checkState, rewindId );
 		},
-		[ dispatch ]
+		[ rewindId, setNodeCheckState ]
 	);
 
 	// Using isSuccess to track the API call status
@@ -110,7 +151,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		if ( isSuccess ) {
 			if ( item.hasChildren && ! addedAnyChildren ) {
 				// Add children to the node
-				addChildrenWhenLoaded( siteId, path, backupFiles );
+				addChildrenWhenLoaded( path, backupFiles );
 				setAddedAnyChildren( true );
 			}
 		}
@@ -132,25 +173,29 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	}, [ isCurrentNodeClicked, isRoot ] );
 
 	// A simple toggle.  Mixed will go to unchecked.
-	const onCheckboxChange = () => {
+	const onCheckboxChange = useCallback( () => {
 		updateNodeCheckState(
-			siteId,
 			path,
 			browserNodeItem && browserNodeItem.checkState === 'unchecked' ? 'checked' : 'unchecked'
 		);
-	};
+	}, [ path, browserNodeItem, updateNodeCheckState ] );
 
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
 			setFetchContentsOnMount( true );
 
-			if ( item.type !== 'dir' ) {
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_backup_browser_view_file', {
-						file_type: item.type,
-					} )
-				);
+			if ( item.type !== 'dir' && onTrackEvent ) {
+				const trackingProps = { file_type: item.type };
+				if ( source === 'dashboard' ) {
+					onTrackEvent( 'calypso_dashboard_backup_browser_view_file', trackingProps );
+				} else {
+					onTrackEvent( 'calypso_jetpack_backup_browser_view_file', trackingProps );
+				}
 			}
+		}
+
+		if ( ! showFileCard ) {
+			onCheckboxChange();
 		}
 
 		// If the node doesn't have children, let's open the file info card
@@ -162,11 +207,74 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
+		if ( expandDirectoriesOnClick ) {
+			setIsOpen( ! isOpen );
+		}
+	}, [
+		expandDirectoriesOnClick,
+		isOpen,
+		item,
+		path,
+		setActiveNodePath,
+		onCheckboxChange,
+		showFileCard,
+		onTrackEvent,
+		source,
+	] );
+
+	const handleExpandButtonClick = useCallback( () => {
+		if ( ! isOpen ) {
+			setFetchContentsOnMount( true );
+		}
+
 		setIsOpen( ! isOpen );
-	}, [ dispatch, isOpen, item, path, setActiveNodePath ] );
+	}, [ isOpen ] );
+
+	const filterItems = useCallback(
+		( item: FileBrowserItem ) => {
+			// No filter is needed
+			if ( ! applyFiltering ) {
+				return true;
+			}
+
+			// Check if this node should always be included
+			if ( fileBrowserConfig?.alwaysInclude?.includes( item.name ) ) {
+				return true;
+			}
+
+			// Check if this node type should always be excluded
+			if ( fileBrowserConfig?.excludeTypes?.includes( item.type ) ) {
+				return false;
+			}
+
+			// Check if we're at root and this item is in restricted paths
+			if ( isRoot && fileBrowserConfig?.restrictedPaths?.includes( item.name ) ) {
+				return true;
+			}
+
+			// Check if current path includes any restricted path
+			if (
+				fileBrowserConfig?.restrictedPaths &&
+				fileBrowserConfig.restrictedPaths.some( ( restrictedPath ) =>
+					path.includes( restrictedPath )
+				)
+			) {
+				return true;
+			}
+			return false;
+		},
+		[
+			applyFiltering,
+			fileBrowserConfig?.alwaysInclude,
+			fileBrowserConfig?.excludeTypes,
+			fileBrowserConfig?.restrictedPaths,
+			isRoot,
+			path,
+		]
+	);
 
 	const renderChildren = () => {
-		if ( isInitialLoading ) {
+		if ( isLoading ) {
 			return (
 				<>
 					<div className="file-browser-node__loading placeholder" />
@@ -180,7 +288,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		if ( isSuccess && addedAnyChildren ) {
 			let childIsAlternate = isAlternate;
 
-			return backupFiles.map( ( childItem ) => {
+			const renderedChildren = backupFiles.filter( filterItems ).map( ( childItem ) => {
 				// Let's hide archives that don't have an extension version
 				// and changed extensions item node
 				if (
@@ -193,19 +301,44 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				childIsAlternate = ! childIsAlternate;
 
 				return (
-					<FileBrowserNode
+					<div
 						key={ childItem.name }
-						item={ childItem }
-						path={ `${ path }${ childItem.name }/` }
-						rewindId={ rewindId }
-						isAlternate={ childIsAlternate }
-						activeNodePath={ activeNodePath }
-						setActiveNodePath={ setActiveNodePath }
-						// Hacky way to pass extensions details to the child node
-						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
-					/>
+						style={ isRoot ? { marginInlineStart: 0 } : { marginInlineStart: 26 } }
+					>
+						<FileBrowserNode
+							item={ childItem }
+							path={ `${ path }${ childItem.name }/` }
+							rewindId={ rewindId }
+							isAlternate={ childIsAlternate }
+							activeNodePath={ activeNodePath }
+							setActiveNodePath={ setActiveNodePath }
+							fileBrowserConfig={ fileBrowserConfig }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							hasCredentials={ hasCredentials }
+							isRestoreEnabled={ isRestoreEnabled }
+							onTrackEvent={ onTrackEvent }
+							source={ source }
+							onRequestGranularRestore={ onRequestGranularRestore }
+							// Hacky way to pass extensions details to the child node
+							{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
+						/>
+					</div>
 				);
 			} );
+
+			if ( renderedChildren.length === 0 ) {
+				return (
+					<Text
+						variant="muted"
+						style={ { marginInlineStart: showSeparateExpandButton ? 36 : 63, fontStyle: 'italic' } }
+					>
+						{ __( 'Empty' ) }
+					</Text>
+				);
+			}
+
+			return renderedChildren;
 		}
 
 		return null;
@@ -220,19 +353,52 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		return (
 			<CheckboxControl
 				__nextHasNoMarginBottom
-				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
-				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
+				checked={ browserNodeItem?.checkState === 'checked' }
+				indeterminate={ browserNodeItem?.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
+				// translators: %s is a file or directory name
+				aria-label={ sprintf( __( 'Select %s' ), item.name ) }
 			/>
 		);
 	};
 
-	const renderExpandIcon = () => {
-		if ( ! item.hasChildren ) {
+	const buttonExpandIcon = () => {
+		if ( ! item.hasChildren || shouldRestrictChildren( item ) ) {
 			return null;
 		}
 
-		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
+		if ( isLoading && isOpen ) {
+			return <Spinner style={ spinnerStyles.left } />;
+		}
+
+		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
+	};
+
+	const expandButton = () => {
+		if ( isLoading && isOpen ) {
+			return (
+				<div
+					className="file-browser-node__separate-expand-button"
+					style={ { padding: '6px', color: 'inherit' } }
+				>
+					<Spinner style={ spinnerStyles.right } />
+				</div>
+			);
+		}
+
+		return (
+			<Button
+				onClick={ handleExpandButtonClick }
+				icon={ isOpen ? chevronDown : expandIcon }
+				className="file-browser-node__separate-expand-button"
+				variant="tertiary"
+				// translators: %s is a directory name
+				aria-label={ sprintf( __( 'Expand contents of %s' ), item.name ) }
+				aria-expanded={ isOpen }
+				size="compact"
+				style={ { color: 'inherit' } }
+			/>
+		);
 	};
 
 	const nodeItemClassName = clsx( 'file-browser-node__item', {
@@ -244,43 +410,56 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		'is-root': isRoot,
 	} );
 
+	const renderSeparateExpandButton =
+		showSeparateExpandButton && item.hasChildren && ! shouldRestrictChildren( item );
+
 	return (
-		<div className={ nodeClassName }>
-			<div className={ nodeItemClassName }>
-				{ ! isRoot && (
-					<>
-						{ renderCheckbox() }
-						<Button
-							icon={ renderExpandIcon }
-							className="file-browser-node__title has-icon"
-							onClick={ handleClick }
-							showTooltip={ isLabelTruncated }
-							label={ item.name }
-							variant="tertiary"
-						>
-							<FileTypeIcon type={ item.type } /> { label }
-						</Button>
-					</>
-				) }
-			</div>
-			{ isCurrentNodeClicked && (
+		<VStack className={ nodeClassName } spacing={ 0.5 }>
+			{ ! isRoot && (
+				<HStack className={ nodeItemClassName } justify="flex-start" spacing={ 0 }>
+					{ renderCheckbox() }
+					<Button
+						icon={ renderSeparateExpandButton ? null : buttonExpandIcon }
+						className="file-browser-node__title has-text has-icon"
+						onClick={ handleClick }
+						showTooltip={ isLabelTruncated }
+						label={ item.name }
+						variant="tertiary"
+						tabIndex={ showSeparateExpandButton && ! showFileCard ? -1 : 0 }
+						size="compact"
+						style={ { color: 'inherit' } }
+					>
+						<FileTypeIcon type={ item.type } /> { label }
+					</Button>
+					{ renderSeparateExpandButton && expandButton() }
+				</HStack>
+			) }
+			{ isCurrentNodeClicked && showFileCard && isRestoreEnabled !== undefined && onTrackEvent && (
 				<FileInfoCard
 					siteId={ siteId }
 					rewindId={ rewindId }
 					item={ item }
 					parentItem={ parentItem }
 					path={ path }
+					siteSlug={ siteSlug }
+					hasCredentials={ hasCredentials }
+					isRestoreEnabled={ isRestoreEnabled }
+					onTrackEvent={ onTrackEvent }
+					source={ source }
+					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
 			) }
 			{ isOpen && (
 				<>
-					{ item.hasChildren && (
-						<div className="file-browser-node__contents">{ renderChildren() }</div>
+					{ item.hasChildren && ! shouldRestrictChildren( item ) && (
+						<VStack className="file-browser-node__contents" spacing={ 1 }>
+							{ renderChildren() }
+						</VStack>
 					) }
 				</>
 			) }
-		</div>
+		</VStack>
 	);
-};
+}
 
 export default FileBrowserNode;

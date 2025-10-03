@@ -16,6 +16,10 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 	fetchCurrentUser: jest.fn(),
 } ) );
 
+jest.mock( '@wordpress/url', () => ( {
+	getQueryArg: jest.fn().mockReturnValue( null ),
+} ) );
+
 describe( 'wpcom-api', () => {
 	describe( 'user settings request', () => {
 		describe( '#requestUserSettings', () => {
@@ -142,6 +146,13 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#userSettingsSaveSuccess', () => {
+			const { getQueryArg } = require( '@wordpress/url' );
+
+			beforeEach( () => {
+				getQueryArg.mockReset();
+				getQueryArg.mockReturnValue( null );
+			} );
+
 			test( 'should dispatch user settings update and clear all unsaved settings on full save', async () => {
 				const dispatch = jest.fn();
 				const action = { type: 'DUMMY' };
@@ -158,6 +169,29 @@ describe( 'wpcom-api', () => {
 				);
 				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings() );
 				expect( dispatch ).toHaveBeenCalledWith(
+					successNotice( 'Settings saved successfully!', {
+						id: 'save-user-settings',
+					} )
+				);
+			} );
+
+			test( 'should not show success notice when ref=reader-onboarding', async () => {
+				const dispatch = jest.fn();
+				const action = { type: 'DUMMY' };
+				getQueryArg.mockReturnValue( 'reader-onboarding' );
+
+				await userSettingsSaveSuccess( action, {
+					language: 'qix',
+				} )( dispatch );
+
+				expect( dispatch ).toHaveBeenCalledTimes( 3 );
+				expect( dispatch ).toHaveBeenCalledWith(
+					saveUserSettingsSuccess( {
+						language: 'qix',
+					} )
+				);
+				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings() );
+				expect( dispatch ).not.toHaveBeenCalledWith(
 					successNotice( 'Settings saved successfully!', {
 						id: 'save-user-settings',
 					} )

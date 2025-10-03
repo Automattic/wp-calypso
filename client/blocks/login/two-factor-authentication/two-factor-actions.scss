@@ -1,8 +1,14 @@
-.two-factor-authentication__actions.card {
-	margin-bottom: 0;
-	padding: 0 0 24px;
+@import "@wordpress/base-styles/variables";
 
-	.button:not(:first-child) {
-		margin-top: 16px;
+.two-factor-authentication__actions.card {
+	display: flex;
+	flex-direction: column;
+	clip-path: initial;
+	gap: $grid-unit-20;
+	margin-bottom: 0;
+	padding: 0 0 $grid-unit-30;
+
+	&::after {
+		content: unset;
 	}
 }

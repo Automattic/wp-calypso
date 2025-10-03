@@ -44,7 +44,7 @@ export default function ThankYouV2( props: ThankYouV2Props ) {
 
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ headerButtons } />
 
-			{ products && <div className="thank-you__products">{ products }</div> }
+			{ products && <ul className="thank-you__products">{ products }</ul> }
 
 			{ footerDetails && ! isGravatarDomain && <ThankYouFooter details={ footerDetails } /> }
 

@@ -11,7 +11,7 @@ jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
 describe( 'useReadFeedSearchQuery', () => {
 	beforeEach( () => {
-		( wpcomRequest as jest.MockedFunction< typeof wpcomRequest > ).mockResolvedValue( {
+		jest.mocked( wpcomRequest ).mockResolvedValue( {
 			algorithm: 'example_algorithm',
 			feeds: [],
 			next_page: 'example_next_page',

@@ -1,6 +1,8 @@
 const path = require( 'path' );
 const base = require( '@automattic/calypso-jest' );
 
+process.env.TZ = 'UTC';
+
 /**
  * Can't use `preset: '@automattic/calypso-jest'` because preset are not recursive. In other words,
  * if this config contains `preset`, then it can't be consumed as a preset by anybody else.

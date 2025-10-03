@@ -18,7 +18,7 @@
 	"license": "GPL-2.0-or-later",
 	"bin": "./cli.js",
 	"dependencies": {
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"object-treeify": "^1.1.33",
 		"yargs": "^17.0.1"
 	},

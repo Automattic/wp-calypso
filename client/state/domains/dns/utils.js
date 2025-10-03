@@ -21,9 +21,14 @@ function validateField( { name, value, type, domain, domainName } ) {
 		case 'target':
 			return isValidDomain( value, type );
 		case 'data':
+		case 'value':
 			return isValidData( value, type );
 		case 'protocol':
 			return [ '_tcp', '_udp', '_tls' ].includes( value );
+		case 'flags': {
+			const intValue = parseInt( value, 10 );
+			return intValue >= 0 && intValue <= 255;
+		}
 		case 'weight':
 		case 'aux':
 		case 'port': {
@@ -84,6 +89,7 @@ function isValidData( data, type ) {
 		case 'MX':
 		case 'NS':
 			return isValidDomain( data );
+		case 'CAA':
 		case 'TXT':
 			return data.length > 0 && data.length <= 2048;
 	}
@@ -136,7 +142,7 @@ function canBeRootDomain( type, domain ) {
 		return true;
 	}
 
-	return [ 'A', 'AAAA', 'ALIAS', 'MX', 'SRV', 'TXT' ].includes( type );
+	return [ 'A', 'AAAA', 'ALIAS', 'CAA', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {

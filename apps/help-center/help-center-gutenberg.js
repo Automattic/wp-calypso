@@ -1,15 +1,17 @@
-/* global helpCenterData */
+/* global helpCenterData, __i18n_text_domain__ */
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useState, useReducer } from '@wordpress/element';
+import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
+import { useCallback, useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-import { useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { getEditorType } from './utils';
 import './help-center.scss';
@@ -17,21 +19,19 @@ import './help-center.scss';
 const queryClient = new QueryClient();
 
 function HelpCenterContent() {
-	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 
-	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
+	const show = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown() );
 
 	const canvasMode = useCanvasMode();
-	const previousCanvasMode = useRef( canvasMode );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
-			section: 'gutenberg-editor',
+			section: helpCenterData.sectionName || 'gutenberg-editor',
 			editor_type: getEditorType(),
 			canvas_mode: canvasMode,
 		} );
@@ -44,20 +44,10 @@ function HelpCenterContent() {
 		return () => clearTimeout( timeout );
 	}, [] );
 
-	useEffect( () => {
-		// Close the Help Center when the canvas mode changes.
-		if ( previousCanvasMode.current !== canvasMode ) {
-			setShowHelpCenter( false );
-
-			// Force to re-render to ensure the sidebar is available.
-			if ( canvasMode === 'view' ) {
-				forceUpdate();
-			}
-			previousCanvasMode.current = canvasMode;
-		}
-	}, [ canvasMode, previousCanvasMode, setShowHelpCenter ] );
-
-	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+	const closeCallback = useCallback(
+		() => setShowHelpCenter( false, undefined, undefined, true ),
+		[ setShowHelpCenter ]
+	);
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
@@ -84,7 +74,7 @@ function HelpCenterContent() {
 			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="gutenberg-editor"
+				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }
@@ -95,12 +85,44 @@ function HelpCenterContent() {
 	);
 }
 
-registerPlugin( 'jetpack-help-center', {
-	render: () => {
-		return (
+if ( helpCenterData.isNextAdmin ) {
+	domReady( () => {
+		dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( 'wp-logo-external' );
+		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'wp-logo' );
+		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
+			label: __( 'Help Center', __i18n_text_domain__ ),
+			parent: 'wp-logo',
+			callback: () => {
+				const state = select( 'automattic/help-center' ).isHelpCenterShown();
+				dispatch( 'automattic/help-center' ).setShowHelpCenter( ! state );
+			},
+		} );
+		const container = document.createElement( 'div' );
+		container.id = 'jetpack-help-center';
+		document.body.appendChild( container );
+		createRoot( container ).render(
 			<QueryClientProvider client={ queryClient }>
-				<HelpCenterContent />
-			</QueryClientProvider>
+				<HelpCenter
+					locale={ helpCenterData.locale }
+					sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
+					currentUser={ helpCenterData.currentUser }
+					site={ helpCenterData.site }
+					hasPurchases={ false }
+					onboardingUrl="https://wordpress.com/start"
+					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
+				/>
+			</QueryClientProvider>,
+			document.getElementById( 'jetpack-help-center' )
 		);
-	},
-} );
+	} );
+} else {
+	registerPlugin( 'jetpack-help-center', {
+		render: () => {
+			return (
+				<QueryClientProvider client={ queryClient }>
+					<HelpCenterContent />
+				</QueryClientProvider>
+			);
+		},
+	} );
+}

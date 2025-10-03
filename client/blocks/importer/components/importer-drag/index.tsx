@@ -38,19 +38,22 @@ interface Props {
 	importerData: ImporterConfig;
 	site: SiteDetails | null | undefined;
 	urlData?: UrlData | null;
+	renderHeading?: boolean;
 	startImport: ( siteId: number, type: string ) => void;
 }
 const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
-	const { importerStatus, importerData, site, urlData /*, startImport*/ } = props;
+	const { importerStatus, importerData, site, urlData, renderHeading } = props;
 	const { errorData, importerState } = importerStatus;
 	const isEnabled = appStates.DISABLED !== importerState;
 
 	return (
 		<div className={ clsx( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
-			<div className="import__heading import__heading-center">
-				<Title>{ importerData?.title }</Title>
-				<SubTitle>{ importerData?.description }</SubTitle>
-			</div>
+			{ renderHeading && (
+				<div className="import__heading import__heading-center">
+					<Title>{ importerData?.title }</Title>
+					<SubTitle>{ importerData?.description }</SubTitle>
+				</div>
+			) }
 			{ errorData && (
 				<ErrorPane
 					type={ errorData.type }

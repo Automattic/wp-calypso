@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,6 +11,10 @@ import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
+
+const shouldSkipTitleFormatting = ( { filter, tier } ) => {
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
+};
 
 export default function ThemeShowcaseHeader( {
 	canonicalUrl,
@@ -27,13 +32,18 @@ export default function ThemeShowcaseHeader( {
 
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
+	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
+	const shouldUseLoggedInHeader = isEnabled( 'themes/universal-header' )
+		? selectedSiteId
+		: isLoggedIn;
+
 	const {
 		title: documentHeadTitle,
 		metaDescription: metaDescription,
 		header: themesHeaderTitle,
 		description: themesHeaderDescription,
-	} = isLoggedIn
+	} = shouldUseLoggedInHeader
 		? {
 				title: title,
 				metaDescription: description,
@@ -72,13 +82,23 @@ export default function ThemeShowcaseHeader( {
 	}
 
 	if ( isCollectionView ) {
-		return <DocumentHead title={ documentHeadTitle } meta={ metas } />;
+		return (
+			<DocumentHead
+				title={ documentHeadTitle }
+				meta={ metas }
+				skipTitleFormatting={ skipTitleFormatting }
+			/>
+		);
 	}
 
 	return (
 		<>
-			<DocumentHead title={ documentHeadTitle } meta={ metas } />
-			{ isLoggedIn ? (
+			<DocumentHead
+				title={ documentHeadTitle }
+				meta={ metas }
+				skipTitleFormatting={ skipTitleFormatting }
+			/>
+			{ shouldUseLoggedInHeader ? (
 				<div className="themes__header-navigation-container">
 					<NavigationHeader
 						compactBreadcrumb={ false }

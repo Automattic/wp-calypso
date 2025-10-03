@@ -328,6 +328,6 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 }
 
 // re-initialize when new locale data is loaded
-i18n.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
+i18n.subscribe( communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
 export default communityTranslatorJumpstart;

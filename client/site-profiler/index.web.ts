@@ -1,4 +1,4 @@
-import { getAnyLanguageRouteParam } from '@automattic/i18n-utils/';
+import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	clientRouter,
 	makeLayout,

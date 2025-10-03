@@ -19,7 +19,6 @@ import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -274,7 +273,7 @@ export class Banner extends Component {
 					/>
 				) }
 				<div className="banner__info">
-					<p className="banner__title">{ title }</p>
+					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
@@ -308,7 +307,7 @@ export class Banner extends Component {
 								onClick={ this.handleSecondaryClick }
 								primary={ false }
 							>
-								{ preventWidows( secondaryCallToAction ) }
+								{ secondaryCallToAction }
 							</Button>
 						) }
 						{ callToAction &&
@@ -319,7 +318,7 @@ export class Banner extends Component {
 									target={ target }
 									busy={ isBusy }
 								>
-									{ preventWidows( callToAction ) }
+									{ callToAction }
 								</Button>
 							) : (
 								<Button
@@ -330,7 +329,7 @@ export class Banner extends Component {
 									target={ target }
 									busy={ isBusy }
 								>
-									{ preventWidows( callToAction ) }
+									{ callToAction }
 								</Button>
 							) ) }
 					</div>

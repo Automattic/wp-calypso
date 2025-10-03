@@ -10,6 +10,7 @@ const OfferingItem: React.FC< OfferingItemProps > = ( {
 	expanded,
 	clickableHeader = true,
 	actionHandler,
+	href,
 } ) => {
 	const header = (
 		<div>
@@ -38,7 +39,7 @@ const OfferingItem: React.FC< OfferingItemProps > = ( {
 					</li>
 				) ) }
 			</ul>
-			<Button className="a4a-offering-item__button" onClick={ actionHandler } primary>
+			<Button className="a4a-offering-item__button" onClick={ actionHandler } href={ href } primary>
 				{ buttonTitle }
 			</Button>
 		</FoldableCard>

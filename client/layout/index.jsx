@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -12,31 +13,35 @@ import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color';
 import QuerySiteAdminMenu from 'calypso/components/data/query-site-admin-menu';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -54,9 +59,6 @@ import GlobalNotifications from './global-notifications';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
-
-// goofy import for environment badge, which is SSR'd
-import 'calypso/components/environment-badge/style.scss';
 
 /*
  * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
@@ -132,6 +134,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -147,6 +150,9 @@ class Layout extends Component {
 		} );
 
 		refreshColorScheme( undefined, this.props.colorScheme );
+
+		// Load Survicate survey on all pages
+		this.props.dispatch( loadTrackingTool( 'Survicate' ) );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -179,14 +185,22 @@ class Layout extends Component {
 			this.props.currentRoute.startsWith( '/checkout/failed-purchases' );
 
 		return (
-			<MasterbarComponent
-				section={ this.props.sectionGroup }
-				isCheckout={ this.props.sectionName === 'checkout' }
-				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
-				isCheckoutFailed={ isCheckoutFailed }
-				loadHelpCenterIcon={ loadHelpCenterIcon }
-				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
-			/>
+			<>
+				{ this.props.hasUniversalHeader && (
+					<UniversalNavbarHeader
+						isLoggedIn={ this.props.isLoggedIn }
+						sectionName={ this.props.sectionName }
+					/>
+				) }
+				<MasterbarComponent
+					section={ this.props.sectionGroup }
+					isCheckout={ this.props.sectionName === 'checkout' }
+					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
+					isCheckoutFailed={ isCheckoutFailed }
+					loadHelpCenterIcon={ loadHelpCenterIcon }
+					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
+				/>
+			</>
 		);
 	}
 
@@ -194,14 +208,16 @@ class Layout extends Component {
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
+			'a8c-for-agencies': isA4AOAuth2Client( this.props.oauth2Client ),
+			crowdsignal: isCrowdsignalOAuth2Client( this.props.oauth2Client ),
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-universal-header': this.props.hasUniversalHeader,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooJPC,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooJPC,
@@ -210,7 +226,9 @@ class Layout extends Component {
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
+			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+			'is-domain-for-gravatar': this.props.isGravatarDomain,
 		} );
 
 		const optionalBodyProps = () => {
@@ -255,7 +273,6 @@ class Layout extends Component {
 					section={ this.props.sectionName }
 					{ ...optionalBodyProps() }
 				/>
-				<HtmlIsIframeClassname />
 				<DocumentHead />
 				{ this.props.shouldQueryAllSites ? (
 					<QuerySites allSites />
@@ -266,9 +283,6 @@ class Layout extends Component {
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				<QuerySiteAdminMenu siteId={ this.props.siteId } />
 				<QuerySiteAdminColor siteId={ this.props.siteId } />
-				{ config.isEnabled( 'layout/query-selected-editor' ) && (
-					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				) }
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
@@ -320,6 +334,9 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'layout/app-banner' ) && (
+					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
@@ -381,9 +398,6 @@ export default withCurrentRoute(
 			isA8CForAgencies() ||
 			isInStepContainerV2FlowContext( currentRoute, currentQuery );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
-		const isJetpackWooDnaFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			wooDnaConfig( currentQuery ).isWooDnaFlow();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const isEligibleForJITM = [ 'home', 'plans', 'themes', 'plugins', 'comments' ].includes(
@@ -405,12 +419,30 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
+		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
+			sectionName
+		);
+		const isGravatarDomain =
+			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
+			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
+
+		const hasUniversalHeader =
+			( config.isEnabled( 'themes/universal-header' ) &&
+				! siteId &&
+				[ 'themes', 'theme' ].includes( sectionName ) ) ||
+			( config.isEnabled( 'plugins/universal-header' ) &&
+				! siteId &&
+				[ 'plugins' ].includes( sectionName ) &&
+				! (
+					currentRoute.startsWith( '/plugins/manage' ) ||
+					currentRoute.startsWith( '/plugins/scheduled-updates' )
+				) );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
-			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isWooJPC,
 			isFromAutomatticForAgenciesPlugin,
@@ -441,6 +473,8 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+			isGravatarDomain,
+			hasUniversalHeader,
 		};
 	} )( Layout )
 );

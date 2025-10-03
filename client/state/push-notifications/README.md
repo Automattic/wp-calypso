@@ -15,7 +15,7 @@ A module for managing push notification state & communicating with the service w
 
 ## Selected Action creators
 
-- `toggleEnabled`: Turn push notifications on and off
+- `setEnabledState`: Turn push notifications on and off
 
 ### How to use
 
@@ -31,12 +31,12 @@ function mapStateToProps( state ) {
 	};
 }
 const mapDispatchToProps = {
-	toggleEnabled,
+	setEnabledState,
 };
 
 class YourReactClass extends React.Component {
-	toggleEnabled = () => {
-		this.props.toggleEnabled();
+	setEnabledState = ( state ) => {
+		this.props.setEnabledState( state );
 	};
 }
 

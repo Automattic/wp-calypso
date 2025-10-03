@@ -36,7 +36,7 @@ const useAssignLicensesToSite = (
 	const assignLicensesToSite = useCallback(
 		async ( licenseKeys: string[] ): Promise< PurchasedProductsInfo > => {
 			// Only proceed if the mutation is in a fresh/ready state
-			if ( ! assignLicense.isIdle ) {
+			if ( assignLicense.isPending ) {
 				throw new Error( 'The mutation for assigning licenses is not ready' );
 			}
 

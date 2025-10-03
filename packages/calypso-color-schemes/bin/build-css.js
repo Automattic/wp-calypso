@@ -1,4 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { dirname, join } = require( 'path' );
 const postcss = require( 'postcss' );

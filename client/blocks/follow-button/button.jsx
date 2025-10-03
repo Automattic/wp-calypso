@@ -19,6 +19,7 @@ class FollowButton extends Component {
 		followIcon: PropTypes.object,
 		followingIcon: PropTypes.object,
 		hasButtonStyle: PropTypes.bool,
+		isButtonOnly: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -27,6 +28,7 @@ class FollowButton extends Component {
 		iconSize: 20,
 		tagName: 'button',
 		disabled: false,
+		isButtonOnly: false,
 	};
 
 	toggleFollow = ( event ) => {
@@ -71,7 +73,7 @@ class FollowButton extends Component {
 		const followIcon = this.props.followIcon || (
 			<Gridicon key="follow" icon="reader-follow" size={ iconSize } />
 		);
-		const followLabelElement = (
+		const followLabelElement = ! this.props.isButtonOnly && (
 			<span key="label" className="follow-button__label">
 				{ label }
 			</span>

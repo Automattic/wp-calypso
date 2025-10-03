@@ -2,14 +2,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { Plans, HelpCenter } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState } from 'react';
+import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
@@ -17,8 +17,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { statTypeToPlan } from '../stat-type-to-plan';
 
 import './style.scss';
-
-const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
 	title: string;
@@ -55,10 +53,15 @@ export default function StatsUpsell( {
 	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_odyssey' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const localizeUrl = useLocalizeUrl();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const redirectTo = encodeURIComponent( window.location.href );
+
+	const learnMoreLink = localizeUrl( 'https://wordpress.com/support/stats/' );
+
+	const { openSupportDoc } = useSupportDocData( {
+		supportLink: learnMoreLink,
+	} );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
@@ -74,8 +77,6 @@ export default function StatsUpsell( {
 			page( `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }` );
 		}
 	};
-
-	const learnMoreLink = localizeUrl( 'https://wordpress.com/support/stats/' );
 
 	const toggleExpanded = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		if ( expandableView ) {
@@ -108,12 +109,7 @@ export default function StatsUpsell( {
 
 	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		if ( ! isOdysseyStats ) {
-			setShowHelpCenter( true );
-			setShowSupportDoc( learnMoreLink );
-		} else {
-			window.open( learnMoreLink, '_blank' );
-		}
+		openSupportDoc();
 
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_learn_more`, {
 			stat_type: statType,

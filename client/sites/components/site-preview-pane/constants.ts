@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+
 export const OVERVIEW = 'overview';
 export const MONITORING = 'monitoring';
 export const LOGS_PHP = 'logs-php';
@@ -18,7 +20,9 @@ export const SETTINGS_PERFORMANCE = 'settings-performance';
 export const PLAN = 'plan';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
-	[ OVERVIEW ]: 'overview/:site',
+	[ OVERVIEW ]: isEnabled( 'dashboard/v2/backport/site-overview' )
+		? 'sites/:site'
+		: 'overview/:site',
 	[ MONITORING ]: 'site-monitoring/:site',
 	[ LOGS_PHP ]: 'site-logs/:site/php',
 	[ LOGS_WEB ]: 'site-logs/:site/web',
@@ -27,7 +31,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ HOSTING_FEATURES ]: 'hosting-features/:site',
 	[ STAGING_SITE ]: 'staging-site/:site',
 	[ PERFORMANCE ]: 'sites/performance/:site',
-	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
+	[ SETTINGS_SITE ]: 'sites/:site/settings',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',
 	[ SETTINGS_ADMINISTRATION_DELETE_SITE ]: 'sites/settings/site/:site/delete-site',

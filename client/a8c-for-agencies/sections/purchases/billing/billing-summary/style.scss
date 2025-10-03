@@ -106,13 +106,15 @@
 }
 
 .billing-summary__open-cost-tooltip {
+	margin-top: 4px;
 	margin-inline-end: 8px;
 
 	&.button {
 		padding: 0;
 
 		.gridicon {
-			inset-block-start: 4px;
+			top: 0;
+			margin-top: 0;
 		}
 	}
 }

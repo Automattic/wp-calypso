@@ -70,7 +70,7 @@ export class StatsPage {
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
 		await this.dismissTooltip();
-		await clickNavTab( this.page, name );
+		await clickNavTab( this.page, name, { isCoreTabs: true } );
 
 		// Wait for the expected URL scheme to load.
 		// Note, the Store tab is only available for Business and above plans.

@@ -8,9 +8,6 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
-export const LOCAL_STORAGE_KEY_FOR_PG_ID = 'pg_flow_pg_id';
-export const LOCAL_STORAGE_KEY_FOR_PG_ID_TS = 'pg_flow_pg_ts';
-export const LOCAL_STORAGE_KEY_FOR_PG_VALIDITY = 180000; // ms - 180 seconds / 3 minutes
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
@@ -49,7 +46,7 @@ export async function initializeWordPressPlayground(
 
 		const client = await startPlaygroundWeb( {
 			iframe,
-			remoteUrl: 'https://wordpress-playground.atomicsites.blog/remote.html',
+			remoteUrl: 'https://playground.wordpress.net/remote.html',
 			blueprint: await getBlueprint( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],

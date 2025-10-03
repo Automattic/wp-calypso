@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
@@ -20,6 +21,7 @@ class DomainSuggestion extends Component {
 		hidePrice: PropTypes.bool,
 		showChevron: PropTypes.bool,
 		isAdded: PropTypes.bool,
+		ariaLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -59,8 +61,15 @@ class DomainSuggestion extends Component {
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice, hideMatchReasons } =
-			this.props;
+		const {
+			children,
+			extraClasses,
+			isAdded,
+			isFeatured,
+			showStrikedOutPrice,
+			hideMatchReasons,
+			ariaLabel,
+		} = this.props;
 		const classes = clsx(
 			'domain-suggestion',
 			'card',
@@ -96,6 +105,7 @@ class DomainSuggestion extends Component {
 								this.props.onButtonClick( isAdded );
 							} }
 							data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+							aria-label={ ariaLabel }
 							{ ...this.props.buttonStyles }
 						>
 							{ this.props.buttonContent }
@@ -111,7 +121,7 @@ class DomainSuggestion extends Component {
 	}
 }
 
-DomainSuggestion.Placeholder = function () {
+function DomainSuggestionPlaceholder() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
@@ -123,6 +133,12 @@ DomainSuggestion.Placeholder = function () {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
+}
 
-export default DomainSuggestion;
+DomainSuggestionPlaceholder.displayName = 'DomainSuggestionPlaceholder';
+DomainSuggestion.Placeholder = DomainSuggestionPlaceholder;
+
+const LocalizedDomainSuggestion = localize( DomainSuggestion );
+LocalizedDomainSuggestion.Placeholder = DomainSuggestionPlaceholder;
+
+export default LocalizedDomainSuggestion;

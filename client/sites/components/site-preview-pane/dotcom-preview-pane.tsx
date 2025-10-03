@@ -1,13 +1,16 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
-import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
-import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
+import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
@@ -16,7 +19,6 @@ import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DEPLOYMENTS,
 	FEATURE_TO_ROUTE_MAP,
-	HOSTING_FEATURES,
 	LOGS_PHP,
 	LOGS_WEB,
 	MONITORING,
@@ -56,15 +58,14 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
-	const hasEnTranslation = useHasEnTranslation();
+	const isInProgress = isMigrationInProgress( site );
+	const isA4ADevSite = !! site?.is_a4a_dev_site;
 
-	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
-	const isPlanExpired = !! site.plan?.expired;
-	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+	const hasStagingSitesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
+	);
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
-		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
@@ -72,38 +73,29 @@ const DotcomPreviewPane = ( {
 				featureIds: [ OVERVIEW ],
 			},
 			{
-				label: (
-					<span>
-						{ __( 'Hosting Features' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
-				enabled: isSimpleSite || isPlanExpired,
-				featureIds: [ HOSTING_FEATURES ],
-			},
-			{
 				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite,
+				enabled: true,
 				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite,
+				enabled: true,
 				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isActiveAtomicSite,
+				enabled: true,
 				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite,
+				enabled: true,
 				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
-				enabled: isActiveAtomicSite,
+				// We don't have the callout for the staging site tab since we'll retire the tab.
+				enabled: hasStagingSitesFeature && ! isA4ADevSite,
 				featureIds: [ STAGING_SITE ],
 			},
 			{
@@ -143,7 +135,7 @@ const DotcomPreviewPane = ( {
 					visible: enabled && visible !== false,
 					selected,
 					onTabClick: () => {
-						if ( enabled && ! selected ) {
+						if ( enabled ) {
 							showSitesPage( defaultRoute );
 						}
 					},
@@ -153,18 +145,16 @@ const DotcomPreviewPane = ( {
 			};
 		} );
 	}, [
-		isAtomicSite,
-		isPlanExpired,
 		__,
-		hasEnTranslation,
-		isSimpleSite,
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
+		hasStagingSitesFeature,
+		isA4ADevSite,
 	] );
 
 	const itemData: ItemData = {
-		title: isMigrationPending ? __( 'Incoming Migration' ) : site.title,
+		title: isInProgress ? __( 'Incoming Migration' ) : site.title,
 		subtitle: site.slug,
 		url: site.URL,
 		blogId: site.ID,
@@ -177,16 +167,39 @@ const DotcomPreviewPane = ( {
 		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
 	} );
 
-	if ( site.options && site.is_wpcom_atomic ) {
-		site.options.wpcom_staging_blog_ids =
-			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
-	}
+	const siteWithStagingIds = useMemo( () => {
+		if ( ! site.options || ! site.is_wpcom_atomic ) {
+			return site;
+		}
+
+		const stagingBlogIds = stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
+
+		return {
+			...site,
+			options: {
+				...site.options,
+				wpcom_staging_blog_ids: stagingBlogIds,
+			},
+		};
+	}, [ site, stagingSites ] );
 
 	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
 	const isStagingStatusFinished =
 		stagingStatus === StagingSiteStatus.COMPLETE ||
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
+
+	const hasEnvironmentPermission = useSelector( ( state ) =>
+		canCurrentUserSwitchEnvironment( state, siteWithStagingIds )
+	);
+
+	// Check if site supports environment switching (atomic readiness check)
+	const supportsEnvironmentSwitching =
+		siteWithStagingIds.is_wpcom_staging_site ||
+		isAtomicTransferredSite( {
+			is_wpcom_atomic: siteWithStagingIds.is_wpcom_atomic,
+			capabilities: siteWithStagingIds.capabilities,
+		} );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
@@ -195,24 +208,46 @@ const DotcomPreviewPane = ( {
 		selectedFeatureId: selectedSiteFeature,
 	} );
 
+	const isProduction =
+		siteWithStagingIds.is_wpcom_atomic && ! siteWithStagingIds.is_wpcom_staging_site;
+	const hasNoStagingSites = ! siteWithStagingIds.options?.wpcom_staging_blog_ids?.length;
+
+	const shouldShowProductionBadge =
+		isProduction &&
+		( hasNoStagingSites || ! isStagingStatusFinished ) &&
+		hasStagingSitesFeature &&
+		! isA4ADevSite;
+
 	return (
 		<ItemView
 			itemData={ itemData }
 			closeItemView={ closeSitePreviewPane }
 			features={ features }
-			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
-				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
+				siteIconFallback: isInProgress ? 'migration' : 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () => {
-					if ( isMigrationPending ) {
+					if ( isInProgress ) {
 						return <SiteStatus site={ site } />;
 					}
 
-					if ( site.is_wpcom_staging_site || isStagingStatusFinished ) {
-						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
+					if ( shouldShowProductionBadge ) {
+						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
+					}
+
+					if (
+						supportsEnvironmentSwitching &&
+						hasEnvironmentPermission &&
+						isStagingStatusFinished
+					) {
+						return (
+							<SiteEnvironmentSwitcher
+								onChange={ changeSitePreviewPane }
+								site={ siteWithStagingIds }
+							/>
+						);
 					}
 				},
 			} }

@@ -9,6 +9,14 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"types": "dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -27,7 +35,7 @@
 		"@automattic/search": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.22.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1"
@@ -37,7 +45,7 @@
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

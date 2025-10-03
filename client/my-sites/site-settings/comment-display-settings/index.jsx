@@ -87,7 +87,7 @@ class CommentDisplaySettings extends Component {
 				</div>
 				<div className="comment-display-settings__module-setting is-indented">
 					<FormLabel htmlFor="jetpack_comment_form_color_scheme">
-						{ translate( 'Color Scheme' ) }
+						{ translate( 'Color scheme' ) }
 					</FormLabel>
 					<FormSelect
 						name="jetpack_comment_form_color_scheme"

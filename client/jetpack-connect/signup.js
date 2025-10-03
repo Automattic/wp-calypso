@@ -7,23 +7,19 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
-import { Button, Card, Modal } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get, includes } from 'lodash';
+import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import LoginBlock from 'calypso/blocks/login';
 import SignupForm from 'calypso/blocks/signup-form';
-import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import { decodeEntities } from 'calypso/lib/formatting';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -126,7 +122,12 @@ export class JetpackSignup extends Component {
 
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
+
+		return (
+			'woocommerce-core-profiler' === from ||
+			this.props.isWooJPC ||
+			this.getWooDnaConfig().isWooDnaFlow()
+		);
 	}
 
 	getWooDnaConfig() {
@@ -298,181 +299,7 @@ export class JetpackSignup extends Component {
 		);
 	}
 
-	renderWooDnaFooter( footerLinks ) {
-		const { authQuery } = this.props;
-		footerLinks.push(
-			<LoggedOutFormLinkItem key="back" href={ authQuery.redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{
-					// translators: eg: Return to The WordPress.com Blog
-					this.props.translate( 'Return to %(sitename)s', {
-						args: { sitename: decodeEntities( authQuery.blogname ) },
-					} )
-				}
-			</LoggedOutFormLinkItem>
-		);
-		return <LoggedOutFormLinks>{ footerLinks }</LoggedOutFormLinks>;
-	}
-
-	renderWooDnaLoginMagicLink() {
-		const { translate, usernameOrEmail, sendEmailLogin } = this.props;
-		return (
-			<>
-				<Card className="jetpack-connect__magic-link-card">
-					<p>
-						{ translate( 'We’ve just sent a magic link to {{b}}%(email)s{{/b}}', {
-							args: {
-								email: usernameOrEmail,
-							},
-							components: {
-								b: <strong />,
-							},
-						} ) }
-					</p>
-					<p>{ translate( 'Click the link in the email to connect your store.' ) }</p>
-					<img src="/calypso/images/illustrations/illustration-woo-magic-link.svg" alt="" />
-					<p className="jetpack-connect__magic-link-resend">
-						{ translate( 'This email will expire in an hour. {{a}}Resend it{{/a}}.', {
-							components: {
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								a: <Button isLink onClick={ sendEmailLogin } />,
-							},
-						} ) }
-					</p>
-				</Card>
-				{ this.renderWooDnaFooter( [
-					<LoggedOutFormLinkItem key="login" onClick={ () => this.showWooDnaLoginView() }>
-						{ translate( 'Connect with a different email' ) }
-					</LoggedOutFormLinkItem>,
-				] ) }
-			</>
-		);
-	}
-
-	renderWooDna() {
-		const { authQuery, isFullLoginFormVisible, locale, translate, usernameOrEmail } = this.props;
-		const { isCreatingAccount, signUpUsernameOrEmail, loginSocialConnect, loginTwoFactorAuthType } =
-			this.state;
-		let header;
-		let subHeader;
-		let content;
-		const footerLinks = [];
-		const email = signUpUsernameOrEmail || usernameOrEmail || authQuery.userEmail;
-		const wooDna = this.getWooDnaConfig();
-		let pageTitle;
-
-		if ( 'link' === loginTwoFactorAuthType ) {
-			// Passwordless link has been sent, nothing else to do here except tell the user.
-			header = wooDna.getServiceName();
-			subHeader = translate( 'Check your email!' );
-			pageTitle = translate( 'Connect' );
-			content = this.renderWooDnaLoginMagicLink();
-		} else if ( 'login' === this.state.wooDnaFormType ) {
-			if ( isFullLoginFormVisible ) {
-				header = translate( 'Log in to your WordPress.com account' );
-				/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
-				subHeader = translate(
-					'Your account will enable you to start using the features and benefits offered by %(pluginName)s',
-					{
-						args: {
-							pluginName: wooDna.getServiceName(),
-						},
-					}
-				);
-				pageTitle = translate( 'Login to WordPress.com' );
-				footerLinks.push(
-					<LoggedOutFormLinkItem key="signup" onClick={ this.showWooDnaSignupView }>
-						{ translate( 'Create a new account' ) }
-					</LoggedOutFormLinkItem>
-				);
-				footerLinks.push(
-					<LoggedOutFormLinkItem key="lostpassword" href={ lostPassword( { locale } ) }>
-						{ translate( 'Lost your password?' ) }
-					</LoggedOutFormLinkItem>
-				);
-			} else {
-				const pluginName = wooDna.getServiceName();
-				header = pluginName;
-				if ( wooDna.getFlowName() === 'woodna:woocommerce-payments' ) {
-					subHeader = translate(
-						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments'
-					);
-				} else if ( wooDna.getFlowName() === 'woodna:blaze-ads-on-woo' ) {
-					/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
-					subHeader = translate(
-						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by %(pluginName)s',
-						{
-							args: {
-								pluginName,
-							},
-						}
-					);
-				} else {
-					subHeader = translate( 'Enter your email address to get started' );
-				}
-				pageTitle = translate( 'Connect' );
-			}
-			content = (
-				<LoginBlock
-					locale={ this.props.locale }
-					footer={ this.renderWooDnaFooter( footerLinks ) }
-					userEmail={ email }
-					socialConnect={ loginSocialConnect }
-					twoFactorAuthType={ loginTwoFactorAuthType }
-					onTwoFactorRequested={ ( authType ) =>
-						this.setState( { loginTwoFactorAuthType: authType } )
-					}
-					onSocialConnectStart={ () => this.setState( { loginSocialConnect: true } ) }
-				/>
-			);
-		} else {
-			// Woo DNA sign-up form
-			header = wooDna.getServiceName();
-			subHeader = translate( 'Create an account' );
-			pageTitle = translate( 'Create a WordPress.com account' );
-			footerLinks.push(
-				<LoggedOutFormLinkItem key="login" onClick={ () => this.showWooDnaLoginView() }>
-					{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
-				</LoggedOutFormLinkItem>
-			);
-			content = (
-				<SignupForm
-					disabled={ isCreatingAccount }
-					email={ includes( email, '@' ) ? email : '' }
-					footerLink={ this.renderWooDnaFooter( footerLinks ) }
-					handleLogin={ this.showWooDnaLoginView }
-					handleSocialResponse={ this.handleSocialResponse }
-					isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
-					locale={ this.props.locale }
-					redirectToAfterLoginUrl={ addQueryArgs( { auth_approved: true }, window.location.href ) }
-					submitButtonText={ this.props.translate( 'Create your account' ) }
-					submitForm={ this.handleSubmitSignup }
-					submitting={ isCreatingAccount }
-					suggestedUsername={ includes( email, '@' ) ? '' : email }
-					flowName={ this.getFlowName() }
-				/>
-			);
-		}
-
-		return (
-			<MainWrapper
-				wooDnaConfig={ wooDna }
-				pageTitle={ wooDna.getServiceName() + ' — ' + pageTitle }
-			>
-				<div className="jetpack-connect__authorize-form">
-					{ this.renderLocaleSuggestions() }
-					<FormattedHeader headerText={ header } subHeaderText={ subHeader } />
-					{ content }
-					{ this.renderLoginUser() }
-				</div>
-			</MainWrapper>
-		);
-	}
-
 	render() {
-		if ( this.getWooDnaConfig().isWooDnaFlow() ) {
-			return this.renderWooDna();
-		}
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooJPC = this.isWooJPC();
 
@@ -507,6 +334,7 @@ export class JetpackSignup extends Component {
 						isWooJPC={ isWooJPC }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 						disableSiteCard={ isWooJPC }
+						wooDnaConfig={ this.getWooDnaConfig() }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }

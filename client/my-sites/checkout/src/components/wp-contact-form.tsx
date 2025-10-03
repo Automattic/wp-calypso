@@ -51,7 +51,8 @@ const BillingFormFields = styled.div< BillingFormFieldsProps >`
 	${ ( props ) =>
 		props.isLoading &&
 		css`
-			+ button {
+			&,
+			& + button {
 				display: none;
 			}
 		` }
@@ -87,8 +88,11 @@ export default function WPContactForm( {
 	} );
 
 	return (
-		<BillingFormFields isLoading={ ! hasCompleted }>
-			{ hasCompleted ? (
+		<>
+			{ ! hasCompleted && (
+				<LoadingText>{ translate( 'Retrieving contact details…' ) }</LoadingText>
+			) }
+			<BillingFormFields isLoading={ ! hasCompleted }>
 				<ContactDetailsContainer
 					contactDetailsType={ contactDetailsType }
 					contactInfo={ contactInfo }
@@ -97,9 +101,7 @@ export default function WPContactForm( {
 					isDisabled={ isDisabled }
 					isLoggedOutCart={ isLoggedOutCart }
 				/>
-			) : (
-				<LoadingText>{ translate( 'Retrieving contact details…' ) }</LoadingText>
-			) }
-		</BillingFormFields>
+			</BillingFormFields>
+		</>
 	);
 }

@@ -18,7 +18,7 @@ export function useDeleteCard( card: PaymentMethod ) {
 
 	const { data: recentCards } = useRecentPaymentMethodsQuery();
 
-	const nextPrimaryPaymentMethod = ( recentCards?.items || [] ).find(
+	const nextPrimaryPaymentMethod = ( ( recentCards as any )?.items || [] ).find(
 		( currCard: PaymentMethod ) => currCard.id !== card.id
 	);
 

@@ -8,8 +8,9 @@ const path = require( 'path' );
 const PLUGIN_NAME = 'GenerateChunksMap';
 
 class GenerateChunksMapPlugin {
-	constructor( { output = path.resolve( '.', 'map.json' ) } = {} ) {
+	constructor( { output = path.resolve( '.', 'map.json' ), base_dir = '.' } = {} ) {
 		this.output = output;
+		this.base_dir = base_dir;
 	}
 
 	apply( compiler ) {
@@ -25,10 +26,9 @@ class GenerateChunksMapPlugin {
 				if ( ! name ) {
 					continue;
 				}
-
 				const modules = [ ...compilation.chunkGraph.getChunkModulesIterable( chunk ) ]
 					.reduce( ( acc, item ) => acc.concat( item.modules || item ), [] )
-					.map( ( { userRequest } ) => userRequest && path.relative( '.', userRequest ) )
+					.map( ( { userRequest } ) => userRequest && path.relative( this.base_dir, userRequest ) )
 					.filter( ( module ) => !! module );
 
 				chunksMap[ name ] = modules;

@@ -2,7 +2,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { preloadEditor } from 'calypso/sections-preloaders';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
 import { getPost } from 'calypso/state/posts/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
@@ -15,13 +14,7 @@ function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bum
 	}
 
 	return (
-		<PopoverMenuItem
-			href={ editUrl }
-			onClick={ bumpStat }
-			icon="pencil"
-			onMouseOver={ preloadEditor }
-			onFocus={ preloadEditor }
-		>
+		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil">
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);

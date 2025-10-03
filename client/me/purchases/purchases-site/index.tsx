@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { Purchase, GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
@@ -29,6 +29,7 @@ export default function PurchasesSite(
 				slug: string;
 				cards: StoredPaymentMethod[];
 				showSite?: boolean;
+				transferredOwnershipPurchases?: Purchase[];
 		  }
 ) {
 	const site = useSelector( ( state ) => getSite( state, props.siteId ?? 0 ) );
@@ -43,6 +44,7 @@ export default function PurchasesSite(
 		slug,
 		cards,
 		showSite = false,
+		transferredOwnershipPurchases = [],
 	} = props;
 
 	return (
@@ -73,6 +75,7 @@ export default function PurchasesSite(
 						site={ site }
 						showSite={ showSite }
 						isBackupMethodAvailable={ isBackupMethodAvailable }
+						transferredOwnershipPurchases={ transferredOwnershipPurchases }
 					/>
 				);
 			} ) }

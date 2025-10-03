@@ -27,6 +27,12 @@ describe( 'leaveCheckout', () => {
 			},
 			writable: true,
 		} );
+		Object.defineProperty( window, 'history', {
+			value: {
+				back: jest.fn(),
+			},
+			writable: true,
+		} );
 	} );
 
 	describe( 'cancel_to parameter handling', () => {
@@ -60,6 +66,14 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
 			expect( navigate ).not.toHaveBeenCalledWith( '/\\example.com' );
+		} );
+	} );
+
+	describe( 'history_back parameter handling', () => {
+		it( 'should use history back to return to previous page when the flag is present', () => {
+			window.location.search = '?history_back=1';
+			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+			expect( window.history.back ).toHaveBeenCalled();
 		} );
 	} );
 

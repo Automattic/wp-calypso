@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -23,19 +22,31 @@ import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import { Downgrade } from './downgrade';
 import ManagePurchase from './manage-purchase';
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
-import PurchasesList from './purchases-list';
 import PurchasesListDataView from './purchases-list-in-dataviews';
 import titles from './titles';
 import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
 
-const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
+/**
+ * Returns the previous page URL if it is one of the two purchases lists
+ * (account-level or site-level), including query strings.
+ * @returns string|undefined
+ */
+function usePreviousUrlIfPurchasesList() {
+	const previousRoute = useSelector( getPreviousRoute );
+	return /\/me\/purchases\/?[^/]*$/.test( previousRoute ) ||
+		/\/purchases\/subscriptions\/?[^/]*$/.test( previousRoute )
+		? previousRoute
+		: undefined;
+}
 
 function useLogPurchasesError( message ) {
 	return useCallback(
@@ -141,14 +152,17 @@ export function confirmCancelDomain( context, next ) {
 }
 
 export function list( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+	const userId = currentUser?.ID;
 	const ListWrapper = localize( () => {
 		return (
 			<PurchasesWrapper>
-				{ useDataViewPurchasesList ? (
-					<PurchasesListDataView noticeType={ context.params.noticeType } />
-				) : (
-					<PurchasesList noticeType={ context.params.noticeType } />
-				) }
+				<PurchasesListDataView
+					userId={ userId }
+					noticeType={ context.params.noticeType }
+					getManagePurchaseUrlFor={ managePurchaseUrl }
+				/>
 			</PurchasesWrapper>
 		);
 	} );
@@ -197,6 +211,7 @@ export function vatDetails( context, next ) {
 export function managePurchase( context, next ) {
 	const ManagePurchasesWrapper = localize( () => {
 		const classes = 'manage-purchase';
+		const purchaseListUrl = usePreviousUrlIfPurchasesList();
 
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
@@ -209,6 +224,7 @@ export function managePurchase( context, next ) {
 					<ManagePurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
+						purchaseListUrl={ purchaseListUrl }
 					/>
 				</Main>
 			</PurchasesWrapper>
@@ -242,7 +258,11 @@ export function managePurchaseByOwnership( context, next ) {
 }
 
 export function addNewPaymentMethod( context, next ) {
-	context.primary = <AddNewPaymentMethod />;
+	const AddNewPaymentMethodTopWrapper = () => {
+		const purchaseListUrl = usePreviousUrlIfPurchasesList();
+		return <AddNewPaymentMethod purchaseListUrl={ purchaseListUrl } />;
+	};
+	context.primary = <AddNewPaymentMethodTopWrapper />;
 	next();
 }
 

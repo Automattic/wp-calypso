@@ -125,6 +125,7 @@
 	font-size: $font-body-small;
 	padding: 0 20px 24px;
 	margin-top: 8px;
+	text-wrap: pretty; // Subtitle can be configured to any element, so we need to make sure it can wrap properly.
 
 	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0;

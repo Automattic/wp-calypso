@@ -76,6 +76,9 @@ export type PlansIntent =
 	| 'plans-guided-segment-consumer-or-business'
 	| 'plans-site-selected-legacy'
 	| 'plans-playground'
+	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
+	| 'plans-wordpress-hosting'
+	| 'plans-website-builder'
 	| 'default';
 
 export interface PlanActionOverrides {
@@ -154,6 +157,7 @@ export type UseActionCallback = ( {
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
+		ariaLabel?: TranslateResult;
 		callback: () => Promise< void > | void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';

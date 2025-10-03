@@ -10,15 +10,16 @@ import {
 	FormLabel,
 	Button,
 } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -36,17 +37,20 @@ const GoogleAnalyticsSimpleForm = ( {
 	isSavingSettings,
 	isSubmitButtonDisabled,
 	placeholderText,
-	recordSupportLinkClick,
 	setDisplayForm,
 	showUpgradeNudge,
 	site,
+	siteId,
 	translate,
 } ) => {
-	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
 		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
 		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 	);
+	const statsUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
+	);
+
 	useEffect( () => {
 		if ( fields?.wga?.code ) {
 			setDisplayForm( true );
@@ -101,16 +105,6 @@ const GoogleAnalyticsSimpleForm = ( {
 									'A free analytics tool that offers additional insights into your site.'
 								) }{ ' ' }
 							</p>
-							<p>
-								<a
-									onClick={ recordSupportLinkClick }
-									href={ analyticsSupportUrl }
-									target="_blank"
-									rel="noreferrer"
-								>
-									{ translate( 'Learn more' ) }
-								</a>
-							</p>
 						</div>
 					</div>
 					{ displayForm && (
@@ -136,7 +130,10 @@ const GoogleAnalyticsSimpleForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<InlineSupportLink supportContext="google-analytics-measurement-id">
+								<InlineSupportLink
+									supportContext="google-analytics-measurement-id"
+									tracksEvent="calypso_traffic_settings_google_support_click"
+								>
 									{ translate( 'Where can I find my Measurement ID?' ) }
 								</InlineSupportLink>
 							</FormFieldset>
@@ -148,19 +145,7 @@ const GoogleAnalyticsSimpleForm = ( {
 										'normally show slightly different totals for your visits, views, etc.',
 									{
 										components: {
-											a: <a href={ '/stats/' + site.domain } />,
-										},
-									}
-								) }
-							</p>
-							<p>
-								{ translate(
-									'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
-									{
-										components: {
-											a: (
-												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
-											),
+											a: <a href={ statsUrl } />,
 										},
 									}
 								) }

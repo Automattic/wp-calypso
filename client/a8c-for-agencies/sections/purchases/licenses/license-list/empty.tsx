@@ -70,7 +70,7 @@ export default function LicenseListEmpty( { filter }: Props ) {
 				href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
 				onClick={ onIssueNewLicense }
 			>
-				{ translate( 'Issue New License' ) }
+				{ translate( 'Issue new license' ) }
 			</Button>
 		</div>
 	);

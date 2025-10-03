@@ -5,6 +5,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
+	is100Year,
 } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -76,8 +77,9 @@ function PurchaseMetaExpiration( {
 	}
 
 	const hideAutoRenew =
-		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
-		! isRenewable( purchase );
+		( JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
+			! isRenewable( purchase ) ) ||
+		is100Year( purchase );
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
@@ -143,8 +145,12 @@ function PurchaseMetaExpiration( {
 				},
 			} );
 		}
+
+		if ( is100Year( purchase ) ) {
+			subsBillingText = moment( purchase.expiryDate ).format( 'LL' );
+		}
 		const shouldShowTooltip = () => {
-			if ( ! purchase.expiryDate || ! purchase.renewDate ) {
+			if ( ! purchase.expiryDate || ! purchase.renewDate || is100Year( purchase ) ) {
 				return false;
 			}
 
@@ -158,9 +164,13 @@ function PurchaseMetaExpiration( {
 			return false;
 		};
 
+		const detailLabel = is100Year( purchase )
+			? translate( 'Paid until' )
+			: translate( 'Subscription Renewal' );
+
 		return (
 			<li className="manage-purchase__meta-expiration">
-				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
+				<em className="manage-purchase__detail-label">{ detailLabel }</em>
 				{ ! hideAutoRenew && ! isJetpackPurchaseUsingPrimaryCancellationFlow && (
 					<div className="manage-purchase__auto-renew">
 						<span className="manage-purchase__detail manage-purchase__auto-renew-text">

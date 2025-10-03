@@ -13,7 +13,6 @@ import {
 	CartCheckoutPage,
 	StartSiteFlow,
 	SecretsManager,
-	SignupDomainPage,
 	MyHomePage,
 	ComingSoonPage,
 	NewSiteResponse,
@@ -21,9 +20,9 @@ import {
 	NewUserResponse,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -70,9 +69,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Skip domain selection', async function () {
-			const signupDomainPage = new SignupDomainPage( page );
-			await signupDomainPage.searchForFooDomains();
-			await signupDomainPage.skipDomainSelection();
+			const signupDomainPage = new RewrittenDomainSearchComponent( page );
+			await signupDomainPage.search( 'foo' );
+			await signupDomainPage.skipPurchase();
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -228,19 +227,17 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
-			await purchasesPage.cancelPurchase( 'Cancel plan' );
 		} );
 
 		it( 'Cancel plan renewal', async function () {
-			await cancelPurchaseFlow( page, {
-				reason: 'Another reason…',
-				customReasonText: 'E2E TEST CANCELLATION',
-			} );
-
 			noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-				timeout: 30 * 1000,
-			} );
+			await purchasesPage.cancelPurchase( 'Cancel plan' );
+			await noticeComponent.noticeShown(
+				'Your refund has been processed and your purchase removed.',
+				{
+					timeout: 30 * 1000,
+				}
+			);
 		} );
 	} );
 

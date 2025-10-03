@@ -1,40 +1,32 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-import { ODIE_TRANSFER_MESSAGE } from '../constants';
+import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
-import { setHelpCenterZendeskConversationStarted } from '../utils';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
-	section,
 	createdFrom,
+	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
-	section?: string | null;
 	createdFrom?: string;
-} ) => Promise< void > ) => {
+	isFromError?: boolean;
+} ) => Promise< string > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
 		userFieldMessage,
 		userFieldFlowName,
 		setChat,
-		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
 		trackEvent,
+		sectionName,
 	} = useOdieAssistantContext();
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
@@ -43,35 +35,73 @@ export const useCreateZendeskConversation = (): ( ( {
 	const createConversation = async ( {
 		avoidTransfer = false,
 		interactionId = '',
-		section = '',
 		createdFrom = '',
+		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
-		section?: string | null;
 		createdFrom?: string;
+		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
-		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
-			return;
-		}
 
-		if ( ! avoidTransfer ) {
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				messages: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
-				status: 'transfer',
-			} ) );
-		}
-
-		await submitUserFields( {
-			messaging_initial_message: userFieldMessage || undefined,
-			messaging_site_id: selectedSiteId || null,
-			messaging_ai_chat_id: chatId || undefined,
-			messaging_url: selectedSiteURL || null,
-			messaging_flow: userFieldFlowName || null,
-			messaging_source: section,
+		trackEvent( 'create_zendesk_conversation', {
+			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
+			chat_conversation_id: chat.conversationId,
+			chat_status: chat.status,
+			chat_provider: chat.provider,
+			interaction_id: currentInteractionID,
+			created_from: createdFrom,
+			avoid_transfer: avoidTransfer,
+			is_from_error: isFromError,
 		} );
+
+		if (
+			isSubmittingZendeskUserFields ||
+			chat.conversationId ||
+			chat.status === 'transfer' ||
+			chat.provider === 'zendesk'
+		) {
+			return chat.conversationId || '';
+		}
+
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			messages: avoidTransfer
+				? prevChat.messages
+				: [
+						...prevChat.messages,
+						...( isFromError ? getOdieOnErrorTransferMessage() : getOdieTransferMessage() ),
+				  ],
+			status: 'transfer',
+		} ) );
+
+		try {
+			trackEvent( 'submitting_zendesk_user_fields', {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			await submitUserFields( {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			trackEvent( 'submitted_zendesk_user_fields' );
+		} catch ( error ) {
+			trackEvent( 'error_submitting_zendesk_user_fields', {
+				error_message:
+					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+			} );
+		}
 
 		const conversation = await Smooch.createConversation( {
 			metadata: {
@@ -80,7 +110,6 @@ export const useCreateZendeskConversation = (): ( ( {
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
-		setHelpCenterZendeskConversationStarted();
 
 		trackEvent( 'new_zendesk_conversation', {
 			support_interaction: currentInteractionID,
@@ -89,11 +118,21 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_url: selectedSiteURL || null,
 		} );
 
-		setWaitAnswerToFirstMessageFromHumanSupport( true );
-		addEventToInteraction( {
+		const updatedInteraction = await addEventToInteraction.mutateAsync( {
 			interactionId: currentInteractionID,
 			eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 		} );
+		const eventAddedToNewInteraction = updatedInteraction.uuid !== currentInteractionID;
+		if ( eventAddedToNewInteraction ) {
+			await Smooch.updateConversation( conversation.id, {
+				metadata: {
+					supportInteractionId: updatedInteraction.uuid,
+				},
+			} );
+		}
+
+		// We need to load the conversation to get typing events. Load simply means "focus on"..
+		Smooch.loadConversation( conversation.id );
 
 		setChat( ( prevChat ) => ( {
 			...prevChat,
@@ -101,6 +140,8 @@ export const useCreateZendeskConversation = (): ( ( {
 			provider: 'zendesk',
 			status: 'loaded',
 		} ) );
+
+		return conversation.id;
 	};
 
 	return createConversation;

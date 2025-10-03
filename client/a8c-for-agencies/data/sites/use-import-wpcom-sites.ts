@@ -3,7 +3,9 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
-interface APIError {}
+interface APIError {
+	message?: string;
+}
 
 interface APIResponse {
 	success: boolean;

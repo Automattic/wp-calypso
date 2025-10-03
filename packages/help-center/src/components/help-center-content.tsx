@@ -3,8 +3,6 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -20,7 +18,6 @@ import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
-import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -50,25 +47,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName } = useHelpCenterContext();
-	const { startNewInteraction } = useManageSupportInteraction();
-	const { data } = useSupportStatus();
-	const { data: openSupportInteractions, isLoading: isLoadingOpenSupportInteractions } =
-		useGetSupportInteractions( 'help-center', 1, 'open' );
-	const { data: resolvedSupportInteractions, isLoading: isLoadingResolvedSupportInteractions } =
-		useGetSupportInteractions( 'help-center', 1, 'resolved' );
+	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 
-	const { currentSupportInteraction, navigateToRoute, isMinimized, allowPremiumSupport } =
-		useSelect( ( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-			return {
-				currentSupportInteraction: store.getCurrentSupportInteraction(),
-				navigateToRoute: store.getNavigateToRoute(),
-				isMinimized: store.getIsMinimized(),
-				allowPremiumSupport: store.getAllowPremiumSupport(),
-			};
-		}, [] );
+	const { navigateToRoute, isMinimized, allowPremiumSupport } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			navigateToRoute: store.getNavigateToRoute(),
+			isMinimized: store.getIsMinimized(),
+			allowPremiumSupport: store.getAllowPremiumSupport(),
+		};
+	}, [] );
 	const isUserEligibleForPaidSupport =
 		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
 
@@ -86,36 +75,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
-		if (
-			! isLoadingOpenSupportInteractions &&
-			! isLoadingResolvedSupportInteractions &&
-			openSupportInteractions === null &&
-			resolvedSupportInteractions === null &&
-			! currentSupportInteraction
-		) {
-			startNewInteraction( {
-				event_source: 'help-center',
-				event_external_id: crypto.randomUUID(),
-			} );
-		} else if (
-			( openSupportInteractions || resolvedSupportInteractions ) &&
-			! currentSupportInteraction
-		) {
-			if ( resolvedSupportInteractions?.length ) {
-				setCurrentSupportInteraction( resolvedSupportInteractions[ 0 ] );
-			} else if ( openSupportInteractions?.length ) {
-				setCurrentSupportInteraction( openSupportInteractions[ 0 ] );
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		openSupportInteractions,
-		resolvedSupportInteractions,
-		isLoadingOpenSupportInteractions,
-		isLoadingResolvedSupportInteractions,
-	] );
-
-	useEffect( () => {
 		if ( navigateToRoute ) {
 			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
 			// On navigate once to keep the back button responsive.
@@ -127,13 +86,33 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	useEffect( () => {
-		if (
-			containerRef.current &&
-			! location.hash &&
-			! location.pathname.includes( '/odie' ) &&
-			! location.pathname.includes( '/post' )
-		) {
-			containerRef.current.scrollTo( 0, 0 );
+		function handler( event: Event ) {
+			const target = event.currentTarget as HTMLDivElement;
+			const { clientHeight, scrollHeight, scrollTop } = target;
+
+			// Sadly, Safari doesn't support animation-timeline yet, once it does, you can use the CSS linked below and delete the JS.
+			// https://github.com/Automattic/wp-calypso/pull/105777/commits/e07a4f09b045ed5008c1892641f45acd1ebfc514
+			target.style.setProperty(
+				'--scroll-progress',
+				// This keeps opacity at 1 until the scroll reaches bottom - BLENDER_HEIGHT.
+				( scrollHeight - clientHeight - scrollTop ).toString()
+			);
+		}
+
+		if ( containerRef.current ) {
+			const container = containerRef.current;
+			container.addEventListener( 'scroll', handler );
+
+			if (
+				! location.hash &&
+				! location.pathname.includes( '/odie' ) &&
+				! location.pathname.includes( '/post' )
+			) {
+				container.scrollTo( 0, 0 );
+			}
+			return () => {
+				container?.removeEventListener( 'scroll', handler );
+			};
 		}
 	}, [ location ] );
 
@@ -143,13 +122,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				<Routes>
 					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
 					<Route path="/post" element={ <HelpCenterArticle /> } />
-					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
 						path="/odie"
 						element={
 							<HelpCenterChat
+								isLoadingStatus={ isLoadingSupportStatus }
 								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 								userFieldFlowName={ userFieldFlowName }
 							/>

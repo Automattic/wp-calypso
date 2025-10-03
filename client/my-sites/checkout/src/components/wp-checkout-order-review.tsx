@@ -14,7 +14,10 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import {
+	getIsOnboardingAffiliateFlow,
+	getIsOnboardingUnifiedFlow,
+} from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -28,6 +31,7 @@ import type {
 	CouponStatus,
 	SetCouponFieldVisible,
 	RemoveCouponAndClearField,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
@@ -81,14 +85,16 @@ export default function WPCheckoutOrderReview( {
 	removeProductFromCart,
 	removeCouponAndClearField,
 	replaceProductInCart,
+	addProductsToCart,
 	onChangeSelection,
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	replaceProductInCart: ReplaceProductInCart;
+	addProductsToCart: AddProductsToCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	removeCouponAndClearField: RemoveCouponAndClearField;
@@ -164,6 +170,7 @@ export default function WPCheckoutOrderReview( {
 					<WPOrderReviewLineItems
 						removeProductFromCart={ removeProductFromCart }
 						replaceProductInCart={ replaceProductInCart }
+						addProductsToCart={ addProductsToCart }
 						removeCoupon={ removeCouponAndClearField }
 						onChangeSelection={ onChangeSelection }
 						isSummary={ isSummary }
@@ -197,6 +204,7 @@ export function CouponFieldArea( {
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
@@ -205,7 +213,12 @@ export function CouponFieldArea( {
 		}
 	}, [ couponStatus, setCouponFieldValue ] );
 
-	if ( isPurchaseFree || couponStatus === 'applied' || isOnboardingAffiliateFlow ) {
+	if (
+		isPurchaseFree ||
+		couponStatus === 'applied' ||
+		isOnboardingAffiliateFlow ||
+		isOnboardingUnifiedFlow
+	) {
 		return null;
 	}
 

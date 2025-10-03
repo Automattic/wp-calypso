@@ -35,6 +35,8 @@
 //
 // [1] https://github.com/Automattic/wp-calypso/blob/HEAD/docs/coding-guidelines/css.md#media-queries
 //
+import { debounce } from 'lodash';
+import { useState, useEffect } from 'react';
 
 // FIXME: We can't detect window size on the server, so until we have more intelligent detection,
 // use 769, which is just above the general maximum mobile screen width.
@@ -233,6 +235,33 @@ export function resolveDeviceTypeByViewPort(): string {
 		return DEVICE_TABLET;
 	}
 	return DEVICE_DESKTOP;
+}
+
+const DEBOUNCE_TIME = 300;
+
+function getWindowDimensions() {
+	const { innerWidth: width, innerHeight: height } = window;
+	return {
+		width,
+		height,
+	};
+}
+
+export function useWindowDimensions() {
+	const [ windowDimensions, setWindowDimensions ] = useState( getWindowDimensions() );
+
+	useEffect( () => {
+		function handleResize() {
+			setWindowDimensions( getWindowDimensions() );
+		}
+
+		const throttledHandleResize = debounce( handleResize, DEBOUNCE_TIME );
+
+		window.addEventListener( 'resize', throttledHandleResize );
+		return () => window.removeEventListener( 'resize', throttledHandleResize );
+	}, [] );
+
+	return windowDimensions;
 }
 
 /******************************************/

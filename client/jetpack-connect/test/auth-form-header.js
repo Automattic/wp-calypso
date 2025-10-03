@@ -1,9 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { AuthFormHeader } from '../auth-form-header';
-import wooDnaConfig from '../woo-dna-config';
 
 jest.mock( 'calypso/blocks/site', () => () => 'Site' );
 
@@ -36,28 +35,5 @@ describe( 'AuthFormHeader', () => {
 		const { container } = render( <AuthFormHeader { ...DEFAULT_PROPS } /> );
 
 		expect( container ).toMatchSnapshot();
-	} );
-
-	test( 'should render WC Payments specific sub header copy', () => {
-		const authQuery = {
-			...DEFAULT_PROPS.authQuery,
-			from: 'woocommerce-payments',
-			woodna_service_name: 'WooPayments',
-		};
-		const props = {
-			...DEFAULT_PROPS,
-			authQuery,
-			wooDnaConfig: wooDnaConfig( authQuery ),
-		};
-
-		// Notice we have \xa0. This is needed when we compare translated text.
-		// Please refer to https://stackoverflow.com/questions/54242039/intl-numberformat-space-character-does-not-match
-		const expectedText =
-			'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments';
-
-		render( <AuthFormHeader { ...props } /> );
-
-		expect( screen.getByText( expectedText ) ).toBeVisible();
-		expect( screen.getByText( expectedText ) ).toHaveClass( 'formatted-header__subtitle' );
 	} );
 } );

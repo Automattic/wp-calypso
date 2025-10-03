@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -118,7 +117,7 @@ export default function () {
 
 	// For some reason, the first redirection below redirects `/jetpack/connect` to `/jetpack/new` in Jetpack cloud.
 	if ( ! isJetpackCloud() ) {
-		page( '/jetpack/new', config( 'signup_url' ) );
+		page( '/jetpack/new', '/start' );
 		page( '/jetpack/new/*', '/jetpack/connect' );
 	}
 }

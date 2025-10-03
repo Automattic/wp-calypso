@@ -10,14 +10,14 @@ import { usePatterns } from '../use-patterns';
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
 
 describe( 'usePatterns', () => {
-	let wrapper: React.FC< React.PropsWithChildren< any > >;
+	let wrapper: React.FC< React.PropsWithChildren >;
 
 	beforeEach( () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockReset();
+		jest.mocked( wpcom.req.get ).mockReset();
 
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-		wrapper = ( { children }: React.PropsWithChildren< any > ) => (
+		wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 	} );
@@ -27,7 +27,7 @@ describe( 'usePatterns', () => {
 	} );
 
 	test( 'calls the API endpoint with the right parameters', async () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( [] );
+		jest.mocked( wpcom.req.get ).mockResolvedValue( [] );
 
 		const { result } = renderHook( () => usePatterns( 'fr', 'intro' ), { wrapper } );
 
@@ -50,7 +50,7 @@ describe( 'usePatterns', () => {
 			},
 		];
 
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( patterns );
+		jest.mocked( wpcom.req.get ).mockResolvedValue( patterns );
 
 		const { result } = renderHook( () => usePatterns( 'en', 'about' ), { wrapper } );
 

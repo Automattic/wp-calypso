@@ -12,7 +12,7 @@ const parameters = {
 	},
 	options: {
 		storySort: ( a, b ) => {
-			const sectionOrder = [ 'WP Overrides', 'Deprecated', 'Unaudited' ];
+			const sectionOrder = [ 'WP Overrides', 'Unpublished', 'Deprecated', 'Unaudited' ];
 			const aIndex = sectionOrder.findIndex( ( prefix ) => a.title.startsWith( prefix ) );
 			const bIndex = sectionOrder.findIndex( ( prefix ) => b.title.startsWith( prefix ) );
 
@@ -22,6 +22,10 @@ const parameters = {
 				if ( bIndex === -1 ) return -1;
 				return aIndex - bIndex;
 			}
+
+			// If either name is "Docs", it should come first
+			if ( a.name === 'Docs' ) return -1;
+			if ( b.name === 'Docs' ) return 1;
 
 			// If they're in the same section, put MDX files first
 			const aIsMdx = a.importPath.endsWith( '.mdx' );

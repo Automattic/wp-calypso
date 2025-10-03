@@ -6,9 +6,11 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
+import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -28,7 +30,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
@@ -58,6 +59,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -240,7 +242,8 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies, siteDomains } =
+			this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -277,6 +280,12 @@ class Signup extends Component {
 			signupDependencies.domainItem !== prevProps.signupDependencies.domainItem
 		) {
 			clearDomainsDependencies();
+		}
+
+		// Re-check fulfilled steps when siteDomains data changes
+		// This ensures that isDomainFulfilled is called again when domain data loads
+		if ( flowName === 'launch-site' && siteDomains !== prevProps.siteDomains ) {
+			this.removeFulfilledSteps( this.props );
 		}
 	}
 
@@ -769,7 +778,6 @@ class Signup extends Component {
 			...flowStepProps,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
-		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
 		if ( this.props.isManageSiteFlow ) {
@@ -789,9 +797,6 @@ class Signup extends Component {
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ stepName }` }>
-					{ shouldRenderLocaleSuggestions && (
-						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-					) }
 					{ this.state.shouldShowLoadingScreen ? (
 						this.renderProcessingScreen()
 					) : (
@@ -858,8 +863,8 @@ class Signup extends Component {
 		if ( waitToRenderReturnValue && ! this.state.shouldShowLoadingScreen ) {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
-
-		const showPageHeader = ! this.props.isGravatar;
+		const showPageHeader = ! ( 0 === this.getPositionInFlow() && ! this.props.isLoggedIn );
+		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
 			<>
@@ -881,6 +886,7 @@ class Signup extends Component {
 									/>
 								)
 							}
+							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
 					<div className="signup__steps">{ this.renderCurrentStep() }</div>
@@ -931,6 +937,7 @@ export default connect(
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
+			isWoo: getIsWoo( state ),
 		};
 	},
 	{

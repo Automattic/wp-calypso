@@ -23,7 +23,7 @@ const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
-const { getByRole, getByTestId, findByText } = screen;
+const { getByRole, findByText, getByLabelText } = screen;
 
 const authorizationUrl = 'https://example.com/authorization.php?appId=123&appName=My%20App';
 const encodedAuthorizationUrl = encodeURIComponent(
@@ -46,7 +46,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 		render( {}, { initialEntry } );
 
 		await waitFor( () => {
-			expect( getByTestId( 'loading-ellipsis' ) ).toBeVisible();
+			expect( getByLabelText( /Loading/ ) ).toBeInTheDocument();
 		} );
 	} );
 

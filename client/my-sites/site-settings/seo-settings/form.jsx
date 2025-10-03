@@ -337,11 +337,13 @@ export class SiteSettingsFormSEO extends Component {
 								{ translate( 'Page Title Structure' ) }
 								{ siteIsJetpack && (
 									<SupportInfo
+										privacyLink={ false }
 										text={ translate(
 											'To help improve your search page ranking, you can customize how the content titles' +
 												' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
 												' and also add custom separators between the items.'
 										) }
+										supportPostId={ 120916 }
 										link=" https://wordpress.com/support/seo-tools/#page-title-structure"
 									/>
 								) }
@@ -391,7 +393,7 @@ export class SiteSettingsFormSEO extends Component {
 										) }
 									</p>
 									<FormLabel htmlFor="advanced_seo_front_page_description">
-										{ translate( 'Front Page Meta Description' ) }
+										{ translate( 'Front page meta description' ) }
 									</FormLabel>
 									<CountedTextarea
 										name="advanced_seo_front_page_description"

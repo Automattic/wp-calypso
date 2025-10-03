@@ -31,7 +31,7 @@ As you complete the tasks in this list, please update the relevant lines with di
 - [ ] Install and activate [v#.#.#]-rc.1 on edge (######-code)
 - [ ] Install and activate [v#.#.#] on edge (######-code)
 - [ ] Activate [v#.#.#] on production (######-code)
-- [ ] Request [v#.#.#] AT upgrade (######-p2)
+- [ ] Release the [v#.#.#] build to intermediary repo for AT to pull (https://github.com/Automattic/gutenberg-dotcom-woa-releases/releases/tag/[v#.#.#])
 
 **Testing**
 

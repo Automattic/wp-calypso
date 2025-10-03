@@ -37,6 +37,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 	'appleLoginUser',
+	'gitHubLoginUser',
 	'jetpackAtomicDefaultUser',
 	'jetpackAtomicPhpOldUser',
 	'jetpackAtomicPhpNewUser',
@@ -160,7 +161,6 @@ export class SecretsManager {
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
 			wooSignupPath: 'FAKE_VALUE',
-			wooLoginPath: 'FAKE_VALUE',
 			calypsoOauthApplication: {
 				client_id: 'FAKE_VALUE',
 				client_secret: 'FAKE_VALUE',
@@ -239,6 +239,9 @@ export class SecretsManager {
 					totpKey: 'FAKE_VALUE',
 				},
 				appleLoginUser: {
+					...fakeAccount,
+				},
+				gitHubLoginUser: {
 					...fakeAccount,
 				},
 				jetpackAtomicDefaultUser: {

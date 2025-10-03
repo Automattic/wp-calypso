@@ -14,5 +14,5 @@ export function HostingHero( { children, className }: HostingHeroProps ) {
 }
 
 export function HostingHeroButton( props: ComponentProps< typeof Button > ) {
-	return <Button variant="primary" className="hosting-hero-button" { ...props } />;
+	return <Button variant="primary" { ...props } />;
 }

@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -20,7 +19,6 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 
 	return (
 		<ReaderMain className="tags__main">
-			<ReaderBackButton />
 			{ isLoggedIn && (
 				<NavigationHeader
 					title={ translate( 'All the Tags' ) }

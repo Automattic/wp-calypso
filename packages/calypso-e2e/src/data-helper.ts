@@ -140,6 +140,35 @@ export function getCalypsoURL(
 }
 
 /**
+ * Returns whether the current Calypso environment is production
+ * (i.e. https://wordpress.com).
+ *
+ * @returns {boolean} True if the current Calypso environment is production; false otherwise.
+ */
+export function isCalypsoProduction(): boolean {
+	return envVariables.CALYPSO_BASE_URL === 'https://wordpress.com';
+}
+
+/**
+ * Constructs a locale-specific path segment based on the provided locale.
+ * If the locale is 'en' (English), returns an empty string (no path segment).
+ * Otherwise, returns the locale code followed by a slash (e.g., 'fr/', 'es/').
+ *
+ * @example
+ * // For English locale
+ * const localePath = ''; // when locale === 'en'
+ *
+ * // For French locale
+ * const localePath = 'fr/'; // when locale === 'fr'
+ *
+ * @param {string} locale - The locale code (e.g., 'en', 'fr', 'es').
+ * @returns {string} The locale path segment to be used in URLs.
+ */
+export function getLocalePath( locale: string ): string {
+	return locale === 'en' ? '' : `${ locale }/`;
+}
+
+/**
  * Returns the credential for a specified account from the secrets file.
  *
  * @param {TestAccountName} accountType Type of the account for which the credentials are to be obtained.

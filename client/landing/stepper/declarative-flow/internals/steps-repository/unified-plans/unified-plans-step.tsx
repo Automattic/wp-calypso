@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UrlFriendlyTermType } from '@automattic/calypso-products';
+import { UrlFriendlyTermType, isDomainTransfer } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
+	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
@@ -13,7 +14,7 @@ import {
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -27,6 +28,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
 import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
 import {
 	useStreamlinedPriceExperiment,
@@ -45,7 +47,7 @@ import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-sit
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
 import './unified-plans-step-styles.scss';
 
@@ -122,6 +124,7 @@ export interface UnifiedPlansStepProps {
 
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
+	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
 	fallbackSubHeaderText?: string;
@@ -221,6 +224,7 @@ function UnifiedPlansStep( {
 	progress,
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
+	onIntentChange,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -254,6 +258,13 @@ function UnifiedPlansStep( {
 
 	const { siteUrl, domainItem, siteTitle, username, coupon, selectedThemeType } =
 		signupDependencies;
+
+	const { domainCartItem } = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
+		const { getDomainCartItem } = select( ONBOARD_STORE );
+		return {
+			domainCartItem: getDomainCartItem(),
+		};
+	}, [] );
 
 	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 
@@ -371,16 +382,26 @@ function UnifiedPlansStep( {
 			return translate( 'The right plan for the right project' );
 		}
 
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return translate( 'Managed hosting without limits' );
+		} else if ( intent === 'plans-website-builder' ) {
+			return translate( 'Create a beautiful WordPress website' );
+		}
 		return translate( 'There’s a plan for you' );
 	};
 
-	const getSubheaderText = () => {
-		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
-			);
-		}
+	let paidDomainName = domainItem?.meta;
 
+	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
+		paidDomainName = getDomainFromUrl( selectedSite.URL );
+	}
+
+	const deemphasizeFreePlan =
+		( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
+			( paidDomainName != null || isPaidTheme ) ) ||
+		deemphasizeFreePlanFromProps;
+
+	const getSubheaderText = () => {
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -397,8 +418,23 @@ function UnifiedPlansStep( {
 					} )
 				}
 				borderless
+				className="plans-features-main__free-plan-cta"
 			/>
 		);
+
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return null; // Use PlansFeaturesMain subheader for hosting
+		}
+
+		if ( intent === 'plans-website-builder' ) {
+			return null; // Use PlansFeaturesMain subheader for website-builder
+		}
 
 		if ( useEmailOnboardingSubheader ) {
 			return translate(
@@ -464,23 +500,18 @@ function UnifiedPlansStep( {
 
 	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
 
-	let paidDomainName = domainItem?.meta;
-
-	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
-		paidDomainName = getDomainFromUrl( selectedSite.URL );
-	}
-
 	let freeWPComSubdomain: string | undefined;
 	if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 		freeWPComSubdomain = siteUrl;
 	}
 
-	const deemphasizeFreePlan =
-		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
-		deemphasizeFreePlanFromProps;
-
 	const stepContent = (
-		<div>
+		<div
+			className={ clsx( {
+				'step-container-v2__visual-split':
+					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder',
+			} ) }
+		>
 			{ 'invalid' === step?.status && (
 				<div>
 					<Notice status="is-error" showDismiss={ false }>
@@ -494,6 +525,7 @@ function UnifiedPlansStep( {
 				siteTitle={ siteTitle ?? undefined }
 				signupFlowUserName={ username ?? undefined }
 				siteId={ selectedSite?.ID }
+				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup
 				isLaunchPage={ isLaunchPage }
@@ -551,7 +583,19 @@ function UnifiedPlansStep( {
 							}
 						/>
 					}
-					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+					heading={
+						<>
+							{ ( intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting' ) && (
+								<IntentToggle
+									currentIntent={ intent }
+									onIntentChange={ ( newIntent ) => {
+										onIntentChange?.( newIntent );
+									} }
+								/>
+							) }
+							<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
+						</>
+					}
 				>
 					{ stepContent }
 				</Step.WideLayout>

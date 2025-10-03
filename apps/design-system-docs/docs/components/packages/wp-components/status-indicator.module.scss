@@ -1,0 +1,11 @@
+@use '@wordpress/base-styles/variables';
+
+.status-indicator {
+	width: variables.$button-size-compact;
+	aspect-ratio: 1;
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: help;
+}

@@ -12,5 +12,7 @@ export function isUrlLikelyAnImage( uri ) {
 	}
 
 	const withoutQuery = getUrlParts( uri ).pathname;
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ( ext ) => withoutQuery.endsWith( ext ) );
+	return some( [ '.jpg', '.jpeg', '.png', '.gif', '.webp' ], ( ext ) =>
+		withoutQuery.endsWith( ext )
+	);
 }

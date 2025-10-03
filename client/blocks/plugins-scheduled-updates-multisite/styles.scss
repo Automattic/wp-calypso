@@ -10,8 +10,12 @@ $brand-display: "SF Pro Display", sans-serif;
 	}
 
 	@media (max-width: $break-small) {
-		padding-inline: 16px;	
-	}	
+		padding-inline: 16px;
+	}
+
+	body:has(.is-global-sidebar-visible) & {
+		padding-inline: 24px;
+	}
 }
 
 .scheduled-updates-list.main.is-full-width-layout {

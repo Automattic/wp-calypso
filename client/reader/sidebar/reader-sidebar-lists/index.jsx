@@ -46,9 +46,7 @@ export class ReaderSidebarLists extends Component {
 					className={ path.startsWith( '/reader/list' ) && 'sidebar__menu--selected' }
 					expandableIconClick={ onClick }
 				>
-					<li>
-						<ReaderSidebarListsList path={ path } { ...passedProps } />
-					</li>
+					<ReaderSidebarListsList path={ path } { ...passedProps } />
 				</ExpandableSidebarMenu>
 			</li>
 		);

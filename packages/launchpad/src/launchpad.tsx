@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Site,
 	type SiteSelect,
-	sortLaunchpadTasksByCompletionStatus,
+	defaultSuccessCallback,
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -71,7 +71,7 @@ const Launchpad = ( {
 	};
 
 	const launchpadOptions = {
-		onSuccess: sortLaunchpadTasksByCompletionStatus,
+		onSuccess: defaultSuccessCallback,
 	};
 
 	if ( ! launchpadContext ) {

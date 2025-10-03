@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
@@ -45,8 +44,6 @@ export default function DomainContactDetails( {
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
 
-	const isVatSupported = config.isEnabled( 'checkout/vat-form' );
-
 	return (
 		<Fragment>
 			<ManagedContactDetailsFormFields
@@ -91,13 +88,11 @@ export default function DomainContactDetails( {
 					}
 				/>
 			) }
-			{ isVatSupported && (
-				<VatForm
-					section="domain-contact-form"
-					isDisabled={ isDisabled }
-					countryCode={ contactDetails.countryCode }
-				/>
-			) }
+			<VatForm
+				section="domain-contact-form"
+				isDisabled={ isDisabled }
+				countryCode={ contactDetails.countryCode }
+			/>
 		</Fragment>
 	);
 }

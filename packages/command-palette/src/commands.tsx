@@ -676,12 +676,7 @@ export function useCommands() {
 						__i18n_text_domain__
 					),
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/admin.php?page=stats'
-							: '/stats/:site'
-					)( params ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=stats' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open Jetpack Stats', __i18n_text_domain__ ),
 				icon: statsIcon,
@@ -1077,7 +1072,7 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'feedback', 'Keyword for the View form responses command', __i18n_text_domain__ ),
 				].join( KEYWORD_SEPARATOR ),
-				callback: commandNavigation( '/wp-admin/edit.php?post_type=feedback' ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=jetpack-forms-admin' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to view form responses', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_PAGES,

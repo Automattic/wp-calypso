@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteSlug } from 'calypso/types';
 
@@ -11,10 +11,10 @@ export type ScheduleUpdatesCapabilities = {
 export const useUpdateScheduleCapabilitiesQuery = (
 	siteSlug: SiteSlug,
 	isEligibleForFeature: boolean
-): UseQueryResult< ScheduleUpdatesCapabilities > => {
+) => {
 	return useQuery( {
 		queryKey: [ 'schedule-updates-capabilities', siteSlug ],
-		queryFn: () =>
+		queryFn: (): Promise< ScheduleUpdatesCapabilities > =>
 			wpcomRequest( {
 				path: `/sites/${ siteSlug }/update-schedules/capabilities`,
 				apiNamespace: 'wpcom/v2',

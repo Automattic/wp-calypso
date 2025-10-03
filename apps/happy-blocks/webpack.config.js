@@ -1,7 +1,6 @@
 /**
  * WARNING: No ES6 modules here. Not transpiled!
  */
-// eslint-disable-next-line import/no-nodejs-modules
 const { existsSync } = require( 'fs' );
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );

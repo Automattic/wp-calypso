@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
-import { logToLogstash } from 'calypso/lib/logstash';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	isRedirectPaymentMethod,
-} from '../lib/translate-payment-method-names';
+} from '@automattic/wpcom-checkout';
+import { logToLogstash } from 'calypso/lib/logstash';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 

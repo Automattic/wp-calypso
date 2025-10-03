@@ -1,12 +1,14 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 body.is-group-me.is-section-help,
 body.is-section-me {
-	background: var(--studio-gray-0);
+	background: var( --color-main-background );
 
 	&.rtl .layout__content {
-		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;
+		padding: calc( var( --masterbar-height ) + var( --content-padding-top ) )
+			calc( var( --sidebar-width-max ) ) var( --content-padding-bottom ) 16px;
 	}
 
 	.layout__content {
@@ -14,23 +16,28 @@ body.is-section-me {
 		overflow: hidden;
 		min-height: 100vh;
 		padding-bottom: 0;
-		@media only screen and (min-width: 782px) {
-			padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) calc(var(--sidebar-width-max)) !important;
+		@media only screen and ( min-width: 782px ) {
+			padding: calc( var( --masterbar-height ) + var( --content-padding-top ) ) 16px
+				var( --content-padding-bottom ) calc( var( --sidebar-width-max ) ) !important;
 		}
-		@media only screen and (max-width: 600px) {
-			background: var(--studio-white);
+		@media only screen and ( max-width: 600px ) {
+			background: var( --studio-white );
 		}
 		.layout_primary > div {
 			padding-bottom: 0;
 		}
 
 		.layout__primary > .main {
-			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top));
+			height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) );
 		}
 
 		@include break-small {
 			.layout__primary > .main {
-				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
+				height: calc(
+					100vh - var( --masterbar-height ) - var( --content-padding-bottom ) - var(
+							--content-padding-top
+						)
+				);
 			}
 		}
 	}
@@ -47,10 +54,8 @@ body.is-section-me {
 		.layout__primary {
 			.main {
 				padding: 24px;
-				border-block-end: 1px solid var(--studio-gray-0);
-				background: var(--color-surface);
-				border-radius: 8px; /* stylelint-disable-line scales/radii */
-				box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
+				background: var( --color-surface );
+				border-radius: 8px;
 				overflow-y: auto;
 				overflow-x: hidden;
 				max-width: none;
@@ -59,25 +64,31 @@ body.is-section-me {
 					margin-left: auto;
 					margin-right: auto;
 				}
+
+				@include break-small {
+					border: 1px solid $gray-200;
+				}
 			}
 		}
 	}
 
-
-	@media screen and (min-width: 782px) {
+	@media screen and ( min-width: 782px ) {
 		.navigation-header::after {
-			content: "";
+			content: '';
 			display: block;
 			position: relative;
-			left: calc(-1 * (100vw - 100%)/2 - 132px);
+			left: calc( -1 * ( 100vw - 100% ) / 2 - 132px );
 			margin: 24px 0;
 			width: 100vw;
 			height: 1px;
-			background: var(--color-border-secondary);
+			background: var( --color-border-secondary );
 		}
 	}
 
-	@media only screen and (max-width: 600px) {
+	@media only screen and ( max-width: 600px ) {
+		.navigation-header:not( .developer__header ) {
+			padding: 0 0 24px 0;
+		}
 		.navigation-header__main {
 			justify-content: normal;
 			align-items: center;
@@ -87,7 +98,7 @@ body.is-section-me {
 		}
 	}
 
-	@media only screen and (max-width: 781px) {
+	@media only screen and ( max-width: 781px ) {
 		div.layout.is-global-sidebar-visible {
 			.layout__primary {
 				overflow-x: hidden;

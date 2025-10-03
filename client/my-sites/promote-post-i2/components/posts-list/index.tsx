@@ -120,7 +120,6 @@ export default function PostsList( props: Props ) {
 							line={ translate(
 								'You have not published any posts, pages or products yet. Make sure your content is published and come back to promote it.'
 							) }
-							illustration={ null }
 						/>
 					) : (
 						<>{ translate( 'No posts match your search' ) }</>

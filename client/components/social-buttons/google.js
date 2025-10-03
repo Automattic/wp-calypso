@@ -198,9 +198,7 @@ export class GoogleSocialButton extends Component {
 					customButton
 				) : (
 					<Button
-						className={ clsx( 'a8c-components-wp-button social-buttons__button google', {
-							disabled: isDisabled,
-						} ) }
+						className="a8c-components-wp-button social-buttons__button google"
 						onClick={ this.handleClick }
 						data-social-service="google"
 						disabled={ isDisabled }

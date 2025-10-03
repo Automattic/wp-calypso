@@ -3,10 +3,11 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
-	CBLogo,
-	VisaLogo,
-	MastercardLogo,
 	AmexLogo,
+	CBLogo,
+	JcbLogo,
+	MastercardLogo,
+	VisaLogo,
 } from 'calypso/my-sites/checkout/src/components/payment-logos';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
@@ -64,6 +65,7 @@ function CreditCardLogos( { currency }: { currency: string | null } ) {
 	return (
 		<PaymentMethodLogos className="credit-card__logos">
 			{ currency === 'EUR' && <CBLogo className="has-background" /> }
+			{ currency === 'JPY' && <JcbLogo /> }
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />

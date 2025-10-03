@@ -6,6 +6,7 @@ import {
 	getPostCommentsCountAtDate,
 	getInlineCommentsExpandedState,
 } from '../selectors';
+import { isCommentsApiDisabled } from '../selectors/get-comments-api-disabled';
 
 const state = {
 	comments: {
@@ -249,6 +250,42 @@ describe( 'selectors', () => {
 		test( 'returns correct value from larger state object', () => {
 			const res = getInlineCommentsExpandedState( biggerState, streamKey, siteId, postId );
 			expect( res ).toBe( true );
+		} );
+	} );
+
+	describe( '#isCommentsApiDisabled()', () => {
+		test( 'should return true when API is disabled for a site', () => {
+			const testState = {
+				comments: {
+					apiDisabled: {
+						123: true,
+					},
+				},
+			};
+
+			expect( isCommentsApiDisabled( testState, 123 ) ).toBe( true );
+		} );
+
+		test( 'should return false when API is not disabled for a site', () => {
+			const testState = {
+				comments: {
+					apiDisabled: {
+						123: true,
+					},
+				},
+			};
+
+			expect( isCommentsApiDisabled( testState, 456 ) ).toBe( false );
+		} );
+
+		test( 'should return false when apiDisabled state is empty', () => {
+			const testState = {
+				comments: {
+					apiDisabled: {},
+				},
+			};
+
+			expect( isCommentsApiDisabled( testState, 123 ) ).toBe( false );
 		} );
 	} );
 } );

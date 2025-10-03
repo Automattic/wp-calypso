@@ -1,0 +1,174 @@
+/*
+ * Temporary style for the PoC
+ * TODO: Remove this file once the PoC is complete
+*/
+
+.staging-site-card {
+	.card {
+		padding: 24px 22px;
+	}
+	.hidden {
+		display: none;
+	}
+
+	.components-checkbox-control__input[type='checkbox']:disabled:checked {
+		background: #f0f0f0;
+		border-color: #ddd;
+	}
+
+	.components-checkbox-control:has( input[disabled]:checked ) {
+		.components-checkbox-control__checked {
+			fill: #a0a5aa;
+		}
+	}
+
+	.components-select-control__input[disabled] {
+		color: #a0a5aa;
+		background-color: #f7f7f7;
+		border-color: #ddd;
+		opacity: 1;
+	}
+
+	&__back-button.components-button.is-link {
+		color: #000;
+		padding: 12px 0;
+		text-decoration: none;
+		margin: 4px 0;
+
+		svg {
+			margin-right: 2px;
+		}
+	}
+
+	.status-card__header-content {
+		align-items: center;
+		display: flex;
+		// Given the layout is mobile-first, reverse the div arrangement by default
+		flex-direction: column-reverse;
+	}
+
+	.status-card__learn-about {
+		font-size: $font-body-small;
+		font-weight: 400;
+		text-decoration-line: underline;
+	}
+
+	.status-card__learn-about a {
+		color: var( --studio-gray-80 );
+	}
+
+	// We are using the deprecated mixin to match the when the mobile navigation appears
+	// which is at 660px instead of the 600px break-small breakpoint.
+	@include breakpoint-deprecated( '>660px' ) {
+		&__back-button.components-button.is-link {
+			padding: 0 0 12px 0;
+			margin: 0;
+		}
+
+		.status-card__header-content {
+			// Return to the default div arrangement on the desktop
+			flex-direction: row;
+			flex-grow: 1;
+		}
+
+		.status-card__learn-about {
+			margin-left: auto;
+		}
+	}
+
+	&__header {
+		padding-left: 2px;
+		padding-right: 2px;
+
+		&.daily-backup-status {
+			box-shadow: none;
+			margin-bottom: 0;
+		}
+	}
+
+	&__body {
+		overflow-x: auto;
+		overflow-y: autodd;
+		padding-bottom: 14px;
+	}
+
+	.components-checkbox-control {
+		font-size: $font-body-small;
+	}
+
+	.components-input-control__container {
+		margin: 2px;
+	}
+
+	.file-browser-node {
+		margin-top: 2px;
+		margin-left: 3px;
+
+		&.wordpress > .file-card .file-card__actions {
+			margin-top: 0;
+		}
+
+		&__loading {
+			&.placeholder {
+				height: 26px;
+				margin: 6px;
+				width: 280px;
+				@include placeholder();
+			}
+		}
+
+		&.is-root > .file-browser-node__contents {
+			padding-left: 0;
+		}
+
+		.file-browser-node__title {
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		.file-browser-node__separate-expand-button {
+			padding: 6px 0;
+			min-width: 0;
+		}
+
+		.components-button.has-icon.has-text svg {
+			width: 22px;
+			height: 22px;
+			margin-right: 4px;
+			fill: var( --theme-base-color );
+		}
+
+		.components-button {
+			border: 0;
+			font-size: $font-body-small;
+			font-weight: normal;
+			height: 32px;
+			color: var( --theme-base-color );
+		}
+
+		.form-checkbox {
+			margin: 8px;
+			&.mixed {
+				background-color: var( --studio-gray-10 );
+			}
+		}
+	}
+
+	.file-browser-header {
+		padding: 0 2px;
+		border-bottom: 1px solid var( --studio-gray-5 );
+		.file-browser-header__selecting {
+			display: none;
+		}
+	}
+}
+
+.staging-site-card__footer {
+	border-top: 1px solid var( --studio-gray-5 );
+	padding: 16px 32px 16px;
+	background: #fff;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	left: 0;
+}

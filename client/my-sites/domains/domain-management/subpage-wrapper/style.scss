@@ -43,13 +43,13 @@
 		}
 	}
 
-    .email-forwards-add,
-    .edit-contact-info-page {
+	.email-forwards-add,
+	.edit-contact-info-page {
 		.button {
 			padding: 10px 24px;
 			border-radius: 4px;
 		}
-    }
+	}
 
 	.email-forwards-add {
 		.card {
@@ -75,78 +75,78 @@
 			padding: 0;
 		}
 
-        .contact-details-form-fields__submit-button {
-            margin-right: 16px;
-        }
+		.contact-details-form-fields__submit-button {
+			margin-right: 16px;
+		}
 	}
 
-    .dns-records {
-        .card.email-setup,
-        .dns-records-list {
-            border: solid 1px $studio-gray-5;
-            border-radius: 4px;
-            box-shadow: none;
-        }
+	.dns-records {
+		.card.email-setup,
+		.dns-records-list {
+			border: solid 1px $studio-gray-5;
+			border-radius: 4px;
+			box-shadow: none;
+		}
 
-        .dns-records-list {
-            margin-top: 32px;
+		.dns-records-list {
+			margin-top: 32px;
 
-            .dns-records-list-item__wrapper.is-header {
-                border-bottom-color: $studio-gray-10;
-            }
+			.dns-records-list-item__wrapper.is-header {
+				border-bottom-color: $studio-gray-10;
+			}
 
-            .dns-records-list-item__wrapper {
-                padding: 16px 30px 16px 36px;
+			.dns-records-list-item__wrapper {
+				padding: 16px 30px 16px 36px;
 
-                &:last-child {
-                    border-bottom: none;
-                }
-            }
+				&:last-child {
+					border-bottom: none;
+				}
+			}
 
 			.dns-records-list-item .dns-records-list-item__menu {
 				.ellipsis-menu__toggle {
 					right: unset;
 				}
 			}
-        }
+		}
 
-        .button.ellipsis {
-            width: 24px;
-        }
-    }
+		.button.ellipsis {
+			width: 24px;
+		}
+	}
 
-    .domain__main-placeholder {
-        .vertical-nav {
-            background-color: $studio-white;
-            border: solid 1px $studio-gray-5;
-            border-radius: 4px;
-            margin-top: 32px;
-        }
+	.domain__main-placeholder {
+		.vertical-nav {
+			background-color: $studio-white;
+			border: solid 1px $studio-gray-5;
+			border-radius: 4px;
+			margin-top: 32px;
+		}
 
-        .card {
-            background-color: transparent;
-            border-bottom: solid 1px $studio-gray-5;
-            box-shadow: none;
+		.card {
+			background-color: transparent;
+			border-bottom: solid 1px $studio-gray-5;
+			box-shadow: none;
 
-            &:last-child {
-                border-bottom: none;
-            }
-        }
-    }
+			&:last-child {
+				border-bottom: none;
+			}
+		}
+	}
 
-    .domain__main-placeholder,
-    .dns-records,
+	.domain__main-placeholder,
+	.dns-records,
 	.add-dns-record {
-        .navigation-header {
-            border-block-end: none !important;
-            padding-top: 0 !important;
-            padding-bottom: 0;
+		.navigation-header {
+			border-block-end: none !important;
+			padding-top: 0 !important;
+			padding-bottom: 0;
 
-            .navigation-header__main {
-                padding-inline: 0 !important;
-            }
-        }
-    }
+			.navigation-header__main {
+				padding-inline: 0 !important;
+			}
+		}
+	}
 
 	.add-dns-record {
 		grid-gap: 2rem;
@@ -162,23 +162,23 @@
 		}
 	}
 
-    .email-providers-in-depth-comparison__table {
-        border: solid 1px $studio-gray-5;
-        border-radius: 4px;
-        padding: 24px;
+	.email-providers-in-depth-comparison__table {
+		border: solid 1px $studio-gray-5;
+		border-radius: 4px;
+		padding: 24px;
 
-        > table {
-            margin-top: 0;
+		> table {
+			margin-top: 0;
 
-            td {
-                padding-top: 12px;
-            }
-        }
+			td {
+				padding-top: 12px;
+			}
+		}
 
-        @media ( max-width: $break-small ) {
-            padding: 8px;
-        }
-    }
+		@media ( max-width: $break-small ) {
+			padding: 8px;
+		}
+	}
 
 	&.subpage-wrapper--add-mailbox {
 		.card-heading.new-mailbox-list__numbered-heading,
@@ -193,20 +193,20 @@
 			border-radius: 4px;
 		}
 
-        .new-mailbox-list__separator {
-            margin-inline: -24px;
-            background: $studio-gray-5;
-        }
+		.new-mailbox-list__separator {
+			margin-inline: -24px;
+			background: $studio-gray-5;
+		}
 
-        .vertical-nav {
-            .card.is-placeholder:first-child {
-                border-radius: 4px 4px 0 0;
-            }
+		.vertical-nav {
+			.card.is-placeholder:first-child {
+				border-radius: 4px 4px 0 0;
+			}
 
-            .card.is-placeholder:last-child {
-                border-radius: 0 0 4px 4px;
-            }
-        }
+			.card.is-placeholder:last-child {
+				border-radius: 0 0 4px 4px;
+			}
+		}
 	}
 
 	&.subpage-wrapper--transfer-other-site {
@@ -227,51 +227,51 @@
 
 .is-bulk-all-domains-page .layout__content .main,
 .is-domain-in-site-context .layout__content .main {
-    .navigation-header {
-        &__breadcrumb,
-        &__title {
-            border-block-end: none;
-        }
+	.navigation-header {
+		&__breadcrumb,
+		&__title {
+			border-block-end: none;
+		}
 
-        &__breadcrumb {
-            padding-top: 22px;
+		&__breadcrumb {
+			padding-top: 22px;
 
-            @media ( max-width: $break-medium ) {
-                padding-top: 16px;
+			@media ( max-width: $break-medium ) {
+				padding-top: 16px;
 
-                .breadcrumbs li {
-                    &.navigation-header__domain-name {
-                        > a,
-                        > span {
-                            word-break: break-word;
-                            overflow-wrap: break-word;
-                            white-space: normal;
-                        }
-                    }
+				.breadcrumbs li {
+					&.navigation-header__domain-name {
+						> a,
+						> span {
+							word-break: break-word;
+							overflow-wrap: break-word;
+							white-space: normal;
+						}
+					}
 
-                    > .gridicons-chevron-right {
-                        margin: 0 8px;
-                    }
-                }
-            }
-        }
+					> .gridicons-chevron-right {
+						margin: 0 8px;
+					}
+				}
+			}
+		}
 
-        &__title {
-            padding-bottom: 0;
-            padding-top: 32px;
+		&__title {
+			padding-bottom: 0;
+			padding-top: 32px;
 
-            .navigation-header__main {
-                max-width: calc(1040px + 92px) !important;
-                margin: 0 auto;
-            }
+			.navigation-header__main {
+				max-width: calc(1040px + 92px) !important;
+				margin: 0 auto;
+			}
 
-            @media ( max-width: $break-medium ) {
-                padding-top: 24px;
+			@media ( max-width: $break-medium ) {
+				padding-top: 24px;
 
-                .navigation-header__main {
-                    padding-inline: 24px !important;
-                }
-            }
-        }
-    }
+				.navigation-header__main {
+					padding-inline: 24px !important;
+				}
+			}
+		}
+	}
 }

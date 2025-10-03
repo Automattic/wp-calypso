@@ -3,6 +3,7 @@
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
 @import "calypso/my-sites/stats/theme-override-mixin";
+@import "calypso/my-sites/stats/modernized-mixins";
 
 // Odyssey font overrides
 $font-sf-pro-display: "SF Pro Display", $sans;
@@ -28,6 +29,11 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 // App Promo card
 .is-odyssey-stats .app-promo-card__title {
 	font-family: $font-sf-pro-display;
+}
+
+.stats {
+	--color-link: var(--theme-highlight-color);
+	--color-link-dark: var(--color-accent-dark);
 }
 
 // Module container
@@ -90,6 +96,8 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		padding: 0;
 	}
 
+	// TODO: Remove other independent segmented control styles by this mixin.
+	@include segmented-controls;
 }
 
 .list-emails {

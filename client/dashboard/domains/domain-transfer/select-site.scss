@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.domain-transfer-select-site {
+	.dataviews-wrapper {
+		max-height: 430px;
+		overflow: auto;
+
+		@media ( max-width: $break-small ) {
+			max-height: 330px;
+		}
+	}
+}

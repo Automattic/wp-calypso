@@ -39,6 +39,7 @@ const baseProps = {
 	recordClickButtonEvent: jest.fn(),
 	recordAvatarUpdatedEvent: jest.fn(),
 	setCurrentUser: jest.fn(),
+	receiveGravatarDetails: jest.fn(),
 };
 
 const setup = ( overrides = {} ) =>
@@ -73,7 +74,7 @@ describe( 'EditGravatar', () => {
 	} );
 
 	describe( 'actions', () => {
-		test( 'opens quick editor and updates avatar URL', () => {
+		test( 'opens quick editor and updates avatar URL and Gravatar details', () => {
 			setup();
 
 			clickEditAvatarLink();
@@ -84,6 +85,8 @@ describe( 'EditGravatar', () => {
 			expect( baseProps.setCurrentUser ).toHaveBeenCalledWith(
 				expect.objectContaining( { avatar_URL: expect.stringContaining( `ver=${ FIXED_NOW }` ) } )
 			);
+
+			expect( baseProps.receiveGravatarDetails ).toHaveBeenCalledWith( { has_gravatar: true } );
 		} );
 
 		test( 'shows email‑verification dialog', () => {

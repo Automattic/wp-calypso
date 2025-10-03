@@ -22,6 +22,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import {
 	DASHBOARD_SECTION_DEFINITION,
 	DASHBOARD_A4A_SECTION_DEFINITION,
+	DASHBOARD_CIAB_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -93,13 +94,13 @@ function getCurrentCommitShortChecksum() {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
-	const disableHelpCenterAutoOpen = isSupportSession || !! req.cookies.ssp;
+	const isSSP = !! req.cookies.ssp;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
 		isSupportSession,
-		disableHelpCenterAutoOpen,
+		isSSP,
 		isLoggedIn,
 	};
 
@@ -115,12 +116,16 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		request.cookies.sensitive_pixel_option
 	);
 
+	const countryCodeCookie = request.cookies.country_code;
+	const validCountryCodeCookie =
+		countryCodeCookie && countryCodeCookie !== 'unknown' ? countryCodeCookie : undefined;
+
 	const showGdprBanner = shouldSeeCookieBanner(
-		request.cookies.country_code || geoIPCountryCode,
+		validCountryCodeCookie || geoIPCountryCode,
 		trackingPrefs
 	);
 
-	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+	if ( ! validCountryCodeCookie && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
@@ -994,6 +999,9 @@ export default function pages() {
 	// Set up v2-a4a dashboard routing.
 	handleSectionPath( DASHBOARD_A4A_SECTION_DEFINITION, '/v2-a4a', 'entry-dashboard-a4a' );
 
+	// Set up CIAB dashboard routing.
+	handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
@@ -1012,6 +1020,16 @@ export default function pages() {
 		}
 
 		res.redirect( 301, redirectUrl );
+	} );
+
+	// Redirect legacy `/help` routes to `sites?help-center=home` if logged in, otherwise `/support`
+	// Note: isLoggedIn will only work under *.wordpress.com domains (wpcalypso, horizon, and prod)
+	app.get( [ '/me/chat', '/help', '/help/*' ], ( req, res ) => {
+		if ( req.context.isLoggedIn ) {
+			return res.redirect( 301, '/sites?help-center=home' );
+		}
+		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
+		return res.redirect( 301, redirectUrl );
 	} );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers

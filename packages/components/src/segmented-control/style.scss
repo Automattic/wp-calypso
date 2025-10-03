@@ -31,6 +31,15 @@
 	&.is-selected + .segmented-control__item .segmented-control__link {
 		border-left-color: var(--color-neutral-70);
 	}
+
+	&:not(.is-selected) {
+		.segmented-control__link.disabled {
+			cursor: not-allowed;
+			opacity: 0.7;
+			color: var(--color-neutral-30);
+			background-color: var(--color-neutral-0);
+		}
+	}
 }
 
 .segmented-control__link {
@@ -45,7 +54,7 @@
 	text-decoration: none;
 	transition: color 0.1s linear, background-color 0.1s linear;
 
-	.segmented-control__item:not(.is-selected) &:focus {
+	.segmented-control__item:not(.is-selected) &:not(.disabled):focus {
 		color: var(--color-neutral-70);
 		outline: none;
 		background-color: var(--color-neutral-0);

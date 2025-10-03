@@ -2,7 +2,15 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export type StepId = 'reset' | 'content' | 'subscribers' | 'summary';
-export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
+
+/**
+ * @param {'initial'|'skipped'|'importing'|'done'|'expired'|'pending'} status
+ * initial: Default state of the import
+ * expired: Import has been completed and reset
+ * done: Import has been completed but not reset
+ * pending: Subscribers are uploaded and are waiting to be imported
+ */
+export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done' | 'expired' | 'pending';
 
 interface ContentStepContentProgress {
 	completed: number;
@@ -11,6 +19,7 @@ interface ContentStepContentProgress {
 
 // FIXME We're actually not using this data in the importing content step...
 export interface ContentStepContent {
+	importStatus: string;
 	progress: {
 		attachment: ContentStepContentProgress;
 		comment: ContentStepContentProgress;
@@ -76,6 +85,7 @@ export interface Steps {
 }
 
 export interface PaidNewsletterData {
+	import_url: string;
 	current_step: StepId;
 	steps: Steps;
 }
@@ -86,8 +96,15 @@ export const usePaidNewsletterQuery = (
 	engine: string,
 	currentStep: StepId,
 	siteId?: number,
-	autoRefresh?: boolean
+	autoRefresh?: boolean,
+	newsletterLocation?: string
 ) => {
+	const params = {
+		engine: engine,
+		current_step: currentStep,
+		...( newsletterLocation && { newsletter_location: newsletterLocation } ),
+	};
+
 	return useQuery( {
 		enabled: !! siteId,
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -98,10 +115,7 @@ export const usePaidNewsletterQuery = (
 					path: `/sites/${ siteId }/site-importer/paid-newsletter`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{
-					engine: engine,
-					current_step: currentStep,
-				}
+				params
 			);
 		},
 		placeholderData: keepPreviousData,

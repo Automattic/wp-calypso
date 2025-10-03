@@ -5,11 +5,11 @@
 	.dot-pager__page {
 		p,
 		li {
-			@include body-large;
+			@include body-medium;
 		}
 
 		h1 {
-			@include heading-2x-large;
+			@include heading-x-large;
 			margin-bottom: 16px;
 		}
 

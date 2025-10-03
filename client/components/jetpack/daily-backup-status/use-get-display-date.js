@@ -6,6 +6,16 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
+/**
+ * Custom hook that returns a function to format dates with site-specific timezone offset.
+ * The returned function formats dates differently based on whether they occur today,
+ * this year, or in previous years, and can optionally prefix with "Latest:" text.
+ * @param {number|null} [selectedSiteId] - The site ID to use for timezone calculations.
+ *                                              If null, uses the currently selected site.
+ * @returns {Function} A date formatting function that accepts:
+ *                     - dateTime: Date string or moment object to format
+ *                     - withLatest: Boolean to include "Latest:" prefix (default: true)
+ */
 export default function useGetDisplayDate( selectedSiteId = null ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();

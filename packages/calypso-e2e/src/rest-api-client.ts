@@ -278,6 +278,8 @@ export class RestAPIClient {
 			return null;
 		}
 
+		console.log( `Deleting site ${ targetSite.domain }.` );
+
 		const scheme = 'http://';
 		const targetDomain = targetSite.domain.startsWith( scheme )
 			? targetSite.domain.replace( scheme, '' )
@@ -307,11 +309,13 @@ export class RestAPIClient {
 		);
 
 		if ( response.hasOwnProperty( 'error' ) ) {
+			console.warn( `Failed to delete site ID ${ targetSite.domain }` );
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
+		console.log( `Successfully deleted site ID ${ targetSite.domain }` );
 		return response;
 	}
 
@@ -918,6 +922,41 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/shopping-cart/clear` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Clears the shopping cart.
+	 *
+	 * @param {string} siteId Site that has the shopping cart.
+	 * @throws {Error} If the user doesn't have access to the siteId.
+	 * @returns {{success:true}} If the request was successful.
+	 */
+	async clearMyShoppingCart( siteId: number | 'no-site' ): Promise< { success: true } > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				blog_id: siteId === 'no-site' ? 0 : siteId,
+				products: [],
+				temporary: false,
+			} ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/me/shopping-cart/${ siteId }` ),
 			params
 		);
 

@@ -294,7 +294,7 @@ export default function ProductListing( {
 
 			{ featuredProducts.length > 0 && (
 				<ProductListingSection
-					title={ translate( 'Featured Products' ) }
+					title={ translate( 'Featured products' ) }
 					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( featuredProducts, true ) }

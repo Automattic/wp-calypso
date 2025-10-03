@@ -34,7 +34,6 @@ class TagEmptyContent extends Component {
 				title={ this.props.translate( 'No likes yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
-				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -37,10 +37,10 @@ export const HelpCenterArticle = () => {
 				if ( anchorId ) {
 					const element = document.getElementById( anchorId );
 					if ( element ) {
-						element.scrollIntoView();
+						element.scrollIntoView( { behavior: 'instant' } );
 					}
 				}
-			}, 0 );
+			}, 100 );
 		}
 	}, [ postUrl, post ] );
 
@@ -53,14 +53,10 @@ export const HelpCenterArticle = () => {
 				result_url: post.URL,
 				post_id: post.ID,
 				blog_id: post.site_ID,
+				search_query: query,
 			};
 
-			query
-				? recordTracksEvent( 'calypso_helpcenter_search_result_article_viewed', {
-						...tracksData,
-						search_query: query,
-				  } )
-				: recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );
+			recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );
 		}
 	}, [ post, query, sectionName ] );
 

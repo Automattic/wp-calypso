@@ -2,12 +2,17 @@ import { useTranslate } from 'i18n-calypso';
 import SiteSelector from 'calypso/components/site-selector';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
-import { useDispatch } from 'calypso/state';
+import { getLocation } from 'calypso/reader/stats';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 
 const ReaderReblogSelection = ( props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const currentPath = useSelector( getCurrentRoute );
+	const previousPath = useSelector( getPreviousPath );
 
 	const buildQuerystringForPost = ( post, comment ) => {
 		const args = {};
@@ -28,11 +33,14 @@ const ReaderReblogSelection = ( props ) => {
 		// Add 'comment' specificity to stats and tracks names if this is for a comment.
 		stats.recordAction( `share_wordpress${ props.comment ? '_comment' : '' }` );
 		stats.recordGaEvent( `Clicked on Share${ props.comment ? ' Comment' : '' } to WordPress` );
+		const statsLocation = getLocation( currentPath );
+		const pathnameOverride = statsLocation === 'single_post' ? previousPath : undefined;
+
 		dispatch(
 			recordReaderTracksEvent(
 				`calypso_reader_share${ props.comment ? '_comment' : '' }_to_site`,
 				{},
-				{ post: props.post }
+				{ pathnameOverride, post: props.post }
 			)
 		);
 		window.open(

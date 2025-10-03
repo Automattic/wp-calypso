@@ -117,8 +117,8 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 					memo[ site.ID ] = {
 						...site,
 						...memo[ site.ID ],
-						options: { ...site?.options, ...memo[ site.ID ]?.options },
-						capabilities: { ...site?.capabilities, ...memo[ site.ID ]?.capabilities },
+						options: { ...memo[ site.ID ]?.options, ...site?.options },
+						capabilities: { ...memo[ site.ID ]?.capabilities, ...site?.capabilities },
 					};
 					return memo;
 				},

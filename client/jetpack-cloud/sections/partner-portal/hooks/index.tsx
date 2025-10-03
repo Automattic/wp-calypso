@@ -122,31 +122,33 @@ export function useProductDescription( productSlug: string ): {
 
 		switch ( productSlug ) {
 			case 'jetpack-complete':
-				description = translate( 'Includes all Security 1TB and full Jetpack package.' );
+				description = translate(
+					'Includes all Security products (1TB storage) and the full Jetpack suite.'
+				);
 				features.push(
 					translate( 'All Security products' ),
 					translate( '1TB cloud storage' ),
-					translate( 'Full Jetpack package' )
+					translate( 'Full Jetpack suite' )
 				);
 				break;
 			case 'jetpack-security-t1':
 				description = translate(
-					'Includes VaultPress Backup 10GB, Scan Daily and Akismet Anti-spam.'
+					'Includes VaultPress Backup 10GB, Scan Daily, and Akismet Anti-spam.'
 				);
 				features.push(
 					translate( 'VaultPress Backup 10GB' ),
 					translate( 'Scan Daily' ),
-					translate( 'Akismet Anti-spam*' )
+					translate( 'Akismet Anti-spam' )
 				);
 				break;
 			case 'jetpack-security-t2':
 				description = translate(
-					'Includes VaultPress Backup 1TB, Scan Daily and Akismet Anti-spam.'
+					'Includes VaultPress Backup 1TB, Scan Daily, and Akismet Anti-spam.'
 				);
 				features.push(
 					translate( 'VaultPress Backup 1TB' ),
 					translate( 'Scan Daily' ),
-					translate( 'Akismet Anti-spam*' )
+					translate( 'Akismet Anti-spam' )
 				);
 				break;
 			case 'jetpack-growth':
@@ -155,7 +157,7 @@ export function useProductDescription( productSlug: string ): {
 				break;
 			case 'jetpack-starter':
 				description = translate( 'Includes VaultPress Backup 1GB and Akismet Anti-spam.' );
-				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam*' ) );
+				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam' ) );
 				break;
 			case 'jetpack-anti-spam':
 				description = translate( 'Automatically clear spam from your comments and forms.' );
@@ -443,6 +445,44 @@ export function useProductDescription( productSlug: string ): {
 			case 'woocommerce-variation-swatches-and-photos':
 				description = translate(
 					'Show color and image swatches instead of dropdowns for variable products.'
+				);
+				break;
+			case 'woocommerce-afterpay':
+				description = translate(
+					'Afterpay allows customers to purchase products and choose to pay in four installments over six weeks or pay monthly (US only).'
+				);
+				break;
+			case 'woocommerce-square':
+				description = translate(
+					'Accepting payments is easy with Square. Clear rates, fast deposits (1-2 business days). Sell online and in person, and sync all payments, items and inventory.'
+				);
+				break;
+			case 'woocommerce-affirm':
+				description = translate(
+					'Buy now, pay later for your business—but smarter. Increase conversions and AOV by offering shoppers flexible payment plans from Affirm.'
+				);
+				break;
+			case 'woocommerce-mollie':
+				description = translate(
+					'Offer global and local payment methods and get onboarded in minutes, with support in your language.'
+				);
+				break;
+			case 'woocommerce-stripe':
+				description = translate( 'Maximize revenue with the new checkout from Stripe.' );
+				break;
+			case 'woocommerce-klarna':
+				description = translate(
+					'Grow your business with increased sales and an enhanced shopping experience — at no extra cost.'
+				);
+				break;
+			case 'woocommerce-paypal':
+				description = translate(
+					'PayPal’s brand recognition helps give customers the confidence to buy. PayPal’s all-in-one checkout solution allows you to offer PayPal, Venmo (US), Pay Later, credit and debit cards, country-specific payment options and more.'
+				);
+				break;
+			case 'woocommerce-klaviyo':
+				description = translate(
+					'As Woo’s preferred marketing automation platform, Klaviyo unifies email and SMS marketing, customer analytics, and product reviews to help your brand achieve better marketing ROI.'
 				);
 				break;
 			case 'jetpack-stats':

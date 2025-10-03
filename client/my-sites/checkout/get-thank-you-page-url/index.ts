@@ -78,6 +78,7 @@ const allowedExternalSites = [
 
 export interface PostCheckoutUrlArguments {
 	siteSlug?: string;
+	siteId?: number;
 	adminUrl?: string;
 	redirectTo?: string;
 	receiptId?: number | string;
@@ -86,6 +87,7 @@ export interface PostCheckoutUrlArguments {
 	feature?: string;
 	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
+	isGravatarDomain?: boolean;
 	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
@@ -123,6 +125,7 @@ export interface PostCheckoutUrlArguments {
  */
 export default function getThankYouPageUrl( {
 	siteSlug,
+	siteId,
 	adminUrl,
 	redirectTo,
 	receiptId,
@@ -132,6 +135,7 @@ export default function getThankYouPageUrl( {
 	cart,
 	sitelessCheckoutType,
 	isJetpackNotAtomic,
+	isGravatarDomain,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
@@ -305,6 +309,26 @@ export default function getThankYouPageUrl( {
 		return redirectTo || '/client/subscriptions';
 	}
 
+	// Unified affiliate + paid media siteless checkout - handles post-checkout site creation flow
+	if ( sitelessCheckoutType === 'unified' ) {
+		// If there is an ecommerce plan in cart, redirect to checkout thank you page
+		if ( cart && hasEcommercePlan( cart ) ) {
+			debug( 'redirecting to Commerce thank you' );
+			return `/checkout/thank-you/${ siteId }/${ receiptIdOrPlaceholder }`;
+		}
+
+		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
+		const urlFromCookie = getUrlFromCookie();
+
+		if (
+			urlFromCookie &&
+			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
+		) {
+			debug( 'redirecting to the saved post-checkout destination' );
+			return addQueryArgs( { siteId }, urlFromCookie );
+		}
+	}
+
 	// If there is no purchase, then send the user to a generic page (not
 	// post-purchase related).
 	if ( noPurchaseMade ) {
@@ -369,8 +393,14 @@ export default function getThankYouPageUrl( {
 		! urlFromCookie.includes( '/start/setup-site' )
 	) {
 		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+		let newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
+
+		if ( isGravatarDomain ) {
+			newBlogReceiptUrl = addGravatarDomainQueryParam( newBlogReceiptUrl );
+			debug( 'adding Gravatar domain query param to new blog receipt URL', newBlogReceiptUrl );
+		}
+
 		return newBlogReceiptUrl;
 	}
 
@@ -407,7 +437,7 @@ export default function getThankYouPageUrl( {
 		return getUrlWithQueryParam( urlFromCookie, noticeType );
 	}
 
-	const fallbackUrl = getFallbackDestination( {
+	let fallbackUrl = getFallbackDestination( {
 		receiptIdOrPlaceholder,
 		siteSlug,
 		adminUrl,
@@ -419,6 +449,12 @@ export default function getThankYouPageUrl( {
 		redirectTo,
 	} );
 	debug( 'returning fallback url', fallbackUrl );
+
+	if ( isGravatarDomain ) {
+		fallbackUrl = addGravatarDomainQueryParam( fallbackUrl );
+		debug( 'adding Gravatar domain query param to fallback URL', fallbackUrl );
+	}
+
 	return getUrlWithQueryParam( fallbackUrl );
 }
 
@@ -545,7 +581,7 @@ function getFallbackDestination( {
 	if ( isJetpackNotAtomic && purchasedProduct ) {
 		debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
-		const adminPath = redirectTo || adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+		const adminPath = redirectTo || adminPageRedirect || 'admin.php?page=my-jetpack';
 
 		// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 		// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
@@ -821,4 +857,8 @@ function doesCartContainGoogleAppsWithoutDomainReceipt( cart: ResponseCart ): bo
 		return true;
 	}
 	return false;
+}
+
+function addGravatarDomainQueryParam( url: string ): string {
+	return addQueryArgs( { isGravatarDomain: '1' }, url );
 }

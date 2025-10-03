@@ -7,10 +7,16 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
+import {
+	isCreditCard,
+	type StoredPaymentMethodCard,
+	ManagedContactDetails,
+	ManagedValue,
+	VatDetails,
+} from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -27,7 +33,6 @@ import Content from './content';
 import Placeholder from './placeholder';
 import { useSubmitTransaction } from './use-submit-transaction';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
-import type { ManagedContactDetails, ManagedValue, VatDetails } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/types/payment-processors';
 import type { SiteSlug } from 'calypso/types';
 import './style.scss';
@@ -288,7 +293,7 @@ function EnsureSelectedSite( { siteSlug, children }: PropsWithChildren< { siteSl
 	return hasSelectedSiteId ? children : null;
 }
 
-export default function ( props: PurchaseModalProps ) {
+export default function PurchaseModalWrapped( props: PurchaseModalProps ) {
 	return (
 		<EnsureSelectedSite siteSlug={ props.siteSlug }>
 			<PurchaseModalWrapper { ...props } />

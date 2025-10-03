@@ -19,6 +19,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useDispatch, useSelector } from 'calypso/state';
+import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import { rewindClone, rewindStagingClone } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
@@ -189,6 +190,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		setShowCredentialForm( true );
 		setIsCloneToStaging( false );
 		dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_new_destination' ) );
+		dispatch( { type: JETPACK_CREDENTIALS_UPDATE_RESET, siteId } );
 	}
 
 	function onSearchChange( newValue: string, isNavigating: boolean ) {

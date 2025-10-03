@@ -16,7 +16,16 @@ export const SOCIAL_PRODUCT_SLUGS = [ 'jetpack-social' ];
 
 export const GROWTH_PRODUCT_SLUGS = [ 'jetpack-creator', 'jetpack-ai', 'jetpack-stats' ];
 
-export const PAYMENTS_PRODUCT_SLUGS = [ 'woocommerce-woopayments' ];
+export const PAYMENTS_PRODUCT_SLUGS = [
+	'woocommerce-woopayments',
+	'woocommerce-afterpay',
+	'woocommerce-square',
+	'woocommerce-affirm',
+	'woocommerce-mollie',
+	'woocommerce-stripe',
+	'woocommerce-klarna',
+	'woocommerce-paypal',
+];
 
 export const SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS = [
 	'woocommerce-advanced-notifications',
@@ -39,6 +48,7 @@ export const CONVERSION_PRODUCT_SLUGS = [
 	'woocommerce-points-and-rewards',
 	'woocommerce-product-add-ons',
 	'woocommerce-product-bundles',
+	'woocommerce-klaviyo',
 ];
 
 export const CUSTOMER_SERVICE_PRODUCT_SLUGS = [

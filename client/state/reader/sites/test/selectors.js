@@ -119,5 +119,122 @@ describe( 'selectors', () => {
 				)
 			).toBe( true );
 		} );
+
+		test( 'should return true if the site is loaded and recent but needs follows sync', () => {
+			expect(
+				shouldSiteBeFetched(
+					{
+						reader: {
+							sites: {
+								queuedRequests: {},
+								items: {
+									1: {
+										ID: 1,
+										feed_URL: 'https://example.com/feed',
+										is_following: true,
+									},
+								},
+								lastFetched: {
+									1: Date.now(),
+								},
+							},
+							follows: {
+								items: {},
+							},
+						},
+					},
+					1
+				)
+			).toBe( true );
+		} );
+
+		test( 'should return false if the site is loaded, recent, and already synced with follows', () => {
+			expect(
+				shouldSiteBeFetched(
+					{
+						reader: {
+							sites: {
+								queuedRequests: {},
+								items: {
+									1: {
+										ID: 1,
+										feed_URL: 'https://example.com/feed',
+										is_following: true,
+									},
+								},
+								lastFetched: {
+									1: Date.now(),
+								},
+							},
+							follows: {
+								items: {
+									'example.com/feed': {
+										feed_URL: 'https://example.com/feed',
+										blog_ID: 1,
+										is_following: true,
+									},
+								},
+							},
+						},
+					},
+					1
+				)
+			).toBe( false );
+		} );
+
+		test( 'should return false if the site is not following', () => {
+			expect(
+				shouldSiteBeFetched(
+					{
+						reader: {
+							sites: {
+								queuedRequests: {},
+								items: {
+									1: {
+										ID: 1,
+										feed_URL: 'https://example.com/feed',
+										is_following: false,
+									},
+								},
+								lastFetched: {
+									1: Date.now(),
+								},
+							},
+							follows: {
+								items: {},
+							},
+						},
+					},
+					1
+				)
+			).toBe( false );
+		} );
+
+		test( 'should return false if the site has no feed_URL', () => {
+			expect(
+				shouldSiteBeFetched(
+					{
+						reader: {
+							sites: {
+								queuedRequests: {},
+								items: {
+									1: {
+										ID: 1,
+										is_following: true,
+									},
+								},
+								lastFetched: {
+									1: Date.now(),
+								},
+							},
+							follows: {
+								items: {},
+							},
+						},
+					},
+					1
+				)
+			).toBe( false );
+		} );
 	} );
 } );

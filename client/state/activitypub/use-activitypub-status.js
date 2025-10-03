@@ -6,14 +6,14 @@ export const useActivityPubStatus = ( blogId, onUpdate = () => {} ) => {
 	const apiNamespace = 'wpcom/v2';
 	const queryKey = [ path, apiNamespace ];
 
-	const { data, isInitialLoading, isError } = useQuery( {
+	const { data, isLoading, isError } = useQuery( {
 		queryKey,
 		staleTime: 0, // refetches are important here, lots of stuff in play while doing upgrades, activation, etc
 		gcTime: 5 * 60 * 1000, // 5 mins
 		queryFn: () => wpcom.req.get( { path, apiNamespace } ),
 	} );
 	const queryClient = useQueryClient();
-	const { mutate, isLoading } = useMutation( {
+	const { mutate, isPending } = useMutation( {
 		mutationFn: ( enabled ) => wpcom.req.post( { path, apiNamespace }, { enabled } ),
 		onSuccess: ( responseData ) => {
 			queryClient.setQueryData( queryKey, responseData );
@@ -24,7 +24,7 @@ export const useActivityPubStatus = ( blogId, onUpdate = () => {} ) => {
 	return {
 		isEnabled: !! data?.enabled,
 		setEnabled: mutate,
-		isLoading: isInitialLoading || isLoading,
+		isLoading: isLoading || isPending,
 		isError,
 		data,
 	};

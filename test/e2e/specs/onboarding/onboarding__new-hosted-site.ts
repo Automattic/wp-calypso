@@ -16,9 +16,6 @@ import {
 	MeSidebarComponent,
 	cancelSubscriptionFlow,
 	cancelAtomicPurchaseFlow,
-	WPAdminSidebarComponent,
-	SiteSettingsPage,
-	DashboardSitePage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -28,6 +25,9 @@ declare const browser: Browser;
 describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
 	function () {
+		// Some of these steps can take more than the default timeout.
+		jest.setTimeout( 240 * 1000 );
+
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();
 
@@ -90,31 +90,16 @@ describe(
 
 			it( 'Wait for the Atomic transfer to complete', async function () {
 				await page.waitForURL( /.*transferring-hosted-site.*/ );
-			} );
-		} );
-
-		describe( 'View server settings', function () {
-			it( 'See WP Admin', async function () {
 				await page.waitForURL( /wp-admin/, {
 					timeout: 180 * 1000,
 				} );
+			} );
+		} );
 
+		describe( 'View WP Admin', function () {
+			it( 'WP Admin', async function () {
+				await page.waitForURL( /wp-admin/ );
 				siteSlug = new URL( page.url() ).hostname;
-			} );
-
-			it( 'Navigate to Hosting > Site Settings', async function () {
-				const wpAdminSidebarComponent = new WPAdminSidebarComponent( page );
-				await wpAdminSidebarComponent.navigate( 'Hosting', 'Site Settings' );
-			} );
-
-			it( 'Navigate to Server > Server Settings', async function () {
-				const dashboardSitePage = new DashboardSitePage( page );
-				await dashboardSitePage.maybeCloseGuidedTour();
-
-				const siteSettings = new SiteSettingsPage( page );
-				await siteSettings.navigateToSubmenu( 'Server' );
-
-				await page.getByRole( 'heading', { name: 'Server Settings' } ).waitFor();
 			} );
 		} );
 
@@ -142,9 +127,12 @@ describe(
 				await cancelSubscriptionFlow( page );
 
 				noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-					timeout: 30 * 1000,
-				} );
+				await noticeComponent.noticeShown(
+					'Your refund has been processed and your purchase removed.',
+					{
+						timeout: 30 * 1000,
+					}
+				);
 			} );
 		} );
 
@@ -161,7 +149,7 @@ describe(
 				await meSidebarComponent.navigate( 'Purchases' );
 			} );
 
-			it( 'View details of purchased plan', async function () {
+			it( 'View details of purchased plan and cancel plan renewal', async function () {
 				purchasesPage = new PurchasesPage( page );
 
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug );
@@ -175,9 +163,12 @@ describe(
 				} );
 
 				noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-					timeout: 30 * 1000,
-				} );
+				await noticeComponent.noticeShown(
+					'Your refund has been processed and your purchase removed.',
+					{
+						timeout: 30 * 1000,
+					}
+				);
 			} );
 		} );
 

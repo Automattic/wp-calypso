@@ -1,6 +1,7 @@
 import { PLAN_PERSONAL, getPlan, isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { getTld } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
@@ -31,7 +32,6 @@ import {
 	getDomainProductSlug,
 	getDomainTransferSalePrice,
 	getFixedDomainSearch,
-	getTld,
 	startInboundTransfer,
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';

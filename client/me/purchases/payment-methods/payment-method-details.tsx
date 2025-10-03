@@ -1,12 +1,9 @@
 import { Gridicon } from '@automattic/components';
+import { getPaymentMethodImageURL, PaymentMethodSummary } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import {
-	getPaymentMethodImageURL,
-	PaymentMethodSummary,
-} from 'calypso/lib/checkout/payment-methods';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 

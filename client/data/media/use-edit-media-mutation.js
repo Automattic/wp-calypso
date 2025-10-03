@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { createTransientMedia } from 'calypso/lib/media/utils';
 import wp from 'calypso/lib/wp';
 import { editMediaItem, receiveMedia } from 'calypso/state/media/actions';
-import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
@@ -69,7 +68,6 @@ export const withEditMedia = createHigherOrderComponent(
 			},
 			onSuccess( media, { siteId } ) {
 				dispatch( receiveMedia( siteId, media ) );
-				dispatch( gutenframeUpdateImageBlocks( media, 'updated' ) );
 			},
 			onError( error, { siteId, originalMediaItem } ) {
 				dispatch( receiveMedia( siteId, originalMediaItem ) );

@@ -15,7 +15,7 @@ describe( 'usePatternCategories', () => {
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockReset();
+		jest.mocked( wpcom.req.get ).mockReset();
 
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -29,7 +29,7 @@ describe( 'usePatternCategories', () => {
 	} );
 
 	test( 'calls the API endpoint with the right parameters', async () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( [] );
+		jest.mocked( wpcom.req.get ).mockResolvedValue( [] );
 
 		const { result } = renderHook( () => usePatternCategories( 'fr' ), { wrapper } );
 
@@ -48,9 +48,7 @@ describe( 'usePatternCategories', () => {
 			},
 		];
 
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue(
-			categories
-		);
+		jest.mocked( wpcom.req.get ).mockResolvedValue( categories );
 
 		const { result } = renderHook( () => usePatternCategories( 'fr' ), { wrapper } );
 

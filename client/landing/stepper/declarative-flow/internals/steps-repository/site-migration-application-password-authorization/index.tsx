@@ -1,16 +1,12 @@
-import { Step, StepContainer } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
 import Authorization from './components/authorization';
@@ -23,7 +19,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
 		authorizationUrl?: string;
 	};
-} > = function ( { navigation, flow } ) {
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
@@ -41,13 +37,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		isError: isStoreApplicationPasswordError,
 		isPending: isStoreApplicationPasswordPending,
 	} = useStoreApplicationPassword( siteSlug as string );
-	const hasStoreApplicationPasswordResponse =
-		isStoreApplicationPasswordSuccess || isStoreApplicationPasswordError;
 	const isLoading =
 		isAuthorizationSuccessful &&
-		( ! hasStoreApplicationPasswordResponse || isStoreApplicationPasswordPending );
-
-	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
+		( isStoreApplicationPasswordSuccess || isStoreApplicationPasswordPending );
 
 	useEffect( () => {
 		if ( ! isAuthorizationSuccessful || ! siteSlug ) {
@@ -119,68 +111,35 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		}
 	);
 
-	const formattedHeader = ! isLoading ? (
-		<FormattedHeader
-			id="site-migration-credentials-header"
-			headerText={ translate( 'Get ready for blazing fast speeds' ) }
-			subHeaderText={ subHeaderText }
-			align="center"
-		/>
-	) : undefined;
-
-	const stepContent = ! isLoading ? (
+	const stepContent = (
 		<Authorization
 			onAuthorizationClick={ startAuthorization }
 			onShareCredentialsClick={ navigateToFallbackCredentials }
 		/>
-	) : (
-		<div data-testid="loading-ellipsis">
-			<LoadingEllipsis />
-		</div>
 	);
 
-	if ( isUsingStepContainerV2 ) {
-		return (
-			<>
-				<DocumentHead title={ title } />
-				<Step.CenteredColumnLayout
-					columnWidth={ 5 }
-					topBar={
-						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
-					}
-					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
-					className="site-migration-application-password-authorization-v2"
-				>
-					{ notice }
-					{ stepContent }
-				</Step.CenteredColumnLayout>
-			</>
-		);
+	if ( isLoading ) {
+		return <Step.Loading title={ title } delay={ 500 } />;
 	}
 
 	return (
 		<>
 			<DocumentHead title={ title } />
-			<StepContainer
-				stepName="site-migration-application-password-authorization"
-				flowName="site-migration"
-				goBack={ navigation?.goBack }
-				notice={ notice }
-				formattedHeader={ formattedHeader }
-				stepContent={
-					! isLoading ? (
-						<Authorization
-							onAuthorizationClick={ startAuthorization }
-							onShareCredentialsClick={ navigateToFallbackCredentials }
-						/>
-					) : (
-						<div data-testid="loading-ellipsis">
-							<LoadingEllipsis />
-						</div>
-					)
+			<Step.CenteredColumnLayout
+				columnWidth={ 5 }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
 				}
-				recordTracksEvent={ recordTracksEvent }
-			/>
+				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
+				className="site-migration-application-password-authorization-v2"
+			>
+				{ notice }
+				{ stepContent }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

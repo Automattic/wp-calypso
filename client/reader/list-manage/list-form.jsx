@@ -71,7 +71,7 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {
 	return (
 		<Card>
 			<FormFieldset>
-				<FormLabel htmlFor="list-name">{ translate( 'Name (Required)' ) }</FormLabel>
+				<FormLabel htmlFor="list-name">{ translate( 'Name (required)' ) }</FormLabel>
 				<FormTextInput
 					data-key="title"
 					id="list-name"

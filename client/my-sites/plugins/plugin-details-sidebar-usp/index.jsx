@@ -1,15 +1,25 @@
-import { FoldableCard, ExternalLink } from '@automattic/components';
+import { FoldableCard, ExternalLink as ExternalLinkComponent } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+
+const PLUGIN_DETAILS_LINK_TYPES = {
+	NEW_TAB: 'NewTab',
+	HELP_CENTER: 'HelpCenter',
+};
 
 const Container = styled( FoldableCard )`
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	width: 100%;
-	margin-bottom: 0;
-	box-shadow: none;
+	&& {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 100%;
+		margin-bottom: 0;
+		box-shadow: none;
+	}
+
 	${ ( props ) => props.showAsAccordion && 'border-bottom: 1px solid #eeeeee' };
 	${ ( props ) => props.showAsAccordion && 'border-top: 1px solid var( --studio-gray-5)' };
 	${ ( props ) => props.showAsAccordion && props.first && 'border-top: 0' };
@@ -26,7 +36,7 @@ const Container = styled( FoldableCard )`
 	&&.is-expanded .foldable-card__content {
 		${ ( props ) => props.first && 'border-top: 0' };
 		${ ( props ) => props.showAsAccordion && 'border: 0' };
-		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };
+		padding: ${ ( props ) => ( props.first ? '0 0 24px' : '24px 0' ) };
 		${ ( props ) => props.showAsAccordion && 'padding: 0' };
 	}
 
@@ -49,16 +59,30 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-size: 14px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 8px;' };
+	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 12px;' };
 `;
 const Description = styled.div`
 	color: var( --studio-gray-80 );
-	margin-bottom: 12px;
+	font-size: 14px;
+	${ ( props ) => props.showAsAccordion && 'margin-bottom: 12px;' };
+`;
+
+const linkStyles = css`
+	display: inline-block;
+	margin-top: 6px;
 	font-size: 14px;
 `;
 
-const Link = styled( ExternalLink )`
-	font-size: 14px;
+const ExternalLink = styled( ExternalLinkComponent )`
+	${ linkStyles }
+`;
+
+const Link = styled.a`
+	${ linkStyles }
+`;
+
+const StyledInlineSupportLink = styled( InlineSupportLink )`
+	${ linkStyles }
 `;
 
 const PluginDetailsSidebarUSP = ( {
@@ -93,14 +117,23 @@ const PluginDetailsSidebarUSP = ( {
 			first={ first }
 		>
 			{ ! isNarrow && <Header /> }
-			<Description>{ description }</Description>
+			<Description showAsAccordion={ isNarrow }>{ description }</Description>
 			{ links &&
 				links.map( ( link, idx ) => {
+					const { openIn, label, ...linkProps } = link;
+					let LinkComponent;
+					if ( openIn === PLUGIN_DETAILS_LINK_TYPES.NEW_TAB ) {
+						LinkComponent = ExternalLink;
+						linkProps.icon = true;
+					} else if ( openIn === PLUGIN_DETAILS_LINK_TYPES.HELP_CENTER ) {
+						LinkComponent = StyledInlineSupportLink;
+					} else {
+						LinkComponent = Link;
+					}
+
 					return (
 						<Fragment key={ idx }>
-							<Link icon href={ link.href } onClick={ link.onClick }>
-								{ link.label }
-							</Link>
+							<LinkComponent { ...linkProps }>{ label }</LinkComponent>
 							<br />
 						</Fragment>
 					);
@@ -109,4 +142,5 @@ const PluginDetailsSidebarUSP = ( {
 	);
 };
 
+export { PLUGIN_DETAILS_LINK_TYPES };
 export default PluginDetailsSidebarUSP;

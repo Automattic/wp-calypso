@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
-import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { AddTagForm } from './add-tags-form';
 import ReaderSidebarTagsList from './list';
 
 export class ReaderSidebarTags extends Component {
@@ -59,7 +59,7 @@ export class ReaderSidebarTags extends Component {
 		const { tags, isOpen, translate, onClick, path } = this.props;
 
 		return (
-			<li>
+			<li className="sidebar-streams__tags">
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
@@ -71,14 +71,9 @@ export class ReaderSidebarTags extends Component {
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
-
-					<FormTextInputWithAction
-						className="reader-sidebar-tags__text-input"
-						key={ this.state.addTagCounter }
-						action={ translate( 'Add' ) }
-						placeholder={ translate( 'Add a tag' ) }
-						onAction={ this.followTag }
-					/>
+					<li className="sidebar-menu__item add-tag-form">
+						<AddTagForm onAction={ this.followTag } />
+					</li>
 				</ExpandableSidebarMenu>
 			</li>
 		);

@@ -27,6 +27,7 @@ export type DomainPlanDialogProps = {
 	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
+	isDomainTransfer?: boolean;
 };
 
 type ModalContainerProps = {
@@ -62,9 +63,9 @@ export default function PlanUpsellModal( props: ModalContainerProps ) {
 
 	const modalWidth = () => {
 		switch ( modalType ) {
-			case FREE_PLAN_PAID_DOMAIN_DIALOG:
 			case FREE_PLAN_FREE_DOMAIN_DIALOG:
 				return '605px';
+			case FREE_PLAN_PAID_DOMAIN_DIALOG:
 			case PAID_PLAN_PAID_DOMAIN_DIALOG:
 			case PAID_PLAN_IS_REQUIRED_DIALOG:
 			default:

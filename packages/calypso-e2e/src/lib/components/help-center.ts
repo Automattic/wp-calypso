@@ -1,4 +1,3 @@
-import { ZENDESK_STAGING_SUPPORT_CHAT_KEY } from '@automattic/zendesk-client/src/constants';
 import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';
@@ -86,11 +85,16 @@ export class HelpCenterComponent {
 	 * @returns {Promise<void>}
 	 */
 	async minimizePopover(): Promise< void > {
-		const minimizeButton = await this.popup.getByRole( 'button', {
-			name: 'Minimize Help Center',
+		const menuButton = await this.popup.getByRole( 'button', {
+			name: 'Help Center Options',
 			exact: true,
 		} );
 
+		await menuButton.click();
+		const minimizeButton = await this.page.getByRole( 'menuitem', {
+			name: 'Minimize',
+			exact: true,
+		} );
 		await minimizeButton.click();
 		await this.popup.locator( '.help-center__container-content' ).waitFor( { state: 'hidden' } );
 	}
@@ -101,9 +105,8 @@ export class HelpCenterComponent {
 	 * @returns {Promise<void>}
 	 */
 	async maximizePopover(): Promise< void > {
-		const maximizeButton = await this.popup.getByRole( 'button', {
+		const maximizeButton = await this.page.getByRole( 'button', {
 			name: 'Maximize Help Center',
-			exact: true,
 		} );
 
 		await maximizeButton.click();
@@ -140,14 +143,12 @@ export class HelpCenterComponent {
 	}
 
 	/**
-	 * Get the articles locator.
+	 * Get the article's locator.
 	 *
 	 * @returns {Locator} The articles locator.
 	 */
 	getArticles(): Locator {
-		return this.popup
-			.getByRole( 'list', { name: 'Recommended Resources' } )
-			.getByRole( 'listitem' );
+		return this.popup.getByRole( 'list', { name: 'Recommended guides' } ).getByRole( 'listitem' );
 	}
 
 	/**
@@ -178,7 +179,7 @@ export class HelpCenterComponent {
 				},
 				{ timeout: 15 * 1000 }
 			),
-			this.popup.getByPlaceholder( 'Search for help' ).fill( query ),
+			this.popup.getByPlaceholder( 'Search guides…' ).fill( query ),
 		] );
 
 		await this.popup.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
@@ -229,7 +230,8 @@ export class HelpCenterComponent {
 				}
 			},
 			{
-				ZENDESK_STAGING_SUPPORT_CHAT_KEY,
+				// This should be imported from `@automattic/zendesk-client` but the import has problems with the `@automattic/calypso-config` dependency.
+				ZENDESK_STAGING_SUPPORT_CHAT_KEY: '715f17a8-4a28-4a7f-8447-0ef8f06c70d7',
 			}
 		);
 	}

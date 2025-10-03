@@ -131,6 +131,7 @@ export default function useGenerateActionHook( {
 					callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
 					status: 'enabled',
 					text: translate( 'Learn more' ),
+					ariaLabel: translate( 'Learn more about Enterprise plan' ),
 				},
 			};
 		}
@@ -276,10 +277,15 @@ function getSignupAction( {
 	eligibleForFreeHostingTrial: boolean;
 	plansIntent?: PlansIntent | null;
 } & UseActionHookProps ): GridAction {
-	const createSignupAction = ( text: TranslateResult, postButtonText?: TranslateResult ) => ( {
+	const createSignupAction = (
+		text: TranslateResult,
+		postButtonText?: TranslateResult,
+		ariaLabel?: TranslateResult
+	) => ( {
 		primary: {
 			callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
 			text,
+			ariaLabel,
 		},
 		postButtonText,
 	} );
@@ -316,7 +322,16 @@ function getSignupAction( {
 						},
 						comment:
 							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium ⋅ $10',
-				  } )
+				  } ),
+			undefined,
+			translate( 'Get %(plan)s plan %(priceString)s', {
+				args: {
+					plan: planTitle ?? '',
+					priceString: priceString ?? '',
+				},
+				comment:
+					'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium $10',
+			} )
 		);
 	}
 
@@ -332,12 +347,23 @@ function getSignupAction( {
 					plan: planTitle ?? '',
 				},
 			} ),
-			translate( "You've already used your free trial! Thanks!" )
+			translate( "You've already used your free trial! Thanks!" ),
+			translate( 'Get %(plan)s plan', {
+				args: {
+					plan: planTitle ?? '',
+				},
+			} )
 		);
 	}
 
 	return createSignupAction(
 		translate( 'Get %(plan)s', {
+			args: {
+				plan: planTitle ?? '',
+			},
+		} ),
+		undefined,
+		translate( 'Get %(plan)s plan', {
 			args: {
 				plan: planTitle ?? '',
 			},
@@ -383,7 +409,8 @@ function getLoggedInPlansAction( {
 
 	const createLoggedInPlansAction = (
 		text: TranslateResult,
-		variant: GridAction[ 'primary' ][ 'variant' ] = 'primary'
+		variant: GridAction[ 'primary' ][ 'variant' ] = 'primary',
+		ariaLabel?: TranslateResult
 	) => ( {
 		primary: {
 			callback: async () => {
@@ -403,6 +430,7 @@ function getLoggedInPlansAction( {
 			},
 			status: ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ],
 			text,
+			ariaLabel,
 			variant,
 		},
 	} );
@@ -481,7 +509,15 @@ function getLoggedInPlansAction( {
 						args: { priceString: priceString ?? '' },
 						comment:
 							'%(priceString)s is the full price including the currency. Eg: Get Upgrade ⋅ $10',
-				  } )
+				  } ),
+			'primary',
+			translate( 'Upgrade to %(plan)s plan, %(priceString)s', {
+				context: 'verb',
+				args: {
+					plan: planTitle ?? '',
+					priceString: priceString ?? '',
+				},
+			} )
 		);
 	}
 
@@ -514,6 +550,13 @@ function getLoggedInPlansAction( {
 	if ( isBusinessTrial( sitePlanSlug || '' ) ) {
 		return createLoggedInPlansAction(
 			translate( 'Get %(plan)s', {
+				textOnly: true,
+				args: {
+					plan: getPlan( planSlug )?.getTitle() || '',
+				},
+			} ),
+			'primary',
+			translate( 'Get %(plan)s plan', {
 				textOnly: true,
 				args: {
 					plan: getPlan( planSlug )?.getTitle() || '',

@@ -158,6 +158,17 @@ export async function recordOrder(
 		window.lintrk( 'track', params );
 	}
 
+	if ( mayWeTrackByTracker( 'linkedin' ) && wpcomJetpackCartInfo.containsWpcomProducts ) {
+		const params = {
+			conversion_id: 19839620,
+			conversion_value: usdTotalCost,
+			conversion_currency: 'USD',
+		};
+
+		debug( 'recordOrder: [LinkedIn]', params );
+		window.lintrk( 'track', params );
+	}
+
 	if ( mayWeTrackByTracker( 'twitter' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
 		const params = [ 'event', 'tw-odlje-oekzo', { value: wpcomJetpackCartInfo.jetpackCostUSD } ];
 		debug( 'recordOrder: [Twitter]', params );

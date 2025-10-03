@@ -544,10 +544,6 @@ export interface ResponseCartProduct {
 	/**
 	 * A unique ID for this cart item that can be used to refer to it in
 	 * certain cart actions.
-	 *
-	 * IMPORTANT: this does not persist between different fetches of the
-	 * shopping cart! It is only valid for the current instance of the
-	 * `ResponseCart`.
 	 */
 	uuid: string;
 
@@ -558,6 +554,10 @@ export interface ResponseCartProduct {
 
 	product_name_en: string;
 
+	/**
+	 * String that sort-of uniquely identifies this cart item
+	 */
+	cart_item_id: string;
 	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
@@ -949,6 +949,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
 	privacy_available?: boolean;
+	privacy?: boolean;
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
@@ -957,6 +958,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	is_hundred_year_domain?: boolean;
+
+	/**
+	 * Tracks the flow from which a domain registration originated.
+	 */
+	flow_name?: string;
 
 	/**
 	 * A way to signal intent to the back end when included as an extra with

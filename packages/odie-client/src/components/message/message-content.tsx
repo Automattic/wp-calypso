@@ -1,45 +1,40 @@
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { zendeskMessageConverter } from '../../utils';
-import ChatWithSupportLabel from '../chat-with-support';
-import ErrorMessage from './error-message';
-import { FeedbackContent } from './feedback-content';
-import { IntroductionMessage } from './introduction-message';
+import { useOdieAssistantContext } from '../../context';
+import { hasSubmittedCSATRating, isCSATMessage, zendeskMessageConverter } from '../../utils';
+import { FeedbackForm } from './feedback-form';
+import { IntroductionMessage } from './introduction-message/introduction-message';
+import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
 
 export const MessageContent = ( {
-	isDisliked = false,
 	message,
-	messageHeader,
-	isNextMessageFromSameSender,
-	displayChatWithSupportLabel,
-	displayChatWithSupportEndedLabel,
+	header,
 }: {
 	message: Message;
-	messageHeader: React.ReactNode;
-	isDisliked?: boolean;
-	isNextMessageFromSameSender?: boolean;
-	displayChatWithSupportLabel?: boolean;
-	displayChatWithSupportEndedLabel?: boolean;
+	header?: React.ReactNode;
 } ) => {
-	const { __ } = useI18n();
+	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
+		'agenttic',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
+		{ 'is-sending': message.isSending },
+		{
+			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
+		}
 	);
-	const isFeedbackMessage = message.type === 'conversation-feedback' && message?.meta?.feedbackUrl;
+	const { chat } = useOdieAssistantContext();
 
-	const containerClasses = clsx(
-		'odie-chatbox-message-sources-container',
-		( isNextMessageFromSameSender || isFeedbackMessage ) && 'next-chat-message-same-sender'
-	);
+	const displayCSAT = ! hasSubmittedCSATRating( chat );
 
-	const isMessageWithOnlyText =
-		message.context?.flags?.hide_disclaimer_content ||
-		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
+	const isMessageWithEscalationOption =
+		message.role === 'bot' &&
+		! (
+			message.context?.flags?.hide_disclaimer_content ||
+			message.context?.question_tags?.inquiry_type === 'user-is-greeting'
+		);
 
 	// This will parse text messages sent from users to Zendesk.
 	const parseTextMessage = ( message: Message ): Message => {
@@ -60,36 +55,20 @@ export const MessageContent = ( {
 	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
 
 	return (
-		<>
-			<div className={ containerClasses } data-is-message="true">
-				<div className={ messageClasses }>
-					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
-					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
-						message.type
-					) ||
-						! message.type ) && (
-						<UserMessage
-							message={ markdownMessageContent }
-							isDisliked={ isDisliked }
-							isMessageWithoutEscalationOption={ isMessageWithOnlyText }
-						/>
-					) }
-					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ isFeedbackMessage && (
-						<FeedbackContent content={ message.content } meta={ message?.meta } />
-					) }
-				</div>
-			</div>
-
-			{ displayChatWithSupportLabel && (
-				<ChatWithSupportLabel
-					labelText={ __( 'Chat with support started', __i18n_text_domain__ ) }
+		<div className={ messageClasses }>
+			{ header && <div className="message-header business">{ header }</div> }
+			{ message.type === 'error' && <MarkdownOrChildren messageContent={ message.content } /> }
+			{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes( message.type ) ||
+				! message.type ) && (
+				<UserMessage
+					message={ markdownMessageContent }
+					isMessageWithEscalationOption={ isMessageWithEscalationOption }
 				/>
 			) }
-			{ displayChatWithSupportEndedLabel && (
-				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
+			{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
+				<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
 			) }
-		</>
+		</div>
 	);
 };

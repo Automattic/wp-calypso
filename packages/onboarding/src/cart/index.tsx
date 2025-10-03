@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
@@ -14,6 +14,7 @@ import {
 	isAnyHostingFlow,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
+import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -179,6 +180,9 @@ export const createSiteWithCart = async (
 	const segmentationSurveyAnswersAnonId = localStorage.getItem( 'ss-anon-id' );
 	localStorage.removeItem( 'ss-anon-id' );
 
+	// This is the parameter that will contain the internal referral, e.g. a landing page.
+	const refParam = new URLSearchParams( document.location.search ).get( 'ref' );
+
 	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
 		path: '/sites/new',
 		apiVersion: '1.1',
@@ -196,6 +200,7 @@ export const createSiteWithCart = async (
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
+				...( refParam && { ref: refParam } ),
 			},
 		},
 	} );

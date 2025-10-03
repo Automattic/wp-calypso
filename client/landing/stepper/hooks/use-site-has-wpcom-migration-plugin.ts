@@ -19,7 +19,9 @@ export const useSiteHasWPCOMMigrationPlugin = ( siteId: number, options: Options
 		enabled,
 	} );
 
-	const pluginRecord = data?.plugins.find( ( plugin: any ) => plugin.slug === 'wpcom-migration' );
+	const pluginRecord = ( data as any )?.plugins.find(
+		( plugin: any ) => plugin.slug === 'wpcom-migration'
+	);
 	const hasWPCOMMigraitonPlugin = Boolean( pluginRecord );
 
 	return { data, error, isLoading, isSuccess, pluginRecord, hasWPCOMMigraitonPlugin };

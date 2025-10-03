@@ -107,6 +107,19 @@ export function classifyPost( post ) {
 	return post;
 }
 
+function identifyRedditPost( post ) {
+	if ( ! post ) {
+		return post;
+	}
+
+	post.is_reddit_post =
+		post.site_URL?.includes( 'reddit.com' ) ||
+		post.site_name?.includes( 'reddit' ) ||
+		post.author?.name?.includes( 'reddit' );
+
+	return post;
+}
+
 const fastPostNormalizationRules = flow( [
 	decodeEntities,
 	stripHtml,
@@ -134,6 +147,7 @@ const fastPostNormalizationRules = flow( [
 	addMinutesToRead,
 	pickCanonicalImage,
 	pickCanonicalMedia,
+	identifyRedditPost,
 	classifyPost,
 ] );
 

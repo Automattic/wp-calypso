@@ -1,5 +1,5 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
@@ -11,9 +11,16 @@ export const PatternsCategoryNotFound = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const translate = useTranslate();
 
-	const title = translate( "Oops! We can't find this category!", {
-		comment:
-			'Heading displayed when an invalid category was specified while searching block patterns',
+	const title = fixMe( {
+		text: "We can't find this category!",
+		newCopy: translate( "We can't find this category!", {
+			comment:
+				'Heading displayed when an invalid category was specified while searching block patterns',
+		} ),
+		oldCopy: translate( "Oops! We can't find this category!", {
+			comment:
+				'Heading displayed when an invalid category was specified while searching block patterns',
+		} ),
 	} );
 
 	const line = translate( "The category you are looking for doesn't exist.", {
@@ -35,7 +42,6 @@ export const PatternsCategoryNotFound = () => {
 				line={ line }
 				action={ action }
 				actionURL={ isLoggedIn ? '/patterns' : addLocaleToPathLocaleInFront( '/patterns' ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</>
 	);

@@ -286,7 +286,7 @@ const AdsFormSettings = () => {
 	function paymentOptions() {
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
+				<FormLabel htmlFor="paypal">{ translate( 'PayPal email address' ) }</FormLabel>
 				<FormTextInput
 					name="paypal"
 					id="paypal-earn-input"
@@ -388,7 +388,7 @@ const AdsFormSettings = () => {
 				{ settings.ccpa_enabled && (
 					<div className="ads__child-settings">
 						<FormFieldset>
-							<FormLabel>{ translate( 'Do Not Sell Link' ) }</FormLabel>
+							<FormLabel>{ translate( 'Do Not Sell link' ) }</FormLabel>
 							<span>
 								{ translate(
 									'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
@@ -409,7 +409,7 @@ const AdsFormSettings = () => {
 
 						<FormFieldset>
 							<FormLabel htmlFor="ccpa-privacy-policy-url">
-								{ translate( 'Privacy Policy URL' ) }
+								{ translate( 'Privacy policy URL' ) }
 							</FormLabel>
 							<FormTextInput
 								name="ccpa_privacy_policy_url"

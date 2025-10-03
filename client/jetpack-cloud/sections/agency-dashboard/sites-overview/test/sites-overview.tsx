@@ -15,10 +15,6 @@ import SitesOverview from '../index';
 
 jest.mock( '@automattic/viewport' );
 
-const mockedIsWithinBreakpoint = isWithinBreakpoint as jest.MockedFunction<
-	typeof isWithinBreakpoint
->;
-
 window.IntersectionObserver = jest.fn( () => ( {
 	observe: jest.fn(),
 	disconnect: jest.fn(),
@@ -193,7 +189,7 @@ describe( '<SitesOverview>', () => {
 		setData();
 
 		//set screen to widescreen for this test
-		mockedIsWithinBreakpoint.mockReturnValue( true );
+		jest.mocked( isWithinBreakpoint ).mockReturnValue( true );
 
 		const { queryByText } = render( <Wrapper context={ context } /> );
 
@@ -203,6 +199,6 @@ describe( '<SitesOverview>', () => {
 		expect( issueLicenseButton ).toBeInTheDocument();
 
 		// set screen back to mobile for rest of tests
-		mockedIsWithinBreakpoint.mockReturnValue( false );
+		jest.mocked( isWithinBreakpoint ).mockReturnValue( false );
 	} );
 } );

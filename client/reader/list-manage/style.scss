@@ -36,7 +36,7 @@
 	display: flex;
 	justify-content: space-between;
 	overflow: hidden;
-	padding: 16px;
+	padding: 16px 16px 16px 0;
 	position: relative;
 	width: 100%;
 }
@@ -104,7 +104,9 @@
 }
 
 .list-manage__subscriptions-header {
-	margin: 1em 0;
+	margin: 1em 0.5em;
+	font-weight: 500;
+	font-size: 1.25rem;
 
 	.button {
 		margin-left: 1em;

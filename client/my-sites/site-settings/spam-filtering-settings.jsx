@@ -111,7 +111,7 @@ const SpamFilteringSettings = ( {
 						text={ translate( 'Removes spam from comments and contact forms.' ) }
 						link="https://jetpack.com/features/security/spam-filtering/"
 					/>
-					<FormLabel htmlFor="wordpress_api_key">{ translate( 'Your API Key' ) }</FormLabel>
+					<FormLabel htmlFor="wordpress_api_key">{ translate( 'Your API key' ) }</FormLabel>
 					<FormTextInput
 						name="wordpress_api_key"
 						className={ className }

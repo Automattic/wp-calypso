@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
-import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
+import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks';
 import './styles/site-subscriptions-list-actions-bar.scss';
 
 const { SiteSubscriptionsSortBy: SortBy } = Reader;

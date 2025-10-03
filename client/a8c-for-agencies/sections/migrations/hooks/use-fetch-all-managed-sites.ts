@@ -32,13 +32,19 @@ export const useFetchAllManagedSites = () => {
 	const sites = useSelector( getSites );
 
 	// First fetch to get the total number of sites so we can fetch all of them
-	const { data } = useFetchDashboardSites( defaultArgs );
+	const firstFetchData = useFetchDashboardSites( defaultArgs );
 
 	// Second fetch to get all sites using the total number of sites
-	const allSitesData = useFetchDashboardSites( {
-		...defaultArgs,
-		perPage: data?.total || 0,
-	} );
+	// Only fetch if we have a total and are not fetching to
+	// ensure we don't fetch before the first fetch is complete
+	const isEnabled = !! firstFetchData?.data?.total && ! firstFetchData.isFetching;
+	const allSitesData = useFetchDashboardSites(
+		{
+			...defaultArgs,
+			perPage: firstFetchData?.data?.total || 0,
+		},
+		isEnabled
+	);
 
 	// Map the sites to the format needed for the table
 	const mappedSites = allSitesData?.data?.sites
@@ -56,8 +62,16 @@ export const useFetchAllManagedSites = () => {
 		} )
 		.filter( Boolean ) as SiteItem[];
 
+	// Show loading if no sites and is fetching
+	const showLoading =
+		! mappedSites?.length && ( firstFetchData.isFetching || allSitesData.isFetching );
+
+	// Show loading if first fetch is loading or all sites data is loading
+	const isLoading = firstFetchData.isLoading || allSitesData.isLoading;
+
 	return {
 		...allSitesData,
+		isLoading: showLoading || isLoading,
 		items: mappedSites ?? [],
 	};
 };

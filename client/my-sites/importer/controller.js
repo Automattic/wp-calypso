@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { BrowserRouter } from 'react-router-dom';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
-import NewsletterImporter from 'calypso/my-sites/importer/newsletter/importer';
+import NewsletterImporter from 'calypso/my-sites/importer/newsletter';
 import SectionImport from 'calypso/my-sites/importer/section-import';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import 'calypso/blocks/import/style/base.scss';

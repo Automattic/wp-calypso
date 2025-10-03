@@ -7,6 +7,7 @@ import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { maybeAddLogRocketScript } from 'calypso/lib/analytics/logrocket';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { recordTracksEvent, setTracksOptOut } from 'calypso/lib/analytics/tracks';
 import {
 	ANALYTICS_EVENT_RECORD,
@@ -35,6 +36,10 @@ const loadTrackingTool = ( trackingTool ) => {
 
 	if ( trackingTool === 'LogRocket' ) {
 		maybeAddLogRocketScript();
+	}
+
+	if ( trackingTool === 'Survicate' ) {
+		addSurvicate();
 	}
 };
 

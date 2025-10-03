@@ -25,7 +25,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
-		setShowHelpCenter( false );
+		setShowHelpCenter( false, undefined, undefined, true );
 	}, [ setShowHelpCenter ] );
 
 	const locale = useLocale();

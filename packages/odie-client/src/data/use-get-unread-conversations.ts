@@ -4,20 +4,26 @@ import { useCallback } from 'react';
 import Smooch from 'smooch';
 import { ZendeskConversation } from '../types';
 
-const calculateUnread = ( conversations: Conversation[] | ZendeskConversation[] ) => {
-	let unreadConversations = 0;
-	let unreadMessages = 0;
+export const calculateUnread = (
+	conversations: Conversation[] | ZendeskConversation[] | undefined | null
+) => {
+	if ( ! Array.isArray( conversations ) || conversations.length === 0 ) {
+		return { numberOfUnreadConversations: 0, numberOfUnreadMessages: 0 };
+	}
+
+	let numberOfUnreadConversations = 0;
+	let numberOfUnreadMessages = 0;
 
 	conversations.forEach( ( conversation ) => {
-		const unreadCount = conversation.participants[ 0 ]?.unreadCount ?? 0;
+		const unreadCount = conversation?.participants?.[ 0 ]?.unreadCount ?? 0;
 
 		if ( unreadCount > 0 ) {
-			unreadConversations++;
-			unreadMessages += unreadCount;
+			numberOfUnreadConversations++;
+			numberOfUnreadMessages += unreadCount;
 		}
 	} );
 
-	return { unreadConversations, unreadMessages };
+	return { numberOfUnreadConversations, numberOfUnreadMessages };
 };
 
 export const useGetUnreadConversations = () => {
@@ -26,10 +32,11 @@ export const useGetUnreadConversations = () => {
 	return useCallback(
 		( conversations?: Conversation[] | ZendeskConversation[] ) => {
 			const conversationsToCheck = conversations ? conversations : Smooch?.getConversations?.();
-			const { unreadConversations, unreadMessages } = calculateUnread( conversationsToCheck );
-			setUnreadCount( unreadConversations );
+			const { numberOfUnreadConversations, numberOfUnreadMessages } =
+				calculateUnread( conversationsToCheck );
+			setUnreadCount( numberOfUnreadConversations );
 
-			return { unreadConversations, unreadMessages };
+			return { numberOfUnreadConversations, numberOfUnreadMessages };
 		},
 		[ setUnreadCount ]
 	);

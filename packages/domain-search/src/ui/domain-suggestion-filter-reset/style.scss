@@ -1,0 +1,8 @@
+@import '@wordpress/base-styles/colors';
+
+.domain-suggestion-filter-reset__btn {
+	&.is-secondary {
+		color: var(--domain-search-secondary-action-color);
+		box-shadow: inset 0 0 0 1px #{$gray-300};
+	}
+}

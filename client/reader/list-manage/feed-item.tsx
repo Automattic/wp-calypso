@@ -65,6 +65,7 @@ export default function FeedItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
+	hideFollowButton?: boolean;
 } ) {
 	const { list, owner, item } = props;
 	const feed = useSelector( ( state ) => {
@@ -74,6 +75,7 @@ export default function FeedItem( props: {
 		}
 		return feed;
 	} );
+	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const isInList = !! useSelector( ( state ) =>
 		getMatchingItem( state, { feedId: item.feed_ID, listId: list.ID } )
@@ -83,10 +85,13 @@ export default function FeedItem( props: {
 	const translate = useTranslate();
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
-	const addItem = () => dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+	const addItem = () =>
+		item.feed_ID && dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
-		shouldDelete && dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+		shouldDelete &&
+			item.feed_ID &&
+			dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
 	};
 
 	if ( isInList && props.hideIfInList ) {
@@ -103,13 +108,13 @@ export default function FeedItem( props: {
 		<Card className="list-manage__site-card">
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
 
-			{ props.isFollowed && (
+			{ props.isFollowed && ! props.hideFollowButton && (
 				<FollowButton followLabel={ translate( 'Following site' ) } following />
 			) }
 
 			{ ! isInList ? (
 				<Button primary onClick={ addItem }>
-					{ translate( 'Add' ) }
+					{ isRecommendedBlogsList ? translate( 'Recommend' ) : translate( 'Add' ) }
 				</Button>
 			) : (
 				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>

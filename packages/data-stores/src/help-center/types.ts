@@ -11,7 +11,7 @@ export type Location = {
 };
 export interface HelpCenterShowOptions {
 	hideBackButton: boolean;
-	searchTerm: string;
+	contextTerm: string;
 }
 export interface SiteLogo {
 	id: number;
@@ -32,6 +32,7 @@ export interface HelpCenterSite {
 	is_wpcom_atomic: boolean;
 	jetpack: boolean;
 	logo: SiteLogo;
+	site_owner: number;
 	options: {
 		launchpad_screen: string;
 		site_intent: string;

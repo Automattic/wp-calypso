@@ -4,9 +4,10 @@ import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 } from '@automattic/wpcom-checkout';
+import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import { get, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
@@ -15,6 +16,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -193,16 +195,11 @@ export class ContactDetailsFormFields extends Component {
 
 	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
-		const fieldsToDeburr = [ 'email', 'phone', 'postalCode', 'countryCode', 'fax' ];
 
 		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
-				// TODO: Deep
-				if ( fieldsToDeburr.includes( fieldName ) ) {
-					sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
-				} else {
-					sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
-				}
+				sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+
 				// TODO: Do this on submit. Is it too annoying?
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(
@@ -388,6 +385,24 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
+							placeholder: translate( 'Organization (optional)' ),
+							description: (
+								<Notice status="warning" isDismissible={ false }>
+									{ translate(
+										'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using {{a}}privacy protection{{/a}}.',
+										{
+											components: {
+												a: (
+													<InlineSupportLink
+														supportContext="domain-registrations-and-privacy"
+														showIcon={ false }
+													/>
+												),
+											},
+										}
+									) }
+								</Notice>
+							),
 						},
 						{
 							needsChildRef: true,

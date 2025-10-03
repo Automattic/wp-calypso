@@ -255,7 +255,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 			<div>
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__organization" htmlFor="organization">
-						{ translate( 'Organization Name' ) }
+						{ translate( 'Organization name' ) }
 					</FormLabel>
 					<FormTextInput
 						id="organization"
@@ -272,7 +272,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 
 				<FormFieldset>
 					<FormLabel htmlFor="registrantVatId" optional>
-						{ translate( 'VAT Number' ) }
+						{ translate( 'VAT number' ) }
 					</FormLabel>
 					<FormTextInput
 						id="registrantVatId"
@@ -289,7 +289,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 
 				<FormFieldset>
 					<FormLabel htmlFor="sirenSiret" optional>
-						{ translate( 'SIREN or SIRET Number' ) }
+						{ translate( 'SIREN or SIRET number' ) }
 					</FormLabel>
 					<FormTextInput
 						id="sirenSiret"
@@ -310,7 +310,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 
 				<FormFieldset>
 					<FormLabel htmlFor="trademarkNumber" optional>
-						{ translate( 'EU Trademark Number' ) }
+						{ translate( 'EU trademark number' ) }
 					</FormLabel>
 					<FormTextInput
 						id="trademarkNumber"

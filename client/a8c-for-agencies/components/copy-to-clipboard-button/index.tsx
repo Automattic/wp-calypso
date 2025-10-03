@@ -1,14 +1,18 @@
 import { Button } from '@wordpress/components';
 import { copy, check } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 
 const CopyToClipboardButton = ( {
 	textToCopy,
 	onClick,
+	label,
+	iconPosition = 'left',
 }: {
 	textToCopy: string;
 	onClick?: () => void;
+	label?: TranslateResult;
+	iconPosition?: 'left' | 'right';
 } ) => {
 	const translate = useTranslate();
 
@@ -38,8 +42,10 @@ const CopyToClipboardButton = ( {
 				icon={ copyStatus === 'success' ? check : copy }
 				variant="tertiary"
 				onClick={ copyToClipboard }
+				iconPosition={ iconPosition }
 			>
-				{ copyStatus === 'success' ? translate( 'Copied' ) : translate( 'Copy to clipboard' ) }
+				{ label ??
+					( copyStatus === 'success' ? translate( 'Copied' ) : translate( 'Copy to clipboard' ) ) }
 			</Button>
 		</>
 	);

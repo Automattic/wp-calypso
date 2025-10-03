@@ -8,7 +8,7 @@ import { MembershipSubscription } from 'calypso/lib/purchases/types';
 
 import 'calypso/me/purchases/style.scss';
 
-const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
@@ -34,7 +34,7 @@ const MembershipTerms = ( { subscription }: { subscription: MembershipSubscripti
 	);
 };
 
-const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
 	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
@@ -59,7 +59,7 @@ const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) 
 	);
 };
 
-const MembershipType = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const MembershipType = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
 
 	if ( subscription.end_date === null ) {
@@ -85,7 +85,7 @@ const MembershipType = ( { subscription }: { subscription: MembershipSubscriptio
 	);
 };
 
-const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
 	const [ site, setSite ] = useState< { icon?: { ico: string } } >();
 	const siteId = subscription.site_id;

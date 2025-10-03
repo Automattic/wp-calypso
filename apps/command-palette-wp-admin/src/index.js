@@ -27,8 +27,7 @@ function CommandPaletteApp() {
 
 	const navigate = ( url, openInNewTab ) => window.open( url, openInNewTab ? '_blank' : '_self' );
 
-	const locale = document.documentElement.lang ?? 'en';
-	setLocale( locale );
+	setLocale();
 
 	const userCapabilities = { [ siteId ]: capabilities };
 

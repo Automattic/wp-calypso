@@ -4,7 +4,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 type SetStep = ( step: string ) => void;
 type OnClose = () => void;

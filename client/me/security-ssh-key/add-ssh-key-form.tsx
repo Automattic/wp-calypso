@@ -58,7 +58,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding, saveText }: AddSSHKeyFormP
 			} }
 		>
 			<FormFieldset>
-				<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
+				<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH public key' ) }</FormLabel>
 				<TextareaAutosize
 					required
 					id={ PUBLIC_SSH_KEY_INPUT_ID }

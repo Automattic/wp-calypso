@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import wp from 'calypso/lib/wp';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { ComponentType } from 'react';
 
 export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';

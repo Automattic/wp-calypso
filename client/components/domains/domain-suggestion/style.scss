@@ -336,6 +336,14 @@
 	}
 }
 
+.domain-registration-suggestion__info-badge {
+	.info-popover {
+		height: 16px;
+		vertical-align: middle;
+		margin: 0 0 2px 4px;
+	}
+}
+
 .domain-product-price {
 	display: flex;
 	flex-direction: column;
@@ -410,10 +418,6 @@ body.is-section-signup {
 		.domain-product-price__price {
 			font-size: $font-body-small;
 			font-weight: initial;
-
-			&:not(.domain-product-price__free-price) {
-				color: var(--color-neutral-40);
-			}
 		}
 
 		&.is-clickable:hover {

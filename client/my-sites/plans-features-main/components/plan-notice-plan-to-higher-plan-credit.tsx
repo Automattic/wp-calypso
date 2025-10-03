@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -26,10 +25,6 @@ const PlanNoticePlanToHigherPlanCredit = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-
-	const upgradeCreditDocsUrl = localizeUrl(
-		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
-	);
 
 	const showNotice =
 		visiblePlans &&
@@ -63,7 +58,7 @@ const PlanNoticePlanToHigherPlanCredit = ( {
 							},
 							components: {
 								b: <strong />,
-								a: <InlineSupportLink supportLink={ upgradeCreditDocsUrl } />,
+								a: <InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />,
 							},
 						}
 					) }

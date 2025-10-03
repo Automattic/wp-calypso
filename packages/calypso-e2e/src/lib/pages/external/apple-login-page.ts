@@ -8,11 +8,7 @@ const selectors = {
 	// Inputs
 	emailInput: 'input[id="account_name_text_field"]',
 	passwordInput: 'input[id="password_text_field"]',
-	otpInput: 'input[maxlength="1"]', // Matches on the first OTP input field.
-
-	// Button
-	continueButton: 'button[aria-label="Continue"][aria-disabled="false"]',
-	submitFormButton: 'button[aria-label="Sign In"][aria-disabled="false"]',
+	otpInput: 'input.form-security-code-input', // Matches OTP input fields
 };
 
 /**
@@ -54,6 +50,17 @@ export class AppleLoginPage {
 	}
 
 	/**
+	 * Checks if a button with the exact text exists and is visible.
+	 *
+	 * @param {string} text Text on the button.
+	 * @returns {Promise<boolean>} True if the button exists and is visible.
+	 */
+	async hasButtonWithExactText( text: string ): Promise< boolean > {
+		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
+		return await locator.isVisible();
+	}
+
+	/**
 	 * Fills the Apple ID username/email field.
 	 *
 	 * @param {string} email Username (Apple ID) of the user.
@@ -63,7 +70,7 @@ export class AppleLoginPage {
 		await locator.fill( email );
 
 		// Wait for the button to no longer be marked "disabled".
-		const buttonLocator = this.page.locator( selectors.continueButton );
+		const buttonLocator = this.page.getByRole( 'button', { name: 'Continue', disabled: false } );
 		await buttonLocator.waitFor();
 	}
 
@@ -77,7 +84,7 @@ export class AppleLoginPage {
 		await locator.type( password );
 
 		// Wait for the button to no longer be marked "disabled".
-		const buttonLocator = this.page.locator( selectors.submitFormButton );
+		const buttonLocator = this.page.getByRole( 'button', { name: 'Sign In', disabled: false } );
 		await buttonLocator.waitFor();
 	}
 
@@ -89,7 +96,31 @@ export class AppleLoginPage {
 	 * @param {string} code 2FA code for the user.
 	 */
 	async enter2FACode( code: string ): Promise< void > {
-		const locator = this.page.locator( selectors.otpInput ).first();
-		await locator.type( code, { delay: 150 } );
+		const firstInput = this.page.locator( selectors.otpInput ).first();
+		await firstInput.focus();
+		await this.page.keyboard.insertText( code );
+	}
+
+	/**
+	 * Checks if the rate limit message is visible.
+	 *
+	 * @returns {Promise<boolean>} True if the rate limit message is visible.
+	 */
+	async hasRateLimitMessage(): Promise< boolean > {
+		try {
+			// Look for the exact error message with proper error handling
+			const element = this.page.locator(
+				'.form-message:has-text("Verification codes can\'t be sent to this phone number at this time. Please try again later.")'
+			);
+
+			// Wait a short time for the message to be visible
+			await element.waitFor( { state: 'visible', timeout: 1000 } ).catch( () => {} );
+
+			// Check if it's visible
+			return await element.isVisible();
+		} catch ( error ) {
+			console.log( 'Error while checking for rate limit message:', error );
+			return false;
+		}
 	}
 }

@@ -10,7 +10,7 @@ function initHelpCenterTracking() {
 			recordTracksEvent( 'calypso_inlinehelp_show', {
 				force_site_id: true,
 				location: 'help-center',
-				section: 'wp-admin',
+				section: 'wp-admin-disconnected',
 				jetpack_disconnected_site: true,
 			} );
 		} );

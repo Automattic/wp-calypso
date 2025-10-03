@@ -1,15 +1,15 @@
 import { useSupportStatus } from '@automattic/help-center/src/data/use-support-status';
+import { useLocale } from '@automattic/i18n-utils';
 import { isDIFMFlow } from '@automattic/onboarding';
-import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 
 export default function useShouldRenderHelpCenterButton( {
 	flowName,
-	enabledGeos,
+	enabledLocales,
 }: {
 	flowName: string;
-	enabledGeos?: string[];
+	enabledLocales?: string[];
 } ) {
-	const { data: geoData } = useGeoLocationQuery();
+	const locale = useLocale();
 	const { data: supportStatus } = useSupportStatus();
 
 	if ( isDIFMFlow( flowName ) ) {
@@ -18,7 +18,7 @@ export default function useShouldRenderHelpCenterButton( {
 		}
 	}
 
-	if ( ! geoData?.country_short || ! enabledGeos?.includes( geoData.country_short ) ) {
+	if ( ! locale || ! enabledLocales?.includes( locale ) ) {
 		return false;
 	}
 

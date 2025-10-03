@@ -27,7 +27,7 @@ export function setCurrentUser( user ) {
 
 let fetchingUser = null;
 
-export function fetchCurrentUser() {
+export function fetchCurrentUser( { retry = false } = {} ) {
 	return ( dispatch ) => {
 		if ( fetchingUser ) {
 			return fetchingUser;
@@ -37,7 +37,7 @@ export function fetchCurrentUser() {
 			type: CURRENT_USER_FETCH,
 		} );
 
-		fetchingUser = rawCurrentUserFetch()
+		fetchingUser = rawCurrentUserFetch( { retry } )
 			.then( async ( user ) => {
 				const userData = filterUserObject( user );
 

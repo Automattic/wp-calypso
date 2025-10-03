@@ -18,6 +18,7 @@ const PlanButton = ( {
 	disabled = false,
 	isStuck = false,
 	isLargeCurrency = false,
+	ariaLabel,
 }: {
 	planSlug?: PlanSlug;
 	children: React.ReactNode;
@@ -30,6 +31,7 @@ const PlanButton = ( {
 	disabled?: boolean;
 	isStuck?: boolean;
 	isLargeCurrency?: boolean;
+	ariaLabel?: string;
 } ) => {
 	const className = clsx(
 		classes,
@@ -50,6 +52,9 @@ const PlanButton = ( {
 			borderless={ borderless }
 			disabled={ disabled }
 			href={ href }
+			aria-label={ ariaLabel }
+			// eslint-disable-next-line jsx-a11y/tabindex-no-positive
+			tabIndex={ 2 }
 		>
 			{ children }
 		</Button>

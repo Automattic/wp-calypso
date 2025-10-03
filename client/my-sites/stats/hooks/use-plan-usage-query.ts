@@ -47,7 +47,7 @@ export default function usePlanUsageQuery(
 	siteId: number | null
 ): UseQueryResult< PlanUsage, unknown > {
 	return useQuery( {
-		...getDefaultQueryParams< PlanUsage >(),
+		...getDefaultQueryParams(),
 		staleTime: 10 * 1000, // 10 seconds
 		queryKey: [ 'stats', 'usage', 'query', siteId ],
 		queryFn: () => queryPlanUsage( siteId ),

@@ -186,9 +186,9 @@ const StyledFoldableCard = styled( FoldableCard )`
 	}
 `;
 
-const WordPressLogoWrapper = styled.div`
+const WordPressLogoWrapper = styled.div< { isMobile: boolean } >`
 	position: absolute;
-	top: 16px;
+	top: ${ ( props ) => ( props.isMobile ? '24px' : '16px' ) };
 	left: 16px;
 `;
 
@@ -248,7 +248,7 @@ function InfoColumn( {
 				className="hundred-year-plan-step-wrapper__info-column-container"
 				isMobile={ isMobile }
 			>
-				<WordPressLogoWrapper>
+				<WordPressLogoWrapper isMobile={ isMobile }>
 					<WordPressWordmark />
 				</WordPressLogoWrapper>
 

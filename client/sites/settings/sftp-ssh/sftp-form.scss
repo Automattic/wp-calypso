@@ -4,6 +4,10 @@
 
 .sftp-card__questions-container {
 	margin-bottom: 1.5em;
+
+	button {
+		justify-content: flex-start;
+	}
 }
 
 .sftp-card__password-explainer {

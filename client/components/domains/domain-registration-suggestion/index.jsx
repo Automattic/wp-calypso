@@ -1,4 +1,5 @@
 import { Badge, Gridicon } from '@automattic/components';
+import { getTld, parseMatchReasons } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
@@ -9,10 +10,6 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-	parseMatchReasons,
-	VALID_MATCH_REASONS,
-} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import InfoPopover from 'calypso/components/info-popover';
 import {
@@ -20,15 +17,10 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
+	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
-import {
-	getDomainPrice,
-	getDomainSalePrice,
-	getTld,
-	isHstsRequired,
-	isDotGayNoticeRequired,
-} from 'calypso/lib/domains';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
+import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/legacy/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -50,8 +42,15 @@ class DomainRegistrationSuggestion extends Component {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
-			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
+			match_reasons: PropTypes.arrayOf( PropTypes.string ),
 			currency_code: PropTypes.string,
+			policy_notices: PropTypes.arrayOf(
+				PropTypes.shape( {
+					type: PropTypes.string.isRequired,
+					label: PropTypes.string.isRequired,
+					message: PropTypes.string.isRequired,
+				} )
+			),
 		} ).isRequired,
 		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
@@ -132,6 +131,110 @@ class DomainRegistrationSuggestion extends Component {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
+	getSelectDomainAriaLabel() {
+		const { suggestion, translate, productCost, productSaleCost } = this.props;
+		const priceRule = this.getPriceRule();
+
+		const baseLabel = translate( 'Select domain %(domainName)s', {
+			args: { domainName: suggestion.domain_name },
+			context: 'Accessible label for domain selection button. %(domainName)s is the domain name.',
+		} );
+
+		switch ( priceRule ) {
+			case DOMAIN_PRICE_RULE.ONE_TIME_PRICE:
+				return translate( '%(baseLabel)s. %(price)s one-time', {
+					args: {
+						baseLabel,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for one-time priced domain (e.g. domain with 100-year plan). %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				} );
+			case DOMAIN_PRICE_RULE.FREE_DOMAIN:
+				return translate( '%(baseLabel)s. Free', {
+					args: {
+						baseLabel,
+					},
+					comment:
+						'Accessible label for free domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+				} );
+			case DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR:
+				return translate( '%(baseLabel)s. Free for the first year, then %(price)s per year', {
+					args: {
+						baseLabel,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for domain free for the first year. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				} );
+			case DOMAIN_PRICE_RULE.FREE_WITH_PLAN:
+				return translate(
+					'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
+					{
+						args: {
+							baseLabel,
+							price: productCost,
+						},
+						comment:
+							'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+					}
+				);
+			case DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY:
+				return translate( '%(baseLabel)s. Plan upgrade required to register this domain.', {
+					args: {
+						baseLabel,
+					},
+					comment:
+						'Accessible label for domain that requires a plan upgrade. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+				} );
+			case DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN:
+				return translate( '%(baseLabel)s. Included in paid plans', {
+					args: {
+						baseLabel,
+					},
+					comment:
+						'Accessible label for domain included in higher plans. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+				} );
+			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
+				return translate( '%(baseLabel)s. %(price)s one-time', {
+					args: {
+						baseLabel,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for domain move price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				} );
+			case DOMAIN_PRICE_RULE.PRICE:
+				if ( productSaleCost && productCost ) {
+					return translate(
+						'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
+						{
+							args: {
+								baseLabel,
+								salePrice: productSaleCost,
+								price: productCost,
+							},
+							comment:
+								'Accessible label for domain with sale price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(salePrice)s is the sale price. %(price)s is the price.',
+						}
+					);
+				}
+				if ( productCost ) {
+					return translate( '%(baseLabel)s. %(price)s per year', {
+						args: {
+							baseLabel,
+							price: productCost,
+						},
+						comment:
+							'Accessible label for regularly priced domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+					} );
+				}
+				return baseLabel;
+			default:
+				return baseLabel;
+		}
+	}
+
 	getButtonProps() {
 		const {
 			cart,
@@ -165,12 +268,18 @@ class DomainRegistrationSuggestion extends Component {
 		}
 
 		let buttonContent;
+		let ariaLabel;
 		let buttonStyles = this.props.buttonStyles;
 
 		if ( isAdded ) {
 			buttonContent = translate( '{{checkmark/}} In Cart', {
 				context: 'Domain is already added to shopping cart',
 				components: { checkmark: <Gridicon icon="checkmark" /> },
+			} );
+			ariaLabel = translate( 'Domain %(domainName)s is already added to shopping cart', {
+				args: { domainName: suggestion.domain_name },
+				context:
+					'Accessible label for domain that is already added to shopping cart. %(domainName)s is the domain name.',
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
@@ -182,15 +291,32 @@ class DomainRegistrationSuggestion extends Component {
 					context: 'Domain is already added to shopping cart',
 					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
 				} );
+				ariaLabel = translate( 'Selected domain %(domainName)s', {
+					args: { domainName: suggestion.domain_name },
+					context:
+						'Accessible label for domain that is selected. %(domainName)s is the domain name.',
+				} );
 			}
 		} else {
-			buttonContent =
+			const shouldUpgrade =
 				! isSignupStep &&
-				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
-					? translate( 'Upgrade', {
-							context: 'Domain mapping suggestion button with plan upgrade',
-					  } )
-					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
+				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion );
+
+			if ( shouldUpgrade ) {
+				buttonContent = translate( 'Upgrade', {
+					context: 'Domain mapping suggestion button with plan upgrade',
+				} );
+				ariaLabel = translate( 'Upgrade plan to add domain %(domainName)s', {
+					args: { domainName: suggestion.domain_name },
+					context:
+						'Accessible label for domain mapping suggestion button with plan upgrade. %(domainName)s is the domain name.',
+				} );
+			} else {
+				buttonContent = translate( 'Select', {
+					context: 'Domain mapping suggestion button',
+				} );
+				ariaLabel = this.getSelectDomainAriaLabel();
+			}
 		}
 
 		if ( premiumDomain?.pending ) {
@@ -200,10 +326,18 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent = translate( 'Restricted', {
 				context: 'Premium domain is not available for registration',
 			} );
+			ariaLabel = translate( 'Premium domain %(domainName)s is not available for registration', {
+				args: { domainName: suggestion.domain_name },
+				context: 'Accessible label for restricted premium domain',
+			} );
 		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
+			} );
+			ariaLabel = translate( 'Domain %(domainName)s is not available for registration', {
+				args: { domainName: suggestion.domain_name },
+				context: 'Accessible label for unavailable domain',
 			} );
 		} else if (
 			pendingCheckSuggestion?.domain_name === domain ||
@@ -225,6 +359,7 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent,
 			buttonStyles,
 			isAdded,
+			ariaLabel,
 		};
 	}
 
@@ -280,8 +415,6 @@ class DomainRegistrationSuggestion extends Component {
 
 	renderDomain( hasBadges = false ) {
 		const {
-			showHstsNotice,
-			showDotGayNotice,
 			suggestion: { domain_name: domain },
 		} = this.props;
 
@@ -299,81 +432,59 @@ class DomainRegistrationSuggestion extends Component {
 		return (
 			<div className={ wrapperClassName }>
 				<div className={ titleWrapperClassName }>
-					<h3 className="domain-registration-suggestion__title">
+					<div className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
-							<span aria-label={ domain }>
+							<h3 aria-label={ domain }>
 								<span className="domain-registration-suggestion__domain-title-name">
 									{ this.getFormattedDomainName( name ) }
 								</span>
 								<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
-							</span>
-							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+							</h3>
 						</div>
-					</h3>
+					</div>
 				</div>
 			</div>
 		);
 	}
 
-	getHstsMessage() {
-		const {
-			translate,
-			suggestion: { domain_name: domain },
-		} = this.props;
-
-		return translate(
-			'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-				'to host a website. When you host this domain at WordPress.com an SSL ' +
-				'certificate is included. {{a}}Learn more{{/a}}.',
-			{
-				args: {
-					tld: '.' + getTld( domain ),
-				},
-				components: {
-					a: (
-						<a
-							href={ localizeUrl( HTTPS_SSL ) }
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-							} }
-						/>
-					),
-					strong: <strong />,
-				},
-			}
-		);
-	}
-
-	getDotGayMessage() {
+	getPolicyNoticeMessage( notice ) {
 		const { translate } = this.props;
 
-		return translate(
-			'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
-		);
-	}
+		if ( notice.type === 'hsts' ) {
+			return translate(
+				'%(message)s When you host this domain at WordPress.com, an SSL ' +
+					'certificate is included. {{a}}Learn more{{/a}}.',
+				{
+					args: {
+						message: notice.message,
+					},
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( HTTPS_SSL ) }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+								} }
+							/>
+						),
+					},
+				}
+			);
+		}
 
-	renderInfoBubble() {
-		const { isFeatured, showHstsNotice, showDotGayNotice } = this.props;
-
-		const infoPopoverSize = isFeatured ? 22 : 18;
-		return (
-			<InfoPopover
-				className="domain-registration-suggestion__hsts-tooltip"
-				iconSize={ infoPopoverSize }
-				position="right"
-				showOnHover
-			>
-				{ ( showHstsNotice && this.getHstsMessage() ) ||
-					( showDotGayNotice && this.getDotGayMessage() ) }
-			</InfoPopover>
-		);
+		return notice.message;
 	}
 
 	renderBadges() {
 		const {
-			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
+			suggestion: {
+				isRecommended,
+				isBestAlternative,
+				is_premium: isPremium,
+				policy_notices: policyNotices,
+			},
 			translate,
 			isFeatured,
 			productSaleCost,
@@ -395,6 +506,23 @@ class DomainRegistrationSuggestion extends Component {
 			);
 		}
 
+		if ( policyNotices ) {
+			policyNotices.forEach( ( notice ) => {
+				badges.push(
+					<Badge
+						key={ notice.type }
+						type="info"
+						className="domain-registration-suggestion__info-badge"
+					>
+						{ notice.label }
+						<InfoPopover iconSize={ 16 } showOnHover>
+							{ this.getPolicyNoticeMessage( notice ) }
+						</InfoPopover>
+					</Badge>
+				);
+			} );
+		}
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
 		if ( productSaleCost && paidDomain ) {
 			const saleBadgeText = translate( 'Sale', {
@@ -405,7 +533,11 @@ class DomainRegistrationSuggestion extends Component {
 
 		if ( isPremium ) {
 			badges.push(
-				<PremiumBadge key="premium" restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+				<PremiumBadge
+					key="premium"
+					restrictedPremium={ premiumDomain?.is_price_limit_exceeded }
+					domainName={ this.props.suggestion.domain_name }
+				/>
 			);
 		}
 
@@ -520,8 +652,6 @@ const mapStateToProps = ( state, props ) => {
 	}
 
 	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
 		renewCost,
 		productSaleCost,

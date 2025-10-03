@@ -98,12 +98,12 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 			</div>
 			<div className="disclaimer">
 				{ translate(
-					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}See calculator ↗{{/link}}',
+					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}Learn more ↗{{/link}}',
 					{
 						components: {
 							link: (
 								<a
-									href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+									href="https://developer.wordpress.com/docs/site-performance/speed-test/#performance-score"
 									target="_blank"
 									rel="noreferrer"
 								/>

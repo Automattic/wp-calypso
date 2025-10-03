@@ -17,6 +17,8 @@ import { addQueryArgs } from 'calypso/lib/url';
 	from?: string;
 	allowSiteConnection?: boolean;
 	signupUrl?: string;
+	gravatarFrom?: string;
+	gravatarFlow?: boolean;
  }} args The arguments
  * @returns {string}
  */

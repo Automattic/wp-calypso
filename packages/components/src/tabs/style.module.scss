@@ -1,0 +1,245 @@
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use '../utils/_theme-variables' as theme;
+
+.tablist {
+	display: flex;
+	align-items: stretch;
+	overflow-x: auto;
+
+	&:where( [aria-orientation='horizontal'] ) {
+		width: fit-content;
+	}
+
+	--direction-factor: 1;
+	--direction-start: left;
+	--direction-end: right;
+	--selected-start: var( --selected-left, 0 );
+	&:dir( rtl ) {
+		--direction-factor: -1;
+		--direction-start: right;
+		--direction-end: left;
+		--selected-start: var( --selected-right, 0 );
+	}
+
+	@media not ( prefers-reduced-motion ) {
+		&[data-indicator-animated]::before {
+			transition-property: transform, border-radius, border-block;
+			transition-duration: 0.2s;
+			transition-timing-function: ease-out;
+		}
+	}
+	position: relative;
+	&::before {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+		transform-origin: var( --direction-start ) top;
+
+		// Windows high contrast mode.
+		outline: 2px solid transparent;
+		outline-offset: -1px;
+	}
+
+	/* Using a large value to avoid antialiasing rounding issues
+			when scaling in the transform, see: https://stackoverflow.com/a/52159123 */
+	--antialiasing-factor: 100;
+	&[aria-orientation='horizontal'] {
+		--fade-width: 4rem;
+		--fade-gradient-base: transparent 0%, #{colors.$black} var( --fade-width );
+		--fade-gradient-composed: var( --fade-gradient-base ), #{colors.$black} 60%, transparent 50%;
+		&.is-overflowing-first {
+			mask-image: linear-gradient( to var( --direction-end ), var( --fade-gradient-base ) );
+		}
+		&.is-overflowing-last {
+			mask-image: linear-gradient( to var( --direction-start ), var( --fade-gradient-base ) );
+		}
+		&.is-overflowing-first.is-overflowing-last {
+			mask-image: linear-gradient( to right, var( --fade-gradient-composed ) ),
+				linear-gradient( to left, var( --fade-gradient-composed ) );
+		}
+
+		&.has-compact-density {
+			gap: 1rem;
+		}
+
+		&::before {
+			bottom: 0;
+			height: 0;
+			width: calc( var( --antialiasing-factor ) * 1px );
+			transform: translateX( calc( var( --selected-start ) * var( --direction-factor ) * 1px ) )
+				scaleX( calc( var( --selected-width, 0 ) / var( --antialiasing-factor ) ) );
+			border-bottom: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
+		}
+	}
+
+	&[aria-orientation='vertical'] {
+		flex-direction: column;
+
+		&::before {
+			/* Adjusting the border radius to match the scaling in the y axis. */
+			border-radius: variables.$radius-small /
+				calc(
+					variables.$radius-small / ( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
+				);
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: calc( var( --antialiasing-factor ) * 1px );
+			transform: translateY( calc( var( --selected-top, 0 ) * 1px ) )
+				scaleY( calc( var( --selected-height, 0 ) / var( --antialiasing-factor ) ) );
+			background-color: color-mix( in srgb, theme.$components-color-accent, transparent 96% );
+		}
+		&[data-select-on-move='true']:has( :is( :focus-visible, [data-focus-visible] ) )::before {
+			box-sizing: border-box;
+			border: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
+			/* Adjusting the border width to match the scaling in the y axis. */
+			border-block-width: calc(
+				var( --wp-admin-border-width-focus, 1px ) /
+					( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
+			);
+		}
+	}
+}
+
+.tab {
+
+	/* Resets */
+	border-radius: 0;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+
+	flex: 1 0 auto;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	line-height: 1.2; // Characters in some languages (e.g. Japanese) may have a native higher line-height.
+	font-weight: 400;
+	color: theme.$components-color-foreground;
+
+	&[aria-disabled='true'] {
+		cursor: default;
+		color: theme.$components-color-gray-600;
+	}
+
+	&:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
+		color: theme.$components-color-accent;
+	}
+
+	&:focus:not( :disabled ) {
+		box-shadow: none;
+		outline: none;
+	}
+
+	// Focus indicator.
+	position: relative;
+	&::after {
+		position: absolute;
+		pointer-events: none;
+
+		// Draw the indicator.
+		// Outline works for Windows high contrast mode as well.
+		outline: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
+		border-radius: variables.$radius-small;
+
+		// Animation
+		opacity: 0;
+
+		@media not ( prefers-reduced-motion ) {
+			transition: opacity 0.1s linear;
+		}
+	}
+
+	&[data-focus-visible]::after {
+		opacity: 1;
+	}
+
+	[aria-orientation='horizontal'] & {
+		padding-inline: variables.$grid-unit-05 * 4;
+		height: variables.$grid-unit-05 * 12;
+		scroll-margin: 24px;
+
+		&::after {
+			content: '';
+			inset: variables.$grid-unit-05 * 3;
+		}
+	}
+
+	.has-compact-density[aria-orientation='horizontal'] & {
+		padding-inline: 0;
+
+		&::after {
+			// Add enough inset to prevent the focus ring (which is 1.5px thick)
+			// from being visually clipped by the tablist.
+			inset-inline: 2px;
+		}
+	}
+
+	[aria-orientation='vertical'] & {
+		padding: variables.$grid-unit-05 * 2 variables.$grid-unit-05 * 3;
+		min-height: variables.$grid-unit-05 * 10;
+
+		&[aria-selected='true'] {
+			color: theme.$components-color-accent;
+			fill: currentColor;
+		}
+	}
+	[aria-orientation='vertical'][data-select-on-move='false'] &::after {
+		content: '';
+		inset: var( --wp-admin-border-width-focus );
+	}
+}
+
+.tab__children {
+	flex-grow: 1;
+
+	display: flex;
+	align-items: center;
+
+	[aria-orientation='horizontal'] & {
+		justify-content: center;
+	}
+	[aria-orientation='vertical'] & {
+		justify-content: start;
+	}
+}
+
+.tab__chevron {
+	flex-shrink: 0;
+	margin-inline-end: variables.$grid-unit-05 * -1;
+	[aria-orientation='horizontal'] & {
+		display: none;
+	}
+	opacity: 0;
+	[role='tab']:is( [aria-selected='true'], [data-focus-visible], :hover ) & {
+		opacity: 1;
+	}
+	// The chevron is transitioned into existence when selectOnMove is enabled,
+	// because otherwise it looks jarring, as it shows up outside of the focus
+	// indicator that's being animated at the same time.
+	@media not ( prefers-reduced-motion ) {
+		[data-select-on-move='true'] [role='tab']:is( [aria-selected='true']  ) & {
+			transition: opacity 0.15s 0.15s linear;
+		}
+	}
+	&:dir( rtl ) {
+		rotate: 180deg;
+	}
+}
+
+.tabpanel {
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	&[data-focus-visible] {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) theme.$components-color-accent;
+		// Windows high contrast mode.
+		outline: 2px solid transparent;
+		outline-offset: 0;
+	}
+}

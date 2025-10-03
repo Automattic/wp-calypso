@@ -63,10 +63,10 @@
 }
 
 @keyframes stats-skeleton-card {
-    0%, 100% {
-        background-color: color-mix(in srgb, var(--color-neutral-5) 80%, var(--color-neutral-0));
-    }
-    50% {
-        background-color: var(--color-neutral-0);
-    }
+	0%, 100% {
+		background-color: color-mix(in srgb, var(--color-neutral-5) 80%, var(--color-neutral-0));
+	}
+	50% {
+		background-color: var(--color-neutral-0);
+	}
 }

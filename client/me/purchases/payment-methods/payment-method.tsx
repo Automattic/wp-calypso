@@ -1,12 +1,12 @@
 import { CompactCard } from '@automattic/components';
+import { isCreditCard } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
-import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import { TaxInfoArea } from 'calypso/my-sites/checkout/src/components/payment-method-tax-info';
 import PaymentMethodDetails from './payment-method-details';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 

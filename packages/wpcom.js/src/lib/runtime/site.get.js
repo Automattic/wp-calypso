@@ -25,6 +25,7 @@ export default [
 	{ name: 'statsTags', subpath: 'stats/tags' },
 	{ name: 'statsTopAuthors', subpath: 'stats/top-authors' },
 	{ name: 'statsTopPosts', subpath: 'stats/top-posts' },
+	{ name: 'statsArchives', subpath: 'stats/archives' },
 	{ name: 'statsVideoPlays', subpath: 'stats/video-plays' },
 	{ name: 'statsVisits', subpath: 'stats/visits' },
 	{ name: 'tagsList', subpath: 'tags' },

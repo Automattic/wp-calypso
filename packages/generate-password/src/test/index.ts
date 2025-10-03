@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// eslint-disable-next-line import/no-nodejs-modules
 import { webcrypto } from 'node:crypto';
 import { generatePassword, DIGITS, SPECIAL_CHARS, EXTRA_SPECIAL_CHARS } from '../';
 

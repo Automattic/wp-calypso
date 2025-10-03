@@ -73,7 +73,7 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 					<LoadingPlaceholder height="52px" />
 				) }
 			</div>
-			<div className="status-card__no-backup-last-backup">
+			<p className="status-card__no-backup-last-backup">
 				{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
 					args: { lastBackupDay, lastBackupTime },
 					components: {
@@ -86,7 +86,7 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 						),
 					},
 				} ) }
-			</div>
+			</p>
 			<ActionButtons disabled />
 			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="SCHEDULED" /> }
 		</>

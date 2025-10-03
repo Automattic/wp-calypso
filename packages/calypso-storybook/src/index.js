@@ -56,12 +56,14 @@ module.exports = function storybookDefaultConfig( {
 				savePropValueAsString: true,
 				propFilter: ( prop ) => {
 					// Always show props declared in `@wordpress/components`
-					if ( prop.declarations.some( ( d ) => d.fileName.includes( '@wordpress/components' ) ) ) {
+					if (
+						prop.declarations?.some( ( d ) => d.fileName.includes( '@wordpress/components' ) )
+					) {
 						return true;
 					}
 
 					// Hide props declared in other `node_modules` (mostly built-in React props)
-					if ( prop.declarations.every( ( d ) => d.fileName.includes( 'node_modules' ) ) ) {
+					if ( prop.declarations?.every( ( d ) => d.fileName.includes( 'node_modules' ) ) ) {
 						return false;
 					}
 
@@ -86,6 +88,7 @@ module.exports = function storybookDefaultConfig( {
 				},
 			];
 			config.resolve.mainFields = [ 'browser', 'calypso:src', 'module', 'main' ];
+			config.resolve.conditionNames = [ 'calypso:src', 'import', 'module', 'require' ];
 			config.plugins.push( ...plugins );
 			return config;
 		},

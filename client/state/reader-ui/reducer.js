@@ -76,13 +76,7 @@ const getInitialLastActionState = () => {
 /*
  * Holds the last action that requires the user to be logged in
  */
-export const lastActionRequiresLogin = ( state, action ) => {
-	// Since we use localStorage, we cannot call getInitialLastActionState() in the declaration
-	// above as it may initialize before window object is available (ssr).
-	if ( typeof state === 'undefined' ) {
-		state = getInitialLastActionState();
-	}
-
+export const lastActionRequiresLogin = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
 			window.localStorage.setItem(
@@ -98,12 +92,39 @@ export const lastActionRequiresLogin = ( state, action ) => {
 	}
 };
 
+/*
+ * Holds the last action that required the user to login, persisted by the above
+ * lastActionRequiresLogin reducer.
+ *
+ * We keep this separate since at truthy value of lastActionRequiresLogin singals the join
+ * conversation dialog to open. The persisted value is only useful for the pending action handler in
+ * cases that required a reload or new window, and should not trigger another dialog to appear while
+ * logged out after reload or new window.
+ */
+const persistedLastActionPriorToLogin = ( state, action ) => {
+	// Since we use localStorage, we cannot call getInitialLastActionState() in the declaration
+	// above as it may initialize before window object is available (ssr).
+	if ( typeof state === 'undefined' ) {
+		state = getInitialLastActionState();
+	}
+
+	switch ( action.type ) {
+		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
+			return action.lastAction;
+		case READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN:
+			return null;
+		default:
+			return state;
+	}
+};
+
 const combinedReducer = combineReducers( {
 	sidebar,
 	cardExpansions,
 	lastPath,
 	currentStream,
 	lastActionRequiresLogin,
+	persistedLastActionPriorToLogin,
 	hasUnseenPosts,
 } );
 

@@ -2,43 +2,54 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { Card } from '@wordpress/components';
+import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { useRef, useEffect, useCallback, FC } from 'react';
+import { useRef, useEffect, useCallback, FC, useState } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useActionHooks } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { PersistentRouter } from './persistent-router';
 import type { HelpCenterSelect } from '@automattic/data-stores';
-
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
 	children?: React.ReactNode;
 }
 
+const DEFAULT_POSITION = { x: 0, y: 0 };
+
 const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props } ) => {
-	if ( ! draggable ) {
-		return <>{ props.children }</>;
-	}
-	return <Draggable { ...props } />;
+	const dims = useWindowDimensions();
+	const [ position, setPosition ] = useState( { x: 0, y: 0 } );
+
+	useEffect( () => {
+		// Reset drag position when window dimensions change
+		setPosition( DEFAULT_POSITION );
+	}, [ dims.width, dims.height ] );
+
+	return (
+		<Draggable
+			position={ draggable ? position : DEFAULT_POSITION }
+			onDrag={ ( _, p ) => draggable && setPosition( p ) }
+			bounds="body"
+			{ ...props }
+		/>
+	);
 };
 
-const HelpCenterContainer: React.FC< Container > = ( {
-	handleClose,
-	hidden,
-	currentRoute,
-	openingCoordinates,
-} ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, currentRoute } ) => {
 	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -46,18 +57,22 @@ const HelpCenterContainer: React.FC< Container > = ( {
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
+	const { sectionName } = useHelpCenterContext();
 
 	const nodeRef = useRef< HTMLDivElement >( null );
-	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
 
+	useActionHooks();
+
 	const onDismiss = useCallback( () => {
 		handleClose();
-		recordTracksEvent( 'calypso_inlinehelp_close' );
-	}, [ handleClose ] );
+		recordTracksEvent( 'calypso_inlinehelp_close', {
+			section: sectionName,
+		} );
+	}, [ handleClose, sectionName ] );
 
 	const focusReturnRef = useFocusReturn();
 
@@ -85,27 +100,28 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}
 
 	return (
-		<MemoryRouter>
+		<PersistentRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
-					handle=".help-center__container-header"
+					handle=".help-center-header__text"
 					bounds="body"
 				>
-					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
-						<HelpCenterHeader
-							isMinimized={ isMinimized }
-							onMinimize={ () => setIsMinimized( true ) }
-							onMaximize={ () => setIsMinimized( false ) }
-							onDismiss={ onDismiss }
-						/>
+					<Card className={ classNames } ref={ cardMergeRefs }>
+						<HelpCenterHeader onDismiss={ onDismiss } />
 						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
+						{ ! isMobile && (
+							<Elevation
+								borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
+								value={ 4 }
+							></Elevation>
+						) }
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>
-		</MemoryRouter>
+		</PersistentRouter>
 	);
 };
 

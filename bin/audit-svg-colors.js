@@ -82,7 +82,7 @@ const PALETTE_APP_COLOR_VALUES = [ ...new Set( Object.values( PALETTE_APP_COLORS
 // The image paths that match the following patterns will not be processed
 const SVG_IGNORE_PATHS = [
 	// Logos found in the repository
-	/(?:billcom|canva|cloudflare|evernote|facebook-messenger|fiverr|google-photos|monday|paypal|quickbooks|sendinblue|stripe|todoist|vaultpress)(-logo)?\.svg$/,
+	/(?:billcom|canva|evernote|facebook-messenger|fiverr|google-photos|monday|paypal|quickbooks|sendinblue|stripe|todoist|vaultpress)(-logo)?\.svg$/,
 	/images\/g-suite\/logo_/,
 	/images\/email-providers\/google-workspace/,
 

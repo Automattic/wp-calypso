@@ -7,7 +7,7 @@ import {
 	JETPACK_SERVICE_VAULTPRESS,
 	JETPACK_SUPPORT,
 } from '@automattic/urls';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { filter, get, range } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -172,10 +172,15 @@ class PlansSetup extends Component {
 		} );
 		return (
 			<EmptyContent
-				title={ this.props.translate(
-					'Oh no! You need to select a Jetpack site to be able to setup your plan'
-				) }
-				illustration="/calypso/images/jetpack/jetpack-manage.svg"
+				title={ fixMe( {
+					text: 'You need to select a Jetpack site to be able to setup your plan',
+					newCopy: this.props.translate(
+						'You need to select a Jetpack site to be able to setup your plan'
+					),
+					oldCopy: this.props.translate(
+						'Oops! You need to select a Jetpack site to be able to setup your plan'
+					),
+				} ) }
 			/>
 		);
 	};
@@ -208,9 +213,12 @@ class PlansSetup extends Component {
 			<EmptyContent
 				action={ translate( 'Contact Support' ) }
 				actionURL={ JETPACK_CONTACT_SUPPORT }
-				title={ translate( "Oh no! We can't install plugins on this site." ) }
+				title={ fixMe( {
+					text: "We can't install plugins on this site.",
+					newCopy: translate( "We can't install plugins on this site." ),
+					oldCopy: translate( "Oh no! We can't install plugins on this site." ),
+				} ) }
 				line={ reason }
-				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};

@@ -8,7 +8,8 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
-import type { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/api-core';
+import type { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import type { SiteGoal } from '@automattic/data-stores/src/onboard';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -144,12 +145,13 @@ export const useCreateSite = () => {
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
-	const mergedDomainCartItems = Array.isArray( domains?.domainCart )
-		? domains?.domainCart.slice( 0 )
-		: [];
+	const mergedDomainCartItems =
+		domains && 'domainCart' in domains && Array.isArray( domains.domainCart )
+			? domains.domainCart.slice( 0 )
+			: [];
 
 	if ( domains?.domainItem ) {
-		mergedDomainCartItems.push( domains?.domainItem );
+		mergedDomainCartItems.push( domains.domainItem );
 	}
 
 	return useMutation( {

@@ -163,5 +163,12 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		window.twq( ...params );
 	}
 
+	// LinkedIn
+	if ( mayWeTrackByTracker( 'linkedin' ) ) {
+		const params = { conversion_id: 19839612 };
+		debug( 'recordSignup: [LinkedIn]', params );
+		window.lintrk( 'track', params );
+	}
+
 	debug( 'recordSignup: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }

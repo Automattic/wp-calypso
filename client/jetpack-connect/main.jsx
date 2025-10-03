@@ -124,9 +124,9 @@ export class JetpackConnectMain extends Component {
 	}
 
 	render() {
-		const { renderFooter, status, type } = this.props;
+		const { renderFooter, status, type, canGoBack, goBack } = this.props;
 		return (
-			<MainWrapper>
+			<MainWrapper useCompactLogo compactBackButton={ canGoBack && goBack }>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<MainHeader type={ type } />

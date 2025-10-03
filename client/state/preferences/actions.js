@@ -87,7 +87,7 @@ export const savePreference = ( key, value ) => ( dispatch ) => {
 				value,
 			} );
 		} )
-		.catch( ( __, error ) => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: PREFERENCES_SAVE_FAILURE,
 				error,

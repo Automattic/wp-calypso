@@ -8,6 +8,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -157,14 +158,13 @@ function InviteForm( props: Props ) {
 	 */
 	function getRoleLearnMoreLink() {
 		return (
-			<Button
-				className="team-invite-form-learn-more__link"
-				plain
-				target="_blank"
-				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
+			<InlineSupportLink
+				showIcon={ false }
+				supportPostId={ 226531 }
+				supportLink={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 			>
 				{ translate( 'Learn more' ) }
-			</Button>
+			</InlineSupportLink>
 		);
 	}
 
@@ -190,7 +190,7 @@ function InviteForm( props: Props ) {
 			{ [ ...Array( tokenControlNum ) ].map( ( v, i ) => (
 				<FormFieldset key={ i }>
 					{ ! i && (
-						<FormLabel htmlFor={ `token-${ i }` }>{ translate( 'Email or Username' ) }</FormLabel>
+						<FormLabel htmlFor={ `token-${ i }` }>{ translate( 'Email or username' ) }</FormLabel>
 					) }
 					<div className="form-field-wrapper">
 						<FormTextInput

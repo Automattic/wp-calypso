@@ -3,10 +3,18 @@ import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types
 
 export const isProductEligibleForCommission = ( slug: string ) => {
 	const thirdPartyProducts = [
+		'woocommerce-affirm',
+		'woocommerce-afterpay',
 		'woocommerce-constellation',
 		'woocommerce-dynamic-pricing',
+		'woocommerce-klarna',
+		'woocommerce-klaviyo',
+		'woocommerce-mollie',
+		'woocommerce-paypal',
 		'woocommerce-rental-products',
 		'woocommerce-smart-coupons',
+		'woocommerce-square',
+		'woocommerce-stripe',
 		'woocommerce-variation-swatches-and-photos',
 	];
 

@@ -3,7 +3,7 @@ import { translate, TranslateResult } from 'i18n-calypso';
 import { PureComponent, ReactNode } from 'react';
 import DiffViewer from 'calypso/components/diff-viewer';
 import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
-import MarkedLines from 'calypso/components/marked-lines';
+import MarkedLines from 'calypso/dashboard/components/marked-lines';
 
 import './style.scss';
 
@@ -14,12 +14,18 @@ export interface Props {
 	type?: string | ReactNode;
 	source?: string;
 	fix?: string | ReactNode;
-	context?: Record< string, unknown >;
+	context?: {
+		marks?: Record< string, [ number, number ][] >;
+		[ lineNumber: string ]: string | Record< string, [ number, number ][] > | undefined;
+	};
 	diff?: string;
 	rows?: Record< string, unknown >;
 	table?: string;
+	primaryKeyColumn?: string;
+	value?: string;
 	filename?: string;
 	isFixable: boolean;
+	details?: Record< string, unknown >;
 }
 
 class ThreatDescription extends PureComponent< Props > {
@@ -67,12 +73,18 @@ class ThreatDescription extends PureComponent< Props > {
 	}
 
 	renderDatabaseRows(): ReactNode | null {
-		const { rows, table } = this.props;
-		if ( ! rows || ! table ) {
+		const { table, details, primaryKeyColumn, value } = this.props;
+		if ( ! table || ! details ) {
 			return null;
 		}
 
-		const content = Object.values( rows ).map( ( row ) => JSON.stringify( row ) + '\n' );
+		const row = {
+			table,
+			primary_key_column: primaryKeyColumn,
+			primary_key_value: value,
+			details,
+		};
+		const content = JSON.stringify( row, null, ' \t' ) + '\n';
 
 		return (
 			<>

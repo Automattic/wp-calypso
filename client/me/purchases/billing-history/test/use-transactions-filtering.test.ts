@@ -22,7 +22,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -46,7 +45,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -77,7 +75,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -108,7 +105,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -139,7 +135,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -180,7 +175,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -207,7 +201,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -231,7 +224,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -256,7 +248,6 @@ describe( 'useTransactionsFiltering', () => {
 						direction: 'asc',
 					},
 					fields: [],
-					hiddenFields: [],
 				},
 				null
 			)
@@ -279,7 +270,6 @@ describe( 'useTransactionsFiltering', () => {
 						perPage: 0,
 						sort: { field: 'service', direction: 'asc' },
 						fields: [],
-						hiddenFields: [],
 					},
 					123 // assuming this siteId exists in mockTransactions
 				)
@@ -304,7 +294,6 @@ describe( 'useTransactionsFiltering', () => {
 						perPage: 0,
 						sort: { field: 'service', direction: 'asc' },
 						fields: [],
-						hiddenFields: [],
 					},
 					null
 				)

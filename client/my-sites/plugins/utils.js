@@ -1,4 +1,5 @@
 import { isMagnificentLocale } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { createSelector } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -35,4 +36,14 @@ export function useServerEffect( fn ) {
 	if ( 'undefined' === typeof window ) {
 		fn();
 	}
+}
+
+export function formatPluginRating( rating ) {
+	if ( ! rating ) {
+		return null;
+	}
+
+	return formatNumber( rating / 20, {
+		decimals: Number.isInteger( rating / 20 ) ? 0 : 1,
+	} );
 }

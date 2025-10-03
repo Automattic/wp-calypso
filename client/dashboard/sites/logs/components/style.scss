@@ -1,0 +1,19 @@
+.site-logs-details-modal {
+	&__row {
+		display: grid;
+		grid-template-columns: 180px 1fr;
+		column-gap: 16px;
+		align-items: start;
+	}
+
+	&__field-title {
+		white-space: nowrap;
+		font-weight: 500;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+	}
+
+	&__field-value {
+		word-break: break-word;
+	}
+}

@@ -7,8 +7,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
-import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
@@ -19,43 +18,46 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import { withEnhancers } from 'calypso/state/utils';
+import { LoginContext } from '../login-context';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
+
 class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
 		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
+		emailAddress: PropTypes.string,
+		isWCCOM: PropTypes.bool,
+		oauth2Client: PropTypes.object,
+		redirectTo: PropTypes.string,
+		currentQuery: PropTypes.object,
+		translate: PropTypes.func.isRequired,
 	};
+
+	static contextType = LoginContext;
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 	}
 
 	onLostPasswordClick = ( event ) => {
-		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
-
-		if ( this.props.isWCCOM ) {
-			event.preventDefault();
-
-			page(
-				login( {
-					redirectTo: this.props.redirectTo,
-					locale: this.props.locale,
-					action: 'lostpassword',
-					oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-					from: get( this.props.currentQuery, 'from' ),
-				} )
-			);
-		}
+		event.preventDefault();
+		// This was tracked with `calypso_magic_login_lost_password_click`, check that event for older analytics
+		recordTracksEvent( 'calypso_login_lost_password_click', {
+			from: 'magic-login',
+		} );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action: 'lostpassword', // TODO add jetpack/lostpassword
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: get( this.props.currentQuery, 'from' ),
+			} )
+		);
 	};
 
 	render() {
 		const { translate, emailAddress } = this.props;
-		const successMessage = emailAddress
-			? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}", {
-					args: { emailAddress },
-					components: { strong: <strong /> },
-			  } )
-			: translate( 'We just emailed you a link.' );
 
 		return (
 			<div className="magic-login__form">
@@ -65,12 +67,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 					waitForEmailAddress={ emailAddress }
 				/>
 
-				<h1 className="magic-login__form-header">{ translate( 'Check your email' ) }</h1>
-
 				<Card className="magic-login__form">
-					<div className="magic-login__form-text">
-						<p>{ preventWidows( successMessage ) }</p>
-					</div>
 					<div className="magic-login__emails-list">
 						<MagicLoginEmailWrapper emailAddress={ emailAddress } />
 					</div>
@@ -81,13 +78,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
 							{
 								components: {
-									a: (
-										<a
-											href={ lostPassword( { locale: this.props.locale } ) }
-											onClick={ this.onLostPasswordClick }
-											rel="noopener noreferrer"
-										/>
-									),
+									a: <a href="/" onClick={ this.onLostPasswordClick } rel="noopener noreferrer" />,
 								},
 							}
 						) }

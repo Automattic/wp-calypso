@@ -12,7 +12,6 @@ export const CALYPSO_CONTACT = '/help/contact';
 export const CALYPSO_HELP = '/help';
 export const CALYPSO_HELP_WITH_HELP_CENTER = CALYPSO_HELP + '?help-center=home';
 export const CUSTOM_DNS = `${ root }/domains/custom-dns/`;
-export const DESIGNATED_AGENT = `${ root }/update-contact-information/#designated-agent`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
 export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAINS = `${ root }/domains/`;
@@ -62,7 +61,7 @@ export const MAP_SUBDOMAIN = `${ root }/domains/connect-subdomain/`;
 export const MAP_SUBDOMAIN_WITH_CNAME_RECORDS = `${ root }/domains/connect-subdomain/#adding-cname-records-with-your-registrar`;
 export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/connect-existing-domain/#step-2-change-your-domains-name-servers`;
 export const PREMIUM_DOMAINS = `${ root }/domains/premium-domains/`;
-export const PRIVACY_PROTECTION = `${ root }/domains/domain-registrations-and-privacy/#privacy-protection`;
+export const PRIVACY_PROTECTION = `${ root }/domains/private-domain-registration/#what-is-privacy-protection`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
 export const REFUNDS = `${ root }/refunds/`;
 export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;
@@ -76,3 +75,6 @@ export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registrat
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;
 export const UPDATE_NAMESERVERS = `${ root }/domains/change-name-servers/`;
 export const WPCC = `${ root }/wpcc-faq/`;
+
+export const isThisASupportArticleLink = ( href: string ) =>
+	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );

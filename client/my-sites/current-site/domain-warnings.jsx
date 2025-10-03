@@ -11,10 +11,6 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 const allowedRules = [
 	'unverifiedDomainsCanManage',
 	'unverifiedDomainsCannotManage',
-	'expiredDomainsCanManage',
-	'expiringDomainsCanManage',
-	'expiredDomainsCannotManage',
-	'expiringDomainsCannotManage',
 	'wrongNSMappedDomains',
 	'pendingGSuiteTosAcceptanceDomains',
 	'transferStatus',

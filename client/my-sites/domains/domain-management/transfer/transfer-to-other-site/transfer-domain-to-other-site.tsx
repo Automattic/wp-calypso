@@ -54,12 +54,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const isAtomic = site?.options?.is_automated_transfer ?? false;
 		const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 
-		return (
+		return Boolean(
 			site?.capabilities?.manage_options &&
-			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
-			! isWpcomStagingSite &&
-			! ( site?.options?.is_domain_only ?? false ) &&
-			site.ID !== this.props.selectedSite?.ID
+				! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
+				! isWpcomStagingSite &&
+				! ( site?.options?.is_domain_only ?? false ) &&
+				site.ID !== this.props.selectedSite?.ID
 		);
 	};
 

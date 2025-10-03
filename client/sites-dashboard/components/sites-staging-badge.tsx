@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
+
 interface SitesStagingBadgeProps {
 	secondary?: boolean;
 }
 
-const COLOR = '#4f3500';
-const BACKGROUND_COLOR = '#f0c930';
+const COLOR = 'var( --studio-gray-90 )';
+const BACKGROUND_COLOR = '#dcdcde';
 
 const SitesStagingBadge = styled( SitesLaunchStatusBadge )( ( props: SitesStagingBadgeProps ) => ( {
 	color: COLOR,

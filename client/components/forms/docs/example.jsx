@@ -192,7 +192,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="username">Disabled Form Text Input</FormLabel>
+						<FormLabel htmlFor="username">Disabled form text input</FormLabel>
 						<FormTextInput
 							id="username"
 							name="username"
@@ -202,7 +202,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="username">Form Text Input</FormLabel>
+						<FormLabel htmlFor="username">Form text input</FormLabel>
 						<FormTextInput id="username" name="username" placeholder="Placeholder text..." />
 						<FormSettingExplanation>
 							This is an explanation of FormTextInput.
@@ -210,7 +210,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="text_valid">Form Text Input</FormLabel>
+						<FormLabel htmlFor="text_valid">Form text input</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoComplete="off"
@@ -224,7 +224,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="text_invalid">Form Text Input</FormLabel>
+						<FormLabel htmlFor="text_invalid">Form text input</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoComplete="off"
@@ -238,7 +238,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="text_with_affixes">Form Text Input With Action</FormLabel>
+						<FormLabel htmlFor="text_with_affixes">Form text input with action</FormLabel>
 						<FormTextInputWithAction
 							placeholder="Enter a name for your site"
 							action="Continue"
@@ -251,7 +251,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="text_with_affixes">Form Text Input With Affixes</FormLabel>
+						<FormLabel htmlFor="text_with_affixes">Form text input with affixes</FormLabel>
 						<FormTextInputWithAffixes
 							id="text_with_affixes"
 							placeholder="Placeholder text..."
@@ -261,7 +261,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="select">Form Select</FormLabel>
+						<FormLabel htmlFor="select">Form select</FormLabel>
 						<FormSelect id="select">
 							<option>1</option>
 							<option>2</option>
@@ -278,7 +278,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="password">Form Password Input</FormLabel>
+						<FormLabel htmlFor="password">Form password input</FormLabel>
 						<FormPasswordInput id="password" name="password" />
 					</FormFieldset>
 
@@ -301,7 +301,7 @@ class FormFields extends PureComponent {
 					<FormSectionHeading>Form Section Heading</FormSectionHeading>
 
 					<FormFieldset>
-						<FormLabel htmlFor="country_code">Form Country Select</FormLabel>
+						<FormLabel htmlFor="country_code">Form country select</FormLabel>
 						<QuerySmsCountries />
 						<FormCountrySelect
 							name="country_code"
@@ -311,7 +311,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="us_state">Form US State Select</FormLabel>
+						<FormLabel htmlFor="us_state">Form US state select</FormLabel>
 						<FormStateSelector name="us_state" id="us_state" />
 					</FormFieldset>
 
@@ -365,12 +365,12 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="telInput">Form Tel Input</FormLabel>
+						<FormLabel htmlFor="telInput">Form tel input</FormLabel>
 						<FormTelInput name="telInput" id="telInput" placeholder="Placeholder text..." />
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="telInput_valid">Form Tel Input</FormLabel>
+						<FormLabel htmlFor="telInput_valid">Form tel input</FormLabel>
 						<FormTelInput
 							name="telInput"
 							id="telInput_valid"
@@ -381,7 +381,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="telInput_error">Form Tel Input</FormLabel>
+						<FormLabel htmlFor="telInput_error">Form tel input</FormLabel>
 						<FormTelInput
 							name="telInput"
 							id="telInput_error"
@@ -392,7 +392,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel>Form Phone Input</FormLabel>
+						<FormLabel>Form phone input</FormLabel>
 						<FormPhoneInput
 							initialCountryCode="US"
 							initialPhoneNumber="8772733049"
@@ -401,7 +401,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel>Form Media Phone Input</FormLabel>
+						<FormLabel>Form media phone input</FormLabel>
 						<PhoneInput
 							value={ {
 								phoneNumber: this.state.phoneInput.value,
@@ -413,7 +413,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="currency_input">Form Currency Input</FormLabel>
+						<FormLabel htmlFor="currency_input">Form currency input</FormLabel>
 						<FormCurrencyInput
 							name="currency_input"
 							id="currency_input"
@@ -423,7 +423,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="currency_input_valid">Form Currency Input</FormLabel>
+						<FormLabel htmlFor="currency_input_valid">Form currency input</FormLabel>
 						<FormCurrencyInput
 							name="currency_input"
 							id="currency_input_valid"
@@ -435,7 +435,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="currency_input_error">Form Currency Input</FormLabel>
+						<FormLabel htmlFor="currency_input_error">Form currency input</FormLabel>
 						<FormCurrencyInput
 							name="currency_input"
 							id="currency_input_error"
@@ -447,7 +447,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="currency_input_editable">Editable Form Currency Input</FormLabel>
+						<FormLabel htmlFor="currency_input_editable">Editable form currency input</FormLabel>
 						<FormCurrencyInput
 							name="currency_input_editable"
 							id="currency_input_editable"
@@ -462,7 +462,7 @@ class FormFields extends PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="currency_input_editable">
-							Editable Form Currency Input (customized list)
+							Editable form currency input (customized list)
 						</FormLabel>
 						<FormCurrencyInput
 							name="currency_input_editable"
@@ -477,12 +477,12 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="textarea">Form Textarea</FormLabel>
+						<FormLabel htmlFor="textarea">Form textarea</FormLabel>
 						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..." />
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="textarea_valid">Form Textarea</FormLabel>
+						<FormLabel htmlFor="textarea_valid">Form textarea</FormLabel>
 						<FormTextarea
 							name="textarea"
 							id="textarea_valid"
@@ -493,7 +493,7 @@ class FormFields extends PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="textarea_error">Form Textarea</FormLabel>
+						<FormLabel htmlFor="textarea_error">Form textarea</FormLabel>
 						<FormTextarea
 							name="textarea"
 							id="textarea_error"

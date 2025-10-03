@@ -129,7 +129,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'woocommerce-subscriptions',
 				name: __( 'WooCommerce Subscriptions' ),
-				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce-subscriptions.png',
+				icon: 'https://woocommerce.com/wp-content/uploads/2012/09/Woo_Subscriptions_icon-marketplace-160x160-2.png',
 				short_description: __( 'Let customers subscribe to your service' ),
 			},
 			{
@@ -141,25 +141,25 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'automatewoo',
 				name: __( 'AutomateWoo' ),
-				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/automatewoo.png',
+				icon: 'https://woocommerce.com/wp-content/uploads/2019/10/woo-AutomateWoo.png',
 				short_description: __( 'Create a range of automated workflows' ),
 			},
 			{
 				slug: 'woocommerce-shipment-tracking',
 				name: __( 'Shipment tracking' ),
-				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce-shipment-tracking.png',
+				icon: 'https://woocommerce.com/wp-content/uploads/2012/05/Shipment_Tracking_icon-marketplace-160x160-2.png',
 				short_description: __( 'Provide shipment tracking information' ),
 			},
 			{
 				slug: 'woocommerce-shipping-usps',
 				name: __( 'WooCommerce USPS Shipping' ),
-				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce.svg',
+				icon: 'https://woocommerce.com/wp-content/uploads/2013/01/woo-USPS-yhn1rb.png',
 				short_description: __( 'Get shipping rates from the USPS API' ),
 			},
 			{
 				slug: 'woocommerce-paypal-payments',
 				name: __( 'WooCommerce PayPal Payments' ),
-				icon: 'https://ps.w.org/woocommerce-paypal-payments/assets/icon-256x256.png',
+				icon: 'https://ps.w.org/woocommerce-paypal-payments/assets/icon-256x256.png?rev=3234615',
 				short_description: __( 'Accept PayPal payments' ),
 			},
 		],
@@ -183,7 +183,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	social: {
-		menu: __( 'Social' ),
+		menu: _x( 'Social', 'category name' ),
 		title: __( 'Social' ),
 		description: __( 'Connect to your audience and amplify your content on social.' ),
 		icon: 'grid',
@@ -393,7 +393,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'woocommerce-bookings',
 				name: __( 'WooCommerce Bookings' ),
-				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce-bookings.png',
+				icon: 'https://woocommerce.com/wp-content/uploads/2014/05/Bookings_icon-marketplace-160x160-1.png',
 				short_description: __( 'Allow customers to book appointments' ),
 			},
 			{
@@ -493,7 +493,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	comments: {
-		menu: __( 'Comment' ),
+		menu: _x( 'Comment', 'category name' ),
 		title: __( 'Comments & commenting' ),
 		slug: 'comments',
 		tags: [ 'comment', 'comments', 'comment fields', 'delete comments' ],
@@ -558,7 +558,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	search: {
-		menu: __( 'Search' ),
+		menu: _x( 'Search', 'category name' ),
 		title: __( 'Search' ),
 		slug: 'search',
 		tags: [ 'ajax search', 'image search', 'search and replace', 'search', 'google' ],

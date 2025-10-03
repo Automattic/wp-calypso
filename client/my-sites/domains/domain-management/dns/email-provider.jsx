@@ -80,7 +80,7 @@ class EmailProvider extends Component {
 						placeholder={ placeholder }
 					/>
 					{ token && ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid token' ) } isError />
 					) }
 				</FormFieldset>
 				<div>
