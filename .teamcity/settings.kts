@@ -246,11 +246,13 @@ object BuildBaseImages : BuildType({
 			}
 			branchFilter = """
 				+:trunk
+				+:alert-for-base-image-build-failure
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
+			buildFinishedSuccessfully = true
 		}
 	}
 })
