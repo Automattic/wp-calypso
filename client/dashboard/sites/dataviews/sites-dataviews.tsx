@@ -55,7 +55,7 @@ export const SitesDataViews = ( {
 		<>
 			<DataViewsCard>
 				<DataViews< Site >
-					getItemId={ ( item ) => item.ID.toString() }
+					getItemId={ ( item ) => item.ID.toString() + item.URL }
 					data={ filteredData }
 					fields={ fields }
 					actions={ actions }
