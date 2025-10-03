@@ -1,6 +1,6 @@
 import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet, notFound } from '@tanstack/react-router';
+import { Outlet, notFound, useLocation } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	MenuGroup,
@@ -33,6 +33,7 @@ function Site() {
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const location = useLocation();
 
 	if ( ! canManageSite( site ) ) {
 		throw notFound();
@@ -48,7 +49,16 @@ function Site() {
 							items={ sites }
 							value={ site }
 							getItemName={ getSiteDisplayName }
-							getItemUrl={ ( site ) => `/sites/${ site.slug }` }
+							getItemUrl={ ( site ) => {
+								const currentPath = location.pathname;
+								const sitePattern = `/sites/${ siteSlug }`;
+
+								if ( currentPath.includes( sitePattern ) ) {
+									return currentPath.replace( sitePattern, `/sites/${ site.slug }` );
+								}
+
+								return `/sites/${ site.slug }`;
+							} }
 							renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
 							open={ isSwitcherOpen }
 							onToggle={ setIsSwitcherOpen }

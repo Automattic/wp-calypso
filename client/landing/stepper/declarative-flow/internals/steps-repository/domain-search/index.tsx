@@ -2,6 +2,7 @@ import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
 	isDomainFlow,
+	isDomainAndPlanFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 	isNewHostedSiteCreationFlow,
@@ -73,7 +74,8 @@ const DomainSearchStep: StepType< {
 
 		return {
 			vendor: getSuggestionsVendor( {
-				isSignup: false,
+				isSignup:
+					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
 				flowName: flow,
 			} ),
@@ -85,7 +87,8 @@ const DomainSearchStep: StepType< {
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
-				! isDomainFlow( flow ),
+				! isDomainFlow( flow ) &&
+				! isDomainAndPlanFlow( flow ),
 			allowedTlds,
 			allowsUsingOwnDomain: ! isAIBuilderFlow( flow ) && ! isNewHostedSiteCreationFlow( flow ),
 		};
@@ -182,10 +185,15 @@ const DomainSearchStep: StepType< {
 			flowName={ flow }
 			config={ config }
 			query={ query }
-			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
+			isFirstDomainFreeForFirstYear={
+				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isDomainAndPlanFlow( flow )
+			}
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
-				isOnboardingFlow( flow ) || isDomainFlow( flow ) || isNewHostedSiteCreationFlow( flow )
+				isOnboardingFlow( flow ) ||
+				isDomainFlow( flow ) ||
+				isNewHostedSiteCreationFlow( flow ) ||
+				isDomainAndPlanFlow( flow )
 			}
 			slots={ slots }
 		/>
@@ -222,6 +230,7 @@ const DomainSearchStep: StepType< {
 			stepName="step-container--domain-search"
 			isWideLayout
 			flowName={ flow }
+			goBack={ navigation.goBack }
 			formattedHeader={
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 			}

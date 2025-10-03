@@ -46,7 +46,7 @@ export default {
 			subtitle: '',
 			badge_text: 'Upgrade plan',
 			isLaunchTask: false,
-			calypso_path: '/setup/domain-upsell/domains?siteSlug=site62798.wordpress.com',
+			calypso_path: '/setup/domain-and-plan/domains?siteSlug=site62798.wordpress.com',
 		},
 		{
 			id: 'first_post_published',

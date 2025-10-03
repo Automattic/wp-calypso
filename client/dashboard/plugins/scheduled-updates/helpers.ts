@@ -180,3 +180,21 @@ export function formatScheduleCollisionsErrorMulti( {
 
 	return lines.join( '\n' );
 }
+
+/**
+ * Normalize a schedule ID coming from a human-readable URL,
+ * in case it includes derived suffixes like "-daily-<interval>-<HH:MM>",
+ * which are not part of the map key.
+ *
+ * Why this exists:
+ * - Pretty URLs may append metadata to the base schedule ID (e.g., "-daily-<interval>-<HH:MM>")
+ * so links are readable and reflect key params.
+ * - The base ID is the canonical storage key used by the API; suffixes are not part of the map key.
+ * - Uniqueness is per site; the same base ID can exist on multiple sites, which is expected in multisite.
+ * @param id string Possibly-suffixed schedule ID from the route
+ * @returns string Base schedule ID suitable for API map lookups
+ */
+export function normalizeScheduleId( id: string ): string {
+	const m = id.match( /^(.*)-(daily|weekly)-(\d+)-(\d{2}:\d{2})$/ );
+	return m ? m[ 1 ] : id;
+}

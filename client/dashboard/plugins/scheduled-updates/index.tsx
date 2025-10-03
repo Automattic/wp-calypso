@@ -126,11 +126,13 @@ export default function PluginsScheduledUpdates() {
 					onChangeView={ setView }
 					isLoading={ isLoading }
 					empty={
-						scheduledUpdates.length === 0
-							? __( 'No scheduled updates yet.' )
-							: __(
-									"We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-							  )
+						<p>
+							{ scheduledUpdates.length === 0
+								? __( 'No scheduled updates yet.' )
+								: __(
+										'We couldn’t find any schedules based on your search criteria. You might want to check your search terms and try again.'
+								  ) }
+						</p>
 					}
 					actions={ [
 						{

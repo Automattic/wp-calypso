@@ -1,4 +1,3 @@
-import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import illustrationUrl from './deployments-callout-illustration.svg';
@@ -11,12 +10,8 @@ export function getDeploymentsCalloutProps() {
 		upsellIcon: <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } />,
 		upsellTitle: __( 'Deploy from GitHub' ),
 		upsellImage: illustrationUrl,
-		upsellDescription: (
-			<Text as="p" variant="muted">
-				{ __(
-					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-				) }
-			</Text>
+		upsellDescription: __(
+			'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
 		),
 	};
 }

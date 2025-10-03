@@ -120,7 +120,7 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
-			&.domains:not(.copy-site):not(.ai-site-builder):not(.domain-upsell):not(.onboarding):not(.newsletter):not(.readymade-template):not(.reblogging):not(.start-writing) {
+			&.domains:not(.copy-site):not(.ai-site-builder):not(.domain-and-plan):not(.onboarding):not(.newsletter):not(.readymade-template):not(.reblogging):not(.start-writing) {
 				margin-top: -60px;
 			}
 		}
@@ -189,7 +189,7 @@ button {
 		}
 	}
 
-	&:not(:has(.wpcom-domain-search-v2)) {
+	&:not(:has(.wpcom-domain-search-v2)):not(:has(.domain-search--step-container)):not(:has(.domain-search--step-container-v2)) {
 		// While we don't standardize all Calypso interfaces, we need to override this for onboarding flows #79851
 		.components-button.is-primary {
 			border-radius: 4px;
