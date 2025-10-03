@@ -44,14 +44,14 @@ function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
 }
 
-function getSiteManagementUrl( site: Site ) {
+export function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
 		return `/sites/${ site.slug }`;
 	}
 	return site.options?.admin_url;
 }
 
-const titleFieldTextOverflowStyles = {
+export const titleFieldTextOverflowStyles = {
 	overflowX: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',

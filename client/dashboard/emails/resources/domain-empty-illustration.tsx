@@ -20,10 +20,10 @@ export default function DomainEmptyIllustration() {
 				mask="url(#path-2-inside-1_213_14434)"
 			/>
 			<path d="M272.5 71.25V208.25H135.5V71.25H272.5Z" stroke="#3858E9" />
-			<circle cx="272" cy="72" r="5.25" fill="white" stroke="#3858E9" stroke-width="1.5" />
-			<circle cx="272" cy="208" r="5.25" fill="white" stroke="#3858E9" stroke-width="1.5" />
-			<circle cx="136" cy="72" r="5.25" fill="white" stroke="#3858E9" stroke-width="1.5" />
-			<circle cx="136" cy="208" r="5.25" fill="white" stroke="#3858E9" stroke-width="1.5" />
+			<circle cx="272" cy="72" r="5.25" fill="white" stroke="#3858E9" strokeWidth="1.5" />
+			<circle cx="272" cy="208" r="5.25" fill="white" stroke="#3858E9" strokeWidth="1.5" />
+			<circle cx="136" cy="72" r="5.25" fill="white" stroke="#3858E9" strokeWidth="1.5" />
+			<circle cx="136" cy="208" r="5.25" fill="white" stroke="#3858E9" strokeWidth="1.5" />
 			<defs>
 				<pattern
 					id="pattern0_213_14434"
@@ -41,8 +41,8 @@ export default function DomainEmptyIllustration() {
 					y2="114.01"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop stop-color="#069E08" />
-					<stop offset="1" stop-color="#3858E9" />
+					<stop stopColor="#069E08" />
+					<stop offset="1" stopColor="#3858E9" />
 				</linearGradient>
 				<image
 					id="image0_213_14434"

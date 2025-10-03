@@ -37,41 +37,11 @@ export function ScanNowButton( { site, scanState }: ScanNowButtonProps ) {
 		triggerScan();
 	};
 
-	const getButtonContent = () => {
-		if ( isEnqueued ) {
-			return {
-				label: __( 'Scan enqueued' ),
-				tooltip: __( 'A scan has been queued and will start shortly.' ),
-			};
-		}
-
-		if ( status === 'running' ) {
-			return {
-				label: __( 'Scan in progress' ),
-				tooltip: __( 'A scan is currently in progress.' ),
-			};
-		}
-
-		return {
-			label: __( 'Scan now' ),
-			tooltip: __( 'Trigger a scan of your site now.' ),
-		};
-	};
-
-	const isBusy = isRunning || isPending || isEnqueued;
+	const isDisabled = isRunning || isPending || isEnqueued;
 
 	return (
-		<Button
-			variant="secondary"
-			onClick={ handleClick }
-			disabled={ isBusy }
-			isBusy={ isBusy }
-			accessibleWhenDisabled
-			description={ getButtonContent().tooltip }
-			label={ getButtonContent().label }
-			showTooltip
-		>
-			{ getButtonContent().label }
+		<Button variant="secondary" onClick={ handleClick } disabled={ isDisabled }>
+			{ __( 'Scan now' ) }
 		</Button>
 	);
 }

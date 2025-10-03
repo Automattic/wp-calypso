@@ -52,6 +52,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -76,6 +77,7 @@ class MasterbarLoggedIn extends Component {
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
+		hostingDashboardOptIn: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -225,11 +227,15 @@ class MasterbarLoggedIn extends Component {
 			currentRoute,
 			isGlobalSidebarVisible,
 			siteAdminUrl,
+			hostingDashboardOptIn,
 		} = this.props;
 
-		const mySitesUrl = domainOnlySite
+		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
+		if ( hostingDashboardOptIn ) {
+			mySitesUrl = domainOnlySite ? '/v2/domains' : '/v2/sites';
+		}
 		const icon = this.wordpressIcon();
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
@@ -243,11 +249,11 @@ class MasterbarLoggedIn extends Component {
 					[
 						{
 							label: translate( 'Sites' ),
-							url: '/sites',
+							url: hostingDashboardOptIn ? '/v2/sites' : '/sites',
 						},
 						{
 							label: translate( 'Domains' ),
-							url: '/domains/manage',
+							url: hostingDashboardOptIn ? '/v2/domains' : '/domains/manage',
 						},
 					],
 					...( this.props.isSimpleSite
@@ -885,6 +891,7 @@ export default connect(
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
+			hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
 		};
 	},
 	{

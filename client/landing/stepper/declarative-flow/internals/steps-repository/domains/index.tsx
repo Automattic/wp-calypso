@@ -4,9 +4,8 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
-	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
-	isDomainUpsellFlow,
+	isDomainAndPlanFlow,
 	isHundredYearDomainFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
@@ -162,7 +161,7 @@ const DomainsStep: Step< {
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return submit?.( { deferDomainSelection: true } );
 		}
 
@@ -295,21 +294,21 @@ const DomainsStep: Step< {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

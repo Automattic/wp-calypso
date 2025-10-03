@@ -95,11 +95,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Domains' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ hasAppSupport( supports, 'emails' ) && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
-					{ __( 'Emails' ) }
-				</ResponsiveMenu.Item>
-			) }
 			{ site.capabilities.manage_options && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
 					{ __( 'Settings' ) }

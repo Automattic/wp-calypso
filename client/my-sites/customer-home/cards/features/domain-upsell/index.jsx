@@ -21,7 +21,7 @@ import domainUpsellIllustration from 'calypso/assets/images/customer-home/illust
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { addQueryArgs } from 'calypso/lib/url';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
@@ -125,14 +125,10 @@ export function RenderDomainUpsell( {
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-			back_to: window.location.href.replace( window.location.origin, '' ),
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, domain: true } );
+
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
 			button_url: searchLink,
@@ -141,16 +137,14 @@ export function RenderDomainUpsell( {
 		} );
 	};
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const plansPageLink = getDomainAndPlanUpsellUrl( {
+		siteSlug,
+		backUrl,
+		step: 'plans',
+		domain: true,
+	} );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const getDismissClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_dismiss_click' );

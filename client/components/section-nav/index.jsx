@@ -6,7 +6,6 @@ import { Children, cloneElement, Component } from 'react';
 import Search from 'calypso/components/search';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import CommentNavigationTab from 'calypso/my-sites/comments/comment-navigation/comment-navigation-tab';
 
 import './style.scss';
 
@@ -175,7 +174,7 @@ class SectionNav extends Component {
 	checkForSiblingControls( children ) {
 		this.hasSiblingControls = false;
 
-		const ignoreSiblings = [ Search, CommentNavigationTab ];
+		const ignoreSiblings = [ Search ];
 
 		Children.forEach( children, ( child, index ) => {
 			// Checking for at least 2 controls groups that are not null or ignored siblings

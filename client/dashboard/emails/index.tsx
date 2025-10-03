@@ -73,7 +73,7 @@ function Emails() {
 
 	return (
 		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
-			<DataViewsCard>
+			<DataViewsCard className="emails__dataviews">
 				<DataViews
 					data={ filteredData }
 					isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }

@@ -1,0 +1,20 @@
+.collapsible-card {
+	max-height: 100%;
+
+	.collapsible-card__toggle svg {
+		transition: transform 0.2s ease-in-out;
+	}
+
+	&.collapsed .collapsible-card__toggle svg {
+		transform: rotate(180deg);
+	}
+
+	.collapsed &__content {
+		display: none;
+	}
+
+	&.collapsed {
+		overflow: hidden;
+	}
+
+}
