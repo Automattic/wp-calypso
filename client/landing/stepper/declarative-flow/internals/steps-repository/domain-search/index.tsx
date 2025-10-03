@@ -34,6 +34,8 @@ import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
+const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
+
 import './style.scss';
 
 type UseMyDomain = {
@@ -94,7 +96,10 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
-			allowedTlds,
+			allowedTlds:
+				isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow )
+					? HUNDRED_YEAR_DOMAIN_TLDS
+					: allowedTlds,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
 				! isNewHostedSiteCreationFlow( flow ) &&
