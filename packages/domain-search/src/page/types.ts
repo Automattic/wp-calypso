@@ -64,6 +64,7 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeShown: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
+	onPageView: () => void;
 }
 
 export interface DomainSearchConfig {

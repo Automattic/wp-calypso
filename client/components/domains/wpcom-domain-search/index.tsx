@@ -87,6 +87,12 @@ const DomainSearchWithCart = ( {
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			...props.events,
+			onPageView: () => {
+				recordTracksEvent( 'calypso_domain_search_pageview', {
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+					flow_name: flowName,
+				} );
+			},
 			onQueryChange: ( query ) => {
 				setQuery( query );
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
