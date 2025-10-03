@@ -18,7 +18,7 @@ export default function NoticeSummary( { type }: Props ) {
 			case 'agency-purchase':
 				return translate( 'When you purchase:' );
 			case 'request-client-payment':
-				return translate( 'When you send this payment request:' );
+				return translate( 'When you share this payment request:' );
 			default:
 				return null;
 		}
@@ -99,7 +99,7 @@ export default function NoticeSummary( { type }: Props ) {
 			case 'request-client-payment':
 				return [
 					translate(
-						"We'll email your client with instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they'll be enrolled in an automatically renewing subscription, billed monthly or annually, based on their selection at checkout. The client may cancel their subscription at any time."
+						"Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they'll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime."
 					),
 					translate(
 						"After their purchase, you'll be able to manage the products on your client's behalf."

@@ -12,7 +12,11 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import {
+	NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
+	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
+} from 'calypso/a8c-for-agencies/constants';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -31,6 +35,7 @@ import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
+import { ReferralOrderFlowType } from '../../types';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
 
@@ -53,9 +58,16 @@ export default function ReferralsOverview() {
 		titleField: 'client',
 	} );
 
-	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
-		REFERRAL_EMAIL_QUERY_PARAM_KEY
+	const { value: newReferralOrderEmail, setValue: setNewReferralOrderEmail } = useUrlQueryParam(
+		NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY
 	);
+
+	const { value: newReferralFlowType, setValue: setNewReferralFlowType } = useUrlQueryParam(
+		NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY
+	);
+
+	const { value: newReferralOrderCheckoutUrl, setValue: setNewReferralOrderCheckoutUrl } =
+		useUrlQueryParam( NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -106,11 +118,17 @@ export default function ReferralsOverview() {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop isFullWidth={ hasReferrals }>
-					{ !! referralEmail && (
+					{ !! newReferralOrderEmail && (
 						<NewReferralOrderNotification
-							email={ referralEmail }
-							onClose={ () => setReferralEmail( '' ) }
+							referralOrderEmail={ newReferralOrderEmail }
+							referralOrderCheckoutUrl={ newReferralOrderCheckoutUrl }
+							onClose={ () => {
+								setNewReferralOrderEmail( '' );
+								setNewReferralFlowType( '' );
+								setNewReferralOrderCheckoutUrl( '' );
+							} }
 							isFullWidth={ hasReferrals }
+							flowType={ newReferralFlowType as ReferralOrderFlowType }
 						/>
 					) }
 

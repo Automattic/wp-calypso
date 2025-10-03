@@ -40,7 +40,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
-			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			gmtOffset: Number( s?.gmt_offset ) || 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
