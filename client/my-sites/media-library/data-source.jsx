@@ -10,7 +10,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import GooglePhotosIcon from './google-photos-icon';
 import OpenverseIcon from './openverse-icon';
 import PexelsIcon from './pexels-icon';
 
@@ -57,13 +56,6 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
-		if ( includeExternalMedia ) {
-			sources.push( {
-				value: 'google_photos',
-				label: translate( 'Google Photos' ),
-				icon: <GooglePhotosIcon className="gridicon" />,
-			} );
-		}
 		if ( includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',

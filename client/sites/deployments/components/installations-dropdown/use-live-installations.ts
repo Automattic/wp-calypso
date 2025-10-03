@@ -12,10 +12,6 @@ import {
 import { openPopup } from '../../utils/open-popup';
 import { useSaveGitHubCredentialsMutation } from './use-save-github-credentials-mutation';
 
-interface UseLiveInstallationsParameters {
-	initialInstallationId?: number;
-}
-
 const NOTICE_ID = 'github-app-install-notice';
 
 const AUTHORIZATION_URL =
@@ -23,9 +19,7 @@ const AUTHORIZATION_URL =
 
 const INSTALLATION_URL = 'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-install';
 
-export const useLiveInstallations = ( {
-	initialInstallationId,
-}: UseLiveInstallationsParameters = {} ) => {
+export const useLiveInstallations = () => {
 	const {
 		data: installations,
 		error: installationsError,
@@ -42,19 +36,8 @@ export const useLiveInstallations = ( {
 			return;
 		}
 
-		if ( initialInstallationId ) {
-			const preselectedInstallation = installations.find(
-				( installation ) => installation.external_id === initialInstallationId
-			);
-
-			if ( preselectedInstallation ) {
-				setInstallation( preselectedInstallation );
-				return;
-			}
-		}
-
 		setInstallation( installations[ 0 ] );
-	}, [ installations, installation, initialInstallationId ] );
+	}, [ installations, installation ] );
 
 	const authorizeApp = async ( { code }: { code: string } ) => {
 		const response = await postLoginRequest( 'exchange-social-auth-code', {

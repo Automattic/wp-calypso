@@ -20,8 +20,13 @@ export default meta;
 function Card( {
 	color,
 	children,
+	actionableArea,
 	...props
-}: { color: string; children: React.ReactNode } & HTMLAttributes< HTMLDivElement > ) {
+}: {
+	color: string;
+	children: React.ReactNode;
+	actionableArea?: React.ReactNode;
+} & HTMLAttributes< HTMLDivElement > ) {
 	return (
 		<div
 			{ ...props }
@@ -38,6 +43,24 @@ function Card( {
 			} }
 		>
 			{ children }
+		</div>
+	);
+}
+
+function WidgetActions( { onClose }: { onClose: () => void } ) {
+	return (
+		<div
+			style={ {
+				position: 'absolute',
+				display: 'flex',
+				alignItems: 'right',
+				justifyContent: 'right',
+				top: 2,
+				right: 2,
+				zIndex: 2,
+			} }
+		>
+			<button onClick={ onClose }>x</button>
 		</div>
 	);
 }
@@ -180,6 +203,110 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			description: {
 				story:
 					'This example demonstrates the Grid component in edit mode with drag, drop, and resize functionality. Use the edit mode to reorder and resize the cards. Grab and drag the handle in the bottom-right corner of each card to resize it. The layout and edit mode are managed with local state.',
+			},
+		},
+		layout: '',
+	},
+};
+
+/**
+ * Example showing the Grid component with actionable area
+ */
+export const WithActionableArea: StoryObj< typeof Grid > = {
+	render: function EditableGrid() {
+		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'a', width: 1, height: 1 },
+			{ key: 'b', width: 2, height: 1 },
+			{ key: 'c', width: 1, height: 1 },
+			{ key: 'd', width: 2, height: 1 },
+			{ key: 'e', width: 1, height: 1 },
+			{ key: 'f', width: 1, height: 1 },
+			{ key: 'g', width: 2, height: 1 },
+			{ key: 'h', width: 1, height: 1 },
+			{ key: 'i', width: 1, height: 1 },
+			{ key: 'j', width: 1, height: 1 },
+		] );
+
+		return (
+			<Grid
+				layout={ layout }
+				minColumnWidth={ 160 }
+				rowHeight={ 100 }
+				spacing={ 2 }
+				editMode
+				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
+			>
+				<Card
+					key="a"
+					color="#f44336"
+					actionableArea={
+						<WidgetActions
+							onClose={ () => {
+								// eslint-disable-next-line no-console
+								console.log( 'close card A' );
+							} }
+						/>
+					}
+				>
+					Card A
+				</Card>
+				<Card key="b" color="#2196f3">
+					Card B
+				</Card>
+				<Card
+					key="c"
+					color="#4caf50"
+					actionableArea={
+						<WidgetActions
+							onClose={ () => {
+								// eslint-disable-next-line no-console
+								console.log( 'close card C' );
+							} }
+						/>
+					}
+				>
+					Card C
+				</Card>
+				<Card key="d" color="#ff9800">
+					Card D
+				</Card>
+				<Card key="e" color="#9c27b0">
+					Card E
+				</Card>
+				<Card key="f" color="#607d8b">
+					Card F
+				</Card>
+				<Card key="g" color="#3f51b5">
+					Card G
+				</Card>
+				<Card
+					key="h"
+					color="#8bc34a"
+					actionableArea={
+						<WidgetActions
+							onClose={ () => {
+								// eslint-disable-next-line no-console
+								console.log( 'close card H' );
+							} }
+						/>
+					}
+				>
+					Card H
+				</Card>
+				<Card key="i" color="#cddc39">
+					Card I
+				</Card>
+				<Card key="j" color="#ffeb3b">
+					Card J
+				</Card>
+			</Grid>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'This example demonstrates how to add actionable areas to grid items that remain interactive during edit mode.',
 			},
 		},
 		layout: '',

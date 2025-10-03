@@ -1,8 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import {
 	CodeDeploymentDeleteResponse,
-	CreateCodeDeploymentVariables,
-	CreateCodeDeploymentResponse,
+	CreateAndUpdateCodeDeploymentVariables,
+	CreateAndUpdateCodeDeploymentResponse,
 	DeploymentRun,
 } from './types';
 
@@ -35,10 +35,22 @@ export async function deleteCodeDeployment(
 
 export async function createCodeDeployment(
 	siteId: number,
-	variables: CreateCodeDeploymentVariables
-): Promise< CreateCodeDeploymentResponse > {
+	variables: CreateAndUpdateCodeDeploymentVariables
+): Promise< CreateAndUpdateCodeDeploymentResponse > {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/hosting/code-deployments`,
+		apiNamespace: 'wpcom/v2',
+		body: variables,
+	} );
+}
+
+export async function updateCodeDeployment(
+	siteId: number,
+	deploymentId: number,
+	variables: CreateAndUpdateCodeDeploymentVariables
+): Promise< CreateAndUpdateCodeDeploymentResponse > {
+	return wpcom.req.put( {
+		path: `/sites/${ siteId }/hosting/code-deployments/${ deploymentId }`,
 		apiNamespace: 'wpcom/v2',
 		body: variables,
 	} );

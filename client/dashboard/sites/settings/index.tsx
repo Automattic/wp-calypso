@@ -11,9 +11,9 @@ import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
-import McpSettingsSummary from '../settings-mcp/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
+import RepositoriesSettingsSummary from '../settings-repositories/summary';
 import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
@@ -45,11 +45,11 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<WordPressSettingsSummary site={ site } />
 					<PHPSettingsSummary site={ site } />
 					<SftpSshSettingsSummary site={ site } />
+					<RepositoriesSettingsSummary site={ site } />
 					<DatabaseSettingsSummary site={ site } />
 					<PrimaryDataCenterSettingsSummary site={ site } />
 					<StaticFile404SettingsSummary site={ site } />
 					<CachingSettingsSummary site={ site } />
-					<McpSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>
 			<VStack spacing={ 3 }>

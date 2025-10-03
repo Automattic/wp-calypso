@@ -49,9 +49,7 @@ export function getFields( timezoneString?: string, gmtOffset?: number ): Field<
 			id: 'first_detected',
 			label: __( 'Detected on' ),
 			type: 'date',
-			filterBy: {
-				operators: [ 'on', 'before', 'after' ],
-			},
+			filterBy: false,
 			getValue: ( { item } ) => {
 				const date = new Date( item.first_detected );
 				return formatYmd( date );
