@@ -8,9 +8,7 @@ import {
 	Button,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect, useCallback } from 'react';
 import { ConfirmationModal } from './confirmation-modal';
 
@@ -20,13 +18,21 @@ const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 
 export const PauseAllEmails = () => {
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
 
 	const {
 		mutate: updateSettings,
 		isPending: isSaving,
 		isSuccess: isSettingsUpdated,
-	} = useMutation( userSettingsMutation() );
+	} = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' ),
+				error: __( 'Failed to pause all emails.' ),
+			},
+		},
+	} );
 
 	const originalState = isAllWpcomEmailsDisabled( settings );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
@@ -34,8 +40,6 @@ export const PauseAllEmails = () => {
 
 	useEffect( () => {
 		if ( isSettingsUpdated ) {
-			const message = enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' );
-			createSuccessNotice( message, { type: 'snackbar' } );
 			setIsConfirmDialogOpen( false );
 		}
 	}, [ createSuccessNotice, enabled, isSettingsUpdated, setIsConfirmDialogOpen ] );
