@@ -47,7 +47,7 @@ export function BackupsListPage() {
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
+			gmtOffset: Number( s?.gmt_offset ) || 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
