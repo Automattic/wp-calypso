@@ -24,7 +24,6 @@ import {
 	getLabel,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
@@ -47,29 +46,13 @@ const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
-const CostOverridesListStyle = styled.div< {
-	isStreamlinedPrice?: boolean;
-} >`
+const CostOverridesListStyle = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			padding-left: 24px;
-			position: relative;
-
-			.rtl & {
-				padding-right: 24px;
-				padding-left: 0;
-			}
-			& svg {
-				top: 0px;
-			}
-		` }
 
 	& .cost-overrides-list-item {
 		display: grid;
@@ -94,12 +77,6 @@ const CostOverridesListStyle = styled.div< {
 
 	& .cost-overrides-list-item__discount {
 		white-space: nowrap;
-		${ ( props ) =>
-			props.isStreamlinedPrice &&
-			css`
-				color: ${ COLOR_GREEN_60 };
-				font-weight: 500;
-			` }
 	}
 `;
 
