@@ -249,6 +249,7 @@ object BuildBaseImages : BuildType({
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
+			buildFinishedSuccessfully = true
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
