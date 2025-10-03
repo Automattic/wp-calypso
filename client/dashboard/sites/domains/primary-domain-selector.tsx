@@ -138,6 +138,8 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 							type: 'snackbar',
 						}
 					);
+					setShowForm( false );
+					setFormData( { primaryDomain: '' } );
 				},
 				onError: () => {
 					createErrorNotice(
@@ -179,7 +181,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 								variant="primary"
 								onClick={ handleSubmit }
 								__next40pxDefaultSize
-								disabled={ formData.primaryDomain === '' }
+								disabled={ formData.primaryDomain === '' || setPrimaryDomainMutation.isPending }
 							>
 								{ __( 'Save' ) }
 							</Button>
