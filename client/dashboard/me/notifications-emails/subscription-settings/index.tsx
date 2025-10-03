@@ -67,7 +67,7 @@ export const SubscriptionSettings = () => {
 		( e: React.FormEvent ) => {
 			e.preventDefault();
 			Object.keys( dataState ).forEach( ( key ) => {
-				recordTracksEvent( `calypso_dashboard_notifications_emails_settings_${ key }_updated`, {
+				recordTracksEvent( 'calypso_dashboard_notifications_emails_settings_updated', {
 					setting_name: key,
 					setting_value: dataState[ key as keyof SettingsData ],
 				} );
