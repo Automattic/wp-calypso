@@ -1,5 +1,5 @@
 import { Breadcrumbs as BreadcrumbsComponent } from '@automattic/components/src/breadcrumbs';
-import { useMatches } from '@tanstack/react-router';
+import { useMatches, Link } from '@tanstack/react-router';
 import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs/types';
 
 export default function Breadcrumbs( { length }: { length: number } ) {
@@ -13,5 +13,14 @@ export default function Breadcrumbs( { length }: { length: number } ) {
 		};
 	} );
 
-	return <BreadcrumbsComponent items={ items } />;
+	return (
+		<BreadcrumbsComponent
+			items={ items }
+			renderItemLink={ ( { href, label, ...rest } ) => (
+				<Link to={ href } { ...rest }>
+					{ label }
+				</Link>
+			) }
+		/>
+	);
 }
