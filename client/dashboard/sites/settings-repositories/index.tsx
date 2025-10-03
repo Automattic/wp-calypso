@@ -3,9 +3,11 @@ import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, __experimentalText as Text } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState, useEffect } from 'react';
 import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
@@ -112,6 +114,35 @@ function SiteRepositories() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
+
+	const notices = useSelect( ( select ) => select( noticesStore ).getNotices(), [] );
+	const { removeNotice, createNotice } = useDispatch( noticesStore );
+
+	useEffect( () => {
+		const backToDeploymentsNotice = notices.find(
+			( notice ) => notice.id === 'back-to-deployments'
+		);
+		if ( ! backToDeploymentsNotice ) {
+			createNotice( 'info', __( 'Back to Deployments' ), {
+				id: 'back-to-deployments',
+				type: 'snackbar',
+				isDismissible: true,
+				actions: [
+					{
+						label: __( 'Navigate' ),
+						url: '',
+						onClick: () => {
+							navigate( {
+								to: siteDeploymentsListRoute.fullPath,
+								params: { siteSlug },
+							} );
+							removeNotice( 'back-to-deployments' );
+						},
+					},
+				],
+			} );
+		}
+	}, [ notices, createNotice, navigate, siteSlug, removeNotice ] );
 
 	const handleConnectRepository = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
