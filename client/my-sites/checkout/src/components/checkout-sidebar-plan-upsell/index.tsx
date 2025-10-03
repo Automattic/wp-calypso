@@ -214,13 +214,9 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const { cardTitle, cellLabel, ctaText } = upsellText;
 
-	const checkoutSidebarPlanUpsellClassName =
-		'checkout-sidebar-plan-upsell' +
-		( isStreamlinedPrice ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
-
 	return (
 		<>
-			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
+			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
 					{ ! isStreamlinedPrice && (
 						<>
