@@ -76,12 +76,12 @@ const DomainSearchWithCart = ( {
 				search_box_value: query,
 				search_count: searchCount.current,
 				search_vendor: config.vendor,
-				section: flowName === 'domain' ? 'domain-first' : 'signup',
+				section: analyticsSection,
 				seconds_from_last_search: searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
 				flow_name: flowName,
 			} );
 		},
-		[ config.vendor, flowName ]
+		[ config.vendor, flowName, analyticsSection ]
 	);
 
 	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10000 );
@@ -202,20 +202,11 @@ const DomainSearchWithCart = ( {
 					resultSuffix = '#best-alternative';
 				}
 
-				let fetchAlgo = '/domains/search/' + config.vendor;
-				if ( flowName === 'domain-only' ) {
-					fetchAlgo = fetchAlgo + '/domain-only';
-				} else if ( flowName === 'signup' ) {
-					fetchAlgo = fetchAlgo + '/signup';
-				} else {
-					fetchAlgo = fetchAlgo + '/domains';
-				}
-
 				recordTracksEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
 					railcar: `${ railcarId.current }-${ suggestion.position }`,
-					fetch_algo: `${ fetchAlgo }/${ suggestion.vendor }`,
+					fetch_algo: `/domains/search/${ config.vendor }/${ analyticsSection }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
 					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
 					fetch_query: query,
@@ -243,19 +234,19 @@ const DomainSearchWithCart = ( {
 			onTrademarkClaimsNoticeShown: ( suggestion ) => {
 				recordTracksEvent( 'calypso_show_trademark_notice_click', {
 					domain_name: suggestion.domain_name,
-					section: 'somains',
+					section: analyticsSection,
 				} );
 			},
 			onTrademarkClaimsNoticeClosed: ( suggestion ) => {
 				recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
 					domain_name: suggestion.domain_name,
-					section: 'domains',
+					section: analyticsSection,
 				} );
 			},
 			onTrademarkClaimsNoticeAccepted: ( suggestion ) => {
 				recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
 					domain_name: suggestion.domain_name,
-					section: 'domains',
+					section: analyticsSection,
 				} );
 			},
 		};
