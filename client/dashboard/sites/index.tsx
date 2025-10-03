@@ -171,6 +171,9 @@ function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 		...hostingDashboardSiteListQuery( getFetchSiteListParams( view ) ),
 		placeholderData: keepPreviousData,
 		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
+		meta: {
+			fullPageLoader: true,
+		},
 	} );
 
 	const sitesQueryResult = useQuery( {
