@@ -239,7 +239,7 @@ object BuildBaseImages : BuildType({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
+				sendTo = "#calypso"
 				messageFormat = verboseMessageFormat {
 					addChanges = true
 					addStatusText = true
@@ -248,11 +248,9 @@ object BuildBaseImages : BuildType({
 			}
 			branchFilter = """
 				+:trunk
-				+:alert-for-base-image-build-failure
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
-			buildFinishedSuccessfully = true
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
