@@ -193,6 +193,7 @@ const DomainSearchUI = (
 		isDomainOnlyFlow,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
+		dispatch,
 	] );
 
 	const allowedTldParam = queryObject.tld;

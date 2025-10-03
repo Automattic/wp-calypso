@@ -103,6 +103,20 @@ const DomainSearchStep: StepType< {
 
 	const events = useMemo( () => {
 		return {
+			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
+				if ( isHundredYearDomainFlow( flow ) ) {
+					return {
+						...product,
+						extra: {
+							...product.extra,
+							is_hundred_year_domain: true,
+						},
+						volume: 100,
+					};
+				}
+
+				return product;
+			},
 			onQueryChange: setQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				window.location.assign(
