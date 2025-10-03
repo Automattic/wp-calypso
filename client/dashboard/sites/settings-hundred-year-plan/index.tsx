@@ -12,11 +12,12 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { canViewHundredYearPlanSettings } from '../features';
-import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
@@ -84,7 +85,9 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title={ __( 'Control your legacy' ) } /> }
+			header={
+				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Control your legacy' ) } />
+			}
 		>
 			<Card>
 				<CardBody>
