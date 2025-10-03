@@ -5,3 +5,4 @@ translate(
 );
 
 translate( 'Having trouble? {{button}}Let us migrate your site{{/button}}' );
+translate( 'Lets translate this as well' );
