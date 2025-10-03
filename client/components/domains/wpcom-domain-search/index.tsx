@@ -138,6 +138,15 @@ const DomainSearchWithCart = ( {
 					section: flowName === 'domain' ? 'domain-first' : 'signup',
 				} );
 			},
+			onFilterReset: ( filter, keysToReset ) => {
+				recordTracksEvent( 'calypso_domain_search_filters_reset', {
+					keys_to_reset: keysToReset?.join( ',' ),
+					filter_exact_sld_matches_only: filter.exactSldMatchesOnly,
+					filter_tlds: filter.tlds?.join( ',' ),
+					flow_name: flowName,
+					section: flowName === 'domain' ? 'domain-first' : 'signup',
+				} );
+			},
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
 				recordTracksEvent( 'calypso_domain_search_results_suggestions_receive', {
 					search_query: query,

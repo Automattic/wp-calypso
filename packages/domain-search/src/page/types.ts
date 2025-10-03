@@ -54,6 +54,7 @@ export interface DomainSearchEvents {
 		rootVendor: string
 	) => void;
 	onFilterApplied: ( filter: FilterState ) => void;
+	onFilterReset: ( filter: FilterState, keysToReset?: string[] ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,

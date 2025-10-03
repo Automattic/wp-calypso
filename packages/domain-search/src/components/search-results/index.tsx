@@ -4,12 +4,19 @@ import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 
 const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
-	const { filter, resetFilter } = useDomainSearch();
+	const { filter, resetFilter, events } = useDomainSearch();
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
 	if ( suggestions.length === 0 ) {
 		if ( hasActiveFilters ) {
-			return <DomainSuggestionFilterReset onClick={ resetFilter } />;
+			return (
+				<DomainSuggestionFilterReset
+					onClick={ () => {
+						resetFilter();
+						events.onFilterReset( filter, [ 'tlds', 'exactSldMatchesOnly' ] );
+					} }
+				/>
+			);
 		}
 
 		return null;
