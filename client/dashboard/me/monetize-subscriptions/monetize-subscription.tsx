@@ -286,7 +286,7 @@ export default function MonetizeSubscriptionDetails() {
 		>
 			{ isStoppingSubscription && (
 				<Notice status="info">
-					{ isProduct ? __( 'Removing this product' ) : __( 'Stopping this subscription' ) }
+					{ isProduct ? __( 'Removing this product.' ) : __( 'Stopping this subscription.' ) }
 				</Notice>
 			) }
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
