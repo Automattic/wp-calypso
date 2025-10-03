@@ -39,12 +39,17 @@ export default function PluginsScheduledUpdatesEdit() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit schedule' ) } /> }>
-			{ error && (
-				<Notice status="error" isDismissible={ false }>
-					{ error }
-				</Notice>
-			) }
+		<PageLayout
+			size="small"
+			header={ <PageHeader /> }
+			notices={
+				error && (
+					<Notice status="error" isDismissible={ false }>
+						{ error }
+					</Notice>
+				)
+			}
+		>
 			{ ! loading && ! error && (
 				<ScheduledUpdatesForm
 					submitLabel={ __( 'Save changes' ) }

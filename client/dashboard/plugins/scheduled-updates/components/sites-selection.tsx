@@ -50,7 +50,7 @@ type Props = {
 };
 
 function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props ) {
-	const { data: sites = [] } = useEligibleSites();
+	const { data: sites = [], isLoading } = useEligibleSites();
 	const [ view, setView ] = useState< View >( defaultView );
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( sites, view, siteFields );
@@ -80,6 +80,7 @@ function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props
 				onChangeSelection={ ( ids ) => onChangeSelection( ids as string[] ) }
 				getItemId={ ( item: Site ) => String( item.ID ) }
 				actions={ actions }
+				isLoading={ isLoading }
 				defaultLayouts={ {
 					table: {
 						showMedia: true,
