@@ -95,9 +95,10 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
 			return createInterpolateElement(
-				'Your site plan doesn’t allow you to set a custom domain as a primary site address. <upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink>Learn more</learnMoreLink>.',
+				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink>Learn more</learnMoreLink>.',
 				{
 					upgradeLink: <a href={ `/plans/${ site.slug }` } />,
+					br: <br />,
 					learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
 				}
 			);
@@ -157,37 +158,35 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		<Notice variant="info" title={ __( 'Primary site address' ) }>
 			<VStack spacing={ 4 }>
 				<Text as="p">{ renderMessage() }</Text>
-				{ canUserSetPrimaryDomainOnThisSite && domainsList.length > 0 && (
+				{ canUserSetPrimaryDomainOnThisSite && domainsList.length > 0 && ! showForm && (
 					<HStack justify="flex-start">
-						<Button variant="link" onClick={ () => setShowForm( ! showForm ) }>
+						<Button variant="link" onClick={ () => setShowForm( true ) }>
 							{ __( 'Change primary site address' ) }
 						</Button>
 					</HStack>
 				) }
-				<HStack justify="flex-start" alignment="flex-end">
-					{ showForm && (
-						<>
-							<form>
-								<DataForm< { primaryDomain: string } >
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: { primaryDomain?: string } ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
-							</form>
-							<Button
-								variant="primary"
-								onClick={ handleSubmit }
-								__next40pxDefaultSize
-								disabled={ formData.primaryDomain === '' || setPrimaryDomainMutation.isPending }
-							>
-								{ __( 'Save' ) }
-							</Button>
-						</>
-					) }
-				</HStack>
+				{ showForm && (
+					<HStack justify="flex-start" alignment="flex-end">
+						<form>
+							<DataForm< { primaryDomain: string } >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: { primaryDomain?: string } ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+						</form>
+						<Button
+							variant="primary"
+							onClick={ handleSubmit }
+							__next40pxDefaultSize
+							disabled={ formData.primaryDomain === '' || setPrimaryDomainMutation.isPending }
+						>
+							{ __( 'Save' ) }
+						</Button>
+					</HStack>
+				) }
 			</VStack>
 		</Notice>
 	);
