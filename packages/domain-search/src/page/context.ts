@@ -187,8 +187,14 @@ export const useDomainSearchContextValue = (
 			slots,
 			currentSiteUrl,
 			filter,
-			setFilter,
-			resetFilter: () => setFilter( DEFAULT_FILTER ),
+			setFilter: ( filter ) => {
+				setFilter( filter );
+				normalizedEvents.onFilterApplied( filter );
+			},
+			resetFilter: () => {
+				setFilter( DEFAULT_FILTER );
+				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
+			},
 		};
 	}, [
 		isFullCartOpen,
