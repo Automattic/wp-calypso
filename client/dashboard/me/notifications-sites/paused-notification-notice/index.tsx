@@ -17,6 +17,10 @@ export const PausedNotificationNotice = () => {
 			actions={ <Link to="/me/notifications/emails">{ __( 'Update email preferences' ) }</Link> }
 			variant="warning"
 			title={ __( 'Email updates are turned off until you change your settings' ) }
-		/>
+		>
+			{ __(
+				'All your email updates are paused. You won’t receive newsletters or site updates until you change your notification settings.'
+			) }
+		</Notice>
 	);
 };
