@@ -20,6 +20,7 @@ import {
 } from '@wordpress/components';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Icon, lock } from '@wordpress/icons';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -86,6 +87,23 @@ const RepositorySelector = ( {
 				} }
 				options={ field.elements || [] }
 				placeholder={ __( 'Select a repository' ) }
+				__experimentalRenderItem={ ( { item } ) => {
+					if ( item.private ) {
+						return (
+							<HStack alignment="left" spacing={ 1 }>
+								<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
+								<Icon
+									icon={ lock }
+									size={ 16 }
+									style={ {
+										fill: 'currentColor',
+									} }
+								/>
+							</HStack>
+						);
+					}
+					return <Text style={ { color: 'currentColor' } }>{ item.label }</Text>;
+				} }
 			/>
 		</VStack>
 	);
@@ -321,6 +339,7 @@ export const ConnectRepositoryForm = ( {
 		return repositories.map( ( repo ) => ( {
 			label: `${ repo.owner }/${ repo.name }`,
 			value: repo.id.toString(),
+			private: repo.private,
 		} ) );
 	}, [ repositories ] );
 
