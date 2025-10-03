@@ -30,8 +30,10 @@ export const useSuggestionsList = () => {
 	} );
 
 	useEffect( () => {
-		triggerSuggestionsReceiveEvent();
-	}, [ triggerSuggestionsReceiveEvent, suggestions ] );
+		if ( ! isLoadingSuggestions ) {
+			triggerSuggestionsReceiveEvent();
+		}
+	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions ] );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
@@ -50,10 +52,10 @@ export const useSuggestionsList = () => {
 	} );
 
 	useEffect( () => {
-		if ( availabilityData ) {
+		if ( ! isLoadingQueryAvailability && availabilityData ) {
 			triggerQueryAvailabilityCheckEvent();
 		}
-	}, [ triggerQueryAvailabilityCheckEvent, availabilityData ] );
+	}, [ triggerQueryAvailabilityCheckEvent, isLoadingQueryAvailability, availabilityData ] );
 
 	const premiumSuggestions = useMemo(
 		() =>
