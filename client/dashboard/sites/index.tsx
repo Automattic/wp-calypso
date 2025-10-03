@@ -171,7 +171,6 @@ function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 		...hostingDashboardSiteListQuery( getFetchSiteListParams( view ) ),
 		placeholderData: keepPreviousData,
 		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
-		select: ( data ) => data.sites.map( siteProfileSiteToSite ),
 	} );
 
 	const sitesQueryResult = useQuery( {
@@ -182,9 +181,10 @@ function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 
 	if ( isEnabled( 'dashboard/v2/es-site-list' ) ) {
 		return {
-			sites: siteProfilesQueryResult.data,
+			sites: siteProfilesQueryResult.data?.sites.map( siteProfileSiteToSite ),
 			isLoadingSites: siteProfilesQueryResult.isLoading,
 			isPlaceholderData: siteProfilesQueryResult.isPlaceholderData,
+			totalItems: siteProfilesQueryResult.data?.total,
 		};
 	}
 
@@ -192,6 +192,7 @@ function useSiteListQuery( view: View, isRestoringAccount: boolean ) {
 		sites: sitesQueryResult.data,
 		isLoadingSites: sitesQueryResult.isLoading,
 		isPlaceholderData: sitesQueryResult.isPlaceholderData,
+		totalItems: sitesQueryResult.data?.length,
 	};
 }
 
@@ -217,7 +218,10 @@ export default function Sites() {
 		defaultFields: getDefaultFields(),
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData } = useSiteListQuery( view, isRestoringAccount );
+	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery(
+		view,
+		isRestoringAccount
+	);
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
@@ -288,6 +292,7 @@ export default function Sites() {
 				<SitesDataViews
 					view={ view }
 					sites={ sites ?? [] }
+					totalItems={ totalItems ?? 0 }
 					fields={ fields }
 					actions={ actions }
 					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }

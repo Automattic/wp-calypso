@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { ResetViewAction } from '../../app/dataviews/reset-view-action';
@@ -9,9 +10,24 @@ import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
+/**
+ * Meant to stand in for the dataview's filterSortAndPaginate function when
+ * the filtering has already been done on the backend by elasticsearch.
+ */
+function esFilterSortAndPaginate( sites: Site[], view: View, totalItems: number = 0 ) {
+	return {
+		data: sites,
+		paginationInfo: {
+			totalItems,
+			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
+		},
+	};
+}
+
 export const SitesDataViews = ( {
 	view,
 	sites,
+	totalItems,
 	fields,
 	actions,
 	isLoading,
@@ -22,6 +38,7 @@ export const SitesDataViews = ( {
 }: {
 	view: View;
 	sites: Site[];
+	totalItems: number;
 	fields: Field< Site >[];
 	actions: Action< Site >[];
 	isLoading: boolean;
@@ -30,7 +47,9 @@ export const SitesDataViews = ( {
 	isViewModified: boolean;
 	onResetView: () => void;
 } ) => {
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/es-site-list' )
+		? esFilterSortAndPaginate( sites ?? [], view, totalItems )
+		: filterSortAndPaginate( sites ?? [], view, fields );
 
 	return (
 		<>
