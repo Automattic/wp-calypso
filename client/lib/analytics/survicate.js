@@ -60,6 +60,8 @@ export function isUserOnAnonymousPaths() {
 		'/setup/onboarding/user',
 		'/log-in/lostpassword',
 		'/account/user-social',
+		'/log-in/link',
+		'/log-in/qr',
 	].includes( window.location.pathname );
 }
 
@@ -75,11 +77,8 @@ export function addSurvicate() {
 		return;
 	}
 
-	if ( survicateScriptLoaded && mayWeLoadSurvicateScript() ) {
-		setTimeout( setSurvicateVisitorTraits, 1000 );
-	}
-
 	if ( survicateScriptLoaded ) {
+		setTimeout( setSurvicateVisitorTraits, 1000 );
 		survicateDebug( 'Survicate script already loaded' );
 		return;
 	}
