@@ -6,3 +6,8 @@ img.payment-method-image {
 	padding: 8px;
 	min-width: 200px;
 }
+
+.checkout-submit-button > button.is-primary {
+	width: 100%;
+	justify-content: center;
+}
