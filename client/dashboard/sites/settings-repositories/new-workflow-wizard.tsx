@@ -44,7 +44,7 @@ export const NewWorkflowWizard = ( {
 		: undefined;
 
 	return (
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 4 } alignment="left">
 			<Text as="pre">{ RECOMMENDED_WORKFLOW_PATH }</Text>
 			<CodeHighlighter content={ exampleTemplate } />
 
@@ -55,6 +55,7 @@ export const NewWorkflowWizard = ( {
 				variant="secondary"
 				disabled={ isPending }
 				isBusy={ isPending }
+				__next40pxDefaultSize
 				onClick={ () =>
 					createWorkflow(
 						{
