@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
@@ -94,14 +93,6 @@ export default function NotificationSettings( {
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
 	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
 
-	const isMultipleEmailEnabled: boolean = isEnabled(
-		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
-	);
-
-	const isSMSNotificationEnabled: boolean = isEnabled(
-		'jetpack/pro-dashboard-monitor-sms-notification'
-	);
-
 	// Check if current site or all sites selected has a paid license.
 	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
 
@@ -138,10 +129,8 @@ export default function NotificationSettings( {
 		enableMobileNotification !== initialSettings.enableMobileNotification ||
 		enableEmailNotification !== initialSettings.enableEmailNotification ||
 		selectedDuration?.time !== initialSettings.selectedDuration?.time ||
-		( isMultipleEmailEnabled &&
-			! isContactListMatch( allEmailItems, initialSettings?.emailContacts ?? [] ) ) ||
-		( isSMSNotificationEnabled &&
-			! isContactListMatch( allPhoneItems, initialSettings?.phoneContacts ?? [] ) );
+		! isContactListMatch( allEmailItems, initialSettings?.emailContacts ?? [] ) ||
+		! isContactListMatch( allPhoneItems, initialSettings?.phoneContacts ?? [] );
 
 	// Check if any unsaved changes are present and prompt user to confirm before closing the modal.
 	const handleOnClose = useCallback( () => {
@@ -197,15 +186,11 @@ export default function NotificationSettings( {
 	};
 
 	function onSave() {
-		if (
-			! enableMobileNotification &&
-			! enableEmailNotification &&
-			! ( isSMSNotificationEnabled && enableSMSNotification )
-		) {
+		if ( ! enableMobileNotification && ! enableEmailNotification && ! enableSMSNotification ) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
 
-		if ( isSMSNotificationEnabled && enableSMSNotification && ! allPhoneItems.length ) {
+		if ( enableSMSNotification && ! allPhoneItems.length ) {
 			return setValidationError( translate( 'Please add at least one phone number.' ) );
 		}
 
@@ -216,40 +201,38 @@ export default function NotificationSettings( {
 
 		const eventParams = { ...params } as any; // Adding eventParams since parameters for tracking events should be flat, not nested.
 
-		if ( isMultipleEmailEnabled ) {
-			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
-			params.contacts = {
-				emails: extraEmails.map( ( item ) => {
-					const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
-					return {
-						name: item.name,
-						email_address: item.email,
-						verified: isVerified,
-					};
-				} ),
-			};
-			eventParams.email_contacts = params.contacts.emails?.length;
-		}
-		if ( isSMSNotificationEnabled ) {
-			params.sms_notifications = enableSMSNotification;
-			params.contacts = {
-				...( params.contacts?.emails ? params.contacts : {} ),
-				sms_numbers: allPhoneItems.map( ( item ) => {
-					const isVerified =
-						item.verified || verifiedContacts.phoneNumbers.includes( item.phoneNumberFull );
-					return {
-						name: item.name,
-						sms_number: item.phoneNumberFull,
-						number: item.phoneNumber,
-						country_code: item.countryCode,
-						country_numeric_code: item.countryNumericCode,
-						verified: isVerified,
-					};
-				} ),
-			};
-			eventParams.sms_contacts = params.contacts.sms_numbers?.length;
-			eventParams.sms_notifications = params.sms_notifications;
-		}
+		const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
+		params.contacts = {
+			emails: extraEmails.map( ( item ) => {
+				const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
+				return {
+					name: item.name,
+					email_address: item.email,
+					verified: isVerified,
+				};
+			} ),
+		};
+		eventParams.email_contacts = params.contacts.emails?.length;
+
+		params.sms_notifications = enableSMSNotification;
+		params.contacts = {
+			...( params.contacts?.emails ? params.contacts : {} ),
+			sms_numbers: allPhoneItems.map( ( item ) => {
+				const isVerified =
+					item.verified || verifiedContacts.phoneNumbers.includes( item.phoneNumberFull );
+				return {
+					name: item.name,
+					sms_number: item.phoneNumberFull,
+					number: item.phoneNumber,
+					country_code: item.countryCode,
+					country_numeric_code: item.countryNumericCode,
+					verified: isVerified,
+				};
+			} ),
+		};
+		eventParams.sms_contacts = params.contacts.sms_numbers?.length;
+		eventParams.sms_notifications = params.sms_notifications;
+
 		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
 	}
@@ -310,22 +293,18 @@ export default function NotificationSettings( {
 			const userEmails = settings.monitor_user_emails || [];
 			setDefaultUserEmailAddresses( userEmails );
 
-			if ( isMultipleEmailEnabled ) {
-				const allEmailItems = getAllEmailItems( settings );
-				setAllEmailItems( allEmailItems );
-			}
+			const allEmailItems = getAllEmailItems( settings );
+			setAllEmailItems( allEmailItems );
 		},
-		[ getAllEmailItems, isMultipleEmailEnabled ]
+		[ getAllEmailItems ]
 	);
 
 	const handleSetPhoneItems = useCallback(
 		( settings: MonitorSettings ) => {
-			if ( isSMSNotificationEnabled ) {
-				const allPhoneItems = getAllPhoneItems( settings );
-				setAllPhoneItems( allPhoneItems );
-			}
+			const allPhoneItems = getAllPhoneItems( settings );
+			setAllPhoneItems( allPhoneItems );
 		},
-		[ getAllPhoneItems, isSMSNotificationEnabled ]
+		[ getAllPhoneItems ]
 	);
 
 	const setInitialMonitorSettings = useCallback(
@@ -358,8 +337,8 @@ export default function NotificationSettings( {
 				enableEmailNotification: isEmailEnabled,
 				enableMobileNotification: isMobileEnabled,
 				selectedDuration: foundDuration,
-				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
-				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems( settings ) } ),
+				emailContacts: getAllEmailItems( settings ),
+				phoneContacts: getAllPhoneItems( settings ),
 			} );
 		},
 		[
@@ -370,8 +349,6 @@ export default function NotificationSettings( {
 			handleSetEmailItems,
 			handleSetPhoneItems,
 			hasPaidLicenses,
-			isMultipleEmailEnabled,
-			isSMSNotificationEnabled,
 		]
 	);
 
@@ -392,18 +369,11 @@ export default function NotificationSettings( {
 				enableEmailNotification: false,
 				enableMobileNotification: false,
 				selectedDuration: defaultDuration,
-				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
-				...( isSMSNotificationEnabled && { phoneContacts: getAllPhoneItems( settings ) } ),
+				emailContacts: getAllEmailItems( settings ),
+				phoneContacts: getAllPhoneItems( settings ),
 			} );
 		},
-		[
-			defaultDuration,
-			getAllEmailItems,
-			getAllPhoneItems,
-			handleSetEmailItems,
-			isMultipleEmailEnabled,
-			isSMSNotificationEnabled,
-		]
+		[ defaultDuration, getAllEmailItems, getAllPhoneItems, handleSetEmailItems ]
 	);
 
 	useEffect( () => {
