@@ -57,7 +57,7 @@ export function AdvancedRecords( {
 					<Text as="p">
 						{ isSubdomainFlow
 							? __( 'Update the A and CNAME records for your subdomain to point to WordPress.com.' )
-							: __( "Update your domain's A records and CNAME record to point to WordPress.com." ) }
+							: __( 'Update your domain’s A records and CNAME record to point to WordPress.com.' ) }
 					</Text>
 
 					<RecordsList records={ records } />

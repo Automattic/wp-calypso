@@ -377,7 +377,6 @@ describe( 'Form Submission', () => {
 		const { user } = setup( { syncType: 'push', environment: 'staging' } );
 
 		const modal = screen.getByRole( 'dialog' );
-		await user.click( within( modal ).getByLabelText( 'Database' ) );
 		await user.type(
 			within( modal ).getByLabelText( 'Type the site domain to confirm' ),
 			'test-site'
@@ -388,7 +387,7 @@ describe( 'Form Submission', () => {
 		await user.click( within( modal ).getByRole( 'button', { name: 'Push' } ) );
 
 		expect( submitMutation ).toHaveBeenCalledWith(
-			expect.objectContaining( { types: 'paths' } ),
+			expect.objectContaining( { types: 'paths', include_paths: '', exclude_paths: '' } ),
 			expect.any( Object )
 		);
 	} );

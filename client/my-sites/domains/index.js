@@ -294,6 +294,7 @@ export default function () {
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		domainsController.redirectToDomainUpsellFlowIfRewrittenDomainSearchIsEnabled,
 		domainsController.domainSearch,
 		makeLayout,
 		clientRender

@@ -33,8 +33,6 @@ type Story = StoryObj< typeof meta >;
 const defaultArgs = {
 	title: 'Server performance',
 	description: 'Requests per minute and average server response time.',
-	onAnchorClick: () => {},
-	onDownloadClick: () => {},
 	isLoading: false,
 };
 

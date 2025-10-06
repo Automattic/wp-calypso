@@ -2,7 +2,6 @@ import { withStorageKey } from '@automattic/state-utils';
 import { EDITOR_STOP, POST_SAVE_SUCCESS } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
-import videoEditor from './video-editor/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
@@ -25,7 +24,6 @@ export function postId( state = null, action ) {
 const combinedReducer = combineReducers( {
 	postId,
 	imageEditor,
-	videoEditor,
 } );
 
 export default withStorageKey( 'editor', combinedReducer );

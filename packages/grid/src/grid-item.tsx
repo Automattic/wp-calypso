@@ -4,21 +4,55 @@ import { useState } from 'react';
 import ResizeHandle from './resize-handle';
 import type { GridLayoutItem } from './types';
 
+type GridItemProps = {
+	/**
+	 * The layout item containing grid positioning information.
+	 */
+	item: GridLayoutItem;
+
+	/**
+	 * The maximum number of columns in the grid.
+	 */
+	maxColumns: number;
+
+	/**
+	 * Whether drag and resize interactions are disabled.
+	 * @default false
+	 */
+	disabled?: boolean;
+
+	/**
+	 * The content to be displayed within the grid item.
+	 */
+	children: React.ReactNode;
+
+	/**
+	 * Content rendered above the draggable area that remains interactive during edit mode.
+	 * Useful for controls like action buttons, inputs, or links that need to stay actionable.
+	 */
+	actionableArea?: React.ReactNode;
+
+	/**
+	 * Callback fired when the item is being resized.
+	 * @param delta - The width and height change in grid units
+	 */
+	onResize: ( delta: { width: number; height: number } ) => void;
+
+	/**
+	 * Callback fired when resize operation ends.
+	 */
+	onResizeEnd: () => void;
+};
+
 export function GridItem( {
 	item,
 	maxColumns,
 	disabled = false,
 	children,
+	actionableArea = null,
 	onResize,
 	onResizeEnd,
-}: {
-	item: GridLayoutItem;
-	maxColumns: number;
-	disabled?: boolean;
-	children: React.ReactNode;
-	onResize: ( delta: { width: number; height: number } ) => void;
-	onResizeEnd: () => void;
-} ) {
+}: GridItemProps ) {
 	const [ previewDelta, setPreviewDelta ] = useState< { width: number; height: number } | null >(
 		null
 	);
@@ -78,17 +112,21 @@ export function GridItem( {
 	) : null;
 
 	return (
-		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			<div style={ contentStyle }>
-				{ children }
-				<ResizeHandle
-					disabled={ disabled }
-					itemId={ item.key }
-					onResize={ handleResize }
-					onResizeEnd={ handleResizeEnd }
-				/>
+		<div ref={ setNodeRef } style={ style } { ...attributes }>
+			{ actionableArea }
+
+			<div { ...listeners } style={ { height: '100%' } }>
+				<div style={ contentStyle }>
+					{ children }
+					<ResizeHandle
+						disabled={ disabled }
+						itemId={ item.key }
+						onResize={ handleResize }
+						onResizeEnd={ handleResizeEnd }
+					/>
+				</div>
+				{ previewOverlay }
 			</div>
-			{ previewOverlay }
 		</div>
 	);
 }

@@ -11,7 +11,6 @@ import {
 	CheckboxControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
@@ -19,6 +18,8 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
+import EmailSection from './email-section';
+import EmailVerificationBanner from './update-email/email-verification-banner';
 import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
@@ -141,7 +142,7 @@ export default function PersonalDetailsSection( {
 
 	return (
 		<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
-			<FlashMessage value="username" message={ __( 'Username saved.' ) } />
+			<FlashMessage value="username" id="updated" message={ __( 'Username saved.' ) } />
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
@@ -150,6 +151,9 @@ export default function PersonalDetailsSection( {
 							title={ __( 'Personal details' ) }
 							headingId="personal-details-heading"
 						/>
+
+						{ /* Email verification banner */ }
+						<EmailVerificationBanner userData={ userSettings } />
 
 						{ /* First & last name */ }
 						<DataForm< UserSettings >
@@ -171,15 +175,11 @@ export default function PersonalDetailsSection( {
 						/>
 
 						{ /* Email address */ }
-						<InputControl
-							__next40pxDefaultSize
-							id="email-input"
-							type="email"
-							label={ __( 'Email address' ) }
+						<EmailSection
 							value={ data.user_email || '' }
 							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
-							autoComplete="email"
-							aria-describedby="email-help"
+							disabled={ isSaving }
+							userData={ userSettings }
 						/>
 
 						{ /* Developer checkbox */ }

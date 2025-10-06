@@ -49,7 +49,7 @@ export function ScanHistoryDataViews( {
 	const threats = scanHistory?.threats || [];
 
 	const fields = getFields( timezoneString, gmtOffset );
-	const actions = getActions( site.ID );
+	const actions = getActions( site );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
 	const NoArchivedThreatsFound = () => {

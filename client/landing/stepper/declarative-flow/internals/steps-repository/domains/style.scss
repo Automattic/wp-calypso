@@ -7,7 +7,7 @@
 .readymade-template,
 .reblogging,
 .start-writing,
-.domain-upsell {
+.domain-and-plan {
 	&.domains.step-container {
 		&:has( .wpcom-domain-search-v2 ) {
 			padding: 0 16px;
@@ -43,7 +43,8 @@
 	}
 }
 
-.hundred-year-plan-step-wrapper__step-container:has( .wpcom-domain-search-v2 ) {
+.hundred-year-plan-step-wrapper__step-container:has( .wpcom-domain-search-v2 ),
+.hundred-year-plan-step-wrapper__step-container:has( .domain-search--step-container ) {
 	width: 100%;
 
 	.domains__content {

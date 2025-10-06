@@ -16,6 +16,11 @@ type Options = {
 	 * Whether to validate eagerly. If false, `HookResult[ "result" ]` will remain undefined.
 	 */
 	eager?: boolean;
+	/**
+	 * Exclude the current schedule when validating collisions.
+	 * Provide the participating site IDs and the schedule ID (base or suffixed).
+	 */
+	exclude?: { siteIds: number[]; scheduleId: string };
 };
 
 type ValidationResult = ScheduleCollisions & { isLoading: boolean };
@@ -43,7 +48,13 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 
 			let timeError = '';
 			const timeIds = siteIds.filter( ( id ) => {
-				const err = validateTimeSlot( proposed, timeSlotsBySite[ id ] || [] );
+				const existing = timeSlotsBySite[ id ] || [];
+				const filtered = options?.exclude?.siteIds?.includes( id )
+					? existing.filter(
+							( s ) => s.timestamp !== proposed.timestamp || s.frequency !== proposed.frequency
+					  )
+					: existing;
+				const err = validateTimeSlot( proposed, filtered );
 				// Record only the first non-empty error as the representative message.
 				// We still collect all colliding site IDs, but avoid overwriting the message.
 				if ( err && ! timeError ) {
@@ -58,7 +69,15 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 				plugins.length === 0
 					? []
 					: siteIds.filter( ( id ) => {
-							const err = validatePlugins( plugins, pluginSetsBySite[ id ] || [] );
+							const existingSets = pluginSetsBySite[ id ] || [];
+							const filteredSets = options?.exclude?.siteIds?.includes( id )
+								? existingSets.filter(
+										( set ) =>
+											JSON.stringify( [ ...set ].sort() ) !==
+											JSON.stringify( [ ...plugins ].sort() )
+								  )
+								: existingSets;
+							const err = validatePlugins( plugins, filteredSets );
 							// Same approach as time collisions: capture the first error message only,
 							// ensuring a stable representative error while still collecting all sites.
 							if ( err && ! pluginError ) {
@@ -73,7 +92,7 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 				pluginCollisions: { error: pluginError, collidingSiteIds: pluginIds },
 			};
 		},
-		[ isLoading, timeSlotsBySite, pluginSetsBySite ]
+		[ isLoading, timeSlotsBySite, pluginSetsBySite, options?.exclude?.siteIds ]
 	);
 
 	const result = useMemo( () => {

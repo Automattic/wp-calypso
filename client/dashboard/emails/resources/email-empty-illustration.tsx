@@ -33,8 +33,8 @@ export default function EmailEmptyIllustration() {
 					y2="139.373"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop stop-color="#3858E9" />
-					<stop offset="1" stop-color="#069E08" />
+					<stop stopColor="#3858E9" />
+					<stop offset="1" stopColor="#069E08" />
 				</linearGradient>
 				<image
 					id="image0_213_6195"
