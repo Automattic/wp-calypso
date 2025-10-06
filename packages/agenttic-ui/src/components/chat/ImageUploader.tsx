@@ -23,6 +23,8 @@ export interface ImageUploaderProps {
 
 	// Upload callbacks
 	onFilesSelected: ( files: File[] ) => void | Promise< void >;
+	onBrowse?: ( files: File[] ) => void | Promise< void >; // Separate callback for browse/click
+	onDrop?: ( files: File[] ) => void | Promise< void >; // Separate callback for drag/drop
 	onRemoveImage: ( image: UploadedImage ) => void;
 
 	// Drag callbacks
@@ -124,6 +126,8 @@ export function ImageUploader( {
 	images = [],
 	uploadingImages = [],
 	onFilesSelected,
+	onBrowse,
+	onDrop,
 	onRemoveImage,
 	onImageDragStart,
 	onImageDragEnd,
@@ -285,7 +289,10 @@ export function ImageUploader( {
 		setIsDraggingFile( false );
 
 		if ( e.dataTransfer.files ) {
+			const fileArray = Array.from( e.dataTransfer.files );
 			handleFiles( e.dataTransfer.files );
+			// Call the specific onDrop callback if provided
+			onDrop?.( fileArray );
 		}
 	};
 
@@ -293,7 +300,10 @@ export function ImageUploader( {
 		e: React.ChangeEvent< HTMLInputElement >
 	) => {
 		if ( e.target.files ) {
+			const fileArray = Array.from( e.target.files );
 			handleFiles( e.target.files );
+			// Call the specific onBrowse callback if provided
+			onBrowse?.( fileArray );
 		}
 		// Reset the input so the same file can be selected again
 		e.target.value = '';
