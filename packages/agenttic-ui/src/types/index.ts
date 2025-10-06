@@ -73,6 +73,10 @@ export interface AgentUIProps {
 
 	// i18n
 	locale?: string; // Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to 'en'
+
+	// Input validation
+	maxInputLength?: number; // Maximum character limit for input (defaults to 600)
+	onInputLimitExceeded?: () => void; // Callback when input exceeds max length
 }
 
 export interface NoticeConfig {
@@ -84,6 +88,7 @@ export interface NoticeConfig {
 	};
 	dismissible?: boolean;
 	onDismiss?: () => void;
+	status?: 'success' | 'warning' | 'error';
 }
 
 // UI-specific types for existing components

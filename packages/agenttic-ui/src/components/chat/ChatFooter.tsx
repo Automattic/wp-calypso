@@ -87,6 +87,7 @@ export function ChatFooter( {
 					action={ notice.action }
 					dismissible={ notice.dismissible }
 					onDismiss={ notice.onDismiss }
+					status={ notice.status }
 				/>
 			) }
 			<ChatInput

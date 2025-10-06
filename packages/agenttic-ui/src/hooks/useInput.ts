@@ -5,6 +5,7 @@ interface UseInputProps {
 	setValue: ( value: string ) => void;
 	onSubmit: ( value: string ) => void;
 	isProcessing: boolean;
+	isInputOverLimit?: boolean;
 }
 
 export interface UseInputReturn {
@@ -21,6 +22,7 @@ export function useInput( {
 	setValue,
 	onSubmit,
 	isProcessing,
+	isInputOverLimit = false,
 }: UseInputProps ): UseInputReturn {
 	// No need for setValue callback since it's passed as prop
 
@@ -63,6 +65,7 @@ export function useInput( {
 				e.key === 'Enter' &&
 				! e.shiftKey &&
 				! isProcessing &&
+				! isInputOverLimit &&
 				value.trim()
 			) {
 				e.preventDefault();
@@ -70,7 +73,7 @@ export function useInput( {
 				clear();
 			}
 		},
-		[ value, isProcessing, onSubmit, clear ]
+		[ value, isProcessing, isInputOverLimit, onSubmit, clear ]
 	);
 
 	// Adjust height when value changes

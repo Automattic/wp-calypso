@@ -51,6 +51,9 @@ export interface AgentUIContextValue {
 	focusOnMount?: boolean;
 	fromCompact?: boolean;
 	showExpandButton?: boolean;
+
+	// Input validation
+	isInputOverLimit?: boolean;
 }
 
 const AgentUIContext = createContext< AgentUIContextValue | null >( null );

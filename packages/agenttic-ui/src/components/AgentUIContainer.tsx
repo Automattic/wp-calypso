@@ -21,6 +21,7 @@ import {
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import styles from './chat/Chat.module.css';
+import { __, sprintf } from '@wordpress/i18n';
 
 const STYLE_CONSTANTS = {
 	COLLAPSED_SIZE: 56,
@@ -95,6 +96,8 @@ export function AgentUIContainer( {
 	onInputChange: controlledOnInputChange,
 	draggableStates = [ 'expanded' ], // Default to only expanded for backward compatibility
 	locale = 'en',
+	maxInputLength = 600, // Default to 600 characters
+	onInputLimitExceeded,
 	...props
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
@@ -138,6 +141,16 @@ export function AgentUIContainer( {
 		}
 	}, [ locale ] );
 
+	// Calculate if input exceeds limit
+	const isInputOverLimit = inputValue.length > maxInputLength;
+
+	// Trigger callback when limit is exceeded
+	useEffect( () => {
+		if ( isInputOverLimit ) {
+			onInputLimitExceeded?.();
+		}
+	}, [ isInputOverLimit, onInputLimitExceeded ] );
+
 	useEffect( () => {
 		// Reset flags when chat state changes.
 		wasClickedToOpen.current = false;
@@ -166,6 +179,7 @@ export function AgentUIContainer( {
 			await onSubmit( message );
 		},
 		isProcessing,
+		isInputOverLimit,
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
@@ -478,6 +492,22 @@ export function AgentUIContainer( {
 		  } as any )
 		: undefined;
 
+	// Compute notice - prioritize input limit error over user-provided notice
+	const computedNotice = isInputOverLimit
+		? {
+				message: sprintf(
+					/* translators: %d: maximum number of characters allowed */
+					__(
+						'Message is too long. Please keep it under %d characters.',
+						'a8c-agenttic'
+					),
+					maxInputLength
+				),
+				dismissible: false,
+				status: 'error' as const,
+		  }
+		: notice;
+
 	// Create context value
 	const contextValue: AgentUIContextValue = {
 		// Core data
@@ -516,12 +546,15 @@ export function AgentUIContainer( {
 		handleSuggestionSubmit,
 
 		// Notice
-		notice,
+		notice: computedNotice,
 
 		// Internal state for components
 		focusOnMount: wasClickedToExpand.current,
 		fromCompact,
 		showExpandButton: ! input.value.trim(),
+
+		// Input validation
+		isInputOverLimit,
 	};
 
 	// Handle embedded variant.

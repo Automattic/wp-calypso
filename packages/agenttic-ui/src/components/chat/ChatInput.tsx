@@ -65,8 +65,10 @@ export function ChatInput( {
 	onMouseLeave,
 }: ChatInputProps ) {
 	const textareaId = useId();
-	const canSubmit = ( value.trim() || isProcessing ) && ! disabled;
-	const { variant, floatingChatState } = useAgentUIContext();
+	const { variant, floatingChatState, isInputOverLimit } =
+		useAgentUIContext();
+	const canSubmit =
+		( value.trim() || isProcessing ) && ! disabled && ! isInputOverLimit;
 
 	// Helper function to ensure text has ellipsis
 	const addEllipsis = ( text: string ) =>

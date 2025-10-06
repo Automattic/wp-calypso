@@ -21,6 +21,7 @@ export function AgentUINotice( { className }: AgentUINoticeProps = {} ) {
 			dismissible={ notice.dismissible }
 			onDismiss={ notice.onDismiss }
 			className={ className }
+			status={ notice.status ?? 'success' }
 		/>
 	);
 }
