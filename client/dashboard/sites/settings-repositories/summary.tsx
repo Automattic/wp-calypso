@@ -6,10 +6,6 @@ import GitHubIcon from '../deployments/icons/github';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-function GitHubDecorationIcon() {
-	return <GitHubIcon width={ 24 } height={ 24 } />;
-}
-
 export default function RepositoriesSettingsSummary( {
 	site,
 	density,
@@ -25,7 +21,7 @@ export default function RepositoriesSettingsSummary( {
 			to={ `/sites/${ site.slug }/settings/repositories` }
 			title={ __( 'GitHub repositories' ) }
 			density={ density }
-			decoration={ <Icon icon={ <GitHubDecorationIcon /> } /> }
+			decoration={ <Icon icon={ <GitHubIcon width={ 24 } height={ 24 } /> } /> }
 		/>
 	);
 }
