@@ -1,4 +1,5 @@
-import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries';
+import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries/src/me-settings';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -17,6 +18,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-login/site-dropdown';
@@ -309,6 +312,7 @@ function McpComponent( { path } ) {
 					}
 				) }
 			/>
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			{ renderContent() }
 		</Main>
 	);
