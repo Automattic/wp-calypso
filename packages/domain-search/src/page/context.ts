@@ -5,7 +5,7 @@ import {
 	freeSuggestionQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { FilterState } from '../components/search-bar/types';
+import { DEFAULT_FILTER } from './constants';
 import { type DomainSearchProps, type DomainSearchContextType } from './types';
 
 const noop = () => {};
@@ -21,6 +21,19 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
 		onQueryChange: noop,
+		onAddDomainToCart: noop,
+		onQueryAvailabilityCheck: noop,
+		onDomainAddAvailabilityPreCheck: noop,
+		onFilterApplied: noop,
+		onFilterReset: noop,
+		onSuggestionsReceive: noop,
+		onSuggestionRender: noop,
+		onSuggestionInteract: noop,
+		onSuggestionNotFound: noop,
+		onTrademarkClaimsNoticeShown: noop,
+		onTrademarkClaimsNoticeAccepted: noop,
+		onTrademarkClaimsNoticeClosed: noop,
+		onPageView: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -61,6 +74,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		tlds: [],
 	},
 	setFilter: () => {},
+	resetFilter: () => {},
 };
 
 export const DomainSearchContext =
@@ -82,10 +96,7 @@ export const useDomainSearchContextValue = (
 	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
-	const [ filter, setFilter ] = useState( {
-		exactSldMatchesOnly: false,
-		tlds: [],
-	} as FilterState );
+	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -128,6 +139,9 @@ export const useDomainSearchContextValue = (
 						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
 					} ),
 					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query, {
@@ -136,10 +150,16 @@ export const useDomainSearchContextValue = (
 							: false,
 					} ),
 					enabled: normalizedConfig.skippable,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 				domainAvailability: ( domainName ) => ( {
 					...domainAvailabilityQuery( domainName ),
 					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
@@ -151,6 +171,9 @@ export const useDomainSearchContextValue = (
 						return data;
 					},
 					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
 				} ),
 			},
 			cart,
@@ -164,7 +187,14 @@ export const useDomainSearchContextValue = (
 			slots,
 			currentSiteUrl,
 			filter,
-			setFilter,
+			setFilter: ( filter ) => {
+				setFilter( filter );
+				normalizedEvents.onFilterApplied( filter );
+			},
+			resetFilter: () => {
+				setFilter( DEFAULT_FILTER );
+				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
+			},
 		};
 	}, [
 		isFullCartOpen,

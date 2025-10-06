@@ -495,7 +495,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function PurchaseSettingsCard( {
+export function PurchaseSettingsCard( {
 	icon,
 	title,
 	heading,

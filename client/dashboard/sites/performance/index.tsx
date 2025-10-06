@@ -1,9 +1,13 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { sitePerformancePagesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	sitePerformancePagesQuery,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter, useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
@@ -17,7 +21,7 @@ import Report from './report';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
-import SubTitle from './subtitle';
+import Subtitle from './subtitle';
 import type { Site, SitePerformancePage } from '@automattic/api-core';
 
 /**
@@ -31,14 +35,22 @@ const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: Number( s?.gmt_offset ) || 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
-	const initialPage = page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+	const currentPage = useMemo( () => {
+		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+	}, [ page_id, pagesData ] );
 	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
-	const [ currentPage, setCurrentPage ] = useState( initialPage );
 	const {
 		desktopReport,
 		mobileReport,
@@ -53,13 +65,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		refetch: refetchReport,
 	} = usePerformanceData( currentPage?.link, currentPage?.wpcom_performance_report_hash );
 	const { recordTracksEvent } = useAnalytics();
-	const router = useRouter();
-
-	const handlePageChange = ( pageId: string | null | undefined ) => {
-		const page = getPageFromID( pagesData, pageId || '' );
-
-		setCurrentPage( page );
-	};
+	const navigate = useNavigate( { from: sitePerformanceRoute.fullPath } );
 
 	const handleReportRefetch = async () => {
 		await refetchReport();
@@ -75,12 +81,18 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const currentReport = isDesktopSelected ? desktopReport : mobileReport;
 	const isRunningReport = isDesktopSelected ? isDesktopReportRunning : isMobileReportRunning;
 	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
+	const { gmtOffset, timezoneString } = siteSettings;
 
 	return (
 		<PageLayout>
 			<PageHeader
 				description={
-					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
+					<Subtitle
+						timestamp={ currentReport?.timestamp }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+						onClick={ handleReportRefetch }
+					/>
 				}
 				actions={
 					<HStack>
@@ -93,15 +105,12 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 									is_home: pageId === '0',
 								} );
 
-								router.navigate( {
-									to: '.',
+								navigate( {
 									search: ( prev: Record< string, string > ) => ( {
 										...prev,
 										page_id: Number( pageId ),
 									} ),
 								} );
-
-								handlePageChange( pageId );
 							} }
 						/>
 						<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />

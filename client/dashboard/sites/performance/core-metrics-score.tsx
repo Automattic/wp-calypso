@@ -1,25 +1,7 @@
 import { Metrics } from '@automattic/api-core';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Text } from '../../components/text';
-import { getColorForStatus, Valuation } from '../../utils/site-performance';
-
-const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
-
-const getDisplayValue = ( metric: Metrics, value: number ): string => {
-	if ( value === null || value === undefined ) {
-		return '';
-	}
-
-	if ( metric === 'overall_score' ) {
-		return `${ Math.floor( value ) }`;
-	}
-
-	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric ) ) {
-		return `${ max2Decimals( value / 1000 ) }s`;
-	}
-
-	return `${ max2Decimals( value ) }`;
-};
+import { getColorForStatus, getDisplayValue, Valuation } from '../../utils/site-performance';
 
 const getValueText = ( {
 	metric,
