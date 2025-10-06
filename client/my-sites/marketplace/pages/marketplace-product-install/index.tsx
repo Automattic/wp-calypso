@@ -300,9 +300,7 @@ const MarketplaceProductInstall = ( {
 	);
 
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
-	const pluginsUrlFinal = atomicFlow
-		? pluginsUrlFresh
-		: pluginsUrlFresh || ( pluginsUrlSelector as string | null );
+	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
