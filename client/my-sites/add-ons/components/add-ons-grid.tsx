@@ -9,7 +9,7 @@ import type { SiteId } from 'calypso/types';
 interface Props extends Omit< CardProps, 'addOnMeta' > {
 	addOns: ( AddOnMeta | null )[];
 	siteId?: SiteId;
-	productFilter?: string;
+	storageOnly?: boolean;
 }
 
 const Container = styled.div`
@@ -29,12 +29,11 @@ const AddOnsGrid = ( {
 	actionSecondary,
 	highlightFeatured,
 	siteId,
-	productFilter,
+	storageOnly,
 }: Props ) => {
-	const nonStorageAddOns =
-		productFilter === 'storage'
-			? []
-			: addOns.filter( ( addOn ) => addOn?.productSlug !== PRODUCT_1GB_SPACE );
+	const nonStorageAddOns = storageOnly
+		? []
+		: addOns.filter( ( addOn ) => addOn?.productSlug !== PRODUCT_1GB_SPACE );
 	return (
 		<Container>
 			{ nonStorageAddOns.map( ( addOn ) =>

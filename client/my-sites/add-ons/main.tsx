@@ -96,7 +96,7 @@ const AddOnsMain = () => {
 
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
 
-	const productFilter = queryArguments?.product as string | undefined;
+	const storageOnly = queryArguments?.product === 'storage';
 
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
@@ -136,7 +136,7 @@ const AddOnsMain = () => {
 					addOns={ addOns }
 					siteId={ selectedSite?.ID }
 					highlightFeatured
-					productFilter={ productFilter }
+					storageOnly={ storageOnly }
 				/>
 			</ContentWithHeader>
 		</>
