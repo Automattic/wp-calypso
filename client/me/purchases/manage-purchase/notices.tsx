@@ -26,6 +26,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getName,
 	isCloseToExpiration,
 	isExpired,
@@ -729,15 +730,19 @@ class PurchaseNotice extends Component<
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-soon-others-renew-soon-cc-expiring';
-				noticeText = translate(
-					'Your %(cardType)s ending in %(cardNumber)d %(tense)s %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-					merge( translateOptions, {
-						args: {
-							...this.creditCardDetails( currentPurchase.payment.creditCard ),
-							tense: this.getCardExpirationTense( currentPurchase.payment.creditCard ),
-						},
-					} )
-				);
+				noticeText = creditCardHasAlreadyExpired( currentPurchase )
+					? translate(
+							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
+							merge( translateOptions, {
+								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+							} )
+					  )
+					: translate(
+							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
+							merge( translateOptions, {
+								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+							} )
+					  );
 			}
 		}
 
@@ -829,15 +834,19 @@ class PurchaseNotice extends Component<
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-later-others-renew-soon-cc-expiring';
-				noticeText = translate(
-					'Your %(cardType)s ending in %(cardNumber)d %(tense)s %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-					merge( translateOptions, {
-						args: {
-							...this.creditCardDetails( currentPurchase.payment.creditCard ),
-							tense: this.getCardExpirationTense( currentPurchase.payment.creditCard ),
-						},
-					} )
-				);
+				noticeText = creditCardHasAlreadyExpired( currentPurchase )
+					? translate(
+							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
+							merge( translateOptions, {
+								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+							} )
+					  )
+					: translate(
+							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
+							merge( translateOptions, {
+								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+							} )
+					  );
 			}
 		}
 
@@ -902,17 +911,6 @@ class PurchaseNotice extends Component<
 		};
 	};
 
-	/**
-	 * Returns the appropriate tense for card expiration text based on whether the card is expired.
-	 */
-	getCardExpirationTense = ( creditCard: PurchasePaymentCreditCard ) => {
-		const { moment } = this.props;
-		const cardExpiryMoment = moment( creditCard.expiryDate, 'MM/YY' );
-		const isExpired = cardExpiryMoment.isBefore( moment(), 'month' );
-
-		return isExpired ? 'expired' : 'expires';
-	};
-
 	renderCreditCardExpiringNotice() {
 		const { changePaymentMethodPath, purchase, translate } = this.props;
 
@@ -939,19 +937,27 @@ class PurchaseNotice extends Component<
 					showDismiss={ false }
 					status={ showCreditCardExpiringWarning( purchase ) ? 'is-error' : 'is-info' }
 				>
-					{ translate(
-						'Your %(cardType)s ending in %(cardNumber)d %(tense)s %(cardExpiry)s ' +
-							'– before the next renewal. Please {{a}}update your payment information{{/a}}.',
-						{
-							args: {
-								...this.creditCardDetails( purchase.payment.creditCard ),
-								tense: this.getCardExpirationTense( purchase.payment.creditCard ),
-							},
-							components: {
-								a: linkComponent,
-							},
-						}
-					) }
+					{ creditCardHasAlreadyExpired( purchase )
+						? translate(
+								'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s ' +
+									'– before the next renewal. Please {{a}}update your payment information{{/a}}.',
+								{
+									args: this.creditCardDetails( purchase.payment.creditCard ),
+									components: {
+										a: linkComponent,
+									},
+								}
+						  )
+						: translate(
+								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s ' +
+									'– before the next renewal. Please {{a}}update your payment information{{/a}}.',
+								{
+									args: this.creditCardDetails( purchase.payment.creditCard ),
+									components: {
+										a: linkComponent,
+									},
+								}
+						  ) }
 					{ this.trackImpression( 'credit-card-expiring' ) }
 				</Notice>
 			);
