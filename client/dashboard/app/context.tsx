@@ -9,6 +9,8 @@ export type SiteFeatureSupports = {
 	scan: boolean;
 	domains: boolean;
 	emails: boolean;
+	// Optional feature flags for site sections/cards
+	flexUsageCard?: boolean;
 };
 
 export type MeSupports = {
