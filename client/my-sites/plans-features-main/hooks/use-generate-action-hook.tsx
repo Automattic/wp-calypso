@@ -467,7 +467,12 @@ function getLoggedInPlansAction( {
 				},
 			};
 		}
-		return createLoggedInPlansAction( translate( 'Downgrade', { context: 'verb' } ), 'secondary' );
+		return createLoggedInPlansAction(
+			translate( 'Downgrade', { context: 'verb' } ),
+			'secondary',
+			undefined,
+			canUserManageCurrentPlan ? undefined : 'disabled'
+		);
 	}
 
 	/**
