@@ -54,6 +54,9 @@ export interface ActivityNotificationRange {
 	site_id?: number;
 	context?: string;
 	root_id?: number;
+	slug?: string;
+	site_slug?: string;
+	uri?: string;
 }
 
 export interface ActivityLogResponse {
