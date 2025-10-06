@@ -77,6 +77,12 @@ export const shouldShowCancelAction = ( domain: Domain, purchase?: Purchase ) =>
 	return true;
 };
 
+export const shouldShowTransferInAction = ( domain: Domain ) => {
+	return (
+		domain.is_eligible_for_inbound_transfer && domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+	);
+};
+
 // Delete action utils
 export const getDeleteTitle = ( domain: Domain ) => {
 	switch ( domain.subtype.id ) {

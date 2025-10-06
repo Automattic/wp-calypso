@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
 
@@ -33,11 +33,13 @@ export const useQueryHandler = ( {
 		return getSessionStorageQuery();
 	} );
 
+	const setQuery = useCallback( ( query: string ) => {
+		setLocalQuery( query );
+		setSessionStorageQuery( query );
+	}, [] );
+
 	return {
 		query: localQuery,
-		setQuery: ( query: string ) => {
-			setLocalQuery( query );
-			setSessionStorageQuery( query );
-		},
+		setQuery,
 	};
 };

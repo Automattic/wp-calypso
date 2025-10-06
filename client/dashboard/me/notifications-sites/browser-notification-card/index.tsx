@@ -2,8 +2,8 @@ import {
 	notificationDeviceQuery,
 	notificationDeviceRegistrationMutation,
 	notificationDeviceRemovalMutation,
+	notificationPushPermissionStateQuery,
 } from '@automattic/api-queries';
-import { type PushNotificationStatus } from '@automattic/api-queries/src/notification-devices';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -24,11 +24,12 @@ const shouldRemove = ( status: string | undefined ) => {
 	return [ 'denied', 'not-supported' ].includes( status );
 };
 
-export const BrowserNotificationCard = ( {
-	status,
-}: {
-	status: PushNotificationStatus | undefined;
-} ) => {
+export const BrowserNotificationCard = () => {
+	const { data: status } = useQuery( {
+		...notificationPushPermissionStateQuery(),
+		staleTime: Infinity,
+	} );
+
 	const {
 		mutate: registerDevice,
 		isPending: isRegisteringDevice,
@@ -38,6 +39,7 @@ export const BrowserNotificationCard = ( {
 	const { mutate: removeDevice, isPending: isRemoving } = useMutation(
 		notificationDeviceRemovalMutation()
 	);
+
 	const deviceId = device?.ID;
 
 	const isPending = isLoadingDevice || isRegisteringDevice || isRemoving;

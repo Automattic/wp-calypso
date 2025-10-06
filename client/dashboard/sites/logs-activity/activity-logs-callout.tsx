@@ -18,7 +18,6 @@ export function getActivityLogsCalloutProps() {
 						'Debug issues faster with insights from a comprehensive audit log of all your admin activities.'
 					) }
 				</Text>
-				<br />
 				<Text as="p" variant="muted">
 					{ __(
 						'With your free plan, you can see your 20 most recent events. Upgrade for 30 days of history, plus filtering and date range controls.'
