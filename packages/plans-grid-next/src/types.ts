@@ -65,6 +65,7 @@ export type PlansIntent =
 	| 'plans-jetpack-app-site-creation'
 	| 'plans-import'
 	| 'plans-woocommerce'
+	| 'plans-woo-hosted'
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'

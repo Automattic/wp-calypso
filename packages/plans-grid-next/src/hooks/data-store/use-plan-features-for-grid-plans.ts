@@ -83,7 +83,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						allFeaturesList,
 						planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
 					);
-				} else if ( 'plans-woocommerce' === intent ) {
+				} else if ( 'plans-woocommerce' === intent || 'plans-woo-hosted' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {

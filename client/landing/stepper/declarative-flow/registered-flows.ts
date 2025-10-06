@@ -19,6 +19,7 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
+	WOO_HOSTED_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -52,6 +53,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		),
 	[ PLAN_UPGRADE_FLOW ]: () =>
 		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
+
+	[ WOO_HOSTED_FLOW ]: () =>
+		import( /* webpackChunkName: "woo-hosted" */ './flows/woo-hosted/woo-hosted' ),
 };
 
 /**

@@ -115,6 +115,7 @@ export interface UnifiedPlansStepProps {
 		goBack: NavigationControls[ 'goBack' ];
 		isFullLayout: boolean;
 		isExtraWideLayout: boolean;
+		logo?: React.ComponentType< any >;
 	};
 
 	shouldHideNavButtons?: boolean;
@@ -580,6 +581,7 @@ function UnifiedPlansStep( {
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
 								) : undefined
 							}
+							logo={ wrapperProps.logo && <wrapperProps.logo /> }
 						/>
 					}
 					heading={

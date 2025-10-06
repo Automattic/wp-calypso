@@ -9,6 +9,7 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
+	WOO_HOSTED_FLOW,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -73,6 +74,8 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
 			return 'plans-upgrade';
+		case WOO_HOSTED_FLOW:
+			return 'plans-woo-hosted';
 		default:
 			return null;
 	}
@@ -224,11 +227,13 @@ const PlansStepAdaptor: StepType< {
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
+			displayedIntervals={ props.displayedIntervals }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,
 				goBack: wrapperProps?.goBack ?? props.navigation.goBack,
 				isFullLayout: wrapperProps?.isFullLayout ?? true,
 				isExtraWideLayout: wrapperProps?.isExtraWideLayout ?? false,
+				logo: wrapperProps?.logo,
 			} }
 			useStepperWrapper
 			useStepContainerV2={ isUsingStepContainerV2 }

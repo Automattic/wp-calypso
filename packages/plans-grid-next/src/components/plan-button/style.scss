@@ -50,7 +50,8 @@
 		}
 	}
 
-	&.is-business-plan {
+	&.is-business-plan,
+	&.is-woo-hosted-plan {
 		background-color: var(--studio-woocommerce-purple-60);
 
 		&:focus {

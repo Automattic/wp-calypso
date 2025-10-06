@@ -215,6 +215,7 @@ export const FlowRenderer: React.FC< {
 				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
+				logo={ flow.logo }
 				{ ...stepsProps?.[ step.slug ] }
 			/>
 		);

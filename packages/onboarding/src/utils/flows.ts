@@ -16,6 +16,7 @@ export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
+export const WOO_HOSTED_FLOW = 'woo-hosted';
 
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 

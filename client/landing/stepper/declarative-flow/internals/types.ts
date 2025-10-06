@@ -278,6 +278,7 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	 */
 	variantSlug?: string;
 	title?: string;
+	logo?: React.ComponentType< any >;
 	classnames?: string | [ string ];
 	/**
 	 * Required flag to indicate if the flow is a signup flow.
@@ -346,6 +347,7 @@ export type StepProps< StepDataShape extends StepPropTypes = object > = Conditio
 		 */
 		redirectTo?: string;
 		signupUrl?: string;
+		logo: React.ComponentType< any >;
 	},
 	StepDataShape[ 'accepts' ]
 >;

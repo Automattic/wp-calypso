@@ -3,6 +3,7 @@ import {
 	isEcommercePlan,
 	isBusinessPlan,
 	isWooExpressPlan,
+	isWooHostedPlan,
 	isWpcomEnterpriseGridPlan,
 	isPersonalPlan,
 	isPremiumPlan,
@@ -30,7 +31,9 @@ const PlanLogo: React.FunctionComponent< {
 } > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, planIndex } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const shouldShowWooLogo = isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug );
+	const shouldShowWooLogo =
+		( isEcommercePlan( planSlug ) || isWooHostedPlan( planSlug ) ) &&
+		! isWooExpressPlan( planSlug );
 	const shouldShowPopularBadge = ! isPartnerBundleOnboarding();
 	const { gridPlansIndex } = usePlansGridContext();
 	const { current } = gridPlansIndex[ planSlug ];
