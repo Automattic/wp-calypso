@@ -9,6 +9,7 @@ export interface EmptyViewProps {
 	onSuggestionClick?: ( prompt: string ) => void;
 	icon?: React.ReactNode;
 	heading?: string;
+	help?: string;
 }
 
 export const EmptyView: React.FC< EmptyViewProps > = ( {
@@ -19,6 +20,7 @@ export const EmptyView: React.FC< EmptyViewProps > = ( {
 		'Your WordPress AI — ready to help design, edit, and launch.',
 		'a8c-agenttic'
 	),
+	help,
 } ) => {
 	return (
 		<div className={ styles.container }>
@@ -33,6 +35,7 @@ export const EmptyView: React.FC< EmptyViewProps > = ( {
 					/>
 				</div>
 			) }
+			{ help && <p className={ styles.help }>{ help }</p> }
 		</div>
 	);
 };

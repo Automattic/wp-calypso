@@ -481,7 +481,7 @@ export function AgentUIContainer( {
 	// Show emptyView only if a react element is provided, on floating variant, with no messages and no input
 	const showEmptyView =
 		emptyView &&
-		variant === 'floating' &&
+		[ 'floating', 'embedded' ].includes( variant ) &&
 		messages.length === 0 &&
 		! input.value.trim() &&
 		React.isValidElement( emptyView );
