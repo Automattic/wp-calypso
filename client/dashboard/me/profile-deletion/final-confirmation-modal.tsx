@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
 
@@ -64,8 +64,13 @@ export default function FinalConfirmationModal( {
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
 					<Text>
-						{ __(
-							'Please type your username in the field below to confirm. Your account will then be gone forever.'
+						{ createInterpolateElement(
+							__(
+								'Please type your username, <username />, in the field below to confirm. Your account will then be gone forever.'
+							),
+							{
+								username: <strong>{ username }</strong>,
+							}
 						) }
 					</Text>
 					<DataForm< ConfirmationFormData >
