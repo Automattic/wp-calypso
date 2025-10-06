@@ -362,7 +362,9 @@ export const ConnectRepositoryForm = ( {
 		return undefined;
 	}, [ isLoadingRepositories, repositories, selectedInstallation ] );
 
-	const isAdvancedValid = ! isAdvancedSelected || !! formData.workflowPath;
+	const isAdvancedValid =
+		! isAdvancedSelected ||
+		( !! formData.workflowPath && formData.workflowPath !== 'CREATE_WORKFLOW_OPTION' );
 	const isFormValid = !! (
 		selectedRepository &&
 		selectedInstallation &&
