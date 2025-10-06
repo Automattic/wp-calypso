@@ -1,5 +1,6 @@
+import { useEvent } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
 import { usePolicyBadges } from '../../hooks/use-policy-badges';
@@ -63,6 +64,16 @@ export const FeaturedSearchResultsItem = ( {
 		}
 		return existingBadges;
 	}, [ reason, suggestionBadges, policyBadges, suggestion.price_rule ] );
+
+	const { events } = useDomainSearch();
+
+	const triggerSuggestionRenderEvent = useEvent( () => {
+		events.onSuggestionRender( suggestion, reason );
+	} );
+
+	useEffect( () => {
+		triggerSuggestionRenderEvent();
+	}, [ triggerSuggestionRenderEvent ] );
 
 	return (
 		<DomainSuggestion.Featured

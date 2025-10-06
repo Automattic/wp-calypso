@@ -16,6 +16,7 @@ import {
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
+import { getMonetizeSubscriptionsPageTitle } from '../../me/monetize-subscriptions/urls';
 import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -51,7 +52,6 @@ export const meRoute = createRoute( {
 		} )
 	)
 );
-
 export const profileRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -201,6 +201,42 @@ export const paymentMethodsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const monetizeSubscriptionsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: getMonetizeSubscriptionsPageTitle(),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'billing/monetize-subscriptions',
+} ).lazy( () =>
+	import( '../../me/monetize-subscriptions' ).then( ( d ) =>
+		createLazyRoute( 'monetize-subscriptions' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const monetizeSubscriptionRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: getMonetizeSubscriptionsPageTitle(),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'billing/monetize-subscriptions/$subscriptionId',
+} ).lazy( () =>
+	import( '../../me/monetize-subscriptions/monetize-subscription' ).then( ( d ) =>
+		createLazyRoute( 'monetize-subscription' )( {
 			component: d.default,
 		} )
 	)
@@ -615,6 +651,8 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		billingRoute.addChildren( [
 			billingIndexRoute,
 			billingHistoryRoute,
+			monetizeSubscriptionsRoute,
+			monetizeSubscriptionRoute,
 			purchasesRoute,
 			purchaseSettingsRoute,
 			paymentMethodsRoute,

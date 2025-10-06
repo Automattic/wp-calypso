@@ -11,8 +11,6 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui: uiReducer, media: mediaReducer } } );
 
-jest.mock( 'calypso/sites/marketing/connections/inline-connection', () => () => null );
-
 const googleConnection = {
 	service: 'google_photos',
 	status: 'ok',
@@ -107,68 +105,6 @@ describe( 'MediaLibraryContent', () => {
 			const content = new MediaLibraryContent();
 
 			expect( content.hasGoogleExpired( props ) ).toBe( true );
-		} );
-	} );
-
-	describe( 'needsToBeConnected', () => {
-		test( 'returns false when default service and not connected', () => {
-			const props = {
-				source: '',
-				mediaValidationErrorTypes,
-				isConnected: false,
-				googleConnection: null,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( false );
-		} );
-
-		test( 'returns false when google service, connected, and not expired', () => {
-			const props = {
-				source: 'google_photos',
-				mediaValidationErrorTypes: [],
-				isConnected: true,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( false );
-		} );
-
-		test( 'returns false when not google service, is connected, and expired', () => {
-			const props = {
-				source: 'example',
-				mediaValidationErrorTypes,
-				isConnected: true,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( false );
-		} );
-
-		test( 'returns true when google service, not connected, and expired', () => {
-			const props = {
-				source: 'google_photos',
-				mediaValidationErrorTypes,
-				isConnected: false,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( true );
-		} );
-
-		test( 'returns true when google service, not connected, and not expired', () => {
-			const props = {
-				source: 'google_photos',
-				mediaValidationErrorTypes: [],
-				isConnected: false,
-				googleConnection,
-			};
-			const content = new MediaLibraryContent( props );
-
-			expect( content.needsToBeConnected() ).toBe( true );
 		} );
 	} );
 

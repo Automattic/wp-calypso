@@ -20,7 +20,7 @@ export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
 export const UPDATE_DESIGN_FLOW = 'update-design';
-export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
+export const DOMAIN_AND_PLAN_FLOW = 'domain-and-plan';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_DOMAIN_TRANSFER = 'hundred-year-domain-transfer';
@@ -106,8 +106,8 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };
 
-export const isDomainUpsellFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
+export const isDomainAndPlanFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DOMAIN_AND_PLAN_FLOW ].includes( flowName ) );
 };
 
 export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;

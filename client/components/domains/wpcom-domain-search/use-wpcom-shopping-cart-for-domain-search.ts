@@ -50,7 +50,7 @@ interface UseWPCOMShoppingCartForDomainSearchOptions {
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
 	onContinue?( cartItems: ResponseCartProduct[] ): void;
-	onAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
+	beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
 
 export const useWPCOMShoppingCartForDomainSearch = ( {
@@ -59,7 +59,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 	flowAllowsMultipleDomainsInCart,
 	isFirstDomainFreeForFirstYear,
 	onContinue,
-	onAddDomainToCart = ( domain ) => domain,
+	beforeAddDomainToCart = ( domain ) => domain,
 }: UseWPCOMShoppingCartForDomainSearchOptions ) => {
 	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 
@@ -92,7 +92,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
 				const cartItems = await addProductsToCart( [
-					onAddDomainToCart( {
+					beforeAddDomainToCart( {
 						product_slug,
 						meta: domain_name,
 						extra: {
@@ -129,6 +129,6 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 		isFirstDomainFreeForFirstYear,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
-		onAddDomainToCart,
+		beforeAddDomainToCart,
 	] );
 };

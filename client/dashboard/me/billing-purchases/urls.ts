@@ -1,6 +1,6 @@
 import type { Purchase } from '@automattic/api-core';
 
-export function getPurchaseUrl( purchase: Purchase ) {
+export function getPurchaseUrl( purchase: Purchase ): string {
 	return getPurchaseUrlForId( purchase.ID );
 }
 

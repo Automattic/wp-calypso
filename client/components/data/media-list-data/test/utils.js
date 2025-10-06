@@ -52,37 +52,4 @@ describe( 'utils', () => {
 			expect( filter ).toBeNull();
 		} );
 	} );
-
-	describe( '#getGoogleQuery()', () => {
-		test( 'show return original query when no category or filter', () => {
-			const original = { source: 'google_photos' };
-			const google = utils.getGoogleQuery( original, {} );
-
-			expect( google ).toEqual( original );
-		} );
-
-		test( 'show return media type filter when supplied', () => {
-			const original = { filter: 'videos' };
-			const expected = { filter: [ 'mediaType=video' ] };
-			const google = utils.getGoogleQuery( {}, original );
-
-			expect( google ).toEqual( expected );
-		} );
-
-		test( 'show return category filter when supplied', () => {
-			const original = { categoryFilter: 'cats' };
-			const expected = { filter: [ 'categoryInclude=cats' ] };
-			const google = utils.getGoogleQuery( {}, original );
-
-			expect( google ).toEqual( expected );
-		} );
-
-		test( 'show return category and media type filter when supplied', () => {
-			const original = { categoryFilter: 'cats', filter: 'videos' };
-			const expected = { filter: [ 'mediaType=video', 'categoryInclude=cats' ] };
-			const google = utils.getGoogleQuery( {}, original );
-
-			expect( google ).toEqual( expected );
-		} );
-	} );
 } );

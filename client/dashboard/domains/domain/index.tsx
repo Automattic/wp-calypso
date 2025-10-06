@@ -4,6 +4,7 @@ import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { globe } from '@wordpress/icons';
+import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { domainRoute } from '../../app/router/domains';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
@@ -17,6 +18,7 @@ function Domain() {
 	const { domainName } = domainRoute.useParams();
 	const domains = useQuery( domainsQuery() ).data;
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	return (
 		<>
@@ -27,7 +29,9 @@ function Domain() {
 							items={ domains }
 							value={ domain }
 							getItemName={ ( domain ) => domain.domain }
-							getItemUrl={ ( domain ) => `/domains/${ domain.domain }` }
+							getItemUrl={ ( domain ) =>
+								buildCurrentRouteLink( { params: { domainName: domain.domain } } )
+							}
 							renderItemIcon={ ( { context } ) =>
 								context === 'list' ? null : (
 									<Icon className="domain-icon" icon={ globe } size={ 24 } />

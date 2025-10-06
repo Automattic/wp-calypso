@@ -3,6 +3,7 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import React from 'react';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
@@ -62,7 +63,11 @@ export default function UpsellCallout( {
 			titleAs={ upsellTitleAs }
 			description={
 				<>
-					<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
+					{ React.isValidElement( upsellDescription ) ? (
+						upsellDescription
+					) : (
+						<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
+					) }
 					<Text variant="muted">
 						{ sprintf(
 							// translators: %(businessPlanName)s is the name of the Business plan, %(commercePlanName)s is the name of the Commerce plan

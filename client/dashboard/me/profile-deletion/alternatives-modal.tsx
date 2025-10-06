@@ -34,7 +34,7 @@ export default function AlternativesModal( {
 		...( siteCount > 0
 			? [
 					{
-						text: __( "Change your site's address" ),
+						text: __( 'Change your site’s address' ),
 						to: '/domains',
 						supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
 					},
@@ -67,7 +67,7 @@ export default function AlternativesModal( {
 		<Modal title={ __( 'Are you sure?' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
 				<Text>
-					{ __( "Here's a few options to try before you permanently delete your account." ) }
+					{ __( 'Here’s a few options to try before you permanently delete your account.' ) }
 				</Text>
 				<ActionList>
 					{ alternativeOptions.map( ( option ) => (

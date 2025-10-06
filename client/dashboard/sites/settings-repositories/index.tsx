@@ -2,15 +2,16 @@ import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
-import ghIconUrl from '../deployments/gh-icon.svg';
+import ghIconUrl from '../deployments/icons/gh-icon.svg';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
@@ -46,9 +47,17 @@ function RepositoriesList() {
 			modalSize: 'medium',
 		},
 		{
-			id: 'configure-connection',
-			label: __( 'Configure connection' ),
-			callback: () => {},
+			id: 'configure-repository',
+			label: __( 'Configure repository' ),
+			callback: ( items ) => {
+				router.navigate( {
+					to: '/sites/$siteSlug/settings/repositories/manage/$deploymentId',
+					params: {
+						siteSlug: siteSlug,
+						deploymentId: items[ 0 ].id,
+					},
+				} );
+			},
 		},
 		{
 			id: 'see-deployment-runs',
@@ -102,6 +111,7 @@ function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
+	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
 	const handleConnectRepository = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
@@ -115,9 +125,11 @@ function SiteRepositories() {
 					title={ __( 'Repositories' ) }
 					description={ __( 'Connect repositories to your WordPress site.' ) }
 					actions={
-						<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
-							{ __( 'Connect repository' ) }
-						</Button>
+						canConnect && (
+							<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
+								{ __( 'Connect repository' ) }
+							</Button>
+						)
 					}
 				/>
 			}
@@ -129,15 +141,9 @@ function SiteRepositories() {
 				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
 				upsellImage={ illustrationUrl }
 				upsellTitle={ __( 'Deploy from GitHub' ) }
-				upsellDescription={
-					<>
-						<Text as="p" variant="muted">
-							{ __(
-								'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-							) }
-						</Text>
-					</>
-				}
+				upsellDescription={ __(
+					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+				) }
 			>
 				<RepositoriesList />
 			</HostingFeatureGatedWithCallout>

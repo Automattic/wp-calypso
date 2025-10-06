@@ -43,6 +43,7 @@ module.exports = {
 							'@automattic/components/src/*',
 							'!@automattic/api-core',
 							'!@automattic/api-queries',
+							'!@automattic/search',
 							'!@automattic/components/src/circular-progress-bar',
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',

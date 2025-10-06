@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
 
@@ -26,15 +27,8 @@ interface OptInFormData {
 const form = {
 	layout: {
 		type: 'regular' as const,
-		labelPosition: 'top' as const,
 	},
-	fields: [
-		{
-			id: 'optInForm',
-			label: __( 'Try the new Hosting Dashboard' ),
-			children: [ 'description', 'enabled' ],
-		},
-	],
+	fields: [ 'enabled' ],
 };
 
 const fields: Field< OptInFormData >[] = [
@@ -53,16 +47,6 @@ const fields: Field< OptInFormData >[] = [
 				/>
 			);
 		},
-	},
-	{
-		id: 'description',
-		Edit: () => (
-			<Text as="p" variant="muted">
-				{ __(
-					'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
-				) }
-			</Text>
-		),
 	},
 ];
 
@@ -119,7 +103,13 @@ export default function PreferencesLanguageForm() {
 		<Card>
 			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
 			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
+				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
+					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />
+					<Text as="p" variant="muted">
+						{ __(
+							'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
+						) }
+					</Text>
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }

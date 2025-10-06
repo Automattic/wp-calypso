@@ -911,12 +911,26 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/repositories/connect',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-connect' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsRepositoriesManageRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories/manage/$deploymentId',
+	parseParams: ( params ) => ( {
+		deploymentId: Number( params.deploymentId ),
+	} ),
 	loader: async () => {
 		await queryClient.ensureQueryData( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories-connect' )( {
+	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-manage' )( {
 			component: d.default,
 		} )
 	)
@@ -1054,6 +1068,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsRepositoriesRoute,
 		siteSettingsRepositoriesConnectRoute,
+		siteSettingsRepositoriesManageRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
