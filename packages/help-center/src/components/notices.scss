@@ -1,11 +1,29 @@
 .help-center__notice {
-	background-color: var( --studio-yellow-0 );
-	border-left: 4px solid var( --studio-yellow-20 );
+	background-color: #FDF7E9;
+	border-radius: 8px;
+	color: #644B1C;
 	padding: 8px 16px;
-    
-    &.cookie-warning{
-        margin-bottom: 30px;
-    }
+	display: flex;
+	column-gap: 8px;
+	align-items: flex-start;
+	
+	&.email-fallback-notice {
+		padding: 8px;
+	}
+
+	&.cookie-warning {
+		margin-bottom: 30px;
+	}
+
+	.help-center__notice-link {
+		color: inherit;
+	}
+
+	.help-center__notice-icon {
+		display: block;
+		color: #644B1C;
+		flex: 0 0 auto;
+	}
 
 	p {
 		margin: 0;

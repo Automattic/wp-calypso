@@ -81,7 +81,7 @@ export const getOdieThirdPartyMessageContent = (): string =>
 
 export const getOdieEmailFallbackMessageContent = (): string =>
 	`${ __(
-		"We’re sorry, but live chat is temporarily unavailable for scheduled maintenance, but I'm here and happy to assist.",
+		"I’m sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
 		__i18n_text_domain__
 	) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`;
 
