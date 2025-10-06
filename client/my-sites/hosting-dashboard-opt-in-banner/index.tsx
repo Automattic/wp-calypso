@@ -72,7 +72,9 @@ export default function HostingDashboardOptInBanner() {
 
 	return (
 		<>
-			<TrackComponentView eventName="calypso_hosting_dashboard_opt_in_banner_impression" />
+			{ ! hasOptedIn && (
+				<TrackComponentView eventName="calypso_hosting_dashboard_opt_in_banner_impression" />
+			) }
 			<Card>
 				<CardBody style={ { padding: '12px' } }>
 					<VStack spacing={ 3 }>
