@@ -6,8 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -66,15 +65,24 @@ export default function HostingDashboardOptInBanner() {
 		}
 	};
 
+	// Can not use the usual TrackComponentView component because `isFetching` is momentarily `false`
+	// when the component first mounts, and we do not know whether the it will start fetching or not.
+	// We add a delay before recording the impression to leave some time for `isFetching` to become `true`.
+	useEffect( () => {
+		const timeout = setTimeout( () => {
+			if ( ! isFetching && ! hasOptedIn ) {
+				dispatch( recordTracksEvent( 'calypso_hosting_dashboard_opt_in_banner_impression' ) );
+			}
+		}, 100 );
+		return () => clearTimeout( timeout );
+	}, [ isFetching, hasOptedIn, dispatch ] );
+
 	if ( isFetching || hasOptedOut ) {
 		return null;
 	}
 
 	return (
 		<>
-			{ ! hasOptedIn && (
-				<TrackComponentView eventName="calypso_hosting_dashboard_opt_in_banner_impression" />
-			) }
 			<Card>
 				<CardBody style={ { padding: '12px' } }>
 					<VStack spacing={ 3 }>
