@@ -7,10 +7,10 @@ import {
 	useMotionValue,
 } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { useChat } from '../../hooks/useChat';
 import { useInput } from '../../hooks/useInput';
 import type { ChatProps } from '../../types';
-import { DEFAULT_PLACEHOLDER } from '../../types';
 import { cn } from '../../utils/classNames';
 import { getChatPosition, setChatPosition } from '../../utils/chatStorage';
 import { morphSpring } from '../animations';
@@ -50,7 +50,7 @@ export function Chat( {
 	onSubmit,
 	variant = 'floating',
 	triggerIcon,
-	placeholder = DEFAULT_PLACEHOLDER,
+	placeholder = __( 'Ask anything', 'a8c-agenttic' ),
 	notice,
 	onOpen,
 	onExpand,

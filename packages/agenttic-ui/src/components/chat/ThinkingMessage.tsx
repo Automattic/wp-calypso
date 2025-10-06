@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 import { BigSkyIcon } from '../icons/BigSkyIcon';
 import styles from './Thinking.module.css';
 
@@ -9,7 +10,9 @@ export interface ThinkingMessageProps {
 export const ThinkingMessage = memo(
 	React.forwardRef< HTMLDivElement, ThinkingMessageProps >(
 		function ThinkingMessage(
-			{ content = 'Thinking…' }: ThinkingMessageProps,
+			{
+				content = __( 'Thinking…', 'a8c-agenttic' ),
+			}: ThinkingMessageProps,
 			ref
 		) {
 			const displayIcon = useMemo( () => <BigSkyIcon />, [] );

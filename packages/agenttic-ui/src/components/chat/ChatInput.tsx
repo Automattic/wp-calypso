@@ -5,7 +5,6 @@ import { ArrowUpIcon } from '../icons/ArrowUpIcon';
 import { StopIcon } from '../icons/StopIcon';
 import { motion } from 'framer-motion';
 import { fastSpring, fastSpringWithDelay } from '../animations';
-import { DEFAULT_PLACEHOLDER } from '../../types';
 import styles from './ChatInput.module.css';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 import { __ } from '@wordpress/i18n';
@@ -50,7 +49,7 @@ export function ChatInput( {
 	onSubmit,
 	onKeyDown,
 	textareaRef,
-	placeholder = DEFAULT_PLACEHOLDER,
+	placeholder = __( 'Ask anything', 'a8c-agenttic' ),
 	isProcessing,
 	onBlur,
 	fromCompact = false,
