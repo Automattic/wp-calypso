@@ -3,22 +3,8 @@
  */
 import { render, screen } from '@testing-library/react';
 import { ActivityEvent } from '../activity-event';
-import type { ReactNode } from 'react';
 
 jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
-jest.mock( '@wordpress/components', () => ( {
-	__experimentalHStack: ( {
-		children,
-		className,
-	}: {
-		children: ReactNode;
-		className?: string;
-	} ) => <div className={ className }>{ children }</div>,
-} ) );
-jest.mock( '@wordpress/icons', () => ( {
-	Icon: ( { icon }: { icon?: ReactNode } ) => <span>{ icon ?? null }</span>,
-} ) );
-
 describe( 'ActivityEvent', () => {
 	it( 'renders the summary and plain content text', () => {
 		render( <ActivityEvent summary="Summary" content={ { text: 'Plain content' } } /> );
