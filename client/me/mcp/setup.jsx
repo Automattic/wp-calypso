@@ -1,5 +1,5 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -26,7 +26,11 @@ import { hasEnabledAccountTools } from './utils';
 
 function McpSetupComponent( { path } ) {
 	const translate = useTranslate();
-	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const {
+		data: userSettings,
+		isLoading: isLoadingUserSettings,
+		error: userSettingsError,
+	} = useQuery( userSettingsQuery() );
 
 	// MCP client selection for configuration format
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState( 'claude' );
@@ -124,6 +128,11 @@ function McpSetupComponent( { path } ) {
 		}
 	};
 
+	// Handle loading and error states
+	if ( isLoadingUserSettings || userSettingsError ) {
+		return null;
+	}
+
 	// Check if any account-level tools are enabled using the new nested structure
 	const hasEnabledTools = hasEnabledAccountTools( userSettings );
 
@@ -207,6 +216,8 @@ function McpSetupComponent( { path } ) {
 					<CardBody>
 						<VStack spacing={ 6 }>
 							<SelectControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
 								label={ translate( 'MCP Client' ) }
 								value={ selectedMcpClient }
 								options={ mcpClientOptions }
@@ -324,13 +335,14 @@ function McpSetupComponent( { path } ) {
 										/>
 									</div>
 									<TextareaControl
+										__nextHasNoMarginBottom
 										value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
 										onChange={ () => {} } // Required prop for read-only textarea
 										readOnly
 										help={ translate(
 											"Copy this configuration and paste it into your MCP client's settings."
 										) }
-										style={ { 'min-height': '240px' } }
+										style={ { minHeight: '240px' } }
 									/>
 								</VStack>
 							</VStack>
