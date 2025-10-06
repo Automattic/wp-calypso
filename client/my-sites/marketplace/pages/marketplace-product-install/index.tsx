@@ -276,7 +276,7 @@ const MarketplaceProductInstall = ( {
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
 	// Fetch fresh site data (including admin_url) post-transfer via TanStack Query
-	const { data: freshSite, isFetching: isFetchingFreshSite } = useQuery( {
+	const { data: freshSite } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
 		refetchInterval: ( query ) => {
@@ -289,7 +289,7 @@ const MarketplaceProductInstall = ( {
 		refetchOnMount: 'always',
 	} );
 
-	const freshAdminUrl = freshSite?.options?.admin_url as string | undefined;
+	const freshAdminUrl = freshSite?.options?.admin_url;
 	const isAtomicTransferReady = freshSite ? isAtomicTransferredSite( freshSite ) : false;
 	const pluginsUrlFresh = freshAdminUrl
 		? `${ freshAdminUrl }plugins.php?activate=true&plugin_status=active`
@@ -304,27 +304,11 @@ const MarketplaceProductInstall = ( {
 		? pluginsUrlFresh
 		: pluginsUrlFresh || ( pluginsUrlSelector as string | null );
 
-	/* eslint-disable no-console */
-	console.log( 'freshAdminUrl', freshAdminUrl );
-	console.log( 'isFetchingFreshSite', isFetchingFreshSite );
-	console.log( 'pluginsUrlFresh', pluginsUrlFresh );
-	console.log( 'pluginsUrlSelector', pluginsUrlSelector );
-	console.log( 'pluginsUrlFinal', pluginsUrlFinal );
-	console.log( 'isAtomicTransferReady', isAtomicTransferReady );
-	/* eslint-enable no-console */
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
 	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
-		/* eslint-disable no-console */
-		console.log( 'installedPlugin', installedPlugin );
-		console.log( 'pluginActive', pluginActive );
-		console.log( 'atomicFlow', atomicFlow );
-		console.log( 'automatedTransferStatus', automatedTransferStatus );
-		console.log( 'canManagePlugins', canManagePlugins );
-		console.log( 'uploadedPluginSlug', uploadedPluginSlug );
-		/* eslint-enable no-console */
 		if (
 			// Happens in 3 cases:
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
