@@ -119,14 +119,14 @@ export default function HostingDashboardOptInBanner( {
 			<CardBody style={ { padding: '12px' } }>
 				{ isMobile ? (
 					<HStack spacing={ 2 }>
-						<img src={ illustratioMobileUrl } alt="illustration" />
-						<HStack spacing={ 1 }>
+						<VStack spacing={ 1 } alignment="flex-start">
 							<VStack spacing={ 0 }>
 								{ heading }
 								{ description }
 							</VStack>
 							{ button }
-						</HStack>
+						</VStack>
+						<img src={ illustratioMobileUrl } alt="illustration" style={ { flexShrink: 0 } } />
 					</HStack>
 				) : (
 					<VStack spacing={ 3 }>
