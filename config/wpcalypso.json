@@ -43,7 +43,7 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domain-search-rewrite": false,
+		"domain-search-rewrite": true,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,
 		"google-my-business": true,

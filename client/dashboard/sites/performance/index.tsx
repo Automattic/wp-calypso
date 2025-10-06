@@ -1,5 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { sitePerformancePagesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	sitePerformancePagesQuery,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -17,7 +21,7 @@ import Report from './report';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
-import SubTitle from './subtitle';
+import Subtitle from './subtitle';
 import type { Site, SitePerformancePage } from '@automattic/api-core';
 
 /**
@@ -31,6 +35,13 @@ const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: Number( s?.gmt_offset ) || 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
@@ -70,12 +81,18 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const currentReport = isDesktopSelected ? desktopReport : mobileReport;
 	const isRunningReport = isDesktopSelected ? isDesktopReportRunning : isMobileReportRunning;
 	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
+	const { gmtOffset, timezoneString } = siteSettings;
 
 	return (
 		<PageLayout>
 			<PageHeader
 				description={
-					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
+					<Subtitle
+						timestamp={ currentReport?.timestamp }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+						onClick={ handleReportRefetch }
+					/>
 				}
 				actions={
 					<HStack>

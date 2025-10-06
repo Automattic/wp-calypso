@@ -3,6 +3,7 @@ import {
 	sitesQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	marketplacePluginsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -52,6 +53,10 @@ export const pluginRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: '$pluginId',
+	loader: async () => {
+		queryClient.ensureQueryData( marketplacePluginsQuery() );
+		await queryClient.ensureQueryData( pluginsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../plugins/plugin' ).then( ( d ) =>
 		createLazyRoute( 'plugin' )( {
@@ -71,6 +76,7 @@ export const pluginsManageRoute = createRoute( {
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
 	loader: async () => {
+		queryClient.ensureQueryData( marketplacePluginsQuery() );
 		queryClient.ensureQueryData( pluginsQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},

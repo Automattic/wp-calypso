@@ -215,3 +215,10 @@ $data-view-border-color: #f1f1f1;
 	flex-direction: column;
 	height: calc(100vh - 32px);
 }
+
+.new-referral-order-notification {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	align-items: flex-start;
+}

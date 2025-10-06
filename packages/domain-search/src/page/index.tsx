@@ -1,7 +1,7 @@
 import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
 import { InitialState } from './initial-state';
 import { ResultsPage } from './results';
@@ -15,6 +15,10 @@ export const DomainSearch = ( props: DomainSearchProps ) => {
 	const cartItemsLength = contextValue.cart.items.length;
 	const isFullCartOpen = contextValue.isFullCartOpen;
 	const closeFullCart = contextValue.closeFullCart;
+
+	useEffect( () => {
+		contextValue.events.onPageView();
+	}, [] );
 
 	useLayoutEffect( () => {
 		if ( cartItemsLength === 0 && isFullCartOpen ) {
