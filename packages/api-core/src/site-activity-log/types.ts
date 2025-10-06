@@ -40,7 +40,7 @@ export interface ActivityLogIcon {
 }
 export interface ActivityNotificationRange {
 	// Node-local unique ID and parent reference
-	id: string;
+	id: string | number;
 	parent?: string | null;
 	// UCS-2 indices within `text` [start, end)
 	indices: [ number, number ];
@@ -51,6 +51,9 @@ export interface ActivityNotificationRange {
 	url?: string;
 	type: string;
 	intent?: string;
+	site_id?: number;
+	context?: string;
+	root_id?: number;
 }
 
 export interface ActivityLogResponse {
