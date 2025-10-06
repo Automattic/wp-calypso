@@ -1,7 +1,4 @@
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Flex } from '@wordpress/components';
 import { useContainerQuery } from '../../hooks/use-container-query';
 
 interface FeaturedDomainSuggestionsListProps {
@@ -16,11 +13,14 @@ export const FeaturedDomainSuggestionsList = ( {
 		large: 600,
 	} );
 
-	const Element = activeQuery === 'large' ? HStack : VStack;
-
 	return (
-		<Element ref={ ref } spacing={ 4 } role="list">
+		<Flex
+			ref={ ref }
+			gap={ 4 }
+			role="list"
+			direction={ activeQuery === 'large' ? 'row' : 'column' }
+		>
 			{ children }
-		</Element>
+		</Flex>
 	);
 };

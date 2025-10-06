@@ -10,7 +10,7 @@ interface NoticeHandlers {
 interface FileBrowserContextValue {
 	fileBrowserState: FileBrowserStateActions;
 	locale: string;
-	notices: NoticeHandlers;
+	notices?: NoticeHandlers;
 }
 
 const FileBrowserContext = createContext< FileBrowserContextValue | null >( null );
@@ -26,7 +26,7 @@ export const useFileBrowserContext = () => {
 interface FileBrowserProviderProps {
 	children: React.ReactNode;
 	locale: string;
-	notices: NoticeHandlers;
+	notices?: NoticeHandlers;
 }
 
 /**

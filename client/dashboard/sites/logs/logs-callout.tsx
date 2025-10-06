@@ -1,4 +1,3 @@
-import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
@@ -11,12 +10,8 @@ export function getLogsCalloutProps() {
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Access detailed logs' ),
 		upsellImage: illustrationUrl,
-		upsellDescription: (
-			<Text as="p" variant="muted">
-				{ __(
-					'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
-				) }
-			</Text>
+		upsellDescription: __(
+			'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
 		),
 	};
 }

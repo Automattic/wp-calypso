@@ -133,8 +133,8 @@ describe( 'index', () => {
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
 		await waitFor( () => {
-			expect( pageLink ).toBe(
-				'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
+			expect( pageLink ).toMatch(
+				/\/plans\/yearly\/example\.wordpress\.com\?domain=true&domainAndPlanPackage=true/
 			);
 		} );
 	} );

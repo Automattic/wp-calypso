@@ -17,6 +17,7 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
+	DOMAIN_AND_PLAN_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -79,8 +80,10 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	'update-options': () =>
 		import( /* webpackChunkName: "update-options-flow" */ './flows/update-options/update-options' ),
 
-	'domain-upsell': () =>
-		import( /* webpackChunkName: "update-design-flow" */ './flows/domain-upsell/domain-upsell' ),
+	[ DOMAIN_AND_PLAN_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "domain-and-plan-flow" */ './flows/domain-and-plan/domain-and-plan'
+		),
 
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
