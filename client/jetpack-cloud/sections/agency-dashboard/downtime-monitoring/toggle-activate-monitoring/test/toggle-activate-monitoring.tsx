@@ -14,6 +14,8 @@ import ToggleActivateMonitoring from '../index';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	config.isEnabled = ( property: string ) => true;
 	return config;
 } );
 
