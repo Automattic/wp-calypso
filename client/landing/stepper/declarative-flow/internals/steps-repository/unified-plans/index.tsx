@@ -88,9 +88,10 @@ const PlansStepAdaptor: StepType< {
 	submits: ProvidedDependencies;
 } > = ( props ) => {
 	// Extract step-specific props from the flow configuration
-	const { isInSignup, isStepperUpgradeFlow } = props as typeof props & {
+	const { isInSignup, isStepperUpgradeFlow, selectedFeature } = props as typeof props & {
 		isInSignup?: boolean;
 		isStepperUpgradeFlow?: boolean;
+		selectedFeature?: string;
 	};
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -227,6 +228,7 @@ const PlansStepAdaptor: StepType< {
 			useStepContainerV2={ isUsingStepContainerV2 }
 			isInSignup={ isInSignup }
 			isStepperUpgradeFlow={ isStepperUpgradeFlow }
+			selectedFeature={ selectedFeature }
 		/>
 	);
 };

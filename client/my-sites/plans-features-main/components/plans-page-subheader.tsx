@@ -226,7 +226,7 @@ const PlansPageSubheader = ( {
 	return (
 		<>
 			{ renderSubheader() }
-			{ isDisplayingPlansNeededForFeature && (
+			{ isDisplayingPlansNeededForFeature && intent !== 'plans-upgrade' && (
 				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
 			) }
 		</>

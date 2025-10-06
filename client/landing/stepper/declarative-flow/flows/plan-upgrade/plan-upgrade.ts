@@ -33,6 +33,9 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 	initialize,
 
 	useStepsProps() {
+		const query = useQuery();
+		const selectedFeature = query.get( 'feature' );
+
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				// Note that this step uses this flow name to select the `plans-upgrade` intent.
@@ -42,6 +45,9 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 				// This is NOT a signup flow - use logged-in behavior for current plans
 				isInSignup: false,
+
+				// Pass the feature parameter for feature-based plan filtering
+				selectedFeature,
 			},
 		};
 	},

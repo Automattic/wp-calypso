@@ -127,6 +127,7 @@ export interface UnifiedPlansStepProps {
 	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
+	selectedFeature?: string;
 	fallbackSubHeaderText?: string;
 
 	/**
@@ -238,6 +239,7 @@ function UnifiedPlansStep( {
 	onIntentChange,
 	isInSignup = true,
 	isStepperUpgradeFlow = false,
+	selectedFeature,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -564,6 +566,7 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
+				selectedFeature={ selectedFeature }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
