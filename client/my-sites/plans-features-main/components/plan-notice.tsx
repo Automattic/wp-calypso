@@ -114,7 +114,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss
+					showDismiss={ false }
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-warning"
