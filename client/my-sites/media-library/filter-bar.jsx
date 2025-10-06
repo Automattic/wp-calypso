@@ -22,7 +22,6 @@ export class MediaLibraryFilterBar extends Component {
 		basePath: PropTypes.string,
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
 		filter: PropTypes.string,
-		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
 		site: PropTypes.object,
@@ -96,8 +95,7 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	shouldSkipFilters() {
-		const { source, photosPickerApiEnabled } = this.props;
-		return photosPickerApiEnabled && source === 'google_photos';
+		return false;
 	}
 
 	changeFilter = ( filter ) => () => {
@@ -148,9 +146,9 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderSearchSection() {
-		const { source, onSearch, search, filterRequiresUpgrade, isConnected } = this.props;
+		const { source, onSearch, search, isConnected } = this.props;
 
-		if ( filterRequiresUpgrade || ! isConnected ) {
+		if ( ! isConnected ) {
 			return null;
 		}
 

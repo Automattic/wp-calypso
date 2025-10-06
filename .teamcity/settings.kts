@@ -5,6 +5,7 @@ import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
@@ -232,6 +233,25 @@ object BuildBaseImages : BuildType({
 		}
 		dockerSupport {
 			cleanupPushedImages = true
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#calypso"
+				messageFormat = verboseMessageFormat {
+					addChanges = true
+					addStatusText = true
+					addBranch = true
+				}
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
 		}
 	}
 })

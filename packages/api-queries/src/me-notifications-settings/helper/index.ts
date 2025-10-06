@@ -1,24 +1,54 @@
 import {
+	BlogNotificationSettings,
+	DeviceNotificationSettings,
 	InputUserNotificationSettings,
-	OtherDeviceNotificationSettings,
 	UserNotificationSettings,
 } from '@automattic/api-core';
 import deepmerge from 'deepmerge';
 
-const mergeDevices = (
-	oldData: OtherDeviceNotificationSettings[],
-	newData: OtherDeviceNotificationSettings[]
-) => {
-	return newData.map( ( device ) => {
-		const oldDevice = oldData.find( ( oldDevice ) => oldDevice.device_id === device.device_id );
+type Mergeable = DeviceNotificationSettings | BlogNotificationSettings;
 
-		if ( oldDevice ) {
-			return {
-				...oldDevice,
-				...device,
-			};
+const isDeviceNotificationSettings = ( data: Mergeable ): data is DeviceNotificationSettings => {
+	return 'device_id' in data;
+};
+
+const isBlogNotificationSettings = ( data: Mergeable ): data is BlogNotificationSettings => {
+	return 'blog_id' in data;
+};
+
+const mergeCollections = ( oldData: Mergeable[], newData: Mergeable[] ) => {
+	if ( oldData.length === 0 ) {
+		return newData;
+	}
+
+	if ( newData.length === 0 ) {
+		return oldData;
+	}
+
+	return oldData.map( ( data ) => {
+		if ( isDeviceNotificationSettings( data ) ) {
+			const device = data as DeviceNotificationSettings;
+
+			const toMerge = ( newData as DeviceNotificationSettings[] ).find(
+				( newDevice ) => newDevice.device_id === device.device_id
+			);
+
+			if ( toMerge ) {
+				return deepmerge( device, toMerge );
+			}
 		}
-		return device;
+
+		if ( isBlogNotificationSettings( data ) ) {
+			const blog = data as BlogNotificationSettings;
+			const toMerge = ( newData as BlogNotificationSettings[] ).find(
+				( newBlog ) => newBlog.blog_id === blog.blog_id
+			);
+
+			if ( toMerge ) {
+				return deepmerge( blog, toMerge );
+			}
+		}
+		return data;
 	} );
 };
 
@@ -27,6 +57,6 @@ export const mergeSettings = (
 	newData: InputUserNotificationSettings
 ) => {
 	return deepmerge( oldData, newData, {
-		arrayMerge: mergeDevices,
+		arrayMerge: mergeCollections,
 	} ) as UserNotificationSettings;
 };

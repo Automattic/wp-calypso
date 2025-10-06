@@ -11,7 +11,7 @@ import { useEligibleSites } from './use-eligible-sites';
 import type { Frequency, Weekday } from '../types';
 import type { Site, CreateSiteUpdateScheduleBody } from '@automattic/api-core';
 
-type CreateInputs = {
+export type CreateInputs = {
 	plugins: string[];
 	frequency: Frequency;
 	weekday: Weekday;

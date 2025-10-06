@@ -192,14 +192,14 @@ export default function jetpackMenu( { siteDomain, hasUnifiedImporter } ) {
 					type: 'submenu-item',
 					url: hasUnifiedImporter
 						? `/import/${ siteDomain }`
-						: `https://${ siteDomain }/wp-admin/import.php?calypsoify=0`,
+						: `https://${ siteDomain }/wp-admin/import.php`,
 				},
 				{
 					parent: 'tools.php',
 					slug: 'tools-export',
 					title: translate( 'Export' ),
 					type: 'submenu-item',
-					url: `https://${ siteDomain }/wp-admin/export.php?calypsoify=0`,
+					url: `https://${ siteDomain }/wp-admin/export.php`,
 				},
 			],
 		},

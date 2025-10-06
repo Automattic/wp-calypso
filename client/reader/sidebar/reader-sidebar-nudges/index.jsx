@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { clickUpgradeNudge } from 'calypso/state/marketing/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
@@ -13,13 +14,15 @@ import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-f
 const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
+	const href = getDomainAndPlanUpsellUrl( { siteSlug } );
+
 	return (
 		<UpsellNudge
 			event="free-to-paid-sidebar-reader"
 			forceHref
 			callToAction={ translate( 'Upgrade' ) }
 			compact
-			href={ '/domains/add/' + siteSlug + '?domainAndPlanPackage=true' }
+			href={ href }
 			title={ translate( 'Free domain with an annual plan' ) }
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
 			tracksClickName="calypso_upgrade_nudge_cta_click"

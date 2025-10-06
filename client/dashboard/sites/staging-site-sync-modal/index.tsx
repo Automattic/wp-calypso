@@ -582,7 +582,11 @@ function StagingSiteSyncModalInner( {
 						</HStack>
 
 						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ handleClose }>
+							<Button
+								variant="tertiary"
+								onClick={ handleClose }
+								disabled={ pullMutation.isPending || pushMutation.isPending }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
