@@ -18,7 +18,6 @@ import {
 	isSavingPreference,
 	preferencesLastSaveError,
 } from 'calypso/state/preferences/selectors';
-import illustratioMobileUrl from './illustration-mobile.svg';
 import illustratioUrl from './illustration.svg';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -118,16 +117,13 @@ export default function HostingDashboardOptInBanner( {
 		<Card style={ { width: '100%' } }>
 			<CardBody style={ { padding: '12px' } }>
 				{ isMobile ? (
-					<HStack spacing={ 2 }>
-						<VStack spacing={ 1 } alignment="flex-start">
-							<VStack spacing={ 0 }>
-								{ heading }
-								{ description }
-							</VStack>
-							{ button }
+					<VStack spacing={ 2 } alignment="flex-start">
+						<VStack spacing={ 0 }>
+							{ heading }
+							{ description }
 						</VStack>
-						<img src={ illustratioMobileUrl } alt="illustration" style={ { flexShrink: 0 } } />
-					</HStack>
+						{ button }
+					</VStack>
 				) : (
 					<VStack spacing={ 3 }>
 						<img src={ illustratioUrl } alt="illustration" />
