@@ -11,7 +11,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
-import ghIconUrl from '../deployments/icons/gh-icon.svg';
+import GitHubIcon from '../deployments/icons/github';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
@@ -138,7 +138,7 @@ function SiteRepositories() {
 				site={ site }
 				feature={ HostingFeatures.DEPLOYMENT }
 				tracksFeatureId="settings-repositories"
-				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
+				upsellIcon={ <GitHubIcon aria-label={ __( 'GitHub logo' ) } /> }
 				upsellImage={ illustrationUrl }
 				upsellTitle={ __( 'Deploy from GitHub' ) }
 				upsellDescription={ __(

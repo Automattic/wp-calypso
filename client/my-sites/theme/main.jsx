@@ -4,6 +4,7 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	FEATURE_INSTALL_THEMES,
+	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
@@ -1148,6 +1149,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		siteId,
 		canInstallPlugins,
 		canInstallThemes,
+		canInstallCommunityThemes,
 		isActive,
 		isLoggedIn,
 		isPremium,
@@ -1203,7 +1205,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	// isWporgTheme is true for some free themes we offer, so we need to check the tier instead.
 	else if (
 		( themeTier === 'community' || themeTier?.slug === 'community' ) &&
-		! canInstallThemes
+		( ! canInstallThemes || ! canInstallCommunityThemes )
 	) {
 		defaultOption = 'upgradePlanForDotOrgThemes';
 	} else {
@@ -1289,6 +1291,7 @@ export default connect(
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
+			canInstallCommunityThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_COMMUNITY_THEMES ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
