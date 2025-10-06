@@ -111,6 +111,10 @@ describe( 'survicate', () => {
 		// Restore original DOM methods
 		document.createElement = originalCreateElement;
 		document.getElementsByTagName = originalGetElementsByTagName;
+
+		// Clean up document and window objects
+		document.body.innerHTML = '';
+		window.location = null;
 	} );
 
 	describe( 'mayWeLoadSurvicateScript', () => {
