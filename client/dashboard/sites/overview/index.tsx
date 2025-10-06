@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { useAppContext } from '../../app/context';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -21,6 +22,7 @@ import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
+import OverviewFlexUsageCard from '../overview-flex-usage-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
 import PerformanceCard from '../overview-performance-card';
@@ -93,6 +95,10 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+	const { supports } = useAppContext();
+	const showFlexUsageCard = Boolean(
+		supports.sites && supports.sites.flexUsageCard && ! isSelfHostedJetpackConnectedSite
+	);
 
 	return (
 		<PageLayout
@@ -146,6 +152,7 @@ function SiteOverview( {
 						<ScanCard site={ site } />
 					</Grid>
 					<PlanCard site={ site } />
+					{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 				</Grid>
 				<Divider
 					orientation="horizontal"
