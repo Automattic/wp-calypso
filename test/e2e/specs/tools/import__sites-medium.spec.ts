@@ -1,5 +1,8 @@
+import path from 'path';
+import { Page } from 'playwright';
 import { expect, tags, test } from '../../lib/pw-base';
-import { TEST_MEDIUM_EXPORT_FILE_PATH } from '../constants';
+
+const TEST_MEDIUM_EXPORT_FILE_PATH = path.join( __dirname, 'medium-export-example.zip' );
 
 test.describe(
 	'Site Import: Calypso: Medium',
@@ -9,8 +12,6 @@ test.describe(
 	},
 	() => {
 		test.describe.configure( { mode: 'serial' } ); // Since all tests use the same account you can only run a single import at a time
-		const importEndpointRegex = /rest\/v1\.1\/sites\/\d+\/imports\//;
-
 		test( 'As a WordPress.com free plan user with a simple site, I can use the wp-admin Importers List Medium link to import my content from my medium.com account', async ( {
 			accountSimpleSiteFreePlan,
 			page,
@@ -23,14 +24,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I visit the Medium importer as coming from the wp-admin Tools > Import page', async function () {
-				await page.route( importEndpointRegex, async ( route ) => {
-					console.log( 'Mocking the imports endpoint' );
-					await route.fulfill( {
-						status: 200,
-						contentType: 'application/json',
-						body: '{}',
-					} );
-				} );
+				await mockImportEndpoint( page );
 				await page.goto(
 					helperData.getCalypsoURL( 'setup/site-setup/importerMedium', {
 						ref: 'wp-admin-importers-list-direct-importer',
@@ -44,7 +38,7 @@ test.describe(
 				await expect(
 					page.getByRole( 'heading', { name: 'Import content from Medium' } )
 				).toBeVisible();
-				await page.unroute( importEndpointRegex );
+				await unMockImportEndpoint( page );
 			} );
 
 			await test.step( 'When I upload a valid Medium export file', async function () {
@@ -91,14 +85,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I enter my Medium site URL and click Continue', async function () {
-				await page.route( importEndpointRegex, async ( route ) => {
-					console.log( 'Mocking the imports endpoint' );
-					await route.fulfill( {
-						status: 200,
-						contentType: 'application/json',
-						body: '{}',
-					} );
-				} );
+				mockImportEndpoint( page );
 				await page
 					.getByRole( 'textbox', { name: 'Enter your site address:' } )
 					.fill( mediumSiteURL );
@@ -109,7 +96,7 @@ test.describe(
 				await expect(
 					page.getByRole( 'heading', { name: 'Import content from Medium' } )
 				).toBeVisible();
-				await page.unroute( importEndpointRegex );
+				await unMockImportEndpoint( page );
 			} );
 
 			await test.step( 'When I upload a valid Medium export file', async function () {
@@ -129,3 +116,16 @@ test.describe(
 		} );
 	}
 );
+async function mockImportEndpoint( page: Page ) {
+	await page.route( /rest\/v1\.1\/sites\/\d+\/imports\//, async ( route ) => {
+		await route.fulfill( {
+			status: 200,
+			contentType: 'application/json',
+			body: '{}',
+		} );
+	} );
+}
+
+async function unMockImportEndpoint( page: Page ) {
+	await page.unroute( /rest\/v1\.1\/sites\/\d+\/imports\// );
+}
