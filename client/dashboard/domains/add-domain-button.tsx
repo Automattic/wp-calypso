@@ -43,7 +43,7 @@ export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 						iconPosition="left"
 						icon={ globe }
 					>
-						{ __( 'Use a domain I own' ) }
+						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
 					</RouterLinkMenuItem>
 				</>
 			) }
