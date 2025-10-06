@@ -1,4 +1,4 @@
-import { userSettingsQuery } from '@automattic/api-queries/src/me-settings';
+import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,

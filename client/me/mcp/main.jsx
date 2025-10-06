@@ -1,5 +1,5 @@
 import { sitesQuery } from '@automattic/api-queries';
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries/src/me-settings';
+import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
