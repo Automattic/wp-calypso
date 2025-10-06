@@ -65,23 +65,14 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
 			if ( forceEmailSupport || contextForceEmailSupport ) {
-				buttons.push(
-					{
-						text: __( 'Send an email', __i18n_text_domain__ ),
-						action: async () => {
-							onClickAdditionalEvent?.( 'email' );
-							params.set( 'wapuuFlow', 'true' );
-							navigate( '/contact-form?' + params.toString() );
-						},
+				buttons.push( {
+					text: __( 'Send an email', __i18n_text_domain__ ),
+					action: async () => {
+						onClickAdditionalEvent?.( 'email' );
+						params.set( 'wapuuFlow', 'true' );
+						navigate( '/contact-form?' + params.toString() );
 					},
-					{
-						text: __( 'Browse support guides', __i18n_text_domain__ ),
-						action: async () => {
-							onClickAdditionalEvent?.( 'support-guides' );
-							window.open( localizeUrl( 'https://wordpress.com/support' ), '_blank' );
-						},
-					}
-				);
+				} );
 			} else {
 				if ( supportInteraction ) {
 					buttons.push( {
@@ -134,13 +125,6 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				action: async () => {
 					onClickAdditionalEvent?.( 'forum' );
 					window.open( localizeUrl( 'https://wordpress.com/forums/?new=1' ), '_blank' );
-				},
-			},
-			{
-				text: __( 'Browse support guides', __i18n_text_domain__ ),
-				action: async () => {
-					onClickAdditionalEvent?.( 'support-guides' );
-					window.open( localizeUrl( 'https://wordpress.com/support' ), '_blank' );
 				},
 			},
 		];
