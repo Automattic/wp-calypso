@@ -149,7 +149,7 @@ function SiteActivityLogsDataViews( {
 		}
 		window.history.replaceState( null, '', url.pathname + url.search );
 		if ( perPageChanged ) {
-			recordTracksEvent( 'calypso_dashboard_activity_logs_per_page_changed', {
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_per_page_changed', {
 				per_page: next.perPage,
 			} );
 		}
@@ -167,15 +167,15 @@ function SiteActivityLogsDataViews( {
 				}
 			} );
 			eventProps.num_total_activities_selected = totalActivitiesSelected;
-			recordTracksEvent( 'calypso_dashboard_activity_logs_filter_changed', eventProps );
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_filter_changed', eventProps );
 		}
 		if ( searchChanged ) {
-			recordTracksEvent( 'calypso_dashboard_activity_logs_search', {
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_search', {
 				has_query: nextSearch.length > 0,
 			} );
 		}
 		if ( ! datasetChanged && requestedPage !== currentPage ) {
-			recordTracksEvent( 'calypso_dashboard_activity_logs_page_changed', {
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_page_changed', {
 				page: requestedPage,
 			} );
 		}

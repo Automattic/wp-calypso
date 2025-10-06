@@ -31,7 +31,7 @@ export function useActivityActions( {
 			callback: async ( items ) => {
 				const [ item ] = items;
 				if ( item ) {
-					recordTracksEvent( 'calypso_dashboard_sites_activity_logs_restore_point_click', {
+					recordTracksEvent( 'calypso_dashboard_sites_logs_activity_restore_point_click', {
 						activity_id: item.activity_id,
 						rewind_id: item.rewind_id,
 						site_id: site.ID,
