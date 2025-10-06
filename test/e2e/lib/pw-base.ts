@@ -333,6 +333,7 @@ export const tags = {
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
+	IMPORTS: '@imports',
 	JETPACK_REMOTE_SITE: '@jetpack-remote-site',
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
