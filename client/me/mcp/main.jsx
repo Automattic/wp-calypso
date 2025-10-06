@@ -1,6 +1,6 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -27,7 +27,11 @@ function McpComponent( { path } ) {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const { data: sites = [] } = useQuery( sitesQuery( { site_visibility: 'visible' } ) );
-	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const {
+		data: userSettings,
+		isLoading: isLoadingUserSettings,
+		error: userSettingsError,
+	} = useQuery( userSettingsQuery() );
 
 	// Site selector state for disabling MCP access on specific sites
 	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
@@ -49,6 +53,11 @@ function McpComponent( { path } ) {
 			);
 		},
 	} );
+
+	// Handle loading and error states
+	if ( isLoadingUserSettings || userSettingsError ) {
+		return null;
+	}
 
 	// Get account-level tools from user settings using the new nested structure
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );

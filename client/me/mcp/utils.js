@@ -15,6 +15,11 @@
  * @returns {Record<string, McpAbility>} An object containing account-level MCP abilities
  */
 export function getAccountMcpAbilities( userSettings ) {
+	// Handle null/undefined userSettings
+	if ( ! userSettings ) {
+		return {};
+	}
+
 	// Check new flat structure first
 	if ( userSettings?.account ) {
 		return userSettings.account;
@@ -65,7 +70,7 @@ export function createAccountApiPayload( userSettings, abilities ) {
  */
 export function hasEnabledAccountTools( userSettings ) {
 	const abilities = getAccountMcpAbilities( userSettings );
-	return Object.values( abilities ).some( ( tool ) => tool.enabled );
+	return Object.values( abilities ).some( ( tool ) => tool?.enabled );
 }
 
 /**
