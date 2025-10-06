@@ -1,9 +1,14 @@
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import ghIconUrl from '../deployments/icons/gh-icon.svg';
+import GitHubIcon from '../deployments/icons/github';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
+
+function GitHubDecorationIcon() {
+	return <GitHubIcon width={ 24 } height={ 24 } />;
+}
 
 export default function RepositoriesSettingsSummary( {
 	site,
@@ -20,7 +25,7 @@ export default function RepositoriesSettingsSummary( {
 			to={ `/sites/${ site.slug }/settings/repositories` }
 			title={ __( 'GitHub repositories' ) }
 			density={ density }
-			decoration={ <img src={ ghIconUrl } style={ { opacity: 0.7 } } alt="" /> }
+			decoration={ <Icon icon={ <GitHubDecorationIcon /> } /> }
 		/>
 	);
 }
