@@ -46,12 +46,9 @@ describe( 'AccountDeletionModal', () => {
 
 		expect( screen.getByText( 'Confirm account deletion' ) ).toBeInTheDocument();
 		expect(
-			screen.getByText( ( content, element ) => {
-				return (
-					element?.textContent ===
-					'Please type your username, testuser, in the field below to confirm. Your account will then be gone forever.'
-				);
-			} )
+			screen.getByText(
+				'Please type your username in the field below to confirm. Your account will then be gone forever.'
+			)
 		).toBeInTheDocument();
 		expect( screen.getByLabelText( /Type your username to confirm/ ) ).toBeInTheDocument();
 	} );
