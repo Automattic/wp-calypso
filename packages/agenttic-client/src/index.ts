@@ -23,7 +23,6 @@ export {
 	extractTextFromMessage,
 	createAbortController,
 } from './client/utils/core';
-export { createMessageRenderer } from './utils/createMessageRenderer';
 
 // All type exports (safe to expose)
 export type {
@@ -77,7 +76,6 @@ export type {
 	UseAgentChatReturn,
 	UIMessage,
 	Suggestion,
-	MarkdownComponents,
 } from './react/useAgentChat';
 
 // Constants
@@ -90,18 +88,8 @@ export { createClient } from './client/index';
 export { getAgentManager } from './react/agentManager';
 export type { AgentManager, AgentManagerConfig } from './react/agentManager';
 
-// Markdown extensions - Chart components
-export { BarChart, LineChart, ChartBlock } from './markdown-extensions/charts';
-export type {
-	MarkdownExtensions,
-	ChartExtensionConfig,
-	ChartData,
-	ChartSeries,
-} from './markdown-extensions/types';
-
 // Message actions
-export { createFeedbackActions, useMessageActions } from './message-actions';
-export type { FeedbackActionsManager } from './message-actions';
+export { useMessageActions } from './message-actions';
 
 // Auth providers (optional utilities)
 export {
@@ -116,6 +104,3 @@ export {
 	convertAbilitiesToTools,
 	isWordPressAbility,
 } from './utils/wordpressAbilities';
-
-// Translation utilities
-export { loadAgentticTranslations } from './utils/translation-loader';

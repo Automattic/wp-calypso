@@ -71,7 +71,7 @@
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "workspace:*",
+		"@automattic/charts": ">=0.14.0 <1.0.0",
 		"@radix-ui/react-scroll-area": "^1.2.9",
 		"@radix-ui/react-slot": "^1.2.3",
 		"@visx/xychart": "^3.12.0",
@@ -83,7 +83,12 @@
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"react-markdown": "^10.1.0",
-		"react-textarea-autosize": "^8.5.9"
+		"react-textarea-autosize": "^8.5.9",
+		"remark-gfm": "^4.0.1",
+		"unified": "^11.0.5"
+	},
+	"optionalDependencies": {
+		"marked": "^16.2.1"
 	},
 	"peerDependencies": {
 		"react": "^18.0.0",

@@ -1,11 +1,19 @@
-import type {
-	FeedbackActionsConfig,
-	MessageActionDefinition,
-	UIMessage,
-} from '../react/useAgentChat';
+import type { Message, MessageAction } from '../types';
+
+export interface FeedbackActionsConfig {
+	onFeedback: (
+		messageId: string,
+		feedback: 'up' | 'down'
+	) => void | Promise< void >;
+	condition?: ( message: Message ) => boolean;
+	icons: {
+		up: React.ReactNode;
+		down: React.ReactNode;
+	};
+}
 
 export interface FeedbackActionsManager {
-	getActionsForMessage: ( message: UIMessage ) => MessageActionDefinition[];
+	getActionsForMessage: ( message: Message ) => MessageAction[];
 	clearFeedback: ( messageId: string ) => void;
 	clearAllFeedback: () => void;
 	onChange: ( listener: () => void ) => void;
@@ -41,15 +49,15 @@ export const createFeedbackActions = (
 
 	return {
 		getActionsForMessage: (
-			message: UIMessage
-		): MessageActionDefinition[] => {
+			message: Message
+		): MessageAction[] => {
 			if ( ! baseCondition( message ) ) {
 				return [];
 			}
 
 			const feedbackState = feedbackByMessageId[ message.id ];
 
-			const actions: MessageActionDefinition[] = [];
+			const actions: MessageAction[] = [];
 
 			// Always show both feedback buttons, use pressed to indicate selection
 			actions.push( {

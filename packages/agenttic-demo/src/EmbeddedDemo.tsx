@@ -7,14 +7,20 @@ import React, {
 } from 'react';
 import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider, UIMessage } from '@automattic/agenttic-client';
-import { AgentUI, ThumbsDownIcon, ThumbsUpIcon } from '@automattic/agenttic-ui';
+import {
+	AgentUI,
+	ThumbsDownIcon,
+	ThumbsUpIcon,
+	createMessageRenderer,
+	createFeedbackActions,
+} from '@automattic/agenttic-ui';
 import {
 	getClientContext,
 	getClientTools,
 } from '@automattic/agenttic-client/mocks';
 
-// Import chart styles from client package source
-import '../../packages/agenttic-client/src/markdown-extensions/charts/charts.css';
+// Import chart styles from UI package source
+import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 
 const EmbeddedDemo: React.FC = () => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
@@ -31,12 +37,8 @@ const EmbeddedDemo: React.FC = () => {
 		suggestions,
 		registerSuggestions,
 		clearSuggestions,
-		registerMarkdownComponents,
-		registerMarkdownExtensions,
 		registerMessageActions,
-		createFeedbackActions,
 		addMessage,
-		messageRenderer,
 		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
@@ -48,6 +50,7 @@ const EmbeddedDemo: React.FC = () => {
 				addMessageRef.current( message );
 			}
 		} ),
+		enableStreaming: true,
 	} );
 
 	useEffect( () => {
@@ -104,17 +107,22 @@ const EmbeddedDemo: React.FC = () => {
 		[]
 	);
 
-	// Memoize the markdown extensions object to prevent re-renders
-	const customMarkdownExtensions = useMemo(
-		() => ( {
-			charts: {
-				enabled: true,
-			},
-			gfm: {
-				enabled: true, // Enables tables, strikethrough, task lists, autolinks
-			},
-		} ),
-		[]
+	// Create custom message renderer with markdown components and extensions
+	const messageRenderer = useMemo(
+		() =>
+			createMessageRenderer( {
+				components: customMarkdownComponents,
+				extensions: {
+					charts: {
+						enabled: true,
+					},
+					gfm: {
+						enabled: true, // Enables tables, strikethrough, task lists, autolinks
+					},
+				},
+				enableStreaming: true,
+			} ),
+		[ customMarkdownComponents ]
 	);
 
 	const handleSubmit = useCallback(
@@ -139,15 +147,9 @@ const EmbeddedDemo: React.FC = () => {
 			return;
 		}
 
-		// Register chart extensions
-		registerMarkdownExtensions( customMarkdownExtensions );
-
-		// Register custom markdown components
-		registerMarkdownComponents( customMarkdownComponents );
-
 		const feedbackManager = createFeedbackActions( {
 			onFeedback: handleFeedback,
-			condition: ( message ) => message.role === 'agent',
+			condition: ( message: UIMessage ) => message.role === 'agent',
 			icons: {
 				up: <ThumbsUpIcon />,
 				down: <ThumbsDownIcon />,
@@ -170,15 +172,7 @@ const EmbeddedDemo: React.FC = () => {
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [
-		registerMarkdownExtensions,
-		registerMarkdownComponents,
-		customMarkdownExtensions,
-		customMarkdownComponents,
-		registerMessageActions,
-		createFeedbackActions,
-		handleFeedback,
-	] );
+	}, [ registerMessageActions, handleFeedback ] );
 	const suggestionSets = useMemo(
 		() => ( {
 			button: [

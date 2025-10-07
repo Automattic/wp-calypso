@@ -14,10 +14,8 @@ import {
 	shareAction,
 } from '../../stories/mocks/messageActions';
 import { ThumbsDownIcon, ThumbsUpIcon } from '..';
+import { createFeedbackActions } from '../../message-actions/utils';
 import type { Message as MessageType } from '../../types';
-
-// Import client functionality for integration examples
-import { createFeedbackActions } from '@automattic/agenttic-client';
 
 const meta = {
 	title: 'Chat/MessageActions',

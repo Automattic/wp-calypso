@@ -13,14 +13,15 @@ import {
 	ThumbsUpIcon,
 	ZoomIcon,
 	ZoomIconFilled,
+	createMessageRenderer,
 } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
 	getClientTools,
 } from '@automattic/agenttic-client/mocks';
 
-// Import chart styles from client package source
-import '../../packages/agenttic-client/src/markdown-extensions/charts/charts.css';
+// Import chart styles from UI package source
+import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 
 const FloatingCompactDemo: React.FC = () => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
@@ -40,12 +41,8 @@ const FloatingCompactDemo: React.FC = () => {
 		suggestions,
 		registerSuggestions,
 		clearSuggestions,
-		registerMarkdownComponents,
-		registerMarkdownExtensions,
 		registerMessageActions,
-		createFeedbackActions,
 		addMessage,
-		messageRenderer,
 		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
@@ -62,6 +59,18 @@ const FloatingCompactDemo: React.FC = () => {
 	useEffect( () => {
 		addMessageRef.current = addMessage;
 	}, [ addMessage ] );
+
+	// Create message renderer with chart and GFM extensions
+	const messageRenderer = useMemo(
+		() => createMessageRenderer( {
+			extensions: {
+				charts: { enabled: true },
+				gfm: { enabled: true },
+			},
+			enableStreaming: true,
+		} ),
+		[]
+	);
 
 	const suggestionSets = useMemo(
 		() => ( {

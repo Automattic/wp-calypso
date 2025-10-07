@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/react';
 import React from 'react';
 import '../src/styles/tokens.css';
 import '../src/styles/global.css';
-import '../../agenttic-client/src/markdown-extensions/charts/charts.css';
+import '../src/markdown-extensions/charts/charts.css';
 import './preview.css';
 import './mocks/wordpress';
 

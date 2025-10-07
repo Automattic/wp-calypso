@@ -3,7 +3,6 @@ import type {
 	MessageActionsRegistration,
 	UseMessageActionsReturn,
 } from '../react/useAgentChat';
-import { createFeedbackActions } from './factories';
 
 /**
  * Hook for managing message actions registrations
@@ -51,7 +50,6 @@ export function useMessageActions(): UseMessageActionsReturn & {
 		registerMessageActions,
 		unregisterMessageActions,
 		clearAllMessageActions,
-		createFeedbackActions,
 		registrations,
 	};
 }

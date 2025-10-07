@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { ChartBlock } from '@automattic/agenttic-client';
+import { ChartBlock } from '../../markdown-extensions/charts';
 
 const meta: Meta< typeof ChartBlock > = {
 	title: 'Markdown Extensions/Charts/Line Chart',
@@ -51,7 +51,7 @@ export const Default: Story = {
 			],
 		} ),
 	},
-	render: ( args ) => (
+	render: ( args: any ) => (
 		<div
 			style={ {
 				width: '360px', // Typical chat container width
@@ -105,7 +105,7 @@ export const MultiSeries: Story = {
 			],
 		} ),
 	},
-	render: ( args ) => (
+	render: ( args: any ) => (
 		<div
 			style={ {
 				width: '600px', // Wider for better multi-series display
@@ -151,7 +151,7 @@ export const WithCurrency: Story = {
 			},
 		} ),
 	},
-	render: ( args ) => (
+	render: ( args: any ) => (
 		<div
 			style={ {
 				width: '360px', // Typical chat container width
@@ -191,7 +191,7 @@ export const NoTitle: Story = {
 			],
 		} ),
 	},
-	render: ( args ) => (
+	render: ( args: any ) => (
 		<div
 			style={ {
 				width: '360px', // Typical chat container width
@@ -219,7 +219,7 @@ export const ErrorState: Story = {
 			data: [],
 		} ),
 	},
-	render: ( args ) => (
+	render: ( args: any ) => (
 		<div
 			style={ {
 				width: '360px', // Typical chat container width

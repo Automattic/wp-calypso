@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { createMessageRenderer } from '@automattic/agenttic-client';
+import { createMessageRenderer } from '../../utils/createMessageRenderer';
 import { Messages } from './Messages';
 import type { Message } from '../../types';
 

@@ -55,13 +55,8 @@
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
-		"@automattic/charts": ">=0.14.0 <1.0.0",
 		"@types/react": "^18.0.0",
-		"@visx/xychart": "^3.12.0",
-		"@wordpress/i18n": "^6.1.0",
-		"react": "^18.0.0",
-		"react-markdown": "^10.1.0",
-		"remark-gfm": "^4.0.1"
+		"react": "^18.0.0"
 	},
 	"optionalDependencies": {
 		"marked": "^16.2.1"

@@ -7,7 +7,7 @@ import {
 	useDragControls,
 	useMotionValue,
 } from 'framer-motion';
-import { loadAgentticTranslations } from '@automattic/agenttic-client';
+import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
 import type { AgentUIProps } from '../types';

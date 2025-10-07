@@ -1,12 +1,7 @@
 import type React from 'react';
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAgentManager } from './agentManager';
-import {
-	createMessageRenderer,
-	type MarkdownComponents,
-	type MarkdownExtensions,
-} from '../utils/createMessageRenderer';
 import type {
 	AuthProvider,
 	Message as ClientMessage,
@@ -15,7 +10,6 @@ import type {
 } from '../client/types/index';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { resolveActionsForMessage } from '../message-actions/resolver';
-import type { createFeedbackActions } from '../message-actions/factories';
 
 // Utility function to sort UI messages by timestamp
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
@@ -29,11 +23,6 @@ export interface Suggestion {
 	prompt: string;
 }
 
-// Re-export markdown types
-export type {
-	MarkdownComponents,
-	MarkdownExtensions,
-} from '../utils/createMessageRenderer';
 
 // UI Message format (simplified for UI components)
 export interface UIMessage {
@@ -87,18 +76,6 @@ export interface MessageActionsRegistration {
 		| ( ( message: UIMessage ) => MessageActionDefinition[] );
 }
 
-export interface FeedbackActionsConfig {
-	onFeedback: (
-		messageId: string,
-		feedback: 'up' | 'down'
-	) => void | Promise< void >;
-	condition?: ( message: UIMessage ) => boolean;
-	icons: {
-		up: ReactNode;
-		down: ReactNode;
-	};
-}
-
 // Hook interface for managing message actions
 export interface UseMessageActionsReturn {
 	registerMessageActions: (
@@ -106,7 +83,6 @@ export interface UseMessageActionsReturn {
 	) => void;
 	unregisterMessageActions: ( id: string ) => void;
 	clearAllMessageActions: () => void;
-	createFeedbackActions: typeof createFeedbackActions;
 }
 
 // Transform client message (with parts) to UI message (with content)
@@ -243,13 +219,10 @@ export interface UseAgentChatReturn {
 	error: string | null;
 	onSubmit: ( message: string ) => Promise< void >;
 	suggestions: Suggestion[];
-	messageRenderer?: React.ComponentType< { children: string } >;
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
 	clearSuggestions: () => void;
-	registerMarkdownComponents: ( components: MarkdownComponents ) => void;
-	registerMarkdownExtensions: ( extensions: MarkdownExtensions ) => void;
 
 	// Message actions methods
 	registerMessageActions: (
@@ -257,7 +230,6 @@ export interface UseAgentChatReturn {
 	) => void;
 	unregisterMessageActions: ( id: string ) => void;
 	clearAllMessageActions: () => void;
-	createFeedbackActions: typeof createFeedbackActions;
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
@@ -273,8 +245,6 @@ interface AgentChatState {
 	isProcessing: boolean;
 	error: string | null;
 	suggestions: Suggestion[];
-	markdownComponents: MarkdownComponents;
-	markdownExtensions: MarkdownExtensions;
 }
 
 /**
@@ -301,8 +271,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		isProcessing: false,
 		error: isValidConfig ? null : 'Invalid agent configuration',
 		suggestions: [],
-		markdownComponents: {},
-		markdownExtensions: {},
 	} );
 
 	// Initialize message actions
@@ -310,7 +278,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		registerMessageActions,
 		unregisterMessageActions,
 		clearAllMessageActions,
-		createFeedbackActions,
 		registrations,
 	} = useMessageActions();
 
@@ -610,95 +577,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		} ) );
 	}, [] );
 
-	// Markdown components management
-	const registerMarkdownComponents = useCallback(
-		( components: MarkdownComponents ) => {
-			setState( ( prev ) => {
-				const updatedComponents = {
-					...prev.markdownComponents,
-					...components,
-				};
 
-				// Re-transform existing client messages if needed
-				const updatedUIMessages = prev.clientMessages
-					.map( ( msg ) =>
-						transformClientMessageToUI(
-							msg,
-							registrationsRef.current
-						)
-					)
-					.filter( ( msg ): msg is UIMessage => msg !== null );
-
-				// Find UI-only messages (component messages not in client history)
-				const clientMessageIds = new Set(
-					prev.clientMessages.map( ( msg ) => msg.messageId )
-				);
-				const uiOnlyMessages = prev.uiMessages.filter(
-					( msg ) =>
-						! clientMessageIds.has( msg.id ) &&
-						msg.content[ 0 ]?.type === 'component'
-				);
-
-				// Merge re-transformed messages with UI-only component messages
-				const mergedUIMessages = sortUIMessagesByTime( [
-					...updatedUIMessages,
-					...uiOnlyMessages,
-				] );
-
-				return {
-					...prev,
-					markdownComponents: updatedComponents,
-					uiMessages: mergedUIMessages,
-				};
-			} );
-		},
-		[]
-	);
-
-	// Markdown extensions management
-	const registerMarkdownExtensions = useCallback(
-		( extensions: MarkdownExtensions ) => {
-			setState( ( prev ) => {
-				const updatedExtensions = {
-					...prev.markdownExtensions,
-					...extensions,
-				};
-
-				// Re-transform existing client messages
-				const updatedUIMessages = prev.clientMessages
-					.map( ( msg ) =>
-						transformClientMessageToUI(
-							msg,
-							registrationsRef.current
-						)
-					)
-					.filter( ( msg ): msg is UIMessage => msg !== null );
-
-				// Find UI-only messages (component messages not in client history)
-				const clientMessageIds = new Set(
-					prev.clientMessages.map( ( msg ) => msg.messageId )
-				);
-				const uiOnlyMessages = prev.uiMessages.filter(
-					( msg ) =>
-						! clientMessageIds.has( msg.id ) &&
-						msg.content[ 0 ]?.type === 'component'
-				);
-
-				// Merge re-transformed messages with UI-only component messages
-				const mergedUIMessages = sortUIMessagesByTime( [
-					...updatedUIMessages,
-					...uiOnlyMessages,
-				] );
-
-				return {
-					...prev,
-					markdownExtensions: updatedExtensions,
-					uiMessages: mergedUIMessages,
-				};
-			} );
-		},
-		[]
-	);
 
 	// Re-transform messages when registrations change
 	useEffect( () => {
@@ -735,19 +614,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		} );
 	}, [ registrations ] );
 
-	// Create a memoized message renderer with current configuration
-	const messageRenderer = useMemo( () => {
-		return createMessageRenderer( {
-			components: state.markdownComponents,
-			extensions: state.markdownExtensions,
-			enableStreaming: config?.enableStreaming,
-		} );
-	}, [
-		state.markdownComponents,
-		state.markdownExtensions,
-		config?.enableStreaming,
-	] );
-
 	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {
 		if ( ! isValidConfig ) {
@@ -765,19 +631,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		error: state.error,
 		onSubmit,
 		suggestions: state.suggestions,
-		messageRenderer,
 
 		// UI management methods
 		registerSuggestions,
 		clearSuggestions,
-		registerMarkdownComponents,
-		registerMarkdownExtensions,
 
 		// Message actions methods
 		registerMessageActions,
 		unregisterMessageActions,
 		clearAllMessageActions,
-		createFeedbackActions,
 
 		// Tool integration
 		addMessage,

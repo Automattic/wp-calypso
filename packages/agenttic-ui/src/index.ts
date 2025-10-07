@@ -58,3 +58,21 @@ export { ZoomIconFilled } from './components/icons/ZoomIconFilled';
 
 // Types
 export type * from './types';
+
+// Message rendering utilities
+export { createMessageRenderer } from './utils/createMessageRenderer';
+export type { MarkdownComponents } from './utils/createMessageRenderer';
+export { loadAgentticTranslations } from './utils/translation-loader';
+
+// Message actions utilities
+export { createFeedbackActions } from './message-actions/utils';
+export type { FeedbackActionsConfig, FeedbackActionsManager } from './message-actions/utils';
+
+// Markdown extensions - Chart components
+export { BarChart, LineChart, ChartBlock } from './markdown-extensions/charts';
+export type {
+	MarkdownExtensions,
+	ChartExtensionConfig,
+	ChartData,
+	ChartSeries,
+} from './markdown-extensions/types';
