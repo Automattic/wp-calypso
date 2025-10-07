@@ -102,6 +102,7 @@ export function Chat( {
 			await onSubmit( message );
 		},
 		isProcessing,
+		floatingChatState: chat.state,
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
