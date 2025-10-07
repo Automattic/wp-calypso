@@ -4,6 +4,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
 import {
 	FREE_THEME,
@@ -45,7 +46,10 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	if ( type === DOT_ORG_THEME ) {
-		return siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
+		return (
+			siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ) &&
+			siteHasFeature( state, siteId, WPCOM_FEATURES_COMMUNITY_THEMES )
+		);
 	}
 
 	if ( type === BUNDLED_THEME ) {

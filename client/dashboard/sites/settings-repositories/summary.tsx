@@ -1,7 +1,8 @@
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import BranchIcon from '../deployments/icons/branch';
+import GitHubIcon from '../deployments/icons/github';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -18,9 +19,9 @@ export default function RepositoriesSettingsSummary( {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/repositories` }
-			title={ __( 'Repositories' ) }
+			title={ __( 'GitHub repositories' ) }
 			density={ density }
-			decoration={ <BranchIcon width={ 22 } height={ 22 } style={ { opacity: 0.95 } } /> }
+			decoration={ <Icon icon={ <GitHubIcon width={ 24 } height={ 24 } /> } /> }
 		/>
 	);
 }

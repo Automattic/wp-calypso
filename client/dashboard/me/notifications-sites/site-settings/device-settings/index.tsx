@@ -14,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
+import { useAnalytics } from '../../../../app/analytics';
 import { getFieldLabel } from '../../helpers/translations';
 import { useSiteSettings, useSettingsMutation } from '../../hooks';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
@@ -23,6 +24,7 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: devices } = useSuspenseQuery( userNotificationsDevicesQuery() );
 	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const { recordTracksEvent } = useAnalytics();
 
 	const [ selectedDeviceId, setSelectedDeviceId ] = useState< string | undefined >(
 		devices?.[ 0 ]?.device_id
@@ -38,6 +40,12 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	};
 
 	const handleChange = ( item: SettingsOption ) => {
+		recordTracksEvent( 'calypso_dashboard_notifications_devices_settings_updated', {
+			setting_name: item.id,
+			setting_value: item.value,
+			site_id: siteId,
+		} );
+
 		updateSettings( {
 			data: {
 				blogs: [
@@ -104,6 +112,11 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 		if ( ! blogSettings ) {
 			return;
 		}
+		recordTracksEvent( 'calypso_dashboard_notifications_settings_apply_to_all_sites', {
+			stream: 'devices',
+			device_to_be_used_as_template: siteId,
+			site_to_be_used_as_template: siteId,
+		} );
 
 		updateSettings( {
 			data: {

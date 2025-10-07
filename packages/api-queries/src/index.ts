@@ -26,6 +26,7 @@ export * from './me-account-recovery';
 export * from './me-blocked-sites';
 export * from './me-connected-applications';
 export * from './me-dpa';
+export * from './me-monetize';
 export * from './me-payment-methods';
 export * from './me-preferences';
 export * from './me-purchases';

@@ -15,11 +15,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasPlanFeature } from '../../utils/site-features';
-import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
@@ -98,7 +99,8 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Accept a gift subscription' ) }
 					description={ createInterpolateElement(
 						__(

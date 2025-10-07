@@ -9,11 +9,12 @@ import { __experimentalVStack as VStack, Card, CardBody, Button } from '@wordpre
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< { setting: string } >[] = [
@@ -80,7 +81,8 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Handling requests for nonexistent assets' ) }
 					description={ __(
 						'Choose how to handle requests for assets (like images, fonts, or JavaScript) that don’t exist on your site.'
