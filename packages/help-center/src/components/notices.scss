@@ -1,7 +1,9 @@
+@import "variables";
+
 .help-center__notice {
-	background-color: #FDF7E9;
+	background-color: $help-center-notice-background;
 	border-radius: 8px;
-	color: #644B1C;
+	color: $help-center-notice-color;
 	padding: 8px 16px;
 	display: flex;
 	column-gap: 8px;
@@ -21,7 +23,7 @@
 
 	.help-center__notice-icon {
 		display: block;
-		color: #644B1C;
+		fill: $help-center-notice-color;
 		flex: 0 0 auto;
 	}
 
