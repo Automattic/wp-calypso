@@ -1,7 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { FormToggle } from '@wordpress/components';
+import { FormToggle, Tooltip, Icon } from '@wordpress/components';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { info } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { pluginsScheduledUpdatesNewRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
@@ -49,6 +50,31 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => [
 		render: ( { item } ) => ( item.schedule === 'daily' ? __( 'Daily' ) : __( 'Weekly' ) ),
 	},
 	{
+		id: 'plugins',
+		type: 'text',
+		label: __( 'Plugins' ),
+		render: ( { item } ) => (
+			<span
+				style={ {
+					alignItems: 'center',
+					display: 'flex',
+				} }
+			>
+				{ item.plugins.length }&nbsp;
+				<Tooltip text={ item.plugins.join( ', ' ) }>
+					<span
+						style={ {
+							alignItems: 'center',
+							display: 'flex',
+						} }
+					>
+						<Icon icon={ info } size={ 16 } />
+					</span>
+				</Tooltip>
+			</span>
+		),
+	},
+	{
 		id: 'active',
 		type: 'text',
 		label: __( 'Active' ),
@@ -80,7 +106,7 @@ export const defaultView: View = {
 	search: '',
 	filters: [],
 	titleField: 'site',
-	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'active' ],
+	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'plugins', 'active' ],
 	sort: { field: 'site', direction: 'asc' },
 	groupByField: 'scheduleId',
 	mediaField: 'icon.ico',
