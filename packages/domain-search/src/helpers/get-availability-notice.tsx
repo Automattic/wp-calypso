@@ -519,11 +519,10 @@ export const getAvailabilityNotice = (
 				}
 			);
 			break;
+	}
 
-		default:
-			message = translate(
-				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
-			);
+	if ( ! message ) {
+		return null;
 	}
 
 	return {

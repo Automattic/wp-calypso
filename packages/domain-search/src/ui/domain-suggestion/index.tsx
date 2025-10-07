@@ -71,6 +71,7 @@ const DomainSuggestionComponent = ( {
 	return (
 		<SuggestionSkeleton
 			role="listitem"
+			data-testid="suggestion"
 			title={ `${ domain }.${ tld }` }
 			domainName={ domainNameElement }
 			price={ price }
