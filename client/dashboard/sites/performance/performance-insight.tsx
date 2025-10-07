@@ -35,7 +35,7 @@ export const PerformanceInsightTitle = ( {
 	return (
 		<HStack>
 			<HStack justify="flex-start">
-				<Text intent={ intent } size={ 16 } weight={ 500 }>
+				<Text intent={ intent } size={ 15 } weight={ 500 }>
 					{ index }
 				</Text>
 				<Text>{ insight.title }</Text>
