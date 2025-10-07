@@ -77,7 +77,7 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
 		buttonListItems.push(
-			<DomainGlueRecordsSettingsSummary key="glue-records" domain={ domain } />
+			<DomainGlueRecordsSettingsSummary key="glue-records" domainName={ domain.domain } />
 		);
 	}
 

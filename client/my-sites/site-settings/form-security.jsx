@@ -23,6 +23,8 @@ import SpamFilteringSettings from './spam-filtering-settings';
 import Sso from './sso';
 import wrapSettingsForm from './wrap-settings-form';
 
+import './style.scss';
+
 class SiteSettingsFormSecurity extends Component {
 	render() {
 		const {

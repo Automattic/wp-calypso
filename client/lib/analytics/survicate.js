@@ -6,12 +6,18 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 const survicateDebug = debug( 'calypso:analytics:survicate' );
 
 let survicateScriptLoaded = false;
+const workspaceId = 'e4794374cce15378101b63de24117572';
 
 /**
  * Sets Survicate visitor traits with current user data
  */
 const setSurvicateVisitorTraits = () => {
 	const user = getCurrentUser();
+
+	if ( isUserOnAnonymousPaths() ) {
+		survicateDebug( 'Not setting Survicate visitor traits because user is on an anonymous path' );
+		return;
+	}
 
 	if ( ! user || ! user.email ) {
 		survicateDebug( 'Not setting Survicate visitor traits because user is not logged in' );
@@ -44,9 +50,22 @@ export function mayWeLoadSurvicateScript() {
 	return config( 'survicate_enabled' );
 }
 
-export function addSurvicate() {
-	const workspaceId = 'e4794374cce15378101b63de24117572';
+/**
+ * Checks if the user is on an anonymous path.
+ * @returns {boolean} True if the user is on an anonymous path, false otherwise
+ */
+export function isUserOnAnonymousPaths() {
+	return [
+		'/log-in',
+		'/setup/onboarding/user',
+		'/log-in/lostpassword',
+		'/account/user-social',
+		'/log-in/link',
+		'/log-in/qr',
+	].includes( window.location.pathname );
+}
 
+export function addSurvicate() {
 	// Only add survicate for en languages
 	if ( ! getLocaleSlug().startsWith( 'en' ) ) {
 		survicateDebug( 'Not loading Survicate script for non-en language' );
@@ -58,8 +77,14 @@ export function addSurvicate() {
 		return;
 	}
 
-	if ( survicateScriptLoaded || ! mayWeLoadSurvicateScript() ) {
-		survicateDebug( 'Not loading Survicate script' );
+	if ( survicateScriptLoaded ) {
+		setTimeout( setSurvicateVisitorTraits, 1000 );
+		survicateDebug( 'Survicate script already loaded' );
+		return;
+	}
+
+	if ( ! mayWeLoadSurvicateScript() ) {
+		survicateDebug( 'Not loading Survicate script due to config setting' );
 		return;
 	}
 

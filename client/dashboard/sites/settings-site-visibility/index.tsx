@@ -5,9 +5,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SettingsPageHeader from '../settings-page-header';
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
@@ -84,7 +85,8 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Site visibility' ) }
 					description={ createInterpolateElement(
 						__( 'Control who can view your site. <link>Learn more</link>' ),
