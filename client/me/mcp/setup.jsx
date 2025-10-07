@@ -22,6 +22,8 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { hasEnabledAccountTools } from './utils';
 
 function McpSetupComponent( { path } ) {
@@ -142,6 +144,7 @@ function McpSetupComponent( { path } ) {
 				<PageViewTracker path={ path } title="MCP Setup" />
 				<DocumentHead title={ translate( 'MCP Setup' ) } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<SectionHeader label={ translate( 'Setup Required' ) } />
 				<Card isRounded={ false }>
 					<CardBody>
@@ -169,6 +172,8 @@ function McpSetupComponent( { path } ) {
 			<PageViewTracker path={ path } title="MCP Setup" />
 			<DocumentHead title={ translate( 'MCP Setup' ) } />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
+
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
 				{ translate( 'WordPress.com MCP Setup' ) }

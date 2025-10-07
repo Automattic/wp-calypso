@@ -28,7 +28,7 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
-import { getIntervalType } from './util';
+import { getIntervalType, getVisualSplitPlansIntent } from './util';
 import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -72,16 +72,6 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-affiliate';
 		default:
 			return null;
-	}
-	return null;
-}
-
-function getVisualSplitPlansIntent( intent: string ): PlansIntent | null {
-	if ( intent === 'default_websitebuilder' ) {
-		return 'plans-website-builder';
-	}
-	if ( intent === 'default_hosting' ) {
-		return 'plans-wordpress-hosting';
 	}
 	return null;
 }
@@ -154,14 +144,13 @@ const PlansStepAdaptor: StepType< {
 
 	// Update plansIntent when the experiment loads
 	useEffect( () => {
-		if ( ! isVisualSplitLoading && props.flow === ONBOARDING_FLOW && ! defaultPlansIntent ) {
-			if ( visualSplitVariation === 'default_websitebuilder' ) {
-				setPlansIntent( 'plans-website-builder' );
-			} else if ( visualSplitVariation === 'default_hosting' ) {
-				setPlansIntent( 'plans-wordpress-hosting' );
-			} else {
-				setPlansIntent( defaultPlansIntent );
-			}
+		if (
+			! isVisualSplitLoading &&
+			props.flow === ONBOARDING_FLOW &&
+			visualSplitVariation &&
+			! defaultPlansIntent
+		) {
+			setPlansIntent( getVisualSplitPlansIntent( visualSplitVariation as string ) );
 		}
 	}, [ isVisualSplitLoading, visualSplitVariation, props.flow, defaultPlansIntent ] );
 
