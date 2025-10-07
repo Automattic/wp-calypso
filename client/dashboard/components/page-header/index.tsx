@@ -1,6 +1,5 @@
 import { useMatches } from '@tanstack/react-router';
 import { SectionHeader } from '../section-header';
-import { SubNavigation } from './sub-navigation';
 import type { PageHeaderProps } from './types';
 
 const PageTitle = () => {
@@ -36,5 +35,3 @@ export const PageHeader = ( props: PageHeaderProps ) => {
 		/>
 	);
 };
-
-PageHeader.SubNavigation = SubNavigation;
