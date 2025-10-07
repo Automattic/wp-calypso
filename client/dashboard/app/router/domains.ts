@@ -64,9 +64,6 @@ export const domainRoute = createRoute( {
 			},
 		],
 	} ),
-	staticData: {
-		breadcrumbTitle: __( 'Overview' ),
-	},
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	loader: async ( { params: { domainName }, location } ) => {

@@ -17,8 +17,7 @@ export default function Breadcrumbs( { length }: BreadcrumbsProps ) {
 
 	const items: BreadcrumbItemProps[] = matches
 		.map( ( match ) => {
-			const title =
-				match.staticData.breadcrumbTitle ?? match.meta?.find( ( meta ) => meta?.title )?.title;
+			const title = match.meta?.find( ( meta ) => meta?.title )?.title;
 			return {
 				label: title || '',
 				href: match.pathname,

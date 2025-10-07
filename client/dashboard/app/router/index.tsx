@@ -10,14 +10,6 @@ import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
 import type { AppConfig } from '../context';
 
-declare module '@tanstack/react-router' {
-	interface StaticDataRouteOption {
-		// Allows a route to override the label used for its breadcrumb link,
-		// which is usually the routes meta.title value.
-		breadcrumbTitle?: string;
-	}
-}
-
 interface RouteContext {
 	config?: AppConfig;
 }
