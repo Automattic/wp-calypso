@@ -207,12 +207,20 @@ export const ConnectRepositoryForm = ( {
 	}, [ repositories, formData.selectedRepositoryId ] );
 
 	useEffect( () => {
-		if ( selectedRepository?.default_branch ) {
+		if (
+			selectedRepository?.id === initialValues.selectedRepositoryId &&
+			initialValues.branch !== ''
+		) {
+			setFormData( ( prev ) => ( { ...prev, branch: initialValues.branch } ) );
+		} else if (
+			selectedRepository?.id !== initialValues.selectedRepositoryId &&
+			selectedRepository?.default_branch
+		) {
 			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
 		} else if ( ! selectedRepository ) {
 			setFormData( ( prev ) => ( { ...prev, branch: '' } ) );
 		}
-	}, [ selectedRepository ] );
+	}, [ initialValues.selectedRepositoryId, initialValues.branch, selectedRepository ] );
 
 	const { data: remoteBranches = [], isLoading: isLoadingBranches } = useQuery( {
 		...githubRepositoryBranchesQuery(
