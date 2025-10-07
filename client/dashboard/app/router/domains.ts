@@ -226,6 +226,11 @@ export const domainForwardingRoute = createRoute( {
 			queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 		] );
 	},
+} );
+
+export const domainForwardingIndexRoute = createRoute( {
+	getParentRoute: () => domainForwardingRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-forwarding' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding' )( {
@@ -242,8 +247,8 @@ export const domainForwardingAddRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'forwarding/add',
+	getParentRoute: () => domainForwardingRoute,
+	path: 'add',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -266,8 +271,8 @@ export const domainForwardingEditRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit/$forwardingId',
+	getParentRoute: () => domainForwardingRoute,
+	path: 'edit/$forwardingId',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -358,6 +363,11 @@ export const domainGlueRecordsRoute = createRoute( {
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+} );
+
+export const domainGlueRecordsIndexRoute = createRoute( {
+	getParentRoute: () => domainGlueRecordsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-glue-records' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records' )( {
@@ -374,8 +384,8 @@ export const domainGlueRecordsAddRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'glue-records/add',
+	getParentRoute: () => domainGlueRecordsRoute,
+	path: 'add',
 } ).lazy( () =>
 	import( '../../domains/domain-glue-records/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-add' )( {
@@ -392,8 +402,8 @@ export const domainGlueRecordsEditRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'glue-records/edit/$nameServer',
+	getParentRoute: () => domainGlueRecordsRoute,
+	path: 'edit/$nameServer',
 	beforeLoad: async ( { params: { domainName, nameServer } } ) => {
 		const glueRecordsData = await queryClient.ensureQueryData(
 			domainGlueRecordsQuery( domainName )
@@ -555,15 +565,19 @@ export const createDomainsRoutes = () => {
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
 			domainConnectionSetupRoute,
-			domainForwardingRoute,
-			domainForwardingAddRoute,
-			domainForwardingEditRoute,
+			domainForwardingRoute.addChildren( [
+				domainForwardingIndexRoute,
+				domainForwardingAddRoute,
+				domainForwardingEditRoute,
+			] ),
 			domainContactInfoRoute,
 			domainContactVerificationRoute,
 			domainNameServersRoute,
-			domainGlueRecordsRoute,
-			domainGlueRecordsAddRoute,
-			domainGlueRecordsEditRoute,
+			domainGlueRecordsRoute.addChildren( [
+				domainGlueRecordsIndexRoute,
+				domainGlueRecordsAddRoute,
+				domainGlueRecordsEditRoute,
+			] ),
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
 			domainTransferToOtherUserRoute,
