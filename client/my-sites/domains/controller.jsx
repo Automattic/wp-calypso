@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { get, includes, map } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -98,6 +99,29 @@ const domainSearch = ( context, next ) => {
 			{ getContent() }
 		</Main>
 	);
+	next();
+};
+
+/**
+ * If the user enters /domains/add/:domain?domainAndPlanPackage=true,
+ * we redirect them to the domain upsell flow.
+ *
+ * This is necessary because we have some back-end logic that sends the user directly,
+ * and the concept of feature flags don't exist there. So we need to redirect here.
+ *
+ * Once the feature flag is removed and the back-end logic is updated, this can be removed.
+ *
+ * Remove this when working on DOMAINS-1590.
+ */
+const redirectToDomainUpsellFlowIfRewrittenDomainSearchIsEnabled = ( context, next ) => {
+	const isBrowsingDomainAndPlanPackageFlow = context.query.domainAndPlanPackage === 'true';
+
+	if ( shouldRenderRewrittenDomainSearch() && isBrowsingDomainAndPlanPackageFlow ) {
+		return window.location.replace(
+			addQueryArgs( '/setup/domain-and-plan', { siteSlug: context.params.domain } )
+		);
+	}
+
 	next();
 };
 
@@ -349,6 +373,7 @@ export default {
 	siteRedirect,
 	mapDomain,
 	mapDomainSetup,
+	redirectToDomainUpsellFlowIfRewrittenDomainSearchIsEnabled,
 	redirectToDomainSearchSuggestion,
 	redirectIfNoSite,
 	redirectToUseYourDomainIfVipSite,

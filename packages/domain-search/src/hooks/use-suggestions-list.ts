@@ -13,7 +13,10 @@ export const useSuggestionsList = () => {
 		enabled: true,
 	} );
 
-	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
+	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
+		...queries.freeSuggestion( query ),
+		enabled: true,
+	} );
 
 	const { isLoading: isLoadingQueryAvailability } = useQuery( {
 		...queries.domainAvailability( query ),

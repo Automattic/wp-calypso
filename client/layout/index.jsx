@@ -13,7 +13,6 @@ import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color';
 import QuerySiteAdminMenu from 'calypso/components/data/query-site-admin-menu';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -284,9 +283,6 @@ class Layout extends Component {
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				<QuerySiteAdminMenu siteId={ this.props.siteId } />
 				<QuerySiteAdminColor siteId={ this.props.siteId } />
-				{ config.isEnabled( 'layout/query-selected-editor' ) && (
-					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				) }
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />

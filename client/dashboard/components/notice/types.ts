@@ -20,7 +20,7 @@ export interface NoticeProps {
 	/**
 	 * The main body content informing and guiding users about the system status change.
 	 */
-	children: React.ReactNode;
+	children?: React.ReactNode;
 
 	/**
 	 * Optional actions that serve as a call to action.

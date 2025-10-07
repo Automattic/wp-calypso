@@ -1,5 +1,5 @@
 import { useA8CForAgenciesSitesBanner } from './sites-dashboard-banners/use-a8c-for-agencies-sites-banner';
-import { useDashboardSurveyBanner } from './sites-dashboard-banners/use-dashboard-survey-banner';
+import { useDashboardOptInBanner } from './sites-dashboard-banners/use-dashboard-opt-in-banner';
 import { useMigrationPendingSitesBanner } from './sites-dashboard-banners/use-migration-pending-sites-banner';
 import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
@@ -17,8 +17,8 @@ const SitesDashboardBannersManager = ( {
 	const banners = [
 		useRestoreSitesBanner(),
 		useMigrationPendingSitesBanner( { sitesStatuses } ),
-		useDashboardSurveyBanner(),
 		useA8CForAgenciesSitesBanner( { sitesCount } ),
+		useDashboardOptInBanner(),
 	];
 
 	// Return the first banner that should show

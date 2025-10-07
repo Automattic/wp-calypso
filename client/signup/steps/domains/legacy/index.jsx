@@ -647,13 +647,9 @@ class RenderDomainsStepComponent extends Component {
 
 	shouldHideDomainExplainer = () => {
 		const { flowName } = this.props;
-		return [
-			'domain',
-			DOMAIN_FOR_GRAVATAR_FLOW,
-			'onboarding-with-email',
-			NEW_HOSTED_SITE_FLOW,
-			'domains/add',
-		].includes( flowName );
+		return [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW, 'onboarding-with-email', 'domains/add' ].includes(
+			flowName
+		);
 	};
 
 	shouldHideUseYourDomain = () => {

@@ -16,7 +16,6 @@ import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../a
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BackupDetails } from './backup-details';
@@ -48,7 +47,7 @@ export function BackupsListPage() {
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
+			gmtOffset: Number( s?.gmt_offset ) || 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
@@ -271,13 +270,9 @@ function SiteBackups() {
 			upsellIcon={ backup }
 			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
 			upsellImage={ illustrationUrl }
-			upsellDescription={
-				<Text as="p" variant="muted">
-					{ __(
-						'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
-					) }
-				</Text>
-			}
+			upsellDescription={ __(
+				'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
+			) }
 		>
 			<FileBrowserProvider locale={ locale } notices={ hostingNotices }>
 				<Outlet />

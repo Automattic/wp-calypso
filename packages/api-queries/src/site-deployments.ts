@@ -1,12 +1,14 @@
 import {
 	fetchCodeDeployments,
+	fetchCodeDeployment,
 	fetchCodeDeploymentRuns,
 	createCodeDeploymentRun,
 	fetchCodeDeploymentRunLogs,
 	fetchCodeDeploymentRunLogDetail,
 	deleteCodeDeployment,
 	createCodeDeployment,
-	CreateCodeDeploymentVariables,
+	updateCodeDeployment,
+	CreateAndUpdateCodeDeploymentVariables,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -15,6 +17,12 @@ export const codeDeploymentsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'code-deployments' ],
 		queryFn: () => fetchCodeDeployments( siteId ),
+	} );
+
+export const codeDeploymentQuery = ( siteId: number, deploymentId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'code-deployment', deploymentId ],
+		queryFn: () => fetchCodeDeployment( siteId, deploymentId ),
 	} );
 
 export const codeDeploymentRunsQuery = ( siteId: number, deploymentId: number ) =>
@@ -44,8 +52,20 @@ export const codeDeploymentDeleteMutation = ( siteId: number, deploymentId: numb
 
 export const createCodeDeploymentMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( variables: CreateCodeDeploymentVariables ) =>
+		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
 			createCodeDeployment( siteId, variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( codeDeploymentsQuery( siteId ) );
+		},
+	} );
+
+export const updateCodeDeploymentMutation = ( siteId: number, deploymentId: number ) =>
+	mutationOptions( {
+		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
+			updateCodeDeployment( siteId, deploymentId, variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( codeDeploymentRunsQuery( siteId, deploymentId ) );
+		},
 	} );
 
 export const deploymentRunLogsQuery = ( siteId: number, deploymentId: number, runId: number ) =>

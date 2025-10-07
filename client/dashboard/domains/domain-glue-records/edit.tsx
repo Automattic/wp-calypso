@@ -60,7 +60,7 @@ export default function EditDomainGlueRecords() {
 				onSubmit={ handleSubmit }
 				isSubmitting={ updateMutation.isPending }
 				isEdit
-				submitButtonText={ __( 'Update glue record' ) }
+				submitButtonText={ __( 'Update record' ) }
 			/>
 		</PageLayout>
 	);

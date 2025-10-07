@@ -26,6 +26,7 @@ import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
+import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Environment from '../../components/environment';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
@@ -94,6 +95,8 @@ const EnvironmentSwitcherDropdown = ( {
 	isStagingSiteDeleting: boolean;
 	isStagingSiteCreating: boolean;
 } ) => {
+	const buildCurrentRouteLink = useBuildCurrentRouteLink();
+
 	// TODO: Handle upsell.
 	const handleUpsell = () => {};
 
@@ -112,12 +115,18 @@ const EnvironmentSwitcherDropdown = ( {
 		<NavigableMenu>
 			<MenuGroup>
 				{ productionSite && canManageSite( productionSite ) && (
-					<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
+					<RouterLinkMenuItem
+						to={ buildCurrentRouteLink( { params: { siteSlug: productionSite.slug } } ) }
+						onClick={ onClose }
+					>
 						<Environment environmentType="production" />
 					</RouterLinkMenuItem>
 				) }
 				{ showStagingSite && (
-					<RouterLinkMenuItem to={ `/sites/${ stagingSite.slug }` } onClick={ onClose }>
+					<RouterLinkMenuItem
+						to={ buildCurrentRouteLink( { params: { siteSlug: stagingSite.slug } } ) }
+						onClick={ onClose }
+					>
 						<Environment environmentType="staging" />
 					</RouterLinkMenuItem>
 				) }

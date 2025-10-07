@@ -80,16 +80,11 @@ const domain: FlowV2< typeof initialize > = {
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
-
-						const lastQueryParam = providedDependencies.lastQuery;
-
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery: providedDependencies.lastQuery,
+						} );
 
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}

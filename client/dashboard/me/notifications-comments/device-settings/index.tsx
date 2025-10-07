@@ -3,6 +3,7 @@ import {
 	userNotificationsSettingsMutation,
 	userNotificationsDevicesQuery,
 } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation, useIsMutating } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -16,9 +17,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
+import { useAnalytics } from '../../../app/analytics';
 import { SectionHeader } from '../../../components/section-header';
 
 export const DevicesSettings = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { mutate: updateSettings } = useMutation( {
 		...userNotificationsSettingsMutation(),
@@ -56,6 +59,12 @@ export const DevicesSettings = () => {
 				};
 			}
 			return device;
+		} );
+
+		recordTracksEvent( 'calypso_dashboard_notifications_devices_settings_updated', {
+			device_id: selectedDeviceId,
+			setting_name: updated.id,
+			setting_value: updated.value,
 		} );
 
 		updateSettings( {
@@ -97,10 +106,12 @@ export const DevicesSettings = () => {
 								),
 								{
 									link: (
-										<ExternalLink href="https://wordpress.org" rel="noopener noreferrer">
-											{ /* Workaround for the fact that the ExternalLink component expects a children prop */ }
-											{ null }
-										</ExternalLink>
+										<ExternalLink
+											href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
+											rel="noopener noreferrer"
+											//Workaround for the fact that the ExternalLink component expects a children prop
+											children={ null }
+										/>
 									),
 								}
 							) }
