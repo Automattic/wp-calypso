@@ -61,7 +61,8 @@ export default function DomainOverview() {
 						</HStack>
 					}
 					actions={
-						purchase?.can_explicit_renew && (
+						purchase?.can_explicit_renew &&
+						domain.current_user_is_owner && (
 							<Button
 								variant="primary"
 								__next40pxDefaultSize
