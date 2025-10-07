@@ -9,10 +9,11 @@ import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider, UIMessage } from '@automattic/agenttic-client';
 import {
 	AgentUI,
+	createFeedbackActions,
+	createMessageRenderer,
+	EmptyView,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
-	createMessageRenderer,
-	createFeedbackActions,
 } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
@@ -251,6 +252,7 @@ const EmbeddedDemo: React.FC = () => {
 				{ `
                 :root {
                     --color-brand: #030AB2;
+                    --color-text: #FFF;
                 }
                 body {
                     background-color: var(--color-brand);
@@ -359,6 +361,7 @@ const EmbeddedDemo: React.FC = () => {
 						'Need help with your website?',
 						"Let's build something amazing",
 					] }
+					emptyView={ <EmptyView /> }
 				>
 					<AgentUI.ConversationView showHeader={ false }>
 						<AgentUI.Messages />

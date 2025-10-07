@@ -43,7 +43,7 @@ export function AgentUISuggestions( {
 	// Hide suggestions when emptyView is being shown
 	if (
 		emptyView &&
-		variant === 'floating' &&
+		[ 'floating', 'embedded' ].includes( variant ) &&
 		messages.length === 0 &&
 		! inputValue
 	) {
