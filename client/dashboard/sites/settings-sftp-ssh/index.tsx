@@ -7,10 +7,11 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import EnableSftpCard from './enable-sftp-card';
 import SftpCard from './sftp-card';
 import SshCard from './ssh-card';
@@ -35,7 +36,10 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 
 	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
+		<PageLayout
+			size="small"
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'SFTP/SSH' ) } /> }
+		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.SFTP }

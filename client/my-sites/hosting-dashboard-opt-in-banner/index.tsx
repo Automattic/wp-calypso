@@ -3,6 +3,7 @@ import {
 	Card,
 	CardBody,
 	__experimentalText as Text,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -20,7 +21,11 @@ import {
 import illustratioUrl from './illustration.svg';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
-export default function HostingDashboardOptInBanner() {
+export default function HostingDashboardOptInBanner( {
+	isMobile = false,
+}: {
+	isMobile?: boolean;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -81,37 +86,55 @@ export default function HostingDashboardOptInBanner() {
 		return null;
 	}
 
+	const heading = (
+		<Text as="p" weight={ 500 } size={ isMobile ? 12 : 13 }>
+			{ hasOptedIn && ! isSubmitting
+				? translate( 'Looking for your new dashboard?' )
+				: translate( 'Your dashboard, simplified' ) }
+		</Text>
+	);
+
+	const description = (
+		<Text as="p" variant="muted" size={ isMobile ? 12 : 13 }>
+			{ translate( 'Try an easier way to manage your sites and hosting features.' ) }
+		</Text>
+	);
+
+	const button = (
+		<Button
+			variant="secondary"
+			size={ isMobile ? 'compact' : undefined }
+			isBusy={ isSubmitting && isSaving }
+			onClick={ handleClick }
+		>
+			{ hasOptedIn && ! isSubmitting
+				? translate( 'Go to new dashboard' )
+				: translate( 'Try it out' ) }
+		</Button>
+	);
+
 	return (
-		<>
-			<Card>
-				<CardBody style={ { padding: '12px' } }>
+		<Card style={ { width: '100%' } }>
+			<CardBody style={ { padding: '12px' } }>
+				{ isMobile ? (
+					<VStack spacing={ 2 } alignment="flex-start">
+						<VStack spacing={ 0 }>
+							{ heading }
+							{ description }
+						</VStack>
+						{ button }
+					</VStack>
+				) : (
 					<VStack spacing={ 3 }>
 						<img src={ illustratioUrl } alt="illustration" />
 						<VStack spacing={ 1 }>
-							<Text as="p" weight={ 500 }>
-								{ hasOptedIn && ! isSubmitting
-									? translate( 'Looking for your new dashboard?' )
-									: translate( 'Your dashboard, simplified' ) }
-							</Text>
-							<Text as="p" variant="muted">
-								{ translate( 'Try an easier way to manage your sites and hosting features.' ) }
-							</Text>
+							{ heading }
+							{ description }
 						</VStack>
-						<div>
-							<Button
-								variant="secondary"
-								size="compact"
-								isBusy={ isSubmitting && isSaving }
-								onClick={ handleClick }
-							>
-								{ hasOptedIn && ! isSubmitting
-									? translate( 'Go to new dashboard' )
-									: translate( 'Try it out' ) }
-							</Button>
-						</div>
+						<HStack expanded={ false }>{ button }</HStack>
 					</VStack>
-				</CardBody>
-			</Card>
-		</>
+				) }
+			</CardBody>
+		</Card>
 	);
 }
