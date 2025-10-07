@@ -912,7 +912,7 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories-index' )( {
+		createLazyRoute( 'site-settings-repositories' )( {
 			component: d.default,
 		} )
 	)
