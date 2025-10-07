@@ -52,8 +52,7 @@ export const useGetCombinedChat = (
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
-	const conversationId =
-		getConversationIdFromInteraction( currentSupportInteraction ) || mainChatState.conversationId;
+	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
