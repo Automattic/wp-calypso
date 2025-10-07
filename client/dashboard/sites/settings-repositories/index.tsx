@@ -2,12 +2,11 @@ import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect } from 'react';
+import { keyboardReturn, Icon } from '@wordpress/icons';
+import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
@@ -116,78 +115,67 @@ function SiteRepositories() {
 	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
-	const notices = useSelect( ( select ) => select( noticesStore ).getNotices(), [] );
-	const { removeNotice, createNotice } = useDispatch( noticesStore );
-
-	useEffect( () => {
-		const backToDeploymentsNotice = notices.find(
-			( notice ) => notice.id === 'back-to-deployments'
-		);
-		if ( ! backToDeploymentsNotice ) {
-			createNotice( 'info', __( 'Back to Deployments' ), {
-				id: 'back-to-deployments',
-				type: 'snackbar',
-				isDismissible: true,
-				actions: [
-					{
-						label: __( 'Navigate' ),
-						url: '',
-						onClick: () => {
-							navigate( {
-								to: siteDeploymentsListRoute.fullPath,
-								params: { siteSlug },
-							} );
-							removeNotice( 'back-to-deployments' );
-						},
-					},
-				],
-			} );
-		}
-	}, [ notices, createNotice, navigate, siteSlug, removeNotice ] );
-
-	useEffect( () => {
-		return () => {
-			// Cleanup when leaving the page
-			removeNotice( 'back-to-deployments' );
-		};
-	}, [ removeNotice ] );
+	const [ showBackToDeployments, setShowBackToDeployments ] = useState( true );
 
 	const handleConnectRepository = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
 	};
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'Repositories' ) }
-					description={ __( 'Connect repositories to your WordPress site.' ) }
-					actions={
-						canConnect && (
-							<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
-								{ __( 'Connect repository' ) }
-							</Button>
-						)
-					}
-				/>
-			}
-		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.DEPLOYMENT }
-				tracksFeatureId="settings-repositories"
-				upsellIcon={ <GitHubIcon aria-label={ __( 'GitHub logo' ) } /> }
-				upsellImage={ illustrationUrl }
-				upsellTitle={ __( 'Deploy from GitHub' ) }
-				upsellDescription={ __(
-					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-				) }
+		<>
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 2 } /> }
+						title={ __( 'Repositories' ) }
+						description={ __( 'Connect repositories to your WordPress site.' ) }
+						actions={
+							canConnect && (
+								<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
+									{ __( 'Connect repository' ) }
+								</Button>
+							)
+						}
+					/>
+				}
 			>
-				<RepositoriesList />
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+				<HostingFeatureGatedWithCallout
+					site={ site }
+					feature={ HostingFeatures.DEPLOYMENT }
+					tracksFeatureId="settings-repositories"
+					upsellIcon={ <GitHubIcon aria-label={ __( 'GitHub logo' ) } /> }
+					upsellImage={ illustrationUrl }
+					upsellTitle={ __( 'Deploy from GitHub' ) }
+					upsellDescription={ __(
+						'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+					) }
+				>
+					<RepositoriesList />
+				</HostingFeatureGatedWithCallout>
+			</PageLayout>
+			{ showBackToDeployments && (
+				<HStack className="dashboard-snackbars">
+					<Snackbar
+						icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
+						actions={ [
+							{
+								label: __( 'Navigate' ),
+								onClick: () => {
+									navigate( {
+										to: siteDeploymentsListRoute.fullPath,
+										params: { siteSlug },
+									} );
+									setShowBackToDeployments( false );
+								},
+							},
+						] }
+					>
+						{ __( 'Back to Deployments' ) }
+					</Snackbar>
+				</HStack>
+			) }
+		</>
 	);
 }
 

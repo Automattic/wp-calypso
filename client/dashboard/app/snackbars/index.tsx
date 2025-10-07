@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Icon, published, error, keyboardReturn } from '@wordpress/icons';
+import { Icon, published, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import './style.scss';
@@ -53,20 +53,12 @@ export default function Snackbars() {
 
 	const snackbarNotices = notices
 		.filter( ( { type } ) => type === 'snackbar' )
-		.map( ( { status, ...notice } ) => {
-			let icon = null;
-
-			if ( statusIcon[ status ] ) {
-				icon = <Icon icon={ statusIcon[ status ] } style={ { fill: 'currentcolor' } } />;
-			} else if ( notice.id === 'back-to-deployments' ) {
-				icon = <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } />;
-			}
-
-			return {
-				...notice,
-				icon,
-			};
-		} )
+		.map( ( { status, ...notice } ) => ( {
+			icon: statusIcon[ status ] && (
+				<Icon icon={ statusIcon[ status ] } style={ { fill: 'currentcolor' } } />
+			),
+			...notice,
+		} ) )
 		.slice( MAX_VISIBLE_NOTICES );
 
 	return (
