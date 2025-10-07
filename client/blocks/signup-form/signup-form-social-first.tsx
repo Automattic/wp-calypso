@@ -85,7 +85,7 @@ const SignupFormSocialFirst = ( {
 	backButtonInFooter = true,
 	emailLabelText,
 }: SignupFormSocialFirst ) => {
-	const [ currentStep, setCurrentStep ] = useState< Screen >( 'initial' );
+	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );

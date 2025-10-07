@@ -63,7 +63,6 @@ export class MediaLibraryContent extends Component {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,
 		filter: PropTypes.string,
-		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
 		onSourceChange: PropTypes.func,
@@ -349,13 +348,7 @@ export class MediaLibraryContent extends Component {
 	renderMediaList() {
 		if ( ! this.props.site || ( this.props.isRequesting && ! this.hasRequested ) ) {
 			this.hasRequested = true; // We only want to do this once
-			return (
-				<MediaLibraryList
-					key="list-loading"
-					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-					mediaScale={ this.props.mediaScale }
-				/>
-			);
+			return <MediaLibraryList key="list-loading" mediaScale={ this.props.mediaScale } />;
 		}
 
 		if ( this.hasGoogleInvalidConnection( this.props ) ) {
@@ -382,7 +375,6 @@ export class MediaLibraryContent extends Component {
 					key={ listKey }
 					site={ this.props.site }
 					filter={ this.props.filter }
-					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 					search={ this.props.search }
 					containerWidth={ this.props.containerWidth }
 					thumbnailType={ this.getThumbnailType() }
@@ -396,24 +388,20 @@ export class MediaLibraryContent extends Component {
 	}
 
 	renderHeader() {
-		if ( ! this.props.filterRequiresUpgrade ) {
-			return (
-				<MediaLibraryHeader
-					site={ this.props.site }
-					filter={ this.props.filter }
-					onMediaScaleChange={ this.props.onMediaScaleChange }
-					onAddMedia={ this.props.onAddMedia }
-					onAddAndEditImage={ this.props.onAddAndEditImage }
-					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDeleteItem={ this.props.onDeleteItem }
-					sticky={ ! this.props.scrollable }
-					mediaScale={ this.props.mediaScale }
-				/>
-			);
-		}
-
-		return null;
+		return (
+			<MediaLibraryHeader
+				site={ this.props.site }
+				filter={ this.props.filter }
+				onMediaScaleChange={ this.props.onMediaScaleChange }
+				onAddMedia={ this.props.onAddMedia }
+				onAddAndEditImage={ this.props.onAddAndEditImage }
+				selectedItems={ this.props.selectedItems }
+				onViewDetails={ this.props.onViewDetails }
+				onDeleteItem={ this.props.onDeleteItem }
+				sticky={ ! this.props.scrollable }
+				mediaScale={ this.props.mediaScale }
+			/>
+		);
 	}
 
 	render() {

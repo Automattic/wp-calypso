@@ -208,7 +208,7 @@
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.2.0/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.2.0/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.2.2/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.2.2/style.css"
 	}
 }
