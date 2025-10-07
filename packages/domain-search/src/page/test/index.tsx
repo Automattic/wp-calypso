@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { buildCart } from '../../test-helpers/factories/cart';
-import { mockGetSuggestions } from '../../test-helpers/mocks/suggestions';
+import { mockGetSuggestionsQuery } from '../../test-helpers/queries/suggestions';
 import { DomainSearch } from '../index';
 
 describe( 'DomainSearch', () => {
@@ -16,7 +16,7 @@ describe( 'DomainSearch', () => {
 	} );
 
 	it( 'renders the results page when a query is provided', () => {
-		mockGetSuggestions( 'test', [] );
+		mockGetSuggestionsQuery( { params: { query: 'test' }, suggestions: [] } );
 
 		render(
 			<DomainSearch

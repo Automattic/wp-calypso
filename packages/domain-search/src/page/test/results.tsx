@@ -2,8 +2,11 @@ import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
-import { mockGetAvailability } from '../../test-helpers/mocks/availability';
-import { mockGetFreeSuggestion, mockGetSuggestions } from '../../test-helpers/mocks/suggestions';
+import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
+import {
+	mockGetFreeSuggestionQuery,
+	mockGetSuggestionsQuery,
+} from '../../test-helpers/queries/suggestions';
 import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
 
@@ -20,11 +23,14 @@ describe( 'ResultsPage', () => {
 	} );
 
 	it( 'renders featured and regular suggestions', async () => {
-		mockGetSuggestions( 'test', [
-			buildSuggestion( { domain_name: 'test.com' } ),
-			buildSuggestion( { domain_name: 'test.net' } ),
-			buildSuggestion( { domain_name: 'test.org' } ),
-		] );
+		mockGetSuggestionsQuery( {
+			params: { query: 'test' },
+			suggestions: [
+				buildSuggestion( { domain_name: 'test.com' } ),
+				buildSuggestion( { domain_name: 'test.net' } ),
+				buildSuggestion( { domain_name: 'test.org' } ),
+			],
+		} );
 
 		render(
 			<TestDomainSearch query="test">
@@ -75,16 +81,16 @@ describe( 'ResultsPage', () => {
 	} );
 
 	it( 'renders the search notice when applicable', async () => {
-		mockGetSuggestions( 'wordpress.com', [] );
+		mockGetSuggestionsQuery( { params: { query: 'wordpress.com' }, suggestions: [] } );
 
-		mockGetAvailability(
-			buildAvailability( {
+		mockGetAvailabilityQuery( {
+			availability: buildAvailability( {
 				domain_name: 'wordpress.com',
 				tld: 'com',
 				status: DomainAvailabilityStatus.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
 				mappable: 'mapped_domain',
-			} )
-		);
+			} ),
+		} );
 
 		render(
 			<TestDomainSearch query="wordpress.com">
@@ -100,16 +106,16 @@ describe( 'ResultsPage', () => {
 	} );
 
 	it( 'renders the unavailable search result when applicable', async () => {
-		mockGetSuggestions( 'a8ctesting.com', [] );
+		mockGetSuggestionsQuery( { params: { query: 'a8ctesting.com' }, suggestions: [] } );
 
-		mockGetAvailability(
-			buildAvailability( {
+		mockGetAvailabilityQuery( {
+			availability: buildAvailability( {
 				domain_name: 'a8ctesting.com',
 				tld: 'com',
 				status: DomainAvailabilityStatus.TRANSFERRABLE,
 				mappable: 'mappable',
-			} )
-		);
+			} ),
+		} );
 
 		render(
 			<TestDomainSearch query="a8ctesting.com">
@@ -134,9 +140,12 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'renders the free suggestion', async () => {
-			mockGetSuggestions( 'site', [] );
+			mockGetSuggestionsQuery( { params: { query: 'site' }, suggestions: [] } );
 
-			mockGetFreeSuggestion( 'site', buildFreeSuggestion( { domain_name: 'site.wordpress.com' } ) );
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'site' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'site.wordpress.com' } ),
+			} );
 
 			render(
 				<TestDomainSearch config={ { skippable: true } } query="site">
@@ -154,11 +163,14 @@ describe( 'ResultsPage', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
 			const onSuggestionsReceive = jest.fn();
 
-			mockGetSuggestions( 'test', [
-				buildSuggestion( { domain_name: 'test.com' } ),
-				buildSuggestion( { domain_name: 'test.net' } ),
-				buildSuggestion( { domain_name: 'test.org' } ),
-			] );
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test.com' } ),
+					buildSuggestion( { domain_name: 'test.net' } ),
+					buildSuggestion( { domain_name: 'test.org' } ),
+				],
+			} );
 
 			render(
 				<TestDomainSearch events={ { onSuggestionsReceive } } query="test">
@@ -178,9 +190,12 @@ describe( 'ResultsPage', () => {
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {
 			const onQueryAvailabilityCheck = jest.fn();
 
-			mockGetAvailability(
-				buildAvailability( { domain_name: 'test.com', status: DomainAvailabilityStatus.AVAILABLE } )
-			);
+			mockGetAvailabilityQuery( {
+				availability: buildAvailability( {
+					domain_name: 'test.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
 
 			render(
 				<TestDomainSearch events={ { onQueryAvailabilityCheck } } query="test.com">

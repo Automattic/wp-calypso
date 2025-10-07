@@ -1,7 +1,17 @@
 import nock from 'nock';
-import type { DomainSuggestion, FreeDomainSuggestion } from '@automattic/api-core';
+import type {
+	DomainSuggestion,
+	DomainSuggestionQuery,
+	FreeDomainSuggestion,
+} from '@automattic/api-core';
 
-export const mockGetSuggestions = ( query: string, suggestions: DomainSuggestion[] ) => {
+export const mockGetSuggestionsQuery = ( {
+	params,
+	suggestions,
+}: {
+	params: Partial< DomainSuggestionQuery >;
+	suggestions: DomainSuggestion[];
+} ) => {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
 		.query( {
@@ -12,12 +22,18 @@ export const mockGetSuggestions = ( query: string, suggestions: DomainSuggestion
 			vendor: 'variation2_front',
 			exact_sld_matches_only: false,
 			include_internal_move_eligible: true,
-			query,
+			...params,
 		} )
 		.reply( 200, suggestions );
 };
 
-export const mockGetFreeSuggestion = ( query: string, freeSuggestion: FreeDomainSuggestion ) => {
+export const mockGetFreeSuggestionQuery = ( {
+	params,
+	freeSuggestion,
+}: {
+	params: Partial< DomainSuggestionQuery >;
+	freeSuggestion: FreeDomainSuggestion;
+} ) => {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
 		.query( {
@@ -26,7 +42,7 @@ export const mockGetFreeSuggestion = ( query: string, freeSuggestion: FreeDomain
 			include_dotblogsubdomain: false,
 			only_wordpressdotcom: false,
 			vendor: 'dot',
-			query,
+			...params,
 		} )
 		.reply( 200, [ freeSuggestion ] );
 };
