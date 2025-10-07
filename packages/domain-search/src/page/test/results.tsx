@@ -22,43 +22,150 @@ describe( 'ResultsPage', () => {
 		expect( screen.getByLabelText( 'Filter, no filters applied' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders featured and regular suggestions', async () => {
-		mockGetSuggestionsQuery( {
-			params: { query: 'test' },
-			suggestions: [
-				buildSuggestion( { domain_name: 'test.com' } ),
-				buildSuggestion( { domain_name: 'test.net' } ),
-				buildSuggestion( { domain_name: 'test.org' } ),
-			],
+	describe( 'suggestion partitioning', () => {
+		it( 'renders featured and regular suggestions', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test.com' } ),
+					buildSuggestion( { domain_name: 'test.net' } ),
+					buildSuggestion( { domain_name: 'test.org' } ),
+				],
+			} );
+
+			render(
+				<TestDomainSearch query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const recommended = await screen.findByTitle( 'test.com' );
+
+			expect( recommended ).toBeInTheDocument();
+			expect( recommended ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
+			expect( recommended ).toHaveTextContent( 'Recommended' );
+
+			const bestAlternative = await screen.findByTitle( 'test.net' );
+
+			expect( bestAlternative ).toBeInTheDocument();
+			expect( bestAlternative ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
+			expect( bestAlternative ).toHaveTextContent( 'Best alternative' );
+
+			const regular = await screen.findByTitle( 'test.org' );
+
+			expect( regular ).toBeInTheDocument();
+			expect( regular ).toHaveAttribute( 'data-testid', 'suggestion' );
+			expect( regular ).not.toHaveTextContent( 'Recommended' );
+			expect( regular ).not.toHaveTextContent( 'Best alternative' );
 		} );
 
-		render(
-			<TestDomainSearch query="test">
-				<ResultsPage />
-			</TestDomainSearch>
-		);
+		it( 'renders a single featured suggestion if searching for a FQDN', async () => {
+			mockGetAvailabilityQuery( {
+				availability: buildAvailability( {
+					domain_name: 'test.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
 
-		const recommended = await screen.findByTitle( 'test.com' );
+			mockGetSuggestionsQuery( {
+				params: { query: 'test.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test.com' } ),
+					buildSuggestion( { domain_name: 'test.net' } ),
+					buildSuggestion( { domain_name: 'test.org' } ),
+				],
+			} );
 
-		expect( recommended ).toBeInTheDocument();
-		expect( recommended ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
-		expect( recommended ).toHaveTextContent( 'Recommended' );
+			render(
+				<TestDomainSearch query="test.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
 
-		const bestAlternative = await screen.findByTitle( 'test.net' );
+			const exactMatch = await screen.findByTitle( 'test.com' );
 
-		expect( bestAlternative ).toBeInTheDocument();
-		expect( bestAlternative ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
-		expect( bestAlternative ).toHaveTextContent( 'Best alternative' );
+			expect( exactMatch ).toBeInTheDocument();
+			expect( exactMatch ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
 
-		const regular = await screen.findByTitle( 'test.org' );
+			const testNet = await screen.findByTitle( 'test.net' );
 
-		expect( regular ).toBeInTheDocument();
-		expect( regular ).toHaveAttribute( 'data-testid', 'suggestion' );
-		expect( regular ).not.toHaveTextContent( 'Recommended' );
-		expect( regular ).not.toHaveTextContent( 'Best alternative' );
+			expect( testNet ).toBeInTheDocument();
+			expect( testNet ).toHaveAttribute( 'data-testid', 'suggestion' );
+
+			const testOrg = await screen.findByTitle( 'test.org' );
+
+			expect( testOrg ).toBeInTheDocument();
+			expect( testOrg ).toHaveAttribute( 'data-testid', 'suggestion' );
+		} );
+
+		it( 'removes deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
+			mockGetAvailabilityQuery( {
+				availability: buildAvailability( {
+					domain_name: 'test.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch query="test.com" config={ { deemphasizedTlds: [ 'com' ] } }>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const testCom = await screen.findByTitle( 'test.com' );
+
+			expect( testCom ).toBeInTheDocument();
+			expect( testCom ).toHaveAttribute( 'data-testid', 'suggestion' );
+		} );
+
+		it( 'removes deemphasized TLDs from featured suggestions', async () => {
+			mockGetAvailabilityQuery( {
+				availability: buildAvailability( {
+					domain_name: 'test.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test.com' } ),
+					buildSuggestion( { domain_name: 'test.net' } ),
+					buildSuggestion( { domain_name: 'test.org' } ),
+				],
+			} );
+
+			render(
+				<TestDomainSearch query="test" config={ { deemphasizedTlds: [ 'com' ] } }>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const testCom = await screen.findByTitle( 'test.com' );
+
+			expect( testCom ).toBeInTheDocument();
+			expect( testCom ).toHaveAttribute( 'data-testid', 'suggestion' );
+
+			const recommended = await screen.findByTitle( 'test.net' );
+
+			expect( recommended ).toBeInTheDocument();
+			expect( recommended ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
+			expect( recommended ).toHaveTextContent( 'Recommended' );
+
+			const bestAlternative = await screen.findByTitle( 'test.org' );
+
+			expect( bestAlternative ).toBeInTheDocument();
+			expect( bestAlternative ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
+			expect( bestAlternative ).toHaveTextContent( 'Best alternative' );
+		} );
 	} );
 
-	it( 'renders the before results slot if passed', () => {
+	it( 'renders the BeforeResults slot if passed', () => {
 		render(
 			<TestDomainSearch slots={ { BeforeResults: () => <div>Before Results</div> } }>
 				<ResultsPage />
