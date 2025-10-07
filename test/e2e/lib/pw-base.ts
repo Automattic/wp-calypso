@@ -36,6 +36,8 @@ import {
 	getTestAccountByFeature,
 	GitHubLoginPage,
 	ImportContentFromMediumPage,
+	ImportContentPage,
+	ImportLetsFindYourSitePage,
 	IncognitoPage,
 	JetpackTrafficPage,
 	LoginPage,
@@ -147,9 +149,17 @@ export const test = base.extend< {
 	 */
 	pageGitHubLogin: GitHubLoginPage;
 	/**
+	 * Page object representing the Import Content page.
+	 */
+	pageImportContent: ImportContentPage;
+	/**
 	 * Page object representing the Import Content from Medium page.
 	 */
 	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Let's Find Your Site page for importing content.
+	 */
+	pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
 	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
@@ -269,9 +279,17 @@ export const test = base.extend< {
 		const gitHubLoginPage = new GitHubLoginPage( page );
 		await use( gitHubLoginPage );
 	},
+	pageImportContent: async ( { page }, use ) => {
+		const importContentPage = new ImportContentPage( page );
+		await use( importContentPage );
+	},
 	pageImportContentFromMedium: async ( { page }, use ) => {
 		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
 		await use( importContentFromMediumPage );
+	},
+	pageImportLetsFindYourSite: async ( { page }, use ) => {
+		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
+		await use( letsFindYourSitePage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
