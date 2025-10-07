@@ -41,3 +41,5 @@ export interface ReferralAPIResponse {
 	status: string;
 	checkout_url: string;
 }
+
+export type ReferralOrderFlowType = 'send' | 'copy';

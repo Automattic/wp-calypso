@@ -10,8 +10,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import OpenverseIcon from './openverse-icon';
-import PexelsIcon from './pexels-icon';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {
@@ -47,8 +45,7 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	getSources = () => {
-		const { disabledSources, translate, ignorePermissions, canUserUploadFiles } = this.props;
-		const includeExternalMedia = ignorePermissions || canUserUploadFiles;
+		const { disabledSources, translate } = this.props;
 		const sources = [
 			{
 				value: '',
@@ -56,20 +53,6 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
-		if ( includeExternalMedia ) {
-			sources.push( {
-				value: 'pexels',
-				label: translate( 'Pexels free photos' ),
-				icon: <PexelsIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
-			} );
-		}
-		if ( includeExternalMedia ) {
-			sources.push( {
-				value: 'openverse',
-				label: translate( 'Openverse free photos' ),
-				icon: <OpenverseIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
-			} );
-		}
 		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
 	};
 
