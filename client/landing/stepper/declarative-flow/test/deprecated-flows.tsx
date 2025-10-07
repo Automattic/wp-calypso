@@ -8,7 +8,7 @@ const frozenDeprecatedV1Flows = [
 	'readymade-template',
 	'update-design',
 	'update-options',
-	'domain-upsell',
+	'domain-and-plan',
 	'build',
 	'write',
 	'start-writing',

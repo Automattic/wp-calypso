@@ -6,6 +6,7 @@ import { TestAccountName } from '..';
 import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import { EmailClient } from '../email-client';
 import envVariables from '../env-variables';
+import { RestAPIClient } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
 import { SidebarComponent } from './components/sidebar-component';
@@ -18,6 +19,18 @@ import type { TestAccountCredentials } from '../secrets';
 export class TestAccount {
 	readonly accountName: TestAccountName;
 	readonly credentials: TestAccountCredentials;
+	private _restAPIClient: RestAPIClient | null = null;
+
+	/**
+	 * Returns a RestAPIClient instance for this test account.
+	 * The instance is cached after first creation.
+	 */
+	get restAPI(): RestAPIClient {
+		if ( ! this._restAPIClient ) {
+			this._restAPIClient = new RestAPIClient( this.credentials );
+		}
+		return this._restAPIClient;
+	}
 
 	/**
 	 * Constructs an instance of the TestAccount for the given account name.

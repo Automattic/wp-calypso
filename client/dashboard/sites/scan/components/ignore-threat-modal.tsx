@@ -10,32 +10,42 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 import { ThreatDescription } from './threat-description';
 import { ThreatsDetailCard } from './threats-detail-card';
-import type { Threat } from '@automattic/api-core';
+import type { Threat, Site } from '@automattic/api-core';
 import type { RenderModalProps } from '@wordpress/dataviews';
 
 interface IgnoreThreatModalProps extends RenderModalProps< Threat > {
-	siteId: number;
+	site: Site;
 }
 
-export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatModalProps ) {
+export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModalProps ) {
 	const threat = items[ 0 ];
 
-	const ignoreThreat = useMutation( ignoreThreatMutation( siteId ) );
+	const { recordTracksEvent } = useAnalytics();
+	const ignoreThreat = useMutation( ignoreThreatMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
+	useEffect( () => {
+		recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_modal_open' );
+	}, [ recordTracksEvent ] );
+
 	const handleIgnoreThreat = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_click' );
 		ignoreThreat.mutate( threat.id, {
 			onSuccess: () => {
 				closeModal?.();
+				recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_success' );
 				createSuccessNotice( __( 'Threat ignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
 				closeModal?.();
+				recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_failed' );
 				createErrorNotice( __( 'Failed to ignore threat. Please try again.' ), {
 					type: 'snackbar',
 				} );
@@ -43,18 +53,26 @@ export function IgnoreThreatModal( { items, closeModal, siteId }: IgnoreThreatMo
 		} );
 	};
 
+	const handleCodeableClick = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_codeable_estimate_click' );
+	};
+
 	return (
 		<VStack spacing={ 4 }>
 			<Text variant="muted">{ __( 'Jetpack will be ignoring the following threat:' ) }</Text>
 			<ThreatsDetailCard threats={ [ threat ] } />
-			<ThreatDescription threat={ threat } />
+			<ThreatDescription threat={ threat } site={ site } />
 			<Notice variant="error">
 				{ createInterpolateElement(
 					__(
 						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with <codeable />.'
 					),
 					{
-						codeable: <ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>,
+						codeable: (
+							<ExternalLink href={ CODEABLE_JETPACK_SCAN_URL } onClick={ handleCodeableClick }>
+								Codeable
+							</ExternalLink>
+						),
 					}
 				) }
 			</Notice>

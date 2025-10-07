@@ -94,13 +94,15 @@ export default function MonitoringResponseTypesCard( {
 		<MonitoringCard
 			title={ __( 'Response types' ) }
 			description={ __( 'Percentage of dynamic versus static responses.' ) }
-			onDownloadClick={ () => {} }
-			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
 			<VStack justify="space-between" expanded>
-				<Legend chartId="response-types-chart" items={ mapDataForLegend( data ) } />
+				<Legend
+					chartId="response-types-chart"
+					items={ mapDataForLegend( data ) }
+					className="dashboard-monitoring-card--legend"
+				/>
 				<HStack alignment="center">
 					<PieChart
 						chartId="response-types-chart"
@@ -109,6 +111,7 @@ export default function MonitoringResponseTypesCard( {
 						size={ 300 }
 						data={ data }
 						showLabels={ false }
+						withTooltips
 					/>
 				</HStack>
 			</VStack>

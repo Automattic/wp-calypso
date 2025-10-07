@@ -17,17 +17,15 @@ export const nameField: Field< PluginListRow > = {
 	enableSorting: true,
 	getValue: ( { item } ) => item.name,
 	render: ( { item, field } ) => {
-		const src = typeof item.icons === 'string' ? item.icons : item.icons?.[ '1x' ];
-
-		const icon = src ? (
-			<img src={ src } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
+		const icon = item.icon ? (
+			<img src={ item.icon } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
 		) : (
 			<Icon icon={ plugins } size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />
 		);
 
 		return (
 			<HStack spacing={ 2 } justify="flex-start">
-				<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icons } ) }>
+				<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icon } ) }>
 					{ icon }
 				</div>
 				<Link

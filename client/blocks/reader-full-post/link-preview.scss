@@ -1,0 +1,111 @@
+.reader-full-post__link-preview {
+	margin: 16px 0;
+	border-radius: 8px;
+	padding: 0;
+	max-height: 140px;
+	transition: all 0.2s ease-in-out;
+	overflow: hidden;
+
+	&.is-loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-height: 80px;
+	}
+
+	&.is-error {
+		border-left: 4px solid var(--color-error);
+		border-top: 1px solid var(--color-neutral-5);
+		border-right: 1px solid var(--color-neutral-5);
+		border-bottom: 1px solid var(--color-neutral-5);
+
+		a {
+			color: var(--color-error);
+		}
+	}
+}
+
+.reader-full-post__link-preview-link {
+	display: flex;
+	text-decoration: none;
+	color: inherit;
+	min-height: 80px;
+}
+
+.reader-full-post__link-preview-image {
+	flex-shrink: 0;
+	width: 140px;
+	height: 140px;
+	object-fit: cover;
+	background: var(--color-neutral-5);
+}
+
+.reader-full-post__link-preview-content {
+	flex: 1;
+	padding: 12px 16px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.reader-full-post__link-preview-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+	gap: 8px;
+}
+
+.reader-full-post__link-preview-favicon {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+
+.reader-full-post__link-preview-site-name {
+	font-size: 12px;
+	color: var(--color-neutral-50);
+	font-weight: 600;
+	letter-spacing: 0.3px;
+}
+
+.reader-full-post__link-preview-type {
+	font-size: 11px;
+	color: var(--color-neutral-40);
+	background: var(--color-neutral-5);
+	padding: 2px 6px;
+	border-radius: 8px;
+	text-transform: capitalize;
+	font-weight: 500;
+}
+
+.reader-full-post__link-preview-title {
+	margin: 0 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--color-neutral-70);
+	line-height: 1.2;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.reader-full-post__link-preview-description {
+	margin: 0 0 8px;
+	font-size: 14px;
+	color: var(--color-neutral-50);
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+
+.reader-full-post__link-preview-date {
+	font-size: 12px;
+	color: var(--color-neutral-40);
+	font-weight: 500;
+}

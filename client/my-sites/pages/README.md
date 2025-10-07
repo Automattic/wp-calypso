@@ -1,3 +1,3 @@
 # Pages
 
-The view module for the Pages list in `/pages` as a React component. It includes a single `Page` child component as well.
+The Pages functionality has been removed from calypso. This module now only exists to redirect URLs.

@@ -66,7 +66,6 @@
 		"jetpack/crm-downloads": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
-		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
 		"newsletter-categories": true,

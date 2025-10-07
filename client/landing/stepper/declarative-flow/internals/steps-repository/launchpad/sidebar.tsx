@@ -19,6 +19,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { type NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { type ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
@@ -170,12 +171,19 @@ const Sidebar = ( {
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	function getDomainUpgradeBadgeUrl() {
+		if ( ! siteSlug ) {
+			return '';
+		}
+
 		if ( isStartWritingFlow( siteIntentOption ) ) {
 			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
 		}
-		return ! site?.plan?.is_free
-			? `/domains/manage/${ siteSlug }`
-			: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+
+		if ( ! site?.plan?.is_free ) {
+			return `/domains/manage/${ siteSlug }`;
+		}
+
+		return getDomainAndPlanUpsellUrl( { siteSlug } );
 	}
 
 	function showDomainUpgradeBadge() {

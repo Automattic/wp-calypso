@@ -361,14 +361,56 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	return '';
 }
 
+function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
+	const productSlug = encodeProductForUrl( purchase.product_slug );
+	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
+	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
+	return checkoutProductSlug;
+}
+
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
 	checkoutSiteSlugForUrl?: string
 ): string {
-	const productSlug = encodeProductForUrl( purchase.product_slug );
-	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
-	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
-	const checkoutSiteSlug = checkoutSiteSlugForUrl || purchase.site_slug || '';
-	const servicePath = getServicePathForCheckoutFromPurchase( purchase );
-	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchase.ID }/${ checkoutSiteSlug }`;
+	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl );
+}
+
+export function getRenewUrlForPurchases(
+	purchases: Purchase[],
+	checkoutSiteSlugForUrl?: string
+): string {
+	if ( purchases.length < 1 ) {
+		throw new Error( 'Could not find product slug or purchase id for renewal.' );
+	}
+	const firstPurchase = purchases[ 0 ];
+	const checkoutProductSlug = purchases
+		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
+		.join( ',' );
+	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
+	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
+	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
+	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`;
+}
+
+/**
+ * Determines if the purchase needs to renew soon.
+ *
+ * This will return true if the purchase is either already expired or
+ * expiring/renewing soon.
+ *
+ * The intention here is to identify purchases that the user might reasonably
+ * want to manually renew (regardless of whether they are also scheduled to
+ * auto-renew).
+ */
+export function needsToRenewSoon( purchase: Purchase ): boolean {
+	// Skip purchases that never need to renew or that can't be renewed.
+	if (
+		isOneTimePurchase( purchase ) ||
+		purchase.partner_type ||
+		! purchase.is_renewable ||
+		! purchase.can_explicit_renew
+	) {
+		return false;
+	}
+	return isCloseToExpiration( purchase );
 }
