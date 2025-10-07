@@ -26,6 +26,24 @@ export const emailsRoute = createRoute( {
 	)
 );
 
+export const addEmailForwarderRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Email Forwarder' ),
+			},
+		],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'emails/add-forwarder',
+} ).lazy( () =>
+	import( '../../emails/add-forwarder' ).then( ( d ) =>
+		createLazyRoute( 'add-email-forwarder' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createEmailsRoutes = () => {
-	return [ emailsRoute ];
+	return [ emailsRoute, addEmailForwarderRoute ];
 };
