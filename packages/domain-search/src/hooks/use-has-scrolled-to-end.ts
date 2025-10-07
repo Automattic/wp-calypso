@@ -1,7 +1,21 @@
 import { RefObject, useEffect, useState } from 'react';
 
+export const hasScrolledToEnd = ( {
+	scrollHeight,
+	scrollTop,
+	clientHeight,
+}: {
+	scrollHeight: number;
+	scrollTop: number;
+	clientHeight: number;
+} ) => {
+	// NOTE: scrollTop might be fractional in some browsers, so without this Math.abs() trick
+	// sometimes the result won't be a whole number, causing the comparison to fail.
+	return Math.abs( scrollHeight - clientHeight - scrollTop ) < 1;
+};
+
 export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
-	const [ hasScrolledToEnd, setHasScrolledToEnd ] = useState( false );
+	const [ hasScrolledToEndResult, setHasScrolledToEndResult ] = useState( false );
 
 	useEffect( () => {
 		const contentElement = contentRef.current;
@@ -13,12 +27,8 @@ export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
 		const checkIfScrollHasReachedBottom = () => {
 			const { scrollHeight, scrollTop, clientHeight } = contentElement;
 
-			// NOTE: scrollTop is fractional, while scrollHeight and clientHeight are
-			// not, so without this Math.abs() trick then sometimes the result won't
-			// work because scrollTop may not be exactly equal to el.scrollHeight -
-			// el.clientHeight when scrolled to the bottom.
-			if ( Math.abs( scrollHeight - clientHeight - scrollTop ) < 1 ) {
-				setHasScrolledToEnd( true );
+			if ( hasScrolledToEnd( { scrollHeight, scrollTop, clientHeight } ) ) {
+				setHasScrolledToEndResult( true );
 			}
 		};
 
@@ -31,5 +41,5 @@ export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
 		};
 	}, [ contentRef ] );
 
-	return hasScrolledToEnd;
+	return hasScrolledToEndResult;
 };

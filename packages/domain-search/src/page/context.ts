@@ -90,11 +90,14 @@ export const useDomainSearch = () => {
 	return context;
 };
 
-export const useDomainSearchContextValue = (
-	props: DomainSearchProps
-): typeof DEFAULT_CONTEXT_VALUE => {
-	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
-
+export const useDomainSearchContextValue = ( {
+	currentSiteUrl,
+	query: externalQuery,
+	cart,
+	events,
+	slots,
+	config,
+}: DomainSearchProps ): typeof DEFAULT_CONTEXT_VALUE => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
 
@@ -149,7 +152,7 @@ export const useDomainSearchContextValue = (
 							? query.includes( '.blog' )
 							: false,
 					} ),
-					enabled: normalizedConfig.skippable,
+					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
