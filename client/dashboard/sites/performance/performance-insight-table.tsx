@@ -1,9 +1,9 @@
 import { DataViews } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import Markdown from 'react-markdown';
-import { InsightScreenshotWithOverlay } from 'calypso/performance-profiler/components/metrics-insight/insight-screenshot'; // eslint-disable-line
 import { Text } from '../../components/text';
 import { getFormattedNumber, getFormattedSize } from '../../utils/site-performance';
+import { InsightScreenshotWithOverlay } from './performance-insight-screenshot';
 import type {
 	PerformanceMetricsDetailsQueryResponse,
 	PerformanceMetricsDetailsItem,
