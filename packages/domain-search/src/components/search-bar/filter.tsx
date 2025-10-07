@@ -16,14 +16,14 @@ export const Filter = () => {
 	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery( {
 		...queries.availableTlds( query ),
 		enabled: true,
-	} ) as { data: string[]; isFetching: boolean };
+	} );
 
 	const filterCount = useMemo(
 		() => filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 ),
 		[ filter ]
 	);
 
-	if ( ! isFetchingTlds && ( ! availableTlds || availableTlds.length === 0 ) ) {
+	if ( ! isFetchingTlds && availableTlds.length === 0 ) {
 		return null;
 	}
 

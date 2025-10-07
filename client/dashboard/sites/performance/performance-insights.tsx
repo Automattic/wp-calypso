@@ -3,6 +3,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	CustomSelectControl,
+	Panel,
+	PanelBody,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -10,25 +12,9 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import { metricsNames } from '../../utils/site-performance';
-
-export interface PerformanceMetricsItemQueryResponse {
-	id: string;
-	title?: string;
-	description?: string;
-	type: 'warning' | 'fail';
-	displayValue?: string;
-	details?: PerformanceMetricsDetailsQueryResponse;
-	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
-}
-
-export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
-	headings?: Array< { key: string; label: string; valueType: string } >;
-	items?: Array< {
-		[ key: string ]: string | number | { [ key: string ]: unknown };
-	} >;
-	chains?: Array< { [ key: string ]: unknown } >;
-}
+import { PerformanceInsightTitle, PerformanceInsight } from './performance-insight';
+import type { PerformanceMetricsItemQueryResponse, DeviceToggleType } from './types';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
 export type CustomSelectControlOption = {
 	key: Metrics;
@@ -56,6 +42,14 @@ const highImpactAudits = [
 	'server-response-time',
 	'mainthread-work-breakdown',
 	'largest-contentful-paint-element',
+];
+
+const tipAudits = [
+	'uses-responsive-images',
+	'uses-long-cache-ttl',
+	'server-response-time',
+	'render-blocking-resources',
+	'unminified-css',
 ];
 
 function getSubtitleText( selectedFilter: Metrics, numRecommendations: number ) {
@@ -104,23 +98,21 @@ const sortHighImpactAudits = ( a: string, b: string ) =>
 	highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
 
 export default function PerformanceInsights( {
-	audits,
+	report,
+	device,
 	selectedFilter,
+	hash,
 	onFilterChange,
 }: {
-	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	report: SitePerformanceReport;
+	device: DeviceToggleType;
 	selectedFilter: Metrics;
+	hash: string;
 	onFilterChange: ( filter: Metrics ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isDesktop = useViewportMatch( 'medium' );
-	const onFilter = ( item: CustomSelectControlOption ) => {
-		recordTracksEvent( 'calypso_dashboard_performance_profiler_recommendations_filter_change', {
-			filter: item.key,
-		} );
-
-		onFilterChange( item.key as Metrics );
-	};
+	const { audits, fullPageScreenshot, is_wpcom } = report;
 
 	const options: CustomSelectControlOption[] = Object.keys( metricsNames ).map( ( key: string ) => {
 		const metricKey = key as Metrics;
@@ -149,6 +141,14 @@ export default function PerformanceInsights( {
 			.sort( sortHighImpactAudits );
 	}, [ audits, selectedFilter ] );
 
+	const onFilter = ( item: CustomSelectControlOption ) => {
+		recordTracksEvent( 'calypso_dashboard_performance_profiler_recommendations_filter_change', {
+			filter: item.key,
+		} );
+
+		onFilterChange( item.key as Metrics );
+	};
+
 	return (
 		<VStack spacing={ 4 }>
 			<HStack
@@ -174,12 +174,32 @@ export default function PerformanceInsights( {
 					/>
 				</div>
 			</HStack>
-			<VStack>
-				<Text>Recommendation Section</Text>
-				{ filteredAudits.map( ( key ) => (
-					<Text key={ key }>{ key }</Text>
+			<Panel>
+				{ filteredAudits.map( ( key, i ) => (
+					<PanelBody
+						key={ key }
+						title={
+							(
+								<PerformanceInsightTitle
+									insight={ audits[ key ] }
+									index={ i + 1 }
+									isHightImpact={ highImpactAudits.includes( key ) }
+								/>
+							 ) as unknown as string
+						}
+						initialOpen={ false }
+					>
+						<PerformanceInsight
+							device={ device }
+							insight={ audits[ key ] }
+							fullPageScreenshot={ fullPageScreenshot }
+							isWpcom={ is_wpcom }
+							hash={ hash }
+							showTip={ tipAudits.includes( key ) }
+						/>
+					</PanelBody>
 				) ) }
-			</VStack>
+			</Panel>
 		</VStack>
 	);
 }
