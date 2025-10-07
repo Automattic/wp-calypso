@@ -6,7 +6,6 @@ import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
 import { useFlexUsageMock } from './use-flex-usage-mock';
 import type { Site } from '@automattic/api-core';
-import './style.scss';
 
 type Props = {
 	site: Site;
