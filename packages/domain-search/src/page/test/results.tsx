@@ -1,6 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import { buildAvailability } from '../../test-helpers/factories/availability';
+import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
@@ -11,15 +12,20 @@ import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
 
 describe( 'ResultsPage', () => {
-	it( 'renders the search bar and filters', () => {
+	it( 'renders the search bar, filters and cart', () => {
 		render(
-			<TestDomainSearch>
+			<TestDomainSearch
+				cart={ buildCart( { items: [ buildCartItem( { domain: 'test.com' } ) ], total: '$100' } ) }
+			>
 				<ResultsPage />
 			</TestDomainSearch>
 		);
 
 		expect( screen.getByLabelText( 'Search for a domain' ) ).toBeInTheDocument();
 		expect( screen.getByLabelText( 'Filter, no filters applied' ) ).toBeInTheDocument();
+		expect(
+			screen.getByLabelText( '1 domain selected. $100 total price. Click to view the cart' )
+		).toBeInTheDocument();
 	} );
 
 	describe( 'suggestion partitioning', () => {
