@@ -38,7 +38,12 @@ const LLMNotice = ( {
 						<Text>{ children }</Text>
 					</HStack>
 					{ actions && (
-						<ButtonStack justify="flex-end" alignment="center">
+						<ButtonStack
+							justify="flex-end"
+							alignment="center"
+							expanded={ false }
+							style={ { flexShrink: 0 } }
+						>
 							{ actions }
 						</ButtonStack>
 					) }

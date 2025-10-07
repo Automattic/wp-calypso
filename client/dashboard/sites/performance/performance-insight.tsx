@@ -5,6 +5,7 @@ import {
 	Button,
 	ExternalLink,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
 import Markdown from 'react-markdown';
@@ -147,6 +148,7 @@ export const PerformanceInsight = ( {
 	showTip: boolean;
 } ) => {
 	const locale = useLocale();
+	const isDesktop = useViewportMatch( 'medium' );
 	const { data: llmAnswer } = useSupportChatLLMQuery(
 		insight,
 		hash,
@@ -157,10 +159,14 @@ export const PerformanceInsight = ( {
 	);
 
 	return (
-		<VStack style={ { padding: '0 16px' } }>
+		<VStack spacing={ 4 } style={ { padding: '0 16px' } }>
 			{ llmAnswer ? (
 				<>
-					<HStack alignment="flex-start" spacing={ 4 }>
+					<HStack
+						alignment="flex-start"
+						spacing={ 4 }
+						style={ { flexWrap: isDesktop ? 'nowrap' : 'wrap-reverse' } }
+					>
 						<div>
 							<Markdown
 								components={ {
