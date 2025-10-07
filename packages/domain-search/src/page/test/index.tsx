@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { buildCart } from '../../test/factories/cart';
-import { mockGetSuggestions } from '../../test/mocks/suggestions';
+import { buildCart } from '../../test-helpers/factories/cart';
+import { mockGetSuggestions } from '../../test-helpers/mocks/suggestions';
 import { DomainSearch } from '../index';
 
 describe( 'DomainSearch', () => {

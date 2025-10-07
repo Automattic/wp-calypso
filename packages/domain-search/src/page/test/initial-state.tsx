@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { TestDomainSearch } from '../../test/renderer';
+import { TestDomainSearch } from '../../test-helpers/renderer';
 import { InitialState } from '../initial-state';
 
 describe( 'InitialState', () => {

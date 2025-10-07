@@ -1,10 +1,10 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
-import { buildAvailability } from '../../test/factories/availability';
-import { buildFreeSuggestion, buildSuggestion } from '../../test/factories/suggestions';
-import { mockGetAvailability } from '../../test/mocks/availability';
-import { mockGetFreeSuggestion, mockGetSuggestions } from '../../test/mocks/suggestions';
-import { TestDomainSearch } from '../../test/renderer';
+import { buildAvailability } from '../../test-helpers/factories/availability';
+import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
+import { mockGetAvailability } from '../../test-helpers/mocks/availability';
+import { mockGetFreeSuggestion, mockGetSuggestions } from '../../test-helpers/mocks/suggestions';
+import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
 
 describe( 'ResultsPage', () => {
