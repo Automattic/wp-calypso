@@ -145,6 +145,13 @@ function SiteRepositories() {
 		}
 	}, [ notices, createNotice, navigate, siteSlug, removeNotice ] );
 
+	useEffect( () => {
+		return () => {
+			// Cleanup when leaving the page
+			removeNotice( 'back-to-deployments' );
+		};
+	}, [ removeNotice ] );
+
 	const handleConnectRepository = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
 	};
