@@ -13,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import { useHelpCenter } from '../../app/help-center';
 import Column from './column';
 import MenuItem from './menu-item';
@@ -21,6 +22,7 @@ import './style.scss';
 
 function AddNewSite( { context }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { name: appName } = useAppContext();
 
 	const wordpressClick = () => {
 		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
@@ -63,12 +65,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 
 	const { setShowHelpCenter } = useHelpCenter();
 
-	// TODO: Surely there's a better way to detect if it's in http://calypso.localhost:3000/ciab/sites
-	const isCiab = window?.location?.pathname?.startsWith( '/ciab' ) || false;
-	let aiHref = `/setup/ai-site-builder?source=${ context }&ref=new-site-popover`;
-	if ( isCiab ) {
-		aiHref = `/setup/ai-site-builder-spec?source=ciab-${ context }&ref=new-site-popover`;
-	}
+	const sourcePrefix = appName === 'CIAB' ? 'ciab-' : '';
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
@@ -93,7 +90,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ aiHref }
+					href={ `/setup/ai-site-builder?source=${ sourcePrefix }${ context }&ref=new-site-popover` }
 					aria-label={ __( 'Build a new site with AI' ) }
 				/>
 				<MenuItem
