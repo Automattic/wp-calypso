@@ -1,6 +1,7 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
@@ -17,7 +18,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
-import FlashMessage from '../../components/flash-message';
+import FlashMessage, { addFlashMessage } from '../../components/flash-message';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -30,6 +31,8 @@ type SecurityPasswordFormData = {
 
 export default function SecurityPassword() {
 	const { recordTracksEvent } = useAnalytics();
+
+	const router = useRouter();
 
 	const mutation = useMutation( userSettingsMutation() );
 	const { createErrorNotice } = useDispatch( noticesStore );
@@ -49,7 +52,7 @@ export default function SecurityPassword() {
 				onSuccess: () => {
 					setIsReloading( true );
 					// Since changing a user's password invalidates the session, we reload.
-					window.location.replace( '?updated=password' );
+					router.navigate( addFlashMessage( { to: '', replace: true }, 'password', 'updated' ) );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {
@@ -126,7 +129,11 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<FlashMessage value="password" message={ __( 'Your password was saved successfully.' ) } />
+			<FlashMessage
+				value="password"
+				id="updated"
+				message={ __( 'Your password was saved successfully.' ) }
+			/>
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

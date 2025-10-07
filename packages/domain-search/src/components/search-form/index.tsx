@@ -48,6 +48,8 @@ export const SearchForm = () => {
 						onChange={ ( value ) => setLocalQuery( value.trim() ) }
 						onReset={ () => setLocalQuery( '' ) }
 						placeholder={ placeholder }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
 					/>
 					{ activeQuery === 'large' && <DomainSearchControls.Submit /> }
 				</HStack>

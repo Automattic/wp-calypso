@@ -11,6 +11,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
+import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainsView } from '../../domains/dataviews';
 import type { SiteDomain } from '@automattic/api-core';
 
@@ -68,6 +69,9 @@ function SiteDomains() {
 				/>
 			}
 		>
+			{ ! isLoading && siteDomains && (
+				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
+			) }
 			<DataViewsCard>
 				<DataViews< SiteDomain >
 					data={ filteredData || [] }

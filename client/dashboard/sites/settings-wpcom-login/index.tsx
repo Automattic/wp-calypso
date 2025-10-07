@@ -8,13 +8,14 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
 import { isSimple } from '../../utils/site-types';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import SsoForm from './sso-form';
 
 export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } ) {
@@ -38,7 +39,8 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'WordPress.com login' ) }
 					description={ createInterpolateElement(
 						__(

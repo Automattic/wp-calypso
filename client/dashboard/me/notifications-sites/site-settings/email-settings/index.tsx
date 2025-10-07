@@ -2,6 +2,7 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
+import { useAnalytics } from '../../../../app/analytics';
 import { getFieldLabel } from '../../helpers/translations';
 import { useSiteSettings, useSettingsMutation } from '../../hooks';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
@@ -10,6 +11,7 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const { recordTracksEvent } = useAnalytics();
 
 	const emailSettings = blogSettings?.email ?? null;
 	const settings = emailSettings ?? null;
@@ -23,7 +25,11 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 			},
 			{
 				onSuccess: () => {
-					setIsConfirmDialogOpen( false );
+					recordTracksEvent( 'calypso_dashboard_notifications_email_settings_updated', {
+						setting_name: updated.id,
+						setting_value: updated.value,
+						site_id: siteId,
+					} );
 				},
 			}
 		);
@@ -47,6 +53,10 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 			},
 			{
 				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_settings_apply_to_all_sites', {
+						stream: 'email',
+						site_to_be_used_as_template: siteId,
+					} );
 					setIsConfirmDialogOpen( false );
 				},
 			}

@@ -88,7 +88,7 @@ export function isValidNameServerSubdomain( nameServerSubdomain: string ): boole
 	return true;
 }
 
-const shouldUpgradeToMakeDomainPrimary = ( {
+export function shouldUpgradeToMakeDomainPrimary( {
 	domain,
 	site,
 	user,
@@ -96,7 +96,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 	domain: DomainSummary;
 	site: Site;
 	user: User;
-} ) => {
+} ) {
 	return (
 		[ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
 			domain.subtype.id
@@ -109,7 +109,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 		!! site.plan?.is_free &&
 		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
 	);
-};
+}
 
 export function canSetAsPrimary( {
 	domain,

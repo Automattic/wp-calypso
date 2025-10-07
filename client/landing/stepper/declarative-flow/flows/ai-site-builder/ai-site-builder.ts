@@ -2,14 +2,14 @@ import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
+import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -29,8 +29,6 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 		return true;
 	} catch ( error ) {
 		// fail silently here, just log an error and return false, Big Sky will still launch
-		// eslint-disable-next-line no-console
-		console.error( `Failed to delete page ${ pageId } for site ${ siteId }:`, error );
 		return false;
 	}
 };
@@ -57,26 +55,54 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	useSideEffect() {
 		const dispatch = useDispatch();
-		const siteId = useQuery().get( 'siteId' );
-		const prompt = useQuery().get( 'prompt' );
+		const { setGardenName, setGardenPartnerName } = useWpDataDispatch( ONBOARD_STORE );
+		const queryParams = useQuery();
+		const siteId = queryParams.get( 'siteId' );
+		const prompt = queryParams.get( 'prompt' );
+		const createGardenSite = queryParams.get( 'create_garden_site' );
+
 		useEffect( () => {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
-		}, [ siteId ] );
+		}, [ siteId, dispatch ] );
+
 		useEffect( () => {
 			if ( prompt && prompt.length > 0 ) {
 				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
 			}
 		}, [ prompt ] );
+
+		useEffect( () => {
+			// Set the garden values based on the query parameter
+			// The parameter should be exactly "1" to enable garden site creation
+			if ( createGardenSite === '1' ) {
+				setGardenName( 'commerce' );
+				setGardenPartnerName( 'wpcom' );
+			} else {
+				setGardenName( null );
+				setGardenPartnerName( null );
+			}
+		}, [ createGardenSite, setGardenName, setGardenPartnerName ] );
 	},
 	initialize,
 	useStepNavigation( _, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
+		const { gardenName } = useSelect(
+			( select ) => ( {
+				gardenName: ( select( ONBOARD_STORE ) as any ).getGardenName(),
+				gardenPartnerName: ( select( ONBOARD_STORE ) as any ).getGardenPartnerName(),
+			} ),
+			[]
+		);
 
-		const { addBlogSticker } = useAddBlogStickerMutation();
+		const { addBlogSticker } = useAddBlogStickerMutation( {
+			onError: () => {
+				// Fail silently - blog sticker addition is not essential for site creation
+			},
+		} );
 
 		const queryParams = useQuery();
 
@@ -124,8 +150,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							const { siteSlug, siteId } = providedDependencies;
 							// We are setting up big sky now.
 							if ( ! siteId || ! siteSlug ) {
-								// eslint-disable-next-line no-console
-								console.error( 'No siteId or siteSlug', providedDependencies );
 								return;
 							}
 							// get the prompt from the get url
@@ -137,38 +161,65 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							let sourceParam = '';
 							let specIdParam = '';
 
-							addBlogSticker( siteId, 'big-sky-free-trial' );
-
 							const pendingActions = [
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
 							];
 
-							// Create a new home page if one is not set yet.
-							pendingActions.push(
-								wpcomRequest( {
-									path: '/sites/' + siteId + '/pages',
-									method: 'POST',
-									apiNamespace: 'wp/v2',
-									body: {
-										title: 'Home',
-										status: 'publish',
-										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-									},
-								} )
-							);
+							if ( ! gardenName ) {
+								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
+								addBlogSticker( siteId, 'big-sky-free-trial' );
 
-							pendingActions.push(
-								setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
-							);
+								// Create a new home page if one is not set yet (only for non-garden sites)
+								pendingActions.push(
+									wpcomRequest( {
+										path: '/sites/' + siteId + '/pages',
+										method: 'POST',
+										apiNamespace: 'wp/v2',
+										body: {
+											title: 'Home',
+											status: 'publish',
+											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+										},
+									} )
+								);
+							}
+
+							// Only apply design and delete page for non-garden sites
+							if ( ! gardenName ) {
+								pendingActions.push(
+									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+								);
+								pendingActions.push( deletePage( siteId || '', 1 ) );
+							}
 							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
 
-							// Delete the existing boilerplate about page, always has a page ID of 1
-							pendingActions.push( deletePage( siteId || '', 1 ) );
-							const results = await Promise.all( pendingActions );
-							const siteURL = results[ 0 ].URL;
+							// Execute operations individually to identify which one fails
+							const results = [];
+							try {
+								// Execute all actions sequentially with logging
+								for ( let i = 0; i < pendingActions.length; i++ ) {
+									const result = await pendingActions[ i ];
+									results.push( result );
+								}
+							} catch ( error ) {
+								return;
+							}
 
-							const homePagePostId = results[ 1 ].id;
-							await setStaticHomepageOnSite( siteId, homePagePostId );
+							// Defensive check for site data (always first)
+							const siteData = results[ 0 ];
+							if ( ! siteData || ! siteData.URL ) {
+								return;
+							}
+							const siteURL = siteData.URL;
+
+							// Handle page creation result (only exists for non-garden sites)
+							if ( ! gardenName && results.length > 1 ) {
+								const pageCreationResult = results[ 1 ];
+								if ( pageCreationResult && pageCreationResult.id ) {
+									const homePagePostId = pageCreationResult.id;
+									await setStaticHomepageOnSite( siteId, homePagePostId );
+								}
+							}
 
 							if ( prompt ) {
 								promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;

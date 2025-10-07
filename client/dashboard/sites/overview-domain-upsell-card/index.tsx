@@ -1,6 +1,5 @@
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -104,7 +103,7 @@ const DomainUpsellCardContent = ( {
 						) : (
 							<TextBlur>{ search }</TextBlur>
 						),
-						link: <Link to={ chooseYourOwnUrl } onClick={ handleChooseYourOwn } />,
+						link: <a href={ chooseYourOwnUrl } onClick={ handleChooseYourOwn } />,
 					} ) }
 				</Text>
 			}

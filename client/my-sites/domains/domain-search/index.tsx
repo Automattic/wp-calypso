@@ -127,6 +127,7 @@ export default function DomainSearch() {
 				query={ query }
 				events={ events }
 				flowAllowsMultipleDomainsInCart
+				analyticsSection="domains"
 			/>
 			<QueryProductsList />
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />

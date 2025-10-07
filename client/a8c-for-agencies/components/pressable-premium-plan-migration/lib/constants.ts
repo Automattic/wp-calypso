@@ -1,6 +1,6 @@
 // We want to show the incentive until the end of the day in UTC.
 export const PRESSABLE_PREMIUM_PLAN_MIGRATION_INCENTIVE_END_DATE = new Date(
-	'2025-09-30T23:59:59Z'
+	'2025-10-31T23:59:59Z'
 );
 
 export const migrationIncentiveEndDateString =

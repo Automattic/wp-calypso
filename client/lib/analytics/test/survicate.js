@@ -32,6 +32,7 @@ describe( 'survicate', () => {
 	let originalGetElementsByTagName;
 	let mayWeLoadSurvicateScript;
 	let addSurvicate;
+	let isUserOnAnonymousPaths;
 
 	beforeAll( () => {
 		// Set up DOM mocks
@@ -63,6 +64,7 @@ describe( 'survicate', () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
 			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
 			addSurvicate = survicateModule.addSurvicate;
+			isUserOnAnonymousPaths = survicateModule.isUserOnAnonymousPaths;
 		} );
 
 		// Mock DOM methods
@@ -109,6 +111,10 @@ describe( 'survicate', () => {
 		// Restore original DOM methods
 		document.createElement = originalCreateElement;
 		document.getElementsByTagName = originalGetElementsByTagName;
+
+		// Clean up document and window objects
+		document.body.innerHTML = '';
+		window.location = null;
 	} );
 
 	describe( 'mayWeLoadSurvicateScript', () => {
@@ -124,6 +130,26 @@ describe( 'survicate', () => {
 
 			expect( mayWeLoadSurvicateScript() ).toBe( false );
 			expect( config ).toHaveBeenCalledWith( 'survicate_enabled' );
+		} );
+	} );
+
+	describe( 'isUserOnAnonymousPaths', () => {
+		test.each( [
+			// Anonymous paths should return true
+			[ '/log-in', true ],
+			[ '/setup/onboarding/user', true ],
+			[ '/log-in/lostpassword', true ],
+			[ '/account/user-social', true ],
+			// Non-anonymous paths should return false
+			[ '/sites', false ],
+			[ '/home', false ],
+		] )( 'should return %s for path %s', ( pathname, expected ) => {
+			Object.defineProperty( window, 'location', {
+				value: { pathname },
+				writable: true,
+			} );
+
+			expect( isUserOnAnonymousPaths() ).toBe( expected );
 		} );
 	} );
 
@@ -361,6 +387,63 @@ describe( 'survicate', () => {
 			// Second call should not create another script
 			addSurvicate();
 			expect( document.createElement ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should set visitor traits when user is not on anonymous paths', () => {
+			const mockUser = {
+				email: 'test@example.com',
+			};
+			getCurrentUser.mockReturnValue( mockUser );
+
+			// Set non-anonymous path
+			Object.defineProperty( window, 'location', {
+				value: { pathname: '/home' },
+				writable: true,
+			} );
+
+			global._sva = {
+				setVisitorTraits: jest.fn(),
+			};
+
+			addSurvicate();
+
+			// Simulate script load
+			mockScript.onload();
+
+			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
+				email: 'test@example.com',
+			} );
+		} );
+
+		test( 'should retry setting visitor traits when script is already loaded', () => {
+			const mockUser = {
+				email: 'test@example.com',
+			};
+			getCurrentUser.mockReturnValue( mockUser );
+
+			Object.defineProperty( window, 'location', {
+				value: { pathname: '/home' },
+				writable: true,
+			} );
+
+			global._sva = {
+				setVisitorTraits: jest.fn(),
+			};
+
+			// First call - loads script
+			addSurvicate();
+			mockScript.onload();
+
+			// Clear the mock to track subsequent calls
+			global._sva.setVisitorTraits.mockClear();
+
+			// Second call - should retry setting visitor traits without loading script again
+			addSurvicate();
+
+			// Should have called setVisitorTraits again via setTimeout
+			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
+				email: 'test@example.com',
+			} );
 		} );
 	} );
 } );

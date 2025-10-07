@@ -1,6 +1,6 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -17,6 +17,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-login/site-dropdown';
@@ -27,7 +29,11 @@ function McpComponent( { path } ) {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const { data: sites = [] } = useQuery( sitesQuery( { site_visibility: 'visible' } ) );
-	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const {
+		data: userSettings,
+		isLoading: isLoadingUserSettings,
+		error: userSettingsError,
+	} = useQuery( userSettingsQuery() );
 
 	// Site selector state for disabling MCP access on specific sites
 	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
@@ -49,6 +55,11 @@ function McpComponent( { path } ) {
 			);
 		},
 	} );
+
+	// Handle loading and error states
+	if ( isLoadingUserSettings || userSettingsError ) {
+		return null;
+	}
 
 	// Get account-level tools from user settings using the new nested structure
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -300,6 +311,7 @@ function McpComponent( { path } ) {
 					}
 				) }
 			/>
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			{ renderContent() }
 		</Main>
 	);
