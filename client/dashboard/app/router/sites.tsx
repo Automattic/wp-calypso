@@ -905,17 +905,22 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
+} );
+
+export const siteSettingsRepositoriesIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsRepositoriesRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories' )( {
+		createLazyRoute( 'site-settings-repositories-index' )( {
 			component: d.default,
 		} )
 	)
 );
 
 export const siteSettingsRepositoriesConnectRoute = createRoute( {
-	getParentRoute: () => siteSettingsRoute,
-	path: 'repositories/connect',
+	getParentRoute: () => siteSettingsRepositoriesRoute,
+	path: 'connect',
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
@@ -925,8 +930,8 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 );
 
 export const siteSettingsRepositoriesManageRoute = createRoute( {
-	getParentRoute: () => siteSettingsRoute,
-	path: 'repositories/manage/$deploymentId',
+	getParentRoute: () => siteSettingsRepositoriesRoute,
+	path: 'manage/$deploymentId',
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
@@ -1072,9 +1077,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			siteSettingsWordPressRoute,
 			siteSettingsPHPRoute,
 			siteSettingsAgencyRoute,
-			siteSettingsRepositoriesRoute,
-			siteSettingsRepositoriesConnectRoute,
-			siteSettingsRepositoriesManageRoute,
+			siteSettingsRepositoriesRoute.addChildren( [
+				siteSettingsRepositoriesIndexRoute,
+				siteSettingsRepositoriesConnectRoute,
+				siteSettingsRepositoriesManageRoute,
+			] ),
 			siteSettingsHundredYearPlanRoute,
 			siteSettingsPrimaryDataCenterRoute,
 			siteSettingsStaticFile404Route,

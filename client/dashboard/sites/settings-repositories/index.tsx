@@ -7,7 +7,13 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
+import {
+	siteDeploymentsListRoute,
+	siteRoute,
+	siteSettingsRepositoriesConnectRoute,
+	siteSettingsRepositoriesManageRoute,
+	siteSettingsRepositoriesRoute,
+} from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -52,7 +58,7 @@ function RepositoriesList() {
 			label: __( 'Configure repository' ),
 			callback: ( items ) => {
 				router.navigate( {
-					to: '/sites/$siteSlug/settings/repositories/manage/$deploymentId',
+					to: siteSettingsRepositoriesManageRoute.fullPath,
 					params: {
 						siteSlug: siteSlug,
 						deploymentId: items[ 0 ].id,
@@ -111,11 +117,11 @@ function RepositoriesList() {
 function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
+	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
 	const handleConnectRepository = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
+		navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } );
 	};
 
 	return (
