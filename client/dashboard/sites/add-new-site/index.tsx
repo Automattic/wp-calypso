@@ -18,11 +18,12 @@ import { useAppContext } from '../../app/context';
 import { useHelpCenter } from '../../app/help-center';
 import Column from './column';
 import MenuItem from './menu-item';
+import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite() {
+function AddNewSite( { context }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { onboardingLinks, onboardingLinkSourceQueryArg: context } = useAppContext();
+	const { onboardingLinks } = useAppContext();
 
 	const wordpressClick = () => {
 		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
@@ -73,7 +74,7 @@ function AddNewSite() {
 					title="WordPress.com"
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
-					href={ addQueryArgs( onboardingLinks.default.href, {
+					href={ addQueryArgs( onboardingLinks?.default.href || '/start', {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
@@ -91,7 +92,7 @@ function AddNewSite() {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( onboardingLinks.withAI.href, {
+					href={ addQueryArgs( onboardingLinks?.withAI.href || '/setup/ai-site-builder', {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
