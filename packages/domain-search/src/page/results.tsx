@@ -6,6 +6,7 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
+import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { useDomainSearch } from './context';
 
@@ -13,6 +14,8 @@ export const ResultsPage = () => {
 	const { slots, config } = useDomainSearch();
 
 	const { isLoading, featuredSuggestions, regularSuggestions } = useSuggestionsList();
+
+	useRequestTracking();
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results">

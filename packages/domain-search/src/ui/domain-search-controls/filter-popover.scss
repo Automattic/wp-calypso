@@ -17,6 +17,8 @@
 .domain-search-controls__filters-popover-available-tld {
 	cursor: pointer;
 	padding: 6px 16px;
+	width: 100%;
+	text-align: left;
 
 	&:hover {
 		background: var( --wp-admin-theme-color );
