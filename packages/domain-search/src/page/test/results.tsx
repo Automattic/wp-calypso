@@ -14,9 +14,7 @@ import { ResultsPage } from '../results';
 describe( 'ResultsPage', () => {
 	it( 'renders the search bar, filters and cart', () => {
 		render(
-			<TestDomainSearch
-				cart={ buildCart( { items: [ buildCartItem( { domain: 'test.com' } ) ], total: '$100' } ) }
-			>
+			<TestDomainSearch cart={ buildCart( { items: [ buildCartItem() ], total: '$100' } ) }>
 				<ResultsPage />
 			</TestDomainSearch>
 		);

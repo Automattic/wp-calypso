@@ -30,10 +30,11 @@ export const TestDomainSearch = ( {
 export const TestDomainSearchWithCart = ( {
 	initialCartItems,
 	children,
+	...props
 }: {
 	initialCartItems: SelectedDomain[];
 	children: React.ReactNode;
-} ) => {
+} & Omit< DomainSearchProps, 'cart' > ) => {
 	const [ items, setItems ] = useState( initialCartItems );
 
 	const total = items.reduce( ( acc, item ) => {
@@ -44,6 +45,7 @@ export const TestDomainSearchWithCart = ( {
 
 	return (
 		<TestDomainSearch
+			{ ...props }
 			cart={ buildCart( {
 				items,
 				total: `$${ total }`,

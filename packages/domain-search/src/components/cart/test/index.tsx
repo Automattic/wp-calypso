@@ -7,7 +7,7 @@ import { TestDomainSearchWithCart } from '../../../test-helpers/renderer';
 describe( 'Cart', () => {
 	it( 'renders the mini cart by default when there are items in the cart', () => {
 		render(
-			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem( { domain: 'test.com' } ) ] }>
+			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] }>
 				<Cart />
 			</TestDomainSearchWithCart>
 		);
@@ -33,7 +33,7 @@ describe( 'Cart', () => {
 		const fireEvent = userEvent.setup();
 
 		render(
-			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem( { domain: 'test.com' } ) ] }>
+			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] }>
 				<Cart />
 			</TestDomainSearchWithCart>
 		);
@@ -50,7 +50,7 @@ describe( 'Cart', () => {
 		const fireEvent = userEvent.setup();
 
 		render(
-			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem( { domain: 'test.com' } ) ] }>
+			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] }>
 				<Cart />
 			</TestDomainSearchWithCart>
 		);
@@ -67,7 +67,7 @@ describe( 'Cart', () => {
 		const fireEvent = userEvent.setup();
 
 		render(
-			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem( { domain: 'test.com' } ) ] }>
+			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] }>
 				<Cart />
 			</TestDomainSearchWithCart>
 		);
@@ -86,7 +86,7 @@ describe( 'Cart', () => {
 		const fireEvent = userEvent.setup();
 
 		render(
-			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem( { domain: 'test.com' } ) ] }>
+			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] }>
 				<Cart />
 			</TestDomainSearchWithCart>
 		);
