@@ -26,6 +26,17 @@ const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
 	} );
 };
 
+const getUpdatedSettings = (
+	dataState: SettingsData,
+	originalSettings: SettingsData
+): Partial< SettingsData > => {
+	return Object.fromEntries(
+		Object.entries( dataState ).filter( ( [ key, value ] ) => {
+			return value !== originalSettings[ key as keyof SettingsData ];
+		} )
+	);
+};
+
 export const SubscriptionSettings = () => {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const { data: rawSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -66,15 +77,16 @@ export const SubscriptionSettings = () => {
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-			Object.keys( dataState ).forEach( ( key ) => {
+			const changedSettings = getUpdatedSettings( dataState, originalSettings );
+			Object.entries( changedSettings ).forEach( ( [ key, value ] ) => {
 				recordTracksEvent( 'calypso_dashboard_notifications_emails_settings_updated', {
 					setting_name: key,
-					setting_value: dataState[ key as keyof SettingsData ],
+					setting_value: value,
 				} );
 			} );
 			saveSettings( dataState );
 		},
-		[ dataState, recordTracksEvent, saveSettings ]
+		[ dataState, recordTracksEvent, saveSettings, originalSettings ]
 	);
 
 	const handleChange = useCallback(
