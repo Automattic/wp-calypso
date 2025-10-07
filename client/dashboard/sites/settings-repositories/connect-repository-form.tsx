@@ -300,9 +300,22 @@ export const ConnectRepositoryForm = ( {
 			return;
 		}
 
+		if (
+			selectedRepository?.id === initialValues.selectedRepositoryId &&
+			initialValues.targetDir !== ''
+		) {
+			setFormData( ( prev ) => ( { ...prev, targetDir: initialValues.targetDir } ) );
+			return;
+		}
 		// Only update target directory when repository changes, not when branch changes
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
-	}, [ repositoryChecks?.suggested_directory, selectedRepository?.id ] );
+	}, [
+		repositoryChecks?.suggested_directory,
+		selectedRepository?.id,
+		formData.targetDir,
+		initialValues.selectedRepositoryId,
+		initialValues.targetDir,
+	] );
 
 	const handleSubmit = async () => {
 		if (
