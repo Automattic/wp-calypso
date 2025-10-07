@@ -38,7 +38,10 @@ export default function NotificationsExtras() {
 	const isSaving = mutation.isPending;
 	const onMutate =
 		( group: 'wpcom' | 'jetpack' ) =>
-		( payload: Partial< WpcomNotificationSettings >, origin: string ) => {
+		(
+			payload: Partial< WpcomNotificationSettings >,
+			origin: 'subscribe-all' | 'unsubscribe-all' | 'single'
+		) => {
 			if ( origin === 'subscribe-all' ) {
 				recordTracksEvent( 'calypso_dashboard_notifications_settings_subscribe_all', {
 					settings_group: group,
@@ -51,15 +54,16 @@ export default function NotificationsExtras() {
 				} );
 			}
 
-			Object.keys( payload ).forEach( ( key ) => {
-				recordTracksEvent( 'calypso_dashboard_notifications_settings_single', {
+			Object.entries( payload ).forEach( ( [ key, value ] ) => {
+				recordTracksEvent( 'calypso_dashboard_notifications_settings_subscribe_update', {
 					settings_name: key,
-					settings_value: payload[ key as keyof WpcomNotificationSettings ] as boolean,
+					settings_value: value as boolean,
 					settings_group: group,
+					update_mechanism: origin,
 				} );
-
-				mutation.mutate( payload );
 			} );
+
+			mutation.mutate( payload );
 		};
 
 	return (
