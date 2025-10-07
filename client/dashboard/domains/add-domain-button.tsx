@@ -1,8 +1,7 @@
-import { Button, Dropdown } from '@wordpress/components';
+import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import RouterLinkMenuItem from '../components/router-link-menu-item';
 
 export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 	return (
@@ -21,8 +20,8 @@ export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 			) }
 			renderContent={ () => (
 				<>
-					<RouterLinkMenuItem
-						to={
+					<MenuItem
+						href={
 							siteSlug
 								? addQueryArgs( '/setup/domain', {
 										siteSlug,
@@ -33,9 +32,9 @@ export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 						icon={ search }
 					>
 						{ __( 'Search domain names' ) }
-					</RouterLinkMenuItem>
-					<RouterLinkMenuItem
-						to={
+					</MenuItem>
+					<MenuItem
+						href={
 							siteSlug
 								? addQueryArgs( '/setup/domain/use-my-domain', { siteSlug } )
 								: '/setup/domain-transfer'
@@ -43,8 +42,8 @@ export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 						iconPosition="left"
 						icon={ globe }
 					>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
-					</RouterLinkMenuItem>
+						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain names' ) }
+					</MenuItem>
 				</>
 			) }
 		/>
