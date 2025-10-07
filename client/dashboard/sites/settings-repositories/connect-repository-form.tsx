@@ -181,13 +181,13 @@ export const ConnectRepositoryForm = ( {
 		isLoading: isLoadingInstallations,
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
+	const [ isModifiedByUser, setIsModifiedByUser ] = useState< boolean >( false );
 	const { installGithub } = useInstallGithub();
 	let hasEditingDefaultValues = false;
 	if (
 		initialValues.selectedRepositoryId !== '' &&
 		initialValues.selectedRepositoryId === formData.selectedRepositoryId &&
-		initialValues.branch === formData.branch &&
-		initialValues.targetDir === formData.targetDir
+		! isModifiedByUser
 	) {
 		hasEditingDefaultValues = true;
 	}
@@ -220,20 +220,12 @@ export const ConnectRepositoryForm = ( {
 			return;
 		}
 
-		if (
-			selectedRepository?.id === initialValues.selectedRepositoryId &&
-			initialValues.branch !== ''
-		) {
-			setFormData( ( prev ) => ( { ...prev, branch: initialValues.branch } ) );
+		if ( selectedRepository?.default_branch ) {
+			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
 		} else if ( ! selectedRepository ) {
 			setFormData( ( prev ) => ( { ...prev, branch: '' } ) );
 		}
-	}, [
-		initialValues.selectedRepositoryId,
-		initialValues.branch,
-		selectedRepository,
-		hasEditingDefaultValues,
-	] );
+	}, [ selectedRepository, hasEditingDefaultValues ] );
 
 	const { data: remoteBranches = [], isLoading: isLoadingBranches } = useQuery( {
 		...githubRepositoryBranchesQuery(
@@ -271,6 +263,8 @@ export const ConnectRepositoryForm = ( {
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
+		setIsModifiedByUser( true );
+
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
 
