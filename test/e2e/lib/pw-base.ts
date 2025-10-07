@@ -35,6 +35,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	GitHubLoginPage,
+	ImportContentFromMediumPage,
 	IncognitoPage,
 	JetpackTrafficPage,
 	LoginPage,
@@ -145,6 +146,10 @@ export const test = base.extend< {
 	 * Page object representing the Github login page.
 	 */
 	pageGitHubLogin: GitHubLoginPage;
+	/**
+	 * Page object representing the Import Content from Medium page.
+	 */
+	pageImportContentFromMedium: ImportContentFromMediumPage;
 	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
@@ -263,6 +268,10 @@ export const test = base.extend< {
 	pageGitHubLogin: async ( { page }, use ) => {
 		const gitHubLoginPage = new GitHubLoginPage( page );
 		await use( gitHubLoginPage );
+	},
+	pageImportContentFromMedium: async ( { page }, use ) => {
+		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
+		await use( importContentFromMediumPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );

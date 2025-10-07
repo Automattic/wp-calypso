@@ -11,41 +11,30 @@ test.describe(
 	},
 	() => {
 		test( 'As a New WordPress.com free plan user with a simple site, I can use the wp-admin Importers List Medium link to import my content from my medium.com account', async ( {
-			helperData,
-			page,
+			pageImportContentFromMedium,
 			sitePublic,
 		}, workerInfo ) => {
 			test.skip( workerInfo.project.name !== 'chrome', 'The import tests only run in Chrome' );
 
 			await test.step( 'When I visit the Medium importer as coming from the wp-admin Tools > Import page', async function () {
-				await page.goto(
-					helperData.getCalypsoURL( 'setup/site-setup/importerMedium', {
-						ref: 'wp-admin-importers-list-direct-importer',
-						siteSlug: sitePublic.blog_details.site_slug,
-						isUploadInProgress: 'false',
-					} )
-				);
+				await pageImportContentFromMedium.visit( sitePublic.blog_details.site_slug );
 			} );
 
 			await test.step( 'Then I see the Import content from Medium page', async function () {
-				await expect(
-					page.getByRole( 'heading', { name: 'Import content from Medium' } )
-				).toBeVisible();
+				await expect( pageImportContentFromMedium.heading ).toBeVisible();
 			} );
 
 			await test.step( 'When I upload a valid Medium export file', async function () {
-				await page.locator( 'input[type="file"]' ).setInputFiles( TEST_MEDIUM_EXPORT_FILE_PATH );
+				await pageImportContentFromMedium.uploadExportFile( TEST_MEDIUM_EXPORT_FILE_PATH );
 			} );
 
 			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
-				await expect(
-					page.getByRole( 'heading', { name: 'Import content from Medium' } )
-				).toBeVisible();
-				await expect( page.getByText( 'Your file is ready to be imported' ) ).toBeVisible( {
+				await expect( pageImportContentFromMedium.heading ).toBeVisible();
+				await expect( pageImportContentFromMedium.yourFileIsReadyText ).toBeVisible( {
 					timeout: 30000,
 				} );
-				await expect( page.getByRole( 'button', { name: 'Import' } ) ).toBeVisible();
-				await expect( page.getByRole( 'button', { name: 'Import' } ) ).toBeEnabled();
+				await expect( pageImportContentFromMedium.importButton ).toBeVisible();
+				await expect( pageImportContentFromMedium.importButton ).toBeEnabled();
 			} );
 		} );
 
