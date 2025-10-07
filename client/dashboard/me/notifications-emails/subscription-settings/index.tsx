@@ -77,14 +77,18 @@ export const SubscriptionSettings = () => {
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-			const changedSettings = getUpdatedSettings( dataState, originalSettings );
-			Object.entries( changedSettings ).forEach( ( [ key, value ] ) => {
-				recordTracksEvent( 'calypso_dashboard_notifications_emails_settings_updated', {
-					setting_name: key,
-					setting_value: value,
-				} );
+
+			saveSettings( dataState, {
+				onSuccess: () => {
+					const changedSettings = getUpdatedSettings( dataState, originalSettings );
+					Object.entries( changedSettings ).forEach( ( [ key, value ] ) => {
+						recordTracksEvent( 'calypso_dashboard_notifications_emails_settings_updated', {
+							setting_name: key,
+							setting_value: value,
+						} );
+					} );
+				},
 			} );
-			saveSettings( dataState );
 		},
 		[ dataState, recordTracksEvent, saveSettings, originalSettings ]
 	);
