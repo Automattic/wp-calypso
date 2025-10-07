@@ -6,6 +6,7 @@ import {
 	githubWorkflowsQuery,
 } from '@automattic/api-queries';
 import { useQuery, UseMutationResult } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	ComboboxControl,
@@ -18,9 +19,11 @@ import {
 	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -31,6 +34,7 @@ import type {
 	CreateAndUpdateCodeDeploymentVariables,
 	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
+import type { NavigateOptions } from '@tanstack/react-router';
 
 interface ConnectRepositoryFormProps {
 	onCancel: () => void;
@@ -42,6 +46,9 @@ interface ConnectRepositoryFormProps {
 	>;
 	initialValues: ConnectRepositoryFormData;
 	submitText: string;
+	successMessage: string;
+	errorMessage: string;
+	navigateFrom: NavigateOptions[ 'from' ];
 }
 
 export interface ConnectRepositoryFormData {
@@ -173,7 +180,12 @@ export const ConnectRepositoryForm = ( {
 	mutation,
 	initialValues,
 	submitText,
+	successMessage,
+	errorMessage,
+	navigateFrom,
 }: ConnectRepositoryFormProps ) => {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const navigate = useNavigate( { from: navigateFrom } );
 	const {
 		data: installations = [],
 		refetch: refetchGithubInstallations,
@@ -316,7 +328,19 @@ export const ConnectRepositoryForm = ( {
 			mutationData.workflow_path = formData.workflowPath || '.github/workflows/wpcom.yml';
 		}
 
-		await mutation.mutateAsync( mutationData );
+		await mutation.mutateAsync( mutationData, {
+			onSuccess: async () => {
+				createSuccessNotice( successMessage, {
+					type: 'snackbar',
+				} );
+				navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+			},
+			onError: ( error ) => {
+				createErrorNotice( sprintf( errorMessage, { reason: error.message } ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	const branchOptions = useMemo( () => {
