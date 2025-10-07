@@ -294,7 +294,7 @@ export const test = base.extend< {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, helperData }, use ) => {
+	sitePublic: async ( { page, clientEmail, helperData }, use ) => {
 		const testUser = helperData.getNewTestUser();
 		const siteName = helperData.getBlogName();
 		const loginPage = new LoginPage( page );
@@ -310,6 +310,14 @@ export const test = base.extend< {
 			name: siteName,
 			title: siteName,
 		} );
+		const message = await clientEmail.getLastMatchingMessage( {
+			inboxId: testUser.inboxId,
+			sentTo: testUser.email,
+			subject: 'Activate',
+		} );
+		const links = await clientEmail.getLinksFromMessage( message );
+		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
+		await page.goto( activationLink );
 		await use( site );
 		await restAPIClient.deleteSite( {
 			id: site.blog_details.blogid,
