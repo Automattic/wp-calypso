@@ -16,9 +16,7 @@ const AVAILABLE_DOMAIN_STATUSES = [
 ];
 
 /**
- * Determines whether the availability notice should be hidden for a given domain availability
- * @param availability - Domain availability returned from the availability endpoint
- * @returns True if the availability notice should be hidden, false otherwise.
+ * Determines whether the availability notice should be hidden for a given domain availability.
  */
 const shouldHideAvailabilityNotice = (
 	availability: DomainAvailability,

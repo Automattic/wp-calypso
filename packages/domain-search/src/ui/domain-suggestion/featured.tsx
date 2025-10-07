@@ -73,6 +73,7 @@ const Featured = ( {
 				role="listitem"
 				title={ `${ domain }.${ tld }` }
 				ref={ containerRef }
+				data-testid="featured-suggestion"
 				activeQuery={ activeQuery }
 				className={ clsx( 'domain-suggestion-featured', {
 					'domain-suggestion-featured--highlighted': isHighlighted,

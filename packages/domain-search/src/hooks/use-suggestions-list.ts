@@ -15,7 +15,7 @@ export const useSuggestionsList = () => {
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
 		...queries.freeSuggestion( query ),
-		enabled: true,
+		enabled: config.skippable,
 	} );
 
 	const { isLoading: isLoadingQueryAvailability } = useQuery( {

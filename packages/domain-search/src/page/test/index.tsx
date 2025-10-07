@@ -16,7 +16,7 @@ describe( 'DomainSearch', () => {
 	} );
 
 	it( 'renders the results page when a query is provided', () => {
-		mockGetSuggestions( [] );
+		mockGetSuggestions( 'test', [] );
 
 		render(
 			<DomainSearch
