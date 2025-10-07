@@ -42,7 +42,7 @@ const PlanButton = ( {
 			'is-stuck': isStuck,
 			'is-large-currency': isLargeCurrency,
 		},
-		disabled && 'is-disabled'
+		disabled && 'disabled'
 	);
 
 	return (
