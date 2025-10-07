@@ -64,6 +64,9 @@ export const domainRoute = createRoute( {
 			},
 		],
 	} ),
+	staticData: {
+		breadcrumbTitle: __( 'Overview' ),
+	},
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	loader: async ( { params: { domainName }, location } ) => {
@@ -107,13 +110,6 @@ export const domainRoute = createRoute( {
 );
 
 export const domainOverviewRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Overview' ),
-			},
-		],
-	} ),
 	getParentRoute: () => domainRoute,
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
@@ -146,6 +142,11 @@ export const domainDnsRoute = createRoute( {
 	path: 'dns',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainDnsQuery( domainName ) ),
+} );
+
+export const domainDnsIndexRoute = createRoute( {
+	getParentRoute: () => domainDnsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
@@ -162,8 +163,8 @@ export const domainDnsAddRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'dns/add',
+	getParentRoute: () => domainDnsRoute,
+	path: 'add',
 } ).lazy( () =>
 	import( '../../domains/dns/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-add' )( {
@@ -180,8 +181,8 @@ export const domainDnsEditRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'dns/edit',
+	getParentRoute: () => domainDnsRoute,
+	path: 'edit',
 	beforeLoad: async ( { params: { domainName }, search } ) => {
 		// If the provided recordId doesn't exist, redirect to the DNS overview page
 		const { recordId } = search as { recordId: string | undefined };
@@ -552,9 +553,7 @@ export const createDomainsRoutes = () => {
 		domainsRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
-			domainDnsRoute,
-			domainDnsAddRoute,
-			domainDnsEditRoute,
+			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
 			domainConnectionSetupRoute,
 			domainForwardingRoute,
 			domainForwardingAddRoute,

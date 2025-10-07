@@ -5,13 +5,17 @@ import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs
 export default function Breadcrumbs( { length }: { length: number } ) {
 	const matches = useMatches();
 
-	const items: BreadcrumbItemProps[] = matches.slice( -length ).map( ( match ) => {
-		const title = match.meta?.find( ( meta ) => meta?.title )?.title;
-		return {
-			label: title || '',
-			href: match.pathname,
-		};
-	} );
+	const items: BreadcrumbItemProps[] = matches
+		.map( ( match ) => {
+			const title =
+				match.staticData.breadcrumbTitle ?? match.meta?.find( ( meta ) => meta?.title )?.title;
+			return {
+				label: title || '',
+				href: match.pathname,
+			};
+		} )
+		.filter( ( { label } ) => Boolean( label ) )
+		.slice( -length );
 
 	return (
 		<BreadcrumbsComponent
