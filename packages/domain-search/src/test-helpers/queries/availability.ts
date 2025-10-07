@@ -8,9 +8,9 @@ export const mockGetAvailabilityQuery = ( {
 	params: { domainName: string };
 	availability: DomainAvailability | Error;
 } ) => {
-	const request = nock( 'https://public-api.wordpress.com' ).get(
-		`/rest/v1.3/domains/${ domainName }/is-available`
-	);
+	const request = nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.3/domains/${ domainName }/is-available` )
+		.query( true );
 
 	if ( availability instanceof Error ) {
 		return request.replyWithError( availability );
