@@ -38,16 +38,23 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	};
 
 	const handleChange = ( item: SettingsOption ) => {
-		updateSettings( {
-			data: {
-				blogs: [
-					{
-						blog_id: siteId,
-						devices: [ { ...settings, [ item.id ]: item.value } as DeviceNotificationSettings ],
-					},
-				],
+		updateSettings(
+			{
+				data: {
+					blogs: [
+						{
+							blog_id: siteId,
+							devices: [ { ...settings, [ item.id ]: item.value } as DeviceNotificationSettings ],
+						},
+					],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const askForConfirmation = () => {
@@ -105,12 +112,19 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 			return;
 		}
 
-		updateSettings( {
-			data: {
-				blogs: [ blogSettings ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ blogSettings ],
+				},
+				applyToAll: true,
 			},
-			applyToAll: true,
-		} );
+			{
+				onSuccess: () => {
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	return (

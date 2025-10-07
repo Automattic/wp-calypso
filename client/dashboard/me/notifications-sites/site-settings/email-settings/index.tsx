@@ -15,11 +15,18 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 	const settings = emailSettings ?? null;
 
 	const handleChange = ( updated: SettingsOption ) => {
-		updateSettings( {
-			data: {
-				blogs: [ { blog_id: siteId, email: { ...settings, [ updated.id ]: updated.value } } ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ { blog_id: siteId, email: { ...settings, [ updated.id ]: updated.value } } ],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const askForConfirmation = () => {
@@ -31,12 +38,19 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 			return;
 		}
 
-		updateSettings( {
-			data: {
-				blogs: [ blogSettings ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ blogSettings ],
+				},
+				applyToAll: true,
 			},
-			applyToAll: true,
-		} );
+			{
+				onSuccess: () => {
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(

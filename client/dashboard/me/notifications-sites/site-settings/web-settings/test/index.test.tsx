@@ -208,6 +208,9 @@ describe( 'WebSettings', () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect(
+				screen.queryByRole( 'dialog', { name: 'Apply to all sites?' } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

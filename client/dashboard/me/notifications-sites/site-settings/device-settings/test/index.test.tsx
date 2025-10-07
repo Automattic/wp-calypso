@@ -304,6 +304,10 @@ describe( 'DevicesSettings', () => {
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
 		} );
+
+		expect(
+			screen.queryByRole( 'dialog', { name: 'Apply to all sites?' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'updates the selected device settings when the option is changed', async () => {

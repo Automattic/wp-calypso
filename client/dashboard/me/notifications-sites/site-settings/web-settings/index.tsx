@@ -35,12 +35,19 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 			return;
 		}
 
-		updateSettings( {
-			data: {
-				blogs: [ blogSettings ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ blogSettings ],
+				},
+				applyToAll: true,
 			},
-			applyToAll: true,
-		} );
+			{
+				onSuccess: () => {
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(
