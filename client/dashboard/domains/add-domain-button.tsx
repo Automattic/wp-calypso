@@ -20,29 +20,23 @@ export function AddDomainButton( { siteSlug }: { siteSlug?: string } ) {
 			) }
 			renderContent={ () => (
 				<>
-					<MenuItem
-						href={
-							siteSlug
-								? addQueryArgs( '/setup/domain', {
-										siteSlug,
-								  } )
-								: '/start/domain'
-						}
-						iconPosition="left"
-						icon={ search }
-					>
-						{ __( 'Search domain names' ) }
+					<MenuItem iconPosition="left" icon={ search }>
+						<Button
+							href={ siteSlug ? addQueryArgs( '/setup/domain', { siteSlug } ) : '/start/domain' }
+						>
+							{ __( 'Search domain names' ) }
+						</Button>
 					</MenuItem>
-					<MenuItem
-						href={
-							siteSlug
-								? addQueryArgs( '/setup/domain/use-my-domain', { siteSlug } )
-								: '/setup/domain-transfer'
-						}
-						iconPosition="left"
-						icon={ globe }
-					>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain names' ) }
+					<MenuItem iconPosition="left" icon={ globe }>
+						<Button
+							href={
+								siteSlug
+									? addQueryArgs( '/setup/domain/use-my-domain', { siteSlug } )
+									: '/setup/domain-transfer'
+							}
+						>
+							{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+						</Button>
 					</MenuItem>
 				</>
 			) }
