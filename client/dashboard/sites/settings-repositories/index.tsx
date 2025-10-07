@@ -115,8 +115,6 @@ function SiteRepositories() {
 	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories' } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
-	const [ showBackToDeployments, setShowBackToDeployments ] = useState( true );
-
 	const handleConnectRepository = () => {
 		navigate( { to: '/sites/$siteSlug/settings/repositories/connect' } );
 	};
@@ -154,27 +152,24 @@ function SiteRepositories() {
 					<RepositoriesList />
 				</HostingFeatureGatedWithCallout>
 			</PageLayout>
-			{ showBackToDeployments && (
-				<HStack className="dashboard-snackbars">
-					<Snackbar
-						icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
-						actions={ [
-							{
-								label: __( 'Navigate' ),
-								onClick: () => {
-									navigate( {
-										to: siteDeploymentsListRoute.fullPath,
-										params: { siteSlug },
-									} );
-									setShowBackToDeployments( false );
-								},
+			<HStack className="dashboard-snackbars">
+				<Snackbar
+					icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
+					actions={ [
+						{
+							label: __( 'Navigate' ),
+							onClick: () => {
+								navigate( {
+									to: siteDeploymentsListRoute.fullPath,
+									params: { siteSlug },
+								} );
 							},
-						] }
-					>
-						{ __( 'Back to Deployments' ) }
-					</Snackbar>
-				</HStack>
-			) }
+						},
+					] }
+				>
+					{ __( 'Back to Deployments' ) }
+				</Snackbar>
+			</HStack>
 		</>
 	);
 }
