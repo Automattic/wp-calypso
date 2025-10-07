@@ -66,8 +66,10 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 	const { setShowHelpCenter } = useHelpCenter();
 
 	const isCiab = appName === 'CIAB';
+	// For the main AI Site Builder version.
 	let aiHref = `/setup/ai-site-builder?source=${ context }&ref=new-site-popover`;
 	if ( isCiab ) {
+		// For the standalone Spec version, currently behind a feature flag.
 		aiHref = `/setup/ai-site-builder-spec?source=ciab-${ context }&ref=new-site-popover`;
 	}
 
