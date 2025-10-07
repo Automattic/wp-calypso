@@ -31,12 +31,24 @@ export function AgentUIConversationView( {
 	}, [ onClose ] );
 
 	if ( children ) {
+		// Check if there's an AgentUIHeader component among the children
+		const hasHeader = React.Children.toArray( children ).some(
+			( child ) => {
+				return (
+					React.isValidElement( child ) &&
+					( child.type === AgentUIHeader ||
+						( typeof child.type === 'function' &&
+							child.type.name === 'AgentUIHeader' ) )
+				);
+			}
+		);
+
 		return (
 			<div
 				data-slot="conversation-view"
 				className={ `${ styles.container }${
-					className ? ` ${ className }` : ''
-				}` }
+					hasHeader ? ` ${ styles.withHeader }` : ''
+				}${ className ? ` ${ className }` : '' }` }
 			>
 				{ children }
 			</div>
