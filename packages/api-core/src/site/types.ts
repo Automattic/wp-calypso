@@ -54,6 +54,7 @@ export interface Site {
 	is_coming_soon: boolean;
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
+	is_wpcom_flex: boolean;
 	is_wpcom_staging_site: boolean;
 	is_vip: boolean;
 	lang: string;
