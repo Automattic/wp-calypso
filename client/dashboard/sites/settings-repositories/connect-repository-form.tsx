@@ -181,16 +181,7 @@ export const ConnectRepositoryForm = ( {
 		isLoading: isLoadingInstallations,
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
-	const [ isModifiedByUser, setIsModifiedByUser ] = useState< boolean >( false );
 	const { installGithub } = useInstallGithub();
-	let hasEditingDefaultValues = false;
-	if (
-		initialValues.selectedRepositoryId !== '' &&
-		initialValues.selectedRepositoryId === formData.selectedRepositoryId &&
-		! isModifiedByUser
-	) {
-		hasEditingDefaultValues = true;
-	}
 
 	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
 		if ( ! installations.length ) {
@@ -216,16 +207,10 @@ export const ConnectRepositoryForm = ( {
 	}, [ repositories, formData.selectedRepositoryId ] );
 
 	useEffect( () => {
-		if ( hasEditingDefaultValues ) {
-			return;
-		}
-
-		if ( selectedRepository?.default_branch ) {
+		if ( selectedRepository?.default_branch && ! formData.branch ) {
 			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
-		} else if ( ! selectedRepository ) {
-			setFormData( ( prev ) => ( { ...prev, branch: '' } ) );
 		}
-	}, [ selectedRepository, hasEditingDefaultValues ] );
+	}, [ formData.branch, selectedRepository?.default_branch ] );
 
 	const { data: remoteBranches = [], isLoading: isLoadingBranches } = useQuery( {
 		...githubRepositoryBranchesQuery(
@@ -263,8 +248,6 @@ export const ConnectRepositoryForm = ( {
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
-		setIsModifiedByUser( true );
-
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
 
@@ -303,13 +286,13 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	useEffect( () => {
-		if ( ! repositoryChecks?.suggested_directory || hasEditingDefaultValues ) {
+		if ( ! repositoryChecks?.suggested_directory || formData.targetDir ) {
 			return;
 		}
 
 		// Only update target directory when repository changes, not when branch changes
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
-	}, [ repositoryChecks?.suggested_directory, hasEditingDefaultValues ] );
+	}, [ repositoryChecks?.suggested_directory, formData.targetDir ] );
 
 	const handleSubmit = async () => {
 		if (
