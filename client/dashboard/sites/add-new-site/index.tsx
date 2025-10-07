@@ -65,7 +65,11 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 
 	const { setShowHelpCenter } = useHelpCenter();
 
-	const sourcePrefix = appName === 'CIAB' ? 'ciab-' : '';
+	const isCiab = appName === 'CIAB';
+	let aiHref = `/setup/ai-site-builder?source=${ context }&ref=new-site-popover`;
+	if ( isCiab ) {
+		aiHref = `/setup/ai-site-builder-spec?source=ciab-${ context }&ref=new-site-popover`;
+	}
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
@@ -90,7 +94,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ `/setup/ai-site-builder?source=${ sourcePrefix }${ context }&ref=new-site-popover` }
+					href={ aiHref }
 					aria-label={ __( 'Build a new site with AI' ) }
 				/>
 				<MenuItem
