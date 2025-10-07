@@ -14,11 +14,59 @@ export interface Email {
 	provider: EmailProvider;
 	providerDisplayName: string;
 	domainName: string;
+	subscriptionId?: string;
 	siteId?: string;
 	siteName?: string;
 	forwardingTo?: string;
 	storageUsed?: number;
 	storageLimit?: number;
-	createdDate: string;
-	status: 'active' | 'pending' | 'suspended';
+	canUserManage: boolean;
+	status:
+		| 'active'
+		| 'pending'
+		| 'suspended'
+		| 'google_pending_tos_acceptance'
+		| 'unverified_forwards'
+		| 'unused_mailboxes';
+}
+
+export interface DomainBinding {
+	domain: string;
+	is_primary: boolean;
+}
+
+export type Role = 'standard';
+
+export type WarningType = 'action_required' | string;
+
+export interface Warning {
+	warning_type: WarningType;
+	warning_slug: string;
+	message: string;
+}
+
+// Email shapes
+export interface EmailBox {
+	target?: string;
+	is_verified?: boolean;
+	mailbox: string;
+	domain: string;
+	email_type: 'email' | 'email_forward';
+	role: Role;
+	warnings: Warning[]; // often empty
+}
+
+// Account type discriminator
+export type AccountType = 'titan' | 'email_forwarding' | 'google_workspace';
+
+// Base account fields (shared)
+export interface EmailAccount {
+	account_type: AccountType;
+	account_id: number | null;
+	product_slug: string | null;
+	maximum_mailboxes: number;
+	subscription_id: number | null;
+	domains: DomainBinding[];
+	warnings: Warning[];
+	emails: EmailBox[];
 }

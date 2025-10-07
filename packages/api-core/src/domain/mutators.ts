@@ -11,3 +11,27 @@ export function resendIcannVerificationEmail( domainName: string ): Promise< voi
 		path: `/domains/${ domainName }/resend-icann`,
 	} );
 }
+
+export function resendVerifyEmailForward(
+	domainName: string,
+	mailbox: string,
+	destination: string
+): Promise< void > {
+	return wpcom.req.post(
+		`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
+			mailbox
+		) }/${ encodeURIComponent( destination ) }/resend-verification`
+	);
+}
+
+export function deleteEmailForward(
+	domainName: string,
+	mailbox: string,
+	destination: string
+): Promise< void > {
+	return wpcom.req.post(
+		`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
+			mailbox
+		) }/${ encodeURIComponent( destination ) }/delete`
+	);
+}
