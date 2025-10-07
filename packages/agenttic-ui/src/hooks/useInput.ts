@@ -6,6 +6,7 @@ interface UseInputProps {
 	onSubmit: ( value: string ) => void;
 	isProcessing: boolean;
 	isInputOverLimit?: boolean;
+	floatingChatState?: string;
 }
 
 export interface UseInputReturn {
@@ -23,6 +24,7 @@ export function useInput( {
 	onSubmit,
 	isProcessing,
 	isInputOverLimit = false,
+	floatingChatState,
 }: UseInputProps ): UseInputReturn {
 	// No need for setValue callback since it's passed as prop
 
@@ -76,10 +78,10 @@ export function useInput( {
 		[ value, isProcessing, isInputOverLimit, onSubmit, clear ]
 	);
 
-	// Adjust height when value changes
+	// Adjust height when value changes or when transitioning to expanded view
 	useEffect( () => {
 		adjustHeight();
-	}, [ value, adjustHeight ] );
+	}, [ value, floatingChatState, adjustHeight ] );
 
 	return {
 		value,

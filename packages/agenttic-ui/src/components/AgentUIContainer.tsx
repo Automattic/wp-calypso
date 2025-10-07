@@ -180,6 +180,7 @@ export function AgentUIContainer( {
 		},
 		isProcessing,
 		isInputOverLimit,
+		floatingChatState: chat.state,
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
