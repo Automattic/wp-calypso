@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import AIIcon from 'calypso/assets/images/performance-profiler/ai-icon.svg';
 import AILoadingIcon from 'calypso/assets/images/performance-profiler/ai-loading-icon.svg';
+import { ButtonStack } from '../../components/button-stack';
 import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 
@@ -37,9 +38,9 @@ const LLMNotice = ( {
 						<Text>{ children }</Text>
 					</HStack>
 					{ actions && (
-						<HStack justify="flex-end" alignment="center">
+						<ButtonStack justify="flex-end" alignment="center">
 							{ actions }
-						</HStack>
+						</ButtonStack>
 					) }
 				</HStack>
 			</CardBody>
