@@ -2,11 +2,19 @@ import nock from 'nock';
 import type { DomainAvailability } from '@automattic/api-core';
 
 export const mockGetAvailabilityQuery = ( {
+	params: { domainName },
 	availability,
 }: {
-	availability: DomainAvailability;
+	params: { domainName: string };
+	availability: DomainAvailability | Error;
 } ) => {
-	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.3/domains/${ availability.domain_name }/is-available` )
-		.reply( 200, availability );
+	const request = nock( 'https://public-api.wordpress.com' ).get(
+		`/rest/v1.3/domains/${ domainName }/is-available`
+	);
+
+	if ( availability instanceof Error ) {
+		return request.replyWithError( availability );
+	}
+
+	return request.reply( 200, availability );
 };

@@ -58,6 +58,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'renders a single featured suggestion if searching for a FQDN', async () => {
 			mockGetAvailabilityQuery( {
+				params: { domainName: 'test.com' },
 				availability: buildAvailability( {
 					domain_name: 'test.com',
 					status: DomainAvailabilityStatus.AVAILABLE,
@@ -96,9 +97,12 @@ describe( 'ResultsPage', () => {
 			expect( testOrg ).not.toHaveTextContent( 'Recommended' );
 			expect( testOrg ).not.toHaveTextContent( 'Best alternative' );
 		} );
+	} );
 
+	describe( 'TLD deemphasis', () => {
 		it( 'removes deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
 			mockGetAvailabilityQuery( {
+				params: { domainName: 'test.com' },
 				availability: buildAvailability( {
 					domain_name: 'test.com',
 					status: DomainAvailabilityStatus.AVAILABLE,
@@ -126,6 +130,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'removes deemphasized TLDs from featured suggestions', async () => {
 			mockGetAvailabilityQuery( {
+				params: { domainName: 'test.com' },
 				availability: buildAvailability( {
 					domain_name: 'test.com',
 					status: DomainAvailabilityStatus.AVAILABLE,
@@ -166,6 +171,113 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'premium domain suggestions', () => {
+		it( 'renders premium suggestion if the availability query is successful', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-premium.com', is_premium: true } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-premium.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-premium.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+					is_supported_premium_domain: true,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-premium.com' ) ).toBeInTheDocument();
+		} );
+
+		it( 'removes premium suggestion if the availability query fails', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-failed.com', is_premium: true } ),
+					buildSuggestion( { domain_name: 'test-supported.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-failed.com' },
+				availability: new Error( 'Test error' ),
+			} );
+
+			render(
+				<TestDomainSearch query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-failed.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'removes premium suggestion if is_supported_premium_domain is not present in the availability query', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-failed.com', is_premium: true } ),
+					buildSuggestion( { domain_name: 'test-supported.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-failed.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-failed.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-failed.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'removes premium suggestion if the availability status is different from available premium', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-failed.com', is_premium: true } ),
+					buildSuggestion( { domain_name: 'test-supported.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-failed.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-failed.com',
+					status: DomainAvailabilityStatus.NOT_REGISTRABLE,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-failed.com' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 'renders the BeforeResults slot if passed', () => {
 		render(
 			<TestDomainSearch slots={ { BeforeResults: () => <div>Before Results</div> } }>
@@ -192,6 +304,7 @@ describe( 'ResultsPage', () => {
 		mockGetSuggestionsQuery( { params: { query: 'wordpress.com' }, suggestions: [] } );
 
 		mockGetAvailabilityQuery( {
+			params: { domainName: 'wordpress.com' },
 			availability: buildAvailability( {
 				domain_name: 'wordpress.com',
 				tld: 'com',
@@ -217,6 +330,7 @@ describe( 'ResultsPage', () => {
 		mockGetSuggestionsQuery( { params: { query: 'a8ctesting.com' }, suggestions: [] } );
 
 		mockGetAvailabilityQuery( {
+			params: { domainName: 'a8ctesting.com' },
 			availability: buildAvailability( {
 				domain_name: 'a8ctesting.com',
 				tld: 'com',
@@ -299,14 +413,20 @@ describe( 'ResultsPage', () => {
 			const onQueryAvailabilityCheck = jest.fn();
 
 			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-available.com' },
 				availability: buildAvailability( {
-					domain_name: 'test.com',
+					domain_name: 'test-available.com',
 					status: DomainAvailabilityStatus.AVAILABLE,
 				} ),
 			} );
 
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-available.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-available.com' } ) ],
+			} );
+
 			render(
-				<TestDomainSearch events={ { onQueryAvailabilityCheck } } query="test.com">
+				<TestDomainSearch events={ { onQueryAvailabilityCheck } } query="test-available.com">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
@@ -314,7 +434,7 @@ describe( 'ResultsPage', () => {
 			await waitFor( () => {
 				expect( onQueryAvailabilityCheck ).toHaveBeenCalledWith(
 					DomainAvailabilityStatus.AVAILABLE,
-					'test.com',
+					'test-available.com',
 					expect.any( Number )
 				);
 			} );

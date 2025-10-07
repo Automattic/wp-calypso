@@ -5,7 +5,13 @@ import type { DomainSearchProps } from '../page/types';
 
 export const TestDomainSearch = ( {
 	cart = buildCart(),
-	queryClient = new QueryClient(),
+	queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: {
+				retry: false,
+			},
+		},
+	} ),
 	...props
 }: Partial< DomainSearchProps > & { queryClient?: QueryClient; children: React.ReactNode } ) => {
 	const contextValue = useDomainSearchContextValue( { cart, ...props } );
