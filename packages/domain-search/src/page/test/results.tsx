@@ -42,19 +42,16 @@ describe( 'ResultsPage', () => {
 			const recommended = await screen.findByTitle( 'test.com' );
 
 			expect( recommended ).toBeInTheDocument();
-			expect( recommended ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
 			expect( recommended ).toHaveTextContent( 'Recommended' );
 
 			const bestAlternative = await screen.findByTitle( 'test.net' );
 
 			expect( bestAlternative ).toBeInTheDocument();
-			expect( bestAlternative ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
 			expect( bestAlternative ).toHaveTextContent( 'Best alternative' );
 
 			const regular = await screen.findByTitle( 'test.org' );
 
 			expect( regular ).toBeInTheDocument();
-			expect( regular ).toHaveAttribute( 'data-testid', 'suggestion' );
 			expect( regular ).not.toHaveTextContent( 'Recommended' );
 			expect( regular ).not.toHaveTextContent( 'Best alternative' );
 		} );
@@ -85,17 +82,19 @@ describe( 'ResultsPage', () => {
 			const exactMatch = await screen.findByTitle( 'test.com' );
 
 			expect( exactMatch ).toBeInTheDocument();
-			expect( exactMatch ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
+			expect( exactMatch ).toHaveTextContent( "It's available!" );
 
 			const testNet = await screen.findByTitle( 'test.net' );
 
 			expect( testNet ).toBeInTheDocument();
-			expect( testNet ).toHaveAttribute( 'data-testid', 'suggestion' );
+			expect( testNet ).not.toHaveTextContent( 'Recommended' );
+			expect( testNet ).not.toHaveTextContent( 'Best alternative' );
 
 			const testOrg = await screen.findByTitle( 'test.org' );
 
 			expect( testOrg ).toBeInTheDocument();
-			expect( testOrg ).toHaveAttribute( 'data-testid', 'suggestion' );
+			expect( testOrg ).not.toHaveTextContent( 'Recommended' );
+			expect( testOrg ).not.toHaveTextContent( 'Best alternative' );
 		} );
 
 		it( 'removes deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
@@ -120,7 +119,9 @@ describe( 'ResultsPage', () => {
 			const testCom = await screen.findByTitle( 'test.com' );
 
 			expect( testCom ).toBeInTheDocument();
-			expect( testCom ).toHaveAttribute( 'data-testid', 'suggestion' );
+			expect( testCom ).not.toHaveTextContent( "It's available!" );
+			expect( testCom ).not.toHaveTextContent( 'Recommended' );
+			expect( testCom ).not.toHaveTextContent( 'Best alternative' );
 		} );
 
 		it( 'removes deemphasized TLDs from featured suggestions', async () => {
@@ -149,18 +150,18 @@ describe( 'ResultsPage', () => {
 			const testCom = await screen.findByTitle( 'test.com' );
 
 			expect( testCom ).toBeInTheDocument();
-			expect( testCom ).toHaveAttribute( 'data-testid', 'suggestion' );
+			expect( testCom ).not.toHaveTextContent( "It's available!" );
+			expect( testCom ).not.toHaveTextContent( 'Recommended' );
+			expect( testCom ).not.toHaveTextContent( 'Best alternative' );
 
 			const recommended = await screen.findByTitle( 'test.net' );
 
 			expect( recommended ).toBeInTheDocument();
-			expect( recommended ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
 			expect( recommended ).toHaveTextContent( 'Recommended' );
 
 			const bestAlternative = await screen.findByTitle( 'test.org' );
 
 			expect( bestAlternative ).toBeInTheDocument();
-			expect( bestAlternative ).toHaveAttribute( 'data-testid', 'featured-suggestion' );
 			expect( bestAlternative ).toHaveTextContent( 'Best alternative' );
 		} );
 	} );
