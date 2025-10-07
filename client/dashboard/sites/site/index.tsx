@@ -85,7 +85,7 @@ function Site() {
 							title={ __( 'Add new site' ) }
 							onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 						>
-							<AddNewSite context="sites-dashboard" />
+							<AddNewSite />
 						</Modal>
 					) }
 					{ ! isSiteMigrationInProgress( site ) && (

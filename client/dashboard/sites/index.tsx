@@ -154,7 +154,7 @@ export default function Sites() {
 		<>
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite />
 				</Modal>
 			) }
 			<PageLayout
