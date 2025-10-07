@@ -59,7 +59,7 @@ export default function ConnectRepository() {
 		targetDir: '/',
 		isAutomated: false,
 		deploymentMode: 'simple',
-		workflowPath: undefined,
+		workflowPath: '',
 	};
 
 	return (

@@ -3,6 +3,7 @@ import {
 	githubRepositoriesQuery,
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
+	githubWorkflowsQuery,
 } from '@automattic/api-queries';
 import { useQuery, UseMutationResult } from '@tanstack/react-query';
 import {
@@ -19,9 +20,10 @@ import {
 } from '@wordpress/components';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Icon, lock } from '@wordpress/icons';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import { AdvancedWorkflowValidation } from './advanced-workflow-validation';
+import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
 import type {
 	GitHubInstallation,
@@ -49,7 +51,7 @@ export interface ConnectRepositoryFormData {
 	targetDir: string;
 	isAutomated: boolean;
 	deploymentMode: 'simple' | 'advanced';
-	workflowPath: string | undefined;
+	workflowPath: string;
 }
 
 // Custom repository selector component with search functionality
@@ -85,6 +87,23 @@ const RepositorySelector = ( {
 				} }
 				options={ field.elements || [] }
 				placeholder={ __( 'Select a repository' ) }
+				__experimentalRenderItem={ ( { item } ) => {
+					if ( item.private ) {
+						return (
+							<HStack alignment="left" spacing={ 1 }>
+								<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
+								<Icon
+									icon={ lock }
+									size={ 16 }
+									style={ {
+										fill: 'currentColor',
+									} }
+								/>
+							</HStack>
+						);
+					}
+					return <Text style={ { color: 'currentColor' } }>{ item.label }</Text>;
+				} }
 			/>
 		</VStack>
 	);
@@ -204,6 +223,20 @@ export const ConnectRepositoryForm = ( {
 		enabled: !! selectedInstallation && !! selectedRepository,
 	} );
 
+	const { data: workflows = [] } = useQuery( {
+		...githubWorkflowsQuery(
+			selectedRepository?.owner ?? '',
+			selectedRepository?.name ?? '',
+			formData.branch
+		),
+		select: ( workflows ) => {
+			// Filter out child workflows (lint files)
+			const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
+			return workflows.filter( ( workflow ) => ! childWorkflows.includes( workflow.file_name ) );
+		},
+		enabled: !! selectedRepository && !! formData.branch,
+	} );
+
 	const { data: repositoryChecks } = useQuery( {
 		...githubRepositoryChecksQuery(
 			selectedInstallation?.external_id ?? 0,
@@ -215,6 +248,44 @@ export const ConnectRepositoryForm = ( {
 	} );
 
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
+
+	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
+		setFormData( ( prev ) => {
+			const newFormData = { ...prev, ...updates };
+
+			if ( 'targetDir' in updates ) {
+				const trimmedValue = updates.targetDir?.trim() || '';
+				newFormData.targetDir = trimmedValue.startsWith( '/' )
+					? trimmedValue
+					: `/${ trimmedValue }`;
+			}
+
+			if ( 'deploymentMode' in updates ) {
+				if ( updates.deploymentMode === 'simple' ) {
+					newFormData.workflowPath = '';
+				} else if (
+					updates.deploymentMode === 'advanced' &&
+					! newFormData.workflowPath &&
+					workflows.length > 0
+				) {
+					newFormData.workflowPath = workflows[ 0 ].workflow_path;
+				}
+			}
+
+			if ( 'selectedRepositoryId' in updates ) {
+				newFormData.branch = '';
+				newFormData.targetDir = '';
+
+				// If repository is unselected, reset to simple mode since advanced requires a repo
+				if ( updates.selectedRepositoryId === '' ) {
+					newFormData.deploymentMode = 'simple';
+					newFormData.workflowPath = '';
+				}
+			}
+
+			return newFormData;
+		} );
+	};
 
 	useEffect( () => {
 		if ( ! repositoryChecks?.suggested_directory ) {
@@ -268,6 +339,7 @@ export const ConnectRepositoryForm = ( {
 		return repositories.map( ( repo ) => ( {
 			label: `${ repo.owner }/${ repo.name }`,
 			value: repo.id.toString(),
+			private: repo.private,
 		} ) );
 	}, [ repositories ] );
 
@@ -290,7 +362,9 @@ export const ConnectRepositoryForm = ( {
 		return undefined;
 	}, [ isLoadingRepositories, repositories, selectedInstallation ] );
 
-	const isAdvancedValid = ! isAdvancedSelected || !! formData.workflowPath;
+	const isAdvancedValid =
+		! isAdvancedSelected ||
+		( !! formData.workflowPath && formData.workflowPath !== 'CREATE_WORKFLOW_OPTION' );
 	const isFormValid = !! (
 		selectedRepository &&
 		selectedInstallation &&
@@ -317,6 +391,25 @@ export const ConnectRepositoryForm = ( {
 			},
 		} );
 	}, [ refetchGithubInstallations, installGithub ] );
+
+	const renderAdvancedWorkflow = () => {
+		if ( ! selectedRepository ) {
+			return null;
+		}
+
+		return (
+			<AdvancedWorkflowStyle
+				repository={ selectedRepository }
+				branchName={ formData.branch }
+				workflowPath={ formData.workflowPath }
+				workflows={ workflows }
+				onWorkflowCreation={ ( workflowPath ) => handleChange( { workflowPath } ) }
+				onChooseWorkflow={ ( workflowPath ) => handleChange( { workflowPath } ) }
+				isLoading={ isLoadingRepositories }
+				useComposerWorkflow={ !! repositoryChecks?.has_composer && ! repositoryChecks?.has_vendor }
+			/>
+		);
+	};
 
 	const fields: Field< ConnectRepositoryFormData >[] = useMemo( () => {
 		return [
@@ -405,6 +498,9 @@ export const ConnectRepositoryForm = ( {
 	return (
 		<>
 			<DataForm< ConnectRepositoryFormData >
+				// Force a re-render when the repository changes
+				// Otherwise, the fields that have validation errors will not be reset
+				key={ formData.selectedRepositoryId }
 				data={ formData }
 				fields={ fields }
 				form={ {
@@ -417,17 +513,7 @@ export const ConnectRepositoryForm = ( {
 						'isAutomated',
 					],
 				} }
-				onChange={ ( edits: Partial< ConnectRepositoryFormData > ) => {
-					const newFormData = { ...formData, ...edits };
-					if ( 'targetDir' in edits ) {
-						const trimmedValue = edits.targetDir?.trim() || '';
-						newFormData.targetDir = trimmedValue.startsWith( '/' )
-							? trimmedValue
-							: `/${ trimmedValue }`;
-					}
-
-					setFormData( newFormData );
-				} }
+				onChange={ handleChange }
 			/>
 
 			<SectionHeader
@@ -440,9 +526,7 @@ export const ConnectRepositoryForm = ( {
 
 			<RadioControl
 				selected={ formData.deploymentMode }
-				onChange={ ( value ) =>
-					setFormData( ( prev ) => ( { ...prev, deploymentMode: value as 'simple' | 'advanced' } ) )
-				}
+				onChange={ ( value ) => handleChange( { deploymentMode: value as 'simple' | 'advanced' } ) }
 				options={ [
 					{ label: __( 'Simple' ), value: 'simple' },
 					{ label: __( 'Advanced' ), value: 'advanced' },
@@ -450,18 +534,7 @@ export const ConnectRepositoryForm = ( {
 				disabled={ ! selectedRepository }
 			/>
 
-			{ isAdvancedSelected && (
-				<AdvancedWorkflowValidation
-					selectedInstallationId={ selectedInstallation?.external_id ?? 0 }
-					repository={ selectedRepository }
-					branchName={ formData.branch }
-					workflowPath={ formData.workflowPath }
-					onWorkflowPathChange={ ( workflowPath ) =>
-						setFormData( ( prev ) => ( { ...prev, workflowPath } ) )
-					}
-					disabled={ ! selectedRepository }
-				/>
-			) }
+			{ isAdvancedSelected && renderAdvancedWorkflow() }
 
 			<HStack justify="flex-end">
 				<Button variant="tertiary" onClick={ onCancel }>

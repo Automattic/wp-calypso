@@ -1,61 +1,27 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useEvent } from '@wordpress/compose';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestionsList = () => {
-	const { query, queries, config, events } = useDomainSearch();
+	const { query, queries, config } = useDomainSearch();
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
 		enabled: true,
 	} );
 
-	const lastQueryChangeTime = useRef( 0 );
-
-	useEffect( () => {
-		lastQueryChangeTime.current = Date.now();
-	}, [ query ] );
-
-	const triggerSuggestionsReceiveEvent = useEvent( () => {
-		const suggestionsReceiveResponseTime = Date.now() - lastQueryChangeTime.current;
-		events.onSuggestionsReceive(
-			query,
-			suggestions.map( ( suggestion ) => suggestion.domain_name ),
-			suggestionsReceiveResponseTime
-		);
+	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
+		...queries.freeSuggestion( query ),
+		enabled: true,
 	} );
 
-	useEffect( () => {
-		if ( ! isLoadingSuggestions ) {
-			triggerSuggestionsReceiveEvent();
-		}
-	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions ] );
-
-	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
-
-	const { isLoading: isLoadingQueryAvailability, data: availabilityData } = useQuery( {
+	const { isLoading: isLoadingQueryAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: !! getTld( query ),
 	} );
-
-	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
-		const availabilityCheckResponseTime = Date.now() - lastQueryChangeTime.current;
-		events.onQueryAvailabilityCheck(
-			availabilityData!.status,
-			query,
-			availabilityCheckResponseTime
-		);
-	} );
-
-	useEffect( () => {
-		if ( ! isLoadingQueryAvailability && availabilityData ) {
-			triggerQueryAvailabilityCheckEvent();
-		}
-	}, [ triggerQueryAvailabilityCheckEvent, isLoadingQueryAvailability, availabilityData ] );
 
 	const premiumSuggestions = useMemo(
 		() =>
