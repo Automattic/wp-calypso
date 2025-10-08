@@ -4,7 +4,7 @@ import filesize from 'filesize';
 import { useAnalytics } from '../../app/analytics';
 import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
-import { useFlexUsageMock } from './use-flex-usage-mock';
+import { useFlexUsage } from './use-flex-usage';
 import type { Site } from '@automattic/api-core';
 
 type Props = {
@@ -22,7 +22,7 @@ function formatHours( hours: number ) {
 }
 
 export default function OverviewFlexUsageCard( { site }: Props ) {
-	const { data } = useFlexUsageMock( site.ID );
+	const { data } = useFlexUsage( site.ID );
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
