@@ -17,7 +17,7 @@ import type { Action } from '@wordpress/dataviews';
 
 export function useEmailActions(): Action< Email >[] {
 	const navigate = useNavigate();
-	const { mutateAsync: resendEmailForwardVerification } = useMutation(
+	const { mutateAsync: resendEmailForwardVerification, isMutating } = useMutation(
 		resendVerifyEmailForwardMutation()
 	);
 	const { mutateAsync: deleteEmailForward } = useMutation( deleteEmailForwardMutation() );
@@ -28,7 +28,7 @@ export function useEmailActions(): Action< Email >[] {
 		finishSetupAction,
 		manageGoogleWorkspaceAction,
 		buildPaymentDetailsAction( navigate ),
-		buildResendVerificationAction( resendEmailForwardVerification ),
+		buildResendVerificationAction( resendEmailForwardVerification, isMutating ),
 		buildDeleteTitanMailboxAction( deleteTitanMailbox ),
 		buildDeleteEmailForwardAction( deleteEmailForward ),
 	];
