@@ -6,39 +6,174 @@ import {
 import { QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalInputControl as InputControl,
 	Button,
+	CheckboxControl,
 	Card,
 	CardBody,
 	CardDivider,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Text } from '../../components/text';
 import type { UserPreferences } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
 import './preferences.scss';
 
-function Preference( { name }: { name: string } ) {
+type InputType = 'string' | 'number' | 'checkbox';
+type InputValue = string | number | boolean;
+
+const formattedValue = ( inputType: InputType, value?: InputValue ) => {
+	if ( inputType === 'number' ) {
+		return Number( value );
+	}
+
+	if ( inputType === 'checkbox' ) {
+		return Boolean( value );
+	}
+
+	return value;
+};
+
+const renderPreference = ( name: string, value: any ) => {
+	if ( typeof value === 'string' ) {
+		return <EditablePreference inputType="string" name={ name } value={ value } />;
+	}
+
+	if ( typeof value === 'boolean' ) {
+		return <EditablePreference inputType="checkbox" name={ name } value={ value } />;
+	}
+
+	if ( typeof value === 'number' ) {
+		return <EditablePreference inputType="number" name={ name } value={ value } />;
+	}
+
+	if ( Array.isArray( value ) ) {
+		return <ArrayPreference value={ value } />;
+	}
+
+	return null;
+};
+
+function ArrayPreference( { value }: { value: InputValue[] } ) {
+	return (
+		<ul>
+			{ value.map( ( preference, index ) => (
+				<li key={ index }>{ JSON.stringify( preference ) }</li>
+			) ) }
+		</ul>
+	);
+}
+
+function EditablePreference( {
+	inputType,
+	name,
+	value,
+}: {
+	inputType: InputType;
+	name: string;
+	value: InputValue;
+} ) {
+	const { mutate: savePreference } = useMutation(
+		userPreferenceMutation( name as keyof UserPreferences )
+	);
+	const [ formData, setFormData ] = useState( { [ name ]: value } );
+
+	const handleSave = () => {
+		savePreference( formData[ name ] );
+	};
+
+	const handleReset = () => {
+		setFormData( { [ name ]: value } );
+	};
+
+	const fields: Field< { [ name ]: InputValue } >[] = useMemo(
+		() => [
+			{
+				id: name,
+				Edit: ( { field, onChange, data } ) => {
+					const { id, getValue } = field;
+					if ( inputType === 'checkbox' ) {
+						return (
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								checked={ getValue( { item: data } ) }
+								onChange={ ( newValue ) =>
+									onChange( { [ id ]: formattedValue( inputType, newValue ) } )
+								}
+							/>
+						);
+					}
+
+					return (
+						<InputControl
+							type={ inputType }
+							value={ getValue( { item: data } ) }
+							size="small"
+							onChange={ ( newValue ) =>
+								onChange( { [ id ]: formattedValue( inputType, newValue ) } )
+							}
+							hideLabelFromVision
+						/>
+					);
+				},
+			},
+		],
+		[ name, inputType ]
+	);
+
+	const isDirty = formData[ name ] !== value;
+
+	return (
+		<VStack>
+			<DataForm< { [ name ]: InputValue } >
+				data={ formData }
+				fields={ fields }
+				form={ {
+					layout: { type: 'regular' as const },
+					fields: [ name ],
+				} }
+				onChange={ ( edits ) => {
+					setFormData( ( current ) => ( { ...current, ...edits } ) );
+				} }
+			/>
+			<HStack justify="flex-start" spacing={ 1 }>
+				<Button variant="primary" size="small" disabled={ ! isDirty } onClick={ handleSave }>
+					{ __( 'Save' ) }
+				</Button>
+				<Button variant="secondary" size="small" disabled={ ! isDirty } onClick={ handleReset }>
+					{ __( 'Reset' ) }
+				</Button>
+			</HStack>
+		</VStack>
+	);
+}
+
+function Preference( { name, value }: { name: string; value: any } ) {
 	const { mutate: unsetPreference } = useMutation(
 		userPreferenceMutation( name as keyof UserPreferences )
 	);
 
-	const handleClick = () => {
-		unsetPreference( null as unknown as UserPreferences[ keyof UserPreferences ] );
-	};
-
 	return (
-		<div>
+		<div className="preferences-helper__preference">
 			<HStack justify="flex-start" spacing={ 1 }>
 				<Button
 					icon={ closeSmall }
 					size="compact"
 					title={ __( 'Unset preference' ) }
-					onClick={ handleClick }
+					onClick={ () =>
+						unsetPreference( null as unknown as UserPreferences[ keyof UserPreferences ] )
+					}
 				/>
 				<Text>{ name }</Text>
 			</HStack>
+			<div className="preferences-helper__preference-content">
+				{ renderPreference( name, value ) }
+			</div>
 		</div>
 	);
 }
@@ -53,12 +188,12 @@ function PreferenceList() {
 	return (
 		<div>
 			<div>{ __( 'Preferences' ) }</div>
-			<Card size="xSmall" className="preferences-helper__current-preferences">
+			<Card size="xSmall" className="preferences-helper__preferences">
 				{ entries.length > 0 ? (
-					entries.map( ( [ name ], index ) => (
+					entries.map( ( [ name, value ], index ) => (
 						<Fragment key={ name }>
 							<CardBody>
-								<Preference name={ name } />
+								<Preference name={ name } value={ value } />
 							</CardBody>
 							{ index < entries.length - 1 && <CardDivider /> }
 						</Fragment>
