@@ -1,4 +1,4 @@
-import { Email, EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
+import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
 import {
 	deleteEmailForwardMutation,
 	deleteTitanMailboxMutation,
@@ -15,11 +15,11 @@ import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { domainHasEmail } from '../utils/domain';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
-import { domainHasEmail } from './utils/email-utils';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';

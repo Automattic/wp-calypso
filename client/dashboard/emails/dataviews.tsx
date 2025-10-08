@@ -12,14 +12,14 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { purchasesRoute } from '../app/router/me';
 import { Text } from '../components/text';
-import GoogleLogo from './resources/google-logo';
-import MailboxIcon from './resources/mailbox-icon';
 import {
 	buildGoogleFinishSetupLink,
 	buildGoogleMailboxLink,
 	buildGoogleManageWorkspaceLink,
 	buildTitanMailboxLink,
-} from './utils/email-utils';
+} from '../utils/email-utils';
+import GoogleLogo from './resources/google-logo';
+import MailboxIcon from './resources/mailbox-icon';
 import type { Action, Field, View } from '@wordpress/dataviews';
 
 // Shared fields for Emails DataViews

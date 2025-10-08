@@ -1,27 +1,4 @@
-import { DomainSummary, EmailAccount, SiteDomain } from '@automattic/api-core';
-
-export function getGSuiteSubscriptionStatus( domain: SiteDomain | undefined ): string {
-	return domain?.google_apps_subscription?.status ?? '';
-}
-
-export function hasGSuiteWithUs( domain: SiteDomain | undefined ): boolean {
-	const status = getGSuiteSubscriptionStatus( domain );
-
-	return ! [ '', 'no_subscription', 'other_provider' ].includes( status );
-}
-
-export function hasTitanMailWithUs( domain: SiteDomain ): boolean {
-	const subscriptionStatus = domain?.titan_mail_subscription?.status ?? '';
-
-	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
-}
-
-export function hasEmailForwards( domain: SiteDomain ) {
-	return domain?.email_forwards_count ?? 0;
-}
-
-export const domainHasEmail = ( domain: DomainSummary ) =>
-	hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
+import { EmailAccount, SiteDomain } from '@automattic/api-core';
 
 export type EmailWarningType =
 	| 'google_pending_tos_acceptance'
@@ -88,8 +65,7 @@ export function buildGoogleManageWorkspaceLink( email: string, domainName: strin
 export function buildTitanMailboxLink( email: string ) {
 	const titanMailUrl = new URL( 'https://wp.titan.email/mail/' );
 	titanMailUrl.searchParams.append( 'email_account', email );
-	// @TODO We're going to need to update this so that we can return back to the emails page after we launch the new dashboard.
-	titanMailUrl.searchParams.append( 'topbar.redirect_url', 'https://wordpress.com/v2/emails' );
+	titanMailUrl.searchParams.append( 'topbar.redirect_url', 'https://wordpress.com/emails' );
 
 	return titanMailUrl.href;
 }
