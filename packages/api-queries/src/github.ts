@@ -1,9 +1,13 @@
 import {
+	createGithubWorkflow,
 	fetchGithubInstallations,
 	fetchGithubRepositories,
 	fetchGithubRepositoryBranches,
 	fetchGithubRepositoryChecks,
 	fetchGithubWorkflowChecks,
+	fetchGithubWorkflows,
+	fetchGithubWorkflowTemplates,
+	type CreateWorkflowRequest,
 	saveGitHubCredentials,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
@@ -57,14 +61,11 @@ export const githubRepositoryChecksQuery = (
 	queryOptions( {
 		queryKey: [
 			'github',
-			'installation',
+			'repository-checks',
 			installationId,
-			'repository',
 			repositoryOwner,
 			repositoryName,
-			'branch',
 			repositoryBranch,
-			'checks',
 		],
 		queryFn: () =>
 			fetchGithubRepositoryChecks(
@@ -87,14 +88,11 @@ export const githubWorkflowChecksQuery = (
 	queryOptions( {
 		queryKey: [
 			'github',
-			'repository',
+			'repository-workflow-checks',
 			repositoryOwner,
 			repositoryName,
-			'branch',
 			repositoryBranch,
-			'workflow',
 			workflowFilename,
-			'checks',
 		],
 		queryFn: () =>
 			fetchGithubWorkflowChecks(
@@ -114,5 +112,37 @@ export const saveGitHubCredentialsMutation = () =>
 			saveGitHubCredentials( accessToken ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( githubInstallationsQuery() );
+		},
+	} );
+
+export const githubWorkflowTemplatesQuery = (
+	repositoryBranch: string,
+	template: 'simple' | 'with_composer'
+) =>
+	queryOptions( {
+		queryKey: [ 'github', 'repository-workflow-template', repositoryBranch, template ],
+		queryFn: () => fetchGithubWorkflowTemplates( repositoryBranch, template ),
+	} );
+
+export const githubWorkflowsQuery = (
+	repositoryOwner: string,
+	repositoryName: string,
+	branchName: string
+) =>
+	queryOptions( {
+		queryKey: [ 'github', 'repository-workflows', repositoryOwner, repositoryName, branchName ],
+		queryFn: () => fetchGithubWorkflows( repositoryOwner, repositoryName, branchName ),
+		meta: {
+			persist: false,
+		},
+	} );
+
+export const createGithubWorkflowMutation = () =>
+	mutationOptions( {
+		mutationFn: ( request: CreateWorkflowRequest ) => createGithubWorkflow( request ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'github', 'repository-workflows' ],
+			} );
 		},
 	} );

@@ -5,6 +5,7 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -43,6 +44,7 @@ export default function NotificationsExtras() {
 			header={
 				<PageHeader
 					title={ __( 'Extras' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ __(
 						'Get curated extras like reports, digests, and community updates, so you can stay tuned for what’s happening in the WordPress ecosystem.'
 					) }

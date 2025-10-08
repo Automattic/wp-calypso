@@ -73,19 +73,34 @@ export class SidebarComponent {
 		}
 
 		// Top level menu item selector.
-		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
+		const itemSelector = `${ selectors.sidebar } a:has(:text-is("${ item }"):visible)`;
+
+		// We need to grab the href before clicking, as after clicking the DOM may change. For Stats, for example, we go to WP-Admin.
+		const hrefItemSelector = ( await this.page.getAttribute( itemSelector, 'href' ) ) as string;
+
 		await this.page.dispatchEvent( itemSelector, 'click' );
+
+		// Wait for navigation after clicking the top level item.
+		await this.page.waitForURL( `**${ hrefItemSelector }`, {
+			waitUntil: 'domcontentloaded',
+		} );
 
 		// Sub-level menu item selector.
 		if ( subitem ) {
-			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible, .wp-menu-open .wp-submenu :text-is("${ subitem }"):visible`;
-			await Promise.all( [
-				this.page.waitForNavigation( { timeout: 30 * 1000 } ),
-				this.page.dispatchEvent( subitemSelector, 'click' ),
-			] );
+			const subitemSelector = `.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`;
+			const hrefSubItemSelector = ( await this.page.getAttribute(
+				subitemSelector,
+				'href'
+			) ) as string;
+
+			await this.page.dispatchEvent( subitemSelector, 'click' );
+			await this.page.waitForURL( `**${ hrefSubItemSelector }`, {
+				waitUntil: 'domcontentloaded',
+			} );
 		}
 
 		const currentURL = this.page.url();
+
 		// Do not verify selected menu items or retry if navigation takes user out of Calypso (eg. WP-Admin, Widgets editor)...
 		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
 			return;

@@ -35,6 +35,7 @@ export const DomainSearchControlsFilterButton = forwardRef(
 			<div className="domain-search-controls__filters">
 				<Button
 					icon={ funnel }
+					aria-label={ ariaLabel }
 					variant="secondary"
 					showTooltip
 					onClick={ onClick }
@@ -42,13 +43,7 @@ export const DomainSearchControlsFilterButton = forwardRef(
 					disabled={ disabled }
 				/>
 				{ !! count && (
-					<div
-						className="domain-search-controls__filters-count"
-						/* translators: %d: number of active filters */
-						aria-label={ ariaLabel }
-						aria-live="polite"
-						role="status"
-					>
+					<div className="domain-search-controls__filters-count" aria-hidden="true">
 						{ count }
 					</div>
 				) }

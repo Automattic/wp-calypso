@@ -17,9 +17,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
+import { useAnalytics } from '../../../app/analytics';
 import { SectionHeader } from '../../../components/section-header';
 
 export const DevicesSettings = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { mutate: updateSettings } = useMutation( {
 		...userNotificationsSettingsMutation(),
@@ -57,6 +59,12 @@ export const DevicesSettings = () => {
 				};
 			}
 			return device;
+		} );
+
+		recordTracksEvent( 'calypso_dashboard_notifications_devices_settings_updated', {
+			device_id: selectedDeviceId,
+			setting_name: updated.id,
+			setting_value: updated.value,
 		} );
 
 		updateSettings( {

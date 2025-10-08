@@ -23,10 +23,18 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
+import {
+	domainAddNew,
+	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
+	domainManagementTransferToOtherSite,
+	domainMapping,
+} from 'calypso/my-sites/domains/paths';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
+import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
@@ -63,6 +71,7 @@ const DomainSearchStep: StepType< {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
+	const siteId = useSiteIdParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
 	const tldQuery = useQuery().get( 'tld' );
 	const source = useQuery().get( 'source' );
@@ -70,6 +79,8 @@ const DomainSearchStep: StepType< {
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+	// eslint-disable-next-line no-nested-ternary
+	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
 	const { query, setQuery } = useQueryHandler( {
 		initialQuery,
@@ -132,6 +143,24 @@ const DomainSearchStep: StepType< {
 					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
 				);
 			},
+			onMakePrimaryAddressClick: () => {
+				if ( ! siteSlug ) {
+					return;
+				}
+
+				window.location.assign( domainManagementList( siteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				window.location.assign( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				window.location.assign(
+					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
+				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				window.location.assign( domainMapping( siteSlug, domainName ) );
+			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( domainName && isHundredYearDomainFlow( flow ) ) {
 					return window.location.assign(
@@ -171,7 +200,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, flow ] );
+	}, [ submit, setQuery, flow, siteSlug ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -226,7 +255,7 @@ const DomainSearchStep: StepType< {
 					? 'domain-search--step-container-v2'
 					: 'domain-search--step-container'
 			}
-			currentSiteId={ site?.ID }
+			currentSiteId={ currentSiteId }
 			currentSiteUrl={ currentSiteUrl }
 			flowName={ flow }
 			config={ config }

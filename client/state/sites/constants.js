@@ -33,6 +33,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_a4a_client',
 	'is_a4a_dev_site',
 	'is_a8c',
+	'is_wpcom_flex',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

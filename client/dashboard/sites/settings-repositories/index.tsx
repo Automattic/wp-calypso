@@ -2,9 +2,10 @@ import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
+import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { keyboardReturn, Icon } from '@wordpress/icons';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
@@ -119,37 +120,57 @@ function SiteRepositories() {
 	};
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'Repositories' ) }
-					description={ __( 'Connect repositories to your WordPress site.' ) }
-					actions={
-						canConnect && (
-							<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
-								{ __( 'Connect repository' ) }
-							</Button>
-						)
-					}
-				/>
-			}
-		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.DEPLOYMENT }
-				tracksFeatureId="settings-repositories"
-				upsellIcon={ <GitHubIcon aria-label={ __( 'GitHub logo' ) } /> }
-				upsellImage={ illustrationUrl }
-				upsellTitle={ __( 'Deploy from GitHub' ) }
-				upsellDescription={ __(
-					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-				) }
+		<>
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 2 } /> }
+						title={ __( 'Repositories' ) }
+						description={ __( 'Connect repositories to your WordPress site.' ) }
+						actions={
+							canConnect && (
+								<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
+									{ __( 'Connect repository' ) }
+								</Button>
+							)
+						}
+					/>
+				}
 			>
-				<RepositoriesList />
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+				<HostingFeatureGatedWithCallout
+					site={ site }
+					feature={ HostingFeatures.DEPLOYMENT }
+					tracksFeatureId="settings-repositories"
+					upsellIcon={ <GitHubIcon aria-label={ __( 'GitHub logo' ) } /> }
+					upsellImage={ illustrationUrl }
+					upsellTitle={ __( 'Deploy from GitHub' ) }
+					upsellDescription={ __(
+						'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+					) }
+				>
+					<RepositoriesList />
+				</HostingFeatureGatedWithCallout>
+			</PageLayout>
+			<HStack className="dashboard-snackbars">
+				<Snackbar
+					icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
+					actions={ [
+						{
+							label: __( 'Navigate' ),
+							onClick: () => {
+								navigate( {
+									to: siteDeploymentsListRoute.fullPath,
+									params: { siteSlug },
+								} );
+							},
+						},
+					] }
+				>
+					{ __( 'Back to Deployments' ) }
+				</Snackbar>
+			</HStack>
+		</>
 	);
 }
 

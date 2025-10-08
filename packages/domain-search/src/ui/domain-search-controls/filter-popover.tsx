@@ -103,7 +103,7 @@ export const DomainSearchControlsFilterPopover = ( {
 				className="domain-search-controls__filters-popover-available-tlds-container"
 				isRounded={ false }
 			>
-				<Scrollable scrollDirection="y" style={ { maxHeight: '18.5rem' } }>
+				<Scrollable role="listbox" scrollDirection="y" style={ { maxHeight: '18.5rem' } }>
 					{ tldList.map( ( tld ) => {
 						return tld.isLabel ? (
 							<FilterPopoverLabel key={ tld.text } text={ tld.text } />
@@ -139,7 +139,6 @@ export const DomainSearchControlsFilterPopover = ( {
 						__nextHasNoMarginBottom
 						__experimentalShowHowTo={ false }
 						__experimentalValidateInput={ validateTld }
-						label=""
 						value={ temporaryFilter.tlds }
 						suggestions={ availableTlds }
 						onChange={ ( tokens ) => {
@@ -158,6 +157,7 @@ export const DomainSearchControlsFilterPopover = ( {
 						label={ __( 'Show exact matches only' ) }
 						checked={ temporaryFilter.exactSldMatchesOnly }
 						onChange={ setExactMatchesOnlyInFilter }
+						__nextHasNoMarginBottom
 					/>
 					<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
 						<Button __next40pxDefaultSize variant="secondary" onClick={ onClear }>

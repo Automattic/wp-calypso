@@ -8,7 +8,7 @@ import {
 	UserNotificationSettings,
 } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
@@ -169,6 +169,36 @@ describe( 'EmailSettings', () => {
 		} );
 	} );
 
+	it( 'closes the modal when the the apply all modal is called', async () => {
+		const blogId = 4;
+		const settings = buildEmailNotificationSettings( blogId, {
+			comment_like: false,
+			comment_reply: false,
+		} );
+
+		mockGetSettingsApiAndReply( settings );
+
+		render( <EmailSettings siteId={ blogId } />, {
+			wrapper: Wrapper,
+		} );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Apply to all sites' } ) );
+		const modal = await screen.findByRole( 'dialog', { name: 'Apply to all sites?' } );
+
+		//modal is visible
+		await waitFor( () => {
+			expect( modal ).toBeVisible();
+		} );
+
+		const cancelButtons = await within( modal ).findAllByRole( 'button', { name: 'Cancel' } );
+		// The modal close button is also a cancel button, it is the reason we have 2 cancel buttons
+		await userEvent.click( cancelButtons[ 1 ] );
+
+		await waitFor( () => {
+			expect( modal ).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 'updates all settings when the apply all button is clicked', async () => {
 		const blogId = 4;
 		const settings = buildEmailNotificationSettings( blogId, {
@@ -209,6 +239,9 @@ describe( 'EmailSettings', () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect(
+				screen.queryByRole( 'dialog', { name: 'Apply to all sites?' } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );
