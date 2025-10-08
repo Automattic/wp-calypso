@@ -6,8 +6,7 @@ import type { Action } from '@wordpress/dataviews';
 export const finishSetupAction: Action< Email > = {
 	id: 'finish-setup',
 	label: __( 'Finish setup ↗' ),
-	callback: ( items: Email[] ) => {
-		const item = items[ 0 ];
+	callback: ( [ item ]: [ Email ] ) => {
 		if ( item.status === 'google_pending_tos_acceptance' ) {
 			const url = buildGoogleFinishSetupLink( item.emailAddress, item.domainName );
 			window.open( url, '_blank' );
