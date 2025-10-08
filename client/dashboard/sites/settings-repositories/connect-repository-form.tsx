@@ -296,7 +296,6 @@ export const ConnectRepositoryForm = ( {
 					);
 					const defaultBranch = newlySelectedRepo?.default_branch;
 					if ( defaultBranch ) {
-						// Compute connected branches for the newly selected repository
 						const connectedForNewRepo = new Set(
 							existingDeployments
 								.filter( ( d ) => d.external_repository_id === updates.selectedRepositoryId )
