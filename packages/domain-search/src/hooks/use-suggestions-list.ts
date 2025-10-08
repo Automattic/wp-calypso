@@ -47,6 +47,11 @@ export const useSuggestionsList = () => {
 
 					const { status, is_supported_premium_domain } = availabilityQuery.data;
 
+					// Non-premium domains don't need to be filtered out
+					if ( DomainAvailabilityStatus.AVAILABLE === status ) {
+						return false;
+					}
+
 					return (
 						DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain
 					);
