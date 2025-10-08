@@ -14,6 +14,10 @@ const SiteSpec: StepType = function SiteSpec() {
 	if ( source && source.startsWith( 'ciab-' ) ) {
 		siteSpecConfig = {
 			buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&spec_id=',
+			backButton: {
+				enabled: true,
+				url: '/ciab/sites',
+			},
 		};
 	}
 
