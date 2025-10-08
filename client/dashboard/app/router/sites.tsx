@@ -919,6 +919,13 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 );
 
 export const siteSettingsRepositoriesConnectRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Connect repository' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'connect',
 } ).lazy( () =>
