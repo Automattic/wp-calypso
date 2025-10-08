@@ -18,18 +18,16 @@ import '../style.scss';
 export interface FormData {
 	local_part: string;
 	domain: string;
-	forwarding_address: string;
+	forwarding_addresses: string[];
 }
 
 function AddEmailForwarder() {
 	const { data: domains, isLoading } = useQuery( domainsQuery() );
 	const { mutate: addEmailForwarder, isPending } = useMutation( addEmailForwarderMutation() );
-	const [ formData, setFormData ] = useState< FormData >( () => {
-		return {
-			local_part: '',
-			domain: '',
-			forwarding_address: '',
-		};
+	const [ formData, setFormData ] = useState< FormData >( {
+		local_part: '',
+		domain: '',
+		forwarding_addresses: [],
 	} );
 	const isBusy = isLoading || isPending;
 
@@ -50,9 +48,9 @@ function AddEmailForwarder() {
 				type: 'text',
 			},
 			{
-				id: 'forwarding_address',
+				id: 'forwarding_addresses',
 				label: __( 'Forward to' ),
-				type: 'text',
+				type: 'array',
 			},
 		],
 		[ domains ]
@@ -68,10 +66,12 @@ function AddEmailForwarder() {
 					type: 'row' as const,
 				},
 			},
-			'forwarding_address',
+			'forwarding_addresses',
 		],
 	};
 
+	const allFieldsSet =
+		formData.local_part && formData.domain && formData.forwarding_addresses.length;
 	const isValid = isItemValid( formData, fields, form );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -81,11 +81,12 @@ function AddEmailForwarder() {
 			return;
 		}
 
-		const { local_part, domain, forwarding_address } = formData;
+		const { local_part, domain, forwarding_addresses } = formData;
+
 		addEmailForwarder( {
 			domain,
 			mailbox: `${ local_part }@${ domain }`,
-			destinations: [ forwarding_address ],
+			destinations: forwarding_addresses,
 		} );
 	};
 
@@ -123,10 +124,6 @@ function AddEmailForwarder() {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-
-								<Text variant="muted">
-									{ __( 'Separate multiple email addresses with commas or press the Enter key.' ) }
-								</Text>
 							</VStack>
 
 							<ButtonStack justify="flex-start">
@@ -134,7 +131,7 @@ function AddEmailForwarder() {
 									variant="primary"
 									type="submit"
 									isBusy={ isBusy }
-									disabled={ isBusy || ! isValid }
+									disabled={ isBusy || ! allFieldsSet || ! isValid }
 								>
 									{ __( 'Save' ) }
 								</Button>
