@@ -12,7 +12,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import {
 	recordMigrationCredentialsEvent,
-	recordMigrationCredentialsFacebookEvent,
+	recordMigrationRequestSubmittedFacebookEvent,
 } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
@@ -102,7 +102,7 @@ const SiteMigrationCredentials: StepType< {
 
 		// Fire Google Ads tracking event when credentials are submitted
 		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
-		recordMigrationCredentialsFacebookEvent( 'SiteMigrationCredentials' );
+		recordMigrationRequestSubmittedFacebookEvent( 'SiteMigrationCredentials' );
 
 		siteId && dispatch( resetSite( siteId ) );
 		return navigation.submit?.( {

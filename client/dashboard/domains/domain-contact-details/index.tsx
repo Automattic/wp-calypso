@@ -1,6 +1,6 @@
 import { domainWhoisQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -14,7 +14,7 @@ export default function DomainContactInfo() {
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact details' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
 			<ContactForm
 				domainName={ domainName }
 				initialData={

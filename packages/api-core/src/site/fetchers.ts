@@ -39,6 +39,7 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 export const SITE_OPTIONS = [
 	'admin_url',
 	'created_at',
+	'unmapped_url',
 	'is_difm_lite_in_progress',
 	'is_summer_special_2025',
 	'is_domain_only',

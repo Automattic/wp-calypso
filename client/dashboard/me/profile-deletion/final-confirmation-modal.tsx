@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
 
 interface ConfirmationFormData {
@@ -33,6 +33,11 @@ export default function FinalConfirmationModal( {
 			id: 'confirmText',
 			type: 'text',
 			label: __( 'Type your username to confirm' ),
+			description: sprintf(
+				/* translators: %s: username */
+				__( 'Your username is: %s' ),
+				username
+			),
 			placeholder: username,
 			isValid: {
 				required: true,

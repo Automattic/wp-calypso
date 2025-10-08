@@ -65,7 +65,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
-			forceRegularPrice: false,
 			freeForFirstYear: false,
 		},
 	},

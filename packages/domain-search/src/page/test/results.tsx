@@ -1,6 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import { buildAvailability } from '../../test-helpers/factories/availability';
+import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
@@ -11,15 +12,18 @@ import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
 
 describe( 'ResultsPage', () => {
-	it( 'renders the search bar and filters', () => {
+	it( 'renders the search bar, filters and cart', () => {
 		render(
-			<TestDomainSearch>
+			<TestDomainSearch cart={ buildCart( { items: [ buildCartItem() ], total: '$100' } ) }>
 				<ResultsPage />
 			</TestDomainSearch>
 		);
 
 		expect( screen.getByLabelText( 'Search for a domain' ) ).toBeInTheDocument();
 		expect( screen.getByLabelText( 'Filter, no filters applied' ) ).toBeInTheDocument();
+		expect(
+			screen.getByLabelText( '1 domain selected. $100 total price. Click to view the cart' )
+		).toBeInTheDocument();
 	} );
 
 	describe( 'suggestion partitioning', () => {
@@ -174,7 +178,7 @@ describe( 'ResultsPage', () => {
 	describe( 'premium domain suggestions', () => {
 		it( 'renders premium suggestion if the availability query is successful', async () => {
 			mockGetSuggestionsQuery( {
-				params: { query: 'test' },
+				params: { query: 'test-premium' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-premium.com', is_premium: true } ) ],
 			} );
 
@@ -188,7 +192,7 @@ describe( 'ResultsPage', () => {
 			} );
 
 			render(
-				<TestDomainSearch query="test">
+				<TestDomainSearch query="test-premium">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
@@ -198,7 +202,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'removes premium suggestion if the availability query fails', async () => {
 			mockGetSuggestionsQuery( {
-				params: { query: 'test' },
+				params: { query: 'test-failed' },
 				suggestions: [
 					buildSuggestion( { domain_name: 'test-failed.com', is_premium: true } ),
 					buildSuggestion( { domain_name: 'test-supported.com' } ),
@@ -211,7 +215,7 @@ describe( 'ResultsPage', () => {
 			} );
 
 			render(
-				<TestDomainSearch query="test">
+				<TestDomainSearch query="test-failed">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
@@ -223,58 +227,58 @@ describe( 'ResultsPage', () => {
 
 		it( 'removes premium suggestion if is_supported_premium_domain is not present in the availability query', async () => {
 			mockGetSuggestionsQuery( {
-				params: { query: 'test' },
+				params: { query: 'test-unsupported' },
 				suggestions: [
-					buildSuggestion( { domain_name: 'test-failed.com', is_premium: true } ),
+					buildSuggestion( { domain_name: 'test-unsupported.com', is_premium: true } ),
 					buildSuggestion( { domain_name: 'test-supported.com' } ),
 				],
 			} );
 
 			mockGetAvailabilityQuery( {
-				params: { domainName: 'test-failed.com' },
+				params: { domainName: 'test-unsupported.com' },
 				availability: buildAvailability( {
-					domain_name: 'test-failed.com',
+					domain_name: 'test-unsupported.com',
 					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
 				} ),
 			} );
 
 			render(
-				<TestDomainSearch query="test">
+				<TestDomainSearch query="test-unsupported">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
 
 			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
 
-			expect( screen.queryByTitle( 'test-failed.com' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-unsupported.com' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'removes premium suggestion if the availability status is different from available premium', async () => {
 			mockGetSuggestionsQuery( {
-				params: { query: 'test' },
+				params: { query: 'test-wrong-status' },
 				suggestions: [
-					buildSuggestion( { domain_name: 'test-failed.com', is_premium: true } ),
+					buildSuggestion( { domain_name: 'test-wrong-status.com', is_premium: true } ),
 					buildSuggestion( { domain_name: 'test-supported.com' } ),
 				],
 			} );
 
 			mockGetAvailabilityQuery( {
-				params: { domainName: 'test-failed.com' },
+				params: { domainName: 'test-wrong-status.com' },
 				availability: buildAvailability( {
-					domain_name: 'test-failed.com',
+					domain_name: 'test-wrong-status.com',
 					status: DomainAvailabilityStatus.NOT_REGISTRABLE,
 				} ),
 			} );
 
 			render(
-				<TestDomainSearch query="test">
+				<TestDomainSearch query="test-wrong-status">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
 
 			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
 
-			expect( screen.queryByTitle( 'test-failed.com' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-wrong-status.com' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -386,7 +390,7 @@ describe( 'ResultsPage', () => {
 			const onSuggestionsReceive = jest.fn();
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test' },
+				params: { query: 'test-receive' },
 				suggestions: [
 					buildSuggestion( { domain_name: 'test.com' } ),
 					buildSuggestion( { domain_name: 'test.net' } ),
@@ -395,14 +399,14 @@ describe( 'ResultsPage', () => {
 			} );
 
 			render(
-				<TestDomainSearch events={ { onSuggestionsReceive } } query="test">
+				<TestDomainSearch events={ { onSuggestionsReceive } } query="test-receive">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
 
 			await waitFor( () => {
 				expect( onSuggestionsReceive ).toHaveBeenCalledWith(
-					'test',
+					'test-receive',
 					[ 'test.com', 'test.net', 'test.org' ],
 					expect.any( Number )
 				);

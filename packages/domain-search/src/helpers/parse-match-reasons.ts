@@ -1,16 +1,19 @@
 import { translate } from 'i18n-calypso';
 import { getTld } from './get-tld';
 
-const TLD_EXACT_MATCH = 'tld-exact';
 const SLD_EXACT_MATCH = 'exact-match';
+const SIMILAR_MATCH = 'similar-match';
+const TLD_EXACT_MATCH = 'tld-exact';
+const TLD_SIMILAR = 'tld-similar';
+const TLD_COMMON = 'tld-common';
 
 // NOTE: This is actually a sorted list.
-const VALID_MATCH_REASONS = [
+export const VALID_MATCH_REASONS = [
 	SLD_EXACT_MATCH,
-	'similar-match',
+	SIMILAR_MATCH,
 	TLD_EXACT_MATCH,
-	'tld-similar',
-	'tld-common',
+	TLD_SIMILAR,
+	TLD_COMMON,
 ];
 
 function sortMatchReasons( matchReasons: string[] ) {
@@ -22,17 +25,17 @@ function sortMatchReasons( matchReasons: string[] ) {
 function getMatchReasonPhrasesMap( tld: string ) {
 	return new Map( [
 		[
-			'tld-exact',
+			TLD_EXACT_MATCH,
 			translate( 'Extension ".%(tld)s" matches your query', { args: { tld } } ) as string,
 		],
 		[
-			'tld-similar',
+			TLD_SIMILAR,
 			translate( 'Extension ".%(tld)s" closely matches your query', { args: { tld } } ) as string,
 		],
 		[ 'exact-match', translate( 'Exact match' ) as string ],
-		[ 'similar-match', translate( 'Close match' ) as string ],
+		[ SIMILAR_MATCH, translate( 'Close match' ) as string ],
 		[
-			'tld-common',
+			TLD_COMMON,
 			tld === 'com'
 				? ( translate( '".com" is the most common extension' ) as string )
 				: ( translate( '".%(tld)s" is a common extension', { args: { tld } } ) as string ),

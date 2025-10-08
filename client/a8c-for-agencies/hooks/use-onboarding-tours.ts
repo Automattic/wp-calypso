@@ -11,14 +11,12 @@ import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
-	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 	A4A_TEAM_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import {
 	A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME,
 	A4A_ONBOARDING_TOURS_PREFERENCE_NAME,
 } from '../sections/onboarding-tours/constants';
-import useNoActiveSite from './use-no-active-site';
 
 const checkTourCompletion = ( preferences: object, prefSlug: string ): boolean => {
 	if ( preferences && A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] ) {
@@ -30,7 +28,6 @@ const checkTourCompletion = ( preferences: object, prefSlug: string ): boolean =
 export default function useOnboardingTours() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const noActiveSite = useNoActiveSite();
 
 	const preferences = useSelector( getAllRemotePreferences );
 
@@ -56,20 +53,19 @@ export default function useOnboardingTours() {
 	);
 
 	const tasks = useMemo( () => {
-		const addNewSiteTask: Task = {
-			calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
-			completed: checkTourCompletion( preferences, 'addSiteStep1' ),
-			disabled: false,
-			actionDispatch: () => {
-				dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
-				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
-			},
-			id: 'add_sites',
-			title: translate( 'Add your first site' ),
-			useCalypsoPath: true,
-		};
-
 		const tasks: Task[] = [
+			{
+				calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
+				completed: checkTourCompletion( preferences, 'addSiteStep1' ),
+				disabled: false,
+				actionDispatch: () => {
+					dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
+					resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
+				},
+				id: 'add_sites',
+				title: translate( 'Add a site' ),
+				useCalypsoPath: true,
+			},
 			{
 				calypso_path: A4A_MARKETPLACE_LINK,
 				completed: checkTourCompletion( preferences, 'exploreMarketplace' ),
@@ -137,36 +133,17 @@ export default function useOnboardingTours() {
 				title: translate( 'Invite your team' ),
 				useCalypsoPath: true,
 			},
-			{
-				calypso_path: A4A_SITES_LINK_WALKTHROUGH_TOUR,
-				completed: checkTourCompletion( preferences, 'sitesWalkthrough' ),
-				disabled: false,
-				actionDispatch: () => {
-					dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_get_familiar_click' ) );
-					resetTour( [ 'sitesWalkthrough' ] );
-				},
-				id: 'get_familiar',
-				title: translate( 'Manage all of your client sites in a single place' ),
-				useCalypsoPath: true,
-			},
 		];
 
-		if ( noActiveSite ) {
-			// When the user has no active site, the "Add new site" task should be the first step.
-			tasks.unshift( addNewSiteTask );
-		} else {
-			// Otherwise, it should be the last step.
-			tasks.push( addNewSiteTask );
-		}
-
 		return tasks;
-	}, [ dispatch, noActiveSite, preferences, resetTour, translate ] );
+	}, [ dispatch, preferences, resetTour, translate ] );
 
 	const completedTasks = tasks.filter( ( task ) => task.completed );
+	const incompleteTasks = tasks.filter( ( task ) => ! task.completed );
 	const isCompleted = completedTasks.length === tasks.length;
 
 	return {
-		tasks,
+		tasks: [ ...incompleteTasks, ...completedTasks ],
 		dismiss,
 		isDismissed: isDismissed && isCompleted, // In case we add more tasks, we need to check the list is complete before concluding the onboarding is dismissed.
 		isCompleted,
