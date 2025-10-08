@@ -36,6 +36,7 @@ import {
 	getTestAccountByFeature,
 	GitHubLoginPage,
 	ImportContentFromMediumPage,
+	ImportContentFromWordPressPage,
 	ImportContentPage,
 	ImportLetsFindYourSitePage,
 	IncognitoPage,
@@ -156,6 +157,10 @@ export const test = base.extend< {
 	 * Page object representing the Import Content from Medium page.
 	 */
 	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Import Content from WordPress page.
+	 */
+	pageImportContentFromWordPress: ImportContentFromWordPressPage;
 	/**
 	 * Page object representing the Let's Find Your Site page for importing content.
 	 */
@@ -286,6 +291,10 @@ export const test = base.extend< {
 	pageImportContentFromMedium: async ( { page }, use ) => {
 		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
 		await use( importContentFromMediumPage );
+	},
+	pageImportContentFromWordPress: async ( { page }, use ) => {
+		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
+		await use( importContentFromWordPressPage );
 	},
 	pageImportLetsFindYourSite: async ( { page }, use ) => {
 		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );

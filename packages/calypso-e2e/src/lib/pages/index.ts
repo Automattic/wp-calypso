@@ -10,6 +10,7 @@ export * from './full-site-editor-page';
 export * from './general-settings-page';
 export * from './import-content-page';
 export * from './import-content-from-medium-page';
+export * from './import-content-from-wordpress-page';
 export * from './import-lets-find-your-site-page';
 export * from './incognito-page';
 export * from './individual-purchase-page';

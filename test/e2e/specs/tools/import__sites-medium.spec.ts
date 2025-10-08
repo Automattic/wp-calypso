@@ -1,7 +1,11 @@
 import path from 'path';
 import { expect, tags, test } from '../../lib/pw-base';
 
-const TEST_MEDIUM_EXPORT_FILE_PATH = path.join( __dirname, 'medium-export-example.zip' );
+const TEST_MEDIUM_EXPORT_FILE_PATH = path.join(
+	__dirname,
+	'import-files',
+	'medium-export-example.zip'
+);
 
 test.describe(
 	'Site Import: Calypso: Medium',
