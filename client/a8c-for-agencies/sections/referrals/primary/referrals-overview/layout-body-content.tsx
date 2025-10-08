@@ -1,4 +1,4 @@
-import { Button, WooLogo, WordPressLogo } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
 import { reusableBlock } from '@wordpress/icons';
@@ -58,7 +58,6 @@ export default function LayoutBodyContent( {
 	}, [ dispatch ] );
 
 	const accountStatus = getAccountStatus( tipaltiData, translate );
-	const isPayable = !! tipaltiData?.IsPayable;
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	const bankAccountCTAText = hasPayeeAccount
@@ -164,6 +163,19 @@ export default function LayoutBodyContent( {
 				) : (
 					<>
 						<StepSection heading={ translate( 'How do I start?' ) }>
+							<StepSectionItem
+								iconClassName="referrals-overview__opacity-70-percent"
+								icon={ reusableBlock }
+								heading={ translate( 'Refer products and hosting' ) }
+								description={ translate( 'Receive up to a 50% commission.' ) }
+								buttonProps={ {
+									children: translate( 'Get started' ),
+									compact: true,
+									primary: hasPayeeAccount,
+									href: A4A_MARKETPLACE_PRODUCTS_LINK,
+									onClick: onGetStartedClick,
+								} }
+							/>
 							<StepSectionItem
 								icon={ tipaltiLogo }
 								heading={ translate( 'Prepare to get paid' ) }
