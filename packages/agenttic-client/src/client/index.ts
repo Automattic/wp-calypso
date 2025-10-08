@@ -569,6 +569,16 @@ async function* processAgentResponseStream(
 				// Add current agent message to new conversation parts (always)
 				newConversationParts.push( update.status.message );
 
+				// Add tool results to conversation history BEFORE creating continuation message
+				if ( toolResults.length > 0 ) {
+					newConversationParts.push( {
+						role: 'agent' as const,
+						kind: 'message',
+						parts: toolResults,
+						messageId: generateMessageId(),
+					} );
+				}
+
 				// Only continue to agent if at least one tool wants to return
 				if ( shouldReturnToAgent ) {
 					// For requests that require multiple tool calls, we need to send the conversation history
@@ -576,7 +586,7 @@ async function* processAgentResponseStream(
 						conversationHistoryToDataParts( newConversationParts );
 
 					const toolResultMessage = createToolResultMessage(
-						toolResults,
+						[], // Empty array - tool results are already in historyDataParts
 						historyDataParts
 					);
 
@@ -628,16 +638,6 @@ async function* processAgentResponseStream(
 								continuedTaskUpdate.status.message
 						  )
 						: [];
-
-					// Add the first tool results to conversation history before processing additional calls
-					if ( toolResults.length > 0 ) {
-						newConversationParts.push( {
-							role: 'agent' as const,
-							kind: 'message',
-							parts: toolResults,
-							messageId: generateMessageId(),
-						} );
-					}
 
 					// Process any additional tool calls from the continued task
 					let finalTask = continuedTaskUpdate;
