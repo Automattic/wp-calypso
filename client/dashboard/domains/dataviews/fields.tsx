@@ -82,7 +82,15 @@ export const useFields = ( {
 				label: __( 'Type' ),
 				enableHiding: false,
 				enableSorting: false,
-				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.label ?? '',
+				elements: [
+					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Domain name registration' ) },
+					{ value: DomainSubtype.DOMAIN_TRANSFER, label: __( 'Domain name transfer' ) },
+					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Domain name connection' ) },
+				],
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.id ?? '',
 			},
 			// {
 			// 	id: 'owner',
