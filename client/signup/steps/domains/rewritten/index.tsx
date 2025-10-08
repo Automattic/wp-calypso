@@ -230,9 +230,6 @@ const DomainSearchUI = (
 				isDomainOnly: isDomainOnlyFlow,
 				flowName: flowName,
 			} ),
-			priceRules: {
-				forceRegularPrice: isMonthlyOrFreeFlow( flowName ),
-			},
 			allowedTlds,
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable:
@@ -376,7 +373,7 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					isFirstDomainFreeForFirstYear={ ! isFreeFlow( flowName ) }
+					isFirstDomainFreeForFirstYear={ ! isMonthlyOrFreeFlow( flowName ) }
 					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}
