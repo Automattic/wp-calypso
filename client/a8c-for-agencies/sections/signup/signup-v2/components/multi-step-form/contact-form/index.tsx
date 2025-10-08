@@ -186,7 +186,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			<div className="signup-contact-form__tos">
 				<p>
 					{ translate(
-						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement ↗{{/link}}",
+						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{/link}} ↗",
 						{
 							components: {
 								break: <br />,
