@@ -1,6 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { Icon, chevronDown, external } from '@wordpress/icons';
+import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -67,14 +67,12 @@ export default function PressablePremiumPlanMigrationBanner( {
 			<Button
 				className="pressable-premium-plan-migration__chat-to-us-button"
 				variant="secondary"
-				icon={ external }
-				iconPosition="right"
 				iconSize={ 16 }
 				onClick={ handleChatToUs }
 				isBusy={ isLoading }
 				disabled={ isLoading }
 			>
-				{ translate( 'Chat to us about this offer' ) }
+				{ translate( 'Chat to us about this offer ↗' ) }
 			</Button>
 		</>
 	);
