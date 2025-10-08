@@ -40,22 +40,27 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	};
 
 	const handleChange = ( item: SettingsOption ) => {
-		recordTracksEvent( 'calypso_dashboard_notifications_devices_settings_updated', {
-			setting_name: item.id,
-			setting_value: item.value,
-			site_id: siteId,
-		} );
-
-		updateSettings( {
-			data: {
-				blogs: [
-					{
-						blog_id: siteId,
-						devices: [ { ...settings, [ item.id ]: item.value } as DeviceNotificationSettings ],
-					},
-				],
+		updateSettings(
+			{
+				data: {
+					blogs: [
+						{
+							blog_id: siteId,
+							devices: [ { ...settings, [ item.id ]: item.value } as DeviceNotificationSettings ],
+						},
+					],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_devices_settings_updated', {
+						setting_name: item.id,
+						setting_value: item.value,
+						site_id: siteId,
+					} );
+				},
+			}
+		);
 	};
 
 	const askForConfirmation = () => {
@@ -112,18 +117,25 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 		if ( ! blogSettings ) {
 			return;
 		}
-		recordTracksEvent( 'calypso_dashboard_notifications_settings_apply_to_all_sites', {
-			stream: 'devices',
-			device_to_be_used_as_template: siteId,
-			site_to_be_used_as_template: siteId,
-		} );
 
-		updateSettings( {
-			data: {
-				blogs: [ blogSettings ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ blogSettings ],
+				},
+				applyToAll: true,
 			},
-			applyToAll: true,
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_settings_apply_to_all_sites', {
+						stream: 'devices',
+						device_to_be_used_as_template: siteId,
+						site_to_be_used_as_template: siteId,
+					} );
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	return (

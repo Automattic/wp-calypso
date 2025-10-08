@@ -4,43 +4,24 @@ import {
 	Icon,
 	Spinner,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { border, published } from '@wordpress/icons';
-import { useInterval } from 'calypso/lib/interval/use-interval';
 import { Text } from '../../components/text';
-
-const useLoadingSteps = ( { isSavedReport }: { isSavedReport: boolean } ) => {
-	const [ step, setStep ] = useState( 0 );
-
-	const steps = isSavedReport
-		? [ __( 'Checking for an existing report.' ) ]
-		: [
-				__( 'Running a new report.' ),
-				__( 'Measuring Core Web Vitals.' ),
-				__( 'Taking screenshots.' ),
-				__( 'Fetching historic data.' ),
-				__( 'Identifying performance improvements.' ),
-				__( 'Finalizing your results.' ),
-		  ];
-
-	useInterval(
-		() => {
-			setStep( ( step ) => step + 1 );
-		},
-		// 5 seconds between steps, except make sure we stop _before_ completing the last step
-		step < steps.length - 1 && 5000 // 5 seconds
-	);
-
-	return {
-		step,
-		steps,
-	};
-};
+import useLoadingSteps from './use-loading-steps';
 
 export default function ReportLoading( { isSavedReport }: { isSavedReport: boolean } ) {
 	const { step, steps } = useLoadingSteps( {
-		isSavedReport,
+		steps: isSavedReport
+			? [ __( 'Checking for an existing report.' ) ]
+			: [
+					__( 'Running a new report.' ),
+					__( 'Measuring Core Web Vitals.' ),
+					__( 'Taking screenshots.' ),
+					__( 'Fetching historic data.' ),
+					__( 'Identifying performance improvements.' ),
+					__( 'Finalizing your results.' ),
+			  ],
+		duration: 5000, // 5 seconds
 	} );
 
 	const getIcon = ( index: number, step: number ) => {

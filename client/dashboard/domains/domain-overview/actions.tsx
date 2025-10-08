@@ -83,7 +83,7 @@ export default function Actions() {
 	);
 
 	const availableActions = {
-		renew: purchase?.is_renewable,
+		renew: purchase?.is_renewable && domain.current_user_is_owner,
 		transfer: shouldShowTransferAction( domain ),
 		transferIn: shouldShowTransferInAction( domain ),
 		disconnect: shouldShowDisconnectAction( domain ),

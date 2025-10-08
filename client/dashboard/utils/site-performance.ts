@@ -118,7 +118,9 @@ export const getDisplayUnit = ( metric: Metrics ) => {
 	return '';
 };
 
-const max2Decimals = ( val: number ) => Number( Number( val ).toFixed( 2 ) );
+export function getFormattedNumber( value: number | string, dec = 2 ) {
+	return Number( Number( value ?? 0 ).toFixed( dec ) );
+}
 
 export const getFormattedValue = ( metric: Metrics, value: number ): number => {
 	if ( value === null || value === undefined ) {
@@ -130,10 +132,10 @@ export const getFormattedValue = ( metric: Metrics, value: number ): number => {
 	}
 
 	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric ) ) {
-		return max2Decimals( value / 1000 );
+		return getFormattedNumber( value / 1000 );
 	}
 
-	return max2Decimals( value );
+	return getFormattedNumber( value );
 };
 
 export const getDisplayValue = ( metric: Metrics, value: number ): string => {
@@ -143,3 +145,16 @@ export const getDisplayValue = ( metric: Metrics, value: number ): string => {
 
 	return [ getFormattedValue( metric, value ), getDisplayUnit( metric ) ].join( '' );
 };
+
+export function getFormattedSize( size: number ) {
+	if ( size === 0 ) {
+		return '0 B';
+	}
+
+	const i = Math.floor( Math.log( size ) / Math.log( 1024 ) );
+	return (
+		getFormattedNumber( size / Math.pow( 1024, i ) ) * 1 +
+		' ' +
+		[ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ]
+	);
+}
