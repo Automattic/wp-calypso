@@ -25,7 +25,7 @@ export function useFlexUsage( siteId: number ) {
 	const end = Math.floor( now.getTime() / 1000 );
 
 	const { data } = useQuery( {
-		...siteFlexUsageQuery( siteId, { start, end, resolution: 'day' } ),
+		...siteFlexUsageQuery( siteId, { start, end, resolution: 'month' } ),
 		select: ( usage ): UsageData => {
 			const storageTotal = sum( usage?.data.storage );
 			const bandwidthTotal = sum( usage?.data.bandwidth );
