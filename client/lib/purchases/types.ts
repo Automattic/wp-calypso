@@ -29,6 +29,7 @@ export interface MembershipSubscription {
 	start_date: string;
 	status: string;
 	title: string;
+	is_renewable: boolean;
 }
 
 export interface MembershipSubscriptionsSite {

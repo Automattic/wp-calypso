@@ -612,6 +612,29 @@ const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
 	return state;
 };
 
+export const gardenName: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_GARDEN_NAME' ) {
+		return action.gardenName;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+export const gardenPartnerName: Reducer< string | null, OnboardAction > = (
+	state = null,
+	action
+) => {
+	if ( action.type === 'SET_GARDEN_PARTNER_NAME' ) {
+		return action.gardenPartnerName;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -660,6 +683,8 @@ const reducer = combineReducers( {
 	paidSubscribers,
 	partnerBundle,
 	signupDomainOrigin,
+	gardenName,
+	gardenPartnerName,
 } );
 
 export type State = ReturnType< typeof reducer >;

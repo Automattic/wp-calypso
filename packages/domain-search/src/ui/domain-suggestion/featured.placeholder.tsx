@@ -10,7 +10,7 @@ export const FeaturedPlaceholder = () => {
 		<FeaturedSkeleton
 			role="status"
 			aria-busy="true"
-			aria-label={ __( 'Loading domain suggestion' ) }
+			aria-label={ __( 'Loading featured domain suggestion' ) }
 			ref={ containerRef }
 			activeQuery={ activeQuery }
 			badges={ <LoadingPlaceholder width="6.3125rem" height="1.5rem" /> }

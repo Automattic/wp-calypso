@@ -8,10 +8,9 @@ import {
 	Button,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect, useCallback } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { ConfirmationModal } from './confirmation-modal';
 
 const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
@@ -20,25 +19,34 @@ const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 
 export const PauseAllEmails = () => {
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
+	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
 
 	const {
 		mutate: updateSettings,
 		isPending: isSaving,
 		isSuccess: isSettingsUpdated,
-	} = useMutation( userSettingsMutation() );
+	} = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' ),
+				error: __( 'Failed to pause all emails.' ),
+			},
+		},
+	} );
 
 	const originalState = isAllWpcomEmailsDisabled( settings );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
-	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
 
 	useEffect( () => {
 		if ( isSettingsUpdated ) {
-			const message = enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' );
-			createSuccessNotice( message, { type: 'snackbar' } );
 			setIsConfirmDialogOpen( false );
+			recordTracksEvent( 'calypso_dashboard_notifications_pause_all_emails', {
+				all_emails_paused: enabled,
+			} );
 		}
-	}, [ createSuccessNotice, enabled, isSettingsUpdated, setIsConfirmDialogOpen ] );
+	}, [ enabled, isSettingsUpdated, setIsConfirmDialogOpen, recordTracksEvent ] );
 
 	const handleChange = ( checked: boolean ) => {
 		setEnabled( checked );

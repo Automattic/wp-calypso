@@ -10,7 +10,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
@@ -19,11 +19,19 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
+import {
+	domainMapping,
+	domainAddNew,
+	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
+	domainManagementTransferToOtherSite,
+} from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
 
@@ -62,8 +70,15 @@ const DomainSearchUI = (
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
+	const site = useSelector( getSelectedSite );
+
 	const siteSlug = queryObject.siteSlug;
-	const currentSiteUrl = siteSlug ? `https://${ siteSlug }` : undefined;
+	const siteId = queryObject.siteId;
+
+	// eslint-disable-next-line no-nested-ternary
+	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+	// eslint-disable-next-line no-nested-ternary
+	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
 	const { query, setQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
@@ -73,7 +88,7 @@ const DomainSearchUI = (
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
+			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
 						...product,
@@ -88,6 +103,24 @@ const DomainSearchUI = (
 			},
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
+			},
+			onMakePrimaryAddressClick: () => {
+				if ( ! siteSlug ) {
+					return;
+				}
+
+				page( domainManagementList( siteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				page( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				page(
+					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
+				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				page( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick( initialQuery?: string ) {
 				if ( isDomainOnlyFlow ) {
@@ -260,7 +293,6 @@ const DomainSearchUI = (
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flowName ] );
 
-	const translate = useTranslate();
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 
 	const { hideBack, backUrl, backLabelText } = useMemo( () => {
@@ -273,18 +305,18 @@ const DomainSearchUI = (
 
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
-				? [ translate( 'Back to My Home' ), '/home' ]
-				: [ translate( 'Back to sites' ), '/sites' ];
+				? [ __( 'Back to My Home' ), '/home' ]
+				: [ __( 'Back to sites' ), '/sites' ];
 
 		if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
 			backUrl = '/plugins';
-			backLabelText = translate( 'Back to plugins' );
+			backLabelText = __( 'Back to plugins' );
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
-			backLabelText = translate( 'Back to themes' );
+			backLabelText = __( 'Back to themes' );
 		} else if ( 'plans-first' === flowName ) {
 			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
@@ -294,7 +326,7 @@ const DomainSearchUI = (
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
 			if ( backTo && isRelativeUrl( backTo ) ) {
 				backUrl = backTo;
-				backLabelText = translate( 'Back' );
+				backLabelText = __( 'Back' );
 			}
 		}
 
@@ -303,7 +335,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ flowName, previousStepName, goBack, userSiteCount, translate ] );
+	}, [ flowName, previousStepName, goBack, userSiteCount ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
@@ -339,11 +371,13 @@ const DomainSearchUI = (
 					flowName={ flowName }
 					query={ query }
 					currentSiteUrl={ currentSiteUrl }
+					currentSiteId={ currentSiteId }
 					events={ events }
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
 					isFirstDomainFreeForFirstYear={ ! isFreeFlow( flowName ) }
+					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}
 		/>

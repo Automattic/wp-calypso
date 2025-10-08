@@ -71,7 +71,7 @@ export default function ConfigureRepository() {
 		deploymentMode: existingDeployment.workflow_path
 			? ( 'advanced' as const )
 			: ( 'simple' as const ),
-		workflowPath: existingDeployment.workflow_path,
+		workflowPath: existingDeployment.workflow_path ?? '',
 	};
 
 	return (
