@@ -142,20 +142,18 @@ function AddEmailForwarder() {
 	return (
 		<PageLayout
 			header={
-				<>
-					<PageHeader
-						prefix={
-							<RouterLinkButton
-								className="add-forwarder__back-button"
-								icon={ arrowLeft }
-								iconSize={ 12 }
-								to="/emails"
-							>
-								<Text variant="muted">{ __( 'Emails' ) }</Text>
-							</RouterLinkButton>
-						}
-					/>
-				</>
+				<PageHeader
+					prefix={
+						<RouterLinkButton
+							className="add-forwarder__back-button"
+							icon={ arrowLeft }
+							iconSize={ 12 }
+							to="/emails"
+						>
+							<Text variant="muted">{ __( 'Emails' ) }</Text>
+						</RouterLinkButton>
+					}
+				/>
 			}
 			notices={ <OptInWelcome tracksContext="emails" /> }
 			size="small"
