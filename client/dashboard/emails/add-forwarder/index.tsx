@@ -1,15 +1,20 @@
-import { addEmailForwarderMutation, domainsQuery } from '@automattic/api-queries';
+import {
+	addEmailForwarderMutation,
+	domainsQuery,
+	emailForwardersQuery,
+} from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueries } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import Notice from '../../components/notice';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -27,15 +32,36 @@ export interface FormData {
 
 function AddEmailForwarder() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutate: addEmailForwarder, isPending } = useMutation( addEmailForwarderMutation() );
+	const { mutate: addEmailForwarder, isPending: isAddingEmailForwarder } = useMutation(
+		addEmailForwarderMutation()
+	);
 	const navigate = useNavigate();
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { data: domains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
+	const userDomains = useMemo(
+		() => domains?.filter( ( d ) => d.current_user_is_owner ) || [],
+		[ domains ]
+	);
+	const emailForwardersQueries = useQueries( {
+		queries: userDomains.map( ( d ) => ( {
+			...emailForwardersQuery( d.domain ),
+		} ) ),
+	} );
+	const uniqueEmailForwarders = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					emailForwardersQueries
+						.flatMap( ( q ) => q.data?.forwards ?? [] )
+						.map( ( f ) => f.forward_address )
+				)
+			),
+		[ emailForwardersQueries ]
+	);
 	const [ formData, setFormData ] = useState< FormData >( {
 		localPart: '',
 		domain: '',
 		forwardingAddresses: [],
 	} );
-	const isBusy = isLoading || isPending;
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -45,10 +71,7 @@ function AddEmailForwarder() {
 				type: 'text',
 			},
 			{
-				elements:
-					domains
-						?.filter( ( d ) => d.current_user_is_owner )
-						.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [],
+				elements: userDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [],
 				id: 'domain',
 				label: __( 'Domain' ),
 				type: 'text',
@@ -59,7 +82,7 @@ function AddEmailForwarder() {
 				type: 'array',
 			},
 		],
-		[ domains ]
+		[ userDomains ]
 	);
 
 	const form = {
@@ -76,6 +99,8 @@ function AddEmailForwarder() {
 		],
 	};
 
+	const isLoadingEmailForwarders = emailForwardersQueries.some( ( q ) => q.isLoading );
+	const isBusy = isLoadingDomains || isLoadingEmailForwarders || isAddingEmailForwarder;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
 	const isValid = isItemValid( formData, fields, form );
 
@@ -138,6 +163,10 @@ function AddEmailForwarder() {
 		);
 	};
 
+	const newForwardingAddresses = formData.forwardingAddresses.filter(
+		( addr ) => ! uniqueEmailForwarders.includes( addr )
+	);
+
 	return (
 		<PageLayout
 			header={
@@ -161,16 +190,30 @@ function AddEmailForwarder() {
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 6 }>
-							<VStack spacing={ 2 }>
-								<DataForm
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: Partial< FormData > ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
-							</VStack>
+							<DataForm
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< FormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+
+							{ newForwardingAddresses.length > 0 && (
+								<Notice>
+									{ sprintf(
+										/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
+										_n(
+											"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to that email after saving.",
+											"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to those emails after saving.",
+											newForwardingAddresses.length
+										),
+										{
+											emailAddresses: newForwardingAddresses.join( ', ' ),
+										}
+									) }
+								</Notice>
+							) }
 
 							<ButtonStack justify="flex-start">
 								<Button
