@@ -203,7 +203,7 @@ class EnvVariables implements SupportedEnvVariables {
 	}
 
 	/**
-	 * Returns the Automattic for Agencies URL.
+	 * Returns the A8C for Agencies URL.
 	 * @example 'https://agencies.automattic.com'
 	 */
 	get A8C_FOR_AGENCIES_URL(): string {
