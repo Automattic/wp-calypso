@@ -1,5 +1,5 @@
-import { addEmailForwarder } from '@automattic/api-core';
-import { mutationOptions } from '@tanstack/react-query';
+import { addEmailForwarder, fetchEmailForwarders } from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 
 type ResponseError = {
 	error:
@@ -38,4 +38,10 @@ export const addEmailForwarderMutation = () =>
 			mailbox: string;
 			destinations: string[];
 		} ) => addEmailForwarder( domain, mailbox, destinations ),
+	} );
+
+export const emailForwardersQuery = ( domainName: string ) =>
+	queryOptions( {
+		queryKey: [ 'domains', domainName, 'email-forwarders' ],
+		queryFn: () => fetchEmailForwarders( domainName ),
 	} );
