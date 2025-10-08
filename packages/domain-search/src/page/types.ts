@@ -41,6 +41,7 @@ export interface DomainSearchEvents {
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( domainName: string ) => void;
 	onQueryChange: ( query: string ) => void;
+	onQueryClear: () => void;
 	onAddDomainToCart: (
 		domainName: string,
 		position: number,
