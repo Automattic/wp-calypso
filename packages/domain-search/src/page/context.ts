@@ -65,7 +65,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
-			forceRegularPrice: false,
 			freeForFirstYear: false,
 		},
 	},
@@ -91,13 +90,16 @@ export const useDomainSearch = () => {
 };
 
 export const useDomainSearchContextValue = ( {
-	currentSiteUrl,
+	currentSiteUrl: externalSiteUrl,
+	currentSiteId,
 	query: externalQuery,
 	cart,
 	events,
 	slots,
 	config,
 }: DomainSearchProps ): typeof DEFAULT_CONTEXT_VALUE => {
+	const currentSiteUrl = externalSiteUrl?.replace( /^https?:\/\//, '' );
+
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
 
@@ -140,6 +142,7 @@ export const useDomainSearchContextValue = ( {
 						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
 						exact_sld_matches_only: filter.exactSldMatchesOnly,
 						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
+						site_slug: currentSiteUrl,
 					} ),
 					enabled: false,
 					staleTime: Infinity,
@@ -157,8 +160,12 @@ export const useDomainSearchContextValue = ( {
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
-				domainAvailability: ( domainName ) => ( {
-					...domainAvailabilityQuery( domainName ),
+				domainAvailability: ( domainName, isCartPreCheck = false ) => ( {
+					...domainAvailabilityQuery( domainName, {
+						vendor: normalizedConfig.vendor,
+						blog_id: currentSiteId,
+						is_cart_pre_check: isCartPreCheck,
+					} ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -208,6 +215,7 @@ export const useDomainSearchContextValue = ( {
 		normalizedEvents,
 		slots,
 		currentSiteUrl,
+		currentSiteId,
 		normalizedConfig,
 		filter,
 		setFilter,

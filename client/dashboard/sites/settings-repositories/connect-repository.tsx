@@ -13,7 +13,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { siteRoute } from '../../app/router/sites';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -24,11 +25,11 @@ export default function ConnectRepository() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
-	const navigateFrom = '/sites/$siteSlug/settings/repositories/connect';
+	const navigateFrom = siteSettingsRepositoriesRoute.fullPath;
 	const navigate = useNavigate( { from: navigateFrom } );
 
 	const handleCancel = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
 	const createMutation = useMutation( createCodeDeploymentMutation( site.ID ) );
@@ -48,6 +49,7 @@ export default function ConnectRepository() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Connect Repository' ) }
 					description={ __( 'Connect a GitHub repository to deploy code to your WordPress site.' ) }
 				/>

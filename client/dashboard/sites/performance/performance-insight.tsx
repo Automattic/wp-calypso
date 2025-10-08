@@ -2,18 +2,25 @@ import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
 	Button,
 	ExternalLink,
+	Modal,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
+import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query'; // eslint-disable-line
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
+import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import LLMNotice from './llm-notice';
+import PerformanceInsightTable from './performance-insight-table';
 import useLoadingSteps from './use-loading-steps';
 import type {
 	PerformanceMetricsItemQueryResponse,
@@ -88,38 +95,94 @@ const PerformanceInsightTip = () => {
 	);
 };
 
-// TODO: Implement click behavior.
-const PerformanceInsightFeedback = () => {
-	return (
-		<LLMNotice
-			actions={
-				<>
-					<Text>{ __( 'How did we do?' ) }</Text>
-					<Button
-						icon={ thumbsUp }
-						iconSize={ 16 }
-						size="compact"
-						style={ { padding: '2px', color: 'var(--dashboard__foreground-color-success)' } }
+const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: string } ) => {
+	const { recordTracksEvent } = useAnalytics();
+	const [ isSent, setIsSent ] = useState( false );
+	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
+	const [ formData, setFormData ] = useState( {
+		userFeedback: '',
+	} );
+
+	const handleSubmit = ( rating: 'good' | 'bad', userFeedback?: string ) => {
+		recordTracksEvent( 'calypso_dashboard_performance_profiler_llm_feedback_click', {
+			chat_id: chatId,
+			version: 'logged-in',
+			hash,
+			rating,
+			...( userFeedback && { user_feedback: userFeedback } ),
+		} );
+
+		setIsSent( true );
+	};
+
+	const handleCloseFeedbackModal = () => setIsFeedbackModalOpen( false );
+
+	const renderActions = () => {
+		if ( isSent ) {
+			return <Text>{ __( 'Thanks for the feedback!' ) }</Text>;
+		}
+
+		return (
+			<>
+				<Text>{ __( 'How did we do?' ) }</Text>
+				<Button
+					icon={ thumbsUp }
+					iconSize={ 16 }
+					size="compact"
+					style={ { padding: '2px', color: 'var(--dashboard__foreground-color-success)' } }
+					onClick={ () => handleSubmit( 'good' ) }
+				>
+					{ __( 'Good, it‘s helpful' ) }
+				</Button>
+				<Button
+					icon={ thumbsDown }
+					iconSize={ 16 }
+					size="compact"
+					style={ { padding: '2px', color: 'var(--dashboard__foreground-color-error)' } }
+					onClick={ () => setIsFeedbackModalOpen( true ) }
+				>
+					{ __( 'Not helpful' ) }
+				</Button>
+				{ isFeedbackModalOpen && (
+					<Modal
+						title={ __( 'Tell us more about your experience' ) }
+						size="medium"
+						onRequestClose={ handleCloseFeedbackModal }
 					>
-						{ __( 'Good, it‘s helpful' ) }
-					</Button>
-					<Button
-						icon={ thumbsDown }
-						iconSize={ 16 }
-						size="compact"
-						style={ { padding: '2px', color: 'var(--dashboard__foreground-color-error)' } }
-					>
-						{ __( 'Not helpful' ) }
-					</Button>
-				</>
-			}
-		>
-			{ __( 'Generated with AI' ) }
-		</LLMNotice>
-	);
+						<form onSubmit={ () => handleSubmit( 'bad', formData.userFeedback ) }>
+							<VStack spacing={ 6 }>
+								<DataForm< { userFeedback: string } >
+									data={ formData }
+									fields={ [
+										{
+											id: 'userFeedback',
+											label: __( 'Feedback' ),
+											type: 'text',
+											Edit: 'textarea',
+										},
+									] }
+									form={ { layout: { type: 'regular' as const }, fields: [ 'userFeedback' ] } }
+									onChange={ ( edits: Partial< { userFeedback: string } > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<ButtonStack justify="flex-end">
+									<Button onClick={ handleCloseFeedbackModal }>{ __( 'Cancel' ) }</Button>
+									<Button variant="primary" type="submit">
+										{ __( 'Submit' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					</Modal>
+				) }
+			</>
+		);
+	};
+
+	return <LLMNotice actions={ renderActions() }>{ __( 'Generated with AI' ) }</LLMNotice>;
 };
 
-// TODO: Implement detail.
 const PerformanceInsightDetail = ( {
 	details,
 	fullPageScreenshot,
@@ -127,9 +190,30 @@ const PerformanceInsightDetail = ( {
 	details: PerformanceMetricsDetailsQueryResponse;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 } ) => {
-	console.log( { details, fullPageScreenshot } ); // eslint-disable-line no-console
+	if ( details.type === 'table' || details.type === 'opportunity' ) {
+		return (
+			<PerformanceInsightTable details={ details } fullPageScreenshot={ fullPageScreenshot } />
+		);
+	}
 
-	return <>Performance Insight Detail</>;
+	if ( details.type === 'list' ) {
+		const tables = details.items ?? [];
+
+		return tables.map( ( item, index ) => (
+			<PerformanceInsightTable
+				key={ index }
+				details={ item as unknown as PerformanceMetricsDetailsQueryResponse }
+				fullPageScreenshot={ fullPageScreenshot }
+			/>
+		) );
+	}
+
+	if ( details.type === 'criticalrequestchain' ) {
+		// TODO: We should render the insight tree but I cannot find any sample data...
+		return null;
+	}
+
+	return null;
 };
 
 export const PerformanceInsight = ( {
@@ -150,7 +234,8 @@ export const PerformanceInsight = ( {
 	const locale = useLocale();
 	const isDesktop = useViewportMatch( 'medium' );
 	const { data: llmAnswer } = useSupportChatLLMQuery(
-		insight,
+		// TODO: Fix types
+		insight as any,
 		hash,
 		isWpcom,
 		true,
@@ -180,12 +265,15 @@ export const PerformanceInsight = ( {
 						</div>
 						{ showTip && <PerformanceInsightTip /> }
 					</HStack>
-					<PerformanceInsightFeedback />
+					<PerformanceInsightFeedback chatId={ llmAnswer.chatId } hash={ hash } />
 					{ insight.details?.type && (
-						<PerformanceInsightDetail
-							details={ insight.details }
-							fullPageScreenshot={ fullPageScreenshot }
-						/>
+						<>
+							<Spacer marginBottom={ 0 } />
+							<PerformanceInsightDetail
+								details={ insight.details }
+								fullPageScreenshot={ fullPageScreenshot }
+							/>
+						</>
 					) }
 				</>
 			) : (
