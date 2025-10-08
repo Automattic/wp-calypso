@@ -1,3 +1,5 @@
+import { smsCountryCodesQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	CheckboxControl,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
@@ -7,10 +9,60 @@ import {
 import { type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
+import PhoneNumberInput from '../../components/phone-number-input';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
+
+// Custom phone field component that handles SMS country codes
+function PhoneField( {
+	field,
+	data,
+	onChange,
+}: {
+	field: Field< DomainContactDetails >;
+	data: DomainContactDetails;
+	onChange: ( edits: Partial< DomainContactDetails > ) => void;
+} ) {
+	const { getValue } = field;
+	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
+	const phoneValue = getValue ? getValue( { item: data } ) : '';
+
+	const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
+
+	// Find country code from the numeric code using SMS country codes
+	const smsCountry = smsCountryCodes?.find(
+		( country ) => country.numeric_code === countryNumericCode
+	);
+
+	const [ countryCode, setCountryCode ] = useState( smsCountry?.code || '' );
+
+	return (
+		<PhoneNumberInput
+			data={ {
+				countryCode: countryCode,
+				phoneNumber: phoneNumber,
+				countryNumericCode: countryNumericCode,
+			} }
+			onChange={ ( edits ) => {
+				// Format the phone value back to the expected format
+				const formattedPhone =
+					edits.countryNumericCode && edits.phoneNumber
+						? `${ edits.countryNumericCode }.${ edits.phoneNumber }`
+						: '';
+
+				setCountryCode( edits.countryCode || '' );
+
+				onChange( {
+					phone: formattedPhone,
+				} );
+			} }
+			isDisabled={ false }
+		/>
+	);
+}
 
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
@@ -51,6 +103,7 @@ export const getContactFormFields = (
 			id: 'phone',
 			label: __( 'Phone' ),
 			type: 'text',
+			Edit: PhoneField,
 			isValid: {
 				required: true,
 			},

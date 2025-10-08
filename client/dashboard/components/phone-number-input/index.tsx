@@ -25,7 +25,6 @@ export default function PhoneNumberInput( {
 	isDisabled: boolean;
 } ) {
 	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
-
 	const countryCodes =
 		smsCountryCodes?.map( ( countryCode ) => ( {
 			label: countryCode.name,
@@ -66,6 +65,7 @@ export default function PhoneNumberInput( {
 					return onChange( {
 						...data,
 						phoneNumber: value ?? '',
+						countryNumericCode: data.countryNumericCode,
 					} );
 				} }
 				disabled={ isDisabled }
