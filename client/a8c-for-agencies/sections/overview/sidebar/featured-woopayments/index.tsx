@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -13,7 +12,6 @@ const DISMISSED_PREFERENCE = 'a4a_woopayments_featured_overview_card_dismissed';
 
 export default function OverviewSidebarFeaturedWooPayments() {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 
 	const product = useWooPaymentsProduct();
 
