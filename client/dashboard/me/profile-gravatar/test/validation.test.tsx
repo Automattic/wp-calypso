@@ -18,7 +18,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 			const longName = 'a'.repeat( 251 );
 
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, longName );
+			fireEvent.change( displayNameInput, { target: { value: longName } } );
 			fireEvent.blur( displayNameInput );
 
 			expect(
@@ -34,7 +34,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 			const maxLengthName = 'a'.repeat( 250 );
 
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, maxLengthName );
+			fireEvent.change( displayNameInput, { target: { value: maxLengthName } } );
 			fireEvent.blur( displayNameInput );
 
 			expect(
@@ -50,7 +50,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 			const longName = 'a'.repeat( 251 );
 
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, longName );
+			fireEvent.change( displayNameInput, { target: { value: longName } } );
 
 			const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 			expect( saveButton ).toBeDisabled();
