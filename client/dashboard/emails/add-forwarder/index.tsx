@@ -20,9 +20,9 @@ import type { Field } from '@wordpress/dataviews';
 import '../style.scss';
 
 export interface FormData {
-	local_part: string;
+	localPart: string;
 	domain: string;
-	forwarding_addresses: string[];
+	forwardingAddresses: string[];
 }
 
 function AddEmailForwarder() {
@@ -31,16 +31,16 @@ function AddEmailForwarder() {
 	const navigate = useNavigate();
 	const { data: domains, isLoading } = useQuery( domainsQuery() );
 	const [ formData, setFormData ] = useState< FormData >( {
-		local_part: '',
+		localPart: '',
 		domain: '',
-		forwarding_addresses: [],
+		forwardingAddresses: [],
 	} );
 	const isBusy = isLoading || isPending;
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
 			{
-				id: 'local_part',
+				id: 'localPart',
 				label: __( 'Email address' ),
 				type: 'text',
 			},
@@ -54,7 +54,7 @@ function AddEmailForwarder() {
 				type: 'text',
 			},
 			{
-				id: 'forwarding_addresses',
+				id: 'forwardingAddresses',
 				label: __( 'Forward to' ),
 				type: 'array',
 			},
@@ -66,18 +66,17 @@ function AddEmailForwarder() {
 		layout: { type: 'regular' as const },
 		fields: [
 			{
-				children: [ 'local_part', 'domain' ],
+				children: [ 'localPart', 'domain' ],
 				id: 'email_address',
 				layout: {
 					type: 'row' as const,
 				},
 			},
-			'forwarding_addresses',
+			'forwardingAddresses',
 		],
 	};
 
-	const allFieldsSet =
-		formData.local_part && formData.domain && formData.forwarding_addresses.length;
+	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
 	const isValid = isItemValid( formData, fields, form );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -87,13 +86,13 @@ function AddEmailForwarder() {
 			return;
 		}
 
-		const { local_part, domain, forwarding_addresses } = formData;
+		const { localPart, domain, forwardingAddresses } = formData;
 
 		addEmailForwarder(
 			{
 				domain,
-				mailbox: `${ local_part }@${ domain }`,
-				destinations: forwarding_addresses,
+				mailbox: `${ localPart }@${ domain }`,
+				destinations: forwardingAddresses,
 			},
 			{
 				onSuccess: () => {
