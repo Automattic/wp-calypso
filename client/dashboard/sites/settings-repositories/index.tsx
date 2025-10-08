@@ -116,12 +116,11 @@ function RepositoriesList() {
 }
 
 function SiteRepositories() {
-	const router = useRouter();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
-	const search = router.state.location.search as Record< string, string > | undefined;
+	const search = siteSettingsRepositoriesRoute.useSearch();
 	const showBackToDeployments = search?.from === 'deployments';
 
 	const handleConnectRepository = () => {
