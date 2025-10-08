@@ -94,10 +94,6 @@ export function useCountriesAndStates() {
 		} );
 
 		const countries = Object.values( countryOptions );
-		countries.unshift( {
-			value: '',
-			label: translate( 'Type to find country' ),
-		} );
 
 		// Alphabetizes country list after translated.
 		countries.sort( ( { label: countryA }, { label: countryB } ) => {
