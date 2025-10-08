@@ -26,16 +26,16 @@
     box-shadow: var(--shadow-lg);
 }
 
-/* Override drag cursor for interactive elements */
+/* Override drag cursor for textarea and input elements */
 .container.floating [data-slot="chat-input"],
-.container.floating [data-slot="chat-input"] *,
-.container.floating button,
+.container.floating [data-slot="chat-input"] .textareaContainer,
+.container.floating [data-slot="chat-input"] .textareaContainer *,
 .container.floating textarea,
 .container.floating input {
-    cursor: auto !important;
+    cursor: auto;
 }
 
 /* Show grabbing cursor when actively dragging */
 .container.floating:active {
-    cursor: grabbing !important;
+    cursor: grabbing;
 }
