@@ -91,8 +91,8 @@ export function recordMigrationCredentialsFacebookEvent( componentName ) {
 		return;
 	}
 
-	const params = [ 'trackCustom', 'MigrationCredentials' ];
-	debug( `${ componentName }: [Facebook] Migration Credentials`, params );
+	const params = [ 'trackCustom', 'MigrationRequestSubmitted' ];
+	debug( `${ componentName }: [Facebook] Migration Request Submitted`, params );
 	window.fbq( ...params );
 }
 
