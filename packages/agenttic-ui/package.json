@@ -18,7 +18,7 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"build": "pnpm run clean && pnpm i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
 		"dev": "vite",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
@@ -27,7 +27,8 @@
 		"test": "vitest run",
 		"prepublishOnly": "pnpm run build",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build -o storybook-static"
+		"build-storybook": "storybook build -o storybook-static",
+		"i18n:download-json": "../../scripts/download-translation-files.js"
 	},
 	"keywords": [
 		"agenttic",
