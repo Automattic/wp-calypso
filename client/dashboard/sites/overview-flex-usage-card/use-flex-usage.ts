@@ -1,6 +1,5 @@
 import { siteFlexUsageQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from '@wordpress/element';
 
 type UsageData = {
 	storage: { usedBytes: number; capBytes: number };
@@ -8,35 +7,35 @@ type UsageData = {
 	compute: { usedHours: number; capHours: number };
 };
 
+const sum = ( arr?: Array< { usage: string } > ) =>
+	( arr ?? [] ).reduce( ( acc, p ) => acc + Number( p.usage || 0 ), 0 );
+
 export function useFlexUsage( siteId: number ) {
 	const now = new Date();
 	const start = Math.floor( new Date( now.getFullYear(), now.getMonth(), 1 ).getTime() / 1000 );
 	const end = Math.floor( now.getTime() / 1000 );
 
-	const { data: usage } = useQuery(
-		siteFlexUsageQuery( siteId, { start, end, resolution: 'day' } )
-	);
+	const { data } = useQuery( {
+		...siteFlexUsageQuery( siteId, { start, end, resolution: 'day' } ),
+		select: ( usage ): UsageData => {
+			const storageTotal = sum( usage?.data.storage );
+			const bandwidthTotal = sum( usage?.data.bandwidth );
+			const computeHours = ( sum( usage?.data.compute ) || 0 ) / 3600;
 
-	// Sum usage series into month-to-date totals
-	const totals = useMemo( () => {
-		if ( ! usage ) {
-			return { storage: 0, bandwidth: 0, compute: 0 };
-		}
-		const sum = ( arr?: Array< { usage: string } > ) =>
-			( arr ?? [] ).reduce( ( acc, p ) => acc + Number( p.usage || 0 ), 0 );
-		return {
-			storage: sum( usage.data.storage ),
-			bandwidth: sum( usage.data.bandwidth ),
-			compute: sum( usage.data.compute ) / 3600, // seconds -> hours
-		};
-	}, [ usage ] );
+			// Temporary caps until billing entitlements are wired
+			return {
+				storage: { usedBytes: storageTotal, capBytes: 1 * 1024 * 1024 * 1024 },
+				bandwidth: { usedBytes: bandwidthTotal, capBytes: 1 * 1024 * 1024 * 1024 },
+				compute: { usedHours: computeHours, capHours: 1 },
+			};
+		},
+	} );
 
-	// Temporary caps until billing entitlements are wired
-	const data: UsageData = {
-		storage: { usedBytes: totals.storage, capBytes: 1 * 1024 * 1024 * 1024 },
-		bandwidth: { usedBytes: totals.bandwidth, capBytes: 1 * 1024 * 1024 * 1024 },
-		compute: { usedHours: totals.compute, capHours: 1 },
+	const fallback: UsageData = {
+		storage: { usedBytes: 0, capBytes: 1 * 1024 * 1024 * 1024 },
+		bandwidth: { usedBytes: 0, capBytes: 1 * 1024 * 1024 * 1024 },
+		compute: { usedHours: 0, capHours: 1 },
 	};
 
-	return { data };
+	return { data: data ?? fallback };
 }
