@@ -28,7 +28,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 			title={ shouldShowAddAttachSite ? __( 'Attach to a site' ) : __( 'Site' ) }
 			heading={
 				<span style={ { wordBreak: 'break-all' } }>
-					{ shouldShowAddAttachSite ? 'No site attached' : site.name }
+					{ shouldShowAddAttachSite ? __( 'No site attached' ) : site.name }
 				</span>
 			}
 			link={
@@ -38,7 +38,9 @@ export default function FeaturedCardSite( { domain }: Props ) {
 			}
 			icon={ shouldShowAddAttachSite ? <Icon icon={ globe } /> : <SiteIcon site={ site } /> }
 			description={
-				shouldShowAddAttachSite ? __( 'Attach to an existing site.' ) : domain.site_slug
+				shouldShowAddAttachSite
+					? __( 'Attach this domain name to an existing site.' )
+					: domain.site_slug
 			}
 		/>
 	);
