@@ -15,7 +15,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
 
-	if ( isSelfHostedJetpackConnected( site ) ) {
+	if ( isSelfHostedJetpackConnected( site ) && ! site.is_wpcom_flex ) {
 		return (
 			<ResponsiveMenu label={ __( 'Site Menu' ) }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>

@@ -98,7 +98,11 @@ export const siteRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		const overviewUrl = `/sites/${ siteSlug }`;
-		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
+		if (
+			isSelfHostedJetpackConnected( site ) &&
+			! site.is_wpcom_flex &&
+			! location.pathname.endsWith( overviewUrl )
+		) {
 			throw redirect( { to: overviewUrl } );
 		}
 
