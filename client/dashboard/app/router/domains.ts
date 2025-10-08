@@ -107,13 +107,6 @@ export const domainRoute = createRoute( {
 );
 
 export const domainOverviewRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Overview' ),
-			},
-		],
-	} ),
 	getParentRoute: () => domainRoute,
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
@@ -146,6 +139,11 @@ export const domainDnsRoute = createRoute( {
 	path: 'dns',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainDnsQuery( domainName ) ),
+} );
+
+export const domainDnsIndexRoute = createRoute( {
+	getParentRoute: () => domainDnsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
@@ -162,8 +160,8 @@ export const domainDnsAddRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'dns/add',
+	getParentRoute: () => domainDnsRoute,
+	path: 'add',
 } ).lazy( () =>
 	import( '../../domains/dns/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-add' )( {
@@ -180,8 +178,8 @@ export const domainDnsEditRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'dns/edit',
+	getParentRoute: () => domainDnsRoute,
+	path: 'edit',
 	beforeLoad: async ( { params: { domainName }, search } ) => {
 		// If the provided recordId doesn't exist, redirect to the DNS overview page
 		const { recordId } = search as { recordId: string | undefined };
@@ -225,6 +223,11 @@ export const domainForwardingRoute = createRoute( {
 			queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 		] );
 	},
+} );
+
+export const domainForwardingIndexRoute = createRoute( {
+	getParentRoute: () => domainForwardingRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-forwarding' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding' )( {
@@ -241,8 +244,8 @@ export const domainForwardingAddRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'forwarding/add',
+	getParentRoute: () => domainForwardingRoute,
+	path: 'add',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -265,8 +268,8 @@ export const domainForwardingEditRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit/$forwardingId',
+	getParentRoute: () => domainForwardingRoute,
+	path: 'edit/$forwardingId',
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -357,6 +360,11 @@ export const domainGlueRecordsRoute = createRoute( {
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+} );
+
+export const domainGlueRecordsIndexRoute = createRoute( {
+	getParentRoute: () => domainGlueRecordsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-glue-records' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records' )( {
@@ -373,8 +381,8 @@ export const domainGlueRecordsAddRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'glue-records/add',
+	getParentRoute: () => domainGlueRecordsRoute,
+	path: 'add',
 } ).lazy( () =>
 	import( '../../domains/domain-glue-records/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-add' )( {
@@ -391,8 +399,8 @@ export const domainGlueRecordsEditRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'glue-records/edit/$nameServer',
+	getParentRoute: () => domainGlueRecordsRoute,
+	path: 'edit/$nameServer',
 	beforeLoad: async ( { params: { domainName, nameServer } } ) => {
 		const glueRecordsData = await queryClient.ensureQueryData(
 			domainGlueRecordsQuery( domainName )
@@ -552,19 +560,21 @@ export const createDomainsRoutes = () => {
 		domainsRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
-			domainDnsRoute,
-			domainDnsAddRoute,
-			domainDnsEditRoute,
+			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
 			domainConnectionSetupRoute,
-			domainForwardingRoute,
-			domainForwardingAddRoute,
-			domainForwardingEditRoute,
+			domainForwardingRoute.addChildren( [
+				domainForwardingIndexRoute,
+				domainForwardingAddRoute,
+				domainForwardingEditRoute,
+			] ),
 			domainContactInfoRoute,
 			domainContactVerificationRoute,
 			domainNameServersRoute,
-			domainGlueRecordsRoute,
-			domainGlueRecordsAddRoute,
-			domainGlueRecordsEditRoute,
+			domainGlueRecordsRoute.addChildren( [
+				domainGlueRecordsIndexRoute,
+				domainGlueRecordsAddRoute,
+				domainGlueRecordsEditRoute,
+			] ),
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
 			domainTransferToOtherUserRoute,

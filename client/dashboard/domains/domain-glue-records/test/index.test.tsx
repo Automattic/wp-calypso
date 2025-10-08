@@ -47,8 +47,7 @@ test( 'renders glue records table with data', async () => {
 
 	render( <DomainGlueRecords /> );
 
-	expect( await screen.findByText( 'Glue records' ) ).toBeInTheDocument();
-	expect( screen.getByRole( 'link', { name: 'Add glue record' } ) ).toBeInTheDocument();
+	expect( await screen.findByRole( 'link', { name: 'Add glue record' } ) ).toBeInTheDocument();
 
 	// Check if the table rows are rendered
 	expect( await screen.findByText( 'ns1' ) ).toBeInTheDocument();
@@ -64,8 +63,7 @@ test( 'renders empty state when no glue records exist', async () => {
 
 	render( <DomainGlueRecords /> );
 
-	expect( await screen.findByText( 'Glue records' ) ).toBeInTheDocument();
-	expect( screen.getByRole( 'link', { name: 'Add glue record' } ) ).toBeInTheDocument();
+	expect( await screen.findByRole( 'link', { name: 'Add glue record' } ) ).toBeInTheDocument();
 	expect( screen.getByText( 'No glue records found for this domain.' ) ).toBeInTheDocument();
 } );
 
