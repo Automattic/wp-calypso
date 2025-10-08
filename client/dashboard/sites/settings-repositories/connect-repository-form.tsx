@@ -238,11 +238,20 @@ export const ConnectRepositoryForm = ( {
 		if ( ! selectedRepository ) {
 			return new Set< string >();
 		}
-		const connected = existingDeployments
+		let connected = existingDeployments
 			.filter( ( d ) => d.external_repository_id === selectedRepository.id )
 			.map( ( d ) => d.branch_name );
+		// When editing a connection, remove the initialValue branch from the connected branches, so it's a valid option
+		if ( selectedRepository.id === initialValues.selectedRepositoryId ) {
+			connected = connected.filter( ( branch ) => branch !== initialValues.branch );
+		}
 		return new Set( connected );
-	}, [ existingDeployments, selectedRepository ] );
+	}, [
+		existingDeployments,
+		selectedRepository,
+		initialValues.selectedRepositoryId,
+		initialValues.branch,
+	] );
 
 	const { data: workflows = [] } = useQuery( {
 		...githubWorkflowsQuery(
