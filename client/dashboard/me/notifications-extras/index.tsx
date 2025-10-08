@@ -1,5 +1,5 @@
 import {
-	userNotificationsExtrasSettingsMutation,
+	userNotificationsSettingsMutation,
 	userNotificationsSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
@@ -26,7 +26,7 @@ export default function NotificationsExtras() {
 	const { recordTracksEvent } = useAnalytics();
 
 	const mutation = useMutation( {
-		...userNotificationsExtrasSettingsMutation(),
+		...userNotificationsSettingsMutation(),
 		meta: {
 			snackbar: {
 				success: __( 'Subscription settings saved.' ),
@@ -35,7 +35,7 @@ export default function NotificationsExtras() {
 		},
 	} );
 
-	const extraSettings: Partial< WpcomNotificationSettings > | undefined = data?.wpcom;
+	const extraSettings: WpcomNotificationSettings = data.wpcom;
 	const isSaving = mutation.isPending;
 	const onMutate =
 		( group: 'wpcom' | 'jetpack' ) =>
@@ -64,7 +64,7 @@ export default function NotificationsExtras() {
 				} );
 			} );
 
-			mutation.mutate( payload );
+			mutation.mutate( { data: { wpcom: payload } } );
 		};
 
 	return (

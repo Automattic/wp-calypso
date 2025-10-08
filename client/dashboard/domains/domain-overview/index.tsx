@@ -52,11 +52,22 @@ export default function DomainOverview() {
 						<HStack spacing={ 2 } alignment="center" justify="flex-start">
 							{ domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
 							<span>
-								{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
-									? // translators: date is the date the domain was connected.
-									  sprintf( __( 'Connected on %(date)s' ), { date: formattedRegistrationDate } )
-									: // translators: date is the date the domain was registered.
-									  sprintf( __( 'Registered on %(date)s' ), { date: formattedRegistrationDate } ) }
+								{ ( () => {
+									switch ( domain.subtype.id ) {
+										case DomainSubtype.DOMAIN_CONNECTION:
+											// translators: date is the date the domain was connected.
+											return sprintf( __( 'Connected on %(date)s' ), {
+												date: formattedRegistrationDate,
+											} );
+										case DomainSubtype.DOMAIN_REGISTRATION:
+											// translators: date is the date the domain was registered.
+											return sprintf( __( 'Registered on %(date)s' ), {
+												date: formattedRegistrationDate,
+											} );
+										default:
+											return null;
+									}
+								} )() }
 							</span>
 						</HStack>
 					}
@@ -89,8 +100,12 @@ export default function DomainOverview() {
 			{ domain.is_pending_icann_verification && (
 				<IcannSuspensionNotice domainName={ domain.domain } />
 			) }
-			<FeaturedCards />
-			<DomainOverviewSettings domain={ domain } />
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
+				<>
+					<FeaturedCards />
+					<DomainOverviewSettings domain={ domain } />
+				</>
+			) }
 			<Actions />
 		</PageLayout>
 	);

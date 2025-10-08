@@ -3,7 +3,6 @@ import {
 	domainQuery,
 	disconnectDomainMutation,
 	removePurchaseMutation,
-	siteByIdQuery,
 	sitePurchaseQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -28,7 +27,7 @@ import {
 	shouldShowTransferAction,
 	shouldShowTransferInAction,
 	shouldShowDisconnectAction,
-	shouldShowDeleteAction,
+	shouldShowRemoveAction,
 	shouldShowCancelAction,
 	getDeleteTitle,
 	getDeleteLabel,
@@ -40,13 +39,13 @@ export default function Actions() {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 	const { data: purchase } = useQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
 	);
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
 		disconnectDomainMutation( domainName )
 	);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { mutate: deleteDomain, isPending: isDeleting } = useMutation( removePurchaseMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isDisconnectDialogOpen, setIsDisconnectDialogOpen ] = useState( false );
@@ -87,7 +86,7 @@ export default function Actions() {
 		transfer: shouldShowTransferAction( domain ),
 		transferIn: shouldShowTransferInAction( domain ),
 		disconnect: shouldShowDisconnectAction( domain ),
-		delete: shouldShowDeleteAction( domain, purchase, site ),
+		remove: shouldShowRemoveAction( domain, purchase ),
 		cancel: shouldShowCancelAction( domain, purchase ),
 	};
 
@@ -169,7 +168,7 @@ export default function Actions() {
 						}
 					/>
 				) }
-				{ availableActions.delete && (
+				{ availableActions.remove && (
 					<ActionList.ActionItem
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
@@ -178,9 +177,7 @@ export default function Actions() {
 								size="compact"
 								variant="secondary"
 								isDestructive
-								isBusy={ isDeleting }
-								disabled={ isDeleting }
-								onClick={ () => setIsDeleteDialogOpen( true ) }
+								href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }
 							>
 								{ getDeleteLabel( domain ) }
 							</Button>
@@ -196,7 +193,7 @@ export default function Actions() {
 								size="compact"
 								variant="secondary"
 								isDestructive
-								href={ `/me/purchases/${ domain.domain }/${ purchase?.ID }/cancel` }
+								href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }/cancel` }
 							>
 								{ getDeleteLabel( domain ) }
 							</Button>
