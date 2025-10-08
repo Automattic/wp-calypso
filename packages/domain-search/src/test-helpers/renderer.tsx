@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { getTld } from '../helpers';
+import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { DomainSearchContext, useDomainSearchContextValue } from '../page/context';
 import { buildCart, buildCartItem } from './factories/cart';
 import type { DomainSearchProps, SelectedDomain } from '../page/types';
@@ -30,14 +31,15 @@ export const TestDomainSearch = ( {
 };
 
 export const TestDomainSearchWithCart = ( {
-	initialCartItems,
+	initialCartItems = [],
 	children,
 	removeItemPromise,
 	...props
 }: {
-	initialCartItems: SelectedDomain[];
+	initialCartItems?: SelectedDomain[];
 	children: React.ReactNode;
-} & Omit< DomainSearchProps, 'cart' > & { removeItemPromise?: Promise< unknown > } ) => {
+	removeItemPromise?: Promise< unknown >;
+} & Omit< DomainSearchProps, 'cart' > ) => {
 	const [ items, setItems ] = useState( initialCartItems );
 
 	const total = items.reduce( ( acc, item ) => {
@@ -84,5 +86,19 @@ export const TestDomainSearchWithCart = ( {
 		>
 			{ children }
 		</TestDomainSearch>
+	);
+};
+
+export const TestDomainSearchWithSuggestionsList: typeof TestDomainSearchWithCart = ( props ) => {
+	const Content = () => {
+		const { isLoading } = useSuggestionsList();
+
+		return isLoading ? null : props.children;
+	};
+
+	return (
+		<TestDomainSearchWithCart { ...props }>
+			<Content />
+		</TestDomainSearchWithCart>
 	);
 };

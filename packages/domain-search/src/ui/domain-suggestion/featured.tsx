@@ -11,6 +11,26 @@ import { FeaturedSkeleton } from './featured.skeleton';
 
 import './featured.scss';
 
+export const getForcedPriceAlignment = ( {
+	activeQuery,
+	isSingleFeaturedSuggestion,
+	matchReasons,
+}: {
+	activeQuery: 'small' | 'large';
+	isSingleFeaturedSuggestion?: boolean;
+	matchReasons?: string[];
+} ) => {
+	if ( activeQuery === 'large' && isSingleFeaturedSuggestion ) {
+		return 'right';
+	}
+
+	if ( ! matchReasons ) {
+		return 'left';
+	}
+
+	return undefined;
+};
+
 type DomainSuggestionFeaturedProps = {
 	domain: string;
 	tld: string;
@@ -38,13 +58,11 @@ const Featured = ( {
 		() =>
 			( {
 				activeQuery,
-				priceAlignment:
-					// eslint-disable-next-line no-nested-ternary
-					activeQuery === 'large' && isSingleFeaturedSuggestion
-						? 'right'
-						: ! matchReasons
-						? 'left'
-						: undefined,
+				priceAlignment: getForcedPriceAlignment( {
+					activeQuery,
+					isSingleFeaturedSuggestion,
+					matchReasons,
+				} ),
 				priceSize: activeQuery === 'large' ? 20 : 18,
 				isFeatured: true,
 				currentWidth: currentWidth,
@@ -76,6 +94,7 @@ const Featured = ( {
 				activeQuery={ activeQuery }
 				className={ clsx( 'domain-suggestion-featured', {
 					'domain-suggestion-featured--highlighted': isHighlighted,
+					'domain-suggestion-featured--single': isSingleFeaturedSuggestion,
 				} ) }
 				badges={ badgesElement }
 				domainName={ domainName }
