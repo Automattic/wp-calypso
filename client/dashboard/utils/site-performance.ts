@@ -147,8 +147,14 @@ export const getDisplayValue = ( metric: Metrics, value: number ): string => {
 };
 
 export function getFormattedSize( size: number ) {
-	const i = size === 0 ? 0 : Math.floor( Math.log( size ) / Math.log( 1024 ) );
+	if ( size === 0 ) {
+		return '0 B';
+	}
+
+	const i = Math.floor( Math.log( size ) / Math.log( 1024 ) );
 	return (
-		+( size / Math.pow( 1024, i ) ).toFixed( 2 ) * 1 + ' ' + [ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ]
+		getFormattedNumber( size / Math.pow( 1024, i ) ) * 1 +
+		' ' +
+		[ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ]
 	);
 }

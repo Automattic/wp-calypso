@@ -1,5 +1,4 @@
 import { DataViews } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
 import Markdown from 'react-markdown';
 import { Text } from '../../components/text';
 import { getFormattedNumber, getFormattedSize } from '../../utils/site-performance';
@@ -89,12 +88,11 @@ const PerformanceInsightTable = ( {
 				switch ( valueType ) {
 					case 'ms':
 					case 'timespanMs':
-						// translators: %(ms)d is the value to be displayed in milliseconds.
-						return sprintf( __( '%(ms)dms' ), { ms: getFormattedNumber( value ) } );
+						return `${ getFormattedNumber( value ) }ms`;
 					case 'bytes':
 						return getFormattedSize( Number( value ) || 0 );
 					case 'numeric':
-						return getFormattedNumber( value, 2 );
+						return getFormattedNumber( value );
 					case 'link':
 						return <Markdown>{ value.toString() }</Markdown>;
 					case 'score':
