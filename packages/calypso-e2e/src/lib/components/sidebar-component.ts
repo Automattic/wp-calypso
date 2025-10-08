@@ -80,11 +80,6 @@ export class SidebarComponent {
 
 		await this.page.dispatchEvent( itemSelector, 'click' );
 
-		// Wait for navigation after clicking the top level item.
-		await this.page.waitForURL( `**${ hrefItemSelector }`, {
-			waitUntil: 'domcontentloaded',
-		} );
-
 		// Sub-level menu item selector.
 		if ( subitem ) {
 			const subitemSelector = `.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`;
@@ -95,6 +90,11 @@ export class SidebarComponent {
 
 			await this.page.dispatchEvent( subitemSelector, 'click' );
 			await this.page.waitForURL( `**${ hrefSubItemSelector }`, {
+				waitUntil: 'domcontentloaded',
+			} );
+		} else {
+			// Otherwise wait for navigation after clicking the top level item.
+			await this.page.waitForURL( `**${ hrefItemSelector }`, {
 				waitUntil: 'domcontentloaded',
 			} );
 		}
