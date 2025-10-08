@@ -24,7 +24,7 @@ const MAX_LOGS_DOWNLOAD = 10_000;
 const MAX_BATCH_RETRIES = 3;
 const MAX_DOWNLOAD_RETRIES = 5;
 const BASE_RETRY_DELAY_MS = 2000;
-const MIN_PAGE_SIZE = 100;
+const MIN_PAGE_SIZE = 200; // If we go lower than this we risk timeouts
 const MAX_EMPTY_BATCHES = 3;
 
 type DownloadLogsSuccess = {
@@ -105,14 +105,14 @@ async function downloadSiteLogsOnce( args: {
 						if ( ! totalAvailable ) {
 							totalAvailable = batchResp.total_results ?? 0;
 						}
-						scrollId = batchResp.scroll_id;
+						scrollId = batchResp.scroll_id ?? null;
 
 						break;
 					} catch ( e: unknown ) {
 						const err = e as { status?: number };
 						// On server error, reduce page size to try succeeding next batch
 						if ( err.status === 500 && pageSize > MIN_PAGE_SIZE ) {
-							pageSize = Math.floor( pageSize / 2 );
+							pageSize = Math.max( Math.floor( pageSize / 2 ), MIN_PAGE_SIZE );
 						}
 						if ( batchAttempt < MAX_BATCH_RETRIES ) {
 							await waitWithBackoff( batchAttempt );
@@ -160,6 +160,11 @@ async function downloadSiteLogsOnce( args: {
 
 			if ( downloadedCount === 0 ) {
 				throw new Error( 'No logs retrieved' );
+			}
+
+			if ( totalAvailable && downloadedCount < totalAvailable && attempt < MAX_DOWNLOAD_RETRIES ) {
+				await waitWithBackoff( attempt );
+				continue; // retry entire attempt
 			}
 
 			const blob = new Blob( rows, { type: 'text/csv;charset=utf-8' } );
