@@ -91,7 +91,16 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ ! isRequestingHumanSupport && (
+					{ isRequestingHumanSupport ? (
+						<GetSupport
+							onClickAdditionalEvent={ ( destination ) => {
+								trackEvent( 'chat_get_support', {
+									location: 'user-message',
+									destination,
+								} );
+							} }
+						/>
+					) : (
 						<>
 							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 								<BotMessageActions message={ message } />
@@ -104,18 +113,6 @@ export const UserMessage = ( {
 							</div>
 						</>
 					) }
-					<div>
-						{ isRequestingHumanSupport && (
-							<GetSupport
-								onClickAdditionalEvent={ ( destination ) => {
-									trackEvent( 'chat_get_support', {
-										location: 'user-message',
-										destination,
-									} );
-								} }
-							/>
-						) }
-					</div>
 				</>
 			) }
 		</>
