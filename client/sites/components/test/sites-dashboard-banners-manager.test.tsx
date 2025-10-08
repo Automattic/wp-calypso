@@ -62,7 +62,7 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( queryByText( 'Stuck on your migration?' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders A8C for Agencies banner when sitesCount is 5 or more', () => {
+	it( 'renders Automattic for Agencies banner when sitesCount is 5 or more', () => {
 		const sitesStatuses = [];
 
 		const { getByText } = render(
@@ -77,7 +77,7 @@ describe( 'SitesDashboardBannersManager', () => {
 		expect( Banner ).toHaveBeenCalled();
 	} );
 
-	it( 'does not render A8C for Agencies banner when sitesCount is less than 5', () => {
+	it( 'does not render Automattic for Agencies banner when sitesCount is less than 5', () => {
 		const sitesStatuses = [];
 
 		const { queryByText } = render(
