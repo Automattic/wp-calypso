@@ -1,9 +1,13 @@
 import { addEmailForwarderMutation, domainsQuery } from '@automattic/api-queries';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { OptInWelcome } from '../../components/opt-in-welcome';
@@ -22,8 +26,10 @@ export interface FormData {
 }
 
 function AddEmailForwarder() {
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: addEmailForwarder, isPending } = useMutation( addEmailForwarderMutation() );
+	const navigate = useNavigate();
+	const { data: domains, isLoading } = useQuery( domainsQuery() );
 	const [ formData, setFormData ] = useState< FormData >( {
 		local_part: '',
 		domain: '',
@@ -83,11 +89,54 @@ function AddEmailForwarder() {
 
 		const { local_part, domain, forwarding_addresses } = formData;
 
-		addEmailForwarder( {
-			domain,
-			mailbox: `${ local_part }@${ domain }`,
-			destinations: forwarding_addresses,
-		} );
+		addEmailForwarder(
+			{
+				domain,
+				mailbox: `${ local_part }@${ domain }`,
+				destinations: forwarding_addresses,
+			},
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Email forwarder added.' ), { type: 'snackbar' } );
+					navigate( {
+						to: '/emails',
+					} );
+				},
+				onError: ( resp, variables ) => {
+					if ( resp ) {
+						const message =
+							typeof resp.message === 'object' ? resp.message.error_message : resp.message;
+
+						createErrorNotice(
+							sprintf(
+								/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for, %s: message is the error message returned by the API */
+								__(
+									'Failed to add email forwarder for %(emailAddress)s with message "%(message)s". Please try again or contact support.'
+								),
+								{
+									emailAddress: variables.mailbox,
+									message,
+								}
+							),
+							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+						);
+					} else {
+						createErrorNotice(
+							sprintf(
+								/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
+								__(
+									'Failed to add email forwarder for %(emailAddress)s. Please try again or contact support.'
+								),
+								{
+									emailAddress: variables.mailbox,
+								}
+							),
+							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+						);
+					}
+				},
+			}
+		);
 	};
 
 	return (
