@@ -361,6 +361,15 @@ export const ConnectRepositoryForm = ( {
 		} );
 	}, [ remoteBranches, connectedBranchesForSelectedRepo ] );
 
+	const allBranchesConnected = useMemo( () => {
+		if ( ! remoteBranches || remoteBranches.length === 0 ) {
+			return false;
+		}
+		return remoteBranches.every( ( branchName ) =>
+			connectedBranchesForSelectedRepo.has( branchName )
+		);
+	}, [ remoteBranches, connectedBranchesForSelectedRepo ] );
+
 	const isDuplicateSelection = useMemo( () => {
 		if ( ! selectedRepository || ! formData.branch ) {
 			return false;
@@ -464,7 +473,7 @@ export const ConnectRepositoryForm = ( {
 					);
 				},
 				elements: installationOptions,
-				help: installationHelpText,
+				description: installationHelpText,
 			},
 			{
 				id: 'selectedRepositoryId',
@@ -472,7 +481,7 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: RepositorySelector,
 				elements: repositoryOptions,
-				help: repositoryHelpText,
+				description: repositoryHelpText,
 			},
 			{
 				id: 'branch',
@@ -480,17 +489,25 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: 'select',
 				elements: branchOptions,
-				help: isLoadingBranches
-					? __( 'Loading branches…' )
-					: __( 'Select the branch to deploy from this repository.' ),
-				disabled: () => ! selectedRepository || isLoadingBranches,
+				description: ( () => {
+					if ( isLoadingBranches ) {
+						return __( 'Loading branches…' );
+					}
+					if ( allBranchesConnected ) {
+						return __(
+							'All branches for this repository are already connected. Please create a new branch or select a different repository.'
+						);
+					}
+					return __( 'Select the branch to deploy from this repository.' );
+				} )(),
+				disabled: () => ! selectedRepository || isLoadingBranches || allBranchesConnected,
 			},
 			{
 				id: 'targetDir',
 				label: __( 'Destination directory' ),
 				type: 'text' as const,
-				help: __( 'This path is relative to the server root.' ),
-				disabled: () => ! selectedRepository,
+				description: __( 'This path is relative to the server root.' ),
+				disabled: () => ! selectedRepository || allBranchesConnected,
 			},
 			{
 				id: 'isAutomated',
@@ -508,6 +525,7 @@ export const ConnectRepositoryForm = ( {
 		isLoadingBranches,
 		selectedRepository,
 		handleAddGitHubAccount,
+		allBranchesConnected,
 	] );
 
 	if ( isLoadingInstallations ) {
