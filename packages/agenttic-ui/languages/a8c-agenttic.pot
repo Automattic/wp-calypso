@@ -9,12 +9,12 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-06T21:18:29+00:00\n"
+"POT-Creation-Date: 2025-10-08T05:39:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: gettext-extractor\n"
 "X-Domain: a8c-agenttic\n"
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:130
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:130
 msgctxt "a8c-agenttic"
 msgid "%d days ago"
 msgstr ""
@@ -25,22 +25,22 @@ msgctxt "a8c-agenttic"
 msgid "Ask anything"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:217
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:217
 msgctxt "a8c-agenttic"
 msgid "Available types: line, bar"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:224
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:224
 msgctxt "a8c-agenttic"
 msgid "Chart data must include a data array"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:213
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:213
 msgctxt "a8c-agenttic"
 msgid "Chart data must include chartType"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:386
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:396
 msgctxt "a8c-agenttic"
 msgid "Click to upload images or drag and drop"
 msgstr ""
@@ -50,43 +50,48 @@ msgctxt "a8c-agenttic"
 msgid "Close conversation"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:395
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:405
 msgctxt "a8c-agenttic"
 msgid "Drop files here to use"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ChatInput.tsx:122
+#: packages/agenttic-ui/src/components/chat/ChatInput.tsx:124
 msgctxt "a8c-agenttic"
 msgid "Expand conversation"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:286
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:286
 msgctxt "a8c-agenttic"
 msgid "Failed to parse chart data as JSON"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:202
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:202
 msgctxt "a8c-agenttic"
 msgid "Invalid chart data provided"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:250
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:254
 msgctxt "a8c-agenttic"
 msgid "Maximum %d files allowed."
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:338
+#: packages/agenttic-ui/src/components/AgentUIContainer.tsx:501
+msgctxt "a8c-agenttic"
+msgid "Message is too long. Please keep it under %d characters."
+msgstr ""
+
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:338
 msgctxt "a8c-agenttic"
 msgid "No chart data available"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:235
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:235
 msgctxt "a8c-agenttic"
 msgid "No data points found for chart"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:226
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:346
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:230
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:356
 msgctxt "a8c-agenttic"
 msgid "Only %s image files are allowed."
 msgstr ""
@@ -96,17 +101,17 @@ msgctxt "a8c-agenttic"
 msgid "Open chat"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:91
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:93
 msgctxt "a8c-agenttic"
 msgid "Remove image"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ChatInput.tsx:151
+#: packages/agenttic-ui/src/components/chat/ChatInput.tsx:153
 msgctxt "a8c-agenttic"
 msgid "Send message"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ChatInput.tsx:150
+#: packages/agenttic-ui/src/components/chat/ChatInput.tsx:152
 msgctxt "a8c-agenttic"
 msgid "Stop processing"
 msgstr ""
@@ -121,27 +126,27 @@ msgctxt "a8c-agenttic"
 msgid "This action is no longer available or cannot be performed"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:124
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:124
 msgctxt "a8c-agenttic"
 msgid "Today"
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:379
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:379
 msgctxt "a8c-agenttic"
 msgid "Unsupported chart type: %s"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:339
+#: packages/agenttic-ui/src/components/chat/ImageUploader.tsx:349
 msgctxt "a8c-agenttic"
 msgid "Upload image files up to %s each."
 msgstr ""
 
-#: packages/agenttic-client/src/markdown-extensions/charts/ChartBlock.tsx:126
+#: packages/agenttic-ui/src/markdown-extensions/charts/ChartBlock.tsx:126
 msgctxt "a8c-agenttic"
 msgid "Yesterday"
 msgstr ""
 
-#: packages/agenttic-ui/src/components/chat/EmptyView.tsx:18
+#: packages/agenttic-ui/src/components/chat/EmptyView.tsx:19
 msgctxt "a8c-agenttic"
 msgid "Your WordPress AI — ready to help design, edit, and launch."
 msgstr ""
