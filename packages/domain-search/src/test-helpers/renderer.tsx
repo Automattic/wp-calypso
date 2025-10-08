@@ -93,7 +93,7 @@ export const TestDomainSearchWithSuggestionsList: typeof TestDomainSearchWithCar
 	const Content = () => {
 		const { isLoading } = useSuggestionsList();
 
-		return isLoading ? null : props.children;
+		return isLoading ? 'LOADING_TEST_CONTENT' : props.children;
 	};
 
 	return (
