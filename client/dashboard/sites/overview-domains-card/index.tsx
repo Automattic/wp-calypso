@@ -80,18 +80,14 @@ const SiteDomainDataViews = ( {
 							<Button
 								variant="tertiary"
 								size="compact"
-								href={ addQueryArgs( `/domains/add/use-my-domain/${ site.slug }`, {
-									redirect_to: window.location.pathname,
-								} ) }
+								href={ addQueryArgs( '/setup/domain/use-my-domain', { siteSlug: site.slug } ) }
 							>
 								{ __( 'Transfer domain' ) }
 							</Button>
 							<Button
 								variant="secondary"
 								size="compact"
-								href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-									redirect_to: window.location.pathname,
-								} ) }
+								href={ addQueryArgs( '/setup/domain', { siteSlug: site.slug } ) }
 							>
 								{ __( 'Add domain' ) }
 							</Button>
