@@ -2,7 +2,7 @@ import { Badge, Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { A4A_WOOPAYMENTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_WOOPAYMENTS_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
 
 type Props = {
@@ -48,7 +48,7 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onClick }: Props ) => {
 				className="overview__featured-woopayments-button"
 				variant="primary"
 				__next40pxDefaultSize
-				href={ A4A_WOOPAYMENTS_LINK }
+				href={ A4A_WOOPAYMENTS_OVERVIEW_LINK }
 				onClick={ onClick }
 			>
 				{ translate( 'View details and start earning' ) }
