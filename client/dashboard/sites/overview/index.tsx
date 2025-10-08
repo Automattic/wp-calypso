@@ -96,8 +96,9 @@ function SiteOverview( {
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
 	const { supports } = useAppContext();
+	const isWpcomFlex = Boolean( site.is_wpcom_flex );
 	const showFlexUsageCard = Boolean(
-		supports.sites && supports.sites.flexUsageCard && ! isSelfHostedJetpackConnectedSite
+		supports.sites && supports.sites.flexUsageCard && isWpcomFlex
 	);
 
 	return (
