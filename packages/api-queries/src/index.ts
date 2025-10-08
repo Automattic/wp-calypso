@@ -5,6 +5,7 @@ export * from './domain-connection-setup';
 export * from './domain-contact-verification';
 export * from './domain-dns-records';
 export * from './domain-dnssec';
+export * from './domain-email';
 export * from './domain-forwarding';
 export * from './domain-glue-records';
 export * from './domain-name-servers';
