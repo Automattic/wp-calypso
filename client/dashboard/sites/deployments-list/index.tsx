@@ -18,7 +18,6 @@ import {
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
@@ -162,14 +161,19 @@ function DeploymentsList() {
 					title={ __( 'Deployments' ) }
 					actions={
 						<>
-							<RouterLinkButton
-								to={ siteSettingsRepositoriesRoute.fullPath }
-								params={ { siteSlug } }
+							<Button
 								variant="secondary"
 								__next40pxDefaultSize
+								onClick={ () =>
+									navigate( {
+										to: siteSettingsRepositoriesRoute.fullPath,
+										params: { siteSlug },
+										search: { from: 'deployments' },
+									} )
+								}
 							>
 								{ __( 'Go to repositories' ) }
-							</RouterLinkButton>
+							</Button>
 							<Button
 								variant="primary"
 								__next40pxDefaultSize
