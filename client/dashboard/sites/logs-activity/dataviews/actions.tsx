@@ -3,6 +3,7 @@ import { Icon } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
+import { useAnalytics } from '../../../app/analytics';
 import { siteBackupDetailRoute } from '../../../app/router/sites';
 import type { SiteActivityLog, Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -17,6 +18,7 @@ export function useActivityActions( {
 	site,
 }: UseActivityActionsOptions ): Action< SiteActivityLog >[] {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 
 	return useMemo( () => {
 		const backupAction: Action< SiteActivityLog > = {
@@ -28,6 +30,13 @@ export function useActivityActions( {
 			isEligible: ( item ) => item.is_rewindable,
 			callback: async ( items ) => {
 				const [ item ] = items;
+				if ( item ) {
+					recordTracksEvent( 'calypso_dashboard_sites_logs_activity_restore_point_click', {
+						activity_id: item.activity_id,
+						rewind_id: item.rewind_id,
+						site_id: site.ID,
+					} );
+				}
 				router.navigate( {
 					to: siteBackupDetailRoute.fullPath,
 					params: { siteSlug: site.slug, rewindId: item.rewind_id },
@@ -36,5 +45,5 @@ export function useActivityActions( {
 		};
 
 		return [ backupAction ];
-	}, [ isLoading, site, router ] );
+	}, [ isLoading, site, router, recordTracksEvent ] );
 }
