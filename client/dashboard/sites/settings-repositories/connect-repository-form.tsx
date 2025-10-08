@@ -500,14 +500,12 @@ export const ConnectRepositoryForm = ( {
 					}
 					return __( 'Select the branch to deploy from this repository.' );
 				} )(),
-				disabled: () => ! selectedRepository || isLoadingBranches || allBranchesConnected,
 			},
 			{
 				id: 'targetDir',
 				label: __( 'Destination directory' ),
 				type: 'text' as const,
 				description: __( 'This path is relative to the server root.' ),
-				disabled: () => ! selectedRepository || allBranchesConnected,
 			},
 			{
 				id: 'isAutomated',
@@ -523,7 +521,6 @@ export const ConnectRepositoryForm = ( {
 		repositoryHelpText,
 		branchOptions,
 		isLoadingBranches,
-		selectedRepository,
 		handleAddGitHubAccount,
 		allBranchesConnected,
 	] );
