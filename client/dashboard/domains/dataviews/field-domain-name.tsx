@@ -30,7 +30,7 @@ export const DomainNameField = ( {
 			params={ { siteSlug, domainName: domain.domain } }
 			disabled={ domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS }
 		>
-			<VStack spacing={ 0 }>
+			<VStack spacing={ 1 }>
 				<HStack spacing={ 1 }>
 					<span style={ textOverflowStyles }>{ value }</span>
 					{ showPrimaryDomainBadge && domain.primary_domain && (

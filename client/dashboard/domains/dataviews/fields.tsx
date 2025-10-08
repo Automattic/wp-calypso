@@ -18,6 +18,7 @@ const THREE_DAYS_IN_MINUTES = 3 * 1440;
 export const useFields = ( {
 	site,
 	showPrimaryDomainBadge = true,
+	inOverview = false,
 }: {
 	site?: Site;
 	showPrimaryDomainBadge?: boolean;
@@ -146,7 +147,9 @@ export const useFields = ( {
 				},
 				render: ( { item } ) => {
 					// Site Overview does not show the Status column, so we use this column for error messages.
+					// TODO: move this inside the DomainExpiryField component?
 					if (
+						inOverview &&
 						site &&
 						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 						! item.points_to_wpcom &&

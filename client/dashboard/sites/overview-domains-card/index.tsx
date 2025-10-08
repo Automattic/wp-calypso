@@ -33,6 +33,7 @@ const SiteDomainDataViews = ( {
 	const fields = useFields( {
 		site,
 		showPrimaryDomainBadge: type === 'table',
+		inOverview: true,
 	} );
 
 	const actions = useActions( { user, site } );
