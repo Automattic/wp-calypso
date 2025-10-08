@@ -23,19 +23,22 @@ export const useSuggestionsList = () => {
 		enabled: !! getTld( query ),
 	} );
 
-	const premiumSuggestions = useMemo(
+	// We need to check the availability not only of all premium suggestions, but also of the suggestion
+	// that's the same as the query. That's because sometimes we get suggestions that are premium but
+	// are not marked as such, and we might need to remove that from the suggestions list.
+	const suggestionsNeedingAvailabilityCheck = useMemo(
 		() =>
 			suggestions
-				.filter( ( suggestion ) => suggestion.is_premium )
+				.filter( ( suggestion ) => suggestion.is_premium || suggestion.domain_name === query )
 				.map( ( suggestion ) => suggestion.domain_name ),
-		[ suggestions ]
+		[ suggestions, query ]
 	);
 
 	const unavailablePremiumDomainsCombinator = useCallback(
 		( results: UseQueryResult< DomainAvailability, Error >[] ) => {
 			return {
 				isLoadingUnavailablePremiumDomains: results.some( ( result ) => result.isLoading ),
-				unavailablePremiumDomains: premiumSuggestions.filter( ( _, index ) => {
+				unavailablePremiumDomains: suggestionsNeedingAvailabilityCheck.filter( ( _, index ) => {
 					const availabilityQuery = results[ index ];
 
 					if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
@@ -50,11 +53,11 @@ export const useSuggestionsList = () => {
 				} ),
 			};
 		},
-		[ premiumSuggestions ]
+		[ suggestionsNeedingAvailabilityCheck ]
 	);
 
 	const { isLoadingUnavailablePremiumDomains, unavailablePremiumDomains } = useQueries( {
-		queries: premiumSuggestions.map( ( suggestion ) => ( {
+		queries: suggestionsNeedingAvailabilityCheck.map( ( suggestion ) => ( {
 			...queries.domainAvailability( suggestion ),
 			enabled: true,
 		} ) ),
