@@ -1,4 +1,4 @@
-import { EmailAccount, SiteDomain } from '@automattic/api-core';
+import { EmailAccount } from '@automattic/api-core';
 
 export type EmailWarningType =
 	| 'google_pending_tos_acceptance'
