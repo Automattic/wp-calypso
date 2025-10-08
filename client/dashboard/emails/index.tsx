@@ -1,14 +1,6 @@
 import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
-import {
-	deleteEmailForwardMutation,
-	deleteTitanMailboxMutation,
-	mailboxAccountsQuery,
-	resendVerifyEmailForwardMutation,
-	siteDomainsQuery,
-	sitesQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { mailboxAccountsQuery, siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
@@ -18,21 +10,14 @@ import PageLayout from '../components/page-layout';
 import { domainHasEmail } from '../utils/domain';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
-import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
+import { DEFAULT_EMAILS_VIEW, emailFields, useEmailActions } from './dataviews';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import type { Email } from './types';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
 function Emails() {
-	const navigate = useNavigate();
-	const { mutateAsync: resendVerificationEmail } = useMutation(
-		resendVerifyEmailForwardMutation()
-	);
-
-	const { mutateAsync: deleteEmailForward } = useMutation( deleteEmailForwardMutation() );
-	const { mutateAsync: deleteTitanMailbox } = useMutation( deleteTitanMailboxMutation() );
-
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const sites = ( allSites ?? [] ).filter( ( site ) => site.capabilities.manage_options );
 	const siteIds = sites.map( ( site ) => site.ID );
@@ -93,16 +78,7 @@ function Emails() {
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 	const [ view, setView ] = useState< View >( DEFAULT_EMAILS_VIEW );
 
-	const actions = useMemo(
-		() =>
-			createEmailActions(
-				navigate,
-				resendVerificationEmail,
-				deleteEmailForward,
-				deleteTitanMailbox
-			),
-		[ navigate, resendVerificationEmail, deleteEmailForward, deleteTitanMailbox ]
-	);
+	const actions = useEmailActions();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 

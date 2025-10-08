@@ -1,6 +1,7 @@
 import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
+import type { Email } from '../types';
 
 export const mapMailboxToEmail = (
 	box: EmailBox,
