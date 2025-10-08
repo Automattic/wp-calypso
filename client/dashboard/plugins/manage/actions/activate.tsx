@@ -27,5 +27,4 @@ export const activateAction: Action< PluginListRow > = {
 	isEligible: ( item: PluginListRow ) => {
 		return [ 'some', 'none' ].includes( item.isActive );
 	},
-	supportsBulk: true,
 };
