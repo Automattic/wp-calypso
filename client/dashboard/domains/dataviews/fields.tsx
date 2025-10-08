@@ -22,6 +22,7 @@ export const useFields = ( {
 }: {
 	site?: Site;
 	showPrimaryDomainBadge?: boolean;
+	inOverview?: boolean;
 } = {} ) => {
 	const { data: domains } = useQuery( domainsQuery() );
 
