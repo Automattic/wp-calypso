@@ -5,6 +5,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
@@ -121,7 +122,7 @@ function DomainGlueRecords() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Glue records' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					actions={
 						<RouterLinkButton
 							to={ domainGlueRecordsAddRoute.fullPath }

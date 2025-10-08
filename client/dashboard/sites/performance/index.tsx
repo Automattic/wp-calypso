@@ -84,6 +84,36 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
 	const { gmtOffset, timezoneString } = siteSettings;
 
+	const renderContent = () => {
+		if ( hasError ) {
+			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
+		}
+
+		if ( isFetchingReport || isRunningReport || ! currentReport ) {
+			return (
+				<ReportLoading
+					isSavedReport={
+						isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
+					}
+				/>
+			);
+		}
+
+		return (
+			<>
+				<ReportExpiredNotice
+					reportTimestamp={ currentReport.timestamp }
+					onRetest={ handleReportRefetch }
+				/>
+				<Report
+					report={ currentReport }
+					device={ deviceToggle }
+					hash={ currentPage?.wpcom_performance_report_hash }
+				/>
+			</>
+		);
+	};
+
 	return (
 		<PageLayout>
 			<PageHeader
@@ -118,26 +148,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					</HStack>
 				}
 			/>
-			{ hasError && <ReportErrorNotice onRetestClick={ handleReportRefetch } /> }
-			{ isFetchingReport || isRunningReport || ! currentReport ? (
-				<ReportLoading
-					isSavedReport={
-						isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
-					}
-				/>
-			) : (
-				<>
-					<ReportExpiredNotice
-						reportTimestamp={ currentReport.timestamp }
-						onRetest={ handleReportRefetch }
-					/>
-					<Report
-						report={ currentReport }
-						device={ deviceToggle }
-						hash={ currentPage?.wpcom_performance_report_hash }
-					/>
-				</>
-			) }
+			{ renderContent() }
 		</PageLayout>
 	);
 }
