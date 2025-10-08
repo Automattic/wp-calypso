@@ -26,6 +26,7 @@ import type {
 	DeviceToggleType,
 } from './types';
 import type { SitePerformanceReport } from '@automattic/api-core';
+import './performance-insight.scss';
 
 export const PerformanceInsightTitle = ( {
 	insight,
@@ -229,17 +230,16 @@ export const PerformanceInsight = ( {
 						spacing={ 4 }
 						style={ { flexWrap: isDesktop ? 'nowrap' : 'wrap-reverse' } }
 					>
-						<div>
-							<Markdown
-								components={ {
-									a( props ) {
-										return <a target="_blank" { ...props } />;
-									},
-								} }
-							>
-								{ llmAnswer.messages }
-							</Markdown>
-						</div>
+						<Markdown
+							className="performance-insight__markdown"
+							components={ {
+								a( props ) {
+									return <a target="_blank" { ...props } />;
+								},
+							} }
+						>
+							{ llmAnswer.messages }
+						</Markdown>
 						{ showTip && <PerformanceInsightTip /> }
 					</HStack>
 					<PerformanceInsightFeedback chatId={ llmAnswer.chatId } hash={ hash } />
