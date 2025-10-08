@@ -15,7 +15,8 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteRoute } from '../../app/router/sites';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -27,10 +28,10 @@ export default function ConnectRepository() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories/connect' } );
+	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 
 	const handleCancel = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
 	const createMutation = useMutation( {
@@ -39,7 +40,7 @@ export default function ConnectRepository() {
 			createSuccessNotice( __( 'Repository connected successfully.' ), {
 				type: 'snackbar',
 			} );
-			navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+			navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 		},
 		onError: ( error ) => {
 			createErrorNotice(
@@ -67,6 +68,7 @@ export default function ConnectRepository() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Connect Repository' ) }
 					description={ __( 'Connect a GitHub repository to deploy code to your WordPress site.' ) }
 				/>
