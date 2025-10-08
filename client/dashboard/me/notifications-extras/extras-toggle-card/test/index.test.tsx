@@ -130,17 +130,20 @@ describe( 'ExtrasToggleCard', () => {
 		const subscribeAllToggle = screen.getByLabelText( 'Subscribe to all' );
 		await userEvent.click( subscribeAllToggle );
 
-		expect( mockOnMutate ).toHaveBeenCalledWith( {
-			marketing: true,
-			research: true,
-			community: true,
-			promotion: true,
-			news: true,
-			digest: true,
-			reports: true,
-			news_developer: true,
-			scheduled_updates: true,
-		} );
+		expect( mockOnMutate ).toHaveBeenCalledWith(
+			{
+				marketing: true,
+				research: true,
+				community: true,
+				promotion: true,
+				news: true,
+				digest: true,
+				reports: true,
+				news_developer: true,
+				scheduled_updates: true,
+			},
+			'subscribe-all'
+		);
 	} );
 
 	it( 'calls onMutate with only changed values when "Unsubscribe from all" is clicked', async () => {
@@ -156,11 +159,14 @@ describe( 'ExtrasToggleCard', () => {
 		const unsubscribeAllToggle = screen.getByLabelText( 'Unsubscribe from all' );
 		await userEvent.click( unsubscribeAllToggle );
 
-		expect( mockOnMutate ).toHaveBeenCalledWith( {
-			marketing: false,
-			research: false,
-			community: false,
-		} );
+		expect( mockOnMutate ).toHaveBeenCalledWith(
+			{
+				marketing: false,
+				research: false,
+				community: false,
+			},
+			'unsubscribe-all'
+		);
 	} );
 
 	it( 'disables all toggles when isSaving is true', () => {
@@ -202,7 +208,7 @@ describe( 'ExtrasToggleCard', () => {
 		const marketingToggle = screen.getByLabelText( 'Suggestions' );
 		await userEvent.click( marketingToggle );
 
-		expect( mockOnMutate ).toHaveBeenCalledWith( { marketing: false } );
+		expect( mockOnMutate ).toHaveBeenCalledWith( { marketing: false }, 'single' );
 
 		mockOnMutate.mockClear();
 
@@ -210,7 +216,7 @@ describe( 'ExtrasToggleCard', () => {
 		const researchToggle = screen.getByLabelText( 'Research' );
 		await userEvent.click( researchToggle );
 
-		expect( mockOnMutate ).toHaveBeenCalledWith( { research: true } );
+		expect( mockOnMutate ).toHaveBeenCalledWith( { research: true }, 'single' );
 	} );
 
 	it( 'renders without descriptions when not provided', () => {

@@ -4,8 +4,10 @@ import {
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
 	githubWorkflowsQuery,
+	siteBySlugQuery,
+	codeDeploymentsQuery,
 } from '@automattic/api-queries';
-import { useQuery, UseMutationResult } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
 import {
 	Button,
 	ComboboxControl,
@@ -22,6 +24,7 @@ import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews
 import { __ } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
@@ -174,6 +177,8 @@ export const ConnectRepositoryForm = ( {
 	initialValues,
 	submitText,
 }: ConnectRepositoryFormProps ) => {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const {
 		data: installations = [],
 		refetch: refetchGithubInstallations,
@@ -206,14 +211,6 @@ export const ConnectRepositoryForm = ( {
 		return repositories.find( ( repository ) => repository.id === formData.selectedRepositoryId );
 	}, [ repositories, formData.selectedRepositoryId ] );
 
-	useEffect( () => {
-		if ( selectedRepository?.default_branch ) {
-			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
-		} else if ( ! selectedRepository ) {
-			setFormData( ( prev ) => ( { ...prev, branch: '' } ) );
-		}
-	}, [ selectedRepository ] );
-
 	const { data: remoteBranches = [], isLoading: isLoadingBranches } = useQuery( {
 		...githubRepositoryBranchesQuery(
 			selectedInstallation?.external_id ?? 0,
@@ -222,6 +219,18 @@ export const ConnectRepositoryForm = ( {
 		),
 		enabled: !! selectedInstallation && !! selectedRepository,
 	} );
+
+	const { data: existingDeployments = [] } = useQuery( codeDeploymentsQuery( site.ID ) );
+
+	const connectedBranchesForSelectedRepo = useMemo( () => {
+		if ( ! selectedRepository ) {
+			return new Set< string >();
+		}
+		const connected = existingDeployments
+			.filter( ( d ) => d.external_repository_id === selectedRepository.id )
+			.map( ( d ) => d.branch_name );
+		return new Set( connected );
+	}, [ existingDeployments, selectedRepository ] );
 
 	const { data: workflows = [] } = useQuery( {
 		...githubWorkflowsQuery(
@@ -280,6 +289,22 @@ export const ConnectRepositoryForm = ( {
 				if ( updates.selectedRepositoryId === '' ) {
 					newFormData.deploymentMode = 'simple';
 					newFormData.workflowPath = '';
+				} else {
+					// When a repository is selected, consider auto-selecting its default branch
+					const newlySelectedRepo = repositories.find(
+						( repo ) => repo.id === updates.selectedRepositoryId
+					);
+					const defaultBranch = newlySelectedRepo?.default_branch;
+					if ( defaultBranch ) {
+						const connectedForNewRepo = new Set(
+							existingDeployments
+								.filter( ( d ) => d.external_repository_id === updates.selectedRepositoryId )
+								.map( ( d ) => d.branch_name )
+						);
+						if ( ! connectedForNewRepo.has( defaultBranch ) ) {
+							newFormData.branch = defaultBranch;
+						}
+					}
 				}
 			}
 
@@ -322,11 +347,35 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	const branchOptions = useMemo( () => {
-		return remoteBranches.map( ( branchName ) => ( {
-			label: branchName,
-			value: branchName,
-		} ) );
-	}, [ remoteBranches ] );
+		if ( ! remoteBranches ) {
+			return [];
+		}
+
+		return remoteBranches.map( ( branchName ) => {
+			const isConnected = connectedBranchesForSelectedRepo.has( branchName );
+			return {
+				label: isConnected ? `${ branchName } ${ __( '(already connected)' ) }` : branchName,
+				value: branchName,
+				disabled: isConnected,
+			} as const;
+		} );
+	}, [ remoteBranches, connectedBranchesForSelectedRepo ] );
+
+	const allBranchesConnected = useMemo( () => {
+		if ( ! remoteBranches || remoteBranches.length === 0 ) {
+			return false;
+		}
+		return remoteBranches.every( ( branchName ) =>
+			connectedBranchesForSelectedRepo.has( branchName )
+		);
+	}, [ remoteBranches, connectedBranchesForSelectedRepo ] );
+
+	const isDuplicateSelection = useMemo( () => {
+		if ( ! selectedRepository || ! formData.branch ) {
+			return false;
+		}
+		return connectedBranchesForSelectedRepo.has( formData.branch );
+	}, [ connectedBranchesForSelectedRepo, selectedRepository, formData.branch ] );
 
 	const installationOptions = useMemo( () => {
 		return installations.map( ( installation ) => ( {
@@ -370,7 +419,8 @@ export const ConnectRepositoryForm = ( {
 		selectedInstallation &&
 		formData.branch &&
 		formData.targetDir &&
-		isAdvancedValid
+		isAdvancedValid &&
+		! isDuplicateSelection
 	);
 
 	const handleAddGitHubAccount = useCallback( () => {
@@ -423,7 +473,7 @@ export const ConnectRepositoryForm = ( {
 					);
 				},
 				elements: installationOptions,
-				help: installationHelpText,
+				description: installationHelpText,
 			},
 			{
 				id: 'selectedRepositoryId',
@@ -431,7 +481,7 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: RepositorySelector,
 				elements: repositoryOptions,
-				help: repositoryHelpText,
+				description: repositoryHelpText,
 			},
 			{
 				id: 'branch',
@@ -439,17 +489,23 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: 'select',
 				elements: branchOptions,
-				help: isLoadingBranches
-					? __( 'Loading branches…' )
-					: __( 'Select the branch to deploy from this repository.' ),
-				disabled: () => ! selectedRepository || isLoadingBranches,
+				description: ( () => {
+					if ( isLoadingBranches ) {
+						return __( 'Loading branches…' );
+					}
+					if ( allBranchesConnected ) {
+						return __(
+							'All branches for this repository are already connected. Please create a new branch or select a different repository.'
+						);
+					}
+					return __( 'Select the branch to deploy from this repository.' );
+				} )(),
 			},
 			{
 				id: 'targetDir',
 				label: __( 'Destination directory' ),
 				type: 'text' as const,
-				help: __( 'This path is relative to the server root.' ),
-				disabled: () => ! selectedRepository,
+				description: __( 'This path is relative to the server root.' ),
 			},
 			{
 				id: 'isAutomated',
@@ -465,8 +521,8 @@ export const ConnectRepositoryForm = ( {
 		repositoryHelpText,
 		branchOptions,
 		isLoadingBranches,
-		selectedRepository,
 		handleAddGitHubAccount,
+		allBranchesConnected,
 	] );
 
 	if ( isLoadingInstallations ) {

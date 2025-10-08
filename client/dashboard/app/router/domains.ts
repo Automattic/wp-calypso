@@ -13,6 +13,8 @@ import {
 	domainWhoisQuery,
 	domainConnectionSetupInfoQuery,
 	rawUserPreferencesQuery,
+	domainAvailabilityQuery,
+	domainInboundTransferStatusQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -555,6 +557,30 @@ export const domainConnectionSetupRoute = createRoute( {
 	)
 );
 
+export const domainTransferSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain transfer setup' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'domain-transfer-setup',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainAvailabilityQuery( domainName ) ),
+			queryClient.ensureQueryData( domainInboundTransferStatusQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-connection-setup/transfer-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -562,6 +588,7 @@ export const createDomainsRoutes = () => {
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
 			domainConnectionSetupRoute,
+			domainTransferSetupRoute,
 			domainForwardingRoute.addChildren( [
 				domainForwardingIndexRoute,
 				domainForwardingAddRoute,
