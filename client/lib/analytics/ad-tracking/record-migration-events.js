@@ -85,7 +85,7 @@ export function recordMigrationStartFacebookEvent( componentName ) {
  * @param {string} componentName - The name of the component firing the event
  * @returns {void}
  */
-export function recordMigrationCredentialsFacebookEvent( componentName ) {
+export function recordMigrationRequestSubmittedFacebookEvent( componentName ) {
 	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
 		debug( `${ componentName }: skipping Facebook tracking as ad tracking is disallowed` );
 		return;
