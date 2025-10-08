@@ -605,7 +605,7 @@ export function AgentUIContainer( {
 				drag={ draggableStates.includes( chat.state ) }
 				dragControls={ dragControls }
 				dragListener={ false }
-				dragConstraints={ constraintsRef }
+				dragConstraints={ isDragging ? constraintsRef : false }
 				dragMomentum={ false }
 				dragElastic={ 0.1 }
 				dragTransition={ { power: 0.1, timeConstant: 100 } }
