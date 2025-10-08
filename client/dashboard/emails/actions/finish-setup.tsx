@@ -10,7 +10,6 @@ export const finishSetupAction: Action< Email > = {
 		if ( item.status === 'google_pending_tos_acceptance' ) {
 			const url = buildGoogleFinishSetupLink( item.emailAddress, item.domainName );
 			window.open( url, '_blank' );
-			return;
 		}
 	},
 	isEligible: ( item: Email ) => item.status === 'google_pending_tos_acceptance',
