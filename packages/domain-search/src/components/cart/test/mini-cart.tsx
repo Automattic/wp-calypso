@@ -5,10 +5,10 @@ import { buildCartItem } from '../../../test-helpers/factories/cart';
 import { TestDomainSearchWithCart } from '../../../test-helpers/renderer';
 import { MiniCart } from '../mini-cart';
 
-const MockMutation = () => {
+const MockMutation = ( { mutationPromise }: { mutationPromise: Promise< unknown > } ) => {
 	const { mutate } = useMutation( {
 		mutationFn: async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
+			await mutationPromise;
 			return Promise.resolve();
 		},
 	} );
@@ -52,9 +52,11 @@ describe( 'MiniCart', () => {
 	it( 'disables the continue button when there is a mutation in progress', async () => {
 		const fireEvent = userEvent.setup();
 
+		const mutation = Promise.withResolvers< void >();
+
 		render(
 			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] }>
-				<MockMutation />
+				<MockMutation mutationPromise={ mutation.promise } />
 				<MiniCart />
 			</TestDomainSearchWithCart>
 		);
@@ -62,5 +64,7 @@ describe( 'MiniCart', () => {
 		await fireEvent.click( await screen.findByRole( 'button', { name: 'Click me' } ) );
 
 		expect( await screen.findByRole( 'button', { name: 'Continue' } ) ).toBeDisabled();
+
+		mutation.resolve();
 	} );
 } );

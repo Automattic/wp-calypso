@@ -5,17 +5,19 @@ import { DomainSearchContext, useDomainSearchContextValue } from '../page/contex
 import { buildCart, buildCartItem } from './factories/cart';
 import type { DomainSearchProps, SelectedDomain } from '../page/types';
 
+const queryClient = new QueryClient( {
+	defaultOptions: {
+		queries: {
+			retry: false,
+			gcTime: 0,
+		},
+	},
+} );
+
 export const TestDomainSearch = ( {
 	cart = buildCart(),
-	queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: {
-				retry: false,
-			},
-		},
-	} ),
 	...props
-}: Partial< DomainSearchProps > & { queryClient?: QueryClient; children: React.ReactNode } ) => {
+}: Partial< DomainSearchProps > & { children: React.ReactNode } ) => {
 	const contextValue = useDomainSearchContextValue( { cart, ...props } );
 
 	return (
@@ -30,11 +32,12 @@ export const TestDomainSearch = ( {
 export const TestDomainSearchWithCart = ( {
 	initialCartItems,
 	children,
+	removeItemPromise,
 	...props
 }: {
 	initialCartItems: SelectedDomain[];
 	children: React.ReactNode;
-} & Omit< DomainSearchProps, 'cart' > ) => {
+} & Omit< DomainSearchProps, 'cart' > & { removeItemPromise?: Promise< unknown > } ) => {
 	const [ items, setItems ] = useState( initialCartItems );
 
 	const total = items.reduce( ( acc, item ) => {
@@ -66,8 +69,15 @@ export const TestDomainSearchWithCart = ( {
 					] );
 					return Promise.resolve();
 				},
-				onRemoveItem: ( uuid ) => {
-					setItems( items.filter( ( item ) => item.uuid !== uuid ) );
+				onRemoveItem: async ( uuid ) => {
+					if ( removeItemPromise ) {
+						await removeItemPromise;
+					}
+
+					setTimeout( () => {
+						setItems( items.filter( ( item ) => item.uuid !== uuid ) );
+					}, 0 );
+
 					return Promise.resolve();
 				},
 			} ) }

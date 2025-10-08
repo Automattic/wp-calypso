@@ -67,7 +67,7 @@ export const FullCart = () => {
 			</DomainsFullCartItems>
 			{ config.skippable && (
 				<div>
-					<DomainsFullCartSkipButton onSkip={ () => events.onSkip() } />
+					<DomainsFullCartSkipButton onSkip={ () => events.onSkip() } disabled={ isMutating } />
 				</div>
 			) }
 		</DomainsFullCart>
