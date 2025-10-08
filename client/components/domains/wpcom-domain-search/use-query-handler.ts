@@ -38,8 +38,17 @@ export const useQueryHandler = ( {
 	} );
 
 	const setQuery = useCallback( ( query: string ) => {
-		setLocalQuery( query );
-		setSessionStorageQuery( query );
+		const normalizedQuery = query
+			.trim()
+			.toLowerCase()
+			.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+			.replace( /^www[0-9]?\./, '' )
+			.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+		if ( normalizedQuery ) {
+			setLocalQuery( normalizedQuery );
+			setSessionStorageQuery( normalizedQuery );
+		}
 	}, [] );
 
 	return {
