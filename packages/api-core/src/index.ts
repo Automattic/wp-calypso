@@ -48,6 +48,7 @@ export * from './me-username';
 export * from './me-notification-devices';
 export * from './meta-sms-country-codes';
 export * from './notification-devices';
+export * from './odie';
 export * from './p2';
 export * from './plugins';
 export * from './purchase';
