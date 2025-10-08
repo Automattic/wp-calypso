@@ -36,6 +36,7 @@ export { EmptyView } from './components/chat/EmptyView';
 export { CollapsedView } from './components/views/CollapsedView';
 export { CompactView } from './components/views/CompactView';
 export { ConversationView } from './components/views/ConversationView';
+export { ImageRenderer } from './components/chat/ImageRenderer';
 
 // Hooks
 export { useChat } from './hooks/useChat';
