@@ -41,5 +41,53 @@ test.describe(
 				await expect( pageImportContentFromWordPress.importButton ).toBeEnabled();
 			} );
 		} );
+
+		test( 'As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com Run Importer" link on the wp-admin Importers List page to import my content from my WordPress site', async ( {
+			pageImportContentFromWordPress,
+			pageImportLetsFindYourSite,
+			pageImportContentWordpressQuestion,
+			sitePublic,
+		}, workerInfo ) => {
+			test.skip( workerInfo.project.name !== 'chrome', 'The import tests only run in Chrome' );
+
+			const wordpressSiteURL = 'https://test.wordpress.com/';
+
+			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
+				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
+			} );
+
+			await test.step( "Then I see the Let's find your site page", async function () {
+				await expect( pageImportLetsFindYourSite.heading ).toBeVisible();
+			} );
+
+			await test.step( 'When I enter my WordPress site URL and click Continue', async function () {
+				await pageImportLetsFindYourSite.enterSiteURLAndCheck( wordpressSiteURL );
+			} );
+
+			await test.step( 'Then I see the What do you want to do? page', async function () {
+				await expect( pageImportContentWordpressQuestion.heading ).toBeVisible();
+			} );
+
+			await test.step( 'When I choose "Import content only" option', async function () {
+				await pageImportContentWordpressQuestion.clickImportContentOnlyButton();
+			} );
+
+			await test.step( 'Then I see the Import content from WordPress page', async function () {
+				await expect( pageImportContentFromWordPress.heading ).toBeVisible();
+			} );
+
+			await test.step( 'When I upload a valid WordPress export file', async function () {
+				await pageImportContentFromWordPress.uploadExportFile( TEST_WORDPRESS_EXPORT_FILE_PATH );
+			} );
+
+			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
+				await expect( pageImportContentFromWordPress.heading ).toBeVisible();
+				await expect( pageImportContentFromWordPress.yourFileIsReadyText ).toBeVisible( {
+					timeout: 30000,
+				} );
+				await expect( pageImportContentFromWordPress.importButton ).toBeVisible();
+				await expect( pageImportContentFromWordPress.importButton ).toBeEnabled();
+			} );
+		} );
 	}
 );

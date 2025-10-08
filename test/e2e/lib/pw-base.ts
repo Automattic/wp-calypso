@@ -38,6 +38,7 @@ import {
 	ImportContentFromMediumPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
+	ImportContentWordPressQuestionPage,
 	ImportLetsFindYourSitePage,
 	IncognitoPage,
 	JetpackTrafficPage,
@@ -161,6 +162,10 @@ export const test = base.extend< {
 	 * Page object representing the Import Content from WordPress page.
 	 */
 	pageImportContentFromWordPress: ImportContentFromWordPressPage;
+	/**
+	 * Page object representing the Import Content WordPress Question page.
+	 */
+	pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
 	/**
 	 * Page object representing the Let's Find Your Site page for importing content.
 	 */
@@ -299,6 +304,10 @@ export const test = base.extend< {
 	pageImportLetsFindYourSite: async ( { page }, use ) => {
 		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
 		await use( letsFindYourSitePage );
+	},
+	pageImportContentWordpressQuestion: async ( { page }, use ) => {
+		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
+		await use( importContentWordpressQuestionPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
