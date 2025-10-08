@@ -67,10 +67,9 @@ function Emails() {
 		return domainsWithEmails.flatMap( ( domain, index ) => {
 			const mailboxes = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
 			return mailboxes
-				.map( ( account ) =>
+				.flatMap( ( account ) =>
 					account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account, domain ) )
 				)
-				.flat()
 				.filter( ( email ) => email.canUserManage ) as Email[];
 		} );
 	}, [ domainsWithEmails, mailboxQueries ] );
