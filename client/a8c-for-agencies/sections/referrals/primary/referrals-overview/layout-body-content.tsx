@@ -208,41 +208,6 @@ export default function LayoutBodyContent( {
 										: undefined
 								}
 							/>
-							<StepSectionItem
-								iconClassName="referrals-overview__opacity-70-percent"
-								icon={ reusableBlock }
-								heading={ translate( 'Refer products and hosting' ) }
-								description={ translate( 'Receive up to a 50% commission.' ) }
-								buttonProps={ {
-									children: translate( 'Get started' ),
-									compact: true,
-									primary: hasPayeeAccount,
-									disabled: ! isPayable,
-									href: A4A_MARKETPLACE_PRODUCTS_LINK,
-									onClick: onGetStartedClick,
-								} }
-							/>
-							<StepSectionItem
-								className="referrals-overview__step-section-woo-payments"
-								icon={ <WooLogo /> }
-								heading={ translate( 'Install WooPayments' ) }
-								description={ translate(
-									'Receive a revenue share of 5 basis points on the total payments{{nbsp/}}volume.',
-									{
-										components: {
-											nbsp: <>&nbsp;</>,
-										},
-									}
-								) }
-								buttonProps={ {
-									children: translate( 'Learn how' ),
-									compact: true,
-									primary: hasPayeeAccount,
-									href: 'https://woocommerce.com/payments/',
-									rel: 'noreferrer',
-									target: '_blank',
-								} }
-							/>
 						</StepSection>
 						<StepSection
 							className="referrals-overview__step-section-learn-more"
