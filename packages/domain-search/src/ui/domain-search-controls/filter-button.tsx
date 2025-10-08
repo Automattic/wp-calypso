@@ -35,7 +35,7 @@ export const DomainSearchControlsFilterButton = forwardRef(
 			<div className="domain-search-controls__filters">
 				<Button
 					icon={ funnel }
-					aria-label={ ariaLabel }
+					label={ ariaLabel }
 					variant="secondary"
 					showTooltip
 					onClick={ onClick }
