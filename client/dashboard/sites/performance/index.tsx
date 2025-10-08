@@ -163,7 +163,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 }
 
 function SitePerformance() {
-	const { recordTracksEvent } = useAnalytics();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -181,14 +180,7 @@ function SitePerformance() {
 					notices={
 						<Notice
 							title={ __( 'Launch your site to start measuring performance' ) }
-							actions={
-								<SiteLaunchButton
-									site={ site }
-									onClick={ () =>
-										recordTracksEvent( 'calypso_dashboard_performance_launch_site_click' )
-									}
-								/>
-							}
+							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
 						>
 							{ __( 'Performance statistics are only available for public sites.' ) }
 						</Notice>

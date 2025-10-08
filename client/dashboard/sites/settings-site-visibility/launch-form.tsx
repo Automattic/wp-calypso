@@ -9,7 +9,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useAnalytics } from '../../app/analytics';
 import Notice from '../../components/notice';
 import { SiteLaunchButton } from '../site-launch-button';
 import TrialUpsellNotice from './trial-upsell-notice';
@@ -68,7 +67,7 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
 				<>
-					<SiteLaunchButton site={ site } />
+					<SiteLaunchButton site={ site } tracksContext="agency_site_settings" />
 					{ shouldShowReferClientButton && (
 						<Button
 							size="compact"
@@ -92,21 +91,12 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 }
 
 export function LaunchForm( { site }: { site: Site } ) {
-	const { recordTracksEvent } = useAnalytics();
-
 	return (
 		<>
 			<TrialUpsellNotice site={ site } />
 			<Notice
 				title={ __( 'Your site hasn’t been launched yet' ) }
-				actions={
-					<SiteLaunchButton
-						site={ site }
-						onClick={ () =>
-							recordTracksEvent( 'calypso_dashboard_site_settings_launch_site_click' )
-						}
-					/>
-				}
+				actions={ <SiteLaunchButton site={ site } tracksContext="site_settings" /> }
 			>
 				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 			</Notice>

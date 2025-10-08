@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -13,7 +14,8 @@ import {
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
-export function SiteLaunchButton( { site, onClick }: { site: Site; onClick?: () => void } ) {
+export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksContext: string } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: domains = [], isLoading } = useQuery( siteDomainsQuery( site.ID ) );
 	const launchMutation = useMutation( {
 		...siteLaunchMutation( site.ID ),
@@ -27,8 +29,12 @@ export function SiteLaunchButton( { site, onClick }: { site: Site; onClick?: () 
 	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
 		useState( false );
 
+	const handleTracksEvent = () => {
+		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
+	};
+
 	const handleLaunch = () => {
-		onClick?.();
+		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSettled: () => {
 				setIsAgencyDevelopmentSiteLaunchModalOpen( false );
@@ -95,5 +101,7 @@ export function SiteLaunchButton( { site, onClick }: { site: Site; onClick?: () 
 		return <Button { ...commonProps } onClick={ handleLaunch } />;
 	}
 
-	return <Button { ...commonProps } onClick={ onClick } href={ getLaunchUrl() } />;
+	return (
+		<Button { ...commonProps } onClick={ () => handleTracksEvent() } href={ getLaunchUrl() } />
+	);
 }
