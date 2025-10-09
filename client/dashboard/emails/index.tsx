@@ -80,6 +80,15 @@ function Emails() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
+	let emptyState = null;
+	if ( emails.length === 0 ) {
+		emptyState = domainsWithoutEmails ? (
+			<NoEmailsAvailableEmptyState />
+		) : (
+			<NoDomainsAvailableEmptyState />
+		);
+	}
+
 	return (
 		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
 			<DataViewsCard>
@@ -97,13 +106,7 @@ function Emails() {
 						actions={ actions }
 						defaultLayouts={ { table: {} } }
 						paginationInfo={ paginationInfo }
-						empty={
-							domainsWithoutEmails ? (
-								<NoEmailsAvailableEmptyState />
-							) : (
-								<NoDomainsAvailableEmptyState />
-							)
-						}
+						empty={ emptyState }
 					/>
 				</div>
 			</DataViewsCard>

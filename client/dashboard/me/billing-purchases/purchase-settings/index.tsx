@@ -1,54 +1,54 @@
 import {
-	AkismetUpgradesProductMap,
-	DomainProductSlugs,
-	DomainTransferStatus,
-	OFFSITE_REDIRECT,
 	ProductUpgradeMap,
+	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
+	DomainProductSlugs,
 	useMyDomainInputMode,
 	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
+	DomainTransferStatus,
 } from '@automattic/api-core';
 import {
 	domainsQuery,
 	purchaseQuery,
-	reinstallMarketplacePluginsQuery,
-	siteBySlugQuery,
+	userPurchaseSetAutoRenewQuery,
 	siteDifmWebsiteContentQuery,
 	siteJetpackKeysQuery,
-	userPurchaseSetAutoRenewQuery,
+	reinstallMarketplacePluginsQuery,
+	siteBySlugQuery,
 } from '@automattic/api-queries';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useRouter, Link } from '@tanstack/react-router';
 import {
-	__experimentalHeading as Heading,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	Button,
-	Card,
-	CardBody,
+	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
 	DropdownMenu,
-	ExternalLink,
-	Icon,
 	MenuGroup,
 	MenuItem,
-	Notice,
+	Card,
+	CardBody,
+	Button,
+	Icon,
 	ToggleControl,
+	Notice,
+	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, isRTL, sprintf } from '@wordpress/i18n';
 import {
-	calendar,
+	moreVertical,
 	chevronLeft,
 	chevronRight,
-	commentAuthorAvatar,
+	calendar,
 	currencyDollar,
-	moreVertical,
 	siteLogo,
+	commentAuthorAvatar,
 } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
@@ -60,30 +60,31 @@ import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { formatDate } from '../../../utils/datetime';
+import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
 	getBillPeriodLabel,
-	getRenewalUrlFromPurchase,
-	getSubtitleForDisplay,
 	getTitleForDisplay,
-	isAkismetProduct,
-	isExpired,
+	getSubtitleForDisplay,
 	isExpiring,
-	isGoogleWorkspace,
-	isIncludedWithPlan,
-	isJetpackCrmProduct,
-	isJetpackTemporarySitePurchase,
-	isMarketplacePlugin,
-	isMarketplaceTemporarySitePurchase,
-	isOneTimePurchase,
+	isExpired,
 	isRenewing,
+	isIncludedWithPlan,
+	isOneTimePurchase,
+	isMarketplaceTemporarySitePurchase,
+	isMarketplacePlugin,
+	isJetpackTemporarySitePurchase,
+	isAkismetProduct,
+	isJetpackCrmProduct,
 	isTitanMail,
+	isGoogleWorkspace,
+	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
-import { getAddPaymentMethodUrlFor, getPurchaseUrlForId } from '../urls';
+import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
-import type { Purchase, User } from '@automattic/api-core';
+import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -207,8 +208,8 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
-		// @TODO Update the link destination once we have a definitive path.
-		const url = 'https://wordpress.com/v2/emails';
+		// @TODO Update link url to whatever the hosting dashboard URL is. https://linear.app/a8c/issue/DOTDASH-626/hosting-dashboard-emails-update-purchase-settings-url
+		const url = getEmailManagementPath( purchase.site_slug, purchase.meta );
 		const text = __( 'Email settings' );
 		return <a href={ url }>{ text }</a>;
 	}
