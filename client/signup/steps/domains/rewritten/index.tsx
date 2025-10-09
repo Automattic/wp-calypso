@@ -80,7 +80,7 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
 	} );
@@ -88,6 +88,7 @@ const DomainSearchUI = (
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -209,6 +210,7 @@ const DomainSearchUI = (
 		stepName,
 		siteSlug,
 		setQuery,
+		clearQuery,
 		submitSignupStep,
 		goToNextStep,
 		locale,

@@ -82,7 +82,7 @@ const DomainSearchStep: StepType< {
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
 	} );
@@ -138,6 +138,7 @@ const DomainSearchStep: StepType< {
 				return product;
 			},
 			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				window.location.assign(
 					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
@@ -200,7 +201,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, flow, siteSlug ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
 
 	const slots = useMemo( () => {
 		return {
