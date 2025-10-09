@@ -1,5 +1,6 @@
 import { addEmailForwarder, fetchEmailForwarders } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 type ResponseError = {
 	error:
@@ -38,6 +39,14 @@ export const addEmailForwarderMutation = () =>
 			mailbox: string;
 			destinations: string[];
 		} ) => addEmailForwarder( domain, mailbox, destinations ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'domains' ],
+				predicate: ( query ) =>
+					Array.isArray( query.queryKey ) && query.queryKey[ 2 ] === 'email-forwarders',
+			} );
+		},
 	} );
 
 export const emailForwardersQuery = ( domainName: string ) =>
