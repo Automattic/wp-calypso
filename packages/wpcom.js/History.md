@@ -1,5 +1,9 @@
 # History
 
+## 7.0.1 / 2025-10-09
+
+- Fixed package versions in `devDependencies`.
+
 ## 7.0.0 / 2025-10-09
 
 - Removed `site.post.like`, `site.post.likesList`
