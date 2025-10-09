@@ -298,6 +298,7 @@ const FloatingCompactDemo: React.FC = () => {
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }
 				messageRenderer={ messageRenderer }
+				expandOnClick={ false }
 				notice={ {
 					message: 'Upgrade now to launch.',
 					action: {

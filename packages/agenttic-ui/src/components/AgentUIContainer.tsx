@@ -98,6 +98,7 @@ export function AgentUIContainer( {
 	locale = 'en',
 	maxInputLength = 600, // Default to 600 characters
 	onInputLimitExceeded,
+	expandOnClick,
 	...props
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
@@ -679,6 +680,7 @@ export function AgentUIContainer( {
 									handleSuggestionSubmit={
 										handleSuggestionSubmit
 									}
+									expandOnClick={ expandOnClick }
 								/>
 							</div>
 						) }

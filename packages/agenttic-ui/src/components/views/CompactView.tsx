@@ -26,6 +26,7 @@ interface CompactViewProps {
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
 	handleSuggestionSubmit?: ( value: string ) => void;
+	expandOnClick?: boolean;
 }
 
 export function CompactView( {
@@ -46,6 +47,7 @@ export function CompactView( {
 	suggestions,
 	clearSuggestions,
 	handleSuggestionSubmit,
+	expandOnClick = false,
 }: CompactViewProps ) {
 	const [ suggestionsVisible, setSuggestionsVisible ] = useState( false );
 
@@ -61,6 +63,16 @@ export function CompactView( {
 			SUGGESTIONS_AUTO_HIDE_DELAY
 		);
 	}, [ setNamedTimeout ] );
+
+	// Handle click event for expandOnClick functionality
+	const handleClick = useCallback(
+		( event?: React.MouseEvent< HTMLTextAreaElement > ) => {
+			if ( expandOnClick && onExpand ) {
+				onExpand();
+			}
+		},
+		[ expandOnClick, onExpand ]
+	);
 
 	useEffect( () => {
 		// Clear any existing timeouts when dependencies change
@@ -102,12 +114,14 @@ export function CompactView( {
 				placeholder={ placeholder }
 				isProcessing={ isProcessing }
 				onBlur={ onBlur }
+				onClick={ handleClick }
 				onExpand={ onExpand }
 				showExpandButton={ showExpandButton }
 				focusOnMount={ focusOnMount }
 				customActions={ customActions }
 				actionOrder={ actionOrder }
 				onStop={ onStop }
+				expandOnClick={ expandOnClick }
 				onMouseEnter={ () => {
 					clearAllTimeouts();
 					setSuggestionsVisible( true );
