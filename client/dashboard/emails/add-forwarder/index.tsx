@@ -43,7 +43,7 @@ function AddEmailForwarder() {
 	const navigate = useNavigate();
 	const { data: domains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
 	const userDomains = useMemo(
-		() => domains?.filter( ( d ) => d.current_user_is_owner ) || [],
+		() => domains?.filter( ( d ) => d.current_user_can_add_email && d.current_user_is_owner ) || [],
 		[ domains ]
 	);
 	const [ formData, setFormData ] = useState< FormData >( {
