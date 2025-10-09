@@ -3,8 +3,8 @@
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { render } from '../../../../test-utils';
-import { NotificationsEmailsSummary } from '../index';
+import { render } from '../../../test-utils';
+import { NotificationsEmailsSummary } from '../summary';
 
 describe( 'NotificationsEmailsSummary', () => {
 	it( 'renders a notification when all emails are paused', async () => {

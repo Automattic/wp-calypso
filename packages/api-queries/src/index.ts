@@ -40,6 +40,7 @@ export * from './me-two-step';
 export * from './me-username';
 export * from './meta-sms-country-codes';
 export * from './notification-devices';
+export * from './odie';
 export * from './p2';
 
 export * from './plugin';

@@ -1,18 +1,16 @@
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import Markdown from 'react-markdown';
-import {
-	FullPageScreenshot,
-	PerformanceMetricsDetailsQueryResponse,
-} from 'calypso/data/site-profiler/types';
+import { FullPageScreenshot } from 'calypso/data/site-profiler/types';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
 import { InsightScreenshotWithOverlay } from './insight-screenshot';
+import type { PerformanceMetricAuditDetails } from '@automattic/api-core';
 
 export function InsightTable( {
 	data,
 	fullPageScreenshot,
 }: {
-	data: PerformanceMetricsDetailsQueryResponse;
+	data: PerformanceMetricAuditDetails;
 	fullPageScreenshot: FullPageScreenshot;
 } ) {
 	const { headings = [], items = [] } = data ?? {};
@@ -78,7 +76,7 @@ function Cell( {
 	headingValueType,
 	fullPageScreenshot,
 }: {
-	data: string | number | { [ key: string ]: any };
+	data: string | number | boolean | { [ key: string ]: any };
 	headingValueType: string;
 	fullPageScreenshot?: FullPageScreenshot;
 } ) {
