@@ -50,7 +50,10 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		...sitePerformancePagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
 	} );
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
+	const { page_id, url } = useSearch( { from: sitePerformanceRoute.fullPath } ) as {
+		page_id?: string;
+		url?: string;
+	};
 	const currentPage = useMemo( () => {
 		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
@@ -67,7 +70,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		isDesktopReportError,
 		isMobileReportError,
 		refetch: refetchReport,
-	} = usePerformanceData( currentPage?.link, currentPage?.wpcom_performance_report_hash );
+	} = usePerformanceData( url ?? currentPage?.link, currentPage?.wpcom_performance_report_hash );
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitePerformanceRoute.fullPath } );
 
