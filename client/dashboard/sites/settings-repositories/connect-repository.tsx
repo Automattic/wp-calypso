@@ -59,10 +59,10 @@ export default function ConnectRepository() {
 						formTitle={ __( 'Configure repository connection' ) }
 						formDescription={ createInterpolateElement(
 							__(
-								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
+								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <adjustPermissions />'
 							),
 							{
-								a: (
+								adjustPermissions: (
 									<ExternalLink
 										href={ `https://github.com/settings/installations/${ installations[ 0 ]?.external_id }` }
 									>
