@@ -15,50 +15,6 @@ import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
-// Custom phone field component that handles SMS country codes
-function DomainContactDetailsPhoneField( {
-	field,
-	data,
-	onChange,
-}: {
-	field: Field< DomainContactDetails >;
-	data: DomainContactDetails;
-	onChange: ( edits: Partial< DomainContactDetails > ) => void;
-} ) {
-	const { getValue } = field;
-	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
-	const phoneValue = getValue ? getValue( { item: data } ) : '';
-
-	const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
-
-	// Find country code from the numeric code using SMS country codes
-	const smsCountry = smsCountryCodes?.find(
-		( country ) => country.numeric_code === countryNumericCode
-	);
-
-	return (
-		<PhoneNumberInput
-			data={ {
-				countryCode: smsCountry?.code || '',
-				phoneNumber: phoneNumber,
-				countryNumericCode: countryNumericCode,
-			} }
-			onChange={ ( edits ) => {
-				// Format the phone value back to the expected format
-				// Keep countryNumericCode even if phoneNumber is empty to preserve the country selection
-				const formattedPhone = edits.countryNumericCode
-					? `${ edits.countryNumericCode }.${ edits.phoneNumber || '' }`
-					: '';
-
-				onChange( {
-					phone: formattedPhone,
-				} );
-			} }
-			isDisabled={ false }
-		/>
-	);
-}
-
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
@@ -98,7 +54,40 @@ export const getContactFormFields = (
 			id: 'phone',
 			label: __( 'Phone' ),
 			type: 'text',
-			Edit: DomainContactDetailsPhoneField,
+			Edit: ( { field, data, onChange } ) => {
+				const { getValue } = field;
+				const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
+				const phoneValue = getValue ? getValue( { item: data } ) : '';
+
+				// Our backend stores phone number in the format: +country_code.phone_number
+				const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
+
+				// Find country code from the numeric code using SMS country codes
+				const smsCountry = smsCountryCodes?.find(
+					( country ) => country.numeric_code === countryNumericCode
+				);
+
+				return (
+					<PhoneNumberInput
+						data={ {
+							countryCode: smsCountry?.code || '',
+							phoneNumber: phoneNumber,
+							countryNumericCode: countryNumericCode,
+						} }
+						onChange={ ( edits ) => {
+							// Format the phone value back to the expected format: +country_code.phone_number
+							const formattedPhone = edits.countryNumericCode
+								? `${ edits.countryNumericCode }.${ edits.phoneNumber || '' }`
+								: '';
+
+							onChange( {
+								phone: formattedPhone,
+							} );
+						} }
+						isDisabled={ false }
+					/>
+				);
+			},
 			isValid: {
 				required: true,
 			},
