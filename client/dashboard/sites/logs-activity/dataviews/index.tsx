@@ -6,6 +6,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, View, Field, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { filtersSignature } from '../../logs/dataviews/filters';
 import { syncFiltersSearchParams } from '../../logs/dataviews/url-sync';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
@@ -40,6 +41,7 @@ function SiteActivityLogsDataViews( {
 	hasActivityLogsAccess,
 }: SiteLogsDataViewsPropsActivity ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const locationSearch = router.state.location.search;
 	const [ view, setView ] = useActivityView( {
 		initialFilters: sanitizeFilters( getInitialFiltersFromSearch( locationSearch ) ),
@@ -145,7 +147,37 @@ function SiteActivityLogsDataViews( {
 			url.searchParams.delete( 'search' );
 		}
 		window.history.replaceState( null, '', url.pathname + url.search );
-
+		if ( perPageChanged ) {
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_per_page_changed', {
+				per_page: next.perPage,
+			} );
+		}
+		if ( filtersChanged ) {
+			const activityTypes = extractActivityLogTypeValues( nextFilters );
+			const eventProps: Record< string, boolean | number > = {
+				num_groups_selected: activityTypes.length,
+			};
+			let totalActivitiesSelected = 0;
+			Object.entries( groupCountsData?.groups ?? {} ).forEach( ( [ groupKey, { count } ] ) => {
+				const isSelected = activityTypes.includes( groupKey );
+				eventProps[ `group_${ groupKey }` ] = isSelected;
+				if ( isSelected ) {
+					totalActivitiesSelected += count ?? 0;
+				}
+			} );
+			eventProps.num_total_activities_selected = totalActivitiesSelected;
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_filter_changed', eventProps );
+		}
+		if ( searchChanged ) {
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_search', {
+				has_query: nextSearch.length > 0,
+			} );
+		}
+		if ( ! datasetChanged && requestedPage !== currentPage ) {
+			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_page_changed', {
+				page: requestedPage,
+			} );
+		}
 		setView( {
 			...next,
 			page: datasetChanged ? 1 : requestedPage,

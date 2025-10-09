@@ -21,6 +21,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
 		onQueryChange: noop,
+		onQueryClear: noop,
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
 		onDomainAddAvailabilityPreCheck: noop,
@@ -65,7 +66,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
-			forceRegularPrice: false,
 			freeForFirstYear: false,
 		},
 	},
@@ -90,10 +90,16 @@ export const useDomainSearch = () => {
 	return context;
 };
 
-export const useDomainSearchContextValue = (
-	props: DomainSearchProps
-): typeof DEFAULT_CONTEXT_VALUE => {
-	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
+export const useDomainSearchContextValue = ( {
+	currentSiteUrl: externalSiteUrl,
+	currentSiteId,
+	query: externalQuery,
+	cart,
+	events,
+	slots,
+	config,
+}: DomainSearchProps ): typeof DEFAULT_CONTEXT_VALUE => {
+	const currentSiteUrl = externalSiteUrl?.replace( /^https?:\/\//, '' );
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
@@ -137,6 +143,7 @@ export const useDomainSearchContextValue = (
 						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
 						exact_sld_matches_only: filter.exactSldMatchesOnly,
 						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
+						site_slug: currentSiteUrl,
 					} ),
 					enabled: false,
 					staleTime: Infinity,
@@ -149,13 +156,17 @@ export const useDomainSearchContextValue = (
 							? query.includes( '.blog' )
 							: false,
 					} ),
-					enabled: normalizedConfig.skippable,
+					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
-				domainAvailability: ( domainName ) => ( {
-					...domainAvailabilityQuery( domainName ),
+				domainAvailability: ( domainName, isCartPreCheck = false ) => ( {
+					...domainAvailabilityQuery( domainName, {
+						vendor: normalizedConfig.vendor,
+						blog_id: currentSiteId,
+						is_cart_pre_check: isCartPreCheck,
+					} ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -205,6 +216,7 @@ export const useDomainSearchContextValue = (
 		normalizedEvents,
 		slots,
 		currentSiteUrl,
+		currentSiteId,
 		normalizedConfig,
 		filter,
 		setFilter,

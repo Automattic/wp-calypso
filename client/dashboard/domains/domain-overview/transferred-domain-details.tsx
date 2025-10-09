@@ -1,13 +1,14 @@
 import { Domain, DomainTransferStatus } from '@automattic/api-core';
 import {
-	Button,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { domainTransferSetupRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
 
 export default function TransferredDomainDetails( { domain }: { domain: Domain } ) {
 	const {
@@ -129,9 +130,13 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 		return (
 			// To do: add cta once we implemented the transfer flow
 			<HStack>
-				<Button variant="primary">
+				<RouterLinkButton
+					variant="primary"
+					to={ domainTransferSetupRoute.fullPath }
+					params={ { domainName: domain_name } }
+				>
 					{ last_transfer_error ? __( 'Restart Transfer' ) : __( 'Start Transfer' ) }
-				</Button>
+				</RouterLinkButton>
 			</HStack>
 		);
 	};
@@ -141,8 +146,7 @@ export default function TransferredDomainDetails( { domain }: { domain: Domain }
 		<Notice variant={ errorLevel ? 'error' : 'info' }>
 			<VStack spacing={ 4 }>
 				{ renderDescriptionText() }
-				{ /* To do: add cta once we implemented the transfer flow */ }
-				{ /* { renderStartTransferButton() } */ }
+				{ renderStartTransferButton() }
 			</VStack>
 		</Notice>
 	);

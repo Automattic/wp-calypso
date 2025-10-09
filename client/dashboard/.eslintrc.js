@@ -7,20 +7,22 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
+							// Allowed: calypso/data/data-center
 							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',
-							'!calypso/data/php-versions',
-							// Allowed: calypso/data/data-center
 							'!calypso/data/data-center',
+							'!calypso/data/php-versions',
+							// Allowed: calypso/lib/explat
+							// Allowed: calypso/lib/interval/use-interval (temporary)
+							// Allowed: calypso/lib/load-dev-helpers
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
-							'!calypso/lib/wp',
-							// Allowed: calypso/lib/load-dev-helpers
-							'!calypso/lib/load-dev-helpers',
-							// Allowed: calypso/lib/interval/use-interval (temporary)
+							'!calypso/lib/explat',
 							'!calypso/lib/interval',
+							'!calypso/lib/load-dev-helpers',
+							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
@@ -35,33 +37,33 @@ module.exports = {
 					{
 						group: [
 							'@automattic/*',
+							'!@automattic/api-core',
+							'!@automattic/api-queries',
+							'!@automattic/calypso-analytics',
 							'!@automattic/calypso-config',
 							'!@automattic/calypso-support-session',
+							'!@automattic/charts',
 							'!@automattic/components',
 							'@automattic/components/*',
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
-							'!@automattic/api-core',
-							'!@automattic/api-queries',
-							'!@automattic/search',
 							'!@automattic/components/src/circular-progress-bar',
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
-							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
 							'!@automattic/i18n-utils',
+							'!@automattic/languages',
+							'!@automattic/load-script',
 							'!@automattic/number-formatters',
+							'!@automattic/search',
 							'!@automattic/ui',
 							'!@automattic/urls',
 							'!@automattic/viewport',
-							'!@automattic/languages',
-							'!@automattic/charts',
-							'!@automattic/load-script',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

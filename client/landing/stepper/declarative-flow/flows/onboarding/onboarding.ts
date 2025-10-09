@@ -296,10 +296,17 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
-		// Load Survicate
+		/**
+		 * Load Survicate and set visitor traits on each step navigation.
+		 *
+		 * This runs on every step change to ensure:
+		 * - Survicate script loads successfully (retries if initial load failed)
+		 * - Visitor traits are updated when user authentication state changes
+		 * - Analytics tracking works correctly throughout the onboarding flow
+		 */
 		useEffect( () => {
 			addSurvicate();
-		}, [] );
+		}, [ currentStepSlug ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

@@ -1,9 +1,9 @@
-import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
 import { InsightTable } from './insight-table';
 import { InsightTree } from './insight-tree';
+import type { PerformanceMetricAuditDetails } from '@automattic/api-core';
 
 export interface InsightDetailedContentProps {
-	data: PerformanceMetricsDetailsQueryResponse;
+	data: PerformanceMetricAuditDetails;
 }
 
 export const InsightDetailedContent: React.FC< InsightDetailedContentProps > = ( props ) => {

@@ -28,7 +28,7 @@ export const DEFAULT_VIEW = BASE_VIEW_PROPS;
 
 export const SITE_CONTEXT_VIEW = {
 	...BASE_VIEW_PROPS,
-	fields: [ 'type', 'ssl_status', 'expiry', 'domain_status' ],
+	fields: [ 'ssl_status', 'expiry', 'domain_status' ],
 };
 
 // Default layouts

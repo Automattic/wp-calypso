@@ -27,5 +27,4 @@ export const enableAutoupdateAction: Action< PluginListRow > = {
 	isEligible: ( item: PluginListRow ) => {
 		return [ 'some', 'none' ].includes( item.areAutoUpdatesEnabled );
 	},
-	supportsBulk: true,
 };

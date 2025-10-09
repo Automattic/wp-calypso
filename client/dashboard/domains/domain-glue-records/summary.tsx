@@ -1,11 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Domain } from '@automattic/api-core';
 
-export default function DomainGlueRecordsSettingsSummary( { domain }: { domain: Domain } ) {
+interface Props {
+	domainName: string;
+}
+
+export default function DomainGlueRecordsSettingsSummary( { domainName }: Props ) {
 	return (
 		<RouterLinkSummaryButton
-			to={ `/domains/${ domain.domain }/glue-records` }
+			to={ `/domains/${ domainName }/glue-records` }
 			title={ __( 'Glue records' ) }
 			badges={ [] }
 			density={ 'medium' as const }

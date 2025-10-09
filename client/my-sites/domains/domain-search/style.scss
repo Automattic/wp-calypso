@@ -18,6 +18,10 @@
 			left: var( --sidebar-width-min );
 		}
 	}
+
+	.domains-full-cart {
+		z-index: z-index( 'root', '.drawer' );
+	}
 }
 
 body:has( .calypso-domain-search ) {

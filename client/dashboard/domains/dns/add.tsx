@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -49,7 +50,7 @@ export default function DomainAddDNS() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Add a new DNS record' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
 			<DNSRecordForm
 				domainName={ domainName }
 				isBusy={ mutation.isPending }

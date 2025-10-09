@@ -333,10 +333,6 @@ class PasswordlessSignupForm extends Component {
 
 		const terms = ! this.props.disableTosText && this.props.renderTerms?.();
 
-		const elements = this.props.secondaryFooterButton
-			? [ this.formFooter(), terms ]
-			: [ terms, this.formFooter() ];
-
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
@@ -359,7 +355,17 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ elements }
+					{ this.props.secondaryFooterButton ? (
+						<>
+							{ this.formFooter() }
+							{ terms }
+						</>
+					) : (
+						<>
+							{ terms }
+							{ this.formFooter() }
+						</>
+					) }
 				</LoggedOutForm>
 			</div>
 		);

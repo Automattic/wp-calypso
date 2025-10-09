@@ -7,6 +7,7 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound, useRouter } from '@tanstack/react-router';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -67,7 +68,7 @@ export default function EditDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit domain forwarding' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

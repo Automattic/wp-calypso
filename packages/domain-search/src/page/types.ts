@@ -39,8 +39,9 @@ export interface DomainSearchEvents {
 	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
-	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
+	onMapDomainClick: ( domainName: string ) => void;
 	onQueryChange: ( query: string ) => void;
+	onQueryClear: () => void;
 	onAddDomainToCart: (
 		domainName: string,
 		position: number,
@@ -89,6 +90,7 @@ export interface DomainSearchProps {
 	query?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
+	currentSiteId?: number;
 	config?: Partial< DomainSearchConfig >;
 }
 

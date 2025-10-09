@@ -10,13 +10,14 @@ import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
@@ -80,7 +81,13 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title="PHP" description={ description } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="PHP"
+					description={ description }
+				/>
+			}
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
