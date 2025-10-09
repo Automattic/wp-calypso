@@ -9,12 +9,15 @@ import {
 	Valuation,
 	getColorForStatus,
 	getDisplayUnit,
+	getFormattedNumber,
 	getFormattedValue,
 	getStatusText,
 	mapThresholdsToStatus,
 } from '../../utils/site-performance';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
 import '@automattic/charts/line-chart/style.css';
+
+const WEEK_TO_SHOW = 8;
 
 const StatusGlyph = {
 	good: GlyphCircle,
@@ -62,22 +65,21 @@ const MetricLabel = ( {
 	);
 };
 
-const useMetricData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
+const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
 	const dates = history?.collection_period ?? [];
 	const values = history?.metrics[ metric ] ?? [];
 	if ( ! dates.length || ! values.length ) {
 		return null;
 	}
 
-	const weeksToShow = 8;
-	const metricData: Array< {
+	const seriesData: Array< {
 		label: string;
 		data: Array< { date: Date; value: number } >;
 		options: { stroke: string };
 	} > = [];
 	const allData = [];
 	let currentValuation;
-	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - weeksToShow ); i-- ) {
+	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - WEEK_TO_SHOW ); i-- ) {
 		const date = dates[ i ];
 		const formattedDate =
 			typeof date === 'string'
@@ -90,11 +92,11 @@ const useMetricData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
 
 		const nextValuation = mapThresholdsToStatus( metric, values[ i ] );
 		if ( nextValuation !== currentValuation ) {
-			const lastData = metricData[ metricData.length - 1 ]?.data?.slice().pop();
+			const lastData = seriesData[ seriesData.length - 1 ]?.data?.slice().pop();
 			currentValuation = nextValuation;
-			metricData.push( {
+			seriesData.push( {
 				// The label should be unique.
-				label: `${ getStatusText( currentValuation ) } - ${ metricData.length }`,
+				label: `${ getStatusText( currentValuation ) } - ${ seriesData.length }`,
 				data: ( lastData ? [ lastData ] : [] ) as Array< { date: Date; value: number } >,
 				options: {
 					stroke: getColorForStatus( currentValuation ),
@@ -106,18 +108,25 @@ const useMetricData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
 			date: new Date( formattedDate ),
 			value: getFormattedValue( metric, values[ i ] ),
 		};
-		metricData[ metricData.length - 1 ].data.push( data );
+		seriesData[ seriesData.length - 1 ].data.push( data );
 		allData.push( data );
 	}
 
-	return [
-		// Use all data to maintain the range of the x axis.
-		{
-			label: '',
-			data: allData,
+	const maxY = Math.max( ...allData.map( ( d ) => d.value ) );
+
+	return {
+		seriesData: [
+			// Use all data to maintain the range of the x axis.
+			{
+				label: '',
+				data: allData,
+			},
+			...seriesData,
+		],
+		yScale: {
+			domain: [ 0, maxY === 0 ? maxY : maxY * 1.5 ] as [ number, number ],
 		},
-		...metricData,
-	];
+	};
 };
 
 export default function CoreMetricsChart( {
@@ -132,7 +141,7 @@ export default function CoreMetricsChart( {
 } ) {
 	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
-	const data = useMetricData( metric, report.history );
+	const lineChartData = useLineChartData( metric, report.history );
 
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		const unit = getDisplayUnit( metric );
@@ -189,11 +198,18 @@ export default function CoreMetricsChart( {
 				/>
 			</HStack>
 			<div style={ { maxWidth: '500px' } }>
-				{ data ? (
+				{ lineChartData ? (
 					<LineChart
-						data={ data }
+						data={ lineChartData.seriesData }
 						withGradientFill={ false }
-						smoothing={ false }
+						options={ {
+							yScale: lineChartData.yScale,
+							axis: {
+								y: {
+									tickFormat: ( value ) => `${ getFormattedNumber( value ) }`,
+								},
+							},
+						} }
 						renderGlyph={ ( { key, x, y, datum } ) => {
 							const data = datum as { value: number };
 							const value = [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric )
