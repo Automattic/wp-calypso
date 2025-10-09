@@ -13,14 +13,7 @@ import {
 } from '../../profile/__mocks__/user-settings';
 import PersonalDetailsSection from '../index';
 
-// Mock the username validation utils
-jest.mock( '../update-username/username-validation-utils', () => ( {
-	validateUsernameDebounced: jest.fn(),
-	isUsernameValid: jest.fn(),
-	getUsernameValidationMessage: jest.fn(),
-	getAllowedActions: jest.fn( () => ( {} ) ),
-	updateUsername: jest.fn(),
-} ) );
+const API_BASE = 'https://public-api.wordpress.com';
 
 // Mock the API queries (return query configurations, not data)
 jest.mock( '@automattic/api-queries', () => ( {
@@ -84,6 +77,14 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 };
 
 describe( 'PersonalDetailsSection', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	afterAll( () => {
+		nock.enableNetConnect();
+	} );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockCreateSuccessNotice.mockClear();
@@ -252,6 +253,120 @@ describe( 'PersonalDetailsSection', () => {
 
 			expect( updateUsernameMutation ).toHaveBeenCalledWith();
 			expect( updateUsernameMutation().meta.snackbar.error ).toBe( 'Failed to update username.' );
+		} );
+	} );
+
+	describe( 'Save button validation', () => {
+		it( 'disables Save button when username has validation error', async () => {
+			const user = userEvent.setup();
+			const eligibleUserData = {
+				...mockUserSettings,
+				email_verified: true,
+				user_login_can_be_changed: true,
+			};
+
+			renderWithUserData( eligibleUserData );
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Username' ) ).toBeEnabled();
+			} );
+
+			const firstNameInput = screen.getByLabelText( 'First name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'Updated' );
+
+			nock( API_BASE ).get( '/rest/v1.1/me/username/validate/ab' ).reply( 200, {
+				error: 'invalid_input',
+				message: 'Usernames must be at least 4 characters.',
+			} );
+
+			const usernameInput = screen.getByLabelText( 'Username' );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'ab' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeDisabled();
+			} );
+		} );
+
+		it( 'enables Save button when username validation passes', async () => {
+			const user = userEvent.setup();
+			const eligibleUserData = {
+				...mockUserSettings,
+				email_verified: true,
+				user_login_can_be_changed: true,
+			};
+
+			renderWithUserData( eligibleUserData );
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Username' ) ).toBeEnabled();
+			} );
+
+			const firstNameInput = screen.getByLabelText( 'First name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'Updated' );
+
+			nock( API_BASE ).get( '/rest/v1.1/me/username/validate/validusername' ).reply( 200, {
+				success: true,
+				message: 'Nice username!',
+			} );
+
+			const usernameInput = screen.getByLabelText( 'Username' );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'validusername' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeEnabled();
+			} );
+		} );
+
+		it( 'enables Save button when username error is cleared', async () => {
+			const user = userEvent.setup();
+			const eligibleUserData = {
+				...mockUserSettings,
+				email_verified: true,
+				user_login_can_be_changed: true,
+			};
+
+			renderWithUserData( eligibleUserData );
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Username' ) ).toBeEnabled();
+			} );
+
+			const firstNameInput = screen.getByLabelText( 'First name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'Updated' );
+
+			nock( API_BASE ).get( '/rest/v1.1/me/username/validate/ab' ).reply( 200, {
+				error: 'invalid_input',
+				message: 'Usernames must be at least 4 characters.',
+			} );
+
+			const usernameInput = screen.getByLabelText( 'Username' );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'ab' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeDisabled();
+			} );
+
+			nock( API_BASE ).get( '/rest/v1.1/me/username/validate/newvalidusername' ).reply( 200, {
+				success: true,
+				message: 'Nice username!',
+			} );
+
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newvalidusername' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeEnabled();
+			} );
 		} );
 	} );
 

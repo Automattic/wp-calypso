@@ -25,6 +25,7 @@ interface UsernameSectionProps {
 	isEmailVerified: boolean;
 	canChangeUsername: boolean;
 	onCancel: () => void;
+	onValidationChange?: ( hasError: boolean ) => void;
 }
 /*
 	Username section:
@@ -40,11 +41,14 @@ export default function UsernameSection( {
 	isEmailVerified,
 	canChangeUsername,
 	onCancel,
+	onValidationChange,
 }: UsernameSectionProps ) {
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
-	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
+	const [ validationResultState, setValidationResultState ] = useState< ValidationResult | null >(
+		null
+	);
 
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...updateUsernameMutation(),
@@ -62,6 +66,19 @@ export default function UsernameSection( {
 	} );
 
 	const hasUsernameChange = !! ( value && value !== currentUsername );
+
+	const setValidationResult = useCallback(
+		( result: ValidationResult | null ) => {
+			setValidationResultState( result );
+			if ( onValidationChange ) {
+				const hasError = hasUsernameChange && result !== null && ! isUsernameValid( result );
+				onValidationChange( hasError );
+			}
+		},
+		[ hasUsernameChange, onValidationChange ]
+	);
+
+	const validationResult = validationResultState;
 
 	// Input field helper text
 	const getHelpText = useCallback( () => {
@@ -118,7 +135,7 @@ export default function UsernameSection( {
 		setUserLoginConfirm( '' );
 		setUsernameAction( 'none' );
 		onCancel();
-	}, [ onChange, currentUsername, onCancel ] );
+	}, [ onChange, currentUsername, onCancel, setValidationResult ] );
 
 	const handleUsernameChange = ( newValue: string | undefined ) => {
 		onChange( newValue );

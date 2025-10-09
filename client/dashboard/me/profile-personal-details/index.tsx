@@ -36,6 +36,7 @@ export default function PersonalDetailsSection( {
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
+	const [ hasUsernameError, setHasUsernameError ] = useState( false );
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),
@@ -110,7 +111,7 @@ export default function PersonalDetailsSection( {
 		id: 'is_dev_account',
 		label: __( 'I am a developer' ),
 		type: 'boolean',
-		description: __( 'Opt in to previews of new developer-focused features.' ),
+		description: __( 'Opt in to previews of new developer—focused features.' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue, description } = field;
 			return (
@@ -172,6 +173,7 @@ export default function PersonalDetailsSection( {
 							isEmailVerified={ isEmailVerified }
 							canChangeUsername={ canChangeUsername }
 							onCancel={ handleUsernameCancel }
+							onValidationChange={ setHasUsernameError }
 						/>
 
 						{ /* Email address */ }
@@ -195,7 +197,7 @@ export default function PersonalDetailsSection( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty }
+								disabled={ isSaving || ! isDirty || hasUsernameError }
 							>
 								{ __( 'Save' ) }
 							</Button>
