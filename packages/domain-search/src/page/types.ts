@@ -34,7 +34,7 @@ export interface DomainSearchCart {
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
-	onExternalDomainClick?: ( domainName?: string ) => void;
+	onExternalDomainClick: ( domainName?: string ) => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onTransferDomainToWordPressComClick: ( domainName: string ) => void;

@@ -6,6 +6,16 @@ import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion } from '../../ui';
 import type { UnavailableProps } from '../../ui/domain-suggestion/unavailable';
 
+const STATUSES_WITH_MESSAGES = [
+	DomainAvailabilityStatus.TRANSFERRABLE,
+	DomainAvailabilityStatus.TRANSFERRABLE_PREMIUM,
+	DomainAvailabilityStatus.MAPPABLE,
+	DomainAvailabilityStatus.MAPPED,
+	DomainAvailabilityStatus.TLD_NOT_SUPPORTED,
+	DomainAvailabilityStatus.TLD_NOT_SUPPORTED_TEMPORARILY,
+	DomainAvailabilityStatus.UNKNOWN,
+];
+
 export const UnavailableSearchResult = () => {
 	const {
 		query,
@@ -18,23 +28,17 @@ export const UnavailableSearchResult = () => {
 	const { onExternalDomainClick } = events;
 
 	const props: UnavailableProps | null = useMemo( () => {
-		if (
-			! availability ||
-			! [
-				DomainAvailabilityStatus.TRANSFERRABLE,
-				DomainAvailabilityStatus.TRANSFERRABLE_PREMIUM,
-				DomainAvailabilityStatus.MAPPABLE,
-				DomainAvailabilityStatus.MAPPED,
-				DomainAvailabilityStatus.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
-				DomainAvailabilityStatus.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
-				DomainAvailabilityStatus.TLD_NOT_SUPPORTED,
-				DomainAvailabilityStatus.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
-				DomainAvailabilityStatus.TLD_NOT_SUPPORTED_TEMPORARILY,
-				DomainAvailabilityStatus.UNKNOWN,
-			].includes( availability.status )
-		) {
+		if ( ! availability || ! STATUSES_WITH_MESSAGES.includes( availability.status ) ) {
 			return null;
 		}
+
+		const domainArgument = isSubdomain( availability.domain_name )
+			? getRootDomain( availability.domain_name )
+			: availability.domain_name;
+
+		const onTransferClick = allowsUsingOwnDomain
+			? () => onExternalDomainClick( domainArgument )
+			: undefined;
 
 		if (
 			[ DomainAvailabilityStatus.TLD_NOT_SUPPORTED, DomainAvailabilityStatus.UNKNOWN ].includes(
@@ -44,26 +48,21 @@ export const UnavailableSearchResult = () => {
 			return {
 				tld: availability.tld,
 				reason: 'tld-not-supported',
+				onTransferClick,
 			};
 		} else if ( DomainAvailabilityStatus.TLD_NOT_SUPPORTED_TEMPORARILY === availability.status ) {
 			return {
 				tld: availability.tld,
 				reason: 'tld-not-supported-temporarily',
+				onTransferClick,
 			};
 		}
-
-		const domainArgument = isSubdomain( availability.domain_name )
-			? getRootDomain( availability.domain_name )
-			: availability.domain_name;
 
 		return {
 			domain: domainArgument.replace( `.${ availability.tld }`, '' ),
 			tld: availability.tld,
 			reason: 'already-registered',
-			onTransferClick:
-				allowsUsingOwnDomain && onExternalDomainClick
-					? () => onExternalDomainClick( domainArgument )
-					: undefined,
+			onTransferClick,
 		};
 	}, [ availability, onExternalDomainClick, allowsUsingOwnDomain ] );
 
