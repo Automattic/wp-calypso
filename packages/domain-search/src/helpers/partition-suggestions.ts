@@ -1,3 +1,5 @@
+import { getTld } from './get-tld';
+
 export type FeaturedSuggestionReason = 'exact-match' | 'recommended' | 'best-alternative';
 
 export interface FeaturedSuggestionWithReason {
@@ -23,7 +25,7 @@ export const partitionSuggestions = ( {
 }: PartitionSuggestionsParams ): PartitionedSuggestions => {
 	const exactMatch = suggestions.find( ( suggestion ) => suggestion === query );
 
-	if ( exactMatch ) {
+	if ( exactMatch && ! deemphasizedTlds.some( ( tld ) => getTld( exactMatch ) === tld ) ) {
 		return {
 			featuredSuggestions: [
 				{
@@ -39,7 +41,7 @@ export const partitionSuggestions = ( {
 	const regularSuggestions: string[] = [];
 
 	for ( const suggestion of suggestions ) {
-		if ( deemphasizedTlds.some( ( tld ) => suggestion.endsWith( `.${ tld }` ) ) ) {
+		if ( deemphasizedTlds.some( ( tld ) => getTld( suggestion ) === tld ) ) {
 			regularSuggestions.push( suggestion );
 			continue;
 		}

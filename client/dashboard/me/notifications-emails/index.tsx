@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -18,7 +18,7 @@ export default function NotificationsEmails() {
 					description={ createInterpolateElement(
 						__( 'To manage individual site subscriptions, <link>go to the Reader</link>.' ),
 						{
-							link: <a href="/reader/subscriptions" target="_blank" rel="noopener noreferrer" />,
+							link: <ExternalLink href="/reader/subscriptions" children={ null } />,
 						}
 					) }
 				/>

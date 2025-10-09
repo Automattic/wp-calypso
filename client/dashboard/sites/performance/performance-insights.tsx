@@ -13,8 +13,8 @@ import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import { metricsNames } from '../../utils/site-performance';
 import { PerformanceInsightTitle, PerformanceInsight } from './performance-insight';
-import type { PerformanceMetricsItemQueryResponse, DeviceToggleType } from './types';
-import type { SitePerformanceReport } from '@automattic/api-core';
+import type { DeviceToggleType } from './types';
+import type { SitePerformanceReport, PerformanceMetricAudit } from '@automattic/api-core';
 
 export type CustomSelectControlOption = {
 	key: Metrics;
@@ -24,7 +24,7 @@ export type CustomSelectControlOption = {
 
 export const filterRecommendations = (
 	selectedFilter: Metrics,
-	audit?: PerformanceMetricsItemQueryResponse
+	audit?: PerformanceMetricAudit
 ) => {
 	return (
 		selectedFilter === 'overall_score' ||

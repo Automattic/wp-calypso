@@ -150,6 +150,9 @@ export default function DomainConnectionSetup() {
 	).includes( currentStepName as string );
 
 	const StepsComponent = currentStep.component;
+	if ( StepsComponent === null ) {
+		return null;
+	}
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain connection setup' ) } /> }>

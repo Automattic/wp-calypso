@@ -134,21 +134,6 @@ declare module 'calypso/components/textarea-autosize' {
 	export default TextareaAutosize;
 }
 
-declare module 'calypso/state/selectors/get-admin-help-results' {
-	const getAdminHelpResults: (
-		state: unknown,
-		searchQuery: string,
-		limit: number
-	) => {
-		title: string;
-		description: string;
-		link: string;
-		synonyms: string[];
-		icon: string;
-	}[];
-	export default getAdminHelpResults;
-}
-
 declare module 'calypso/lib/formatting' {
 	export const preventWidows: ( text: string, wordsToKeep?: number ) => string;
 }

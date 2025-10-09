@@ -265,6 +265,7 @@ const DomainSearchWithCart = ( {
 		<DomainSearch
 			{ ...props }
 			currentSiteUrl={ currentSiteUrl }
+			currentSiteId={ currentSiteId }
 			config={ config }
 			cart={ cart }
 			events={ events }

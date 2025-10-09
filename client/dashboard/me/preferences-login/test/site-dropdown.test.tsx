@@ -58,6 +58,7 @@ function createMockSite( overrides: Partial< Site > = {} ): Site {
 		is_coming_soon: false,
 		is_private: false,
 		is_wpcom_atomic: false,
+		is_wpcom_flex: false,
 		is_wpcom_staging_site: false,
 		is_vip: false,
 		lang: 'en',

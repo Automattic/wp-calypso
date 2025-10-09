@@ -11,11 +11,14 @@ import {
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { siteRoute } from '../../app/router/sites';
+import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
+import {
+	siteRoute,
+	siteSettingsRepositoriesConnectRoute,
+	siteSettingsRepositoriesRoute,
+} from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -26,31 +29,14 @@ export default function ConnectRepository() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const navigate = useNavigate( { from: '/sites/$siteSlug/settings/repositories/connect' } );
+	const navigateFrom = siteSettingsRepositoriesConnectRoute.fullPath;
+	const navigate = useNavigate( { from: navigateFrom } );
 
 	const handleCancel = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
-	const createMutation = useMutation( {
-		...createCodeDeploymentMutation( site.ID ),
-		onSuccess: async () => {
-			createSuccessNotice( __( 'Repository connected successfully.' ), {
-				type: 'snackbar',
-			} );
-			navigate( { to: '/sites/$siteSlug/settings/repositories' } );
-		},
-		onError: ( error ) => {
-			createErrorNotice(
-				// translators: "reason" is why connecting the repository failed.
-				sprintf( __( 'Failed to connect repository: %(reason)s' ), { reason: error.message } ),
-				{
-					type: 'snackbar',
-				}
-			);
-		},
-	} );
+	const createMutation = useMutation( createCodeDeploymentMutation( site.ID ) );
 
 	const initialValues: ConnectRepositoryFormData = {
 		selectedInstallationId: installations[ 0 ]?.external_id || '',
@@ -67,6 +53,7 @@ export default function ConnectRepository() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Connect Repository' ) }
 					description={ __( 'Connect a GitHub repository to deploy code to your WordPress site.' ) }
 				/>
@@ -98,6 +85,12 @@ export default function ConnectRepository() {
 							mutation={ createMutation }
 							initialValues={ initialValues }
 							submitText={ __( 'Connect Repository' ) }
+							successMessage={ __( 'Repository connected successfully.' ) }
+							errorMessage={
+								// translators: "reason" is why connecting the repository failed.
+								__( 'Failed to connect repository: %(reason)s' )
+							}
+							navigateFrom={ navigateFrom }
 						/>
 					</VStack>
 				</CardBody>

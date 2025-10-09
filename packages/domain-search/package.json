@@ -66,6 +66,7 @@
 		"@types/jest": "^29.5.14",
 		"@wordpress/base-styles": "^5.23.0",
 		"copyfiles": "^2.4.1",
+		"nock": "^13.5.6",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^8.6.14",
