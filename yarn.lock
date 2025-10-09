@@ -39879,6 +39879,7 @@ __metadata:
     babel-loader: "npm:^8.2.3"
     debug: "npm:^4.4.1"
     npm-run-all: "npm:^4.1.5"
+    postcss: "npm:^8.5.3"
     qs: "npm:^6.5.2"
     tus-js-client: "npm:2.3.2"
     webpack: "npm:^5.99.8"
