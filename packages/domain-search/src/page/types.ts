@@ -8,6 +8,7 @@ import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
+	DomainAvailability,
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
@@ -50,7 +51,7 @@ export interface DomainSearchEvents {
 	) => void;
 	onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => void;
 	onDomainAddAvailabilityPreCheck: (
-		unavailableStatus: string | null,
+		availabilityStatus: DomainAvailability,
 		domainName: string,
 		rootVendor: string
 	) => void;

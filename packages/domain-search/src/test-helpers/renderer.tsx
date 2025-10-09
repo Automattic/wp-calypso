@@ -33,12 +33,12 @@ export const TestDomainSearch = ( {
 export const TestDomainSearchWithCart = ( {
 	initialCartItems = [],
 	children,
-	removeItemPromise,
+	operationPromise,
 	...props
 }: {
 	initialCartItems?: SelectedDomain[];
 	children: React.ReactNode;
-	removeItemPromise?: Promise< unknown >;
+	operationPromise?: Promise< unknown >;
 } & Omit< DomainSearchProps, 'cart' > ) => {
 	const [ items, setItems ] = useState( initialCartItems );
 
@@ -56,24 +56,39 @@ export const TestDomainSearchWithCart = ( {
 				total: `$${ total }`,
 				hasItem: ( domainName ) =>
 					items.some( ( item ) => `${ item.domain }.${ item.tld }` === domainName ),
-				onAddItem: ( item ) => {
-					const tld = getTld( item.domain_name );
+				onAddItem: async ( item ) => {
+					if ( operationPromise ) {
+						try {
+							await operationPromise;
+						} catch ( error ) {
+							return Promise.reject( error );
+						}
+					}
 
-					setItems( [
-						...items,
-						buildCartItem( {
-							uuid: crypto.randomUUID(),
-							domain: item.domain_name.replace( `.${ tld }`, '' ),
-							tld,
-							price: item.cost,
-							salePrice: item.sale_cost ? `$${ item.sale_cost }` : undefined,
-						} ),
-					] );
+					setTimeout( () => {
+						const tld = getTld( item.domain_name );
+
+						setItems( [
+							...items,
+							buildCartItem( {
+								uuid: crypto.randomUUID(),
+								domain: item.domain_name.replace( `.${ tld }`, '' ),
+								tld,
+								price: item.cost,
+								salePrice: item.sale_cost ? `$${ item.sale_cost }` : undefined,
+							} ),
+						] );
+					}, 0 );
+
 					return Promise.resolve();
 				},
 				onRemoveItem: async ( uuid ) => {
-					if ( removeItemPromise ) {
-						await removeItemPromise;
+					if ( operationPromise ) {
+						try {
+							await operationPromise;
+						} catch ( error ) {
+							return Promise.reject( error );
+						}
 					}
 
 					setTimeout( () => {
