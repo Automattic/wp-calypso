@@ -1,11 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import {
-	Metrics,
-	PerformanceMetricsHistory,
-	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
+import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	getMetricsNames,
@@ -18,11 +14,12 @@ import {
 import HistoryChart from '../charts/history-chart';
 import { StatusIndicator } from '../status-indicator';
 import { StatusSection } from '../status-section';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 
 type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	activeTab: Metrics | null;
-	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	audits: Record< string, PerformanceMetricAudit >;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };

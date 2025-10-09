@@ -1,4 +1,6 @@
+import { odieAssistantPerformanceProfilerQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -13,7 +15,6 @@ import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
-import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query'; // eslint-disable-line
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
@@ -22,12 +23,12 @@ import { Text } from '../../components/text';
 import LLMNotice from './llm-notice';
 import PerformanceInsightTable from './performance-insight-table';
 import useLoadingSteps from './use-loading-steps';
+import type { DeviceToggleType } from './types';
 import type {
-	PerformanceMetricsItemQueryResponse,
-	PerformanceMetricsDetailsQueryResponse,
-	DeviceToggleType,
-} from './types';
-import type { SitePerformanceReport } from '@automattic/api-core';
+	SitePerformanceReport,
+	PerformanceMetricAudit,
+	PerformanceMetricAuditDetails,
+} from '@automattic/api-core';
 import './performance-insight.scss';
 
 export const PerformanceInsightTitle = ( {
@@ -35,7 +36,7 @@ export const PerformanceInsightTitle = ( {
 	index,
 	isHightImpact,
 }: {
-	insight: PerformanceMetricsItemQueryResponse;
+	insight: PerformanceMetricAudit;
 	index: number;
 	isHightImpact: boolean;
 } ) => {
@@ -188,7 +189,7 @@ const PerformanceInsightDetail = ( {
 	details,
 	fullPageScreenshot,
 }: {
-	details: PerformanceMetricsDetailsQueryResponse;
+	details: PerformanceMetricAuditDetails;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 } ) => {
 	if ( details.type === 'table' || details.type === 'opportunity' ) {
@@ -203,7 +204,7 @@ const PerformanceInsightDetail = ( {
 		return tables.map( ( item, index ) => (
 			<PerformanceInsightTable
 				key={ index }
-				details={ item as unknown as PerformanceMetricsDetailsQueryResponse }
+				details={ item as unknown as PerformanceMetricAuditDetails }
 				fullPageScreenshot={ fullPageScreenshot }
 			/>
 		) );
@@ -226,7 +227,7 @@ export const PerformanceInsight = ( {
 	showTip,
 }: {
 	device: DeviceToggleType;
-	insight: PerformanceMetricsItemQueryResponse;
+	insight: PerformanceMetricAudit;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 	isWpcom: boolean;
 	hash: string;
@@ -234,15 +235,16 @@ export const PerformanceInsight = ( {
 } ) => {
 	const locale = useLocale();
 	const isDesktop = useViewportMatch( 'medium' );
-	const { data: llmAnswer } = useSupportChatLLMQuery(
-		// TODO: Fix types
-		insight as any,
-		hash,
-		isWpcom,
-		true,
-		locale,
-		device
-	);
+	const { data: llmAnswer } = useQuery( {
+		...odieAssistantPerformanceProfilerQuery( {
+			hash,
+			insight,
+			isWpcom,
+			locale,
+			device,
+		} ),
+		enabled: !! insight,
+	} );
 
 	return (
 		<VStack spacing={ 4 } style={ { padding: '0 16px' } }>

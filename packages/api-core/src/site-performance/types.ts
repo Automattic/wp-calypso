@@ -9,8 +9,57 @@ export type SitePerformanceHistory = {
 	metrics: Partial< Record< Metrics, number[] > >;
 };
 
+type PerformanceMetricAuditDetailsHeading = {
+	key: string;
+	label: string;
+	valueType: string;
+	subItemsHeading?: { key: string; valueType?: string };
+};
+
+type PerformanceMetricAuditDetailsItemObject = {
+	location?: {
+		url: string;
+		line: number;
+		column: number;
+	};
+} & Record< string, string | number >;
+
+type PerformanceMetricAuditDetailsSubItemObject = {
+	items: Record< string, string | number >[];
+	type: 'subitems';
+} & Record< string, string | number >;
+
+export type PerformanceMetricAuditDetailsItem = {
+	subItems?: PerformanceMetricAuditDetailsSubItemObject;
+} & Record<
+	string,
+	| string
+	| number
+	| boolean
+	| PerformanceMetricAuditDetailsItemObject
+	| PerformanceMetricAuditDetailsSubItemObject
+>;
+
+export interface PerformanceMetricAuditDetails {
+	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
+	headings?: PerformanceMetricAuditDetailsHeading[];
+	items?: PerformanceMetricAuditDetailsItem[];
+	chains?: Record< string, unknown >[];
+	isEntityGrouped?: boolean;
+}
+
+export type PerformanceMetricAudit = {
+	id: string;
+	title?: string;
+	description?: string;
+	type: 'warning' | 'fail';
+	displayValue?: string;
+	details?: PerformanceMetricAuditDetails;
+	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
+};
+
 export type SitePerformanceReport = {
-	audits: Record< string, any >;
+	audits: Record< string, PerformanceMetricAudit >;
 	crux_score: number;
 	performance: number;
 	fullPageScreenshot: {

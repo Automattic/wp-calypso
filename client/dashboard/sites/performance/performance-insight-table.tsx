@@ -4,10 +4,10 @@ import { Text } from '../../components/text';
 import { getFormattedNumber, getFormattedSize } from '../../utils/site-performance';
 import { InsightScreenshotWithOverlay } from './performance-insight-screenshot';
 import type {
-	PerformanceMetricsDetailsQueryResponse,
-	PerformanceMetricsDetailsItem,
-} from './types';
-import type { SitePerformanceReport } from '@automattic/api-core';
+	SitePerformanceReport,
+	PerformanceMetricAuditDetails,
+	PerformanceMetricAuditDetailsItem,
+} from '@automattic/api-core';
 
 const renderNode = (
 	data: { [ key: string ]: any },
@@ -38,7 +38,7 @@ const PerformanceInsightTable = ( {
 	details,
 	fullPageScreenshot,
 }: {
-	details: PerformanceMetricsDetailsQueryResponse;
+	details: PerformanceMetricAuditDetails;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 } ) => {
 	const { headings = [], items = [] } = details ?? {};
@@ -47,7 +47,7 @@ const PerformanceInsightTable = ( {
 		label: heading.label,
 		enableSorting: false,
 		enableHiding: false,
-		render: ( { item }: { item: PerformanceMetricsDetailsItem } ) => {
+		render: ( { item }: { item: PerformanceMetricAuditDetailsItem } ) => {
 			const value =
 				heading.subItemsHeading && item.__isSubItem
 					? item[ heading.subItemsHeading.key ]
@@ -115,7 +115,7 @@ const PerformanceInsightTable = ( {
 	};
 
 	return (
-		<DataViews< PerformanceMetricsDetailsItem & { id: string; __isSubItem?: boolean } >
+		<DataViews< PerformanceMetricAuditDetailsItem & { id: string; __isSubItem?: boolean } >
 			data={
 				details.isEntityGrouped
 					? items
