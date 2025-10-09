@@ -25,7 +25,8 @@ const getTextAreaPlaceholder = (
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
-	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
+	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport, isBlockedFromChat } =
+		useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -175,7 +176,7 @@ export const OdieSendMessageButton = () => {
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
 				{ isEmailFallback ? (
-					<EmailFallbackNotice />
+					<EmailFallbackNotice isBlocked={ isBlockedFromChat } />
 				) : (
 					<AgentUIFooter
 						value={ inputValue }

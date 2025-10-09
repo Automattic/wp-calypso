@@ -27,6 +27,7 @@ const getDisplayMessage = (
 	messageContent: ReactNode,
 	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
+	isBlockedFromChat?: boolean,
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
@@ -38,7 +39,7 @@ const getDisplayMessage = (
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
-		return getOdieEmailFallbackMessageContent();
+		return getOdieEmailFallbackMessageContent( { isBlockedFromChat } );
 	}
 
 	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
@@ -59,7 +60,7 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, chat } =
+	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, isBlockedFromChat, chat } =
 		useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
@@ -78,6 +79,7 @@ export const UserMessage = ( {
 				message.content,
 				hasCannedResponse,
 				forceEmailSupport,
+				isBlockedFromChat,
 				message?.context?.flags?.is_error_message
 		  )
 		: message.content;

@@ -32,7 +32,7 @@ export function HelpCenterChat( {
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 
-	const { forceEmailSupport } = useChatStatus();
+	const { forceEmailSupport, isBlockedFromChat } = useChatStatus();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -55,6 +55,7 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
+			isBlockedFromChat={ Boolean( isBlockedFromChat ) }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />
