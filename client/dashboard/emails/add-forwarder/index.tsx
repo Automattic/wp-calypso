@@ -1,6 +1,6 @@
-import { addEmailForwarderMutation, domainsQuery } from '@automattic/api-queries';
+import { addEmailForwarderMutation } from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -24,7 +24,7 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { useDomains } from '../hooks/use-domains';
-import { useIsDomainMaxForwardsReached } from './hooks/use-is-domain-max-forwards-reached';
+import { useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useNewForwardingAddresses } from './hooks/use-new-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
@@ -63,10 +63,10 @@ function AddEmailForwarder() {
 			forwardingAddresses: formData.forwardingAddresses,
 		} );
 	const {
-		isLoading: isLoadingIsDomainMaxForwardsReached,
-		isReached: isDomainMaxForwardsReached,
+		isLoading: isLoadingDomainMaxForwards,
+		forwards,
 		maxForwards,
-	} = useIsDomainMaxForwardsReached( formData.domain );
+	} = useDomainMaxForwards( formData.domain );
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -113,10 +113,17 @@ function AddEmailForwarder() {
 	const isBusy =
 		isAddingEmailForwarder ||
 		isLoadingDomains ||
-		isLoadingIsDomainMaxForwardsReached ||
+		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
-	const isValid = isItemValid( formData, fields, form ) && ! isDomainMaxForwardsReached;
+	const isDomainMaxForwardsReached = forwards.length >= maxForwards;
+	const willDomainMaxForwardsBeReached =
+		forwards.length + formData.forwardingAddresses.length > maxForwards;
+
+	const isValid =
+		isItemValid( formData, fields, form ) &&
+		! isDomainMaxForwardsReached &&
+		! willDomainMaxForwardsBeReached;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -239,6 +246,26 @@ function AddEmailForwarder() {
 												/>
 											),
 											maxForwards: <>{ maxForwards }</>,
+										}
+									) }
+								</Notice>
+							) }
+							{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
+								<Notice variant="warning">
+									{ createInterpolateElement(
+										__(
+											'You are adding too many new email forwarders for this domain (<forwardingAddressesCount/>); the maximum number is <maxForwards /> and there are already <existingForwardersCount/> before this change. Please edit your changes or <manageForwadersLink>delete any of the existing forwarders</manageForwadersLink>.'
+										),
+										{
+											manageForwadersLink: (
+												<ExternalLink
+													href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
+													children={ null }
+												/>
+											),
+											forwardingAddressesCount: <>{ formData.forwardingAddresses.length }</>,
+											maxForwards: <>{ maxForwards }</>,
+											existingForwardersCount: <>{ forwards && forwards.length }</>,
 										}
 									) }
 								</Notice>
