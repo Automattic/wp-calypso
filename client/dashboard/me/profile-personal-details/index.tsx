@@ -111,7 +111,7 @@ export default function PersonalDetailsSection( {
 		id: 'is_dev_account',
 		label: __( 'I am a developer' ),
 		type: 'boolean',
-		description: __( 'Opt in to previews of new developer—focused features.' ),
+		description: __( 'Opt in to previews of new developer-focused features.' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue, description } = field;
 			return (
