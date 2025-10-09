@@ -89,7 +89,7 @@ export const TestDomainSearchWithCart = ( {
 	);
 };
 
-export const TestDomainSearchWithSuggestionsList: typeof TestDomainSearchWithCart = ( props ) => {
+export const TestDomainSearchWithSuggestions: typeof TestDomainSearchWithCart = ( props ) => {
 	const Content = () => {
 		const { isLoading } = useSuggestionsList();
 
