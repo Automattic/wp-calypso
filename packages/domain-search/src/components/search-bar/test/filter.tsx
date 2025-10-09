@@ -207,4 +207,92 @@ describe( 'SearchBar#Filter', () => {
 			await screen.findByRole( 'button', { name: 'Filter, no filters applied' } )
 		).toBeDisabled();
 	} );
+
+	describe( 'allowed TLDs', () => {
+		it( 'limits the filterable TLDs to the allowed TLDs and includes them by default in the suggestion query', async () => {
+			const user = userEvent.setup();
+
+			const suggestionsQuery = mockGetSuggestionsQuery( {
+				params: { query: 'test', tlds: [ 'com', 'net' ] },
+				suggestions: [],
+			} );
+
+			mockGetAvailableTldsQuery( {
+				params: { query: 'test' },
+				tlds: [ 'com', 'net', 'org' ],
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test" config={ { allowedTlds: [ 'com', 'net' ] } }>
+					<Filter />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			const filterButton = await screen.findByRole( 'button', {
+				name: 'Filter, no filters applied',
+			} );
+
+			await user.dblClick( filterButton );
+
+			expect( screen.getByRole( 'option', { name: '.com' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: '.net' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'option', { name: '.org' } ) ).not.toBeInTheDocument();
+
+			await waitFor( () => {
+				expect( suggestionsQuery.isDone() ).toBeTruthy();
+			} );
+		} );
+
+		it( 'includes only the subset of allowed filtered TLDs in the suggestion query', async () => {
+			const user = userEvent.setup();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test', tlds: [ 'com', 'net' ] },
+				suggestions: [],
+			} );
+
+			const suggestionsQuery = mockGetSuggestionsQuery( {
+				params: { query: 'test', tlds: [ 'com' ] },
+				suggestions: [],
+			} );
+
+			mockGetAvailableTldsQuery( {
+				params: { query: 'test' },
+				tlds: [ 'com', 'net', 'org' ],
+			} );
+
+			const onFilterApplied = jest.fn();
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="test"
+					config={ { allowedTlds: [ 'com', 'net' ] } }
+					events={ { onFilterApplied } }
+				>
+					<Filter />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			const filterButton = await screen.findByRole( 'button', {
+				name: 'Filter, no filters applied',
+			} );
+
+			await user.dblClick( filterButton );
+
+			const tldOption = await screen.findByRole( 'option', { name: '.com' } );
+			await user.click( tldOption );
+
+			const applyButton = await screen.findByRole( 'button', { name: 'Apply' } );
+			await user.click( applyButton );
+
+			expect( onFilterApplied ).toHaveBeenCalledWith( {
+				tlds: [ 'com' ],
+				exactSldMatchesOnly: false,
+			} );
+
+			await waitFor( () => {
+				expect( suggestionsQuery.isDone() ).toBeTruthy();
+			} );
+		} );
+	} );
 } );
