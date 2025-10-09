@@ -19,7 +19,7 @@ export const mapMailboxToEmail = (
 
 	const type: Email[ 'type' ] = provider === 'email_forwarding' ? 'forwarding' : 'mailbox';
 
-	const id: string = box.domain + box.mailbox;
+	const id: string = box.domain + box.mailbox + box?.target;
 
 	// Infer status from known subscriptions or warnings
 	let status: Email[ 'status' ] = 'active';
