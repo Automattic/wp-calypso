@@ -28,14 +28,18 @@ export const statusField: Field< Email > = {
 			return <Text intent="success">{ __( 'Active' ) }</Text>;
 		}
 
+		if ( item.status === 'no_subscription' ) {
+			return <Text intent="error">{ __( 'No subscription' ) }</Text>;
+		}
+
 		return <Text>{ item.status }</Text>;
 	},
 	getValue: ( { item }: { item: Email } ) => item.status,
 	// map to display values for filtering UI
 	elements: [
 		{ value: 'active', label: __( 'Active' ) },
-		{ value: 'pending', label: __( 'Pending verification' ) },
-		{ value: 'pending', label: __( 'Finish setup' ) },
+		{ value: 'unverified_forwards', label: __( 'Pending verification' ) },
+		{ value: 'google_pending_tos_acceptance', label: __( 'Finish setup' ) },
 		{ value: 'suspended', label: __( 'Expired' ) },
 	],
 };

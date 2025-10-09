@@ -20,5 +20,6 @@ export interface Email {
 		| 'suspended'
 		| 'google_pending_tos_acceptance'
 		| 'unverified_forwards'
+		| 'no_subscription'
 		| 'unused_mailboxes';
 }
