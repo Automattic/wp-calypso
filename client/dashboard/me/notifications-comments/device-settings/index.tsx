@@ -102,14 +102,12 @@ export const DevicesSettings = () => {
 							title={ __( 'Devices' ) }
 							description={ createInterpolateElement(
 								__(
-									'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
+									'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app</link>'
 								),
 								{
 									link: (
 										<ExternalLink
 											href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
-											rel="noopener noreferrer"
-											//Workaround for the fact that the ExternalLink component expects a children prop
 											children={ null }
 										/>
 									),
