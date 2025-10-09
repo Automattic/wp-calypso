@@ -5,7 +5,8 @@ import type { ComponentType } from 'react';
 export interface Suggestion {
 	id: string;
 	label: string;
-	prompt: string;
+	prompt?: string;
+	action?: () => void | Promise< void >;
 }
 
 export interface Message {
