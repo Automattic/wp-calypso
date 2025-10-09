@@ -39872,6 +39872,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wpcom@workspace:packages/wpcom.js"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"
