@@ -9,7 +9,7 @@ interface DomainSuggestionMatchReasonsProps {
 
 export const DomainSuggestionMatchReasons = ( { reasons }: DomainSuggestionMatchReasonsProps ) => {
 	return (
-		<ul className="domain-suggestion-match-reasons">
+		<ul className="domain-suggestion-match-reasons" data-testid="domain-suggestion-match-reasons">
 			{ reasons.map( ( reason ) => {
 				return (
 					<li key={ reason }>

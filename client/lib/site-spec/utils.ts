@@ -20,6 +20,10 @@ export interface SiteSpecConfig {
 		prefix?: string;
 		getOverrides?: ( eventName: string ) => Record< string, string >;
 	};
+	backButton?: {
+		enabled?: boolean;
+		url?: string;
+	};
 }
 
 // Config key for URL functions

@@ -65,7 +65,7 @@ export default function DomainSearch() {
 	const currentSiteUrl = selectedSite?.URL;
 	const currentSiteId = selectedSite?.ID;
 
-	const { query, setQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
 	} );
@@ -73,6 +73,7 @@ export default function DomainSearch() {
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
 			},
@@ -112,7 +113,7 @@ export default function DomainSearch() {
 				}
 			},
 		};
-	}, [ selectedSiteSlug, setQuery ] );
+	}, [ selectedSiteSlug, setQuery, clearQuery ] );
 
 	const currentRoute = useSelector( getCurrentRoute );
 

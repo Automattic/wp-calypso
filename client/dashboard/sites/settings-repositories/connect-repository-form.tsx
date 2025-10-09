@@ -8,6 +8,7 @@ import {
 	codeDeploymentsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	ComboboxControl,
@@ -20,9 +21,11 @@ import {
 	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
@@ -34,6 +37,7 @@ import type {
 	CreateAndUpdateCodeDeploymentVariables,
 	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
+import type { NavigateOptions } from '@tanstack/react-router';
 
 interface ConnectRepositoryFormProps {
 	formTitle: string;
@@ -47,6 +51,9 @@ interface ConnectRepositoryFormProps {
 	>;
 	initialValues: ConnectRepositoryFormData;
 	submitText: string;
+	successMessage: string;
+	errorMessage: string;
+	navigateFrom: NavigateOptions[ 'from' ];
 }
 
 export interface ConnectRepositoryFormData {
@@ -180,7 +187,12 @@ export const ConnectRepositoryForm = ( {
 	mutation,
 	initialValues,
 	submitText,
+	successMessage,
+	errorMessage,
+	navigateFrom,
 }: ConnectRepositoryFormProps ) => {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const navigate = useNavigate( { from: navigateFrom } );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const {
@@ -230,11 +242,20 @@ export const ConnectRepositoryForm = ( {
 		if ( ! selectedRepository ) {
 			return new Set< string >();
 		}
-		const connected = existingDeployments
+		let connected = existingDeployments
 			.filter( ( d ) => d.external_repository_id === selectedRepository.id )
 			.map( ( d ) => d.branch_name );
+		// When editing a connection, remove the initialValue branch from the connected branches, so it's a valid option
+		if ( selectedRepository.id === initialValues.selectedRepositoryId ) {
+			connected = connected.filter( ( branch ) => branch !== initialValues.branch );
+		}
 		return new Set( connected );
-	}, [ existingDeployments, selectedRepository ] );
+	}, [
+		existingDeployments,
+		selectedRepository,
+		initialValues.selectedRepositoryId,
+		initialValues.branch,
+	] );
 
 	const { data: workflows = [] } = useQuery( {
 		...githubWorkflowsQuery(
@@ -317,13 +338,13 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	useEffect( () => {
-		if ( ! repositoryChecks?.suggested_directory ) {
+		if ( ! repositoryChecks?.suggested_directory || formData.targetDir ) {
 			return;
 		}
 
 		// Only update target directory when repository changes, not when branch changes
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
-	}, [ repositoryChecks?.suggested_directory, selectedRepository?.id ] );
+	}, [ repositoryChecks?.suggested_directory, formData.targetDir ] );
 
 	const handleSubmit = async () => {
 		if (
@@ -347,7 +368,19 @@ export const ConnectRepositoryForm = ( {
 			mutationData.workflow_path = formData.workflowPath || '.github/workflows/wpcom.yml';
 		}
 
-		await mutation.mutateAsync( mutationData );
+		await mutation.mutateAsync( mutationData, {
+			onSuccess: async () => {
+				createSuccessNotice( successMessage, {
+					type: 'snackbar',
+				} );
+				navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+			},
+			onError: ( error ) => {
+				createErrorNotice( sprintf( errorMessage, { reason: error.message } ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	const branchOptions = useMemo( () => {

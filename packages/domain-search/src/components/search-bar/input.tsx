@@ -8,7 +8,7 @@ const DELAY_TIMEOUT = 300;
 
 export const Input = () => {
 	const { __ } = useI18n();
-	const { query, setQuery } = useDomainSearch();
+	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 
 	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
@@ -19,9 +19,12 @@ export const Input = () => {
 			onChange={ ( value ) => {
 				const trimmedValue = value.trim();
 
+				setLocalQuery( trimmedValue );
+
 				if ( trimmedValue ) {
-					setLocalQuery( trimmedValue );
 					debouncedPropagateQuery( trimmedValue );
+				} else {
+					events.onQueryClear();
 				}
 			} }
 			label={ __( 'Search for a domain' ) }

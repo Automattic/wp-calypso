@@ -150,7 +150,7 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 				<Text variant="muted">
 					{ createInterpolateElement(
 						__(
-							'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
+							'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app</link>'
 						),
 						{
 							link: (

@@ -1,9 +1,20 @@
-.site-preview {
-	width: 100%;
-	overflow: hidden;
+@import '@wordpress/base-styles/colors';
 
-	&__badge {
-		grid-column-start: 2;
+.site-preview {
+	&__name {
+		display: flex;
+		min-width: 0;
+
+		> a {
+			color: $gray-800;
+			font-weight: 500;
+			min-width: 0;
+			text-decoration: none;
+
+			&:hover {
+				color: var(--wp-admin-theme-color);
+			}
+		}
 	}
 
 	&__url {
@@ -15,6 +26,7 @@
 
 		.components-external-link__contents {
 			max-width: 170px;
+			text-decoration: none;
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
@@ -24,6 +36,7 @@
 				max-width: unset;
 				max-width: 250px;
 			}
+
 			@include break-small {
 				max-width: unset;
 			}
@@ -33,5 +46,4 @@
 			color: var(--wp-admin-theme-color);
 		}
 	}
-
 }

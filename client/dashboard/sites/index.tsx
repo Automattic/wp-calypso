@@ -21,6 +21,7 @@ import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
+import { useAppContext } from '../app/context';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsCard } from '../components/dataviews-card';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
@@ -64,6 +65,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 };
 
 export default function Sites() {
+	const { onboardingLinkSourceQueryArg } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
@@ -154,7 +156,7 @@ export default function Sites() {
 		<>
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite context={ onboardingLinkSourceQueryArg } />
 				</Modal>
 			) }
 			<PageLayout

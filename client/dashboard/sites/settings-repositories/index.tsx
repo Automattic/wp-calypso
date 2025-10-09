@@ -108,7 +108,7 @@ function RepositoriesList() {
 				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }
-				getItemId={ ( item ) => item.repository_name }
+				getItemId={ ( item ) => item.id.toString() }
 				empty={ <p>{ emptyTitle }</p> }
 			/>
 		</DataViewsCard>

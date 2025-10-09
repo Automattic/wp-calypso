@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -68,8 +67,6 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
-
-	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -217,12 +214,6 @@ function HelpSearchResults( {
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},
-			{
-				type: SUPPORT_TYPE_ADMIN_SECTION,
-				title: translate( 'Show me where to' ),
-				results: adminResults,
-				condition: !! searchQuery && adminResults.length > 0,
-			},
 		];
 
 		return sections.map( renderSearchResultsSection );
@@ -233,7 +224,7 @@ function HelpSearchResults( {
 		: translate( 'Helpful resources for this section' );
 
 	const renderSearchResults = () => {
-		if ( isSearching && ! searchResults.length && ! adminResults.length ) {
+		if ( isSearching && ! searchResults.length ) {
 			return <PlaceholderLines lines={ placeholderLines } />;
 		}
 

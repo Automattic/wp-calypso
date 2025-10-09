@@ -80,7 +80,7 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
 	} );
@@ -88,6 +88,7 @@ const DomainSearchUI = (
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -209,6 +210,7 @@ const DomainSearchUI = (
 		stepName,
 		siteSlug,
 		setQuery,
+		clearQuery,
 		submitSignupStep,
 		goToNextStep,
 		locale,
@@ -230,9 +232,6 @@ const DomainSearchUI = (
 				isDomainOnly: isDomainOnlyFlow,
 				flowName: flowName,
 			} ),
-			priceRules: {
-				forceRegularPrice: isMonthlyOrFreeFlow( flowName ),
-			},
 			allowedTlds,
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable:
@@ -376,7 +375,7 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					isFirstDomainFreeForFirstYear={ ! isFreeFlow( flowName ) }
+					isFirstDomainFreeForFirstYear={ ! isMonthlyOrFreeFlow( flowName ) }
 					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}

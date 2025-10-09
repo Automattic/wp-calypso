@@ -7,11 +7,13 @@ import {
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, CardBody, ExternalLink } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { siteRoute } from '../../app/router/sites';
+import { __ } from '@wordpress/i18n';
+import {
+	siteRoute,
+	siteSettingsRepositoriesRoute,
+	siteSettingsRepositoriesManageRoute,
+} from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { ConnectRepositoryForm } from './connect-repository-form';
@@ -19,38 +21,20 @@ import { ConnectRepositoryForm } from './connect-repository-form';
 export default function ConfigureRepository() {
 	const { siteSlug, deploymentId } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: existingDeployment } = useSuspenseQuery(
 		codeDeploymentQuery( site.ID, deploymentId )
 	);
 	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
-
+	const navigateFrom = siteSettingsRepositoriesManageRoute.fullPath;
 	const navigate = useNavigate( {
-		from: '/sites/$siteSlug/settings/repositories/manage/$deploymentId',
+		from: navigateFrom,
 	} );
 
 	const handleCancel = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
-	const updateMutation = useMutation( {
-		...updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ),
-		onSuccess: async () => {
-			createSuccessNotice( __( 'Repository settings updated successfully.' ), {
-				type: 'snackbar',
-			} );
-			navigate( { to: '/sites/$siteSlug/settings/repositories' } );
-		},
-		onError: ( error ) => {
-			createErrorNotice(
-				// translators: "reason" is why updating the repository failed.
-				sprintf( __( 'Failed to update repository: %(reason)s' ), { reason: error.message } ),
-				{
-					type: 'snackbar',
-				}
-			);
-		},
-	} );
+	const updateMutation = useMutation( updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ) );
 
 	const selectedInstallation = installations.find(
 		( inst ) => inst.external_id === existingDeployment.installation_id
@@ -102,6 +86,12 @@ export default function ConfigureRepository() {
 						mutation={ updateMutation }
 						initialValues={ initialValues }
 						submitText={ __( 'Update Connection' ) }
+						successMessage={ __( 'Repository settings updated successfully.' ) }
+						errorMessage={
+							// translators: "reason" is why updating the repository failed.
+							__( 'Failed to update repository: %(reason)s' )
+						}
+						navigateFrom={ navigateFrom }
 					/>
 				</CardBody>
 			</Card>

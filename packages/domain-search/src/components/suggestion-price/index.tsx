@@ -15,15 +15,6 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 
 	const priceSource = availability ?? suggestion;
 
-	// The availability endpoint returns a number, but the suggestion endpoint returns a string.
-	// We need to format it manually in this case.
-	const saleCost =
-		typeof priceSource.sale_cost === 'number'
-			? formatCurrency( priceSource.sale_cost, priceSource.currency_code, {
-					stripZeros: true,
-			  } )
-			: priceSource.sale_cost;
-
 	if ( suggestion.price_rule === DomainPriceRule.HIDE_PRICE ) {
 		return null;
 	}
@@ -49,6 +40,15 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 			/>
 		);
 	}
+
+	// The availability endpoint returns a number, but the suggestion endpoint returns a string.
+	// We need to format it manually in this case.
+	const saleCost =
+		typeof priceSource.sale_cost === 'number'
+			? formatCurrency( priceSource.sale_cost, priceSource.currency_code, {
+					stripZeros: true,
+			  } )
+			: priceSource.sale_cost;
 
 	return (
 		<DomainSuggestionPriceComponent
