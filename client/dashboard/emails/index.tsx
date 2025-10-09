@@ -65,7 +65,11 @@ function Emails() {
 		}
 		return domainsWithEmails.flatMap( ( domain, index ) => {
 			const mailboxes = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
+
+			const skipFilterForwards = mailboxes.length === 1;
+
 			return mailboxes
+				.filter( ( account ) => skipFilterForwards || account.account_type !== 'email_forwarding' )
 				.flatMap( ( account ) =>
 					account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account, domain ) )
 				)
