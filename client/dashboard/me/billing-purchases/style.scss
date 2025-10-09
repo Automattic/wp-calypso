@@ -21,3 +21,7 @@ button.purchase-payment-method__update {
 	// like a bug in `HStack` to me but for now this fixes it.
 	min-width: max-content;
 }
+
+.paypal-fields {
+	padding: 0 12px 12px 12px;
+}
