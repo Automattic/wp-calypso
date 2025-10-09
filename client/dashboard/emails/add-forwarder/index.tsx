@@ -71,7 +71,13 @@ function AddEmailForwarder() {
 				type: 'text',
 			},
 			{
-				elements: userDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [],
+				elements: [
+					{
+						label: __( 'Select a domain' ),
+						value: '',
+					},
+					...( userDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [] ),
+				],
 				id: 'domain',
 				label: __( 'Domain' ),
 				type: 'text',
