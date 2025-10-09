@@ -60,7 +60,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 	useStepsProps() {
 		const query = useQuery();
-		const selectedFeature = query.get( 'feature' );
+		const selectedFeature = query.get( 'feature' ) ?? undefined;
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
