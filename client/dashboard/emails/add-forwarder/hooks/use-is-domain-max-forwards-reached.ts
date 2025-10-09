@@ -2,7 +2,7 @@ import { emailForwardersQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 
 export const useIsDomainMaxForwardsReached = ( domain: string ) => {
-	const { data, isLoading } = useQuery( emailForwardersQuery( domain ) );
+	const { data, isLoading } = useQuery( { ...emailForwardersQuery( domain ), enabled: !! domain } );
 
 	if ( ! data ) {
 		return { isLoading, isReached: false, maxForwards: undefined };
