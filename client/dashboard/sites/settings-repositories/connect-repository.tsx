@@ -14,7 +14,11 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
+import {
+	siteRoute,
+	siteSettingsRepositoriesConnectRoute,
+	siteSettingsRepositoriesRoute,
+} from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -25,7 +29,7 @@ export default function ConnectRepository() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
-	const navigateFrom = siteSettingsRepositoriesRoute.fullPath;
+	const navigateFrom = siteSettingsRepositoriesConnectRoute.fullPath;
 	const navigate = useNavigate( { from: navigateFrom } );
 
 	const handleCancel = () => {
