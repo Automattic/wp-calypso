@@ -9,7 +9,6 @@ import {
 import { type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import PhoneNumberInput from '../../components/phone-number-input';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
@@ -17,7 +16,7 @@ import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
 // Custom phone field component that handles SMS country codes
-function PhoneField( {
+function DomainContactDetailsPhoneField( {
 	field,
 	data,
 	onChange,
@@ -37,23 +36,19 @@ function PhoneField( {
 		( country ) => country.numeric_code === countryNumericCode
 	);
 
-	const [ countryCode, setCountryCode ] = useState( smsCountry?.code || '' );
-
 	return (
 		<PhoneNumberInput
 			data={ {
-				countryCode: countryCode,
+				countryCode: smsCountry?.code || '',
 				phoneNumber: phoneNumber,
 				countryNumericCode: countryNumericCode,
 			} }
 			onChange={ ( edits ) => {
 				// Format the phone value back to the expected format
-				const formattedPhone =
-					edits.countryNumericCode && edits.phoneNumber
-						? `${ edits.countryNumericCode }.${ edits.phoneNumber }`
-						: '';
-
-				setCountryCode( edits.countryCode || '' );
+				// Keep countryNumericCode even if phoneNumber is empty to preserve the country selection
+				const formattedPhone = edits.countryNumericCode
+					? `${ edits.countryNumericCode }.${ edits.phoneNumber || '' }`
+					: '';
 
 				onChange( {
 					phone: formattedPhone,
@@ -103,7 +98,7 @@ export const getContactFormFields = (
 			id: 'phone',
 			label: __( 'Phone' ),
 			type: 'text',
-			Edit: PhoneField,
+			Edit: DomainContactDetailsPhoneField,
 			isValid: {
 				required: true,
 			},

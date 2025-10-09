@@ -65,7 +65,6 @@ export default function PhoneNumberInput( {
 					return onChange( {
 						...data,
 						phoneNumber: value ?? '',
-						countryNumericCode: data.countryNumericCode,
 					} );
 				} }
 				disabled={ isDisabled }
