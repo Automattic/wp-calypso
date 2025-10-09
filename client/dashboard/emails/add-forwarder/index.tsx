@@ -1,10 +1,6 @@
-import {
-	addEmailForwarderMutation,
-	domainsQuery,
-	emailForwardersQuery,
-} from '@automattic/api-queries';
+import { addEmailForwarderMutation, domainsQuery } from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useMutation, useQuery, useQueries } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -28,6 +24,7 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { useIsDomainMaxForwardsReached } from './hooks/use-is-domain-max-forwards-reached';
+import { useNewForwardingAddresses } from './hooks/use-new-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
 import '../style.scss';
@@ -49,27 +46,16 @@ function AddEmailForwarder() {
 		() => domains?.filter( ( d ) => d.current_user_is_owner ) || [],
 		[ domains ]
 	);
-	const emailForwardersQueries = useQueries( {
-		queries: userDomains.map( ( d ) => ( {
-			...emailForwardersQuery( d.domain ),
-		} ) ),
-	} );
-	const uniqueEmailForwarders = useMemo(
-		() =>
-			Array.from(
-				new Set(
-					emailForwardersQueries
-						.flatMap( ( q ) => q.data?.forwards ?? [] )
-						.map( ( f ) => f.forward_address )
-				)
-			),
-		[ emailForwardersQueries ]
-	);
 	const [ formData, setFormData ] = useState< FormData >( {
 		localPart: '',
 		domain: '',
 		forwardingAddresses: [],
 	} );
+	const { isLoading: isLoadingNewForwardingAddresses, newForwardingAddresses } =
+		useNewForwardingAddresses( {
+			forwardingAddresses: formData.forwardingAddresses,
+			userDomains,
+		} );
 	const { isReached: isDomainMaxForwardsReached, maxForwards } = useIsDomainMaxForwardsReached(
 		formData.domain
 	);
@@ -116,8 +102,7 @@ function AddEmailForwarder() {
 		],
 	};
 
-	const isLoadingEmailForwarders = emailForwardersQueries.some( ( q ) => q.isLoading );
-	const isBusy = isLoadingDomains || isLoadingEmailForwarders || isAddingEmailForwarder;
+	const isBusy = isLoadingDomains || isLoadingNewForwardingAddresses || isAddingEmailForwarder;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
 	const isValid = isItemValid( formData, fields, form ) && ! isDomainMaxForwardsReached;
 
@@ -179,10 +164,6 @@ function AddEmailForwarder() {
 			}
 		);
 	};
-
-	const newForwardingAddresses = formData.forwardingAddresses.filter(
-		( addr ) => ! uniqueEmailForwarders.includes( addr )
-	);
 
 	return (
 		<PageLayout
