@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import {
 	useCreateExistingCards,
 	useCreatePayPalExpress,
+	useCreateCreditCard,
 	isValueTruthy,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from '../payment-methods';
@@ -42,6 +43,16 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 		isTaxInfoRequired: true,
 	} );
 
+	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+
+	const creditCardMethod = useCreateCreditCard( {
+		currency: purchase?.currency_code,
+		isStripeLoading,
+		stripeLoadingError,
+		hasExistingCardMethods,
+		allowUseForAllSubscriptions: true,
+	} );
+
 	const currentPaymentMethodId = purchase ? getPaymentMethodIdFromPayment( purchase ) : null;
 	const payPalExpressMethod = useCreatePayPalExpress( {
 		labelText:
@@ -52,7 +63,7 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 
 	const paymentMethods = useMemo(
 		() =>
-			[ ...existingCardMethods, payPalExpressMethod ]
+			[ ...existingCardMethods, creditCardMethod, payPalExpressMethod ]
 				.filter( isValueTruthy )
 				.filter( ( method ) => {
 					// If there's an error fetching allowed payment methods, just allow all of them.
@@ -62,7 +73,13 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 					const paymentMethodName = translateCheckoutPaymentMethodToWpcomPaymentMethod( method.id );
 					return paymentMethodName && allowedPaymentMethods?.includes( paymentMethodName );
 				} ),
-		[ existingCardMethods, payPalExpressMethod, allowedPaymentMethods, allowedPaymentMethodsError ]
+		[
+			existingCardMethods,
+			creditCardMethod,
+			payPalExpressMethod,
+			allowedPaymentMethods,
+			allowedPaymentMethodsError,
+		]
 	);
 
 	if ( allowedPaymentMethods === undefined ) {
