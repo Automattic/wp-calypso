@@ -1,26 +1,52 @@
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
-import {
-	AssertConditionResult,
-	AssertConditionState,
-	FlowV2,
-	SubmitHandler,
-} from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { FlowV2, SubmitHandler } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import type { SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
 
-function initialize() {
+/**
+ * Checks if the user has access to upgrade plans for the given site
+ */
+async function checkUserHasAccess(): Promise< boolean > {
+	// Get site slug or ID from query params
+	const queryParams = getCurrentQueryParams();
+	const siteSlugFromQuery = queryParams.get( 'siteSlug' );
+	const siteIdFromQuery = queryParams.get( 'siteId' );
+
+	const siteIdOrSlug = siteSlugFromQuery || siteIdFromQuery;
+
+	if ( ! siteIdOrSlug ) {
+		return false;
+	}
+
+	try {
+		const site = await resolveSelect( SITE_STORE ).getSite( siteIdOrSlug );
+
+		if ( ! site ) {
+			return false;
+		}
+
+		// Check if user can manage the site using the capabilities from the site object
+		return site.capabilities?.manage_options === true;
+	} catch ( error ) {
+		return false;
+	}
+}
+
+async function initialize() {
+	const hasAccess = await checkUserHasAccess();
+
+	if ( ! hasAccess ) {
+		window.location.assign( '/' );
+		return false;
+	}
+
 	return stepsWithRequiredLogin( BASE_STEPS );
 }
 
@@ -52,87 +78,10 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		};
 	},
 
-	useAssertConditions(): AssertConditionResult {
-		const { site, siteSlug, siteId } = useSiteData();
-
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
-		const fetchingSiteError = useSelect(
-			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
-			[]
-		);
-
-		const { isAdmin, isFetching } = useIsSiteAdmin();
-
-		// Track how long we've been waiting for site data
-		const [ waitingTooLong, setWaitingTooLong ] = useState( false );
-
-		useEffect( () => {
-			if ( ( siteSlug || siteId ) && ! site ) {
-				// Set a timeout - if no site after 5 seconds, give up
-				const timeoutId = setTimeout( () => {
-					setWaitingTooLong( true );
-				}, 5000 );
-
-				return () => clearTimeout( timeoutId );
-			}
-			setWaitingTooLong( false );
-		}, [ siteSlug, siteId, site ] );
-
-		// All hooks called - now we can use conditional logic
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		if ( ! userIsLoggedIn ) {
-			window.location.assign( '/' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'User must be logged in to access plan upgrade flow.',
-			};
-		} else if ( ! siteSlug && ! siteId ) {
-			window.location.assign( '/' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'plan-upgrade did not provide the site slug or site id it is configured to.',
-			};
-		} else if ( fetchingSiteError ) {
-			window.location.assign( '/' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: fetchingSiteError.message,
-			};
-		} else if ( waitingTooLong ) {
-			window.location.assign( '/' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'Site not found or you do not have access to this site.',
-			};
-		} else if ( isFetching || ! site || isAdmin === null ) {
-			// Still loading site data or waiting for admin check
-			result = { state: AssertConditionState.CHECKING };
-		} else if ( isAdmin === false ) {
-			// Site loaded and user is definitely not admin
-			window.location.assign( '/' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'You need to be an admin to upgrade plans for this site.',
-			};
-		}
-
-		return result;
-	},
-
 	useStepNavigation() {
-		const { siteSlug } = useSiteData();
-		const urlParams = useParams< { siteSlug?: string } >();
-		const siteSlugFromParam = useSiteSlugParam();
 		const query = useQuery();
+		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
-
-		// Use URL path parameter first, then query parameter fallback
-		const finalSiteSlug = siteSlug || urlParams.siteSlug || siteSlugFromParam;
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -142,11 +91,9 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 					// User selected plan, go directly to checkout
 					if ( providedDependencies?.cartItems && providedDependencies.cartItems.length > 0 ) {
 						const selectedPlan = providedDependencies.cartItems[ 0 ]?.product_slug;
-						if ( selectedPlan && finalSiteSlug ) {
+						if ( selectedPlan && siteSlug ) {
 							// Build checkout URL with plan
-							const checkoutUrl = `/checkout/${ encodeURIComponent(
-								finalSiteSlug
-							) }/${ selectedPlan }`;
+							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
 
 							// Add redirect_to parameter if provided
 							const queryParams = new URLSearchParams();
