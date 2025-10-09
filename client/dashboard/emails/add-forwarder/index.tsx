@@ -23,6 +23,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
+import { useDomains } from '../hooks/use-domains';
 import { useIsDomainMaxForwardsReached } from './hooks/use-is-domain-max-forwards-reached';
 import { useNewForwardingAddresses } from './hooks/use-new-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
@@ -41,9 +42,14 @@ function AddEmailForwarder() {
 		addEmailForwarderMutation()
 	);
 	const navigate = useNavigate();
-	const { data: domains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
-	const userDomains = useMemo(
-		() => domains?.filter( ( d ) => d.current_user_can_add_email && d.current_user_is_owner ) || [],
+	const { domains, isLoading: isLoadingDomains } = useDomains();
+
+	const eligibleDomains = useMemo(
+		() =>
+			domains?.filter(
+				( { current_user_can_add_email, current_user_is_owner, wpcom_domain } ) =>
+					current_user_can_add_email && current_user_is_owner && ! wpcom_domain
+			) || [],
 		[ domains ]
 	);
 	const [ formData, setFormData ] = useState< FormData >( {
@@ -53,8 +59,8 @@ function AddEmailForwarder() {
 	} );
 	const { isLoading: isLoadingNewForwardingAddresses, newForwardingAddresses } =
 		useNewForwardingAddresses( {
+			domains: eligibleDomains,
 			forwardingAddresses: formData.forwardingAddresses,
-			userDomains,
 		} );
 	const {
 		isLoading: isLoadingIsDomainMaxForwardsReached,
@@ -75,7 +81,7 @@ function AddEmailForwarder() {
 						label: __( 'Select a domain' ),
 						value: '',
 					},
-					...( userDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [] ),
+					...( eligibleDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [] ),
 				],
 				id: 'domain',
 				label: __( 'Domain' ),
@@ -87,7 +93,7 @@ function AddEmailForwarder() {
 				type: 'array',
 			},
 		],
-		[ userDomains ]
+		[ eligibleDomains ]
 	);
 
 	const form = {
