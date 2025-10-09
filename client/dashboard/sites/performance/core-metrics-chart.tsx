@@ -62,20 +62,21 @@ const MetricLabel = ( {
 	);
 };
 
-const useMetricData = (
-	metric: Metrics,
-	valuation: Valuation,
-	history?: SitePerformanceHistory
-) => {
+const useMetricData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
 	const dates = history?.collection_period ?? [];
 	const values = history?.metrics[ metric ] ?? [];
 	if ( ! dates.length || ! values.length ) {
 		return null;
 	}
 
-	const color = getColorForStatus( valuation );
 	const weeksToShow = 8;
-	const data = [];
+	const metricData: Array< {
+		label: string;
+		data: Array< { date: Date; value: number } >;
+		options: { stroke: string };
+	} > = [];
+	const allData = [];
+	let currentValuation;
 	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - weeksToShow ); i-- ) {
 		const date = dates[ i ];
 		const formattedDate =
@@ -87,20 +88,35 @@ const useMetricData = (
 						date.day.toString().padStart( 2, '0' ),
 				  ].join( '-' );
 
-		data.push( {
+		const nextValuation = mapThresholdsToStatus( metric, values[ i ] );
+		if ( nextValuation !== currentValuation ) {
+			const lastData = metricData[ metricData.length - 1 ]?.data?.slice().pop();
+			currentValuation = nextValuation;
+			metricData.push( {
+				// The label should be unique.
+				label: `${ getStatusText( currentValuation ) } - ${ metricData.length }`,
+				data: ( lastData ? [ lastData ] : [] ) as Array< { date: Date; value: number } >,
+				options: {
+					stroke: getColorForStatus( currentValuation ),
+				},
+			} );
+		}
+
+		const data = {
 			date: new Date( formattedDate ),
 			value: getFormattedValue( metric, values[ i ] ),
-		} );
+		};
+		metricData[ metricData.length - 1 ].data.push( data );
+		allData.push( data );
 	}
 
 	return [
+		// Use all data to maintain the range of the x axis.
 		{
-			label: getStatusText( valuation ),
-			data,
-			options: {
-				stroke: color,
-			},
+			label: '',
+			data: allData,
 		},
+		...metricData,
 	];
 };
 
@@ -116,8 +132,7 @@ export default function CoreMetricsChart( {
 } ) {
 	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
-	const currentValuation = mapThresholdsToStatus( metric, report[ metric ] );
-	const data = useMetricData( metric, currentValuation, report.history );
+	const data = useMetricData( metric, report.history );
 
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		const unit = getDisplayUnit( metric );
@@ -179,8 +194,18 @@ export default function CoreMetricsChart( {
 						data={ data }
 						withGradientFill={ false }
 						smoothing={ false }
-						renderGlyph={ ( { color, x, y } ) => {
-							const GlyphComponent = StatusGlyph[ currentValuation ];
+						renderGlyph={ ( { key, x, y, datum } ) => {
+							const data = datum as { value: number };
+							const value = [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric )
+								? data.value * 1000
+								: data.value;
+							const valuation = mapThresholdsToStatus( metric, value );
+							const color = getColorForStatus( valuation );
+							const label = getStatusText( valuation );
+							if ( ! label.includes( key ) ) {
+								return null;
+							}
+							const GlyphComponent = StatusGlyph[ valuation ];
 							return <GlyphComponent top={ y } left={ x } size={ 100 } fill={ color } />;
 						} }
 						renderTooltip={ ( { tooltipData } ) => {
@@ -189,7 +214,11 @@ export default function CoreMetricsChart( {
 								return null;
 							}
 
-							return nearestDatum.value;
+							const formattedDate = nearestDatum.date?.toLocaleDateString( undefined, {
+								month: 'short',
+								day: 'numeric',
+							} );
+							return [ formattedDate, nearestDatum.value ].join( ': ' );
 						} }
 					/>
 				) : (
