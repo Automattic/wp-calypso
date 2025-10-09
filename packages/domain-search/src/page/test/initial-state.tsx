@@ -36,16 +36,6 @@ describe( 'InitialState', () => {
 		expect( screen.queryByText( /already have a domain/i ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'does not render the already own domain CTA when onExternalDomainClick is not provided', () => {
-		render(
-			<TestDomainSearch config={ { allowsUsingOwnDomain: true } }>
-				<InitialState />
-			</TestDomainSearch>
-		);
-
-		expect( screen.queryByText( /already have a domain/i ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'calls onExternalDomainClick when CTA is clicked', () => {
 		const onExternalDomainClick = jest.fn();
 

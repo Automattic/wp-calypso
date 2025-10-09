@@ -20,7 +20,7 @@ export const mockGetSuggestionsQuery = ( {
 		quantity: 30,
 		vendor: 'variation2_front',
 		exact_sld_matches_only: false,
-		include_internal_move_eligible: true,
+		include_internal_move_eligible: false,
 		...rawParams,
 	};
 
