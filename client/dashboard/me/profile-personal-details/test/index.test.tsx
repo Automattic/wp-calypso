@@ -257,6 +257,87 @@ describe( 'PersonalDetailsSection', () => {
 	} );
 
 	describe( 'Save button validation', () => {
+		it( 'disables Save button when username confirmation does not match', async () => {
+			const user = userEvent.setup();
+			const eligibleUserData = {
+				...mockUserSettings,
+				email_verified: true,
+				user_login_can_be_changed: true,
+			};
+
+			renderWithUserData( eligibleUserData );
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Username' ) ).toBeEnabled();
+			} );
+
+			const firstNameInput = screen.getByLabelText( 'First name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'Updated' );
+
+			nock( API_BASE ).get( '/rest/v1.1/me/username/validate/newusername' ).reply( 200, {
+				success: true,
+				message: 'Nice username!',
+			} );
+
+			const usernameInput = screen.getByLabelText( 'Username' );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Confirm new username' ) ).toBeInTheDocument();
+			} );
+
+			const confirmInput = screen.getByLabelText( 'Confirm new username' );
+			await user.type( confirmInput, 'wrongusername' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeDisabled();
+				expect( screen.getByText( 'Usernames do not match.' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'enables Save button when username confirmation matches', async () => {
+			const user = userEvent.setup();
+			const eligibleUserData = {
+				...mockUserSettings,
+				email_verified: true,
+				user_login_can_be_changed: true,
+			};
+
+			renderWithUserData( eligibleUserData );
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Username' ) ).toBeEnabled();
+			} );
+
+			const firstNameInput = screen.getByLabelText( 'First name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'Updated' );
+
+			nock( API_BASE ).get( '/rest/v1.1/me/username/validate/newusername' ).reply( 200, {
+				success: true,
+				message: 'Nice username!',
+			} );
+
+			const usernameInput = screen.getByLabelText( 'Username' );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Confirm new username' ) ).toBeInTheDocument();
+			} );
+
+			const confirmInput = screen.getByLabelText( 'Confirm new username' );
+			await user.type( confirmInput, 'newusername' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeEnabled();
+			} );
+		} );
+
 		it( 'disables Save button when username has validation error', async () => {
 			const user = userEvent.setup();
 			const eligibleUserData = {

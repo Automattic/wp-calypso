@@ -67,15 +67,36 @@ export default function UsernameSection( {
 
 	const hasUsernameChange = !! ( value && value !== currentUsername );
 
+	const notifyValidationChange = useCallback(
+		( result: ValidationResult | null, confirmValue: string ) => {
+			if ( ! onValidationChange ) {
+				return;
+			}
+
+			const hasValidationError =
+				hasUsernameChange && result !== null && ! isUsernameValid( result );
+			const hasConfirmError =
+				hasUsernameChange && !! value && confirmValue.length > 0 && confirmValue !== value;
+
+			onValidationChange( hasValidationError || hasConfirmError );
+		},
+		[ hasUsernameChange, value, onValidationChange ]
+	);
+
 	const setValidationResult = useCallback(
 		( result: ValidationResult | null ) => {
 			setValidationResultState( result );
-			if ( onValidationChange ) {
-				const hasError = hasUsernameChange && result !== null && ! isUsernameValid( result );
-				onValidationChange( hasError );
-			}
+			notifyValidationChange( result, userLoginConfirm );
 		},
-		[ hasUsernameChange, onValidationChange ]
+		[ notifyValidationChange, userLoginConfirm ]
+	);
+
+	const handleConfirmChange = useCallback(
+		( confirmValue: string ) => {
+			setUserLoginConfirm( confirmValue );
+			notifyValidationChange( validationResultState, confirmValue );
+		},
+		[ notifyValidationChange, validationResultState ]
 	);
 
 	const validationResult = validationResultState;
@@ -214,7 +235,7 @@ export default function UsernameSection( {
 					usernameToConfirm={ value }
 					validationResult={ validationResult }
 					usernameAction={ usernameAction }
-					onConfirmChange={ setUserLoginConfirm }
+					onConfirmChange={ handleConfirmChange }
 					onActionChange={ setUsernameAction }
 					onShowConfirmModal={ () => setShowConfirmModal( true ) }
 					onCancel={ cancelUsernameChange }
