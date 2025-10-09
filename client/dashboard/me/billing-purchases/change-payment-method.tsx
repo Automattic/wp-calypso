@@ -56,7 +56,7 @@ function ChangePaymentMethod() {
 	);
 	const { isStripeLoading } = useStripe();
 
-	const paymentMethods = useCreateAssignablePaymentMethods();
+	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
 	const isDataLoading = isLoadingStoredCards || isStripeLoading;
 
 	useEffect( () => {

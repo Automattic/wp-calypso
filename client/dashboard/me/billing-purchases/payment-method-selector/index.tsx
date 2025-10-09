@@ -1,5 +1,9 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { userPaymentMethodsQuery, assignPaymentMethodMutation } from '@automattic/api-queries';
+import {
+	userPaymentMethodsQuery,
+	assignPaymentMethodMutation,
+	createPayPalAgreementMutation,
+} from '@automattic/api-queries';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
@@ -19,7 +23,7 @@ import clsx from 'clsx';
 import { useCallback } from 'react';
 import { Notice } from '../../../components/notice';
 import { creditCardHasAlreadyExpired, isAkismetProduct } from '../../../utils/purchase';
-import { assignExistingCardProcessor } from '../payment-methods';
+import { assignExistingCardProcessor, assignPayPalProcessor } from '../payment-methods';
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
 import type { Purchase } from '@automattic/api-core';
@@ -43,6 +47,7 @@ export function PaymentMethodSelector( {
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase );
 
 	const { mutateAsync: assignPaymentMethod } = useMutation( assignPaymentMethodMutation() );
+	const { mutateAsync: createPayPalAgreement } = useMutation( createPayPalAgreementMutation() );
 
 	const isAkismetPurchase = purchase ? isAkismetProduct( purchase ) : false;
 	const is100YearPlanPurchase =
@@ -94,6 +99,8 @@ export function PaymentMethodSelector( {
 					assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
 				'existing-card-ebanx': ( data: unknown ) =>
 					assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
+				'paypal-express': ( data: unknown ) =>
+					assignPayPalProcessor( purchase, data, createPayPalAgreement ),
 			} }
 			initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
 				currentlyAssignedPaymentMethodId,

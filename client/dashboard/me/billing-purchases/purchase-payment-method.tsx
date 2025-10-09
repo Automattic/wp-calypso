@@ -87,7 +87,27 @@ export function PurchasePaymentMethod( {
 		}
 
 		if ( purchase.payment_type === 'paypal' ) {
-			return <PaymentMethodImage paymentMethodType={ purchase.payment_type } />;
+			return (
+				<HStack>
+					<HStack justify="flex-start">
+						<PaymentMethodImage paymentMethodType={ purchase.payment_type } />
+						<span>PayPal { purchase.payment_name }</span>
+					</HStack>
+					{ showUpdateButton && (
+						<Button
+							className="purchase-payment-method__update"
+							aria-label={ __( 'Update payment method' ) }
+							variant="secondary"
+							size="compact"
+							onClick={ () => {
+								navigate( { to: getChangePaymentMethodUrlFor( purchase ) } );
+							} }
+						>
+							{ __( 'Update' ) }
+						</Button>
+					) }
+				</HStack>
+			);
 		}
 
 		if ( purchase.payment_type === 'upi' ) {

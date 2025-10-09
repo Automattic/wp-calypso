@@ -1,8 +1,18 @@
-import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import type { Purchase, AssignPaymentMethodParams } from '@automattic/api-core';
+import {
+	makeSuccessResponse,
+	makeErrorResponse,
+	makeRedirectResponse,
+} from '@automattic/composite-checkout';
+import { addQueryArgs } from '@wordpress/url';
+import type {
+	Purchase,
+	CreatePayPalAgreementParams,
+	AssignPaymentMethodParams,
+} from '@automattic/api-core';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 type AssignPaymentMethodMutation = ( params: AssignPaymentMethodParams ) => Promise< unknown >;
+type CreatePayPalAgreementMutation = ( params: CreatePayPalAgreementParams ) => Promise< string >;
 
 export async function assignExistingCardProcessor(
 	purchase: Purchase | undefined,
@@ -27,6 +37,36 @@ export async function assignExistingCardProcessor(
 	}
 }
 
+export async function assignPayPalProcessor(
+	purchase: Purchase | undefined,
+	submitData: unknown,
+	createPayPalAgreement: CreatePayPalAgreementMutation
+): Promise< PaymentProcessorResponse > {
+	try {
+		if ( ! purchase ) {
+			throw new Error( 'Cannot assign PayPal payment method without a purchase' );
+		}
+		if ( ! isValidPayPalData( submitData ) ) {
+			throw new Error( 'PayPal data is missing tax information' );
+		}
+		// PayPal assignment will trigger a redirect to PayPal for authorization
+		const redirectUrl = await createPayPalAgreement( {
+			subscriptionId: String( purchase.ID ),
+			successUrl: addQueryArgs( window.location.href, { success: 'true' } ),
+			cancelUrl: window.location.href,
+			taxCountryCode: submitData.countryCode,
+			taxPostalCode: submitData.postalCode ?? '',
+			taxAddress: submitData.address ?? '',
+			taxOrganization: submitData.organization ?? '',
+			taxCity: submitData.city ?? '',
+			taxSubdivisionCode: submitData.state ?? '',
+		} );
+		return makeRedirectResponse( redirectUrl );
+	} catch ( error ) {
+		return makeErrorResponse( ( error as Error ).message );
+	}
+}
+
 function isValidExistingCardData( data: unknown ): data is ExistingCardSubmitData {
 	const existingCardData = data as ExistingCardSubmitData;
 	return !! existingCardData.storedDetailsId;
@@ -34,4 +74,18 @@ function isValidExistingCardData( data: unknown ): data is ExistingCardSubmitDat
 
 interface ExistingCardSubmitData {
 	storedDetailsId: string;
+}
+
+interface PayPalSubmitData {
+	postalCode?: string;
+	countryCode: string;
+	address?: string;
+	organization?: string;
+	city?: string;
+	state?: string;
+}
+
+function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
+	const payPalData = data as PayPalSubmitData;
+	return payPalData.countryCode !== undefined;
 }
