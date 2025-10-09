@@ -20,9 +20,14 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 		ref
 	) {
 		const renderMessageContent = () => {
+			// Ensure message.content is an array
+			const messageContent = Array.isArray( message.content )
+				? message.content
+				: [];
+
 			return (
 				<>
-					{ message.content.map( ( contentBlock, index ) => {
+					{ messageContent.map( ( contentBlock, index ) => {
 						if (
 							contentBlock.type === 'text' &&
 							contentBlock.text
