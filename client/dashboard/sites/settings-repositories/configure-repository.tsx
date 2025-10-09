@@ -4,14 +4,9 @@ import {
 	updateCodeDeploymentMutation,
 	codeDeploymentQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { Card, CardBody, ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -19,7 +14,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
@@ -29,7 +23,7 @@ export default function ConfigureRepository() {
 	const { data: existingDeployment } = useSuspenseQuery(
 		codeDeploymentQuery( site.ID, deploymentId )
 	);
-	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
+	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
 
 	const navigate = useNavigate( {
 		from: '/sites/$siteSlug/settings/repositories/manage/$deploymentId',
@@ -88,32 +82,27 @@ export default function ConfigureRepository() {
 		>
 			<Card>
 				<CardBody>
-					<VStack spacing={ 6 }>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Update connection details' ) }
-							description={ createInterpolateElement(
-								__(
-									'Update the connection used to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
+					<ConnectRepositoryForm
+						formTitle={ __( 'Update connection details' ) }
+						formDescription={ createInterpolateElement(
+							__(
+								'Update the connection used to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
+							),
+							{
+								a: (
+									<ExternalLink
+										href={ `https://github.com/settings/installations/${ selectedInstallation?.external_id }` }
+									>
+										{ __( 'Adjust permissions on GitHub' ) }
+									</ExternalLink>
 								),
-								{
-									a: (
-										<ExternalLink
-											href={ `https://github.com/settings/installations/${ selectedInstallation?.external_id }` }
-										>
-											{ __( 'Adjust permissions on GitHub' ) }
-										</ExternalLink>
-									),
-								}
-							) }
-						/>
-						<ConnectRepositoryForm
-							onCancel={ handleCancel }
-							mutation={ updateMutation }
-							initialValues={ initialValues }
-							submitText={ __( 'Update Connection' ) }
-						/>
-					</VStack>
+							}
+						) }
+						onCancel={ handleCancel }
+						mutation={ updateMutation }
+						initialValues={ initialValues }
+						submitText={ __( 'Update Connection' ) }
+					/>
 				</CardBody>
 			</Card>
 		</PageLayout>

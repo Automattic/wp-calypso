@@ -3,14 +3,9 @@ import {
 	githubInstallationsQuery,
 	createCodeDeploymentMutation,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { Card, CardBody, ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -19,14 +14,13 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { siteRoute, siteSettingsRepositoriesRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
 import { ConnectRepositoryForm } from './connect-repository-form';
 import type { ConnectRepositoryFormData } from './connect-repository-form';
 
 export default function ConnectRepository() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
+	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 
@@ -76,10 +70,9 @@ export default function ConnectRepository() {
 		>
 			<Card>
 				<CardBody>
-					<SectionHeader
-						level={ 3 }
-						title={ __( 'Configure repository connection' ) }
-						description={ createInterpolateElement(
+					<ConnectRepositoryForm
+						formTitle={ __( 'Configure repository connection' ) }
+						formDescription={ createInterpolateElement(
 							__(
 								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
 							),
@@ -93,15 +86,11 @@ export default function ConnectRepository() {
 								),
 							}
 						) }
+						onCancel={ handleCancel }
+						mutation={ createMutation }
+						initialValues={ initialValues }
+						submitText={ __( 'Connect Repository' ) }
 					/>
-					<VStack spacing={ 6 }>
-						<ConnectRepositoryForm
-							onCancel={ handleCancel }
-							mutation={ createMutation }
-							initialValues={ initialValues }
-							submitText={ __( 'Connect Repository' ) }
-						/>
-					</VStack>
 				</CardBody>
 			</Card>
 		</PageLayout>

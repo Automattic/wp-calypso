@@ -1,6 +1,5 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
-	githubInstallationsQuery,
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
@@ -942,9 +941,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	loader: async () => {
-		await queryClient.ensureQueryData( githubInstallationsQuery() );
-	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-manage' )( {
