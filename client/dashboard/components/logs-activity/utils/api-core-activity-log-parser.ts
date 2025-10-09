@@ -4,7 +4,7 @@
  * multiple decorators (links, emphasis, entity references) to the same slice of copy.
  *
  * Example:
- * parseActivityContent({
+ * parseActivityLogEntryContent({
  * 	text: 'Site Example updated',
  * 	ranges: [ { indices: [ 5, 12 ], type: 'site', id: 987, section: 'sites' } ],
  * });
@@ -17,38 +17,8 @@
  * // Rendered by FormattedBlock as:
  * // Site <a href="/sites/987">Example</a> updated
  */
-import type { ActivityNotificationRange } from '@automattic/api-core';
-
-export interface ActivityBlockNode {
-	type?: string;
-	text?: string | null;
-	children?: ActivityBlockContent[];
-	// these are all optional and depend on the type of node
-	url?: string | null;
-	// the activity field was mostly referenced as a data attribute for links.
-	// we now check it elsewhere so downstream consumers can rely on the data when present.
-	activity?: string;
-	section?: string;
-	intent?: string;
-	siteId?: number | string;
-	postId?: number | string;
-	isTrashed?: boolean;
-	commentId?: number | string;
-	name?: string;
-	siteSlug?: string;
-	pluginSlug?: string;
-	themeUri?: string;
-	themeSlug?: string;
-}
-
-export type ActivityBlockContent = string | ActivityBlockNode;
-
-export interface ActivityContent {
-	text?: string;
-	ranges?: ActivityNotificationRange[];
-	items?: ActivityBlockContent[];
-}
-
+import type { ActivityBlockContent, ActivityBlockNode } from '../types';
+import type { ActivityNotificationRange, ActivityLogEntry } from '@automattic/api-core';
 interface RangeWithChildren extends ActivityNotificationRange {
 	children: RangeWithChildren[];
 	[ key: string ]: unknown;
@@ -271,8 +241,8 @@ const parseRange = (
 	return [ [ ...prev, ...preText, parsedNode ], text.slice( offsetEnd ), end ];
 };
 
-export const parseActivityContent = (
-	content?: ActivityContent | string | ActivityBlockContent[]
+export const parseActivityLogEntryContent = (
+	content?: string | ActivityLogEntry[ 'content' ]
 ): ActivityBlockContent[] => {
 	if ( typeof content === 'string' ) {
 		return content ? [ content ] : [];
@@ -285,13 +255,9 @@ export const parseActivityContent = (
 	if ( ! content ) {
 		return [];
 	}
-
-	if ( Array.isArray( content.items ) ) {
-		return content.items;
-	}
-
 	const { text = '' } = content;
 
+	// In case the ActivityLogEntry content has no ranges, return early.
 	if ( ! content.ranges || ! content.ranges.length ) {
 		return text ? [ text ] : [];
 	}
@@ -312,4 +278,4 @@ export const parseActivityContent = (
 	return joinResults( [ reduced, remainder ] );
 };
 
-export default parseActivityContent;
+export default parseActivityLogEntryContent;

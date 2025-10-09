@@ -10,8 +10,8 @@ import {
 	renderFormattedContent,
 	type ActivityBlockMeta,
 	createFormattedBlock,
-} from '../formatted-block';
-import type { ActivityBlockContent } from '../formatted-block-parser';
+} from '../activity-formatted-block';
+import type { ActivityBlockContent } from '../types';
 
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn() );

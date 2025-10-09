@@ -1,5 +1,5 @@
 // Compatibility wrapper - forwards to new implementation
-import { renderFormattedContent } from 'calypso/dashboard/components/logs-activity/formatted-block';
+import { renderFormattedContent } from 'calypso/dashboard/components/logs-activity/activity-formatted-block';
 
 /**
  * Legacy FormattedBlock component

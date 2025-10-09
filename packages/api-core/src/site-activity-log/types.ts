@@ -1,6 +1,6 @@
 export interface ActivityLogEntry {
 	activity_id: string;
-	actor: ActivityActor;
+	actor: ActivityLogActor;
 	content: {
 		text: string;
 		ranges?: ActivityNotificationRange[];
@@ -10,6 +10,8 @@ export interface ActivityLogEntry {
 	image?: {
 		available: boolean;
 		medium_url: string;
+		thumbnail_url?: string;
+		type?: string;
 		name: string;
 		url: string;
 	};
@@ -95,7 +97,7 @@ export interface ActivityGenerator {
 	blog_id: number;
 }
 
-export type ActivityActor = {
+export type ActivityLogActor = {
 	// Typically 'Person'; can also be 'Application' or 'Happiness Engineer'
 	type: 'Person' | 'Application' | 'Happiness Engineer';
 	name: string;

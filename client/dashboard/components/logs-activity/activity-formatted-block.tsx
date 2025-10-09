@@ -16,7 +16,7 @@
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
-import type { ActivityBlockContent, ActivityBlockNode } from './formatted-block-parser';
+import type { ActivityBlockContent, ActivityBlockNode } from './types';
 
 export interface ActivityBlockMeta {
 	activity?: string;

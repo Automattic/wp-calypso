@@ -1,11 +1,12 @@
-import parseActivityContent, { type ActivityBlockContent } from '../formatted-block-parser';
+import parseActivityLogEntryContent from '../utils/api-core-activity-log-parser';
+import type { ActivityBlockContent } from '../types';
 
-describe( 'parseActivityContent', () => {
+describe( 'parseActivityLogEntryContent', () => {
 	test( 'returns an empty array when content is undefined', () => {
-		expect( parseActivityContent() ).toEqual( [] );
+		expect( parseActivityLogEntryContent() ).toEqual( [] );
 	} );
 	test( 'wraps string content in an array', () => {
-		expect( parseActivityContent( 'text' ) ).toEqual( [ 'text' ] );
+		expect( parseActivityLogEntryContent( 'text' ) ).toEqual( [ 'text' ] );
 	} );
 
 	test( 'returns items verbatim when provided', () => {
@@ -13,7 +14,7 @@ describe( 'parseActivityContent', () => {
 			'text',
 			{ type: 'b', text: 'bold', children: [ 'bold' ] },
 		];
-		expect( parseActivityContent( { text: 'ignored', items } ) ).toEqual( items );
+		expect( parseActivityLogEntryContent( { text: 'ignored', items } ) ).toEqual( items );
 	} );
 
 	test( 'parses ranges into block nodes and surrounding text', () => {
@@ -29,7 +30,7 @@ describe( 'parseActivityContent', () => {
 			],
 		};
 
-		const result = parseActivityContent( content );
+		const result = parseActivityLogEntryContent( content );
 
 		expect( result ).toHaveLength( 2 );
 		expect( result[ 0 ] ).toMatchObject( {
@@ -59,7 +60,7 @@ describe( 'parseActivityContent', () => {
 			],
 		};
 
-		const result = parseActivityContent( content );
+		const result = parseActivityLogEntryContent( content );
 		const linkNode = result[ 0 ] as { children?: ActivityBlockContent[] };
 
 		expect( Array.isArray( linkNode.children ) ).toBe( true );

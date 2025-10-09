@@ -1,28 +1,21 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
-import { renderFormattedContent } from './formatted-block';
-import parseActivityContent from './formatted-block-parser';
-import type { SiteActivityLog } from '@automattic/api-core';
+import { renderFormattedContent } from './activity-formatted-block';
+import type { Activity } from './types';
 import './activity-event.scss';
-type ActivityEventProps = {
-	summary: SiteActivityLog[ 'summary' ];
-	content?: SiteActivityLog[ 'content' ];
-	gridicon?: SiteActivityLog[ 'gridicon' ];
-};
-
-export function ActivityEvent( { summary, content, gridicon }: ActivityEventProps ) {
-	const parsedContent = parseActivityContent( content );
-	const formattedContent = parsedContent.length
-		? renderFormattedContent( { items: parsedContent } )
+export function ActivityEvent( { activity }: { activity: Activity } ) {
+	const { activityDescription, activityIcon, activityTitle } = activity;
+	const formattedContent = activityDescription.items.length
+		? renderFormattedContent( { items: activityDescription.items } )
 		: null;
 
 	return (
 		<HStack spacing="2" alignment="left" className="site-activity-logs__event">
-			{ gridicon && (
+			{ activityIcon && (
 				<Icon
 					className="site-activity-logs__event-icon"
-					icon={ gridiconToWordPressIcon( gridicon ) }
+					icon={ gridiconToWordPressIcon( activityIcon ) }
 					size={ 24 }
 				/>
 			) }
@@ -32,7 +25,7 @@ export function ActivityEvent( { summary, content, gridicon }: ActivityEventProp
 				alignment="start"
 				className="site-activity-logs__event-content"
 			>
-				<strong>{ summary }</strong>
+				<strong>{ activityTitle }</strong>
 				{ formattedContent && <span>{ formattedContent }</span> }
 			</HStack>
 		</HStack>

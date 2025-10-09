@@ -5,7 +5,8 @@ import { render, screen } from '@testing-library/react';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
-import type { SiteActivityLog } from '@automattic/api-core';
+import parseActivityLogEntryContent from '../utils/api-core-activity-log-parser';
+import type { Activity, ActivityContent } from '../types';
 
 jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
@@ -13,6 +14,44 @@ jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn
 
 const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
 const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
+
+type ContentInput = ActivityContent | string | undefined;
+
+const createActivity = ( {
+	title = 'Summary',
+	icon,
+	content,
+}: {
+	title?: string;
+	icon?: string;
+	content?: ContentInput;
+} = {} ): Activity => {
+	const items = parseActivityLogEntryContent( content );
+	const textDescription = typeof content === 'string' ? content : content?.text ?? '';
+
+	return {
+		activityDescription: {
+			textDescription,
+			items,
+		},
+		activityIcon: icon,
+		activityId: 1,
+		activityMedia: {
+			available: false,
+			medium_url: '',
+			name: '',
+			thumbnail_url: '',
+			type: '',
+			url: '',
+		},
+		activityName: 'activity',
+		activityStatus: '',
+		activityTitle: title,
+		activityTs: 0,
+		activityActor: {},
+		activityIsRewindable: false,
+	};
+};
 
 describe( 'ActivityEvent', () => {
 	beforeEach( () => {
@@ -22,14 +61,16 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders the summary and plain content text', () => {
-		render( <ActivityEvent summary="Summary" content={ { text: 'Plain content' } } /> );
+		const activity = createActivity( { content: { text: 'Plain content' } } );
+
+		render( <ActivityEvent activity={ activity } /> );
 
 		expect( screen.getByText( 'Summary' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Plain content' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders formatted content with links', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'View post',
 			ranges: [
 				{
@@ -40,8 +81,9 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'View' } );
 		expect( link ).toBeInTheDocument();
@@ -49,7 +91,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders strong ranges as bold text', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'A Bold move',
 			ranges: [
 				{
@@ -59,15 +101,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const strong = screen.getByText( 'Bold' );
 		expect( strong.tagName ).toBe( 'STRONG' );
 	} );
 
 	it( 'renders emphasis ranges inside <em>', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'Very important',
 			ranges: [
 				{
@@ -77,15 +120,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const emphasis = screen.getByText( 'important' );
 		expect( emphasis.tagName ).toBe( 'EM' );
 	} );
 
 	it( 'renders preformatted ranges inside <pre>', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'Code block',
 			ranges: [
 				{
@@ -95,15 +139,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const pre = screen.getByText( 'Code' );
 		expect( pre.tagName ).toBe( 'PRE' );
 	} );
 
 	it( 'renders file paths inside a <code> element', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'File wp-config.php',
 			ranges: [
 				{
@@ -113,15 +158,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const code = screen.getByText( 'wp-config.php' );
 		expect( code.tagName ).toBe( 'CODE' );
 	} );
 
 	it( 'renders post links when post ranges are provided', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'View Example now',
 			ranges: [
 				{
@@ -132,15 +178,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Example' } );
 		expect( link.getAttribute( 'href' ) ).toBe( '/reader/blogs/123/posts/77' );
 	} );
 
 	it( 'renders comment links with anchors', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'Comment added',
 			ranges: [
 				{
@@ -157,15 +204,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Comment' } );
 		expect( link.getAttribute( 'href' ) ).toBe( '/comment/2/1' );
 	} );
 
 	it( 'renders plugin links for plugin ranges', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'Activated Akismet today',
 			ranges: [
 				{
@@ -177,15 +225,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Akismet' } );
 		expect( link.getAttribute( 'href' ) ).toBe( '/plugins/akismet/example.com' );
 	} );
 
 	it( 'renders theme links when themes originate from WordPress.com', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'Installed Example today',
 			ranges: [
 				{
@@ -198,15 +247,16 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Example' } );
 		expect( link.getAttribute( 'href' ) ).toBe( '/theme/example/example.com' );
 	} );
 
 	it( 'renders external theme links with target and rel attributes', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'External theme installed',
 			ranges: [
 				{
@@ -219,8 +269,9 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'External theme' } );
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://example.com/theme' );
@@ -229,7 +280,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders backup links with site slug fallback', () => {
-		const content: SiteActivityLog[ 'content' ] = {
+		const content: ActivityContent = {
 			text: 'Restored backup now',
 			ranges: [
 				{
@@ -240,8 +291,9 @@ describe( 'ActivityEvent', () => {
 				},
 			],
 		};
+		const activity = createActivity( { content } );
 
-		render( <ActivityEvent summary="Summary" content={ content } /> );
+		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'backup' } );
 		expect( link.getAttribute( 'href' ) ).toBe( '/backup/site-slug' );

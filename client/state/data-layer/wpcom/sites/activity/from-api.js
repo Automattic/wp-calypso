@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { parseActivityContent } from 'calypso/dashboard/components/logs-activity/formatted-block-parser';
+import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity/utils/api-core-activity-log-parser';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import apiResponseSchema from './schema';
 
@@ -59,7 +59,7 @@ export function processItem( item ) {
 			activityName: item.name,
 			activityTitle: item.summary,
 			activityTs: Date.parse( activityDate ),
-			activityDescription: parseActivityContent( item.content ),
+			activityDescription: parseActivityLogEntryContent( item.content ),
 			activityMedia: get( item, 'image' ),
 			activityMeta,
 			baseRewindId: item.base_rewind_id,
