@@ -19,7 +19,6 @@ export const sitePerformanceInsightsQuery = ( url: string, token: string ) =>
 			if ( query.state.data?.pagespeed?.status === 'completed' || query.state.error ) {
 				return false;
 			}
-
 			return 5000;
 		},
 	} );
