@@ -5,7 +5,9 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { Text } from '../../components/text';
 import type { Email } from '../types';
 import type { Action } from '@wordpress/dataviews';
@@ -21,19 +23,30 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 		isDestructive: true,
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
+			const { createErrorNotice } = useDispatch( noticesStore );
 			const email = items[ 0 ];
-			if ( email.type !== 'forwarding' || ! email?.forwardingTo ) {
-				return <></>;
-			}
+
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
 			const onConfirm = async () => {
-				await deleteEmailForward( {
-					domainName: email.domainName,
-					mailbox,
-					destination: email.forwardingTo as string,
-				} );
-				onActionPerformed?.( items );
-				closeModal?.();
+				try {
+					await deleteEmailForward( {
+						domainName: email.domainName,
+						mailbox,
+						destination: email.forwardingTo as string,
+					} );
+					onActionPerformed?.( items );
+					closeModal?.();
+				} catch ( _e ) {
+					createErrorNotice(
+						sprintf(
+							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
+							__( 'Failed to remove forwarder from %1$s to %2$s. Please try again.' ),
+							email.emailAddress,
+							email.forwardingTo as string
+						),
+						{ type: 'snackbar' }
+					);
+				}
 			};
 			return (
 				<VStack spacing={ 4 }>
@@ -70,6 +83,6 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 				</VStack>
 			);
 		},
-		isEligible: ( item: Email ) => item.type === 'forwarding',
+		isEligible: ( item: Email ) => item.type === 'forwarding' && !! ( item?.forwardingTo ?? false ),
 	};
 };

@@ -24,24 +24,33 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 		// Using a modal to confirm deletion
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-			const { createSuccessNotice } = useDispatch( noticesStore );
+			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 			const email = items[ 0 ];
-			if ( email.type !== 'mailbox' || email.provider !== 'titan' ) {
-				return <></>;
-			}
+
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
 			const onConfirm = async () => {
-				await deleteTitanMailbox( { domainName: email.domainName, mailbox: mailbox } );
-				createSuccessNotice(
-					sprintf(
-						/* translators: %s is the email address. */
-						__( 'Mailbox %s has been scheduled for removal.' ),
-						email.emailAddress
-					),
-					{ type: 'snackbar' }
-				);
-				onActionPerformed?.( items );
-				closeModal?.();
+				try {
+					await deleteTitanMailbox( { domainName: email.domainName, mailbox: mailbox } );
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s is the email address. */
+							__( 'Mailbox %s has been scheduled for removal.' ),
+							email.emailAddress
+						),
+						{ type: 'snackbar' }
+					);
+					onActionPerformed?.( items );
+					closeModal?.();
+				} catch ( _e ) {
+					createErrorNotice(
+						sprintf(
+							/* translators: %s is the email address. */
+							__( 'Failed to remove mailbox %s. Please try again.' ),
+							email.emailAddress
+						),
+						{ type: 'snackbar' }
+					);
+				}
 			};
 			return (
 				<VStack spacing={ 4 }>
