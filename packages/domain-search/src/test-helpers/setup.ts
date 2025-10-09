@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { queryClient } from './renderer';
 
 // Disables all network requests for all tests.
 nock.disableNetConnect();
@@ -8,6 +9,10 @@ beforeAll( () => {
 	if ( ! nock.isActive() ) {
 		nock.activate();
 	}
+} );
+
+afterEach( () => {
+	queryClient.clear();
 } );
 
 afterAll( () => {

@@ -6,7 +6,7 @@ import { DomainSearchContext, useDomainSearchContextValue } from '../page/contex
 import { buildCart, buildCartItem } from './factories/cart';
 import type { DomainSearchProps, SelectedDomain } from '../page/types';
 
-const queryClient = new QueryClient( {
+export const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
 			retry: false,

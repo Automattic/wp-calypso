@@ -7,7 +7,7 @@ export const mockGetAvailableTldsQuery = ( {
 	params: { query: string };
 	tlds: string[];
 } ) => {
-	nock( 'https://public-api.wordpress.com' )
+	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions/tlds' )
 		.query( {
 			search: query,
