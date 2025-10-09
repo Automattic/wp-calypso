@@ -20,7 +20,7 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 		ref
 	) {
 		const renderMessageContent = () => {
-			// Ensure message.content is an array
+			// Ensure `message.content` is an array
 			const messageContent = Array.isArray( message.content )
 				? message.content
 				: [];
