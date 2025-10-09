@@ -754,7 +754,7 @@ export function LineItemSublabelAndPrice( {
 		isTitanMail( product )
 	) {
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			const billingInterval = GetBillingIntervalLabel( translate, product );
+			const billingInterval = GetBillingIntervalLabel( { product } );
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
@@ -833,7 +833,7 @@ export function LineItemSublabelAndPrice( {
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
 				{ ! product.is_included_for_100yearplan && (
-					<>: { GetBillingIntervalLabel( translate, product ) }</>
+					<>: { GetBillingIntervalLabel( { product } ) }</>
 				) }
 				<LineItemExpiryDates product={ product } />
 			</>
@@ -1024,10 +1024,8 @@ function formatDate( isoDate: string ): string {
 	} );
 }
 
-function GetBillingIntervalLabel(
-	translate: ReturnType< typeof useTranslate >,
-	product: ResponseCartProduct
-) {
+function GetBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
 	if ( product.volume > 1 ) {
 		return translate( 'billed %(total_years)s years, then annually', {
 			args: { total_years: product.volume },
