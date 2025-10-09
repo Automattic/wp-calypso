@@ -6,9 +6,16 @@ import {
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery, useQueries } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	ExternalLink,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -20,6 +27,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
+import { useIsDomainMaxForwardsReached } from './hooks/use-is-domain-max-forwards-reached';
 import type { Field } from '@wordpress/dataviews';
 
 import '../style.scss';
@@ -62,6 +70,9 @@ function AddEmailForwarder() {
 		domain: '',
 		forwardingAddresses: [],
 	} );
+	const { isReached: isDomainMaxForwardsReached, maxForwards } = useIsDomainMaxForwardsReached(
+		formData.domain
+	);
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -108,7 +119,7 @@ function AddEmailForwarder() {
 	const isLoadingEmailForwarders = emailForwardersQueries.some( ( q ) => q.isLoading );
 	const isBusy = isLoadingDomains || isLoadingEmailForwarders || isAddingEmailForwarder;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
-	const isValid = isItemValid( formData, fields, form );
+	const isValid = isItemValid( formData, fields, form ) && ! isDomainMaxForwardsReached;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -216,6 +227,25 @@ function AddEmailForwarder() {
 										),
 										{
 											emailAddresses: newForwardingAddresses.join( ', ' ),
+										}
+									) }
+								</Notice>
+							) }
+
+							{ isDomainMaxForwardsReached && (
+								<Notice variant="warning">
+									{ createInterpolateElement(
+										__(
+											"You can't add another email forwarder for this domain because you've reached the maximum number (<maxForwards />) of Email Forwards allowed on it. Please <manageForwadersLink>delete an existing forwarder</manageForwadersLink> to add a new one."
+										),
+										{
+											manageForwadersLink: (
+												<ExternalLink
+													href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
+													children={ null }
+												/>
+											),
+											maxForwards: <>{ maxForwards }</>,
 										}
 									) }
 								</Notice>
