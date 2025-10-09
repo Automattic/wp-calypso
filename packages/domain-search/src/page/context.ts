@@ -152,9 +152,7 @@ export const useDomainSearchContextValue = ( {
 				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query, {
-						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain
-							? query.includes( '.blog' )
-							: false,
+						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain,
 					} ),
 					enabled: false,
 					staleTime: Infinity,

@@ -37,7 +37,7 @@ export const mockGetFreeSuggestionQuery = ( {
 	params: Partial< DomainSuggestionQuery >;
 	freeSuggestion: FreeDomainSuggestion;
 } ) => {
-	nock( 'https://public-api.wordpress.com' )
+	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
 		.query( {
 			quantity: 1,
