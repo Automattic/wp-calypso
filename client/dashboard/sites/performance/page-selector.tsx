@@ -24,7 +24,7 @@ function mapPageToPageOption( page: SitePerformancePage, siteUrl: string ): Page
 
 	return {
 		key,
-		name,
+		name: name.replace( /&nbsp;/g, ' ' ),
 		hint: path.length > 1 ? path.replace( /\/$/, '' ) : path,
 		style: defaultStyle,
 	};
