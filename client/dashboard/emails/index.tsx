@@ -51,10 +51,9 @@ function Emails() {
 	}, [ domainsQueries, isLoadingDomains ] );
 
 	const mailboxQueries = useQueries( {
-		queries: domainsWithEmails.map( ( domain: SiteDomain ) => {
-			const opts = mailboxAccountsQuery( domain.blog_id, domain.domain );
-			return { ...opts, enabled: Boolean( domain.blog_id ) };
-		} ),
+		queries: domainsWithEmails.map( ( domain: SiteDomain ) =>
+			mailboxAccountsQuery( domain.blog_id, domain.domain )
+		),
 	} );
 
 	const isLoadingMailboxes = mailboxQueries.some( ( q ) => q.isLoading );

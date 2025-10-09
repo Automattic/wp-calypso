@@ -16,6 +16,7 @@ export const mailboxAccountsQuery = ( siteId: number, domain: string ) =>
 	queryOptions( {
 		queryKey: [ 'mailboxes', siteId, domain ],
 		queryFn: () => fetchDomainMailboxAccounts( siteId, domain ),
+		enabled: Boolean( siteId ),
 	} );
 
 export const deleteTitanMailboxMutation = () => {
