@@ -18,7 +18,9 @@ export const SitePreview = ( { site }: Props ) => {
 				<div className="site-preview__name">
 					<Name site={ site } value={ getSiteDisplayName( site ) } />
 				</div>
-				<URL site={ site } value={ site.URL } />
+				<div className="site-preview__url">
+					<URL site={ site } value={ site.URL } />
+				</div>
 			</Grid>
 		</HStack>
 	);
