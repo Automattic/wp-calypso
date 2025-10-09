@@ -14,7 +14,11 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { siteRoute } from '../../app/router/sites';
+import {
+	siteRoute,
+	siteSettingsRepositoriesRoute,
+	siteSettingsRepositoriesManageRoute,
+} from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -27,13 +31,13 @@ export default function ConfigureRepository() {
 		codeDeploymentQuery( site.ID, deploymentId )
 	);
 	const { data: installations } = useSuspenseQuery( githubInstallationsQuery() );
-	const navigateFrom = '/sites/$siteSlug/settings/repositories/manage/$deploymentId';
+	const navigateFrom = siteSettingsRepositoriesManageRoute.fullPath;
 	const navigate = useNavigate( {
 		from: navigateFrom,
 	} );
 
 	const handleCancel = () => {
-		navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
 	const updateMutation = useMutation( updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ) );
