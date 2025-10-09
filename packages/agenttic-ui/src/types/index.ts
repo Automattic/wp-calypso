@@ -63,6 +63,7 @@ export interface AgentUIProps {
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
 	messageRenderer?: ComponentType< { children: string } >;
+	expandOnClick?: boolean;
 
 	// Controlled input props (optional)
 	inputValue?: string;

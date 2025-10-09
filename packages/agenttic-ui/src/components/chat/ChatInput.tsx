@@ -30,6 +30,7 @@ interface ChatInputProps {
 	placeholder?: string | string[];
 	isProcessing: boolean;
 	onBlur?: () => void;
+	onClick?: ( event?: React.MouseEvent< HTMLTextAreaElement > ) => void;
 	fromCompact?: boolean;
 	onExpand?: () => void;
 	showExpandButton?: boolean;
@@ -41,6 +42,7 @@ interface ChatInputProps {
 	className?: string;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
+	expandOnClick?: boolean;
 }
 
 export function ChatInput( {
@@ -52,6 +54,7 @@ export function ChatInput( {
 	placeholder = __( 'Ask anything', 'a8c-agenttic' ),
 	isProcessing,
 	onBlur,
+	onClick,
 	fromCompact = false,
 	onExpand,
 	showExpandButton = true,
@@ -63,6 +66,7 @@ export function ChatInput( {
 	className,
 	onMouseEnter,
 	onMouseLeave,
+	expandOnClick = false,
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const { variant, floatingChatState, isInputOverLimit } =
@@ -113,6 +117,10 @@ export function ChatInput( {
 
 	const renderExpandButton = () => {
 		if ( variant === 'embedded' || floatingChatState === 'expanded' ) {
+			return null;
+		}
+		// Hide the expand button when expandOnClick is true (it will expand automatically on click)
+		if ( expandOnClick ) {
 			return null;
 		}
 		return showExpandButton && onExpand ? (
@@ -188,6 +196,7 @@ export function ChatInput( {
 					onChange={ ( e ) => onChange( e.target.value ) }
 					onKeyDown={ onKeyDown }
 					onBlur={ onBlur }
+					onClick={ onClick }
 					placeholder={
 						isAnimated ? '' : ( formattedPlaceholder as string )
 					}
