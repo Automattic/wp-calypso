@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { ActivityLogEntry } from '../../../../../packages/api-core/src';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
 import parseActivityLogEntryContent from '../utils/api-core-activity-log-parser';
-import type { Activity, ActivityContent } from '../types';
+import type { Activity } from '../types';
 
 jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
@@ -15,7 +16,7 @@ jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn
 const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
 const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
 
-type ContentInput = ActivityContent | string | undefined;
+type ContentInput = ActivityLogEntry[ 'content' ] | string | undefined;
 
 const createActivity = ( {
 	title = 'Summary',
@@ -70,7 +71,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders formatted content with links', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'View post',
 			ranges: [
 				{
@@ -91,7 +92,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders strong ranges as bold text', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'A Bold move',
 			ranges: [
 				{
@@ -110,7 +111,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders emphasis ranges inside <em>', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'Very important',
 			ranges: [
 				{
@@ -129,7 +130,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders preformatted ranges inside <pre>', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'Code block',
 			ranges: [
 				{
@@ -148,7 +149,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders file paths inside a <code> element', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'File wp-config.php',
 			ranges: [
 				{
@@ -167,7 +168,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders post links when post ranges are provided', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'View Example now',
 			ranges: [
 				{
@@ -187,7 +188,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders comment links with anchors', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'Comment added',
 			ranges: [
 				{
@@ -213,7 +214,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders plugin links for plugin ranges', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'Activated Akismet today',
 			ranges: [
 				{
@@ -234,7 +235,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders theme links when themes originate from WordPress.com', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'Installed Example today',
 			ranges: [
 				{
@@ -256,7 +257,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders external theme links with target and rel attributes', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'External theme installed',
 			ranges: [
 				{
@@ -280,7 +281,7 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders backup links with site slug fallback', () => {
-		const content: ActivityContent = {
+		const content: ActivityLogEntry[ 'content' ] = {
 			text: 'Restored backup now',
 			ranges: [
 				{
