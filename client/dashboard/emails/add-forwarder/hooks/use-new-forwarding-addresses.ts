@@ -4,14 +4,14 @@ import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export const useNewForwardingAddresses = ( {
+	domains,
 	forwardingAddresses,
-	userDomains,
 }: {
+	domains: DomainSummary[];
 	forwardingAddresses: string[];
-	userDomains: DomainSummary[];
 } ) => {
 	const emailForwardersQueries = useQueries( {
-		queries: userDomains.map( ( d ) => ( {
+		queries: domains.map( ( d ) => ( {
 			...emailForwardersQuery( d.domain ),
 		} ) ),
 	} );
