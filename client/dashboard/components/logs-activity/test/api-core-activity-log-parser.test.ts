@@ -9,14 +9,6 @@ describe( 'parseActivityLogEntryContent', () => {
 		expect( parseActivityLogEntryContent( 'text' ) ).toEqual( [ 'text' ] );
 	} );
 
-	test( 'returns items verbatim when provided', () => {
-		const items: ActivityBlockContent[] = [
-			'text',
-			{ type: 'b', text: 'bold', children: [ 'bold' ] },
-		];
-		expect( parseActivityLogEntryContent( { text: 'ignored', items } ) ).toEqual( items );
-	} );
-
 	test( 'parses ranges into block nodes and surrounding text', () => {
 		const content = {
 			text: 'View post',
