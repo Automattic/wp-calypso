@@ -56,9 +56,11 @@ function AddEmailForwarder() {
 			forwardingAddresses: formData.forwardingAddresses,
 			userDomains,
 		} );
-	const { isReached: isDomainMaxForwardsReached, maxForwards } = useIsDomainMaxForwardsReached(
-		formData.domain
-	);
+	const {
+		isLoading: isLoadingIsDomainMaxForwardsReached,
+		isReached: isDomainMaxForwardsReached,
+		maxForwards,
+	} = useIsDomainMaxForwardsReached( formData.domain );
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -102,7 +104,11 @@ function AddEmailForwarder() {
 		],
 	};
 
-	const isBusy = isLoadingDomains || isLoadingNewForwardingAddresses || isAddingEmailForwarder;
+	const isBusy =
+		isAddingEmailForwarder ||
+		isLoadingDomains ||
+		isLoadingIsDomainMaxForwardsReached ||
+		isLoadingNewForwardingAddresses;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
 	const isValid = isItemValid( formData, fields, form ) && ! isDomainMaxForwardsReached;
 
