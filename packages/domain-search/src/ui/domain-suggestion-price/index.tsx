@@ -63,24 +63,59 @@ export const DomainSuggestionPrice = ( {
 
 	const subText = getSubText();
 
+	const isRenewPriceEqualPerYear = renewPrice && renewPrice === price;
+
 	return (
 		<VStack spacing={ 0 }>
 			<HStack spacing={ 2 } justify={ alignment === 'left' ? 'start' : 'end' }>
 				{ salePrice ? (
 					<>
-						<Text size={ priceSize } variant="muted" style={ { textDecoration: 'line-through' } }>
+						<Text
+							size={ priceSize }
+							variant="muted"
+							style={ { textDecoration: 'line-through' } }
+							aria-label={ sprintf(
+								// translators: %(price)s is the original price of the domain.
+								__( 'Original price: %(price)s' ),
+								{ price }
+							) }
+						>
 							{ price }
 						</Text>
-						<Text size={ priceSize } color="var( --domain-search-promotional-price-color )">
+						<Text
+							size={ priceSize }
+							color="var( --domain-search-promotional-price-color )"
+							aria-label={ sprintf(
+								// translators: %(price)s is the sale price of the domain.
+								__( 'Sale price: %(price)s' ),
+								{ price: salePrice }
+							) }
+						>
 							{ salePrice }
 						</Text>
 					</>
 				) : (
-					<HStack spacing={ 1 } alignment={ alignment }>
+					<HStack
+						spacing={ 1 }
+						alignment={ alignment }
+						aria-label={
+							isRenewPriceEqualPerYear
+								? sprintf(
+										// translators: %(price)s is the price of the domain.
+										__( 'Price: %(price)s/year' ),
+										{ price }
+								  )
+								: sprintf(
+										// translators: %(price)s is the price of the domain.
+										__( 'Price: %(price)s' ),
+										{ price }
+								  )
+						}
+					>
 						<Text size={ priceSize } align={ alignment }>
 							{ price }
 						</Text>
-						{ renewPrice && renewPrice === price && <Text>{ __( '/year' ) }</Text> }
+						{ isRenewPriceEqualPerYear && <Text>{ __( '/year' ) }</Text> }
 					</HStack>
 				) }
 			</HStack>

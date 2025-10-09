@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -53,7 +54,7 @@ export default function NameServers() {
 	);
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Name servers' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
 			<Card>
 				<CardBody>
 					<NameServersForm

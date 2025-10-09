@@ -1,6 +1,5 @@
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { AddDomainButton } from './add-domain-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
 import type { DomainSummary } from '@automattic/api-core';
@@ -35,16 +35,7 @@ function Domains() {
 
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={
-						<Button variant="primary" __next40pxDefaultSize href="/setup/domain">
-							{ __( 'Add New Domain' ) }
-						</Button>
-					}
-				/>
-			}
+			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
 			notices={ <OptInWelcome tracksContext="domains" /> }
 		>
 			<DataViewsCard>

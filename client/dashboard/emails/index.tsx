@@ -1,29 +1,26 @@
-import { Email, SiteDomain } from '@automattic/api-core';
-import { emailsQuery, siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
+import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
+import { mailboxAccountsQuery, siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { domainHasEmail } from '../utils/domain';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
-import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
-import { domainHasEmail } from './utils/email-utils';
+import { DEFAULT_EMAILS_VIEW, emailFields, useEmailActions } from './dataviews';
+import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import type { Email } from './types';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
 function Emails() {
-	const navigate = useNavigate();
-
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const sites = ( allSites ?? [] ).filter( ( site ) => site.capabilities.manage_options );
 	const siteIds = sites.map( ( site ) => site.ID );
-
-	const { data: allEmails, isLoading: isLoadingEmails } = useQuery( emailsQuery() );
 
 	// Fetch site domains for each managed site ID
 	const domainsQueries = useQueries( {
@@ -49,52 +46,73 @@ function Emails() {
 		const domainsWithoutEmails = domains.filter(
 			( domain ) => ! domainHasEmail( domain )
 		) as SiteDomain[];
+
 		return { domainsWithEmails, domainsWithoutEmails };
 	}, [ domainsQueries, isLoadingDomains ] );
 
-	// Filter emails to those belonging to managed sites by either siteId or matching one of the managed domains
-	const emails = ( allEmails ?? [] ).filter( ( email ) => {
-		const siteIdMatch = email.siteId && siteIds.includes( Number( email.siteId ) );
-		const domainMatch = domainsWithEmails.filter(
-			( domain: SiteDomain ) => domain.domain === email?.domainName
-		);
-		return Boolean( siteIdMatch && domainMatch );
+	const mailboxQueries = useQueries( {
+		queries: domainsWithEmails.map( ( domain: SiteDomain ) =>
+			mailboxAccountsQuery( domain.blog_id, domain.domain )
+		),
 	} );
+
+	const isLoadingMailboxes = mailboxQueries.some( ( q ) => q.isLoading );
+
+	// Build emails by pairing each domain with its corresponding mailboxes query
+	const emails: Email[] = useMemo( () => {
+		if ( ! domainsWithEmails.length ) {
+			return [];
+		}
+		return domainsWithEmails.flatMap( ( domain, index ) => {
+			const mailboxes = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
+
+			const skipFilterForwards = mailboxes.length === 1;
+
+			return mailboxes
+				.filter( ( account ) => skipFilterForwards || account.account_type !== 'email_forwarding' )
+				.flatMap( ( account ) =>
+					account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account, domain ) )
+				)
+				.filter( ( email ) => email.canUserManage ) as Email[];
+		} );
+	}, [ domainsWithEmails, mailboxQueries ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 	const [ view, setView ] = useState< View >( DEFAULT_EMAILS_VIEW );
 
-	const actions = useMemo(
-		() => createEmailActions( navigate, setSelection ),
-		[ navigate, setSelection ]
-	);
+	const actions = useEmailActions();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
 
+	let emptyState = null;
+	if ( emails.length === 0 ) {
+		emptyState = domainsWithoutEmails ? (
+			<NoEmailsAvailableEmptyState />
+		) : (
+			<NoDomainsAvailableEmptyState />
+		);
+	}
+
 	return (
 		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
-			<DataViewsCard className="emails__dataviews">
-				<DataViews
-					data={ filteredData }
-					isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }
-					fields={ emailFields }
-					view={ view }
-					onChangeView={ setView }
-					selection={ selection.map( ( item ) => item.id ) }
-					onChangeSelection={ ( ids ) =>
-						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
-					}
-					actions={ actions }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ paginationInfo }
-					empty={
-						domainsWithoutEmails ? (
-							<NoEmailsAvailableEmptyState />
-						) : (
-							<NoDomainsAvailableEmptyState />
-						)
-					}
-				/>
+			<DataViewsCard>
+				<div className="emails__dataviews">
+					<DataViews
+						data={ filteredData }
+						isLoading={ isLoadingSites || isLoadingDomains || isLoadingMailboxes }
+						fields={ emailFields }
+						view={ view }
+						onChangeView={ setView }
+						selection={ selection.map( ( item ) => item.id ) }
+						onChangeSelection={ ( ids ) =>
+							setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
+						}
+						actions={ actions }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ paginationInfo }
+						empty={ emptyState }
+					/>
+				</div>
 			</DataViewsCard>
 		</PageLayout>
 	);

@@ -1,15 +1,14 @@
 import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { AddDomainButton } from '../../domains/add-domain-button';
 import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainsView } from '../../domains/dataviews';
@@ -57,15 +56,7 @@ function SiteDomains() {
 			header={
 				<PageHeader
 					title={ __( 'Domains' ) }
-					actions={
-						<Button
-							href={ addQueryArgs( '/setup/domain', { siteSlug: site.slug } ) }
-							variant="primary"
-							__next40pxDefaultSize
-						>
-							{ __( 'Add New Domain' ) }
-						</Button>
-					}
+					actions={ <AddDomainButton siteSlug={ site.slug } /> }
 				/>
 			}
 		>

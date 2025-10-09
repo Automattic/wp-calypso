@@ -32,4 +32,13 @@ boot( {
 		plugins: true,
 		commandPalette: false,
 	},
+	onboardingLinkSourceQueryArg: 'sites-dashboard',
+	onboardingLinks: {
+		default: {
+			href: '/start',
+		},
+		withAI: {
+			href: '/setup/ai-site-builder',
+		},
+	},
 } );

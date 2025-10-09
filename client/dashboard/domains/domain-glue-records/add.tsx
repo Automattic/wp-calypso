@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -49,7 +50,7 @@ export default function AddDomainGlueRecords() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Add glue record' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
 			<DomainGlueRecordsForm
 				domainName={ domainName }
 				onSubmit={ handleSubmit }

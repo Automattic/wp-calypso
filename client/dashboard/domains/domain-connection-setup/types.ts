@@ -2,6 +2,7 @@ import {
 	type DomainConnectionSetupModeValue,
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
+	DomainInboundTransferStatus,
 } from '@automattic/api-core';
 
 export const StepType = {
@@ -47,6 +48,7 @@ export const StepName = {
 	SUBDOMAIN_ADVANCED_UPDATE: 'subdomain_advanced_update',
 	SUBDOMAIN_ADVANCED_VERIFYING: 'subdomain_advanced_verifying',
 	SUBDOMAIN_ADVANCED_CONNECTED: 'subdomain_advanced_connected',
+	UNUSED_TRANSFER_DOMAIN_STEP: 'unused_transfer_domain_step',
 } as const;
 
 export type StepTypeValue = ( typeof StepType )[ keyof typeof StepType ];
@@ -72,7 +74,27 @@ export type StepComponentProps = {
 
 export type StepDefinition = {
 	name?: string;
-	component: React.ComponentType< StepComponentProps >;
+	component: React.ComponentType< StepComponentProps > | null;
+	mode: DomainConnectionSetupModeValue;
+	stepType: StepTypeValue;
+	next?: StepNameValue;
+	prev?: StepNameValue;
+	singleColumnLayout?: boolean;
+};
+
+export type TransferStepComponentProps = {
+	domainName: string;
+	stepType: StepTypeValue;
+	stepName: StepNameValue;
+	mode: DomainConnectionSetupModeValue | null;
+	onNextStep: () => void;
+	inboundTransferStatusInfo?: DomainInboundTransferStatus;
+	siteId?: number;
+};
+
+export type TransferStepDefinition = {
+	name?: string;
+	component: React.ComponentType< TransferStepComponentProps > | null;
 	mode: DomainConnectionSetupModeValue;
 	stepType: StepTypeValue;
 	next?: StepNameValue;
@@ -83,6 +105,8 @@ export type StepDefinition = {
 export type ProgressStepList = Partial< Record< StepNameValue, string > >;
 
 export type DomainConnectionStepsMap = Partial< Record< StepNameValue, StepDefinition > >;
+
+export type DomainTransferStepsMap = Partial< Record< StepNameValue, TransferStepDefinition > >;
 
 export type DNSRecord = {
 	type: string;
