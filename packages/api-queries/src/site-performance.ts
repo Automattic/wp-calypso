@@ -16,9 +16,10 @@ export const sitePerformanceInsightsQuery = ( url: string, token: string ) =>
 		queryKey: [ 'performance', url, token ],
 		queryFn: () => fetchSitePerformanceInsights( url, token ),
 		refetchInterval: ( query ) => {
-			if ( query.state.data?.pagespeed?.status === 'completed' ) {
+			if ( query.state.data?.pagespeed?.status === 'completed' || query.state.error ) {
 				return false;
 			}
+
 			return 5000;
 		},
 	} );
