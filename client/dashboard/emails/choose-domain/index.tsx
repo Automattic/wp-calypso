@@ -18,7 +18,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import { domainHasEmail, hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
+import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import './styles.css';
 
 const isJetpackSlug = ( slug: unknown ): boolean =>
@@ -57,12 +57,8 @@ export default function ChooseDomain() {
 		const domains = domainsQueries
 			.flatMap( ( q ) => ( q.data as SiteDomain[] ) ?? [] )
 			.filter( ( domain ) => ! domain.wpcom_domain );
-		const eligibleDomains = domains.filter(
-			( domain ) =>
-				! domainHasEmail( domain ) || hasGSuiteWithUs( domain ) || hasTitanMailWithUs( domain )
-		) as SiteDomain[];
 
-		return { eligibleDomains };
+		return { eligibleDomains: domains };
 	}, [ domainsQueries, isLoadingDomains ] );
 	// Prepare domain lists and search state
 	const firstTen = eligibleDomains.slice( 0, 10 );
