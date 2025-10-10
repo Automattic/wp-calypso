@@ -46,7 +46,7 @@ export default function UsernameSection( {
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
-	const [ validationResultState, setValidationResultState ] = useState< ValidationResult | null >(
+	const [ validationResult, setValidationResultState ] = useState< ValidationResult | null >(
 		null
 	);
 
@@ -94,12 +94,10 @@ export default function UsernameSection( {
 	const handleConfirmChange = useCallback(
 		( confirmValue: string ) => {
 			setUserLoginConfirm( confirmValue );
-			notifyValidationChange( validationResultState, confirmValue );
+			notifyValidationChange( validationResult, confirmValue );
 		},
-		[ notifyValidationChange, validationResultState ]
+		[ notifyValidationChange, validationResult ]
 	);
-
-	const validationResult = validationResultState;
 
 	// Input field helper text
 	const getHelpText = useCallback( () => {
