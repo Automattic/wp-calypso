@@ -215,84 +215,88 @@ function AddEmailForwarder() {
 		>
 			<Card>
 				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 6 }>
-							<DataForm
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< FormData > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
+					{ eligibleDomains.length === 0 ? (
+						<Text>{ __( 'You do not have any domains eligible for email forwarding.' ) }</Text>
+					) : (
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 6 }>
+								<DataForm
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: Partial< FormData > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
 
-							{ newForwardingAddresses.length > 0 && (
-								<Notice>
-									{ sprintf(
-										/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
-										_n(
-											"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to that email after saving.",
-											"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to those emails after saving.",
-											newForwardingAddresses.length
-										),
-										{
-											emailAddresses: newForwardingAddresses.join( ', ' ),
-										}
-									) }
-								</Notice>
-							) }
-
-							{ isDomainMaxForwardsReached && (
-								<Notice variant="warning">
-									{ createInterpolateElement(
-										__(
-											"You can't add another email forwarder for this domain because you've reached the maximum number (<maxForwards />) of Email Forwards allowed on it. Please <manageForwadersLink>delete an existing forwarder</manageForwadersLink> to add a new one."
-										),
-										{
-											manageForwadersLink: (
-												<ExternalLink
-													href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
-													children={ null }
-												/>
+								{ newForwardingAddresses.length > 0 && (
+									<Notice>
+										{ sprintf(
+											/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
+											_n(
+												"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to that email after saving.",
+												"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to those emails after saving.",
+												newForwardingAddresses.length
 											),
-											maxForwards: <>{ maxForwards }</>,
-										}
-									) }
-								</Notice>
-							) }
-							{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
-								<Notice variant="warning">
-									{ createInterpolateElement(
-										__(
-											'You are adding too many new email forwarders for this domain (<forwardingAddressesCount/>); the maximum number is <maxForwards /> and there are already <existingForwardersCount/> before this change. Please edit your changes or <manageForwadersLink>delete any of the existing forwarders</manageForwadersLink>.'
-										),
-										{
-											manageForwadersLink: (
-												<ExternalLink
-													href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
-													children={ null }
-												/>
-											),
-											forwardingAddressesCount: <>{ formData.forwardingAddresses.length }</>,
-											maxForwards: <>{ maxForwards }</>,
-											existingForwardersCount: <>{ forwards && forwards.length }</>,
-										}
-									) }
-								</Notice>
-							) }
+											{
+												emailAddresses: newForwardingAddresses.join( ', ' ),
+											}
+										) }
+									</Notice>
+								) }
 
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isBusy }
-									disabled={ isBusy || ! allFieldsSet || ! isValid }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
+								{ isDomainMaxForwardsReached && (
+									<Notice variant="warning">
+										{ createInterpolateElement(
+											__(
+												"You can't add another email forwarder for this domain because you've reached the maximum number (<maxForwards />) of Email Forwards allowed on it. Please <manageForwadersLink>delete an existing forwarder</manageForwadersLink> to add a new one."
+											),
+											{
+												manageForwadersLink: (
+													<ExternalLink
+														href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
+														children={ null }
+													/>
+												),
+												maxForwards: <>{ maxForwards }</>,
+											}
+										) }
+									</Notice>
+								) }
+								{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
+									<Notice variant="warning">
+										{ createInterpolateElement(
+											__(
+												'You are adding too many new email forwarders for this domain (<forwardingAddressesCount/>); the maximum number is <maxForwards /> and there are already <existingForwardersCount/> before this change. Please edit your changes or <manageForwadersLink>delete any of the existing forwarders</manageForwadersLink>.'
+											),
+											{
+												manageForwadersLink: (
+													<ExternalLink
+														href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
+														children={ null }
+													/>
+												),
+												forwardingAddressesCount: <>{ formData.forwardingAddresses.length }</>,
+												maxForwards: <>{ maxForwards }</>,
+												existingForwardersCount: <>{ forwards && forwards.length }</>,
+											}
+										) }
+									</Notice>
+								) }
+
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isBusy }
+										disabled={ isBusy || ! allFieldsSet || ! isValid }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					) }
 				</CardBody>
 			</Card>
 		</PageLayout>
