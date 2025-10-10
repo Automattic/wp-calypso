@@ -43,6 +43,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-stripe#readme",
 	"dependencies": {
+		"@automattic/api-core": "workspace:^",
 		"@stripe/react-stripe-js": "^2.1.0",
 		"@stripe/stripe-js": "^1.54.2",
 		"debug": "^4.4.1",
