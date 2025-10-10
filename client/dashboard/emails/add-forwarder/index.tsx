@@ -24,7 +24,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { useDomains } from '../hooks/use-domains';
 import { useDomainMaxForwards } from './hooks/use-domain-max-forwards';
-import { useNewForwardingAddresses } from './hooks/use-new-forwarding-addresses';
+import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
 import '../style.scss';
@@ -66,11 +66,14 @@ function AddEmailForwarder() {
 		domain: '',
 		forwardingAddresses: [],
 	} );
-	const { isLoading: isLoadingNewForwardingAddresses, newForwardingAddresses } =
-		useNewForwardingAddresses( {
-			domains: eligibleDomains,
-			forwardingAddresses: formData.forwardingAddresses,
-		} );
+	const {
+		isLoading: isLoadingNewForwardingAddresses,
+		forwardsByMailbox,
+		newForwardingAddresses,
+	} = useForwardingAddresses( {
+		domains: eligibleDomains,
+		forwardingAddresses: formData.forwardingAddresses,
+	} );
 	const {
 		isLoading: isLoadingDomainMaxForwards,
 		forwards,
@@ -128,11 +131,15 @@ function AddEmailForwarder() {
 	const isDomainMaxForwardsReached = ( forwards?.length ?? 0 ) >= maxForwards;
 	const willDomainMaxForwardsBeReached =
 		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length > maxForwards;
+	const duplicateForwardAddress = formData.forwardingAddresses.find(
+		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
+	);
 
 	const isValid =
 		isItemValid( formData, fields, form ) &&
 		! isDomainMaxForwardsReached &&
-		! willDomainMaxForwardsBeReached;
+		! willDomainMaxForwardsBeReached &&
+		! duplicateForwardAddress;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -261,6 +268,7 @@ function AddEmailForwarder() {
 										) }
 									</Notice>
 								) }
+
 								{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
 									<Notice variant="warning">
 										{ createInterpolateElement(
@@ -277,6 +285,20 @@ function AddEmailForwarder() {
 												forwardingAddressesCount: <>{ formData.forwardingAddresses.length }</>,
 												maxForwards: <>{ maxForwards }</>,
 												existingForwardersCount: <>{ forwards && forwards.length }</>,
+											}
+										) }
+									</Notice>
+								) }
+
+								{ duplicateForwardAddress && (
+									<Notice variant="error">
+										{ createInterpolateElement(
+											__(
+												'There is already a forwarding set from <mailbox/> to <forwardingAddress/>. Please remove the duplicate and try again.'
+											),
+											{
+												mailbox: <>{ `${ formData.localPart }@${ formData.domain }` }</>,
+												forwardingAddress: <>{ duplicateForwardAddress }</>,
 											}
 										) }
 									</Notice>
