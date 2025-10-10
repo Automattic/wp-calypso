@@ -51,7 +51,7 @@ function Card( {
 	);
 }
 
-function WidgetActions( { onClose }: { onClose: () => void } ) {
+function WidgetActions( { onDuplicate }: { onDuplicate: () => void } ) {
 	return (
 		<div
 			style={ {
@@ -60,11 +60,11 @@ function WidgetActions( { onClose }: { onClose: () => void } ) {
 				alignItems: 'right',
 				justifyContent: 'right',
 				top: 2,
-				right: 2,
-				zIndex: 2,
+				left: 2,
+				zIndex: 1,
 			} }
 		>
-			<button onClick={ onClose }>x</button>
+			<button onClick={ onDuplicate }>duplicate</button>
 		</div>
 	);
 }
@@ -216,7 +216,7 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 /**
  * Example showing the Grid component with actionable area
  */
-export const WithActionableArea: StoryObj< typeof Grid > = {
+export const withActions: StoryObj< typeof Grid > = {
 	render: function EditableGrid() {
 		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
 			{ key: 'a', width: 1, height: 1 },
@@ -249,9 +249,9 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 					color="#f44336"
 					actionableArea={
 						<WidgetActions
-							onClose={ () => {
+							onDuplicate={ () => {
 								// eslint-disable-next-line no-console
-								console.log( 'close card A' );
+								console.log( 'duplicate card A' );
 							} }
 						/>
 					}
@@ -263,7 +263,7 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 					color="#2196f3"
 					removeButton={ ( onRemove ) => {
 						return (
-							<div style={ { position: 'absolute', top: 2, right: 2, zIndex: 2 } }>
+							<div style={ { position: 'absolute', top: 2, right: 2, zIndex: 1 } }>
 								<button onClick={ onRemove }>x</button>
 							</div>
 						);
@@ -276,9 +276,9 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 					color="#4caf50"
 					actionableArea={
 						<WidgetActions
-							onClose={ () => {
+							onDuplicate={ () => {
 								// eslint-disable-next-line no-console
-								console.log( 'close card C' );
+								console.log( 'duplicate card C' );
 							} }
 						/>
 					}
@@ -297,7 +297,18 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				<Card key="g" color="#3f51b5">
 					Card G
 				</Card>
-				<Card key="h" color="#8bc34a">
+				<Card
+					key="h"
+					color="#8bc34a"
+					actionableArea={
+						<WidgetActions
+							onDuplicate={ () => {
+								// eslint-disable-next-line no-console
+								console.log( 'duplicate card H' );
+							} }
+						/>
+					}
+				>
 					Card H
 				</Card>
 				<Card key="i" color="#cddc39">
