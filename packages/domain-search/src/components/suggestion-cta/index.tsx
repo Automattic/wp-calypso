@@ -1,6 +1,6 @@
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope, shuffle } from '@wordpress/icons';
+import { envelope, moveTo } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
@@ -112,7 +112,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			<DomainSuggestionPrimaryCTA
 				disabled={ isMutating }
 				label={ existingDomainLabel }
-				icon={ suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ? shuffle : undefined }
+				icon={ suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ? moveTo : undefined }
 				isBusy={ isPending }
 				onClick={ () => {
 					events.onSuggestionInteract( suggestion );
