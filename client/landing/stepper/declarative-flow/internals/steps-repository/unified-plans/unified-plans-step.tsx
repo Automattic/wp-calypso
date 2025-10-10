@@ -127,6 +127,7 @@ export interface UnifiedPlansStepProps {
 	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
+	selectedFeature?: string;
 	fallbackSubHeaderText?: string;
 
 	/**
@@ -176,6 +177,17 @@ export interface UnifiedPlansStepProps {
 	isCustomDomainAllowedOnFreePlan?: boolean;
 
 	useStepContainerV2?: boolean;
+
+	/**
+	 * Whether this step is being used in a signup flow context.
+	 * Defaults to true to preserve existing behavior.
+	 */
+	isInSignup?: boolean;
+
+	/**
+	 * Whether this step is being used in a stepper upgrade flow context.
+	 */
+	isStepperUpgradeFlow?: boolean;
 }
 
 /**
@@ -225,6 +237,9 @@ function UnifiedPlansStep( {
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
 	onIntentChange,
+	isInSignup = true,
+	isStepperUpgradeFlow = false,
+	selectedFeature,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -527,7 +542,7 @@ function UnifiedPlansStep( {
 				siteId={ selectedSite?.ID }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-				isInSignup
+				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				intervalType={
 					intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
@@ -539,6 +554,7 @@ function UnifiedPlansStep( {
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
+				isStepperUpgradeFlow={ isStepperUpgradeFlow }
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
@@ -550,6 +566,7 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
+				selectedFeature={ selectedFeature }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;

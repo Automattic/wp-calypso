@@ -7,6 +7,7 @@ import {
 	NEWSLETTER_FLOW,
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
+	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
 	Step,
 	useStepPersistedState,
@@ -70,6 +71,8 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
+		case PLAN_UPGRADE_FLOW:
+			return 'plans-upgrade';
 		default:
 			return null;
 	}
@@ -83,7 +86,19 @@ type ProvidedDependencies = {
 
 const PlansStepAdaptor: StepType< {
 	submits: ProvidedDependencies;
+	accepts: {
+		isInSignup?: boolean;
+		isStepperUpgradeFlow?: boolean;
+		selectedFeature?: string;
+		wrapperProps?: {
+			hideBack?: boolean;
+			goBack?: () => void;
+			isFullLayout?: boolean;
+			isExtraWideLayout?: boolean;
+		};
+	};
 } > = ( props ) => {
+	const { isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -210,13 +225,16 @@ const PlansStepAdaptor: StepType< {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
-				hideBack: false,
-				goBack: props.navigation.goBack,
-				isFullLayout: true,
-				isExtraWideLayout: false,
+				hideBack: wrapperProps?.hideBack ?? false,
+				goBack: wrapperProps?.goBack ?? props.navigation.goBack,
+				isFullLayout: wrapperProps?.isFullLayout ?? true,
+				isExtraWideLayout: wrapperProps?.isExtraWideLayout ?? false,
 			} }
 			useStepperWrapper
 			useStepContainerV2={ isUsingStepContainerV2 }
+			isInSignup={ isInSignup }
+			isStepperUpgradeFlow={ isStepperUpgradeFlow }
+			selectedFeature={ selectedFeature }
 		/>
 	);
 };

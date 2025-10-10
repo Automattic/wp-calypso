@@ -4,7 +4,7 @@ import { SearchResults } from '..';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
 import { mockGetAvailableTldsQuery } from '../../../test-helpers/queries/tlds';
-import { TestDomainSearchWithSuggestionsList } from '../../../test-helpers/renderer';
+import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 import { Filter } from '../../search-bar/filter';
 
 describe( 'SearchResults', () => {
@@ -18,9 +18,9 @@ describe( 'SearchResults', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test">
+			<TestDomainSearchWithSuggestions query="test">
 				<SearchResults suggestions={ [ 'test-regular.com', 'test-regular.net' ] } />
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByTitle( 'test-regular.com' ) ).toBeInTheDocument();
@@ -34,9 +34,9 @@ describe( 'SearchResults', () => {
 		} );
 
 		const { container } = render(
-			<TestDomainSearchWithSuggestionsList query="test-no-suggestions">
+			<TestDomainSearchWithSuggestions query="test-no-suggestions">
 				<SearchResults suggestions={ [] } />
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
@@ -59,10 +59,10 @@ describe( 'SearchResults', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test-no-suggestions" events={ { onFilterReset } }>
+			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
 				<Filter />
 				<SearchResults suggestions={ [] } />
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		const filterButton = await screen.findByLabelText( 'Filter, no filters applied' );
@@ -100,10 +100,10 @@ describe( 'SearchResults', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test-no-suggestions" events={ { onFilterReset } }>
+			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
 				<Filter />
 				<SearchResults suggestions={ [] } />
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		const filterButton = await screen.findByLabelText( 'Filter, no filters applied' );

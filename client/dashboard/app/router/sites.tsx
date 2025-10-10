@@ -904,6 +904,11 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
+	validateSearch: ( search ): { from?: 'deployments' } => {
+		return {
+			from: search.from === 'deployments' ? 'deployments' : undefined,
+		};
+	},
 } );
 
 export const siteSettingsRepositoriesIndexRoute = createRoute( {

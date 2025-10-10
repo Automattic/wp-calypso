@@ -611,25 +611,27 @@ export const ConnectRepositoryForm = ( {
 					onChange={ handleChange }
 				/>
 
-				<SectionHeader
-					level={ 3 }
-					title={ __( 'Pick your deployment mode' ) }
-					description={ __(
-						'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
-					) }
-				/>
+				<div>
+					<SectionHeader
+						level={ 3 }
+						title={ __( 'Pick your deployment mode' ) }
+						description={ __(
+							'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+						) }
+					/>
 
-				<RadioControl
-					selected={ formData.deploymentMode }
-					onChange={ ( value ) =>
-						handleChange( { deploymentMode: value as 'simple' | 'advanced' } )
-					}
-					options={ [
-						{ label: __( 'Simple' ), value: 'simple' },
-						{ label: __( 'Advanced' ), value: 'advanced' },
-					] }
-					disabled={ ! selectedRepository }
-				/>
+					<RadioControl
+						selected={ formData.deploymentMode }
+						onChange={ ( value ) =>
+							handleChange( { deploymentMode: value as 'simple' | 'advanced' } )
+						}
+						options={ [
+							{ label: __( 'Simple' ), value: 'simple' },
+							{ label: __( 'Advanced' ), value: 'advanced' },
+						] }
+						disabled={ ! selectedRepository }
+					/>
+				</div>
 
 				{ isAdvancedSelected && renderAdvancedWorkflow() }
 

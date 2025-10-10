@@ -195,6 +195,7 @@ export default function useGenerateActionHook( {
 			billingPeriod,
 			setIsLoading,
 			isLoading,
+			plansIntent,
 		} );
 	};
 
@@ -390,6 +391,7 @@ function getLoggedInPlansAction( {
 	billingPeriod,
 	isLoading,
 	setIsLoading,
+	plansIntent,
 }: {
 	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
@@ -400,8 +402,14 @@ function getLoggedInPlansAction( {
 	canUserManageCurrentPlan: boolean | null;
 	isLoading: boolean;
 	setIsLoading: ( value: boolean ) => void;
+	plansIntent?: PlansIntent | null;
 } & UseActionHookProps ): GridAction {
-	const current = sitePlanSlug === planSlug;
+	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
+	// This allows monthly/yearly versions of the same plan to be considered "current"
+	const current =
+		plansIntent === 'plans-upgrade' && sitePlanSlug
+			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
+			: sitePlanSlug === planSlug;
 	const isTrialPlan =
 		sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
@@ -439,6 +447,18 @@ function getLoggedInPlansAction( {
 
 	// All actions for the current plan
 	if ( current ) {
+		// For the plans-upgrade intent, show "Your plan" as a non-clickable indicator
+		if ( plansIntent === 'plans-upgrade' ) {
+			return {
+				primary: {
+					callback: () => {},
+					status: 'disabled',
+					text: translate( 'Your plan' ),
+					variant: 'secondary',
+				},
+			};
+		}
+
 		if ( isFreePlan( planSlug ) ) {
 			return createLoggedInPlansAction( translate( 'Manage add-ons', { context: 'verb' } ) );
 		}

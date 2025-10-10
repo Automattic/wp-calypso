@@ -18,6 +18,7 @@ import {
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
+	PLAN_UPGRADE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -49,6 +50,8 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "ai-site-builder-spec-flow" */ './flows/ai-site-builder-spec/ai-site-builder-spec'
 		),
+	[ PLAN_UPGRADE_FLOW ]: () =>
+		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 };
 
 /**
