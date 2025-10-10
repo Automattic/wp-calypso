@@ -2,6 +2,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardNumberElement, useElements } from '@stripe/react-stripe-js';
 import {
 	Button,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
@@ -80,11 +81,13 @@ function CreditCardLabel( {
 } ) {
 	return (
 		<Fragment>
-			{ hasExistingCardMethods ? (
-				<span>{ __( 'New credit or debit card' ) }</span>
-			) : (
-				<span>{ __( 'Credit or debit card' ) }</span>
-			) }
+			<HStack>
+				<Text>
+					{ hasExistingCardMethods
+						? __( 'New credit or debit card' )
+						: __( 'Credit or debit card' ) }
+				</Text>
+			</HStack>
 			<CreditCardLogos currency={ currency } />
 		</Fragment>
 	);
