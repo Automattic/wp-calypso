@@ -18,7 +18,7 @@ export function Grid( {
 	onChangeLayout,
 	onRemoveItem,
 }: GridProps ) {
-	// Temporary layout to avoid updaing the layout while dragging
+	// Temporary layout to avoid updating the layout while dragging
 	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
 		layout
 	);
