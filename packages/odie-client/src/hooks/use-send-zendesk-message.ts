@@ -19,6 +19,7 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	// < void, Error, { message: Message; signal: AbortSignal } >
 	let conversationId = currentConversationId || chat.conversationId;
 	return useMutation( {
+		mutationKey: [ 'send-zendesk-messages' ],
 		mutationFn: async ( message: Message ): Promise< Message > => {
 			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist

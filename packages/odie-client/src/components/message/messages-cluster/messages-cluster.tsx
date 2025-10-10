@@ -6,6 +6,7 @@ import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
 import { hasFeedbackForm, isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
+import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
 import type { Message, MessageRole } from '../../../types';
 import './style.scss';
 
@@ -63,14 +64,13 @@ function clusterMessagesBySender( messages: Message[] ) {
 	if ( ! messages.length ) {
 		return [];
 	}
-	let id = 0;
 
 	let currentGroup: {
-		id: number;
+		id: string;
 		role: MessageRole | 'csat' | 'attachment' | 'feedback';
 		messages: Message[];
 	} = {
-		id: id++,
+		id: crypto.randomUUID(),
 		role: getPresentedRole( messages[ 0 ] ),
 		messages: [],
 	};
@@ -80,7 +80,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 	for ( const message of sortMessagesByTimestamp( messages ) ) {
 		if ( getPresentedRole( message ) !== currentGroup.role ) {
 			currentGroup = {
-				id: ++id,
+				id: crypto.randomUUID(),
 				role: getPresentedRole( message ),
 				messages: [],
 			};
@@ -120,13 +120,10 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 						labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
 					/>
 				) }
-				<div
-					key={ group.id }
-					className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
-				>
+				<div className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }>
 					{ group.messages.map( ( message, index ) => (
 						<ChatMessage
-							key={ message.message_id || index }
+							key={ getMessageUniqueIdentifier( message ) }
 							message={ message }
 							currentUser={ currentUser }
 							header={ index === 0 ? messageHeader() : undefined }
