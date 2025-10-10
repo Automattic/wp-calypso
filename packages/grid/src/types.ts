@@ -78,7 +78,7 @@ interface BaseGridProps {
 	/**
 	 * Callback fired when an item is removed from the grid.
 	 */
-	onRemoveItem?: ( key: GridLayoutItem ) => void;
+	onRemoveItem?: ( key: string ) => void;
 }
 
 interface StandardGridProps extends BaseGridProps {

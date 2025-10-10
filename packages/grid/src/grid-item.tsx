@@ -46,7 +46,7 @@ type GridItemProps = {
 	/**
 	 * Callback fired when the item is being removed.
 	 */
-	onRemove?: ( id: GridLayoutItem ) => void;
+	onRemove?: ( key: string ) => void;
 
 	/**
 	 * Button to remove an item from the grid.
@@ -126,7 +126,7 @@ export function GridItem( {
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes }>
 			{ actionableArea }
-			{ removeButton && removeButton( () => onRemove?.( item ) ) }
+			{ removeButton && removeButton( () => onRemove?.( item.key ) ) }
 
 			<div { ...listeners } style={ { height: '100%' } }>
 				<div style={ contentStyle }>
