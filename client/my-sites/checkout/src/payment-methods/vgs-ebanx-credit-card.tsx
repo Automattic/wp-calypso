@@ -8,7 +8,6 @@ import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { VgsEbanxCreditCardForm } from '../components/vgs-ebanx-credit-card-form';
-import { VgsEbanxCreditCardFormProvider } from '../components/vgs-ebanx-credit-card-form-provider';
 import { createVgsEbanxPaymentMethodData } from '../lib/vgs-ebanx-payment-method-utils';
 import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { VGS } from '@vgs/collect-js';
@@ -85,16 +84,8 @@ export const VgsEbanxCreditCardPaymentMethod = () => {
 				<span>{ __( 'Credit Card (Ebanx)', 'calypso' ) }</span>
 			</div>
 		),
-		activeContent: (
-			<VgsEbanxCreditCardFormProvider>
-				<VgsEbanxCreditCardForm />
-			</VgsEbanxCreditCardFormProvider>
-		),
-		submitButton: (
-			<VgsEbanxCreditCardFormProvider>
-				<VgsEbanxSubmitButton />
-			</VgsEbanxCreditCardFormProvider>
-		),
+		activeContent: <VgsEbanxCreditCardForm />,
+		submitButton: <VgsEbanxSubmitButton />,
 		getAriaLabel: ( localize: ( value: string ) => string ) => localize( 'Credit Card (Ebanx)' ),
 	};
 };
