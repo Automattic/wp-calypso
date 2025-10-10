@@ -51,6 +51,7 @@ The main component exported by this package.
 - `minColumnWidth` (optional): Minimum width in pixels for each column; when provided, enables responsive mode that automatically adjusts columns based on container width
 - `editMode` (optional): Enables drag-and-drop reordering and resize functionality
 - `onChangeLayout` (optional): Callback fired when the layout changes (required when `editMode` is true)
+- `onRemoveItem` (optional): Callback fired when an item is removed from the grid. Receives the item's `key` as a string parameter. Use this to update your layout state when users remove items
 
 #### Child Components Props
 
@@ -69,6 +70,40 @@ Child components can accept special props that affect their behavior within the 
 	>
 		Card content
 	</Card>
+</Grid>
+```
+
+- `removeButton` (optional): A render prop function that receives an `onRemove` callback and returns React content. This allows you to create custom remove buttons with full control over styling and positioning. The function signature is: `(onRemove: () => void) => React.ReactNode`. When the user clicks your custom button, it will trigger the Grid's `onRemoveItem` callback with the item's key.
+
+```jsx
+// Example with custom remove button
+const [ layout, setLayout ] = useState( [
+	{ key: 'a', width: 2 },
+	{ key: 'b', width: 4 },
+] );
+
+<Grid
+	layout={ layout }
+	editMode
+	onChangeLayout={ setLayout }
+	onRemoveItem={ ( key ) => {
+		setLayout( ( prevLayout ) => prevLayout.filter( ( item ) => item.key !== key ) );
+	} }
+>
+	<Card
+		key="a"
+		removeButton={ ( onRemove ) => (
+			<button
+				onClick={ onRemove }
+				style={ { position: 'absolute', top: 8, right: 8, zIndex: 1 } }
+			>
+				×
+			</button>
+		) }
+	>
+		Card content
+	</Card>
+	<Card key="b">Another card</Card>
 </Grid>
 ```
 
