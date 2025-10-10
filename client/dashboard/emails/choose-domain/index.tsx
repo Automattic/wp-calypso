@@ -72,6 +72,21 @@ export default function ChooseDomain() {
 		return eligibleDomains.filter( ( d ) => d.domain.toLowerCase().includes( q ) );
 	}, [ eligibleDomains, search ] );
 
+	const handleDomainClick = ( d: SiteDomain ) => {
+		// Navigate based on existing email solution
+		if ( hasTitanMailWithUs( d ) ) {
+			router.navigate( { to: '/emails/add-titan-mailbox' } );
+			return;
+		}
+		if ( hasGSuiteWithUs( d ) ) {
+			router.navigate( { to: '/emails/add-google-mailbox' } );
+			return;
+		}
+		router.navigate( {
+			to: `/emails/choose-email-solution/${ encodeURIComponent( d.domain ) }`,
+		} );
+	};
+
 	return (
 		<PageLayout
 			header={
@@ -109,23 +124,7 @@ export default function ChooseDomain() {
 							) }
 							{ ! search.trim() &&
 								firstTen.map( ( d ) => (
-									<Item
-										key={ d.blog_id + '-' + d.domain }
-										onClick={ () => {
-											// Navigate based on existing email solution
-											if ( hasTitanMailWithUs( d ) ) {
-												router.navigate( { to: '/emails/add-titan-mailbox' } );
-												return;
-											}
-											if ( hasGSuiteWithUs( d ) ) {
-												router.navigate( { to: '/emails/add-google-mailbox' } );
-												return;
-											}
-											router.navigate( {
-												to: `/emails/choose-email-solution/${ encodeURIComponent( d.domain ) }`,
-											} );
-										} }
-									>
+									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>
 											<Icon className="choose-domain__icon" icon={ chevronRight } />
@@ -135,22 +134,7 @@ export default function ChooseDomain() {
 							{ remaining.length > 0 &&
 								search.trim() &&
 								filteredRemaining.map( ( d: SiteDomain ) => (
-									<Item
-										key={ d.blog_id + '-' + d.domain }
-										onClick={ () => {
-											if ( hasTitanMailWithUs( d ) ) {
-												router.navigate( { to: '/emails/add-titan-mailbox' } );
-												return;
-											}
-											if ( hasGSuiteWithUs( d ) ) {
-												router.navigate( { to: '/emails/add-google-mailbox' } );
-												return;
-											}
-											router.navigate( {
-												to: `/emails/choose-email-solution/${ encodeURIComponent( d.domain ) }`,
-											} );
-										} }
-									>
+									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>
 											<Icon className="choose-domain__icon" icon={ chevronRight } />
