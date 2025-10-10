@@ -5,6 +5,13 @@ import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
+const isSupportedPremiumDomain = ( availability: DomainAvailability ) => {
+	return (
+		availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
+		availability.is_supported_premium_domain
+	);
+};
+
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
@@ -18,7 +25,7 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable,
 	} );
 
-	const { isLoading: isLoadingQueryAvailability } = useQuery( {
+	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: !! getTld( query ),
 	} );
@@ -36,17 +43,9 @@ export const useSuggestionsList = () => {
 			return {
 				isLoadingUnavailablePremiumDomains: results.some( ( result ) => result.isLoading ),
 				unavailablePremiumDomains: premiumSuggestions.filter( ( _, index ) => {
-					const availabilityQuery = results[ index ];
+					const availabilityQuery = results[ index ].data;
 
-					if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
-						return true;
-					}
-
-					const { status, is_supported_premium_domain } = availabilityQuery.data;
-
-					return (
-						DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain
-					);
+					return ! availabilityQuery || ! isSupportedPremiumDomain( availabilityQuery );
 				} ),
 			};
 		},
@@ -71,11 +70,36 @@ export const useSuggestionsList = () => {
 		return partitionSuggestions( {
 			suggestions: suggestions
 				.map( ( suggestion ) => suggestion.domain_name )
-				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
+				.filter( ( suggestion ) => {
+					if ( suggestion !== query ) {
+						return ! unavailablePremiumDomains.includes( suggestion );
+					}
+
+					if ( ! fqdnAvailability ) {
+						return false;
+					}
+
+					if (
+						fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ||
+						( config.includeOwnedDomainInSuggestions &&
+							fqdnAvailability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER )
+					) {
+						return true;
+					}
+
+					return isSupportedPremiumDomain( fqdnAvailability );
+				} ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
 		} );
-	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
+	}, [
+		suggestions,
+		query,
+		config.deemphasizedTlds,
+		unavailablePremiumDomains,
+		fqdnAvailability,
+		config.includeOwnedDomainInSuggestions,
+	] );
 
 	return {
 		isLoading,
