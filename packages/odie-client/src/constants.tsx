@@ -81,16 +81,20 @@ export const getOdieThirdPartyMessageContent = (): string =>
 
 export const getOdieEmailFallbackMessageContent = ( {
 	isBlockedFromChat = false,
-}: { isBlockedFromChat?: boolean } = {} ): string =>
-	isBlockedFromChat
-		? `${ __(
-				"I’m sorry, our human chat support is unavailable, but I'm here and ready to assist.",
+}: { isBlockedFromChat?: boolean } = {} ): string => {
+	const unavailableMessage = isBlockedFromChat
+		? __(
+				"I'm sorry, our human chat support is unavailable, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  ) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`
-		: `${ __(
-				"I’m sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
+		  )
+		: __(
+				"I'm sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  ) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`;
+		  );
+
+	const followUp = __( 'What can I help you with?', __i18n_text_domain__ );
+	return `${ unavailableMessage } \n\n ${ followUp }`;
+};
 
 export const getOdieEmailFallbackMessage = (): Message => ( {
 	content: getOdieEmailFallbackMessageContent(),
