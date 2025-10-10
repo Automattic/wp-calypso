@@ -202,6 +202,7 @@ export default function CoreMetricsChart( {
 					<LineChart
 						data={ lineChartData.seriesData }
 						withGradientFill={ false }
+						curveType="linear"
 						options={ {
 							yScale: lineChartData.yScale,
 							axis: {
