@@ -28,12 +28,16 @@ export const FeaturedSearchResultsItem = ( {
 	const suggestion = useSuggestion( domainName );
 
 	const matchReasons = useMemo( () => {
-		if ( ! suggestion.match_reasons || query !== domainName ) {
+		if (
+			! suggestion.match_reasons ||
+			query !== domainName ||
+			suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE
+		) {
 			return;
 		}
 
 		return parseMatchReasons( domainName, suggestion.match_reasons );
-	}, [ domainName, suggestion.match_reasons, query ] );
+	}, [ domainName, suggestion.match_reasons, query, suggestion.price_rule ] );
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 	const policyBadges = usePolicyBadges( domainName );

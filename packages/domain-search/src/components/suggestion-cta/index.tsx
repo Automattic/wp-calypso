@@ -1,9 +1,9 @@
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope } from '@wordpress/icons';
+import { envelope, shuffle } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
-import { useSuggestion } from '../../hooks/use-suggestion';
+import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSearchTrademarkClaimsModal,
@@ -102,16 +102,25 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		);
 	}
 
+	const existingDomainLabel =
+		suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE
+			? __( 'Move your existing domain' )
+			: undefined;
+
 	return (
 		<>
 			<DomainSuggestionPrimaryCTA
 				disabled={ isMutating }
+				label={ existingDomainLabel }
+				icon={ suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ? shuffle : undefined }
 				isBusy={ isPending }
 				onClick={ () => {
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
-			/>
+			>
+				{ existingDomainLabel }
+			</DomainSuggestionPrimaryCTA>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
