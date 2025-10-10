@@ -1,9 +1,5 @@
 import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
-import {
-	siteBySlugQuery,
-	codeDeploymentsQuery,
-	githubInstallationsQuery,
-} from '@automattic/api-queries';
+import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
@@ -36,15 +32,9 @@ function RepositoriesList() {
 	const router = useRouter();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { error: githubInstallationsError, isLoading: isLoadingInstallations } = useQuery(
-		githubInstallationsQuery()
-	);
-
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
-		codeDeploymentsQuery( site.ID )
-	);
+	const { data: deployments = [], isLoading } = useQuery( codeDeploymentsQuery( site.ID ) );
 
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
@@ -110,12 +100,12 @@ function RepositoriesList() {
 	return (
 		<DataViewsCard>
 			<DataViews
-				data={ isLoadingInstallations || githubInstallationsError ? [] : filteredData }
+				data={ filteredData }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
 				actions={ actions }
-				isLoading={ isLoadingDeployments || isLoadingInstallations }
+				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => item.id.toString() }
