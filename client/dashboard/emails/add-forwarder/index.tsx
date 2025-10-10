@@ -18,7 +18,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -210,7 +209,6 @@ function AddEmailForwarder() {
 					}
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="emails" /> }
 			size="small"
 		>
 			<Card>
