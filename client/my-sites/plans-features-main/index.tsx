@@ -289,14 +289,6 @@ const PlansFeaturesMain = ( {
 		};
 	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
 
-	const isDisplayingPlansNeededForFeature =
-		!! selectedFeature &&
-		isValidFeatureKey( selectedFeature ) &&
-		!! selectedPlan &&
-		!! getPlan( selectedPlan ) &&
-		! isPersonalPlan( selectedPlan ) &&
-		( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) );
-
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
@@ -349,6 +341,15 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
 	] );
+
+	const isDisplayingPlansNeededForFeature =
+		!! selectedFeature &&
+		isValidFeatureKey( selectedFeature ) && // For plans-upgrade intent, enable feature filtering without requiring selectedPlan
+		( intent === 'plans-upgrade' ||
+			( !! selectedPlan &&
+				!! getPlan( selectedPlan ) &&
+				! isPersonalPlan( selectedPlan ) &&
+				( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) ) ) );
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent &&
@@ -824,6 +825,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
+						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {

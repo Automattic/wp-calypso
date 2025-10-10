@@ -1,3 +1,4 @@
+import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -156,7 +157,16 @@ const DomainSearchWithCart = ( {
 					section: analyticsSection,
 				} );
 			},
-			onDomainAddAvailabilityPreCheck: ( unavailableStatus, domainName, rootVendor ) => {
+			onDomainAddAvailabilityPreCheck: ( availability, domainName, rootVendor ) => {
+				const isAvailable = DomainAvailabilityStatus.AVAILABLE === availability.status;
+				const isAvailableSupportedPremiumDomain =
+					DomainAvailabilityStatus.AVAILABLE_PREMIUM === availability.status &&
+					availability.is_supported_premium_domain;
+
+				// We only log the availability status if the domain is not available or not a supported premium domain
+				const unavailableStatus =
+					isAvailable || isAvailableSupportedPremiumDomain ? null : availability.status;
+
 				recordTracksEvent( 'calypso_domain_add_availability_precheck', {
 					domain: domainName,
 					flow_name: flowName,
