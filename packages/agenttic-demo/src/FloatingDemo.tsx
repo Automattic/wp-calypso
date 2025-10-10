@@ -10,10 +10,11 @@ import type { ContextProvider, UIMessage } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	CopyIcon,
+	createFeedbackActions,
+	createMessageRenderer,
+	EmptyView,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
-	createMessageRenderer,
-	createFeedbackActions,
 } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
@@ -151,18 +152,19 @@ const FloatingDemo: React.FC = () => {
 
 	// Create custom message renderer with markdown components and extensions
 	const messageRenderer = useMemo(
-		() => createMessageRenderer( {
-			components: customMarkdownComponents,
-			extensions: {
-				charts: {
-					enabled: true,
+		() =>
+			createMessageRenderer( {
+				components: customMarkdownComponents,
+				extensions: {
+					charts: {
+						enabled: true,
+					},
+					gfm: {
+						enabled: true, // Enables tables, strikethrough, task lists, autolinks
+					},
 				},
-				gfm: {
-					enabled: true, // Enables tables, strikethrough, task lists, autolinks
-				},
-			},
-			enableStreaming: true,
-		} ),
+				enableStreaming: true,
+			} ),
 		[ customMarkdownComponents ]
 	);
 
@@ -242,11 +244,7 @@ const FloatingDemo: React.FC = () => {
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [
-		registerMessageActions,
-		handleFeedback,
-		handleCopy,
-	] );
+	}, [ registerMessageActions, handleFeedback, handleCopy ] );
 
 	return (
 		<div
@@ -321,6 +319,7 @@ const FloatingDemo: React.FC = () => {
 				messageRenderer={ messageRenderer }
 				expandOnClick={ false }
 				locale="en"
+				emptyView={ <EmptyView suggestions={ suggestions } /> }
 			/>
 		</div>
 	);

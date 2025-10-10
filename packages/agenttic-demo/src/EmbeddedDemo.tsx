@@ -361,7 +361,7 @@ const EmbeddedDemo: React.FC = () => {
 						'Need help with your website?',
 						"Let's build something amazing",
 					] }
-					emptyView={ <EmptyView /> }
+					emptyView={ <EmptyView suggestions={ suggestions } /> }
 				>
 					<AgentUI.ConversationView showHeader={ false }>
 						<AgentUI.Messages />

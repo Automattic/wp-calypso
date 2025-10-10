@@ -479,12 +479,11 @@ export function AgentUIContainer( {
 		}
 	}, [ chat.state, input.value ] );
 
-	// Show emptyView only if a react element is provided, on floating variant, with no messages and no input
+	// Show emptyView only if a react element is provided, on floating|embedded variant, with no messages
 	const showEmptyView =
 		emptyView &&
 		[ 'floating', 'embedded' ].includes( variant ) &&
 		messages.length === 0 &&
-		! input.value.trim() &&
 		React.isValidElement( emptyView );
 
 	// Clone the emptyView and inject handleSuggestionSubmit

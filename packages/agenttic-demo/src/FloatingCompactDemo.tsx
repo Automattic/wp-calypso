@@ -9,11 +9,12 @@ import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider, UIMessage } from '@automattic/agenttic-client';
 import {
 	AgentUI,
+	createMessageRenderer,
+	EmptyView,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 	ZoomIcon,
 	ZoomIconFilled,
-	createMessageRenderer,
 } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
@@ -62,13 +63,14 @@ const FloatingCompactDemo: React.FC = () => {
 
 	// Create message renderer with chart and GFM extensions
 	const messageRenderer = useMemo(
-		() => createMessageRenderer( {
-			extensions: {
-				charts: { enabled: true },
-				gfm: { enabled: true },
-			},
-			enableStreaming: true,
-		} ),
+		() =>
+			createMessageRenderer( {
+				extensions: {
+					charts: { enabled: true },
+					gfm: { enabled: true },
+				},
+				enableStreaming: true,
+			} ),
 		[]
 	);
 
@@ -308,6 +310,7 @@ const FloatingCompactDemo: React.FC = () => {
 						},
 					},
 				} }
+				emptyView={ <EmptyView suggestions={ suggestions } /> }
 			/>
 		</div>
 	);
