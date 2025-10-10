@@ -116,9 +116,9 @@ function AddEmailForwarder() {
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
-	const isDomainMaxForwardsReached = forwards?.length ?? 0 >= maxForwards;
+	const isDomainMaxForwardsReached = ( forwards?.length ?? 0 ) >= maxForwards;
 	const willDomainMaxForwardsBeReached =
-		forwards?.length + formData.forwardingAddresses.length > maxForwards;
+		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length > maxForwards;
 
 	const isValid =
 		isItemValid( formData, fields, form ) &&
