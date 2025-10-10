@@ -2,7 +2,7 @@ import { SiteDomain } from '@automattic/api-core';
 import { siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 
-export const useDomains = () => {
+export const useDomains = (): { domains: SiteDomain[]; isLoading: boolean } => {
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const sites = ( allSites ?? [] ).filter( ( site ) => site.capabilities.manage_options );
 	const siteIds = sites.map( ( site ) => site.ID );

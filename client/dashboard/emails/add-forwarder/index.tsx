@@ -47,8 +47,18 @@ function AddEmailForwarder() {
 	const eligibleDomains = useMemo(
 		() =>
 			domains?.filter(
-				( { current_user_can_add_email, current_user_is_owner, wpcom_domain } ) =>
-					current_user_can_add_email && current_user_is_owner && ! wpcom_domain
+				( {
+					current_user_can_add_email,
+					current_user_is_owner,
+					google_apps_subscription,
+					titan_mail_subscription,
+					wpcom_domain,
+				} ) =>
+					current_user_can_add_email &&
+					current_user_is_owner &&
+					google_apps_subscription?.status === 'no_subscription' &&
+					titan_mail_subscription?.status === 'no_subscription' &&
+					! wpcom_domain
 			) || [],
 		[ domains ]
 	);
