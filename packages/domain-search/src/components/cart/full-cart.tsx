@@ -12,13 +12,17 @@ import type { SelectedDomain } from '../../page/types';
 const FullCartItem = ( { item }: { item: SelectedDomain } ) => {
 	const { cart } = useDomainSearch();
 
+	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
+
 	const {
 		mutate: removeProductFromCart,
 		isPending,
 		reset,
 		error,
-		submittedAt,
 	} = useMutation( {
+		meta: {
+			mutationId,
+		},
 		mutationFn: ( uuid: string ) => {
 			return cart.onRemoveItem( uuid );
 		},
@@ -27,7 +31,6 @@ const FullCartItem = ( { item }: { item: SelectedDomain } ) => {
 	} );
 
 	const isMutating = !! useIsMutating();
-	const isCurrentMutation = useIsCurrentMutation( submittedAt );
 
 	return (
 		<DomainsFullCartItem

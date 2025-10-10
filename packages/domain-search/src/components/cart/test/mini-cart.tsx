@@ -1,20 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildCartItem } from '../../../test-helpers/factories/cart';
 import { TestDomainSearchWithCart } from '../../../test-helpers/renderer';
+import { MockMutation } from '../../../test-helpers/utils';
 import { MiniCart } from '../mini-cart';
-
-const MockMutation = ( { mutationPromise }: { mutationPromise: Promise< unknown > } ) => {
-	const { mutate } = useMutation( {
-		mutationFn: async () => {
-			await mutationPromise;
-			return Promise.resolve();
-		},
-	} );
-
-	return <button onClick={ () => mutate() }>Click me</button>;
-};
 
 describe( 'MiniCart', () => {
 	it( 'renders the domain count and total price', () => {
