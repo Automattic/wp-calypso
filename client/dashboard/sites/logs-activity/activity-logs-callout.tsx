@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
@@ -8,6 +9,7 @@ import type { Site } from '@automattic/api-core';
 export function getActivityLogsCalloutProps() {
 	return {
 		tracksFeatureId: 'logs-activity',
+		feature: HostingFeatures.ACTIVITY_LOG,
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Track every action with Jetpack Activity' ),
 		upsellImage: illustrationUrl,

@@ -459,6 +459,7 @@ import {
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
 	FEATURE_GOOGLE_LISTING_ADS,
+	WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -1158,6 +1159,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SSH,
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_SECURITY_SETTINGS,
+		WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1828,6 +1830,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SSH,
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_SECURITY_SETTINGS,
+		WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
 	],
 	getInferiorFeatures: () => [],
 	getSenseiFeatures: ( term ) => () =>
