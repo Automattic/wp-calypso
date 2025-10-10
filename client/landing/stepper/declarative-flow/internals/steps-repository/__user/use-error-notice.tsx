@@ -18,72 +18,70 @@ export function useErrorNotice( { error: errorResponse, recentSocialAuthAttemptP
 		signupUrl: window.location.pathname + window.location.search,
 		redirectTo: window.location.pathname + window.location.search,
 	} );
+
 	if ( errorResponse && 'error' in errorResponse ) {
+		let noticeText =
+			errorResponse?.message || translate( 'Something went wrong. Please try again.' );
+
 		if ( errorResponse.error === 'user_exists' ) {
-			return (
-				<Notice
-					className="signup-form__notice signup-form__span-columns"
-					showDismiss={ false }
-					status="is-transparent-info"
-					text={ translate(
-						'We found a WordPress.com account with the email "%(email)s". ' +
-							'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
-						{
-							args: { email: errorResponse.data?.email },
+			noticeText = translate(
+				'We found a WordPress.com account with the email "%(email)s". ' +
+					'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
+				{
+					args: { email: errorResponse.data?.email },
+					components: {
+						a: (
+							<a
+								href={ loginLink }
+								onClick={ ( event ) => {
+									event.preventDefault();
+									recordTracksEvent( 'calypso_signup_social_existing_user_login_link_click' );
+									window.location.href = addQueryArgs(
+										{
+											service: recentSocialAuthAttemptParams?.service,
+											access_token: recentSocialAuthAttemptParams?.access_token,
+											id_token: recentSocialAuthAttemptParams?.id_token,
+										},
+										loginLink
+									);
+								} }
+							/>
+						),
+					},
+				}
+			);
+		} else if ( errorResponse.error === '2FA_enabled' ) {
+			noticeText = (
+				<span>
+					<p>
+						{ errorResponse.message }
+						&nbsp;
+						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
 							components: {
 								a: (
 									<a
 										href={ loginLink }
-										onClick={ ( event ) => {
-											event.preventDefault();
-											recordTracksEvent( 'calypso_signup_social_existing_user_login_link_click' );
-											window.location.href = addQueryArgs(
-												{
-													service: recentSocialAuthAttemptParams?.service,
-													access_token: recentSocialAuthAttemptParams?.access_token,
-													id_token: recentSocialAuthAttemptParams?.id_token,
-												},
-												loginLink
-											);
-										} }
+										onClick={ () =>
+											dispatch( recordTracksEventWithClientId( 'calypso_signup_login_midflow' ) )
+										}
 									/>
 								),
 							},
-						}
-					) }
-				/>
-			);
-		} else if ( errorResponse.error === '2FA_enabled' ) {
-			return (
-				<Notice
-					className="signup-form__notice signup-form__span-columns"
-					showDismiss={ false }
-					status="is-transparent-info"
-					text={
-						<span>
-							<p>
-								{ errorResponse.message }
-								&nbsp;
-								{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
-									components: {
-										a: (
-											<a
-												href={ loginLink }
-												onClick={ () =>
-													dispatch(
-														recordTracksEventWithClientId( 'calypso_signup_login_midflow' )
-													)
-												}
-											/>
-										),
-									},
-								} ) }
-							</p>
-						</span>
-					}
-				/>
+						} ) }
+					</p>
+				</span>
 			);
 		}
+
+		return (
+			<Notice
+				className="signup-form__notice signup-form__span-columns"
+				showDismiss={ false }
+				status="is-transparent-info"
+				text={ noticeText }
+			/>
+		);
 	}
+
 	return false;
 }
