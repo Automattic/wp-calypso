@@ -1,15 +1,26 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { getTld } from '../helpers';
+import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
-const isSupportedPremiumDomain = ( availability: DomainAvailability ) => {
-	return (
-		availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
-		availability.is_supported_premium_domain
-	);
+const hasDataAndIsSupportedPremiumDomain = (
+	result: UseQueryResult< DomainAvailability, Error >
+): result is DefinedUseQueryResult< DomainAvailability, Error > => {
+	return !! result.data && isSupportedPremiumDomain( result.data );
+};
+
+const availablePremiumDomainsCombinator = (
+	results: UseQueryResult< DomainAvailability, Error >[]
+) => {
+	return {
+		isLoadingAvailablePremiumDomains: results.some( ( result ) => result.isLoading ),
+		availablePremiumDomains: results
+			.filter( hasDataAndIsSupportedPremiumDomain )
+			.map( ( { data: availabilityQuery } ) => availabilityQuery.domain_name ),
+	};
 };
 
 export const useSuggestionsList = () => {
@@ -38,41 +49,30 @@ export const useSuggestionsList = () => {
 		[ suggestions ]
 	);
 
-	const unavailablePremiumDomainsCombinator = useCallback(
-		( results: UseQueryResult< DomainAvailability, Error >[] ) => {
-			return {
-				isLoadingUnavailablePremiumDomains: results.some( ( result ) => result.isLoading ),
-				unavailablePremiumDomains: premiumSuggestions.filter( ( _, index ) => {
-					const availabilityQuery = results[ index ].data;
-
-					return ! availabilityQuery || ! isSupportedPremiumDomain( availabilityQuery );
-				} ),
-			};
-		},
-		[ premiumSuggestions ]
-	);
-
-	const { isLoadingUnavailablePremiumDomains, unavailablePremiumDomains } = useQueries( {
+	const availabilityResults = useQueries( {
 		queries: premiumSuggestions.map( ( suggestion ) => ( {
 			...queries.domainAvailability( suggestion ),
 			enabled: true,
 		} ) ),
-		combine: unavailablePremiumDomainsCombinator,
 	} );
+
+	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } = useMemo(
+		() => availablePremiumDomainsCombinator( availabilityResults ),
+		[ availabilityResults ]
+	);
 
 	const isLoading =
 		isLoadingSuggestions ||
 		isLoadingFreeSuggestion ||
 		isLoadingQueryAvailability ||
-		isLoadingUnavailablePremiumDomains;
+		isLoadingAvailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		return partitionSuggestions( {
 			suggestions: suggestions
-				.map( ( suggestion ) => suggestion.domain_name )
-				.filter( ( suggestion ) => {
+				.filter( ( { domain_name: suggestion, is_premium } ) => {
 					if ( suggestion !== query ) {
-						return ! unavailablePremiumDomains.includes( suggestion );
+						return ! is_premium || availablePremiumDomains.includes( suggestion );
 					}
 
 					if ( ! fqdnAvailability ) {
@@ -88,7 +88,8 @@ export const useSuggestionsList = () => {
 					}
 
 					return isSupportedPremiumDomain( fqdnAvailability );
-				} ),
+				} )
+				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
 		} );
@@ -96,7 +97,7 @@ export const useSuggestionsList = () => {
 		suggestions,
 		query,
 		config.deemphasizedTlds,
-		unavailablePremiumDomains,
+		availablePremiumDomains,
 		fqdnAvailability,
 		config.includeOwnedDomainInSuggestions,
 	] );

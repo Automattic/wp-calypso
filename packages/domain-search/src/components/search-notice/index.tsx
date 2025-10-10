@@ -2,6 +2,7 @@ import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-co
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
+import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
 
@@ -33,10 +34,7 @@ const shouldHideAvailabilityNotice = (
 		return true;
 	}
 
-	if (
-		availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
-		availability.is_supported_premium_domain
-	) {
+	if ( isSupportedPremiumDomain( availability ) ) {
 		return true;
 	}
 
