@@ -1,10 +1,4 @@
-/* eslint-disable no-restricted-imports */
-import {
-	isDomainMoveInternal,
-	isDomainRegistration,
-	isDomainTransfer,
-	isPlan,
-} from '@automattic/calypso-products';
+import { isDomainProduct, isDomainTransfer, isPlan } from '@automattic/calypso-products';
 import { DomainSearch } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -71,10 +65,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 	return useMemo( () => {
 		const domainItems = flowAllowsMultipleDomainsInCart
 			? responseCart.products.filter(
-					( product ) =>
-						isDomainRegistration( product ) ||
-						isDomainTransfer( product ) ||
-						isDomainMoveInternal( product )
+					( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 			  )
 			: [];
 		const isPlanInCart =
