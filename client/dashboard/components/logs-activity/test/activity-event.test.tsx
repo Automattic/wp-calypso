@@ -49,6 +49,7 @@ const createActivity = ( {
 		activityStatus: '',
 		activityTitle: title,
 		activityTs: 0,
+		activityUnparsedTs: '',
 		activityActor: {},
 		activityIsRewindable: false,
 	};
