@@ -342,70 +342,11 @@ export const getAvailabilityNotice = (
 			);
 			break;
 
-		case DomainAvailabilityStatus.DISALLOWED:
-			if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
-				message = translate(
-					'Due to {{a1}}trademark policy{{/a1}}, ' +
-						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or connected here. ' +
-						'Please {{a2}}contact support{{/a2}} if you have any questions.',
-					{
-						components: {
-							strong: <strong />,
-							a1: (
-								<a
-									target="_blank"
-									rel="noopener noreferrer"
-									href="http://wordpressfoundation.org/trademark-policy/"
-								/>
-							),
-							a2: <a target="_blank" href={ CALYPSO_HELP_WITH_HELP_CENTER } rel="noreferrer" />,
-						},
-					}
-				);
-			} else {
-				message = translate(
-					'Domain cannot be connected to a WordPress.com blog because of disallowed term.'
-				);
-			}
-			break;
-
-		case DomainAvailabilityStatus.FORBIDDEN_SUBDOMAIN:
-			message = translate(
-				"Subdomains starting with 'www.' cannot be connected to a WordPress.com blog"
-			);
-			break;
-
-		case DomainAvailabilityStatus.FORBIDDEN:
-			message = translate( 'Only the owner of the domain can connect its subdomains.' );
-			break;
-
-		case DomainAvailabilityStatus.WPCOM_STAGING_DOMAIN:
-			message = translate( 'This domain is a reserved WordPress.com staging domain' );
-			break;
-
 		case DomainAvailabilityStatus.INVALID_TLD:
 		case DomainAvailabilityStatus.INVALID:
 			message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 				args: { domain: domain },
 			} );
-			break;
-
-		case DomainAvailabilityStatus.MAPPED:
-			message = translate( 'This domain is already connected to a WordPress.com site.' );
-			break;
-
-		case DomainAvailabilityStatus.DOTBLOG_SUBDOMAIN:
-		case DomainAvailabilityStatus.RESTRICTED:
-			message = translate(
-				'This is a free WordPress.com subdomain. You can’t connect it to another site.'
-			);
-			break;
-
-		case DomainAvailabilityStatus.RECENTLY_UNMAPPED:
-			message = translate(
-				'This domain was recently in use by someone else and is not available to connect yet. ' +
-					'Please try again later or contact support.'
-			);
 			break;
 
 		case DomainAvailabilityStatus.RECENTLY_EXPIRED:
@@ -416,29 +357,6 @@ export const getAvailabilityNotice = (
 						a: <a target="_blank" href={ CALYPSO_HELP_WITH_HELP_CENTER } rel="noreferrer" />,
 					},
 				}
-			);
-			break;
-
-		case DomainAvailabilityStatus.UNKOWN_ACTIVE:
-			message = translate(
-				'This domain is still active and is not available to connect yet. ' +
-					'Please try again later or contact support.'
-			);
-			break;
-
-		case DomainAvailabilityStatus.EMPTY_QUERY:
-			message = translate( 'Please enter a domain name or keyword.' );
-			break;
-
-		case DomainAvailabilityStatus.INVALID_QUERY:
-			message = translate(
-				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
-			);
-			break;
-
-		case DomainAvailabilityStatus.AVAILABILITY_CHECK_ERROR:
-			message = translate(
-				'Sorry, an error occurred when checking the availability of this domain. Please try again in a few minutes.'
 			);
 			break;
 
@@ -478,30 +396,6 @@ export const getAvailabilityNotice = (
 				'Sorry, {{strong}}%(domain)s{{/strong}} is reserved by the .%(tld)s registry and cannot be registered without permission.',
 				{
 					args: { domain, tld: availabilityData.tld },
-					components: {
-						strong: <strong />,
-					},
-				}
-			);
-			break;
-
-		case DomainAvailabilityStatus.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
-			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred because it was registered less than 60 days ago.",
-				{
-					args: { domain },
-					components: {
-						strong: <strong />,
-					},
-				}
-			);
-			break;
-
-		case DomainAvailabilityStatus.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
-			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred due to a transfer lock at the registry.",
-				{
-					args: { domain },
 					components: {
 						strong: <strong />,
 					},
