@@ -21,8 +21,7 @@ import { Text } from '../../components/text';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import './styles.css';
 
-const isJetpackSlug = ( slug: unknown ): boolean =>
-	typeof slug === 'string' && String( slug ).startsWith( 'jetpack_' );
+const isJetpackSlug = ( slug: string ): boolean => String( slug ).startsWith( 'jetpack_' );
 
 export default function ChooseDomain() {
 	const router = useRouter();
