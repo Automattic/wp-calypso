@@ -2,16 +2,9 @@ import { addEmailForwarderMutation } from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	Button,
-	Card,
-	CardBody,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -252,18 +245,13 @@ function AddEmailForwarder() {
 
 								{ isDomainMaxForwardsReached && (
 									<Notice variant="warning">
-										{ createInterpolateElement(
+										{ sprintf(
+											// translators: %(maxForwards) is the maximum number of email forwards allowed for a domain.
 											__(
-												"You can't add another email forwarder for this domain because you've reached the maximum number (<maxForwards />) of Email Forwards allowed on it. Please <manageForwadersLink>delete an existing forwarder</manageForwadersLink> to add a new one."
+												"You can't add another email forwarder for this domain because you've reached the maximum number %(maxForwards)d of Email Forwards allowed on it. Please delete an existing forwarder in order to add a new one."
 											),
 											{
-												manageForwadersLink: (
-													<ExternalLink
-														href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
-														children={ null }
-													/>
-												),
-												maxForwards: <>{ maxForwards }</>,
+												maxForwards,
 											}
 										) }
 									</Notice>
@@ -271,20 +259,15 @@ function AddEmailForwarder() {
 
 								{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
 									<Notice variant="warning">
-										{ createInterpolateElement(
+										{ sprintf(
+											// translators: %(forwardingAddressesCount)d is the number of new email forwards the user is attempting to add, %(maxForwards)d is the maximum number of email forwards allowed for a domain, %(existingForwardersCount)d is the number of existing email forwards already set up for the domain.
 											__(
-												'You are adding too many new email forwarders for this domain (<forwardingAddressesCount/>); the maximum number is <maxForwards /> and there are already <existingForwardersCount/> before this change. Please edit your changes or <manageForwadersLink>delete any of the existing forwarders</manageForwadersLink>.'
+												'You are adding too many new email forwarders for this domain (%(forwardingAddressesCount)d); the maximum number is %(maxForwards)d and there are already %(existingForwardersCount)d before this change. Please edit your changes or delete any of the existing forwarders.'
 											),
 											{
-												manageForwadersLink: (
-													<ExternalLink
-														href={ `/email/${ formData.domain }/manage/${ formData.domain }` }
-														children={ null }
-													/>
-												),
-												forwardingAddressesCount: <>{ formData.forwardingAddresses.length }</>,
-												maxForwards: <>{ maxForwards }</>,
-												existingForwardersCount: <>{ forwards && forwards.length }</>,
+												forwardingAddressesCount: formData.forwardingAddresses.length,
+												maxForwards,
+												existingForwardersCount: forwards?.length ?? 0,
 											}
 										) }
 									</Notice>
@@ -292,13 +275,14 @@ function AddEmailForwarder() {
 
 								{ duplicateForwardAddress && (
 									<Notice variant="error">
-										{ createInterpolateElement(
+										{ sprintf(
+											// translators: %(mailbox)s is the email address the user is attempting to add a forwarder for, %(forwardingAddress)s is the duplicate forwarding email address.
 											__(
-												'There is already a forwarding set from <mailbox/> to <forwardingAddress/>. Please remove the duplicate and try again.'
+												'There is already a forwarding set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicate and try again.'
 											),
 											{
-												mailbox: <>{ `${ formData.localPart }@${ formData.domain }` }</>,
-												forwardingAddress: <>{ duplicateForwardAddress }</>,
+												mailbox: `${ formData.localPart }@${ formData.domain }`,
+												forwardingAddress: duplicateForwardAddress,
 											}
 										) }
 									</Notice>
