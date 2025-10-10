@@ -8,6 +8,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { keyboardReturn, Icon } from '@wordpress/icons';
 import { useState } from 'react';
@@ -102,10 +103,28 @@ function RepositoriesList() {
 		},
 	];
 
+	let emptyTitle;
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
-	const emptyTitle = hasFilterOrSearch
-		? __( 'No repositories found' )
-		: __( 'No repositories connected' );
+
+	if ( githubInstallationsError ) {
+		emptyTitle = createInterpolateElement(
+			__( 'No repositories available. <a>Check your GitHub connection</a>.' ),
+			{
+				a: (
+					<Button
+						variant="link"
+						onClick={ () =>
+							router.navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } )
+						}
+					/>
+				),
+			}
+		);
+	} else if ( hasFilterOrSearch ) {
+		emptyTitle = __( 'No repositories found' );
+	} else {
+		emptyTitle = __( 'No repositories connected' );
+	}
 
 	return (
 		<DataViewsCard>
