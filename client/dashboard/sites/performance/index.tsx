@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	sitePerformancePagesQuery,
@@ -179,7 +178,6 @@ function SitePerformance() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.PERFORMANCE }
 			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getPerformanceCalloutProps() }
 		>
