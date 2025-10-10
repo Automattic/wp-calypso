@@ -175,8 +175,128 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'FQDN suggestion', () => {
+		it( 'removes FQDN suggestion from the list if availability query is not successful', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-unavailable.com' } ),
+					buildSuggestion( { domain_name: 'test-available.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: new Error( 'Test error' ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unavailable.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'removes FQDN suggestion from the list if availability query is successful but the status is not available', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-unavailable.com' } ),
+					buildSuggestion( { domain_name: 'test-available.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-unavailable.com',
+					status: DomainAvailabilityStatus.NOT_AVAILABLE,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unavailable.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'removes FQDN suggestion if its registered in another site by the same user and config.includeOwnedDomainInSuggestions is false', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-unavailable.com' } ),
+					buildSuggestion( { domain_name: 'test-available.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-unavailable.com',
+					status: DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch
+					query="test-unavailable.com"
+					config={ { includeOwnedDomainInSuggestions: false } }
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps FQDN suggestion if its registered in another site by the same user and config.includeOwnedDomainInSuggestions is true', async () => {
+			mockGetSuggestionsQuery( {
+				params: {
+					query: 'test-registered-in-another-site.com',
+					include_internal_move_eligible: true,
+				},
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-registered-in-another-site.com' } ),
+					buildSuggestion( { domain_name: 'test-available.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-registered-in-another-site.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-registered-in-another-site.com',
+					status: DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch
+					query="test-registered-in-another-site.com"
+					config={ { includeOwnedDomainInSuggestions: true } }
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
+
+			expect( screen.getByTitle( 'test-registered-in-another-site.com' ) ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'premium domain suggestions', () => {
-		it( 'renders premium suggestion if the availability query is successful', async () => {
+		it( 'renders premium suggestion if its a supported premium domain', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-premium' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-premium.com', is_premium: true } ) ],
@@ -279,6 +399,35 @@ describe( 'ResultsPage', () => {
 			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
 
 			expect( screen.queryByTitle( 'test-wrong-status.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'removes FQDN premium suggestion if its available but not supported', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unsupported.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-unsupported.com' } ),
+					buildSuggestion( { domain_name: 'test-supported.com' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unsupported.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-unsupported.com',
+					status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+					is_supported_premium_domain: false,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unsupported.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-supported.com' ) ).toBeInTheDocument();
+
+			expect( screen.queryByTitle( 'test-unsupported.com' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

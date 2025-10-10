@@ -62,7 +62,7 @@ describe( 'UnavailableSearchResult', () => {
 		}
 	);
 
-	it( 'renders the tld not supported message if the availability status is tld_not_supported', async () => {
+	it( 'renders the TLD not supported message if the availability status is tld_not_supported', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'woo.test.boston' },
 			suggestions: [ buildSuggestion( { domain_name: 'test.boston' } ) ],
@@ -93,7 +93,7 @@ describe( 'UnavailableSearchResult', () => {
 		);
 	} );
 
-	it( 'renders the tld not supported message if the availability status is unknown', async () => {
+	it( 'renders the TLD not supported message if the availability status is unknown', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'woo.test.boston' },
 			suggestions: [ buildSuggestion( { domain_name: 'test.boston' } ) ],
@@ -124,7 +124,7 @@ describe( 'UnavailableSearchResult', () => {
 		);
 	} );
 
-	it( 'renders the tld not supported temporarily message if the availability status is tld_not_supported_temporarily', async () => {
+	it( 'renders the TLD not supported temporarily message if the availability status is tld_not_supported_temporarily', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'woo.test.boston' },
 			suggestions: [ buildSuggestion( { domain_name: 'test.boston' } ) ],
