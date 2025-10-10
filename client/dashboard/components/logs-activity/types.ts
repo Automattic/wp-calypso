@@ -30,6 +30,7 @@ export interface Activity {
 	activityStatus: string;
 	activityTitle: string;
 	activityTs: number;
+	activityUnparsedTs: string;
 	activityActor: ActivityActorDetails;
 	activityIsRewindable: boolean;
 	rewindId?: string;

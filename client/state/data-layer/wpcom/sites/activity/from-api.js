@@ -58,6 +58,7 @@ export function processItem( item ) {
 			activityIsRewindable: item.is_rewindable,
 			activityName: item.name,
 			activityTitle: item.summary,
+			activityUnparsedTs: activityDate,
 			activityTs: Date.parse( activityDate ),
 			activityDescription: parseActivityLogEntryContent( item.content ),
 			activityMedia: get( item, 'image' ),

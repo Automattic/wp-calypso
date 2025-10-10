@@ -79,9 +79,9 @@ export function useActivityFields( {
 				label: dateTimeLabel,
 				enableHiding: true,
 				enableSorting: true,
-				getValue: ( { item } ) => item.activityTs,
+				getValue: ( { item } ) => item.activityUnparsedTs,
 				render: ( { item } ) => {
-					const value = item.activityTs;
+					const value = item.activityUnparsedTs;
 					return <span>{ formatDateCell( { value, timezoneString, gmtOffset, locale } ) }</span>;
 				},
 				filterBy: { operators: [] },
@@ -94,9 +94,9 @@ export function useActivityFields( {
 							label: __( 'Date & time (UTC)' ),
 							enableHiding: true,
 							enableSorting: true,
-							getValue: ( { item } ) => item.activityTs,
+							getValue: ( { item } ) => item.activityUnparsedTs,
 							render: ( { item } ) => {
-								const value = item.activityTs;
+								const value = item.activityUnparsedTs;
 								return (
 									<span>
 										{ formatDateCell( {

@@ -59,6 +59,7 @@ describe( 'transformActivityLogEntry', () => {
 		expect( activity.activityActor.isCli ).toBe( true );
 		expect( activity.activityActor.isSupport ).toBe( false );
 		expect( activity.activityTs ).toBe( Date.parse( '2024-01-01T00:00:00Z' ) );
+		expect( activity.activityUnparsedTs ).toBe( '2024-01-01T00:00:00Z' );
 		expect( activity.activityIsRewindable ).toBe( true );
 		expect( activity.rewindId ).toBe( 'rewind' );
 	} );
