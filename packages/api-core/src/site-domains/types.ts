@@ -1,7 +1,7 @@
 import type { DomainSummary } from '../domains';
 
 interface EmailSubscription {
-	status: 'active' | 'pending' | 'suspended';
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription';
 }
 
 export interface GoogleEmailSubscription extends EmailSubscription {}

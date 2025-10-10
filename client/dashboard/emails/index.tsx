@@ -1,6 +1,6 @@
 import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
-import { mailboxAccountsQuery, siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../components/dataviews-card';
@@ -11,6 +11,7 @@ import { domainHasEmail } from '../utils/domain';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import { DEFAULT_EMAILS_VIEW, emailFields, useEmailActions } from './dataviews';
+import { useDomains } from './hooks/use-domains';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
 import type { View } from '@wordpress/dataviews';
@@ -18,18 +19,7 @@ import type { View } from '@wordpress/dataviews';
 import './style.scss';
 
 function Emails() {
-	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const sites = ( allSites ?? [] ).filter( ( site ) => site.capabilities.manage_options );
-	const siteIds = sites.map( ( site ) => site.ID );
-
-	// Fetch site domains for each managed site ID
-	const domainsQueries = useQueries( {
-		queries: siteIds.map( ( id ) => ( {
-			...siteDomainsQuery( id ),
-			enabled: Boolean( id ),
-		} ) ),
-	} );
-	const isLoadingDomains = domainsQueries.some( ( q ) => q.isLoading );
+	const { domains, isLoading: isLoadingDomains } = useDomains();
 
 	// Aggregate all domains into a single array
 	const { domainsWithEmails, domainsWithoutEmails } = useMemo( () => {
@@ -38,17 +28,15 @@ function Emails() {
 		}
 
 		// We filter the same way v1 does.
-		const domains = domainsQueries
-			.flatMap( ( q ) => ( q.data as SiteDomain[] ) ?? [] )
-			.filter( ( domain ) => ! domain.wpcom_domain );
+		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.wpcom_domain );
 
-		const domainsWithEmails = domains.filter( domainHasEmail ) as SiteDomain[];
-		const domainsWithoutEmails = domains.filter(
+		const domainsWithEmails = nonWpcomDomains.filter( domainHasEmail ) as SiteDomain[];
+		const domainsWithoutEmails = nonWpcomDomains.filter(
 			( domain ) => ! domainHasEmail( domain )
 		) as SiteDomain[];
 
 		return { domainsWithEmails, domainsWithoutEmails };
-	}, [ domainsQueries, isLoadingDomains ] );
+	}, [ domains, isLoadingDomains ] );
 
 	const mailboxQueries = useQueries( {
 		queries: domainsWithEmails.map( ( domain: SiteDomain ) =>
@@ -99,7 +87,7 @@ function Emails() {
 				<div className="emails__dataviews">
 					<DataViews
 						data={ filteredData }
-						isLoading={ isLoadingSites || isLoadingDomains || isLoadingMailboxes }
+						isLoading={ isLoadingDomains || isLoadingMailboxes }
 						fields={ emailFields }
 						view={ view }
 						onChangeView={ setView }
