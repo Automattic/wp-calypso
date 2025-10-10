@@ -16,6 +16,7 @@ export function Grid( {
 	minColumnWidth,
 	editMode = false,
 	onChangeLayout,
+	onRemoveItem,
 }: GridProps ) {
 	// Temporary layout to avoid updaing the layout while dragging
 	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
@@ -166,6 +167,8 @@ export function Grid( {
 							onResize={ ( delta ) => handleResize( id, delta ) }
 							onResizeEnd={ persistTemporaryLayout }
 							actionableArea={ childrenMap.get( id )?.props.actionableArea ?? null }
+							onRemove={ onRemoveItem }
+							removeButton={ childrenMap.get( id )?.props.removeButton }
 						>
 							{ childrenMap.get( id ) }
 						</GridItem>

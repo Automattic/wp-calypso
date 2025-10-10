@@ -21,10 +21,14 @@ function Card( {
 	color,
 	children,
 	actionableArea,
+	removeButton,
+	onRemove,
 	...props
 }: {
 	color: string;
 	children: React.ReactNode;
+	onRemove?: ( id: string ) => void;
+	removeButton?: ( onRemove: () => void ) => React.ReactNode;
 	actionableArea?: React.ReactNode;
 } & HTMLAttributes< HTMLDivElement > ) {
 	return (
@@ -235,6 +239,10 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				spacing={ 2 }
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
+				onRemoveItem={ ( key ) => {
+					// eslint-disable-next-line no-console
+					console.log( 'Grid.onRemoveItem: ', key );
+				} }
 			>
 				<Card
 					key="a"
@@ -250,7 +258,17 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				>
 					Card A
 				</Card>
-				<Card key="b" color="#2196f3">
+				<Card
+					key="b"
+					color="#2196f3"
+					removeButton={ ( onRemove ) => {
+						return (
+							<div style={ { position: 'absolute', top: 2, right: 2, zIndex: 2 } }>
+								<button onClick={ onRemove }>x</button>
+							</div>
+						);
+					} }
+				>
 					Card B
 				</Card>
 				<Card
@@ -279,18 +297,7 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				<Card key="g" color="#3f51b5">
 					Card G
 				</Card>
-				<Card
-					key="h"
-					color="#8bc34a"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card H' );
-							} }
-						/>
-					}
-				>
+				<Card key="h" color="#8bc34a">
 					Card H
 				</Card>
 				<Card key="i" color="#cddc39">

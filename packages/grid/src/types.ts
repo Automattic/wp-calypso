@@ -74,6 +74,11 @@ interface BaseGridProps {
 	 * Callback fired when layout changes due to item dragging
 	 */
 	onChangeLayout?: ( newLayout: GridLayoutItem[] ) => void;
+
+	/**
+	 * Callback fired when an item is removed from the grid.
+	 */
+	onRemoveItem?: ( key: GridLayoutItem ) => void;
 }
 
 interface StandardGridProps extends BaseGridProps {

@@ -42,6 +42,16 @@ type GridItemProps = {
 	 * Callback fired when resize operation ends.
 	 */
 	onResizeEnd: () => void;
+
+	/**
+	 * Callback fired when the item is being removed.
+	 */
+	onRemove?: ( id: GridLayoutItem ) => void;
+
+	/**
+	 * Button to remove an item from the grid.
+	 */
+	removeButton?: ( onRemove: () => void ) => React.ReactNode;
 };
 
 export function GridItem( {
@@ -52,6 +62,8 @@ export function GridItem( {
 	actionableArea = null,
 	onResize,
 	onResizeEnd,
+	onRemove,
+	removeButton,
 }: GridItemProps ) {
 	const [ previewDelta, setPreviewDelta ] = useState< { width: number; height: number } | null >(
 		null
@@ -114,6 +126,7 @@ export function GridItem( {
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes }>
 			{ actionableArea }
+			{ removeButton && removeButton( () => onRemove?.( item ) ) }
 
 			<div { ...listeners } style={ { height: '100%' } }>
 				<div style={ contentStyle }>
