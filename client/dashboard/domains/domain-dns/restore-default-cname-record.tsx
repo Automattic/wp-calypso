@@ -31,7 +31,7 @@ export default function RestoreDefaultCnameRecord( {
 					<Button __next40pxDefaultSize onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button __next40pxDefaultSizevariant="primary" isBusy={ isBusy } onClick={ onConfirm }>
+					<Button __next40pxDefaultSize variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
 						{ __( 'Restore' ) }
 					</Button>
 				</ButtonStack>
