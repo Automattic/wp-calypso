@@ -10,8 +10,9 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
-import './style.scss';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+
+import './style.scss';
 
 class PostLikes extends PureComponent {
 	static defaultProps = {
