@@ -193,7 +193,15 @@ export const useDomainSearchContextValue = ( {
 			openFullCart,
 			query: externalQuery ?? '',
 			setQuery: ( query ) => {
-				normalizedEvents.onQueryChange( query );
+				const normalizedQuery = query
+					.trim()
+					.toLowerCase()
+					.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+				if ( normalizedQuery ) {
+					normalizedEvents.onQueryChange( normalizedQuery );
+				}
 			},
 			slots,
 			currentSiteUrl,
