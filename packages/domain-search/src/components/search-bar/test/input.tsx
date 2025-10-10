@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 import { Input } from '../input';
 
-describe( 'Input', () => {
+describe( 'SearchBar#Input', () => {
 	it( 'renders the query', () => {
 		render(
 			<TestDomainSearch query="test">

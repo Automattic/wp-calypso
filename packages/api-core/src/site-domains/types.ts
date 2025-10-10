@@ -1,12 +1,14 @@
 import type { DomainSummary } from '../domains';
 
 interface EmailSubscription {
-	status?: string;
+	status: 'active' | 'pending' | 'suspended';
 }
 
 export interface GoogleEmailSubscription extends EmailSubscription {}
 
-export interface TitanEmailSubscription extends EmailSubscription {}
+export interface TitanEmailSubscription extends EmailSubscription {
+	order_id: number;
+}
 
 export type SiteDomain = DomainSummary & {
 	google_apps_subscription?: GoogleEmailSubscription | null;

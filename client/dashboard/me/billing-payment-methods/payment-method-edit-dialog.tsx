@@ -91,6 +91,17 @@ function calculateTaxLocationFields( {
 	return fields;
 }
 
+const defaultTaxLocation: StoredPaymentMethod[ 'tax_location' ] = {
+	country_code: '',
+	postal_code: '',
+	subdivision_code: '',
+	ip_address: '',
+	vat_id: '',
+	organization: '',
+	address: '',
+	city: '',
+};
+
 export function PaymentMethodEditDialog( {
 	paymentMethod,
 	isVisible,
@@ -104,7 +115,7 @@ export function PaymentMethodEditDialog( {
 } ) {
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< StoredPaymentMethod[ 'tax_location' ] >(
-		paymentMethod.tax_location
+		paymentMethod.tax_location ?? defaultTaxLocation
 	);
 
 	const selectedCountryCode = formData?.country_code;

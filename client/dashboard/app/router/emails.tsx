@@ -1,6 +1,14 @@
-import { emailsQuery, queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { SiteDomain } from '@automattic/api-core';
+import {
+	queryClient,
+	rawUserPreferencesQuery,
+	sitesQuery,
+	siteDomainsQuery,
+	mailboxAccountsQuery,
+} from '@automattic/api-queries';
+import { createLazyRoute, createRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { domainHasEmail } from '../../utils/domain';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {
@@ -13,11 +21,30 @@ export const emailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: () =>
-		Promise.all( [
-			queryClient.ensureQueryData( emailsQuery() ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] ),
+	loader: async () => {
+		// Preload user prefs used broadly
+		const prefsPromise = queryClient.ensureQueryData( rawUserPreferencesQuery() );
+
+		// 1) Preload sites
+		const sites = await queryClient.ensureQueryData( sitesQuery() );
+		const managedSites = ( sites ?? [] ).filter( ( site ) => site.capabilities?.manage_options );
+
+		// 2) Preload domains for each managed site
+		const domainsArrays = await Promise.all(
+			managedSites.map( ( site ) => queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ) )
+		);
+
+		// 3) From those domains, identify ones with email capability and preload their mailboxes
+		const allDomains = domainsArrays.flat().filter( ( d: SiteDomain ) => d && ! d.wpcom_domain );
+		const domainsWithEmails = allDomains.filter( ( d ) => domainHasEmail( d ) );
+
+		await Promise.all( [
+			prefsPromise,
+			...domainsWithEmails.map( ( domain ) =>
+				queryClient.ensureQueryData( mailboxAccountsQuery( domain.blog_id, domain.domain ) )
+			),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
