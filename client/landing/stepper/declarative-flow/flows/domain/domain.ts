@@ -71,6 +71,20 @@ const domain: FlowV2< typeof initialize > = {
 			[]
 		);
 
+		const goToCheckout = ( siteSlug: string ) => {
+			const destination = `/v2/sites/${ siteSlug }/domains`;
+
+			// replace the location to delete processing step from history.
+			return window.location.replace(
+				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+					redirect_to: destination,
+					signup: 1,
+					cancel_to: new URL( addQueryArgs( '/setup/domain', { siteSlug } ), window.location.href )
+						.href,
+				} )
+			);
+		};
+
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -90,7 +104,7 @@ const domain: FlowV2< typeof initialize > = {
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
-					setSiteUrl( providedDependencies.siteUrl as string );
+					setSiteUrl( siteSlug ?? ( providedDependencies.siteUrl as string ) );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
@@ -239,6 +253,27 @@ const domain: FlowV2< typeof initialize > = {
 						} else {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
+
+						if ( siteSlug ) {
+							return goToCheckout( siteSlug );
+						}
+					} else if ( siteSlug ) {
+						setPendingAction( async () => {
+							if ( pickedPlan ) {
+								await addProductsToCart( siteSlug, this.name, [
+									pickedPlan,
+									...products.filter( ( product ) => product !== null ),
+								] );
+							}
+
+							return {
+								siteSlug,
+								goToCheckout: true,
+								siteCreated: false,
+							};
+						} );
+
+						return navigate( STEPS.PROCESSING.slug );
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
@@ -258,23 +293,11 @@ const domain: FlowV2< typeof initialize > = {
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						if ( providedDependencies.goToCheckout ) {
-							const siteSlug = providedDependencies.siteSlug as string;
-
-							// replace the location to delete processing step from history.
-							window.location.replace(
-								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									redirect_to: destination,
-									signup: 1,
-									cancel_to: new URL(
-										addQueryArgs( '/setup/domain', { siteSlug } ),
-										window.location.href
-									).href,
-								} )
-							);
-						} else {
-							// replace the location to delete processing step from history.
-							window.location.replace( destination );
+							return goToCheckout( providedDependencies.siteSlug as string );
 						}
+
+						// replace the location to delete processing step from history.
+						window.location.replace( destination );
 					} else {
 						// TODO: Handle errors
 						// navigate( 'error' );
