@@ -68,9 +68,11 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 		const domainItems = flowAllowsMultipleDomainsInCart ? getDomainsInCart( responseCart ) : [];
 		const isPlanInCart =
 			responseCart.products.find( ( product ) => isPlan( product ) ) !== undefined;
-		// If there's a plan in the cart, the backend will already set the first domain as free.
-		// We have to check this here since there might already be a plan in the shopping cart
-		// when a user starts a domain search flow.
+		// If there's an annual plan in the cart, the backend will already set the first domain as free.
+		// If there's a monthly plan in the cart, the backend will not set the first domain as free and
+		// we'll also not set it as free here, which is correct since monthly plans don't have a free domain.
+		// We have to check if there's a plan in the cart here since the user's cart might not be empty
+		// when they start a domain search flow.
 		const shouldFirstDomainBeFree = isFirstDomainFreeForFirstYear && ! isPlanInCart;
 
 		// Order domains from most expensive to least expensive
