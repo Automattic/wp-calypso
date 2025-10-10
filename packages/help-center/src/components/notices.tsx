@@ -74,9 +74,9 @@ export const EmailFallbackNotice: React.FC< { isBlocked?: boolean } > = ( {
 		: __( 'Live chat is temporarily unavailable for scheduled maintenance.', __i18n_text_domain__ );
 
 	const message = __(
-				'Please reach out via <email>email</email> if you need immediate assistance.',
-				__i18n_text_domain__
-		  );
+		'Please reach out via <email>email</email> if you need immediate assistance.',
+		__i18n_text_domain__
+	);
 
 	return (
 		<div className="help-center__notice email-fallback-notice">

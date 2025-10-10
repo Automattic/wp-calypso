@@ -60,8 +60,14 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, isBlockedFromChat, chat } =
-		useOdieAssistantContext();
+	const {
+		isUserEligibleForPaidSupport,
+		trackEvent,
+		canConnectToZendesk,
+		forceEmailSupport,
+		isBlockedFromChat,
+		chat,
+	} = useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 

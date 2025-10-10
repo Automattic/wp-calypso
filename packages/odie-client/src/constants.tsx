@@ -84,13 +84,13 @@ export const getOdieEmailFallbackMessageContent = ( {
 }: { isBlockedFromChat?: boolean } = {} ): string =>
 	isBlockedFromChat
 		? `${ __(
-		"I’m sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
-		__i18n_text_domain__
-	) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`
-		: __(
-				'We’re sorry, but live chat is temporarily unavailable for scheduled maintenance. Please feel free to reach out via email or check our Support Guides in the meantime.',
+				"I’m sorry, our human chat support is unavailable, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  );
+		  ) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`
+		: `${ __(
+				"I’m sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
+				__i18n_text_domain__
+		  ) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`;
 
 export const getOdieEmailFallbackMessage = (): Message => ( {
 	content: getOdieEmailFallbackMessageContent(),
