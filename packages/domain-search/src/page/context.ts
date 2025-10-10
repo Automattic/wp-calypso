@@ -17,7 +17,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onExternalDomainClick: noop,
 		onMakePrimaryAddressClick: noop,
 		onMoveDomainToSiteClick: noop,
-		onTransferDomainToWordPressComClick: noop,
 		onRegisterDomainClick: noop,
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
