@@ -11,6 +11,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 import './style.scss';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class PostLikes extends PureComponent {
 	static defaultProps = {
@@ -22,10 +23,16 @@ class PostLikes extends PureComponent {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
 
+	// In case of Odyssey Stats, ensure that we return the absolute URL for redirect.
+	getCalypsoUrl = ( href ) => {
+		const baseUrl = window?.location?.hostname === this.props.slug ? 'https://wordpress.com' : '';
+		return baseUrl + href;
+	};
+
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.login ? getUserProfileUrl( like.login ) : null;
+		const likeUrl = like.login ? this.getCalypsoUrl( getUserProfileUrl( like.login ) ) : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (
@@ -131,10 +138,12 @@ export default connect(
 		const likeCount = countPostLikes( state, siteId, postId );
 		const likes = getPostLikes( state, siteId, postId );
 		const currentUserId = getCurrentUserId( state );
+		const slug = getSiteSlug( state, siteId );
 		return {
 			likeCount,
 			likes,
 			currentUserId,
+			slug,
 		};
 	},
 	{ recordGoogleEvent }
