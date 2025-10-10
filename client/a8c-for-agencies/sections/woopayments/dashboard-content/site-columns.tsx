@@ -120,7 +120,7 @@ export const WooPaymentsStatusColumn = ( {
 				) }
 				target="_blank"
 			>
-				<>{ translate( 'Learn more about the incentive ↗' ) }</>
+				{ translate( 'Learn more about the incentive ↗' ) }
 			</Button>
 		</div>
 	);
