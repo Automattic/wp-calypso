@@ -324,7 +324,7 @@ describe( 'ResultsPage', () => {
 		);
 
 		const [ , notice ] = await screen.findAllByText(
-			'This domain is already mapped to a WordPress.com site.'
+			'This domain is already connected to a WordPress.com site.'
 		);
 
 		expect( notice ).toBeInTheDocument();

@@ -116,7 +116,7 @@ export const getAvailabilityNotice = (
 			break;
 		case DomainAvailabilityStatus.CONFLICTING_CNAME_EXISTS:
 			message = translate(
-				'There is an existing CNAME for {{strong}}%(domain)s{{/strong}}. If you want to map this subdomain, you should remove the conflicting CNAME DNS record first.',
+				'There is an existing CNAME for {{strong}}%(domain)s{{/strong}}. If you want to connect this subdomain, you should remove the conflicting CNAME DNS record first.',
 				{
 					args: { domain },
 					components: {
@@ -339,7 +339,7 @@ export const getAvailabilityNotice = (
 			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
-						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
+						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or connected here. ' +
 						'Please {{a2}}contact support{{/a2}} if you have any questions.',
 					{
 						components: {
@@ -357,19 +357,19 @@ export const getAvailabilityNotice = (
 				);
 			} else {
 				message = translate(
-					'Domain cannot be mapped to a WordPress.com blog because of disallowed term.'
+					'Domain cannot be connected to a WordPress.com blog because of disallowed term.'
 				);
 			}
 			break;
 
 		case DomainAvailabilityStatus.FORBIDDEN_SUBDOMAIN:
 			message = translate(
-				"Subdomains starting with 'www.' cannot be mapped to a WordPress.com blog"
+				"Subdomains starting with 'www.' cannot be connected to a WordPress.com blog"
 			);
 			break;
 
 		case DomainAvailabilityStatus.FORBIDDEN:
-			message = translate( 'Only the owner of the domain can map its subdomains.' );
+			message = translate( 'Only the owner of the domain can connect its subdomains.' );
 			break;
 
 		case DomainAvailabilityStatus.WPCOM_STAGING_DOMAIN:
@@ -384,19 +384,19 @@ export const getAvailabilityNotice = (
 			break;
 
 		case DomainAvailabilityStatus.MAPPED:
-			message = translate( 'This domain is already mapped to a WordPress.com site.' );
+			message = translate( 'This domain is already connected to a WordPress.com site.' );
 			break;
 
 		case DomainAvailabilityStatus.DOTBLOG_SUBDOMAIN:
 		case DomainAvailabilityStatus.RESTRICTED:
 			message = translate(
-				'This is a free WordPress.com subdomain. You can’t map it to another site.'
+				'This is a free WordPress.com subdomain. You can’t connect it to another site.'
 			);
 			break;
 
 		case DomainAvailabilityStatus.RECENTLY_UNMAPPED:
 			message = translate(
-				'This domain was recently in use by someone else and is not available to map yet. ' +
+				'This domain was recently in use by someone else and is not available to connect yet. ' +
 					'Please try again later or contact support.'
 			);
 			break;
@@ -414,7 +414,7 @@ export const getAvailabilityNotice = (
 
 		case DomainAvailabilityStatus.UNKOWN_ACTIVE:
 			message = translate(
-				'This domain is still active and is not available to map yet. ' +
+				'This domain is still active and is not available to connect yet. ' +
 					'Please try again later or contact support.'
 			);
 			break;
@@ -444,7 +444,7 @@ export const getAvailabilityNotice = (
 		case DomainAvailabilityStatus.AVAILABLE_PREMIUM:
 			if ( currentSiteUrl ) {
 				message = translate(
-					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{button}}map it to your site{{/button}}.",
+					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{button}}connect it to your site{{/button}}.",
 					{
 						args: { domain },
 						components: {
