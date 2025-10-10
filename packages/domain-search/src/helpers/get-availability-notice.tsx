@@ -65,14 +65,26 @@ export const getAvailabilityNotice = (
 						),
 					},
 				};
-				if ( availabilityData.other_site_domain_only ) {
+				if ( currentSiteUrl ) {
+					if ( availabilityData.other_site_domain_only ) {
+						message = translate(
+							'{{strong}}%(domain)s{{/strong}} is already registered as a domain-only site. Do you want to {{button}}move it to this site{{/button}}?',
+							messageOptions
+						);
+					} else {
+						message = translate(
+							'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{button}}move it to this site{{/button}}?',
+							messageOptions
+						);
+					}
+				} else if ( availabilityData.other_site_domain_only ) {
 					message = translate(
-						'{{strong}}%(domain)s{{/strong}} is already registered as a domain-only site. Do you want to {{button}}move it to this site{{/button}}?',
+						'{{strong}}%(domain)s{{/strong}} is already registered as a domain-only site.',
 						messageOptions
 					);
 				} else {
 					message = translate(
-						'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{button}}move it to this site{{/button}}?',
+						'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s.',
 						messageOptions
 					);
 				}
@@ -324,11 +336,6 @@ export const getAvailabilityNotice = (
 			break;
 		}
 
-		case DomainAvailabilityStatus.UNKNOWN:
-			// unavailable domains are displayed in the search results, not as a notice OR
-			// domain registrations are closed, in which case it is handled in parent
-			break;
-
 		case DomainAvailabilityStatus.EMPTY_RESULTS:
 			message = translate(
 				"Sorry, we weren't able to generate any domain name suggestions for that search term. Please try a different set of keywords."
@@ -336,7 +343,7 @@ export const getAvailabilityNotice = (
 			break;
 
 		case DomainAvailabilityStatus.DISALLOWED:
-			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
+			if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
 						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or connected here. ' +
