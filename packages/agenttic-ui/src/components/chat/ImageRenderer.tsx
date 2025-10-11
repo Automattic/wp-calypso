@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './ImageRenderer.module.css';
 import { motion } from 'framer-motion';
 import { CheckIcon } from '../icons/CheckIcon';
@@ -32,6 +32,13 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 		onSelect( image );
 	};
 
+	// Reset selected image when clicking outside the component
+	useEffect( () => {
+		window.addEventListener( 'click', () => {
+			setSelectedUrl( null );
+		} );
+	}, [] );
+
 	return (
 		<motion.div>
 			{ header ? (
@@ -48,7 +55,10 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 						className={ `${ styles.imageButton } ${
 							selectedUrl === image.url ? styles.selected : ''
 						}` }
-						onClick={ () => handleImageClick( image ) }
+						onClick={ ( e ) => {
+							e.stopPropagation();
+							handleImageClick( image );
+						} }
 						type="button"
 					>
 						<img

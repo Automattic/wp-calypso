@@ -68,9 +68,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 								} }
 							>
 								<Button
-									onClick={ () =>
-										handleSuggestionClick( suggestion )
-									}
+									onClick={ ( e ) => {
+										e.stopPropagation();
+										handleSuggestionClick( suggestion );
+									} }
 									variant={
 										layout === 'vertical'
 											? 'transparent'
