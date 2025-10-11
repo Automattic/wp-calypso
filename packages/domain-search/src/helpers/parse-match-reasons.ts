@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { __, sprintf } from '@wordpress/i18n';
 import { getTld } from './get-tld';
 
 const SLD_EXACT_MATCH = 'exact-match';
@@ -26,19 +26,22 @@ function getMatchReasonPhrasesMap( tld: string ) {
 	return new Map( [
 		[
 			TLD_EXACT_MATCH,
-			translate( 'Extension ".%(tld)s" matches your query', { args: { tld } } ) as string,
+			/* translators: %(tld)s is the TLD */
+			sprintf( __( 'Extension ".%(tld)s" matches your query' ), { tld } ),
 		],
 		[
 			TLD_SIMILAR,
-			translate( 'Extension ".%(tld)s" closely matches your query', { args: { tld } } ) as string,
+			/* translators: %(tld)s is the TLD */
+			sprintf( __( 'Extension ".%(tld)s" closely matches your query' ), { tld } ),
 		],
-		[ 'exact-match', translate( 'Exact match' ) as string ],
-		[ SIMILAR_MATCH, translate( 'Close match' ) as string ],
+		[ 'exact-match', __( 'Exact match' ) ],
+		[ SIMILAR_MATCH, __( 'Close match' ) ],
 		[
 			TLD_COMMON,
 			tld === 'com'
-				? ( translate( '".com" is the most common extension' ) as string )
-				: ( translate( '".%(tld)s" is a common extension', { args: { tld } } ) as string ),
+				? __( '".com" is the most common extension' )
+				: /* translators: %(tld)s is the TLD */
+				  sprintf( __( '".%(tld)s" is a common extension' ), { tld } ),
 		],
 	] );
 }
