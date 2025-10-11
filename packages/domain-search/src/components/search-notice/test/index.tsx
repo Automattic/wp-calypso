@@ -544,12 +544,12 @@ describe( 'SearchNotice', () => {
 			expect( await screen.findByText( 'Information notice' ) ).toBeInTheDocument();
 
 			const [ notice ] = screen.getAllByText(
-				'test-mapped-other-site-same-user.com is already connected to your site other-site.com. If you want to connect it to this site instead, we will be happy to help you do that. Contact us.'
+				'test-mapped-other-site-same-user.com is already connected to your site other-site.com. If you want to connect it to this site instead, we will be happy to help you do that. Contact us .'
 			);
 
 			expect( notice ).toBeInTheDocument();
 
-			expect( screen.getByRole( 'link', { name: 'Contact us.' } ) ).toHaveAttribute(
+			expect( screen.getByRole( 'link', { name: 'Contact us' } ) ).toHaveAttribute(
 				'href',
 				'/help?help-center=home'
 			);
@@ -582,12 +582,12 @@ describe( 'SearchNotice', () => {
 			expect( await screen.findByText( 'Information notice' ) ).toBeInTheDocument();
 
 			const [ notice ] = screen.getAllByText(
-				'test-mapped-other-site-same-user-registrable.com is already connected to your site other-site.com. Register it to the connected site.'
+				'test-mapped-other-site-same-user-registrable.com is already connected to your site other-site.com. Register it to the connected site .'
 			);
 
 			expect( notice ).toBeInTheDocument();
 
-			const cta = screen.getByText( 'Register it to the connected site.' );
+			const cta = screen.getByText( 'Register it to the connected site' );
 
 			expect( cta ).toBeInTheDocument();
 
@@ -659,12 +659,12 @@ describe( 'SearchNotice', () => {
 			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
 
 			const [ notice ] = screen.getAllByText(
-				"test-transfer-pending.com is pending transfer and can't be connected to WordPress.com right now. Learn More."
+				"test-transfer-pending.com is pending transfer and can't be connected to WordPress.com right now. Learn more ."
 			);
 
 			expect( notice ).toBeInTheDocument();
 
-			expect( screen.getByRole( 'link', { name: 'Learn More.' } ) ).toHaveAttribute(
+			expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
 				'href',
 				'https://wordpress.com/support/incoming-domain-transfer/#step-4-check-the-transfer-status'
 			);
