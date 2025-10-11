@@ -83,18 +83,24 @@ function PerformanceCardContentWithTests( {
 	site: Site;
 	page: SitePerformancePage;
 } ) {
-	const { desktopReport, mobileReport, desktopScore, mobileScore } = usePerformanceData(
+	const { getReport, hasCompleted } = usePerformanceData(
 		page.link,
 		page.wpcom_performance_report_hash
 	);
 
-	if ( ! desktopReport || ! mobileReport ) {
+	if ( ! hasCompleted ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( ! desktopScore || ! mobileScore ) {
+	const desktopReport = getReport( 'desktop' );
+	const mobileReport = getReport( 'mobile' );
+
+	if ( ! desktopReport || ! mobileReport ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
+
+	const desktopScore = desktopReport.overall_score;
+	const mobileScore = mobileReport.overall_score;
 
 	const report = desktopScore < mobileScore ? desktopReport : mobileReport;
 	const worseScore = Math.min( desktopScore, mobileScore );

@@ -30,9 +30,9 @@ const isReportRunning = ( report: unknown ) => 'running' === report || 'queued' 
 export function usePerformanceData(
 	url: string | undefined,
 	hash: string | undefined,
-	runNewReport: boolean
+	runNewReport?: boolean
 ): PerformanceData {
-	const shouldFetchToken = runNewReport || ! hash;
+	const shouldFetchToken = runNewReport ?? ! hash;
 
 	const {
 		data: basicMetricsData,
