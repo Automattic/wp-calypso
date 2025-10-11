@@ -32,7 +32,7 @@
 		"checkout/checkout-version": true,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
-		"checkout/razorpay": false,
+		"checkout/razorpay": true,
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
