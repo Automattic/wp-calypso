@@ -2,21 +2,17 @@ import { basicMetricsQuery, sitePerformanceInsightsQuery } from '@automattic/api
 import { useQuery } from '@tanstack/react-query';
 import type { SitePerformanceReport } from '@automattic/api-core';
 
+type ReportType = 'mobile' | 'desktop';
+
 interface PerformanceData {
-	hash: string | undefined;
-	mobileReport: SitePerformanceReport | undefined;
-	desktopReport: SitePerformanceReport | undefined;
-	desktopScore: number | undefined;
-	mobileScore: number | undefined;
-	desktopLoaded: boolean;
-	mobileLoaded: boolean;
-	isLoading: boolean;
-	isDesktopReportRunning: boolean;
-	isMobileReportRunning: boolean;
-	isDesktopReportError: boolean;
-	isMobileReportError: boolean;
-	isError: boolean;
 	refetch: () => void;
+	loadingState: ( reportType: ReportType ) => {
+		isLoading: boolean;
+		message: string | null;
+	} | null;
+	getReport: ( type: ReportType ) => SitePerformanceReport | undefined;
+	hasError: ( type: ReportType ) => boolean;
+	hasCompleted: boolean;
 }
 
 /**
@@ -35,17 +31,21 @@ const isReportRunning = ( report: unknown ) => 'running' === report || 'queued' 
 
 export function usePerformanceData(
 	url: string | undefined,
-	hash: string | undefined
+	hash: string | undefined,
+	runNewReport: boolean
 ): PerformanceData {
+	const shouldFetchToken = runNewReport || ! hash;
+
 	const {
 		data: basicMetricsData,
 		isLoading: isLoadingBasicMetrics,
+		isFetching: isFetchingBasicMetrics,
 		isError: isBasicMetricsError,
 		refetch,
 	} = useQuery( {
 		...basicMetricsQuery( url as string ),
 		refetchOnWindowFocus: false,
-		enabled: !! url && ! hash,
+		enabled: !! url && shouldFetchToken,
 	} );
 
 	const token = basicMetricsData?.token || hash;
@@ -53,12 +53,14 @@ export function usePerformanceData(
 	const {
 		data: performanceData,
 		isLoading: isLoadingPerformanceInsights,
+		isFetching: isFetchingPerformanceInsights,
 		isError: isInsightsError,
 	} = useQuery( {
 		...sitePerformanceInsightsQuery( url as string, token || '' ),
 		refetchOnWindowFocus: false,
 		retry: false,
 		enabled: !! url && !! token,
+		staleTime: 0,
 	} );
 
 	const desktop = performanceData?.pagespeed?.desktop;
@@ -66,20 +68,45 @@ export function usePerformanceData(
 	const desktopLoaded = typeof desktop === 'object';
 	const mobileLoaded = typeof mobile === 'object';
 
+	const getLoadingState = ( reportType: ReportType ) => {
+		// If we have loaded reports, never show loading
+		if ( reportType === 'desktop' ? desktopLoaded : mobileLoaded ) {
+			return { isLoading: false, message: null };
+		}
+
+		if ( shouldFetchToken ) {
+			if ( isLoadingBasicMetrics || isFetchingBasicMetrics ) {
+				return { isLoading: true, message: 'Generating new report token...' };
+			}
+
+			if ( isLoadingPerformanceInsights || isFetchingPerformanceInsights ) {
+				return { isLoading: true, message: 'Running new report...' };
+			}
+
+			if ( isReportRunning( reportType === 'desktop' ? desktop : mobile ) ) {
+				return { isLoading: true, message: 'Running new report...' };
+			}
+		} else if ( isLoadingPerformanceInsights || isFetchingPerformanceInsights ) {
+			return { isLoading: true, message: 'Loading your data...' };
+		}
+
+		return { isLoading: false, message: null };
+	};
+
+	const getReport = ( type: ReportType ): SitePerformanceReport | undefined => {
+		if ( typeof performanceData?.pagespeed[ type ] === 'string' ) {
+			return undefined;
+		}
+
+		return performanceData?.pagespeed[ type ];
+	};
+
 	return {
-		hash: token,
-		mobileReport: mobileLoaded ? mobile : undefined,
-		desktopReport: desktopLoaded ? desktop : undefined,
-		desktopScore: desktop?.overall_score,
-		mobileScore: mobile?.overall_score,
-		desktopLoaded,
-		mobileLoaded,
-		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,
-		isDesktopReportRunning: isReportRunning( desktop ),
-		isMobileReportRunning: isReportRunning( mobile ),
-		isDesktopReportError: isReportFailed( desktop ),
-		isMobileReportError: isReportFailed( mobile ),
-		isError: isBasicMetricsError || isInsightsError,
+		hasError: ( type: ReportType ) =>
+			isReportFailed( getReport( type ) ) || isBasicMetricsError || isInsightsError,
 		refetch,
+		loadingState: getLoadingState,
+		getReport: ( type: ReportType ) => getReport( type ),
+		hasCompleted: getReport( 'desktop' ) !== undefined && getReport( 'mobile' ) !== undefined,
 	};
 }
