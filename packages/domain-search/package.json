@@ -54,7 +54,6 @@
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
-		"i18n-calypso": "workspace:^",
 		"moment": "^2.30.1",
 		"qs": "^6.11.2"
 	},
