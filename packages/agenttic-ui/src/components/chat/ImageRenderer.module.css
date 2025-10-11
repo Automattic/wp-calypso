@@ -28,6 +28,12 @@
 	border-radius: calc(var(--radius-sm) + 1px);
 }
 
+.imageButton.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
 .image {
 	width: 100%;
 	height: auto;

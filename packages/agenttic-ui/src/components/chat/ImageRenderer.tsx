@@ -13,12 +13,14 @@ export interface ImageRendererProps {
 	images: ImageData[];
 	onSelect: ( image: ImageData | null ) => void;
 	header?: string | React.ReactNode;
+	disabled?: boolean;
 }
 
 export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 	images,
 	onSelect,
 	header,
+	disabled = false,
 } ) => {
 	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
 
@@ -50,12 +52,16 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 						key={ image.url }
 						className={ cn(
 							styles.imageButton,
-							selectedUrl === image.url ? styles.selected : ''
+							! disabled && selectedUrl === image.url
+								? styles.selected
+								: '',
+							disabled ? styles.disabled : ''
 						) }
 						onClick={ ( e ) => {
 							e.stopPropagation();
 							handleImageClick( image );
 						} }
+						disabled={ disabled }
 						type="button"
 					>
 						<img
