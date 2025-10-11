@@ -5,14 +5,12 @@ import type { SitePerformanceReport } from '@automattic/api-core';
 type ReportType = 'mobile' | 'desktop';
 
 interface PerformanceData {
-	refetch: () => void;
-	loadingState: ( reportType: ReportType ) => {
-		isLoading: boolean;
-		message: string | null;
-	} | null;
+	hasCompleted: boolean;
+	createNewReport: () => void;
 	getReport: ( type: ReportType ) => SitePerformanceReport | undefined;
 	hasError: ( type: ReportType ) => boolean;
-	hasCompleted: boolean;
+	isLoadingExistingReport: ( reportType: ReportType ) => boolean;
+	isLoadingNewReport: ( reportType: ReportType ) => boolean;
 }
 
 /**
@@ -41,7 +39,7 @@ export function usePerformanceData(
 		isLoading: isLoadingBasicMetrics,
 		isFetching: isFetchingBasicMetrics,
 		isError: isBasicMetricsError,
-		refetch,
+		refetch: createNewReport,
 	} = useQuery( {
 		...basicMetricsQuery( url as string ),
 		refetchOnWindowFocus: false,
@@ -63,36 +61,6 @@ export function usePerformanceData(
 		staleTime: 0,
 	} );
 
-	const desktop = performanceData?.pagespeed?.desktop;
-	const mobile = performanceData?.pagespeed?.mobile;
-	const desktopLoaded = typeof desktop === 'object';
-	const mobileLoaded = typeof mobile === 'object';
-
-	const getLoadingState = ( reportType: ReportType ) => {
-		// If we have loaded reports, never show loading
-		if ( reportType === 'desktop' ? desktopLoaded : mobileLoaded ) {
-			return { isLoading: false, message: null };
-		}
-
-		if ( shouldFetchToken ) {
-			if ( isLoadingBasicMetrics || isFetchingBasicMetrics ) {
-				return { isLoading: true, message: 'Generating new report token...' };
-			}
-
-			if ( isLoadingPerformanceInsights || isFetchingPerformanceInsights ) {
-				return { isLoading: true, message: 'Running new report...' };
-			}
-
-			if ( isReportRunning( reportType === 'desktop' ? desktop : mobile ) ) {
-				return { isLoading: true, message: 'Running new report...' };
-			}
-		} else if ( isLoadingPerformanceInsights || isFetchingPerformanceInsights ) {
-			return { isLoading: true, message: 'Loading your data...' };
-		}
-
-		return { isLoading: false, message: null };
-	};
-
 	const getReport = ( type: ReportType ): SitePerformanceReport | undefined => {
 		if ( typeof performanceData?.pagespeed[ type ] === 'string' ) {
 			return undefined;
@@ -101,12 +69,43 @@ export function usePerformanceData(
 		return performanceData?.pagespeed[ type ];
 	};
 
+	const isLoadingExistingReport = ( reportType: ReportType ) => {
+		if ( getReport( reportType ) !== undefined ) {
+			return false;
+		}
+
+		return ! shouldFetchToken && ( isLoadingPerformanceInsights || isFetchingPerformanceInsights );
+	};
+
+	const isLoadingNewReport = ( reportType: ReportType ) => {
+		if ( getReport( reportType ) !== undefined ) {
+			return false;
+		}
+
+		if ( shouldFetchToken ) {
+			if ( isLoadingBasicMetrics || isFetchingBasicMetrics ) {
+				return true;
+			}
+
+			if ( isLoadingPerformanceInsights || isFetchingPerformanceInsights ) {
+				return true;
+			}
+
+			if ( isReportRunning( performanceData?.pagespeed?.[ reportType ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	return {
+		createNewReport,
+		getReport,
+		hasCompleted: !! getReport( 'desktop' ) && !! getReport( 'mobile' ),
 		hasError: ( type: ReportType ) =>
 			isReportFailed( getReport( type ) ) || isBasicMetricsError || isInsightsError,
-		refetch,
-		loadingState: getLoadingState,
-		getReport: ( type: ReportType ) => getReport( type ),
-		hasCompleted: getReport( 'desktop' ) !== undefined && getReport( 'mobile' ) !== undefined,
+		isLoadingExistingReport,
+		isLoadingNewReport,
 	};
 }

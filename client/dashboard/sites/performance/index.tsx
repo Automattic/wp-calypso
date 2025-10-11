@@ -39,6 +39,9 @@ const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
+	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
+	const [ runNewReport, setRunNewReport ] = useState( false );
+
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
 		select: ( s ) => ( {
@@ -48,18 +51,17 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	} );
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
-		refetchOnWindowFocus: false,
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
 	const currentPage = useMemo( () => {
 		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
-	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
-	const [ runNewReport, setRunNewReport ] = useState( false );
+
 	const {
 		hasError,
-		refetch: refetchReport,
-		loadingState,
+		createNewReport,
+		isLoadingExistingReport,
+		isLoadingNewReport,
 		getReport,
 		hasCompleted,
 	} = usePerformanceData(
@@ -72,27 +74,22 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 
 	const handleReportRefetch = async () => {
 		setRunNewReport( true );
-		await refetchReport();
+		await createNewReport();
 		// Once we get a token back, we can refetch the pages to get the updated hash.
 		refetchPages();
 	};
 
-	const currentReport = getReport( deviceToggle );
-
 	useEffect( () => {
-		if ( ! hasCompleted ) {
-			return;
+		if ( hasCompleted ) {
+			setRunNewReport( false );
 		}
-
-		setRunNewReport( false );
 	}, [ hasCompleted ] );
 
 	if ( ! pagesData || ! currentPage ) {
 		return null;
 	}
 
-	console.log( 'loadingState', loadingState( deviceToggle ) );
-
+	const currentReport = getReport( deviceToggle );
 	const { gmtOffset, timezoneString } = siteSettings;
 
 	const renderContent = () => {
@@ -100,8 +97,12 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
 		}
 
-		if ( isFetchingReport || ! currentReport ) {
-			return <ReportLoading isSavedReport={ isFetchingReport } />;
+		if ( isLoadingNewReport( deviceToggle ) ) {
+			return <ReportLoading isSavedReport={ false } />;
+		}
+
+		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport ) {
+			return <ReportLoading isSavedReport />;
 		}
 
 		return (
