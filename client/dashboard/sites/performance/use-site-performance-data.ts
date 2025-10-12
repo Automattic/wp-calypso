@@ -1,12 +1,13 @@
 import { basicMetricsQuery, sitePerformanceInsightsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import type { SitePerformanceReport } from '@automattic/api-core';
+import type { BasicMetricsData, SitePerformanceReport } from '@automattic/api-core';
+import type { QueryObserverResult } from '@tanstack/react-query';
 
 type ReportType = 'mobile' | 'desktop';
 
 interface PerformanceData {
 	hasCompleted: boolean;
-	createNewReport: () => void;
+	createNewReport: () => Promise< QueryObserverResult< BasicMetricsData, Error > >;
 	getReport: ( type: ReportType ) => SitePerformanceReport | undefined;
 	hasError: ( type: ReportType ) => boolean;
 	isLoadingExistingReport: ( reportType: ReportType ) => boolean;
