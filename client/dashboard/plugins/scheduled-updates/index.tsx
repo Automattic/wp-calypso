@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { FormToggle, Tooltip, Icon } from '@wordpress/components';
 import { useNavigate } from '@tanstack/react-router';
+import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
