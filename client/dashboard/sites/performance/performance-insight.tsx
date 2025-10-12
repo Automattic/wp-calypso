@@ -45,13 +45,17 @@ export const PerformanceInsightTitle = ( {
 	const intent = insight.type === 'fail' ? 'error' : 'warning';
 
 	return (
-		<HStack style={ { minHeight: isMediumScreen ? '40px' : 'auto' } }>
+		<HStack
+			alignment={ isSmallScreen ? 'flex-start' : 'center' }
+			style={ {
+				minHeight: isMediumScreen ? '40px' : 'auto',
+				flexDirection: isSmallScreen ? 'column-reverse' : 'row',
+			} }
+		>
 			<HStack justify="flex-start" alignment={ isMediumScreen ? 'flex-start' : 'center' }>
-				{ ! isSmallScreen && (
-					<Text intent={ intent } size={ 15 } weight={ 500 }>
-						{ index }
-					</Text>
-				) }
+				<Text intent={ intent } size={ 15 } weight={ 500 }>
+					{ index }
+				</Text>
 				<HStack
 					justify="flex-start"
 					alignment={ isMediumScreen ? 'flex-start' : 'center' }
@@ -135,7 +139,7 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 		}
 
 		return (
-			<>
+			<HStack wrap>
 				<Text>{ __( 'How did we do?' ) }</Text>
 				<Button
 					icon={ thumbsUp }
@@ -188,7 +192,7 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 						</form>
 					</Modal>
 				) }
-			</>
+			</HStack>
 		);
 	};
 
