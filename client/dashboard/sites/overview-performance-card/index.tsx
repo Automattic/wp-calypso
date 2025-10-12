@@ -4,12 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { usePerformanceData } from '../../app/hooks/site-performance';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
+import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -83,7 +83,7 @@ function PerformanceCardContentWithTests( {
 	site: Site;
 	page: SitePerformancePage;
 } ) {
-	const { getReport, hasCompleted } = usePerformanceData(
+	const { getReport, hasCompleted } = useSitePerformanceData(
 		page.link,
 		page.wpcom_performance_report_hash
 	);

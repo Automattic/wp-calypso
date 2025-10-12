@@ -10,7 +10,6 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -25,6 +24,7 @@ import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
 import Subtitle from './subtitle';
+import { useSitePerformanceData } from './use-site-performance-data';
 import type { DeviceToggleType } from './types';
 import type { Site, SitePerformancePage } from '@automattic/api-core';
 
@@ -64,7 +64,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		isLoadingNewReport,
 		getReport,
 		hasCompleted,
-	} = usePerformanceData(
+	} = useSitePerformanceData(
 		currentPage?.link,
 		currentPage?.wpcom_performance_report_hash,
 		runNewReport

@@ -27,7 +27,7 @@ const isReportFailed = ( report: unknown ) => report === 'failed';
  */
 const isReportRunning = ( report: unknown ) => 'running' === report || 'queued' === report;
 
-export function usePerformanceData(
+export function useSitePerformanceData(
 	url: string | undefined,
 	hash: string | undefined,
 	runNewReport?: boolean
