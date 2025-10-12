@@ -40,21 +40,31 @@ export const PerformanceInsightTitle = ( {
 	index: number;
 	isHightImpact: boolean;
 } ) => {
+	const isMediumScreen = useViewportMatch( 'medium', '<' );
+	const isSmallScreen = useViewportMatch( 'small', '<' );
 	const intent = insight.type === 'fail' ? 'error' : 'warning';
 
 	return (
-		<HStack>
-			<HStack justify="flex-start">
-				<Text intent={ intent } size={ 15 } weight={ 500 }>
-					{ index }
-				</Text>
-				<Text>{ insight.title }</Text>
-				{ insight.displayValue && (
-					<>
-						<Text>&nbsp;&minus;&nbsp;</Text>
-						<Text intent={ intent }>{ insight.displayValue }</Text>
-					</>
+		<HStack style={ { minHeight: isMediumScreen ? '40px' : 'auto' } }>
+			<HStack justify="flex-start" alignment={ isMediumScreen ? 'flex-start' : 'center' }>
+				{ ! isSmallScreen && (
+					<Text intent={ intent } size={ 15 } weight={ 500 }>
+						{ index }
+					</Text>
 				) }
+				<HStack
+					justify="flex-start"
+					alignment={ isMediumScreen ? 'flex-start' : 'center' }
+					direction={ isMediumScreen ? 'column' : 'row' }
+				>
+					<Text lineHeight={ isMediumScreen ? '17px' : 'unset' }>{ insight.title }</Text>
+					{ insight.displayValue && (
+						<>
+							{ ! isMediumScreen && <Text>&nbsp;&minus;&nbsp;</Text> }
+							<Text intent={ intent }>{ insight.displayValue }</Text>
+						</>
+					) }
+				</HStack>
 			</HStack>
 			{ isHightImpact && (
 				<Badge intent="error" style={ { flexShrink: 0 } }>
