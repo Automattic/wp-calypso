@@ -4,6 +4,7 @@ import { Link, useRouter } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	domainRoute,
 	domainForwardingAddRoute,
@@ -148,7 +149,7 @@ function DomainForwarding() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Domain forwarding' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					actions={
 						<RouterLinkButton
 							to={ domainForwardingAddRoute.fullPath }

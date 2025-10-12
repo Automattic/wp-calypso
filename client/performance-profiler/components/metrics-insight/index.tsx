@@ -1,21 +1,20 @@
+import { odieAssistantPerformanceProfilerQuery } from '@automattic/api-queries';
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import {
-	FullPageScreenshot,
-	PerformanceMetricsItemQueryResponse,
-} from 'calypso/data/site-profiler/types';
+import { FullPageScreenshot } from 'calypso/data/site-profiler/types';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { useDeviceTab } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { Tip } from 'calypso/performance-profiler/components/tip';
-import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
 import { loggedInTips, tips } from 'calypso/performance-profiler/utils/tips';
 import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
 
 interface MetricsInsightProps {
-	insight: PerformanceMetricsItemQueryResponse;
+	insight: PerformanceMetricAudit;
 	fullPageScreenshot: FullPageScreenshot;
 	onClick?: () => void;
 	index: number;
@@ -104,14 +103,16 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		data: llmAnswer,
 		isLoading,
 		isFetched,
-	} = useSupportChatLLMQuery(
-		insight,
-		hash,
-		isWpcom,
-		retrieveInsight,
-		translate.localeSlug,
-		activeTab
-	);
+	} = useQuery( {
+		...odieAssistantPerformanceProfilerQuery( {
+			hash,
+			insight,
+			isWpcom,
+			locale: translate.localeSlug,
+			device: activeTab,
+		} ),
+		enabled: retrieveInsight && !! insight.title,
+	} );
 
 	const { data } = useUrlPerformanceInsightsQuery( url, hash );
 	const wpscanErrors = data?.wpscan?.errors;

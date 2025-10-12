@@ -1,10 +1,14 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { FormToggle, Tooltip, Icon } from '@wordpress/components';
+import { useNavigate } from '@tanstack/react-router';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { pluginsScheduledUpdatesNewRoute } from '../../app/router/plugins';
+import {
+	pluginsScheduledUpdatesEditRoute,
+	pluginsScheduledUpdatesNewRoute,
+} from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -116,7 +120,7 @@ export const defaultView: View = {
 export default function PluginsScheduledUpdates() {
 	const [ view, setView ] = useState( defaultView );
 	const locale = useLocale();
-
+	const navigate = useNavigate();
 	const fields = useMemo( () => getFields( locale ), [ locale ] );
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
@@ -165,7 +169,13 @@ export default function PluginsScheduledUpdates() {
 							id: 'edit',
 							label: __( 'Edit' ),
 							isPrimary: true,
-							callback: () => {},
+							callback: ( items ) => {
+								const item = items[ 0 ];
+								navigate( {
+									to: pluginsScheduledUpdatesEditRoute.fullPath,
+									params: { scheduleId: item?.scheduleId },
+								} );
+							},
 						},
 						{
 							id: 'remove',

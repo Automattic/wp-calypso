@@ -1,33 +1,42 @@
+import { odieAssistantPerformanceProfilerQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
 	Button,
 	ExternalLink,
+	Modal,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
+import { useState } from 'react';
 import Markdown from 'react-markdown';
-import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query'; // eslint-disable-line
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
+import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import LLMNotice from './llm-notice';
+import PerformanceInsightTable from './performance-insight-table';
 import useLoadingSteps from './use-loading-steps';
+import type { DeviceToggleType } from './types';
 import type {
-	PerformanceMetricsItemQueryResponse,
-	PerformanceMetricsDetailsQueryResponse,
-	DeviceToggleType,
-} from './types';
-import type { SitePerformanceReport } from '@automattic/api-core';
+	SitePerformanceReport,
+	PerformanceMetricAudit,
+	PerformanceMetricAuditDetails,
+} from '@automattic/api-core';
+import './performance-insight.scss';
 
 export const PerformanceInsightTitle = ( {
 	insight,
 	index,
 	isHightImpact,
 }: {
-	insight: PerformanceMetricsItemQueryResponse;
+	insight: PerformanceMetricAudit;
 	index: number;
 	isHightImpact: boolean;
 } ) => {
@@ -88,48 +97,125 @@ const PerformanceInsightTip = () => {
 	);
 };
 
-// TODO: Implement click behavior.
-const PerformanceInsightFeedback = () => {
-	return (
-		<LLMNotice
-			actions={
-				<>
-					<Text>{ __( 'How did we do?' ) }</Text>
-					<Button
-						icon={ thumbsUp }
-						iconSize={ 16 }
-						size="compact"
-						style={ { padding: '2px', color: 'var(--dashboard__foreground-color-success)' } }
+const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: string } ) => {
+	const { recordTracksEvent } = useAnalytics();
+	const [ isSent, setIsSent ] = useState( false );
+	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
+	const [ formData, setFormData ] = useState( {
+		userFeedback: '',
+	} );
+
+	const handleSubmit = ( rating: 'good' | 'bad', userFeedback?: string ) => {
+		recordTracksEvent( 'calypso_dashboard_performance_profiler_llm_feedback_click', {
+			chat_id: chatId,
+			version: 'logged-in',
+			hash,
+			rating,
+			...( userFeedback && { user_feedback: userFeedback } ),
+		} );
+
+		setIsSent( true );
+	};
+
+	const handleCloseFeedbackModal = () => setIsFeedbackModalOpen( false );
+
+	const renderActions = () => {
+		if ( isSent ) {
+			return <Text>{ __( 'Thanks for the feedback!' ) }</Text>;
+		}
+
+		return (
+			<>
+				<Text>{ __( 'How did we do?' ) }</Text>
+				<Button
+					icon={ thumbsUp }
+					iconSize={ 16 }
+					size="compact"
+					style={ { padding: '2px', color: 'var(--dashboard__foreground-color-success)' } }
+					onClick={ () => handleSubmit( 'good' ) }
+				>
+					{ __( 'Good, it‘s helpful' ) }
+				</Button>
+				<Button
+					icon={ thumbsDown }
+					iconSize={ 16 }
+					size="compact"
+					style={ { padding: '2px', color: 'var(--dashboard__foreground-color-error)' } }
+					onClick={ () => setIsFeedbackModalOpen( true ) }
+				>
+					{ __( 'Not helpful' ) }
+				</Button>
+				{ isFeedbackModalOpen && (
+					<Modal
+						title={ __( 'Tell us more about your experience' ) }
+						size="medium"
+						onRequestClose={ handleCloseFeedbackModal }
 					>
-						{ __( 'Good, it‘s helpful' ) }
-					</Button>
-					<Button
-						icon={ thumbsDown }
-						iconSize={ 16 }
-						size="compact"
-						style={ { padding: '2px', color: 'var(--dashboard__foreground-color-error)' } }
-					>
-						{ __( 'Not helpful' ) }
-					</Button>
-				</>
-			}
-		>
-			{ __( 'Generated with AI' ) }
-		</LLMNotice>
-	);
+						<form onSubmit={ () => handleSubmit( 'bad', formData.userFeedback ) }>
+							<VStack spacing={ 6 }>
+								<DataForm< { userFeedback: string } >
+									data={ formData }
+									fields={ [
+										{
+											id: 'userFeedback',
+											label: __( 'Feedback' ),
+											type: 'text',
+											Edit: 'textarea',
+										},
+									] }
+									form={ { layout: { type: 'regular' as const }, fields: [ 'userFeedback' ] } }
+									onChange={ ( edits: Partial< { userFeedback: string } > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<ButtonStack justify="flex-end">
+									<Button onClick={ handleCloseFeedbackModal }>{ __( 'Cancel' ) }</Button>
+									<Button variant="primary" type="submit">
+										{ __( 'Submit' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					</Modal>
+				) }
+			</>
+		);
+	};
+
+	return <LLMNotice actions={ renderActions() }>{ __( 'Generated with AI' ) }</LLMNotice>;
 };
 
-// TODO: Implement detail.
 const PerformanceInsightDetail = ( {
 	details,
 	fullPageScreenshot,
 }: {
-	details: PerformanceMetricsDetailsQueryResponse;
+	details: PerformanceMetricAuditDetails;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 } ) => {
-	console.log( { details, fullPageScreenshot } ); // eslint-disable-line no-console
+	if ( details.type === 'table' || details.type === 'opportunity' ) {
+		return (
+			<PerformanceInsightTable details={ details } fullPageScreenshot={ fullPageScreenshot } />
+		);
+	}
 
-	return <>Performance Insight Detail</>;
+	if ( details.type === 'list' ) {
+		const tables = details.items ?? [];
+
+		return tables.map( ( item, index ) => (
+			<PerformanceInsightTable
+				key={ index }
+				details={ item as unknown as PerformanceMetricAuditDetails }
+				fullPageScreenshot={ fullPageScreenshot }
+			/>
+		) );
+	}
+
+	if ( details.type === 'criticalrequestchain' ) {
+		// TODO: We should render the insight tree but I cannot find any sample data...
+		return null;
+	}
+
+	return null;
 };
 
 export const PerformanceInsight = ( {
@@ -141,7 +227,7 @@ export const PerformanceInsight = ( {
 	showTip,
 }: {
 	device: DeviceToggleType;
-	insight: PerformanceMetricsItemQueryResponse;
+	insight: PerformanceMetricAudit;
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ];
 	isWpcom: boolean;
 	hash: string;
@@ -149,14 +235,16 @@ export const PerformanceInsight = ( {
 } ) => {
 	const locale = useLocale();
 	const isDesktop = useViewportMatch( 'medium' );
-	const { data: llmAnswer } = useSupportChatLLMQuery(
-		insight,
-		hash,
-		isWpcom,
-		true,
-		locale,
-		device
-	);
+	const { data: llmAnswer } = useQuery( {
+		...odieAssistantPerformanceProfilerQuery( {
+			hash,
+			insight,
+			isWpcom,
+			locale,
+			device,
+		} ),
+		enabled: !! insight,
+	} );
 
 	return (
 		<VStack spacing={ 4 } style={ { padding: '0 16px' } }>
@@ -167,25 +255,27 @@ export const PerformanceInsight = ( {
 						spacing={ 4 }
 						style={ { flexWrap: isDesktop ? 'nowrap' : 'wrap-reverse' } }
 					>
-						<div>
-							<Markdown
-								components={ {
-									a( props ) {
-										return <a target="_blank" { ...props } />;
-									},
-								} }
-							>
-								{ llmAnswer.messages }
-							</Markdown>
-						</div>
+						<Markdown
+							className="performance-insight__markdown"
+							components={ {
+								a( props ) {
+									return <a target="_blank" { ...props } />;
+								},
+							} }
+						>
+							{ llmAnswer.messages }
+						</Markdown>
 						{ showTip && <PerformanceInsightTip /> }
 					</HStack>
-					<PerformanceInsightFeedback />
+					<PerformanceInsightFeedback chatId={ llmAnswer.chatId } hash={ hash } />
 					{ insight.details?.type && (
-						<PerformanceInsightDetail
-							details={ insight.details }
-							fullPageScreenshot={ fullPageScreenshot }
-						/>
+						<>
+							<Spacer marginBottom={ 0 } />
+							<PerformanceInsightDetail
+								details={ insight.details }
+								fullPageScreenshot={ fullPageScreenshot }
+							/>
+						</>
 					) }
 				</>
 			) : (

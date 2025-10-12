@@ -754,10 +754,10 @@ export function LineItemSublabelAndPrice( {
 		isTitanMail( product )
 	) {
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			const billingInterval = GetBillingIntervalLabel( { product } );
 			return (
 				<>
-					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+					<DefaultLineItemSublabel product={ product } />:{ ' ' }
+					<GetBillingIntervalLabel product={ product } />
 					<LineItemExpiryDates product={ product } />
 				</>
 			);
@@ -833,7 +833,9 @@ export function LineItemSublabelAndPrice( {
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
 				{ ! product.is_included_for_100yearplan && (
-					<>: { GetBillingIntervalLabel( { product } ) }</>
+					<>
+						: <GetBillingIntervalLabel product={ product } />
+					</>
 				) }
 				<LineItemExpiryDates product={ product } />
 			</>

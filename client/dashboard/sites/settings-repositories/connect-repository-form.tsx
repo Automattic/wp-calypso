@@ -4,8 +4,11 @@ import {
 	githubRepositoryBranchesQuery,
 	githubRepositoryChecksQuery,
 	githubWorkflowsQuery,
+	siteBySlugQuery,
+	codeDeploymentsQuery,
 } from '@automattic/api-queries';
-import { useQuery, UseMutationResult } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	ComboboxControl,
@@ -18,10 +21,13 @@ import {
 	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
@@ -31,8 +37,11 @@ import type {
 	CreateAndUpdateCodeDeploymentVariables,
 	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
+import type { NavigateOptions } from '@tanstack/react-router';
 
 interface ConnectRepositoryFormProps {
+	formTitle: string;
+	formDescription: React.ReactNode;
 	onCancel: () => void;
 	mutation: UseMutationResult<
 		CreateAndUpdateCodeDeploymentResponse,
@@ -42,6 +51,9 @@ interface ConnectRepositoryFormProps {
 	>;
 	initialValues: ConnectRepositoryFormData;
 	submitText: string;
+	successMessage: string;
+	errorMessage: string;
+	navigateFrom: NavigateOptions[ 'from' ];
 }
 
 export interface ConnectRepositoryFormData {
@@ -169,11 +181,20 @@ const AutomatedToggle = ( {
 };
 
 export const ConnectRepositoryForm = ( {
+	formTitle,
+	formDescription,
 	onCancel,
 	mutation,
 	initialValues,
 	submitText,
+	successMessage,
+	errorMessage,
+	navigateFrom,
 }: ConnectRepositoryFormProps ) => {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const navigate = useNavigate( { from: navigateFrom } );
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const {
 		data: installations = [],
 		refetch: refetchGithubInstallations,
@@ -206,14 +227,6 @@ export const ConnectRepositoryForm = ( {
 		return repositories.find( ( repository ) => repository.id === formData.selectedRepositoryId );
 	}, [ repositories, formData.selectedRepositoryId ] );
 
-	useEffect( () => {
-		if ( selectedRepository?.default_branch ) {
-			setFormData( ( prev ) => ( { ...prev, branch: selectedRepository.default_branch } ) );
-		} else if ( ! selectedRepository ) {
-			setFormData( ( prev ) => ( { ...prev, branch: '' } ) );
-		}
-	}, [ selectedRepository ] );
-
 	const { data: remoteBranches = [], isLoading: isLoadingBranches } = useQuery( {
 		...githubRepositoryBranchesQuery(
 			selectedInstallation?.external_id ?? 0,
@@ -222,6 +235,27 @@ export const ConnectRepositoryForm = ( {
 		),
 		enabled: !! selectedInstallation && !! selectedRepository,
 	} );
+
+	const { data: existingDeployments = [] } = useQuery( codeDeploymentsQuery( site.ID ) );
+
+	const connectedBranchesForSelectedRepo = useMemo( () => {
+		if ( ! selectedRepository ) {
+			return new Set< string >();
+		}
+		let connected = existingDeployments
+			.filter( ( d ) => d.external_repository_id === selectedRepository.id )
+			.map( ( d ) => d.branch_name );
+		// When editing a connection, remove the initialValue branch from the connected branches, so it's a valid option
+		if ( selectedRepository.id === initialValues.selectedRepositoryId ) {
+			connected = connected.filter( ( branch ) => branch !== initialValues.branch );
+		}
+		return new Set( connected );
+	}, [
+		existingDeployments,
+		selectedRepository,
+		initialValues.selectedRepositoryId,
+		initialValues.branch,
+	] );
 
 	const { data: workflows = [] } = useQuery( {
 		...githubWorkflowsQuery(
@@ -280,6 +314,22 @@ export const ConnectRepositoryForm = ( {
 				if ( updates.selectedRepositoryId === '' ) {
 					newFormData.deploymentMode = 'simple';
 					newFormData.workflowPath = '';
+				} else {
+					// When a repository is selected, consider auto-selecting its default branch
+					const newlySelectedRepo = repositories.find(
+						( repo ) => repo.id === updates.selectedRepositoryId
+					);
+					const defaultBranch = newlySelectedRepo?.default_branch;
+					if ( defaultBranch ) {
+						const connectedForNewRepo = new Set(
+							existingDeployments
+								.filter( ( d ) => d.external_repository_id === updates.selectedRepositoryId )
+								.map( ( d ) => d.branch_name )
+						);
+						if ( ! connectedForNewRepo.has( defaultBranch ) ) {
+							newFormData.branch = defaultBranch;
+						}
+					}
 				}
 			}
 
@@ -288,13 +338,13 @@ export const ConnectRepositoryForm = ( {
 	};
 
 	useEffect( () => {
-		if ( ! repositoryChecks?.suggested_directory ) {
+		if ( ! repositoryChecks?.suggested_directory || formData.targetDir ) {
 			return;
 		}
 
 		// Only update target directory when repository changes, not when branch changes
 		setFormData( ( prev ) => ( { ...prev, targetDir: repositoryChecks.suggested_directory } ) );
-	}, [ repositoryChecks?.suggested_directory, selectedRepository?.id ] );
+	}, [ repositoryChecks?.suggested_directory, formData.targetDir ] );
 
 	const handleSubmit = async () => {
 		if (
@@ -318,15 +368,51 @@ export const ConnectRepositoryForm = ( {
 			mutationData.workflow_path = formData.workflowPath || '.github/workflows/wpcom.yml';
 		}
 
-		await mutation.mutateAsync( mutationData );
+		await mutation.mutateAsync( mutationData, {
+			onSuccess: async () => {
+				createSuccessNotice( successMessage, {
+					type: 'snackbar',
+				} );
+				navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+			},
+			onError: ( error ) => {
+				createErrorNotice( sprintf( errorMessage, { reason: error.message } ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	const branchOptions = useMemo( () => {
-		return remoteBranches.map( ( branchName ) => ( {
-			label: branchName,
-			value: branchName,
-		} ) );
-	}, [ remoteBranches ] );
+		if ( ! remoteBranches ) {
+			return [];
+		}
+
+		return remoteBranches.map( ( branchName ) => {
+			const isConnected = connectedBranchesForSelectedRepo.has( branchName );
+			return {
+				label: isConnected ? `${ branchName } ${ __( '(already connected)' ) }` : branchName,
+				value: branchName,
+				disabled: isConnected,
+			} as const;
+		} );
+	}, [ remoteBranches, connectedBranchesForSelectedRepo ] );
+
+	const allBranchesConnected = useMemo( () => {
+		if ( ! remoteBranches || remoteBranches.length === 0 ) {
+			return false;
+		}
+		return remoteBranches.every( ( branchName ) =>
+			connectedBranchesForSelectedRepo.has( branchName )
+		);
+	}, [ remoteBranches, connectedBranchesForSelectedRepo ] );
+
+	const isDuplicateSelection = useMemo( () => {
+		if ( ! selectedRepository || ! formData.branch ) {
+			return false;
+		}
+		return connectedBranchesForSelectedRepo.has( formData.branch );
+	}, [ connectedBranchesForSelectedRepo, selectedRepository, formData.branch ] );
 
 	const installationOptions = useMemo( () => {
 		return installations.map( ( installation ) => ( {
@@ -370,7 +456,8 @@ export const ConnectRepositoryForm = ( {
 		selectedInstallation &&
 		formData.branch &&
 		formData.targetDir &&
-		isAdvancedValid
+		isAdvancedValid &&
+		! isDuplicateSelection
 	);
 
 	const handleAddGitHubAccount = useCallback( () => {
@@ -423,7 +510,7 @@ export const ConnectRepositoryForm = ( {
 					);
 				},
 				elements: installationOptions,
-				help: installationHelpText,
+				description: installationHelpText,
 			},
 			{
 				id: 'selectedRepositoryId',
@@ -431,7 +518,7 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: RepositorySelector,
 				elements: repositoryOptions,
-				help: repositoryHelpText,
+				description: repositoryHelpText,
 			},
 			{
 				id: 'branch',
@@ -439,17 +526,23 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: 'select',
 				elements: branchOptions,
-				help: isLoadingBranches
-					? __( 'Loading branches…' )
-					: __( 'Select the branch to deploy from this repository.' ),
-				disabled: () => ! selectedRepository || isLoadingBranches,
+				description: ( () => {
+					if ( isLoadingBranches ) {
+						return __( 'Loading branches…' );
+					}
+					if ( allBranchesConnected ) {
+						return __(
+							'All branches for this repository are already connected. Please create a new branch or select a different repository.'
+						);
+					}
+					return __( 'Select the branch to deploy from this repository.' );
+				} )(),
 			},
 			{
 				id: 'targetDir',
 				label: __( 'Destination directory' ),
 				type: 'text' as const,
-				help: __( 'This path is relative to the server root.' ),
-				disabled: () => ! selectedRepository,
+				description: __( 'This path is relative to the server root.' ),
 			},
 			{
 				id: 'isAutomated',
@@ -465,8 +558,8 @@ export const ConnectRepositoryForm = ( {
 		repositoryHelpText,
 		branchOptions,
 		isLoadingBranches,
-		selectedRepository,
 		handleAddGitHubAccount,
+		allBranchesConnected,
 	] );
 
 	if ( isLoadingInstallations ) {
@@ -497,59 +590,66 @@ export const ConnectRepositoryForm = ( {
 
 	return (
 		<>
-			<DataForm< ConnectRepositoryFormData >
-				// Force a re-render when the repository changes
-				// Otherwise, the fields that have validation errors will not be reset
-				key={ formData.selectedRepositoryId }
-				data={ formData }
-				fields={ fields }
-				form={ {
-					layout: { type: 'regular' as const },
-					fields: [
-						'selectedInstallationId',
-						'selectedRepositoryId',
-						'branch',
-						'targetDir',
-						'isAutomated',
-					],
-				} }
-				onChange={ handleChange }
-			/>
+			<SectionHeader level={ 3 } title={ formTitle } description={ formDescription } />
+			<VStack spacing={ 6 }>
+				<DataForm< ConnectRepositoryFormData >
+					// Force a re-render when the repository changes
+					// Otherwise, the fields that have validation errors will not be reset
+					key={ formData.selectedRepositoryId }
+					data={ formData }
+					fields={ fields }
+					form={ {
+						layout: { type: 'regular' as const },
+						fields: [
+							'selectedInstallationId',
+							'selectedRepositoryId',
+							'branch',
+							'targetDir',
+							'isAutomated',
+						],
+					} }
+					onChange={ handleChange }
+				/>
 
-			<SectionHeader
-				level={ 3 }
-				title={ __( 'Pick your deployment mode' ) }
-				description={ __(
-					'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
-				) }
-			/>
+				<div>
+					<SectionHeader
+						level={ 3 }
+						title={ __( 'Pick your deployment mode' ) }
+						description={ __(
+							'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+						) }
+					/>
 
-			<RadioControl
-				selected={ formData.deploymentMode }
-				onChange={ ( value ) => handleChange( { deploymentMode: value as 'simple' | 'advanced' } ) }
-				options={ [
-					{ label: __( 'Simple' ), value: 'simple' },
-					{ label: __( 'Advanced' ), value: 'advanced' },
-				] }
-				disabled={ ! selectedRepository }
-			/>
+					<RadioControl
+						selected={ formData.deploymentMode }
+						onChange={ ( value ) =>
+							handleChange( { deploymentMode: value as 'simple' | 'advanced' } )
+						}
+						options={ [
+							{ label: __( 'Simple' ), value: 'simple' },
+							{ label: __( 'Advanced' ), value: 'advanced' },
+						] }
+						disabled={ ! selectedRepository }
+					/>
+				</div>
 
-			{ isAdvancedSelected && renderAdvancedWorkflow() }
+				{ isAdvancedSelected && renderAdvancedWorkflow() }
 
-			<HStack justify="flex-end">
-				<Button variant="tertiary" onClick={ onCancel }>
-					{ __( 'Cancel' ) }
-				</Button>
-				<Button
-					variant="primary"
-					onClick={ handleSubmit }
-					isBusy={ mutation.isPending }
-					disabled={ ! isFormValid || mutation.isPending }
-					__next40pxDefaultSize
-				>
-					{ submitText }
-				</Button>
-			</HStack>
+				<HStack justify="flex-end">
+					<Button variant="tertiary" onClick={ onCancel }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						onClick={ handleSubmit }
+						isBusy={ mutation.isPending }
+						disabled={ ! isFormValid || mutation.isPending }
+						__next40pxDefaultSize
+					>
+						{ submitText }
+					</Button>
+				</HStack>
+			</VStack>
 		</>
 	);
 };

@@ -1,0 +1,26 @@
+.choose-domain__itemlist {
+	background: #fff;
+	border-radius: 8px;
+}
+
+/* Ensure the text inside each item is 16px */
+.choose-domain__itemlist .components-item {
+	height: 56px;
+	display: flex;
+	padding: 0 24px;
+	font-size: 14px;
+}
+
+/* Chevron icon color */
+.choose-domain__icon {
+	color: #757575;
+	fill: #757575; /* fallback for SVGs not using currentColor */
+	stroke: #757575; /* extra safety for stroke-based icons */
+}
+
+/* Ensure SearchControl input spans full width */
+.choose-domain__itemlist .components-item .searchbox {
+	width: 100%;
+	padding-top: 8px;
+	box-sizing: border-box;
+}

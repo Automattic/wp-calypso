@@ -1,10 +1,12 @@
 import {
-	userNotificationsExtrasSettingsMutation,
+	userNotificationsSettingsMutation,
 	userNotificationsSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -21,8 +23,10 @@ import type { WpcomNotificationSettings } from '@automattic/api-core';
 
 export default function NotificationsExtras() {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
+	const { recordTracksEvent } = useAnalytics();
+
 	const mutation = useMutation( {
-		...userNotificationsExtrasSettingsMutation(),
+		...userNotificationsSettingsMutation(),
 		meta: {
 			snackbar: {
 				success: __( 'Subscription settings saved.' ),
@@ -31,11 +35,37 @@ export default function NotificationsExtras() {
 		},
 	} );
 
-	const extraSettings: Partial< WpcomNotificationSettings > | undefined = data?.wpcom;
+	const extraSettings: WpcomNotificationSettings = data.wpcom;
 	const isSaving = mutation.isPending;
-	const onMutate = ( payload: Partial< WpcomNotificationSettings > ) => {
-		mutation.mutate( payload );
-	};
+	const onMutate =
+		( group: 'wpcom' | 'jetpack' ) =>
+		(
+			payload: Partial< WpcomNotificationSettings >,
+			origin: 'subscribe-all' | 'unsubscribe-all' | 'single'
+		) => {
+			if ( origin === 'subscribe-all' ) {
+				recordTracksEvent( 'calypso_dashboard_notifications_settings_subscribe_all', {
+					settings_group: group,
+				} );
+			}
+
+			if ( origin === 'unsubscribe-all' ) {
+				recordTracksEvent( 'calypso_dashboard_notifications_settings_unsubscribe_all', {
+					settings_group: group,
+				} );
+			}
+
+			Object.entries( payload ).forEach( ( [ key, value ] ) => {
+				recordTracksEvent( 'calypso_dashboard_notifications_settings_subscribe_update', {
+					settings_name: key,
+					settings_value: value as boolean,
+					settings_group: group,
+					update_mechanism: origin,
+				} );
+			} );
+
+			mutation.mutate( { data: { wpcom: payload } } );
+		};
 
 	return (
 		<PageLayout
@@ -43,6 +73,7 @@ export default function NotificationsExtras() {
 			header={
 				<PageHeader
 					title={ __( 'Extras' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ __(
 						'Get curated extras like reports, digests, and community updates, so you can stay tuned for what’s happening in the WordPress ecosystem.'
 					) }
@@ -53,7 +84,7 @@ export default function NotificationsExtras() {
 				<ExtrasToggleCard
 					extraSettings={ extraSettings }
 					isSaving={ isSaving }
-					onMutate={ onMutate }
+					onMutate={ onMutate( 'wpcom' ) }
 					optionKeys={ WPCOM_OPTION_KEYS }
 					titles={ WPCOM_TITLES }
 					descriptions={ WPCOM_DESCRIPTIONS }
@@ -63,7 +94,7 @@ export default function NotificationsExtras() {
 				<ExtrasToggleCard
 					extraSettings={ extraSettings }
 					isSaving={ isSaving }
-					onMutate={ onMutate }
+					onMutate={ onMutate( 'jetpack' ) }
 					optionKeys={ JETPACK_OPTION_KEYS }
 					titles={ JETPACK_TITLES }
 					descriptions={ JETPACK_DESCRIPTIONS }

@@ -25,7 +25,7 @@ export interface DomainAvailability {
 	/**
 	 * Whether the domain is a supported premium domain
 	 */
-	is_supported_premium_domain?: true;
+	is_supported_premium_domain?: boolean;
 
 	/**
 	 * Whether the domain price exceeds the limit

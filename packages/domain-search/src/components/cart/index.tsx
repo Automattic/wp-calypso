@@ -1,22 +1,12 @@
-import { useIsMutating } from '@tanstack/react-query';
 import { useLayoutEffect } from 'react';
 import { useDomainSearch } from '../../page/context';
-import {
-	DomainsFullCart,
-	DomainsFullCartItems,
-	DomainsFullCartSkipButton,
-	DomainsMiniCart,
-} from '../../ui';
-import { CartItem } from './item';
+import { FullCart } from './full-cart';
+import { MiniCart } from './mini-cart';
 
 export const Cart = () => {
-	const { cart, isFullCartOpen, closeFullCart, config, events, openFullCart, slots } =
-		useDomainSearch();
-
-	const isMutating = !! useIsMutating();
+	const { cart, isFullCartOpen, closeFullCart } = useDomainSearch();
 
 	const totalItems = cart.items.length;
-	const totalPrice = cart.total;
 
 	useLayoutEffect( () => {
 		if ( totalItems === 0 && isFullCartOpen ) {
@@ -26,34 +16,8 @@ export const Cart = () => {
 
 	return (
 		<>
-			<DomainsMiniCart
-				isMiniCartOpen={ ! isFullCartOpen && totalItems > 0 }
-				totalItems={ totalItems }
-				totalPrice={ totalPrice }
-				openFullCart={ openFullCart }
-				onContinue={ events.onContinue }
-				isCartBusy={ isMutating }
-			/>
-			<DomainsFullCart
-				isFullCartOpen={ isFullCartOpen }
-				closeFullCart={ closeFullCart }
-				onContinue={ events.onContinue }
-				isCartBusy={ isMutating }
-				totalItems={ totalItems }
-				totalPrice={ totalPrice }
-			>
-				{ slots?.BeforeFullCartItems && <slots.BeforeFullCartItems /> }
-				<DomainsFullCartItems>
-					{ cart.items.map( ( item ) => (
-						<CartItem key={ item.uuid } item={ item } />
-					) ) }
-				</DomainsFullCartItems>
-				{ config.skippable && (
-					<div>
-						<DomainsFullCartSkipButton onSkip={ () => events.onSkip() } />
-					</div>
-				) }
-			</DomainsFullCart>
+			<MiniCart />
+			<FullCart />
 		</>
 	);
 };

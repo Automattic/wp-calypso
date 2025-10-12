@@ -16,6 +16,10 @@ export type MeSupports = {
 	apps: boolean;
 };
 
+export type OnboardingLink = {
+	href: string;
+};
+
 export type AppConfig = {
 	name: string;
 	basePath: string;
@@ -34,6 +38,11 @@ export type AppConfig = {
 		notifications: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
+	};
+	onboardingLinkSourceQueryArg: string;
+	onboardingLinks?: {
+		default: OnboardingLink;
+		withAI: OnboardingLink;
 	};
 };
 
@@ -56,6 +65,8 @@ const AppContext = createContext< AppConfig >( {
 		me: false,
 		commandPalette: false,
 	},
+	onboardingLinkSourceQueryArg: '',
+	onboardingLinks: undefined,
 } );
 
 interface AppProviderProps {

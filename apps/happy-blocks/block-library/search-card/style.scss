@@ -16,6 +16,13 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		z-index: 1;
 	}
 
+	&:not(.navigation-only) .navigation-header {
+		background: #f7f8ff;
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
 	.navigation-header {
 		padding: 0 24px;
 
@@ -318,6 +325,10 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	@media ( min-width: $breakpoint-mobile ) {
 		margin-left: 0;
 		top: 32px;
+
+		.navigation-header {
+			top: 32px;
+		}
 	}
 }
 

@@ -119,8 +119,8 @@ export function useDeploymentFields( {
 				},
 			},
 			{
-				id: 'user_name',
-				label: __( 'User name' ),
+				id: 'username',
+				label: __( 'Username' ),
 				enableGlobalSearch: true,
 				elements: userNameOptions,
 				filterBy: {

@@ -12,6 +12,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
@@ -28,6 +29,7 @@ import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
+	const { onboardingLinkSourceQueryArg } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } );
@@ -85,7 +87,7 @@ function Site() {
 							title={ __( 'Add new site' ) }
 							onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 						>
-							<AddNewSite context="sites-dashboard" />
+							<AddNewSite context={ onboardingLinkSourceQueryArg } />
 						</Modal>
 					) }
 					{ ! isSiteMigrationInProgress( site ) && (

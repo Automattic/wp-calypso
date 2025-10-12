@@ -1,6 +1,6 @@
 import { domainQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -13,7 +13,7 @@ export default function DomainSecurity() {
 	const { data: sslDetails } = useSuspenseQuery( sslDetailsQuery( domainName ) );
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Security' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }>
 			<SslCertificate domainName={ domainName } domain={ domain } sslDetails={ sslDetails } />
 			<DnsSec domainName={ domainName } domain={ domain } />
 		</PageLayout>
