@@ -58,7 +58,6 @@ export function useSitePerformanceData(
 		refetchOnWindowFocus: false,
 		retry: false,
 		enabled: !! url && !! token,
-		staleTime: 0,
 	} );
 
 	const getReport = ( type: ReportType ): SitePerformanceReport | undefined => {
