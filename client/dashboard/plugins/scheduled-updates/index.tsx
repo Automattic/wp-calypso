@@ -6,8 +6,8 @@ import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { info } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import {
 	pluginsScheduledUpdatesEditRoute,
