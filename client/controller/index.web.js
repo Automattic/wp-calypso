@@ -141,7 +141,10 @@ export function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
+	if (
+		isUserLoggedIn( state ) &&
+		( ! config.isEnabled( 'cookie-missing-redirect' ) || ! isCookieAuthMissing() )
+	) {
 		next();
 		return;
 	}
