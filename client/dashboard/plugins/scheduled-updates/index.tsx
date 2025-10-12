@@ -124,7 +124,6 @@ export const defaultView: View = {
 
 export default function PluginsScheduledUpdates() {
 	const [ view, setView ] = useState( defaultView );
-	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
 	const [ scheduleToDelete, setScheduleToDelete ] = useState< ScheduledUpdateRow | null >( null );
 	const locale = useLocale();
 	const navigate = useNavigate();
@@ -132,19 +131,20 @@ export default function PluginsScheduledUpdates() {
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const deleteMutation = useMutation( hostingUpdateScheduleDeleteMutation() );
+	const { mutate: deleteSchedule, isPending: isDeletingSchedule } = useMutation(
+		hostingUpdateScheduleDeleteMutation()
+	);
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
 	}, [ scheduledUpdates, view, fields ] );
 
 	const handleDeleteClick = ( schedule: ScheduledUpdateRow ) => {
 		setScheduleToDelete( schedule );
-		setIsDeleteDialogOpen( true );
 	};
 
 	const handleDeleteConfirm = () => {
 		if ( scheduleToDelete ) {
-			deleteMutation.mutate(
+			deleteSchedule(
 				{
 					siteId: scheduleToDelete.site.ID,
 					scheduleId: scheduleToDelete.scheduleId,
@@ -159,19 +159,14 @@ export default function PluginsScheduledUpdates() {
 						} );
 					},
 					onSettled: () => {
-						setIsDeleteDialogOpen( false );
 						setScheduleToDelete( null );
 					},
 				}
 			);
-		} else {
-			setIsDeleteDialogOpen( false );
-			setScheduleToDelete( null );
 		}
 	};
 
 	const handleDeleteCancel = () => {
-		setIsDeleteDialogOpen( false );
 		setScheduleToDelete( null );
 	};
 
@@ -228,6 +223,7 @@ export default function PluginsScheduledUpdates() {
 							{
 								id: 'remove',
 								label: __( 'Remove' ),
+								isEligible: () => ! isDeletingSchedule,
 								callback: ( items ) => {
 									const item = items[ 0 ];
 									if ( item ) {
@@ -241,11 +237,11 @@ export default function PluginsScheduledUpdates() {
 			</PageLayout>
 
 			<ConfirmModal
-				isOpen={ isDeleteDialogOpen }
+				isOpen={ !! scheduleToDelete }
 				confirmButtonProps={ {
 					label: __( 'Delete schedule' ),
-					isBusy: deleteMutation.isPending,
-					disabled: deleteMutation.isPending,
+					isBusy: isDeletingSchedule,
+					disabled: isDeletingSchedule,
 				} }
 				onCancel={ handleDeleteCancel }
 				onConfirm={ handleDeleteConfirm }
