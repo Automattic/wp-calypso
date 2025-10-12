@@ -10,6 +10,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
 import MomentProvider from 'calypso/components/localized-moment/provider';
@@ -140,7 +141,7 @@ export function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( state ) ) {
+	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
 		next();
 		return;
 	}
