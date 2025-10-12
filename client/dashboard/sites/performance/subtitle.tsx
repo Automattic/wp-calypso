@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { __experimentalText as Text, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -8,11 +8,13 @@ export default function Subtitle( {
 	timestamp,
 	timezoneString,
 	gmtOffset,
+	isLoadingNewReport,
 	onClick,
 }: {
 	timestamp: string | undefined;
 	timezoneString?: string;
 	gmtOffset?: number;
+	isLoadingNewReport?: boolean;
 	onClick: () => void;
 } ) {
 	const formattedTime = useFormattedTime(
@@ -24,6 +26,10 @@ export default function Subtitle( {
 		timezoneString,
 		gmtOffset
 	);
+
+	if ( isLoadingNewReport ) {
+		return <Text variant="muted">{ __( 'Testing your site may take around 30 seconds.' ) }</Text>;
+	}
 
 	if ( ! timestamp ) {
 		return createInterpolateElement(
