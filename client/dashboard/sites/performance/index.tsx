@@ -137,7 +137,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 							timezoneString={ timezoneString }
 							gmtOffset={ gmtOffset }
 							onClick={ handleReportRefetch }
-							isLoadingNewReport={ isRunningReport }
 						/>
 					}
 					actions={
