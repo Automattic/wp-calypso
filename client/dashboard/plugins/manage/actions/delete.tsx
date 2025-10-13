@@ -28,5 +28,4 @@ export const deleteAction: Action< PluginListRow > = {
 	isEligible: ( item: PluginListRow ) => {
 		return item.isActive === 'none';
 	},
-	supportsBulk: true,
 };

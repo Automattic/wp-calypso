@@ -13,9 +13,12 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
+import { useAnalytics } from '../../../app/analytics';
 import { SectionHeader } from '../../../components/section-header';
 
 export const WebSettings = () => {
+	const { recordTracksEvent } = useAnalytics();
+
 	const { data } = useSuspenseQuery( {
 		...userNotificationsSettingsQuery(),
 		meta: {
@@ -45,6 +48,11 @@ export const WebSettings = () => {
 				timeline: { ...settings, [ updated.id ]: updated.value },
 			},
 		} as InputUserNotificationSettings;
+
+		recordTracksEvent( 'calypso_dashboard_notifications_timeline_settings_updated', {
+			setting_name: updated.id,
+			setting_value: updated.value,
+		} );
 
 		updateSettings( { data: updatedSettings } );
 	};

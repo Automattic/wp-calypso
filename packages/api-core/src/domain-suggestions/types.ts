@@ -76,6 +76,11 @@ export interface DomainSuggestionQuery {
 	 * Domain category slug
 	 */
 	category_slug?: string;
+
+	/**
+	 * The site slug
+	 */
+	site_slug?: string;
 }
 
 export interface DomainSuggestion {

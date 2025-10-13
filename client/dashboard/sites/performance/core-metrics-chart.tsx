@@ -9,12 +9,15 @@ import {
 	Valuation,
 	getColorForStatus,
 	getDisplayUnit,
+	getFormattedNumber,
 	getFormattedValue,
 	getStatusText,
 	mapThresholdsToStatus,
 } from '../../utils/site-performance';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
 import '@automattic/charts/line-chart/style.css';
+
+const WEEK_TO_SHOW = 8;
 
 const StatusGlyph = {
 	good: GlyphCircle,
@@ -62,21 +65,21 @@ const MetricLabel = ( {
 	);
 };
 
-const useMetricData = (
-	metric: Metrics,
-	valuation: Valuation,
-	history?: SitePerformanceHistory
-) => {
+const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
 	const dates = history?.collection_period ?? [];
 	const values = history?.metrics[ metric ] ?? [];
 	if ( ! dates.length || ! values.length ) {
 		return null;
 	}
 
-	const color = getColorForStatus( valuation );
-	const weeksToShow = 8;
-	const data = [];
-	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - weeksToShow ); i-- ) {
+	const seriesData: Array< {
+		label: string;
+		data: Array< { date: Date; value: number } >;
+		options: { stroke: string };
+	} > = [];
+	const allData = [];
+	let currentValuation;
+	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - WEEK_TO_SHOW ); i-- ) {
 		const date = dates[ i ];
 		const formattedDate =
 			typeof date === 'string'
@@ -87,21 +90,43 @@ const useMetricData = (
 						date.day.toString().padStart( 2, '0' ),
 				  ].join( '-' );
 
-		data.push( {
+		const nextValuation = mapThresholdsToStatus( metric, values[ i ] );
+		if ( nextValuation !== currentValuation ) {
+			const lastData = seriesData[ seriesData.length - 1 ]?.data?.slice().pop();
+			currentValuation = nextValuation;
+			seriesData.push( {
+				// The label should be unique.
+				label: `${ getStatusText( currentValuation ) } - ${ seriesData.length }`,
+				data: ( lastData ? [ lastData ] : [] ) as Array< { date: Date; value: number } >,
+				options: {
+					stroke: getColorForStatus( currentValuation ),
+				},
+			} );
+		}
+
+		const data = {
 			date: new Date( formattedDate ),
 			value: getFormattedValue( metric, values[ i ] ),
-		} );
+		};
+		seriesData[ seriesData.length - 1 ].data.push( data );
+		allData.push( data );
 	}
 
-	return [
-		{
-			label: getStatusText( valuation ),
-			data,
-			options: {
-				stroke: color,
+	const maxY = Math.max( ...allData.map( ( d ) => d.value ) );
+
+	return {
+		seriesData: [
+			// Use all data to maintain the range of the x axis.
+			{
+				label: '',
+				data: allData,
 			},
+			...seriesData,
+		],
+		yScale: {
+			domain: [ 0, maxY === 0 ? maxY : maxY * 1.5 ] as [ number, number ],
 		},
-	];
+	};
 };
 
 export default function CoreMetricsChart( {
@@ -116,8 +141,7 @@ export default function CoreMetricsChart( {
 } ) {
 	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
-	const currentValuation = mapThresholdsToStatus( metric, report[ metric ] );
-	const data = useMetricData( metric, currentValuation, report.history );
+	const lineChartData = useLineChartData( metric, report.history );
 
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
 		const unit = getDisplayUnit( metric );
@@ -174,13 +198,31 @@ export default function CoreMetricsChart( {
 				/>
 			</HStack>
 			<div style={ { maxWidth: '500px' } }>
-				{ data ? (
+				{ lineChartData ? (
 					<LineChart
-						data={ data }
+						data={ lineChartData.seriesData }
 						withGradientFill={ false }
-						smoothing={ false }
-						renderGlyph={ ( { color, x, y } ) => {
-							const GlyphComponent = StatusGlyph[ currentValuation ];
+						curveType="linear"
+						options={ {
+							yScale: lineChartData.yScale,
+							axis: {
+								y: {
+									tickFormat: ( value ) => `${ getFormattedNumber( value ) }`,
+								},
+							},
+						} }
+						renderGlyph={ ( { key, x, y, datum } ) => {
+							const data = datum as { value: number };
+							const value = [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric )
+								? data.value * 1000
+								: data.value;
+							const valuation = mapThresholdsToStatus( metric, value );
+							const color = getColorForStatus( valuation );
+							const label = getStatusText( valuation );
+							if ( ! label.includes( key ) ) {
+								return null;
+							}
+							const GlyphComponent = StatusGlyph[ valuation ];
 							return <GlyphComponent top={ y } left={ x } size={ 100 } fill={ color } />;
 						} }
 						renderTooltip={ ( { tooltipData } ) => {
@@ -189,7 +231,11 @@ export default function CoreMetricsChart( {
 								return null;
 							}
 
-							return nearestDatum.value;
+							const formattedDate = nearestDatum.date?.toLocaleDateString( undefined, {
+								month: 'short',
+								day: 'numeric',
+							} );
+							return [ formattedDate, nearestDatum.value ].join( ': ' );
 						} }
 					/>
 				) : (

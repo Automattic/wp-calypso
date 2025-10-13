@@ -2,6 +2,7 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
+import { useAnalytics } from '../../../../app/analytics';
 import { getFieldLabel } from '../../helpers/translations';
 import { useSiteSettings, useSettingsMutation } from '../../hooks';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
@@ -10,16 +11,28 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const { recordTracksEvent } = useAnalytics();
 
 	const emailSettings = blogSettings?.email ?? null;
 	const settings = emailSettings ?? null;
 
 	const handleChange = ( updated: SettingsOption ) => {
-		updateSettings( {
-			data: {
-				blogs: [ { blog_id: siteId, email: { ...settings, [ updated.id ]: updated.value } } ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ { blog_id: siteId, email: { ...settings, [ updated.id ]: updated.value } } ],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_email_settings_updated', {
+						setting_name: updated.id,
+						setting_value: updated.value,
+						site_id: siteId,
+					} );
+				},
+			}
+		);
 	};
 
 	const askForConfirmation = () => {
@@ -31,12 +44,23 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 			return;
 		}
 
-		updateSettings( {
-			data: {
-				blogs: [ blogSettings ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ blogSettings ],
+				},
+				applyToAll: true,
 			},
-			applyToAll: true,
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_settings_apply_to_all_sites', {
+						stream: 'email',
+						site_to_be_used_as_template: siteId,
+					} );
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(

@@ -2,6 +2,14 @@ import { normalizePurchase } from '../purchase';
 import { wpcom } from '../wpcom-fetcher';
 import type { Purchase } from '../purchase';
 
+export async function fetchUserPurchases(): Promise< Purchase[] > {
+	const data = await wpcom.req.get( {
+		path: '/upgrades',
+		apiVersion: '1.2',
+	} );
+	return data.map( normalizePurchase );
+}
+
 export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
 	const data = await wpcom.req.get( {
 		path: `/upgrades/${ purchaseId }`,

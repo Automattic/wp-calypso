@@ -7,6 +7,7 @@ import {
 	NEWSLETTER_FLOW,
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
+	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
 	Step,
 	useStepPersistedState,
@@ -28,7 +29,7 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
-import { getIntervalType } from './util';
+import { getIntervalType, getVisualSplitPlansIntent } from './util';
 import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -70,18 +71,10 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
+		case PLAN_UPGRADE_FLOW:
+			return 'plans-upgrade';
 		default:
 			return null;
-	}
-	return null;
-}
-
-function getVisualSplitPlansIntent( intent: string ): PlansIntent | null {
-	if ( intent === 'default_websitebuilder' ) {
-		return 'plans-website-builder';
-	}
-	if ( intent === 'default_hosting' ) {
-		return 'plans-wordpress-hosting';
 	}
 	return null;
 }
@@ -93,7 +86,19 @@ type ProvidedDependencies = {
 
 const PlansStepAdaptor: StepType< {
 	submits: ProvidedDependencies;
+	accepts: {
+		isInSignup?: boolean;
+		isStepperUpgradeFlow?: boolean;
+		selectedFeature?: string;
+		wrapperProps?: {
+			hideBack?: boolean;
+			goBack?: () => void;
+			isFullLayout?: boolean;
+			isExtraWideLayout?: boolean;
+		};
+	};
 } > = ( props ) => {
+	const { isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -154,14 +159,13 @@ const PlansStepAdaptor: StepType< {
 
 	// Update plansIntent when the experiment loads
 	useEffect( () => {
-		if ( ! isVisualSplitLoading && props.flow === ONBOARDING_FLOW && ! defaultPlansIntent ) {
-			if ( visualSplitVariation === 'default_websitebuilder' ) {
-				setPlansIntent( 'plans-website-builder' );
-			} else if ( visualSplitVariation === 'default_hosting' ) {
-				setPlansIntent( 'plans-wordpress-hosting' );
-			} else {
-				setPlansIntent( defaultPlansIntent );
-			}
+		if (
+			! isVisualSplitLoading &&
+			props.flow === ONBOARDING_FLOW &&
+			visualSplitVariation &&
+			! defaultPlansIntent
+		) {
+			setPlansIntent( getVisualSplitPlansIntent( visualSplitVariation as string ) );
 		}
 	}, [ isVisualSplitLoading, visualSplitVariation, props.flow, defaultPlansIntent ] );
 
@@ -221,13 +225,16 @@ const PlansStepAdaptor: StepType< {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
-				hideBack: false,
-				goBack: props.navigation.goBack,
-				isFullLayout: true,
-				isExtraWideLayout: false,
+				hideBack: wrapperProps?.hideBack ?? false,
+				goBack: wrapperProps?.goBack ?? props.navigation.goBack,
+				isFullLayout: wrapperProps?.isFullLayout ?? true,
+				isExtraWideLayout: wrapperProps?.isExtraWideLayout ?? false,
 			} }
 			useStepperWrapper
 			useStepContainerV2={ isUsingStepContainerV2 }
+			isInSignup={ isInSignup }
+			isStepperUpgradeFlow={ isStepperUpgradeFlow }
+			selectedFeature={ selectedFeature }
 		/>
 	);
 };

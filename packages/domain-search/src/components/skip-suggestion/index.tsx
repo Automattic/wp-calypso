@@ -12,7 +12,7 @@ const SkipSuggestion = () => {
 	if ( currentSiteUrl ) {
 		return (
 			<DomainSearchSkipSuggestion
-				existingSiteUrl={ currentSiteUrl.replace( /^https?:\/\//, '' ) }
+				existingSiteUrl={ currentSiteUrl }
 				onSkip={ () => events.onSkip() }
 				disabled={ !! isMutating }
 			/>

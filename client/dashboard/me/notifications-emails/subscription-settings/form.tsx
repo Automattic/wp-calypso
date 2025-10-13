@@ -132,7 +132,7 @@ const baseFields: Field< SettingsData >[] = [
 					label={ field.label }
 					help={
 						<span>
-							{ __( 'Receive subscription updates via instant message.' ) }
+							{ __( 'Receive subscription updates via instant message.' ) }{ ' ' }
 							<InlineSupportLink supportContext="jabber-subscription-updates" />
 						</span>
 					}
@@ -146,7 +146,7 @@ const baseFields: Field< SettingsData >[] = [
 	},
 	{
 		id: 'p2_disable_autofollow_on_comment',
-		label: __( 'Automatically subscribe to P2 post notifications when you leave a comment.' ),
+		label: __( 'Automatically subscribe to P2 post notifications when you leave a comment' ),
 		description: __( 'Auto-follow P2 posts (Automatticians only)' ),
 		type: 'boolean' as const,
 		Edit: ( { field, data, hideLabelFromVision, onChange } ) => {

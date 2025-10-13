@@ -169,7 +169,6 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 						>
 							{ __( 'Learn more' ) }
 						</ExternalLink>
-						.
 					</Text>
 				</VStack>
 			</Notice>
@@ -198,7 +197,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 								<Text as="p">
 									{ createInterpolateElement(
 										__(
-											'By clicking <strong>Save contact info</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
+											'By clicking <strong>Save</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
 										),
 										{
 											strong: <strong />,
@@ -221,7 +220,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 									isBusy={ isSubmitting }
 									disabled={ ! canSave || ! isDirty || isSubmitting }
 								>
-									{ __( 'Save contact info' ) }
+									{ __( 'Save' ) }
 								</Button>
 							</ButtonStack>
 						</form>
