@@ -143,7 +143,6 @@ describe( 'selectors', () => {
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: 'inactive',
-				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
 				purchaseRenewalQuantity: null,

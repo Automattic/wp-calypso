@@ -262,7 +262,6 @@ export interface Purchase {
 	site_slug?: string;
 	subscribed_date: string;
 	subscription_status: 'active' | 'inactive';
-	tag_line?: string;
 	renewal_price_tier_usage_quantity: number | undefined | null;
 
 	/**

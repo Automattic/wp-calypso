@@ -112,7 +112,6 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		siteSlug: purchase.site_slug,
 		subscribedDate: purchase.subscribed_date,
 		subscriptionStatus: purchase.subscription_status,
-		tagLine: purchase.tag_line ?? '',
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,

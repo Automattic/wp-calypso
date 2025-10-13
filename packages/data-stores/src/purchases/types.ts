@@ -158,7 +158,6 @@ export interface Purchase {
 	userId: number;
 	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
-	tagLine: string;
 
 	/**
 	 * The coupon code that will automatically apply on the next renewal.

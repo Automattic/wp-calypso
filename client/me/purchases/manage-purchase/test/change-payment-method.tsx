@@ -119,7 +119,6 @@ const initialPurchases = [
 		blogname: 'example.com',
 		subscribed_date: '2021-01-01',
 		subscription_status: 'active',
-		tag_line: '',
 		tax_amount: undefined,
 		tax_text: undefined,
 		renewal_price_tier_usage_quantity: undefined,
