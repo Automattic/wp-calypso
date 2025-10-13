@@ -119,10 +119,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
-									'Switch to a staging site to test a beta version of the next WordPress release. <a>Learn more</a>'
+									'Switch to a staging site to test a beta version of the next WordPress release. <learnMore>Learn more</learnMore>'
 								),
 								{
-									a: <InlineSupportLink supportContext="switch-to-staging-site" />,
+									learnMore: <InlineSupportLink supportContext="switch-to-staging-site" />,
 								}
 							) }
 						</Text>
