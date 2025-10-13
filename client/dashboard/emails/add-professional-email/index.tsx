@@ -40,6 +40,8 @@ const EmailForm = ( {
 	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
 	const { domain = '' } = params;
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
+	const [ passwordResetEmail, setPasswordResetEmail ] = useState( user.email );
+	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState( false );
 
 	return (
 		<VStack spacing={ 4 }>
@@ -74,22 +76,42 @@ const EmailForm = ( {
 					data-lpignore="true"
 				/>
 
-				<Text variant="muted">
-					{ createInterpolateElement(
-						sprintf(
-							// Translators: %(userEmail)s is the email address that the user has currently configured as their password reset email.
-							__(
-								'Your password reset email is <strong>%(userEmail)s</strong>. <passwordChangeLink>Change it</passwordChangeLink>.'
+				{ ! isPasswordResetEmailVisible && (
+					<Text variant="muted">
+						{ createInterpolateElement(
+							sprintf(
+								// Translators: %(userEmail)s is the email address that the user has currently configured as their password reset email.
+								__(
+									'Your password reset email is <strong>%(userEmail)s</strong>. <passwordChangeLink>Change it</passwordChangeLink>.'
+								),
+								{ userEmail: user.email }
 							),
-							{ userEmail: user?.email }
-						),
-						{
-							strong: <strong />,
-							passwordChangeLink: <a href="#change-password" />,
-						}
-					) }
-				</Text>
+							{
+								strong: <strong />,
+								passwordChangeLink: (
+									<a
+										href="#change-password"
+										onClick={ ( e ) => {
+											e.preventDefault();
+											setIsPasswordResetEmailVisible( ( prev ) => ! prev );
+										} }
+									/>
+								),
+							}
+						) }
+					</Text>
+				) }
 			</VStack>
+
+			{ isPasswordResetEmailVisible && (
+				<InputControl
+					__next40pxDefaultSize
+					label={ __( 'Password reset email address' ) }
+					value={ passwordResetEmail }
+					onChange={ ( value ) => setPasswordResetEmail( value || '' ) }
+					disabled={ disabled }
+				/>
+			) }
 
 			{ removeForm && (
 				<ButtonStack justify="flex-start">
