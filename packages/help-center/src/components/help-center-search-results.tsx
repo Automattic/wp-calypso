@@ -9,10 +9,10 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from '@automattic/data-stores';
-import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
@@ -30,11 +30,8 @@ import React, { Fragment, useEffect, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
-import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
-import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
-import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search-results.scss';
 
 const MAX_VISIBLE_RESULTS = 8;
@@ -182,9 +179,10 @@ interface HelpSearchResultsProps {
 		result: SearchResult
 	) => void;
 	searchQuery: string;
-	placeholderLines: number;
 	openAdminInNewTab: boolean;
 	location: string;
+	isSearching: boolean;
+	searchData: SearchResult[];
 	currentRoute?: string;
 }
 
@@ -192,17 +190,15 @@ function HelpSearchResults( {
 	externalLinks = false,
 	onSelect,
 	searchQuery = '',
-	placeholderLines,
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
+	isSearching,
+	searchData,
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName, site, source } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const contextTerm = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
-		[]
-	);
+	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = site?.options.site_intent;
@@ -211,20 +207,10 @@ function HelpSearchResults( {
 		[ sectionName, siteIntent ]
 	);
 
-	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
-	);
-
-	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
-
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
-		locale,
-		currentRoute,
-		source
 	);
 
 	const searchResults = searchData ?? [];
@@ -261,8 +247,8 @@ function HelpSearchResults( {
 		queueMicrotask( () => {
 			recordTracksEvent( 'calypso_help_center_search_traintracks_interact', {
 				action: 'click',
-				railcar: result.railcar.railcar,
-				session_id: result.railcar.session_id,
+				railcar: result.railcar?.railcar,
+				session_id: result.railcar?.session_id,
 				href: result.link,
 				search_type: ! contextSearch && ! searchQuery ? 'tailored' : 'search',
 				location,
@@ -372,7 +358,6 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
-			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<div className="help-center-search-results__empty-results">
 					<p>
