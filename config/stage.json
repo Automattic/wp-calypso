@@ -39,7 +39,7 @@
 		"dashboard/v2/backport/site-overview": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
-		"domain-search-rewrite": false,
+		"domain-search-rewrite": true,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,

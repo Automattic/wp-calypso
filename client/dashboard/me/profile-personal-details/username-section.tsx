@@ -7,7 +7,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback } from 'react';
-import { Text } from '../../components/text';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
@@ -68,20 +67,12 @@ export default function UsernameSection( {
 		// Static/conditional messages
 		if ( ! hasUsernameChange ) {
 			if ( isAutomattician ) {
-				return (
-					<Text className="account-profile-personal-details__username-help">
-						{ __( 'Automatticians cannot change their username.' ) }
-					</Text>
-				);
+				return __( 'Automatticians cannot change their username.' );
 			}
 
 			// New users can't change their username until they've verified their email
 			if ( ! isEmailVerified ) {
-				return (
-					<Text className="account-profile-personal-details__username-help">
-						{ __( 'Username can be changed once your email address is verified.' ) }
-					</Text>
-				);
+				return __( 'Username can be changed once your email address is verified.' );
 			}
 
 			return null;

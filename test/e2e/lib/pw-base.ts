@@ -383,6 +383,7 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD: '@dashboard',
+	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',

@@ -10,16 +10,14 @@ const TEST_MEDIUM_EXPORT_FILE_PATH = path.join(
 test.describe(
 	'Site Import: Calypso: Medium',
 	{
-		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS ],
+		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
 		annotation: { type: 'flowchart', description: 'https://flowchart.fun/p/envious-tent-cost' },
 	},
 	() => {
 		test( 'As a New WordPress.com free plan user with a simple site, I can use the "Medium import link" on the wp-admin Importers List page to import my content from my Medium account', async ( {
 			pageImportContentFromMedium,
 			sitePublic,
-		}, workerInfo ) => {
-			test.skip( workerInfo.project.name !== 'chrome', 'The import tests only run in Chrome' );
-
+		} ) => {
 			await test.step( 'When I visit the Medium importer as coming from the wp-admin Tools > Import page', async function () {
 				await pageImportContentFromMedium.visit( sitePublic.blog_details.site_slug );
 			} );
@@ -46,9 +44,7 @@ test.describe(
 			pageImportContentFromMedium,
 			pageImportLetsFindYourSite,
 			sitePublic,
-		}, workerInfo ) => {
-			test.skip( workerInfo.project.name !== 'chrome', 'The import tests only run in Chrome' );
-
+		} ) => {
 			const mediumSiteURL = 'https://medium.com/@testacount';
 
 			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
@@ -84,9 +80,7 @@ test.describe(
 		test( 'As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
 			sitePublic,
 			pageImportContent,
-		}, workerInfo ) => {
-			test.skip( workerInfo.project.name !== 'chrome', 'The import tests only run in Chrome' );
-
+		} ) => {
 			await test.step( 'When I visit the "Import Content" page for my new site', async function () {
 				await pageImportContent.visit( sitePublic.blog_details.site_slug );
 			} );
