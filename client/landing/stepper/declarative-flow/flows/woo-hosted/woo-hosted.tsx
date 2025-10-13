@@ -1,4 +1,3 @@
-import { WooCommerceWooLogo } from '@automattic/components';
 import { WOO_HOSTED_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
@@ -12,9 +11,6 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import './style.scss';
-
-const WooHostedLogo = () => <WooCommerceWooLogo width={ 50 } />;
 
 async function initialize() {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -30,14 +26,13 @@ const wooHosted: FlowV2< typeof initialize > = {
 	name: WOO_HOSTED_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: false,
-	logo: WooHostedLogo,
 	initialize,
 	useStepsProps() {
 		return {
 			plans: {
 				displayedIntervals: [ 'monthly', 'yearly' ],
 			},
-		};
+		} as any;
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {

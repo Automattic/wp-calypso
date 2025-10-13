@@ -233,7 +233,6 @@ const PlansStepAdaptor: StepType< {
 				goBack: wrapperProps?.goBack ?? props.navigation.goBack,
 				isFullLayout: wrapperProps?.isFullLayout ?? true,
 				isExtraWideLayout: wrapperProps?.isExtraWideLayout ?? false,
-				logo: wrapperProps?.logo,
 			} }
 			useStepperWrapper
 			useStepContainerV2={ isUsingStepContainerV2 }
