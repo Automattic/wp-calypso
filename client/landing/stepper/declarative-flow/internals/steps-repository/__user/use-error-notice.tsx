@@ -20,7 +20,7 @@ export function useErrorNotice( { error: errorResponse, recentSocialAuthAttemptP
 	} );
 
 	if ( errorResponse && 'error' in errorResponse ) {
-		let noticeText =
+		let noticeText: React.ReactNode =
 			errorResponse?.message || translate( 'Something went wrong. Please try again.' );
 
 		if ( errorResponse.error === 'user_exists' ) {
