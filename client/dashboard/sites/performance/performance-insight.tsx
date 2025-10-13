@@ -46,14 +46,14 @@ export const PerformanceInsightTitle = ( {
 
 	return (
 		<HStack
+			direction={ isSmallScreen ? 'column' : 'row' }
 			alignment={ isSmallScreen ? 'flex-start' : 'center' }
 			style={ {
 				minHeight: isMediumScreen ? '40px' : 'auto',
-				flexDirection: isSmallScreen ? 'column-reverse' : 'row',
 			} }
 		>
 			<HStack justify="flex-start" alignment={ isMediumScreen ? 'flex-start' : 'center' }>
-				<Text intent={ intent } size={ 15 } weight={ 500 }>
+				<Text intent={ intent } size={ 15 } weight={ 500 } style={ { flexShrink: 0 } }>
 					{ index }
 				</Text>
 				<HStack
@@ -71,7 +71,7 @@ export const PerformanceInsightTitle = ( {
 				</HStack>
 			</HStack>
 			{ isHightImpact && (
-				<Badge intent="error" style={ { flexShrink: 0 } }>
+				<Badge intent="error" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
 					{ __( 'High impact' ) }
 				</Badge>
 			) }
