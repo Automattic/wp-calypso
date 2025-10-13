@@ -47,7 +47,7 @@ function Card( {
 	);
 }
 
-function WidgetActions( { onClose }: { onClose: () => void } ) {
+function WidgetActions() {
 	return (
 		<div
 			style={ {
@@ -60,7 +60,14 @@ function WidgetActions( { onClose }: { onClose: () => void } ) {
 				zIndex: 2,
 			} }
 		>
-			<button onClick={ onClose }>x</button>
+			<button
+				onClick={ () => {
+					// eslint-disable-next-line no-console
+					console.log( 'close card' );
+				} }
+			>
+				x
+			</button>
 		</div>
 	);
 }
@@ -236,35 +243,14 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
 			>
-				<Card
-					key="a"
-					color="#f44336"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card A' );
-							} }
-						/>
-					}
-				>
-					Card A
-				</Card>
+				<Grid.Item key="a" actionableArea={ <WidgetActions /> }>
+					<Card color="#f44336">Card A</Card>
+				</Grid.Item>
+
 				<Card key="b" color="#2196f3">
 					Card B
 				</Card>
-				<Card
-					key="c"
-					color="#4caf50"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card C' );
-							} }
-						/>
-					}
-				>
+				<Card key="c" color="#4caf50" actionableArea={ <WidgetActions /> }>
 					Card C
 				</Card>
 				<Card key="d" color="#ff9800">
@@ -279,18 +265,7 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				<Card key="g" color="#3f51b5">
 					Card G
 				</Card>
-				<Card
-					key="h"
-					color="#8bc34a"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card H' );
-							} }
-						/>
-					}
-				>
+				<Card key="h" color="#8bc34a">
 					Card H
 				</Card>
 				<Card key="i" color="#cddc39">

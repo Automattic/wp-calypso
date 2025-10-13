@@ -5,6 +5,16 @@ import { useMemo, Children, isValidElement, useState } from 'react';
 import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
+import type { ReactNode, ReactElement } from 'react';
+
+type GridItemWrapperProps = {
+	children: ReactNode;
+	actionableArea?: ReactNode;
+};
+
+function GridItemWrapper( { children }: GridItemWrapperProps ) {
+	return children as JSX.Element;
+}
 
 export function Grid( {
 	layout,
@@ -17,7 +27,7 @@ export function Grid( {
 	editMode = false,
 	onChangeLayout,
 }: GridProps ) {
-	// Temporary layout to avoid updaing the layout while dragging
+	// Temporary layout to avoid updating the layout while dragging
 	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
 		layout
 	);
@@ -52,9 +62,10 @@ export function Grid( {
 		[ activeLayout ]
 	);
 
-	const [ childrenMap, remaining ] = useMemo( () => {
-		const map = new Map< string, React.ReactElement >();
-		const rest: React.ReactNode[] = [];
+	const [ childrenMap, actionableAreasMap, remaining ] = useMemo( () => {
+		const map = new Map< string, ReactElement >();
+		const actionableAreas = new Map< string, ReactNode >();
+		const rest: ReactNode[] = [];
 
 		Children.forEach( children, ( child ) => {
 			if ( ! isValidElement( child ) ) {
@@ -62,15 +73,51 @@ export function Grid( {
 				return;
 			}
 
+			// Handle Grid.Item wrapper
+			if ( child.type === GridItemWrapper ) {
+				const key = child.key?.toString();
+				const itemProps = child.props as {
+					children: ReactNode;
+					actionableArea?: ReactNode;
+				};
+
+				if ( key && layoutMap.has( key ) ) {
+					// Get the main child content
+					const mainChild = Children.only( itemProps.children );
+					map.set( key, mainChild as ReactElement );
+
+					// Get the actionable area if provided
+					if ( itemProps.actionableArea ) {
+						actionableAreas.set( key, itemProps.actionableArea );
+					}
+				} else {
+					rest.push( itemProps.children );
+				}
+				return;
+			}
+
+			// Handle regular child (backward compatibility)
 			const key = child.key?.toString();
 			if ( key && layoutMap.has( key ) ) {
 				map.set( key, child );
+
+				// Support deprecated actionableArea prop on children
+				const childActionableArea = ( child.props as { actionableArea?: ReactNode } )
+					?.actionableArea;
+				if ( childActionableArea ) {
+					// eslint-disable-next-line no-console
+					console.warn(
+						'Passing `actionableArea` as a prop to Grid children is deprecated. ' +
+							'Please use <Grid.Item actionableArea={...}> instead.'
+					);
+					actionableAreas.set( key, childActionableArea );
+				}
 			} else {
 				rest.push( child );
 			}
 		} );
 
-		return [ map, rest ];
+		return [ map, actionableAreas, rest ];
 	}, [ children, layoutMap ] );
 
 	const sensors = useSensors(
@@ -165,7 +212,7 @@ export function Grid( {
 							disabled={ ! editMode }
 							onResize={ ( delta ) => handleResize( id, delta ) }
 							onResizeEnd={ persistTemporaryLayout }
-							actionableArea={ childrenMap.get( id )?.props.actionableArea }
+							actionableArea={ actionableAreasMap.get( id ) }
 						>
 							{ childrenMap.get( id ) }
 						</GridItem>
@@ -176,3 +223,5 @@ export function Grid( {
 		</DndContext>
 	);
 }
+
+Grid.Item = GridItemWrapper;
