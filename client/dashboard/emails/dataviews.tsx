@@ -1,6 +1,6 @@
 import type { View } from '@wordpress/dataviews';
 
-export { emailFields } from './fields';
+export { getEmailFields } from './fields';
 
 export const DEFAULT_EMAILS_VIEW: View = {
 	type: 'table',
@@ -9,6 +9,7 @@ export const DEFAULT_EMAILS_VIEW: View = {
 	sort: { field: 'emailAddress', direction: 'asc' },
 	fields: [ 'domainName', 'type', 'status' ],
 	titleField: 'emailAddress',
+	search: '',
 };
 
 export { useEmailActions } from './actions';

@@ -45,6 +45,11 @@ export const emailsRoute = createRoute( {
 			),
 		] );
 	},
+	validateSearch: ( search ): { domainName: string | undefined } => {
+		return {
+			domainName: typeof search.domainName === 'string' ? search.domainName : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
