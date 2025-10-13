@@ -1,6 +1,5 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
-	githubInstallationsQuery,
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
@@ -905,6 +904,11 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
+	validateSearch: ( search ): { from?: 'deployments' } => {
+		return {
+			from: search.from === 'deployments' ? 'deployments' : undefined,
+		};
+	},
 } );
 
 export const siteSettingsRepositoriesIndexRoute = createRoute( {
@@ -942,9 +946,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	loader: async () => {
-		await queryClient.ensureQueryData( githubInstallationsQuery() );
-	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-manage' )( {

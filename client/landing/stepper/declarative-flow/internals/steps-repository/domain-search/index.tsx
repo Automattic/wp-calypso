@@ -111,6 +111,7 @@ const DomainSearchStep: StepType< {
 				isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow )
 					? HUNDRED_YEAR_DOMAIN_TLDS
 					: allowedTlds,
+			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
 				! isNewHostedSiteCreationFlow( flow ) &&

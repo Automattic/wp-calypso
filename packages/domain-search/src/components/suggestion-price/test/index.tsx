@@ -5,7 +5,7 @@ import { buildAvailability } from '../../../test-helpers/factories/availability'
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
-import { TestDomainSearchWithSuggestionsList } from '../../../test-helpers/renderer';
+import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 import { DomainSuggestionsList } from '../../../ui';
 
 describe( 'DomainSuggestionPrice', () => {
@@ -23,11 +23,11 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test-regular-price.com">
+			<TestDomainSearchWithSuggestions query="test-regular-price.com">
 				<DomainSuggestionsList>
 					<DomainSuggestionPrice domainName="test-regular-price.com" />
 				</DomainSuggestionsList>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByLabelText( 'Original price: $5' ) ).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		const { container } = render(
-			<TestDomainSearchWithSuggestionsList
+			<TestDomainSearchWithSuggestions
 				config={ {
 					priceRules: {
 						hidePrice: true,
@@ -53,7 +53,7 @@ describe( 'DomainSuggestionPrice', () => {
 				query="test-hide-price.com"
 			>
 				<DomainSuggestionPrice domainName="test-hide-price.com" />
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
@@ -68,7 +68,7 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList
+			<TestDomainSearchWithSuggestions
 				config={ {
 					priceRules: {
 						oneTimePrice: true,
@@ -79,7 +79,7 @@ describe( 'DomainSuggestionPrice', () => {
 				<DomainSuggestionsList>
 					<DomainSuggestionPrice domainName="test-one-time-price.com" />
 				</DomainSuggestionsList>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByText( '$5' ) ).toBeInTheDocument();
@@ -97,11 +97,11 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test-domain-move-price.com">
+			<TestDomainSearchWithSuggestions query="test-domain-move-price.com">
 				<DomainSuggestionsList>
 					<DomainSuggestionPrice domainName="test-domain-move-price.com" />
 				</DomainSuggestionsList>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByText( 'Move your existing domain' ) ).toBeInTheDocument();
@@ -119,7 +119,7 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList
+			<TestDomainSearchWithSuggestions
 				query="test-free-for-first-year.com"
 				config={ {
 					priceRules: {
@@ -130,7 +130,7 @@ describe( 'DomainSuggestionPrice', () => {
 				<DomainSuggestionsList>
 					<DomainSuggestionPrice domainName="test-free-for-first-year.com" />
 				</DomainSuggestionsList>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByLabelText( 'Original price: $5' ) ).toBeInTheDocument();
@@ -149,7 +149,7 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList
+			<TestDomainSearchWithSuggestions
 				query="test-free-for-first-year-renew-cost.com"
 				config={ {
 					priceRules: {
@@ -160,7 +160,7 @@ describe( 'DomainSuggestionPrice', () => {
 				<DomainSuggestionsList>
 					<DomainSuggestionPrice domainName="test-free-for-first-year-renew-cost.com" />
 				</DomainSuggestionsList>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByLabelText( 'Original price: $5' ) ).toBeInTheDocument();
@@ -192,11 +192,11 @@ describe( 'DomainSuggestionPrice', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test-premium-domain.com">
+			<TestDomainSearchWithSuggestions query="test-premium-domain.com">
 				<DomainSuggestionsList>
 					<DomainSuggestionPrice domainName="test-premium-domain.com" />
 				</DomainSuggestionsList>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByLabelText( 'Original price: $5' ) ).toBeInTheDocument();

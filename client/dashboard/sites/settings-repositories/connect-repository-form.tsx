@@ -40,6 +40,8 @@ import type {
 import type { NavigateOptions } from '@tanstack/react-router';
 
 interface ConnectRepositoryFormProps {
+	formTitle: string;
+	formDescription: React.ReactNode;
 	onCancel: () => void;
 	mutation: UseMutationResult<
 		CreateAndUpdateCodeDeploymentResponse,
@@ -179,6 +181,8 @@ const AutomatedToggle = ( {
 };
 
 export const ConnectRepositoryForm = ( {
+	formTitle,
+	formDescription,
 	onCancel,
 	mutation,
 	initialValues,
@@ -586,59 +590,66 @@ export const ConnectRepositoryForm = ( {
 
 	return (
 		<>
-			<DataForm< ConnectRepositoryFormData >
-				// Force a re-render when the repository changes
-				// Otherwise, the fields that have validation errors will not be reset
-				key={ formData.selectedRepositoryId }
-				data={ formData }
-				fields={ fields }
-				form={ {
-					layout: { type: 'regular' as const },
-					fields: [
-						'selectedInstallationId',
-						'selectedRepositoryId',
-						'branch',
-						'targetDir',
-						'isAutomated',
-					],
-				} }
-				onChange={ handleChange }
-			/>
+			<SectionHeader level={ 3 } title={ formTitle } description={ formDescription } />
+			<VStack spacing={ 6 }>
+				<DataForm< ConnectRepositoryFormData >
+					// Force a re-render when the repository changes
+					// Otherwise, the fields that have validation errors will not be reset
+					key={ formData.selectedRepositoryId }
+					data={ formData }
+					fields={ fields }
+					form={ {
+						layout: { type: 'regular' as const },
+						fields: [
+							'selectedInstallationId',
+							'selectedRepositoryId',
+							'branch',
+							'targetDir',
+							'isAutomated',
+						],
+					} }
+					onChange={ handleChange }
+				/>
 
-			<SectionHeader
-				level={ 3 }
-				title={ __( 'Pick your deployment mode' ) }
-				description={ __(
-					'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
-				) }
-			/>
+				<div>
+					<SectionHeader
+						level={ 3 }
+						title={ __( 'Pick your deployment mode' ) }
+						description={ __(
+							'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+						) }
+					/>
 
-			<RadioControl
-				selected={ formData.deploymentMode }
-				onChange={ ( value ) => handleChange( { deploymentMode: value as 'simple' | 'advanced' } ) }
-				options={ [
-					{ label: __( 'Simple' ), value: 'simple' },
-					{ label: __( 'Advanced' ), value: 'advanced' },
-				] }
-				disabled={ ! selectedRepository }
-			/>
+					<RadioControl
+						selected={ formData.deploymentMode }
+						onChange={ ( value ) =>
+							handleChange( { deploymentMode: value as 'simple' | 'advanced' } )
+						}
+						options={ [
+							{ label: __( 'Simple' ), value: 'simple' },
+							{ label: __( 'Advanced' ), value: 'advanced' },
+						] }
+						disabled={ ! selectedRepository }
+					/>
+				</div>
 
-			{ isAdvancedSelected && renderAdvancedWorkflow() }
+				{ isAdvancedSelected && renderAdvancedWorkflow() }
 
-			<HStack justify="flex-end">
-				<Button variant="tertiary" onClick={ onCancel }>
-					{ __( 'Cancel' ) }
-				</Button>
-				<Button
-					variant="primary"
-					onClick={ handleSubmit }
-					isBusy={ mutation.isPending }
-					disabled={ ! isFormValid || mutation.isPending }
-					__next40pxDefaultSize
-				>
-					{ submitText }
-				</Button>
-			</HStack>
+				<HStack justify="flex-end">
+					<Button variant="tertiary" onClick={ onCancel }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						onClick={ handleSubmit }
+						isBusy={ mutation.isPending }
+						disabled={ ! isFormValid || mutation.isPending }
+						__next40pxDefaultSize
+					>
+						{ submitText }
+					</Button>
+				</HStack>
+			</VStack>
 		</>
 	);
 };

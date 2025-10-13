@@ -50,7 +50,8 @@ export default function DomainOverview() {
 					title={ wrappableDomainName }
 					description={
 						<HStack spacing={ 2 } alignment="center" justify="flex-start">
-							{ domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
+							{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION &&
+								domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
 							<span>
 								{ ( () => {
 									switch ( domain.subtype.id ) {

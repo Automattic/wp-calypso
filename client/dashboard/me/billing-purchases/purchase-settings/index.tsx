@@ -208,6 +208,7 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+		// @TODO Update link url to whatever the hosting dashboard URL is. https://linear.app/a8c/issue/DOTDASH-626/hosting-dashboard-emails-update-purchase-settings-url
 		const url = getEmailManagementPath( purchase.site_slug, purchase.meta );
 		const text = __( 'Email settings' );
 		return <a href={ url }>{ text }</a>;

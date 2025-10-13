@@ -116,6 +116,7 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 	}
 
 	return {
+		...message,
 		content: getContentMessage( message ),
 		context,
 		role,

@@ -11,7 +11,7 @@ import { buildCartItem } from '../../../test-helpers/factories/cart';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
-import { TestDomainSearchWithSuggestionsList } from '../../../test-helpers/renderer';
+import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 import { FeaturedSearchResultsItem } from '../item';
 
 describe( 'FeaturedSearchResultsItem', () => {
@@ -33,13 +33,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test.com">
+				<TestDomainSearchWithSuggestions query="test.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test.com' ) );
@@ -67,13 +67,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-all-reasons.net">
+				<TestDomainSearchWithSuggestions query="test-all-reasons.net">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-all-reasons.net"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-all-reasons.net' ) );
@@ -100,13 +100,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test">
+				<TestDomainSearchWithSuggestions query="test">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test.com' ) );
@@ -129,13 +129,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-no-reasons.com">
+				<TestDomainSearchWithSuggestions query="test-no-reasons.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-no-reasons.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-no-reasons.com' ) );
@@ -152,13 +152,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-exact-match.com">
+				<TestDomainSearchWithSuggestions query="test-exact-match.com">
 					<FeaturedSearchResultsItem
 						reason="exact-match"
 						domainName="test-exact-match.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-exact-match.com' ) );
@@ -178,13 +178,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-move-suggestion.com">
+				<TestDomainSearchWithSuggestions query="test-move-suggestion.com">
 					<FeaturedSearchResultsItem
 						reason="exact-match"
 						domainName="test-move-suggestion.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-move-suggestion.com' ) );
@@ -218,13 +218,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-policy-badges.app">
+				<TestDomainSearchWithSuggestions query="test-policy-badges.app">
 					<FeaturedSearchResultsItem
 						reason="exact-match"
 						domainName="test-policy-badges.app"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-policy-badges.app' ) );
@@ -259,13 +259,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-exact-match-1.com">
+				<TestDomainSearchWithSuggestions query="test-exact-match-1.com">
 					<FeaturedSearchResultsItem
 						reason="exact-match"
 						domainName="test-exact-match-1.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-exact-match-1.com' ) );
@@ -301,13 +301,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-policy-badges.app">
+				<TestDomainSearchWithSuggestions query="test-policy-badges.app">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-policy-badges.app"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-policy-badges.app' ) );
@@ -340,13 +340,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-recommended.com">
+				<TestDomainSearchWithSuggestions query="test-recommended.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-recommended.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-recommended.com' ) );
@@ -361,13 +361,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-best-alternative.com">
+				<TestDomainSearchWithSuggestions query="test-best-alternative.com">
 					<FeaturedSearchResultsItem
 						reason="best-alternative"
 						domainName="test-best-alternative.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-best-alternative.com' ) );
@@ -382,13 +382,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-sale.com">
+				<TestDomainSearchWithSuggestions query="test-sale.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-sale.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-sale.com' ) );
@@ -418,13 +418,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-sale-availability.com">
+				<TestDomainSearchWithSuggestions query="test-sale-availability.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-sale-availability.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-sale-availability.com' ) );
@@ -452,13 +452,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-premium-normal-price.com">
+				<TestDomainSearchWithSuggestions query="test-premium-normal-price.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-premium-normal-price.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-premium-normal-price.com' ) );
@@ -487,13 +487,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-premium-price-limit-exceeded.com">
+				<TestDomainSearchWithSuggestions query="test-premium-price-limit-exceeded.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-premium-price-limit-exceeded.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-premium-price-limit-exceeded.com' ) );
@@ -510,13 +510,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-add-to-cart.com">
+				<TestDomainSearchWithSuggestions query="test-add-to-cart.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-add-to-cart.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-add-to-cart.com' ) );
@@ -535,7 +535,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList
+				<TestDomainSearchWithSuggestions
 					initialCartItems={ [ buildCartItem( { domain: 'test-continue', tld: 'com' } ) ] }
 					query="test-continue.com"
 				>
@@ -544,7 +544,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 						domainName="test-continue.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-continue.com' ) );
@@ -574,13 +574,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-contact-support.com">
+				<TestDomainSearchWithSuggestions query="test-contact-support.com">
 					<FeaturedSearchResultsItem
 						reason="recommended"
 						domainName="test-contact-support.com"
 						isSingleFeaturedSuggestion={ false }
 					/>
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-contact-support.com' ) );
@@ -602,13 +602,13 @@ describe( 'FeaturedSearchResultsItem', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="test-exact-match.com">
+			<TestDomainSearchWithSuggestions query="test-exact-match.com">
 				<FeaturedSearchResultsItem
 					reason="exact-match"
 					domainName="test-exact-match.com"
 					isSingleFeaturedSuggestion={ false }
 				/>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		await waitFor( () => screen.getByTitle( 'test-exact-match.com' ) );
@@ -629,7 +629,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 		const onSuggestionRender = jest.fn();
 
 		render(
-			<TestDomainSearchWithSuggestionsList
+			<TestDomainSearchWithSuggestions
 				events={ { onSuggestionRender } }
 				query="test-suggestion-render.com"
 			>
@@ -638,7 +638,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 					domainName="test-suggestion-render.com"
 					isSingleFeaturedSuggestion={ false }
 				/>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		await waitFor( () => {

@@ -9,7 +9,7 @@ import { buildCartItem } from '../../../test-helpers/factories/cart';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
-import { TestDomainSearchWithSuggestionsList } from '../../../test-helpers/renderer';
+import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 import { SearchResultsItem } from '../item';
 
 describe( 'SearchResultsItem', () => {
@@ -40,9 +40,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-policy-badges.app">
+				<TestDomainSearchWithSuggestions query="test-policy-badges.app">
 					<SearchResultsItem domainName="test-policy-badges.app" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-policy-badges.app' ) );
@@ -75,9 +75,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-sale.com">
+				<TestDomainSearchWithSuggestions query="test-sale.com">
 					<SearchResultsItem domainName="test-sale.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-sale.com' ) );
@@ -107,9 +107,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-sale-availability.com">
+				<TestDomainSearchWithSuggestions query="test-sale-availability.com">
 					<SearchResultsItem domainName="test-sale-availability.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-sale-availability.com' ) );
@@ -137,9 +137,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-premium-normal-price.com">
+				<TestDomainSearchWithSuggestions query="test-premium-normal-price.com">
 					<SearchResultsItem domainName="test-premium-normal-price.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-premium-normal-price.com' ) );
@@ -168,9 +168,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-premium-price-limit-exceeded.com">
+				<TestDomainSearchWithSuggestions query="test-premium-price-limit-exceeded.com">
 					<SearchResultsItem domainName="test-premium-price-limit-exceeded.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-premium-price-limit-exceeded.com' ) );
@@ -187,9 +187,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-add-to-cart.com">
+				<TestDomainSearchWithSuggestions query="test-add-to-cart.com">
 					<SearchResultsItem domainName="test-add-to-cart.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-add-to-cart.com' ) );
@@ -208,12 +208,12 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList
+				<TestDomainSearchWithSuggestions
 					initialCartItems={ [ buildCartItem( { domain: 'test-continue', tld: 'com' } ) ] }
 					query="test-continue.com"
 				>
 					<SearchResultsItem domainName="test-continue.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-continue.com' ) );
@@ -243,9 +243,9 @@ describe( 'SearchResultsItem', () => {
 			} );
 
 			render(
-				<TestDomainSearchWithSuggestionsList query="test-contact-support.com">
+				<TestDomainSearchWithSuggestions query="test-contact-support.com">
 					<SearchResultsItem domainName="test-contact-support.com" />
-				</TestDomainSearchWithSuggestionsList>
+				</TestDomainSearchWithSuggestions>
 			);
 
 			await waitFor( () => screen.getByTitle( 'test-contact-support.com' ) );
@@ -271,12 +271,12 @@ describe( 'SearchResultsItem', () => {
 		const onSuggestionRender = jest.fn();
 
 		render(
-			<TestDomainSearchWithSuggestionsList
+			<TestDomainSearchWithSuggestions
 				events={ { onSuggestionRender } }
 				query="test-suggestion-render.com"
 			>
 				<SearchResultsItem domainName="test-suggestion-render.com" />
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		await waitFor( () => {

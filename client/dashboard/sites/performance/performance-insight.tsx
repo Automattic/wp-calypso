@@ -40,24 +40,38 @@ export const PerformanceInsightTitle = ( {
 	index: number;
 	isHightImpact: boolean;
 } ) => {
+	const isMediumScreen = useViewportMatch( 'medium', '<' );
+	const isSmallScreen = useViewportMatch( 'small', '<' );
 	const intent = insight.type === 'fail' ? 'error' : 'warning';
 
 	return (
-		<HStack>
-			<HStack justify="flex-start">
-				<Text intent={ intent } size={ 15 } weight={ 500 }>
+		<HStack
+			direction={ isSmallScreen ? 'column' : 'row' }
+			alignment={ isSmallScreen ? 'flex-start' : 'center' }
+			style={ {
+				minHeight: isMediumScreen ? '40px' : 'auto',
+			} }
+		>
+			<HStack justify="flex-start" alignment={ isMediumScreen ? 'flex-start' : 'center' }>
+				<Text intent={ intent } size={ 15 } weight={ 500 } style={ { flexShrink: 0 } }>
 					{ index }
 				</Text>
-				<Text>{ insight.title }</Text>
-				{ insight.displayValue && (
-					<>
-						<Text>&nbsp;&minus;&nbsp;</Text>
-						<Text intent={ intent }>{ insight.displayValue }</Text>
-					</>
-				) }
+				<HStack
+					justify="flex-start"
+					alignment={ isMediumScreen ? 'flex-start' : 'center' }
+					direction={ isMediumScreen ? 'column' : 'row' }
+				>
+					<Text lineHeight={ isMediumScreen ? '17px' : 'unset' }>{ insight.title }</Text>
+					{ insight.displayValue && (
+						<>
+							{ ! isMediumScreen && <Text>&nbsp;&minus;&nbsp;</Text> }
+							<Text intent={ intent }>{ insight.displayValue }</Text>
+						</>
+					) }
+				</HStack>
 			</HStack>
 			{ isHightImpact && (
-				<Badge intent="error" style={ { flexShrink: 0 } }>
+				<Badge intent="error" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
 					{ __( 'High impact' ) }
 				</Badge>
 			) }
@@ -125,7 +139,7 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 		}
 
 		return (
-			<>
+			<HStack wrap>
 				<Text>{ __( 'How did we do?' ) }</Text>
 				<Button
 					icon={ thumbsUp }
@@ -178,7 +192,7 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 						</form>
 					</Modal>
 				) }
-			</>
+			</HStack>
 		);
 	};
 

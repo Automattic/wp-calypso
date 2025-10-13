@@ -87,8 +87,8 @@ export const getContactFormFields = (
 								{ createInterpolateElement(
 									sprintf(
 										/* translators: %s: "what is this?" link */
-										__( 'Opt-out of the 60-day transfer lock <link>%s</link>' ),
-										__( 'what is this?' )
+										__( 'Opt-out of the 60-day transfer lock. <link>%s</link>' ),
+										__( 'What is this?' )
 									),
 									{
 										link: <InlineSupportLink supportContext="60-day-transfer-lock" />,

@@ -5,6 +5,7 @@ import ConfirmModal from '../../../components/confirm-modal';
 interface UsernameUpdateConfirmationModalProps {
 	isOpen: boolean;
 	currentUsername: string;
+	newUsername: string;
 	onConfirm: () => void;
 	onCancel: () => void;
 	isBusy: boolean;
@@ -13,6 +14,7 @@ interface UsernameUpdateConfirmationModalProps {
 export default function UsernameUpdateConfirmationModal( {
 	isOpen,
 	currentUsername,
+	newUsername,
 	onConfirm,
 	onCancel,
 	isBusy,
@@ -34,13 +36,14 @@ export default function UsernameUpdateConfirmationModal( {
 		>
 			{ createInterpolateElement(
 				sprintf(
-					/* translators: %(username)s is the current username that will be changed */
+					/* translators: currentUsername is the current username that will be changed.
+					newUsername is the new username */
 					__(
-						'You are about to change your username, <strong>%s</strong>. ' +
+						'You are about to change your username, <strong>%(currentUsername)s</strong>, to <strong>%(newUsername)s</strong>. <break />' +
 							'Once changed, you will not be able to revert it. <break />' +
 							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
 					),
-					currentUsername
+					{ currentUsername, newUsername }
 				),
 				{
 					strong: <strong />,

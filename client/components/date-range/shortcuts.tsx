@@ -67,7 +67,7 @@ const DateRangePickerShortcuts = ( {
 		onShortcutClick && onShortcutClick( shortcut );
 	};
 
-	selectedShortcutId = selectedShortcutId || selectedShortcut?.id || 'custom_date_range';
+	selectedShortcutId = selectedShortcutId || selectedShortcut?.id || '';
 
 	return (
 		<div className="date-range-picker-shortcuts__inner">

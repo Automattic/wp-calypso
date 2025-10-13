@@ -87,6 +87,7 @@ export const UNLISTED_PLUGINS = [
 	'social-blend',
 	'wp-fusion-lite',
 	'wp-persistent-login',
+	'snap-pixel',
 ];
 
 export const WPBEGINNER_PLUGINS = [
