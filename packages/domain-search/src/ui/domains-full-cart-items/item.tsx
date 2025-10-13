@@ -28,17 +28,15 @@ export const DomainsFullCartItem = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const domainName = `${ domain.domain }.${ domain.tld }`;
+
 	return (
-		<Card>
+		<Card title={ domainName }>
 			<CardBody size="small">
 				<VStack spacing={ 4 }>
 					<HStack alignment="top" justify="space-between" spacing={ 6 }>
 						<VStack spacing={ 2 } alignment="left">
-							<Text
-								size="medium"
-								aria-label={ `${ domain.domain }.${ domain.tld }` }
-								style={ { wordBreak: 'break-all' } }
-							>
+							<Text size="medium" aria-label={ domainName } style={ { wordBreak: 'break-all' } }>
 								{ domain.domain }
 								<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
 									.{ domain.tld }
@@ -58,17 +56,41 @@ export const DomainsFullCartItem = ( {
 							<HStack alignment="right" spacing={ 2 }>
 								{ domain.salePrice ? (
 									<>
-										<Text size="small" className="domains-full-cart-items__original-price">
+										<Text
+											size="small"
+											className="domains-full-cart-items__original-price"
+											aria-label={ sprintf(
+												// translators: %(price)s is the original price of the domain.
+												__( 'Original price: %(price)s/year' ),
+												{ price: domain.price }
+											) }
+										>
 											{ sprintf(
 												// translators: %(price)s is the price of the domain.
 												__( '%(price)s/year' ),
 												{ price: domain.price }
 											) }
 										</Text>
-										<Text size="small">{ domain.salePrice }</Text>
+										<Text
+											size="small"
+											aria-label={ sprintf(
+												// translators: %(price)s is the sale price of the domain.
+												__( 'Sale price: %(price)s/year' ),
+												{ price: domain.salePrice }
+											) }
+										>
+											{ domain.salePrice }
+										</Text>
 									</>
 								) : (
-									<Text size="small">
+									<Text
+										size="small"
+										aria-label={ sprintf(
+											// translators: %(price)s is the price of the domain.
+											__( 'Price: %(price)s/year' ),
+											{ price: domain.price }
+										) }
+									>
 										{ sprintf(
 											// translators: %(price)s is the price of the domain.
 											__( '%(price)s/year' ),

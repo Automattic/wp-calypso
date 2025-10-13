@@ -557,7 +557,7 @@ class CancelPurchaseForm extends Component {
 	}
 
 	renderStepButtons = () => {
-		const { translate, disableButtons } = this.props;
+		const { translate, disableButtons, purchase } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -591,7 +591,9 @@ class CancelPurchaseForm extends Component {
 						disabled={ ! this.canGoNext() }
 						onClick={ this.onSubmit }
 					>
-						{ translate( 'Submit' ) }
+						{ translate( 'Remove %(productName)s', {
+							args: { productName: purchase.productName || 'plan' },
+						} ) }
 					</GutenbergButton>
 					<GutenbergButton
 						isSecondary

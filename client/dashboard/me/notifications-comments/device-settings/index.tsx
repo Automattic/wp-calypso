@@ -17,9 +17,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
+import { useAnalytics } from '../../../app/analytics';
 import { SectionHeader } from '../../../components/section-header';
 
 export const DevicesSettings = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { mutate: updateSettings } = useMutation( {
 		...userNotificationsSettingsMutation(),
@@ -59,6 +61,12 @@ export const DevicesSettings = () => {
 			return device;
 		} );
 
+		recordTracksEvent( 'calypso_dashboard_notifications_devices_settings_updated', {
+			device_id: selectedDeviceId,
+			setting_name: updated.id,
+			setting_value: updated.value,
+		} );
+
 		updateSettings( {
 			data: {
 				other: {
@@ -94,14 +102,12 @@ export const DevicesSettings = () => {
 							title={ __( 'Devices' ) }
 							description={ createInterpolateElement(
 								__(
-									'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app.</link>'
+									'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app</link>'
 								),
 								{
 									link: (
 										<ExternalLink
 											href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
-											rel="noopener noreferrer"
-											//Workaround for the fact that the ExternalLink component expects a children prop
 											children={ null }
 										/>
 									),

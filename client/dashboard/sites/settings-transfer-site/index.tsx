@@ -7,10 +7,11 @@ import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { canTransferSite } from '../features';
-import SettingsPageHeader from '../settings-page-header';
 import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owner-form';
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
@@ -26,7 +27,8 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Transfer site' ) }
 					description={ createInterpolateElement(
 						__(

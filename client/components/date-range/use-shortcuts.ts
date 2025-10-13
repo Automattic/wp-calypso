@@ -113,13 +113,6 @@ export const getShortcuts = createSelector(
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.YEAR,
 			},
-			{
-				id: 'custom_date_range',
-				label: translate( 'Custom Range' ),
-				startDate: '',
-				endDate: '',
-				period: DATERANGE_PERIOD.DAY,
-			},
 		];
 
 		return {

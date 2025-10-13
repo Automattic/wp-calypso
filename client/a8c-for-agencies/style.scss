@@ -187,6 +187,7 @@
 		&:hover,
 		&:focus-visible {
 			background-color: var(--color-scary-60);
+			color: var(--color-text-inverted);
 		}
 	}
 

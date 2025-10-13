@@ -10,7 +10,6 @@ import {
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -62,12 +61,6 @@ export const useCheckoutHelpCenter = (): {
 			setNavigateToRoute( '/odie' );
 		}
 	};
-
-	useEffect( () => {
-		return () => {
-			setShowHelpCenter( false );
-		};
-	}, [] );
 
 	return {
 		toggleHelpCenter,

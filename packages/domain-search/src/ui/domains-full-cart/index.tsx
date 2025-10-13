@@ -19,7 +19,7 @@ import { DomainsFullCartSummary } from '../domains-full-cart-summary';
 
 import './style.scss';
 
-const AnimatedCard = motion( Card );
+const AnimatedCard = motion.create( Card );
 
 const createSlideAnimation = ( axis: 'x' | 'y' ) => ( {
 	initial: {

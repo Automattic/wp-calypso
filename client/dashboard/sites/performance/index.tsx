@@ -7,14 +7,17 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import DeviceToggle, { DeviceToggleType } from './device-toggle';
+import { SiteLaunchButton } from '../site-launch-button';
+import DeviceToggle from './device-toggle';
 import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
 import Report from './report';
@@ -22,6 +25,7 @@ import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
 import Subtitle from './subtitle';
+import type { DeviceToggleType } from './types';
 import type { Site, SitePerformancePage } from '@automattic/api-core';
 
 /**
@@ -83,56 +87,77 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
 	const { gmtOffset, timezoneString } = siteSettings;
 
-	return (
-		<PageLayout>
-			<PageHeader
-				description={
-					<Subtitle
-						timestamp={ currentReport?.timestamp }
-						timezoneString={ timezoneString }
-						gmtOffset={ gmtOffset }
-						onClick={ handleReportRefetch }
-					/>
-				}
-				actions={
-					<HStack>
-						<PageSelector
-							siteUrl={ site.URL }
-							currentPage={ currentPage }
-							pages={ pagesData }
-							onChange={ ( pageId ) => {
-								recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {
-									is_home: pageId === '0',
-								} );
+	const renderContent = () => {
+		if ( hasError ) {
+			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
+		}
 
-								navigate( {
-									search: ( prev: Record< string, string > ) => ( {
-										...prev,
-										page_id: Number( pageId ),
-									} ),
-								} );
-							} }
-						/>
-						<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-					</HStack>
-				}
-			/>
-			{ hasError && <ReportErrorNotice onRetestClick={ handleReportRefetch } /> }
-			{ isFetchingReport || isRunningReport || ! currentReport ? (
+		if ( isFetchingReport || isRunningReport || ! currentReport ) {
+			return (
 				<ReportLoading
 					isSavedReport={
 						isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
 					}
 				/>
-			) : (
-				<>
-					<ReportExpiredNotice
-						reportTimestamp={ currentReport.timestamp }
-						onRetest={ handleReportRefetch }
-					/>
-					<Report report={ currentReport } />
-				</>
-			) }
+			);
+		}
+
+		return (
+			<>
+				<ReportExpiredNotice
+					reportTimestamp={ currentReport.timestamp }
+					onRetest={ handleReportRefetch }
+				/>
+				<Report
+					report={ currentReport }
+					device={ deviceToggle }
+					hash={ currentPage?.wpcom_performance_report_hash }
+				/>
+			</>
+		);
+	};
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					description={
+						<Subtitle
+							timestamp={ currentReport?.timestamp }
+							timezoneString={ timezoneString }
+							gmtOffset={ gmtOffset }
+							onClick={ handleReportRefetch }
+						/>
+					}
+					actions={
+						<HStack>
+							<PageSelector
+								siteUrl={ site.URL }
+								currentPage={ currentPage }
+								pages={ pagesData }
+								onChange={ ( pageId ) => {
+									recordTracksEvent(
+										'calypso_dashboard_performance_profiler_page_selector_change',
+										{
+											is_home: pageId === '0',
+										}
+									);
+
+									navigate( {
+										search: ( prev: Record< string, string > ) => ( {
+											...prev,
+											page_id: Number( pageId ),
+										} ),
+									} );
+								} }
+							/>
+							<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
+						</HStack>
+					}
+				/>
+			}
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }
@@ -148,7 +173,22 @@ function SitePerformance() {
 			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getPerformanceCalloutProps() }
 		>
-			<SitePerformanceContent site={ site } />
+			{ site.is_coming_soon || site.is_private ? (
+				<PageLayout
+					size="small"
+					header={ <PageHeader /> }
+					notices={
+						<Notice
+							title={ __( 'Launch your site to start measuring performance' ) }
+							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
+						>
+							{ __( 'Performance statistics are only available for public sites.' ) }
+						</Notice>
+					}
+				/>
+			) : (
+				<SitePerformanceContent site={ site } />
+			) }
 		</HostingFeatureGatedWithCallout>
 	);
 }

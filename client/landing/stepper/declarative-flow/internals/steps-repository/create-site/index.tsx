@@ -19,6 +19,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
@@ -53,6 +54,37 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
+async function pollForGardenProvisioning( siteId: number, maxAttempts = 10, delayMs = 3000 ) {
+	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+		try {
+			const siteResponse = ( await wpcomRequest( {
+				path: `/sites/${ siteId }`,
+				apiVersion: '1.1',
+				method: 'GET',
+			} ) ) as { garden_is_provisioned?: boolean };
+
+			if ( siteResponse?.garden_is_provisioned ) {
+				return true;
+			}
+
+			if ( attempt < maxAttempts ) {
+				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
+			}
+		} catch ( error ) {
+			if ( attempt < maxAttempts ) {
+				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
+			}
+		}
+	}
+
+	// Throw an error to trigger the processing step's error handling
+	const error = new Error(
+		'We were unable to create your site. Please try again or contact support.'
+	) as Error & { code: string };
+	error.code = 'garden_provisioning_timeout';
+	throw error;
+}
+
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -69,6 +101,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
+		gardenName,
+		gardenPartnerName,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -80,6 +114,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
+			gardenName: select( ONBOARD_STORE ).getGardenName(),
+			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
 		} ),
 		[]
 	);
@@ -193,8 +229,16 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent
+			siteIntent,
+			undefined, // siteGoals
+			gardenName,
+			gardenPartnerName
 		);
+
+		// Poll for garden provisioning status if this is a garden site
+		if ( gardenName && site?.siteId ) {
+			await pollForGardenProvisioning( site.siteId );
+		}
 
 		if ( isEntrepreneurFlow( flow ) && site ) {
 			await addEcommerceTrial( { siteId: site.siteId } );

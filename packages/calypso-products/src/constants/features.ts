@@ -294,6 +294,10 @@ export const WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED = 'premium-themes';
  * WPCOM) to `premium-themes-limited` so it better reflects the actual feature.
  */
 export const WPCOM_FEATURES_PREMIUM_THEMES_LIMITED = 'personal-themes';
+export const WPCOM_FEATURES_PARTNER_THEMES = 'partner-themes';
+export const WPCOM_FEATURES_COMMUNITY_THEMES = 'community-themes';
+export const WPCOM_FEATURES_WOOCOMMERCE_THEMES = 'woocommerce-themes';
+export const WPCOM_FEATURES_SENSEI_THEMES = 'sensei-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';

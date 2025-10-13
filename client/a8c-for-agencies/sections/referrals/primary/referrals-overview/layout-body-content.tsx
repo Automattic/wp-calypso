@@ -1,4 +1,4 @@
-import { Button, WooLogo, WordPressLogo } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
 import { reusableBlock } from '@wordpress/icons';
@@ -58,7 +58,6 @@ export default function LayoutBodyContent( {
 	}, [ dispatch ] );
 
 	const accountStatus = getAccountStatus( tipaltiData, translate );
-	const isPayable = !! tipaltiData?.IsPayable;
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	const bankAccountCTAText = hasPayeeAccount
@@ -165,6 +164,19 @@ export default function LayoutBodyContent( {
 					<>
 						<StepSection heading={ translate( 'How do I start?' ) }>
 							<StepSectionItem
+								iconClassName="referrals-overview__opacity-70-percent"
+								icon={ reusableBlock }
+								heading={ translate( 'Refer products and hosting' ) }
+								description={ translate( 'Receive up to a 50% commission.' ) }
+								buttonProps={ {
+									children: translate( 'Get started' ),
+									compact: true,
+									primary: hasPayeeAccount,
+									href: A4A_MARKETPLACE_PRODUCTS_LINK,
+									onClick: onGetStartedClick,
+								} }
+							/>
+							<StepSectionItem
 								icon={ tipaltiLogo }
 								heading={ translate( 'Prepare to get paid' ) }
 								description={ translate( 'With {{a}}Tipalti{{/a}}↗, our secure platform.', {
@@ -195,41 +207,6 @@ export default function LayoutBodyContent( {
 										  }
 										: undefined
 								}
-							/>
-							<StepSectionItem
-								iconClassName="referrals-overview__opacity-70-percent"
-								icon={ reusableBlock }
-								heading={ translate( 'Refer products and hosting' ) }
-								description={ translate( 'Receive up to a 50% commission.' ) }
-								buttonProps={ {
-									children: translate( 'Get started' ),
-									compact: true,
-									primary: hasPayeeAccount,
-									disabled: ! isPayable,
-									href: A4A_MARKETPLACE_PRODUCTS_LINK,
-									onClick: onGetStartedClick,
-								} }
-							/>
-							<StepSectionItem
-								className="referrals-overview__step-section-woo-payments"
-								icon={ <WooLogo /> }
-								heading={ translate( 'Install WooPayments' ) }
-								description={ translate(
-									'Receive a revenue share of 5 basis points on the total payments{{nbsp/}}volume.',
-									{
-										components: {
-											nbsp: <>&nbsp;</>,
-										},
-									}
-								) }
-								buttonProps={ {
-									children: translate( 'Learn how' ),
-									compact: true,
-									primary: hasPayeeAccount,
-									href: 'https://woocommerce.com/payments/',
-									rel: 'noreferrer',
-									target: '_blank',
-								} }
 							/>
 						</StepSection>
 						<StepSection

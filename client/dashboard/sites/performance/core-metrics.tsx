@@ -30,7 +30,7 @@ export default function CoreMetrics( {
 			selectedTabId={ activeTab }
 			onSelect={ ( tabId: Metrics ) => setActiveTab( tabId ) }
 		>
-			<HStack wrap={ ! isDesktop } alignment="flex-start" justify="flex-start" spacing={ 6 }>
+			<HStack wrap={ ! isDesktop } alignment="stretch" justify="flex-start" spacing={ 6 }>
 				<Card style={ { flexGrow: ! isDesktop ? 1 : 0, flexShrink: ! isDesktop ? 1 : 0 } }>
 					<CoreMetricsTabs compact={ ! isDesktop } report={ report } />
 				</Card>

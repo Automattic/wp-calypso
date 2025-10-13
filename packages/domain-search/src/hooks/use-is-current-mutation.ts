@@ -1,9 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useId } from 'react';
 
-export const useIsCurrentMutation = ( submittedAt: number ) => {
+export const useIsCurrentMutation = () => {
 	const queryClient = useQueryClient();
+	const mutationId = useId();
 
-	const lastSubmittedAt = queryClient.getMutationCache().findAll().at( -1 )?.state.submittedAt;
+	const lastMutationId = queryClient.getMutationCache().findAll().at( -1 )?.meta?.mutationId;
 
-	return lastSubmittedAt === submittedAt;
+	return {
+		mutationId,
+		isCurrentMutation: lastMutationId === mutationId,
+	};
 };

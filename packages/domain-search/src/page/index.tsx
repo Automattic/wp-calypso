@@ -1,7 +1,8 @@
 import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useEvent } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
 import { InitialState } from './initial-state';
 import { ResultsPage } from './results';
@@ -12,19 +13,13 @@ import './style.scss';
 export const DomainSearch = ( props: DomainSearchProps ) => {
 	const contextValue = useDomainSearchContextValue( props );
 
-	const cartItemsLength = contextValue.cart.items.length;
-	const isFullCartOpen = contextValue.isFullCartOpen;
-	const closeFullCart = contextValue.closeFullCart;
+	const onPageView = useEvent( () => {
+		contextValue.events.onPageView();
+	} );
 
 	useEffect( () => {
-		contextValue.events.onPageView();
-	}, [] );
-
-	useLayoutEffect( () => {
-		if ( cartItemsLength === 0 && isFullCartOpen ) {
-			closeFullCart();
-		}
-	}, [ cartItemsLength, isFullCartOpen, closeFullCart ] );
+		onPageView();
+	}, [ onPageView ] );
 
 	const getContent = () => {
 		if ( ! contextValue.query ) {
