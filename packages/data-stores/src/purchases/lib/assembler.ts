@@ -23,7 +23,6 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		description: purchase.description,
 		domain: purchase.domain,
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
-		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),

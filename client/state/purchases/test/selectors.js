@@ -92,7 +92,6 @@ describe( 'selectors', () => {
 				description: undefined,
 				domain: undefined,
 				domainRegistrationAgreementUrl: null,
-				error: null,
 				expiryDate: undefined,
 				expiryStatus: '',
 				iapPurchaseManagementLink: undefined,

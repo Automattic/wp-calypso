@@ -27,7 +27,6 @@ export interface Purchase {
 	domain: string;
 
 	domainRegistrationAgreementUrl: string | null;
-	error: null;
 	expiryDate: string;
 	expiryStatus: string;
 	iapPurchaseManagementLink: string | null;
