@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import Notice from 'calypso/components/notice';
+import Notice from 'calypso/dashboard/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -52,35 +52,26 @@ export function useErrorNotice( { error: errorResponse, recentSocialAuthAttemptP
 			);
 		} else if ( errorResponse.error === '2FA_enabled' ) {
 			noticeText = (
-				<span>
-					<p>
-						{ errorResponse.message }
-						&nbsp;
-						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
-							components: {
-								a: (
-									<a
-										href={ loginLink }
-										onClick={ () =>
-											dispatch( recordTracksEventWithClientId( 'calypso_signup_login_midflow' ) )
-										}
-									/>
-								),
-							},
-						} ) }
-					</p>
-				</span>
+				<>
+					{ errorResponse.message }
+					&nbsp;
+					{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+						components: {
+							a: (
+								<a
+									href={ loginLink }
+									onClick={ () =>
+										dispatch( recordTracksEventWithClientId( 'calypso_signup_login_midflow' ) )
+									}
+								/>
+							),
+						},
+					} ) }
+				</>
 			);
 		}
 
-		return (
-			<Notice
-				className="signup-form__notice signup-form__span-columns"
-				showDismiss={ false }
-				status="is-transparent-info"
-				text={ noticeText }
-			/>
-		);
+		return <Notice variant="error">{ noticeText }</Notice>;
 	}
 
 	return false;
