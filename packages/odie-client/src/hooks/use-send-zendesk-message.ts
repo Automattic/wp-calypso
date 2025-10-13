@@ -13,12 +13,13 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
-	const { setChatStatus, chat, setChat } = useOdieAssistantContext();
+	const { chat, setChat } = useOdieAssistantContext();
 	const newConversation = useCreateZendeskConversation();
 
 	// < void, Error, { message: Message; signal: AbortSignal } >
 	let conversationId = currentConversationId || chat.conversationId;
 	return useMutation( {
+		mutationKey: [ 'send-zendesk-messages' ],
 		mutationFn: async ( message: Message ): Promise< Message > => {
 			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist
@@ -35,15 +36,22 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				text: message.content as string,
 				...( message.payload && { payload: message.payload } ),
 				...( message.metadata && { metadata: message.metadata } ),
-				isSending: true,
 			};
 
 			Smooch.sendMessage( messageToSend, conversationId );
 			return new Promise< Message >( ( resolve, reject ) => {
+				// If the message is not sent within 5 seconds, reject the promise.
+				// This allows Tanstack Query to retry the request if the user comes back online.
+				const timeout = setTimeout( () => {
+					reject( new Error( 'Message not sent' ) );
+				}, 5000 );
 				function onMessageSent( message: Message ) {
-					// @ts-expect-error -- 'off' is not part of the def.
-					Smooch.off( 'message:sent', onMessageSent );
-					resolve( message );
+					if ( message.metadata?.temporary_id === messageToSend.metadata?.temporary_id ) {
+						// @ts-expect-error -- 'off' is not part of the def.
+						Smooch.off( 'message:sent', onMessageSent );
+						resolve( message );
+						clearTimeout( timeout );
+					}
 				}
 				signal.onabort = reject;
 				// When this isn't called, the promise will not resolve,
@@ -51,28 +59,17 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				Smooch.on( 'message:sent', onMessageSent as any );
 			} );
 		},
-		onMutate: () => {
-			setChatStatus( 'sending' );
-		},
-		onSettled: () => {
-			setChatStatus( 'loaded' );
-		},
 		onSuccess: ( data: Message ) => {
 			// Update the chat with the message that was sent
 			setChat( ( chat ) => ( {
 				...chat,
 				messages: chat.messages.map( ( message ) =>
 					message.metadata?.temporary_id === data.metadata?.temporary_id
-						? { ...message, isSending: false }
+						? { ...data, ...message }
 						: message
 				),
 			} ) );
-			setChatStatus( 'loaded' );
 		},
-		onError: ( error ) => {
-			if ( error instanceof Event && error.type === 'abort' ) {
-				setChatStatus( 'loaded' );
-			}
-		},
+		retry: true,
 	} );
 };

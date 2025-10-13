@@ -20,7 +20,11 @@ export const MessageContent = ( {
 		'agenttic',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		{ 'is-sending': message.isSending },
+		// `received` timestamp is assigned on the server. it's existence means the message was successfully sent.
+		// Checking for the temporary id means the message is a ZD message.
+		{
+			'is-sending': message.role === 'user' && ! message.received && message.metadata?.temporary_id,
+		},
 		{
 			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
 		}
