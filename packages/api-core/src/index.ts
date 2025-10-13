@@ -97,6 +97,7 @@ export * from './site-preview-links';
 export * from './site-performance';
 export * from './site-performance-pages';
 export * from './site-purchases';
+export * from './site-redirect';
 export * from './site-reset';
 export * from './site-scan';
 export * from './site-settings';
