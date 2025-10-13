@@ -47,7 +47,7 @@ function Card( {
 	);
 }
 
-function WidgetActions() {
+function WidgetActions( { cardKey }: { cardKey: string } ) {
 	return (
 		<div
 			style={ {
@@ -63,7 +63,7 @@ function WidgetActions() {
 			<button
 				onClick={ () => {
 					// eslint-disable-next-line no-console
-					console.log( 'close card' );
+					console.log( 'close card: ', cardKey );
 				} }
 			>
 				x
@@ -243,14 +243,14 @@ export const WithActionableArea: StoryObj< typeof Grid > = {
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
 			>
-				<Grid.Item key="a" actionableArea={ <WidgetActions /> }>
+				<Grid.Item key="a" actionableArea={ <WidgetActions cardKey="a" /> }>
 					<Card color="#f44336">Card A</Card>
 				</Grid.Item>
 
 				<Card key="b" color="#2196f3">
 					Card B
 				</Card>
-				<Card key="c" color="#4caf50" actionableArea={ <WidgetActions /> }>
+				<Card key="c" color="#4caf50" actionableArea={ <WidgetActions cardKey="c" /> }>
 					Card C
 				</Card>
 				<Card key="d" color="#ff9800">
