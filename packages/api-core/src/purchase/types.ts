@@ -208,7 +208,20 @@ export interface Purchase {
 	partner_type: string | undefined;
 	partner_key_id: number | undefined;
 	payment_name: string;
-	payment_type:
+
+	/**
+	 * The payment method attached to this subscription which will be re-used if
+	 * the subscription renews and if auto-renew is turned on and if the payment
+	 * method supports recharging.
+	 *
+	 * Typically this is the payment method last used to pay for this
+	 * subscription, although it may have been changed.
+	 *
+	 * If there is no payment method set (eg: if the purchase was added manually
+	 * by an admin), this will be undefined. If the subscription was purchased
+	 * with credits, it will be `'credits'`.
+	 */
+	payment_type?:
 		| 'credit_card'
 		| 'paypal_direct'
 		| 'paypal'
@@ -219,7 +232,10 @@ export interface Purchase {
 		| 'tef'
 		| 'credits'
 		| 'upi'
-		| 'razorpay';
+		| 'razorpay'
+		| 'Apple App Store'
+		| 'Google Play App Store';
+
 	payment_card_display_brand: string | null;
 	payment_country_name: string;
 	payment_country_code: string | null;
