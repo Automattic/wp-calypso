@@ -83,7 +83,7 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 	const dataValues = [];
 	// Start from the most recent data and go backwards until we have enough data points or reach the start of available data.
 	for ( let i = dates.length - 1; i >= 0; i-- ) {
-		if ( values[ i ] != null ) {
+		if ( values[ i ] !== null && values[ i ] !== undefined ) {
 			dataValues.push( { date: dates[ i ], value: values[ i ] } );
 			if ( dataValues.length >= WEEK_TO_SHOW ) {
 				break;
