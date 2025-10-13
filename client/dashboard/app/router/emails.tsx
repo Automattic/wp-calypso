@@ -99,6 +99,24 @@ export const chooseEmailSolutionRoute = createRoute( {
 	)
 );
 
+export const addProfessionalEmailRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Professional Email' ),
+			},
+		],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'emails/add-professional-email/$domain',
+} ).lazy( () =>
+	import( '../../emails/add-professional-email' ).then( ( d ) =>
+		createLazyRoute( 'add-professional-email' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const addTitanmailMailboxRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -158,6 +176,7 @@ export const createEmailsRoutes = () => {
 		emailsRoute,
 		chooseDomainRoute,
 		chooseEmailSolutionRoute,
+		addProfessionalEmailRoute,
 		addTitanmailMailboxRoute,
 		addGoogleMailboxRoute,
 		addEmailForwarderRoute,
