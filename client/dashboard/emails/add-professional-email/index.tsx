@@ -11,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -32,6 +33,7 @@ const EmailForm = ( {
 	state: FormState;
 	setState: ( state: FormState ) => void;
 } ) => {
+	const { user } = useAuth();
 	const router = useRouter();
 	// Extract params from the current match for this route
 	const match = router.state.matches[ router.state.matches.length - 1 ];
@@ -79,7 +81,7 @@ const EmailForm = ( {
 							__(
 								'Your password reset email is <strong>%(userEmail)s</strong>. <passwordChangeLink>Change it</passwordChangeLink>.'
 							),
-							{ userEmail: 'user@example.com' }
+							{ userEmail: user?.email }
 						),
 						{
 							strong: <strong />,
