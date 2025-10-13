@@ -115,6 +115,7 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 	const { recordTracksEvent } = useAnalytics();
 	const [ isSent, setIsSent ] = useState( false );
 	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
+	const isSmallScreen = useViewportMatch( 'small', '<' );
 	const [ formData, setFormData ] = useState( {
 		userFeedback: '',
 	} );
@@ -140,7 +141,9 @@ const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: s
 
 		return (
 			<HStack wrap>
-				<Text>{ __( 'How did we do?' ) }</Text>
+				<Text style={ { flexBasis: isSmallScreen ? '100%' : 'auto' } }>
+					{ __( 'How did we do?' ) }
+				</Text>
 				<Button
 					icon={ thumbsUp }
 					iconSize={ 16 }
