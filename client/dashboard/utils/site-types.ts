@@ -1,7 +1,13 @@
 import type { Site } from '@automattic/api-core';
 
+type SiteWithFlex = Site & { is_wpcom_flex?: boolean };
+
+export function isWpcomFlex( site: Site ) {
+	return !! ( site as SiteWithFlex ).is_wpcom_flex;
+}
+
 export function isSelfHostedJetpackConnected( site: Site ) {
-	return site.jetpack_connection && ! site.is_wpcom_atomic;
+	return site.jetpack_connection && ! site.is_wpcom_atomic && ! isWpcomFlex( site );
 }
 
 export function isP2( site: Site ) {
