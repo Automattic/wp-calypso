@@ -23,11 +23,12 @@ export const vgsEbanxProcessor = async (
 	debug( 'processing VGS Ebanx transaction', transactionData );
 
 	try {
-		// Submit payment to Ebanx via VGS
+		// Submit payment to Ebanx via VGS with enhanced data
 		const response = await fetch( '/wp-json/wc/v3/payments/ebanx/process', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				'X-Requested-With': 'XMLHttpRequest',
 			},
 			body: JSON.stringify( transactionData ),
 		} );

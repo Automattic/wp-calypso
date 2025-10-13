@@ -7,6 +7,36 @@ import { VGS } from '@vgs/collect-js';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * Enhanced browser information collection for fraud detection
+ * Provides comprehensive browser and device data for security analysis
+ */
+function getEnhancedBrowserInfo() {
+	return {
+		user_agent: navigator.userAgent,
+		accept_header: '*/*',
+		language: navigator.language,
+		screen_width: window.screen.width,
+		screen_height: window.screen.height,
+		color_depth: window.screen.colorDepth,
+		time_zone_offset: new Date().getTimezoneOffset(),
+		java_enabled: navigator.javaEnabled ? navigator.javaEnabled() : false,
+		// Additional fraud detection data
+		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+		platform: navigator.platform,
+		cookie_enabled: navigator.cookieEnabled,
+		do_not_track: navigator.doNotTrack,
+		// Screen and window info
+		window_width: window.innerWidth,
+		window_height: window.innerHeight,
+		device_pixel_ratio: window.devicePixelRatio,
+		// Connection info (if available)
+		connection_type: ( navigator as any ).connection?.effectiveType || 'unknown',
+		// Timestamp for fraud detection
+		timestamp: Date.now(),
+	};
+}
+
+/**
  * Transform VGS Collect tokens to Ebanx payment data format
  * Maps VGS field names from working example to Ebanx token structure
  *
@@ -78,24 +108,18 @@ export function createVgsEbanxPaymentMethodData( tokens: VGS.TokenizedCardData )
 		}
 	}
 
-	// Build provider-specific data
+	// Build enhanced provider-specific data with comprehensive browser information
 	const providerSpecificData = {
-		browser_info: {
-			user_agent: navigator.userAgent,
-			accept_header: '*/*',
-			language: navigator.language,
-			screen_width: window.screen.width,
-			screen_height: window.screen.height,
-			color_depth: window.screen.colorDepth,
-			time_zone_offset: new Date().getTimezoneOffset(),
-			java_enabled: navigator.javaEnabled(),
+		browser_info: getEnhancedBrowserInfo(),
+		// Add cardholder name if available
+		...( cardNameToken && { cardholder_name: cardNameToken } ),
+		// Add additional metadata
+		metadata: {
+			integration_version: '1.0.0',
+			checkout_source: 'calypso',
+			payment_method: 'vgs-ebanx',
 		},
 	};
-
-	// Add cardholder name if available
-	if ( cardNameToken ) {
-		( providerSpecificData as any ).cardholder_name = cardNameToken;
-	}
 
 	return {
 		payment_instrument_tokens: JSON.stringify( paymentInstrumentTokens ),

@@ -12,6 +12,7 @@ import {
 	type VGSCollectFormState,
 	type VGSCollectHttpStatusCode,
 	type VGSCollectVaultEnvironment,
+	type ICollectFormPayloadStructure,
 } from '@vgs/collect-js-react';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -50,9 +51,10 @@ export const VgsEbanxCreditCardForm = ( {
 }: VgsEbanxCreditCardFormProps ) => {
 	const hasRun = useRef( false );
 	const [ isVGSCollectScriptLoaded, setCollectScriptLoaded ] = useState( false );
+	const [ initializationError, setInitializationError ] = useState< string | null >( null );
 
 	// Vault configuration from API
-	const { data: vaultConfig, isSuccess } = useVaultId();
+	const { data: vaultConfig, isSuccess, error: vaultError } = useVaultId();
 
 	/**
 	 * VGS Collect state hook to retrieve the form state
@@ -67,21 +69,40 @@ export const VgsEbanxCreditCardForm = ( {
 	const [ response ] = useVGSCollectResponse();
 
 	/**
-	 * Loading VGS Collect script and attaching it to the <head>
-	 * Matches working example pattern exactly
+	 * Enhanced VGS Collect script loading with better error handling
 	 */
 	useEffect( () => {
 		if ( ! hasRun.current && isSuccess && vaultConfig ) {
+			console.log( 'vaultConfig', vaultConfig );
 			loadVGSCollect( {
 				vaultId: vaultConfig.vault_id as string,
 				environment: vaultConfig.environment as VGSCollectVaultEnvironment,
 				version: '3.2.2',
-			} ).then( () => {
-				setCollectScriptLoaded( true );
-			} );
+			} )
+				.then( () => {
+					setCollectScriptLoaded( true );
+					setInitializationError( null );
+				} )
+				.catch( ( error ) => {
+					setInitializationError(
+						__( 'Failed to load payment form. Please refresh the page.', 'calypso' )
+					);
+					console.error( 'VGS Collect initialization failed:', error );
+				} );
 			hasRun.current = true;
 		}
 	}, [ isSuccess, vaultConfig ] );
+
+	/**
+	 * Handle vault configuration errors
+	 */
+	useEffect( () => {
+		if ( vaultError ) {
+			setInitializationError(
+				__( 'Failed to load payment configuration. Please try again.', 'calypso' )
+			);
+		}
+	}, [ vaultError ] );
 
 	/**
 	 * Log state changes for debugging
@@ -132,10 +153,33 @@ export const VgsEbanxCreditCardForm = ( {
 		  }
 		: VGSCollectFieldStyles;
 
+	// Show error state
+	if ( initializationError ) {
+		return (
+			<div className="vgs-ebanx-credit-card-form">
+				<div
+					className="vgs-error"
+					style={ {
+						color: '#d63638',
+						padding: '1rem',
+						border: '1px solid #d63638',
+						borderRadius: '4px',
+						backgroundColor: '#fcf0f1',
+					} }
+				>
+					{ initializationError }
+				</div>
+			</div>
+		);
+	}
+
+	// Show loading state
 	if ( ! isVGSCollectScriptLoaded || ! vaultConfig ) {
 		return (
 			<div className="vgs-ebanx-credit-card-form">
-				<div className="vgs-loading">{ __( 'Loading payment form...', 'calypso' ) }</div>
+				<div className="vgs-loading" style={ { padding: '1rem', textAlign: 'center' } }>
+					{ __( 'Loading payment form...', 'calypso' ) }
+				</div>
 			</div>
 		);
 	}
@@ -150,7 +194,6 @@ export const VgsEbanxCreditCardForm = ( {
 			<VGSCollectForm
 				vaultId={ vaultConfig.vault_id as string }
 				environment={ vaultConfig.environment as VGSCollectVaultEnvironment }
-				action="/post"
 				submitParameters={ {} }
 				onUpdateCallback={ onUpdateCallback }
 				onSubmitCallback={ onSubmitCallback }
@@ -163,7 +206,7 @@ export const VgsEbanxCreditCardForm = ( {
 				<CardholderField
 					validations={ [ 'required' ] }
 					css={ fieldStyles }
-					name="card_name"
+					name="card_holder"
 					placeholder={ __( 'Cardholder Name', 'calypso' ) }
 				/>
 
