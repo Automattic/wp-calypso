@@ -126,8 +126,6 @@ export interface Purchase {
 	domain_registration_agreement_url: string | undefined;
 	blog_created_date: string;
 	expiry_date: string;
-	expiry_message: string;
-	expiry_sub_message: string;
 	expiry_status:
 		| 'expiring'
 		| 'included'
