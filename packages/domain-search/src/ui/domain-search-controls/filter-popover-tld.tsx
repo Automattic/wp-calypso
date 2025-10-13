@@ -8,10 +8,12 @@ type Props = {
 export const FilterPopoverTld = ( { tld, addTldToFilter }: Props ) => {
 	return (
 		<Text
+			as="button"
 			className="domain-search-controls__filters-popover-available-tld"
 			isBlock
 			key={ tld }
-			role="button"
+			role="option"
+			tabIndex={ 0 }
 			size="small"
 			lineHeight="1.5"
 			onClick={ () => {

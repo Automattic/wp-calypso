@@ -11,8 +11,10 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import { useHelpCenter } from '../../app/help-center';
 import Column from './column';
 import MenuItem from './menu-item';
@@ -21,6 +23,7 @@ import './style.scss';
 
 function AddNewSite( { context }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { onboardingLinks } = useAppContext();
 
 	const wordpressClick = () => {
 		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
@@ -71,7 +74,10 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					title="WordPress.com"
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
-					href={ `/start?source=${ context }&ref=new-site-popover` }
+					href={ addQueryArgs( onboardingLinks?.default.href || '/start', {
+						source: context,
+						ref: 'new-site-popover',
+					} ) }
 					aria-label={ __( 'Add WordPress.com site' ) }
 				/>
 				<MenuItem
@@ -86,7 +92,10 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
+					href={ addQueryArgs( onboardingLinks?.withAI.href || '/setup/ai-site-builder', {
+						source: context,
+						ref: 'new-site-popover',
+					} ) }
 					aria-label={ __( 'Build a new site with AI' ) }
 				/>
 				<MenuItem

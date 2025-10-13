@@ -29,6 +29,10 @@
 	@include break-small {
 		padding-inline: 24px;
 	}
+
+	.step-container__navigation-link {
+		color: #1d2327;
+	}
 }
 
 .step-container-v2--domain-search {

@@ -22,15 +22,16 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@wordpress/dataviews';
 
@@ -316,7 +317,13 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Caching' ) }
+					description={ description }
+				/>
+			}
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }

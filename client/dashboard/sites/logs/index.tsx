@@ -42,7 +42,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
+			gmtOffset: Number( s?.gmt_offset ) || 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );

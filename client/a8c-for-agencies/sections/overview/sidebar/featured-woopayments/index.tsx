@@ -1,8 +1,4 @@
-import page from '@automattic/calypso-router';
-import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useShoppingCart from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-shopping-cart';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -16,8 +12,6 @@ const DISMISSED_PREFERENCE = 'a4a_woopayments_featured_overview_card_dismissed';
 
 export default function OverviewSidebarFeaturedWooPayments() {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const { setSelectedCartItems } = useShoppingCart();
 
 	const product = useWooPaymentsProduct();
 
@@ -26,20 +20,9 @@ export default function OverviewSidebarFeaturedWooPayments() {
 		dispatch( savePreference( DISMISSED_PREFERENCE, true ) );
 	}, [ dispatch ] );
 
-	const onAddToCart = useCallback( () => {
-		if ( ! product ) {
-			return;
-		}
-		setSelectedCartItems( [
-			{
-				...product,
-				quantity: 1,
-			},
-		] );
-		dispatch( recordTracksEvent( 'calypso_a4a_overview_woopayments_add_to_cart_click' ) );
-
-		page( `${ A4A_MARKETPLACE_CHECKOUT_LINK }` );
-	}, [ dispatch, product, setSelectedCartItems ] );
+	const onClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_overview_featured_woopayments_cta_click' ) );
+	}, [ dispatch ] );
 
 	const isDismissed = useSelector( ( state ) => getPreference( state, DISMISSED_PREFERENCE ) );
 
@@ -47,12 +30,5 @@ export default function OverviewSidebarFeaturedWooPayments() {
 		return null;
 	}
 
-	return (
-		<WooPaymentsFeaturedCard
-			products={ [ product ] }
-			onSelectProduct={ onAddToCart }
-			onDismiss={ onDismiss }
-			customCTALabel={ translate( 'Add to cart and checkout' ) }
-		/>
-	);
+	return <WooPaymentsFeaturedCard onDismiss={ onDismiss } onClick={ onClick } />;
 }

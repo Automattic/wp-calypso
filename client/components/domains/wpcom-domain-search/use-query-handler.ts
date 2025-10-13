@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
 
@@ -12,6 +12,10 @@ const getSessionStorageQuery = () => {
 
 const setSessionStorageQuery = ( query: string ) => {
 	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
+};
+
+const clearSessionStorageQuery = () => {
+	sessionStorage.removeItem( SESSION_STORAGE_QUERY_KEY );
 };
 
 export const useQueryHandler = ( {
@@ -33,11 +37,14 @@ export const useQueryHandler = ( {
 		return getSessionStorageQuery();
 	} );
 
+	const setQuery = useCallback( ( query: string ) => {
+		setLocalQuery( query );
+		setSessionStorageQuery( query );
+	}, [] );
+
 	return {
 		query: localQuery,
-		setQuery: ( query: string ) => {
-			setLocalQuery( query );
-			setSessionStorageQuery( query );
-		},
+		setQuery,
+		clearQuery: clearSessionStorageQuery,
 	};
 };

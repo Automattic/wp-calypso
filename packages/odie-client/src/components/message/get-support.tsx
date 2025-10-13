@@ -66,7 +66,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
 			if ( forceEmailSupport || contextForceEmailSupport ) {
 				buttons.push( {
-					text: __( 'Email support', __i18n_text_domain__ ),
+					text: __( 'Send an email', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
 						params.set( 'wapuuFlow', 'true' );

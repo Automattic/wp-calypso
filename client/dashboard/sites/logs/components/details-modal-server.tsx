@@ -1,10 +1,12 @@
 import { Badge } from '@automattic/ui';
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay } from '../utils';
-import type { ServerLog } from '@automattic/api-core';
+import type { ServerLog, ServerData } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 export default function DetailsModalServer( {
@@ -19,114 +21,85 @@ export default function DetailsModalServer( {
 	const locale = useLocale();
 	const offsetDisplay = getUtcOffsetDisplay( gmtOffset );
 	const formatted = formatLogDateTimeForDisplay( item.date, gmtOffset, locale, timezoneString );
+
+	const data = {
+		date: formatted,
+		request_type: item.request_type,
+		status: item.status,
+		request_url: item.request_url,
+		body_bytes_sent: String( item.body_bytes_sent ),
+		cached: item.cached,
+		http_host: item.http_host,
+		http_referer: item.http_referer,
+		http2: item.http2,
+		http_user_agent: item.http_user_agent,
+		http_version: item.http_version,
+		http_x_forwarded_for: item.http_x_forwarded_for,
+		renderer: item.renderer,
+		request_completion: item.request_completion,
+		request_time: item.request_time,
+		scheme: item.scheme,
+		timestamp: String( item.timestamp ),
+		type: item.type,
+		user_ip: item.user_ip,
+	};
+
+	const fields: Field< ServerData >[] = [
+		{
+			id: 'date',
+			label: sprintf(
+				/* Translators: %s: UTC offset */
+				__( 'Date & Time (%s)' ),
+				offsetDisplay
+			),
+			type: 'text',
+			readOnly: true,
+		},
+		{
+			id: 'request_type',
+			label: __( 'Request Type' ),
+			type: 'text',
+			render: ( { item }: { item: ServerData } ) => (
+				<Badge intent="default" className={ `badge--${ item.request_type }` }>
+					{ item.request_type }
+				</Badge>
+			),
+			readOnly: true,
+		},
+		{ id: 'status', label: __( 'Status' ), type: 'text', readOnly: true },
+		{ id: 'request_url', label: __( 'Request URL' ), type: 'text', readOnly: true },
+		{ id: 'body_bytes_sent', label: __( 'Body Bytes Sent' ), type: 'text', readOnly: true },
+		{ id: 'cached', label: __( 'Cached' ), type: 'text', readOnly: true },
+		{ id: 'http_host', label: __( 'HTTP Host' ), type: 'text', readOnly: true },
+		{ id: 'http_referer', label: __( 'HTTP Referrer' ), type: 'text', readOnly: true },
+		{ id: 'http2', label: __( 'HTTP/2' ), type: 'text', readOnly: true },
+		{ id: 'http_user_agent', label: __( 'User Agent' ), type: 'text', readOnly: true },
+		{ id: 'http_version', label: __( 'HTTP Version' ), type: 'text', readOnly: true },
+		{ id: 'http_x_forwarded_for', label: __( 'X-Forwarded-For' ), type: 'text', readOnly: true },
+		{ id: 'renderer', label: __( 'Renderer' ), type: 'text', readOnly: true },
+		{ id: 'request_completion', label: __( 'Request Completion' ), type: 'text', readOnly: true },
+		{ id: 'request_time', label: __( 'Request Time' ), type: 'text', readOnly: true },
+		{ id: 'scheme', label: __( 'Scheme' ), type: 'text', readOnly: true },
+		{ id: 'timestamp', label: __( 'Timestamp' ), type: 'text', readOnly: true },
+		{ id: 'type', label: __( 'Type' ), type: 'text', readOnly: true },
+		{ id: 'user_ip', label: __( 'User IP' ), type: 'text', readOnly: true },
+	];
+
 	return (
-		<VStack className="site-logs-details-modal" spacing={ 3 }>
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">
-					{ sprintf(
-						/* Translators: %s: UTC offset */
-						__( 'Date & Time (%s)' ),
-						offsetDisplay
-					) }
-				</Text>
-				<Text className="site-logs-details-modal__field-value">{ formatted }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Request Type' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">
-					<Badge intent="default" className={ `badge--${ item.request_type }` }>
-						{ item.request_type }
-					</Badge>
-				</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Status' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.status }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Request URL' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.request_url }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Body Bytes Sent' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">
-					{ String( item.body_bytes_sent ) }
-				</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Cached' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.cached }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'HTTP Host' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.http_host }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'HTTP Referrer' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.http_referer }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'HTTP/2' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.http2 }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'User Agent' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.http_user_agent }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'HTTP Version' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.http_version }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'X-Forwarded-For' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.http_x_forwarded_for }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Renderer' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.renderer }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Request Completion' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.request_completion }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Request Time' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.request_time }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Scheme' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.scheme }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Timestamp' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ String( item.timestamp ) }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Type' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.type }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'User IP' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.user_ip }</Text>
-			</div>
+		<VStack spacing={ 3 } className="site-logs-details-modal">
+			<DataForm
+				data={ data }
+				fields={ fields }
+				form={ {
+					fields: fields.map( ( field ) => field.id ),
+					layout: {
+						type: 'panel',
+						labelPosition: 'side',
+						openAs: 'dropdown',
+					},
+				} }
+				onChange={ () => {} }
+			/>
 		</VStack>
 	);
 }

@@ -143,11 +143,8 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
-
-						const lastQueryParam =
+						const initialQuery =
 							// eslint-disable-next-line no-nested-ternary
 							'lastQuery' in providedDependencies
 								? providedDependencies.lastQuery
@@ -155,10 +152,10 @@ const onboarding: FlowV2< typeof initialize > = {
 								? providedDependencies.domainForm?.lastQuery
 								: undefined;
 
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery,
+						} );
 
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
@@ -299,10 +296,17 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
-		// Load Survicate
+		/**
+		 * Load Survicate and set visitor traits on each step navigation.
+		 *
+		 * This runs on every step change to ensure:
+		 * - Survicate script loads successfully (retries if initial load failed)
+		 * - Visitor traits are updated when user authentication state changes
+		 * - Analytics tracking works correctly throughout the onboarding flow
+		 */
 		useEffect( () => {
 			addSurvicate();
-		}, [] );
+		}, [ currentStepSlug ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

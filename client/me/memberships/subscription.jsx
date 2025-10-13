@@ -118,8 +118,8 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 					isLoading
 					text={
 						isProduct
-							? translate( 'Removing this product' )
-							: translate( 'Stopping this subscription' )
+							? translate( 'Removing this product.' )
+							: translate( 'Stopping this subscription.' )
 					}
 				/>
 			) }
@@ -127,7 +127,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 				<Notice
 					status="is-info"
 					isLoading
-					text={ translate( 'Updating subscription auto-renew' ) }
+					text={ translate( 'Updating subscription auto-renew.' ) }
 				/>
 			) }
 			{ subscription && (

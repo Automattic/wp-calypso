@@ -209,6 +209,7 @@ export default function UsernameSection( {
 			<UsernameUpdateConfirmationModal
 				isOpen={ showConfirmModal }
 				currentUsername={ currentUsername }
+				newUsername={ value }
 				onConfirm={ submitUpdateUsername }
 				onCancel={ () => setShowConfirmModal( false ) }
 				isBusy={ isPending }

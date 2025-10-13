@@ -1,0 +1,117 @@
+import { MonetizeSubscription } from '@automattic/api-core';
+import { monetizeSubscriptionsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { useResizeObserver } from '@wordpress/compose';
+import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
+import { useMemo, useState } from 'react';
+import { DataViewsCard } from '../../components/dataviews-card';
+import FlashMessage from '../../components/flash-message';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
+import { useMonetizeFieldDefinitions } from './dataviews';
+import { getMonetizeSubscriptionsPageTitle, getMonetizeSubscriptionUrl } from './urls';
+
+const defaultPerPage = 10;
+
+const monetizeDesktopFields = [ 'status' ];
+const monetizeMobileFields: string[] = [];
+
+const monetizeDataView: View = {
+	type: 'table',
+	page: 1,
+	perPage: defaultPerPage,
+	titleField: 'product',
+	showTitle: true,
+	mediaField: 'site',
+	showMedia: true,
+	descriptionField: 'description',
+	showDescription: true,
+	fields: monetizeDesktopFields,
+	sort: {
+		field: 'product',
+		direction: 'desc',
+	},
+	layout: {},
+};
+
+function MonetizeSubscriptions() {
+	const [ currentView, setView ] = useState( monetizeDataView );
+	const ref = useResizeObserver( ( entries ) => {
+		const firstEntry = entries[ 0 ];
+		if ( firstEntry ) {
+			adjustDataViewFieldsForWidth( {
+				width: firstEntry.contentRect.width,
+				setView,
+				wideFields: monetizeDesktopFields,
+				desktopFields: monetizeDesktopFields,
+				mobileFields: monetizeMobileFields,
+			} );
+		}
+	} );
+
+	const monetizeDataFields = useMonetizeFieldDefinitions();
+	const { data: monetizeSubscriptions, isLoading: isLoadingMonetize } = useQuery(
+		monetizeSubscriptionsQuery()
+	);
+	const navigate = useNavigate();
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'manage-purchase',
+				label: __( 'Manage purchase' ),
+				isEligible: ( item: MonetizeSubscription ) => Boolean( item.ID ),
+				callback: ( items: MonetizeSubscription[] ) => {
+					const subscriptionId = items[ 0 ].ID;
+					if ( ! subscriptionId ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without ID' );
+						return;
+					}
+					navigate( {
+						to: getMonetizeSubscriptionUrl( subscriptionId ),
+					} );
+				},
+			},
+		],
+		[ navigate ]
+	);
+
+	const { data: adjustedMonetizeSubscriptions, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( monetizeSubscriptions ?? [], currentView, monetizeDataFields );
+	}, [ monetizeSubscriptions, currentView, monetizeDataFields ] );
+
+	const getItemId = ( item: MonetizeSubscription ) => {
+		return item.ID;
+	};
+
+	return (
+		<PageLayout
+			size="large"
+			header={ <PageHeader title={ getMonetizeSubscriptionsPageTitle() } /> }
+		>
+			<div ref={ ref }>
+				{ /* Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed */ }
+				<FlashMessage value="true" message={ __( 'This item has been removed.' ) } />
+				<DataViewsCard>
+					<DataViews
+						data={ adjustedMonetizeSubscriptions }
+						isLoading={ isLoadingMonetize }
+						fields={ monetizeDataFields }
+						view={ currentView }
+						onChangeView={ setView }
+						defaultLayouts={ { table: {} } }
+						actions={ actions }
+						getItemId={ getItemId }
+						paginationInfo={ paginationInfo }
+					/>
+				</DataViewsCard>
+			</div>
+		</PageLayout>
+	);
+}
+
+export default MonetizeSubscriptions;

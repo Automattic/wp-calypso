@@ -112,7 +112,7 @@ export default function TeamInvite() {
 			<LayoutBody>
 				<Form
 					className="team-invite-form"
-					title={ translate( 'Invite a team member.' ) }
+					title={ translate( 'Invite a team member' ) }
 					autocomplete="off"
 					description={ translate( 'Invite team members to manage client sites and purchases.' ) }
 				>

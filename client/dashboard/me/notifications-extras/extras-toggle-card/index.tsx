@@ -13,7 +13,10 @@ import type { WpcomNotificationSettings } from '@automattic/api-core';
 export type ExtrasToggleCardProps< Key extends keyof WpcomNotificationSettings & string > = {
 	extraSettings?: Partial< WpcomNotificationSettings >;
 	isSaving: boolean;
-	onMutate: ( payload: Partial< WpcomNotificationSettings > ) => void;
+	onMutate: (
+		payload: Partial< WpcomNotificationSettings >,
+		origin: 'single' | 'subscribe-all' | 'unsubscribe-all'
+	) => void;
 	optionKeys: readonly Key[];
 	titles: Record< Key, string >;
 	descriptions?: Record< Key, string >;
@@ -49,8 +52,9 @@ export function ExtrasToggleCard< Key extends keyof WpcomNotificationSettings & 
 					payload[ key ] = nextValue;
 				}
 			} );
+
 			if ( Object.keys( payload ).length > 0 ) {
-				onMutate( payload );
+				onMutate( payload, nextValue ? 'subscribe-all' : 'unsubscribe-all' );
 			}
 		},
 		[ extraSettings, onMutate, optionKeys ]
@@ -58,7 +62,7 @@ export function ExtrasToggleCard< Key extends keyof WpcomNotificationSettings & 
 
 	const handleSingleToggle = useCallback(
 		( key: Key ) => ( nextValue: boolean ) => {
-			onMutate( { [ key ]: nextValue } as Partial< WpcomNotificationSettings > );
+			onMutate( { [ key ]: nextValue } as Partial< WpcomNotificationSettings >, 'single' );
 		},
 		[ onMutate ]
 	);

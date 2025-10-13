@@ -27,5 +27,4 @@ export const deactivateAction: Action< PluginListRow > = {
 	isEligible: ( item: PluginListRow ) => {
 		return [ 'some', 'all' ].includes( item.isActive );
 	},
-	supportsBulk: true,
 };
