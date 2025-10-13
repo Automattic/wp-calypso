@@ -26,5 +26,13 @@
 			color: inherit;
 			border-radius: 0;
 		}
+
+		/* Should reflect the constant NON_DRAGGABLE_SELECTORS */
+		[data-slot="messages"],
+		[data-slot="chat-input"],
+		[data-slot="chat-footer"],
+		[data-slot="chat-header"] [data-slot="button"] {
+			cursor: default;
+		}
 	}
 }

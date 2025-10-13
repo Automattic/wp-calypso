@@ -7,6 +7,7 @@ import {
 	useDragControls,
 	useMotionValue,
 } from 'framer-motion';
+import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
@@ -22,30 +23,6 @@ import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import styles from './chat/Chat.module.css';
 import { __, sprintf } from '@wordpress/i18n';
-
-const STYLE_CONSTANTS = {
-	COLLAPSED_SIZE: 56,
-	COMPACT_WIDTH: 372,
-	EXPANDED_HEIGHT: 520,
-	AUTO_COLLAPSE_DELAY: 1500,
-	BORDER_RADIUS: 24,
-	PADDING: 16,
-	VIEWPORT_OFFSET: 16,
-} as const;
-
-const DRAG_CONSTANTS = {
-	SPRING_CONFIG: {
-		type: 'spring' as const,
-		damping: 25,
-		stiffness: 300,
-	},
-	VELOCITY_MULTIPLIER: 0.1,
-	NON_DRAGGABLE_SELECTORS: [
-		'[data-slot="message"]',
-		'[data-slot="chat-input"]',
-		'[data-slot="chat-footer"]',
-	].join( ', ' ),
-} as const;
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;

@@ -13,35 +13,12 @@ import { useInput } from '../../hooks/useInput';
 import type { ChatProps } from '../../types';
 import { cn } from '../../utils/classNames';
 import { getChatPosition, setChatPosition } from '../../utils/chatStorage';
+import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../../utils/constants';
 import { morphSpring } from '../animations';
 import { CollapsedView } from '../views/CollapsedView';
 import { CompactView } from '../views/CompactView';
 import { ConversationView } from '../views/ConversationView';
 import styles from './Chat.module.css';
-
-const STYLE_CONSTANTS = {
-	COLLAPSED_SIZE: 56,
-	COMPACT_WIDTH: 372,
-	EXPANDED_HEIGHT: 520,
-	AUTO_COLLAPSE_DELAY: 1500,
-	BORDER_RADIUS: 24,
-	PADDING: 16,
-	VIEWPORT_OFFSET: 16,
-} as const;
-
-const DRAG_CONSTANTS = {
-	SPRING_CONFIG: {
-		type: 'spring' as const,
-		damping: 25,
-		stiffness: 300,
-	},
-	VELOCITY_MULTIPLIER: 0.1,
-	NON_DRAGGABLE_SELECTORS: [
-		'[data-slot="message"]',
-		'[data-slot="chat-input"]',
-		'[data-slot="chat-footer"]',
-	].join( ', ' ),
-} as const;
 
 export function Chat( {
 	messages,
