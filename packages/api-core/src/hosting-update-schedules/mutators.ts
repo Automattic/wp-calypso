@@ -7,3 +7,15 @@ export function deleteHostingUpdateSchedule( siteId: number, scheduleId: string 
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+export function updateActiveStatusHostingUpdateSchedule(
+	siteId: number,
+	scheduleId: string,
+	active: boolean
+): Promise< unknown > {
+	return wpcom.req.put( {
+		path: `/sites/${ siteId }/update-schedules/${ encodeURIComponent( scheduleId ) }/active`,
+		apiNamespace: 'wpcom/v2',
+		body: { active },
+	} );
+}

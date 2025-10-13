@@ -1,4 +1,8 @@
-import { fetchHostingUpdateSchedules, deleteHostingUpdateSchedule } from '@automattic/api-core';
+import {
+	fetchHostingUpdateSchedules,
+	deleteHostingUpdateSchedule,
+	updateActiveStatusHostingUpdateSchedule,
+} from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
@@ -38,6 +42,48 @@ export const hostingUpdateScheduleDeleteMutation = () =>
 		},
 		onSuccess: () => {
 			// Delay cache invalidation to allow server to process the deletion and get fresh data
+			setTimeout( () => {
+				queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
+			}, 5000 );
+		},
+	} );
+
+// Mutation: toggle hosting update schedule activation
+export const hostingUpdateScheduleToggleActiveMutation = () =>
+	mutationOptions( {
+		mutationFn: ( variables: { siteId: number; scheduleId: string; active: boolean } ) =>
+			updateActiveStatusHostingUpdateSchedule(
+				variables.siteId,
+				variables.scheduleId,
+				variables.active
+			),
+		onMutate: ( variables: { siteId: number; scheduleId: string; active: boolean } ) => {
+			// Optimistically update the cache
+			const data = queryClient.getQueryData( hostingUpdateSchedulesQuery().queryKey );
+			if ( data && typeof data === 'object' && 'sites' in data ) {
+				const prevData = JSON.parse( JSON.stringify( data ) ); // deep copy
+				const sites = ( data as any ).sites || {};
+
+				// Update the schedule active status in the site
+				if ( sites[ variables.siteId ] && sites[ variables.siteId ][ variables.scheduleId ] ) {
+					sites[ variables.siteId ][ variables.scheduleId ] = {
+						...sites[ variables.siteId ][ variables.scheduleId ],
+						active: variables.active,
+					};
+				}
+
+				queryClient.setQueryData( hostingUpdateSchedulesQuery().queryKey, { ...data, sites } );
+				return { prevData };
+			}
+		},
+		onError: ( error, variables, context ) => {
+			// Rollback on error
+			if ( context?.prevData ) {
+				queryClient.setQueryData( hostingUpdateSchedulesQuery().queryKey, context.prevData );
+			}
+		},
+		onSuccess: () => {
+			// Delay cache invalidation to allow server to process the activation change and get fresh data
 			setTimeout( () => {
 				queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
 			}, 5000 );

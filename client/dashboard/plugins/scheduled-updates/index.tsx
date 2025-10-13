@@ -1,4 +1,7 @@
-import { hostingUpdateScheduleDeleteMutation } from '@automattic/api-queries';
+import {
+	hostingUpdateScheduleDeleteMutation,
+	hostingUpdateScheduleToggleActiveMutation,
+} from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -39,93 +42,101 @@ const getUniqueScheduleName = ( () => {
 	};
 } )();
 
-const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
-	return [
-		{
-			id: 'site',
-			type: 'text',
-			label: __( 'Site' ),
-			getValue: ( { item } ) => item.site.name,
-		},
-		{
-			id: 'lastUpdate',
-			type: 'integer',
-			label: __( 'Last Update' ),
-			render: ( { item } ) =>
-				item.lastUpdate
-					? formatDate( new Date( item.lastUpdate * 1000 ), locale, {
-							dateStyle: 'medium',
-							timeStyle: 'short',
-					  } )
-					: '-',
-		},
-		{
-			id: 'nextUpdate',
-			type: 'integer',
-			label: __( 'Next Update' ),
-			render: ( { item } ) =>
-				formatDate( new Date( item.nextUpdate * 1000 ), locale, {
-					dateStyle: 'medium',
-					timeStyle: 'short',
-				} ),
-		},
-		{
-			id: 'schedule',
-			type: 'text',
-			label: __( 'Frequency' ),
-			render: ( { item } ) => ( item.schedule === 'daily' ? __( 'Daily' ) : __( 'Weekly' ) ),
-		},
-		{
-			id: 'plugins',
-			type: 'text',
-			label: __( 'Plugins' ),
-			render: ( { item } ) => (
-				<span
-					style={ {
-						alignItems: 'center',
-						display: 'flex',
-					} }
-				>
-					{ item.plugins.length }&nbsp;
-					<Tooltip text={ item.plugins.join( ', ' ) }>
-						<span
-							style={ {
-								alignItems: 'center',
-								display: 'flex',
-							} }
-						>
-							<Icon icon={ info } size={ 16 } />
-						</span>
-					</Tooltip>
-				</span>
-			),
-		},
-		{
-			id: 'active',
-			type: 'text',
-			label: __( 'Active' ),
-			render: ( { item } ) => <FormToggle checked={ item.active } onChange={ () => {} } />,
-		},
-		{
-			id: 'actions',
-			type: 'text',
-			label: __( 'Actions' ),
-		},
-		{
-			id: 'scheduleId',
-			type: 'text',
-			label: __( 'Schedule' ),
-			getValue: ( { item } ) => getUniqueScheduleName( locale, item ),
-		},
-		{
-			id: 'icon.ico',
-			label: __( 'Site icon' ),
-			render: ( { item } ) => <SiteIconLink site={ item.site } />,
-			enableSorting: false,
-			enableGlobalSearch: false,
-		},
-	];
-};
+const getFields = (
+	locale: string,
+	onToggleActive: ( item: ScheduledUpdateRow ) => void,
+	isToggling: boolean
+): Field< ScheduledUpdateRow >[] => [
+	{
+		id: 'site',
+		type: 'text',
+		label: __( 'Site' ),
+		getValue: ( { item } ) => item.site.name,
+	},
+	{
+		id: 'lastUpdate',
+		type: 'integer',
+		label: __( 'Last Update' ),
+		render: ( { item } ) =>
+			item.lastUpdate
+				? formatDate( new Date( item.lastUpdate * 1000 ), locale, {
+						dateStyle: 'medium',
+						timeStyle: 'short',
+				  } )
+				: '-',
+	},
+	{
+		id: 'nextUpdate',
+		type: 'integer',
+		label: __( 'Next Update' ),
+		render: ( { item } ) =>
+			formatDate( new Date( item.nextUpdate * 1000 ), locale, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			} ),
+	},
+	{
+		id: 'schedule',
+		type: 'text',
+		label: __( 'Frequency' ),
+		render: ( { item } ) => ( item.schedule === 'daily' ? __( 'Daily' ) : __( 'Weekly' ) ),
+	},
+	{
+		id: 'plugins',
+		type: 'text',
+		label: __( 'Plugins' ),
+		render: ( { item } ) => (
+			<span
+				style={ {
+					alignItems: 'center',
+					display: 'flex',
+				} }
+			>
+				{ item.plugins.length }&nbsp;
+				<Tooltip text={ item.plugins.join( ', ' ) }>
+					<span
+						style={ {
+							alignItems: 'center',
+							display: 'flex',
+						} }
+					>
+						<Icon icon={ info } size={ 16 } />
+					</span>
+				</Tooltip>
+			</span>
+		),
+	},
+	{
+		id: 'active',
+		type: 'text',
+		label: __( 'Active' ),
+		render: ( { item } ) => (
+			<FormToggle
+				checked={ item.active }
+				disabled={ isToggling }
+				onChange={ () => onToggleActive( item ) }
+			/>
+		),
+	},
+	{
+		id: 'actions',
+		type: 'text',
+		label: __( 'Actions' ),
+	},
+	{
+		id: 'scheduleId',
+		type: 'text',
+		label: __( 'Schedule' ),
+		getValue: ( { item } ) => getUniqueScheduleName( locale, item ),
+	},
+	{
+		id: 'icon.ico',
+		label: __( 'Site icon' ),
+		render: ( { item } ) => <SiteIconLink site={ item.site } />,
+		enableSorting: false,
+		enableGlobalSearch: false,
+	},
+];
 
 export const defaultView: View = {
 	type: 'table',
@@ -146,12 +157,43 @@ export default function PluginsScheduledUpdates() {
 	const [ scheduleToDelete, setScheduleToDelete ] = useState< ScheduledUpdateRow | null >( null );
 	const locale = useLocale();
 	const navigate = useNavigate();
-	const fields = useMemo( () => getFields( locale ), [ locale ] );
-
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: deleteSchedule, isPending: isDeletingSchedule } = useMutation(
 		hostingUpdateScheduleDeleteMutation()
+	);
+	const { mutate: toggleActive, isPending: isTogglingActive } = useMutation(
+		hostingUpdateScheduleToggleActiveMutation()
+	);
+
+	const handleToggleActive = ( schedule: ScheduledUpdateRow ) => {
+		toggleActive(
+			{
+				siteId: schedule.site.ID,
+				scheduleId: schedule.scheduleId,
+				active: ! schedule.active,
+			},
+			{
+				onSuccess: () => {
+					createSuccessNotice(
+						schedule.active
+							? __( 'Schedule deactivated successfully.' )
+							: __( 'Schedule activated successfully.' ),
+						{ type: 'snackbar' }
+					);
+				},
+				onError: ( error: Error ) => {
+					createErrorNotice( error.message || __( 'Failed to update schedule.' ), {
+						type: 'snackbar',
+					} );
+				},
+			}
+		);
+	};
+
+	const fields = useMemo(
+		() => getFields( locale, handleToggleActive, isTogglingActive ),
+		[ locale, isTogglingActive ]
 	);
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
