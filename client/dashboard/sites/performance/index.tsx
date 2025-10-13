@@ -7,11 +7,13 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
+import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -176,7 +178,18 @@ function SitePerformance() {
 			{ site.is_coming_soon || site.is_private ? (
 				<PageLayout
 					size="small"
-					header={ <PageHeader /> }
+					header={
+						<PageHeader
+							description={ createInterpolateElement(
+								__(
+									'Optimize your site for lightning-fast performance. <learnMoreLink>Learn more</learnMoreLink>'
+								),
+								{
+									learnMoreLink: <InlineSupportLink supportContext="site-performance" />,
+								}
+							) }
+						/>
+					}
 					notices={
 						<Notice
 							title={ __( 'Launch your site to start measuring performance' ) }

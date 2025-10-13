@@ -52,7 +52,7 @@ export const SectionHeader = ( {
 					<ButtonStack
 						justify="flex-end"
 						expanded={ false }
-						alignment="center"
+						alignment="flex-start"
 						className="dashboard-section-header__actions"
 					>
 						{ actions }
