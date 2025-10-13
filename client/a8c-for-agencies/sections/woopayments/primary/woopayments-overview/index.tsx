@@ -234,6 +234,10 @@ const WooPaymentsOverview = () => {
 		);
 	}, [ dispatch ] );
 
+	const onSeeFullTermsClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_woopayments_overview_see_full_terms_click' ) );
+	}, [ dispatch ] );
+
 	const addWooPaymentsToSite = useMemo( () => {
 		return (
 			<Button __next40pxDefaultSize variant="primary" onClick={ handleAddWooPaymentsToSite }>
@@ -335,6 +339,16 @@ const WooPaymentsOverview = () => {
 									)
 								) }
 							</div>
+							<div>
+								<a
+									href="https://automattic.com/for-agencies/program-incentives/"
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ onSeeFullTermsClick }
+								>
+									{ translate( 'See full terms' ) }
+								</a>
+							</div>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column>
@@ -370,6 +384,16 @@ const WooPaymentsOverview = () => {
 										),
 									] }
 								/>
+							</div>
+							<div>
+								<a
+									href="https://automattic.com/for-agencies/program-incentives/"
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ onSeeFullTermsClick }
+								>
+									{ translate( 'See full terms' ) }
+								</a>
 							</div>
 						</div>
 					</PageSectionColumns.Column>
