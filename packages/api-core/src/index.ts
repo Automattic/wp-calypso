@@ -52,6 +52,7 @@ export * from './notification-devices';
 export * from './odie';
 export * from './p2';
 export * from './plugins';
+export * from './products';
 export * from './purchase';
 export * from './read-teams';
 export * from './site';

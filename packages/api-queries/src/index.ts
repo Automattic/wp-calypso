@@ -43,8 +43,8 @@ export * from './meta-sms-country-codes';
 export * from './notification-devices';
 export * from './odie';
 export * from './p2';
-
 export * from './plugin';
+export * from './products';
 export * from './purchase';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
