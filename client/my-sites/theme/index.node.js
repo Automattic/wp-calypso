@@ -1,6 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { details, fetchThemeDetailsData, fetchThemeFilters, notFoundError } from './controller';
 
 export default function ( router ) {
@@ -10,6 +11,7 @@ export default function ( router ) {
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		ssrSetupLocale,
+		setupPreferences,
 		fetchThemeFilters,
 		fetchThemeDetailsData,
 		details,

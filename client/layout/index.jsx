@@ -429,18 +429,22 @@ export default withCurrentRoute(
 
 		const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
 
+		const isEnabledThemeUniversalHeader =
+			config.isEnabled( 'themes/universal-header' ) &&
+			[ 'themes', 'theme' ].includes( sectionName );
+
+		const isEnabledPluginsUniversalHeader =
+			config.isEnabled( 'plugins/universal-header' ) &&
+			[ 'plugins' ].includes( sectionName ) &&
+			! (
+				currentRoute.startsWith( '/plugins/manage' ) ||
+				currentRoute.startsWith( '/plugins/scheduled-updates' )
+			);
+
 		const hasUniversalHeader =
 			hostingDashboardOptIn &&
-			( ( config.isEnabled( 'themes/universal-header' ) &&
-				! siteId &&
-				[ 'themes', 'theme' ].includes( sectionName ) ) ||
-				( config.isEnabled( 'plugins/universal-header' ) &&
-					! siteId &&
-					[ 'plugins' ].includes( sectionName ) &&
-					! (
-						currentRoute.startsWith( '/plugins/manage' ) ||
-						currentRoute.startsWith( '/plugins/scheduled-updates' )
-					) ) );
+			! siteId &&
+			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
 		return {
 			masterbarIsHidden,
