@@ -14,13 +14,14 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
 		onSkip: noop,
+		onExternalDomainClick: noop,
 		onMakePrimaryAddressClick: noop,
 		onMoveDomainToSiteClick: noop,
-		onTransferDomainToWordPressComClick: noop,
 		onRegisterDomainClick: noop,
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
 		onQueryChange: noop,
+		onQueryClear: noop,
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
 		onDomainAddAvailabilityPreCheck: noop,
@@ -59,13 +60,12 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		skippable: false,
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
-		allowsUsingOwnDomain: true,
-		includeOwnedDomainInSuggestions: true,
+		allowsUsingOwnDomain: false,
+		includeOwnedDomainInSuggestions: false,
 		allowedTlds: [],
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
-			forceRegularPrice: false,
 			freeForFirstYear: false,
 		},
 	},
@@ -90,10 +90,16 @@ export const useDomainSearch = () => {
 	return context;
 };
 
-export const useDomainSearchContextValue = (
-	props: DomainSearchProps
-): typeof DEFAULT_CONTEXT_VALUE => {
-	const { currentSiteUrl, query: externalQuery, cart, events, slots, config } = props;
+export const useDomainSearchContextValue = ( {
+	currentSiteUrl: externalSiteUrl,
+	currentSiteId,
+	query: externalQuery,
+	cart,
+	events,
+	slots,
+	config,
+}: DomainSearchProps ): typeof DEFAULT_CONTEXT_VALUE => {
+	const currentSiteUrl = externalSiteUrl?.replace( /^https?:\/\//, '' );
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
@@ -137,6 +143,7 @@ export const useDomainSearchContextValue = (
 						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
 						exact_sld_matches_only: filter.exactSldMatchesOnly,
 						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
+						site_slug: currentSiteUrl,
 					} ),
 					enabled: false,
 					staleTime: Infinity,
@@ -145,17 +152,19 @@ export const useDomainSearchContextValue = (
 				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query, {
-						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain
-							? query.includes( '.blog' )
-							: false,
+						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain,
 					} ),
-					enabled: normalizedConfig.skippable,
+					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
-				domainAvailability: ( domainName ) => ( {
-					...domainAvailabilityQuery( domainName ),
+				domainAvailability: ( domainName, isCartPreCheck = false ) => ( {
+					...domainAvailabilityQuery( domainName, {
+						vendor: normalizedConfig.vendor,
+						blog_id: currentSiteId,
+						is_cart_pre_check: isCartPreCheck,
+					} ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -182,7 +191,15 @@ export const useDomainSearchContextValue = (
 			openFullCart,
 			query: externalQuery ?? '',
 			setQuery: ( query ) => {
-				normalizedEvents.onQueryChange( query );
+				const normalizedQuery = query
+					.trim()
+					.toLowerCase()
+					.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+				if ( normalizedQuery ) {
+					normalizedEvents.onQueryChange( normalizedQuery );
+				}
 			},
 			slots,
 			currentSiteUrl,
@@ -205,6 +222,7 @@ export const useDomainSearchContextValue = (
 		normalizedEvents,
 		slots,
 		currentSiteUrl,
+		currentSiteId,
 		normalizedConfig,
 		filter,
 		setFilter,

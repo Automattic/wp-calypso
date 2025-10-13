@@ -1,14 +1,12 @@
 import { Badge } from '@automattic/ui';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
-import type { PHPLog } from '@automattic/api-core';
+import type { PHPLog, PHPData } from '@automattic/api-core';
+import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 export default function DetailsModalPHP( {
@@ -28,52 +26,86 @@ export default function DetailsModalPHP( {
 		locale,
 		timezoneString
 	);
+
+	const data = {
+		timestamp: formatted,
+		kind: item.kind,
+		name: item.name,
+		severity: item.severity,
+		file: item.file,
+		line: String( item.line ),
+		message: item.message,
+	};
+
+	const fields: Field< PHPData >[] = [
+		{
+			id: 'timestamp',
+			label: sprintf(
+				/* Translators: %s: UTC offset */
+				__( 'Date & Time (%s)' ),
+				offsetDisplay
+			),
+			type: 'text',
+			readOnly: true,
+		},
+		{
+			id: 'kind',
+			label: __( 'Group' ),
+			type: 'text',
+			readOnly: true,
+		},
+		{
+			id: 'name',
+			label: __( 'Source' ),
+			type: 'text',
+			readOnly: true,
+		},
+		{
+			id: 'severity',
+			label: __( 'Severity' ),
+			type: 'text',
+			render: ( { item }: { item: PHPData } ) => (
+				<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
+					{ item.severity }
+				</Badge>
+			),
+			readOnly: true,
+		},
+		{
+			id: 'file',
+			label: __( 'File' ),
+			type: 'text',
+			readOnly: true,
+		},
+		{
+			id: 'line',
+			label: __( 'Line' ),
+			type: 'text',
+			readOnly: true,
+		},
+		{
+			id: 'message',
+			label: __( 'Message' ),
+			type: 'text',
+			readOnly: true,
+		},
+	];
+
 	return (
-		<VStack className="site-logs-details-modal" spacing={ 3 }>
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">
-					{ sprintf(
-						/* Translators: %s: UTC offset */
-						__( 'Date & Time (%s)' ),
-						offsetDisplay
-					) }
-				</Text>
-				<Text className="site-logs-details-modal__field-value">{ formatted }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Group' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.kind }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Source' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.name }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Severity' ) }</Text>
-				<HStack className="site-logs-details-modal__field-value">
-					<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
-						{ item.severity }
-					</Badge>
-				</HStack>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'File' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.file }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Line' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ String( item.line ) }</Text>
-			</div>
-
-			<div className="site-logs-details-modal__row">
-				<Text className="site-logs-details-modal__field-title">{ __( 'Message' ) }</Text>
-				<Text className="site-logs-details-modal__field-value">{ item.message }</Text>
-			</div>
+		<VStack spacing={ 3 } className="site-logs-details-modal">
+			<DataForm
+				data={ data }
+				fields={ fields }
+				form={ {
+					fields: fields.map( ( field ) => field.id ),
+					layout: {
+						type: 'panel',
+						labelPosition: 'side',
+						openAs: 'dropdown',
+					},
+				} }
+				onChange={ () => {} }
+			/>
 		</VStack>
 	);
 }

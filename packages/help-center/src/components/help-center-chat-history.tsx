@@ -8,15 +8,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useChatStatus, useGetHistoryChats } from '../hooks';
+import { useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { EmailFallbackNotice } from './notices';
 import { getLastMessage } from './utils';
-import type {
-	Conversations,
-	SupportInteraction,
-	ZendeskConversation,
-} from '@automattic/odie-client';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 const EmptyStateArtWork = () => {
 	return (
@@ -64,17 +59,11 @@ const EmptyStateArtWork = () => {
 	);
 };
 
-const Conversations = ( {
-	conversations,
-	isLoadingInteractions,
-}: {
-	conversations: Conversations;
-	supportInteractions: SupportInteraction[];
-	isLoadingInteractions?: boolean;
-} ) => {
+export const HelpCenterChatHistory = () => {
+	const { isLoadingInteractions, recentConversations } = useGetHistoryChats();
 	const { __ } = useI18n();
 
-	if ( isLoadingInteractions && ! conversations.length ) {
+	if ( isLoadingInteractions && ! recentConversations.length ) {
 		return (
 			<div className="help-center-chat-history__loading">
 				<Spinner />
@@ -82,7 +71,7 @@ const Conversations = ( {
 		);
 	}
 
-	if ( ! conversations.length ) {
+	if ( ! recentConversations.length ) {
 		if (
 			translationExists( 'Nothing here yet' ) &&
 			translationExists( 'Start a new conversation if you need any help.' )
@@ -115,7 +104,7 @@ const Conversations = ( {
 
 	return (
 		<>
-			{ conversations.map( ( conversation ) => {
+			{ recentConversations.map( ( conversation ) => {
 				const { numberOfUnreadMessages } = calculateUnread( [
 					conversation as ZendeskConversation,
 				] );
@@ -135,22 +124,6 @@ const Conversations = ( {
 					/>
 				);
 			} ) }
-		</>
-	);
-};
-
-export const HelpCenterChatHistory = () => {
-	const { supportInteractions, isLoadingInteractions, recentConversations } = useGetHistoryChats();
-	const { forceEmailSupport } = useChatStatus();
-
-	return (
-		<>
-			{ forceEmailSupport && <EmailFallbackNotice /> }
-			<Conversations
-				conversations={ recentConversations }
-				supportInteractions={ supportInteractions }
-				isLoadingInteractions={ isLoadingInteractions }
-			/>
 		</>
 	);
 };

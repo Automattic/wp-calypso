@@ -149,7 +149,9 @@ export const createSiteWithCart = async (
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
 	siteIntent?: string,
-	siteGoals?: SiteGoal[]
+	siteGoals?: SiteGoal[],
+	gardenName?: string | null,
+	gardenPartnerName?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -193,6 +195,11 @@ export const createSiteWithCart = async (
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			...( gardenName &&
+				gardenPartnerName && {
+					garden_name: gardenName,
+					garden_partner_name: gardenPartnerName,
+				} ),
 			options: {
 				...newSiteParams.options,
 				has_segmentation_survey: hasSegmentationSurvey,
@@ -205,9 +212,21 @@ export const createSiteWithCart = async (
 		},
 	} );
 
+	// Sleep for 10 seconds to allow for site creation to settle
+	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+
 	if ( ! siteCreationResponse.success ) {
 		// TODO ebuccelli: Manage siteCreationResponse.errors
 		return;
+	}
+
+	// TODO - This is a temporary fix to ensure garden site URLs use HTTPS.
+	// Ensure garden site URLs use HTTPS
+	if ( gardenName && siteCreationResponse?.blog_details?.url ) {
+		siteCreationResponse.blog_details.url = siteCreationResponse.blog_details.url.replace(
+			'http://',
+			'https://'
+		);
 	}
 
 	const parsedBlogURL = getUrlParts( siteCreationResponse?.blog_details.url );

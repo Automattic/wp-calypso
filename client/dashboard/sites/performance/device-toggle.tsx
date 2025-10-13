@@ -7,8 +7,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { mobile, desktop } from '@wordpress/icons';
-
-export type DeviceToggleType = 'mobile' | 'desktop';
+import type { DeviceToggleType } from './types';
 
 type DeviceToggleProps = {
 	value: DeviceToggleType;

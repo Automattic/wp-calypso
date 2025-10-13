@@ -1,4 +1,3 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
@@ -27,12 +26,16 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 
 	const [ trademarkClaimModalOpen, setTrademarkClaimModalOpen ] = useState( false );
 
+	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
+
 	const {
 		mutate: addToCart,
 		isPending,
 		error,
-		submittedAt,
 	} = useMutation( {
+		meta: {
+			mutationId,
+		},
 		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
 			if ( acceptedTrademarkClaim ) {
 				events.onTrademarkClaimsNoticeAccepted( suggestion );
@@ -44,18 +47,9 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 				queries.domainAvailability( domainName )
 			);
 
-			if ( availability ) {
-				const isAvailable = DomainAvailabilityStatus.AVAILABLE === availability.status;
-				const isAvailableSupportedPremiumDomain =
-					DomainAvailabilityStatus.AVAILABLE_PREMIUM === availability.status &&
-					availability.is_supported_premium_domain;
-				// We only log the availability status if the domain is not available or not a supported premium domain
-				const unavailableStatus =
-					! isAvailable && ! isAvailableSupportedPremiumDomain ? availability.status : null;
-				events.onDomainAddAvailabilityPreCheck( unavailableStatus, domainName, suggestion.vendor );
-			}
+			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
 
-			if ( ! availability?.trademark_claims_notice_info ) {
+			if ( ! availability.trademark_claims_notice_info ) {
 				await cart.onAddItem( suggestion );
 				return { addedToCart: true };
 			}
@@ -78,7 +72,6 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 	} );
 
 	const isMutating = !! useIsMutating();
-	const isCurrentMutation = useIsCurrentMutation( submittedAt );
 
 	if ( availability?.is_price_limit_exceeded ) {
 		return (

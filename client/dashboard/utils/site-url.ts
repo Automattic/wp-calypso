@@ -9,7 +9,20 @@ import type { Site } from '@automattic/api-core';
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
+	if ( site.options?.is_redirect ) {
+		return site.slug;
+	}
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
+}
+
+/**
+ * Returns the actual formatted URL for the site considering site redirects
+ */
+export function getSiteFormattedUrl( site: Site ) {
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		return site.options.unmapped_url;
+	}
+	return site.URL;
 }
 
 /**

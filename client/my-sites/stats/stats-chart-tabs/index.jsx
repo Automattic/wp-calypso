@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight, memoize } from 'lodash';
@@ -36,11 +37,18 @@ const ChartTabShape = PropTypes.shape( {
 
 const CHART_TYPE_STORAGE_KEY = ( siteId ) => `jetpack_stats_chart_type_${ siteId }`;
 
-const getChartType = memoize( ( siteId ) => {
+const getChartType = memoize( ( siteId, isMobile = false ) => {
 	if ( ! siteId ) {
 		return 'bar';
 	}
-	return localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) ) || 'bar';
+
+	const savedChartType = localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) );
+
+	if ( [ 'bar', 'line' ].includes( savedChartType ) ) {
+		return savedChartType;
+	}
+
+	return isMobile ? 'line' : 'bar';
 } );
 
 // Define chart type change event names
@@ -82,10 +90,11 @@ class StatModuleChartTabs extends Component {
 		secondaryColor: PropTypes.string,
 		siteId: PropTypes.number,
 		recordTracksEvent: PropTypes.func.isRequired,
+		isBreakpointActive: PropTypes.bool,
 	};
 
 	state = {
-		chartType: getChartType( this.props.siteId ),
+		chartType: getChartType( this.props.siteId, this.props.isBreakpointActive ),
 	};
 
 	intervalId = null;
@@ -394,23 +403,31 @@ const connectComponent = connect(
 );
 
 // TODO: let's convert it to a function component and remove all the hassle.
-const withCssColors = ( WrappedComponent ) => ( props ) => {
-	const chartContainerRef = useRef( null );
+const withCssColors = ( WrappedComponent ) => {
+	const WithCssColorsComponent = ( props ) => {
+		const chartContainerRef = useRef( null );
 
-	const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
-	const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
+		const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
+		const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
 
-	return (
-		<WrappedComponent
-			{ ...props }
-			primaryColor={ primaryColor }
-			secondaryColor={ secondaryColor }
-			chartContainerRef={ chartContainerRef }
-		/>
-	);
+		return (
+			<WrappedComponent
+				{ ...props }
+				primaryColor={ primaryColor }
+				secondaryColor={ secondaryColor }
+				chartContainerRef={ chartContainerRef }
+			/>
+		);
+	};
+
+	WithCssColorsComponent.displayName = `WithCssColors(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithCssColorsComponent;
 };
 
 export default flowRight(
 	localize,
 	connectComponent
-)( withPerformanceTrackerStop( withCssColors( StatModuleChartTabs ) ) );
+)( withMobileBreakpoint( withPerformanceTrackerStop( withCssColors( StatModuleChartTabs ) ) ) );

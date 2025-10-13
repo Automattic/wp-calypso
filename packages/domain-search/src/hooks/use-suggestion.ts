@@ -14,7 +14,6 @@ export enum DomainPriceRule {
 export interface PriceRulesConfig {
 	hidePrice?: boolean;
 	oneTimePrice?: boolean;
-	forceRegularPrice?: boolean;
 	freeForFirstYear?: boolean;
 }
 
@@ -37,7 +36,7 @@ const getPriceRuleForSuggestion = ( {
 		return DomainPriceRule.DOMAIN_MOVE_PRICE;
 	}
 
-	if ( suggestion.is_premium || priceRules.forceRegularPrice ) {
+	if ( suggestion.is_premium ) {
 		return DomainPriceRule.PRICE;
 	}
 

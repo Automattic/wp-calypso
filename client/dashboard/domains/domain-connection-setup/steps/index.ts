@@ -5,3 +5,7 @@ export * from './advanced-start';
 export * from './advanced-records';
 export * from './done';
 export * from './dc-start';
+export * from './transfer-start';
+export * from './transfer-login';
+export * from './transfer-unlock';
+export * from './transfer-auth-code';
