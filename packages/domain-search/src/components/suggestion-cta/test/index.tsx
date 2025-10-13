@@ -29,7 +29,8 @@ describe( 'DomainSuggestionCTA', () => {
 
 			const availability = buildAvailability( {
 				domain_name: 'test-add-to-cart.com',
-				status: DomainAvailabilityStatus.AVAILABLE,
+				status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+				is_supported_premium_domain: true,
 			} );
 
 			mockGetAvailabilityQuery( {

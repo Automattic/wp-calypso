@@ -11,7 +11,7 @@ export const mockGetSuggestionsQuery = ( {
 	suggestions,
 }: {
 	params: Partial< DomainSuggestionQuery >;
-	suggestions: DomainSuggestion[];
+	suggestions: DomainSuggestion[] | Error;
 } ) => {
 	const params = {
 		include_wordpressdotcom: false,
@@ -24,10 +24,15 @@ export const mockGetSuggestionsQuery = ( {
 		...rawParams,
 	};
 
-	return nock( 'https://public-api.wordpress.com' )
+	const request = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
-		.query( qs.stringify( params, { arrayFormat: 'brackets' } ) )
-		.reply( 200, suggestions );
+		.query( qs.stringify( params, { arrayFormat: 'brackets' } ) );
+
+	if ( suggestions instanceof Error ) {
+		return request.replyWithError( suggestions );
+	}
+
+	return request.reply( 200, suggestions );
 };
 
 export const mockGetFreeSuggestionQuery = ( {

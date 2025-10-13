@@ -11,7 +11,7 @@ export function getDeploymentsCalloutProps() {
 		upsellTitle: __( 'Deploy from GitHub' ),
 		upsellImage: illustrationUrl,
 		upsellDescription: __(
-			'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+			'Connect your GitHub repository directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
 		),
 	};
 }

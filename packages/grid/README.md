@@ -83,7 +83,9 @@ A wrapper component for grid items that provides an actionable area.
 		Card content
 	</Card>
 </Grid>
+```
 
+```jsx
 // ✅ Recommended
 <Grid layout={ layout }>
 	<Grid.Item key="a" actionableArea={ <button>×</button> }>

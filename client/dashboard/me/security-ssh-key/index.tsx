@@ -1,8 +1,9 @@
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { sshKeysQuery, userSettingsQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
@@ -21,8 +22,15 @@ export default function SecuritySshKey() {
 
 	let description = sshKey
 		? createInterpolateElement(
-				__(
-					'Attach the SSH key to a site with a Business or Commerce plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink>Learn more</learnMoreLink>'
+				sprintf(
+					/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
+					__(
+						'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink>Learn more</learnMoreLink>'
+					),
+					{
+						businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
+						commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+					}
 				),
 				{
 					learnMoreLink: (

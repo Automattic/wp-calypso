@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import wpcomOAuthFactory from 'wpcom-oauth-cors';
 import proxy from 'wpcom-proxy-request';
-import wpcomFactory from '../../';
+import wpcomFactory from '../..';
 
 const debug = debugFactory( 'media-editor' );
 const isLocalhost = document.location.hostname === 'calypso.localhost';

@@ -37,11 +37,13 @@ export default function AlternativesModal( {
 						text: __( 'Change your site’s address' ),
 						to: '/domains',
 						supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
+						useRouterButton: true,
 					},
 					{
 						text: __( 'Delete a site' ),
 						to: '/sites',
 						supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
+						useRouterButton: true,
 					},
 			  ]
 			: [] ),
@@ -53,13 +55,15 @@ export default function AlternativesModal( {
 		},
 		{
 			text: __( 'Change your username' ),
-			to: '/me/account',
+			to: '/me/profile',
 			supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
+			useRouterButton: true,
 		},
 		{
 			text: __( 'Change your password' ),
 			to: '/me/security',
 			supportLink: localizeUrl( 'https://wordpress.com/support/passwords/' ),
+			useRouterButton: true,
 		},
 	];
 

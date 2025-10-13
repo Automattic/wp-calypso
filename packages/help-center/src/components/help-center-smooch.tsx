@@ -88,16 +88,22 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const queryClient = useQueryClient();
 	const smoochRef = useRef< HTMLDivElement >( null );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
-	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled, allowPremiumSupport } =
-		useSelect( ( select ) => {
-			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-			return {
-				isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
-				isChatLoaded: helpCenterSelect.getIsChatLoaded(),
-				areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
-				allowPremiumSupport: helpCenterSelect.getAllowPremiumSupport(),
-			};
-		}, [] );
+	const {
+		isHelpCenterShown,
+		isChatLoaded,
+		areSoundNotificationsEnabled,
+		allowPremiumSupport,
+		connectionStatus,
+	} = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
+			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+			allowPremiumSupport: helpCenterSelect.getAllowPremiumSupport(),
+			connectionStatus: helpCenterSelect.getZendeskConnectionStatus(),
+		};
+	}, [] );
 
 	const allowChat =
 		canConnectToZendesk && enableAuth && ( isEligibleForChat || allowPremiumSupport );
@@ -152,9 +158,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	);
 
 	const connectedListener = useCallback( () => {
-		setZendeskConnectionStatus( 'connected' );
-		recordTracksEvent( 'calypso_smooch_messenger_connected' );
-	}, [ setZendeskConnectionStatus ] );
+		// We only want to revert the connection status to connected if it was disconnected before.
+		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
+		if ( connectionStatus ) {
+			setZendeskConnectionStatus( 'connected' );
+			recordTracksEvent( 'calypso_smooch_messenger_connected' );
+		}
+	}, [ setZendeskConnectionStatus, connectionStatus ] );
 
 	const clientIdListener = useCallback(
 		( message: ZendeskMessage ) => {

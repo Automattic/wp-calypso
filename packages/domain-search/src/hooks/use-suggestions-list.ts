@@ -1,9 +1,27 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { getTld } from '../helpers';
+import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
+
+const hasDataAndIsSupportedPremiumDomain = (
+	result: UseQueryResult< DomainAvailability, Error >
+): result is DefinedUseQueryResult< DomainAvailability, Error > => {
+	return !! result.data && isSupportedPremiumDomain( result.data );
+};
+
+const availablePremiumDomainsCombinator = (
+	results: UseQueryResult< DomainAvailability, Error >[]
+) => {
+	return {
+		isLoadingAvailablePremiumDomains: results.some( ( result ) => result.isLoading ),
+		availablePremiumDomains: results
+			.filter( hasDataAndIsSupportedPremiumDomain )
+			.map( ( { data: availabilityQuery } ) => availabilityQuery.domain_name ),
+	};
+};
 
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
@@ -18,7 +36,7 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable,
 	} );
 
-	const { isLoading: isLoadingQueryAvailability } = useQuery( {
+	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: !! getTld( query ),
 	} );
@@ -31,51 +49,58 @@ export const useSuggestionsList = () => {
 		[ suggestions ]
 	);
 
-	const unavailablePremiumDomainsCombinator = useCallback(
-		( results: UseQueryResult< DomainAvailability, Error >[] ) => {
-			return {
-				isLoadingUnavailablePremiumDomains: results.some( ( result ) => result.isLoading ),
-				unavailablePremiumDomains: premiumSuggestions.filter( ( _, index ) => {
-					const availabilityQuery = results[ index ];
-
-					if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
-						return true;
-					}
-
-					const { status, is_supported_premium_domain } = availabilityQuery.data;
-
-					return (
-						DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain
-					);
-				} ),
-			};
-		},
-		[ premiumSuggestions ]
-	);
-
-	const { isLoadingUnavailablePremiumDomains, unavailablePremiumDomains } = useQueries( {
+	const availabilityResults = useQueries( {
 		queries: premiumSuggestions.map( ( suggestion ) => ( {
 			...queries.domainAvailability( suggestion ),
 			enabled: true,
 		} ) ),
-		combine: unavailablePremiumDomainsCombinator,
 	} );
+
+	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } = useMemo(
+		() => availablePremiumDomainsCombinator( availabilityResults ),
+		[ availabilityResults ]
+	);
 
 	const isLoading =
 		isLoadingSuggestions ||
 		isLoadingFreeSuggestion ||
 		isLoadingQueryAvailability ||
-		isLoadingUnavailablePremiumDomains;
+		isLoadingAvailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		return partitionSuggestions( {
 			suggestions: suggestions
-				.map( ( suggestion ) => suggestion.domain_name )
-				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
+				.filter( ( { domain_name: suggestion, is_premium } ) => {
+					if ( suggestion !== query ) {
+						return ! is_premium || availablePremiumDomains.includes( suggestion );
+					}
+
+					if ( ! fqdnAvailability ) {
+						return false;
+					}
+
+					if (
+						fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ||
+						( config.includeOwnedDomainInSuggestions &&
+							fqdnAvailability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER )
+					) {
+						return true;
+					}
+
+					return isSupportedPremiumDomain( fqdnAvailability );
+				} )
+				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
 		} );
-	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
+	}, [
+		suggestions,
+		query,
+		config.deemphasizedTlds,
+		availablePremiumDomains,
+		fqdnAvailability,
+		config.includeOwnedDomainInSuggestions,
+	] );
 
 	return {
 		isLoading,

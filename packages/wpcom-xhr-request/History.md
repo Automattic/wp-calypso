@@ -1,6 +1,6 @@
 # History
 
-## 1.3.0 / 2022-09-27
+## 1.3.0 / 2025-10-10
 
 - Add support for `token` parameter for OAuth authentication
 

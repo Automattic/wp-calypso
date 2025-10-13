@@ -37,7 +37,6 @@ export interface DomainSearchEvents {
 	onExternalDomainClick: ( domainName?: string ) => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
-	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( domainName: string ) => void;

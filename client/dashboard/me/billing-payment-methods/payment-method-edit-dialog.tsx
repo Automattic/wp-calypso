@@ -1,106 +1,15 @@
-import { countryListQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import RequiredSelect from '../../components/required-select';
+import { TaxLocationForm, defaultTaxLocation } from '../../components/tax-location-form';
 import { Text } from '../../components/text';
 import { PaymentMethodDetails } from './payment-method-details';
-import type { CountryListItem, StoredPaymentMethod } from '@automattic/api-core';
-import type { Field } from '@wordpress/dataviews';
-
-function getFields( {
-	countryList,
-}: {
-	countryList: CountryListItem[];
-} ): Field< StoredPaymentMethod[ 'tax_location' ] >[] {
-	return [
-		{
-			id: 'country_code',
-			label: __( 'Country' ),
-			Edit: RequiredSelect,
-			elements: countryList
-				.filter( ( countryItem ) => countryItem.name )
-				.map( ( countryItem ) => ( {
-					label: countryItem.name,
-					value: countryItem.code,
-				} ) ),
-		},
-		{
-			id: 'postal_code',
-			label: __( 'Postal code' ),
-			Edit: 'text',
-		},
-		{
-			id: 'subdivision_code',
-			label: __( 'State/Province' ),
-			Edit: 'text',
-		},
-		{
-			id: 'city',
-			label: __( 'City' ),
-			Edit: 'text',
-		},
-		{
-			id: 'organization',
-			label: __( 'Organization' ),
-			Edit: 'text',
-		},
-		{
-			id: 'address',
-			label: __( 'Address' ),
-			Edit: 'text',
-		},
-	];
-}
-
-const form = {
-	type: 'regular' as const,
-	labelPosition: 'top' as const,
-	fields: [ 'country_code' ],
-};
-
-function calculateTaxLocationFields( {
-	selectedCountryItem,
-}: {
-	selectedCountryItem?: CountryListItem;
-} ): string[] {
-	const fields = [ 'country_code' ];
-	if ( selectedCountryItem?.has_postal_codes ) {
-		fields.push( 'postal_code' );
-	}
-	if ( selectedCountryItem?.tax_needs_subdivision ) {
-		fields.push( 'subdivision_code' );
-	}
-	if ( selectedCountryItem?.tax_needs_city ) {
-		fields.push( 'city' );
-	}
-	if ( selectedCountryItem?.tax_needs_organization ) {
-		fields.push( 'organization' );
-	}
-	if ( selectedCountryItem?.tax_needs_address ) {
-		fields.push( 'address' );
-	}
-	// FIXME: add is_for_business if elligible (two US states)
-	return fields;
-}
-
-const defaultTaxLocation: StoredPaymentMethod[ 'tax_location' ] = {
-	country_code: '',
-	postal_code: '',
-	subdivision_code: '',
-	ip_address: '',
-	vat_id: '',
-	organization: '',
-	address: '',
-	city: '',
-};
+import type { StoredPaymentMethod, StoredPaymentMethodTaxLocation } from '@automattic/api-core';
 
 export function PaymentMethodEditDialog( {
 	paymentMethod,
@@ -113,21 +22,9 @@ export function PaymentMethodEditDialog( {
 	onCancel: () => void;
 	onConfirm: ( paymentMethod: StoredPaymentMethod ) => void;
 } ) {
-	const { data: countryList } = useQuery( countryListQuery() );
-	const [ formData, setFormData ] = useState< StoredPaymentMethod[ 'tax_location' ] >(
+	const [ formData, setFormData ] = useState< StoredPaymentMethodTaxLocation >(
 		paymentMethod.tax_location ?? defaultTaxLocation
 	);
-
-	const selectedCountryCode = formData?.country_code;
-	const selectedCountryItem = countryList?.find(
-		( country ) =>
-			country.code.toUpperCase() === selectedCountryCode?.toUpperCase() ||
-			( country.vat_supported &&
-				selectedCountryCode &&
-				country.tax_country_codes.includes( selectedCountryCode.toUpperCase() ) )
-	);
-
-	form.fields = calculateTaxLocationFields( { selectedCountryItem } );
 
 	return (
 		<ConfirmDialog
@@ -154,16 +51,12 @@ export function PaymentMethodEditDialog( {
 					</VStack>
 				</HStack>
 
-				{ countryList && (
-					<DataForm< StoredPaymentMethod[ 'tax_location' ] >
-						data={ formData }
-						fields={ getFields( { countryList } ) }
-						form={ form }
-						onChange={ ( updated ) => {
-							setFormData( ( previous ) => ( { ...previous, ...updated } ) );
-						} }
-					/>
-				) }
+				<TaxLocationForm
+					data={ formData }
+					onChange={ ( updated ) => {
+						setFormData( ( previous ) => ( { ...previous, ...updated } ) );
+					} }
+				/>
 			</VStack>
 		</ConfirmDialog>
 	);

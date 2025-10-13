@@ -208,6 +208,7 @@ export class DateRange extends Component {
 	handleInputChange = ( val, startOrEnd ) => {
 		this.setState( {
 			[ `textInput${ startOrEnd }Date` ]: val,
+			selectedShortcutId: null, // clear any selected shortcut because user is manually entering dates.
 		} );
 	};
 

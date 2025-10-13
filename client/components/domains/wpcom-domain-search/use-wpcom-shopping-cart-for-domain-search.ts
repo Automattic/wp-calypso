@@ -1,5 +1,4 @@
-/* eslint-disable no-restricted-imports */
-import { isPlan } from '@automattic/calypso-products';
+import { isDomainProduct, isDomainTransfer, isPlan } from '@automattic/calypso-products';
 import { DomainSearch } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -9,7 +8,6 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
-import { getDomainsInCart } from '../../../lib/cart-values/cart-items';
 
 const wpcomCartToDomainSearchCart = (
 	domain: ResponseCartProduct,
@@ -65,7 +63,11 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 
 	return useMemo( () => {
-		const domainItems = flowAllowsMultipleDomainsInCart ? getDomainsInCart( responseCart ) : [];
+		const domainItems = flowAllowsMultipleDomainsInCart
+			? responseCart.products.filter(
+					( product ) => isDomainProduct( product ) || isDomainTransfer( product )
+			  )
+			: [];
 		const isPlanInCart =
 			responseCart.products.find( ( product ) => isPlan( product ) ) !== undefined;
 		// If there's an annual plan in the cart, the backend will already set the first domain as free.

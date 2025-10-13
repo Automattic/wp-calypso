@@ -2,6 +2,7 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { isCloseToExpiration } from '../../../utils/purchase';
+import { getAddPaymentMethodUrlFor, getChangePaymentMethodUrlFor } from '../urls';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -48,10 +49,9 @@ export function RenewNoticeAction( {
 	purchase: Purchase;
 	onClick: () => void;
 } ) {
-	const siteSlug = purchase.site_slug ?? purchase.blog_id;
 	const changePaymentMethodPath = purchase.payment_card_id
-		? `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/change/${ purchase.payment_card_id }`
-		: `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/add`;
+		? getChangePaymentMethodUrlFor( purchase )
+		: getAddPaymentMethodUrlFor( purchase );
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;

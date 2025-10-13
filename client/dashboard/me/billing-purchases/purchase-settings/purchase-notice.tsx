@@ -18,7 +18,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
-import { getPurchaseUrl } from '../urls';
+import { getPurchaseUrl, getAddPaymentMethodUrlFor, getChangePaymentMethodUrlFor } from '../urls';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
@@ -336,10 +336,9 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 }
 
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
-	const siteSlug = purchase.site_slug ?? purchase.blog_id;
 	const changePaymentMethodPath = purchase.payment_card_id
-		? `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/change/${ purchase.payment_card_id }`
-		: `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/add`;
+		? getChangePaymentMethodUrlFor( purchase )
+		: getAddPaymentMethodUrlFor( purchase );
 	return (
 		<Notice variant={ shouldShowCardExpiringWarning( purchase ) ? 'error' : 'info' }>
 			{ createInterpolateElement(
