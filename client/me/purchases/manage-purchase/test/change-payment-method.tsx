@@ -65,7 +65,6 @@ const initialPurchases = [
 		can_reenable_auto_renewal: true,
 		async_pending_payment_block_is_set: false,
 		can_explicit_renew: true,
-		cost_to_unbundle: undefined,
 		cost_to_unbundle_display: undefined,
 		price_text: '$100',
 		currency_code: 'USD',

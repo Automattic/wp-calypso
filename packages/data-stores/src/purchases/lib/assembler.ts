@@ -15,9 +15,6 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canReenableAutoRenewal: Boolean( purchase.can_reenable_auto_renewal ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
-		costToUnbundle: purchase.cost_to_unbundle
-			? Number( purchase.cost_to_unbundle )
-			: Number( purchase.amount ),
 		costToUnbundleText: purchase.cost_to_unbundle_display
 			? purchase.cost_to_unbundle_display
 			: purchase.price_text,

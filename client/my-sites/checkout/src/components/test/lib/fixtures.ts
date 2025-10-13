@@ -145,7 +145,6 @@ export const storeData = () => ( {
 				renewal_price_tier_usage_quantity: null,
 				current_price_tier_slug: null,
 				current_price_tier_usage_quantity: null,
-				cost_to_unbundle: 500,
 				cost_to_unbundle_display: '$500.00',
 				expiry_date: moment().add( 1, 'day' ).format(),
 				expiry_message: 'Renews on May 19, 2020',

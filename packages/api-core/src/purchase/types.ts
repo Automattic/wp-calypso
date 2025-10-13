@@ -116,7 +116,6 @@ export interface Purchase {
 	can_reenable_auto_renewal: boolean;
 	async_pending_payment_block_is_set: boolean;
 	can_explicit_renew: boolean;
-	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
 	price_tier_list: Array< PriceTierEntry >;

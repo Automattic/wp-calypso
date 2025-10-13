@@ -10,7 +10,6 @@ export interface Purchase {
 	asyncPendingPaymentBlockIsSet: boolean;
 	canExplicitRenew: boolean;
 	canReenableAutoRenewal: boolean;
-	costToUnbundle: number;
 	costToUnbundleText: string;
 	currencyCode: string;
 	currencySymbol: string;
