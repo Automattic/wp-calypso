@@ -24,22 +24,22 @@ import { prepareScheduleName } from './helpers';
 import { useScheduledUpdates } from './hooks/use-scheduled-updates';
 import { ScheduledUpdateRow } from './types';
 
+// Create stable mapping for unique schedule names with invisible suffixes
+const getUniqueScheduleName = ( () => {
+	const scheduleIdMap = new Map< string, number >();
+	let counter = 0;
+
+	return ( locale: string, item: ScheduledUpdateRow ) => {
+		if ( ! scheduleIdMap.has( item.scheduleId ) ) {
+			scheduleIdMap.set( item.scheduleId, ++counter );
+		}
+		const uniqueNumber = scheduleIdMap.get( item.scheduleId )!;
+		const invisibleId = '\u200B'.repeat( uniqueNumber );
+		return prepareScheduleName( locale, item ) + invisibleId;
+	};
+} )();
+
 const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
-	// Create stable mapping outside of getValue calls
-	const getUniqueScheduleName = ( () => {
-		const scheduleIdMap = new Map< string, number >();
-		let counter = 0;
-
-		return ( item: ScheduledUpdateRow ) => {
-			if ( ! scheduleIdMap.has( item.scheduleId ) ) {
-				scheduleIdMap.set( item.scheduleId, ++counter );
-			}
-			const uniqueNumber = scheduleIdMap.get( item.scheduleId )!;
-			const invisibleId = '\u200B'.repeat( uniqueNumber );
-			return prepareScheduleName( locale, item ) + invisibleId;
-		};
-	} )();
-
 	return [
 		{
 			id: 'site',
@@ -115,7 +115,7 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
 			id: 'scheduleId',
 			type: 'text',
 			label: __( 'Schedule' ),
-			getValue: ( { item } ) => getUniqueScheduleName( item ),
+			getValue: ( { item } ) => getUniqueScheduleName( locale, item ),
 		},
 		{
 			id: 'icon.ico',
