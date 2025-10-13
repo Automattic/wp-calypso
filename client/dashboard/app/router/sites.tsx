@@ -561,6 +561,31 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRedirectsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Redirects' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'site-redirects',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-redirects' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-redirects' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1099,6 +1124,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
 			siteSettingsWpcomLoginRoute,
+			siteSettingsRedirectsRoute,
 		] ),
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
