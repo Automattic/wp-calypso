@@ -1,7 +1,7 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { Icon, check, warning, info } from '@wordpress/icons';
+import { Icon, check, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 
@@ -28,6 +28,7 @@ export default function useConnectionStatusNotice( isLiveChat: boolean = false )
 			return () => clearTimeout( connectionTimeout );
 		} else if ( connectionStatus === 'connected' ) {
 			setSecondsSinceDisconnected( 0 );
+			// Show the "Connected" notice for 2 seconds then auto-hide it.
 			const hidingReconnectedTimeout = setTimeout( setShouldWarn, 2000, false );
 			return () => clearTimeout( hidingReconnectedTimeout );
 		}
@@ -43,9 +44,9 @@ export default function useConnectionStatusNotice( isLiveChat: boolean = false )
 
 	const connectionStatusMap = {
 		disconnected: {
-			icon: <Icon size={ 24 } icon={ warning } />,
+			icon: <Icon size={ 24 } icon={ info } />,
 			message: __( 'Unstable internet connection.', __i18n_text_domain__ ),
-			status: 'error' as const,
+			status: 'warning' as const,
 			dismissible: false,
 		},
 		reconnecting: {
