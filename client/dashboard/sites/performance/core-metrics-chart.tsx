@@ -124,7 +124,7 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 			...seriesData,
 		],
 		yScale: {
-			domain: [ 0, maxY === 0 ? maxY : maxY * 1.5 ] as [ number, number ],
+			domain: [ 0, maxY === 0 ? 1 : maxY * 1.5 ] as [ number, number ],
 		},
 	};
 };
