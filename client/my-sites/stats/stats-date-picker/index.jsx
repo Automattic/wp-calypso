@@ -128,7 +128,7 @@ class StatsDatePicker extends Component {
 	dateForDisplay( selectedShortcut = null ) {
 		if (
 			selectedShortcut?.label &&
-			! [ 'custom_date_range', 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
+			! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
 		) {
 			return selectedShortcut.label;
 		}

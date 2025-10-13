@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Icon, info } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -66,18 +67,17 @@ export const EmailFallbackNotice: React.FC = () => {
 	params.set( 'wapuuFlow', 'true' );
 	const url = '/contact-form?' + params.toString();
 	return (
-		<div className="help-center__notice">
+		<div className="help-center__notice email-fallback-notice">
+			<Icon icon={ info } className="help-center__notice-icon" />
 			<p>
-				<strong>
-					{ __(
-						'Live chat is temporarily unavailable for scheduled maintenance.',
-						__i18n_text_domain__
-					) }
-				</strong>
+				{ __(
+					'Live chat is temporarily unavailable for scheduled maintenance.',
+					__i18n_text_domain__
+				) }
 				&nbsp;
 				{ createInterpolateElement(
 					__(
-						'We’re sorry for the inconvenience and appreciate your patience. Please feel free to reach out via <email>email</email> or check our <guides>Support Guides</guides> in the meantime.',
+						'Please reach out via <email>email</email> if you need immediate assistance.',
 						__i18n_text_domain__
 					),
 					{
@@ -86,13 +86,6 @@ export const EmailFallbackNotice: React.FC = () => {
 								variant="link"
 								className="help-center__notice-link"
 								onClick={ () => navigate( url ) }
-							/>
-						),
-						guides: (
-							<Button
-								variant="link"
-								className="help-center__notice-link"
-								onClick={ () => navigate( '/' ) }
 							/>
 						),
 					}

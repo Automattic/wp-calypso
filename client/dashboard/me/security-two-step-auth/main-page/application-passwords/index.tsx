@@ -164,7 +164,7 @@ export default function ApplicationPasswords() {
 				title={ __( 'Application passwords' ) }
 				description={ createInterpolateElement(
 					__(
-						'Generate a custom password for each third-party application you authorise to use your WordPress.com account. You can revoke access for an individual application here if you ever need to. <learnMoreLink>Learn more</learnMoreLink>'
+						'Generate a custom password for each third-party application you authorize to use your WordPress.com account. You can revoke access for an individual application here if you ever need to. <learnMoreLink>Learn more</learnMoreLink>'
 					),
 					{
 						learnMoreLink: (

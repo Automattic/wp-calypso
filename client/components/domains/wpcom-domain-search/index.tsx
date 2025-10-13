@@ -1,10 +1,12 @@
+import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useDebounce } from '@wordpress/compose';
 import { useCallback, useMemo, useRef, type ComponentProps } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import { recordUseYourDomainButtonClick } from '../../domain-search-v2/register-domain-step/analytics';
 import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
@@ -34,7 +36,9 @@ const DomainSearchWithCart = ( {
 	...props
 }: DomainSearchProps ) => {
 	const dispatch = useDispatch();
-	const cartKey = currentSiteId ?? 'no-site';
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
+	const cartKey = currentSiteId ?? sitelessCartKey;
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 
 	const { query } = props;
@@ -156,7 +160,16 @@ const DomainSearchWithCart = ( {
 					section: analyticsSection,
 				} );
 			},
-			onDomainAddAvailabilityPreCheck: ( unavailableStatus, domainName, rootVendor ) => {
+			onDomainAddAvailabilityPreCheck: ( availability, domainName, rootVendor ) => {
+				const isAvailable = DomainAvailabilityStatus.AVAILABLE === availability.status;
+				const isAvailableSupportedPremiumDomain =
+					DomainAvailabilityStatus.AVAILABLE_PREMIUM === availability.status &&
+					availability.is_supported_premium_domain;
+
+				// We only log the availability status if the domain is not available or not a supported premium domain
+				const unavailableStatus =
+					isAvailable || isAvailableSupportedPremiumDomain ? null : availability.status;
+
 				recordTracksEvent( 'calypso_domain_add_availability_precheck', {
 					domain: domainName,
 					flow_name: flowName,

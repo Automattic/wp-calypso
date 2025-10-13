@@ -5,7 +5,7 @@ import { buildAvailability } from '../../../test-helpers/factories/availability'
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
-import { TestDomainSearchWithSuggestionsList } from '../../../test-helpers/renderer';
+import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 
 describe( 'FeaturedSearchResults', () => {
 	it( 'renders a single featured suggestion', async () => {
@@ -23,11 +23,11 @@ describe( 'FeaturedSearchResults', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="single-featured.com">
+			<TestDomainSearchWithSuggestions query="single-featured.com">
 				<FeaturedSearchResults
 					suggestions={ [ { reason: 'recommended', suggestion: 'single-featured.com' } ] }
 				/>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		const featuredSuggestion = await screen.findByTitle( 'single-featured.com' );
@@ -46,14 +46,14 @@ describe( 'FeaturedSearchResults', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestionsList query="multiple-featured">
+			<TestDomainSearchWithSuggestions query="multiple-featured">
 				<FeaturedSearchResults
 					suggestions={ [
 						{ reason: 'recommended', suggestion: 'multiple-featured.com' },
 						{ reason: 'best-alternative', suggestion: 'multiple-featured.net' },
 					] }
 				/>
-			</TestDomainSearchWithSuggestionsList>
+			</TestDomainSearchWithSuggestions>
 		);
 
 		const dotCom = await screen.findByTitle( 'multiple-featured.com' );

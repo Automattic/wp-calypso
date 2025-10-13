@@ -1,8 +1,5 @@
 import '@automattic/agenttic-ui/index.css';
-import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Smooch from 'smooch';
@@ -45,13 +42,6 @@ export const OdieSendMessageButton = () => {
 	useEffect( () => {
 		textareaRef.current?.focus();
 	}, [ textareaRef ] );
-
-	const { connectionStatus } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			connectionStatus: helpCenterSelect.getZendeskConnectionStatus(),
-		};
-	}, [] );
 
 	useEffect( () => {
 		if ( isLiveChat ) {
@@ -121,12 +111,14 @@ export const OdieSendMessageButton = () => {
 				content: inputValue,
 				role: 'user',
 				type: 'message',
-				// Odie messages are considered sent immediately.
-				// Because it's impossible to know if the message was sent or until the response is received.
-				// Which takes north of 10 seconds.
-				isSending: chat?.provider !== 'odie',
-				metadata: { temporary_id: crypto.randomUUID() },
 			} as Message;
+
+			if ( chat?.provider === 'zendesk' ) {
+				messageObj.metadata = {
+					temporary_id: crypto.randomUUID(),
+					local_timestamp: Date.now() / 1000,
+				};
+			}
 
 			sendMessage( messageObj ).catch( ( error ) => {
 				if ( error?.type === 'abort' ) {
@@ -175,9 +167,7 @@ export const OdieSendMessageButton = () => {
 		[ sendMessageHandler, handleImagePaste ]
 	);
 
-	const isDisabled =
-		!! messageSizeNotice ||
-		( isLiveChat && [ 'disconnected', 'reconnecting' ].includes( connectionStatus ?? '' ) );
+	const isDisabled = !! messageSizeNotice;
 	// When there is a reason to disable the input, we should not convey a processing state.
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 

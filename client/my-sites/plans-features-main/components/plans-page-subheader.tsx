@@ -212,7 +212,7 @@ const PlansPageSubheader = ( {
 			return <PlanBenefitHeader />;
 		}
 
-		if ( isOnboarding ) {
+		if ( isOnboarding || intent === 'plans-upgrade' ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
@@ -226,7 +226,7 @@ const PlansPageSubheader = ( {
 	return (
 		<>
 			{ renderSubheader() }
-			{ isDisplayingPlansNeededForFeature && (
+			{ isDisplayingPlansNeededForFeature && intent !== 'plans-upgrade' && (
 				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
 			) }
 		</>

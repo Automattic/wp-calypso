@@ -35,7 +35,10 @@ export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 	} );
 
 	return wpcom.req
-		.get( `/sites/${ siteId }/purchases` )
+		.get( {
+			path: `/sites/${ siteId }/purchases`,
+			apiVersion: '1.2',
+		} )
 		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
@@ -57,7 +60,10 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 	} );
 
 	return wpcom.req
-		.get( '/me/purchases' )
+		.get( {
+			path: '/me/purchases',
+			apiVersion: '1.2',
+		} )
 		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,

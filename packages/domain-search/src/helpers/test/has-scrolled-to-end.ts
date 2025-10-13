@@ -1,6 +1,6 @@
-import { hasScrolledToEnd } from '../use-has-scrolled-to-end';
+import { hasScrolledToEnd } from '../has-scrolled-to-end';
 
-describe( 'useHasScrolledToEnd#hasScrolledToEnd', () => {
+describe( 'hasScrolledToEnd', () => {
 	it( 'returns false when element is not scrolled to the end', () => {
 		expect( hasScrolledToEnd( { scrollHeight: 500, scrollTop: 0, clientHeight: 100 } ) ).toBe(
 			false

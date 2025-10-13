@@ -14,9 +14,9 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
 		onSkip: noop,
+		onExternalDomainClick: noop,
 		onMakePrimaryAddressClick: noop,
 		onMoveDomainToSiteClick: noop,
-		onTransferDomainToWordPressComClick: noop,
 		onRegisterDomainClick: noop,
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
@@ -60,8 +60,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		skippable: false,
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
-		allowsUsingOwnDomain: true,
-		includeOwnedDomainInSuggestions: true,
+		allowsUsingOwnDomain: false,
+		includeOwnedDomainInSuggestions: false,
 		allowedTlds: [],
 		priceRules: {
 			hidePrice: false,
@@ -152,9 +152,7 @@ export const useDomainSearchContextValue = ( {
 				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query, {
-						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain
-							? query.includes( '.blog' )
-							: false,
+						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain,
 					} ),
 					enabled: false,
 					staleTime: Infinity,
@@ -193,7 +191,15 @@ export const useDomainSearchContextValue = ( {
 			openFullCart,
 			query: externalQuery ?? '',
 			setQuery: ( query ) => {
-				normalizedEvents.onQueryChange( query );
+				const normalizedQuery = query
+					.trim()
+					.toLowerCase()
+					.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+				if ( normalizedQuery ) {
+					normalizedEvents.onQueryChange( normalizedQuery );
+				}
 			},
 			slots,
 			currentSiteUrl,

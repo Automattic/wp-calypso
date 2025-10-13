@@ -56,6 +56,8 @@ export default function DomainSearch() {
 			} ),
 			allowedTlds,
 			skippable: false,
+			includeOwnedDomainInSuggestions: true,
+			allowsUsingOwnDomain: true,
 		};
 	}, [ tldQuery ] );
 

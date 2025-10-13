@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack, Card, CardBody } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import AIIcon from 'calypso/assets/images/performance-profiler/ai-icon.svg';
@@ -16,6 +17,8 @@ const LLMNotice = ( {
 	isLoading?: boolean;
 	actions?: ReactNode;
 } ) => {
+	const isMediumScreen = useViewportMatch( 'medium', '<' );
+
 	return (
 		<Card
 			size="xSmall"
@@ -25,7 +28,10 @@ const LLMNotice = ( {
 			} }
 		>
 			<CardBody>
-				<HStack>
+				<HStack
+					direction={ isMediumScreen ? 'column' : 'row' }
+					alignment={ isMediumScreen ? 'flex-start' : 'center' }
+				>
 					<HStack
 						className={ clsx( 'llm-notice', { 'is-loading': isLoading } ) }
 						justify="flex-start"

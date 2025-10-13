@@ -33,6 +33,7 @@ export const DomainSuggestionErrorCTA = ( {
 					isDestructive
 					variant="primary"
 					__next40pxDefaultSize
+					label={ __( 'Add to Cart' ) }
 					onClick={ callback }
 					icon={ warning }
 				>

@@ -17,4 +17,5 @@ export interface ScheduledUpdateRow {
 	active: boolean;
 	schedule: Frequency;
 	scheduleId: string;
+	plugins: string[];
 }

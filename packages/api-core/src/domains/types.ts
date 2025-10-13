@@ -36,6 +36,7 @@ export interface DomainSummary {
 	cannot_update_contact_info_reason: string | null;
 	cannot_manage_name_servers_reason: string | null;
 	cannot_manage_dns_records_reason: string | null;
+	current_user_can_add_email: boolean;
 	current_user_can_create_site_from_domain_only: boolean;
 	current_user_can_manage: boolean;
 	current_user_is_owner: boolean | null;

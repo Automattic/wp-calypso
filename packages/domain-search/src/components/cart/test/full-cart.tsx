@@ -109,7 +109,7 @@ describe( 'FullCart', () => {
 	it( 'shows loading state only for the button that initiated the operation', async () => {
 		const fireEvent = userEvent.setup();
 
-		const removeItemPromise = Promise.withResolvers< void >();
+		const operation = Promise.withResolvers< void >();
 
 		render(
 			<TestDomainSearchWithCart
@@ -117,7 +117,7 @@ describe( 'FullCart', () => {
 					buildCartItem( { uuid: '1', domain: 'test-caller', tld: 'com' } ),
 					buildCartItem( { uuid: '2', domain: 'test-other', tld: 'com' } ),
 				] }
-				removeItemPromise={ removeItemPromise.promise }
+				operationPromise={ operation.promise }
 			>
 				<OpenFullCart />
 				<FullCart />
@@ -142,14 +142,14 @@ describe( 'FullCart', () => {
 		expect( testCallerRemoveButton ).toHaveClass( 'is-busy' );
 		expect( testOtherRemoveButton ).not.toHaveClass( 'is-busy' );
 
-		removeItemPromise.resolve();
+		operation.resolve();
 	} );
 
 	describe( 'cart removal error', () => {
 		it( 'shows error message only for the button that initiated the operation', async () => {
 			const fireEvent = userEvent.setup();
 
-			const removeItemPromise = Promise.withResolvers< void >();
+			const operation = Promise.withResolvers< void >();
 
 			render(
 				<TestDomainSearchWithCart
@@ -157,7 +157,7 @@ describe( 'FullCart', () => {
 						buildCartItem( { uuid: '1', domain: 'test', tld: 'com' } ),
 						buildCartItem( { uuid: '2', domain: 'test-caller', tld: 'com' } ),
 					] }
-					removeItemPromise={ removeItemPromise.promise }
+					operationPromise={ operation.promise }
 				>
 					<OpenFullCart />
 					<FullCart />
@@ -173,7 +173,7 @@ describe( 'FullCart', () => {
 
 			await fireEvent.click( getByRole( testCallerItem, 'button', { name: 'Remove' } ) );
 
-			removeItemPromise.reject( new Error( 'Test error' ) );
+			operation.reject( new Error( 'Test error' ) );
 
 			await waitFor( () => {
 				expect( getByText( testCallerItem, 'Test error' ) ).toBeInTheDocument();
@@ -185,12 +185,12 @@ describe( 'FullCart', () => {
 		it( 'removes the error message when the remove button is clicked within the notice', async () => {
 			const fireEvent = userEvent.setup();
 
-			const removeItemPromise = Promise.withResolvers< void >();
+			const operation = Promise.withResolvers< void >();
 
 			render(
 				<TestDomainSearchWithCart
 					initialCartItems={ [ buildCartItem( { uuid: '1', domain: 'test', tld: 'com' } ) ] }
-					removeItemPromise={ removeItemPromise.promise }
+					operationPromise={ operation.promise }
 				>
 					<OpenFullCart />
 					<FullCart />
@@ -205,7 +205,7 @@ describe( 'FullCart', () => {
 
 			await fireEvent.click( getByRole( testItem, 'button', { name: 'Remove' } ) );
 
-			removeItemPromise.reject( new Error( 'Test error' ) );
+			operation.reject( new Error( 'Test error' ) );
 
 			await waitFor( () => {
 				expect( getByText( testItem, 'Test error' ) ).toBeInTheDocument();
@@ -220,7 +220,7 @@ describe( 'FullCart', () => {
 	it( 'disables all buttons when there is a mutation in progress', async () => {
 		const fireEvent = userEvent.setup();
 
-		const removeItemPromise = Promise.withResolvers< void >();
+		const operation = Promise.withResolvers< void >();
 
 		render(
 			<TestDomainSearchWithCart
@@ -229,7 +229,7 @@ describe( 'FullCart', () => {
 					buildCartItem( { uuid: '2', domain: 'test1', tld: 'com' } ),
 				] }
 				config={ { skippable: true } }
-				removeItemPromise={ removeItemPromise.promise }
+				operationPromise={ operation.promise }
 			>
 				<OpenFullCart />
 				<FullCart />
@@ -257,7 +257,7 @@ describe( 'FullCart', () => {
 		const skipButton = screen.getByRole( 'button', { name: 'Choose a domain later' } );
 		expect( skipButton ).toBeDisabled();
 
-		removeItemPromise.resolve();
+		operation.resolve();
 
 		await waitFor( () => {
 			expect( continueButton ).not.toBeDisabled();

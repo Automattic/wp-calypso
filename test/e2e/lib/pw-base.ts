@@ -35,6 +35,9 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	GitHubLoginPage,
+	ImportContentFromMediumPage,
+	ImportContentPage,
+	ImportLetsFindYourSitePage,
 	IncognitoPage,
 	JetpackTrafficPage,
 	LoginPage,
@@ -145,6 +148,18 @@ export const test = base.extend< {
 	 * Page object representing the Github login page.
 	 */
 	pageGitHubLogin: GitHubLoginPage;
+	/**
+	 * Page object representing the Import Content page.
+	 */
+	pageImportContent: ImportContentPage;
+	/**
+	 * Page object representing the Import Content from Medium page.
+	 */
+	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Let's Find Your Site page for importing content.
+	 */
+	pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
 	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
@@ -264,6 +279,18 @@ export const test = base.extend< {
 		const gitHubLoginPage = new GitHubLoginPage( page );
 		await use( gitHubLoginPage );
 	},
+	pageImportContent: async ( { page }, use ) => {
+		const importContentPage = new ImportContentPage( page );
+		await use( importContentPage );
+	},
+	pageImportContentFromMedium: async ( { page }, use ) => {
+		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
+		await use( importContentFromMediumPage );
+	},
+	pageImportLetsFindYourSite: async ( { page }, use ) => {
+		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
+		await use( letsFindYourSitePage );
+	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
@@ -294,7 +321,7 @@ export const test = base.extend< {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, helperData }, use ) => {
+	sitePublic: async ( { page, clientEmail, helperData }, use ) => {
 		const testUser = helperData.getNewTestUser();
 		const siteName = helperData.getBlogName();
 		const loginPage = new LoginPage( page );
@@ -310,6 +337,14 @@ export const test = base.extend< {
 			name: siteName,
 			title: siteName,
 		} );
+		const message = await clientEmail.getLastMatchingMessage( {
+			inboxId: testUser.inboxId,
+			sentTo: testUser.email,
+			subject: 'Activate',
+		} );
+		const links = await clientEmail.getLinksFromMessage( message );
+		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
+		await page.goto( activationLink );
 		await use( site );
 		await restAPIClient.deleteSite( {
 			id: site.blog_details.blogid,
@@ -330,9 +365,11 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD: '@dashboard',
+	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
+	IMPORTS: '@imports',
 	JETPACK_REMOTE_SITE: '@jetpack-remote-site',
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',

@@ -7,9 +7,11 @@ export const useRequestTracking = () => {
 	const { query, events, queries } = useDomainSearch();
 	const lastQueryChangeTime = useRef( 0 );
 
-	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
-		queries.domainSuggestions( query )
-	);
+	const {
+		data: suggestions = [],
+		isLoading: isLoadingSuggestions,
+		isPending: isPendingSuggestions,
+	} = useQuery( queries.domainSuggestions( query ) );
 
 	const { data: availabilityData, isLoading: isLoadingQueryAvailability } = useQuery(
 		queries.domainAvailability( query )
@@ -29,10 +31,10 @@ export const useRequestTracking = () => {
 	} );
 
 	useEffect( () => {
-		if ( ! isLoadingSuggestions ) {
+		if ( ! isLoadingSuggestions && ! isPendingSuggestions ) {
 			triggerSuggestionsReceiveEvent();
 		}
-	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions ] );
+	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions, isPendingSuggestions ] );
 
 	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
 		const availabilityCheckResponseTime = Date.now() - lastQueryChangeTime.current;
