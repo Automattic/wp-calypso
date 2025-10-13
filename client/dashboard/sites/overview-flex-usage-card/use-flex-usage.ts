@@ -21,8 +21,9 @@ const sum = ( arr?: Array< { usage: string } > ) =>
  */
 export function useFlexUsage( siteId: number ) {
 	const now = new Date();
-	const start = Math.floor( new Date( now.getFullYear(), now.getMonth(), 1 ).getTime() / 1000 );
-	const end = Math.floor( now.getTime() / 1000 );
+	// Use UTC month boundary to align with billing calculations
+	const start = Math.floor( Date.UTC( now.getUTCFullYear(), now.getUTCMonth(), 1 ) / 1000 );
+	const end = Math.floor( Date.now() / 1000 );
 
 	const { data } = useQuery( {
 		...siteFlexUsageQuery( siteId, { start, end, resolution: 'month' } ),
