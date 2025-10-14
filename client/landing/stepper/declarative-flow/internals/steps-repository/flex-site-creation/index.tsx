@@ -28,6 +28,13 @@ const FlexSiteCreation: StepType< {
 
 		setIsLoading( true );
 
+		// Store site title in ONBOARD_STORE so create-site step can use it
+		setSiteTitle( siteName );
+
+		recordTracksEvent( 'calypso_flex_site_creation_submit', {
+			site_name: siteName,
+		} );
+
 		submit?.( {
 			siteName,
 		} );
@@ -66,6 +73,8 @@ const FlexSiteCreation: StepType< {
 								__nextHasNoMarginBottom
 							/>
 						</FormFieldset>
+
+						<div className="flex-site-creation__form-row" />
 
 						<Button
 							className="flex-site-creation__submit-button"
