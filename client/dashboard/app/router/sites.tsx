@@ -21,6 +21,7 @@ import {
 	sitePrimaryDataCenterQuery,
 	sitePurchaseQuery,
 	sitePurchasesQuery,
+	siteRedirectQuery,
 	siteScanQuery,
 	siteSettingsQuery,
 	siteSftpUsersQuery,
@@ -561,11 +562,11 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	)
 );
 
-export const siteSettingsRedirectsRoute = createRoute( {
+export const siteSettingsRedirectRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Redirects' ),
+				title: __( 'Site Redirect' ),
 			},
 		],
 	} ),
@@ -573,14 +574,11 @@ export const siteSettingsRedirectsRoute = createRoute( {
 	path: 'site-redirects',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await Promise.all( [
-			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
-		] );
+		return await queryClient.ensureQueryData( siteRedirectQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-redirects' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-redirects' )( {
+	import( '../../sites/settings-redirect' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-redirect' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1124,7 +1122,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
 			siteSettingsWpcomLoginRoute,
-			siteSettingsRedirectsRoute,
+			siteSettingsRedirectRoute,
 		] ),
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
