@@ -6,7 +6,7 @@ import { ActivityLogEntry } from '../../../../../packages/api-core/src';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
-import parseActivityLogEntryContent from '../utils/api-core-activity-log-parser';
+import parseActivityLogEntryContent from '../api-core-parser';
 import type { Activity } from '../types';
 
 jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );

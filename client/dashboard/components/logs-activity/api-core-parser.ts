@@ -17,7 +17,7 @@
  * // Rendered by FormattedBlock as:
  * // Site <a href="/sites/987">Example</a> updated
  */
-import type { ActivityBlockContent, ActivityBlockNode } from '../types';
+import type { ActivityBlockContent, ActivityBlockNode } from './types';
 import type { ActivityNotificationRange, ActivityLogEntry } from '@automattic/api-core';
 interface RangeWithChildren extends ActivityNotificationRange {
 	children: RangeWithChildren[];

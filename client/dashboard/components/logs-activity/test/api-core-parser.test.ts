@@ -1,4 +1,4 @@
-import parseActivityLogEntryContent from '../utils/api-core-activity-log-parser';
+import parseActivityLogEntryContent from '../api-core-parser';
 import type { ActivityBlockContent } from '../types';
 
 describe( 'parseActivityLogEntryContent', () => {

@@ -1,7 +1,7 @@
-import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity/utils/api-core-activity-log-parser';
+import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity/api-core-parser';
 
 /**
- * @deprecated Use parseActivityLogEntryContent from 'calypso/dashboard/components/logs-activity/utils/api-core-activity-log-parser' instead.
+ * @deprecated Use parseActivityLogEntryContent from 'calypso/dashboard/components/logs-activity/api-core-parser' instead.
  * We're keeping this in place temporarily to confirm old tests are working
  * TODO: Remove the function
  * Parses a formatted text block into typed nodes
@@ -26,7 +26,7 @@ const stripTextProp = ( segment ) => {
 };
 
 /**
- * @deprecated Use parseActivityLogEntryContent from 'calypso/dashboard/components/logs-activity/utils/api-core-activity-log-parser' instead.
+ * @deprecated Use parseActivityLogEntryContent from 'calypso/dashboard/components/logs-activity/api-core-parser' instead.
  * We're keeping this in place temporarily to confirm old tests are working
  * TODO: Remove the function
  */

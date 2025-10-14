@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity/utils/api-core-activity-log-parser';
+import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity/api-core-parser';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import apiResponseSchema from './schema';
 
