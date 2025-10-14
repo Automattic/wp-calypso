@@ -250,6 +250,20 @@ const DomainSearchStep: StepType< {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow ] );
 
+	const isFirstDomainFreeForFirstYear = useMemo( () => {
+		if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+			return false;
+		}
+
+		// Outside of a site context, we should show the free domain for a year discount
+		if ( ! siteSlug || ! site ) {
+			return true;
+		}
+
+		// If the site has a plan with unused domain credit, return true, false otherwise
+		return site.plan?.has_free_domain_credit;
+	}, [ flow, siteSlug, site ] );
+
 	const domainSearchElement = (
 		<WPCOMDomainSearch
 			className={
@@ -262,9 +276,7 @@ const DomainSearchStep: StepType< {
 			flowName={ flow }
 			config={ config }
 			query={ query }
-			isFirstDomainFreeForFirstYear={
-				! isHundredYearDomainFlow( flow ) && ! isHundredYearPlanFlow( flow )
-			}
+			isFirstDomainFreeForFirstYear={ isFirstDomainFreeForFirstYear }
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||

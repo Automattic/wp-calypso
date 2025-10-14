@@ -106,6 +106,7 @@ export interface SiteDetailsPlan {
 	user_is_owner: boolean;
 	is_free: boolean;
 	license_key?: string;
+	has_free_domain_credit?: boolean;
 	features: {
 		active: string[];
 		available: Record< string, string[] >;
