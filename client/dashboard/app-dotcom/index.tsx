@@ -18,7 +18,6 @@ boot( {
 			scan: true,
 			domains: true,
 			emails: true,
-			flexUsageCard: true,
 		},
 		domains: true,
 		emails: true,
