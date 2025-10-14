@@ -82,7 +82,8 @@ function SiteLogsDataViews( {
 			if ( ! Number.isFinite( number ) ) {
 				return null;
 			}
-			return number > 1e12 ? Math.floor( number / 1000 ) : number;
+			// Enforce seconds-only here. The page-level normalizer will rewrite ms→s on mount.
+			return number > 1e11 ? null : number;
 		};
 
 		const from = readSeconds( 'from' );
