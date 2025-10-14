@@ -3,7 +3,7 @@ import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-que
 import config from '@automattic/calypso-config';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo, useEffect, useRef } from 'react';
 import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -43,6 +43,16 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		},
 	} );
 
+	// Dynamically import Calypso v1 cleanup code.
+	const disableCalypsoPersistence = useRef< () => void >();
+	const clearCalypsoStore = useRef< () => void >();
+	useEffect( () => {
+		import( 'calypso/lib/user/store' ).then( ( { disablePersistence, clearStore } ) => {
+			disableCalypsoPersistence.current = disablePersistence;
+			clearCalypsoStore.current = clearStore;
+		} );
+	} );
+
 	const value = useMemo( () => {
 		if ( ! user ) {
 			return undefined;
@@ -73,6 +83,10 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				// before navigation occurs.
 				disablePersistQueryClient();
 				clearQueryClient();
+
+				// Do the equivalent for v1 Calypso
+				disableCalypsoPersistence.current?.();
+				clearCalypsoStore.current?.();
 			},
 		};
 	}, [ user ] );
