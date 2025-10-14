@@ -67,11 +67,12 @@ export function CompactView( {
 	// Handle click event for expandOnClick functionality
 	const handleClick = useCallback(
 		( event?: React.MouseEvent< HTMLTextAreaElement > ) => {
-			if ( expandOnClick && onExpand ) {
+			// Only expand on click if expandOnClick is enabled AND the input is empty
+			if ( expandOnClick && onExpand && ! value ) {
 				onExpand();
 			}
 		},
-		[ expandOnClick, onExpand ]
+		[ expandOnClick, onExpand, value ]
 	);
 
 	useEffect( () => {
