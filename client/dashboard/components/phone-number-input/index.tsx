@@ -21,12 +21,10 @@ export default function PhoneNumberInput( {
 	data: SecuritySMSNumber;
 	onChange: ( value: Partial< SecuritySMSNumber > ) => void;
 	isDisabled?: boolean;
-	customValidity:
-		| {
-				type: 'invalid';
-				message: string;
-		  }
-		| undefined;
+	customValidity?: {
+		type: 'invalid';
+		message: string;
+	};
 } ) {
 	const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 		'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
