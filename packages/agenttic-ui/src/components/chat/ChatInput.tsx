@@ -201,6 +201,7 @@ export function ChatInput( {
 						isAnimated ? '' : ( formattedPlaceholder as string )
 					}
 					rows={ 1 }
+					disabled={ disabled }
 					aria-label={ __( 'Chat input', 'a8c-agenttic' ) }
 				/>
 			</motion.div>

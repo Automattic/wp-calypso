@@ -3,6 +3,7 @@ import { Button } from '../ui/button';
 import { XIcon } from '../icons/XIcon';
 import { cn } from '../../utils/classNames';
 import styles from './Notice.module.css';
+import Markdown from 'react-markdown';
 
 interface NoticeProps {
 	icon?: React.ReactNode;
@@ -42,7 +43,26 @@ export function Notice( {
 		>
 			<div className={ styles.content }>
 				{ icon && <div className={ styles.icon }>{ icon }</div> }
-				<span>{ message }</span>
+				{ /* Add markdown support with select whitelisted tags */ }
+				<div>
+					<Markdown
+						allowedElements={ [ 'p', 'strong', 'em', 'a', 'br' ] }
+						unwrapDisallowed={ true }
+						components={ {
+							a: ( { node, ...props } ) => (
+								<a
+									{ ...props }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ props.children }
+								</a>
+							),
+						} }
+					>
+						{ message }
+					</Markdown>
+				</div>
 			</div>
 			<div className={ styles.actions }>
 				{ action && (
