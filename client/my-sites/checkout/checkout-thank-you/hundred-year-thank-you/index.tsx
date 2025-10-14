@@ -194,10 +194,6 @@ export default function HundredYearThankYou( {
 					FLOWS_ZENDESK_FLOWNAME[
 						productSlug === PLAN_100_YEARS ? HUNDRED_YEAR_PLAN_FLOW : HUNDRED_YEAR_DOMAIN_FLOW
 					],
-				messaging_initial_message:
-					productSlug === PLAN_100_YEARS
-						? 'User purchased the 100 year plan.'
-						: 'User purchased the 100 year domain.',
 				messaging_site_id: siteId,
 				messaging_url: window.location.href,
 			} );
