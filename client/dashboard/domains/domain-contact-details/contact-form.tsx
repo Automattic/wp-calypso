@@ -15,7 +15,6 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -38,7 +37,6 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
-	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
@@ -116,15 +114,8 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				children: [ 'firstName', 'lastName' ],
 			} as FormField,
 			'organization',
-			{
-				id: 'contact-row',
-				layout: {
-					type: 'row' as const,
-					alignment: 'start' as const,
-				},
-				children: isMobileViewport ? [ 'email' ] : [ 'email', 'phone' ],
-			} as FormField,
-			...( isMobileViewport ? [ 'phone' ] : [] ),
+			'email',
+			'phone',
 			'countryCode',
 			...RegionAddressFieldsLayout( {
 				statesList,

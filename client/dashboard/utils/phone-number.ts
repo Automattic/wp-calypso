@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import phone from 'phone';
 
-export function validatePhone( phoneNumber: string ) {
+export function validatePhone( phoneNumber: string, countryCode: string | null ) {
 	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {
@@ -33,7 +33,7 @@ export function validatePhone( phoneNumber: string ) {
 	}
 
 	// phone module validates mobile numbers
-	if ( ! phone( phoneNumber ).isValid ) {
+	if ( ! phone( phoneNumber, { country: countryCode ?? undefined } ).isValid ) {
 		return {
 			error: 'phone_number_invalid',
 			message: __( 'That phone number does not appear to be valid' ),

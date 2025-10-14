@@ -11,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import PhoneNumberInput from '../../components/phone-number-input';
+import { validatePhone } from '../../utils/phone-number';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
@@ -67,8 +68,13 @@ export const getContactFormFields = (
 					( country ) => country.numeric_code === countryNumericCode
 				);
 
+				const validationMessage = field.isValid?.custom?.( data, field );
+
 				return (
 					<PhoneNumberInput
+						customValidity={
+							validationMessage ? { type: 'invalid', message: validationMessage } : undefined
+						}
 						data={ {
 							countryCode: smsCountry?.code || '',
 							phoneNumber: phoneNumber,
@@ -90,6 +96,15 @@ export const getContactFormFields = (
 			},
 			isValid: {
 				required: true,
+				custom: ( item, field ) => {
+					const raw = field.getValue ? field.getValue( { item } ) : '';
+					if ( ! raw ) {
+						return null;
+					}
+					const phoneNumber = String( raw ).replace( '+', '' ).split( '.' ).join( '' );
+					const result = validatePhone( phoneNumber, countryCode );
+					return 'error' in result ? result.message : null;
+				},
 			},
 		},
 		{
