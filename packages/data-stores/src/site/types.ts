@@ -133,6 +133,7 @@ export interface SiteDetails {
 	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_flex?: boolean;
 	is_wpcom_staging_site?: boolean;
 	is_a4a_client?: boolean;
 	is_a4a_dev_site?: boolean;

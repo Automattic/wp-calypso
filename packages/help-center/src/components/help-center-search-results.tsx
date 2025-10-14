@@ -28,7 +28,6 @@ import PropTypes from 'prop-types';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
@@ -195,8 +194,6 @@ function HelpSearchResults( {
 		[]
 	);
 
-	const adminResults = useAdminResults( searchQuery );
-
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = site?.options.site_intent;
 	const rawContextualResults = useMemo(
@@ -359,12 +356,6 @@ function HelpSearchResults( {
 			title: ! searchQuery.length ? __( 'Recommended guides', __i18n_text_domain__ ) : '',
 			results: contextualResults.slice( 0, 6 ),
 			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
-		},
-		{
-			type: SUPPORT_TYPE_ADMIN_SECTION,
-			title: __( 'Show me where to', __i18n_text_domain__ ),
-			results: adminResults,
-			condition: !! searchQuery && adminResults.length > 0,
 		},
 	].map( renderSearchResultsSection );
 

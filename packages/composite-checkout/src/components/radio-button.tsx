@@ -40,6 +40,7 @@ const RadioButtonWrapper = styled.div<
 			box-sizing: border-box;
 			border-radius: ${ props.checked || props.highlighted ? '3px' : 0 };
 			border-width: ${ props.checked && props.highlighted ? '2px' : '1px' };
+			pointer-events: none;
 			.rtl & {
 				right: 0;
 				left: auto;

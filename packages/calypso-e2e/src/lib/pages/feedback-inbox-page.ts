@@ -51,7 +51,10 @@ export class FeedbackInboxPage {
 					.waitFor();
 			} else {
 				await newResponseRowLocator.getByRole( 'button', { name: 'View response' } ).click();
-				await this.page.getByRole( 'dialog', { name: 'Response' } ).waitFor();
+				await this.page
+					.getByRole( 'dialog' )
+					.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
+					.waitFor();
 			}
 		} else {
 			await oldResponseRowLocator.click();

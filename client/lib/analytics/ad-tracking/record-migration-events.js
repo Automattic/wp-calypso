@@ -85,14 +85,14 @@ export function recordMigrationStartFacebookEvent( componentName ) {
  * @param {string} componentName - The name of the component firing the event
  * @returns {void}
  */
-export function recordMigrationCredentialsFacebookEvent( componentName ) {
+export function recordMigrationRequestSubmittedFacebookEvent( componentName ) {
 	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
 		debug( `${ componentName }: skipping Facebook tracking as ad tracking is disallowed` );
 		return;
 	}
 
-	const params = [ 'trackCustom', 'MigrationCredentials' ];
-	debug( `${ componentName }: [Facebook] Migration Credentials`, params );
+	const params = [ 'trackCustom', 'MigrationRequestSubmitted' ];
+	debug( `${ componentName }: [Facebook] Migration Request Submitted`, params );
 	window.fbq( ...params );
 }
 

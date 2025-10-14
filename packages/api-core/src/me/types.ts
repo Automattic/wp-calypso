@@ -13,6 +13,7 @@ export interface User {
 	avatar_URL?: string;
 	language: string;
 	locale_variant: string;
+	logout_URL?: string;
 	email: string;
 	email_verified: boolean;
 	has_unseen_notes: boolean;

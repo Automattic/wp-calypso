@@ -11,6 +11,7 @@ import type {
 	Site,
 	User,
 	WhoisDataEntry,
+	Domain as FullDomain,
 } from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
@@ -88,7 +89,7 @@ export function isValidNameServerSubdomain( nameServerSubdomain: string ): boole
 	return true;
 }
 
-const shouldUpgradeToMakeDomainPrimary = ( {
+export function shouldUpgradeToMakeDomainPrimary( {
 	domain,
 	site,
 	user,
@@ -96,7 +97,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 	domain: DomainSummary;
 	site: Site;
 	user: User;
-} ) => {
+} ) {
 	return (
 		[ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
 			domain.subtype.id
@@ -109,7 +110,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 		!! site.plan?.is_free &&
 		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
 	);
-};
+}
 
 export function canSetAsPrimary( {
 	domain,
@@ -132,15 +133,22 @@ export function canSetAsPrimary( {
 	);
 }
 
-export function hasGSuiteWithUs( domain: SiteDomain ) {
+export function hasGSuiteWithUs( domain: SiteDomain | FullDomain ) {
 	const status = domain.google_apps_subscription?.status;
-	return status && ! [ 'no_subscription', 'other_provider' ].includes( status );
+	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );
 }
 
-export function hasTitanMailWithUs( domain: SiteDomain ) {
+export function hasTitanMailWithUs( domain: SiteDomain | FullDomain ) {
 	const subscriptionStatus = domain.titan_mail_subscription?.status;
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }
+
+export function hasEmailForwards( domain: SiteDomain | FullDomain ) {
+	return domain?.email_forwards_count ?? 0;
+}
+
+export const domainHasEmail = ( domain: SiteDomain ) =>
+	hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
 export function findRegistrantWhois( whoisContacts: WhoisDataEntry[] | undefined ) {
 	return whoisContacts?.find( ( contact ) => contact.type === WhoisType.REGISTRANT );

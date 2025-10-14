@@ -46,6 +46,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -426,17 +427,24 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
+		const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+
+		const isEnabledThemeUniversalHeader =
+			config.isEnabled( 'themes/universal-header' ) &&
+			[ 'themes', 'theme' ].includes( sectionName );
+
+		const isEnabledPluginsUniversalHeader =
+			config.isEnabled( 'plugins/universal-header' ) &&
+			[ 'plugins' ].includes( sectionName ) &&
+			! (
+				currentRoute.startsWith( '/plugins/manage' ) ||
+				currentRoute.startsWith( '/plugins/scheduled-updates' )
+			);
+
 		const hasUniversalHeader =
-			( config.isEnabled( 'themes/universal-header' ) &&
-				! siteId &&
-				[ 'themes', 'theme' ].includes( sectionName ) ) ||
-			( config.isEnabled( 'plugins/universal-header' ) &&
-				! siteId &&
-				[ 'plugins' ].includes( sectionName ) &&
-				! (
-					currentRoute.startsWith( '/plugins/manage' ) ||
-					currentRoute.startsWith( '/plugins/scheduled-updates' )
-				) );
+			hostingDashboardOptIn &&
+			! siteId &&
+			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
 		return {
 			masterbarIsHidden,

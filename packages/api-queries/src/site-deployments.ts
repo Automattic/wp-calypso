@@ -64,7 +64,8 @@ export const updateCodeDeploymentMutation = ( siteId: number, deploymentId: numb
 		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
 			updateCodeDeployment( siteId, deploymentId, variables ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( codeDeploymentRunsQuery( siteId, deploymentId ) );
+			queryClient.invalidateQueries( codeDeploymentQuery( siteId, deploymentId ) );
+			queryClient.invalidateQueries( codeDeploymentsQuery( siteId ) );
 		},
 	} );
 

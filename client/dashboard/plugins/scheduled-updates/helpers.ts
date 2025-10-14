@@ -1,5 +1,5 @@
-import { __ } from '@wordpress/i18n';
-import type { TimeSlot, Frequency, Weekday, ScheduleCollisions } from './types';
+import { __, sprintf } from '@wordpress/i18n';
+import { TimeSlot, Frequency, Weekday, ScheduleCollisions, ScheduledUpdateRow } from './types';
 import type { Site } from '@automattic/api-core';
 
 export function prepareTimestamp(
@@ -179,4 +179,60 @@ export function formatScheduleCollisionsErrorMulti( {
 	}
 
 	return lines.join( '\n' );
+}
+
+/**
+ * Normalize a schedule ID coming from a human-readable URL,
+ * in case it includes derived suffixes like "-daily-<interval>-<HH:MM>",
+ * which are not part of the map key.
+ *
+ * Why this exists:
+ * - Pretty URLs may append metadata to the base schedule ID (e.g., "-daily-<interval>-<HH:MM>")
+ * so links are readable and reflect key params.
+ * - The base ID is the canonical storage key used by the API; suffixes are not part of the map key.
+ * - Uniqueness is per site; the same base ID can exist on multiple sites, which is expected in multisite.
+ * @param id string Possibly-suffixed schedule ID from the route
+ * @returns string Base schedule ID suitable for API map lookups
+ */
+export function normalizeScheduleId( id: string ): string {
+	const m = id.match( /^(.*)-(daily|weekly)-(\d+)-(\d{2}:\d{2})$/ );
+	return m ? m[ 1 ] : id;
+}
+
+export function prepareScheduleName( locale: string, schedule: ScheduledUpdateRow ) {
+	const time = new Intl.DateTimeFormat( locale, { timeStyle: 'short' } ).format(
+		schedule.nextUpdate * 1000
+	);
+	const dayNumber = new Date( schedule.nextUpdate * 1000 ).getDay();
+
+	if ( schedule.schedule === 'daily' ) {
+		/* translators: Daily at 10 am. */
+		return sprintf( __( 'Daily at %s' ), time );
+	} else if ( schedule.schedule === 'weekly' ) {
+		switch ( dayNumber ) {
+			case 0:
+				/* translators: Sundays at 10 am. */
+				return sprintf( __( 'Sundays at %s' ), time );
+			case 1:
+				/* translators: Mondays at 10 am. */
+				return sprintf( __( 'Mondays at %s' ), time );
+			case 2:
+				/* translators: Tuesdays at 10 am. */
+				return sprintf( __( 'Tuesdays at %s' ), time );
+			case 3:
+				/* translators: Wednesdays at 10 am. */
+				return sprintf( __( 'Wednesdays at %s' ), time );
+			case 4:
+				/* translators: Thursdays at 10 am. */
+				return sprintf( __( 'Thursdays at %s' ), time );
+			case 5:
+				/* translators: Fridays at 10 am. */
+				return sprintf( __( 'Fridays at %s' ), time );
+			case 6:
+				/* translators: Saturdays at 10 am. */
+				return sprintf( __( 'Saturdays at %s' ), time );
+		}
+	}
+
+	return '';
 }

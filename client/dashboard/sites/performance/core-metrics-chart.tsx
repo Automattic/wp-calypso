@@ -1,8 +1,29 @@
+import { LineChart } from '@automattic/charts';
+import { GlyphCircle, GlyphSquare, GlyphTriangle } from '@visx/glyph';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
-import { Valuation, getColorForStatus } from '../../utils/site-performance';
+import {
+	Valuation,
+	getColorForStatus,
+	getDisplayUnit,
+	getFormattedNumber,
+	getFormattedValue,
+	getStatusText,
+	mapThresholdsToStatus,
+} from '../../utils/site-performance';
+import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
+import '@automattic/charts/line-chart/style.css';
+
+const WEEK_TO_SHOW = 8;
+
+const StatusGlyph = {
+	good: GlyphCircle,
+	needsImprovement: GlyphTriangle,
+	bad: GlyphSquare,
+};
 
 const StatusIndicator = ( { valuation }: { valuation: Valuation } ) => {
 	const innerSvg: Record< Valuation, React.ReactNode > = {
@@ -44,69 +65,131 @@ const MetricLabel = ( {
 	);
 };
 
+const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) => {
+	const dates = history?.collection_period ?? [];
+	const values = history?.metrics[ metric ] ?? [];
+	if ( ! dates.length || ! values.length ) {
+		return null;
+	}
+
+	const seriesData: Array< {
+		label: string;
+		data: Array< { date: Date; value: number } >;
+		options: { stroke: string };
+	} > = [];
+	const allData = [];
+	let currentValuation;
+
+	const dataValues = [];
+	// Start from the most recent data and go backwards until we have enough data points or reach the start of available data.
+	for ( let i = dates.length - 1; i >= 0; i-- ) {
+		if ( values[ i ] !== null && values[ i ] !== undefined ) {
+			dataValues.push( { date: dates[ i ], value: values[ i ] } );
+			if ( dataValues.length >= WEEK_TO_SHOW ) {
+				break;
+			}
+		}
+	}
+
+	// Loop through the date range
+	for ( const { date, value } of dataValues ) {
+		const formattedDate =
+			typeof date === 'string'
+				? date
+				: [
+						date.year,
+						date.month.toString().padStart( 2, '0' ),
+						date.day.toString().padStart( 2, '0' ),
+				  ].join( '-' );
+
+		const nextValuation = mapThresholdsToStatus( metric, value );
+		if ( nextValuation !== currentValuation ) {
+			const lastData = seriesData[ seriesData.length - 1 ]?.data?.slice().pop();
+			currentValuation = nextValuation;
+			seriesData.push( {
+				// The label should be unique.
+				label: `${ getStatusText( currentValuation ) } - ${ seriesData.length }`,
+				data: ( lastData ? [ lastData ] : [] ) as Array< { date: Date; value: number } >,
+				options: {
+					stroke: getColorForStatus( currentValuation ),
+				},
+			} );
+		}
+
+		const data = {
+			date: new Date( formattedDate ),
+			value: getFormattedValue( metric, value ),
+		};
+		seriesData[ seriesData.length - 1 ].data.push( data );
+		allData.push( data );
+	}
+
+	const maxY = Math.max( ...allData.map( ( d ) => d.value ) );
+
+	return {
+		seriesData: [
+			// Use all data to maintain the range of the x axis.
+			{
+				label: '',
+				data: allData,
+			},
+			...seriesData,
+		],
+		yScale: {
+			domain: [ 0, maxY === 0 ? 1 : maxY * 1.5 ] as [ number, number ],
+		},
+	};
+};
+
 export default function CoreMetricsChart( {
-	activeTab,
+	report,
+	metric,
 	metricsThresholds,
 }: {
-	data?: any;
-	activeTab: string;
-	metricsThresholds: any;
+	history?: SitePerformanceHistory;
+	report: SitePerformanceReport;
+	metric: Metrics;
+	metricsThresholds: Record< Metrics, { good: number; needsImprovement: number; bad: number } >;
 } ) {
-	const { good, needsImprovement, bad } = metricsThresholds[ activeTab ];
+	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
-
-	const formatUnit = ( value: number | string ) => {
-		const num = parseFloat( value as string );
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return Number( num / 1000 ).toFixed( 2 );
-		}
-		return num;
-	};
-
-	const displayUnit = () => {
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return 's';
-		}
-		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
-			return 'ms';
-		}
-		return '';
-	};
+	const lineChartData = useLineChartData( metric, report.history );
 
 	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
+		const unit = getDisplayUnit( metric );
 		if ( valuation === 'good' ) {
 			return isOverall
-				? sprintf( '(50–%(to)s)', { to: formatUnit( needsImprovement ) } )
-				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
-						from: formatUnit( good ),
-						to: formatUnit( needsImprovement ),
-						unit: displayUnit(),
+				? sprintf( '(90–%(to)s)', { to: getFormattedValue( metric, good ) } )
+				: sprintf( '(0–%(to)s%(unit)s)', {
+						to: getFormattedValue( metric, good ),
+						unit,
 				  } );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
 			return isOverall
-				? sprintf( '(50–%(to)s)', { to: formatUnit( needsImprovement ) } )
+				? sprintf( '(50–%(to)s)', { to: getFormattedValue( metric, needsImprovement ) } )
 				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
-						from: formatUnit( good ),
-						to: formatUnit( needsImprovement ),
-						unit: displayUnit(),
+						from: getFormattedValue( metric, good ),
+						to: getFormattedValue( metric, needsImprovement ),
+						unit,
 				  } );
 		}
 
 		if ( valuation === 'bad' ) {
 			return isOverall
-				? sprintf( '(0-%(to)s)', { to: formatUnit( bad ) } )
+				? sprintf( '(0-%(to)s)', { to: getFormattedValue( metric, bad ) } )
 				: sprintf( '(Over %(from)s%(unit)s)', {
-						from: formatUnit( needsImprovement ),
-						unit: displayUnit(),
+						from: getFormattedValue( metric, needsImprovement ),
+						unit,
 				  } );
 		}
 
 		return '';
 	};
 
-	const isOverall = activeTab === 'overall_score';
+	const isOverall = metric === 'overall_score';
+
 	return (
 		<>
 			<HStack spacing={ isDesktop ? 5 : 2 } justify="flex-start" wrap>
@@ -126,7 +209,55 @@ export default function CoreMetricsChart( {
 					value={ formatThresholdValue( isOverall, 'bad' ) }
 				/>
 			</HStack>
-			<Text> Not implemented yet</Text>
+			<div style={ { maxWidth: '500px' } }>
+				{ lineChartData ? (
+					<LineChart
+						data={ lineChartData.seriesData }
+						withGradientFill={ false }
+						curveType="linear"
+						options={ {
+							yScale: lineChartData.yScale,
+							axis: {
+								y: {
+									tickFormat: ( value ) => `${ getFormattedNumber( value ) }`,
+								},
+							},
+						} }
+						renderGlyph={ ( { key, x, y, datum } ) => {
+							const data = datum as { value: number };
+							const value = [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric )
+								? data.value * 1000
+								: data.value;
+							const valuation = mapThresholdsToStatus( metric, value );
+							const color = getColorForStatus( valuation );
+							const label = getStatusText( valuation );
+							if ( ! label.includes( key ) ) {
+								return null;
+							}
+							const GlyphComponent = StatusGlyph[ valuation ];
+							return <GlyphComponent top={ y } left={ x } size={ 100 } fill={ color } />;
+						} }
+						renderTooltip={ ( { tooltipData } ) => {
+							const nearestDatum = tooltipData?.nearestDatum?.datum;
+							if ( ! nearestDatum ) {
+								return null;
+							}
+
+							const formattedDate = nearestDatum.date?.toLocaleDateString( undefined, {
+								month: 'short',
+								day: 'numeric',
+							} );
+							return [ formattedDate, nearestDatum.value ].join( ': ' );
+						} }
+					/>
+				) : (
+					<Notice title={ __( 'No history available' ) }>
+						{ __(
+							'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
+						) }
+					</Notice>
+				) }
+			</div>
 		</>
 	);
 }

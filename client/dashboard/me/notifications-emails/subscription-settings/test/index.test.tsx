@@ -80,7 +80,7 @@ const jabberSubscriptionDeliveryCheckbox = () => {
 
 const automatticiansOnlyCheckbox = () => {
 	return screen.queryByLabelText(
-		'Automatically subscribe to P2 post notifications when you leave a comment.'
+		'Automatically subscribe to P2 post notifications when you leave a comment'
 	);
 };
 

@@ -1,6 +1,6 @@
 import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet, notFound, useLocation } from '@tanstack/react-router';
+import { Outlet, notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	MenuGroup,
@@ -12,6 +12,8 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAppContext } from '../../app/context';
+import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import HeaderBar from '../../components/header-bar';
@@ -27,13 +29,14 @@ import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
+	const { onboardingLinkSourceQueryArg } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } );
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const location = useLocation();
+	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	if ( ! canManageSite( site ) ) {
 		throw notFound();
@@ -49,16 +52,9 @@ function Site() {
 							items={ sites }
 							value={ site }
 							getItemName={ getSiteDisplayName }
-							getItemUrl={ ( site ) => {
-								const currentPath = location.pathname;
-								const sitePattern = `/sites/${ siteSlug }`;
-
-								if ( currentPath.includes( sitePattern ) ) {
-									return currentPath.replace( sitePattern, `/sites/${ site.slug }` );
-								}
-
-								return `/sites/${ site.slug }`;
-							} }
+							getItemUrl={ ( site ) =>
+								buildCurrentRouteLink( { params: { siteSlug: site.slug } } )
+							}
 							renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
 							open={ isSwitcherOpen }
 							onToggle={ setIsSwitcherOpen }
@@ -91,7 +87,7 @@ function Site() {
 							title={ __( 'Add new site' ) }
 							onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 						>
-							<AddNewSite context="sites-dashboard" />
+							<AddNewSite context={ onboardingLinkSourceQueryArg } />
 						</Modal>
 					) }
 					{ ! isSiteMigrationInProgress( site ) && (

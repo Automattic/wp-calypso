@@ -41,7 +41,7 @@ export default function SecurityAccountRecoverySummary() {
 		<RouterLinkSummaryButton
 			to="/me/security/account-recovery"
 			title={ __( 'Account recovery' ) }
-			description={ __( 'Set up recovery email & SMS number' ) }
+			description={ __( 'Set up recovery email & SMS number.' ) }
 			decoration={ <Icon icon={ lifesaver } /> }
 			badges={ badges }
 		/>

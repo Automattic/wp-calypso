@@ -2,7 +2,6 @@ import {
 	fetchUserNotificationSettings,
 	InputUserNotificationSettings,
 	updateUserNotificationSettings,
-	updateWpcomNotificationSettings,
 	UserNotificationSettings,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
@@ -45,24 +44,5 @@ export const userNotificationsSettingsMutation = () =>
 			if ( previousData ) {
 				queryClient.setQueryData( userNotificationsSettingsQuery().queryKey, previousData );
 			}
-		},
-	} );
-
-export const userNotificationsExtrasSettingsMutation = () =>
-	mutationOptions( {
-		mutationFn: updateWpcomNotificationSettings,
-		onSuccess: ( newData ) => {
-			const wpcomUpdate = ( newData as any )?.wpcom ?? newData;
-			queryClient.setQueryData(
-				userNotificationsSettingsQuery().queryKey,
-				( oldData: any ) =>
-					oldData && {
-						...oldData,
-						wpcom: {
-							...oldData.wpcom,
-							...wpcomUpdate,
-						},
-					}
-			);
 		},
 	} );

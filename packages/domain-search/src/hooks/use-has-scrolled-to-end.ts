@@ -1,7 +1,8 @@
 import { RefObject, useEffect, useState } from 'react';
+import { hasScrolledToEnd } from '../helpers/has-scrolled-to-end';
 
 export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
-	const [ hasScrolledToEnd, setHasScrolledToEnd ] = useState( false );
+	const [ hasScrolledToEndResult, setHasScrolledToEndResult ] = useState( false );
 
 	useEffect( () => {
 		const contentElement = contentRef.current;
@@ -13,12 +14,8 @@ export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
 		const checkIfScrollHasReachedBottom = () => {
 			const { scrollHeight, scrollTop, clientHeight } = contentElement;
 
-			// NOTE: scrollTop is fractional, while scrollHeight and clientHeight are
-			// not, so without this Math.abs() trick then sometimes the result won't
-			// work because scrollTop may not be exactly equal to el.scrollHeight -
-			// el.clientHeight when scrolled to the bottom.
-			if ( Math.abs( scrollHeight - clientHeight - scrollTop ) < 1 ) {
-				setHasScrolledToEnd( true );
+			if ( hasScrolledToEnd( { scrollHeight, scrollTop, clientHeight } ) ) {
+				setHasScrolledToEndResult( true );
 			}
 		};
 
@@ -31,5 +28,5 @@ export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
 		};
 	}, [ contentRef ] );
 
-	return hasScrolledToEnd;
+	return hasScrolledToEndResult;
 };

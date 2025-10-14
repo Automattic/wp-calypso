@@ -12,10 +12,12 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
+import { useAnalytics } from '../../../app/analytics';
 import { SectionHeader } from '../../../components/section-header';
 
 export const EmailSettings = () => {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
+	const { recordTracksEvent } = useAnalytics();
 	const { mutate: updateSettings } = useMutation( {
 		...userNotificationsSettingsMutation(),
 		meta: {
@@ -33,6 +35,11 @@ export const EmailSettings = () => {
 		} ) > 0;
 
 	const handleChange = ( updated: SettingsOption ) => {
+		recordTracksEvent( 'calypso_dashboard_notifications_email_settings_updated', {
+			setting_name: updated.id,
+			setting_value: updated.value,
+		} );
+
 		updateSettings( {
 			data: {
 				other: {

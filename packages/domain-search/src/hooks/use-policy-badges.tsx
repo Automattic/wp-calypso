@@ -2,6 +2,7 @@ import { PolicyNotice } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { HTTPS_SSL } from '@automattic/urls';
 import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { type ReactNode, useMemo } from 'react';
 import { DomainSuggestionBadge } from '../ui';
@@ -18,10 +19,15 @@ export const usePolicyBadges = ( domainName: string ) => {
 		const getPolicyNoticeMessage = ( { type, message }: PolicyNotice ) => {
 			if ( type === 'hsts' ) {
 				return createInterpolateElement(
-					`${ message } ` +
+					sprintf(
+						/* translators: %(message)s is the message of the policy notice. */
 						__(
-							'When you host this domain at WordPress.com, an SSL certificate is included. <a>Learn more</a>.'
+							'%(message)s When you host this domain at WordPress.com, an SSL certificate is included. <a>Learn more</a>.'
 						),
+						{
+							message,
+						}
+					),
 					{
 						a: (
 							<a

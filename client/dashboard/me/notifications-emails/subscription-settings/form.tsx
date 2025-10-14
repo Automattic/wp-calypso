@@ -36,7 +36,6 @@ const CustomSelectControl = ( { field, data, onChange }: DataFormControlProps< S
 	return (
 		<SelectControl
 			label={ field.label }
-			hideLabelFromVision
 			value={ getValue( { item: data } ) }
 			options={ field.elements ?? [] }
 			help={ field.description }
@@ -133,7 +132,7 @@ const baseFields: Field< SettingsData >[] = [
 					label={ field.label }
 					help={
 						<span>
-							{ __( 'Receive subscription updates via instant message.' ) }
+							{ __( 'Receive subscription updates via instant message.' ) }{ ' ' }
 							<InlineSupportLink supportContext="jabber-subscription-updates" />
 						</span>
 					}
@@ -147,7 +146,7 @@ const baseFields: Field< SettingsData >[] = [
 	},
 	{
 		id: 'p2_disable_autofollow_on_comment',
-		label: __( 'Automatically subscribe to P2 post notifications when you leave a comment.' ),
+		label: __( 'Automatically subscribe to P2 post notifications when you leave a comment' ),
 		description: __( 'Auto-follow P2 posts (Automatticians only)' ),
 		type: 'boolean' as const,
 		Edit: ( { field, data, hideLabelFromVision, onChange } ) => {
@@ -224,7 +223,8 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 				id: 'subscription_delivery_window',
 				label: 'Email delivery window',
 				layout: {
-					type: 'regular' as const,
+					type: 'row' as const,
+					alignment: 'start' as const,
 				},
 			},
 			'subscription_delivery_jabber_default',

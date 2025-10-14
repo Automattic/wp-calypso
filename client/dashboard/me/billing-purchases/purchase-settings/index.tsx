@@ -80,7 +80,7 @@ import {
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
-import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
+import { getPurchaseUrlForId } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -208,6 +208,7 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+		// @TODO Update link url to whatever the hosting dashboard URL is. https://linear.app/a8c/issue/DOTDASH-626/hosting-dashboard-emails-update-purchase-settings-url
 		const url = getEmailManagementPath( purchase.site_slug, purchase.meta );
 		const text = __( 'Email settings' );
 		return <a href={ url }>{ text }</a>;
@@ -495,7 +496,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function PurchaseSettingsCard( {
+export function PurchaseSettingsCard( {
 	icon,
 	title,
 	heading,
@@ -648,10 +649,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 						</Notice>
 					) }
 
-					<PurchasePaymentMethod
-						purchase={ purchase }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-					/>
+					<PurchasePaymentMethod purchase={ purchase } showUpdateButton />
 				</VStack>
 			</CardBody>
 		</Card>

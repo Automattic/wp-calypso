@@ -37,7 +37,7 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 ## Hacks
 
 - We want to use the core `Badge` component but there are limitations in its functionality right now. Specifically we want a way to apply the colors (by `intent` prop), but sometimes override the used `icon`. For now we are using `TrendComparisonBadge` with some hacky css to hide the icon.
-
+- Grouping by a field in the core `DataViews` component uses `getValue` to display the grouping header. To group by a value but display something else in the header, we're generating an ID containing a unique number of zero-width space characters in `scheduled-updates`. This should be removed once we're able to edit the header value.
 ## E2E testing
 
 ### Currently

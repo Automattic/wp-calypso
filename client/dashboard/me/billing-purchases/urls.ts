@@ -1,6 +1,6 @@
 import type { Purchase } from '@automattic/api-core';
 
-export function getPurchaseUrl( purchase: Purchase ) {
+export function getPurchaseUrl( purchase: Purchase ): string {
 	return getPurchaseUrlForId( purchase.ID );
 }
 
@@ -15,4 +15,8 @@ export function getPurchaseUrlForId( id: number | string ) {
 
 export function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
 	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
+}
+
+export function getChangePaymentMethodUrlFor( purchase: Purchase ): string {
+	return `/me/billing/purchases/${ purchase.ID }/payment-method/change`;
 }

@@ -22,8 +22,12 @@ import useCartKey from '../../checkout/use-cart-key';
 import NewDomainsRedirectionNoticeUpsell from '../domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
+	domainAddNew,
 	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
 	domainManagementTransferToOtherSite,
+	domainMapping,
 	domainUseMyDomain,
 } from '../paths';
 
@@ -52,6 +56,8 @@ export default function DomainSearch() {
 			} ),
 			allowedTlds,
 			skippable: false,
+			includeOwnedDomainInSuggestions: true,
+			allowsUsingOwnDomain: true,
 		};
 	}, [ tldQuery ] );
 
@@ -59,8 +65,9 @@ export default function DomainSearch() {
 
 	const initialQuery = queryArguments?.suggestion?.toString() ?? '';
 	const currentSiteUrl = selectedSite?.URL;
+	const currentSiteId = selectedSite?.ID;
 
-	const { query, setQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
 	} );
@@ -68,8 +75,25 @@ export default function DomainSearch() {
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
+			},
+			onMakePrimaryAddressClick: () => {
+				page( domainManagementList( selectedSiteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				page( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				page(
+					selectedSiteSlug
+						? domainManagementTransferIn( selectedSiteSlug, domainName )
+						: domainManagementRoot()
+				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				page( domainMapping( selectedSiteSlug, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {
@@ -91,7 +115,7 @@ export default function DomainSearch() {
 				}
 			},
 		};
-	}, [ selectedSiteSlug, setQuery ] );
+	}, [ selectedSiteSlug, setQuery, clearQuery ] );
 
 	const currentRoute = useSelector( getCurrentRoute );
 
@@ -120,17 +144,18 @@ export default function DomainSearch() {
 			{ ! hasPlan( cart.responseCart ) && <NewDomainsRedirectionNoticeUpsell /> }
 			<WPCOMDomainSearch
 				className="domain-search--calypso"
-				currentSiteId={ selectedSite?.ID }
+				currentSiteId={ currentSiteId }
 				currentSiteUrl={ currentSiteUrl }
 				flowName={ FLOW_NAME }
 				config={ config }
 				query={ query }
 				events={ events }
 				flowAllowsMultipleDomainsInCart
+				analyticsSection="domains"
 			/>
 			<QueryProductsList />
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ selectedSite?.ID && <QuerySiteDomains siteId={ selectedSite?.ID } /> }
+			{ selectedSite?.ID && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 		</Main>
 	);
 }

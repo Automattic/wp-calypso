@@ -95,19 +95,19 @@ export const initialClientsData = {
 	95928: {
 		id: 95928,
 		name: 'a8c-for-agencies',
-		title: 'A8C for Agencies',
+		title: 'Automattic for Agencies',
 		url: 'https://agencies.automattic.com',
 	},
 	95931: {
 		id: 95931,
 		name: 'a8c-for-agencies',
-		title: 'A8C for Agencies',
+		title: 'Automattic for Agencies',
 		url: 'https://agencies.automattic.com',
 	},
 	95932: {
 		id: 95932,
 		name: 'a8c-for-agencies',
-		title: 'A8C for Agencies',
+		title: 'Automattic for Agencies',
 		url: 'https://agencies.automattic.com',
 	},
 	95109: {

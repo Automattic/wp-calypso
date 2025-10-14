@@ -621,7 +621,11 @@ function SyncModal( {
 						</HStack>
 
 						<HStack justify="flex-end" spacing={ 4 }>
-							<Button variant="tertiary" onClick={ handleClose }>
+							<Button
+								variant="tertiary"
+								onClick={ handleClose }
+								disabled={ pullMutation.isPending || pushMutation.isPending }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button

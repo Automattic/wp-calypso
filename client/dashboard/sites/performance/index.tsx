@@ -1,23 +1,33 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { sitePerformancePagesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	sitePerformancePagesQuery,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter, useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useState } from 'react';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { usePerformanceData } from '../../app/hooks/site-performance';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
+import InlineSupportLink from '../../components/inline-support-link';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import DeviceToggle, { DeviceToggleType } from './device-toggle';
+import { SiteLaunchButton } from '../site-launch-button';
+import DeviceToggle from './device-toggle';
 import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
 import Report from './report';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
-import SubTitle from './subtitle';
+import Subtitle from './subtitle';
+import { useSitePerformanceData } from './use-site-performance-data';
+import type { DeviceToggleType } from './types';
 import type { Site, SitePerformancePage } from '@automattic/api-core';
 
 /**
@@ -31,99 +41,129 @@ const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
+	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
+	const [ runNewReport, setRunNewReport ] = useState( false );
+
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: Number( s?.gmt_offset ) || 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
-		refetchOnWindowFocus: false,
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
-	const initialPage = page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
-	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
-	const [ currentPage, setCurrentPage ] = useState( initialPage );
+	const currentPage = useMemo( () => {
+		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+	}, [ page_id, pagesData ] );
+
 	const {
-		desktopReport,
-		mobileReport,
-		isLoading: isFetchingReport,
-		isDesktopReportRunning,
-		isMobileReportRunning,
-		desktopLoaded,
-		mobileLoaded,
-		isError,
-		isDesktopReportError,
-		isMobileReportError,
-		refetch: refetchReport,
-	} = usePerformanceData( currentPage?.link, currentPage?.wpcom_performance_report_hash );
+		hasError,
+		createNewReport,
+		isLoadingExistingReport,
+		isLoadingNewReport,
+		getReport,
+		hasCompleted,
+	} = useSitePerformanceData(
+		currentPage?.link,
+		currentPage?.wpcom_performance_report_hash,
+		runNewReport
+	);
 	const { recordTracksEvent } = useAnalytics();
-	const router = useRouter();
-
-	const handlePageChange = ( pageId: string | null | undefined ) => {
-		const page = getPageFromID( pagesData, pageId || '' );
-
-		setCurrentPage( page );
-	};
+	const navigate = useNavigate( { from: sitePerformanceRoute.fullPath } );
 
 	const handleReportRefetch = async () => {
-		await refetchReport();
+		setRunNewReport( true );
+		await createNewReport();
 		// Once we get a token back, we can refetch the pages to get the updated hash.
 		refetchPages();
 	};
+
+	useEffect( () => {
+		if ( hasCompleted ) {
+			setRunNewReport( false );
+		}
+	}, [ hasCompleted ] );
 
 	if ( ! pagesData || ! currentPage ) {
 		return null;
 	}
 
-	const isDesktopSelected = deviceToggle === 'desktop';
-	const currentReport = isDesktopSelected ? desktopReport : mobileReport;
-	const isRunningReport = isDesktopSelected ? isDesktopReportRunning : isMobileReportRunning;
-	const hasError = ( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError;
+	const currentReport = getReport( deviceToggle );
+	const { gmtOffset, timezoneString } = siteSettings;
+
+	const renderContent = () => {
+		if ( hasError( deviceToggle ) ) {
+			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
+		}
+
+		if ( isLoadingNewReport( deviceToggle ) ) {
+			return <ReportLoading isSavedReport={ false } />;
+		}
+
+		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport ) {
+			return <ReportLoading isSavedReport />;
+		}
+
+		return (
+			<>
+				<ReportExpiredNotice
+					reportTimestamp={ currentReport.timestamp }
+					onRetest={ handleReportRefetch }
+				/>
+				<Report
+					report={ currentReport }
+					device={ deviceToggle }
+					hash={ currentPage?.wpcom_performance_report_hash }
+				/>
+			</>
+		);
+	};
 
 	return (
-		<PageLayout>
-			<PageHeader
-				description={
-					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
-				}
-				actions={
-					<HStack>
-						<PageSelector
-							siteUrl={ site.URL }
-							currentPage={ currentPage }
-							pages={ pagesData }
-							onChange={ ( pageId ) => {
-								recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {
-									is_home: pageId === '0',
-								} );
-
-								router.navigate( {
-									to: '.',
-									search: ( prev: Record< string, string > ) => ( {
-										...prev,
-										page_id: Number( pageId ),
-									} ),
-								} );
-
-								handlePageChange( pageId );
-							} }
+		<PageLayout
+			header={
+				<PageHeader
+					description={
+						<Subtitle
+							timestamp={ currentReport?.timestamp }
+							timezoneString={ timezoneString }
+							gmtOffset={ gmtOffset }
+							onClick={ handleReportRefetch }
 						/>
-						<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-					</HStack>
-				}
-			/>
-			{ hasError && <ReportErrorNotice onRetestClick={ handleReportRefetch } /> }
-			{ isFetchingReport || isRunningReport || ! currentReport ? (
-				<ReportLoading
-					isSavedReport={
-						isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
+					}
+					actions={
+						<HStack>
+							<PageSelector
+								siteUrl={ site.URL }
+								currentPage={ currentPage }
+								pages={ pagesData }
+								onChange={ ( pageId ) => {
+									setRunNewReport( false );
+									recordTracksEvent(
+										'calypso_dashboard_performance_profiler_page_selector_change',
+										{
+											is_home: pageId === '0',
+										}
+									);
+
+									navigate( {
+										search: ( prev: Record< string, string > ) => ( {
+											...prev,
+											page_id: Number( pageId ),
+										} ),
+									} );
+								} }
+							/>
+							<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
+						</HStack>
 					}
 				/>
-			) : (
-				<>
-					<ReportExpiredNotice
-						reportTimestamp={ currentReport.timestamp }
-						onRetest={ handleReportRefetch }
-					/>
-					<Report report={ currentReport } />
-				</>
-			) }
+			}
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }
@@ -139,7 +179,33 @@ function SitePerformance() {
 			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getPerformanceCalloutProps() }
 		>
-			<SitePerformanceContent site={ site } />
+			{ site.is_coming_soon || site.is_private ? (
+				<PageLayout
+					size="small"
+					header={
+						<PageHeader
+							description={ createInterpolateElement(
+								__(
+									'Optimize your site for lightning-fast performance. <learnMoreLink>Learn more</learnMoreLink>'
+								),
+								{
+									learnMoreLink: <InlineSupportLink supportContext="site-performance" />,
+								}
+							) }
+						/>
+					}
+					notices={
+						<Notice
+							title={ __( 'Launch your site to start measuring performance' ) }
+							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
+						>
+							{ __( 'Performance statistics are only available for public sites.' ) }
+						</Notice>
+					}
+				/>
+			) : (
+				<SitePerformanceContent site={ site } />
+			) }
 		</HostingFeatureGatedWithCallout>
 	);
 }

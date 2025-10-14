@@ -11,6 +11,7 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
@@ -19,10 +20,11 @@ import './style.scss';
 interface Props {
 	path: string;
 	isCollapsed: boolean;
+	hasOptIn: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -47,7 +49,7 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			footer={ isEnabled( 'dashboard/v2' ) && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
-				{ ! isEnabled( 'plugins/universal-header' ) && (
+				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
 					<SidebarItem
 						className="sidebar__menu-item--plugins"
 						link="/plugins"
@@ -82,7 +84,7 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					customIcon={ <SidebarIconCalendar /> }
 				/>
 
-				{ isEnabled( 'plugins/universal-header' ) && (
+				{ isEnabled( 'plugins/universal-header' ) && hasOptIn && (
 					<SidebarItem
 						className="sidebar__menu-item--plugins"
 						link="/plugins"
@@ -113,8 +115,10 @@ export default withCurrentRoute(
 			section: currentSection,
 			route: currentRoute,
 		} );
+
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
+			hasOptIn: hasHostingDashboardOptIn( state ),
 		};
 	} )( PluginsSidebar )
 );
