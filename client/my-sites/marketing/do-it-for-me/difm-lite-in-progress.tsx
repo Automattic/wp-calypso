@@ -46,8 +46,7 @@ function SupportLink( { children }: { children?: JSX.Element } ) {
 
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
 		'disable-gpt': 'true',
-		'skip-resources': 'true',
-		'skip-subject': 'true',
+		'simplified-form': 'true',
 	} ).toString() }`;
 
 	return (

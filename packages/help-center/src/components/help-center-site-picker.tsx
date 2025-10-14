@@ -11,6 +11,7 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	ownershipResult,
 	isSelfDeclaredSite,
 	onSelfDeclaredSite,
+	disabled,
 } ) => {
 	const { setUserDeclaredSiteUrl } = useDispatch( HELP_CENTER_STORE );
 	const userDeclaredSiteUrl = useSelect( ( select ) => {
@@ -27,6 +28,7 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 				<section>
 					<SelectControl
 						label="Site"
+						disabled={ disabled }
 						options={ [
 							{ label: siteSlug, value: 'current' },
 							{ label: __( 'Another site' ), value: 'another_site' },
