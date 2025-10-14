@@ -49,7 +49,7 @@ export default function ConnectRepository() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Connect Repository' ) }
-					description={ __( 'Deploy code from GitHub to your WordPress site.' ) }
+					description={ __( 'Deploy code from GitHub to your WordPress.com site.' ) }
 				/>
 			}
 		>
