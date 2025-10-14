@@ -1,7 +1,5 @@
-import { fetchSiteFlexUsage, type FlexUsageResponse } from '@automattic/api-core';
+import { fetchSiteFlexUsage } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-
-export type { FlexUsageResponse };
 
 export const siteFlexUsageQuery = (
 	siteId: number,
