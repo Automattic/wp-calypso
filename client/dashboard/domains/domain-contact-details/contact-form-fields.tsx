@@ -90,7 +90,6 @@ export const getContactFormFields = (
 								phone: formattedPhone,
 							} );
 						} }
-						isDisabled={ false }
 					/>
 				);
 			},

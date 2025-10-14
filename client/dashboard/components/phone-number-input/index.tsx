@@ -15,12 +15,12 @@ export type SecuritySMSNumber = {
 export default function PhoneNumberInput( {
 	data,
 	onChange,
-	isDisabled,
+	isDisabled = false,
 	customValidity,
 }: {
 	data: SecuritySMSNumber;
 	onChange: ( value: Partial< SecuritySMSNumber > ) => void;
-	isDisabled: boolean;
+	isDisabled?: boolean;
 	customValidity:
 		| {
 				type: 'invalid';
