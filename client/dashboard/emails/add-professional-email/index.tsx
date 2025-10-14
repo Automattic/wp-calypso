@@ -68,7 +68,9 @@ const AddProfessionalEmail = () => {
 		<PageLayout header={ <PageHeader /> } size="small">
 			<Card>
 				<CardBody>
-					<MailboxForm mailboxEntity={ mailboxEntities?.[ 0 ] } disabled={ isSubmitting } />
+					{ mailboxEntities.map( ( mailboxEntity, index ) => (
+						<MailboxForm key={ index } mailboxEntity={ mailboxEntity } disabled={ isSubmitting } />
+					) ) }
 				</CardBody>
 			</Card>
 

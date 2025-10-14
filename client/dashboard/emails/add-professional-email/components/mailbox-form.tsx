@@ -12,11 +12,22 @@ import { useState } from 'react';
 import { useAuth } from '../../../app/auth';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
+import {
+	FIELD_FIRSTNAME,
+	FIELD_MAILBOX,
+	FIELD_NAME,
+	FIELD_PASSWORD,
+} from '../../entities/constants';
+import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
+import { MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
+import { sanitizeMailboxValue } from '../../utils/sanitize-mailbox-value';
 
 export const MailboxForm = ( {
+	mailboxEntity,
 	disabled = false,
 	removeForm = undefined,
 }: {
+	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
 	disabled: boolean;
 	removeForm?: () => void;
 } ) => {
@@ -31,13 +42,55 @@ export const MailboxForm = ( {
 	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState( false );
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
 
+	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
+		mailboxEntity.validateField( field.fieldName );
+	const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
+		if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
+			return;
+		}
+		if ( mailboxEntity.getIsFieldTouched( FIELD_MAILBOX ) ) {
+			return;
+		}
+
+		mailboxEntity.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
+		mailboxEntity.validateField( FIELD_MAILBOX );
+	};
+
+	const onChange = ( {
+		value,
+		field,
+		lowerCaseChangeValue = false,
+	}: {
+		value: string | undefined;
+		field: MailboxFormFieldBase< string >;
+		lowerCaseChangeValue?: boolean;
+	} ) => {
+		if ( value && lowerCaseChangeValue ) {
+			value = value.toLowerCase();
+		}
+		field.value = value || '';
+
+		// Validate the field on the fly if there was already an error, or the field was already touched
+		if ( field.error || field.isTouched ) {
+			onRequestFieldValidation( field );
+		}
+		// field.dispatchState(); -> TODO: dunno what this state is for
+		onFieldValueChanged( field );
+	};
+
 	return (
 		<VStack spacing={ 4 }>
 			<InputControl
 				__next40pxDefaultSize
 				label={ __( 'Email address' ) }
-				value=""
-				onChange={ () => {} }
+				value={ mailboxEntity.getFieldValue( FIELD_MAILBOX ) }
+				onChange={ ( value ) => {
+					onChange( {
+						value,
+						field: mailboxEntity.formFields[ FIELD_MAILBOX ],
+						lowerCaseChangeValue: true,
+					} );
+				} }
 				disabled={ disabled }
 				suffix={
 					<InputControlSuffixWrapper>
@@ -51,8 +104,13 @@ export const MailboxForm = ( {
 					__next40pxDefaultSize
 					type={ isPasswordVisible ? 'text' : 'password' }
 					label={ __( 'Password' ) }
-					value=""
-					onChange={ () => {} }
+					value={ mailboxEntity.getFieldValue( FIELD_PASSWORD ) }
+					onChange={ ( value ) => {
+						onChange( {
+							value,
+							field: mailboxEntity.formFields[ FIELD_PASSWORD ],
+						} );
+					} }
 					disabled={ disabled }
 					suffix={
 						<InputControlSuffixWrapper>
