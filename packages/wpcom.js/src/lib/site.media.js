@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import TusUploader from './tus-uploader';
 import { createReadStream } from './util/fs';
 
 const debug = debugFactory( 'wpcom:media' );
@@ -153,8 +152,12 @@ Media.prototype.addFiles = function ( query, files, fn ) {
 
 	const videoFiles = this.filterFilesUploadableOnVideoPress( files );
 	if ( videoFiles.length ) {
-		const uploader = new TusUploader( this.wpcom, this._sid );
-		return uploader.startUpload( videoFiles );
+		return import( /* webpackChunkName: "wpcom-tus-uploader" */ './tus-uploader' ).then(
+			( { default: TusUploader } ) => {
+				const uploader = new TusUploader( this.wpcom, this._sid );
+				return uploader.startUpload( videoFiles );
+			}
+		);
 	}
 
 	const params = {
