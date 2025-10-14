@@ -144,11 +144,13 @@ export function DeploymentLogsModalContent( {
 					) }
 
 				<HStack alignment="right" spacing={ 5 }>
-					<ExternalLink
-						href={ `https://github.com/${ deployment.repository_name }/commit/${ deployment.metadata.commit_sha }` }
-					>
-						{ __( 'View deployment in Github' ) }
-					</ExternalLink>
+					{ deployment.metadata.workflow_run_id && (
+						<ExternalLink
+							href={ `https://github.com/${ deployment.repository_name }/actions/runs/${ deployment.metadata.workflow_run_id }` }
+						>
+							{ __( 'View workflow run in Github' ) }
+						</ExternalLink>
+					) }
 					<Button variant="primary" onClick={ onRequestClose }>
 						{ __( 'Close' ) }
 					</Button>
