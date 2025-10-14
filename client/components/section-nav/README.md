@@ -14,7 +14,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 
-export default class extends React.Component {
+export default class ExampleComponent extends React.Component {
 	// ...
 
 	render() {
