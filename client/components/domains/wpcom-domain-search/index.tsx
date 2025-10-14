@@ -1,90 +1,17 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { useMemo, type ComponentProps } from 'react';
-import { useSelector } from 'react-redux';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { useDomainSearchEvents } from './use-domain-search-events';
-import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import {
+	type WPCOMDomainSearchProps,
+	useWPCOMDomainSearchProps,
+} from './use-wpcom-domain-search-props';
 
-type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | 'events' > & {
-	currentSiteId?: number;
-	flowName: string;
-	events?: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
-		onContinue?: ( items: ResponseCartProduct[] ) => void;
-		beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
-	};
-	isFirstDomainFreeForFirstYear?: boolean;
-	flowAllowsMultipleDomainsInCart: boolean;
-	analyticsSection: string;
+const DomainSearchWithCartAndAnalytics = ( props: WPCOMDomainSearchProps ) => {
+	const wpcomDomainSearchProps = useWPCOMDomainSearchProps( props );
+
+	return <DomainSearch { ...props } { ...wpcomDomainSearchProps } />;
 };
 
-const DomainSearchWithCartAndAnalytics = ( {
-	flowName,
-	config: externalConfig,
-	isFirstDomainFreeForFirstYear,
-	flowAllowsMultipleDomainsInCart,
-	analyticsSection,
-	...props
-}: DomainSearchProps ) => {
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
-	const cartKey = props.currentSiteId ?? sitelessCartKey;
-
-	const { cart, isNextDomainFree, onContinue } = useWPCOMShoppingCartForDomainSearch( {
-		cartKey,
-		flowName,
-		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
-		flowAllowsMultipleDomainsInCart,
-		onContinue: props.events?.onContinue,
-		beforeAddDomainToCart: props.events?.beforeAddDomainToCart,
-	} );
-
-	const cartItemsLength = cart.items.length;
-
-	const config = useMemo( () => {
-		return {
-			...externalConfig,
-			priceRules: {
-				...externalConfig?.priceRules,
-				freeForFirstYear:
-					( cartItemsLength === 0 && isFirstDomainFreeForFirstYear ) || isNextDomainFree,
-			},
-		};
-	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
-
-	const analyticsEvents = useDomainSearchEvents( {
-		vendor: config.vendor,
-		flowName,
-		analyticsSection,
-		query: props.query,
-	} );
-
-	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
-		return {
-			...analyticsEvents,
-			...props.events,
-			onContinue,
-			onQueryChange: ( query ) => {
-				analyticsEvents.onQueryChange?.( query );
-				props.events?.onQueryChange?.( query );
-			},
-			onSkip: ( suggestion ) => {
-				analyticsEvents.onSkip?.( suggestion );
-				props.events?.onSkip?.( suggestion );
-			},
-			onExternalDomainClick: ( domainName ) => {
-				analyticsEvents.onExternalDomainClick?.( domainName );
-				props.events?.onExternalDomainClick?.( domainName );
-			},
-		};
-	}, [ analyticsEvents, props.events, onContinue ] );
-
-	return <DomainSearch { ...props } config={ config } cart={ cart } events={ events } />;
-};
-
-export const WPCOMDomainSearch = ( props: DomainSearchProps ) => {
+export const WPCOMDomainSearch = ( props: WPCOMDomainSearchProps ) => {
 	return (
 		<CalypsoShoppingCartProvider>
 			<DomainSearchWithCartAndAnalytics { ...props } />

@@ -8,7 +8,7 @@ import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import { recordUseYourDomainButtonClick } from '../../domain-search-v2/register-domain-step/analytics';
 
-export const useDomainSearchEvents = ( {
+export const useWPCOMDomainSearchEvents = ( {
 	vendor,
 	flowName,
 	analyticsSection,

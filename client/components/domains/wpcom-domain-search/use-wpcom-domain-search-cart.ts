@@ -43,23 +43,23 @@ const wpcomCartToDomainSearchCart = (
 	};
 };
 
-interface UseWPCOMShoppingCartForDomainSearchOptions {
+interface UseWPCOMDomainSearchCartOptions {
 	cartKey: CartKey;
 	flowName?: string;
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
-	onContinue?( cartItems: ResponseCartProduct[] ): void;
+	onContinue( cartItems: ResponseCartProduct[] ): void;
 	beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
 
-export const useWPCOMShoppingCartForDomainSearch = ( {
+export const useWPCOMDomainSearchCart = ( {
 	cartKey,
 	flowName,
 	flowAllowsMultipleDomainsInCart,
 	isFirstDomainFreeForFirstYear,
 	onContinue,
 	beforeAddDomainToCart = ( domain ) => domain,
-}: UseWPCOMShoppingCartForDomainSearchOptions ) => {
+}: UseWPCOMDomainSearchCartOptions ) => {
 	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 
 	return useMemo( () => {
@@ -123,7 +123,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 				] );
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
-					return onContinue?.( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
+					return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
 				}
 
 				return cartItems;
@@ -136,7 +136,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 			isNextDomainFree: shouldFirstDomainBeFree
 				? domainItems.length === 0
 				: responseCart.next_domain_is_free,
-			onContinue: () => onContinue?.( domainItems ),
+			onContinue: () => onContinue( domainItems ),
 		};
 	}, [
 		responseCart,
