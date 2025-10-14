@@ -3,6 +3,7 @@ import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { mergeObjectFunctions } from '../../../lib/merge-object-functions';
 import { useWPCOMDomainSearchCart } from './use-wpcom-domain-search-cart';
 import { useWPCOMDomainSearchEvents } from './use-wpcom-domain-search-events';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -36,13 +37,19 @@ export const useWPCOMDomainSearchProps = ( {
 	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
 	const cartKey = currentSiteId ?? sitelessCartKey;
 
+	const {
+		onContinue: externalOnContinue,
+		beforeAddDomainToCart: externalBeforeAddDomainToCart,
+		...otherExternalEvents
+	} = externalEvents;
+
 	const { cart, isNextDomainFree, onContinue } = useWPCOMDomainSearchCart( {
 		cartKey,
 		flowName,
 		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
 		flowAllowsMultipleDomainsInCart,
-		onContinue: externalEvents.onContinue,
-		beforeAddDomainToCart: externalEvents.beforeAddDomainToCart,
+		onContinue: externalOnContinue,
+		beforeAddDomainToCart: externalBeforeAddDomainToCart,
 	} );
 
 	const cartItemsLength = cart.items.length;
@@ -67,23 +74,10 @@ export const useWPCOMDomainSearchProps = ( {
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
-			...analyticsEvents,
-			...externalEvents,
+			...mergeObjectFunctions( analyticsEvents, otherExternalEvents ),
 			onContinue,
-			onQueryChange: ( query ) => {
-				analyticsEvents.onQueryChange?.( query );
-				externalEvents.onQueryChange?.( query );
-			},
-			onSkip: ( suggestion ) => {
-				analyticsEvents.onSkip?.( suggestion );
-				externalEvents.onSkip?.( suggestion );
-			},
-			onExternalDomainClick: ( domainName ) => {
-				analyticsEvents.onExternalDomainClick?.( domainName );
-				externalEvents.onExternalDomainClick?.( domainName );
-			},
 		};
-	}, [ analyticsEvents, externalEvents, onContinue ] );
+	}, [ analyticsEvents, otherExternalEvents, onContinue ] );
 
 	return {
 		config,
