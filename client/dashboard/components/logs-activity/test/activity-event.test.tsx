@@ -2,12 +2,10 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { ActivityLogEntry } from '../../../../../packages/api-core/src';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
-import parseActivityLogEntryContent from '../../logs-activity-formatted-block/api-core-parser';
 import { ActivityEvent } from '../activity-event';
-import type { Activity } from '../types';
+import type { Activity, ActivityDescription } from '../types';
 
 jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
@@ -16,25 +14,22 @@ jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn
 const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
 const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
 
-type ContentInput = ActivityLogEntry[ 'content' ] | string | undefined;
-
 const createActivity = ( {
 	title = 'Summary',
 	icon,
-	content,
+	activityDescription,
 }: {
 	title?: string;
 	icon?: string;
-	content?: ContentInput;
+	activityDescription?: ActivityDescription;
 } = {} ): Activity => {
-	const items = parseActivityLogEntryContent( content );
-	const textDescription = typeof content === 'string' ? content : content?.text ?? '';
+	const description: ActivityDescription = activityDescription ?? {
+		textDescription: '',
+		items: [],
+	};
 
 	return {
-		activityDescription: {
-			textDescription,
-			items,
-		},
+		activityDescription: description,
 		activityIcon: icon,
 		activityId: 1,
 		activityMedia: {
@@ -63,7 +58,11 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders the summary and plain content text', () => {
-		const activity = createActivity( { content: { text: 'Plain content' } } );
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Plain content',
+			items: [ 'Plain content' ],
+		};
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -72,18 +71,18 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders formatted content with links', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'View post',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'View post',
+			items: [
 				{
-					id: 'range-1',
-					indices: [ 0, 4 ],
 					type: 'link',
 					url: 'https://wordpress.com/post/example',
+					children: [ 'View' ],
 				},
+				'post',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -93,17 +92,19 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders strong ranges as bold text', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'A Bold move',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'A Bold move',
+			items: [
+				'A ',
 				{
-					id: 'strong',
-					indices: [ 2, 6 ],
 					type: 'strong',
+					children: [ 'Bold' ],
+					text: 'Bold',
 				},
+				' move',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -112,17 +113,18 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders emphasis ranges inside <em>', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'Very important',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Very important',
+			items: [
+				'Very ',
 				{
-					id: 'em',
-					indices: [ 5, 14 ],
 					type: 'em',
+					children: [ 'important' ],
+					text: 'important',
 				},
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -131,17 +133,18 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders preformatted ranges inside <pre>', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'Code block',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Code block',
+			items: [
 				{
-					id: 'pre',
-					indices: [ 0, 4 ],
 					type: 'pre',
+					children: [ 'Code' ],
+					text: 'Code',
 				},
+				' block',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -150,17 +153,18 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders file paths inside a <code> element', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'File wp-config.php',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'File wp-config.php',
+			items: [
+				'File ',
 				{
-					id: 'filepath',
-					indices: [ 5, 18 ],
 					type: 'filepath',
+					children: [ 'wp-config.php' ],
+					text: 'wp-config.php',
 				},
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -169,18 +173,21 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders post links when post ranges are provided', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'View Example now',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'View Example now',
+			items: [
+				'View ',
 				{
-					id: 77,
-					indices: [ 5, 12 ],
 					type: 'post',
-					site_id: 123,
+					siteId: 123,
+					postId: 77,
+					children: [ 'Example' ],
+					text: 'Example',
 				},
+				' now',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -189,24 +196,19 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders comment links with anchors', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'Comment added',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Comment added',
+			items: [
 				{
+					type: 'link',
 					url: 'https://wordpress.com/comment/2/1',
-					indices: [ 0, 7 ],
-					id: 1,
-					parent: null,
-					type: 'a',
-					site_id: 2,
-					section: 'comment',
-					intent: 'edit',
-					context: 'single',
-					root_id: 3,
+					children: [ 'Comment' ],
+					text: 'Comment',
 				},
+				' added',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -215,19 +217,21 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders plugin links for plugin ranges', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'Activated Akismet today',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Activated Akismet today',
+			items: [
+				'Activated ',
 				{
-					id: 123,
-					indices: [ 10, 17 ],
 					type: 'plugin',
-					slug: 'akismet',
-					site_slug: 'example.com',
+					pluginSlug: 'akismet',
+					siteSlug: 'example.com',
+					children: [ 'Akismet' ],
+					text: 'Akismet',
 				},
+				' today',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -236,20 +240,22 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders theme links when themes originate from WordPress.com', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'Installed Example today',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Installed Example today',
+			items: [
+				'Installed ',
 				{
-					id: 123,
-					indices: [ 10, 17 ],
 					type: 'theme',
-					slug: 'example',
-					site_slug: 'example.com',
-					uri: 'https://wordpress.com/theme/example',
+					themeSlug: 'example',
+					siteSlug: 'example.com',
+					themeUri: 'https://wordpress.com/theme/example',
+					children: [ 'Example' ],
+					text: 'Example',
 				},
+				' today',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -258,20 +264,21 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders external theme links with target and rel attributes', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'External theme installed',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'External theme installed',
+			items: [
 				{
-					id: 123,
-					indices: [ 0, 14 ],
 					type: 'theme',
-					slug: 'external-theme',
-					site_slug: 'site-slug',
-					uri: 'https://example.com/theme',
+					themeSlug: 'external-theme',
+					siteSlug: 'site-slug',
+					themeUri: 'https://example.com/theme',
+					children: [ 'External theme' ],
+					text: 'External theme',
 				},
+				' installed',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 
@@ -282,18 +289,20 @@ describe( 'ActivityEvent', () => {
 	} );
 
 	it( 'renders backup links with site slug fallback', () => {
-		const content: ActivityLogEntry[ 'content' ] = {
-			text: 'Restored backup now',
-			ranges: [
+		const activityDescription: ActivityDescription = {
+			textDescription: 'Restored backup now',
+			items: [
+				'Restored ',
 				{
-					id: 123,
-					indices: [ 9, 15 ],
 					type: 'backup',
-					site_slug: 'site-slug',
+					siteSlug: 'site-slug',
+					children: [ 'backup' ],
+					text: 'backup',
 				},
+				' now',
 			],
 		};
-		const activity = createActivity( { content } );
+		const activity = createActivity( { activityDescription } );
 
 		render( <ActivityEvent activity={ activity } /> );
 

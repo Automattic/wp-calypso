@@ -16,14 +16,7 @@
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
-import type { ActivityBlockContent, ActivityBlockNode } from '../logs-activity/types';
-
-export interface ActivityBlockMeta {
-	activity?: string;
-	intent?: string;
-	section?: string;
-	published?: number | string;
-}
+import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
 
 type BlockClickHandler = ( event: MouseEvent< HTMLAnchorElement > ) => void;
 
