@@ -1,3 +1,5 @@
+import { productsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -6,9 +8,11 @@ import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { IntervalLength } from '../types';
+import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
 import { MailboxForm } from './components/mailbox-form';
 
 const AddProfessionalEmail = () => {
+	const { data: products } = useQuery( productsQuery() );
 	const router = useRouter();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
@@ -19,6 +23,10 @@ const AddProfessionalEmail = () => {
 
 	const handleSubmit = async () => {
 		setIsSubmitting( true );
+
+		const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const product = products[ productSlug ];
 	};
 
 	return (
