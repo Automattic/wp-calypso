@@ -27,16 +27,24 @@ test.describe(
 			} );
 
 			await test.step( 'When I upload a valid Medium export file', async function () {
-				await pageImportContentFromMedium.uploadExportFile( TEST_MEDIUM_EXPORT_FILE_PATH );
+				await pageImportContentFromMedium.importFileContentPage.uploadExportFile(
+					TEST_MEDIUM_EXPORT_FILE_PATH
+				);
 			} );
 
 			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
 				await expect( pageImportContentFromMedium.heading ).toBeVisible();
-				await expect( pageImportContentFromMedium.yourFileIsReadyText ).toBeVisible( {
+				await expect(
+					pageImportContentFromMedium.importFileContentPage.yourFileIsReadyText
+				).toBeVisible( {
 					timeout: 30000,
 				} );
-				await expect( pageImportContentFromMedium.importButton ).toBeVisible();
-				await expect( pageImportContentFromMedium.importButton ).toBeEnabled();
+				await expect(
+					pageImportContentFromMedium.importFileContentPage.importButton
+				).toBeVisible();
+				await expect(
+					pageImportContentFromMedium.importFileContentPage.importButton
+				).toBeEnabled();
 			} );
 		} );
 
@@ -64,16 +72,24 @@ test.describe(
 			} );
 
 			await test.step( 'When I upload a valid Medium export file', async function () {
-				await pageImportContentFromMedium.uploadExportFile( TEST_MEDIUM_EXPORT_FILE_PATH );
+				await pageImportContentFromMedium.importFileContentPage.uploadExportFile(
+					TEST_MEDIUM_EXPORT_FILE_PATH
+				);
 			} );
 
 			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
 				await expect( pageImportContentFromMedium.heading ).toBeVisible();
-				await expect( pageImportContentFromMedium.yourFileIsReadyText ).toBeVisible( {
+				await expect(
+					pageImportContentFromMedium.importFileContentPage.yourFileIsReadyText
+				).toBeVisible( {
 					timeout: 30000,
 				} );
-				await expect( pageImportContentFromMedium.importButton ).toBeVisible();
-				await expect( pageImportContentFromMedium.importButton ).toBeEnabled();
+				await expect(
+					pageImportContentFromMedium.importFileContentPage.importButton
+				).toBeVisible();
+				await expect(
+					pageImportContentFromMedium.importFileContentPage.importButton
+				).toBeEnabled();
 			} );
 		} );
 

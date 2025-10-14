@@ -1,11 +1,12 @@
 import { Page } from 'playwright';
-import { DataHelper } from '../..';
+import { DataHelper, ImportFileContentPage } from '../..';
 
 /**
  * Represents the Import Content from WordPress page.
  */
 export class ImportContentFromWordPressPage {
 	private page: Page;
+	importFileContentPage: ImportFileContentPage;
 
 	/**
 	 * Constructs an instance of the page.
@@ -14,6 +15,7 @@ export class ImportContentFromWordPressPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.importFileContentPage = new ImportFileContentPage( page );
 	}
 
 	/**
@@ -37,29 +39,5 @@ export class ImportContentFromWordPressPage {
 	 */
 	get heading() {
 		return this.page.getByRole( 'heading', { name: 'Import content from WordPress' } );
-	}
-
-	/**
-	 * Get the text element indicating the uploaded file is ready to be imported.
-	 * @returns The text element indicating the uploaded file is ready to be imported.
-	 */
-	get yourFileIsReadyText() {
-		return this.page.getByText( 'Your file is ready to be imported' );
-	}
-
-	/**
-	 * Get the Import button element.
-	 * @returns The Import button element.
-	 */
-	get importButton() {
-		return this.page.getByRole( 'button', { name: 'Import' } );
-	}
-
-	/**
-	 * 	Uploads a WordPress export file via the file input.
-	 * @param filePath Path to the WordPress export file to upload.
-	 */
-	async uploadExportFile( filePath: string ): Promise< void > {
-		await this.page.locator( 'input[type="file"]' ).setInputFiles( filePath );
 	}
 }

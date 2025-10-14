@@ -42,6 +42,14 @@ export class ImportContentPage {
 	}
 
 	/**
+	 * Get the Medium import button element.
+	 * @returns The WordPress import button element.
+	 */
+	get wordPressImportButton() {
+		return this.page.getByRole( 'button', { name: 'WordPress' } );
+	}
+
+	/**
 	 * Get the heading for the Medium import page.
 	 * @returns The heading element for the Medium import page.
 	 */
