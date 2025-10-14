@@ -1,3 +1,4 @@
+import { EmailProvider } from '@automattic/api-core';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
@@ -19,11 +20,6 @@ type ExistingReactNode = React.ReactElement | string | number;
 type TranslateResult = ExistingReactNode;
 
 type FieldError = TranslateResult | null;
-
-enum EmailProvider {
-	Google = 'Google',
-	Titan = 'Titan',
-}
 
 interface MailboxFormField< Type > {
 	dispatchState: () => void;
@@ -134,9 +130,14 @@ class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxF
 	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 }
 
-const MailboxFormFieldsMap = {
-	[ EmailProvider.Google ]: GoogleMailboxFormFields,
-	[ EmailProvider.Titan ]: TitanMailboxFormFields,
+type SupportedEmailProvider = Extract< EmailProvider, 'google_workspace' | 'titan' >;
+
+const MailboxFormFieldsMap: Record<
+	SupportedEmailProvider,
+	new ( domain: string ) => MailboxFormFields
+> = {
+	google_workspace: GoogleMailboxFormFields,
+	titan: TitanMailboxFormFields,
 };
 
 type GoogleFormFieldNames = keyof GoogleMailboxFormFields;
@@ -168,4 +169,4 @@ export type {
 	ValidatorFieldNames,
 };
 
-export { EmailProvider, MailboxFormFieldsFactory };
+export { MailboxFormFieldsFactory };

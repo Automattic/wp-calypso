@@ -1,9 +1,9 @@
+import { EmailProvider } from '@automattic/api-core';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
 import { createElement } from 'react';
 import wp from 'calypso/lib/wp';
-import { EmailProvider } from './types';
 import type { FieldError, MailboxFormFieldBase } from './types';
 
 interface Validator< T > {
@@ -373,7 +373,7 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 
 	async validateField( field: MailboxFormFieldBase< string > ) {
 		// Google has no mailbox name validator at this time
-		if ( this.provider === EmailProvider.Google ) {
+		if ( this.provider === 'google_workspace' ) {
 			return;
 		}
 

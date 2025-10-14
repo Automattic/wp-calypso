@@ -15,6 +15,7 @@ export interface TitanProductUser {
 	password?: string;
 }
 
+import { EmailProvider } from '@automattic/api-core';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
@@ -26,7 +27,7 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 	FIELD_UUID,
 } from './constants';
-import { EmailProvider, FieldError, MailboxFormFieldBase, MailboxFormFieldsFactory } from './types';
+import { FieldError, MailboxFormFieldBase, MailboxFormFieldsFactory } from './types';
 import {
 	ExistingMailboxNamesValidator,
 	MailboxNameAvailabilityValidator,
@@ -60,8 +61,8 @@ class MailboxForm< T extends EmailProvider > {
 		const domainField = this.getFormField< string >( FIELD_DOMAIN );
 		const domainName = domainField?.value ?? '';
 		const mailboxHasDomainError = Boolean( domainField?.error );
-		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
-		const areApostrophesSupported = this.provider === EmailProvider.Google;
+		const minimumPasswordLength = this.provider === 'titan' ? 10 : 12;
+		const areApostrophesSupported = this.provider === 'google_workspace';
 
 		return [
 			[ FIELD_DOMAIN, new RequiredValidator< string >() ],
@@ -136,7 +137,7 @@ class MailboxForm< T extends EmailProvider > {
 			password: this.getFieldValue< string >( FIELD_PASSWORD ),
 		};
 
-		return this.provider === EmailProvider.Google
+		return this.provider === 'google_workspace'
 			? {
 					...commonFields,
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
