@@ -151,7 +151,11 @@ export default function PluginsScheduledUpdates() {
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutateAsync: deleteSchedules } = useDeleteSchedules();
+	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
+		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
+		scheduleToDelete?.scheduleId ?? '',
+		{ optimisticHosting: true }
+	);
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
 	}, [ scheduledUpdates, view, fields ] );
@@ -166,9 +170,7 @@ export default function PluginsScheduledUpdates() {
 		}
 		try {
 			setIsDeletingSchedule( true );
-			await deleteSchedules( [ scheduleToDelete.site.ID ], scheduleToDelete.scheduleId, {
-				optimisticHosting: true,
-			} );
+			await deleteSchedules();
 			createSuccessNotice( __( 'Schedule deleted successfully.' ), { type: 'snackbar' } );
 		} catch ( e ) {
 			const message = e instanceof Error ? e.message : __( 'Failed to delete schedule.' );

@@ -18,67 +18,68 @@ type UseDeleteSchedulesOptions = {
 	optimisticHosting?: boolean;
 };
 
-export function useDeleteSchedules() {
+export function useDeleteSchedules(
+	siteIds: number[],
+	scheduleId: string,
+	options?: UseDeleteSchedulesOptions
+) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: eligibleSites = [] } = useEligibleSites();
-	const mutateAsync = useCallback(
-		async ( siteIds: number[], scheduleId: string, options?: UseDeleteSchedulesOptions ) => {
-			const normalizedId = normalizeScheduleId( scheduleId );
-			const errors: string[] = [];
-			const siteMap = new Map( ( eligibleSites as Site[] ).map( ( s ) => [ s.ID, s ] ) );
-			let rollbackHosting: ( () => void ) | undefined;
+	const normalizedId = normalizeScheduleId( scheduleId );
+	const mutateAsync = useCallback( async () => {
+		const errors: string[] = [];
+		const siteMap = new Map( ( eligibleSites as Site[] ).map( ( s ) => [ s.ID, s ] ) );
+		let rollbackHosting: ( () => void ) | undefined;
 
-			// Apply optional optimistic update to hosting aggregate cache
-			if ( options?.optimisticHosting ) {
-				const hostingQuery = hostingUpdateSchedulesQuery();
-				const prevData = queryClient.getQueryData( hostingQuery.queryKey );
-				if ( prevData && typeof prevData === 'object' && 'sites' in prevData ) {
-					const cloned = JSON.parse( JSON.stringify( prevData ) );
-					siteIds.forEach( ( id ) => {
-						const key = String( id );
-						if ( cloned.sites?.[ key ]?.[ normalizedId ] ) {
-							delete cloned.sites[ key ][ normalizedId ];
-						}
-					} );
-					queryClient.setQueryData( hostingQuery.queryKey, cloned );
-					rollbackHosting = () => {
-						queryClient.setQueryData( hostingQuery.queryKey, prevData );
-					};
-				}
-			}
-
-			await Promise.all(
-				siteIds.map( async ( siteId ) => {
-					try {
-						await deleteSiteUpdateSchedule( siteId, normalizedId );
-						await queryClient.invalidateQueries( siteUpdateSchedulesQuery( siteId ) );
-						const site = siteMap.get( siteId );
-						if ( site ) {
-							recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
-								site_slug: site.slug,
-							} );
-						}
-					} catch ( e ) {
-						errors.push( `Delete failed for site ${ siteId }` );
+		// Apply optional optimistic update to hosting aggregate cache
+		if ( options?.optimisticHosting && siteIds.length && normalizedId ) {
+			const hostingQuery = hostingUpdateSchedulesQuery();
+			const prevData = queryClient.getQueryData( hostingQuery.queryKey );
+			if ( prevData && typeof prevData === 'object' && 'sites' in prevData ) {
+				const cloned = JSON.parse( JSON.stringify( prevData ) );
+				siteIds.forEach( ( id ) => {
+					const key = String( id );
+					if ( cloned.sites?.[ key ]?.[ normalizedId ] ) {
+						delete cloned.sites[ key ][ normalizedId ];
 					}
-				} )
-			);
-
-			if ( errors.length ) {
-				// Rollback optimistic changes on error
-				try {
-					rollbackHosting?.();
-				} catch {
-					// no-op
-				}
-				throw new Error( errors.join( '\n' ) );
+				} );
+				queryClient.setQueryData( hostingQuery.queryKey, cloned );
+				rollbackHosting = () => {
+					queryClient.setQueryData( hostingQuery.queryKey, prevData );
+				};
 			}
+		}
 
-			// Invalidate hosting aggregate to refresh list view
-			await queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
-		},
-		[ eligibleSites, recordTracksEvent ]
-	);
+		await Promise.all(
+			siteIds.map( async ( siteId ) => {
+				try {
+					await deleteSiteUpdateSchedule( siteId, normalizedId );
+					await queryClient.invalidateQueries( siteUpdateSchedulesQuery( siteId ) );
+					const site = siteMap.get( siteId );
+					if ( site ) {
+						recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+							site_slug: site.slug,
+						} );
+					}
+				} catch ( e ) {
+					errors.push( `Delete failed for site ${ siteId }` );
+				}
+			} )
+		);
+
+		if ( errors.length ) {
+			// Rollback optimistic changes on error
+			try {
+				rollbackHosting?.();
+			} catch {
+				// no-op
+			}
+			throw new Error( errors.join( '\n' ) );
+		}
+
+		// Invalidate hosting aggregate to refresh list view
+		await queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
+	}, [ eligibleSites, recordTracksEvent, siteIds, normalizedId, options ] );
 
 	return { mutateAsync } as const;
 }
