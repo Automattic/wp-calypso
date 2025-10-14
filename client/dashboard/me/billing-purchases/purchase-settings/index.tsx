@@ -53,6 +53,7 @@ import {
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
+import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -208,7 +209,7 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 		const text = __( 'Email settings' );
-		return <Link to="/v2/emails">{ text }</Link>;
+		return <Link to={ emailsRoute.to }>{ text }</Link>;
 	}
 
 	return null;
