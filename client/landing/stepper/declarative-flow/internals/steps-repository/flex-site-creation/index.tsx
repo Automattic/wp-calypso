@@ -1,5 +1,5 @@
 import { Step } from '@automattic/onboarding';
-import { SelectControl, TextControl, Button } from '@wordpress/components';
+import { TextControl, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useState } from 'react';
@@ -13,10 +13,6 @@ import './style.scss';
 const FlexSiteCreation: StepType< {
 	submits: {
 		siteName: string;
-		siteType: string;
-		dataCenter: string;
-		phpVersion: string;
-		wordpressVersion: string;
 	};
 } > = function FlexSiteCreation( { navigation } ) {
 	const { submit } = navigation;
@@ -24,40 +20,7 @@ const FlexSiteCreation: StepType< {
 	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 
 	const [ siteName, setSiteName ] = useState( '' );
-	const [ siteType, setSiteType ] = useState( 'production' );
-	const [ dataCenter, setDataCenter ] = useState( 'default' );
-	const [ phpVersion, setPhpVersion ] = useState( '8.3' );
-	const [ wordpressVersion, setWordpressVersion ] = useState( 'latest' );
 	const [ isLoading, setIsLoading ] = useState( false );
-
-	const siteTypeOptions = [
-		{ label: __( 'Production' ), value: 'production' },
-		{ label: __( 'Staging' ), value: 'staging' },
-		{ label: __( 'Development' ), value: 'development' },
-	];
-
-	const dataCenterOptions = [
-		{ label: __( 'Default' ), value: 'default' },
-		{ label: __( 'US East' ), value: 'us-east' },
-		{ label: __( 'US West' ), value: 'us-west' },
-		{ label: __( 'Europe' ), value: 'europe' },
-		{ label: __( 'Asia' ), value: 'asia' },
-	];
-
-	const phpVersionOptions = [
-		{ label: '8.3', value: '8.3' },
-		{ label: '8.2', value: '8.2' },
-		{ label: '8.1', value: '8.1' },
-		{ label: '8.0', value: '8.0' },
-		{ label: '7.4', value: '7.4' },
-	];
-
-	const wordpressVersionOptions = [
-		{ label: __( 'Latest' ), value: 'latest' },
-		{ label: '6.5', value: '6.5' },
-		{ label: '6.4', value: '6.4' },
-		{ label: '6.3', value: '6.3' },
-	];
 
 	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
@@ -73,18 +36,10 @@ const FlexSiteCreation: StepType< {
 
 		recordTracksEvent( 'calypso_flex_site_creation_submit', {
 			site_name: siteName,
-			site_type: siteType,
-			data_center: dataCenter,
-			php_version: phpVersion,
-			wordpress_version: wordpressVersion,
 		} );
 
 		submit?.( {
 			siteName,
-			siteType,
-			dataCenter,
-			phpVersion,
-			wordpressVersion,
 		} );
 	};
 
@@ -124,49 +79,7 @@ const FlexSiteCreation: StepType< {
 							/>
 						</FormFieldset>
 
-						<div className="flex-site-creation__form-row">
-							<FormFieldset className="flex-site-creation__form-field">
-								<SelectControl
-									label={ __( 'Site type' ) }
-									value={ siteType }
-									options={ siteTypeOptions }
-									onChange={ ( value: string ) => setSiteType( value ) }
-									__nextHasNoMarginBottom
-								/>
-							</FormFieldset>
-
-							<FormFieldset className="flex-site-creation__form-field">
-								<SelectControl
-									label={ __( 'Data center (optional)' ) }
-									value={ dataCenter }
-									options={ dataCenterOptions }
-									onChange={ ( value: string ) => setDataCenter( value ) }
-									__nextHasNoMarginBottom
-								/>
-							</FormFieldset>
-						</div>
-
-						<div className="flex-site-creation__form-row">
-							<FormFieldset className="flex-site-creation__form-field">
-								<SelectControl
-									label={ __( 'PHP version' ) }
-									value={ phpVersion }
-									options={ phpVersionOptions }
-									onChange={ ( value: string ) => setPhpVersion( value ) }
-									__nextHasNoMarginBottom
-								/>
-							</FormFieldset>
-
-							<FormFieldset className="flex-site-creation__form-field">
-								<SelectControl
-									label={ __( 'WordPress version' ) }
-									value={ wordpressVersion }
-									options={ wordpressVersionOptions }
-									onChange={ ( value: string ) => setWordpressVersion( value ) }
-									__nextHasNoMarginBottom
-								/>
-							</FormFieldset>
-						</div>
+						<div className="flex-site-creation__form-row" />
 
 						<Button
 							className="flex-site-creation__submit-button"
