@@ -11,13 +11,11 @@ import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { logStashEvent } from '../../lib/analytics';
-import { createVgsEnhancedEbanxPaymentData } from '../../lib/vgs-ebanx-payment-method-utils';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
 import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
-import type { VGS } from '@vgs/collect-js';
 import { 
 	useVGSCollectFormInstance
 } from '@vgs/collect-js-react';
@@ -91,9 +89,10 @@ export default function CreditCardPayButton( {
 			const processVgsPayment = async () => {
 				try {
 					// Get existing payment data structure (same as regular EBANX flow)
-					const existingPaymentData = {
-						name: cardholderName?.value || '',
+					const paymentData = {
+						tokens: tokens,
 						countryCode: fields?.countryCode?.value || '',
+						number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
 						state: fields?.state?.value || '',
 						city: fields?.city?.value || '',
 						postalCode: fields[ 'postal-code' ]?.value || '',
@@ -101,11 +100,8 @@ export default function CreditCardPayButton( {
 						streetNumber: fields[ 'street-number' ]?.value || '',
 						phoneNumber: fields[ 'phone-number' ]?.value || '',
 						document: fields?.document?.value || '', // Taxpayer Identification Number
-						paymentPartner: 'ebanx',
+						paymentPartner,
 					};
-
-					// Transform VGS tokens and combine with existing payment data
-					const paymentData = {};
 
 					// Call the payment processor
 					await onClick?.( paymentData );
@@ -146,41 +142,27 @@ export default function CreditCardPayButton( {
 				throw new Error( __( 'Payment form not ready. Please try again.', 'calypso' ) );
 			}
 
-			console.log( 'handleVgsTokenization -> form', form );
-
 			// Manually trigger VGS tokenization
-			// await new Promise( ( resolve, reject ) => {
-				form.submit(
-					'/post',
-					{
-						data: ( formValues: any ) => {
-							return {
-								card_number: formValues[ 'card_number' ],
-								card_cvc: formValues[ 'card_cvc' ],
-								card_exp: formValues[ 'card_exp' ],
-								card_holder: formValues[ 'card_holder' ],
-							};
-						},
-					}, ( status: any, data: any ) => {
-						if ( status === 200 && data ) {
-							console.log( 'handleVgsTokenization -> data', data );
-							setTokens( data.json );
-						} else {
-							console.log( 'handleVgsTokenization -> error', status, data );
-						}
-					});
-
-			// The response will be available after the form.submit() promise resolves
-			// We need to wait for the response to be populated by the VGS hooks
-			// This is a simplified approach - in a real implementation, you might need
-			// to use a different pattern to wait for the response
-			
-			// For now, let's assume the tokenization was successful if we reach here
-			// The actual response handling should be done in a useEffect that watches for response changes
-			debug( 'VGS tokenization initiated, waiting for response...' );
-			
+			form.submit(
+				'/post',
+				{
+					data: ( formValues: any ) => {
+						return {
+							card_number: formValues[ 'card_number' ],
+							card_cvc: formValues[ 'card_cvc' ],
+							card_exp: formValues[ 'card_exp' ],
+							card_holder: formValues[ 'card_holder' ],
+						};
+					},
+				}, ( status: any, data: any ) => {
+					if ( status === 200 && data ) {
+						console.log( 'handleVgsTokenization -> data', data );
+						setTokens( data.json );
+					} else {
+						console.log( 'handleVgsTokenization -> error', status, data );
+					}
+				});
 			// Return true to indicate tokenization was initiated
-			// The actual payment processing will happen when response becomes available
 			return true;
 		} catch ( error ) {
 			setIsVgsTokenizing( false );
@@ -196,22 +178,20 @@ export default function CreditCardPayButton( {
 			<Button
 				disabled={ disabled || isVgsTokenizing }
 				onClick={ async () => {
-					console.log( 'onClick' );
-					console.log( 'shouldUseVgsData', shouldUseVgsData );
 					// Handle VGS tokenization for EBANX payments
-					if ( shouldUseVgsData ) {
+					console.log( 'paymentPartner', paymentPartner );
+					console.log( 'shouldUseVgsData', shouldUseVgsData );
+					if ( shouldUseVgsData && paymentPartner === 'ebanx' ) {
 						console.log( 'shouldUseVgsData' );
 						const vgsSuccess = await handleVgsTokenization();
-						console.log( 'vgsSuccess', vgsSuccess );
 						if ( vgsSuccess ) {
-							console.log( 'vgsSuccess' );
 							return; // VGS tokenization handled the payment
 						}
 						// If VGS tokenization failed, fall back to regular EBANX flow
 					}
 
 					if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
-						if ( paymentPartner === 'stripe' ) {
+						if ( paymentPartner === 'stripe' && ! shouldUseVgsData ) {
 							debug( 'submitting stripe payment' );
 							if ( ! cardNumberElement ) {
 								// This should never happen because they won't get
@@ -252,7 +232,7 @@ export default function CreditCardPayButton( {
 							} );
 							return;
 						}
-						if ( paymentPartner === 'ebanx' ) {
+						if ( paymentPartner === 'ebanx' && ! shouldUseVgsData ) {
 							debug( 'submitting ebanx payment' );
 							onClick( {
 								name: cardholderName?.value || '',
