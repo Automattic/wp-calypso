@@ -1,3 +1,5 @@
+import { domainQuery, productsQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -16,6 +18,11 @@ import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { getEmailCheckoutPath } from '../../utils/email-paths';
+import { IntervalLength } from '../types';
+import { getCartItems } from '../utils/get-cart-items';
+import { getEmailProductProperties, ProductListItem } from '../utils/get-email-product-properties';
+import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
 
 interface FormState {
 	localPart: string;
@@ -131,13 +138,58 @@ const EmailForm = ( {
 };
 
 const AddProfessionalEmail = () => {
+	const router = useRouter();
+	// Extract params from the current match for this route
+	const match = router.state.matches[ router.state.matches.length - 1 ];
+	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
+	const { domain = '' } = params;
+	let interval: IntervalLength = router.state.location.search.interval;
+	if ( interval !== 'monthly' && interval !== 'annually' ) {
+		interval = 'annually';
+	}
+	const { data: domainData } = useSuspenseQuery( domainQuery( domain ) );
+	const { data: site } = useQuery( siteBySlugQuery( domain ) );
+	const { data: products } = useQuery( productsQuery() );
 	const [ emailForms, setEmailForms ] = useState< FormState[] >( [
 		{ localPart: '', password: '' },
 	] );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const removeForm = ( index: number ) => {
 		const newForms = emailForms.filter( ( _, i ) => i !== index );
 		setEmailForms( newForms );
+	};
+
+	const handleSubmit = async () => {
+		setIsSubmitting( true );
+
+		const { shoppingCartManagerClient } = await import(
+			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
+		);
+
+		const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
+		const product = products[ productSlug ];
+		const numberOfMailboxes = emailForms.length;
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const emailProperties = getEmailProductProperties(
+			'titan',
+			domainData,
+			product as ProductListItem,
+			numberOfMailboxes
+		);
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const checkoutPath = getEmailCheckoutPath(
+			domain,
+			domainData.domain,
+			router.state.location.pathname,
+			`${ emailForms[ 0 ].localPart }@${ domain }`
+		);
+
+		await shoppingCartManagerClient
+			.forCartKey( site?.ID )
+			.actions.addProductsToCart( [ getCartItems( 'titan' ) ] );
 	};
 
 	return (
@@ -146,7 +198,7 @@ const AddProfessionalEmail = () => {
 				<Card key={ index }>
 					<CardBody>
 						<EmailForm
-							disabled={ false }
+							disabled={ isSubmitting }
 							removeForm={ index > 0 ? () => removeForm( index ) : undefined }
 							state={ state }
 							setState={ ( newState ) => {
@@ -168,6 +220,12 @@ const AddProfessionalEmail = () => {
 					} }
 				>
 					{ __( 'Add another mailbox' ) }
+				</Button>
+			</ButtonStack>
+
+			<ButtonStack justify="flex-start">
+				<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
+					{ __( 'Continue' ) }
 				</Button>
 			</ButtonStack>
 		</PageLayout>
