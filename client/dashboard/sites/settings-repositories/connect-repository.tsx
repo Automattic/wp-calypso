@@ -49,17 +49,17 @@ export default function ConnectRepository() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Connect Repository' ) }
-					description={ __( 'Connect a GitHub repository to deploy code to your WordPress site.' ) }
+					description={ __( 'Deploy code from GitHub to your WordPress site.' ) }
 				/>
 			}
 		>
 			<Card>
 				<CardBody>
 					<ConnectRepositoryForm
-						formTitle={ __( 'Configure repository connection' ) }
+						formTitle={ __( 'Set Up Connection' ) }
 						formDescription={ createInterpolateElement(
 							__(
-								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
+								'Choose your GitHub account and repository to connect with WordPress.com. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
 							),
 							{
 								a: (
