@@ -13,12 +13,13 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import useIntlCollator from '../../app/hooks/use-intl-collator';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SecurityPageHeader from '../security-page-header';
 import ApplicationDetailsModal from './application-details-modal';
 import type { ConnectedApplication } from '@automattic/api-core';
 
@@ -138,7 +139,8 @@ export default function SecurityConnectedApps() {
 		<PageLayout
 			size="small"
 			header={
-				<SecurityPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Connected applications' ) }
 					description={ createInterpolateElement(
 						__(

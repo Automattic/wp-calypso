@@ -28,10 +28,10 @@ export default function Subtitle( {
 	if ( ! timestamp ) {
 		return createInterpolateElement(
 			__(
-				'Optimize your site for lightning-fast performance. <supportLink>Learn more.</supportLink>'
+				'Optimize your site for lightning-fast performance. <learnMoreLink>Learn more</learnMoreLink>'
 			),
 			{
-				supportLink: <InlineSupportLink supportContext="site-performance" />,
+				learnMoreLink: <InlineSupportLink supportContext="site-performance" />,
 			}
 		);
 	}

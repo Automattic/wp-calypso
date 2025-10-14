@@ -25,6 +25,7 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -109,7 +110,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
-	const shouldUseLoggedInView = isEnabled( 'plugins/universal-header' ) ? siteId : isLoggedIn;
+	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const shouldUseLoggedInView =
+		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {

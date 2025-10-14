@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import Breadcrumbs from '../../../app/breadcrumbs';
 import {
 	pluginsScheduledUpdatesNewRoute,
 	pluginsScheduledUpdatesRoute,
@@ -35,6 +36,7 @@ function ScheduledUpdatesNew() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'New schedule' ) }
 					description={ __(
 						'First, choose the sites you want. Next, select the plugins to update. Finally, set how often the updates should run.'

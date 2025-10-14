@@ -4,12 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { usePerformanceData } from '../../app/hooks/site-performance';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
+import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -83,18 +83,24 @@ function PerformanceCardContentWithTests( {
 	site: Site;
 	page: SitePerformancePage;
 } ) {
-	const { desktopReport, mobileReport, desktopScore, mobileScore } = usePerformanceData(
+	const { getReport, hasCompleted } = useSitePerformanceData(
 		page.link,
 		page.wpcom_performance_report_hash
 	);
 
-	if ( ! desktopReport || ! mobileReport ) {
+	if ( ! hasCompleted ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( ! desktopScore || ! mobileScore ) {
+	const desktopReport = getReport( 'desktop' );
+	const mobileReport = getReport( 'mobile' );
+
+	if ( ! desktopReport || ! mobileReport ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
+
+	const desktopScore = desktopReport.overall_score;
+	const mobileScore = mobileReport.overall_score;
 
 	const report = desktopScore < mobileScore ? desktopReport : mobileReport;
 	const worseScore = Math.min( desktopScore, mobileScore );

@@ -1036,10 +1036,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 					padding-inline: 0;
 				}
 			}
-
-			.checkout-steps__submit-footer-wrapper {
-				min-height: auto;
-			}
 		` }
 
 	${ ( props ) =>

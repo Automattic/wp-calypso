@@ -35,9 +35,14 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	GitHubLoginPage,
+	ImportContentFromAnotherPlatformOrFilePage,
 	ImportContentFromMediumPage,
+	ImportContentFromWordPressPage,
 	ImportContentPage,
+	ImportContentWordPressQuestionPage,
 	ImportLetsFindYourSitePage,
+	ImportLetUsMigrateYourSitePage,
+	ImportPlansPage,
 	IncognitoPage,
 	JetpackTrafficPage,
 	LoginPage,
@@ -153,13 +158,33 @@ export const test = base.extend< {
 	 */
 	pageImportContent: ImportContentPage;
 	/**
+	 * Page object representing the Import Plans page.
+	 */
+	pageImportPlans: ImportPlansPage;
+	/**
 	 * Page object representing the Import Content from Medium page.
 	 */
 	pageImportContentFromMedium: ImportContentFromMediumPage;
 	/**
+	 * Page object representing the Import Content from WordPress page.
+	 */
+	pageImportContentFromWordPress: ImportContentFromWordPressPage;
+	/**
+	 * Page object representing the Import Content WordPress Question page.
+	 */
+	pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
+	/**
+	 * Page object representing the Import Content from Another Platform or File page.
+	 */
+	pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
+	/**
 	 * Page object representing the Let's Find Your Site page for importing content.
 	 */
 	pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
+	/**
+	 * Page object representing the Let Us Migrate Your Site page for importing content.
+	 */
+	pageImportLetUsMigrateYourSite: ImportLetUsMigrateYourSitePage;
 	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
@@ -287,9 +312,30 @@ export const test = base.extend< {
 		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
 		await use( importContentFromMediumPage );
 	},
+	pageImportContentFromAnotherPlatformOrFile: async ( { page }, use ) => {
+		const importContentFromAnotherPlatformOrFilePage =
+			new ImportContentFromAnotherPlatformOrFilePage( page );
+		await use( importContentFromAnotherPlatformOrFilePage );
+	},
+	pageImportContentFromWordPress: async ( { page }, use ) => {
+		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
+		await use( importContentFromWordPressPage );
+	},
 	pageImportLetsFindYourSite: async ( { page }, use ) => {
 		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
 		await use( letsFindYourSitePage );
+	},
+	pageImportLetUsMigrateYourSite: async ( { page }, use ) => {
+		const importLetUsMigrateYourSitePage = new ImportLetUsMigrateYourSitePage( page );
+		await use( importLetUsMigrateYourSitePage );
+	},
+	pageImportPlans: async ( { page }, use ) => {
+		const importPlansPage = new ImportPlansPage( page );
+		await use( importPlansPage );
+	},
+	pageImportContentWordpressQuestion: async ( { page }, use ) => {
+		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
+		await use( importContentWordpressQuestionPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );

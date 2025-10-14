@@ -9,6 +9,7 @@ import {
 	__experimentalVStack as VStack,
 	TabPanel,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
@@ -16,6 +17,7 @@ import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { isLast7Days } from '../../components/date-range-picker/utils';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -100,6 +102,14 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			header={
 				<PageHeader
 					title={ __( 'Logs' ) }
+					description={ createInterpolateElement(
+						__(
+							'View and download various server logs. <learnMoreLink>Learn more</learnMoreLink>'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="site-monitoring-logs" />,
+						}
+					) }
 					actions={
 						shouldShowDateRangePicker ? (
 							<DateRangePicker

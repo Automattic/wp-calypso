@@ -1,11 +1,12 @@
 import { Page } from 'playwright';
-import { DataHelper } from '../..';
+import { DataHelper, ImportFileContentPage } from '../..';
 
 /**
  * Represents the Import Content from Medium page.
  */
 export class ImportContentFromMediumPage {
 	private page: Page;
+	importFileContentPage: ImportFileContentPage;
 
 	/**
 	 * Constructs an instance of the page.
@@ -14,6 +15,7 @@ export class ImportContentFromMediumPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.importFileContentPage = new ImportFileContentPage( page );
 	}
 
 	/**
@@ -37,29 +39,5 @@ export class ImportContentFromMediumPage {
 	 */
 	get heading() {
 		return this.page.getByRole( 'heading', { name: 'Import content from Medium' } );
-	}
-
-	/**
-	 * Get the text element indicating the uploaded file is ready to be imported.
-	 * @returns The text element indicating the uploaded file is ready to be imported.
-	 */
-	get yourFileIsReadyText() {
-		return this.page.getByText( 'Your file is ready to be imported' );
-	}
-
-	/**
-	 * Get the Import button element.
-	 * @returns The Import button element.
-	 */
-	get importButton() {
-		return this.page.getByRole( 'button', { name: 'Import' } );
-	}
-
-	/**
-	 * 	Uploads a Medium export file via the file input.
-	 * @param filePath Path to the Medium export file to upload.
-	 */
-	async uploadExportFile( filePath: string ): Promise< void > {
-		await this.page.locator( 'input[type="file"]' ).setInputFiles( filePath );
 	}
 }

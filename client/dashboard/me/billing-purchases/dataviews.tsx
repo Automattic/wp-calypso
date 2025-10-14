@@ -20,7 +20,7 @@ import {
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
-import { getPurchaseUrl, getAddPaymentMethodUrlFor } from './urls';
+import { getPurchaseUrl } from './urls';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
@@ -51,12 +51,14 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function InfoPopover( { children }: { children: ReactNode } ) {
+function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	return (
 		<span>
 			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
-			{ isTooltipVisible && <Popover>{ children }</Popover> }
+			{ isTooltipVisible && (
+				<Popover className="billing-purchase-info-popover">{ children }</Popover>
+			) }
 		</span>
 	);
 }
@@ -134,7 +136,7 @@ function BackupPaymentMethodNotice() {
 			link: <a href="/me/purchases/payment-methods" />,
 		}
 	);
-	return <InfoPopover>{ noticeText }</InfoPopover>;
+	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
 }
 
 function OwnerInfo( {
@@ -170,7 +172,7 @@ function OwnerInfo( {
 		</span>
 	);
 
-	return <InfoPopover>{ tooltipContent }</InfoPopover>;
+	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
 }
 
 export function getFields( {
@@ -413,11 +415,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<div>
-						<PurchasePaymentMethod
-							purchase={ item }
-							isDisconnectedSite={ ! site }
-							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-						/>
+						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
 					</div>
 				);

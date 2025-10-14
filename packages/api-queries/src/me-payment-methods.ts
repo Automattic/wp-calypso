@@ -3,10 +3,18 @@ import {
 	setPaymentMethodBackup,
 	requestPaymentMethodDeletion,
 	setPaymentMethodTaxInfo,
+	fetchAllowedPaymentMethods,
+	saveCreditCard,
+	updateCreditCard,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { PaymentMethodRequestType, StoredPaymentMethod } from '@automattic/api-core';
+import type {
+	PaymentMethodRequestType,
+	StoredPaymentMethod,
+	SaveCreditCardParams,
+	UpdateCreditCardParams,
+} from '@automattic/api-core';
 
 export const userPaymentMethodsQuery = ( {
 	type = 'all',
@@ -68,6 +76,32 @@ export const userPaymentMethodSetTaxInfoQuery = () =>
 	mutationOptions( {
 		mutationFn: ( data: Pick< StoredPaymentMethod, 'stored_details_id' | 'tax_location' > ) =>
 			setPaymentMethodTaxInfo( data.stored_details_id, data.tax_location ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'me', 'payment-methods' ],
+			} );
+		},
+	} );
+
+export const allowedPaymentMethodsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'allowed-payment-methods' ],
+		queryFn: fetchAllowedPaymentMethods,
+	} );
+
+export const saveCreditCardMutation = () =>
+	mutationOptions( {
+		mutationFn: ( params: SaveCreditCardParams ) => saveCreditCard( params ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'me', 'payment-methods' ],
+			} );
+		},
+	} );
+
+export const updateCreditCardMutation = () =>
+	mutationOptions( {
+		mutationFn: ( params: UpdateCreditCardParams ) => updateCreditCard( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'me', 'payment-methods' ],

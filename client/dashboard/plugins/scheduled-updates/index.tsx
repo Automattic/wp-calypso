@@ -50,7 +50,7 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
 		{
 			id: 'lastUpdate',
 			type: 'integer',
-			label: __( 'Last Update' ),
+			label: __( 'Last update' ),
 			render: ( { item } ) =>
 				item.lastUpdate
 					? formatDate( new Date( item.lastUpdate * 1000 ), locale, {
@@ -62,7 +62,7 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
 		{
 			id: 'nextUpdate',
 			type: 'integer',
-			label: __( 'Next Update' ),
+			label: __( 'Next update' ),
 			render: ( { item } ) =>
 				formatDate( new Date( item.nextUpdate * 1000 ), locale, {
 					dateStyle: 'medium',

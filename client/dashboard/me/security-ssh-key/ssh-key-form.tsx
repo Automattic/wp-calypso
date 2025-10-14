@@ -157,7 +157,7 @@ export default function SshKeyForm( {
 							/>
 						) }
 						{ isEditing && sshKey && (
-							<BaseControl label={ __( 'Current public SSH key' ) }>
+							<BaseControl __nextHasNoMarginBottom label={ __( 'Current public SSH key' ) }>
 								<Card isRounded={ false }>
 									<CardBody>
 										<VStack spacing={ 2 }>

@@ -79,8 +79,20 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 	} > = [];
 	const allData = [];
 	let currentValuation;
-	for ( let i = dates.length - 1; i > Math.max( 0, dates.length - 1 - WEEK_TO_SHOW ); i-- ) {
-		const date = dates[ i ];
+
+	const dataValues = [];
+	// Start from the most recent data and go backwards until we have enough data points or reach the start of available data.
+	for ( let i = dates.length - 1; i >= 0; i-- ) {
+		if ( values[ i ] !== null && values[ i ] !== undefined ) {
+			dataValues.push( { date: dates[ i ], value: values[ i ] } );
+			if ( dataValues.length >= WEEK_TO_SHOW ) {
+				break;
+			}
+		}
+	}
+
+	// Loop through the date range
+	for ( const { date, value } of dataValues ) {
 		const formattedDate =
 			typeof date === 'string'
 				? date
@@ -90,7 +102,7 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 						date.day.toString().padStart( 2, '0' ),
 				  ].join( '-' );
 
-		const nextValuation = mapThresholdsToStatus( metric, values[ i ] );
+		const nextValuation = mapThresholdsToStatus( metric, value );
 		if ( nextValuation !== currentValuation ) {
 			const lastData = seriesData[ seriesData.length - 1 ]?.data?.slice().pop();
 			currentValuation = nextValuation;
@@ -106,7 +118,7 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 
 		const data = {
 			date: new Date( formattedDate ),
-			value: getFormattedValue( metric, values[ i ] ),
+			value: getFormattedValue( metric, value ),
 		};
 		seriesData[ seriesData.length - 1 ].data.push( data );
 		allData.push( data );
@@ -124,7 +136,7 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 			...seriesData,
 		],
 		yScale: {
-			domain: [ 0, maxY === 0 ? maxY : maxY * 1.5 ] as [ number, number ],
+			domain: [ 0, maxY === 0 ? 1 : maxY * 1.5 ] as [ number, number ],
 		},
 	};
 };

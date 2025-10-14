@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -17,9 +18,12 @@ export default function Plugin() {
 
 	if ( ! isLoading && ! plugin ) {
 		return (
-			<PageLayout size="large" header={ <PageHeader title={ __( 'Plugin Not Found' ) } /> }>
-				<div>{ __( 'Plugin not found' ) }</div>
-			</PageLayout>
+			<PageLayout
+				size="large"
+				header={
+					<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Plugin not found' ) } />
+				}
+			/>
 		);
 	}
 
@@ -28,11 +32,8 @@ export default function Plugin() {
 			size="large"
 			header={
 				<VStack spacing={ 2 }>
-					<Text as="p" variant="muted">
-						{ __( 'Manage plugins' ) }
-					</Text>
-
 					<PageHeader
+						prefix={ <Breadcrumbs length={ 2 } /> }
 						decoration={ icon && <img src={ icon } alt={ plugin?.name } /> }
 						title={
 							plugin ? (

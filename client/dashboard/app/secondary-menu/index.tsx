@@ -62,7 +62,7 @@ function Help() {
 
 // User profile dropdown component
 function UserProfile() {
-	const { user } = useAuth();
+	const { user, logoutUrl, handleLogout } = useAuth();
 	const { supports } = useAppContext();
 	const openCommandPalette = useOpenCommandPalette();
 
@@ -119,7 +119,9 @@ function UserProfile() {
 						</MenuGroup>
 					) }
 					<MenuGroup>
-						<MenuItem onClick={ () => {} }>{ __( 'Log out' ) }</MenuItem>
+						<RouterLinkMenuItem onClick={ handleLogout } reloadDocument to={ logoutUrl }>
+							{ __( 'Log out' ) }
+						</RouterLinkMenuItem>
 					</MenuGroup>
 				</VStack>
 			) }

@@ -16,6 +16,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
@@ -383,6 +384,7 @@ export function maybeRedirectLoggedOut( context, next ) {
 export function renderPluginsSidebar( context, next ) {
 	const state = context.store.getState();
 	const siteUrl = getSiteFragment( context.path );
+	const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
 
 	if ( ! isUserLoggedIn( state ) ) {
 		next();
@@ -391,6 +393,7 @@ export function renderPluginsSidebar( context, next ) {
 	if ( ! siteUrl ) {
 		context.secondary =
 			isEnabled( 'plugins/universal-header' ) &&
+			hostingDashboardOptIn &&
 			! (
 				context.path.startsWith( '/plugins/manage' ) ||
 				context.path.startsWith( '/plugins/scheduled-updates' )

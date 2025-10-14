@@ -14,7 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { copy, check, error } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -39,6 +39,22 @@ function McpSetupComponent( { path } ) {
 
 	// Copy button state
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
+
+	// Reauth state
+	const [ reauthRequired, setReauthRequired ] = useState( false );
+
+	// Monitor reauth status
+	useEffect( () => {
+		const checkReauth = () => {
+			const reauth = twoStepAuthorization.isReauthRequired();
+			setReauthRequired( reauth );
+		};
+
+		twoStepAuthorization.on( 'change', checkReauth );
+		checkReauth(); // Initial check
+
+		return () => twoStepAuthorization.off( 'change', checkReauth );
+	}, [] ); // Empty dependency array - only run once on mount
 
 	// MCP client options
 	const mcpClientOptions = [
@@ -130,21 +146,28 @@ function McpSetupComponent( { path } ) {
 		}
 	};
 
-	// Handle loading and error states
-	if ( isLoadingUserSettings || userSettingsError ) {
+	// Handle error states only - allow loading to continue so reauth can show
+	if ( userSettingsError ) {
 		return null;
 	}
+
+	// Common layout wrapper
+	const renderLayout = ( children ) => (
+		<Main wideLayout className="mcp-setup">
+			<PageViewTracker path={ path } title="MCP Setup" />
+			<DocumentHead title={ translate( 'MCP Setup' ) } />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+			{ ! isLoadingUserSettings && ! reauthRequired && children }
+		</Main>
+	);
 
 	// Check if any account-level tools are enabled using the new nested structure
 	const hasEnabledTools = hasEnabledAccountTools( userSettings );
 
 	if ( ! hasEnabledTools ) {
-		return (
-			<Main wideLayout className="mcp-setup">
-				<PageViewTracker path={ path } title="MCP Setup" />
-				<DocumentHead title={ translate( 'MCP Setup' ) } />
-				<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+		return renderLayout(
+			<>
 				<SectionHeader label={ translate( 'Setup Required' ) } />
 				<Card isRounded={ false }>
 					<CardBody>
@@ -163,18 +186,12 @@ function McpSetupComponent( { path } ) {
 						</VStack>
 					</CardBody>
 				</Card>
-			</Main>
+			</>
 		);
 	}
 
-	return (
-		<Main wideLayout className="mcp-setup">
-			<PageViewTracker path={ path } title="MCP Setup" />
-			<DocumentHead title={ translate( 'MCP Setup' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
-
-			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-
+	return renderLayout(
+		<>
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
 				{ translate( 'WordPress.com MCP Setup' ) }
 			</HeaderCake>
@@ -405,7 +422,7 @@ function McpSetupComponent( { path } ) {
 					</CardBody>
 				</Card>
 			</div>
-		</Main>
+		</>
 	);
 }
 

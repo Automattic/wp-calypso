@@ -48,4 +48,13 @@ export class ImportLetsFindYourSitePage {
 		await this.page.getByRole( 'textbox', { name: 'Enter your site address:' } ).fill( url );
 		await this.page.getByRole( 'button', { name: 'Check my site' } ).click();
 	}
+
+	/**
+	 * Clicks the "pick your current platform from a list" button.
+	 */
+	async clickPickFromListButton(): Promise< void > {
+		await this.page
+			.getByRole( 'button', { name: 'pick your current platform from a list' } )
+			.click();
+	}
 }

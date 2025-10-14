@@ -88,22 +88,22 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							} }
 							successOn={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Activated %s' ),
+								__( '%s has been activated.' ),
 								plugin?.name ?? ''
 							) }
 							errorOn={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Failed to activate %s' ),
+								__( 'Failed to activate %s.' ),
 								plugin?.name ?? ''
 							) }
 							successOff={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Deactivated %s' ),
+								__( '%s has been deactivated.' ),
 								plugin?.name ?? ''
 							) }
 							errorOff={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Failed to deactivate %s' ),
+								__( 'Failed to deactivate %s.' ),
 								plugin?.name ?? ''
 							) }
 							actionId="activate"
@@ -141,22 +141,22 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							} }
 							successOn={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Enabled auto‑updates for %s' ),
+								__( 'Auto‑updates for %s have been enabled.' ),
 								plugin?.name ?? ''
 							) }
 							errorOn={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Failed to enable auto‑updates for %s' ),
+								__( 'Failed to enable auto‑updates for %s.' ),
 								plugin?.name ?? ''
 							) }
 							successOff={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Disabled auto‑updates for %s' ),
+								__( 'Auto‑updates for %s have been disabled.' ),
 								plugin?.name ?? ''
 							) }
 							errorOff={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Failed to disable auto‑updates for %s' ),
+								__( 'Failed to disable auto‑updates for %s.' ),
 								plugin?.name ?? ''
 							) }
 							actionId="autoupdate"
