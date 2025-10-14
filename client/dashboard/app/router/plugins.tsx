@@ -32,7 +32,7 @@ export const pluginsIndexRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Sites' ),
+				title: __( 'Plugins' ),
 			},
 		],
 	} ),
