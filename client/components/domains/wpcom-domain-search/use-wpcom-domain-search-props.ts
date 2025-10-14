@@ -26,7 +26,7 @@ export type WPCOMDomainSearchProps = Omit<
 export const useWPCOMDomainSearchProps = ( {
 	currentSiteId,
 	flowName,
-	isFirstDomainFreeForFirstYear,
+	isFirstDomainFreeForFirstYear = false,
 	flowAllowsMultipleDomainsInCart,
 	analyticsSection,
 	query,
@@ -46,24 +46,21 @@ export const useWPCOMDomainSearchProps = ( {
 	const { cart, isNextDomainFree, onContinue } = useWPCOMDomainSearchCart( {
 		cartKey,
 		flowName,
-		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
+		isFirstDomainFreeForFirstYear,
 		flowAllowsMultipleDomainsInCart,
 		onContinue: externalOnContinue,
 		beforeAddDomainToCart: externalBeforeAddDomainToCart,
 	} );
-
-	const cartItemsLength = cart.items.length;
 
 	const config = useMemo( () => {
 		return {
 			...externalConfig,
 			priceRules: {
 				...externalConfig?.priceRules,
-				freeForFirstYear:
-					( cartItemsLength === 0 && isFirstDomainFreeForFirstYear ) || isNextDomainFree,
+				freeForFirstYear: isNextDomainFree,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
+	}, [ externalConfig, isNextDomainFree ] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,

@@ -39,7 +39,6 @@ const wpcomCartToDomainSearchCart = (
 		tld: tld.join( '.' ),
 		salePrice: hasPromotion ? currentPrice : undefined,
 		price: hasPromotion ? originalPrice : currentPrice,
-		isFirstDomainFreeForFirstYear,
 	};
 };
 
