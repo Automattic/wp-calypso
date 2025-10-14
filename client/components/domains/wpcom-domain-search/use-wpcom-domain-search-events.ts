@@ -45,7 +45,7 @@ export const useWPCOMDomainSearchEvents = ( {
 		[ vendor, flowName, analyticsSection ]
 	);
 
-	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10000 );
+	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10_000 );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
