@@ -31,7 +31,7 @@ const createActivity = ( {
 	return {
 		activityDescription: description,
 		activityIcon: icon,
-		activityId: 1,
+		activityId: 'test.' + Math.random().toString(),
 		activityMedia: {
 			available: false,
 			medium_url: '',
