@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 
 /**
- * Represents the Import File Content page.
+ * Represents the Import File Content page which are shared elements between Medium and WordPress imports.
  */
 export class ImportFileContentPage {
 	private page: Page;
@@ -32,8 +32,8 @@ export class ImportFileContentPage {
 	}
 
 	/**
-	 * 	Uploads a Medium export file via the file input.
-	 * @param filePath Path to the Medium export file to upload.
+	 * 	Uploads an export file via the file input.
+	 * @param filePath Path to the export file to upload.
 	 */
 	async uploadExportFile( filePath: string ): Promise< void > {
 		await this.page.locator( 'input[type="file"]' ).setInputFiles( filePath );

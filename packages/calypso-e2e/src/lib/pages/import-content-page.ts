@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 import { DataHelper } from '../..';
 
 /**
- * Represents the Import Content page.
+ * Represents the Import Content page which is a generic page in Calypso used for importing content from a file.
  */
 export class ImportContentPage {
 	private page: Page;
