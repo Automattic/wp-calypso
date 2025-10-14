@@ -10,7 +10,7 @@ import {
 	renderFormattedContent,
 	type ActivityBlockMeta,
 	createFormattedBlock,
-} from '../activity-formatted-block';
+} from '../../logs-activity-formatted-block';
 import type { ActivityBlockContent } from '../types';
 
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );

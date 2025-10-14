@@ -1,4 +1,4 @@
-import parseActivityLogEntryContent from '../../components/logs-activity/api-core-parser';
+import parseActivityLogEntryContent from '../../components/logs-activity-formatted-block/api-core-parser';
 import type { ActivityMediaDetails, Activity } from '../../components/logs-activity/types';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
