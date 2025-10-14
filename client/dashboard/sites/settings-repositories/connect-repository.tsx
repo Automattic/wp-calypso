@@ -56,7 +56,7 @@ export default function ConnectRepository() {
 			<Card>
 				<CardBody>
 					<ConnectRepositoryForm
-						formTitle={ __( 'Set Up Connection' ) }
+						formTitle={ __( 'Set up connection' ) }
 						formDescription={ createInterpolateElement(
 							__(
 								'Choose your GitHub account and repository to connect with WordPress.com. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
