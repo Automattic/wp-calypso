@@ -71,7 +71,7 @@ export default function PhoneNumberInput( {
 				type="tel"
 				label={ __( 'Phone number' ) }
 				value={ data.phoneNumber ?? '' }
-				onChange={ ( value ) => {
+				onChange={ ( value: string | undefined ) => {
 					return onChange( {
 						...data,
 						phoneNumber: value ?? '',

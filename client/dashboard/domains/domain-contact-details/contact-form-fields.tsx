@@ -100,8 +100,8 @@ export const getContactFormFields = (
 					if ( ! raw ) {
 						return null;
 					}
-					const phoneNumber = String( raw ).replace( '+', '' ).split( '.' ).join( '' );
-					const result = validatePhone( phoneNumber, countryCode );
+					const phoneNumber = String( raw ).split( '.' ).join( '' );
+					const result = validatePhone( phoneNumber );
 					return 'error' in result ? result.message : null;
 				},
 			},
