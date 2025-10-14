@@ -1,0 +1,48 @@
+.dashboard-page-header {
+	align-self: center;
+}
+
+.billing-selector {
+	background-color: #fff;
+	border: 1px solid #dbdbdc;
+	padding: 3px;
+	border-radius: 3px;
+	max-width: max-content;
+	margin-left: auto;
+	margin-right: auto;
+
+	.components-button-group .components-button {
+		box-shadow: none;
+		border-radius: 3px;
+	}
+}
+
+.choose-email-solution__card {
+
+	.choose-email-solution__divider {
+		width: 1px;
+		background-color: #dbdbdc;
+		align-self: stretch;
+	}
+
+	.choose-email-solution__select-mailbox {
+		justify-content: center;
+		border-radius: 3px;
+	}
+
+	.titan-logo {
+		height: 32px;
+		align-self: baseline;
+	}
+
+	ul {
+		padding: 0;
+		line-height: 28px;
+		list-style: none;
+	}
+
+	.professional-email-icon {
+		stroke: none;
+		fill: var(--wp-admin-theme-color);
+	}
+}
