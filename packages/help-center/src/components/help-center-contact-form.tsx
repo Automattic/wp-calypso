@@ -156,6 +156,7 @@ export const HelpCenterContactForm = () => {
 
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const skipResources = params.get( 'skip-resources' ) === 'true';
+	const skipSubject = params.get( 'skip-subject' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
 
 	const redirectToArticle = useCallback(
@@ -466,14 +467,16 @@ export const HelpCenterContactForm = () => {
 								onSelfDeclaredSite={ setIsSelfDeclaredSite }
 							/>
 
-							<section>
-								<TextControl
-									className="help-center-contact-form__subject"
-									label={ __( 'Subject', __i18n_text_domain__ ) }
-									value={ subject ?? '' }
-									onChange={ setSubject }
-								/>
-							</section>
+							{ ! skipSubject && (
+								<section>
+									<TextControl
+										className="help-center-contact-form__subject"
+										label={ __( 'Subject', __i18n_text_domain__ ) }
+										value={ subject ?? '' }
+										onChange={ setSubject }
+									/>
+								</section>
+							) }
 							<section>
 								<label
 									className="help-center-contact-form__label"
@@ -489,6 +492,16 @@ export const HelpCenterContactForm = () => {
 									className="help-center-contact-form__message"
 								/>
 							</section>
+							{ getHEsTraySection() }
+							{ ! skipResources && (
+								<HelpCenterSearchResults
+									onSelect={ redirectToArticle }
+									searchQuery={ message || '' }
+									openAdminInNewTab
+									placeholderLines={ 4 }
+									location="help-center-contact-form"
+								/>
+							) }
 						</main>
 						<div className="contact-form-submit">
 							<Button
@@ -513,14 +526,6 @@ export const HelpCenterContactForm = () => {
 								/>
 							) }
 						</div>
-						{ getHEsTraySection() }
-						<HelpCenterSearchResults
-							onSelect={ redirectToArticle }
-							searchQuery={ message || '' }
-							openAdminInNewTab
-							placeholderLines={ 4 }
-							location="help-center-contact-form"
-						/>
 					</div>
 				) }
 			</div>

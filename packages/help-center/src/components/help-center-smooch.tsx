@@ -92,7 +92,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		isHelpCenterShown,
 		isChatLoaded,
 		areSoundNotificationsEnabled,
-		allowPremiumSupport,
+		hasPremiumSupport,
 		connectionStatus,
 	} = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -100,13 +100,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
 			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
 			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
-			allowPremiumSupport: helpCenterSelect.getAllowPremiumSupport(),
+			hasPremiumSupport: helpCenterSelect.getHasPremiumSupport(),
 			connectionStatus: helpCenterSelect.getZendeskConnectionStatus(),
 		};
 	}, [] );
 
-	const allowChat =
-		canConnectToZendesk && enableAuth && ( isEligibleForChat || allowPremiumSupport );
+	const allowChat = canConnectToZendesk && enableAuth && ( isEligibleForChat || hasPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 

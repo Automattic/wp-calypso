@@ -32,7 +32,7 @@ function Help() {
 	};
 
 	const handleCloseHelpCenterApp = useCallback( () => {
-		setShowHelpCenter( false, undefined, undefined, true );
+		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
 
 	return (
