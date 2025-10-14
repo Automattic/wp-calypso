@@ -2,8 +2,8 @@ import { useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import UseMyDomainForm from 'calypso/components/domains/use-my-domain';
-import { WPCOMDomainSearchCartProvider } from 'calypso/components/domains/wpcom-domain-search/domain-search-cart-provider';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import type { StepProps } from './types';
@@ -22,7 +22,7 @@ export const UseMyDomain = ( {
 	const mode = queryObject.get( 'step' ) ?? useMyDomainInputMode.domainInput;
 
 	return (
-		<WPCOMDomainSearchCartProvider>
+		<CalypsoShoppingCartProvider>
 			<UseMyDomainForm
 				analyticsSection={ flowName === 'domain' ? 'domain-first' : 'signup' }
 				initialQuery={ initialQuery }
@@ -77,6 +77,6 @@ export const UseMyDomain = ( {
 					/>
 				) }
 			/>
-		</WPCOMDomainSearchCartProvider>
+		</CalypsoShoppingCartProvider>
 	);
 };
