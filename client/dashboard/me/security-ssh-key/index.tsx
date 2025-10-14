@@ -5,9 +5,10 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SecurityPageHeader from '../security-page-header';
 import SshKey from './ssh-key';
 import SshKeyForm from './ssh-key-form';
 
@@ -57,7 +58,8 @@ export default function SecuritySshKey() {
 		<PageLayout
 			size="small"
 			header={
-				<SecurityPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ isEditing ? __( 'Update SSH key' ) : __( 'SSH key' ) }
 					description={ description }
 				/>
