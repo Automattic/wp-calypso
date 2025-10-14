@@ -39,7 +39,11 @@ export const MailboxForm = ( {
 				value=""
 				onChange={ () => {} }
 				disabled={ disabled }
-				suffix={ <InputControlSuffixWrapper>{ `@${ domain }` }</InputControlSuffixWrapper> }
+				suffix={
+					<InputControlSuffixWrapper>
+						<Text variant="muted">{ `@${ domain }` }</Text>
+					</InputControlSuffixWrapper>
+				}
 			/>
 
 			<VStack>
