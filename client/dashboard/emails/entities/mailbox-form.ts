@@ -15,7 +15,6 @@ export interface TitanProductUser {
 	password?: string;
 }
 
-import { EmailProvider } from '@automattic/api-core';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
@@ -39,10 +38,15 @@ import {
 	RequiredIfVisibleValidator,
 	RequiredValidator,
 } from './validators';
-import type { FormFieldNames, MailboxFormFields, ValidatorFieldNames } from './types';
+import type {
+	FormFieldNames,
+	MailboxFormFields,
+	SupportedEmailProvider,
+	ValidatorFieldNames,
+} from './types';
 import type { Validator } from './validators';
 
-class MailboxForm< T extends EmailProvider > {
+class MailboxForm< T extends SupportedEmailProvider > {
 	existingMailboxNames: string[];
 	formFields: MailboxFormFields;
 	provider: T;
