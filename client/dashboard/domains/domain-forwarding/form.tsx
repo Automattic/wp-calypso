@@ -12,6 +12,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
+import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import { isTargetUrlValid, isSubdomainValid } from './utils';
 import type { DomainForwarding } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -131,7 +132,30 @@ export default function DomainForwardingForm( {
 				label: __( 'Subdomain' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
 				type: 'text' as const,
+				Edit: ( { field, data, onChange } ) => {
+					const { id, getValue } = field;
+					const suffix = `.${ domainName }`;
+					const value = getValue( { item: data } );
+					const validationMessage = field.isValid?.custom?.( data, field );
+
+					return (
+						<SuffixInputControl
+							required={ !! field.isValid?.required }
+							label={ field.label }
+							placeholder={ field.placeholder }
+							value={ value }
+							onChange={ ( value: string ) => {
+								return onChange( { [ id ]: value } );
+							} }
+							customValidity={
+								validationMessage ? { type: 'invalid', message: validationMessage } : undefined
+							}
+							suffix={ suffix }
+						/>
+					);
+				},
 				isValid: {
+					required: true,
 					custom: ( item ) => {
 						if ( ! isSubdomainValid( item.subdomain ) ) {
 							return __(
