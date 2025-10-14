@@ -1006,12 +1006,26 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 				value("mobile", label = "Mobile"),
 			))
 		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
 	}
 
 	triggers {
 		vcs {
 			branchFilter = """
-				+:trunk
+				+:<default>
 			""".trimIndent()
 			triggerRules = """
 				-:**.md

@@ -33,8 +33,8 @@ import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
 import type {
-	GitHubInstallation,
-	GitHubRepository,
+	GithubInstallation,
+	GithubRepository,
 	CreateAndUpdateCodeDeploymentVariables,
 	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
@@ -123,16 +123,16 @@ const RepositorySelector = ( {
 	);
 };
 
-type GitHubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
-	onAddGitHubAccount: () => void;
+type GithubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
+	onAddGithubAccount: () => void;
 };
 
-const GitHubAccountSelector = ( {
+const GithubAccountSelector = ( {
 	field,
 	onChange,
 	data,
-	onAddGitHubAccount,
-}: GitHubAccountSelectorProps ) => {
+	onAddGithubAccount,
+}: GithubAccountSelectorProps ) => {
 	const { id, getValue } = field;
 
 	return (
@@ -141,7 +141,7 @@ const GitHubAccountSelector = ( {
 				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
 					{ __( 'GitHub account' ) }
 				</Text>
-				<Button variant="link" onClick={ onAddGitHubAccount }>
+				<Button variant="link" onClick={ onAddGithubAccount }>
 					{ __( 'Add GitHub account' ) }
 				</Button>
 			</HStack>
@@ -206,7 +206,7 @@ export const ConnectRepositoryForm = ( {
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
 	const { installGithub } = useInstallGithub();
 
-	const selectedInstallation: GitHubInstallation | undefined = useMemo( () => {
+	const selectedInstallation: GithubInstallation | undefined = useMemo( () => {
 		if ( ! installations.length ) {
 			return;
 		}
@@ -221,7 +221,7 @@ export const ConnectRepositoryForm = ( {
 		enabled: !! selectedInstallation,
 	} );
 
-	const selectedRepository: GitHubRepository | undefined = useMemo( () => {
+	const selectedRepository: GithubRepository | undefined = useMemo( () => {
 		if ( ! repositories || formData.selectedRepositoryId === '' ) {
 			return undefined;
 		}
@@ -472,7 +472,7 @@ export const ConnectRepositoryForm = ( {
 		! isDuplicateSelection
 	);
 
-	const handleAddGitHubAccount = useCallback( () => {
+	const handleAddGithubAccount = useCallback( () => {
 		installGithub( {
 			onSuccess: async ( installationId: number ) => {
 				const { data: newInstallations } = await refetchGithubInstallations();
@@ -518,7 +518,7 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: ( props ) => {
 					return (
-						<GitHubAccountSelector { ...props } onAddGitHubAccount={ handleAddGitHubAccount } />
+						<GithubAccountSelector { ...props } onAddGithubAccount={ handleAddGithubAccount } />
 					);
 				},
 				elements: installationOptions,
@@ -570,7 +570,7 @@ export const ConnectRepositoryForm = ( {
 		repositoryHelpText,
 		branchOptions,
 		isLoadingBranches,
-		handleAddGitHubAccount,
+		handleAddGithubAccount,
 		allBranchesConnected,
 	] );
 
@@ -592,7 +592,7 @@ export const ConnectRepositoryForm = ( {
 					) }
 				/>
 				<HStack alignment="center">
-					<Button variant="primary" onClick={ handleAddGitHubAccount }>
+					<Button variant="primary" onClick={ handleAddGithubAccount }>
 						{ __( 'Install the WordPress.com app' ) }
 					</Button>
 				</HStack>
