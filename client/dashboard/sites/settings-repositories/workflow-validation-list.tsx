@@ -23,7 +23,7 @@ import {
 	codePushExample,
 	uploadArtifactExample,
 } from './workflow-yaml-examples';
-import type { GitHubWorkflowValidationItem, GitHubRepository } from '@automattic/api-core';
+import type { GithubWorkflowValidationItem, GithubRepository } from '@automattic/api-core';
 
 export interface WorkflowValidationDefinition {
 	label: string;
@@ -32,12 +32,12 @@ export interface WorkflowValidationDefinition {
 }
 
 interface WorkflowValidationListProps {
-	repository: GitHubRepository;
+	repository: GithubRepository;
 	branchName: string;
 	workflowPath: string;
 }
 
-const getStatusIcon = ( status: GitHubWorkflowValidationItem[ 'status' ] | 'loading' ) => {
+const getStatusIcon = ( status: GithubWorkflowValidationItem[ 'status' ] | 'loading' ) => {
 	if ( status === 'loading' ) {
 		return <Spinner />;
 	}

@@ -5,11 +5,11 @@ import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useDebounce } from '@wordpress/compose';
 import { useCallback, useMemo, useRef, type ComponentProps } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import { recordUseYourDomainButtonClick } from '../../domain-search-v2/register-domain-step/analytics';
-import { WPCOMDomainSearchCartProvider } from './domain-search-cart-provider';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -288,8 +288,8 @@ const DomainSearchWithCart = ( {
 
 export const WPCOMDomainSearch = ( props: DomainSearchProps ) => {
 	return (
-		<WPCOMDomainSearchCartProvider>
+		<CalypsoShoppingCartProvider>
 			<DomainSearchWithCart { ...props } />
-		</WPCOMDomainSearchCartProvider>
+		</CalypsoShoppingCartProvider>
 	);
 };

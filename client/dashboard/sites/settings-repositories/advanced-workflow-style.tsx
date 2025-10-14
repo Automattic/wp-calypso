@@ -11,10 +11,10 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { NewWorkflowWizard } from './new-workflow-wizard';
 import { WorkflowValidationList } from './workflow-validation-list';
-import type { GitHubRepository, GithubWorkflow } from '@automattic/api-core';
+import type { GithubRepository, GithubWorkflow } from '@automattic/api-core';
 
 type AdvancedWorkflowStyleProps = {
-	repository: GitHubRepository;
+	repository: GithubRepository;
 	branchName: string;
 	workflowPath: string;
 	workflows: GithubWorkflow[];

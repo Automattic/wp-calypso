@@ -7,10 +7,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { CodeHighlighter } from '../../components/code-highlighter';
-import type { GitHubRepository, GithubWorkflow } from '@automattic/api-core';
+import type { GithubRepository, GithubWorkflow } from '@automattic/api-core';
 
 interface NewWorkflowWizardProps {
-	repository: GitHubRepository;
+	repository: GithubRepository;
 	repositoryBranch: string;
 	workflows?: GithubWorkflow[];
 	templateName: string;
