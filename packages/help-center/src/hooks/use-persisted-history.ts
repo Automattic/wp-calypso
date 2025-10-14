@@ -67,10 +67,10 @@ class MemoryHistory {
 			this.entries.shift();
 			this.entries.shift();
 			// Keep the start at root so the back button always works.
-			this.entries.unshift( this.createLocation( '/', null ) );
-			this.index--;
+			this.entries.unshift( this.createLocation( '/' ) );
+		} else {
+			this.index++;
 		}
-		this.index++;
 		this.notifyListeners( Action.Push );
 	}
 
