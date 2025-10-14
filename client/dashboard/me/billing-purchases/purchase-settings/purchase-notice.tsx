@@ -354,7 +354,7 @@ function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 					}
 				),
 				{
-					link: <a href={ changePaymentMethodPath } />,
+					link: <Link to={ changePaymentMethodPath } />,
 				}
 			) }
 		</Notice>
