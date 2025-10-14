@@ -29,4 +29,12 @@ export class ImportContentWordPressQuestionPage {
 	async clickImportContentOnlyButton() {
 		await this.page.getByRole( 'button', { name: 'Import content only' } ).click();
 	}
+
+	/**
+	 * Click the "Migrate site" button.
+	 * @returns A promise that resolves when the action is complete.
+	 */
+	async clickMigrateSiteButton() {
+		await this.page.getByRole( 'button', { name: 'Migrate site' } ).click();
+	}
 }

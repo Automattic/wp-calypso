@@ -46,7 +46,7 @@ export class ImportContentPage {
 	 * @returns The WordPress import button element.
 	 */
 	get wordPressImportButton() {
-		return this.page.getByRole( 'button', { name: 'WordPress' } );
+		return this.page.getByRole( 'link', { name: 'WordPress' } ); // It's a link, not a button.
 	}
 
 	/**
@@ -55,6 +55,14 @@ export class ImportContentPage {
 	 */
 	get mediumHeading() {
 		return this.page.getByRole( 'heading', { name: 'Medium' } );
+	}
+
+	/**
+	 * Get the heading for the WordPress import page.
+	 * @returns The heading element for the WordPress import page.
+	 */
+	get wordPressHeading() {
+		return this.page.getByRole( 'heading', { name: 'WordPress' } );
 	}
 
 	/**
