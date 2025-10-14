@@ -88,7 +88,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							} }
 							successOn={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( '%s has been successfully activated.' ),
+								__( '%s has been activated.' ),
 								plugin?.name ?? ''
 							) }
 							errorOn={ sprintf(
@@ -98,7 +98,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							) }
 							successOff={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( '%s has been successfully deactivated.' ),
+								__( '%s has been deactivated.' ),
 								plugin?.name ?? ''
 							) }
 							errorOff={ sprintf(
@@ -141,7 +141,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							} }
 							successOn={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Auto‑updates for %s have been successfully enabled.' ),
+								__( 'Auto‑updates for %s have been enabled.' ),
 								plugin?.name ?? ''
 							) }
 							errorOn={ sprintf(
@@ -151,7 +151,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							) }
 							successOff={ sprintf(
 								// translators: %s is the name of the plugin.
-								__( 'Auto‑updates for %s have been successfully disabled.' ),
+								__( 'Auto‑updates for %s have been disabled.' ),
 								plugin?.name ?? ''
 							) }
 							errorOff={ sprintf(
