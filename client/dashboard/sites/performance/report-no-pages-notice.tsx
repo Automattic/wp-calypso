@@ -7,9 +7,11 @@ export default function ReportNoPagesNotice() {
 		<Notice variant="error" title={ __( 'No pages found' ) }>
 			<Text as="p">
 				{ __(
-					'We couldn’t find any pages to test yet. If you just activated hosting features, they should appear soon.'
+					'We couldn’t find any pages to test yet. If you just activated hosting features, they should appear soon. If the issue persists, please contact support.'
 				) }
 			</Text>
+
+			<Text as="p">{ __( 'If the issue persists, please contact support.' ) }</Text>
 		</Notice>
 	);
 }
