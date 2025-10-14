@@ -20,6 +20,7 @@ import './style.scss';
 interface Props {
 	path: string;
 	isCollapsed: boolean;
+	hasOptIn: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
