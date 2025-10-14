@@ -7,10 +7,12 @@ export type AnalyticsClient = {
 	recordPageView: ( url: string, title: string ) => void;
 };
 
-const AnalyticsContext = createContext< AnalyticsClient >( {
+const defaultNoopAnalyticsClient = {
 	recordTracksEvent() {},
 	recordPageView() {},
-} );
+};
+
+const AnalyticsContext = createContext< AnalyticsClient >( defaultNoopAnalyticsClient );
 
 interface AnalyticsProviderProps {
 	children: React.ReactNode;
@@ -22,7 +24,19 @@ export function AnalyticsProvider( { children, client }: AnalyticsProviderProps 
 }
 
 export function useAnalytics() {
-	return useContext( AnalyticsContext );
+	const context = useContext( AnalyticsContext );
+
+	if (
+		! config< string >( 'env_id' ).includes( 'production' ) &&
+		context === defaultNoopAnalyticsClient
+	) {
+		// eslint-disable-next-line no-console
+		console.error(
+			'useAnalytics() hook expects the <AnalyticsProvider> to be available in the component tree'
+		);
+	}
+
+	return context;
 }
 
 export function bumpStat( group: string, name: string ) {
