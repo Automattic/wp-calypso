@@ -4,14 +4,10 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderFormattedContent, createFormattedBlock } from '../';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
-import {
-	renderFormattedContent,
-	type ActivityBlockMeta,
-	createFormattedBlock,
-} from '../../logs-activity-formatted-block';
-import type { ActivityBlockContent } from '../types';
+import type { ActivityBlockContent, ActivityBlockMeta } from '../types';
 
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn() );
