@@ -130,7 +130,7 @@ class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxF
 	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 }
 
-type SupportedEmailProvider = Extract< EmailProvider, 'google_workspace' | 'titan' >;
+export type SupportedEmailProvider = Extract< EmailProvider, 'google_workspace' | 'titan' >;
 
 const MailboxFormFieldsMap: Record<
 	SupportedEmailProvider,
