@@ -1,0 +1,76 @@
+.canvas {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--color-canvas-background, #1e1e1e);
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+	min-height: 0;
+	min-width: 0;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+/* Content fit modes */
+.contain > * {
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	display: block;
+}
+
+.cover > * {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block; 
+}
+
+.fill > * {
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+	display: block; 
+}
+
+.none > * {
+	object-fit: none;
+	display: block; 
+}
+
+/* Loading state */
+.loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--spacing-3);
+	color: var(--color-muted-foreground);
+}
+
+.loadingSpinner {
+	width: var(--spacing-5);
+	height: var(--spacing-5);
+	border: 2px solid var(--color-muted);
+	border-top: 2px solid var(--color-primary);
+	border-radius: var(--radius-full);
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.loadingText {
+	font-size: var(--text-sm);
+	color: var(--color-muted-foreground);
+}
+
