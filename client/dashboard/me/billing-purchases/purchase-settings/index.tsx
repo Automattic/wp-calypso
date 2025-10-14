@@ -208,7 +208,7 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 		const text = __( 'Email settings' );
-		return <a href="/v2/emails">{ text }</a>;
+		return <Link to="/v2/emails">{ text }</Link>;
 	}
 
 	return null;
