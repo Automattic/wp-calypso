@@ -12,13 +12,29 @@ type Props = {
 };
 
 function formatBytes( bytes: number ) {
-	return filesize( bytes, { round: 0 } );
+	return filesize( bytes, { round: 1 } );
 }
 
 function formatHours( hours: number ) {
 	const rounded = Math.round( hours * 10 ) / 10;
 	// translators: %s is the number of hours of compute used
 	return sprintf( _n( '%s hr', '%s hrs', rounded === 1 ? 1 : 2 ), rounded );
+}
+
+const symbolsBytesPerMonth = {
+	B: 'B-month',
+	KB: 'KB-month',
+	MB: 'MB-month',
+	GB: 'GB-month',
+	TB: 'TB-month',
+	PB: 'PB-month',
+	EB: 'EB-month',
+	ZB: 'ZB-month',
+	YB: 'YB-month',
+};
+
+function formatBytesPerMonth( bytes: number ) {
+	return filesize( bytes, { round: 1, symbols: symbolsBytesPerMonth } );
 }
 
 export default function OverviewFlexUsageCard( { site }: Props ) {
@@ -59,7 +75,7 @@ function StorageStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: nu
 			density="high"
 			strapline={ __( 'Storage' ) }
 			metric={ formatBytes( usedBytes ) }
-			description={ formatBytes( capBytes ) }
+			description={ formatBytesPerMonth( capBytes ) }
 			progressValue={ progressBarValue }
 			progressLabel={ `${ usagePercent }%` }
 		/>
