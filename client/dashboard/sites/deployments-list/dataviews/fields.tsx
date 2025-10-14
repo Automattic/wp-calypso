@@ -88,7 +88,7 @@ export function useDeploymentFields( {
 										{ author.name }
 									</Text>
 								</HStack>
-								{ item.is_active_deployment && <Badge>{ __( 'Active deployment' ) }</Badge> }
+								{ item.is_active_deployment && <Badge>{ __( 'Live deployment' ) }</Badge> }
 							</HStack>
 						</VStack>
 					);
