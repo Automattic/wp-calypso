@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { JetpackLogo } from '@automattic/components';
+import { JetpackLogo, WordPressLogo } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -143,6 +143,7 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 								} }
 								href="/setup/flex-site"
 							>
+								<WordPressLogo className="gridicon" size={ 18 } />
 								<span>{ translate( 'Create a Flex Site' ) }</span>
 							</PopoverMenuItem>
 						) }
