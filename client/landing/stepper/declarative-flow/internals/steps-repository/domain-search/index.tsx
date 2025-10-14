@@ -255,14 +255,15 @@ const DomainSearchStep: StepType< {
 			return false;
 		}
 
-		// Outside of a site context, we should show the free domain for a year discount
-		if ( ! siteSlug || ! site ) {
+		// We always want to show the free domain for a year discount in onboarding
+		if ( isOnboardingFlow( flow ) ) {
 			return true;
 		}
 
-		// If the site has a plan with unused domain credit, return true, false otherwise
-		return site.plan?.has_free_domain_credit;
-	}, [ flow, siteSlug, site ] );
+		// Returning false here defers this decision to cart.next_domain_is_free, which checks
+		// if there's a plan in the cart or if the site has a plan with unused domain credit
+		return false;
+	}, [ flow ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
