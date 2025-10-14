@@ -994,26 +994,28 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 	name = "Pre-Release E2E Tests (Playwright Test)"
 	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
 
-	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile")
-			))
-		}
-	}
-
 	params {
 		text("TEST_GROUP", "@calypso-release")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 	}
 
-	steps {
-		bashNodeScript {
-			name = "Test step"
-			scriptContent = """
-				echo "Running pre-release Playwright tests for project %PROJECT%"
-			"""
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+			""".trimIndent()
 		}
 	}
 })
