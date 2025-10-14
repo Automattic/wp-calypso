@@ -12,7 +12,6 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
-import { useAppContext } from '../../app/context';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -95,11 +94,7 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
-	const { supports } = useAppContext();
-	const isWpcomFlex = Boolean( site.is_wpcom_flex );
-	const showFlexUsageCard = Boolean(
-		supports.sites && supports.sites.flexUsageCard && isWpcomFlex
-	);
+	const showFlexUsageCard = site.is_wpcom_flex;
 
 	return (
 		<PageLayout
