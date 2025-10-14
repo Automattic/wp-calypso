@@ -15,8 +15,6 @@ export default [
 		most_recent_renew_date: '2024-05-01T00:53:21+00:00',
 		amount: 155.4,
 		expiry_date: '2025-05-01T00:00:00+00:00',
-		expiry_message: 'Renews on May 1, 2025',
-		expiry_sub_message: '',
 		expiry_status: 'active',
 		partner_name: null,
 		partner_slug: null,

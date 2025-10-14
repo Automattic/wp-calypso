@@ -1,7 +1,7 @@
 import { snakeToCamelCase } from '@automattic/js-utils';
-import type { PurchasePriceTier, Purchase, RawPurchase, RawPurchaseCreditCard } from '../types';
+import type { PurchasePriceTier, Purchase, RawPurchase } from '../types';
 
-export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): Purchase {
+export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 	const object: Purchase = {
 		id: Number( purchase.ID ),
 		amount: Number( purchase.amount ),
@@ -15,9 +15,6 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canReenableAutoRenewal: Boolean( purchase.can_reenable_auto_renewal ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
-		costToUnbundle: purchase.cost_to_unbundle
-			? Number( purchase.cost_to_unbundle )
-			: Number( purchase.amount ),
 		costToUnbundleText: purchase.cost_to_unbundle_display
 			? purchase.cost_to_unbundle_display
 			: purchase.price_text,
@@ -26,7 +23,6 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		description: purchase.description,
 		domain: purchase.domain,
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
-		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
@@ -116,27 +112,20 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		siteSlug: purchase.site_slug,
 		subscribedDate: purchase.subscribed_date,
 		subscriptionStatus: purchase.subscription_status,
-		tagLine: purchase.tag_line,
-		taxAmount: purchase.tax_amount,
-		taxText: purchase.tax_text,
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 	};
 
-	if ( purchase.purchaser_id ) {
-		object.purchaserId = Number( purchase.purchaser_id );
-	}
-
 	if ( isCreditCardPurchase( purchase ) ) {
 		object.payment.creditCard = {
 			id: Number( purchase.payment_card_id ),
-			type: purchase.payment_card_type,
+			type: purchase.payment_card_type ?? '',
 			displayBrand: purchase.payment_card_display_brand,
-			processor: purchase.payment_card_processor,
-			number: purchase.payment_details,
-			expiryDate: purchase.payment_expiry,
+			processor: purchase.payment_card_processor ?? '',
+			number: purchase.payment_details ?? '',
+			expiryDate: purchase.payment_expiry ?? '',
 		};
 	}
 
@@ -147,15 +136,11 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 	return object;
 }
 
-function isCreditCardPurchase(
-	purchase: RawPurchase | RawPurchaseCreditCard
-): purchase is RawPurchaseCreditCard {
+function isCreditCardPurchase( purchase: RawPurchase ): boolean {
 	return purchase.payment_type === 'credit_card';
 }
 
-export function createPurchasesArray(
-	dataTransferObject: undefined | ( RawPurchase | RawPurchaseCreditCard )[]
-): Purchase[] {
+export function createPurchasesArray( dataTransferObject: undefined | RawPurchase[] ): Purchase[] {
 	if ( ! Array.isArray( dataTransferObject ) ) {
 		return [];
 	}

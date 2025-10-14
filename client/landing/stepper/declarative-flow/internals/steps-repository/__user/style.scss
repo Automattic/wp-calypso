@@ -44,6 +44,10 @@ $breakpoint-mobile: 660px;
 			padding-right: 0;
 		}
 	}
+
+	.dashboard-notice {
+		margin-bottom: 2rem;
+	}
 }
 
 .step-route.user:not(:has(.step-container-v2--user)) {

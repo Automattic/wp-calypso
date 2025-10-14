@@ -14,7 +14,7 @@ export function getPurchaseUrlForId( id: number | string ) {
 }
 
 export function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
-	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
+	return `/me/billing/purchases/${ purchase.ID }/payment-method/change`;
 }
 
 export function getChangePaymentMethodUrlFor( purchase: Purchase ): string {
