@@ -1,6 +1,7 @@
 import { TextControl, SelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { HELP_CENTER_STORE } from '../stores';
 import { SitePicker } from '../types';
@@ -19,8 +20,10 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 		return helpCenterSelect.getUserDeclaredSiteUrl();
 	}, [] );
 
+	const { site } = useHelpCenterContext();
 	// The lack of site slug implies the user has no sites at all.
 	const siteSlug = useSiteSlug();
+	const siteLabel = site?.name || siteSlug || '';
 
 	return (
 		<>
@@ -30,7 +33,7 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 						label="Site"
 						disabled={ disabled }
 						options={ [
-							{ label: siteSlug, value: 'current' },
+							{ label: siteLabel, value: 'current' },
 							{ label: __( 'Another site' ), value: 'another_site' },
 						] }
 						onChange={ ( value ) => {
