@@ -16,8 +16,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'pix';
 		case 'WPCOM_Billing_Ebanx':
 			return 'ebanx';
-		case 'WPCOM_Billing_VGS_Ebanx':
-			return 'vgs-ebanx';
 		case 'WPCOM_Billing_PayPal_Direct':
 			return 'paypal-direct';
 		case 'WPCOM_Billing_PayPal_Express':
@@ -62,8 +60,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 	switch ( paymentMethod ) {
 		case 'existingCard':
 			return 'WPCOM_Billing_MoneyPress_Stored';
-		case 'vgs-ebanx':
-			return 'WPCOM_Billing_VGS_Ebanx';
 		case 'pix':
 			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix';
 		case 'ebanx':
@@ -104,7 +100,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_MoneyPress_Stored':
-		case 'WPCOM_Billing_VGS_Ebanx':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
@@ -133,7 +128,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 	}
 	switch ( slug ) {
 		case 'ebanx':
-		case 'vgs-ebanx':
 		case 'pix':
 		case 'netbanking':
 		case 'paypal-direct':

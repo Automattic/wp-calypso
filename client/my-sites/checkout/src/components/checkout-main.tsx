@@ -52,7 +52,6 @@ import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
-import { vgsEbanxProcessor } from '../lib/vgs-ebanx-processor';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -545,8 +544,6 @@ export default function CheckoutMain( {
 				payPalJsProcessor( transactionData, dataForProcessor ),
 			razorpay: ( transactionData: unknown ) =>
 				razorpayProcessor( transactionData, dataForProcessor, translate ),
-			'vgs-ebanx': ( transactionData: unknown ) =>
-				vgsEbanxProcessor( transactionData, dataForProcessor ),
 		} ),
 		[ dataForProcessor, translate ]
 	);
