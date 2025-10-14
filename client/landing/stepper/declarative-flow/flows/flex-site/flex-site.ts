@@ -2,6 +2,7 @@ import { FLEX_SITE_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 
 async function initialize() {
@@ -37,12 +38,16 @@ const flexSite: FlowV2< typeof initialize > = {
 					// Pass true to remove create-site from history so back button works properly
 					return navigate( STEPS.PROCESSING.slug, undefined, true );
 
-				case 'processing':
-					if ( providedDependencies?.siteSlug ) {
-						return ( window.location.href = `/sites/${ providedDependencies.siteSlug }` );
+				case 'processing': {
+					if (
+						providedDependencies?.processingResult === ProcessingResult.SUCCESS &&
+						typeof providedDependencies.siteSlug === 'string'
+					) {
+						return window.location.replace( `/sites/${ providedDependencies.siteSlug }` );
 					}
 					// Fallback to sites dashboard
-					return ( window.location.href = '/sites' );
+					return window.location.replace( '/sites' );
+				}
 			}
 		};
 

@@ -87,7 +87,7 @@ const FlexSiteCreation: StepType< {
 							type="submit"
 							disabled={ isSiteNameEmpty || isLoading }
 						>
-							{ isLoading ? __( 'Creating...' ) : __( 'Create a site' ) }
+							{ __( 'Create a site' ) }
 						</Button>
 					</div>
 
