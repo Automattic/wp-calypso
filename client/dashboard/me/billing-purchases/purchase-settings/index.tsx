@@ -53,6 +53,7 @@ import {
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
+import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -60,7 +61,6 @@ import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { formatDate } from '../../../utils/datetime';
-import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -208,10 +208,8 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
-		// @TODO Update link url to whatever the hosting dashboard URL is. https://linear.app/a8c/issue/DOTDASH-626/hosting-dashboard-emails-update-purchase-settings-url
-		const url = getEmailManagementPath( purchase.site_slug, purchase.meta );
 		const text = __( 'Email settings' );
-		return <a href={ url }>{ text }</a>;
+		return <Link to={ emailsRoute.to }>{ text }</Link>;
 	}
 
 	return null;
