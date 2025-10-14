@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../../app/breadcrumbs';
 import {
 	pluginsScheduledUpdatesEditRoute,
 	pluginsScheduledUpdatesRoute,
@@ -27,7 +28,7 @@ export default function PluginsScheduledUpdatesEdit() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader /> }
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }
 			notices={
 				error && (
 					<Notice status="error" isDismissible={ false }>
