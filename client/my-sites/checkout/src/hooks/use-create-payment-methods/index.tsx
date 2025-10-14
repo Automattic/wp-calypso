@@ -37,7 +37,6 @@ import {
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
 import { createPixPaymentMethod } from '../../payment-methods/pix';
-import { VgsEbanxCreditCardPaymentMethod } from '../../payment-methods/vgs-ebanx-credit-card';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
@@ -386,14 +385,6 @@ function useCreateRazorpay( {
 	}, [ razorpayConfiguration, isRazorpayReady, cartKey ] );
 }
 
-function useCreateVgsEbanx(): PaymentMethod | null {
-	const isVgsEbanxEnabled = isEnabled( 'checkout/vgs-ebanx' );
-	return useMemo(
-		() => ( isVgsEbanxEnabled ? VgsEbanxCreditCardPaymentMethod() : null ),
-		[ isVgsEbanxEnabled ]
-	);
-}
-
 /**
  * Create all possible payment methods.
  *
@@ -528,8 +519,6 @@ export default function useCreatePaymentMethods( {
 		cartKey,
 	} );
 
-	const vgsEbanxMethod = useCreateVgsEbanx();
-
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
@@ -553,7 +542,6 @@ export default function useCreatePaymentMethods( {
 		wechatMethod,
 		bancontactMethod,
 		razorpayMethod,
-		vgsEbanxMethod,
 	].filter( isValueTruthy );
 
 	// In Germany, PayPal is the preferred option, so we display it before

@@ -62,6 +62,27 @@ type EbanxCardTransactionRequest = {
 	document: string;
 };
 
+type VgsEbanxCardTransactionRequest = {
+	// VGS-specific fields
+	payment_instrument_tokens: string;
+	provider_specific_data: string;
+	isVgsTokenized: true;
+	// Enhanced EBANX fields (VGS tokens replace plain text values)
+	name: string;
+	countryCode: string;
+	number: string; // VGS token instead of plain card number
+	cvv: string; // VGS token instead of plain CVV
+	'expiration-date': string; // VGS token instead of plain expiration
+	state: string;
+	city: string;
+	postalCode: string;
+	address: string;
+	streetNumber: string;
+	phoneNumber: string;
+	document: string;
+	paymentPartner: string;
+};
+
 type EbanxToken = {
 	deviceId: string;
 	token: string;
@@ -191,9 +212,6 @@ async function ebanxCardProcessor(
 	submitData: unknown,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	if ( ! isValidEbanxCardTransactionData( submitData ) ) {
-		throw new Error( 'Required purchase data is missing' );
-	}
 	const {
 		includeDomainDetails,
 		includeGSuiteDetails,
@@ -202,6 +220,41 @@ async function ebanxCardProcessor(
 		reduxDispatch,
 	} = transactionOptions;
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
+
+	// Check if this is VGS tokenized data
+	if ( isValidVgsEbanxCardTransactionData( submitData ) ) {
+		debug( 'processing VGS tokenized EBANX payment' );
+		
+		const formattedTransactionData = createTransactionEndpointRequestPayload( {
+			...submitData,
+			couponId: responseCart.coupon,
+			country: submitData.countryCode || 'BR', // Map countryCode to country
+			domainDetails: getDomainDetails( contactDetails, {
+				includeDomainDetails,
+				includeGSuiteDetails,
+			} ),
+			cart: createTransactionEndpointCartFromResponseCart( {
+				siteId: transactionOptions.siteId,
+				contactDetails:
+					getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+				responseCart: transactionOptions.responseCart,
+			} ),
+			paymentMethodType: 'WPCOM_Billing_Ebanx',
+		} );
+		
+		debug( 'sending VGS EBANX transaction', formattedTransactionData );
+		return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+			.then( makeSuccessResponse )
+			.catch( ( error ) => {
+				debug( 'VGS EBANX transaction failed' );
+				return makeErrorResponse( error.message );
+			} );
+	}
+
+	// Handle regular EBANX card data
+	if ( ! isValidEbanxCardTransactionData( submitData ) ) {
+		throw new Error( 'Required purchase data is missing' );
+	}
 
 	let paymentMethodToken;
 	try {
@@ -376,6 +429,26 @@ function isValidEbanxCardTransactionData(
 		throw new Error( 'Transaction requires data and none was provided' );
 	}
 	return true;
+}
+
+function isValidVgsEbanxCardTransactionData(
+	submitData: unknown
+): submitData is VgsEbanxCardTransactionRequest {
+	const data = submitData as VgsEbanxCardTransactionRequest;
+	if ( ! data ) {
+		return false;
+	}
+	return !!(
+		data.payment_instrument_tokens &&
+		data.provider_specific_data &&
+		data.isVgsTokenized === true &&
+		data.paymentPartner === 'ebanx' &&
+		data.name &&
+		data.countryCode &&
+		data.number &&
+		data.cvv &&
+		data[ 'expiration-date' ]
+	);
 }
 
 interface NewCardResponseData {

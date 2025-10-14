@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -15,6 +16,7 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
+import { VgsCreditCardFields } from './vgs-credit-card-fields';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, StripeFieldChangeInput } from './types';
 
@@ -45,6 +47,11 @@ export default function CreditCardFields( {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
+	const [ vgsFormError, setVgsFormError ] = useState< string | null >( null );
+
+	// Check if VGS form should be used
+	const isVgsEbanxEnabled = isEnabled( 'checkout/vgs-ebanx' );
+	const shouldUseVgsForm = isVgsEbanxEnabled && shouldUseEbanx;
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
@@ -130,6 +137,38 @@ export default function CreditCardFields( {
 	};
 
 	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
+
+	// Render VGS form if enabled (let VgsCreditCardFields handle its own loading state)
+	if ( shouldUseVgsForm && ! vgsFormError ) {
+		return (
+			<StripeFields className="credit-card-form-fields">
+				<VgsCreditCardFields
+					styles={ { input: stripeElementStyle.base } }
+					showFutureChargeNotice
+					onVgsFormError={ setVgsFormError }
+				/>
+
+				{ shouldShowContactFields && (
+					<ContactFields
+						getFieldValue={ getFieldValue }
+						setFieldValue={ setFieldValue }
+						setForBusinessUse={ setForBusinessUse }
+						getErrorMessagesForField={ getErrorMessagesForField }
+						shouldUseEbanx={ shouldUseEbanx }
+						shouldShowTaxFields={ shouldShowTaxFields }
+					/>
+				) }
+
+				{ allowUseForAllSubscriptions && (
+					<AssignToAllPaymentMethods
+						isChecked={ useForAllSubscriptions }
+						isDisabled={ isDisabled }
+						onChange={ setUseForAllSubscriptions }
+					/>
+				) }
+			</StripeFields>
+		);
+	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
