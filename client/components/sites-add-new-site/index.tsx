@@ -21,7 +21,7 @@ interface Props extends PropsWithChildren {
 
 export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 	const translate = useTranslate();
-	const user = useSelector( getCurrentUser ) as any;
+	const user = useSelector( getCurrentUser ) as User;
 
 	return (
 		<AuthProvider>
