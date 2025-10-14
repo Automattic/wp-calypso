@@ -55,7 +55,7 @@ export function useReconcileSchedules(
 
 	const { mutateAsync: runCreate } = useCreateSchedules( toCreate );
 	const { mutateAsync: runEdit } = useEditSchedules( toEdit, scheduleId );
-	const { mutateAsync: runDelete } = useDeleteSchedules( toDelete, scheduleId );
+	const { mutateAsync: runDelete } = useDeleteSchedules();
 
 	const mutateAsync = useCallback(
 		async ( { plugins, frequency, weekday, time }: Inputs ) => {
@@ -67,13 +67,13 @@ export function useReconcileSchedules(
 				tasks.push( runEdit( { plugins, frequency, weekday, time } ) );
 			}
 			if ( toDelete.length ) {
-				tasks.push( runDelete() );
+				tasks.push( runDelete( toDelete, scheduleId ) );
 			}
 
 			await Promise.all( tasks );
 			await queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
 		},
-		[ toCreate, toEdit, toDelete, runCreate, runEdit, runDelete ]
+		[ toCreate, toEdit, toDelete, runCreate, runEdit, runDelete, scheduleId ]
 	);
 
 	return { mutateAsync } as const;

@@ -1,4 +1,4 @@
-import { hostingUpdateSchedulesQuery, queryClient } from '@automattic/api-queries';
+// no imports from api-queries needed here
 import { useLocale } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import { FormToggle, Icon, Tooltip } from '@wordpress/components';
@@ -151,10 +151,7 @@ export default function PluginsScheduledUpdates() {
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
-		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
-		scheduleToDelete?.scheduleId ?? ''
-	);
+	const { mutateAsync: deleteSchedules } = useDeleteSchedules();
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
 	}, [ scheduledUpdates, view, fields ] );
@@ -169,8 +166,9 @@ export default function PluginsScheduledUpdates() {
 		}
 		try {
 			setIsDeletingSchedule( true );
-			await deleteSchedules();
-			await queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
+			await deleteSchedules( [ scheduleToDelete.site.ID ], scheduleToDelete.scheduleId, {
+				optimisticHosting: true,
+			} );
 			createSuccessNotice( __( 'Schedule deleted successfully.' ), { type: 'snackbar' } );
 		} catch ( e ) {
 			const message = e instanceof Error ? e.message : __( 'Failed to delete schedule.' );
