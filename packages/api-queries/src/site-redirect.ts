@@ -8,9 +8,9 @@ export const siteRedirectQuery = ( siteId: number ) =>
 		queryFn: () => fetchSiteRedirect( siteId ),
 	} );
 
-export const updateSiteRedirectMutation = ( siteId: number, location: string ) =>
+export const updateSiteRedirectMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: () => updateSiteRedirect( siteId, location ),
+		mutationFn: ( location: string ) => updateSiteRedirect( siteId, location ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'site', siteId, 'redirect' ],
