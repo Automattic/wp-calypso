@@ -29,7 +29,7 @@ export function useDeleteSchedules() {
 			let rollbackHosting: ( () => void ) | undefined;
 
 			// Apply optional optimistic update to hosting aggregate cache
-			if ( options?.optimisticHosting && siteIds.length && normalizedId ) {
+			if ( options?.optimisticHosting ) {
 				const hostingQuery = hostingUpdateSchedulesQuery();
 				const prevData = queryClient.getQueryData( hostingQuery.queryKey );
 				if ( prevData && typeof prevData === 'object' && 'sites' in prevData ) {
