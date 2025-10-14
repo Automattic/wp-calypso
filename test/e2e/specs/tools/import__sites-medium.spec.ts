@@ -14,7 +14,7 @@ test.describe(
 		annotation: { type: 'flowchart', description: 'https://flowchart.fun/p/envious-tent-cost' },
 	},
 	() => {
-		test( 'As a New WordPress.com free plan user with a simple site, I can use the "Medium import link" on the wp-admin Importers List page to import my content from my Medium account', async ( {
+		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "Medium import link" on the wp-admin Importers List page to import my content from my Medium account', async ( {
 			pageImportContentFromMedium,
 			sitePublic,
 		} ) => {
@@ -48,7 +48,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com import link" on the wp-admin Importers List page to import my content from my Medium account', async ( {
+		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com import link" on the wp-admin Importers List page to import my content from my Medium account', async ( {
 			pageImportContentFromMedium,
 			pageImportLetsFindYourSite,
 			sitePublic,
@@ -93,7 +93,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
+		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
 			sitePublic,
 			pageImportContent,
 		} ) => {
