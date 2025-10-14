@@ -52,7 +52,7 @@ describe( 'transformActivityLogEntry', () => {
 		expect( activity.activityDescription.textDescription ).toBe( 'View post' );
 		expect( activity.activityDescription.items ).toHaveLength( 2 );
 		expect( activity.activityIcon ).toBe( 'info' );
-		expect( activity.activityId ).toBe( 42 );
+		expect( activity.activityId ).toBe( '42' );
 		expect( activity.activityMedia.available ).toBe( true );
 		expect( activity.activityMedia.medium_url ).toBe( 'https://example.com/medium.jpg' );
 		expect( activity.activityActor.actorName ).toBe( 'Jane Doe' );
@@ -87,7 +87,7 @@ describe( 'transformActivityLogEntry', () => {
 		};
 		const activity = transformActivityLogEntry( entry );
 
-		expect( activity.activityId ).toBe( 0 );
+		expect( activity.activityId ).toBe( 'not-a-number' );
 		expect( activity.activityMedia.available ).toBe( false );
 		expect( activity.activityMedia.medium_url ).toBe( '' );
 		expect( activity.activityDescription.items ).toEqual( [ 'No ranges' ] );

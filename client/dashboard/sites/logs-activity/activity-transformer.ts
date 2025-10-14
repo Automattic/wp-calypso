@@ -2,11 +2,6 @@ import parseActivityLogEntryContent from '../../components/logs-activity-formatt
 import type { ActivityMediaDetails, Activity } from '../../components/logs-activity/types';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
-const parseActivityId = ( activityId?: string ): number => {
-	const numericId = Number( activityId );
-	return Number.isFinite( numericId ) ? numericId : 0;
-};
-
 const parseTimestamp = ( published?: string ): number => {
 	if ( ! published ) {
 		return 0;
@@ -71,7 +66,7 @@ export const transformActivityLogEntry = ( entry: ActivityLogEntry ): Activity =
 			items: descriptionItems,
 		},
 		activityIcon: gridicon,
-		activityId: parseActivityId( rawActivityId ),
+		activityId: rawActivityId,
 		activityMedia: normalizeActivityMedia( image ),
 		activityName: name,
 		activityStatus: status ?? '',

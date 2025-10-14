@@ -25,7 +25,7 @@ export interface ActivityMediaDetails {
 export interface Activity {
 	activityDescription: ActivityDescription;
 	activityIcon?: string;
-	activityId: number;
+	activityId: string;
 	activityMedia: ActivityMediaDetails;
 	activityName: string;
 	activityStatus: string;
