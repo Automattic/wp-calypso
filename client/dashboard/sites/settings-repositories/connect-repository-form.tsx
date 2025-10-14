@@ -530,7 +530,7 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: RepositorySelector,
 				elements: repositoryOptions,
-				description: repositoryHelpText,
+				description: repositoryHelpText as string,
 			},
 			{
 				id: 'branch',
