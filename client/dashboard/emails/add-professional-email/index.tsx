@@ -3,12 +3,15 @@ import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { MailboxForm } from './components/mailbox-form';
 
 const AddProfessionalEmail = () => {
 	return (
 		<PageLayout header={ <PageHeader /> } size="small">
 			<Card>
-				<CardBody>.</CardBody>
+				<CardBody>
+					<MailboxForm disabled={ false } />
+				</CardBody>
 			</Card>
 
 			<ButtonStack justify="flex-start">
