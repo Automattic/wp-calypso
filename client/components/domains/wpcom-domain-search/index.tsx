@@ -32,7 +32,7 @@ const DomainSearchWithCartAndAnalytics = ( {
 	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
 	const cartKey = props.currentSiteId ?? sitelessCartKey;
 
-	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
+	const { cart, isNextDomainFree, onContinue } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
 		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear || false,
@@ -65,12 +65,10 @@ const DomainSearchWithCartAndAnalytics = ( {
 		return {
 			...analyticsEvents,
 			...props.events,
+			onContinue,
 			onQueryChange: ( query ) => {
 				analyticsEvents.onQueryChange?.( query );
 				props.events?.onQueryChange?.( query );
-			},
-			onContinue: () => {
-				props.events?.onContinue?.( items );
 			},
 			onSkip: ( suggestion ) => {
 				analyticsEvents.onSkip?.( suggestion );
@@ -81,7 +79,7 @@ const DomainSearchWithCartAndAnalytics = ( {
 				props.events?.onExternalDomainClick?.( domainName );
 			},
 		};
-	}, [ analyticsEvents, props.events, items ] );
+	}, [ analyticsEvents, props.events, onContinue ] );
 
 	return <DomainSearch { ...props } config={ config } cart={ cart } events={ events } />;
 };

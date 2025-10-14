@@ -136,7 +136,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 			isNextDomainFree: shouldFirstDomainBeFree
 				? domainItems.length === 0
 				: responseCart.next_domain_is_free,
-			items: domainItems,
+			onContinue: () => onContinue?.( domainItems ),
 		};
 	}, [
 		responseCart,
