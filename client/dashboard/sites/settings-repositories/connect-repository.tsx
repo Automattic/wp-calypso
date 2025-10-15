@@ -5,8 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, CardBody, Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
@@ -57,19 +56,8 @@ export default function ConnectRepository() {
 				<CardBody>
 					<ConnectRepositoryForm
 						formTitle={ __( 'Configure repository connection' ) }
-						formDescription={ createInterpolateElement(
-							__(
-								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
-							),
-							{
-								a: (
-									<Button
-										variant="link"
-										target="_blank"
-										href={ `https://github.com/settings/installations/${ installations[ 0 ]?.external_id }` }
-									/>
-								),
-							}
+						formDescription={ __(
+							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
 						) }
 						onCancel={ handleCancel }
 						mutation={ createMutation }

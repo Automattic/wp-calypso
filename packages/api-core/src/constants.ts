@@ -72,7 +72,7 @@ export const HostingFeatures = {
 	CACHING: DotcomFeatures.ATOMIC,
 	DATABASE: DotcomFeatures.SFTP,
 	DEFENSIVE_MODE: DotcomFeatures.SFTP,
-	DEPLOYMENT: DotcomFeatures.ATOMIC,
+	DEPLOYMENT: DotcomFeatures.SSH,
 	LOGS: DotcomFeatures.ATOMIC,
 	ACTIVITY_LOG: DotcomFeatures.FULL_ACTIVITY_LOG,
 	MONITOR: DotcomFeatures.ATOMIC,

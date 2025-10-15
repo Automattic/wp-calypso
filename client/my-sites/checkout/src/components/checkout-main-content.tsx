@@ -65,10 +65,6 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -292,7 +288,6 @@ function CheckoutSidebarNudge( {
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
@@ -307,11 +302,7 @@ function CheckoutSidebarNudge( {
 
 	if ( isDIFMInCart ) {
 		return (
-			<CheckoutSidebarNudgeWrapper
-				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-					streamlinedPriceExperimentAssignment
-				) }
-			>
+			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
 			</CheckoutSidebarNudgeWrapper>
 		);
@@ -323,11 +314,7 @@ function CheckoutSidebarNudge( {
 	 */
 
 	return (
-		<CheckoutSidebarNudgeWrapper
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
-		>
+		<CheckoutSidebarNudgeWrapper>
 			{ ! ( productsWithVariants.length > 1 ) && (
 				<>
 					<CheckoutSidebarPlanUpsell />
@@ -404,11 +391,6 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
-
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
-		streamlinedPriceExperimentAssignment
-	);
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -642,15 +624,7 @@ export default function CheckoutMainContent( {
 								</div>
 							) }
 
-							{ isStreamlinedPrice ? (
-								<WPCheckoutOrderSummary siteId={ siteId } />
-							) : (
-								<WPCheckoutOrderSummary
-									siteId={ siteId }
-									onChangeSelection={ changeSelection }
-									showFeaturesList
-								/>
-							) }
+							<WPCheckoutOrderSummary siteId={ siteId } />
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
 								areThereDomainProductsInCart={ areThereDomainProductsInCart }
@@ -664,10 +638,7 @@ export default function CheckoutMainContent( {
 
 	const checkoutMainContent = (
 		<RestorableProductsProvider>
-			<WPCheckoutMainContent
-				className="checkout-main-content"
-				isStreamlinedPrice={ isStreamlinedPrice }
-			>
+			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
 				{ isStepContainerV2 ? (
 					<Step.Heading
@@ -880,13 +851,7 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper
-				className="checkout-wrapper"
-				isLargeViewport={ isLargeViewport }
-				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-					streamlinedPriceExperimentAssignment
-				) }
-			>
+			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
 				{ checkoutSummary }
 				{ checkoutMainContent }
 			</WPCheckoutWrapper>
@@ -894,12 +859,7 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer
-			isLargeViewport={ isLargeViewport }
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
-		>
+		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }
 				secondColumnWidth={ 4 }
@@ -950,7 +910,6 @@ export default function CheckoutMainContent( {
 
 const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
-	isStreamlinedPrice: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
@@ -1004,7 +963,7 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				max-width: 100%;
 			}
 
-			.checkout-sidebar-plan-upsell {
+			.checkout-sidebar-plan-upsell.promo-card {
 				margin: 0;
 				max-width: 100%;
 			}
@@ -1086,7 +1045,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		` }
 	${ ( props ) =>
 		props.isLargeViewport &&
-		props.isStreamlinedPrice &&
 		css`
 			div:has( .checkout-sidebar-content ) {
 				position: sticky;
@@ -1240,21 +1198,14 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div< {
-	isStreamlinedPrice: boolean;
-} >`
+const CheckoutSidebarNudgeWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	grid-area: nudge;
 	row-gap: 16px;
 
 	& > * {
-		max-width: 288px;
-		${ ( props ) =>
-			props.isStreamlinedPrice &&
-			css`
-				max-width: 384px;
-			` }
+		max-width: 384px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -1464,7 +1415,6 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
-	isStreamlinedPrice?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
@@ -1476,14 +1426,9 @@ const WPCheckoutWrapper = styled.div< {
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		grid-template-columns: 1fr minmax( 500px, 688px ) 376px 1fr;
+		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
 		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
-		${ ( props ) =>
-			props.isStreamlinedPrice &&
-			css`
-				grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-			` }
 	}
 
 	& > * {
@@ -1499,16 +1444,11 @@ const WPCheckoutWrapper = styled.div< {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 
+	.checkout__summary-area {
+		position: sticky;
+		top: 32px;
+	}
 	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			.checkout__summary-area {
-				position: sticky;
-				top: 32px;
-			}
-		` }
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
 		props.isLargeViewport &&
 		css`
 			.checkout__summary-body,
@@ -1537,9 +1477,7 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div< {
-	isStreamlinedPrice?: boolean;
-} >`
+const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
 	min-height: 100vh;
@@ -1558,29 +1496,27 @@ const WPCheckoutMainContent = styled.div< {
 			padding: 0 24px 0 64px;
 		}
 	}
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			.checkout-line-item .checkout-line-item__remove-product {
-				font-size: 14px;
-			}
-			.form-fieldset.contact-details-form-fields .form__hidden-input a {
-				font-weight: 500;
-				text-decoration: none;
-				color: ${ props.theme.colors.textColorDark };
-				font-size: 14px;
-			}
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
-			.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
-				gap: 10px;
-			}
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
-				margin-bottom: 10px;
-			}
-			.checkout-terms-and-checkboxes a {
-				color: ${ props.theme.colors.textColorDark };
-			}
-		` }
+	${ ( props ) => css`
+		.checkout-line-item .checkout-line-item__remove-product {
+			font-size: 14px;
+		}
+		.form-fieldset.contact-details-form-fields .form__hidden-input a {
+			font-weight: 500;
+			text-decoration: none;
+			color: ${ props.theme.colors.textColorDark };
+			font-size: 14px;
+		}
+		.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
+		.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
+			gap: 10px;
+		}
+		.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
+			margin-bottom: 10px;
+		}
+		.checkout-terms-and-checkboxes a {
+			color: ${ props.theme.colors.textColorDark };
+		}
+	` }
 `;
 
 const WPCheckoutCompletedMainContent = styled.div`
