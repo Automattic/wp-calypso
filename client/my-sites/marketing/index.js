@@ -13,7 +13,6 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
-	jetpackSocial,
 	activitypub,
 } from './controller';
 
@@ -53,16 +52,6 @@ export default function () {
 		siteSelection,
 		navigation,
 		connections,
-		layout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/marketing/jetpack-social/:domain',
-		siteSelection,
-		navigation,
-		jetpackSocial,
 		layout,
 		makeLayout,
 		clientRender

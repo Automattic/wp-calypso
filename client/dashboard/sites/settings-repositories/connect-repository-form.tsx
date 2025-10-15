@@ -23,6 +23,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -72,7 +73,7 @@ const RepositorySelector = ( {
 	onChange,
 	data,
 }: DataFormControlProps< ConnectRepositoryFormData > ) => {
-	const { id, getValue } = field;
+	const { id, getValue, description } = field;
 	const currentValue = getValue?.( { item: data } );
 
 	return (
@@ -99,6 +100,7 @@ const RepositorySelector = ( {
 				} }
 				options={ field.elements || [] }
 				placeholder={ __( 'Select a repository' ) }
+				help={ description }
 				__experimentalRenderItem={ ( { item } ) => {
 					if ( item.private ) {
 						return (
@@ -445,7 +447,17 @@ export const ConnectRepositoryForm = ( {
 			return __( 'No repositories available for this account.' );
 		}
 
-		return undefined;
+		return createInterpolateElement(
+			__( 'Missing GitHub repositories? <a>Adjust permissions on GitHub</a>' ),
+			{
+				a: (
+					<ExternalLink
+						href={ `https://github.com/settings/installations/${ selectedInstallation.external_id }` }
+						children={ null }
+					/>
+				),
+			}
+		);
 	}, [ isLoadingRepositories, repositories, selectedInstallation ] );
 
 	const isAdvancedValid =
@@ -518,7 +530,7 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: RepositorySelector,
 				elements: repositoryOptions,
-				description: repositoryHelpText,
+				description: repositoryHelpText as string,
 			},
 			{
 				id: 'branch',
@@ -590,8 +602,8 @@ export const ConnectRepositoryForm = ( {
 
 	return (
 		<>
-			<SectionHeader level={ 3 } title={ formTitle } description={ formDescription } />
 			<VStack spacing={ 6 }>
+				<SectionHeader level={ 3 } title={ formTitle } description={ formDescription } />
 				<DataForm< ConnectRepositoryFormData >
 					// Force a re-render when the repository changes
 					// Otherwise, the fields that have validation errors will not be reset

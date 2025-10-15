@@ -1194,16 +1194,16 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 
 function IntroductoryOfferCallout( {
 	product,
-	isStreamlinedPrice,
+	shouldShowComparison,
 }: {
 	product: ResponseCartProduct;
-	isStreamlinedPrice?: boolean;
+	shouldShowComparison?: boolean;
 } ) {
 	const translate = useTranslate();
 	const introductoryOffer = getItemIntroductoryOfferDisplay(
 		translate,
 		product,
-		isStreamlinedPrice
+		shouldShowComparison
 	);
 
 	if ( ! introductoryOffer ) {
@@ -1535,7 +1535,7 @@ function CheckoutLineItem( {
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout
 								product={ product }
-								isStreamlinedPrice={ shouldShowComparison }
+								shouldShowComparison={ shouldShowComparison }
 							/>
 							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>

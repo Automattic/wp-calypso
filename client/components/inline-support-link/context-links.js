@@ -451,6 +451,18 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/',
 		post_id: 170164,
 	},
+	'subscribe-block-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/',
+		post_id: 51572,
+	},
+	'import-subscribers': {
+		link: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/',
+		post_id: 220199,
+	},
+	'import-subscribers-jetpack': {
+		link: 'https://jetpack.com/support/newsletter/import-subscribers/',
+		post_id: 198813,
+	},
 	tags: {
 		link: 'https://wordpress.com/support/posts/tags/',
 		post_id: 8586,
