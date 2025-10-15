@@ -12,9 +12,9 @@ import { AddDomainButton } from '../../domains/add-domain-button';
 import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainsView } from '../../domains/dataviews';
-import type { SiteDomain } from '@automattic/api-core';
+import type { DomainSummary } from '@automattic/api-core';
 
-function getDomainId( domain: SiteDomain ) {
+function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
 }
 
@@ -59,7 +59,7 @@ function SiteDomains() {
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
 			) }
 			<DataViewsCard>
-				<DataViews< SiteDomain >
+				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }
