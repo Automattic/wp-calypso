@@ -3,7 +3,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -34,20 +33,13 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-export const redirect = async ( context, next ) => {
+export const redirect = async ( context ) => {
 	const {
 		store: { getState },
 	} = context;
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
-	const isPostShare = context.query.is_post_share; // Added here https://github.com/Automattic/wp-calypso/blob/4b5fdb65b115e02baf743d2487eeca94fbd28a18/client/blocks/reader-share/index.jsx#L74
-
-	// Force load Gutenframe when choosing to share a post to a Simple site.
-	if ( isPostShare && isPostShare === 'true' && ! isAtomicSite( state, siteId ) ) {
-		return next();
-	}
-
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
 
