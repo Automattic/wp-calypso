@@ -352,7 +352,6 @@ const DomainSearchUI = (
 		);
 	};
 
-
 	return (
 		<StepWrapper
 			{ ...props }
