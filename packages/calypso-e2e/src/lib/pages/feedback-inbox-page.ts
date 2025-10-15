@@ -83,7 +83,16 @@ export class FeedbackInboxPage {
 	 * @throws If the text is not found in the response.
 	 */
 	async validateTextInSubmission( text: string ): Promise< void > {
-		await this.page.locator( '.jp-forms__inbox-response' ).getByText( text ).first().waitFor();
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, the response is in a full-screen modal
+			await this.page
+				.locator( '.jp-forms__inbox__response-mobile' )
+				.getByText( text )
+				.first()
+				.waitFor();
+		} else {
+			await this.page.locator( '.jp-forms__inbox-response' ).getByText( text ).first().waitFor();
+		}
 	}
 
 	/**
@@ -184,11 +193,16 @@ export class FeedbackInboxPage {
 	async clickNotSpamAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Not spam' } ).last().click();
-		// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
-		await this.page
-			.getByText( 'Response marked as not spam.' )
-			.first()
-			.waitFor( { timeout: 5000 } );
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, the modal closes after the action
+			await this.page.waitForTimeout( 1000 );
+		} else {
+			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
+			await this.page
+				.getByText( 'Response marked as not spam.' )
+				.first()
+				.waitFor( { timeout: 5000 } );
+		}
 	}
 
 	/**
@@ -197,8 +211,13 @@ export class FeedbackInboxPage {
 	async clickMarkAsSpamAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as spam' } ).last().click();
-		// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
-		await this.page.getByText( 'Response marked as spam.' ).first().waitFor( { timeout: 5000 } );
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, the modal closes after the action
+			await this.page.waitForTimeout( 1000 );
+		} else {
+			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
+			await this.page.getByText( 'Response marked as spam.' ).first().waitFor( { timeout: 5000 } );
+		}
 	}
 
 	/**
@@ -207,8 +226,16 @@ export class FeedbackInboxPage {
 	async clickMarkAsReadAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as read' } ).last().click();
-		// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
-		await this.page.getByText( 'Response marked as read.' ).first().waitFor( { timeout: 5000 } );
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, read/unread actions keep the modal open, so wait for button state change
+			await this.page
+				.getByRole( 'button', { name: 'Mark as unread' } )
+				.last()
+				.waitFor( { timeout: 5000 } );
+		} else {
+			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
+			await this.page.getByText( 'Response marked as read.' ).first().waitFor( { timeout: 5000 } );
+		}
 	}
 
 	/**
@@ -217,8 +244,19 @@ export class FeedbackInboxPage {
 	async clickMarkAsUnreadAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as unread' } ).last().click();
-		// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
-		await this.page.getByText( 'Response marked as unread.' ).first().waitFor( { timeout: 5000 } );
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, read/unread actions keep the modal open, so wait for button state change
+			await this.page
+				.getByRole( 'button', { name: 'Mark as read' } )
+				.last()
+				.waitFor( { timeout: 5000 } );
+		} else {
+			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
+			await this.page
+				.getByText( 'Response marked as unread.' )
+				.first()
+				.waitFor( { timeout: 5000 } );
+		}
 	}
 
 	/**
@@ -227,8 +265,13 @@ export class FeedbackInboxPage {
 	async clickMoveToTrashAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Move to trash' } ).last().click();
-		// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
-		await this.page.getByText( 'Response moved to trash.' ).first().waitFor( { timeout: 5000 } );
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, the modal closes after the action
+			await this.page.waitForTimeout( 1000 );
+		} else {
+			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
+			await this.page.getByText( 'Response moved to trash.' ).first().waitFor( { timeout: 5000 } );
+		}
 	}
 
 	/**
@@ -237,8 +280,13 @@ export class FeedbackInboxPage {
 	async clickRestoreAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Restore' } ).last().click();
-		// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
-		await this.page.getByText( 'Response restored.' ).first().waitFor( { timeout: 5000 } );
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, the modal closes after the action
+			await this.page.waitForTimeout( 1000 );
+		} else {
+			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
+			await this.page.getByText( 'Response restored.' ).first().waitFor( { timeout: 5000 } );
+		}
 	}
 
 	/**

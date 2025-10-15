@@ -192,7 +192,6 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// The email is unique to every run, so will only ever return one response result when the search is successful.
 			// So we loop over a search attempt on the email, looking for a folder tab with a result in it!
 			const searchAndClickFolderWithResult = async () => {
-				await feedbackInboxPage.clearSearch();
 				await feedbackInboxPage.searchResponses( formData1.email );
 				const tabLocator = page
 					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
@@ -363,6 +362,12 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 				await feedbackInboxPage.validateTextInSubmission( formData1.email );
+			}
+		} );
+
+		it( 'Close response modal', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+				await feedbackInboxPage.clickCloseResponse();
 			}
 		} );
 	} );
