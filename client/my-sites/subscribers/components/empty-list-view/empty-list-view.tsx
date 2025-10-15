@@ -1,25 +1,23 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const HELP_CENTER_STORE = HelpCenter.register();
-
 type EmptyListCTALinkProps = {
 	icon: JSX.Element;
 	text: string;
-	url: string;
+	url?: string;
 	eventName: string;
 	openInHelpCenter?: boolean;
+	supportContext?: string;
 };
 
 const EmptyListCTALink = ( {
@@ -28,15 +26,18 @@ const EmptyListCTALink = ( {
 	url,
 	eventName,
 	openInHelpCenter = false,
+	supportContext,
 }: EmptyListCTALinkProps ) => {
-	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { openSupportDoc } = useSupportDocData( {
+		supportContext,
+	} );
 
 	const handleClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( eventName );
 
 		if ( openInHelpCenter ) {
 			event.preventDefault();
-			setShowSupportDoc( url );
+			openSupportDoc();
 		}
 	};
 
@@ -47,7 +48,7 @@ const EmptyListCTALink = ( {
 			as="a"
 			href={ url }
 			rel="noreferrer"
-			target={ openInHelpCenter ? undefined : '_blank' }
+			target="_blank"
 			onClick={ handleClick }
 		>
 			<CardBody className="empty-list-view__card-body">
@@ -74,7 +75,11 @@ const EmptyListView = () => {
 	const subscribeBlockUrl = isWPCOMSite
 		? 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
 		: 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/';
+	const subscribeBlockContext = isWPCOMSite ? 'subscribe-block' : 'subscribe-block-jetpack';
 
+	const importSubscribersContext = isWPCOMSite
+		? 'import-subscribers'
+		: 'import-subscribers-jetpack';
 	const importSubscribersUrl = isWPCOMSite
 		? 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
 		: 'https://jetpack.com/support/newsletter/import-subscribers/';
@@ -91,12 +96,14 @@ const EmptyListView = () => {
 				icon={ chartBar }
 				text={ translate( 'How to turn your visitors into subscribers' ) }
 				url={ localizeUrl( subscribeBlockUrl ) }
+				supportContext={ subscribeBlockContext }
 				eventName="calypso_subscribers_empty_view_subscribe_block_clicked"
 				openInHelpCenter={ isWPCOMSite ?? false }
 			/>
 			<EmptyListCTALink
 				icon={ people }
 				text={ translate( 'How to import existing subscribers' ) }
+				supportContext={ importSubscribersContext }
 				url={ localizeUrl( importSubscribersUrl ) }
 				eventName="calypso_subscribers_empty_view_import_subscribers_clicked"
 				openInHelpCenter={ isWPCOMSite ?? false }
@@ -107,7 +114,6 @@ const EmptyListView = () => {
 					text={ translate( 'How to grow your audience' ) }
 					url={ localizeUrl( 'https://wordpress.com/support/category/grow-your-audience/' ) }
 					eventName="calypso_subscribers_empty_view_grow_your_audience_clicked"
-					openInHelpCenter
 				/>
 			) }
 		</div>
