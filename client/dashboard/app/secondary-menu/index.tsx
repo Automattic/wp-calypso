@@ -129,8 +129,10 @@ function UserProfile() {
 							} }
 						>
 							<HStack>
-								<span>{ __( 'Log out' ) }</span>
-								{ isLoggingOut && <Spinner style={ { margin: 0 } } /> }
+								<span>{ isLoggingOut ? __( 'Logging out…' ) : __( 'Log out' ) }</span>
+								{ isLoggingOut && (
+									<Spinner style={ { width: 24, height: 24, padding: 4, margin: 0 } } />
+								) }
 							</HStack>
 						</MenuItem>
 					</MenuGroup>
