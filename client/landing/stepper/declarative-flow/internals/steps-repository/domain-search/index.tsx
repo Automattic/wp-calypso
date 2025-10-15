@@ -250,21 +250,14 @@ const DomainSearchStep: StepType< {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow ] );
 
+	// For /setup flows, we want to show the free domain for a year discount for all flows
+	// except if we're in a site context or in the 100-year plan or domain flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		// We always want to show the free domain for a year discount in onboarding
-		if ( isOnboardingFlow( flow ) ) {
-			return true;
+		if ( siteSlug || siteId || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return false;
 		}
-
-		// We only want to force the free domain for a year discount in the domain flow if we're not in a site context
-		if ( isDomainFlow( flow ) && ! siteSlug ) {
-			return true;
-		}
-
-		// Returning false here defers this decision to cart.next_domain_is_free, which checks
-		// if there's a plan in the cart or if the site has a plan with unused domain credit
-		return false;
-	}, [ flow, siteSlug ] );
+		return true;
+	}, [ flow, siteSlug, siteId ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
