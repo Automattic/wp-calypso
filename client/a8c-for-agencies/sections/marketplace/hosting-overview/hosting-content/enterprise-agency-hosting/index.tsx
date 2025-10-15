@@ -15,6 +15,7 @@ import NewsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
 import SalesforceLogo from 'calypso/assets/images/logos/salesforce.svg';
 import SlackLogo from 'calypso/assets/images/logos/slack.svg';
 import SpotifyLogo from 'calypso/assets/images/logos/spotify.svg';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
@@ -22,6 +23,8 @@ import HostingTestimonialsSection from '../../../common/hosting-testimonials-sec
 import HostingPlanSection from '../common/hosting-plan-section';
 
 import './style.scss';
+
+const VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE = 20;
 
 export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode: boolean } ) {
 	const translate = useTranslate();
@@ -58,8 +61,15 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 
 						<div>
 							{ isReferMode && isVipPartnerOpportunityReferralsEnabled
-								? translate(
-										"Successfully refer your client to WordPress VIP and you'll earn a one-time 5% commission"
+								? preventWidows(
+										translate(
+											"Successfully refer your client to WordPress VIP and you'll earn up to a %(commission)s%% one-time commission",
+											{
+												args: {
+													commission: VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE,
+												},
+											}
+										)
 								  )
 								: translate(
 										'Combine the ease of WordPress with enterprise-grade security and scalability.'
@@ -132,7 +142,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					{ isVipPartnerOpportunityReferralsEnabled && (
 						<div className="enterprise-agency-hosting__top-details-subheading">
 							{ translate(
-								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
+								'Earn up to a %(commission)s%% one-time commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
 								{
 									components: {
 										a: (
@@ -142,6 +152,9 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 												rel="noopener noreferrer"
 											/>
 										),
+									},
+									args: {
+										commission: VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE,
 									},
 								}
 							) }

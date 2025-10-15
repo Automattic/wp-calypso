@@ -10,7 +10,6 @@ export interface Purchase {
 	asyncPendingPaymentBlockIsSet: boolean;
 	canExplicitRenew: boolean;
 	canReenableAutoRenewal: boolean;
-	costToUnbundle: number;
 	costToUnbundleText: string;
 	currencyCode: string;
 	currencySymbol: string;
@@ -28,7 +27,6 @@ export interface Purchase {
 	domain: string;
 
 	domainRegistrationAgreementUrl: string | null;
-	error: null;
 	expiryDate: string;
 	expiryStatus: string;
 	iapPurchaseManagementLink: string | null;
@@ -70,7 +68,6 @@ export interface Purchase {
 	productSlug: string;
 	productType: string;
 	purchaseRenewalQuantity: number | null;
-	purchaserId?: number;
 
 	/**
 	 * The refund amount for the purchase, not including bundled domains, as a
@@ -161,9 +158,6 @@ export interface Purchase {
 	userId: number;
 	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
-	tagLine: string;
-	taxAmount: number | string | undefined;
-	taxText: string | undefined;
 
 	/**
 	 * The coupon code that will automatically apply on the next renewal.
@@ -192,114 +186,7 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 	maximum_price_monthly_display: never;
 }
 
-export interface RawPurchase {
-	ID: number | string;
-	amount: number | string;
-	attached_to_purchase_id: number | string;
-	auto_renew_coupon_code: string | null;
-	auto_renew_coupon_discount_percentage: number | null;
-	is_auto_renew_enabled: boolean;
-	bill_period_days: number | string;
-	bill_period_label: string;
-	most_recent_renew_date: string;
-	can_disable_auto_renew: boolean;
-	can_reenable_auto_renewal: boolean;
-	async_pending_payment_block_is_set: boolean;
-	can_explicit_renew: boolean;
-	cost_to_unbundle: undefined | number | string;
-	cost_to_unbundle_display: undefined | string;
-	price_text: string;
-	price_tier_list?: Array< RawPurchasePriceTierEntry >;
-	currency_code: string;
-	currency_symbol: string;
-	description: string;
-	domain: string;
-	domain_registration_agreement_url: string | undefined;
-	blog_created_date: string;
-	expiry_date: string;
-	expiry_status: string;
-	iap_purchase_management_link: string | null;
-	included_domain: string;
-	included_domain_purchase_amount: number;
-	introductory_offer: RawPurchaseIntroductoryOffer | null;
-	is_cancelable: boolean;
-	is_domain: boolean;
-	is_domain_registration: boolean;
-	is_hundred_year_domain: boolean;
-	is_locked: boolean;
-	is_iap_purchase: boolean;
-	is_rechargable: boolean;
-	is_refundable: boolean;
-	is_renewable: boolean;
-	is_renewal: boolean;
-	is_woo_express_trial: boolean;
-	is_jetpack_plan_or_product: boolean;
-	meta: string | undefined;
-	ownership_id: number | string | undefined;
-	partner_name: string | undefined;
-	partner_slug: string | undefined;
-	partner_type: string | undefined;
-	partner_key_id: number | undefined;
-	payment_name: string;
-	payment_type:
-		| 'credit_card'
-		| 'paypal_direct'
-		| 'paypal'
-		| 'emergent-paywall'
-		| 'brazil-tef'
-		| string;
-	payment_card_display_brand: string | null;
-	payment_country_name: string;
-	payment_country_code: string | null;
-	stored_details_id: string | null;
-	pending_transfer: boolean;
-	product_id: number | string;
-	product_name: string;
-	product_slug: string;
-	product_type: string;
-	product_display_price: string;
-	price_integer: number;
-	purchaser_id?: number;
-	total_refund_amount: number | undefined;
-	total_refund_currency: string;
-	total_refund_integer: number;
-	total_refund_text: string;
-	refund_amount: number;
-	refund_integer: number;
-	refund_text: string;
-	refund_currency_symbol: string;
-	refund_options: RefundOptions[] | null;
-	refund_period_in_days: number;
-	regular_price_text: string;
-	regular_price_integer: number;
-	renew_date: string;
-	sale_amount: number | undefined;
-	sale_amount_integer: number | undefined;
-	blog_id: number | string;
-	blogname: string;
-	site_slug?: string;
-	subscribed_date: string;
-	subscription_status: 'active' | 'inactive';
-	tag_line: string;
-	tax_amount: number | string | undefined;
-	tax_text: string | undefined;
-	renewal_price_tier_usage_quantity: number | undefined | null;
-	user_id: number | string;
-	payment_card_id: number | string | undefined;
-	payment_card_type: string | undefined;
-	payment_card_processor: string | undefined;
-	payment_details: string | undefined;
-	payment_expiry: string | undefined;
-}
-
-export type RawPurchaseCreditCard = RawPurchase & {
-	payment_type: 'credit_card';
-	payment_card_type: string;
-	payment_card_display_brand: string | null;
-	payment_card_processor: string;
-	payment_details: string | number;
-	payment_expiry: string;
-};
+export type { RawPurchase } from '@automattic/api-core';
 
 export interface RefundOptions {
 	to_product_id: number;

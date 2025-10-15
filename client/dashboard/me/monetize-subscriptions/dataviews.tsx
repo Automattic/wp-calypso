@@ -59,7 +59,7 @@ export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
 		},
 		{
 			id: 'description',
-			label: __( 'Product Description' ),
+			label: __( 'Product description' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,

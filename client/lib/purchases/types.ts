@@ -7,7 +7,6 @@ export type Purchase = Purchases.Purchase;
 export type PurchasePriceTier = Purchases.PurchasePriceTier;
 export type RawPurchasePriceTierEntry = Purchases.RawPurchasePriceTierEntry;
 export type RawPurchase = Purchases.RawPurchase;
-export type RawPurchaseCreditCard = Purchases.RawPurchaseCreditCard;
 export type RefundOptions = Purchases.RefundOptions;
 export type RawPurchaseIntroductoryOffer = Purchases.RawPurchaseIntroductoryOffer;
 export type PurchaseIntroductoryOffer = Purchases.PurchaseIntroductoryOffer;

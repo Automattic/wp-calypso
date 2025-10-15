@@ -139,7 +139,7 @@ function getSitePurchasesStatus( site: SiteWithPurchases ) {
 function getPurchaseStatus( purchase: PurchaseWithStatus, userId?: number ) {
 	const expiry = moment( purchase.expiryDate );
 
-	if ( userId && purchase.userId !== userId && purchase.purchaserId === userId ) {
+	if ( userId && purchase.userId !== userId ) {
 		return 'ownershipTransferred';
 	}
 

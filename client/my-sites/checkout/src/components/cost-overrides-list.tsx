@@ -24,7 +24,6 @@ import {
 	getLabel,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
@@ -47,29 +46,23 @@ const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
-const CostOverridesListStyle = styled.div< {
-	isStreamlinedPrice?: boolean;
-} >`
+const CostOverridesListStyle = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			padding-left: 24px;
-			position: relative;
+	position: relative;
 
-			.rtl & {
-				padding-right: 24px;
-				padding-left: 0;
-			}
-			& svg {
-				top: 0px;
-			}
-		` }
+	&:has( svg ) {
+		padding-left: 24px;
+	}
+
+	.rtl &:has( svg ) {
+		padding-right: 24px;
+		padding-left: 0;
+	}
 
 	& .cost-overrides-list-item {
 		display: grid;
@@ -94,12 +87,11 @@ const CostOverridesListStyle = styled.div< {
 
 	& .cost-overrides-list-item__discount {
 		white-space: nowrap;
-		${ ( props ) =>
-			props.isStreamlinedPrice &&
-			css`
-				color: ${ COLOR_GREEN_60 };
-				font-weight: 500;
-			` }
+	}
+
+	&:has( svg ) .cost-overrides-list-item__discount {
+		color: ${ COLOR_GREEN_60 };
+		font-weight: 500;
 	}
 `;
 
@@ -387,7 +379,7 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
 	position: absolute;
-	top: 1px;
+	top: 0;
 	left: 0;
 
 	.rtl & {
@@ -479,7 +471,6 @@ export function CouponCostOverride( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -493,14 +484,8 @@ export function CouponCostOverride( {
 	const label =
 		isOnboardingAffiliateFlow || isOnboardingUnifiedFlow ? getAffiliateCouponLabel() : couponLabel;
 	return (
-		<CostOverridesListStyle
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
-		>
-			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-				<WPCheckoutCheckIcon />
-			) }
+		<CostOverridesListStyle>
+			<WPCheckoutCheckIcon />
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }

@@ -71,20 +71,20 @@ const EmptyListView = () => {
 			</p>
 			<EmptyListCTALink
 				icon={ chartBar }
-				text={ translate( 'Turn your visitors into subscribers' ) }
+				text={ translate( 'How to turn your visitors into subscribers' ) }
 				url={ localizeUrl( subscribeBlockUrl ) }
 				eventName="calypso_subscribers_empty_view_subscribe_block_clicked"
 			/>
 			<EmptyListCTALink
 				icon={ people }
-				text={ translate( 'Import existing subscribers' ) }
+				text={ translate( 'How to import existing subscribers' ) }
 				url={ localizeUrl( importSubscribersUrl ) }
 				eventName="calypso_subscribers_empty_view_import_subscribers_clicked"
 			/>
 			{ isWPCOMSite && (
 				<EmptyListCTALink
 					icon={ trendingUp }
-					text={ translate( 'Grow your audience' ) }
+					text={ translate( 'How to grow your audience' ) }
 					url={ localizeUrl( 'https://wordpress.com/support/category/grow-your-audience/' ) }
 					eventName="calypso_subscribers_empty_view_grow_your_audience_clicked"
 				/>
