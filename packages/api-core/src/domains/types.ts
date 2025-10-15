@@ -64,37 +64,4 @@ export interface DomainSummary {
 	};
 	subscription_id: string | null;
 	tags: string[];
-
-	/*
-	aftermarket_auction: boolean;
-	can_manage_dns_records: boolean;
-	can_update_contact_info: boolean;
-	can_set_as_primary: boolean;
-	cannot_update_contact_info_reason: string | null;
-	cannot_manage_name_servers_reason: string | null;
-	cannot_manage_dns_records_reason: string | null;
-	current_user_can_add_email: boolean;
-	current_user_can_create_site_from_domain_only: boolean;
-	current_user_can_manage: boolean;
-	email_forwards_count: number;
-	expired: boolean;
-	is_eligible_for_inbound_transfer: boolean;
-	is_hundred_year_domain: boolean;
-	is_pending_whois_update: boolean;
-	is_redeemable: boolean;
-	is_renewable: boolean;
-	is_wpcom_staging_domain: boolean;
-	pending_registration: boolean;
-	pending_registration_at_registry: boolean;
-	pending_renewal: boolean;
-	pending_transfer: boolean;
-	points_to_wpcom: boolean;
-	primary_domain: boolean;
-	registration_date: string;
-	transfer_status: DomainTransferStatus | null;
-	type: DomainTypes;
-	wpcom_domain: boolean;
-	last_transfer_error?: string;
-	transfer_start_date?: string;
-	*/
 }
