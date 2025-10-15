@@ -7,10 +7,11 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
 export function areHostingFeaturesSupported( site?: SiteExcerptData | null ) {
-	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isAtomicOrStagingSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isFlexSite = !! site?.is_wpcom_flex;
 	const isPlanExpired = site?.plan?.expired;
 
-	return isAtomicSite && ! isPlanExpired;
+	return ( isAtomicOrStagingSite || isFlexSite ) && ! isPlanExpired;
 }
 
 export function useAreHostingFeaturesSupported() {
