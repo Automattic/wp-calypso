@@ -411,7 +411,7 @@ export const siteBackupsIndexRoute = createRoute( {
 	path: '/',
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
-		createLazyRoute( 'site-backups-index' )( {
+		createLazyRoute( 'site-backups' )( {
 			component: d.BackupsListPage,
 		} )
 	)
@@ -434,7 +434,7 @@ export const siteBackupDetailIndexRoute = createRoute( {
 	path: '/',
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
-		createLazyRoute( 'site-backup-detail-index' )( {
+		createLazyRoute( 'site-backup-detail' )( {
 			component: d.BackupsListPage,
 		} )
 	)
