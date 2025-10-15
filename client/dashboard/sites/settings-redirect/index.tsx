@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import CreateSiteRedirect from './create-site-redirect';
 import ManageSiteRedirect from './manage-site-redirect';
 
 export default function RedirectsSettings( { siteSlug }: { siteSlug: string } ) {
@@ -17,7 +18,7 @@ export default function RedirectsSettings( { siteSlug }: { siteSlug: string } ) 
 	};
 
 	const renderCreateRedirect = () => {
-		return <div>Create redirect</div>;
+		return <CreateSiteRedirect />;
 	};
 
 	return (

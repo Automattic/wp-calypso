@@ -25,7 +25,7 @@ interface SiteRedirectFormData {
 	redirect: string;
 }
 
-export default function RedirectsSettings( { siteId, currentRedirect }: ManageSiteRedirectProps ) {
+export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageSiteRedirectProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState< SiteRedirectFormData >( {
 		redirect: currentRedirect,
