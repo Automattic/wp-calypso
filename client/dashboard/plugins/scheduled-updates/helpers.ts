@@ -1,4 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
+import { CRON_CHECK_INTERVAL } from './constants';
 import { TimeSlot, Frequency, Weekday, ScheduleCollisions, ScheduledUpdateRow } from './types';
 import type { Site } from '@automattic/api-core';
 
@@ -127,6 +128,28 @@ export function validatePlugins(
 	}
 
 	return error;
+}
+
+// Monitor URL payload shape for create settings
+export type MonitorUrlInput = {
+	monitor_url: string;
+	check_interval: number;
+};
+
+/**
+ * Build Jetpack Monitor URLs payload for a site.
+ * Matches legacy behavior: monitor the home URL and `/wp-cron.php` with the same interval.
+ */
+export function createMonitorUrls(
+	siteUrl: string,
+	checkInterval: number = CRON_CHECK_INTERVAL
+): MonitorUrlInput[] {
+	return [
+		// The home URL needs to be one of the URLs monitored.
+		{ monitor_url: siteUrl, check_interval: checkInterval },
+		// Monitoring the wp-cron.php file to ensure that the cron jobs are running.
+		{ monitor_url: siteUrl + '/wp-cron.php', check_interval: checkInterval },
+	];
 }
 
 /**

@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback } from '@wordpress/element';
 import { useAnalytics } from '../../../app/analytics';
 import { CRON_CHECK_INTERVAL } from '../constants';
-import { prepareTimestamp, runWithConcurrency } from '../helpers';
+import { prepareTimestamp, runWithConcurrency, createMonitorUrls } from '../helpers';
 import { useEligibleSites } from './use-eligible-sites';
 import type { Frequency, Weekday } from '../types';
 import type { Site, CreateSiteUpdateScheduleBody } from '@automattic/api-core';
@@ -81,15 +81,7 @@ export function useCreateSchedules( siteIds: number[] ) {
 								return async () => {
 									await createMonitorForSite( {
 										siteId: site.ID,
-										body: {
-											urls: [
-												{ monitor_url: site.URL, check_interval: CRON_CHECK_INTERVAL },
-												{
-													monitor_url: site.URL + '/wp-cron.php',
-													check_interval: CRON_CHECK_INTERVAL,
-												},
-											],
-										},
+										body: { urls: createMonitorUrls( site.URL, CRON_CHECK_INTERVAL ) },
 									} );
 								};
 							} );
