@@ -1,6 +1,6 @@
 export interface ActivityLogEntry {
 	activity_id: string;
-	actor: ActivityActor;
+	actor: ActivityLogActor;
 	content: {
 		text: string;
 		ranges?: ActivityNotificationRange[];
@@ -10,6 +10,8 @@ export interface ActivityLogEntry {
 	image?: {
 		available: boolean;
 		medium_url: string;
+		thumbnail_url?: string;
+		type?: string;
 		name: string;
 		url: string;
 	};
@@ -40,7 +42,7 @@ export interface ActivityLogIcon {
 }
 export interface ActivityNotificationRange {
 	// Node-local unique ID and parent reference
-	id: string;
+	id: string | number;
 	parent?: string | null;
 	// UCS-2 indices within `text` [start, end)
 	indices: [ number, number ];
@@ -51,6 +53,12 @@ export interface ActivityNotificationRange {
 	url?: string;
 	type: string;
 	intent?: string;
+	site_id?: number;
+	context?: string;
+	root_id?: number;
+	slug?: string;
+	site_slug?: string;
+	uri?: string;
 }
 
 export interface ActivityLogResponse {
@@ -89,7 +97,7 @@ export interface ActivityGenerator {
 	blog_id: number;
 }
 
-export type ActivityActor = {
+export type ActivityLogActor = {
 	// Typically 'Person'; can also be 'Application' or 'Happiness Engineer'
 	type: 'Person' | 'Application' | 'Happiness Engineer';
 	name: string;

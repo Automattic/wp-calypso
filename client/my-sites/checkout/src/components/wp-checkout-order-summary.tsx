@@ -18,10 +18,7 @@ import {
 	isJetpackProduct,
 	isJetpackPlan,
 	isAkismetProduct,
-	planHasFeature,
-	WPCOM_FEATURES_ATOMIC,
 	isWooExpressPlan,
-	isSenseiProduct,
 	PLAN_100_YEARS,
 	type PlanSlug,
 } from '@automattic/calypso-products';
@@ -30,7 +27,6 @@ import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isBillingInfoEmpty,
@@ -47,15 +43,9 @@ import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
-import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
-import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
@@ -82,11 +72,9 @@ const StyledIcon = styled( Icon )`
 `;
 
 export function WPCheckoutOrderSummary( {
-	siteId,
 	onChangeSelection,
 	showFeaturesList,
 }: {
-	siteId: number | undefined;
 	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
@@ -107,7 +95,6 @@ export function WPCheckoutOrderSummary( {
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
 					responseCart={ responseCart }
-					siteId={ siteId }
 					isCartUpdating={ isCartUpdating }
 					onChangeSelection={ onChangeSelection }
 				/>
@@ -118,13 +105,10 @@ export function WPCheckoutOrderSummary( {
 }
 export function CheckoutSummaryFeaturedList( {
 	responseCart,
-	siteId,
 	isCartUpdating,
 	onChangeSelection,
-	isStreamlinedPrice,
 }: {
 	responseCart: ResponseCart;
-	siteId: number | undefined;
 	isCartUpdating: boolean;
 	onChangeSelection?: (
 		uuid: string,
@@ -132,10 +116,7 @@ export function CheckoutSummaryFeaturedList( {
 		productId: number,
 		volume?: number
 	) => void;
-	isStreamlinedPrice?: boolean;
 } ) {
-	const translate = useTranslate();
-
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
 		return null;
@@ -152,25 +133,8 @@ export function CheckoutSummaryFeaturedList( {
 
 	return (
 		<>
-			{ ! isStreamlinedPrice && (
-				<CheckoutSummaryFeatures className="checkout__summary-features">
-					<CheckoutSummaryFeaturesTitle>
-						{ responseCart.is_gift_purchase
-							? translate( 'WordPress.com Gift Subscription' )
-							: translate( 'Included with your purchase' ) }
-					</CheckoutSummaryFeaturesTitle>
-					<CheckoutSummaryFeaturesWrapper
-						siteId={ siteId }
-						nextDomainIsFree={ responseCart.next_domain_is_free }
-					/>
-				</CheckoutSummaryFeatures>
-			) }
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell
-					plan={ plan }
-					onChangeSelection={ onChangeSelection }
-					isStreamlinedPrice={ isStreamlinedPrice }
-				/>
+				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
 		</>
 	);
@@ -200,76 +164,55 @@ function CheckoutSummaryPriceList() {
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 
-	let subtotalBeforeDiscounts = 0;
-	let totalDiscount = 0;
-	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
-		subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-			const originalAmountInteger =
-				monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
-			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-			return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
-		}, 0 );
-		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
-	}
+	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
+		const originalAmountInteger =
+			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
+		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
+		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
+	}, 0 );
+	const totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 
 	return (
 		<>
-			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-				<CheckoutSummaryTitle>
-					<span>{ translate( 'Your order' ) }</span>
-				</CheckoutSummaryTitle>
-			) }
+			<CheckoutSummaryTitle>
+				<span>{ translate( 'Your order' ) }</span>
+			</CheckoutSummaryTitle>
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>
-					{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
-							<span>{ translate( 'Subtotal' ) }</span>
-							<span className="wp-checkout-order-summary__subtotal-price">
-								{ totalDiscount > 0 && (
-									<s>
-										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
-											isSmallestUnit: true,
-											stripZeros: true,
-										} ) }
-									</s>
-								) }
-								<span>
-									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+					<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
+						<span>{ translate( 'Subtotal' ) }</span>
+						<span className="wp-checkout-order-summary__subtotal-price">
+							{ totalDiscount > 0 && (
+								<s>
+									{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 										isSmallestUnit: true,
 										stripZeros: true,
 									} ) }
-								</span>
-							</span>
-						</CheckoutSummarySubtotal>
-					) }
-					{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
-						totalDiscount > 0 && (
-							<CheckoutSummaryTotalDiscount>
-								<span>{ translate( 'Discount' ) }</span>
-								<span className="wp-checkout-order-summary__subtotal-discount">
-									{ formatCurrency( totalDiscount, responseCart.currency, {
-										isSmallestUnit: true,
-										stripZeros: true,
-									} ) }
-								</span>
-							</CheckoutSummaryTotalDiscount>
-						) }
-
-					{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-						<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
-							<span>{ translate( 'Subtotal' ) }</span>
+								</s>
+							) }
 							<span>
 								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 									isSmallestUnit: true,
 									stripZeros: true,
 								} ) }
 							</span>
-						</CheckoutSummaryLineItem>
+						</span>
+					</CheckoutSummarySubtotal>
+					{ totalDiscount > 0 && (
+						<CheckoutSummaryTotalDiscount>
+							<span>{ translate( 'Discount' ) }</span>
+							<span className="wp-checkout-order-summary__subtotal-discount">
+								{ formatCurrency( totalDiscount, responseCart.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ) }
+							</span>
+						</CheckoutSummaryTotalDiscount>
 					) }
+
 					{ taxLineItems.map( ( taxLineItem ) => (
 						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
 							<span>{ taxLineItem.label }</span>
@@ -335,54 +278,6 @@ function SwitchToAnnualPlan( {
 	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
 
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
-}
-
-function CheckoutSummaryFeaturesWrapper( props: {
-	siteId: number | undefined;
-	nextDomainIsFree: boolean;
-} ) {
-	const { siteId, nextDomainIsFree } = props;
-	const signupFlowName = getSignupCompleteFlowName();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	const planHasHostingFeature = responseCart.products.some( ( product ) =>
-		planHasFeature( product.product_slug, WPCOM_FEATURES_ATOMIC )
-	);
-	const hasSenseiProductInCart = responseCart.products.some( ( product ) =>
-		isSenseiProduct( product )
-	);
-	const shouldUseFlowFeatureList =
-		isNewsletterFlow( signupFlowName ) ||
-		hasSenseiProductInCart ||
-		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
-	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
-
-	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
-		return <CheckoutSummaryGiftFeaturesList siteSlug={ giftSiteSlug } />;
-	}
-
-	if ( signupFlowName && shouldUseFlowFeatureList ) {
-		return (
-			<CheckoutSummaryFlowFeaturesList
-				flowName={ signupFlowName }
-				nextDomainIsFree={ nextDomainIsFree }
-			/>
-		);
-	}
-
-	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
-}
-
-function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
-	const translate = useTranslate();
-	return (
-		<CheckoutSummaryFeaturesListWrapper>
-			{ translate(
-				'You are showing your appreciation for %(siteSlug)s by gifting them their next subscription.',
-				{ args: { siteSlug } }
-			) }
-		</CheckoutSummaryFeaturesListWrapper>
-	);
 }
 
 const CheckoutSummaryRefundWindowsContainer = styled.p`
@@ -611,58 +506,6 @@ export function CheckoutSummaryFeaturesList( props: {
 	);
 }
 
-function CheckoutSummaryFlowFeaturesList( {
-	flowName,
-	nextDomainIsFree,
-}: {
-	flowName: string;
-	nextDomainIsFree: boolean;
-} ) {
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
-	);
-	const domains = responseCart.products.filter(
-		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
-	);
-	const hasRenewalInCart = responseCart.products.some(
-		( product ) => product.extra.purchaseType === 'renewal'
-	);
-	const planFeatures = getFlowPlanFeatures(
-		flowName,
-		planInCart,
-		hasDomainsInCart,
-		hasRenewalInCart,
-		nextDomainIsFree
-	);
-
-	return (
-		<CheckoutSummaryFeaturesListWrapper>
-			{ hasDomainsInCart &&
-				domains.map( ( domain ) => {
-					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
-				} ) }
-			{ planFeatures.map( ( feature ) => {
-				return (
-					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
-						<WPCheckoutCheckIcon />
-						{ feature.isHighlightedFeature ? (
-							<strong>{ feature.getTitle() }</strong>
-						) : (
-							feature.getTitle()
-						) }
-					</CheckoutSummaryFeaturesListItem>
-				);
-			} ) }
-			{ isAnyHostingFlow( flowName ) && (
-				<CheckoutSummaryRefundWindows cart={ responseCart } highlight />
-			) }
-		</CheckoutSummaryFeaturesListWrapper>
-	);
-}
-
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
@@ -863,7 +706,6 @@ function CheckoutSummaryAnnualUpsell( props: {
 		productId: number,
 		volume?: number
 	) => void;
-	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -876,11 +718,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 	const shouldShowFreeDomainUpsell = ! (
 		isWooExpressPlan( productSlug ) && Boolean( props.plan.introductory_offer_terms?.enabled )
 	);
-	let title = translate( 'Included with an annual plan' );
-
-	if ( props.isStreamlinedPrice && hasEnTranslation( 'Extra features with annual plans' ) ) {
-		title = translate( 'Extra features with annual plans' );
-	}
+	const title = translate( 'Extra features with annual plans' );
 
 	return (
 		<CheckoutSummaryFeaturesUpsell>
@@ -957,25 +795,17 @@ const CheckoutSummaryFeatures = styled.div`
 `;
 
 const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
-	padding: 0 0 24px;
+	padding-top: 12px;
+	padding-bottom: 0;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	line-height: 1.6;
 
 	& svg {
-		opacity: 50%;
+		opacity: 100%;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 0 0 24px;
-	}
-
-	.checkout-sidebar-plan-upsell-streamlined & {
-		padding-top: 12px;
-		padding-bottom: 0;
-		color: ${ ( props ) => props.theme.colors.textColorDark };
-		line-height: 1.6;
-
-		svg {
-			opacity: 100%;
-		}
 	}
 `;
 
@@ -983,16 +813,13 @@ const CheckoutSummaryFeaturesTitle = styled.h3`
 	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
-	margin-bottom: 12px;
+	font-weight: 500;
+	margin-bottom: 6px;
 
 	& button {
 		font-size: 16px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
-	}
-	.checkout-sidebar-plan-upsell-streamlined & {
-		font-weight: 500;
-		margin-bottom: 6px;
 	}
 `;
 
@@ -1038,15 +865,11 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 	padding-left: 24px;
 	position: relative;
 	overflow-wrap: break-word;
-	color: ${ ( props ) => ( props.isSupported ? 'inherit' : props.theme.colors.textColorLight ) };
+	color: inherit;
 
 	.rtl & {
 		padding-right: 24px;
 		padding-left: 0;
-	}
-
-	.checkout-sidebar-plan-upsell-streamlined & {
-		color: inherit;
 	}
 `;
 CheckoutSummaryFeaturesListItem.defaultProps = {
