@@ -181,30 +181,6 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => getPath( siteName, domainName, 'titan/control-panel', relativeTo, urlParameters );
 
-// Generates URL: /email/:domain/manage/:site
-export const getEmailManagementPath: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo = undefined,
-	urlParameters = {},
-	inSiteContext = false
-) => {
-	if (
-		inSiteContext ||
-		isUnderDomainManagementAll( relativeTo ) ||
-		isUnderCheckoutRoute( relativeTo )
-	) {
-		const prefix =
-			inSiteContext || isUnderDomainSiteContext( relativeTo )
-				? emailSiteContextPrefix
-				: domainsManagementPrefix;
-
-		return `${ prefix }/${ domainName }/${ siteName }${ buildQueryString( urlParameters ) }`;
-	}
-
-	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
-};
-
 export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>
 	getPath( siteName, domainName, 'forwarding', relativeTo );
 

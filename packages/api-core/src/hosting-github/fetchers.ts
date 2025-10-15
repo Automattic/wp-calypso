@@ -1,15 +1,15 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
 import type {
-	GitHubInstallation,
-	GitHubRepository,
-	GitHubRepositoryChecks,
+	GithubInstallation,
+	GithubRepository,
+	GithubRepositoryChecks,
 	GithubWorkflow,
 	GithubWorkflowTemplate,
-	GitHubWorkflowValidation,
+	GithubWorkflowValidation,
 } from './types';
 
-export async function fetchGithubInstallations(): Promise< GitHubInstallation[] > {
+export async function fetchGithubInstallations(): Promise< GithubInstallation[] > {
 	return wpcom.req.get( {
 		path: '/hosting/github/installations',
 		apiNamespace: 'wpcom/v2',
@@ -18,7 +18,7 @@ export async function fetchGithubInstallations(): Promise< GitHubInstallation[] 
 
 export async function fetchGithubRepositories(
 	installationId: number
-): Promise< GitHubRepository[] > {
+): Promise< GithubRepository[] > {
 	return wpcom.req.get( {
 		path: addQueryArgs( '/hosting/github/repositories', {
 			installation_id: installationId,
@@ -47,7 +47,7 @@ export async function fetchGithubRepositoryChecks(
 	repositoryOwner: string,
 	repositoryName: string,
 	repositoryBranch: string
-): Promise< GitHubRepositoryChecks > {
+): Promise< GithubRepositoryChecks > {
 	return wpcom.req.get( {
 		path: addQueryArgs( '/hosting/github/repository/pre-connect-checks', {
 			installation_id: installationId,
@@ -64,7 +64,7 @@ export async function fetchGithubWorkflowChecks(
 	repositoryName: string,
 	repositoryBranch: string,
 	workflowFilename: string
-): Promise< GitHubWorkflowValidation > {
+): Promise< GithubWorkflowValidation > {
 	return wpcom.req.get( {
 		path: addQueryArgs( '/hosting/github/workflows/checks', {
 			repository_owner: repositoryOwner,

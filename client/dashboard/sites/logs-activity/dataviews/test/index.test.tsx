@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import SiteActivityLogsDataViews from '../index';
-import type { Site, LogType } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 import type { DeepPartial } from 'utility-types';
 
 const mockNavigate = jest.fn();
@@ -72,16 +72,71 @@ const mockSite: DeepPartial< Site > = {
 const mockActivityLogsData = {
 	activityLogs: [
 		{
+			summary: 'Plugin updated',
+			content: {
+				text: 'Jetpack 15.1',
+				ranges: [
+					{
+						type: 'plugin',
+						indices: [ 0, 12 ],
+						id: '2',
+						parent: null,
+						slug: 'jetpack',
+						version: '15.1',
+						site_slug: 'testsite-slug',
+					},
+				],
+			},
+			name: 'plugin__updated',
+			actor: {
+				type: 'Person',
+				name: 'Server',
+				external_user_id: -1,
+				wpcom_user_id: -1,
+				icon: {
+					type: 'Image',
+					url: 'https://secure.gravatar.com/avatar/bb916f3b04845914b0ab60201e5e440bbf6fa99465af2f0beccec7a52e234559?s=96&d=identicon&r=g',
+					width: 96,
+					height: 96,
+				},
+				role: '',
+			},
+			type: 'Update',
+			published: '2025-10-09T15:36:47.531+00:00',
+			generator: {
+				jetpack_version: 15.1,
+				blog_id: 999999999999,
+			},
+			is_rewindable: false,
+			rewind_id: '12345678990.123',
+			base_rewind_id: null,
+			rewind_step_count: 0,
+			gridicon: 'plugins',
+			status: 'success',
+			activity_id: 'test-123456789',
+			items: [
+				{
+					type: 'Plugin',
+					name: 'Jetpack',
+					object_version: '15.1',
+					object_slug: 'jetpack/jetpack.php',
+					object_previous_version: '15.0.2',
+				},
+			],
+			totalItems: 1,
+			is_discarded: false,
+		},
+		{
 			activity_id: 'activity-1',
 			is_rewindable: true,
 			rewind_id: 'rewind-123',
 			summary: 'Backup completed',
-			published: '2023-01-01T12:00:00Z',
+			published: '2023-01-01T12:00:00Z.531+00:00',
 			content: { text: 'Backup content' },
 			actor: { name: 'System' },
 		},
 	],
-	totalItems: 1,
+	totalItems: 2,
 	totalPages: 1,
 };
 
@@ -105,7 +160,7 @@ function renderActivityLogsDataViews() {
 			dateRange={ { start: new Date(), end: new Date() } }
 			autoRefresh={ false }
 			setAutoRefresh={ jest.fn() }
-			logType={ 'activity' as typeof LogType.ACTIVITY }
+			logType="activity"
 			hasActivityLogsAccess
 		/>
 	);
@@ -145,4 +200,34 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 			rewindId: 'rewind-123',
 		},
 	} );
+} );
+
+test( 'data is properly displayed', async () => {
+	renderActivityLogsDataViews();
+
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Backup completed' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	expect( screen.getByText( 'Plugin updated' ) ).toBeInTheDocument();
+
+	// plugin update date formatting
+	expect( screen.getByText( 'Oct 9, 2025 at 8:36 AM' ) ).toBeInTheDocument();
+
+	// actor
+	expect( screen.getByText( 'Server' ) ).toBeInTheDocument();
+
+	// actor avatar
+	expect( screen.getByAltText( 'Server' ) ).toHaveAttribute(
+		'src',
+		'https://secure.gravatar.com/avatar/bb916f3b04845914b0ab60201e5e440bbf6fa99465af2f0beccec7a52e234559?s=96&d=identicon&r=g'
+	);
+	// check the link
+	expect( screen.getByRole( 'link', { name: 'Jetpack 15.1' } ) ).toHaveAttribute(
+		'href',
+		'/plugins/jetpack/testsite-slug'
+	);
 } );

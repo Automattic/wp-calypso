@@ -41,7 +41,7 @@ $alt-color: #FAF7F3;
 		margin-block-end: 16px;
 	}
 
-	a {
+	a:not(.components-external-link) {
 		text-decoration: underline;
 	}
 }

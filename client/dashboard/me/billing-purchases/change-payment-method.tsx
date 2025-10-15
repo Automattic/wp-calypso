@@ -50,18 +50,20 @@ function ChangePaymentMethod() {
 	if ( isNaN( numericId ) ) {
 		throw new Error( 'Invalid purchase ID' );
 	}
-	const { data: purchase } = useSuspenseQuery( purchaseQuery( numericId ) );
+	const { data: purchase, isLoading: isLoadingPurchase } = useSuspenseQuery(
+		purchaseQuery( numericId )
+	);
 	const { isLoading: isLoadingStoredCards } = useQuery(
 		userPaymentMethodsQuery( { type: 'card' } )
 	);
 	const { isStripeLoading } = useStripe();
 
 	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
-	const isDataLoading = isLoadingStoredCards || isStripeLoading;
+	const isDataLoading = isLoadingStoredCards || isStripeLoading || isLoadingPurchase;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {
-			// Redirect if invalid data
+			// Redirect if the purchase does not exist
 			navigate( { to: '/me/billing/purchases' } );
 		}
 	}, [ isDataLoading, purchase, navigate ] );
@@ -80,7 +82,11 @@ function ChangePaymentMethod() {
 			header={
 				<PageHeader
 					prefix={ <BackButton purchase={ purchase } /> }
-					title={ __( 'Update payment method' ) }
+					title={
+						! purchase.payment_type || purchase.payment_type === 'credits'
+							? __( 'Add payment method' )
+							: __( 'Update payment method' )
+					}
 				/>
 			}
 		>

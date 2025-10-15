@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -234,13 +234,22 @@ const WooPaymentsOverview = () => {
 		);
 	}, [ dispatch ] );
 
-	const addWooPaymentsToSite = useMemo( () => {
-		return (
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleAddWooPaymentsToSite }>
-				{ translate( 'Add WooPayments to site' ) }
-			</Button>
-		);
-	}, [ translate, handleAddWooPaymentsToSite ] );
+	const addWooPaymentsToSite = (
+		<Button __next40pxDefaultSize variant="primary" onClick={ handleAddWooPaymentsToSite }>
+			{ translate( 'Add WooPayments to site' ) }
+		</Button>
+	);
+
+	const seeFullTermsLink = (
+		<ExternalLink
+			onClick={ () => {
+				dispatch( recordTracksEvent( 'calypso_a4a_woopayments_see_full_terms_click' ) );
+			} }
+			href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
+		>
+			{ translate( 'See full terms' ) }
+		</ExternalLink>
+	);
 
 	return (
 		<Layout className="woopayments-overview" title={ title } wide>
@@ -335,6 +344,7 @@ const WooPaymentsOverview = () => {
 									)
 								) }
 							</div>
+							<div>{ seeFullTermsLink }</div>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column>
@@ -371,6 +381,7 @@ const WooPaymentsOverview = () => {
 									] }
 								/>
 							</div>
+							<div>{ seeFullTermsLink }</div>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column heading={ translate( 'Commissions at a glance' ) } fullWidth>

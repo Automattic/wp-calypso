@@ -1,18 +1,18 @@
 import { SVG, Path } from '@wordpress/components';
 
-type GitHubIconProps = {
+type GithubIconProps = {
 	width?: number | string;
 	height?: number | string;
 	style?: React.CSSProperties;
 	className?: string;
 };
 
-export default function GitHubIcon( {
+export default function GithubIcon( {
 	width = 18,
 	height = 18,
 	style,
 	className,
-}: GitHubIconProps ) {
+}: GithubIconProps ) {
 	return (
 		<SVG
 			width={ width }
