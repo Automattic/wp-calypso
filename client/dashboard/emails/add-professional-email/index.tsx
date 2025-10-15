@@ -56,7 +56,6 @@ const AddProfessionalEmail = () => {
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
-
 	const createNewMailbox = useCallback( () => {
 		const mailbox = new MailboxFormEntity< SupportedEmailProvider >(
 			'titan',
@@ -104,6 +103,11 @@ const AddProfessionalEmail = () => {
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const validated = await mailboxOperations.validateAndCheck( false );
+
+		if ( ! validated ) {
+			setIsSubmitting( false );
+			return;
+		}
 
 		const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
