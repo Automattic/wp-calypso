@@ -211,6 +211,7 @@ function UnifiedPlansStep( {
 	launchSite,
 	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
 	isLaunchPage,
+	isInSignup: isInSignupFromProps,
 	intent,
 	intervalType,
 	path,
@@ -249,6 +250,9 @@ function UnifiedPlansStep( {
 		customerTypeFromProps ??
 		( parseQs( path?.split( '?' ).pop() ?? '' ).customerType as string ) ??
 		'personal';
+
+	// Default to true for backward compatibility with flows that don't explicitly set it
+	const isInSignup = isInSignupFromProps ?? true;
 
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
