@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -72,7 +71,7 @@ function useIsValidSite() {
 }
 
 const COPY_SITE_STEPS = [
-	shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+	STEPS.DOMAIN_SEARCH,
 	STEPS.USE_MY_DOMAIN,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
@@ -110,12 +109,6 @@ const copySite: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					if ( ! shouldRenderRewrittenDomainSearch() ) {
-						return navigate( 'create-site', {
-							sourceSlug: sourceSiteSlug,
-						} );
-					}
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 

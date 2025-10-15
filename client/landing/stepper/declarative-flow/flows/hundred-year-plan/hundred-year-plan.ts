@@ -4,7 +4,6 @@ import { OnboardActions, UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -42,7 +41,7 @@ const HundredYearPlanFlow: Flow = {
 			// If the user has a site, we show them a different flow
 			...( hasSite ? [ STEPS.NEW_OR_EXISTING_SITE, STEPS.HUNDRED_YEAR_PLAN_SITE_PICKER ] : [] ),
 			STEPS.HUNDRED_YEAR_PLAN_SETUP,
-			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+			STEPS.DOMAIN_SEARCH,
 			STEPS.PROCESSING,
 			STEPS.SITE_CREATION_STEP,
 		];
@@ -106,9 +105,7 @@ const HundredYearPlanFlow: Flow = {
 				case 'setup':
 					return navigate( 'domains' );
 				case 'domains':
-					if ( shouldRenderRewrittenDomainSearch() ) {
-						setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					}
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 
 					setPlanCartItem( {
 						product_slug: PLAN_100_YEARS,

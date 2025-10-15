@@ -56,11 +56,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
-	DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () => import( './steps-repository/domains' ),
-	},
-
 	DOMAIN_SEARCH: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domain-search' ),
