@@ -1,8 +1,9 @@
 import { Task } from '@automattic/launchpad';
 import { isStartWritingFlow } from '@automattic/onboarding';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
-import { isDomainUpsellCompleted } from '../../task-helper';
+import { getSiteIdOrSlug, isDomainUpsellCompleted } from '../../task-helper';
 import { TaskAction } from '../../types';
 
 export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
@@ -12,6 +13,14 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const getDestionationUrl = () => {
 		if ( ! siteSlug ) {
 			return '';
+		}
+
+		if ( isStartWritingFlow( flow ) ) {
+			return addQueryArgs( `/setup/${ flow }/domains`, {
+				...getSiteIdOrSlug( flow, site, siteSlug ),
+				flowToReturnTo: flow,
+				new: site?.name,
+			} );
 		}
 
 		const backUrl = `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
