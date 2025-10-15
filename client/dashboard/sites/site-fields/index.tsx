@@ -29,6 +29,7 @@ import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
+import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SiteIcon from '../site-icon';
@@ -44,14 +45,14 @@ function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
 }
 
-function getSiteManagementUrl( site: Site ) {
+export function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
 		return `/sites/${ site.slug }`;
 	}
 	return site.options?.admin_url;
 }
 
-const titleFieldTextOverflowStyles = {
+export const titleFieldTextOverflowStyles = {
 	overflowX: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
@@ -95,7 +96,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ site.URL }
+			href={ getSiteFormattedUrl( site ) }
 		>
 			{ value }
 		</ExternalLink>

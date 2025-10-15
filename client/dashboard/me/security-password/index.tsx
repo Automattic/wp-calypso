@@ -1,6 +1,7 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
@@ -15,10 +16,12 @@ import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
-import FlashMessage from '../../components/flash-message';
+import FlashMessage, { addFlashMessage } from '../../components/flash-message';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -28,6 +31,10 @@ type SecurityPasswordFormData = {
 };
 
 export default function SecurityPassword() {
+	const { recordTracksEvent } = useAnalytics();
+
+	const router = useRouter();
+
 	const mutation = useMutation( userSettingsMutation() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ isReloading, setIsReloading ] = useState( false );
@@ -39,13 +46,14 @@ export default function SecurityPassword() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		recordTracksEvent( 'calypso_dashboard_security_password_save_password_click' );
 		mutation.mutate(
 			{ password: formData.password },
 			{
 				onSuccess: () => {
-					// Since changing a user's password invalidates the session, we reload.
 					setIsReloading( true );
-					window.location.replace( '?updated=password' );
+					// Since changing a user's password invalidates the session, we reload.
+					router.navigate( addFlashMessage( { to: '', replace: true }, 'password', 'updated' ) );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {
@@ -57,11 +65,14 @@ export default function SecurityPassword() {
 	};
 
 	const handleGeneratePassword = () => {
+		recordTracksEvent( 'calypso_dashboard_security_password_generate_password_click' );
 		setFormData( ( data ) => ( {
 			...data,
 			password: generatePassword(),
 		} ) );
 	};
+
+	const isLoading = mutation.isPending || isReloading;
 
 	const fields: Field< SecurityPasswordFormData >[] = useMemo(
 		() => [
@@ -84,6 +95,7 @@ export default function SecurityPassword() {
 							onChange={ ( value ) => {
 								return onChange( { [ id ]: value ?? '' } );
 							} }
+							disabled={ isLoading }
 							suffix={
 								<InputControlSuffixWrapper>
 									<Button
@@ -103,14 +115,15 @@ export default function SecurityPassword() {
 				// There is currently a bug that prevents it from working.
 			},
 		],
-		[ isPasswordVisible ]
+		[ isPasswordVisible, isLoading ]
 	);
 
 	return (
 		<PageLayout
 			size="small"
 			header={
-				<SecurityPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Password' ) }
 					description={ __(
 						'Strong passwords have at least six characters, and use upper and lower case letters, numbers, and symbols like ! ” ? $ % ^ & ).'
@@ -118,7 +131,11 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<FlashMessage value="password" message={ __( 'Your password was saved successfully.' ) } />
+			<FlashMessage
+				value="password"
+				id="updated"
+				message={ __( 'Your password was saved successfully.' ) }
+			/>
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -132,12 +149,7 @@ export default function SecurityPassword() {
 								} }
 							/>
 							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ mutation.isPending || isReloading }
-									disabled={ mutation.isPending || isReloading }
-								>
+								<Button variant="primary" type="submit" isBusy={ isLoading } disabled={ isLoading }>
 									{ __( 'Save' ) }
 								</Button>
 								<Button variant="secondary" onClick={ handleGeneratePassword }>

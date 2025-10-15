@@ -21,7 +21,6 @@ jest.mock( 'calypso/my-sites/media-library/list-item', () => ( { media: mediaIte
 		onClick={ ( event ) => onToggle( mediaItem, event.shiftKey ) }
 	/>
 ) );
-jest.mock( 'calypso/my-sites/media-library/list-plan-upgrade-nudge', () => () => null );
 
 const { media } = fixtures;
 const selectMediaItems = jest.fn();

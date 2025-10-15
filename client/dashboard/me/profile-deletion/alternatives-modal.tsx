@@ -34,14 +34,16 @@ export default function AlternativesModal( {
 		...( siteCount > 0
 			? [
 					{
-						text: __( "Change your site's address" ),
+						text: __( 'Change your site’s address' ),
 						to: '/domains',
 						supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
+						useRouterButton: true,
 					},
 					{
 						text: __( 'Delete a site' ),
 						to: '/sites',
 						supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
+						useRouterButton: true,
 					},
 			  ]
 			: [] ),
@@ -53,13 +55,15 @@ export default function AlternativesModal( {
 		},
 		{
 			text: __( 'Change your username' ),
-			to: '/me/account',
+			to: '/me/profile',
 			supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
+			useRouterButton: true,
 		},
 		{
 			text: __( 'Change your password' ),
 			to: '/me/security',
 			supportLink: localizeUrl( 'https://wordpress.com/support/passwords/' ),
+			useRouterButton: true,
 		},
 	];
 
@@ -67,7 +71,7 @@ export default function AlternativesModal( {
 		<Modal title={ __( 'Are you sure?' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
 				<Text>
-					{ __( "Here's a few options to try before you permanently delete your account." ) }
+					{ __( 'Here’s a few options to try before you permanently delete your account.' ) }
 				</Text>
 				<ActionList>
 					{ alternativeOptions.map( ( option ) => (

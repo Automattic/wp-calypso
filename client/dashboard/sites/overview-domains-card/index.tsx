@@ -33,6 +33,7 @@ const SiteDomainDataViews = ( {
 	const fields = useFields( {
 		site,
 		showPrimaryDomainBadge: type === 'table',
+		inOverview: true,
 	} );
 
 	const actions = useActions( { user, site } );
@@ -58,7 +59,11 @@ const SiteDomainDataViews = ( {
 		[ initialView, type ]
 	);
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+		domains,
+		view as View,
+		fields
+	);
 
 	return (
 		<Card>
@@ -76,18 +81,14 @@ const SiteDomainDataViews = ( {
 							<Button
 								variant="tertiary"
 								size="compact"
-								href={ addQueryArgs( `/domains/add/use-my-domain/${ site.slug }`, {
-									redirect_to: window.location.pathname,
-								} ) }
+								href={ addQueryArgs( '/setup/domain/use-my-domain', { siteSlug: site.slug } ) }
 							>
 								{ __( 'Transfer domain' ) }
 							</Button>
 							<Button
 								variant="secondary"
 								size="compact"
-								href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-									redirect_to: window.location.pathname,
-								} ) }
+								href={ addQueryArgs( '/setup/domain', { siteSlug: site.slug } ) }
 							>
 								{ __( 'Add domain' ) }
 							</Button>
@@ -100,7 +101,7 @@ const SiteDomainDataViews = ( {
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ handleChangeView }
-					view={ view }
+					view={ view as View }
 					actions={ actions }
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
@@ -124,34 +125,34 @@ export default function DomainsCard( {
 	isCompact?: boolean;
 } ) {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
-	const filteredSiteDomains = useMemo( () => {
-		// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
-		if ( siteDomains && siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
-			return siteDomains.filter(
-				( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain
-			);
-		}
+	const { data: siteDomains } = useQuery( {
+		...siteDomainsQuery( site.ID ),
+		select: ( data ) => {
+			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
+			}
 
-		return siteDomains;
-	}, [ siteDomains ] );
+			return data;
+		},
+	} );
 
 	if ( site.is_wpcom_staging_site ) {
 		return null;
 	}
 
-	if ( ! sitePlan || ! filteredSiteDomains ) {
+	if ( ! sitePlan || ! siteDomains ) {
 		return <CalloutSkeleton />;
 	}
 
 	if (
 		isSelfHostedJetpackConnected( site ) &&
-		filteredSiteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
+		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
 		return <DomainTransferUpsellCard />;
 	}
 
-	if ( ! filteredSiteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
@@ -159,7 +160,7 @@ export default function DomainsCard( {
 		<SiteDomainDataViews
 			type={ isCompact ? 'list' : 'table' }
 			site={ site }
-			domains={ filteredSiteDomains }
+			domains={ siteDomains }
 		/>
 	);
 }

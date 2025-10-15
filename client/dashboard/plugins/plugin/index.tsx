@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -13,13 +14,16 @@ import { usePlugin } from './use-plugin';
 
 export default function Plugin() {
 	const { pluginId: pluginSlug } = pluginRoute.useParams();
-	const { icons, isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
+	const { icon, isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
 
 	if ( ! isLoading && ! plugin ) {
 		return (
-			<PageLayout size="large" header={ <PageHeader title={ __( 'Plugin Not Found' ) } /> }>
-				<div>{ __( 'Plugin not found' ) }</div>
-			</PageLayout>
+			<PageLayout
+				size="large"
+				header={
+					<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Plugin not found' ) } />
+				}
+			/>
 		);
 	}
 
@@ -28,18 +32,9 @@ export default function Plugin() {
 			size="large"
 			header={
 				<VStack spacing={ 2 }>
-					<Text as="p" variant="muted">
-						{ __( 'Manage plugins' ) }
-					</Text>
-
 					<PageHeader
-						decoration={
-							typeof icons === 'string' ? (
-								<img src={ icons } alt={ plugin?.name } />
-							) : (
-								icons?.[ '1x' ] && <img src={ icons[ '1x' ] } alt={ plugin?.name } />
-							)
-						}
+						prefix={ <Breadcrumbs length={ 2 } /> }
+						decoration={ icon && <img src={ icon } alt={ plugin?.name } /> }
 						title={
 							plugin ? (
 								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.

@@ -47,14 +47,6 @@ async function downloadSiteLogs( args: {
 } ): Promise< DownloadLogsResult > {
 	const { siteId, siteSlug, logType, startSec, endSec, filter } = args;
 
-	// Activity logs don't support batch downloads yet
-	if ( LogType.ACTIVITY ) {
-		return {
-			ok: false,
-			message: __( 'Activity log downloads are not yet supported.' ),
-		};
-	}
-
 	let scrollId: string | null = null;
 	const rows: string[] = [];
 	let isError = false;

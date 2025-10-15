@@ -1,16 +1,108 @@
 .dashboard-monitoring-card {
 	flex-grow: 1;
 
-	.components-card__body {
-		padding: 0;
+	.components-card__body, .dashboard-monitoring-card__body {
+		height: 100%;
 	}
 
 	.dashboard-monitoring-card__content {
-		padding: 16px 24px;
-		box-sizing: border-box;
+		flex-grow: 1;
+
+		&__is-loading {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		&__server-performance,
+		&__http-responses {
+			/* Set a minimum height to prevent layout shift when the chart loads. */
+			min-height: 450px;
+		}
+	}
+
+	&.dashboard-monitoring-card--row-layout {
+		flex-basis: 0;
+		min-width: 250px;
 	}
 
 	.dashboard-monitoring-card__header {
 		flex-grow: 1;
+	}
+
+	.dashboard-monitoring-card--legend,
+	.dashboard-monitoring-card__line-chart > div[role="list"] {
+		display: flex;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+}
+
+.dashboard-monitoring-card__line-chart {
+	flex-direction: column-reverse !important;
+	gap: 20px;
+	justify-content: start;
+
+	svg {
+		/* Ensure the chart numbers are not clipped. */
+		overflow: visible;
+	}
+
+	.visx-legend-item > svg {
+		margin-inline-start: 5px;
+		margin-top: 8px;
+		width: 8px;
+		height: 8px;
+	}
+}
+
+.dashboard-monitoring-card__line-chart--tooltip {
+	padding: 13px;
+	line-height: 16px;
+
+	.dashboard-monitoring-card__line-chart--tooltip-lines {
+		margin-top: 12px;
+
+		.dashboard-monitoring-card__line-chart--tooltip-lines--line {
+			display: flex;
+			padding: 3px 0;
+
+			svg {
+				margin-inline-end: 6px;
+				overflow: visible;
+			}
+
+			> :last-child {
+				padding-inline-start: 6px;
+				flex-grow: 1;
+				text-align: end;
+			}
+		}
+	}
+}
+
+.dashboard-monitoring-card--row-layout {
+	.pie-chart {
+		position: relative;
+
+		> svg {
+			/* Prevent the chart from overflowing its container. */
+			max-width: 100%;
+		}
+
+		> div[role="tooltip"] {
+			position: absolute;
+			margin-top: 20px;
+			margin-inline-start: 20px;
+			border-radius: 4px;
+			border: 1px solid #DDD;
+			background: #FFF;
+			padding: 16px;
+			text-wrap: nowrap;
+		}
+	}
+
+	.dashboard-monitoring-card__content {
+		min-height: 350px;
 	}
 }

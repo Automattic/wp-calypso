@@ -8,11 +8,9 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
@@ -56,8 +54,15 @@ const form = {
 
 export default function AllowListForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
-	const mutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteJetpackSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Allowed IP addresses saved.' ),
+				error: __( 'Failed to save allowed IP addresses.' ),
+			},
+		},
+	} );
 
 	const currentEnabled = jetpackSettings?.jetpack_waf_ip_allow_list_enabled ?? false;
 	const currentList = jetpackSettings?.jetpack_waf_ip_allow_list ?? '';
@@ -69,17 +74,7 @@ export default function AllowListForm( { site }: { site: Site } ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{ ...formData },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Allowed IP addresses saved.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save allowed IP addresses.' ), { type: 'snackbar' } );
-				},
-			}
-		);
+		mutation.mutate( { ...formData } );
 	};
 
 	const isDirty =

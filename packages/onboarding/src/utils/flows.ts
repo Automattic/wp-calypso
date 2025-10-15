@@ -20,7 +20,7 @@ export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
 export const UPDATE_DESIGN_FLOW = 'update-design';
-export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
+export const DOMAIN_AND_PLAN_FLOW = 'domain-and-plan';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_DOMAIN_TRANSFER = 'hundred-year-domain-transfer';
@@ -38,6 +38,7 @@ export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
+export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
 
 export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
@@ -106,8 +107,8 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };
 
-export const isDomainUpsellFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
+export const isDomainAndPlanFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DOMAIN_AND_PLAN_FLOW ].includes( flowName ) );
 };
 
 export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;

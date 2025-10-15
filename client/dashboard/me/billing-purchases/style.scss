@@ -1,3 +1,28 @@
 img.payment-method-image {
 	vertical-align: middle;
 }
+
+.billing-purchase-info-popover > div.components-popover__content {
+	padding: 8px;
+	min-width: 200px;
+}
+
+.checkout-submit-button > button.is-primary {
+	width: 100%;
+	justify-content: center;
+}
+
+button.purchase-payment-method__update {
+	// This button is inside a flexbox (HStack) which has `min-width: 0` set on
+	// all its children, but this overrides the default of `min-width: auto`
+	// and allows elements to shrink beyond their minimum content size. This
+	// causes the button to shrink slighly and the content overflows its
+	// padding on the right (due to `justify-content: flex-start`). This seems
+	// like a bug in `HStack` to me but for now this fixes it.
+	min-width: max-content;
+}
+
+.credit-card-fields,
+.paypal-fields {
+	padding: 0 12px 12px 12px;
+}

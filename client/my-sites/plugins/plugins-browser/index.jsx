@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +25,7 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -108,6 +110,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
+	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+	const shouldUseLoggedInView =
+		isEnabled( 'plugins/universal-header' ) && hostingDashboardOptIn ? siteId : isLoggedIn;
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -151,7 +156,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
 			wideLayout
-			isLoggedOut={ ! isLoggedIn }
+			isLoggedOut={ ! shouldUseLoggedInView }
 		>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
@@ -180,7 +185,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				{ isLoggedIn ? (
+				{ shouldUseLoggedInView ? (
 					<>
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories
@@ -202,12 +207,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 							searchTerm={ search }
 							isSearching={ isFetchingPluginsBySearchTerm }
 							title={ __( 'Flex your site’s features with plugins' ) }
-							subtitle={
-								! isLoggedIn &&
-								__(
-									'Add new functionality and integrations to your site with thousands of plugins.'
-								)
-							}
+							subtitle={ __(
+								'Add new functionality and integrations to your site with thousands of plugins.'
+							) }
 							searchTerms={ searchTerms }
 							renderTitleInH1={ ! category }
 						/>

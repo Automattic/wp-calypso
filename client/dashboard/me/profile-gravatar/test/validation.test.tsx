@@ -5,8 +5,8 @@ import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils';
+import { mockUserSettings } from '../../profile/__mocks__/user-settings';
 import GravatarProfileSection from '../index';
-import { mockUserSettings } from './__mocks__/user-settings';
 
 describe( 'GravatarProfileSection Form Validation', () => {
 	describe( 'Display Name Validation', () => {
@@ -18,7 +18,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 			const longName = 'a'.repeat( 251 );
 
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, longName );
+			fireEvent.change( displayNameInput, { target: { value: longName } } );
 			fireEvent.blur( displayNameInput );
 
 			expect(
@@ -34,7 +34,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 			const maxLengthName = 'a'.repeat( 250 );
 
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, maxLengthName );
+			fireEvent.change( displayNameInput, { target: { value: maxLengthName } } );
 			fireEvent.blur( displayNameInput );
 
 			expect(
@@ -50,7 +50,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 			const longName = 'a'.repeat( 251 );
 
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, longName );
+			fireEvent.change( displayNameInput, { target: { value: longName } } );
 
 			const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 			expect( saveButton ).toBeDisabled();

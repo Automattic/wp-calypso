@@ -1,5 +1,4 @@
 import { siteByIdQuery, stagingSiteDeleteMutation } from '@automattic/api-queries';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -11,7 +10,9 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {
@@ -23,6 +24,7 @@ export default function StagingSiteDeleteModal( {
 } ) {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	const { data: productionSite } = useQuery( {
@@ -48,7 +50,7 @@ export default function StagingSiteDeleteModal( {
 			},
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
-				if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
+				if ( ! isDashboardBackport() ) {
 					createSuccessNotice(
 						__( 'We are deleting your staging site. We will notify you when it is done.' ),
 						{ type: 'snackbar' }

@@ -1,12 +1,20 @@
-import { Threat } from '@automattic/api-core';
+import { Threat, type Site } from '@automattic/api-core';
 import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import MarkedLines from 'calypso/components/marked-lines';
+import { useAnalytics } from '../../../app/analytics';
+import MarkedLines from '../../../components/marked-lines';
 import { Text } from '../../../components/text';
+import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
 import { CODEABLE_JETPACK_SCAN_URL } from '../constants';
 
-export function ThreatDescription( { threat }: { threat: Threat } ) {
+export function ThreatDescription( { threat, site }: { threat: Threat; site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleCodeableClick = () => {
+		recordTracksEvent( 'calypso_dashboard_scan_codeable_estimate_click' );
+	};
+
 	const renderFixTitle = () => {
 		switch ( threat.status ) {
 			case 'fixed':
@@ -69,43 +77,6 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 		);
 	};
 
-	const getThreatFix = () => {
-		const { fixable } = threat;
-
-		if ( ! fixable ) {
-			return null;
-		}
-
-		switch ( fixable.fixer ) {
-			case 'replace':
-				return __( 'Jetpack Scan will replace the affected file or directory.' );
-			case 'delete':
-				return __( 'Jetpack Scan will delete the affected file or directory.' );
-			case 'update':
-				if ( fixable.target ) {
-					return sprintf(
-						/** translators: %s: version */
-						__( 'Jetpack Scan will update to a newer version (%s).' ),
-						fixable.target
-					);
-				}
-				return __( 'Jetpack Scan will update to a newer version.' );
-			case 'edit':
-				return __( 'Jetpack Scan will edit the affected file or directory.' );
-			case 'rollback':
-				if ( fixable.target ) {
-					return sprintf(
-						/** translators: %s: version */
-						__( 'Jetpack Scan will rollback the affected file to the version from %s.' ),
-						fixable.target
-					);
-				}
-				return __( 'Jetpack Scan will rollback the affected file to an older (clean) version.' );
-			default:
-				return __( 'Jetpack Scan will resolve the threat.' );
-		}
-	};
-
 	const renderFix = () => {
 		if ( threat.status === 'fixed' ) {
 			return;
@@ -128,7 +99,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 							) }
 						</Text>
 					) }
-					{ 'current' === threat.status && (
+					{ 'current' === threat.status && isSelfHostedJetpackConnected( site ) && (
 						<Text variant="muted">
 							{ createInterpolateElement(
 								__(
@@ -136,7 +107,12 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 								),
 								{
 									codeable: (
-										<ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>
+										<ExternalLink
+											href={ CODEABLE_JETPACK_SCAN_URL }
+											onClick={ handleCodeableClick }
+										>
+											Codeable
+										</ExternalLink>
 									),
 								}
 							) }
@@ -153,7 +129,7 @@ export function ThreatDescription( { threat }: { threat: Threat } ) {
 						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
 					) }
 				</Text>
-				<Text variant="muted">{ getThreatFix() }</Text>
+				<Text variant="muted">{ threat.fix_description }</Text>
 			</>
 		);
 	};

@@ -9,7 +9,11 @@ import {
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
-import { interactionHasZendeskEvent, getIsRequestingHumanSupport } from '../../utils';
+import {
+	interactionHasZendeskEvent,
+	getIsRequestingHumanSupport,
+	getIsLastBotMessage,
+} from '../../utils';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -55,13 +59,14 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport } =
+	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, chat } =
 		useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
+	const isLastBotMessage = getIsLastBotMessage( chat, message );
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
@@ -91,26 +96,29 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ ! isRequestingHumanSupport &&
-						! interactionHasZendeskEvent( currentSupportInteraction ) && (
-							<BotMessageActions message={ message } />
-						) }
-					<div className="chat-feedback-wrapper">
-						<Sources
-							message={ message }
-							isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+					{ isRequestingHumanSupport && isLastBotMessage && (
+						<GetSupport
+							onClickAdditionalEvent={ ( destination ) => {
+								trackEvent( 'chat_get_support', {
+									location: 'user-message',
+									destination,
+								} );
+							} }
 						/>
-						{ isRequestingHumanSupport && (
-							<GetSupport
-								onClickAdditionalEvent={ ( destination ) => {
-									trackEvent( 'chat_get_support', {
-										location: 'user-message',
-										destination,
-									} );
-								} }
-							/>
-						) }
-					</div>
+					) }{ ' ' }
+					{ ! isRequestingHumanSupport && (
+						<>
+							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
+								<BotMessageActions message={ message } />
+							) }
+							<div className="chat-feedback-wrapper">
+								<Sources
+									message={ message }
+									isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+								/>
+							</div>
+						</>
+					) }
 				</>
 			) }
 		</>

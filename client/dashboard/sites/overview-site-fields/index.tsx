@@ -11,7 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { getSiteDisplayUrl } from '../../utils/site-url';
+import { getSiteDisplayUrl, getSiteFormattedUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
 import type { Site } from '@automattic/api-core';
@@ -61,9 +61,10 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
-	const { URL: url } = site;
+	const url = getSiteFormattedUrl( site );
 	const wpVersion = getFormattedWordPressVersion( site );
 	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
+	const hasSiteRedirect = site.options?.is_redirect;
 
 	return (
 		<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">
@@ -72,6 +73,17 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 					{ getSiteDisplayUrl( site ) }
 				</ExternalLink>
 			</Field>
+			{ hasSiteRedirect && (
+				<Field>
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s: the URL this site is redirected to, e.g.: http://example.com */
+							__( 'Redirects to %s' ),
+							site.URL
+						) }
+					</Text>
+				</Field>
+			) }
 			{ wpVersion && (
 				<Field title={ __( 'WordPress' ) }>
 					{ isSelfHostedJetpackConnected( site ) ? (

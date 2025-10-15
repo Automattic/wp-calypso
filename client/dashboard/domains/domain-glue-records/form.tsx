@@ -1,16 +1,9 @@
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
-	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
-	Button,
-} from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
-import { Text } from '../../components/text';
+import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -54,29 +47,28 @@ export default function DomainGlueRecordsForm( {
 		() => [
 			{
 				id: 'nameServer',
-				label: __( 'Name Server' ),
+				label: __( 'Name server' ),
 				placeholder: 'ns1',
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
 					const suffix = `.${ domainName }`;
 					const value = getValue( { item: data } ).replace( suffix, '' );
+					const validationMessage = field.isValid?.custom?.( data, field );
 
 					return (
-						// TODO: Show the error via Data Form when the ValidatedInputControl component is ready.
-						<InputControl
-							__next40pxDefaultSize
+						<SuffixInputControl
+							required={ !! field.isValid?.required }
 							label={ field.label }
 							placeholder={ field.placeholder }
 							value={ value }
-							onChange={ ( value ) => {
+							onChange={ ( value: string ) => {
 								return onChange( { [ id ]: value + suffix } );
 							} }
-							suffix={
-								<InputControlSuffixWrapper>
-									<Text variant="muted">{ suffix }</Text>
-								</InputControlSuffixWrapper>
+							customValidity={
+								validationMessage ? { type: 'invalid', message: validationMessage } : undefined
 							}
+							suffix={ suffix }
 						/>
 					);
 				},
@@ -93,7 +85,7 @@ export default function DomainGlueRecordsForm( {
 			},
 			{
 				id: 'ipAddress',
-				label: __( 'IP Address' ),
+				label: __( 'IP address' ),
 				placeholder: '123.45.78.9',
 				type: 'text',
 				isValid: {

@@ -5,6 +5,8 @@ import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 
 object CalypsoE2ETestsBuildTemplate : Template({
 	name = "Calypso E2E Tests Build Template"
@@ -21,7 +23,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
-		param("VIEWPORT", "desktop")
+		param("PROJECT", "desktop")
 		text("TEST_GROUP", "")
 		text("CALYPSO_BASE_URL", "")
 		text("DOCKER_IMAGE_BUILD_NUMBER", "")
@@ -36,6 +38,16 @@ object CalypsoE2ETestsBuildTemplate : Template({
       		rules = "+:test/e2e/output/results.xml"
 			verbose = true
     	}
+
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
 	}
 
   	steps {
@@ -136,15 +148,35 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				cd test/e2e
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
-				echo "Running Playwright tests for project: %VIEWPORT%"
-				yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
+				echo "Running Playwright tests for project: %PROJECT%"
+				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
 			dockerImage = "%docker_image_e2e%"
 		}
   }
 
-  artifactRules = """
-		test/e2e/output => %VIEWPORT%/output
+  	artifactRules = """
+		test/e2e/output => %PROJECT%/output
 		test/e2e/blob-report => blob-report
 	""".trimIndent()
+  
+  	failureConditions {
+		executionTimeoutMin = 20
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
+		nonZeroExitCode = false
+
+		// Support retries using the --onlyFailures flag in Jest.
+		supportTestRetry = true
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
 })

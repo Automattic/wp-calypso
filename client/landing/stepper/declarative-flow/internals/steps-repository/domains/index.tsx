@@ -4,9 +4,8 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
-	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
-	isDomainUpsellFlow,
+	isDomainAndPlanFlow,
 	isHundredYearDomainFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
@@ -15,13 +14,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -54,7 +51,6 @@ const DomainsStep: Step< {
 		  }
 		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
-	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -165,7 +161,7 @@ const DomainsStep: Step< {
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return submit?.( { deferDomainSelection: true } );
 		}
 
@@ -202,14 +198,7 @@ const DomainsStep: Step< {
 			case HUNDRED_YEAR_DOMAIN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
-				return shouldUseDomainSearchV2
-					? __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' )
-					: createInterpolateElement(
-							__(
-								'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
-							),
-							decideLaterComponent
-					  );
+				return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 		}
 	};
 
@@ -226,11 +215,7 @@ const DomainsStep: Step< {
 			return __( 'Find the perfect domain' );
 		}
 
-		if ( shouldUseDomainSearchV2 ) {
-			return __( 'Claim your space on the web' );
-		}
-
-		return __( 'Choose a domain' );
+		return __( 'Claim your space on the web' );
 	};
 
 	function getAnalyticsSection() {
@@ -309,21 +294,21 @@ const DomainsStep: Step< {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainAndPlanFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );
@@ -368,17 +353,4 @@ const DomainsStep: Step< {
 	);
 };
 
-const StyleWrappedDomainsStep: typeof DomainsStep = ( props ) => {
-	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
-
-	return (
-		<>
-			<DomainsStep { ...props } />
-			{ ! shouldUseDomainSearchV2 && (
-				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--stepper' ] } />
-			) }
-		</>
-	);
-};
-
-export default StyleWrappedDomainsStep;
+export default DomainsStep;

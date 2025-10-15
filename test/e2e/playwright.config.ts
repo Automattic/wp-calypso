@@ -1,4 +1,5 @@
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+import { tags } from './lib/pw-base';
 
 const outputPath = './output';
 const reporter: ReporterDescription[] = [
@@ -29,6 +30,9 @@ export default defineConfig( {
 	workers: process.env.CI ? '50%' : '100%',
 	/* Global timeout for each test */
 	timeout: 60 * 1000,
+	expect: {
+		timeout: 10 * 1000,
+	},
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -36,6 +40,8 @@ export default defineConfig( {
 	use: {
 		/* Base URL to use in actions like `await page.goto('/')`. */
 		// baseURL: 'http://localhost:3000',
+		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
+		actionTimeout: 10 * 1000,
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',
@@ -61,14 +67,37 @@ export default defineConfig( {
 		{
 			name: 'pixel',
 			use: { ...devices[ 'Pixel 7' ] },
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'galaxy',
 			use: { ...devices[ 'Galaxy S24' ] },
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'iphone',
 			use: { ...devices[ 'iPhone 15 Pro' ] },
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
+		},
+		{
+			name: 'authentication',
+			retries: 0,
+			testDir: './specs/authentication',
+			use: {
+				...devices[ 'Desktop Chrome HiDPI' ],
+				bypassCSP: true,
+				launchOptions: {
+					args: [
+						'--disable-blink-features=AutomationControlled',
+						'--disable-features=IsolateOrigins,site-per-process',
+					],
+					slowMo: 1000,
+					env: {},
+					channel: '',
+				},
+				userAgent:
+					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+			},
 		},
 	],
 } );

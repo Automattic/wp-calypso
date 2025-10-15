@@ -22,7 +22,9 @@
  */
 /* eslint-disable no-empty-pattern */
 import {
+	AdvertisingPage,
 	AppleLoginPage,
+	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	DashboardPage,
 	DashboardVisibilitySettingsPage,
@@ -32,8 +34,20 @@ import {
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
+	GitHubLoginPage,
+	ImportContentFromAnotherPlatformOrFilePage,
+	ImportContentFromMediumPage,
+	ImportContentFromWordPressPage,
+	ImportContentPage,
+	ImportContentWordPressQuestionPage,
+	ImportLetsFindYourSitePage,
+	ImportLetUsMigrateYourSitePage,
+	ImportPlansPage,
 	IncognitoPage,
+	JetpackTrafficPage,
 	LoginPage,
+	MarketingPage,
+	MediaHelper,
 	NewSiteResponse,
 	PreviewComponent,
 	RestAPIClient,
@@ -52,6 +66,10 @@ import { getAccount } from './get-account';
 
 export const test = base.extend< {
 	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountAtomic: TestAccount;
+	/**
 	 * Test account selected based on the current environment variables.
 	 */
 	accountGivenByEnvironment: TestAccount;
@@ -63,6 +81,14 @@ export const test = base.extend< {
 	 * Test account used for i18n locale switching.
 	 */
 	accounti18n: TestAccount;
+	/**
+	 * Test account used to test atomic sites (Business plans)
+	 */
+	accountSimpleSiteFreePlan: TestAccount;
+	/**
+	 * Test account used for SMS-based 2FA.
+	 */
+	accountSMS: TestAccount;
 	/**
 	 * Client for interacting with emails during tests.
 	 */
@@ -96,9 +122,21 @@ export const test = base.extend< {
 	 */
 	helperData: typeof DataHelper;
 	/**
+	 * Helper for media-related tasks in tests.
+	 */
+	helperMedia: typeof MediaHelper;
+	/**
+	 * Page object representing the WordPress.com Advertising page.
+	 */
+	pageAdvertising: AdvertisingPage;
+	/**
 	 * Page object representing the Apple login page.
 	 */
 	pageAppleLogin: AppleLoginPage;
+	/**
+	 * Page object representing the Blaze campaign page.
+	 */
+	pageBlazeCampaign: BlazeCampaignPage;
 	/**
 	 * Page object representing the WordPress.com dashboard.
 	 */
@@ -112,13 +150,57 @@ export const test = base.extend< {
 	 */
 	pageEditor: EditorPage;
 	/**
+	 * Page object representing the Github login page.
+	 */
+	pageGitHubLogin: GitHubLoginPage;
+	/**
+	 * Page object representing the Import Content page.
+	 */
+	pageImportContent: ImportContentPage;
+	/**
+	 * Page object representing the Import Plans page.
+	 */
+	pageImportPlans: ImportPlansPage;
+	/**
+	 * Page object representing the Import Content from Medium page.
+	 */
+	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Import Content from WordPress page.
+	 */
+	pageImportContentFromWordPress: ImportContentFromWordPressPage;
+	/**
+	 * Page object representing the Import Content WordPress Question page.
+	 */
+	pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
+	/**
+	 * Page object representing the Import Content from Another Platform or File page.
+	 */
+	pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
+	/**
+	 * Page object representing the Let's Find Your Site page for importing content.
+	 */
+	pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
+	/**
+	 * Page object representing the Let Us Migrate Your Site page for importing content.
+	 */
+	pageImportLetUsMigrateYourSite: ImportLetUsMigrateYourSitePage;
+	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
 	pageIncognito: IncognitoPage;
 	/**
+	 * Page object representing the Jetpack Traffic Page
+	 */
+	pageJetpackTraffic: JetpackTrafficPage;
+	/**
 	 * Page object representing the WordPress.com login page.
 	 */
 	pageLogin: LoginPage;
+	/**
+	 * Page object representing the WordPress.com marketing page.
+	 */
+	pageMarketing: MarketingPage;
 	/**
 	 * Page object representing the WordPress.com themes detail page.
 	 */
@@ -136,6 +218,10 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	accountAtomic: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'atomicUser' );
+		await use( testAccount );
+	},
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
@@ -147,6 +233,14 @@ export const test = base.extend< {
 	},
 	accounti18n: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'i18nUser' );
+		await use( testAccount );
+	},
+	accountSimpleSiteFreePlan: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
+		await use( testAccount );
+	},
+	accountSMS: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'smsUser' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
@@ -179,6 +273,17 @@ export const test = base.extend< {
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
 	},
+	helperMedia: async ( {}, use ) => {
+		await use( MediaHelper );
+	},
+	pageBlazeCampaign: async ( { page }, use ) => {
+		const blazeCampaignPage = new BlazeCampaignPage( page );
+		await use( blazeCampaignPage );
+	},
+	pageAdvertising: async ( { page }, use ) => {
+		const advertisingPage = new AdvertisingPage( page );
+		await use( advertisingPage );
+	},
 	pageAppleLogin: async ( { page }, use ) => {
 		const appleLoginPage = new AppleLoginPage( page );
 		await use( appleLoginPage );
@@ -195,15 +300,60 @@ export const test = base.extend< {
 		const editorPage = new EditorPage( page );
 		await use( editorPage );
 	},
+	pageGitHubLogin: async ( { page }, use ) => {
+		const gitHubLoginPage = new GitHubLoginPage( page );
+		await use( gitHubLoginPage );
+	},
+	pageImportContent: async ( { page }, use ) => {
+		const importContentPage = new ImportContentPage( page );
+		await use( importContentPage );
+	},
+	pageImportContentFromMedium: async ( { page }, use ) => {
+		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
+		await use( importContentFromMediumPage );
+	},
+	pageImportContentFromAnotherPlatformOrFile: async ( { page }, use ) => {
+		const importContentFromAnotherPlatformOrFilePage =
+			new ImportContentFromAnotherPlatformOrFilePage( page );
+		await use( importContentFromAnotherPlatformOrFilePage );
+	},
+	pageImportContentFromWordPress: async ( { page }, use ) => {
+		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
+		await use( importContentFromWordPressPage );
+	},
+	pageImportLetsFindYourSite: async ( { page }, use ) => {
+		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
+		await use( letsFindYourSitePage );
+	},
+	pageImportLetUsMigrateYourSite: async ( { page }, use ) => {
+		const importLetUsMigrateYourSitePage = new ImportLetUsMigrateYourSitePage( page );
+		await use( importLetUsMigrateYourSitePage );
+	},
+	pageImportPlans: async ( { page }, use ) => {
+		const importPlansPage = new ImportPlansPage( page );
+		await use( importPlansPage );
+	},
+	pageImportContentWordpressQuestion: async ( { page }, use ) => {
+		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
+		await use( importContentWordpressQuestionPage );
+	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
 		await use( incognitoPage );
 		await incognitoPage.close();
 	},
+	pageJetpackTraffic: async ( { page }, use ) => {
+		const jetpackTrafficPage = new JetpackTrafficPage( page );
+		await use( jetpackTrafficPage );
+	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );
 		await use( loginPage );
+	},
+	pageMarketing: async ( { page }, use ) => {
+		const marketingPage = new MarketingPage( page );
+		await use( marketingPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
@@ -217,7 +367,7 @@ export const test = base.extend< {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, helperData }, use ) => {
+	sitePublic: async ( { page, clientEmail, helperData }, use ) => {
 		const testUser = helperData.getNewTestUser();
 		const siteName = helperData.getBlogName();
 		const loginPage = new LoginPage( page );
@@ -233,6 +383,14 @@ export const test = base.extend< {
 			name: siteName,
 			title: siteName,
 		} );
+		const message = await clientEmail.getLastMatchingMessage( {
+			inboxId: testUser.inboxId,
+			sentTo: testUser.email,
+			subject: 'Activate',
+		} );
+		const links = await clientEmail.getLinksFromMessage( message );
+		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
+		await page.goto( activationLink );
 		await use( site );
 		await restAPIClient.deleteSite( {
 			id: site.blog_details.blogid,
@@ -252,9 +410,12 @@ export const tags = {
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
+	DASHBOARD: '@dashboard',
+	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
+	IMPORTS: '@imports',
 	JETPACK_REMOTE_SITE: '@jetpack-remote-site',
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',

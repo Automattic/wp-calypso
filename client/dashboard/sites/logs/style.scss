@@ -1,4 +1,9 @@
-.site-logs-card .dataviews-pagination__page-select {
-	display: none !important;
+.site-logs-card {
+	&--server,
+	&--php {
+		.dashboard-callout {
+			max-width: 600px;
+			margin: 60px auto;
+		}
+	}
 }
-

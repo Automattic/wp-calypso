@@ -1,17 +1,45 @@
 import page from '@automattic/calypso-router';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
+import { Gridicon } from '@automattic/components';
+import { BackButton } from '@automattic/onboarding';
+import { type ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import QueryProductsList from '../../../components/data/query-products-list';
+import QuerySiteDomains from '../../../components/data/query-site-domains';
 import { useMyDomainInputMode } from '../../../components/domains/connect-domain-step/constants';
+import { hasPlan } from '../../../lib/cart-values/cart-items';
 import { useSelector } from '../../../state';
 import getCurrentQueryArguments from '../../../state/selectors/get-current-query-arguments';
-import { domainAddEmailUpsell, domainUseMyDomain } from '../paths';
+import getCurrentRoute from '../../../state/selectors/get-current-route';
+import useCartKey from '../../checkout/use-cart-key';
+import NewDomainsRedirectionNoticeUpsell from '../domain-management/components/domain/new-domains-redirection-notice-upsell';
+import {
+	domainAddEmailUpsell,
+	domainAddNew,
+	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
+	domainManagementTransferToOtherSite,
+	domainMapping,
+	domainUseMyDomain,
+} from '../paths';
+
+import './style.scss';
 
 const FLOW_NAME = 'domains';
 
 export default function DomainSearch() {
+	const translate = useTranslate();
+	const cartKey = useCartKey();
+	const cart = useShoppingCart( cartKey );
+
 	const queryArguments = useSelector( getCurrentQueryArguments );
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -28,13 +56,45 @@ export default function DomainSearch() {
 			} ),
 			allowedTlds,
 			skippable: false,
+			includeOwnedDomainInSuggestions: true,
+			allowsUsingOwnDomain: true,
 		};
 	}, [ tldQuery ] );
 
 	const selectedSiteSlug = selectedSite?.slug;
 
+	const initialQuery = queryArguments?.suggestion?.toString() ?? '';
+	const currentSiteUrl = selectedSite?.URL;
+	const currentSiteId = selectedSite?.ID;
+
+	const { query, setQuery, clearQuery } = useQueryHandler( {
+		initialQuery,
+		currentSiteUrl,
+	} );
+
 	const events = useMemo( () => {
 		return {
+			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
+			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
+			},
+			onMakePrimaryAddressClick: () => {
+				page( domainManagementList( selectedSiteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				page( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				page(
+					selectedSiteSlug
+						? domainManagementTransferIn( selectedSiteSlug, domainName )
+						: domainManagementRoot()
+				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				page( domainMapping( selectedSiteSlug, domainName ) );
+			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( ! selectedSiteSlug ) {
 					throw new Error( 'Selected site slug is required' );
@@ -55,17 +115,47 @@ export default function DomainSearch() {
 				}
 			},
 		};
-	}, [ selectedSiteSlug ] );
+	}, [ selectedSiteSlug, setQuery, clearQuery ] );
+
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const isFromMyHome = queryArguments?.from === 'my-home';
+
+	const getBackButtonHref = () => {
+		// If we have the from query param, we should use that as the back button href
+		if ( isFromMyHome ) {
+			return `/home/${ selectedSiteSlug }`;
+		} else if ( queryArguments?.redirect_to ) {
+			return queryArguments.redirect_to.toString();
+		}
+
+		return domainManagementList( selectedSiteSlug ?? undefined, currentRoute );
+	};
 
 	return (
-		<WPCOMDomainSearch
-			currentSiteId={ selectedSite?.ID }
-			currentSiteUrl={ selectedSite?.URL }
-			flowName={ FLOW_NAME }
-			initialQuery={ queryArguments?.suggestion.toString() ?? '' }
-			config={ config }
-			events={ events }
-			flowAllowsMultipleDomainsInCart
-		/>
+		<Main className="main-column calypso-domain-search" wideLayout>
+			<div>
+				<BackButton className="domain-search__go-back" href={ getBackButtonHref() }>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Back' ) }
+				</BackButton>
+				<FormattedHeader brandFont headerText={ translate( 'Search for a domain' ) } align="left" />
+			</div>
+			{ ! hasPlan( cart.responseCart ) && <NewDomainsRedirectionNoticeUpsell /> }
+			<WPCOMDomainSearch
+				className="domain-search--calypso"
+				currentSiteId={ currentSiteId }
+				currentSiteUrl={ currentSiteUrl }
+				flowName={ FLOW_NAME }
+				config={ config }
+				query={ query }
+				events={ events }
+				flowAllowsMultipleDomainsInCart
+				analyticsSection="domains"
+			/>
+			<QueryProductsList />
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+			{ selectedSite?.ID && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+		</Main>
 	);
 }

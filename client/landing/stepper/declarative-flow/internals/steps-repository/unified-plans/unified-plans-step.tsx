@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UrlFriendlyTermType } from '@automattic/calypso-products';
+import { UrlFriendlyTermType, isDomainTransfer } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -14,7 +14,7 @@ import {
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -47,7 +47,7 @@ import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-sit
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
 import './unified-plans-step-styles.scss';
 
@@ -127,6 +127,7 @@ export interface UnifiedPlansStepProps {
 	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
+	selectedFeature?: string;
 	fallbackSubHeaderText?: string;
 
 	/**
@@ -176,6 +177,17 @@ export interface UnifiedPlansStepProps {
 	isCustomDomainAllowedOnFreePlan?: boolean;
 
 	useStepContainerV2?: boolean;
+
+	/**
+	 * Whether this step is being used in a signup flow context.
+	 * Defaults to true to preserve existing behavior.
+	 */
+	isInSignup?: boolean;
+
+	/**
+	 * Whether this step is being used in a stepper upgrade flow context.
+	 */
+	isStepperUpgradeFlow?: boolean;
 }
 
 /**
@@ -225,6 +237,9 @@ function UnifiedPlansStep( {
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
 	onIntentChange,
+	isInSignup = true,
+	isStepperUpgradeFlow = false,
+	selectedFeature,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -258,6 +273,13 @@ function UnifiedPlansStep( {
 
 	const { siteUrl, domainItem, siteTitle, username, coupon, selectedThemeType } =
 		signupDependencies;
+
+	const { domainCartItem } = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
+		const { getDomainCartItem } = select( ONBOARD_STORE );
+		return {
+			domainCartItem: getDomainCartItem(),
+		};
+	}, [] );
 
 	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 
@@ -518,8 +540,9 @@ function UnifiedPlansStep( {
 				siteTitle={ siteTitle ?? undefined }
 				signupFlowUserName={ username ?? undefined }
 				siteId={ selectedSite?.ID }
+				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-				isInSignup
+				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				intervalType={
 					intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
@@ -531,6 +554,7 @@ function UnifiedPlansStep( {
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
+				isStepperUpgradeFlow={ isStepperUpgradeFlow }
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
@@ -542,6 +566,7 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
+				selectedFeature={ selectedFeature }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;

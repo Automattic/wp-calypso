@@ -15,21 +15,20 @@
  * @returns {Record<string, McpAbility>} An object containing account-level MCP abilities
  */
 export function getAccountMcpAbilities( userSettings ) {
-	const mcpData = userSettings?.mcp_abilities;
-
-	if ( ! mcpData ) {
-		return {};
+	// Check new flat structure first
+	if ( userSettings?.account ) {
+		return userSettings.account;
 	}
 
-	// For account-level settings, we want to get the account-level abilities
-	// If account-level abilities don't exist, fall back to the old flat structure for backward compatibility
-	if ( mcpData.account ) {
+	// Current structure: mcp_abilities.account (nested)
+	const mcpData = userSettings?.mcp_abilities;
+	if ( mcpData?.account ) {
 		return mcpData.account;
 	}
 
-	// Backward compatibility: if mcp_abilities is a flat object (old structure),
+	// Backward compatibility: if mcp_abilities is a flat object (very old structure),
 	// treat it as account-level abilities
-	if ( typeof mcpData === 'object' && ! mcpData.site && ! mcpData.sites ) {
+	if ( mcpData ) {
 		return mcpData;
 	}
 
@@ -37,23 +36,21 @@ export function getAccountMcpAbilities( userSettings ) {
 }
 
 /**
- * Create API payload for account-level MCP abilities updates
- * This creates the new nested structure for account-level settings
+ * Create API payload for account-level MCP settings
  * @param {Object} userSettings - The user settings object
- * @param {Record<string, McpAbility>} abilities - The abilities object from form data
- * @returns {Object} The API payload with mcp_abilities.account structure
+ * @param {Object} abilities - The account-level abilities object
+ * @returns {Object} The API payload
  */
 export function createAccountApiPayload( userSettings, abilities ) {
-	// Convert abilities to the format expected by the API (1/0 instead of boolean)
+	// Convert abilities to the format expected by the API (boolean values)
 	const accountAbilities = {};
 	Object.entries( abilities ).forEach( ( [ toolId, tool ] ) => {
-		// Handle both old structure (tool.enabled) and new structure (tool is just 1/0)
-		const enabled = typeof tool === 'object' ? tool.enabled : tool === 1;
-		accountAbilities[ toolId ] = enabled ? 1 : 0;
+		// Handle both old structure (tool.enabled) and new structure (tool is just boolean)
+		const enabled = typeof tool === 'object' ? tool.enabled : tool === true;
+		accountAbilities[ toolId ] = enabled;
 	} );
 
-	// For account-level settings, we only send the account section
-	// This matches the pattern from the site settings PR
+	// Send nested structure with just boolean values
 	return {
 		mcp_abilities: {
 			account: accountAbilities,
@@ -69,4 +66,31 @@ export function createAccountApiPayload( userSettings, abilities ) {
 export function hasEnabledAccountTools( userSettings ) {
 	const abilities = getAccountMcpAbilities( userSettings );
 	return Object.values( abilities ).some( ( tool ) => tool.enabled );
+}
+
+/**
+ * Get the account tools enabled state for a specific site
+ * @param {Object} userSettings - The user settings object
+ * @param {string|number} siteId - The site ID
+ * @returns {boolean} True if account tools are enabled for this site (defaults to true)
+ */
+export function getSiteAccountToolsEnabled( userSettings, siteId ) {
+	// Check new flat structure first
+	if ( userSettings?.sites ) {
+		const sites = userSettings.sites;
+		const siteEntry = sites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+		if ( siteEntry ) {
+			return siteEntry.account_tools_enabled;
+		}
+	}
+
+	// Current structure: check nested mcp_abilities.sites
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+	if ( siteEntry ) {
+		return siteEntry.account_tools_enabled;
+	}
+
+	// Default to true (enabled) if no entry exists
+	return true;
 }

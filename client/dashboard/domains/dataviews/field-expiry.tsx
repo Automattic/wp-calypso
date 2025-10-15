@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { caution, reusableBlock } from '@wordpress/icons';
@@ -13,7 +14,10 @@ export const DomainExpiryField = ( {
 	isCompact?: boolean;
 } ) => {
 	if ( ! domain.expiry ) {
-		return __( 'Free forever' );
+		if ( domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) {
+			return __( 'Free forever' );
+		}
+		return '-';
 	}
 
 	const isAutoRenewing = Boolean( domain.auto_renewing );

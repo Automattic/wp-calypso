@@ -1,33 +1,97 @@
 import { CodeDeploymentData, HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	codeDeploymentsQuery,
+	githubInstallationsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import { useNavigate, useRouter } from '@tanstack/react-router';
+import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { keyboardReturn, Icon } from '@wordpress/icons';
 import { useState } from 'react';
-import { siteRoute } from '../../app/router/sites';
+import Breadcrumbs from '../../app/breadcrumbs';
+import {
+	siteDeploymentsListRoute,
+	siteRoute,
+	siteSettingsRepositoriesConnectRoute,
+	siteSettingsRepositoriesManageRoute,
+	siteSettingsRepositoriesRoute,
+} from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
-import ghIconUrl from '../deployments/gh-icon.svg';
+import GithubIcon from '../deployments/icons/github';
+import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
-import type { RenderModalProps, View } from '@wordpress/dataviews';
+import type { RenderModalProps, View, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
+	const router = useRouter();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { error: githubInstallationsError, isLoading: isLoadingInstallations } = useQuery(
+		githubInstallationsQuery()
+	);
+
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	const { data: deployments = [], isLoading } = useQuery( codeDeploymentsQuery( site.ID ) );
+	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
+		codeDeploymentsQuery( site.ID )
+	);
 
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
 
-	const actions = [
+	const actions: Action< CodeDeploymentData >[] = [
+		{
+			id: 'trigger-manual-deployment',
+			label: __( 'Trigger manual deployment' ),
+			RenderModal: ( { items, closeModal }: RenderModalProps< CodeDeploymentData > ) => {
+				return (
+					<TriggerDeploymentModalForm
+						deployments={ deployments }
+						repositoryId={ items[ 0 ].id.toString() }
+						onClose={ closeModal }
+					/>
+				);
+			},
+			modalSize: 'medium',
+		},
+		{
+			id: 'configure-repository',
+			label: __( 'Configure repository' ),
+			callback: ( items ) => {
+				router.navigate( {
+					to: siteSettingsRepositoriesManageRoute.fullPath,
+					params: {
+						siteSlug: siteSlug,
+						deploymentId: items[ 0 ].id,
+					},
+				} );
+			},
+		},
+		{
+			id: 'see-deployment-runs',
+			label: __( 'See deployment runs' ),
+			callback: ( items ) => {
+				const repositoryName = items[ 0 ]?.repository_name;
+				router.navigate( {
+					to: siteDeploymentsListRoute.fullPath,
+					params: {
+						siteSlug: siteSlug,
+					},
+					search: repositoryName ? { repository: repositoryName } : undefined,
+				} );
+			},
+		},
 		{
 			id: 'delete',
 			label: __( 'Disconnect repository' ),
@@ -39,24 +103,42 @@ function RepositoriesList() {
 		},
 	];
 
+	let emptyTitle;
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
-	const emptyTitle = hasFilterOrSearch
-		? __( 'No repositories found' )
-		: __( 'No repositories connected' );
+
+	if ( githubInstallationsError ) {
+		emptyTitle = createInterpolateElement(
+			__( 'No repositories available. <a>Check your GitHub connection</a>.' ),
+			{
+				a: (
+					<Button
+						variant="link"
+						onClick={ () =>
+							router.navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } )
+						}
+					/>
+				),
+			}
+		);
+	} else if ( hasFilterOrSearch ) {
+		emptyTitle = __( 'No repositories found' );
+	} else {
+		emptyTitle = __( 'No repositories connected' );
+	}
 
 	return (
 		<DataViewsCard>
 			<DataViews
-				data={ filteredData }
+				data={ isLoadingInstallations || githubInstallationsError ? [] : filteredData }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
 				actions={ actions }
-				isLoading={ isLoading }
+				isLoading={ isLoadingDeployments || isLoadingInstallations }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }
-				getItemId={ ( item ) => item.repository_name }
-				empty={ emptyTitle }
+				getItemId={ ( item ) => item.id.toString() }
+				empty={ <p>{ emptyTitle }</p> }
 			/>
 		</DataViewsCard>
 	);
@@ -65,42 +147,69 @@ function RepositoriesList() {
 function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
+	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
+	const search = siteSettingsRepositoriesRoute.useSearch();
+	const showBackToDeployments = search?.from === 'deployments';
+
+	const handleConnectRepository = () => {
+		navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } );
+	};
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<SettingsPageHeader
-					title={ __( 'Repositories' ) }
-					description={ __( 'Connect repositories to your WordPress site.' ) }
-					actions={
-						<Button variant="primary" __next40pxDefaultSize>
-							{ __( 'Connect repository' ) }
-						</Button>
-					}
-				/>
-			}
-		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.DEPLOYMENT }
-				tracksFeatureId="settings-repositories"
-				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
-				upsellImage={ illustrationUrl }
-				upsellTitle={ __( 'Deploy from GitHub' ) }
-				upsellDescription={
-					<>
-						<Text as="p" variant="muted">
-							{ __(
-								'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-							) }
-						</Text>
-					</>
+		<>
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 2 } /> }
+						title={ __( 'Repositories' ) }
+						description={ __( 'Connect repositories to your WordPress site.' ) }
+						actions={
+							canConnect && (
+								<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
+									{ __( 'Connect repository' ) }
+								</Button>
+							)
+						}
+					/>
 				}
 			>
-				<RepositoriesList />
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+				<HostingFeatureGatedWithCallout
+					site={ site }
+					feature={ HostingFeatures.DEPLOYMENT }
+					tracksFeatureId="settings-repositories"
+					upsellIcon={ <GithubIcon aria-label={ __( 'GitHub logo' ) } /> }
+					upsellImage={ illustrationUrl }
+					upsellTitle={ __( 'Deploy from GitHub' ) }
+					upsellDescription={ __(
+						'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+					) }
+				>
+					<RepositoriesList />
+				</HostingFeatureGatedWithCallout>
+			</PageLayout>
+			{ showBackToDeployments && (
+				<HStack className="dashboard-snackbars">
+					<Snackbar
+						icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
+						actions={ [
+							{
+								label: __( 'Navigate' ),
+								onClick: () => {
+									navigate( {
+										to: siteDeploymentsListRoute.fullPath,
+										params: { siteSlug },
+									} );
+								},
+							},
+						] }
+					>
+						{ __( 'Back to Deployments' ) }
+					</Snackbar>
+				</HStack>
+			) }
+		</>
 	);
 }
 

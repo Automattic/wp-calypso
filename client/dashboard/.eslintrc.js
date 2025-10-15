@@ -7,28 +7,28 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
+							// Allowed: calypso/data/data-center
 							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',
-							'!calypso/data/php-versions',
-							// Allowed: calypso/data/data-center
 							'!calypso/data/data-center',
+							'!calypso/data/php-versions',
+							// Allowed: calypso/lib/explat
+							// Allowed: calypso/lib/interval/use-interval (temporary)
+							// Allowed: calypso/lib/load-dev-helpers
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
-							'!calypso/lib/wp',
-							// Allowed: calypso/lib/load-dev-helpers
+							'!calypso/lib/explat',
+							'!calypso/lib/interval',
 							'!calypso/lib/load-dev-helpers',
+							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
-							// Allowed: calypso/components/marked-lines
-							'!calypso/components',
-							'calypso/components/*',
-							'!calypso/components/marked-lines',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
@@ -37,30 +37,37 @@ module.exports = {
 					{
 						group: [
 							'@automattic/*',
+							'!@automattic/api-core',
+							'!@automattic/api-queries',
+							'!@automattic/calypso-analytics',
 							'!@automattic/calypso-config',
 							'!@automattic/calypso-support-session',
+							'!@automattic/charts',
 							'!@automattic/components',
 							'@automattic/components/*',
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
-							'!@automattic/api-core',
-							'!@automattic/api-queries',
 							'!@automattic/components/src/circular-progress-bar',
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
-							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
 							'!@automattic/i18n-utils',
+							'!@automattic/languages',
+							'!@automattic/load-script',
 							'!@automattic/number-formatters',
+							'!@automattic/search',
+							'!@automattic/calypso-razorpay',
+							'!@automattic/calypso-stripe',
+							'!@automattic/composite-checkout',
+							'!@automattic/shopping-cart',
 							'!@automattic/ui',
 							'!@automattic/urls',
 							'!@automattic/viewport',
-							'!@automattic/languages',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
@@ -73,6 +80,10 @@ module.exports = {
 					},
 				],
 				paths: [
+					{
+						name: '@automattic/calypso-analytics',
+						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
 					{
 						name: '@automattic/components',
 						message:

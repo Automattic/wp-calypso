@@ -12,6 +12,8 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -104,14 +106,27 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const isFreePlan = site.plan?.is_free;
+
+	const getBillingLinkProps = () => {
+		if ( isFreePlan ) {
+			return { externalLink: `/plans/${ site.slug }` };
+		}
+
+		if ( ! isDashboardBackport() ) {
+			return { link: purchase ? getPurchaseUrlForId( purchase.ID ) : '/me/billing/purchases' };
+		}
+
+		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };
+	};
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			externalLink={ site.plan?.is_free ? `/plans/${ site.slug }` : undefined }
-			link={ ! site.plan?.is_free ? `/me/billing/purchases/purchase/${ purchase?.ID }` : undefined }
+			{ ...getBillingLinkProps() }
 			tracksId="plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }

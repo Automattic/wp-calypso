@@ -137,10 +137,10 @@
 		top: var( --masterbar-height, 0 );
 		max-height: calc( 100% - 45px );
 		height: calc( 100% - var( --masterbar-height, 0 ) );
-		animation: 0.25s ease-out 0s 1 normal none running fadeIn;
+		animation: none;
+		transition: none;
 
 		&.is-minimized {
-			animation: none;
 			min-height: $head-foot-height;
 			max-height: $head-foot-height;
 			top: calc( 100vh - #{$head-foot-height} );
@@ -207,22 +207,6 @@
 					fill: var( --color-text-inverted );
 				}
 			}
-		}
-	}
-
-	// Contact Form URL privacy popover
-	.popover__inner {
-		.help-center-contact-form__site-picker-forum-privacy-popover {
-			display: inline-block;
-			max-width: 200px;
-			padding: 5px;
-		}
-
-		.help-center-contact-form__site-picker-forum-privacy-info {
-			padding: 0;
-			margin: 0;
-			background: none;
-			border: none;
 		}
 	}
 }

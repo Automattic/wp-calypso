@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -12,7 +13,6 @@ import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color';
 import QuerySiteAdminMenu from 'calypso/components/data/query-site-admin-menu';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -46,6 +46,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -185,14 +186,22 @@ class Layout extends Component {
 			this.props.currentRoute.startsWith( '/checkout/failed-purchases' );
 
 		return (
-			<MasterbarComponent
-				section={ this.props.sectionGroup }
-				isCheckout={ this.props.sectionName === 'checkout' }
-				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
-				isCheckoutFailed={ isCheckoutFailed }
-				loadHelpCenterIcon={ loadHelpCenterIcon }
-				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
-			/>
+			<>
+				{ this.props.hasUniversalHeader && (
+					<UniversalNavbarHeader
+						isLoggedIn={ this.props.isLoggedIn }
+						sectionName={ this.props.sectionName }
+					/>
+				) }
+				<MasterbarComponent
+					section={ this.props.sectionGroup }
+					isCheckout={ this.props.sectionName === 'checkout' }
+					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
+					isCheckoutFailed={ isCheckoutFailed }
+					loadHelpCenterIcon={ loadHelpCenterIcon }
+					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
+				/>
+			</>
 		);
 	}
 
@@ -205,6 +214,7 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-universal-header': this.props.hasUniversalHeader,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -274,9 +284,6 @@ class Layout extends Component {
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				<QuerySiteAdminMenu siteId={ this.props.siteId } />
 				<QuerySiteAdminColor siteId={ this.props.siteId } />
-				{ config.isEnabled( 'layout/query-selected-editor' ) && (
-					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				) }
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
@@ -420,6 +427,25 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
+		const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+
+		const isEnabledThemeUniversalHeader =
+			config.isEnabled( 'themes/universal-header' ) &&
+			[ 'themes', 'theme' ].includes( sectionName );
+
+		const isEnabledPluginsUniversalHeader =
+			config.isEnabled( 'plugins/universal-header' ) &&
+			[ 'plugins' ].includes( sectionName ) &&
+			! (
+				currentRoute.startsWith( '/plugins/manage' ) ||
+				currentRoute.startsWith( '/plugins/scheduled-updates' )
+			);
+
+		const hasUniversalHeader =
+			hostingDashboardOptIn &&
+			! siteId &&
+			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -456,6 +482,7 @@ export default withCurrentRoute(
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
+			hasUniversalHeader,
 		};
 	} )( Layout )
 );

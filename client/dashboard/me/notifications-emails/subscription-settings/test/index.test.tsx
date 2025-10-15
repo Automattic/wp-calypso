@@ -80,7 +80,7 @@ const jabberSubscriptionDeliveryCheckbox = () => {
 
 const automatticiansOnlyCheckbox = () => {
 	return screen.queryByLabelText(
-		'Automatically subscribe to P2 post notifications when you leave a comment.'
+		'Automatically subscribe to P2 post notifications when you leave a comment'
 	);
 };
 
@@ -201,7 +201,7 @@ describe( 'SubscriptionSettings', () => {
 		await waitFor( () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
 		} );
 	} );
 } );

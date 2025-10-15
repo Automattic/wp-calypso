@@ -373,7 +373,7 @@ export type Plan = BillingTerm & {
 	 * to determine what a given plan *may* be capable of doing
 	 * before verifying with an API.
 	 */
-	getIncludedFeatures?: () => Feature[];
+	getIncludedFeatures?: ( hasSummerSpecialSticker?: boolean ) => Feature[];
 
 	/**
 	 * Features that are superseded by another feature included in this plan.

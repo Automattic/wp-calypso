@@ -41,7 +41,6 @@ function SupportLink( { children }: { children?: JSX.Element } ) {
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
-		mode: 'EMAIL',
 		'disable-gpt': 'true',
 		'skip-resources': 'true',
 	} ).toString() }`;

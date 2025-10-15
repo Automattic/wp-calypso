@@ -212,8 +212,8 @@ const contextLinks = {
 		post_id: 19775,
 	},
 	mcp: {
-		link: 'https://wordpress.com/support/account-settings/',
-		post_id: 80368,
+		link: 'https://wordpress.com/support/model-context-protocol-mcp-settings/',
+		post_id: 418160,
 	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
@@ -514,7 +514,7 @@ const contextLinks = {
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'site-monitoring-logs': {
-		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/#php-logs-and-webserver-logs',
+		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/#3-php-logs-and-web-server-logs',
 		post_id: 99421,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
@@ -615,6 +615,10 @@ const contextLinks = {
 	'security-wpcom-login': {
 		link: 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/',
 		post_id: 175831,
+	},
+	'switch-to-staging-site': {
+		link: 'https://wordpress.com/support/check-your-wordpress-version/#switch-to-a-previous-or-future-version-of-wordpress',
+		post_id: 225525,
 	},
 };
 

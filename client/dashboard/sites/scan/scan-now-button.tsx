@@ -2,20 +2,20 @@ import { siteScanEnqueueMutation, siteScanQuery } from '@automattic/api-queries'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useScanState } from './use-scan-state';
+import { ScanState } from './use-scan-state';
 import type { Site } from '@automattic/api-core';
 
 interface ScanNowButtonProps {
 	site: Site;
+	scanState: ScanState;
 }
 
-export function ScanNowButton( { site }: ScanNowButtonProps ) {
+export function ScanNowButton( { site, scanState }: ScanNowButtonProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const [ isEnqueued, setIsEnqueued ] = useState( false );
-	const { status } = useScanState( site.ID );
+	const { status, setIsEnqueued } = scanState;
+	const isEnqueued = status === 'enqueued';
 	const isRunning = status === 'running';
 
 	// Enqueue a new scan
@@ -32,53 +32,16 @@ export function ScanNowButton( { site }: ScanNowButtonProps ) {
 		refetchInterval: isRunning || isEnqueued ? 2000 : false,
 	} );
 
-	// Reset enqueued state when scan actually starts
-	useEffect( () => {
-		if ( isRunning && isEnqueued ) {
-			setIsEnqueued( false );
-		}
-	}, [ status, isEnqueued, isRunning ] );
-
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_scan_scan_now' );
 		triggerScan();
 	};
 
-	const getButtonContent = () => {
-		if ( isEnqueued ) {
-			return {
-				label: __( 'Scan enqueued' ),
-				tooltip: __( 'A scan has been queued and will start shortly.' ),
-			};
-		}
-
-		if ( status === 'running' ) {
-			return {
-				label: __( 'Scan in progress' ),
-				tooltip: __( 'A scan is currently in progress.' ),
-			};
-		}
-
-		return {
-			label: __( 'Scan now' ),
-			tooltip: __( 'Trigger a scan of your site now.' ),
-		};
-	};
-
-	const isBusy = isRunning || isPending || isEnqueued;
+	const isDisabled = isRunning || isPending || isEnqueued;
 
 	return (
-		<Button
-			variant="secondary"
-			onClick={ handleClick }
-			disabled={ isBusy }
-			isBusy={ isBusy }
-			accessibleWhenDisabled
-			description={ getButtonContent().tooltip }
-			label={ getButtonContent().label }
-			showTooltip
-		>
-			{ getButtonContent().label }
+		<Button variant="secondary" onClick={ handleClick } disabled={ isDisabled }>
+			{ __( 'Scan now' ) }
 		</Button>
 	);
 }

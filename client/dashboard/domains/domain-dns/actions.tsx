@@ -2,10 +2,8 @@ import { domainDnsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { edit, trash } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { domainRoute, domainDnsEditRoute } from '../../app/router/domains';
 import type { DnsRecord } from '@automattic/api-core';
@@ -13,8 +11,15 @@ import type { Action } from '@wordpress/dataviews';
 
 export function useDnsActions(): Action< DnsRecord >[] {
 	const { domainName } = domainRoute.useParams();
-	const deleteMutation = useMutation( domainDnsMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const deleteMutation = useMutation( {
+		...domainDnsMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'DNS record deleted.' ),
+				error: __( 'Failed to delete DNS record.' ),
+			},
+		},
+	} );
 	const router = useRouter();
 
 	return useMemo( () => {
@@ -24,23 +29,11 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				return;
 			}
 
-			deleteMutation.mutate(
-				{
-					recordsToAdd: [],
-					recordsToRemove: [ itemToDelete ],
-					restoreDefaultARecords: false,
-				},
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'DNS record deleted.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to delete DNS record.' ), {
-							type: 'snackbar',
-						} );
-					},
-				}
-			);
+			deleteMutation.mutate( {
+				recordsToAdd: [],
+				recordsToRemove: [ itemToDelete ],
+				restoreDefaultARecords: false,
+			} );
 		};
 
 		return [
@@ -72,5 +65,5 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				callback: handleDelete,
 			},
 		];
-	}, [ deleteMutation, createSuccessNotice, createErrorNotice, router, domainName ] );
+	}, [ deleteMutation, router, domainName ] );
 }

@@ -10,11 +10,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { edit, trash } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import ConfirmModal from '../../components/confirm-modal';
@@ -30,31 +29,28 @@ export default function SshKey( {
 	username: string;
 } ) {
 	const userLocale = useLocale();
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 
-	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation(
-		deleteSshKeyMutation()
-	);
+	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation( {
+		...deleteSshKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'SSH key deleted.' ),
+				error: __( 'Failed to delete SSH key.' ),
+			},
+		},
+	} );
 
 	const handleEdit = () => {
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_edit_click' );
 		setIsEditing( true );
 	};
 
 	const handleRemove = () => {
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_remove_click' );
 		deleteSshKey( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'SSH key removed.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to remove SSH key.' ), {
-					type: 'snackbar',
-				} );
-			},
 			onSettled: () => {
 				setIsRemoveDialogOpen( false );
 			},
@@ -94,7 +90,10 @@ export default function SshKey( {
 							<Button
 								size="small"
 								icon={ <Icon icon={ trash } /> }
-								onClick={ () => setIsRemoveDialogOpen( true ) }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_security_ssh_key_remove_dialog_open' );
+									setIsRemoveDialogOpen( true );
+								} }
 								label={ __( 'Delete SSH key' ) }
 							/>
 						</ButtonStack>

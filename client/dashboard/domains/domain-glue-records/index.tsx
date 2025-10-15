@@ -5,6 +5,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
@@ -78,7 +79,7 @@ function DomainGlueRecords() {
 		() => [
 			{
 				id: 'nameServer',
-				label: __( 'Name Server' ),
+				label: __( 'Name server' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -96,7 +97,7 @@ function DomainGlueRecords() {
 			},
 			{
 				id: 'ipAddress',
-				label: __( 'IP Address' ),
+				label: __( 'IP address' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -121,7 +122,7 @@ function DomainGlueRecords() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Glue records' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					actions={
 						<RouterLinkButton
 							to={ domainGlueRecordsAddRoute.fullPath }
@@ -148,9 +149,11 @@ function DomainGlueRecords() {
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					empty={
-						view.search
-							? __( 'No glue records found.' )
-							: __( 'No glue records found for this domain.' )
+						<p>
+							{ view.search
+								? __( 'No glue records found.' )
+								: __( 'No glue records found for this domain.' ) }
+						</p>
 					}
 				/>
 			</DataViewsCard>

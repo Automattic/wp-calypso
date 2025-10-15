@@ -13,6 +13,7 @@ import {
 	StepNameValue,
 	DomainConnectionStepsMap,
 	ProgressStepList,
+	DomainTransferStepsMap,
 } from './types';
 
 export const getStepName = (
@@ -28,7 +29,7 @@ export const getStepName = (
 
 export const getProgressStepList = (
 	mode: DomainConnectionSetupModeValue,
-	stepsDefinition: DomainConnectionStepsMap
+	stepsDefinition: DomainConnectionStepsMap | DomainTransferStepsMap
 ): ProgressStepList => {
 	const modeSteps = Object.fromEntries(
 		Object.entries( stepsDefinition ).filter(

@@ -123,7 +123,9 @@ export type UseStepNavigationHookV2< FlowSteps extends StepperStep[] > = (
 };
 
 export type SubmitHandler< InitializeFunction extends DefaultFlowStepsConfig > = (
-	submittedStep: MapStepToItsSubmitData< Awaited< ReturnType< InitializeFunction > >[ number ] >
+	submittedStep: MapStepToItsSubmitData<
+		ExtractSteps< ReturnType< InitializeFunction > >[ number ]
+	>
 ) => /* return unknown, not void, to activate type checks against function params */ unknown;
 /**
  * This type is complex because it's tricky to keep the mapping between slug and the steps submitted data type.
@@ -234,7 +236,14 @@ export type Flow = {
  */
 export type FlowV1 = Flow;
 
-type DefaultFlowStepsConfig = ( reduxStore: Store ) => StepperStep[] | Promise< StepperStep[] >;
+type DefaultFlowStepsConfig = (
+	reduxStore: Store
+) => StepperStep[] | false | Promise< StepperStep[] | false >;
+
+/**
+ * Helper type to extract the steps array from the initialize return type, excluding false
+ */
+type ExtractSteps< T > = Exclude< Awaited< T >, false >;
 
 export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**
@@ -259,7 +268,9 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**
 	 * Use this method to pass props to the steps from the flow.
 	 */
-	useStepsProps?(): MapStepsToTheirAcceptedProps< Awaited< ReturnType< FlowStepsInitialize > > >;
+	useStepsProps?(): MapStepsToTheirAcceptedProps<
+		ExtractSteps< ReturnType< FlowStepsInitialize > >
+	>;
 
 	name: string;
 	/**
@@ -290,11 +301,11 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	 */
 	initialize: FlowStepsInitialize;
 
-	useStepNavigation: UseStepNavigationHookV2< Awaited< ReturnType< FlowStepsInitialize > > >;
+	useStepNavigation: UseStepNavigationHookV2< ExtractSteps< ReturnType< FlowStepsInitialize > > >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< Awaited< ReturnType< FlowStepsInitialize > > >;
+	useSideEffect?: UseSideEffectHook< ExtractSteps< ReturnType< FlowStepsInitialize > > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.

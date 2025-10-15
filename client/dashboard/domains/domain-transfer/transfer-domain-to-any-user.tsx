@@ -14,11 +14,9 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
@@ -58,10 +56,25 @@ export default function TransferDomainToAnyUser() {
 		domainTransferRequestQuery( domainName, domain.site_slug )
 	);
 	const { mutate: deleteDomainTransferRequest, isPending: isDeletingDomainTransferRequest } =
-		useMutation( deleteDomainTransferRequestMutation( domainName, domain.site_slug ) );
+		useMutation( {
+			...deleteDomainTransferRequestMutation( domainName, domain.site_slug ),
+			meta: {
+				snackbar: {
+					success: __( 'Domain transfer cancelled.' ),
+					error: __( 'Failed to cancel domain transfer.' ),
+				},
+			},
+		} );
 	const { mutate: updateDomainTransferRequest, isPending: isUpdatingDomainTransferRequest } =
-		useMutation( updateDomainTransferRequestMutation( domainName, domain.site_slug ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+		useMutation( {
+			...updateDomainTransferRequestMutation( domainName, domain.site_slug ),
+			meta: {
+				snackbar: {
+					success: __( 'A domain transfer request has been emailed to the recipient’s address.' ),
+					error: __( 'Failed to initiate domain transfer.' ),
+				},
+			},
+		} );
 	const locale = useLocale();
 	const transferEmail = domainTransferRequest?.email;
 	const requestedAt = domainTransferRequest?.requested_at;
@@ -83,17 +96,8 @@ export default function TransferDomainToAnyUser() {
 
 	const onConfirm = () => {
 		updateDomainTransferRequest( formData.email, {
-			onSuccess: () => {
-				createSuccessNotice(
-					__( 'A domain transfer request has been emailed to the recipient’s address.' )
-				);
-				setIsTransferDialogOpen( false );
-			},
-			onError: () => {
-				createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
-				setIsTransferDialogOpen( false );
-			},
 			onSettled: () => {
+				setIsTransferDialogOpen( false );
 				setFormData( { email: '' } );
 			},
 		} );
@@ -105,12 +109,7 @@ export default function TransferDomainToAnyUser() {
 
 	const onConfirmCancel = () => {
 		deleteDomainTransferRequest( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Your domain transfer has been cancelled.' ) );
-				setIsCancelDialogOpen( false );
-			},
-			onError: () => {
-				createErrorNotice( __( 'The domain transfer cannot be cancelled at this time.' ) );
+			onSettled: () => {
 				setIsCancelDialogOpen( false );
 			},
 		} );
@@ -175,7 +174,7 @@ export default function TransferDomainToAnyUser() {
 								isBusy={ isUpdatingDomainTransferRequest }
 								disabled={ isSaveDisabled || isUpdatingDomainTransferRequest }
 							>
-								{ __( 'Transfer Domain' ) }
+								{ __( 'Transfer domain' ) }
 							</Button>
 						</HStack>
 					</VStack>
@@ -217,7 +216,7 @@ export default function TransferDomainToAnyUser() {
 							onClick={ onConfirm }
 							disabled={ isUpdatingDomainTransferRequest }
 						>
-							{ __( 'Confirm Transfer' ) }
+							{ __( 'Confirm transfer' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -247,7 +246,7 @@ export default function TransferDomainToAnyUser() {
 							onClick={ () => setIsCancelDialogOpen( false ) }
 							disabled={ isDeletingDomainTransferRequest }
 						>
-							{ __( 'Keep Transfer' ) }
+							{ __( 'Keep transfer' ) }
 						</Button>
 						<Button
 							__next40pxDefaultSize
@@ -257,7 +256,7 @@ export default function TransferDomainToAnyUser() {
 							onClick={ onConfirmCancel }
 							disabled={ isDeletingDomainTransferRequest }
 						>
-							{ __( 'Cancel Transfer' ) }
+							{ __( 'Cancel transfer' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -302,7 +301,7 @@ export default function TransferDomainToAnyUser() {
 						disabled={ isDeletingDomainTransferRequest }
 						onClick={ handleCancelTransfer }
 					>
-						{ __( 'Cancel Transfer' ) }
+						{ __( 'Cancel transfer' ) }
 					</Button>
 				</HStack>
 			</VStack>

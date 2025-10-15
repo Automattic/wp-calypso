@@ -1,7 +1,8 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { OnboardActions, updateLaunchpadSettings } from '@automattic/data-stores';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -19,10 +20,13 @@ import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-re
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
+import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import type { DomainSuggestion } from '@automattic/api-core';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
@@ -65,7 +69,15 @@ const startWriting: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const {
+			setSiteUrl,
+			setSelectedSite,
+			setHideFreePlan,
+			setDomainCartItem,
+			setSignupDomainOrigin,
+			setDomain,
+			setDomainCartItems,
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { site, siteSlug, siteId } = useSiteData();
 		const { exitFlow } = useExitFlow();
 
@@ -101,7 +113,7 @@ const startWriting: Flow = {
 					return navigate( 'site-picker' );
 				case 'site-picker': {
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
-						setSelectedSite( providedDependencies?.siteId );
+						setSelectedSite( providedDependencies?.siteId as number );
 						await Promise.all( [
 							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
 							saveSiteSettings( providedDependencies?.siteId, {
@@ -127,7 +139,7 @@ const startWriting: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					if ( ! providedDependencies?.isLaunched && providedDependencies?.siteSlug ) {
-						setSelectedSite( providedDependencies?.siteId );
+						setSelectedSite( providedDependencies?.siteId as number );
 						await Promise.all( [
 							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
 							saveSiteSettings( providedDependencies?.siteId, {
@@ -166,23 +178,78 @@ const startWriting: Flow = {
 
 					return postFlowNavigator( { siteId, siteSlug } );
 				}
-				case 'domains':
+				case 'domains': {
+					if ( ! shouldRenderRewrittenDomainSearch() ) {
+						if ( siteId ) {
+							await updateLaunchpadSettings( siteId, {
+								checklist_statuses: { domain_upsell_deferred: true },
+							} );
+						}
+
+						if ( providedDependencies?.freeDomain ) {
+							return navigate( addQueryArgs( 'launchpad', { siteId: site?.ID } ) );
+						}
+
+						return navigate( 'plans' );
+					}
+
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery: providedDependencies.lastQuery,
+						} );
+
+						return navigate( useMyDomainURL );
+					}
+
 					if ( siteId ) {
 						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
 
-					if ( providedDependencies?.freeDomain ) {
-						return window.location.assign( `/setup/start-writing/launchpad?siteId=${ site?.ID }` );
+					if ( ! providedDependencies.domainItem ) {
+						return navigate( addQueryArgs( 'launchpad', { siteId: site?.ID } ) );
 					}
+
+					const suggestion = providedDependencies.suggestion as DomainSuggestion;
+
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( suggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+					setHideFreePlan( ! suggestion.is_free );
 
 					return navigate( 'plans' );
+				}
 				case 'use-my-domain':
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
+							step: providedDependencies.mode,
+							initialQuery: providedDependencies.domain,
+						} );
+						return navigate( destination as typeof currentStep );
+					}
+
 					if ( siteId ) {
 						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
+					}
+
+					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
 					}
 					return navigate( 'plans' );
 				case 'plans':

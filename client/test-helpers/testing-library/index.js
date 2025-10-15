@@ -8,6 +8,16 @@ import initialReducer from 'calypso/state/reducer';
 import { setRoute } from 'calypso/state/route/actions';
 import routeReducer from 'calypso/state/route/reducer';
 
+/**
+ * Renders a component with a provider
+ * @param {import('react').ReactNode} ui - The component to render
+ * @param {Object} [options] - The options for the render
+ * @param {string} [options.initialPath] - The initial path to set in the route
+ * @param {Object} [options.initialState] - The initial state to set in the store
+ * @param {Object} [options.store] - The store to use
+ * @param {Object} [options.reducers] - The reducers to use
+ * @param {Object} [options.renderOptions] - The options for the render
+ */
 export const renderWithProvider = (
 	ui,
 	{ initialPath, initialState, store = null, reducers, ...renderOptions } = {}

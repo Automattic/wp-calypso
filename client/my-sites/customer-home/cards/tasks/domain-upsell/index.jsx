@@ -19,8 +19,8 @@ import editorPreviewIllustration from 'calypso/assets/images/customer-home/illus
 import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { TASK_DOMAIN_UPSELL } from 'calypso/my-sites/customer-home/cards/constants';
@@ -108,25 +108,18 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	const searchLink = addQueryArgs(
-		{
-			domainAndPlanPackage: true,
-			domain: true,
-			back_to: window.location.href.replace( window.location.origin, '' ),
-		},
-		`/domains/add/${ siteSlug }`
-	);
+	const backUrl = window.location.href.replace( window.location.origin, '' );
 
-	const purchaseLink =
-		! isFreePlan && ! isMonthlyPlan
-			? `/checkout/${ siteSlug }`
-			: addQueryArgs(
-					{
-						domain: true,
-						domainAndPlanPackage: true,
-					},
-					`/plans/yearly/${ siteSlug }`
-			  );
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, domain: true } );
+
+	const plansPageLink = getDomainAndPlanUpsellUrl( {
+		siteSlug,
+		backUrl,
+		step: 'plans',
+		domain: true,
+	} );
+
+	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
 
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
@@ -138,7 +131,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					productSlug: domainSuggestionProductSlug,
 					domain: domainSuggestionName,
 					extra: {
-						flow_name: 'domain-upsell',
+						flow_name: 'domain-and-plan',
 					},
 				} ),
 			] );

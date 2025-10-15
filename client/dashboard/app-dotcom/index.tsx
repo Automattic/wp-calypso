@@ -21,6 +21,7 @@ boot( {
 		},
 		domains: true,
 		emails: true,
+		themes: true,
 		reader: true,
 		help: true,
 		notifications: true,
@@ -29,5 +30,15 @@ boot( {
 			apps: true,
 		},
 		plugins: true,
+		commandPalette: false,
+	},
+	onboardingLinkSourceQueryArg: 'sites-dashboard',
+	onboardingLinks: {
+		default: {
+			href: '/start',
+		},
+		withAI: {
+			href: '/setup/ai-site-builder',
+		},
 	},
 } );

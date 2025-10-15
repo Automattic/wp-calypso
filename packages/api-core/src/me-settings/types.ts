@@ -22,6 +22,7 @@ export interface UserSettings {
 	display_name: string;
 	is_dev_account: boolean;
 	password: string;
+	is_passwordless_user: boolean;
 	tracks_opt_out: boolean;
 	user_email: string;
 	user_login: string;
@@ -52,4 +53,12 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+
+	// Username change related fields
+	email_verified?: boolean;
+	user_login_can_be_changed?: boolean;
+
+	// Email verification fields
+	user_email_change_pending?: boolean;
+	new_user_email?: string;
 }

@@ -1,7 +1,9 @@
 import {
 	fetchSiteBackupRestoreProgress,
 	initiateSiteBackupRestore,
+	initiateSiteGranularRestore,
 	type RestoreConfig,
+	type GranularRestoreConfig,
 } from '@automattic/api-core';
 import configApi from '@automattic/calypso-config';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
@@ -33,6 +35,26 @@ export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
 			timestamp: string | number;
 			config?: RestoreConfig;
 		} ) => initiateSiteBackupRestore( siteId, timestamp, configApi( 'env_id' ), restoreConfig ),
+		onSuccess: ( restoreId ) => {
+			// Start polling restore progress
+			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
+		},
+	} );
+
+/**
+ * Initiate a granular site restore.
+ * @param siteId - The ID of the site to initiate a granular restore for.
+ * @returns A promise that resolves to the restore ID.
+ */
+export const siteBackupGranularRestoreMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( {
+			timestamp,
+			config: granularConfig,
+		}: {
+			timestamp: string | number;
+			config: GranularRestoreConfig;
+		} ) => initiateSiteGranularRestore( siteId, timestamp, configApi( 'env_id' ), granularConfig ),
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );

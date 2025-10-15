@@ -14,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -62,7 +63,15 @@ export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
-	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
+	const restoreDefaultEmailRecordsMutation = useMutation( {
+		...domainDnsEmailMutation( domainName ),
+		meta: {
+			snackbar: {
+				success: __( 'Default email DNS records restored.' ),
+				error: __( 'Failed to restore default email DNS records.' ),
+			},
+		},
+	} );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const {
@@ -177,16 +186,6 @@ export default function DomainDns() {
 
 	const handleRestoreDefaultEmailRecords = () => {
 		restoreDefaultEmailRecordsMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'The default email DNS records were successfully fixed!' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'There was a problem when restoring default email DNS records' ), {
-					type: 'snackbar',
-				} );
-			},
 			onSettled: () => {
 				setIsRestoreDefaultEmailRecordsDialogOpen( false );
 			},
@@ -284,7 +283,7 @@ export default function DomainDns() {
 			header={
 				<VStack>
 					<PageHeader
-						title={ __( 'DNS records' ) }
+						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
 							<>
 								<ImportBindFileButton

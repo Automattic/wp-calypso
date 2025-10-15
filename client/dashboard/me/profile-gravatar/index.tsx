@@ -154,14 +154,14 @@ export default function GravatarProfileSection( {
 								sprintf(
 									/* translators: %1$s: User email */
 									__(
-										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>.'
+										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>'
 									),
 									data.user_email
 								),
 								{
 									strong: <strong />,
 									// @ts-expect-error children prop is injected by createInterpolateElement
-									external: <ExternalLink href="https://gravatar.com" />,
+									external: <ExternalLink href="https://gravatar.com/profile" />,
 								}
 							) }
 						/>

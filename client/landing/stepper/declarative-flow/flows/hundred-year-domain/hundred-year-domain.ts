@@ -47,19 +47,25 @@ const HundredYearDomainFlow: Flow = {
 		);
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const { domainName, productSlug } = providedDependencies;
-
-			const submittedDomainCartItem = domainRegistration( {
-				productSlug: productSlug as string,
-				domain: domainName as string,
-				extra: { is_hundred_year_domain: true, flow_name: HUNDRED_YEAR_DOMAIN_FLOW },
-				volume: 100,
-			} );
-
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
-					setDomainCartItem( submittedDomainCartItem );
+
+					if ( ! shouldRenderRewrittenDomainSearch() ) {
+						const { domainName, productSlug } = providedDependencies;
+
+						const submittedDomainCartItem = domainRegistration( {
+							productSlug: productSlug as string,
+							domain: domainName as string,
+							extra: { is_hundred_year_domain: true, flow_name: HUNDRED_YEAR_DOMAIN_FLOW },
+							volume: 100,
+						} );
+
+						setDomainCartItem( submittedDomainCartItem );
+					} else {
+						setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					}
+
 					return navigate( 'processing' );
 
 				case 'processing':

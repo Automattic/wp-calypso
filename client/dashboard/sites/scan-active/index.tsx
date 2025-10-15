@@ -2,7 +2,7 @@ import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
 import { useTimeSince } from '../../components/time-since';
 import { getActions } from './dataviews/actions';
@@ -11,19 +11,41 @@ import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function ActiveThreatsDataViews( { site }: { site: Site } ) {
+interface ActiveThreatsDataViewsProps {
+	site: Site;
+	timezoneString?: string;
+	gmtOffset?: number;
+}
+
+export function ActiveThreatsDataViews( {
+	site,
+	timezoneString,
+	gmtOffset,
+}: ActiveThreatsDataViewsProps ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'severity', 'threat', 'first_detected', 'auto_fix' ],
 		perPage: 10,
 		sort: { field: 'severity', direction: 'desc' },
+		layout: {
+			styles: {
+				threat: {
+					minWidth: '500px',
+				},
+				first_detected: {
+					maxWidth: '175px',
+					minWidth: '140px',
+				},
+			},
+		},
 	} );
 
+	const [ selection, setSelection ] = useState< string[] >( [] );
 	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
 	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
-	const fields = getFields();
-	const actions = getActions();
+	const fields = getFields( timezoneString, gmtOffset );
+	const actions = useMemo( () => getActions( site, selection.length ), [ site, selection.length ] );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
@@ -77,9 +99,11 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 			fields={ fields }
 			getItemId={ ( item ) => item.id.toString() }
 			isLoading={ isLoading }
+			onChangeSelection={ setSelection }
 			onChangeView={ setView }
 			paginationInfo={ paginationInfo }
 			searchLabel={ __( 'Search' ) }
+			selection={ selection }
 			view={ view }
 		/>
 	);

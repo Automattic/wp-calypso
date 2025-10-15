@@ -19,7 +19,6 @@ export async function fetchSites( {
 		{
 			include_a8c_owned,
 			include_domain_only: false,
-			include_redirect: false,
 			site_activity: 'active',
 			site_visibility,
 			fields: JOINED_SITE_FIELDS,

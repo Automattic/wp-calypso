@@ -12,10 +12,9 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
 const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
@@ -27,35 +26,33 @@ const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {
 	} );
 };
 
+const getUpdatedSettings = (
+	dataState: SettingsData,
+	originalSettings: SettingsData
+): Partial< SettingsData > => {
+	return Object.fromEntries(
+		Object.entries( dataState ).filter( ( [ key, value ] ) => {
+			return value !== originalSettings[ key as keyof SettingsData ];
+		} )
+	);
+};
+
 export const SubscriptionSettings = () => {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const { data: rawSettings } = useSuspenseQuery( userSettingsQuery() );
 	const originalSettings = getSettings( rawSettings );
 	const [ dataState, setDataState ] = useState< SettingsData >( originalSettings );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
-	const {
-		mutate: saveSettings,
-		isPending: isSaving,
-		isSuccess: isSuccessSaving,
-		isError: isErrorSaving,
-	} = useMutation( userSettingsMutation() );
-
-	useEffect( () => {
-		if ( isSuccessSaving ) {
-			createSuccessNotice( __( 'Settings saved successfully.' ), {
-				type: 'snackbar',
-			} );
-		}
-	}, [ isSuccessSaving, createSuccessNotice ] );
-
-	useEffect( () => {
-		if ( isErrorSaving ) {
-			createErrorNotice( __( 'Failed to save settings.' ), {
-				type: 'snackbar',
-			} );
-		}
-	}, [ isErrorSaving, createErrorNotice ] );
+	const { mutate: saveSettings, isPending: isSaving } = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Subscription settings saved.' ),
+				error: __( 'Failed to save subscription settings.' ),
+			},
+		},
+	} );
 
 	const isDataStateDirty = useMemo(
 		() => isDirty( dataState, originalSettings ),
@@ -80,9 +77,20 @@ export const SubscriptionSettings = () => {
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-			saveSettings( dataState );
+
+			saveSettings( dataState, {
+				onSuccess: () => {
+					const changedSettings = getUpdatedSettings( dataState, originalSettings );
+					Object.entries( changedSettings ).forEach( ( [ key, value ] ) => {
+						recordTracksEvent( 'calypso_dashboard_notifications_emails_settings_updated', {
+							setting_name: key,
+							setting_value: value,
+						} );
+					} );
+				},
+			} );
 		},
-		[ dataState, saveSettings ]
+		[ dataState, recordTracksEvent, saveSettings, originalSettings ]
 	);
 
 	const handleChange = useCallback(

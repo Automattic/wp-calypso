@@ -16,9 +16,16 @@ import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import MonitoringCard from '../monitoring-card';
+import MonitoringHttpResponsesCard from '../monitoring-http-responses-card';
+import {
+	useSuccessHttpCodeSeries,
+	useErrorHttpCodeSeries,
+} from '../monitoring-http-responses-card/http-codes';
 import MonitoringPerformanceCard from '../monitoring-performance-card';
+import MonitoringRequestMethodsCard from '../monitoring-request-methods-card';
+import MonitoringResponseTypesCard from '../monitoring-response-types-card';
 import { getMonitoringCalloutProps } from './monitoring-callout';
+import type { HTTPCodeSerie } from '../monitoring-http-responses-card/http-codes';
 import type { Site } from '@automattic/api-core';
 
 const hoursMap: Record< string, number > = {
@@ -56,52 +63,35 @@ function SiteMonitoringBody( {
 	locale: string;
 } ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const successHttpCodeSeries: HTTPCodeSerie[] = useSuccessHttpCodeSeries();
+	const errorHttpCodeSeries: HTTPCodeSerie[] = useErrorHttpCodeSeries();
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
-
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
-				<MonitoringCard
-					title={ __( 'HTTP request methods' ) }
-					description={ __( 'Percentage of traffic per HTTP request method.' ) }
-					onDownloadClick={ () => {} }
-					onAnchorClick={ () => {} }
-				>
-					[HTTP request methods graph]
-				</MonitoringCard>
-
-				<MonitoringCard
-					title={ __( 'Response types' ) }
-					description={ __( 'Percentage of dynamic versus static responses.' ) }
-					onDownloadClick={ () => {} }
-					onAnchorClick={ () => {} }
-				>
-					[Response types graph]
-				</MonitoringCard>
+				<MonitoringRequestMethodsCard site={ site } timeRange={ hoursMap[ timeRange ] } />
+				<MonitoringResponseTypesCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 			</HStack>
 
-			<MonitoringCard
-				title={ __( 'Successful HTTP responses' ) }
-				description={ __( 'Requests per minute completed without errors by the server.' ) }
-				onDownloadClick={ () => {} }
-				onAnchorClick={ () => {} }
-			>
-				[Successful HTTP responses graph]
-			</MonitoringCard>
+			<MonitoringHttpResponsesCard
+				site={ site }
+				timeRange={ hoursMap[ timeRange ] }
+				httpCodeSeries={ successHttpCodeSeries }
+				cardLabel={ __( 'Successful HTTP responses' ) }
+				cardDescription={ __( 'Requests per minute completed without errors by the server.' ) }
+			/>
 
-			<MonitoringCard
-				title={ __( 'Unsuccessful HTTP responses' ) }
-				description={ __(
+			<MonitoringHttpResponsesCard
+				site={ site }
+				timeRange={ hoursMap[ timeRange ] }
+				httpCodeSeries={ errorHttpCodeSeries }
+				cardLabel={ __( 'Unsuccessful HTTP responses' ) }
+				cardDescription={ __(
 					'Requests per minute that encountered errors or issues during processing.'
 				) }
-				onDownloadClick={ () => {} }
-				onAnchorClick={ () => {} }
-			>
-				[Unsuccessful HTTP responses graph]
-			</MonitoringCard>
+			/>
 		</VStack>
 	);
 }
@@ -127,43 +117,48 @@ function SiteMonitoring() {
 	};
 
 	return (
-		<PageLayout
-			header={
-				<HStack
-					justify="space-between"
-					alignment="stretch"
-					wrap
-					spacing={ isSmallViewport ? 5 : 10 }
-				>
-					<PageHeader title={ __( 'Monitoring' ) } />
-					<div>
-						<ToggleGroupControl
-							value={ timeRange }
-							isBlock
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							onChange={ handleTimeRangeChange }
-							label={ __( 'Time period' ) }
-							hideLabelFromVision
-						>
-							<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
-							<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
-							<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
-							<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
-						</ToggleGroupControl>
-					</div>
-				</HStack>
-			}
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.MONITOR }
+			overlay={ <PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> } /> }
+			{ ...getMonitoringCalloutProps() }
 		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.MONITOR }
-				asOverlay
-				{ ...getMonitoringCalloutProps() }
+			<PageLayout
+				header={
+					<HStack
+						justify="space-between"
+						alignment="stretch"
+						wrap
+						spacing={ isSmallViewport ? 5 : 10 }
+					>
+						<VStack spacing={ 2 }>
+							<PageHeader />
+							<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
+						</VStack>
+
+						<div>
+							<ToggleGroupControl
+								value={ timeRange }
+								isBlock
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								onChange={ handleTimeRangeChange }
+								label={ __( 'Time period' ) }
+								hideLabelFromVision
+								style={ { textWrap: 'nowrap' } }
+							>
+								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
+								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
+								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
+								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
+							</ToggleGroupControl>
+						</div>
+					</HStack>
+				}
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
-			</HostingFeatureGatedWithCallout>
-		</PageLayout>
+			</PageLayout>
+		</HostingFeatureGatedWithCallout>
 	);
 }
 

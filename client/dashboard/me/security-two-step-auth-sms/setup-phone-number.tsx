@@ -11,6 +11,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import PhoneNumberInput, { type SecuritySMSNumber } from '../../components/phone-number-input';
 import { SectionHeader } from '../../components/section-header';
@@ -24,6 +25,8 @@ type SMSSetupFormData = {
 };
 
 export default function SetupPhoneNumber( { userSettings }: { userSettings: UserSettings } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const router = useRouter();
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -33,9 +36,15 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 	const { mutate: setupTwoStepAuthSMS, isPending: isSetupSMSPending } = useMutation(
 		setupTwoStepAuthSMSMutation()
 	);
-	const { mutate: resendTwoStepAuthSMSCode, isPending: isResending } = useMutation(
-		resendTwoStepAuthSMSCodeMutation()
-	);
+	const { mutate: resendTwoStepAuthSMSCode, isPending: isResending } = useMutation( {
+		...resendTwoStepAuthSMSCodeMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Verification code sent to your phone.' ),
+				error: __( 'Failed to send verification code. Please try again.' ),
+			},
+		},
+	} );
 
 	const initialCountryCode = userSettings.two_step_sms_country;
 	const initialPhoneNumber = userSettings.two_step_sms_phone_number || '';
@@ -63,6 +72,9 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		recordTracksEvent(
+			'calypso_dashboard_security_two_step_auth_sms_setup_phone_number_submit_click'
+		);
 
 		const fullPhoneNumber = `${ formData.phoneNumber.countryNumericCode }${ formData.phoneNumber.phoneNumber }`;
 		const validation = validatePhone( fullPhoneNumber );
@@ -105,17 +117,14 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 
 	const handleResend = () => {
 		setIsSMSResendThrottled( true );
+		recordTracksEvent(
+			'calypso_dashboard_security_two_step_auth_sms_setup_phone_number_resend_click'
+		);
 		resendTwoStepAuthSMSCode( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Verification code sent to your phone.' ), {
-					type: 'snackbar',
-				} );
 				handleThrottleSMSRequests();
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to send verification code. Please try again.' ), {
-					type: 'snackbar',
-				} );
 				setIsSMSResendThrottled( false );
 			},
 		} );

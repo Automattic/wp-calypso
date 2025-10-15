@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
 
@@ -80,10 +80,10 @@ export const getOdieThirdPartyMessageContent = (): string =>
 	) }`;
 
 export const getOdieEmailFallbackMessageContent = (): string =>
-	__(
-		'We’re sorry, but live chat is temporarily unavailable for scheduled maintenance. Please feel free to reach out via email or check our Support Guides in the meantime.',
+	`${ __(
+		"I’m sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
 		__i18n_text_domain__
-	);
+	) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`;
 
 export const getOdieEmailFallbackMessage = (): Message => ( {
 	content: getOdieEmailFallbackMessageContent(),
@@ -131,12 +131,21 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 	}
 };
 
-export const getOdieInitialMessage = ( botNameSlug: OdieAllowedBots ): Message => {
+export const getOdieInitialMessage = (
+	botNameSlug: OdieAllowedBots,
+	displayName: string
+): Message => {
 	return {
-		content: __(
-			'👋 Howdy, I’m WordPress.com’s support assistant. I can help with questions about your site or account.',
+		content: `**${ sprintf(
+			/* translators: %(name)s: the user's display name */
+			__( 'Howdy %(name)s 👋', __i18n_text_domain__ ),
+			{
+				name: displayName || 'there',
+			}
+		) }** \n\n ${ __(
+			"I'm your personal AI assistant. I can help with any questions about your site or account.",
 			__i18n_text_domain__
-		),
+		) }`,
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),

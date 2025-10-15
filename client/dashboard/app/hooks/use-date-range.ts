@@ -7,17 +7,19 @@ interface UseDateRangeOptions {
 	timezoneString?: string;
 	gmtOffset?: number;
 	autoRefresh?: boolean;
+	defaultDays?: number;
 }
 
 export function useDateRange( {
 	timezoneString,
 	gmtOffset,
 	autoRefresh = false,
+	defaultDays = 7,
 }: UseDateRangeOptions ) {
 	const router = useRouter();
 	const search = router.state.location.search;
 
-	const initial = getDefaultDateRange( timezoneString, gmtOffset );
+	const initial = getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
 	const initialFromUrl = getInitialDateRangeFromSearch( search );
 
 	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
@@ -44,7 +46,7 @@ export function useDateRange( {
 
 		const tick = () => {
 			const end = new Date();
-			const start = subDays( end, 6 );
+			const start = subDays( end, defaultDays - 1 );
 
 			setDateRange( ( prev ) =>
 				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
@@ -68,7 +70,7 @@ export function useDateRange( {
 		tick();
 		const intervalId = setInterval( tick, 10 * 1000 );
 		return () => clearInterval( intervalId );
-	}, [ autoRefresh, timezoneString, gmtOffset ] );
+	}, [ autoRefresh, defaultDays, timezoneString, gmtOffset ] );
 
 	return {
 		dateRange,
@@ -77,12 +79,20 @@ export function useDateRange( {
 }
 
 /**
- * Get the default date range (7 days ending today).
+ * Get the default date range ending today.
  */
-export function getDefaultDateRange( timezoneString?: string, gmtOffset?: number ) {
+export function getDefaultDateRange(
+	timezoneString?: string,
+	gmtOffset?: number,
+	defaultDays: number = 7
+) {
 	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
 	return {
-		start: new Date( siteToday.getFullYear(), siteToday.getMonth(), siteToday.getDate() - 6 ),
+		start: new Date(
+			siteToday.getFullYear(),
+			siteToday.getMonth(),
+			siteToday.getDate() - ( defaultDays - 1 )
+		),
 		end: siteToday,
 	};
 }

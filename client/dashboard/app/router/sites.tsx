@@ -198,6 +198,17 @@ export const siteDeploymentsRoute = createRoute( {
 	)
 );
 
+export const siteDeploymentsListRoute = createRoute( {
+	getParentRoute: () => siteDeploymentsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../sites/deployments-list' ).then( ( d ) =>
+		createLazyRoute( 'site-deployments-list' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteMonitoringRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -281,6 +292,13 @@ export const siteLogsServerRoute = createRoute( {
 );
 
 export const siteLogsActivityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Activity' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteLogsRoute,
 	path: 'activity',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -373,6 +391,13 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
@@ -384,16 +409,20 @@ export const siteBackupsRoute = createRoute( {
 export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Preload activity log backup-related entries.
-		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
+			component: d.BackupsListPage,
+		} )
+	)
+);
+
+export const siteBackupDetailRoute = createRoute( {
+	getParentRoute: () => siteBackupsRoute,
+	path: '$rewindId',
+} ).lazy( () =>
+	import( '../../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backup-detail' )( {
 			component: d.BackupsListPage,
 		} )
 	)
@@ -427,6 +456,12 @@ export const siteBackupDownloadRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId/download',
+	validateSearch: ( search ) => {
+		const downloadId = Number( search.downloadId );
+		return {
+			downloadId: downloadId > 0 ? downloadId : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../sites/backup-download' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-download' )( {
@@ -448,24 +483,6 @@ export const siteDomainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/domains' ).then( ( d ) =>
 		createLazyRoute( 'site-domains' )( {
-			component: d.default,
-		} )
-	)
-);
-
-export const siteEmailsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Emails' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'emails',
-} ).lazy( () =>
-	import( '../../sites/emails' ).then( ( d ) =>
-		createLazyRoute( 'site-emails' )( {
 			component: d.default,
 		} )
 	)
@@ -503,6 +520,11 @@ export const siteSettingsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
+} );
+
+export const siteSettingsIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
@@ -519,8 +541,8 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/site-visibility',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'site-visibility',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
@@ -547,8 +569,8 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/subscription-gifting',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'subscription-gifting',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
@@ -569,8 +591,8 @@ export const siteSettingsWordPressRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/wordpress',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( canViewWordPressSettings( site ) ) {
@@ -593,8 +615,8 @@ export const siteSettingsPHPRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/php',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.PHP ) ) {
@@ -617,8 +639,8 @@ export const siteSettingsDatabaseRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/database',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'database',
 } ).lazy( () =>
 	import( '../../sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-database' )( {
@@ -635,8 +657,8 @@ export const siteSettingsAgencyRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/agency',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'agency',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( site.is_wpcom_atomic ) {
@@ -651,54 +673,6 @@ export const siteSettingsAgencyRoute = createRoute( {
 	)
 );
 
-export const siteSettingsMcpRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Model Context Protocol (MCP) Settings' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/mcp',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-mcp' ).then( ( d ) => {
-		return createLazyRoute( 'site-settings-mcp' )( {
-			component: () => {
-				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
-			},
-		} );
-	} )
-);
-
-export const siteSettingsMcpSetupRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'MCP Setup' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/mcp-setup',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
-		return createLazyRoute( 'site-settings-mcp-setup' )( {
-			component: () => {
-				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
-			},
-		} );
-	} )
-);
-
 export const siteSettingsHundredYearPlanRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -707,8 +681,8 @@ export const siteSettingsHundredYearPlanRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/hundred-year-plan',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'hundred-year-plan',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( canViewHundredYearPlanSettings( site ) ) {
@@ -731,8 +705,8 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/primary-data-center',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
@@ -755,8 +729,8 @@ export const siteSettingsStaticFile404Route = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/static-file-404',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.STATIC_FILE_404 ) ) {
@@ -779,8 +753,8 @@ export const siteSettingsCachingRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/caching',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'caching',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.CACHING ) ) {
@@ -803,8 +777,8 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/defensive-mode',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.DEFENSIVE_MODE ) ) {
@@ -827,8 +801,8 @@ export const siteSettingsSftpSshRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/sftp-ssh',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [
@@ -854,8 +828,8 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/transfer-site',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'transfer-site',
 } ).lazy( () =>
 	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
@@ -874,8 +848,8 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/web-application-firewall',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'web-application-firewall',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
@@ -901,8 +875,8 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/wpcom-login',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'wpcom-login',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
@@ -928,11 +902,53 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteRoute,
-	path: 'settings/repositories',
+	getParentRoute: () => siteSettingsRoute,
+	path: 'repositories',
+	validateSearch: ( search ): { from?: 'deployments' } => {
+		return {
+			from: search.from === 'deployments' ? 'deployments' : undefined,
+		};
+	},
+} );
+
+export const siteSettingsRepositoriesIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsRepositoriesRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsRepositoriesConnectRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Connect repository' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRepositoriesRoute,
+	path: 'connect',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-connect' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsRepositoriesManageRoute = createRoute( {
+	getParentRoute: () => siteSettingsRepositoriesRoute,
+	path: 'manage/$deploymentId',
+	parseParams: ( params ) => ( {
+		deploymentId: Number( params.deploymentId ),
+	} ),
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-manage' )( {
 			component: d.default,
 		} )
 	)
@@ -1061,32 +1077,36 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	const siteRoutes: AnyRoute[] = [
 		siteOverviewRoute,
-		siteSettingsRoute,
-		siteSettingsSiteVisibilityRoute,
-		siteSettingsSubscriptionGiftingRoute,
-		siteSettingsDatabaseRoute,
-		siteSettingsWordPressRoute,
-		siteSettingsPHPRoute,
-		siteSettingsAgencyRoute,
-		siteSettingsMcpRoute,
-		siteSettingsMcpSetupRoute,
-		siteSettingsRepositoriesRoute,
-		siteSettingsHundredYearPlanRoute,
-		siteSettingsPrimaryDataCenterRoute,
-		siteSettingsStaticFile404Route,
-		siteSettingsCachingRoute,
-		siteSettingsDefensiveModeRoute,
-		siteSettingsTransferSiteRoute,
-		siteSettingsSftpSshRoute,
-		siteSettingsWebApplicationFirewallRoute,
-		siteSettingsWpcomLoginRoute,
+		siteSettingsRoute.addChildren( [
+			siteSettingsIndexRoute,
+			siteSettingsSiteVisibilityRoute,
+			siteSettingsSubscriptionGiftingRoute,
+			siteSettingsDatabaseRoute,
+			siteSettingsWordPressRoute,
+			siteSettingsPHPRoute,
+			siteSettingsAgencyRoute,
+			siteSettingsRepositoriesRoute.addChildren( [
+				siteSettingsRepositoriesIndexRoute,
+				siteSettingsRepositoriesConnectRoute,
+				siteSettingsRepositoriesManageRoute,
+			] ),
+			siteSettingsHundredYearPlanRoute,
+			siteSettingsPrimaryDataCenterRoute,
+			siteSettingsStaticFile404Route,
+			siteSettingsCachingRoute,
+			siteSettingsDefensiveModeRoute,
+			siteSettingsTransferSiteRoute,
+			siteSettingsSftpSshRoute,
+			siteSettingsWebApplicationFirewallRoute,
+			siteSettingsWpcomLoginRoute,
+		] ),
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute );
+		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
 	}
 
 	if ( config.supports.sites.performance ) {
@@ -1111,6 +1131,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
+				siteBackupDetailRoute,
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
@@ -1132,15 +1153,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	if ( config.supports.sites.emails ) {
-		siteRoutes.push( siteEmailsRoute );
-	}
-
 	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
-	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
 }

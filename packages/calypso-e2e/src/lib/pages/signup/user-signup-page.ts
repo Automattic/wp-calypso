@@ -94,7 +94,7 @@ export class UserSignupPage {
 		// Click the button first, then wait for the response
 		await this.page.click( selectors.submitButton );
 
-		const response = await this.page.waitForResponse( /.*new\?.*/ );
+		const response = await this.page.waitForResponse( /.*new\?.*/, { timeout: 20000 } );
 
 		if ( ! response ) {
 			throw new Error( 'Failed to sign up as new user: no or unexpected API response.' );

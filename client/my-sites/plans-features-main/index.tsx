@@ -125,6 +125,7 @@ export interface PlansFeaturesMainProps {
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
+	isDomainTransfer?: boolean;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
@@ -195,6 +196,7 @@ const PlansFeaturesMain = ( {
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
+	isDomainTransfer,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectToAddDomainFlow,
@@ -287,14 +289,6 @@ const PlansFeaturesMain = ( {
 		};
 	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
 
-	const isDisplayingPlansNeededForFeature =
-		!! selectedFeature &&
-		isValidFeatureKey( selectedFeature ) &&
-		!! selectedPlan &&
-		!! getPlan( selectedPlan ) &&
-		! isPersonalPlan( selectedPlan ) &&
-		( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) );
-
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
@@ -347,6 +341,15 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
 	] );
+
+	const isDisplayingPlansNeededForFeature =
+		!! selectedFeature &&
+		isValidFeatureKey( selectedFeature ) && // For plans-upgrade intent, enable feature filtering without requiring selectedPlan
+		( intent === 'plans-upgrade' ||
+			( !! selectedPlan &&
+				!! getPlan( selectedPlan ) &&
+				! isPersonalPlan( selectedPlan ) &&
+				( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) ) ) );
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent &&
@@ -529,12 +532,12 @@ const PlansFeaturesMain = ( {
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
-			let isDomainUpsellFlow: string | null = '';
+			let isDomainAndPlanFlow: string | null = '';
 			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
 
 			if ( typeof window !== 'undefined' ) {
-				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+				isDomainAndPlanFlow = new URLSearchParams( window.location.search ).get( 'domain' );
 				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
 					'domainAndPlanPackage'
 				);
@@ -543,7 +546,7 @@ const PlansFeaturesMain = ( {
 
 			const pathOrQueryParam = getPlanTypeDestination( props, {
 				intervalType: interval,
-				domain: isDomainUpsellFlow,
+				domain: isDomainAndPlanFlow,
 				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
@@ -793,6 +796,7 @@ const PlansFeaturesMain = ( {
 					modalType={ resolveModal( lastClickedPlan ) }
 					generatedWPComSubdomain={ resolvedSubdomainName }
 					selectedThemeType={ selectedThemeType }
+					isDomainTransfer={ isDomainTransfer || false }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {
@@ -821,6 +825,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
+						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {

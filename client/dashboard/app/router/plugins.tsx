@@ -1,4 +1,10 @@
-import { sitesQuery, queryClient } from '@automattic/api-queries';
+import {
+	pluginsQuery,
+	sitesQuery,
+	queryClient,
+	rawUserPreferencesQuery,
+	marketplacePluginsQuery,
+} from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { rootRoute } from './root';
@@ -26,7 +32,7 @@ export const pluginsIndexRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Sites' ),
+				title: __( 'Plugins' ),
 			},
 		],
 	} ),
@@ -36,24 +42,6 @@ export const pluginsIndexRoute = createRoute( {
 		throw redirect( { to: '/plugins/manage' } );
 	},
 } );
-
-export const pluginRoute = createRoute( {
-	head: ( { params } ) => ( {
-		meta: [
-			{
-				title: params.pluginId,
-			},
-		],
-	} ),
-	getParentRoute: () => pluginsRoute,
-	path: '$pluginId',
-} ).lazy( () =>
-	import( '../../plugins/plugin' ).then( ( d ) =>
-		createLazyRoute( 'plugin' )( {
-			component: d.default,
-		} )
-	)
-);
 
 export const pluginsManageRoute = createRoute( {
 	head: () => ( {
@@ -65,9 +53,41 @@ export const pluginsManageRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
+	loader: async () => {
+		queryClient.ensureQueryData( marketplacePluginsQuery() );
+		queryClient.ensureQueryData( pluginsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
+} );
+
+export const pluginsManageIndexRoute = createRoute( {
+	getParentRoute: () => pluginsManageRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../plugins/manage' ).then( ( d ) =>
 		createLazyRoute( 'plugins-manage' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const pluginRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: params.pluginId,
+			},
+		],
+	} ),
+	getParentRoute: () => pluginsManageRoute,
+	path: '$pluginId',
+	loader: async () => {
+		queryClient.ensureQueryData( marketplacePluginsQuery() );
+		await queryClient.ensureQueryData( pluginsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../plugins/plugin' ).then( ( d ) =>
+		createLazyRoute( 'plugin' )( {
 			component: d.default,
 		} )
 	)
@@ -83,6 +103,11 @@ export const pluginsScheduledUpdatesRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'scheduled-updates',
+} );
+
+export const pluginsScheduledUpdatesIndexRoute = createRoute( {
+	getParentRoute: () => pluginsScheduledUpdatesRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates' ).then( ( d ) =>
 		createLazyRoute( 'plugins-scheduled-updates' )( {
@@ -99,9 +124,11 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => pluginsRoute,
-	path: 'scheduled-updates/new',
-	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+	getParentRoute: () => pluginsScheduledUpdatesRoute,
+	path: '/new',
+	loader: () => {
+		queryClient.ensureQueryData( sitesQuery() );
+	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
 		createLazyRoute( 'plugins-scheduled-updates-new' )( {
@@ -110,13 +137,37 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	)
 );
 
+export const pluginsScheduledUpdatesEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit schedule' ),
+			},
+		],
+	} ),
+	getParentRoute: () => pluginsScheduledUpdatesRoute,
+	path: '/edit/$scheduleId',
+	loader: () => {
+		queryClient.ensureQueryData( sitesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../plugins/scheduled-updates/edit' ).then( ( d ) =>
+		createLazyRoute( 'plugins-scheduled-updates-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createPluginsRoutes = () => {
 	const childRoutes: AnyRoute[] = [
 		pluginsIndexRoute,
-		pluginRoute,
-		pluginsManageRoute,
-		pluginsScheduledUpdatesRoute,
-		pluginsScheduledUpdatesNewRoute,
+		pluginsManageRoute.addChildren( [ pluginsManageIndexRoute, pluginRoute ] ),
+		pluginsScheduledUpdatesRoute.addChildren( [
+			pluginsScheduledUpdatesIndexRoute,
+			pluginsScheduledUpdatesNewRoute,
+			pluginsScheduledUpdatesEditRoute,
+		] ),
 	];
+
 	return [ pluginsRoute.addChildren( childRoutes ) ];
 };

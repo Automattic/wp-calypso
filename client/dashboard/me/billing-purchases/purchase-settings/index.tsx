@@ -21,7 +21,7 @@ import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-tab
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useRouter, Link } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -40,19 +40,20 @@ import {
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, isRTL, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	moreVertical,
-	chevronLeft,
-	chevronRight,
 	calendar,
+	chevronRight,
 	currencyDollar,
 	siteLogo,
 	commentAuthorAvatar,
 } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
+import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -60,7 +61,6 @@ import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { formatDate } from '../../../utils/datetime';
-import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -80,7 +80,8 @@ import {
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
-import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
+import { getPurchaseUrlForId } from '../urls';
+import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
@@ -171,24 +172,6 @@ function upgradePurchase( upgradeUrl: string ): void {
 	window.location.href = upgradeUrl;
 }
 
-const BackButton = () => {
-	const router = useRouter();
-
-	return (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				router.navigate( {
-					to: '/me/billing/purchases',
-				} );
-			} }
-		>
-			{ __( 'Purchases' ) }
-		</Button>
-	);
-};
-
 function ProductLink( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_plan && purchase.site_slug ) {
 		const url = '/plans/my-plan/' + purchase.site_slug;
@@ -207,9 +190,8 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
-		const url = getEmailManagementPath( purchase.site_slug, purchase.meta );
 		const text = __( 'Email settings' );
-		return <a href={ url }>{ text }</a>;
+		return <Link to={ emailsRoute.to }>{ text }</Link>;
 	}
 
 	return null;
@@ -281,7 +263,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Downgrade or cancel your subscription' ) }
-				description={ __( "We'll be sorry to see you go!" ) }
+				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
 						variant="secondary"
@@ -300,7 +282,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Remove subscription' ) }
-				description={ __( "We'll be sorry to see you go!" ) }
+				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
 						variant="secondary"
@@ -442,11 +424,15 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ReinstallButton( { purchase }: { purchase: Purchase } ) {
-	const {
-		mutate: reinstallPlugins,
-		error,
-		isPending: isMutationPending,
-	} = useMutation( reinstallMarketplacePluginsQuery( purchase.blog_id ) );
+	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation( {
+		...reinstallMarketplacePluginsQuery( purchase.blog_id ),
+		meta: {
+			snackbar: {
+				success: __( 'Plugins reinstalled.' ),
+				error: __( 'Failed to reinstall plugins.' ),
+			},
+		},
+	} );
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
@@ -469,14 +455,6 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 					>
 						{ __( 'Reinstall plugins' ) }
 					</Button>
-					{
-						// FIXME: there's probably a better place for this error message
-						error && (
-							<Notice status="error" isDismissible={ false }>
-								{ error.message }
-							</Notice>
-						)
-					}
 				</>
 			}
 		/>
@@ -498,7 +476,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function PurchaseSettingsCard( {
+export function PurchaseSettingsCard( {
 	icon,
 	title,
 	heading,
@@ -651,10 +629,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 						</Notice>
 					) }
 
-					<PurchasePaymentMethod
-						purchase={ purchase }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-					/>
+					<PurchasePaymentMethod purchase={ purchase } showUpdateButton />
 				</VStack>
 			</CardBody>
 		</Card>
@@ -1102,7 +1077,7 @@ export default function PurchaseSettings() {
 			header={
 				<VStack>
 					<PageHeader
-						prefix={ <BackButton /> }
+						prefix={ <Breadcrumbs length={ 3 } /> }
 						title={ getTitleForDisplay( purchase ) }
 						actions={
 							site?.options?.admin_url && (
@@ -1130,6 +1105,7 @@ export default function PurchaseSettings() {
 			}
 		>
 			<VStack spacing={ 6 }>
+				<PurchaseNotice purchase={ purchase } />
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
 					<PurchaseSettingsCard
 						icon={ calendar }

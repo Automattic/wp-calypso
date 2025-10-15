@@ -1,5 +1,8 @@
 /** @jest-environment jsdom */
-import { notificationDeviceQuery } from '@automattic/api-queries';
+import {
+	notificationDeviceQuery,
+	notificationPushPermissionStateQuery,
+} from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,9 +10,23 @@ import nock from 'nock';
 import { BrowserNotificationCard } from '../index';
 
 describe( 'BrowserNotificationCard', () => {
+	const mockServiceWorkState = (
+		queryClient: QueryClient,
+		state: 'granted' | 'denied' | 'prompt' | 'not-supported'
+	) => {
+		queryClient.setQueryData( notificationPushPermissionStateQuery().queryKey, state );
+	};
+
+	const mockDeviceQuery = ( queryClient: QueryClient, deviceId: string ) => {
+		queryClient.setQueryData( notificationDeviceQuery().queryKey, {
+			ID: deviceId,
+		} );
+	};
+
 	beforeEach( () => {
 		nock.disableNetConnect();
 		nock.cleanAll();
+		window.scrollTo = jest.fn();
 
 		Object.defineProperty( window, 'navigator', {
 			value: {
@@ -33,7 +50,9 @@ describe( 'BrowserNotificationCard', () => {
 	};
 
 	it( 'renders the option to enable browser notifications', async () => {
-		renderWithProvider( <BrowserNotificationCard status="granted" /> );
+		const queryClient = new QueryClient();
+		mockServiceWorkState( queryClient, 'granted' );
+		renderWithProvider( <BrowserNotificationCard />, queryClient );
 
 		await waitFor( () => {
 			expect(
@@ -43,7 +62,9 @@ describe( 'BrowserNotificationCard', () => {
 	} );
 
 	it( 'renders the option to disable browser notification when status is denied', () => {
-		renderWithProvider( <BrowserNotificationCard status="denied" /> );
+		const queryClient = new QueryClient();
+		mockServiceWorkState( queryClient, 'denied' );
+		renderWithProvider( <BrowserNotificationCard />, queryClient );
 
 		expect(
 			screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
@@ -51,7 +72,10 @@ describe( 'BrowserNotificationCard', () => {
 	} );
 
 	it( 'renders the option to disable browser notification when status is not supported', () => {
-		renderWithProvider( <BrowserNotificationCard status="not-supported" /> );
+		const queryClient = new QueryClient();
+		mockServiceWorkState( queryClient, 'not-supported' );
+
+		renderWithProvider( <BrowserNotificationCard />, queryClient );
 
 		expect(
 			screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
@@ -59,6 +83,9 @@ describe( 'BrowserNotificationCard', () => {
 	} );
 
 	it( 'registers a device when the feature is enabled', async () => {
+		const queryClient = new QueryClient();
+		mockServiceWorkState( queryClient, 'granted' );
+
 		const browserSubscription = {
 			endpoint: 'https://fcm.googleapis.com/fcm/send/fcm_token',
 			keys: {
@@ -85,7 +112,7 @@ describe( 'BrowserNotificationCard', () => {
 			} )
 			.reply( 200 );
 
-		renderWithProvider( <BrowserNotificationCard status="granted" /> );
+		renderWithProvider( <BrowserNotificationCard />, queryClient );
 
 		await waitFor( () => {
 			expect( screen.getByLabelText( 'Enable browser notifications' ) ).toBeEnabled();
@@ -106,16 +133,15 @@ describe( 'BrowserNotificationCard', () => {
 		const queryClient = new QueryClient();
 		const deviceId = 'device_id_2';
 
-		queryClient.setQueryData( notificationDeviceQuery().queryKey, {
-			ID: deviceId,
-		} );
+		mockServiceWorkState( queryClient, 'granted' );
+		mockDeviceQuery( queryClient, deviceId );
 
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( `/rest/v1.1/${ deviceId }/delete` )
 			.reply( 200 )
 			.persist();
 
-		renderWithProvider( <BrowserNotificationCard status="granted" />, queryClient );
+		renderWithProvider( <BrowserNotificationCard />, queryClient );
 
 		const browserSubscription = {
 			endpoint: 'https://fcm.googleapis.com/fcm/send/fcm_token',

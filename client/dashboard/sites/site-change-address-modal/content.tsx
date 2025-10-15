@@ -45,10 +45,9 @@ const SubdomainInputControlEdit = < Item, >( {
 		<SuffixInputControl
 			label={ field.label }
 			value={ getValue( { item: data } ) }
-			__next40pxDefaultSize
-			suffix={ <Text variant="muted">{ DOMAIN_SUFFIX }</Text> }
-			onChange={ ( newValue ) => {
-				onChange( { [ id ]: newValue } );
+			suffix={ DOMAIN_SUFFIX }
+			onChange={ ( newValue: string ) => {
+				onChange( { [ id ]: newValue } as Partial< Item > );
 			} }
 		/>
 	);

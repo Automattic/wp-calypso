@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useTimeSince } from '../../components/time-since';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
@@ -20,9 +21,9 @@ function getScanURL( site: Site ) {
 		return `https://cloud.jetpack.com/scan/${ site.slug }`;
 	}
 
-	return window?.location?.pathname?.startsWith( '/v2' )
-		? `/sites/${ site.slug }/scan`
-		: `https://wordpress.com/scan/${ site.slug }`;
+	return isDashboardBackport()
+		? `https://wordpress.com/scan/${ site.slug }`
+		: `/sites/${ site.slug }/scan`;
 }
 
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {

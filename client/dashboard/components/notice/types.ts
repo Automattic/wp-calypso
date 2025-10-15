@@ -1,4 +1,5 @@
 import React from 'react';
+import type { IconType } from '@wordpress/components';
 
 type NoticeDensity = 'low' | 'medium' | 'high';
 
@@ -19,7 +20,7 @@ export interface NoticeProps {
 	/**
 	 * The main body content informing and guiding users about the system status change.
 	 */
-	children: React.ReactNode;
+	children?: React.ReactNode;
 
 	/**
 	 * Optional actions that serve as a call to action.
@@ -32,6 +33,11 @@ export interface NoticeProps {
 	 * @default 'low'
 	 */
 	density?: NoticeDensity;
+
+	/**
+	 * Custom icon to use instead of the default one for each variant.
+	 */
+	icon?: IconType;
 
 	/**
 	 * An optional action to close the component.

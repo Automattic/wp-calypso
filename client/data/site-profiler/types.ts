@@ -1,4 +1,5 @@
-import { UrlData } from 'calypso/blocks/import/types';
+import type { PerformanceMetricAudit } from '@automattic/api-core';
+import type { UrlData } from 'calypso/blocks/import/types';
 
 export interface DNS {
 	host: string;
@@ -120,8 +121,8 @@ export interface UrlSecurityMetricsQueryResponse {
 	wpscan: {
 		report: {
 			audits: {
-				pass: Record< string, PerformanceMetricsItemQueryResponse >;
-				fail: Record< string, PerformanceMetricsItemQueryResponse >;
+				pass: Record< string, PerformanceMetricAudit >;
+				fail: Record< string, PerformanceMetricAudit >;
 				truncated: boolean;
 			};
 			ovc: number;
@@ -150,7 +151,7 @@ export type PerformanceMetricsHistory = {
 };
 
 export type PerformanceReport = {
-	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	audits: Record< string, PerformanceMetricAudit >;
 	crux_score: number;
 	performance: number;
 	overall_score: number;
@@ -201,28 +202,9 @@ export interface UrlPerformanceInsightsQueryResponse {
 }
 
 export interface PerformanceMetricsDataQueryResponse {
-	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
-	pass: Record< string, PerformanceMetricsItemQueryResponse >;
+	diagnostic: Record< string, PerformanceMetricAudit >;
+	pass: Record< string, PerformanceMetricAudit >;
 	truncated: boolean;
-}
-
-export interface PerformanceMetricsItemQueryResponse {
-	id: string;
-	title?: string;
-	description?: string;
-	type: 'warning' | 'fail';
-	displayValue?: string;
-	details?: PerformanceMetricsDetailsQueryResponse;
-	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
-}
-
-export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
-	headings?: Array< { key: string; label: string; valueType: string } >;
-	items?: Array< {
-		[ key: string ]: string | number | { [ key: string ]: any };
-	} >;
-	chains?: Array< { [ key: string ]: any } >;
 }
 
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {

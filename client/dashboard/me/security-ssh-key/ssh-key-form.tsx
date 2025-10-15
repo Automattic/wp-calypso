@@ -16,6 +16,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
@@ -38,51 +39,41 @@ export default function SshKeyForm( {
 	setIsEditing?: ( isEditing: boolean ) => void;
 	username: string;
 } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
+
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< SshKeyFormData >( {
 		key: '',
 	} );
 
-	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation(
-		createSshKeyMutation()
-	);
-	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation(
-		updateSshKeyMutation()
-	);
+	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation( {
+		...createSshKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'SSH key saved.' ),
+				error: __( 'Failed to save SSH key.' ),
+			},
+		},
+	} );
+	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation( {
+		...updateSshKeyMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'SSH key saved.' ),
+				error: __( 'Failed to save SSH key.' ),
+			},
+		},
+	} );
 
 	const handleUpdateSshKey = () => {
-		updateSshKey( formData.key, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'SSH key updated.' ), {
-					type: 'snackbar',
-				} );
-				setIsEditing?.( false );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to update SSH key.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click' );
+		updateSshKey( formData.key );
 	};
 
 	const handleCreateSshKey = () => {
-		createSshKey(
-			{ key: formData.key, name: 'default' },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'SSH key added.' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to add SSH key.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
-		);
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_create_click' );
+		createSshKey( { key: formData.key, name: 'default' } );
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -166,7 +157,7 @@ export default function SshKeyForm( {
 							/>
 						) }
 						{ isEditing && sshKey && (
-							<BaseControl label={ __( 'Current public SSH key' ) }>
+							<BaseControl __nextHasNoMarginBottom label={ __( 'Current public SSH key' ) }>
 								<Card isRounded={ false }>
 									<CardBody>
 										<VStack spacing={ 2 }>

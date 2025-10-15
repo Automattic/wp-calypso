@@ -26,33 +26,52 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 
 	const [ trademarkClaimModalOpen, setTrademarkClaimModalOpen ] = useState( false );
 
+	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
+
 	const {
 		mutate: addToCart,
 		isPending,
 		error,
-		submittedAt,
 	} = useMutation( {
+		meta: {
+			mutationId,
+		},
 		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
 			if ( acceptedTrademarkClaim ) {
-				return cart.onAddItem( suggestion );
+				events.onTrademarkClaimsNoticeAccepted( suggestion );
+				await cart.onAddItem( suggestion );
+				return { addedToCart: true };
 			}
 
 			const availability = await queryClient.ensureQueryData(
 				queries.domainAvailability( domainName )
 			);
 
-			if ( ! availability?.trademark_claims_notice_info ) {
-				return cart.onAddItem( suggestion );
+			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
+
+			if ( ! availability.trademark_claims_notice_info ) {
+				await cart.onAddItem( suggestion );
+				return { addedToCart: true };
 			}
 
+			events.onTrademarkClaimsNoticeShown( suggestion );
 			setTrademarkClaimModalOpen( true );
+		},
+		onSuccess: ( data ) => {
+			if ( data?.addedToCart ) {
+				events.onAddDomainToCart(
+					domainName,
+					suggestion.position,
+					suggestion.is_premium ?? false,
+					suggestion.vendor
+				);
+			}
 		},
 		networkMode: 'always',
 		retry: false,
 	} );
 
 	const isMutating = !! useIsMutating();
-	const isCurrentMutation = useIsCurrentMutation( submittedAt );
 
 	if ( availability?.is_price_limit_exceeded ) {
 		return (
@@ -88,7 +107,10 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			<DomainSuggestionPrimaryCTA
 				disabled={ isMutating }
 				isBusy={ isPending }
-				onClick={ () => addToCart( { acceptedTrademarkClaim: false } ) }
+				onClick={ () => {
+					events.onSuggestionInteract( suggestion );
+					addToCart( { acceptedTrademarkClaim: false } );
+				} }
 			/>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal
@@ -98,7 +120,10 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 						setTrademarkClaimModalOpen( false );
 						addToCart( { acceptedTrademarkClaim: true } );
 					} }
-					onClose={ () => setTrademarkClaimModalOpen( false ) }
+					onClose={ () => {
+						setTrademarkClaimModalOpen( false );
+						events.onTrademarkClaimsNoticeClosed( suggestion );
+					} }
 				/>
 			) }
 		</>

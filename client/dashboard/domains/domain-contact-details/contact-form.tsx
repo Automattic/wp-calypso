@@ -16,7 +16,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -26,6 +26,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { getContactFormFields } from './contact-form-fields';
 import ContactFormPrivacy from './contact-form-privacy';
+import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 
 interface ContactFormProps {
 	domainName: string;
@@ -41,21 +42,35 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	);
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
+
+	const normalizedFormData = useMemo( () => {
+		if ( ! statesList || statesList.length === 0 ) {
+			return formData;
+		}
+
+		// If current state is not in the statesList, use the first available state
+		const isValidState = statesList.some( ( state ) => state.code === formData.state );
+		if ( formData.state && ! isValidState ) {
+			return { ...formData, state: statesList[ 0 ]?.code };
+		}
+
+		return formData;
+	}, [ formData, statesList ] );
+
 	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
-
-	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
+	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		validateMutation.mutate( formData, {
+		validateMutation.mutate( normalizedFormData, {
 			onSuccess: ( data ) => {
 				if ( data.success ) {
 					updateMutation.mutate(
 						{
-							domainContactDetails: formData,
-							transferLock: formData.optOutTransferLock === false,
+							domainContactDetails: normalizedFormData,
+							transferLock: normalizedFormData.optOutTransferLock === false,
 						},
 						{
 							onSuccess: () => {
@@ -83,30 +98,41 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 	};
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() => getContactFormFields( countryList ?? [], statesList ?? [] ),
-		[ countryList, statesList ]
+		() => getContactFormFields( countryList ?? [], statesList ?? [], selectedCountryCode ),
+		[ countryList, statesList, selectedCountryCode ]
 	);
 
 	const form = {
-		type: 'regular' as const,
-		labelPosition: 'top' as const,
+		layout: { type: 'regular' as const },
 		fields: [
-			'firstName',
-			'lastName',
+			{
+				id: 'name-row',
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+				},
+				children: [ 'firstName', 'lastName' ],
+			} as FormField,
 			'organization',
-			'email',
-			'phone',
+			{
+				id: 'contact-row',
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+				},
+				children: [ 'email', 'phone' ],
+			} as FormField,
 			'countryCode',
-			'address1',
-			'address2',
-			'city',
-			'state',
-			'postalCode',
+			...RegionAddressFieldsLayout( {
+				statesList,
+				countryList,
+				countryCode: selectedCountryCode,
+			} ),
 			'optOutTransferLock',
 		],
 	};
 
-	const canSave = isItemValid( formData, fields, form );
+	const canSave = isItemValid( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -143,7 +169,6 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 						>
 							{ __( 'Learn more' ) }
 						</ExternalLink>
-						.
 					</Text>
 				</VStack>
 			</Notice>
@@ -160,7 +185,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				<CardBody>
 					<VStack spacing={ 4 }>
 						<DataForm< DomainContactDetails >
-							data={ formData }
+							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
@@ -172,7 +197,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 								<Text as="p">
 									{ createInterpolateElement(
 										__(
-											'By clicking <strong>Save contact info</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
+											'By clicking <strong>Save</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
 										),
 										{
 											strong: <strong />,
@@ -195,7 +220,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 									isBusy={ isSubmitting }
 									disabled={ ! canSave || ! isDirty || isSubmitting }
 								>
-									{ __( 'Save contact info' ) }
+									{ __( 'Save' ) }
 								</Button>
 							</ButtonStack>
 						</form>

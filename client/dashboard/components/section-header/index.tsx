@@ -36,26 +36,29 @@ export const SectionHeader = ( {
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
-				<HStack justify="space-between" alignment="center" spacing={ 3 } wrap>
-					<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
-						{ title }
-					</HeadingTag>
+				<HStack justify="space-between" alignment="center" spacing={ 4 } wrap>
+					<VStack>
+						<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
+							{ title }
+						</HeadingTag>
+						{ description && (
+							<Text variant="muted" className="dashboard-section-header__description">
+								{ description }
+							</Text>
+						) }
+					</VStack>
+
 					{ /* The wrapper is always needed for view transitions. */ }
 					<ButtonStack
 						justify="flex-end"
 						expanded={ false }
-						alignment="center"
+						alignment="flex-start"
 						className="dashboard-section-header__actions"
 					>
 						{ actions }
 					</ButtonStack>
 				</HStack>
 			</HStack>
-			{ description && (
-				<Text variant="muted" className="dashboard-section-header__description">
-					{ description }
-				</Text>
-			) }
 		</VStack>
 	);
 };

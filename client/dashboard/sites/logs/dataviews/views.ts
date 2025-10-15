@@ -10,7 +10,7 @@ const phpLogsViewConfig = {
 	allowedFilters: [ 'severity' ],
 	layout: {
 		styles: {
-			timestamp: { maxWidth: '175px', minWidth: '140px' },
+			timestamp: { maxWidth: '300px', minWidth: '140px' },
 			name: { maxWidth: '200px', minWidth: '75px' },
 			message: { maxWidth: '30vw' },
 			file: { minWidth: '300px' },
@@ -26,25 +26,9 @@ const serverLogsViewConfig = {
 	allowedFilters: [ 'cached', 'request_type', 'status', 'renderer' ],
 	layout: {
 		styles: {
-			date: { maxWidth: '175px', minWidth: '140px' },
+			date: { maxWidth: '300px', minWidth: '140px' },
 			request_url: { minWidth: '300px' },
 			http_referer: { minWidth: '300px' },
-		},
-	},
-};
-
-const activityLogsViewConfig = {
-	sortField: 'published',
-	titleField: '',
-	primaryField: 'event',
-	visibleFields: [ 'published', 'event', 'actor' ],
-	allowedFilters: [ 'published_utc' ],
-	layout: {
-		styles: {
-			published: { maxWidth: '175px', minWidth: '140px' },
-			published_utc: { maxWidth: '175px', minWidth: '140px' },
-			summary: { minWidth: '300px' },
-			actor: { maxWidth: '150px', minWidth: '75px' },
 		},
 	},
 };
@@ -77,10 +61,6 @@ export function toFilterParams( { view, logType }: { view: View; logType: LogTyp
 		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
 
-	if ( logType === LogType.ACTIVITY ) {
-		return getFilterParamsFromView( view, [] );
-	}
-
 	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
 }
 
@@ -88,21 +68,14 @@ export function useView( {
 	logType,
 	initialFilters,
 }: {
-	logType: LogType;
+	logType: Omit< LogType, 'activity' >;
 	initialFilters?: View[ 'filters' ];
 } ) {
-	let config;
-	if ( logType === LogType.PHP ) {
-		config = phpLogsViewConfig;
-	} else if ( logType === LogType.ACTIVITY ) {
-		config = activityLogsViewConfig;
-	} else {
-		config = serverLogsViewConfig;
-	}
+	const config = logType === LogType.PHP ? phpLogsViewConfig : serverLogsViewConfig;
 	return useState< View >( () => ( {
 		type: 'table',
 		page: 1,
-		perPage: logType === LogType.ACTIVITY ? 20 : 50,
+		perPage: 50,
 		sort: {
 			field: config.sortField,
 			direction: 'desc',
@@ -112,5 +85,6 @@ export function useView( {
 		primaryField: config.primaryField,
 		fields: config.visibleFields,
 		layout: config.layout,
+		infiniteScrollEnabled: true,
 	} ) );
 }

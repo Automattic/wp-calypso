@@ -1,4 +1,3 @@
-import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
@@ -11,12 +10,8 @@ export function getPerformanceCalloutProps() {
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Optimize your site’s performance' ),
 		upsellImage: illustrationUrl,
-		upsellDescription: (
-			<Text as="p" variant="muted">
-				{ __(
-					'Make smarter decisions, boost speed and engagement, and see how your site‘s performing with key metrics and contextual insights.'
-				) }
-			</Text>
+		upsellDescription: __(
+			'Make smarter decisions, boost speed and engagement, and see how your site‘s performing with key metrics and contextual insights.'
 		),
 	};
 }

@@ -6,10 +6,11 @@ import { SummaryButtonList } from '../../components/summary-button-list';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
-import DomainForwardingsSettingsSummary from '../domain-forwardings/summary';
+import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
+import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
-import DomainGlueRecordsSettingsSummary from '../overview-glue-records/summary';
+
 export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
 	const buttonListItems = [];
 
@@ -36,9 +37,7 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.can_manage_dns_records
 	) {
 		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
-		buttonListItems.push(
-			<DomainForwardingsSettingsSummary key="forwardings" domain={ domain } />
-		);
+		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
 	}
 
 	/**
@@ -78,7 +77,7 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
 		buttonListItems.push(
-			<DomainGlueRecordsSettingsSummary key="glue-records" domain={ domain } />
+			<DomainGlueRecordsSettingsSummary key="glue-records" domainName={ domain.domain } />
 		);
 	}
 
