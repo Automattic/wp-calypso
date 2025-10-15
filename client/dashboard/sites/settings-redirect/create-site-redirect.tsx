@@ -1,17 +1,24 @@
 import { productsQuery, domainCanRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
+import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { ButtonStack } from '../../components/button-stack';
 import { validateHostname } from '../../domains/name-servers/utils';
+import RedirectInputField from './redirect-input-field';
 
 interface FormData {
-	redirectUrl: string;
+	redirect: string;
 }
 
 export default function CreateSiteRedirect( {
@@ -24,37 +31,48 @@ export default function CreateSiteRedirect( {
 	const { data: products } = useSuspenseQuery( productsQuery() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const offsetRedirect = products?.offsite_redirect;
-	const [ formData, setFormData ] = useState< FormData >( { redirectUrl: '' } );
+	const [ formData, setFormData ] = useState< FormData >( { redirect: '' } );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { refetch } = useQuery( {
-		...domainCanRedirectQuery( siteId, formData.redirectUrl ),
+		...domainCanRedirectQuery( siteId, formData.redirect ),
 		enabled: false,
 	} );
+
+	const fields: Field< FormData >[] = useMemo(
+		() => [
+			{
+				id: 'redirect',
+				type: 'text',
+				Edit: ( { field, data, onChange } ) => {
+					const { id, getValue } = field;
+					return (
+						<RedirectInputField
+							value={ getValue( { item: data } ) }
+							onChange={ ( value ) => onChange( { [ id ]: value } ) }
+						/>
+					);
+				},
+				isValid: {
+					required: true,
+					custom: ( formData: FormData ) => {
+						const value = formData.redirect;
+						return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
+					},
+				},
+			},
+		],
+		[]
+	);
 
 	if ( ! offsetRedirect ) {
 		return null;
 	}
 
-	const fields: Field< FormData >[] = [
-		{
-			id: 'redirectUrl',
-			label: __( 'Redirect URL' ),
-			type: 'text',
-			placeholder: __( 'Enter destination URL' ),
-			isValid: {
-				required: true,
-				custom: ( formData: FormData ) => {
-					const value = formData.redirectUrl;
-					return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
-				},
-			},
-		},
-	];
-
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'redirectUrl' ],
+		fields: [ 'redirect' ],
 	};
+	const isFormValid = isItemValid( formData, fields, form );
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -72,7 +90,7 @@ export default function CreateSiteRedirect( {
 		await shoppingCartManagerClient.forCartKey( siteId ).actions.replaceProductsInCart( [
 			{
 				product_slug: offsetRedirect?.product_slug,
-				meta: formData.redirectUrl,
+				meta: formData.redirect,
 			},
 		] );
 		window.location.href = addQueryArgs( `/checkout/${ siteSlug }`, {
@@ -85,7 +103,10 @@ export default function CreateSiteRedirect( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<div>{ offsetRedirect?.cost_display }</div>
+					<Text as="p">
+						{ offsetRedirect?.cost_display }
+						<small>{ __( '/year' ) }</small>
+					</Text>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
 							<DataForm< FormData >
@@ -102,6 +123,7 @@ export default function CreateSiteRedirect( {
 									type="submit"
 									__next40pxDefaultSize
 									isBusy={ isSubmitting }
+									disabled={ isSubmitting || ! isFormValid }
 								>
 									{ __( 'GO' ) }
 								</Button>

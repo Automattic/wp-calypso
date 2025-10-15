@@ -1,13 +1,6 @@
 import { updateSiteRedirectMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	Button,
-	__experimentalInputControl as InputControl,
-	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
-} from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -15,6 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { validateHostname } from '../../domains/name-servers/utils';
+import RedirectInputField from './redirect-input-field';
 
 interface ManageSiteRedirectProps {
 	siteId: number;
@@ -34,10 +28,6 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 		updateSiteRedirectMutation( siteId )
 	);
 
-	const withoutHttp = ( url: string ) => {
-		return url.replace( /^https?:\/\//, '' );
-	};
-
 	const fields: Field< SiteRedirectFormData >[] = useMemo(
 		() => [
 			{
@@ -46,16 +36,9 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
 					return (
-						<InputControl
-							placeholder={ __( 'Enter destination URL' ) }
-							label={ __( 'Redirect URL' ) }
-							prefix={ <InputControlPrefixWrapper>http://</InputControlPrefixWrapper> }
-							__next40pxDefaultSize
+						<RedirectInputField
 							value={ getValue( { item: data } ) }
-							onChange={ ( value ) => {
-								const processedValue = withoutHttp( value ?? '' );
-								return onChange( { [ id ]: processedValue } );
-							} }
+							onChange={ ( value ) => onChange( { [ id ]: value } ) }
 						/>
 					);
 				},
@@ -77,7 +60,6 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		return;
 		updateSiteRedirect( formData.redirect ?? '', {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Site redirect updated successfully.' ), {
