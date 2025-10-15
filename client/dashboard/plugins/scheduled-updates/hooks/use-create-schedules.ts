@@ -66,6 +66,7 @@ export function useCreateSchedules( siteIds: number[] ) {
 						const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
 						const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 
+						let anyRetryExhausted = false;
 						const monitorTasks = successfulSiteIds
 							.map( ( id ) => siteMap.get( id ) )
 							.filter( ( site ): site is Site => Boolean( site ) )
@@ -79,14 +80,29 @@ export function useCreateSchedules( siteIds: number[] ) {
 								} );
 
 								return async () => {
-									await createMonitorForSite( {
-										siteId: site.ID,
-										body: { urls: createMonitorUrls( site.URL, CRON_CHECK_INTERVAL ) },
-									} );
+									try {
+										await createMonitorForSite( {
+											siteId: site.ID,
+											body: { urls: createMonitorUrls( site.URL, CRON_CHECK_INTERVAL ) },
+										} );
+									} catch ( error ) {
+										if ( error instanceof Error && error.message === 'Monitor is not active.' ) {
+											anyRetryExhausted = true;
+											recordTracksEvent(
+												'calypso_scheduled_updates_retry_monitor_settings_failed',
+												{ site_slug: site.slug }
+											);
+										}
+										// Swallow other errors; scheduling succeeded and monitor creation is best-effort
+									}
 								};
 							} );
 
 						await runWithConcurrency( monitorTasks, 4 );
+						// If any site had monitor retry exhaustion, emit batch-level failure once
+						if ( anyRetryExhausted ) {
+							recordTracksEvent( 'calypso_scheduled_updates_batch_retry_monitor_settings_failed' );
+						}
 						resolve();
 					},
 					onError: ( error ) => reject( error ),
