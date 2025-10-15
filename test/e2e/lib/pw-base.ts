@@ -37,6 +37,7 @@ import {
 	GitHubLoginPage,
 	ImportContentFromAnotherPlatformOrFilePage,
 	ImportContentFromMediumPage,
+	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
 	ImportContentWordPressQuestionPage,
@@ -165,6 +166,10 @@ export const test = base.extend< {
 	 * Page object representing the Import Content from Medium page.
 	 */
 	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Import Content from Substack page.
+	 */
+	pageImportContentFromSubstack: ImportContentFromSubstackPage;
 	/**
 	 * Page object representing the Import Content from WordPress page.
 	 */
@@ -308,14 +313,18 @@ export const test = base.extend< {
 		const importContentPage = new ImportContentPage( page );
 		await use( importContentPage );
 	},
-	pageImportContentFromMedium: async ( { page }, use ) => {
-		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
-		await use( importContentFromMediumPage );
-	},
 	pageImportContentFromAnotherPlatformOrFile: async ( { page }, use ) => {
 		const importContentFromAnotherPlatformOrFilePage =
 			new ImportContentFromAnotherPlatformOrFilePage( page );
 		await use( importContentFromAnotherPlatformOrFilePage );
+	},
+	pageImportContentFromMedium: async ( { page }, use ) => {
+		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
+		await use( importContentFromMediumPage );
+	},
+	pageImportContentFromSubstack: async ( { page }, use ) => {
+		const importContentFromSubstackPage = new ImportContentFromSubstackPage( page );
+		await use( importContentFromSubstackPage );
 	},
 	pageImportContentFromWordPress: async ( { page }, use ) => {
 		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
