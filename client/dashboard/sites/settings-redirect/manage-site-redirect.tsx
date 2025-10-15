@@ -9,11 +9,12 @@ import {
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field } from '@wordpress/dataviews';
+import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import { validateHostname } from '../../domains/name-servers/utils';
 
 interface ManageSiteRedirectProps {
 	siteId: number;
@@ -49,9 +50,10 @@ export default function RedirectsSettings( { siteId, currentRedirect }: ManageSi
 						<InputControl
 							prefix={ <InputControlPrefixWrapper>HTTP://</InputControlPrefixWrapper> }
 							__next40pxDefaultSize
-							value={ withoutHttp( getValue( { item: data } ) ) }
+							value={ getValue( { item: data } ) }
 							onChange={ ( value ) => {
-								return onChange( { [ id ]: withoutHttp( value ?? '' ) } );
+								const processedValue = withoutHttp( value ?? '' );
+								return onChange( { [ id ]: processedValue } );
 							} }
 						/>
 					);
