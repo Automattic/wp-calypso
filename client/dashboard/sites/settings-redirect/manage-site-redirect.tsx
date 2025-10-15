@@ -9,7 +9,7 @@ import {
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
+import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
@@ -42,13 +42,14 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 		() => [
 			{
 				id: 'redirect',
-				label: 'Redirect',
 				type: 'text',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
 					return (
 						<InputControl
-							prefix={ <InputControlPrefixWrapper>HTTP://</InputControlPrefixWrapper> }
+							placeholder={ __( 'Enter destination URL' ) }
+							label={ __( 'Redirect URL' ) }
+							prefix={ <InputControlPrefixWrapper>http://</InputControlPrefixWrapper> }
 							__next40pxDefaultSize
 							value={ getValue( { item: data } ) }
 							onChange={ ( value ) => {
@@ -60,15 +61,8 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 				},
 				isValid: {
 					required: true,
-					custom: (
-						formData: SiteRedirectFormData,
-						field: NormalizedField< SiteRedirectFormData >
-					) => {
+					custom: ( formData: SiteRedirectFormData ) => {
 						const value = formData.redirect;
-						// Skip validation for empty optional fields
-						if ( ! value && ! field.isValid?.required ) {
-							return null;
-						}
 						return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
 					},
 				},
@@ -79,8 +73,11 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 
 	const form = { layout: { type: 'regular' as const }, fields: [ 'redirect' ] };
 
+	const isFormValid = isItemValid( formData, fields, form );
+
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		return;
 		updateSiteRedirect( formData.redirect ?? '', {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Site redirect updated successfully.' ), {
@@ -99,28 +96,27 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<div>
-						Manage site redirect { siteId } { currentRedirect }
-					</div>
 					<form onSubmit={ handleSubmit }>
-						<DataForm< SiteRedirectFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< SiteRedirectFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isPending }
-								disabled={ isPending || formData.redirect === currentRedirect }
-							>
-								{ __( 'Save' ) }
-							</Button>
-						</ButtonStack>
+						<VStack spacing={ 4 }>
+							<DataForm< SiteRedirectFormData >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< SiteRedirectFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || formData.redirect === currentRedirect || ! isFormValid }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</ButtonStack>
+						</VStack>
 					</form>
 				</VStack>
 			</CardBody>

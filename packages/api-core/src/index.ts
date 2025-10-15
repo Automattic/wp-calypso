@@ -5,6 +5,7 @@ export * from './error';
 export * from './agency';
 export * from './domain';
 export * from './domain-availability';
+export * from './domain-can-redirect';
 export * from './domain-connection-setup';
 export * from './domain-contact-verification';
 export * from './domain-dns-records';
