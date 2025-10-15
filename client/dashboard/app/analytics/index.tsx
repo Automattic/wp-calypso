@@ -31,9 +31,7 @@ export function useAnalytics() {
 		context === defaultNoopAnalyticsClient
 	) {
 		// eslint-disable-next-line no-console
-		console.error(
-			'useAnalytics() hook expects the <AnalyticsProvider> to be available in the component tree'
-		);
+		console.error( 'useAnalytics() must be used with a <AnalyticsProvider>' );
 	}
 
 	return context;
