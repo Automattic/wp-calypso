@@ -24,14 +24,18 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useActions } from '../sites/actions';
 import AddNewSite from '../sites/add-new-site';
-import SitesDataViews from '../sites/dataviews';
-import { getFields } from '../sites/fields';
+import {
+	SitesDataViews,
+	useActions,
+	getFields,
+	getView,
+	mergeViews,
+	recordViewChanges,
+} from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
-import { getView, mergeViews, recordViewChanges } from '../sites/views';
-import type { ViewSearchParams } from '../sites/views';
+import type { ViewSearchParams } from '../sites/dataviews/views';
 import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 

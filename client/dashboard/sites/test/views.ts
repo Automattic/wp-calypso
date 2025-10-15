@@ -1,4 +1,4 @@
-import { recordViewChanges, type SitesView } from '../views';
+import { recordViewChanges, type SitesView } from '../dataviews/views';
 
 describe( 'recordViewChanges', () => {
 	test( 'nothing relevant changed', () => {
