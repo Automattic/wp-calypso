@@ -1,15 +1,14 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains.ts';
-import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
@@ -22,9 +21,9 @@ import {
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const linkUrl = addQueryArgs( domainAddNew( domain ), {
-		domainAndPlanPackage: 'true',
-		upsell: 'activitypub',
+	const linkUrl = getDomainAndPlanUpsellUrl( {
+		siteSlug: domain,
+		step: 'domains',
 	} );
 	const translate = useTranslate();
 	const recordClick = () => {

@@ -75,7 +75,6 @@ const DomainUpsellCardContent = ( {
 				siteSlug: site.slug,
 				backUrl,
 				step: 'plans',
-				domain: true,
 			} );
 		} else {
 			window.location.href = addQueryArgs( `/checkout/${ site.slug }`, {
@@ -88,7 +87,6 @@ const DomainUpsellCardContent = ( {
 	const chooseYourOwnUrl = getDomainAndPlanUpsellUrl( {
 		siteSlug: site.slug,
 		backUrl,
-		domain: true,
 	} );
 
 	return (

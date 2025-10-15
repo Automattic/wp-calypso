@@ -110,13 +110,12 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	const backUrl = window.location.href.replace( window.location.origin, '' );
 
-	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, domain: true } );
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
 
 	const plansPageLink = getDomainAndPlanUpsellUrl( {
 		siteSlug,
 		backUrl,
 		step: 'plans',
-		domain: true,
 	} );
 
 	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;
