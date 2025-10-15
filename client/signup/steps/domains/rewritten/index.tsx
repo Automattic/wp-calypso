@@ -5,7 +5,12 @@ import {
 	isEcommerceFlow,
 	isFreeFlow,
 	isWithThemeFlow,
-	isLaunchSiteFlow,
+	PERSONAL_FLOW,
+	PREMIUM_FLOW,
+	BUSINESS_FLOW,
+	DOMAIN_FLOW,
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	ONBOARDING_WITH_EMAIL_FLOW,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
@@ -18,7 +23,6 @@ import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
 	domainMapping,
@@ -47,6 +51,15 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 
 	return `${ repo }/${ themeSlug }`;
 };
+
+const flowsWithFreeDomainForFirstYear = [
+	BUSINESS_FLOW,
+	PREMIUM_FLOW,
+	PERSONAL_FLOW,
+	DOMAIN_FLOW,
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	ONBOARDING_WITH_EMAIL_FLOW,
+];
 
 const DomainSearchUI = (
 	props: StepProps & {
@@ -353,6 +366,16 @@ const DomainSearchUI = (
 		);
 	};
 
+	const isFirstDomainFreeForFirstYear = useMemo( () => {
+		if ( flowsWithFreeDomainForFirstYear.includes( flowName ) ) {
+			return true;
+		}
+
+		// Returning false here defers this decision to cart.next_domain_is_free, which checks
+		// if there's a plan in the cart or if the site has a plan with unused domain credit
+		return false;
+	}, [ flowName ] );
+
 	return (
 		<StepWrapper
 			{ ...props }
@@ -376,9 +399,7 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					isFirstDomainFreeForFirstYear={
-						! isMonthlyOrFreeFlow( flowName ) && ! isLaunchSiteFlow( flowName )
-					}
+					isFirstDomainFreeForFirstYear={ isFirstDomainFreeForFirstYear }
 					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}

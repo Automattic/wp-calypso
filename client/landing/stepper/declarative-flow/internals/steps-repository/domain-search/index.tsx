@@ -251,10 +251,6 @@ const DomainSearchStep: StepType< {
 	}, [ flow ] );
 
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
-			return false;
-		}
-
 		// We always want to show the free domain for a year discount in onboarding
 		if ( isOnboardingFlow( flow ) ) {
 			return true;
