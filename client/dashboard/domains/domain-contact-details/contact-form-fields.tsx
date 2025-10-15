@@ -58,10 +58,10 @@ export const getContactFormFields = (
 			Edit: ( { field, data, onChange } ) => {
 				const { getValue } = field;
 				const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
-				const phoneValue = getValue ? getValue( { item: data } ) : '';
+				const phoneValue = getValue( { item: data } );
 
 				// Our backend stores phone number in the format: +country_code.phone_number
-				const [ countryNumericCode, phoneNumber ] = phoneValue?.split( '.' ) ?? [ '', '' ];
+				const [ countryNumericCode, phoneNumber ] = phoneValue.split( '.' ) ?? [ '', '' ];
 
 				// Find country code from the numeric code using SMS country codes
 				const smsCountry = smsCountryCodes?.find(
