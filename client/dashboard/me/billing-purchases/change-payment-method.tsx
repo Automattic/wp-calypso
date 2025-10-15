@@ -9,38 +9,19 @@ import {
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter, useNavigate } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { useNavigate } from '@tanstack/react-router';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useCallback } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { changePaymentMethodRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PaymentMethodSelector } from './payment-method-selector';
 import { useCreateAssignablePaymentMethods } from './payment-method-selector/use-create-assignable-payment-methods';
 import { getPurchaseUrl } from './urls';
-import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
-
-function BackButton( { purchase }: { purchase: Purchase } ) {
-	const router = useRouter();
-
-	return (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				router.navigate( {
-					to: getPurchaseUrl( purchase ),
-				} );
-			} }
-		>
-			{ __( 'Cancel' ) }
-		</Button>
-	);
-}
 
 function ChangePaymentMethod() {
 	const { purchaseId } = changePaymentMethodRoute.useParams();
@@ -81,7 +62,7 @@ function ChangePaymentMethod() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={ <BackButton purchase={ purchase } /> }
+					prefix={ <Breadcrumbs length={ 4 } /> }
 					title={
 						! purchase.payment_type || purchase.payment_type === 'credits'
 							? __( 'Add payment method' )

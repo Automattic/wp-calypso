@@ -2,14 +2,15 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
-import { __experimentalGrid as Grid, Button } from '@wordpress/components';
+import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { __, isRTL } from '@wordpress/i18n';
-import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import { backup } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect, useCallback } from 'react';
 import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
@@ -127,7 +128,7 @@ export function BackupsListPage() {
 		handleDateRangeChange( next );
 		setSelectedBackup( null, false );
 	};
-	const [ showDetails, setShowDetails ] = useState( false );
+	const [ showDetails, setShowDetails ] = useState( Boolean( rewindId ) );
 	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
@@ -138,19 +139,6 @@ export function BackupsListPage() {
 			setShowDetails( true );
 		}
 	};
-
-	const backButton = (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				setShowDetails( false );
-				setSelectedBackup( null );
-			} }
-		>
-			{ __( 'Backups' ) }
-		</Button>
-	);
 
 	const renderMobileView = () => {
 		if ( showDetails && selectedBackup ) {
@@ -203,7 +191,7 @@ export function BackupsListPage() {
 			header={
 				<PageHeader
 					title={ isMobileDetailsView ? __( 'Backup details' ) : __( 'Backups' ) }
-					prefix={ isMobileDetailsView ? backButton : undefined }
+					prefix={ isMobileDetailsView && rewindId ? <Breadcrumbs length={ 2 } /> : undefined }
 					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
