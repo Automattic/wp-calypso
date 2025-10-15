@@ -326,13 +326,6 @@ export const STEPS = {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
-	UNIFIED_DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
-			),
-	},
 	UNIFIED_PLANS: {
 		slug: 'plans',
 		asyncComponent: () =>
