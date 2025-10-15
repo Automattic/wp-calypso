@@ -29,6 +29,6 @@ export default function useChatStatus() {
 		supportActivity,
 		supportLevel: supportStatus?.eligibility?.support_level,
 		forceEmailSupport,
-		isBlockedFromChat: supportStatus?.eligibility?.is_chat_restricted,
+		isChatRestricted: supportStatus?.eligibility?.is_chat_restricted,
 	};
 }

@@ -27,7 +27,7 @@ const getDisplayMessage = (
 	messageContent: ReactNode,
 	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
-	isBlockedFromChat?: boolean,
+	isChatRestricted?: boolean,
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
@@ -39,7 +39,7 @@ const getDisplayMessage = (
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
-		return getOdieEmailFallbackMessageContent( { isBlockedFromChat } );
+		return getOdieEmailFallbackMessageContent( isChatRestricted );
 	}
 
 	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
@@ -65,7 +65,7 @@ export const UserMessage = ( {
 		trackEvent,
 		canConnectToZendesk,
 		forceEmailSupport,
-		isBlockedFromChat,
+		isChatRestricted,
 		chat,
 	} = useOdieAssistantContext();
 
@@ -85,7 +85,7 @@ export const UserMessage = ( {
 				message.content,
 				hasCannedResponse,
 				forceEmailSupport,
-				isBlockedFromChat,
+				isChatRestricted,
 				message?.context?.flags?.is_error_message
 		  )
 		: message.content;
