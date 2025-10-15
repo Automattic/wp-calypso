@@ -1,48 +1,48 @@
+@import '@wordpress/base-styles/variables';
+
 .dashboard-page-header {
 	align-self: center;
 }
 
-.billing-selector {
-	background-color: #fff;
-	border: 1px solid #dbdbdc;
-	padding: 3px;
-	border-radius: 3px;
-	max-width: max-content;
+.billing-interval-selector {
+	width: 330px;
 	margin-inline-start: auto;
 	margin-inline-end: auto;
+}
 
-	.components-button-group .components-button {
-		box-shadow: none;
-		border-radius: 3px;
+.email-providers {
+	border: 1px solid $gray-200;
+	border-radius: 8px;
+	display: flex;
+}
+
+.email-provider {
+	padding: 20px;
+	justify-content: flex-start;
+
+	&:not(:first-child) {
+		border-inline-start: 1px solid $gray-200;
 	}
 }
 
-.choose-email-solution__card {
+.email-provider-logo {
+	margin-inline-start: -2px;
+}
 
-	.choose-email-solution__divider {
-		width: 1px;
-		background-color: #dbdbdc;
-		align-self: stretch;
-	}
+.email-provider-name {
+	font-family: Recoleta, sans-serif;
+}
 
-	.choose-email-solution__select-mailbox {
-		justify-content: center;
-		border-radius: 3px;
-	}
+.email-provider-action {
+	justify-content: center;
+}
 
-	.titan-logo {
-		height: 32px;
-		align-self: baseline;
-	}
+.email-provider-features {
+	padding: 0;
+	line-height: 28px;
+	list-style: none;
+}
 
-	ul {
-		padding: 0;
-		line-height: 28px;
-		list-style: none;
-	}
-
-	.professional-email-icon {
-		stroke: none;
-		fill: var(--wp-admin-theme-color);
-	}
+.email-provider-powered-by {
+	width: 145px;
 }
