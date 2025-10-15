@@ -1,5 +1,5 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
-import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,8 +14,14 @@ import {
 	getSignupCompleteSiteID,
 	setSignupCompleteSiteID,
 	getSignupCompleteSlug,
+	clearSignupDestinationCookie,
+	clearSignupCompleteFlowName,
+	clearSignupCompleteSlug,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
@@ -238,6 +244,26 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+		/**
+		 * Clears every state we're persisting during the flow
+		 * when entering it. This is to ensure that the user
+		 * starts on a clean slate.
+		 */
+		useEffect( () => {
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+				reduxDispatch( setSelectedSiteId( null ) );
+				clearStepPersistedState( this.name );
+				clearSignupDestinationCookie();
+				clearSignupCompleteFlowName();
+				clearSignupCompleteSlug();
+				clearSignupCompleteSiteID();
+			}
+		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 
 		useEffect( () => {
