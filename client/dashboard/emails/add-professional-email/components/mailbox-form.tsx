@@ -21,6 +21,9 @@ import {
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
 import { MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
 import { sanitizeMailboxValue } from '../../utils/sanitize-mailbox-value';
+import { MailboxInput } from './mailbox-input';
+
+import './style.scss';
 
 export const MailboxForm = ( {
 	mailboxEntity,
@@ -80,37 +83,26 @@ export const MailboxForm = ( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<InputControl
-				__next40pxDefaultSize
+			<MailboxInput
+				fieldName={ FIELD_MAILBOX }
+				mailboxEntity={ mailboxEntity }
 				label={ __( 'Email address' ) }
-				value={ mailboxEntity.getFieldValue( FIELD_MAILBOX ) }
-				onChange={ ( value ) => {
-					onChange( {
-						value,
-						field: mailboxEntity.formFields[ FIELD_MAILBOX ],
-						lowerCaseChangeValue: true,
-					} );
-				} }
 				disabled={ disabled }
+				lowerCaseChangeValue
 				suffix={
 					<InputControlSuffixWrapper>
 						<Text variant="muted">{ `@${ domain }` }</Text>
 					</InputControlSuffixWrapper>
 				}
+				onChange={ onChange }
 			/>
 
 			<VStack>
-				<InputControl
-					__next40pxDefaultSize
+				<MailboxInput
+					fieldName={ FIELD_PASSWORD }
 					type={ isPasswordVisible ? 'text' : 'password' }
+					mailboxEntity={ mailboxEntity }
 					label={ __( 'Password' ) }
-					value={ mailboxEntity.getFieldValue( FIELD_PASSWORD ) }
-					onChange={ ( value ) => {
-						onChange( {
-							value,
-							field: mailboxEntity.formFields[ FIELD_PASSWORD ],
-						} );
-					} }
 					disabled={ disabled }
 					suffix={
 						<InputControlSuffixWrapper>
@@ -124,6 +116,7 @@ export const MailboxForm = ( {
 					}
 					// Hint to LastPass not to attempt autofill
 					data-lpignore="true"
+					onChange={ onChange }
 				/>
 
 				{ ! isPasswordResetEmailVisible && (
