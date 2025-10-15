@@ -4,7 +4,7 @@ import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
-import type { Site } from '@automattic/api-core';
+import type { Site, DomainSubtype } from '@automattic/api-core';
 
 export default function DomainsCard( { site }: { site: Site } ) {
 	const { data: siteDomains } = useQuery( {
@@ -29,7 +29,7 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		return <DomainTransferUpsellCard />;
 	}
 
-	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if ( ! siteDomains.find( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ) ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
