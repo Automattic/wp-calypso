@@ -156,7 +156,11 @@ export const useFields = ( {
 				render: ( { item } ) => {
 					// Site Overview does not show the Status column, so we use this column for error messages.
 					// TODO: move this inside the DomainExpiryField component?
-					if ( inOverview ) {
+					if (
+						inOverview &&
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
+						item.domain_status.id === 'connection_error'
+					) {
 						return <Text intent={ item.domain_status.type }>{ item.domain_status.label }</Text>;
 					}
 
