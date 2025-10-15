@@ -1,4 +1,4 @@
-import { DotcomFeatures, WhoisType, DomainSubtype } from '@automattic/api-core';
+import { DotcomFeatures, WhoisType, DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
@@ -46,17 +46,17 @@ export function isDomainRenewable( domain: DomainSummary ) {
 
 	return (
 		!! domain.subscription_id &&
-		! domain.pending_renewal &&
-		! domain.pending_registration_at_registry &&
-		! domain.pending_registration &&
-		domain.current_user_can_manage &&
-		( domain.is_renewable || domain.is_redeemable ) &&
-		! domain.aftermarket_auction
+		! [
+			DomainStatus.PENDING_RENEWAL,
+			DomainStatus.PENDING_TRANSFER,
+			DomainStatus.PENDING_REGISTRATION,
+			DomainStatus.EXPIRED_IN_AUCTION,
+		].includes( domain.domain_status.id )
 	);
 }
 
 export function isDomainUpdatable( domain: DomainSummary ) {
-	return ! domain.pending_transfer && ! domain.expired;
+	return domain.domain_status.id !== DomainStatus.PENDING_TRANSFER && ! domain.expired;
 }
 
 export function isDomainInGracePeriod( domain: DomainSummary ) {

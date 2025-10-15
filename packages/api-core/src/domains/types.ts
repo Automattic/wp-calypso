@@ -25,6 +25,21 @@ export enum DomainSubtype {
 	SITE_REDIRECT = 'site_redirect',
 }
 
+export enum DomainStatus {
+	ACTIVE = 'active',
+	IN_PROGRESS = 'in_progress',
+	EXPIRED = 'expired',
+	EXPIRED_IN_AUCTION = 'expired_in_auction',
+	PENDING_RENEWAL = 'pending_renewal',
+	PENDING_TRANSFER = 'pending_transfer',
+	EXPIRING_SOON = 'expiring_soon',
+	TRANSFER_COMPLETED = 'transfer_completed',
+	CONNECTION_ERROR = 'connection_error',
+	TRANSFER_PENDING = 'transfer_pending',
+	TRANSFER_ERROR = 'transfer_error',
+	PENDING_REGISTRATION = 'pending_registration',
+}
+
 export interface DomainSummary {
 	domain: string;
 	subtype: {
@@ -42,7 +57,7 @@ export interface DomainSummary {
 	primary_domain: boolean;
 	can_set_as_primary: boolean;
 	domain_status: {
-		id: string;
+		id: DomainStatus;
 		label: string;
 		type: 'success' | 'warning' | 'error';
 		cta: string;
