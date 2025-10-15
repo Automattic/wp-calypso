@@ -114,8 +114,14 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 				children: [ 'firstName', 'lastName' ],
 			} as FormField,
 			'organization',
-			'email',
-			'phone',
+			{
+				id: 'contact-row',
+				layout: {
+					type: 'row' as const,
+					alignment: 'start' as const,
+				},
+				children: [ 'email', 'phone' ],
+			} as FormField,
 			'countryCode',
 			...RegionAddressFieldsLayout( {
 				statesList,
