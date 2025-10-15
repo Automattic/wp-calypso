@@ -2,9 +2,19 @@ import { SiteDomain } from '@automattic/api-core';
 import { siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 
+const isJetpackSlug = ( slug: string ): boolean => String( slug ).startsWith( 'jetpack_' );
+
 export const useDomains = (): { domains: SiteDomain[]; isLoading: boolean } => {
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const sites = ( allSites ?? [] ).filter( ( site ) => site.capabilities.manage_options );
+	const sites = ( allSites ?? [] )
+		.filter( ( site ) => {
+			const product = site?.plan?.product_slug ?? null;
+			if ( product === null ) {
+				return true;
+			}
+			return ! isJetpackSlug( product );
+		} )
+		.filter( ( site ) => site.capabilities.manage_options );
 	const siteIds = sites.map( ( site ) => site.ID );
 
 	// Fetch site domains for each managed site ID
