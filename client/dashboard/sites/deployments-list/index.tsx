@@ -55,9 +55,13 @@ function DeploymentsList() {
 			  }
 			: DEFAULT_VIEW;
 	} );
-	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
-		codeDeploymentsQuery( site.ID )
-	);
+	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery( {
+		...codeDeploymentsQuery( site.ID ),
+		refetchInterval: 5000,
+		meta: {
+			persist: false,
+		},
+	} );
 
 	// Fetch all deployment runs in parallel
 	const deploymentRunsQueries = useQueries( {
