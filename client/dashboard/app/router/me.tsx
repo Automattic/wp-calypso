@@ -3,6 +3,7 @@ import {
 	userSettingsQuery,
 	userPurchasesQuery,
 	purchaseQuery,
+	receiptQuery,
 	sitesQuery,
 	queryClient,
 	accountRecoveryQuery,
@@ -127,9 +128,38 @@ export const billingHistoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingRoute,
 	path: '/billing-history',
+} );
+
+export const billingHistoryIndexRoute = createRoute( {
+	getParentRoute: () => billingHistoryRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const receiptRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Receipt' ),
+			},
+		],
+	} ),
+	getParentRoute: () => billingHistoryRoute,
+	loader: async ( { params: { receiptId } } ) => {
+		const receipt = await queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) );
+		return {
+			receipt,
+		};
+	},
+	path: '$receiptId',
+} ).lazy( () =>
+	import( '../../me/billing-history/receipt' ).then( ( d ) =>
+		createLazyRoute( 'billing-history-receipt' )( {
 			component: d.default,
 		} )
 	)
@@ -688,7 +718,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	meRoutes.push(
 		billingRoute.addChildren( [
 			billingIndexRoute,
-			billingHistoryRoute,
+			billingHistoryRoute.addChildren( [ billingHistoryIndexRoute, receiptRoute ] ),
 			monetizeSubscriptionsRoute.addChildren( [
 				monetizeSubscriptionsIndexRoute,
 				monetizeSubscriptionRoute,
