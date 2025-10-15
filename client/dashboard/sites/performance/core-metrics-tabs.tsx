@@ -34,6 +34,7 @@ const CoreMetricsTabs = ( {
 	compact?: boolean;
 } ) => {
 	const isSmall = useViewportMatch( 'small' );
+	const performanceValue = report.crux_score ? report.crux_score : report.overall_score;
 
 	return (
 		<Tabs.TabList style={ { maxWidth: '100%' } }>
@@ -43,9 +44,9 @@ const CoreMetricsTabs = ( {
 				</Text>
 				<OverallScore
 					lineHeight="32px"
-					status={ mapThresholdsToStatus( 'overall_score', report.overall_score ) }
+					status={ mapThresholdsToStatus( 'overall_score', performanceValue ) }
 					size={ isSmall ? 20 : 16 }
-					value={ report.overall_score }
+					value={ performanceValue }
 				/>
 			</Tab>
 			{ Object.entries( metricsNames ).map(

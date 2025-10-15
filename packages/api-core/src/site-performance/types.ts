@@ -2,7 +2,15 @@ export interface BasicMetricsData {
 	token?: string;
 }
 
-export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall_score';
+export type Metrics =
+	| 'cls'
+	| 'lcp'
+	| 'fcp'
+	| 'ttfb'
+	| 'inp'
+	| 'tbt'
+	| 'overall_score'
+	| 'crux_score';
 
 export type SitePerformanceHistory = {
 	collection_period: Array< string | { year: number; month: number; day: number } >;
