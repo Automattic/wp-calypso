@@ -9,7 +9,7 @@ import {
 	Button,
 	Icon,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useState } from 'react';
 import poweredByTitanLogo from '../../../assets/images/email-providers/titan/powered-by-titan-caps.svg';
@@ -20,18 +20,38 @@ import GoogleLogo from '../../images/google-logo.svg';
 
 import './style.scss';
 
+type BillingInterval = 'monthly' | 'annually';
+
+const EMAIL_PRODUCTS = {
+	titan: {
+		monthly: TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG,
+		annually: TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG,
+	},
+	google: {
+		monthly: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+		annually: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	},
+};
+
+const getAnnualSavings = (
+	provider: 'titan' | 'google',
+	products: Record< string, { cost: number } >
+) => {
+	const monthlyProduct = products[ EMAIL_PRODUCTS[ provider ].monthly ];
+	const annuallyProduct = products[ EMAIL_PRODUCTS[ provider ].annually ];
+	return 100 - ( annuallyProduct.cost * 100 ) / ( monthlyProduct.cost * 12 );
+};
+
 export default function ChooseEmailSolution() {
-	const [ billingInterval, setBillingInterval ] = useState( 'annual' as 'monthly' | 'annual' );
+	const [ billingInterval, setBillingInterval ] = useState( 'annually' as BillingInterval );
 
 	const { data: products } = useQuery( productsQuery() );
-	const titanProductSlug =
-		billingInterval === 'annual'
-			? TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-			: TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG;
-	const googleProductSlug =
-		billingInterval === 'annual'
-			? GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY;
+	const titanAnnuallySavings = getAnnualSavings( 'titan', products );
+	const googleAnnuallySavings = getAnnualSavings( 'google', products );
+	const bestAnnuallySavings = Math.floor( Math.max( titanAnnuallySavings, googleAnnuallySavings ) );
+
+	const googleProduct = products[ EMAIL_PRODUCTS.google[ billingInterval ] ];
+	const titanProduct = products[ EMAIL_PRODUCTS.titan[ billingInterval ] ];
 
 	const providers = [
 		{
@@ -51,7 +71,7 @@ export default function ChooseEmailSolution() {
 				logo: poweredByTitanLogo,
 				text: __( 'Powered by Titan' ),
 			},
-			product: products[ titanProductSlug ],
+			product: titanProduct,
 		},
 		{
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -69,7 +89,7 @@ export default function ChooseEmailSolution() {
 				__( 'Store and share files in the cloud' ),
 				__( '24/7 support via email' ),
 			],
-			product: products[ googleProductSlug ],
+			product: googleProduct,
 		},
 	];
 
@@ -85,11 +105,15 @@ export default function ChooseEmailSolution() {
 					hideLabelFromVision
 					value={ billingInterval }
 					onChange={ ( newBillingInterval ) =>
-						setBillingInterval( newBillingInterval as 'monthly' | 'annual' )
+						setBillingInterval( newBillingInterval as BillingInterval )
 					}
 				>
 					<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
-					<ToggleGroupControlOption label={ __( 'Annually (Save xx%)' ) } value="annual" />
+					<ToggleGroupControlOption
+						/* translators: %d is the annual savings percentage. */
+						label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnuallySavings ) }
+						value="annually"
+					/>
 				</ToggleGroupControl>
 			</div>
 
@@ -109,7 +133,7 @@ export default function ChooseEmailSolution() {
 								} ) }
 							</Text>
 							<Text variant="muted">
-								{ billingInterval === 'annual'
+								{ billingInterval === 'annually'
 									? __( 'per year, per mailbox, excl. taxes.' )
 									: __( 'per month, per mailbox, excl. taxes.' ) }
 							</Text>
