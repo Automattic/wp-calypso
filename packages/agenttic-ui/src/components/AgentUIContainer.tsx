@@ -417,10 +417,6 @@ export function AgentUIContainer( {
 
 	// Handle window resize to maintain bottom positioning
 	useEffect( () => {
-		if ( chat.state !== 'expanded' ) {
-			return;
-		}
-
 		const handleResize = () => {
 			const position = calculateSnapPosition();
 			if ( ! position ) {
