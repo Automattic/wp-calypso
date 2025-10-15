@@ -179,7 +179,9 @@ const Sidebar = ( {
 			return `/domains/manage/${ siteSlug }`;
 		}
 
-		return getDomainAndPlanUpsellUrl( { siteSlug } );
+		const backUrl = `/setup/${ siteIntentOption }/launchpad?siteSlug=${ siteSlug }`;
+
+		return getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
 	}
 
 	function showDomainUpgradeBadge() {
