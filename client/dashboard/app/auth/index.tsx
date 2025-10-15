@@ -3,21 +3,14 @@ import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-que
 import config from '@automattic/calypso-config';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useMemo, useEffect, useRef } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 interface AuthContextType {
 	user: User;
-
-	// Navigate here to log user out.
-	// Different from `user.logout_URL` which may not be appropriate for WP desktop
-	// app or have a redirect URL set.
-	logoutUrl: string;
-
-	// Perform cleanup of user data before navigating to `logoutUrl`.
-	handleLogout: () => void;
+	logout: () => Promise< void >;
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
@@ -41,16 +34,6 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		meta: {
 			persist: false,
 		},
-	} );
-
-	// Dynamically import Calypso v1 cleanup code.
-	const disableCalypsoPersistence = useRef< () => void >();
-	const clearCalypsoStore = useRef< () => void >();
-	useEffect( () => {
-		import( 'calypso/lib/user/store' ).then( ( { disablePersistence, clearStore } ) => {
-			disableCalypsoPersistence.current = disablePersistence;
-			clearCalypsoStore.current = clearStore;
-		} );
 	} );
 
 	const value = useMemo( () => {
@@ -77,16 +60,17 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 
 		return {
 			user,
-			logoutUrl,
-			handleLogout: () => {
-				// Both functions run synchronously so will complete
-				// before navigation occurs.
+			logout: async () => {
 				disablePersistQueryClient();
 				clearQueryClient();
 
-				// Do the equivalent for v1 Calypso
-				disableCalypsoPersistence.current?.();
-				clearCalypsoStore.current?.();
+				// Dynamically import Calypso v1 cleanup code because it includes a number
+				// of dependencies we don't want included in the Hosting Dashboard bundle.
+				const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
+				disablePersistence();
+				clearStore();
+
+				window.location.href = logoutUrl;
 			},
 		};
 	}, [ user ] );
