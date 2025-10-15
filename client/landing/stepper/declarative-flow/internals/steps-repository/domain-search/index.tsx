@@ -69,7 +69,8 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
-	const site = useSite();
+	const sourceSlug = useQuery().get( 'sourceSlug' );
+	const site = useSite( sourceSlug ?? undefined );
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
@@ -77,8 +78,14 @@ const DomainSearchStep: StepType< {
 	const source = useQuery().get( 'source' );
 	const backTo = useQuery().get( 'back_to' );
 
+	const siteFragment = siteSlug || sourceSlug;
+
 	// eslint-disable-next-line no-nested-ternary
-	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+	const currentSiteUrl = site?.URL
+		? site.URL
+		: siteFragment
+		? `https://${ siteFragment }`
+		: undefined;
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
@@ -253,11 +260,16 @@ const DomainSearchStep: StepType< {
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if ( siteSlug || siteId || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+		if (
+			siteFragment ||
+			siteId ||
+			isHundredYearPlanFlow( flow ) ||
+			isHundredYearDomainFlow( flow )
+		) {
 			return false;
 		}
 		return true;
-	}, [ flow, siteSlug, siteId ] );
+	}, [ flow, siteFragment, siteId ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
