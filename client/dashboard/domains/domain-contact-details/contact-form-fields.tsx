@@ -100,8 +100,15 @@ export const getContactFormFields = (
 					if ( ! raw ) {
 						return null;
 					}
-					const phoneNumber = String( raw ).split( '.' ).join( '' );
-					const result = validatePhone( phoneNumber );
+					const fullPhoneNumber = String( raw ).split( '.' ).join( '' );
+					const [ , phoneNumberOnly ] = String( raw ).split( '.' ) ?? [ '', '' ];
+					const result = validatePhone( fullPhoneNumber );
+
+					if ( 'error' in result && result.error === 'phone_number_too_short' ) {
+						const resultWithoutCountryCode = validatePhone( phoneNumberOnly );
+						return 'error' in resultWithoutCountryCode ? resultWithoutCountryCode.message : null;
+					}
+
 					return 'error' in result ? result.message : null;
 				},
 			},
