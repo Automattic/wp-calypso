@@ -11,7 +11,7 @@ const userId = 1;
 function render( ui: React.ReactElement ) {
 	return testingLibraryRender(
 		<AuthContext.Provider
-			value={ { user: { ID: userId } as User, logoutUrl: '', handleLogout: () => {} } }
+			value={ { user: { ID: userId } as User, logout: () => Promise.resolve() } }
 		>
 			{ ui }
 		</AuthContext.Provider>
