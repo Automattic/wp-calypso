@@ -2,14 +2,12 @@ import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
-	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { useState } from 'react';
-import { useAuth } from '../../../app/auth';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import {
@@ -17,6 +15,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from '../../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
 import { MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
@@ -34,15 +33,12 @@ export const MailboxForm = ( {
 	disabled: boolean;
 	removeForm?: () => void;
 } ) => {
-	const { user } = useAuth();
 	const router = useRouter();
 	// Extract params from the current match for this route
 	const match = router.state.matches[ router.state.matches.length - 1 ];
 	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
 	const { domain = '' } = params;
 
-	const [ passwordResetEmail, setPasswordResetEmail ] = useState( user.email );
-	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState( false );
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
 
 	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
@@ -119,7 +115,7 @@ export const MailboxForm = ( {
 					onChange={ onChange }
 				/>
 
-				{ ! isPasswordResetEmailVisible && (
+				{ ! mailboxEntity.getIsFieldRequired( FIELD_PASSWORD_RESET_EMAIL ) && (
 					<Text variant="muted">
 						{ createInterpolateElement(
 							sprintf(
@@ -127,7 +123,7 @@ export const MailboxForm = ( {
 								__(
 									'Your password reset email is <strong>%(userEmail)s</strong>. <passwordChangeLink>Change it</passwordChangeLink>.'
 								),
-								{ userEmail: user.email }
+								{ userEmail: mailboxEntity.getFieldValue( FIELD_PASSWORD_RESET_EMAIL ) }
 							),
 							{
 								strong: <strong />,
@@ -136,7 +132,7 @@ export const MailboxForm = ( {
 										href="#change-password"
 										onClick={ ( e ) => {
 											e.preventDefault();
-											setIsPasswordResetEmailVisible( ( prev ) => ! prev );
+											mailboxEntity.setFieldIsRequired( FIELD_PASSWORD_RESET_EMAIL, true );
 										} }
 									/>
 								),
@@ -146,13 +142,13 @@ export const MailboxForm = ( {
 				) }
 			</VStack>
 
-			{ isPasswordResetEmailVisible && (
-				<InputControl
-					__next40pxDefaultSize
+			{ mailboxEntity.getIsFieldRequired( FIELD_PASSWORD_RESET_EMAIL ) && (
+				<MailboxInput
+					fieldName={ FIELD_PASSWORD_RESET_EMAIL }
+					mailboxEntity={ mailboxEntity }
 					label={ __( 'Password reset email address' ) }
-					value={ passwordResetEmail }
-					onChange={ ( value ) => setPasswordResetEmail( value || '' ) }
 					disabled={ disabled }
+					onChange={ onChange }
 				/>
 			) }
 
