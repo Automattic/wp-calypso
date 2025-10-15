@@ -19,7 +19,6 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
@@ -37,6 +36,13 @@ async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	await resetOnboardStore();
+	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+	reduxStore.dispatch( setSelectedSiteId( null ) );
+	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
+	clearSignupDestinationCookie();
+	clearSignupCompleteFlowName();
+	clearSignupCompleteSlug();
+	clearSignupCompleteSiteID();
 
 	const queryParams = getCurrentQueryParams();
 	const showDomainStep = queryParams.has( 'showDomainStep' );
@@ -244,26 +250,6 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const reduxDispatch = useReduxDispatch();
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
-		/**
-		 * Clears every state we're persisting during the flow
-		 * when entering it. This is to ensure that the user
-		 * starts on a clean slate.
-		 */
-		useEffect( () => {
-			if ( ! currentStepSlug ) {
-				resetOnboardStore();
-				reduxDispatch( setSelectedSiteId( null ) );
-				clearStepPersistedState( this.name );
-				clearSignupDestinationCookie();
-				clearSignupCompleteFlowName();
-				clearSignupCompleteSlug();
-				clearSignupCompleteSiteID();
-			}
-		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
-
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 
 		useEffect( () => {
