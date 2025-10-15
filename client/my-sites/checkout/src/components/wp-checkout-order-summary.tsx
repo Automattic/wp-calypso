@@ -38,7 +38,7 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { css, keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -99,15 +99,10 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
-		streamlinedPriceExperimentAssignment
-	);
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
-			isStreamlinedPrice={ isStreamlinedPrice }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -228,11 +223,7 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSummaryTitle>
 			) }
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
-			<CheckoutSummaryAmountWrapper
-				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-					streamlinedPriceExperimentAssignment
-				) }
-			>
+			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>
 					{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
 						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
@@ -294,7 +285,7 @@ function CheckoutSummaryPriceList() {
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }>
+				<CheckoutSummaryTotal>
 					<span className="wp-checkout-order-summary__label">
 						{ translate( 'Total', {
 							context: 'The label of the total line item in checkout',
@@ -942,20 +933,15 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled.div< { isStreamlinedPrice: boolean } >`
-	border-bottom: none 0;
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			border: none;
-			border-radius: 4px;
-			background: #fff;
-			padding: 28px;
-			box-shadow:
-				0 3px 1px rgb( 0 0 0 / 4% ),
-				0 3px 8px rgb( 0 0 0 / 12% );
-			margin-bottom: 20px;
-		` }
+const CheckoutSummaryCard = styled.div`
+	border: none;
+	border-radius: 4px;
+	background: #fff;
+	padding: 28px;
+	box-shadow:
+		0 3px 1px rgb( 0 0 0 / 4% ),
+		0 3px 8px rgb( 0 0 0 / 12% );
+	margin-bottom: 20px;
 `;
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
@@ -1081,16 +1067,10 @@ const CheckoutSubtotalSection = styled.div`
 	padding-bottom: 20px;
 `;
 
-const CheckoutSummaryAmountWrapper = styled.div< { isStreamlinedPrice: boolean } >`
+const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 20px 0;
+	padding: 20px 0 0 0;
 	margin-top: 20px;
-
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			padding: 20px 0 0 0;
-		` }
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
@@ -1144,28 +1124,12 @@ const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 	}
 `;
 
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )< { isStreamlinedPrice: boolean } >`
+const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
-
-	${ ( props ) =>
-		! props.isStreamlinedPrice &&
-		css`
-	& span {
-		font-family: 'Recoleta', sans-serif;
-	}
-	& .wp-checkout-order-summary__label {
-		font-size: 28px;
-		line-height: 40px;
-	}
-
-	& .wp-checkout-order-summary__total-price {
-		font-size: 40px; line-height: 44px; }
-	}
-	` }
 `;
 
 const LoadingCopy = styled.p`
