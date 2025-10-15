@@ -260,10 +260,15 @@ const DomainSearchStep: StepType< {
 			return true;
 		}
 
+		// We only want to force the free domain for a year discount in the domain flow if we're not in a site context
+		if ( isDomainFlow( flow ) && ! siteSlug ) {
+			return true;
+		}
+
 		// Returning false here defers this decision to cart.next_domain_is_free, which checks
 		// if there's a plan in the cart or if the site has a plan with unused domain credit
 		return false;
-	}, [ flow ] );
+	}, [ flow, siteSlug ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
