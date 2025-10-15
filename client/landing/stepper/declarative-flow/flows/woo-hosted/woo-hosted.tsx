@@ -13,6 +13,7 @@ import { AssertConditionState, ProvidedDependencies } from '../../internals/type
 import type { FlowV2 } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import './style.scss';
 
 function initialize() {
 	const steps = [ STEPS.UNIFIED_DOMAINS, STEPS.USE_MY_DOMAIN, STEPS.UNIFIED_PLANS ];
