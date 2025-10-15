@@ -128,8 +128,10 @@ function UserProfile() {
 								logout().catch( () => setIsLoggingOut( false ) );
 							} }
 						>
-							{ __( 'Log out' ) }
-							{ isLoggingOut && <Spinner /> }
+							<HStack>
+								<span>{ __( 'Log out' ) }</span>
+								{ isLoggingOut && <Spinner style={ { margin: 0 } } /> }
+							</HStack>
 						</MenuItem>
 					</MenuGroup>
 				</VStack>
