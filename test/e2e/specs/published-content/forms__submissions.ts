@@ -245,6 +245,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.validateTextInSubmission( formData1.phone );
 			await feedbackInboxPage.validateTextInSubmission( formData1.hearAboutUsOption );
 			await feedbackInboxPage.validateTextInSubmission( formData1.otherDetails );
+			await feedbackInboxPage.clickCloseResponse();
 		} );
 	} );
 
@@ -310,6 +311,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.validateTextInSubmission( formData2.phone );
 			await feedbackInboxPage.validateTextInSubmission( formData2.hearAboutUsOption );
 			await feedbackInboxPage.validateTextInSubmission( formData2.otherDetails );
+			await feedbackInboxPage.clickCloseResponse();
 		} );
 	} );
 
