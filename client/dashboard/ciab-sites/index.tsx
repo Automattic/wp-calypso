@@ -14,11 +14,10 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import deepmerge from 'deepmerge';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { sitesRoute } from '../app/router/sites';
@@ -26,6 +25,7 @@ import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { useActions } from '../sites/actions';
+import AddNewSite from '../sites/add-new-site';
 import SitesDataViews from '../sites/dataviews';
 import { getFields } from '../sites/fields';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
@@ -85,6 +85,8 @@ export default function CIABSites() {
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.type === 'list' ) {
 			return;
@@ -138,13 +140,18 @@ export default function CIABSites() {
 
 	return (
 		<>
+			{ isModalOpen && (
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+					<AddNewSite context="ciab-sites-dashboard" />
+				</Modal>
+			) }
 			<PageLayout
 				header={
 					<PageHeader
 						actions={
 							<Button
 								variant="primary"
-								href={ addQueryArgs( '/start', { context: 'stores-dashboard' } ) }
+								onClick={ () => setIsModalOpen( true ) }
 								__next40pxDefaultSize
 							>
 								{ __( 'Add new store' ) }
@@ -190,9 +197,9 @@ export default function CIABSites() {
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
-										href={ addQueryArgs( '/start', { context: 'stores-dashboard' } ) }
+										onClick={ () => setIsModalOpen( true ) }
 									>
-										{ __( 'Add new store' ) }
+										{ __( 'Add new site' ) }
 									</Button>
 								</>
 							}

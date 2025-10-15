@@ -40,7 +40,7 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 	};
-	onboardingLinkSourceQueryArg: string;
+	onboardingLinkSourceQueryArg: 'sites-dashboard' | 'ciab-sites-dashboard' | '';
 	onboardingLinks?: {
 		default: OnboardingLink;
 		withAI: OnboardingLink;
