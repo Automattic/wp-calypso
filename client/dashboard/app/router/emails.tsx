@@ -90,7 +90,7 @@ export const chooseEmailSolutionRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Choose email solution' ),
+				title: __( 'Choose an email solution' ),
 			},
 		],
 	} ),

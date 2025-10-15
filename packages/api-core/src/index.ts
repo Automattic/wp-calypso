@@ -59,6 +59,7 @@ export * from './odie';
 export * from './p2';
 export * from './payment-methods';
 export * from './plugins';
+export * from './products';
 export * from './purchase';
 export * from './read-teams';
 export * from './site';

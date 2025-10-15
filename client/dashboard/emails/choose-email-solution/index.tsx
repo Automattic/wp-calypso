@@ -1,11 +1,12 @@
+import { TitanMailSlugs, GoogleWorkspaceSlugs } from '@automattic/api-core';
+import { productsQuery } from '@automattic/api-queries';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
-	ButtonGroup,
-	Card,
-	CardBody,
-	FlexBlock,
 	Icon,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -15,126 +16,122 @@ import poweredByTitanLogo from '../../../assets/images/email-providers/titan/pow
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
-import GoogleLogo from '../resources/google-logo';
+import GoogleLogo from '../../images/google-logo.svg';
 
 import './style.scss';
 
 export default function ChooseEmailSolution() {
-	const [ billing, setBilling ] = useState( 'annual' as 'monthly' | 'annual' );
+	const [ billingInterval, setBillingInterval ] = useState( 'annual' as 'monthly' | 'annual' );
+
+	const { data: products } = useQuery( productsQuery() );
+	const titanProductSlug =
+		billingInterval === 'annual'
+			? TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
+			: TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG;
+	const googleProductSlug =
+		billingInterval === 'annual'
+			? GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY;
+
+	const providers = [
+		{
+			logo: wordpress,
+			name: __( 'Professional Email' ),
+			description: __(
+				'Integrated email solution with powerful features. Manage your email and more on any device.'
+			),
+			action: __( 'Get Professional Email' ),
+			features: [
+				__( 'Send and receive from your custom domain' ),
+				__( '30GB storage' ),
+				__( 'Email, calendar, and contacts' ),
+				__( '24/7 support via email' ),
+			],
+			poweredBy: {
+				logo: poweredByTitanLogo,
+				text: __( 'Powered by Titan' ),
+			},
+			product: products[ titanProductSlug ],
+		},
+		{
+			logo: <img src={ GoogleLogo } alt="" />,
+			name: __( 'Google Workspace' ),
+			action: __( 'Get Google Workspace' ),
+			description: __(
+				'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
+			),
+			features: [
+				__( 'Send and receive from your custom domain' ),
+				__( '30GB storage' ),
+				__( 'Email, calendar, and contacts' ),
+				__( 'Video calls, docs, spreadsheets, and more' ),
+				__( 'Real-time collaboration' ),
+				__( 'Store and share files in the cloud' ),
+				__( '24/7 support via email' ),
+			],
+			product: products[ googleProductSlug ],
+		},
+	];
 
 	return (
 		<PageLayout header={ <PageHeader /> } size="small">
-			{ /* Billing selector */ }
-			<div className="billing-selector">
-				<ButtonGroup>
-					<Button
-						variant={ billing === 'monthly' ? 'primary' : undefined }
-						onClick={ () => setBilling( 'monthly' ) }
-					>
-						{ billing === 'monthly' ? (
-							__( 'Monthly' )
-						) : (
-							<Text variant="muted">{ __( 'Monthly' ) }</Text>
-						) }
-					</Button>
-					<Button
-						variant={ billing === 'annual' ? 'primary' : undefined }
-						onClick={ () => setBilling( 'annual' ) }
-					>
-						{ billing === 'annual' ? (
-							__( 'Annually (Save xx%)' )
-						) : (
-							<Text variant="muted">{ __( 'Annually (Save xx%)' ) }</Text>
-						) }
-					</Button>
-				</ButtonGroup>
+			{ /* Billing interval selector */ }
+			<div className="billing-interval-selector">
+				<ToggleGroupControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					isBlock
+					label={ __( 'Billing interval' ) }
+					hideLabelFromVision
+					value={ billingInterval }
+					onChange={ ( newBillingInterval ) =>
+						setBillingInterval( newBillingInterval as 'monthly' | 'annual' )
+					}
+				>
+					<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
+					<ToggleGroupControlOption label={ __( 'Annually (Save xx%)' ) } value="annual" />
+				</ToggleGroupControl>
 			</div>
 
 			{ /* Split card for providers */ }
-			<Card className="choose-email-solution__card">
-				<CardBody>
-					<HStack spacing={ 8 } alignment="stretch" className="choose-email-solution__card-content">
-						<FlexBlock>
-							<VStack spacing={ 4 }>
-								<Icon icon={ wordpress } size={ 33 } className="professional-email-icon" />
-								<Text as="h2" size={ 28 }>
-									{ __( 'Professional Email' ) }
-								</Text>
-								<Text>
-									{ __(
-										'Integrated email solution with powerful features. Manage your email and more on any device.'
-									) }
-								</Text>
-								<VStack spacing={ 2 }>
-									<Text size={ 22 } weight={ 600 }>
-										{ __( '—' ) }
-									</Text>
-									<Text variant="muted">{ __( 'per year, per mailbox, excl. taxes.' ) }</Text>
-								</VStack>
-								<Button className="choose-email-solution__select-mailbox" variant="primary">
-									{ __( 'Get professional email' ) }
-								</Button>
-								<VStack spacing={ 1 }>
-									<ul>
-										<li>{ __( 'Send and receive from your custom domain' ) }</li>
-										<li>{ __( '30GB storage' ) }</li>
-										<li>{ __( 'Email, calendar, and contacts' ) }</li>
-										<li>{ __( '24/7 support via email' ) }</li>
-									</ul>
-								</VStack>
-								<img
-									className="titan-logo"
-									src={ poweredByTitanLogo }
-									alt={ __( 'Powered by Titan' ) }
-								/>
-							</VStack>
-						</FlexBlock>
-						<div
-							className="choose-email-solution__divider"
-							role="separator"
-							aria-orientation="vertical"
-							aria-hidden="true"
-						/>
-						<FlexBlock>
-							<VStack spacing={ 4 }>
-								<GoogleLogo
-									size={ 28 }
-									className="choose-email-solution__provider-logo"
-									aria-label={ __( 'Google Workspace logo' ) }
-								/>
-								<Text as="h2" size={ 28 }>
-									{ __( 'Google Workspace' ) }
-								</Text>
-								<Text>
-									{ __(
-										'Integrated email solution with powerful features. Manage your email and more on any device.'
-									) }
-								</Text>
-								<VStack spacing={ 2 }>
-									<Text size={ 22 } weight={ 600 }>
-										{ __( '—' ) }
-									</Text>
-									<Text variant="muted">{ __( 'per year, per mailbox, excl. taxes.' ) }</Text>
-								</VStack>
-								<Button className="choose-email-solution__select-mailbox" variant="primary">
-									{ __( 'Get Google Workspace' ) }
-								</Button>
-								<VStack spacing={ 1 }>
-									<ul>
-										<li>{ __( 'Send and receive from your custom domain' ) }</li>
-										<li>{ __( '30GB storage' ) }</li>
-										<li>{ __( 'Email, calendar, and contacts' ) }</li>
-										<li>{ __( 'Video calls, docs, spreadsheets, and more' ) }</li>
-										<li>{ __( 'Real-time collaboration' ) }</li>
-										<li>{ __( 'Store and share files in the cloud' ) }</li>
-										<li>{ __( '24/7 support via email' ) }</li>
-									</ul>
-								</VStack>
-							</VStack>
-						</FlexBlock>
-					</HStack>
-				</CardBody>
-			</Card>
+			<div className="email-providers">
+				{ providers.map( ( provider, providerIndex ) => (
+					<VStack className="email-provider" key={ `provider-${ providerIndex }` } spacing={ 4 }>
+						<Icon icon={ provider.logo } size={ 30 } className="email-provider-logo" />
+						<Text as="h2" size={ 28 } lineHeight="40px" className="email-provider-name">
+							{ provider.name }
+						</Text>
+						<Text>{ provider.description }</Text>
+						<VStack spacing={ 2 }>
+							<Text size={ 22 } weight={ 600 }>
+								{ formatCurrency( provider.product.cost, provider.product.currency_code, {
+									stripZeros: true,
+								} ) }
+							</Text>
+							<Text variant="muted">
+								{ billingInterval === 'annual'
+									? __( 'per year, per mailbox, excl. taxes.' )
+									: __( 'per month, per mailbox, excl. taxes.' ) }
+							</Text>
+						</VStack>
+						<Button className="email-provider-action" variant="primary">
+							{ provider.action }
+						</Button>
+						<ul className="email-provider-features">
+							{ provider.features.map( ( feature, featureIndex ) => (
+								<li key={ `feature-${ providerIndex }-${ featureIndex }` }>{ feature }</li>
+							) ) }
+						</ul>
+						{ provider.poweredBy && (
+							<img
+								className="email-provider-powered-by"
+								src={ provider.poweredBy.logo }
+								alt={ provider.poweredBy.text }
+							/>
+						) }
+					</VStack>
+				) ) }
+			</div>
 		</PageLayout>
 	);
 }
