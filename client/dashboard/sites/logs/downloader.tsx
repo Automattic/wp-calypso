@@ -8,6 +8,7 @@ import { TZDate } from '@automattic/ui';
 import {
 	Button,
 	Tooltip,
+	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -257,15 +258,15 @@ export function LogsDownloader( {
 		recordTracksEvent( 'calypso_dashboard_site_logs_download_started', tracksProps );
 	};
 
-	const disabled = status === 'downloading';
-	const label = disabled ? __( 'Downloading…' ) : __( 'Download logs' );
+	const isDownloading = status === 'downloading';
+	const label = isDownloading ? __( 'Downloading…' ) : __( 'Download logs' );
 
 	return (
 		<VStack spacing={ 2 }>
 			<HStack spacing={ 2 }>
 				<Tooltip
 					text={
-						status === 'downloading'
+						isDownloading
 							? sprintf(
 									/* translators: %s: percentage value */
 									__( '%s%% downloaded' ),
@@ -275,17 +276,27 @@ export function LogsDownloader( {
 					}
 				>
 					<VStack>
-						<Button
-							aria-label={ label }
-							size="compact"
-							icon={ download }
-							disabled={ disabled }
-							onClick={ handleOnClick }
-						/>
+						{ isDownloading ? (
+							<Spinner
+								style={ {
+									margin: '6px',
+									height: '20px',
+									width: '20px',
+								} }
+							/>
+						) : (
+							<Button
+								aria-label={ label }
+								size="compact"
+								icon={ download }
+								disabled={ isDownloading }
+								onClick={ handleOnClick }
+							/>
+						) }
 					</VStack>
 				</Tooltip>
 				<div aria-live="polite" className="screen-reader-text">
-					{ status === 'downloading' && `${ Math.round( progress * 100 ) }% downloaded` }
+					{ isDownloading && `${ Math.round( progress * 100 ) }% downloaded` }
 				</div>
 			</HStack>
 		</VStack>
