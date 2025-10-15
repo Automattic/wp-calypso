@@ -90,10 +90,6 @@ describe( 'PersonalDetailsSection', () => {
 		mockCreateSuccessNotice.mockClear();
 		mockCreateErrorNotice.mockClear();
 		nock.cleanAll();
-
-		// Set default email validator behavior
-		// const emailValidator = require( 'email-validator' );
-		// emailValidator.validate.mockReturnValue( true );
 	} );
 
 	describe( 'Basic rendering', () => {
