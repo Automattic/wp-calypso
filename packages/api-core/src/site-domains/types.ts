@@ -11,6 +11,7 @@ export interface TitanEmailSubscription extends EmailSubscription {
 }
 
 export type SiteDomain = DomainSummary & {
+	email_forwards_count?: number;
 	google_apps_subscription?: GoogleEmailSubscription | null;
 	titan_mail_subscription?: TitanEmailSubscription | null;
 };

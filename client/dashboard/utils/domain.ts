@@ -102,10 +102,7 @@ export function shouldUpgradeToMakeDomainPrimary( {
 		[ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
 			domain.subtype.id
 		) &&
-		! domain.current_user_can_create_site_from_domain_only &&
 		! domain.primary_domain &&
-		! domain.wpcom_domain &&
-		! domain.is_wpcom_staging_domain &&
 		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
 		!! site.plan?.is_free &&
 		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
@@ -124,7 +121,6 @@ export function canSetAsPrimary( {
 	return (
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
-		! domain.aftermarket_auction &&
 		! shouldUpgradeToMakeDomainPrimary( {
 			domain,
 			site,
