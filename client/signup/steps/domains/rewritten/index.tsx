@@ -5,6 +5,7 @@ import {
 	isEcommerceFlow,
 	isFreeFlow,
 	isWithThemeFlow,
+	isLaunchSiteFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
@@ -375,7 +376,9 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					isFirstDomainFreeForFirstYear={ ! isMonthlyOrFreeFlow( flowName ) }
+					isFirstDomainFreeForFirstYear={
+						! isMonthlyOrFreeFlow( flowName ) && ! isLaunchSiteFlow( flowName )
+					}
 					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}
