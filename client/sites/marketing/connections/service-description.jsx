@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 import './service-description.scss';
@@ -14,6 +15,7 @@ class SharingServiceDescription extends Component {
 		numberOfConnections: PropTypes.number,
 		translate: PropTypes.func,
 		moment: PropTypes.func,
+		hasJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -56,6 +58,24 @@ class SharingServiceDescription extends Component {
 					);
 				}
 
+				const helpLink = this.props.hasJetpack ? (
+					<ExternalLink
+						className="instagram-business__help-link"
+						href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
+					>
+						{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
+					</ExternalLink>
+				) : (
+					<InlineSupportLink
+						className="instagram-business__help-link"
+						showIcon={ false }
+						supportPostId={ 408944 }
+						supportLink={ localizeUrl( 'https://wordpress.com/support/post-to-instagram/' ) }
+					>
+						{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
+					</InlineSupportLink>
+				);
+
 				return (
 					<>
 						{ this.props.translate(
@@ -68,12 +88,7 @@ class SharingServiceDescription extends Component {
 							{ this.props.translate(
 								'Instagram requires a business account connected to Facebook in order to work with third party services.'
 							) }
-							<ExternalLink
-								className="instagram-business__help-link"
-								href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
-							>
-								{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
-							</ExternalLink>
+							{ helpLink }
 						</InfoPopover>
 					</>
 				);

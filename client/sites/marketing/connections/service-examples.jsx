@@ -188,6 +188,24 @@ class SharingServiceExamples extends Component {
 	}
 
 	instagram_business() {
+		const helpLink = this.props.hasJetpack ? (
+			<ExternalLink
+				className="instagram-business__help-link"
+				href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
+			>
+				{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
+			</ExternalLink>
+		) : (
+			<InlineSupportLink
+				className="instagram-business__help-link"
+				showIcon={ false }
+				supportPostId={ 408944 }
+				supportLink={ localizeUrl( 'https://wordpress.com/support/post-to-instagram/' ) }
+			>
+				{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
+			</InlineSupportLink>
+		);
+
 		const label = (
 			<>
 				{ this.props.translate(
@@ -214,12 +232,7 @@ class SharingServiceExamples extends Component {
 					}
 				) }
 				<br />
-				<ExternalLink
-					className="instagram-business__help-link"
-					href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
-				>
-					{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
-				</ExternalLink>
+				{ helpLink }
 			</>
 		);
 

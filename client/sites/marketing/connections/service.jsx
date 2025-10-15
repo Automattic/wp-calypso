@@ -560,6 +560,7 @@ export class SharingService extends Component {
 						status={ connectionStatus }
 						expires={ earliestExpiry }
 						numberOfConnections={ this.getConnections().length }
+						hasJetpack={ this.props.isJetpack }
 					/>
 				</div>
 				{ showLinkedInNotice && (
