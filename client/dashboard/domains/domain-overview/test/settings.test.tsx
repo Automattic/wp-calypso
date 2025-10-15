@@ -44,7 +44,6 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 		registration_date: '2023-01-01',
 		subscription_id: 'sub123',
 		transfer_status: null,
-		type: 'wpcom',
 		wpcom_domain: true,
 		subtype: {
 			id: DomainSubtype.DOMAIN_REGISTRATION,

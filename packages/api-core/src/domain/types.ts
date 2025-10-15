@@ -39,6 +39,7 @@ export interface Domain extends DomainSummary {
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;
 	is_domain_only_site: boolean;
+	is_eligible_for_inbound_transfer: boolean;
 	is_gravatar_domain: boolean;
 	is_gravatar_restricted_domain: boolean;
 	is_locked: boolean;
