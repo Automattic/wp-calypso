@@ -175,13 +175,15 @@ const Sidebar = ( {
 			return '';
 		}
 
+		if ( isStartWritingFlow( siteIntentOption ) ) {
+			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
+		}
+
 		if ( ! site?.plan?.is_free ) {
 			return `/domains/manage/${ siteSlug }`;
 		}
 
-		const backUrl = `/setup/${ siteIntentOption }/launchpad?siteSlug=${ siteSlug }`;
-
-		return getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
+		return getDomainAndPlanUpsellUrl( { siteSlug } );
 	}
 
 	function showDomainUpgradeBadge() {

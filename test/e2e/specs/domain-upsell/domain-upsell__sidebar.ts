@@ -59,7 +59,7 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.openNotice(
 			'Upgrade',
-			`**/setup/domain-and-plan?siteSlug=${ siteSlug }`
+			`**/domains/add/${ siteSlug }?domainAndPlanPackage=true`
 		);
 	} );
 
