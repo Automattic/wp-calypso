@@ -39,6 +39,7 @@ export const MailboxForm = ( {
 	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
 	const { domain = '' } = params;
 
+	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState( false );
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
 
 	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
@@ -115,7 +116,7 @@ export const MailboxForm = ( {
 					onChange={ onChange }
 				/>
 
-				{ ! mailboxEntity.getIsFieldRequired( FIELD_PASSWORD_RESET_EMAIL ) && (
+				{ ! isPasswordResetEmailVisible && (
 					<Text variant="muted">
 						{ createInterpolateElement(
 							sprintf(
@@ -133,6 +134,7 @@ export const MailboxForm = ( {
 										onClick={ ( e ) => {
 											e.preventDefault();
 											mailboxEntity.setFieldIsRequired( FIELD_PASSWORD_RESET_EMAIL, true );
+											setIsPasswordResetEmailVisible( ( prev ) => ! prev );
 										} }
 									/>
 								),
@@ -142,7 +144,7 @@ export const MailboxForm = ( {
 				) }
 			</VStack>
 
-			{ mailboxEntity.getIsFieldRequired( FIELD_PASSWORD_RESET_EMAIL ) && (
+			{ isPasswordResetEmailVisible && (
 				<MailboxInput
 					fieldName={ FIELD_PASSWORD_RESET_EMAIL }
 					mailboxEntity={ mailboxEntity }
