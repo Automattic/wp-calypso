@@ -1,6 +1,7 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	isAutomatticianQuery,
+	productsQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
 	siteBackupActivityLogEntriesQuery,
@@ -574,7 +575,10 @@ export const siteSettingsRedirectRoute = createRoute( {
 	path: 'site-redirects',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return await queryClient.ensureQueryData( siteRedirectQuery( site.ID ) );
+		return Promise.all( [
+			queryClient.ensureQueryData( productsQuery() ),
+			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-redirect' ).then( ( d ) =>
