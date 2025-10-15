@@ -23,10 +23,6 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 } ) );
 
 // Mock email validator
-jest.mock( 'email-validator', () => ( {
-	validate: jest.fn(),
-} ) );
-
 // Mock the API queries (return query configurations, not data)
 jest.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: jest.fn( () => ( {
@@ -96,8 +92,8 @@ describe( 'PersonalDetailsSection', () => {
 		nock.cleanAll();
 
 		// Set default email validator behavior
-		const emailValidator = require( 'email-validator' );
-		emailValidator.validate.mockReturnValue( true );
+		// const emailValidator = require( 'email-validator' );
+		// emailValidator.validate.mockReturnValue( true );
 	} );
 
 	describe( 'Basic rendering', () => {
@@ -310,9 +306,6 @@ describe( 'PersonalDetailsSection', () => {
 
 	describe( 'Email validation and Save button', () => {
 		it( 'disables save when email is invalid', async () => {
-			const emailValidator = require( 'email-validator' );
-			emailValidator.validate.mockReturnValue( false );
-
 			const user = userEvent.setup();
 			renderWithUserData();
 
@@ -331,9 +324,6 @@ describe( 'PersonalDetailsSection', () => {
 		} );
 
 		it( 'disables save when email is invalid even if other fields are edited', async () => {
-			const emailValidator = require( 'email-validator' );
-			emailValidator.validate.mockReturnValue( false );
-
 			const user = userEvent.setup();
 			renderWithUserData();
 
@@ -358,8 +348,6 @@ describe( 'PersonalDetailsSection', () => {
 		} );
 
 		it( 'enables save when email becomes valid after being invalid', async () => {
-			const emailValidator = require( 'email-validator' );
-
 			const user = userEvent.setup();
 			renderWithUserData();
 
@@ -373,7 +361,6 @@ describe( 'PersonalDetailsSection', () => {
 			await user.type( firstNameInput, 'UpdatedName' );
 
 			// Enter invalid email
-			emailValidator.validate.mockReturnValue( false );
 			const emailInput = screen.getByLabelText( 'Email address' );
 			await user.clear( emailInput );
 			await user.type( emailInput, 'invalid' );
@@ -384,7 +371,6 @@ describe( 'PersonalDetailsSection', () => {
 			} );
 
 			// Fix email to be valid
-			emailValidator.validate.mockReturnValue( true );
 			await user.clear( emailInput );
 			await user.type( emailInput, 'valid@example.com' );
 
