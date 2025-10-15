@@ -20,7 +20,7 @@ interface EmailSectionProps {
 type EmailValidationState = 'valid' | 'invalid' | null;
 
 function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void ) {
-	const [ emailValidationStateValue, setEmailValidationStateValue ] =
+	const [ emailValidationState, setEmailValidationStateValue ] =
 		useState< EmailValidationState >( null );
 
 	const setEmailValidationState = useCallback(
@@ -31,7 +31,7 @@ function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void )
 		[ onValidationChange ]
 	);
 
-	return [ emailValidationStateValue, setEmailValidationState ] as const;
+	return [ emailValidationState, setEmailValidationState ] as const;
 }
 
 export default function EmailSection( {
@@ -65,7 +65,7 @@ export default function EmailSection( {
 	const pendingEmail = userData.new_user_email;
 	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userData.user_email;
 
-	const [ emailValidationStateValue, setEmailValidationState ] =
+	const [ emailValidationState, setEmailValidationState ] =
 		useEmailValidation( onValidationChange );
 
 	const handleCancelPendingEmail = useCallback( () => {
@@ -100,10 +100,10 @@ export default function EmailSection( {
 		if ( isEmailPending ) {
 			return '';
 		}
-		if ( emailValidationStateValue === 'valid' ) {
+		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
 		}
-		if ( emailValidationStateValue === 'invalid' ) {
+		if ( emailValidationState === 'invalid' ) {
 			return 'has-error';
 		}
 		return '';
@@ -139,7 +139,7 @@ export default function EmailSection( {
 
 		// Input validation messages
 		if ( value && value !== currentEmail ) {
-			if ( emailValidationStateValue === 'valid' ) {
+			if ( emailValidationState === 'valid' ) {
 				return (
 					<>
 						<Icon icon={ check } size={ 16 } />
@@ -148,7 +148,7 @@ export default function EmailSection( {
 				);
 			}
 
-			if ( emailValidationStateValue === 'invalid' ) {
+			if ( emailValidationState === 'invalid' ) {
 				return (
 					<>
 						<Icon icon={ info } size={ 16 } />
@@ -163,7 +163,7 @@ export default function EmailSection( {
 		isEmailPending,
 		value,
 		currentEmail,
-		emailValidationStateValue,
+		emailValidationState,
 		handleCancelPendingEmail,
 		isCancelPending,
 	] );
