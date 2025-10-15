@@ -11,15 +11,15 @@ import {
 	SearchControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { arrowLeft, chevronRight, Icon, plus } from '@wordpress/icons';
+import { arrowLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { domainsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import './styles.css';
+import AddNewDomain from '../components/add-new-domain';
 
 const isJetpackSlug = ( slug: string ): boolean => String( slug ).startsWith( 'jetpack_' );
 
@@ -141,18 +141,7 @@ export default function ChooseDomain() {
 									</Item>
 								) ) }
 						</ItemGroup>
-						<ItemGroup className="choose-domain__itemlist" isBordered isSeparated>
-							<Item
-								onClick={ () => {
-									router.navigate( { to: domainsRoute.fullPath } );
-								} }
-							>
-								<HStack justify="flex-start">
-									<FlexBlock>{ __( 'Add a new domain' ) }</FlexBlock>
-									<Icon className="choose-domain__icon" icon={ plus } />
-								</HStack>
-							</Item>
-						</ItemGroup>
+						<AddNewDomain />
 					</>
 				) }
 			</VStack>
