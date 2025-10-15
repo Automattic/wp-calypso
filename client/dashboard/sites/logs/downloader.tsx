@@ -265,6 +265,7 @@ export function LogsDownloader( {
 		<VStack spacing={ 2 }>
 			<HStack spacing={ 2 }>
 				<Tooltip
+					className={ isDownloading ? 'logs-downloader__tooltip' : undefined }
 					text={
 						isDownloading
 							? sprintf(
