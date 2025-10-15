@@ -40,10 +40,6 @@ export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
 export const LAUNCH_SITE_FLOW = 'launch-site';
-export const PERSONAL_FLOW = 'personal';
-export const PREMIUM_FLOW = 'premium';
-export const BUSINESS_FLOW = 'business';
-export const ONBOARDING_WITH_EMAIL_FLOW = 'onboarding-with-email';
 
 export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
@@ -174,16 +170,4 @@ export const isDomainFlow = ( flowName: string | null ) => {
 
 export const isLaunchSiteFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ LAUNCH_SITE_FLOW ].includes( flowName ) );
-};
-
-export const isPremiumFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ PREMIUM_FLOW ].includes( flowName ) );
-};
-
-export const isBusinessFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ BUSINESS_FLOW ].includes( flowName ) );
-};
-
-export const isPersonalFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ PERSONAL_FLOW ].includes( flowName ) );
 };
