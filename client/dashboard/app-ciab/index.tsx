@@ -10,7 +10,7 @@ boot( {
 	supports: {
 		overview: false,
 		sites: false,
-		stores: true,
+		ciabSites: true,
 		domains: true,
 		emails: true,
 		themes: false,

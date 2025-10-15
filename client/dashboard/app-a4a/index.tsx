@@ -20,7 +20,7 @@ boot( {
 			domains: false,
 			emails: false,
 		},
-		stores: false,
+		ciabSites: false,
 		domains: false,
 		emails: false,
 		themes: false,

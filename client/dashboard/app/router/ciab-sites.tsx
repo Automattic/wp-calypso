@@ -8,7 +8,7 @@ import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { rootRoute } from './root';
 import {
-	siteRoute as storeRoue,
+	siteRoute as ciabSiteRoute,
 	siteOverviewRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
@@ -35,7 +35,7 @@ import {
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
 
-export const storesRoute = createRoute( {
+export const ciabSitesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -68,19 +68,19 @@ export const storesRoute = createRoute( {
 		return search;
 	},
 } ).lazy( () =>
-	import( '../../stores' ).then( ( d ) =>
-		createLazyRoute( 'stores' )( {
+	import( '../../ciab-sites' ).then( ( d ) =>
+		createLazyRoute( 'ciab-sites' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const createStoresRoutes = ( config: AppConfig ) => {
-	if ( ! config.supports.stores ) {
+export const createCIABSitesRoutes = ( config: AppConfig ) => {
+	if ( ! config.supports.ciabSites ) {
 		return [];
 	}
 
-	const storeRoutes: AnyRoute[] = [
+	const ciabSiteRoutes: AnyRoute[] = [
 		siteOverviewRoute,
 		siteSettingsRoute,
 		siteSettingsSiteVisibilityRoute,
@@ -105,5 +105,5 @@ export const createStoresRoutes = ( config: AppConfig ) => {
 		siteMigrationOverviewRoute,
 	];
 
-	return [ storesRoute, storeRoue.addChildren( storeRoutes ) ];
+	return [ ciabSitesRoute, ciabSiteRoute.addChildren( ciabSiteRoutes ) ];
 };

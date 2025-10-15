@@ -50,7 +50,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 	};
 };
 
-export default function Stores() {
+export default function CIABSites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
@@ -60,8 +60,10 @@ export default function Stores() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'stores-view' ) );
-	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'stores-view' ) );
+	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
+	const { mutate: updateViewPreferences } = useMutation(
+		userPreferenceMutation( 'ciab-sites-view' )
+	);
 
 	const { defaultView, view } = getView( {
 		user,
