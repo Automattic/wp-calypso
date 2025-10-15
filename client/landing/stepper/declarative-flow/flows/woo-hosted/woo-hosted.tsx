@@ -107,7 +107,7 @@ const wooHosted: FlowV2< typeof initialize > = {
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
-					setHideFreePlan( ! suggestion.is_free );
+					setHideFreePlan( true );
 
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}

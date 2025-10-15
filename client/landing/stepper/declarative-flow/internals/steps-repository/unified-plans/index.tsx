@@ -228,7 +228,6 @@ const PlansStepAdaptor: StepType< {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			displayedIntervals={ props.displayedIntervals }
-			isInSignup={ props.isInSignup }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,
 				goBack: wrapperProps?.goBack ?? props.navigation.goBack,
