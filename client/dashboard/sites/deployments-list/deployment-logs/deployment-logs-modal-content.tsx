@@ -148,7 +148,7 @@ export function DeploymentLogsModalContent( {
 						<ExternalLink
 							href={ `https://github.com/${ deployment.repository_name }/actions/runs/${ deployment.metadata.workflow_run_id }` }
 						>
-							{ __( 'View workflow run in Github' ) }
+							{ __( 'View workflow run in GitHub' ) }
 						</ExternalLink>
 					) }
 					<Button variant="primary" onClick={ onRequestClose }>
