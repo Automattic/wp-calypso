@@ -175,6 +175,7 @@ export default function DomainForwardingForm( {
 				help: __( 'The URL to redirect to (e.g., https://example.com/path)' ),
 				type: 'text',
 				isValid: {
+					required: true,
 					custom: ( item ) => {
 						if ( ! isTargetUrlValid( item.targetUrl, domainName ) ) {
 							return __( 'Please enter a valid URL.' );
