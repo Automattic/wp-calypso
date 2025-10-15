@@ -1,10 +1,11 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
-import type { Site, DomainSubtype } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
 export default function DomainsCard( { site }: { site: Site } ) {
 	const { data: siteDomains } = useQuery( {
