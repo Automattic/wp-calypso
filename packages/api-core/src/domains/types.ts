@@ -26,10 +26,32 @@ export enum DomainSubtype {
 }
 
 export interface DomainSummary {
-	aftermarket_auction: boolean;
-	auto_renewing: boolean;
+	domain: string;
+	subtype: {
+		id: DomainSubtype;
+		label: string;
+	};
 	blog_id: number;
 	blog_name: string;
+	site_slug: string;
+	auto_renewing: boolean;
+	current_user_is_owner: boolean | null;
+	is_domain_only_site: boolean;
+	expiry: string | false;
+	expired: boolean;
+	primary_domain: boolean;
+	can_set_as_primary: boolean;
+	domain_status: {
+		id: string;
+		label: string;
+		type: 'success' | 'warning' | 'error';
+		cta: string;
+	};
+	subscription_id: string | null;
+	tags: string[];
+
+	/*
+	aftermarket_auction: boolean;
 	can_manage_dns_records: boolean;
 	can_update_contact_info: boolean;
 	can_set_as_primary: boolean;
@@ -39,17 +61,8 @@ export interface DomainSummary {
 	current_user_can_add_email: boolean;
 	current_user_can_create_site_from_domain_only: boolean;
 	current_user_can_manage: boolean;
-	current_user_is_owner: boolean | null;
-	domain: string;
-	domain_status?: {
-		status: string;
-		status_type: 'success' | 'neutral' | 'error';
-	};
 	email_forwards_count: number;
 	expired: boolean;
-	expiry: string | false;
-	has_registration: boolean;
-	is_domain_only_site: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
 	is_pending_whois_update: boolean;
@@ -63,15 +76,10 @@ export interface DomainSummary {
 	points_to_wpcom: boolean;
 	primary_domain: boolean;
 	registration_date: string;
-	site_slug: string;
-	subscription_id: string;
-	subtype: {
-		id: DomainSubtype;
-		label: string;
-	};
 	transfer_status: DomainTransferStatus | null;
 	type: DomainTypes;
 	wpcom_domain: boolean;
 	last_transfer_error?: string;
 	transfer_start_date?: string;
+	*/
 }

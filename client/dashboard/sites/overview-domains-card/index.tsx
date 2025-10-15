@@ -1,4 +1,4 @@
-import { siteDomainsQuery } from '@automattic/api-queries';
+import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -8,14 +8,9 @@ import type { Site } from '@automattic/api-core';
 
 export default function DomainsCard( { site }: { site: Site } ) {
 	const { data: siteDomains } = useQuery( {
-		...siteDomainsQuery( site.ID ),
+		...domainsQuery(),
 		select: ( data ) => {
-			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
-			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
-				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
-			}
-
-			return data;
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
 

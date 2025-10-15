@@ -1,4 +1,4 @@
-import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
+import { EmailAccount, EmailBox, SiteDomain, DomainSubtype } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -29,7 +29,9 @@ function Emails() {
 		}
 
 		// We filter the same way v1 does.
-		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.wpcom_domain );
+		const nonWpcomDomains = domains.filter(
+			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		);
 
 		const domainsWithEmails = nonWpcomDomains.filter( domainHasEmail ) as SiteDomain[];
 		const domainsWithoutEmails = nonWpcomDomains.filter(

@@ -1,4 +1,4 @@
-import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, domainsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -23,14 +23,9 @@ function SiteDomains() {
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: siteDomains, isLoading } = useQuery( {
-		...siteDomainsQuery( site.ID ),
+		...domainsQuery(),
 		select: ( data ) => {
-			// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
-			if ( data && data.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
-				return data.filter( ( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain );
-			}
-
-			return data;
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
 
