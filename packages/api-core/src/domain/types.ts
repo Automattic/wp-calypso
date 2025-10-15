@@ -23,6 +23,11 @@ export interface Domain extends DomainSummary {
 	can_transfer_to_other_site: boolean;
 	contact_info_disclosure_available: boolean;
 	contact_info_disclosed: boolean;
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ key: string ]: string[];
+		};
+	};
 	dnssec_records?: {
 		dnskey: string[];
 		ds_data: string[];
