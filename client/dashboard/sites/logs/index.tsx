@@ -151,11 +151,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					</CardHeader>
 					<CardBody>
 						{ logType === LogType.PHP || logType === LogType.SERVER ? (
-							<HostingFeatureGatedWithCallout
-								site={ site }
-								feature={ HostingFeatures.LOGS }
-								{ ...getLogsCalloutProps() }
-							>
+							<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
 								<SiteLogsDataViews
 									logType={ logType }
 									dateRange={ dateRange }
