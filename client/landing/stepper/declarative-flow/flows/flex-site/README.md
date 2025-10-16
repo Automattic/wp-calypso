@@ -1,46 +1,56 @@
 # Flex Site Flow
 
-This flow allows users to create new flex sites with custom configuration options.
+This flow allows users to quickly create new flex sites with a simple site name form.
+
+## Flow Configuration
+
+- **Flow Name**: `flex-site`
+- **Uses Sessions**: Yes (`__experimentalUseSessions`)
+- **Built-in Authentication**: Yes (`__experimentalUseBuiltinAuth`)
+- **Signup Flow**: Yes
+- **Requires Login**: All steps require authentication
 
 ## Flow Steps
 
-1. **Flex Site Creation** (`flex-site-creation`): A form where users can configure a new flex site with the following options:
+1. **Flex Site Creation** (`flex-site-creation`): A simple form where users enter the site name to create a new flex site:
 
-   - Site Name (required)
-   - Site Type (Production, Staging, Development)
-   - Data Center (optional)
-   - PHP Version (8.3, 8.2, 8.1, 8.0, 7.4)
-   - WordPress Version (Latest, 6.5, 6.4, 6.3)
+   - **Site Name** (required): Text field with autofocus
+   - **Create a site** button: Disabled until a site name is entered
+   - **Migration link**: "Already have an existing site? Migrate it to WordPress.com" redirects to `/setup/site-migration-flow`
+   - **Back button**: Returns to `/sites` dashboard
 
-2. **Create Site** (`create-site`): Sets up the site creation pending action:
+   On submission, the site name is stored in ONBOARD_STORE and the flow navigates to the site creation step.
+
+2. **Site Creation** (`SITE_CREATION_STEP`): Sets up the site creation pending action:
 
    - Stores the site creation function in ONBOARD_STORE as a pending action
-   - Uses the site title stored in ONBOARD_STORE
+   - Uses the site title stored in ONBOARD_STORE from the previous step
    - Shows a "Creating your site" loading indicator
-   - Immediately navigates to the processing step
+   - Immediately navigates to the processing step (step is removed from history for proper back button behavior)
 
 3. **Processing** (`processing`): Executes the site creation:
 
-   - Runs the pending action set by the create-site step
+   - Runs the pending action set by the site creation step
    - Calls the `/sites/new` endpoint with the stored configuration
    - Backend determines flex site creation based on user attributes
-   - After successful creation, redirects to the new site or sites dashboard
+   - After successful creation, redirects to the flex site's wp-admin with `logmein=direct` parameter for automatic login
+   - If site creation fails, falls back to redirecting to the sites dashboard at `/sites`
 
 ## Backend Integration
 
-The flex site creation is handled on the backend by checking user attributes. The frontend simply:
+The flex site creation is handled on the backend by checking user attributes. The frontend:
 
-- Collects the site name and configuration preferences (for future use)
+- Collects the site name
 - Stores the site title in ONBOARD_STORE
-- Uses the standard `create-site` step
-- The backend `/sites/new` endpoint will detect eligible users and create a flex site accordingly
+- Uses the standard `SITE_CREATION_STEP`
+- The backend `/sites/new` endpoint detects eligible users and creates a flex site accordingly
 
 ## Future Enhancements
 
-- Pass flex configuration options (PHP version, WordPress version, etc.) to backend
+- Add configuration options form (Site Type, Data Center, PHP version, WordPress version, etc.) and pass to backend
 - Add checkout step for paid plans (when applicable)
 - Add domain selection step (when applicable)
-- Add success/launchpad step after site creation
+- Add success/launchpad step after site creation instead of direct redirect to wp-admin
 
 ## Testing
 
@@ -52,40 +62,47 @@ To test this flow, navigate to:
 
 ### Test Cases
 
-1. **Basic Site Creation**
+1. **Successful Site Creation**
 
    - Navigate to `/setup/flex-site`
-   - Enter a site name
-   - Keep default selections
+   - Enter a site name (e.g., "My Test Site")
    - Click "Create a site"
-   - Verify the data is submitted correctly
+   - Verify the button shows loading state
+   - After creation, verify redirect to the new site's wp-admin with automatic login via `logmein=direct`
 
-2. **Custom Configuration**
+2. **Validation - Empty Site Name**
 
    - Navigate to `/setup/flex-site`
+   - Leave the site name field empty
+   - Verify the "Create a site" button is disabled
    - Enter a site name
-   - Change Site Type to "Staging"
-   - Select a different Data Center
-   - Change PHP Version to 8.2
-   - Change WordPress Version to 6.4
-   - Click "Create a site"
-   - Verify all selections are submitted correctly
+   - Verify the button becomes enabled
 
-3. **Migration Link**
+3. **Validation - Whitespace Only**
 
    - Navigate to `/setup/flex-site`
-   - Click "Migrate it to WordPress.com" link
-   - Verify redirect to migration flow
+   - Enter only spaces in the site name field
+   - Verify the "Create a site" button remains disabled
+   - Enter actual text
+   - Verify the button becomes enabled
 
-4. **Validation**
+4. **Migration Link**
+
    - Navigate to `/setup/flex-site`
-   - Try to submit without entering a site name
-   - Verify the button is disabled
-   - Enter a site name
-   - Verify the button is enabled
+   - Click "Migrate it to WordPress.com" link in the footer
+   - Verify redirect to `/setup/site-migration-flow`
+   - Verify tracks event `calypso_flex_site_creation_migration_link_click` is fired
+
+5. **Back Button**
+
+   - Navigate to `/setup/flex-site`
+   - Click the "Back to sites" button in the top bar
+   - Verify redirect to `/sites` dashboard
 
 ## Notes
 
-- This flow currently requires user authentication
+- This flow requires user authentication for all steps
 - No checkout or domains are included in this initial version
-- Site creation backend integration is pending
+- After successful site creation, users are automatically logged into their new flex site's wp-admin
+- The flow uses experimental session and built-in authentication features
+- Back button navigation is handled properly by removing the site creation step from history
