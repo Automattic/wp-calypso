@@ -572,7 +572,7 @@ export const siteSettingsRedirectRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsRoute,
-	path: 'site-redirects',
+	path: 'site-redirect',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [

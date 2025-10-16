@@ -24,7 +24,7 @@ export default function RedirectsSettings( { siteSlug }: { siteSlug: string } ) 
 				<Notice variant="error">
 					{ createInterpolateElement(
 						__(
-							'Site Redirects are not available for this site. <contactSupportLink/> for assistance.'
+							'Site Redirect is not available for this site. <contactSupportLink/> for assistance.'
 						),
 						{
 							contactSupportLink: (
@@ -54,7 +54,7 @@ export default function RedirectsSettings( { siteSlug }: { siteSlug: string } ) 
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'Redirects' ) }
+					title={ __( 'Site Redirect' ) }
 					description={ __( 'Redirect your site to another address.' ) }
 				/>
 			}
