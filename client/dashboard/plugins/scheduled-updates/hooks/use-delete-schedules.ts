@@ -9,15 +9,18 @@ import { useAnalytics } from '../../../app/analytics';
 import { normalizeScheduleId } from '../helpers';
 import { useEligibleSites } from './use-eligible-sites';
 
+type UseDeleteSchedulesOptions = {
+	/**
+	 * Whether to apply optimistic updates to the hosting aggregate cache.
+	 */
+	optimistic?: boolean;
+};
+
 /**
  * Batch delete an existing schedule across multiple sites and track analytics.
  * @param {number[]} siteIds Sites to delete from
  * @param {string} scheduleId Base schedule ID to delete
  */
-type UseDeleteSchedulesOptions = {
-	optimisticHosting?: boolean;
-};
-
 export function useDeleteSchedules(
 	siteIds: number[],
 	scheduleId: string,
@@ -32,7 +35,7 @@ export function useDeleteSchedules(
 		let rollbackHosting: ( () => void ) | undefined;
 
 		// Apply optional optimistic update to hosting aggregate cache
-		if ( options?.optimisticHosting && siteIds.length && normalizedId ) {
+		if ( options?.optimistic && siteIds.length && normalizedId ) {
 			const hostingQuery = hostingUpdateSchedulesQuery();
 			const prevData = queryClient.getQueryData( hostingQuery.queryKey );
 			if ( prevData && typeof prevData === 'object' && 'sites' in prevData ) {
