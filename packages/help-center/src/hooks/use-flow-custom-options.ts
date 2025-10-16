@@ -15,9 +15,8 @@ export function useFlowCustomOptions( flowName: string ) {
 	) {
 		return {
 			hideBackButton: true,
-			hasPremiumSupport: Boolean(
-				supportStatus?.availability.is_difm_chat_open && geoData?.country_short === 'US'
-			),
+			hasPremiumSupport:
+				supportStatus?.availability.is_difm_chat_open && geoData?.country_short === 'US',
 		};
 	}
 
