@@ -171,6 +171,14 @@ const AddProfessionalEmail = () => {
 			} );
 	};
 
+	const removeForm = ( index: number ) => {
+		setMailboxEntities( ( prevMailboxEntities ) => {
+			const newMailboxEntities = [ ...prevMailboxEntities ];
+			newMailboxEntities.splice( index, 1 );
+			return newMailboxEntities;
+		} );
+	};
+
 	const showEmailPurchaseDisabledMessage = !! domain && ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
@@ -191,7 +199,11 @@ const AddProfessionalEmail = () => {
 			{ mailboxEntities.map( ( mailboxEntity, index ) => (
 				<Card key={ index }>
 					<CardBody>
-						<MailboxForm mailboxEntity={ mailboxEntity } disabled={ disabled } />
+						<MailboxForm
+							mailboxEntity={ mailboxEntity }
+							disabled={ disabled }
+							removeForm={ index > 0 ? () => removeForm( index ) : undefined }
+						/>
 					</CardBody>
 				</Card>
 			) ) }
