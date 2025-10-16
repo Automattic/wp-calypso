@@ -222,9 +222,7 @@ function AddEmailForwarder() {
 				</>
 			) : (
 				<>
-					<Text size={ 16 }>
-						{ __( 'Pick a domain and set where your emails should be forwarded.' ) }
-					</Text>
+					<Text size={ 16 }>{ __( 'Set where your emails should be forwarded.' ) }</Text>
 					<Card>
 						<CardBody>
 							<form onSubmit={ handleSubmit }>
