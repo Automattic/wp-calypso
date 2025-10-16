@@ -51,7 +51,10 @@ const flexSite: FlowV2< typeof initialize > = {
 						providedDependencies?.processingResult === ProcessingResult.SUCCESS &&
 						typeof providedDependencies.siteSlug === 'string'
 					) {
-						return window.location.replace( `/sites/${ providedDependencies.siteSlug }` );
+						// Redirect to the Flex site's wp-admin with logmein parameter for direct login
+						return window.location.replace(
+							`https://${ providedDependencies.siteSlug }/wp-admin/?logmein=direct`
+						);
 					}
 					// Fallback to sites dashboard
 					return window.location.replace( '/sites' );
