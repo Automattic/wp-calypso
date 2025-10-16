@@ -191,7 +191,7 @@ function SiteRepositories() {
 			</PageLayout>
 			{ showBackToDeployments && (
 				<div
-					className="repositories-back-link"
+					className="repositories-back-button"
 					style={ {
 						position: 'fixed',
 						bottom: '16px',
