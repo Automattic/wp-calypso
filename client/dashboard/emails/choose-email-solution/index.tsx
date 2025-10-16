@@ -2,12 +2,15 @@ import { TitanMailSlugs, GoogleWorkspaceSlugs } from '@automattic/api-core';
 import { productsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
 	Icon,
+	Card,
+	CardMedia,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
@@ -17,6 +20,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
+import { useDomains } from '../hooks/use-domains';
 
 import './style.scss';
 
@@ -43,6 +47,15 @@ const getAnnualSavings = (
 };
 
 export default function ChooseEmailSolution() {
+	const router = useRouter();
+	// Extract params from the current match for this route
+	const match = router.state.matches[ router.state.matches.length - 1 ];
+	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
+	const { domain: domainName = '' } = params;
+
+	const { domains, isLoading: isLoadingDomains } = useDomains();
+	const domain = domains.find( ( d ) => d.domain === domainName );
+
 	const [ billingInterval, setBillingInterval ] = useState( 'annually' as BillingInterval );
 
 	const { data: products } = useQuery( productsQuery() );
@@ -52,6 +65,10 @@ export default function ChooseEmailSolution() {
 
 	const googleProduct = products[ EMAIL_PRODUCTS.google[ billingInterval ] ];
 	const titanProduct = products[ EMAIL_PRODUCTS.titan[ billingInterval ] ];
+
+	const hasTitanFreeTrial =
+		( domain?.titan_mail_subscription?.is_eligible_for_introductory_offer ?? false ) &&
+		titanProduct.introductory_offer?.cost_per_interval === 0;
 
 	const providers = [
 		{
@@ -72,6 +89,7 @@ export default function ChooseEmailSolution() {
 				text: __( 'Powered by Titan' ),
 			},
 			product: titanProduct,
+			hasFreeTrial: hasTitanFreeTrial,
 		},
 		{
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -92,6 +110,29 @@ export default function ChooseEmailSolution() {
 			product: googleProduct,
 		},
 	];
+
+	if ( ! domain && ! isLoadingDomains ) {
+		return (
+			<PageLayout size="small">
+				<Card>
+					<CardMedia>
+						<div
+							style={ {
+								background: 'var(--dashboard__background-color-error)',
+								color: '#fff',
+								padding: 16,
+							} }
+						>
+							{
+								/* translators: %s is the domain name. */
+								sprintf( __( 'You cannot add a mailbox to %s.' ), domainName )
+							}
+						</div>
+					</CardMedia>
+				</Card>
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout header={ <PageHeader /> } size="small">
@@ -126,17 +167,28 @@ export default function ChooseEmailSolution() {
 							{ provider.name }
 						</Text>
 						<Text>{ provider.description }</Text>
-						<VStack spacing={ 2 }>
+						<VStack
+							spacing={ 2 }
+							justify="flex-start"
+							style={ { ...( hasTitanFreeTrial && { minHeight: '76px' } ) } }
+						>
 							<Text size={ 22 } weight={ 600 }>
-								{ formatCurrency( provider.product.cost, provider.product.currency_code, {
-									stripZeros: true,
-								} ) }
+								{ formatCurrency(
+									provider.hasFreeTrial ? 0 : provider.product.cost,
+									provider.product.currency_code,
+									{
+										stripZeros: true,
+									}
+								) }
 							</Text>
 							<Text variant="muted">
 								{ billingInterval === 'annually'
 									? __( 'per year, per mailbox, excl. taxes.' )
 									: __( 'per month, per mailbox, excl. taxes.' ) }
 							</Text>
+							{ provider.hasFreeTrial && (
+								<div className="email-provider-trial">{ __( '3 month free trial' ) }</div>
+							) }
 						</VStack>
 						<Button className="email-provider-action" variant="primary">
 							{ provider.action }

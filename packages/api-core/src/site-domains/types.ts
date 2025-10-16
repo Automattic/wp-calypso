@@ -8,6 +8,7 @@ export interface GoogleEmailSubscription extends EmailSubscription {}
 
 export interface TitanEmailSubscription extends EmailSubscription {
 	order_id: number;
+	is_eligible_for_introductory_offer: boolean;
 }
 
 export type SiteDomain = DomainSummary & {
