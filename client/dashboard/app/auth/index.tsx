@@ -1,10 +1,15 @@
-import { fetchUser } from '@automattic/api-core';
+import { fetchUser, isWpError } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
-import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useMemo } from 'react';
+import {
+	useQuery,
+	useQueryClient,
+	type QueryCacheNotifyEvent,
+	type MutationCacheNotifyEvent,
+} from '@tanstack/react-query';
+import { createContext, useContext, useMemo, useEffect } from 'react';
 import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -47,11 +52,8 @@ async function initializeCurrentUser(): Promise< User > {
  * 4. Redirects to login if unauthorized
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
-	const {
-		data: user,
-		isLoading: userIsLoading,
-		isError: userIsError,
-	} = useQuery( {
+	const queryClient = useQueryClient();
+	const { data: user, isLoading: userIsLoading } = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
 		queryFn: initializeCurrentUser,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
@@ -100,14 +102,29 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	if ( userIsError ) {
-		if ( typeof window !== 'undefined' ) {
-			const currentPath = window.location.pathname;
-			const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
-		}
-		return null;
-	}
+	// Subscribe to network errors and when errors occur due to being logged
+	// out, redirect the user to the log in screen.
+	useEffect( () => {
+		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
+			if (
+				event.type === 'updated' &&
+				event.action.type === 'error' &&
+				isWpError( event.action.error ) &&
+				event.action.error.statusCode === 403 &&
+				event.action.error.error === 'authorization_required'
+			) {
+				const currentPath = window.location.pathname;
+				const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
+				window.location.href = loginUrl;
+			}
+		};
+		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
+		const unsubQueryCache = queryClient.getQueryCache().subscribe( handleEvent );
+		return () => {
+			unsubMutationCache();
+			unsubQueryCache();
+		};
+	}, [ queryClient ] );
 
 	if ( userIsLoading || ! user ) {
 		return null;
