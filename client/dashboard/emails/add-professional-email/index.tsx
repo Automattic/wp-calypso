@@ -11,12 +11,16 @@ import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpre
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { add } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { CartActionError } from '../../shopping-cart/errors';
+import { formatDate } from '../../utils/datetime';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
 import {
 	FIELD_NAME,
@@ -53,15 +57,23 @@ const possibleHiddenFieldNames: HiddenFieldNames[] = [
 const AddProfessionalEmail = () => {
 	const { user } = useAuth();
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
 	const router = useRouter();
 	// Extract params from the current match for this route
 	const match = router.state.matches[ router.state.matches.length - 1 ];
 	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
 	const { domain: domainName = '' } = params;
 
+	let interval: IntervalLength = router.state.location.search.interval;
+	if ( interval !== 'monthly' && interval !== 'annually' ) {
+		interval = 'annually';
+	}
+
 	const { data: domain } = useQuery( domainQuery( domainName ) );
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { data: products } = useQuery( productsQuery() );
+	const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
+	const product = products?.[ productSlug ] as Product;
 	const { data: site } = useQuery( siteBySlugQuery( domainName ) );
 	const { data: existingMailboxes, isFetched } = useQuery( {
 		// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
@@ -103,11 +115,6 @@ const AddProfessionalEmail = () => {
 		isFetched && setMailboxEntities( [ createNewMailbox() ] );
 	}, [ createNewMailbox, isFetched ] );
 
-	let interval: IntervalLength = router.state.location.search.interval;
-	if ( interval !== 'monthly' && interval !== 'annually' ) {
-		interval = 'annually';
-	}
-
 	const handleSubmit = async () => {
 		const { shoppingCartManagerClient } = await import(
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
@@ -137,10 +144,6 @@ const AddProfessionalEmail = () => {
 
 			return;
 		}
-
-		const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const product = products?.[ productSlug ] as Product;
 
 		const numberOfMailboxes = mailboxOperations.mailboxes.length;
 
@@ -182,6 +185,30 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = !! domain && ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
+	let endDate = new Date();
+	const hasOffer =
+		product?.introductory_offer &&
+		product?.introductory_offer.interval_count > 0 &&
+		product?.introductory_offer?.interval_unit;
+	if ( hasOffer ) {
+		const count = product?.introductory_offer?.interval_count;
+		const unit = product?.introductory_offer?.interval_unit;
+		switch ( unit ) {
+			case 'year':
+				endDate = add( new Date(), { years: count } );
+				break;
+			case 'month':
+				endDate = add( new Date(), { months: count } );
+				break;
+			case 'week':
+				endDate = add( new Date(), { weeks: count } );
+				break;
+			case 'day':
+				endDate = add( new Date(), { days: count } );
+				break;
+		}
+	}
+
 	return (
 		<PageLayout
 			header={ <PageHeader /> }
@@ -196,6 +223,31 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
+			<Text as="p">
+				{ hasOffer
+					? sprintf(
+							// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
+							__(
+								'Add as many mailboxes as you need. Each one will renew at the regular price of %(cost)s per %(termLocalized)s (excl. taxes) when your free trial ends on %(endDate)s.'
+							),
+							{
+								cost: product.combined_cost_display,
+								termLocalized: product.product_term_localized,
+								endDate: formatDate( endDate, locale, { dateStyle: 'long' } ),
+							}
+					  )
+					: sprintf(
+							// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year").
+							__(
+								'Add as many mailboxes as you need. Each one has a price of %(cost)s per %(termLocalized)s (excl. taxes).'
+							),
+							{
+								cost: product.combined_cost_display,
+								termLocalized: product.product_term_localized,
+							}
+					  ) }
+			</Text>
+
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
 					{ mailboxEntities.map( ( mailboxEntity, index ) => (
