@@ -47,7 +47,7 @@ export function useFlexUsage( siteId: number ) {
 
 			// Temporary caps until billing entitlements are wired
 			return {
-				storage: { usedBytes: storageBytesAvg, capBytes: 20 * 1024 * 1024 * 1024 },
+				storage: { usedBytes: storageBytesAvg, capBytes: 400 * 1024 * 1024 * 1024 },
 				bandwidth: { usedBytes: bandwidthTotal, capBytes: 1 * 1024 * 1024 * 1024 },
 				compute: { usedHours: computeHours, capHours: 1 },
 			};
@@ -55,7 +55,7 @@ export function useFlexUsage( siteId: number ) {
 	} );
 
 	const fallback: UsageData = {
-		storage: { usedBytes: 0, capBytes: 20 * 1024 * 1024 * 1024 },
+		storage: { usedBytes: 0, capBytes: 400 * 1024 * 1024 * 1024 },
 		bandwidth: { usedBytes: 0, capBytes: 1 * 1024 * 1024 * 1024 },
 		compute: { usedHours: 0, capHours: 1 },
 	};

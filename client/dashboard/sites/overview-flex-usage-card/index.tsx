@@ -74,7 +74,7 @@ function StorageStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: nu
 		<Stat
 			density="high"
 			strapline={ __( 'Storage' ) }
-			metric={ formatBytes( usedBytes ) }
+			metric={ formatBytesPerMonth( usedBytes ) }
 			description={ formatBytesPerMonth( capBytes ) }
 			progressValue={ progressBarValue }
 			progressLabel={ `${ usagePercent }%` }
