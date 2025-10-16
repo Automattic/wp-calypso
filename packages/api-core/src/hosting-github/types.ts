@@ -1,11 +1,11 @@
-export interface GitHubInstallation {
+export interface GithubInstallation {
 	external_id: number;
 	account_name: string;
 	management_url: string;
 	repository_selection: 'all' | 'selected';
 }
 
-export interface GitHubRepository {
+export interface GithubRepository {
 	owner: string;
 	name: string;
 	id: number;
@@ -14,7 +14,7 @@ export interface GitHubRepository {
 	updated_at: string;
 }
 
-export interface GitHubRepositoryChecks {
+export interface GithubRepositoryChecks {
 	inferred_type: string;
 	has_composer: boolean;
 	has_vendor: boolean;
@@ -22,18 +22,18 @@ export interface GitHubRepositoryChecks {
 	protected_paths: string[];
 }
 
-export type GitHubWorkflowStatus = 'loading' | 'success' | 'error';
+export type GithubWorkflowStatus = 'loading' | 'success' | 'error';
 
-export interface GitHubWorkflowValidationItem {
+export interface GithubWorkflowValidationItem {
 	validation_name: string;
-	status: GitHubWorkflowStatus;
+	status: GithubWorkflowStatus;
 }
 
-export interface GitHubWorkflowValidation {
-	conclusion: GitHubWorkflowStatus;
+export interface GithubWorkflowValidation {
+	conclusion: GithubWorkflowStatus;
 	file_name: string;
 	workflow_path: string;
-	checked_items: GitHubWorkflowValidationItem[];
+	checked_items: GithubWorkflowValidationItem[];
 }
 
 export interface GithubWorkflowTemplate {

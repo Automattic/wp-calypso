@@ -7,6 +7,38 @@ import {
 
 const noop = () => {};
 
+export const recordDomainSearchStepSubmit = ( suggestion, section ) => {
+	let domainType = 'domain_reg';
+	if ( suggestion.is_free ) {
+		domainType = 'wpcom_subdomain';
+		if ( suggestion.domain_name.endsWith( '.blog' ) ) {
+			domainType = 'dotblog_subdomain';
+		}
+	}
+
+	const tracksObjects = {
+		domain_name: suggestion.domain_name,
+		section,
+		type: domainType,
+	};
+	if ( suggestion.isRecommended ) {
+		tracksObjects.label = 'recommended';
+	}
+	if ( suggestion.isBestAlternative ) {
+		tracksObjects.label = 'best-alternative';
+	}
+
+	return composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			`Submitted Domain Selection for a ${ domainType } on a Domain Registration`,
+			'Domain Name',
+			suggestion.domain_name
+		),
+		recordTracksEvent( 'calypso_domain_search_submit_step', tracksObjects )
+	);
+};
+
 export const recordMapDomainButtonClick = ( section, flowName ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),

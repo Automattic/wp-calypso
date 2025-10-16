@@ -50,8 +50,6 @@ const purchase = {
 	current_price_tier_usage_quantity: null,
 	price_tier_list: [],
 	expiry_date: '2023-11-27T00:00:00+00:00',
-	expiry_message: 'Expires on November 27, 2023',
-	expiry_sub_message: null,
 	expiry_status: 'manual-renew',
 	price_text: '$300',
 	bill_period_label: 'per year',

@@ -337,7 +337,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		}
 
 		createSuccessNotice(
-			__( 'We are adding your staging site. We will send you an email when it is done.' ),
+			__(
+				'Setting up your staging site — this may take a few minutes. We’ll email you when it’s ready.'
+			),
 			{
 				type: 'snackbar',
 			}

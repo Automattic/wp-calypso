@@ -1,7 +1,5 @@
-import { useRouter } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 
@@ -10,25 +8,14 @@ export default function SecurityTwoStepAuthPageLayout( {
 }: {
 	children: React.ReactNode;
 } ) {
-	const router = useRouter();
-
-	// TODO: Replace with breadcrumb
-	const backButton = (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				router.navigate( { to: '/me/security/two-step-auth' } );
-			} }
-		>
-			{ __( 'Security' ) }
-		</Button>
-	);
 	return (
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ backButton } title={ __( 'Set up two-step authentication' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					title={ __( 'Set up two-step authentication' ) }
+				/>
 			}
 		>
 			{ children }

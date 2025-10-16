@@ -10,14 +10,7 @@ export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 interface AuthContextType {
 	user: User;
-
-	// Navigate here to log user out.
-	// Different from `user.logout_URL` which may not be appropriate for WP desktop
-	// app or have a redirect URL set.
-	logoutUrl: string;
-
-	// Perform cleanup of user data before navigating to `logoutUrl`.
-	handleLogout: () => void;
+	logout: () => Promise< void >;
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
@@ -67,12 +60,17 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 
 		return {
 			user,
-			logoutUrl,
-			handleLogout: () => {
-				// Both functions run synchronously so will complete
-				// before navigation occurs.
+			logout: async () => {
 				disablePersistQueryClient();
 				clearQueryClient();
+
+				// Dynamically import Calypso v1 cleanup code because it includes a number
+				// of dependencies we don't want included in the Hosting Dashboard bundle.
+				const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
+				disablePersistence();
+				clearStore();
+
+				window.location.href = logoutUrl;
 			},
 		};
 	}, [ user ] );

@@ -418,8 +418,20 @@ export const siteBackupsIndexRoute = createRoute( {
 );
 
 export const siteBackupDetailRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Backups' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId',
+} );
+
+export const siteBackupDetailIndexRoute = createRoute( {
+	getParentRoute: () => siteBackupDetailRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-detail' )( {
@@ -436,8 +448,8 @@ export const siteBackupRestoreRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteBackupsRoute,
-	path: '$rewindId/restore',
+	getParentRoute: () => siteBackupDetailRoute,
+	path: 'restore',
 } ).lazy( () =>
 	import( '../../sites/backup-restore' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-restore' )( {
@@ -450,12 +462,12 @@ export const siteBackupDownloadRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Sites' ),
+				title: __( 'Download backup' ),
 			},
 		],
 	} ),
-	getParentRoute: () => siteBackupsRoute,
-	path: '$rewindId/download',
+	getParentRoute: () => siteBackupDetailRoute,
+	path: 'download',
 	validateSearch: ( search ) => {
 		const downloadId = Number( search.downloadId );
 		return {
@@ -1131,10 +1143,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
-				siteBackupDetailRoute,
 				siteBackupsIndexRoute,
-				siteBackupRestoreRoute,
-				siteBackupDownloadRoute,
+				siteBackupDetailRoute.addChildren( [
+					siteBackupDetailIndexRoute,
+					siteBackupRestoreRoute,
+					siteBackupDownloadRoute,
+				] ),
 			] )
 		);
 	}

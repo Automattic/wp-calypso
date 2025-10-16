@@ -134,10 +134,21 @@ export default function DNSRecordForm( {
 							} }
 						/>
 						<ButtonStack justify="flex-start">
-							<Button variant="primary" type="submit" isBusy={ isBusy } disabled={ isBusy }>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								isBusy={ isBusy }
+								disabled={ isBusy }
+							>
 								{ submitButtonText }
 							</Button>
-							<Button type="button" disabled={ isBusy } onClick={ handleCancel }>
+							<Button
+								__next40pxDefaultSize
+								type="button"
+								disabled={ isBusy }
+								onClick={ handleCancel }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 						</ButtonStack>

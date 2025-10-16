@@ -7,10 +7,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { CodeHighlighter } from '../../components/code-highlighter';
-import type { GitHubRepository, GithubWorkflow } from '@automattic/api-core';
+import type { GithubRepository, GithubWorkflow } from '@automattic/api-core';
 
 interface NewWorkflowWizardProps {
-	repository: GitHubRepository;
+	repository: GithubRepository;
 	repositoryBranch: string;
 	workflows?: GithubWorkflow[];
 	templateName: string;
@@ -49,6 +49,11 @@ export const NewWorkflowWizard = ( {
 			<CodeHighlighter content={ exampleTemplate } />
 
 			{ errorMessage && <Text>{ errorMessage }</Text> }
+			<Text variant="muted">
+				{ __(
+					'Proceeding will commit a new workflow configuration file to your repository‘s default branch. No other files will be affected.'
+				) }
+			</Text>
 
 			<Button
 				type="button"

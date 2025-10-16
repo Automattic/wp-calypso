@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
@@ -7,6 +8,7 @@ import type { Site } from '@automattic/api-core';
 export function getMonitoringCalloutProps() {
 	return {
 		tracksFeatureId: 'monitoring',
+		feature: HostingFeatures.MONITOR,
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Monitor server stats' ),
 		upsellImage: illustrationUrl,

@@ -31,8 +31,9 @@ export async function deleteSiteUpdateSchedule(
 	siteId: number,
 	scheduleId: string
 ): Promise< unknown > {
-	return await wpcom.req.delete( {
+	return await wpcom.req.post( {
 		path: `/sites/${ siteId }/update-schedules/${ scheduleId }`,
+		method: 'DELETE',
 		apiNamespace: 'wpcom/v2',
 	} );
 }

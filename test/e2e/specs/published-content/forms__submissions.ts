@@ -14,13 +14,22 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Locator } from 'playwright';
 
-const formData = {
+const formData1 = {
 	name: `${ DataHelper.getRandomPhrase() }`,
 	// Making the email unique to each run allows us to filter down to one in the inbox later.
 	email: `test${ DataHelper.getTimestamp() + DataHelper.getRandomInteger( 0, 100 ) }@example.com`,
 	phone: '(877) 273-3049',
 	hearAboutUsOption: 'Search Engine',
-	otherDetails: 'Test submission details',
+	otherDetails: 'Test submission details - First',
+};
+
+const formData2 = {
+	name: `${ DataHelper.getRandomPhrase() }`,
+	// Making the email unique for the second submission
+	email: `test${ DataHelper.getTimestamp() + DataHelper.getRandomInteger( 100, 200 ) }@example.com`,
+	phone: '(877) 273-3050',
+	hearAboutUsOption: 'Social Media',
+	otherDetails: 'Test submission details - Second',
 };
 
 const postTitle = DataHelper.getRandomPhrase();
@@ -46,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const postContent = `<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","to":"","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
+		const postContent = `<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","to":"","disableGoBack":false,"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
 						<div class="wp-block-jetpack-contact-form" style="padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px"><!-- wp:jetpack/field-name {"required":true,"requiredText":"(required)"} /-->
 
 						<!-- wp:jetpack/field-email {"required":true,"requiredText":"(required)"} /-->
@@ -73,38 +82,86 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		);
 	} );
 
-	describe( 'Fill and submit form', function () {
+	describe( 'Fill and submit first form', function () {
 		it( 'View the published post', async function () {
 			await page.goto( newPostDetails.URL );
 		} );
 
-		it( 'Fill out form', async function () {
+		it( 'Fill out first form', async function () {
 			publishedFormLocator = page.locator( "[data-test='contact-form']" );
 
-			await publishedFormLocator.getByRole( 'textbox', { name: 'Name' } ).fill( formData.name );
+			await publishedFormLocator.getByRole( 'textbox', { name: 'Name' } ).fill( formData1.name );
 
-			await publishedFormLocator.getByRole( 'textbox', { name: 'Email' } ).fill( formData.email );
+			await publishedFormLocator.getByRole( 'textbox', { name: 'Email' } ).fill( formData1.email );
 
-			await publishedFormLocator.getByRole( 'textbox', { name: 'Phone' } ).fill( formData.phone );
+			await publishedFormLocator.getByRole( 'textbox', { name: 'Phone' } ).fill( formData1.phone );
 
 			await publishedFormLocator
 				.getByRole( 'combobox', { name: 'How did you hear about us?' } )
-				.selectOption( { label: formData.hearAboutUsOption } );
+				.selectOption( { label: formData1.hearAboutUsOption } );
 
 			await publishedFormLocator
 				.getByRole( 'textbox', { name: 'Other details' } )
-				.fill( formData.otherDetails );
+				.fill( formData1.otherDetails );
 		} );
 
-		it( 'Submit form', async function () {
+		it( 'Submit first form', async function () {
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
 
 			await page.getByText( 'Your message has been sent' ).waitFor( { timeout: 20 * 1000 } );
 		} );
+
+		it( 'Verify "Go back" link appears', async function () {
+			// The "Go back" can be either a link or button depending on the implementation
+			await page.getByText( 'Go back', { exact: true } ).waitFor();
+		} );
+
+		it( 'Click "Go back" to return to form', async function () {
+			await page.getByText( 'Go back', { exact: true } ).click();
+			// Verify the form is visible again and the success message is hidden
+			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
+			// Wait for the success message to be hidden
+			await page.waitForTimeout( 500 );
+		} );
 	} );
 
-	describe( 'Validate response', function () {
+	describe( 'Fill and submit second form', function () {
+		it( 'Reload the page to get a fresh form', async function () {
+			await page.reload();
+			publishedFormLocator = page.locator( "[data-test='contact-form']" );
+			// Wait for the form to be ready
+			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
+		} );
+
+		it( 'Fill out second form', async function () {
+			await publishedFormLocator.getByRole( 'textbox', { name: 'Name' } ).fill( formData2.name );
+
+			await publishedFormLocator.getByRole( 'textbox', { name: 'Email' } ).fill( formData2.email );
+
+			await publishedFormLocator.getByRole( 'textbox', { name: 'Phone' } ).fill( formData2.phone );
+
+			await publishedFormLocator
+				.getByRole( 'combobox', { name: 'How did you hear about us?' } )
+				.selectOption( { label: formData2.hearAboutUsOption } );
+
+			await publishedFormLocator
+				.getByRole( 'textbox', { name: 'Other details' } )
+				.fill( formData2.otherDetails );
+		} );
+
+		it( 'Submit second form', async function () {
+			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
+
+			// Wait for the success message to become visible (not just exist)
+			await page
+				.getByText( 'Your message has been sent' )
+				.waitFor( { state: 'visible', timeout: 20 * 1000 } );
+		} );
+	} );
+
+	describe( 'Validate first response', function () {
 		let feedbackInboxPage: FeedbackInboxPage;
+		let isInSpam = false;
 
 		beforeAll( async function () {
 			await testAccount.authenticate( page );
@@ -127,7 +184,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 		} );
 
-		it( 'Search for unique response email until result shows up', async function () {
+		it( 'Search for first response email until result shows up', async function () {
 			// There's a lot we have to account for to stably find the right response!
 			// First, there may be a delay in the response showing up.
 			// Second, the response may be in the spam folder!
@@ -135,12 +192,14 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// The email is unique to every run, so will only ever return one response result when the search is successful.
 			// So we loop over a search attempt on the email, looking for a folder tab with a result in it!
 			const searchAndClickFolderWithResult = async () => {
-				await feedbackInboxPage.clearSearch();
-				await feedbackInboxPage.searchResponses( formData.email );
-				await page
+				await feedbackInboxPage.searchResponses( formData1.email );
+				const tabLocator = page
 					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
-					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) )
-					.click( { timeout: 4000 } );
+					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
+				await tabLocator.click( { timeout: 4000 } );
+				// Check if we're in spam folder
+				const tabText = await tabLocator.textContent();
+				isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
 			};
 
 			const MAX_ATTEMPTS = 3;
@@ -156,16 +215,237 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Click response row', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData.name );
+		it( 'Click first response row', async () => {
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 		} );
 
-		it( 'Validate response data', async () => {
-			await feedbackInboxPage.validateTextInSubmission( formData.name );
-			await feedbackInboxPage.validateTextInSubmission( formData.email );
-			await feedbackInboxPage.validateTextInSubmission( formData.phone );
-			await feedbackInboxPage.validateTextInSubmission( formData.hearAboutUsOption );
-			await feedbackInboxPage.validateTextInSubmission( formData.otherDetails );
+		it( 'If in Spam, mark as not spam', async function () {
+			if ( isInSpam ) {
+				await feedbackInboxPage.clickNotSpamAction();
+			}
+		} );
+
+		it( 'Navigate to Inbox tab', async function () {
+			if ( isInSpam ) {
+				// Clear search first to show all responses
+				await feedbackInboxPage.clearSearch( true );
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
+				// Wait for folder change to complete and data to reload
+				await page.waitForTimeout( 2000 );
+				// Search again for the first response in Inbox
+				await feedbackInboxPage.searchResponses( formData1.name );
+				await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			}
+		} );
+
+		it( 'Validate first response data', async () => {
+			await feedbackInboxPage.validateTextInSubmission( formData1.name );
+			await feedbackInboxPage.validateTextInSubmission( formData1.email );
+			await feedbackInboxPage.validateTextInSubmission( formData1.phone );
+			await feedbackInboxPage.validateTextInSubmission( formData1.hearAboutUsOption );
+			await feedbackInboxPage.validateTextInSubmission( formData1.otherDetails );
+			await feedbackInboxPage.clickCloseResponse();
+		} );
+	} );
+
+	describe( 'Validate second response', function () {
+		let feedbackInboxPage: FeedbackInboxPage;
+		let isInSpam = false;
+
+		it( 'Search for second response email until result shows up', async function () {
+			feedbackInboxPage = new FeedbackInboxPage( page );
+
+			const searchAndClickFolderWithResult = async () => {
+				// Don't clear/wait as it won't happen, results are cached.
+				await feedbackInboxPage.clearSearch( true );
+				await feedbackInboxPage.searchResponses( formData2.email );
+				const tabLocator = page
+					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
+				await tabLocator.click( { timeout: 4000 } );
+				// Check if we're in spam folder
+				const tabText = await tabLocator.textContent();
+				isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
+			};
+
+			const MAX_ATTEMPTS = 3;
+			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
+				try {
+					await searchAndClickFolderWithResult();
+					return;
+				} catch ( err ) {
+					if ( attempt === MAX_ATTEMPTS ) {
+						throw err;
+					}
+				}
+			}
+		} );
+
+		it( 'Click second response row', async () => {
+			await feedbackInboxPage.clickResponseRowByText( formData2.name );
+		} );
+
+		it( 'If in Spam, mark as not spam', async function () {
+			if ( isInSpam ) {
+				await feedbackInboxPage.clickNotSpamAction();
+			}
+		} );
+
+		it( 'Navigate to Inbox tab', async function () {
+			if ( isInSpam ) {
+				// Clear search first to show all responses
+				await feedbackInboxPage.clearSearch( true );
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
+				// Wait for folder change to complete
+				await page.waitForTimeout( 1000 );
+				// Search again for the second response in Inbox
+				await feedbackInboxPage.searchResponses( formData2.name );
+				await feedbackInboxPage.clickResponseRowByText( formData2.name );
+			}
+		} );
+
+		it( 'Validate second response data', async () => {
+			await feedbackInboxPage.validateTextInSubmission( formData2.name );
+			await feedbackInboxPage.validateTextInSubmission( formData2.email );
+			await feedbackInboxPage.validateTextInSubmission( formData2.phone );
+			await feedbackInboxPage.validateTextInSubmission( formData2.hearAboutUsOption );
+			await feedbackInboxPage.validateTextInSubmission( formData2.otherDetails );
+			await feedbackInboxPage.clickCloseResponse();
+		} );
+	} );
+
+	describe( 'Test response navigation', function () {
+		let feedbackInboxPage: FeedbackInboxPage;
+
+		it( 'Clear search to show both responses', async function () {
+			feedbackInboxPage = new FeedbackInboxPage( page );
+			await feedbackInboxPage.clearSearch( true );
+			// Wait for the data to reload
+			await page.waitForTimeout( 1000 );
+		} );
+
+		it( 'Click on first response', async function () {
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+		} );
+
+		it( 'Verify first response data is visible', async function () {
+			await feedbackInboxPage.validateTextInSubmission( formData1.name );
+			await feedbackInboxPage.validateTextInSubmission( formData1.email );
+		} );
+
+		it( 'Click Previous to navigate to second response', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await feedbackInboxPage.clickPreviousResponse();
+			}
+		} );
+
+		it( 'Verify second response data is visible', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await feedbackInboxPage.validateTextInSubmission( formData2.name );
+				await feedbackInboxPage.validateTextInSubmission( formData2.email );
+			}
+		} );
+
+		it( 'Verify Previous button is disabled (no newer responses)', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await feedbackInboxPage.verifyPreviousButtonDisabled();
+			}
+		} );
+
+		it( 'Click Next to navigate back to first response', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await feedbackInboxPage.clickNextResponse();
+			}
+		} );
+
+		it( 'Verify first response data is visible again', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await feedbackInboxPage.validateTextInSubmission( formData1.name );
+				await feedbackInboxPage.validateTextInSubmission( formData1.email );
+			}
+		} );
+
+		it( 'Close response modal', async function () {
+			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+				await feedbackInboxPage.clickCloseResponse();
+			}
+		} );
+	} );
+
+	describe( 'Test response actions', function () {
+		let feedbackInboxPage: FeedbackInboxPage;
+
+		it( 'Ensure first response is selected', async function () {
+			feedbackInboxPage = new FeedbackInboxPage( page );
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+		} );
+
+		it( 'Mark first response as unread', async function () {
+			await feedbackInboxPage.clickMarkAsUnreadAction();
+		} );
+
+		it( 'Mark first response as read', async function () {
+			// Re-select the response after the action
+			// await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.clickMarkAsReadAction();
+		} );
+
+		it( 'Mark first response as spam', async function () {
+			// Re-select the response after the action
+			// await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.clickMarkAsSpamAction();
+		} );
+
+		it( 'Navigate to Spam folder', async function () {
+			await feedbackInboxPage.clickFolderTab( 'Spam' );
+		} );
+
+		it( 'Verify first response is in Spam', async function () {
+			await feedbackInboxPage.searchResponses( formData1.email );
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.validateTextInSubmission( formData1.name );
+		} );
+
+		it( 'Mark first response as not spam', async function () {
+			await feedbackInboxPage.clickNotSpamAction();
+		} );
+
+		it( 'Navigate back to Inbox', async function () {
+			await feedbackInboxPage.clickFolderTab( 'Inbox' );
+		} );
+
+		it( 'Verify first response is back in Inbox', async function () {
+			await feedbackInboxPage.searchResponses( formData1.email, true );
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.validateTextInSubmission( formData1.name );
+		} );
+
+		it( 'Move first response to trash', async function () {
+			await feedbackInboxPage.clickMoveToTrashAction();
+		} );
+
+		it( 'Navigate to Trash folder', async function () {
+			await feedbackInboxPage.clickFolderTab( 'Trash' );
+		} );
+
+		it( 'Verify first response is in Trash', async function () {
+			await feedbackInboxPage.searchResponses( formData1.email, true );
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.validateTextInSubmission( formData1.name );
+		} );
+
+		it( 'Restore first response from trash', async function () {
+			await feedbackInboxPage.clickRestoreAction();
+		} );
+
+		it( 'Navigate back to Inbox to confirm', async function () {
+			await feedbackInboxPage.clickFolderTab( 'Inbox' );
+		} );
+
+		it( 'Verify first response is restored in Inbox', async function () {
+			await feedbackInboxPage.searchResponses( formData1.email, true );
+			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 	} );
 } );

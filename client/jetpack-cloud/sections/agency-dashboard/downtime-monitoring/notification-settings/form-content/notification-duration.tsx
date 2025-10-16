@@ -1,8 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import useNotificationDurations from '../../../sites-overview/hooks/use-notification-durations';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import UpgradeLink from '../../upgrade-link';
@@ -24,13 +23,9 @@ export default function NotificationDuration( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const showPaidDuration = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
-
 	const durations = useNotificationDurations();
-	const selectableDuration = useMemo(
-		() => ( showPaidDuration ? durations : durations.filter( ( duration ) => ! duration.isPaid ) ),
-		[ durations, showPaidDuration ]
-	);
+
+	const isA4AEnvironment = isA8CForAgencies();
 
 	return (
 		<div className="notification-settings__content-block">
@@ -52,7 +47,7 @@ export default function NotificationDuration( {
 				}
 				selectedText={ selectedDuration?.label }
 			>
-				{ selectableDuration.map( ( duration ) => (
+				{ durations.map( ( duration ) => (
 					<SelectDropdown.Item
 						key={ duration.time }
 						selected={ duration.time === selectedDuration?.time }
@@ -63,7 +58,9 @@ export default function NotificationDuration( {
 						{ duration.isPaid && (
 							<>
 								<FeatureRestrictionBadge restriction={ restriction } />
-								{ restriction === 'upgrade_required' && <UpgradeLink isInline /> }
+								{ restriction === 'upgrade_required' && ! isA4AEnvironment && (
+									<UpgradeLink isInline />
+								) }
 							</>
 						) }
 					</SelectDropdown.Item>

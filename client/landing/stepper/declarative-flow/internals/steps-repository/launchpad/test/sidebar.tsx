@@ -79,7 +79,7 @@ const sidebarDomain = buildDomainResponse( {
 } );
 
 const upgradeDomainBadgeText = 'Pick a custom domain';
-const upgradeDomainBadgeLink = `/setup/domain-and-plan?siteSlug=${ sidebarDomain.domain }`;
+const upgradeDomainBadgeLink = `/setup/domain-and-plan?siteSlug=${ sidebarDomain.domain }&back_to=%2Fsetup%2Fnewsletter%2Flaunchpad%3FsiteSlug%3D${ siteSlug }`;
 
 const props = {
 	sidebarDomain,

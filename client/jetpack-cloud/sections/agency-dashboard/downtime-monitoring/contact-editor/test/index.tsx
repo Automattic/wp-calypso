@@ -32,7 +32,11 @@ describe( 'ContactEditor', () => {
 		sites: [],
 	};
 
-	const initialState = {};
+	const initialState = {
+		a8cForAgencies: {
+			agencies: {},
+		},
+	};
 
 	const mockStore = configureStore();
 	const store = mockStore( initialState );

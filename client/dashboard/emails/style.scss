@@ -1,34 +1,43 @@
-.emails__dataviews {
-	.email-redirect-field {
-		gap: 1px;
-	}
+@import "@wordpress/base-styles/variables";
 
-	.email-icon-wrapper {
-		border: 1px solid var(--color-border, #ddd);
-		border-radius: 4px;
-		width: 36px;
-		height: 36px;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-	}
+.email-redirect-field {
+	gap: 1px;
+}
 
-	.professional-email-icon {
-		stroke: none;
-		fill: var(--wp-admin-theme-color);
-	}
+.email-icon-wrapper {
+	border: 1px solid var(--color-border, #ddd);
+	border-radius: 4px;
+	width: 36px;
+	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
 
-	.email-forwarder-icon {
-		stroke: none;
-		fill: #959595;
-	}
+.professional-email-icon {
+	stroke: none;
+	fill: var(--wp-admin-theme-color);
+}
 
-	.mailbox--icon {
-		width: 16px;
-	}
+.email-forwarder-icon {
+	stroke: none;
+	fill: #959595;
+}
+
+.mailbox--icon {
+	width: 16px;
 }
 
 .add-forwarder__back-button {
 	padding: 0 !important;
+}
+
+.dashboard-section-header__actions {
+	align-items: center;
+}
+
+.emails__add-email-forwarder {
+	text-decoration: none !important;
+	font-size: $font-size-medium;
 }

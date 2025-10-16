@@ -15,7 +15,6 @@ type SiteColumn = {
 const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 	const translate = useTranslate();
 	const isBoostEnabled = isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
-	const isPaidMonitorEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
 		'jetpack/pro-dashboard-wpcom-atomic-hosting'
 	);
@@ -71,7 +70,7 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 				title: translate( 'Monitor' ),
 				className: 'min-width-100px jetpack-cloud-site-column__monitor',
 				isExpandable: true,
-				showInfo: isPaidMonitorEnabled,
+				showInfo: true,
 			},
 			{
 				key: 'plugin',
@@ -79,13 +78,7 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 				className: 'width-fit-content jetpack-cloud-site-column__plugin',
 			},
 		];
-	}, [
-		isBoostEnabled,
-		isPaidMonitorEnabled,
-		isWPCOMAtomicSiteCreationEnabled,
-		translate,
-		isLargeScreen,
-	] );
+	}, [ isBoostEnabled, isWPCOMAtomicSiteCreationEnabled, translate, isLargeScreen ] );
 };
 
 export default useDefaultSiteColumns;

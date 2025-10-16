@@ -1374,7 +1374,6 @@ class ManagePurchase extends Component<
 												rawPrice={ purchase.regularPriceInteger }
 												isSmallestUnit
 												currencyCode={ purchase.currencyCode }
-												taxText={ purchase.taxText }
 												isOnSale={ !! purchase.saleAmount }
 											/>
 										) }

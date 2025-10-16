@@ -8,6 +8,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DnsDescription from '../domain-dns/dns-description';
 import DNSRecordForm from './form';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
@@ -50,7 +51,12 @@ export default function DomainAddDNS() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader prefix={ <Breadcrumbs length={ 3 } /> } description={ <DnsDescription /> } />
+			}
+		>
 			<DNSRecordForm
 				domainName={ domainName }
 				isBusy={ mutation.isPending }

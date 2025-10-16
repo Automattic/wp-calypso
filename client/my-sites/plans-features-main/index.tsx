@@ -344,9 +344,11 @@ const PlansFeaturesMain = ( {
 
 	const isDisplayingPlansNeededForFeature =
 		!! selectedFeature &&
-		isValidFeatureKey( selectedFeature ) && // For plans-upgrade intent, enable feature filtering without requiring selectedPlan
+		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
+		// that may not be in the feature key list (e.g. because they're grouped into a broader feature).
 		( intent === 'plans-upgrade' ||
-			( !! selectedPlan &&
+			( isValidFeatureKey( selectedFeature ) &&
+				!! selectedPlan &&
 				!! getPlan( selectedPlan ) &&
 				! isPersonalPlan( selectedPlan ) &&
 				( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) ) ) );
@@ -532,22 +534,14 @@ const PlansFeaturesMain = ( {
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
-			let isDomainAndPlanFlow: string | null = '';
-			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
 
 			if ( typeof window !== 'undefined' ) {
-				isDomainAndPlanFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-					'domainAndPlanPackage'
-				);
 				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 			}
 
 			const pathOrQueryParam = getPlanTypeDestination( props, {
 				intervalType: interval,
-				domain: isDomainAndPlanFlow,
-				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 

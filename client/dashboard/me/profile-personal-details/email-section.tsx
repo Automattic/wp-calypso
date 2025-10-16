@@ -14,6 +14,24 @@ interface EmailSectionProps {
 	onChange: ( value: string ) => void;
 	disabled?: boolean;
 	userData: UserSettings;
+	onValidationChange?: ( isValid: boolean ) => void;
+}
+
+type EmailValidationState = 'valid' | 'invalid' | null;
+
+function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void ) {
+	const [ emailValidationState, setEmailValidationStateValue ] =
+		useState< EmailValidationState >( null );
+
+	const setEmailValidationState = useCallback(
+		( state: EmailValidationState ) => {
+			setEmailValidationStateValue( state );
+			onValidationChange?.( state !== 'invalid' );
+		},
+		[ onValidationChange ]
+	);
+
+	return [ emailValidationState, setEmailValidationState ] as const;
 }
 
 export default function EmailSection( {
@@ -21,6 +39,7 @@ export default function EmailSection( {
 	onChange,
 	disabled = false,
 	userData,
+	onValidationChange,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
 
@@ -46,9 +65,8 @@ export default function EmailSection( {
 	const pendingEmail = userData.new_user_email;
 	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userData.user_email;
 
-	const [ emailValidationState, setEmailValidationState ] = useState< 'valid' | 'invalid' | null >(
-		null
-	);
+	const [ emailValidationState, setEmailValidationState ] =
+		useEmailValidation( onValidationChange );
 
 	const handleCancelPendingEmail = useCallback( () => {
 		cancelPendingEmail();
@@ -71,7 +89,7 @@ export default function EmailSection( {
 				setEmailValidationState( 'invalid' );
 			}
 		},
-		[ currentEmail ]
+		[ currentEmail, setEmailValidationState ]
 	);
 
 	useEffect( () => {

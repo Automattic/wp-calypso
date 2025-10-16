@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
@@ -40,7 +40,7 @@ export function PurchasePaymentMethod( {
 	) {
 		return (
 			<div>
-				<a href={ getAddPaymentMethodUrlFor( purchase ) }>{ __( 'Add payment method' ) }</a>
+				<Link to={ getAddPaymentMethodUrlFor( purchase ) }>{ __( 'Add payment method' ) }</Link>
 			</div>
 		);
 	}

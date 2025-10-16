@@ -59,7 +59,6 @@ export function plans( context, next ) {
 					? context.query.addDomainFlow === 'true'
 					: undefined
 			}
-			domainAndPlanPackage={ context.query.domainAndPlanPackage === 'true' }
 			jetpackAppPlans={ context.query.jetpackAppPlans === 'true' }
 		/>
 	);

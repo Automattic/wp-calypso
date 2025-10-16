@@ -9,7 +9,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -21,26 +21,17 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { __, isRTL, sprintf } from '@wordpress/i18n';
-import {
-	chevronRight,
-	chevronLeft,
-	calendar,
-	currencyDollar,
-	siteLogo,
-	rotateRight,
-} from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { calendar, currencyDollar, rotateRight, siteLogo } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { addFlashMessage } from '../../components/flash-message';
 import { useFormattedTime } from '../../components/formatted-time';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import {
-	getMonetizeSubscriptionsUrl,
-	getMonetizeSubscriptionsPageTitle,
-} from '../../me/monetize-subscriptions/urls';
+import { getMonetizeSubscriptionsUrl } from '../../me/monetize-subscriptions/urls';
 import { formatDate } from '../../utils/datetime';
 import { PurchaseSettingsCard } from '../billing-purchases/purchase-settings';
 
@@ -219,24 +210,6 @@ function StopSubscriptionButton( {
 	);
 }
 
-const BackButton = () => {
-	const router = useRouter();
-
-	return (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				router.navigate( {
-					to: getMonetizeSubscriptionsUrl(),
-				} );
-			} }
-		>
-			{ getMonetizeSubscriptionsPageTitle() }
-		</Button>
-	);
-};
-
 export default function MonetizeSubscriptionDetails() {
 	const params = monetizeSubscriptionRoute.useParams();
 	const subscriptionId: string = params.subscriptionId ?? '';
@@ -276,8 +249,8 @@ export default function MonetizeSubscriptionDetails() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={ <BackButton /> }
-					title={ isProduct ? __( 'Product Details' ) : __( 'Subscription Details' ) }
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					title={ isProduct ? __( 'Product details' ) : __( 'Subscription details' ) }
 				/>
 			}
 		>
@@ -302,7 +275,7 @@ export default function MonetizeSubscriptionDetails() {
 							title={ expiryDateTitle }
 							heading={ ( () => {
 								if ( isOneTimePurchase ) {
-									return __( 'Never expires' );
+									return __( 'Never expires.' );
 								}
 								if ( isAutoRenewing ) {
 									return formattedRenewal;
@@ -311,9 +284,9 @@ export default function MonetizeSubscriptionDetails() {
 							} )() }
 							description={ ( () => {
 								if ( isAutoRenewing ) {
-									return __( 'Auto-renew is enabled' );
+									return __( 'Auto-renew is enabled.' );
 								}
-								return __( 'Auto-renew is disabled' );
+								return __( 'Auto-renew is disabled.' );
 							} )() }
 						/>
 					</HStack>
