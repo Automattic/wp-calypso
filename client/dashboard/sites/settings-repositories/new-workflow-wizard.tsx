@@ -51,7 +51,7 @@ export const NewWorkflowWizard = ( {
 			{ errorMessage && <Text>{ errorMessage }</Text> }
 			<Text variant="muted">
 				{ __(
-					'Proceeding will commit a new workflow configuration file to your repository‘s default branch, no other files will be affected.'
+					'Proceeding will commit a new workflow configuration file to your repository‘s default branch. No other files will be affected.'
 				) }
 			</Text>
 
