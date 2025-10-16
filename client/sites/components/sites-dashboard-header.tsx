@@ -144,7 +144,7 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 								href="/setup/flex-site"
 							>
 								<WordPressLogo className="gridicon" size={ 18 } />
-								<span>{ translate( 'Create a Flex Site' ) }</span>
+								<span>{ translate( 'Create a Flex site' ) }</span>
 							</PopoverMenuItem>
 						) }
 						<PopoverMenuItem

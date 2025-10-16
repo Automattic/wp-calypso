@@ -19,7 +19,7 @@ async function initialize() {
 const flexSite: FlowV2< typeof initialize > = {
 	name: FLEX_SITE_FLOW,
 	get title() {
-		return translate( 'Create a Flex Site' );
+		return translate( 'Create a Flex site' );
 	},
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,

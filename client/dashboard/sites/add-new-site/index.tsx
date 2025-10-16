@@ -76,7 +76,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				{ isFlexEligible && (
 					<MenuItem
 						icon={ <WordPressLogo /> }
-						title={ __( 'Create a Flex Site' ) }
+						title={ __( 'Create a Flex site' ) }
 						description={ __( 'Provision a flexible WordPress.com environment.' ) }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
@@ -84,7 +84,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 							} );
 						} }
 						href={ `/setup/flex-site?source=${ context }&ref=new-site-popover` }
-						aria-label={ __( 'Create a Flex Site' ) }
+						aria-label={ __( 'Create a Flex site' ) }
 					/>
 				) }
 				<MenuItem

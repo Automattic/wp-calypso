@@ -1,4 +1,4 @@
-# Flex Site Flow
+# Flex site Flow
 
 This flow allows users to quickly create new flex sites with a simple site name form.
 
@@ -12,7 +12,7 @@ This flow allows users to quickly create new flex sites with a simple site name 
 
 ## Flow Steps
 
-1. **Flex Site Creation** (`flex-site-creation`): A simple form where users enter the site name to create a new flex site:
+1. **Flex site Creation** (`flex-site-creation`): A simple form where users enter the site name to create a new flex site:
 
    - **Site Name** (required): Text field with autofocus
    - **Create a site** button: Disabled until a site name is entered
