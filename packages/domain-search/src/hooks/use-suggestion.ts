@@ -1,7 +1,7 @@
+import { type DomainSuggestion, DomainAvailabilityStatus } from '@automattic/api-core';
 import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../page/context';
-import type { DomainSuggestion } from '@automattic/api-core';
 
 export enum DomainPriceRule {
 	ONE_TIME_PRICE = 'ONE_TIME_PRICE',
@@ -50,6 +50,10 @@ const getPriceRuleForSuggestion = ( {
 export const useSuggestion = ( domainName: string ) => {
 	const { query, queries, config, events } = useDomainSearch();
 
+	const { data: fqdnAvailability } = useQuery( {
+		...queries.domainAvailability( domainName ),
+	} );
+
 	const { data: suggestion } = useQuery( {
 		...queries.domainSuggestions( query ),
 		select: ( data ) => {
@@ -58,6 +62,12 @@ export const useSuggestion = ( domainName: string ) => {
 			);
 
 			if ( suggestionPosition === -1 ) {
+				// If there's no suggestion matching the domain name, the user might have
+				// provided a FQDN and the filters do not match the FQDN's TLD
+				if ( fqdnAvailability && fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ) {
+					return fqdnAvailability;
+				}
+
 				events.onSuggestionNotFound( domainName );
 				throw new Error( `Suggestion not found for domain: ${ domainName }` );
 			}

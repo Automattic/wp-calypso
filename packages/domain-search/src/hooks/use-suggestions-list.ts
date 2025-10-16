@@ -92,6 +92,7 @@ export const useSuggestionsList = () => {
 				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
+			fqdnAvailability,
 		} );
 	}, [
 		suggestions,
