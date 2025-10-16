@@ -1,7 +1,10 @@
 import { DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES } from '@automattic/onboarding';
+import { useSupportStatus } from '../data/use-support-status';
 
 // We want to give the Help Center custom options based on the flow in which the user is in
 export function useFlowCustomOptions( flowName: string ) {
+	const { data: supportStatus } = useSupportStatus();
+
 	if (
 		flowName === DIFM_FLOW ||
 		flowName === DIFM_FLOW_STORE ||
@@ -9,7 +12,7 @@ export function useFlowCustomOptions( flowName: string ) {
 	) {
 		return {
 			hideBackButton: true,
-			hasPremiumSupport: true,
+			hasPremiumSupport: Boolean( supportStatus?.availability.is_difm_chat_open ),
 		};
 	}
 

@@ -59,7 +59,6 @@ export default function DIFMSitePickerStep( props: Props ) {
 	};
 
 	const { data: geoData } = useGeoLocationQuery();
-
 	const isPremiumHelpCenterLinkEnabled = geoData?.country_short === 'US';
 
 	const subHeaderText = translate(
