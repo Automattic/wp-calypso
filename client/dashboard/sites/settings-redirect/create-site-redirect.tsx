@@ -1,23 +1,18 @@
 import { productsQuery, domainCanRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	Button,
-	Card,
-	CardBody,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { ButtonStack } from '../../components/button-stack';
+import { Notice } from '../../components/notice';
 import { validateHostname } from '../../domains/name-servers/utils';
 import RedirectInputField from './redirect-input-field';
 
-interface FormData {
+interface SiteRedirectFormData {
 	redirect: string;
 }
 
@@ -31,14 +26,14 @@ export default function CreateSiteRedirect( {
 	const { data: products } = useSuspenseQuery( productsQuery() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const offsetRedirect = products?.offsite_redirect;
-	const [ formData, setFormData ] = useState< FormData >( { redirect: '' } );
+	const [ formData, setFormData ] = useState< SiteRedirectFormData >( { redirect: '' } );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { refetch } = useQuery( {
 		...domainCanRedirectQuery( siteId, formData.redirect ),
 		enabled: false,
 	} );
 
-	const fields: Field< FormData >[] = useMemo(
+	const fields: Field< SiteRedirectFormData >[] = useMemo(
 		() => [
 			{
 				id: 'redirect',
@@ -54,7 +49,7 @@ export default function CreateSiteRedirect( {
 				},
 				isValid: {
 					required: true,
-					custom: ( formData: FormData ) => {
+					custom: ( formData: SiteRedirectFormData ) => {
 						const value = formData.redirect;
 						return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
 					},
@@ -103,17 +98,22 @@ export default function CreateSiteRedirect( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<Text as="p">
-						{ offsetRedirect?.cost_display }
-						<small>{ __( '/year' ) }</small>
-					</Text>
+					<Notice variant="info" title={ __( 'Redirect your site' ) }>
+						{ sprintf(
+							/* translators: cost is the cost of the redirect per year */
+							__(
+								'Redirecting costs %(cost)s per year. Visitors will be automatically sent to your new address.'
+							),
+							{ cost: offsetRedirect?.cost_display }
+						) }
+					</Notice>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
-							<DataForm< FormData >
+							<DataForm< SiteRedirectFormData >
 								data={ formData }
 								fields={ fields }
 								form={ form }
-								onChange={ ( edits: Partial< FormData > ) => {
+								onChange={ ( edits: Partial< SiteRedirectFormData > ) => {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
@@ -125,7 +125,7 @@ export default function CreateSiteRedirect( {
 									isBusy={ isSubmitting }
 									disabled={ isSubmitting || ! isFormValid }
 								>
-									{ __( 'GO' ) }
+									{ __( 'Redirect' ) }
 								</Button>
 							</ButtonStack>
 						</VStack>

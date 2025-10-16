@@ -1,13 +1,22 @@
-import { updateSiteRedirectMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
-import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { updateSiteRedirectMutation, userPurchasesQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	Button,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { validateHostname } from '../../domains/name-servers/utils';
+import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import RedirectInputField from './redirect-input-field';
 
 interface ManageSiteRedirectProps {
@@ -26,6 +35,10 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 	} );
 	const { mutate: updateSiteRedirect, isPending } = useMutation(
 		updateSiteRedirectMutation( siteId )
+	);
+	const { data: purchases } = useQuery( userPurchasesQuery() );
+	const purchase = purchases?.find(
+		( purchase ) => purchase.blog_id === siteId && purchase.product_slug === 'offsite_redirect'
 	);
 
 	const fields: Field< SiteRedirectFormData >[] = useMemo(
@@ -100,6 +113,13 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 							</ButtonStack>
 						</VStack>
 					</form>
+					{ purchase && (
+						<Text>
+							{ createInterpolateElement( __( '<link>Manage</link> your site redirect upgrade.' ), {
+								link: <Link to={ getPurchaseUrlForId( purchase.ID ) } />,
+							} ) }
+						</Text>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>
