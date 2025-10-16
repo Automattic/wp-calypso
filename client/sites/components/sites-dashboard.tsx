@@ -12,7 +12,6 @@ import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import moment from 'moment';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -28,7 +27,6 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Experiment } from 'calypso/lib/explat';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
 	SitesDashboardQueryParams,
@@ -501,25 +499,6 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-			{ /* ExPlat's Evergreen A/A Test Experiment:
-			 *
-			 * This continually starts a new experiment every week that doesn't render anything and
-			 * shouldn't send any extra requests, just to help us ensure our experimentation system is
-			 * working smoothly.
-			 *
-			 * This particular spot isn't special, it just needs somewhere to live.
-			 *
-			 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
-			 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
-			 */ }
-			<Experiment
-				name={ `explat_test_aa_weekly_calypso_${ moment.utc().format( 'GGGG' ) }_week_${ moment
-					.utc()
-					.format( 'WW' ) }` }
-				defaultExperience={ null }
-				treatmentExperience={ null }
-				loadingExperience={ null }
-			/>
 		</Layout>
 	);
 };

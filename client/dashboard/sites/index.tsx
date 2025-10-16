@@ -28,6 +28,8 @@ import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { getISOWeekDate } from '../utils/datetime';
+import { Experiment } from 'calypso/lib/explat';
 import { useActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
@@ -265,6 +267,26 @@ export default function Sites() {
 					/>
 				</GuidedTourContextProvider>
 			</PageLayout>
+			{ /* ExPlat's Evergreen A/A Test Experiment:
+			 *
+			 * This continually starts a new experiment every week that doesn't render anything and
+			 * shouldn't send any extra requests, just to help us ensure our experimentation system is
+			 * working smoothly.
+			 *
+			 * This particular spot isn't special, it just needs somewhere to live.
+			 *
+			 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
+			 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
+			 */ }
+			<Experiment
+				name={ ( () => {
+					const { year, week } = getISOWeekDate( new Date() );
+					return `explat_test_aa_weekly_calypso_${ year }_week_${ week }`;
+				} )() }
+				defaultExperience={ null }
+				treatmentExperience={ null }
+				loadingExperience={ null }
+			/>
 		</>
 	);
 }
