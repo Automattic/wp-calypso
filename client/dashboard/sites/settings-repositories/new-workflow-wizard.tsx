@@ -49,6 +49,11 @@ export const NewWorkflowWizard = ( {
 			<CodeHighlighter content={ exampleTemplate } />
 
 			{ errorMessage && <Text>{ errorMessage }</Text> }
+			<Text variant="muted">
+				{ __(
+					'Proceeding will commit a new workflow configuration file to your repository‘s default branch, no other files will be affected.'
+				) }
+			</Text>
 
 			<Button
 				type="button"
