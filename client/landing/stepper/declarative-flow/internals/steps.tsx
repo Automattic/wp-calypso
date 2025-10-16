@@ -56,11 +56,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
-	DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () => import( './steps-repository/domains' ),
-	},
-
 	DOMAIN_SEARCH: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domain-search' ),
@@ -330,13 +325,6 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
-	},
-	UNIFIED_DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
-			),
 	},
 	UNIFIED_PLANS: {
 		slug: 'plans',

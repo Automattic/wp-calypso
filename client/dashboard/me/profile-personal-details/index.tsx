@@ -36,6 +36,7 @@ export default function PersonalDetailsSection( {
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
+	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),
@@ -180,6 +181,7 @@ export default function PersonalDetailsSection( {
 							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
 							disabled={ isSaving }
 							userData={ userSettings }
+							onValidationChange={ setIsEmailValid }
 						/>
 
 						{ /* Developer checkbox */ }
@@ -195,7 +197,7 @@ export default function PersonalDetailsSection( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty }
+								disabled={ isSaving || ! isDirty || ! isEmailValid }
 							>
 								{ __( 'Save' ) }
 							</Button>

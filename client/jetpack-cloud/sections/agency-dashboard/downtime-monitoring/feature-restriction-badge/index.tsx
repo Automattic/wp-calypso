@@ -7,13 +7,15 @@ type Props = {
 };
 
 export default function FeatureRestrictionBadge( { restriction }: Props ) {
+	if ( ! restriction ) {
+		return null;
+	}
+
 	if ( restriction === 'upgrade_required' ) {
 		return <UpgradeBadge />;
 	}
 
-	if ( restriction === 'free_site_selected' ) {
-		return <NotAvailableBadge />;
+	if ( [ 'free_site_selected', 'atomic_site_selected' ].includes( restriction ) ) {
+		return <NotAvailableBadge restriction={ restriction } />;
 	}
-
-	return null;
 }

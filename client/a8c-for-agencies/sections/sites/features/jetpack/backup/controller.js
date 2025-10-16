@@ -12,6 +12,7 @@ import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import BackupContentsPage from 'calypso/my-sites/backup/backup-contents-page';
+import { FileBrowserProvider } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import BackupUpsell from 'calypso/my-sites/backup/backup-upsell';
 import BackupCloneFlow from 'calypso/my-sites/backup/clone-flow';
 import BackupsPage from 'calypso/my-sites/backup/main';
@@ -20,10 +21,18 @@ import BackupRewindFlow, { RewindFlowPurpose } from 'calypso/my-sites/backup/rew
 import WPCOMBackupUpsell from 'calypso/my-sites/backup/wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from 'calypso/my-sites/backup/wpcom-backup-upsell-placeholder';
 import { setFilter } from 'calypso/state/activity-log/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
+
+// Helper function to create Calypso notice handlers
+const createCalypsoNotices = ( store, options = {} ) => ( {
+	showError: ( message ) => store.dispatch( errorNotice( message, options ) ),
+	showSuccess: ( message ) => store.dispatch( successNotice( message, options ) ),
+} );
 
 export function showUpsellIfNoBackup( context, next ) {
 	debug( 'controller: showUpsellIfNoBackup', context.params );
@@ -162,14 +171,21 @@ export function backupRestore( context, next ) {
 /* handles /backup/:site/granular-restore/:rewindId, see `backupGranularRestorePath` */
 export function backupGranularRestore( context, next ) {
 	debug( 'controller: backupGranularRestore', context.params );
+	const state = context.store.getState();
 
 	context.featurePreview = (
-		<>
+		<FileBrowserProvider
+			locale={ getCurrentUserLocale( state ) || 'en' }
+			notices={ createCalypsoNotices( context.store, {
+				duration: 5000,
+				isPersistent: true,
+			} ) }
+		>
 			<BackupRewindFlow
 				rewindId={ context.params.rewindId }
 				purpose={ RewindFlowPurpose.GRANULAR_RESTORE }
 			/>
-		</>
+		</FileBrowserProvider>
 	);
 	next();
 }
@@ -191,7 +207,15 @@ export function backupContents( context, next ) {
 	const siteId = getSelectedSiteId( state );
 
 	context.featurePreview = (
-		<BackupContentsPage siteId={ siteId } rewindId={ Number( context.params.rewindId ) } />
+		<FileBrowserProvider
+			locale={ getCurrentUserLocale( state ) || 'en' }
+			notices={ createCalypsoNotices( context.store, {
+				duration: 5000,
+				isPersistent: true,
+			} ) }
+		>
+			<BackupContentsPage siteId={ siteId } rewindId={ Number( context.params.rewindId ) } />
+		</FileBrowserProvider>
 	);
 	next();
 }

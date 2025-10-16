@@ -532,22 +532,14 @@ const PlansFeaturesMain = ( {
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
-			let isDomainAndPlanFlow: string | null = '';
-			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
 
 			if ( typeof window !== 'undefined' ) {
-				isDomainAndPlanFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-					'domainAndPlanPackage'
-				);
 				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 			}
 
 			const pathOrQueryParam = getPlanTypeDestination( props, {
 				intervalType: interval,
-				domain: isDomainAndPlanFlow,
-				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 

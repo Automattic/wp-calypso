@@ -14,29 +14,37 @@ Please watch this video before making your first flow:
 
 ## Table of Contents
 
-- [How does it work](#how-does-it-work)
-  - [The most important principle: Steps shouldn't make decisions or communicate](#the-most-important-principle-steps-shouldnt-make-decisions-or-communicate)
-- [Making a flow](#making-a-flow)
-  - [Code example](#code-example)
-  - [Registering the flow](#registering-the-flow)
-  - [File hierarchy convention](#file-hierarchy-convention)
-  - [Managing authentication](#managing-authentication)
-  - [Asserting conditions before running the flow](#asserting-conditions-before-running-the-flow)
-- [Notes](#notes)
-- [Deleting your flow](#deleting-your-flow)
-- [Making a Step](#making-a-step)
-  - [Code example](#code-example-1)
-  - [Passing data down to steps](#passing-data-down-to-steps)
-  - [Reusability](#reusability)
-  - [Renaming steps](#renaming-steps)
-- [State management](#state-management)
-  - [Typed state](#typed-state)
-  - [Miscellaneous fields](#miscellaneous-fields)
-- [Creating a site](#creating-a-site)
-- [The API](#the-api)
-- [Useful utilities and hooks](#useful-utilities-and-hooks)
-- [Troubleshooting](#troubleshooting)
-- [Help and feedback](#help-and-feedback)
+- [Stepper Walkthrough Framework](#stepper-walkthrough-framework)
+  - [Introduction](#introduction)
+    - [Intro video](#intro-video)
+  - [Table of Contents](#table-of-contents)
+  - [How does it work](#how-does-it-work)
+    - [The most important principle: Steps shouldn't make decisions or communicate](#the-most-important-principle-steps-shouldnt-make-decisions-or-communicate)
+    - [Making a flow](#making-a-flow)
+      - [Notes](#notes)
+      - [Code example](#code-example)
+      - [Registering the flow](#registering-the-flow)
+      - [File hierarchy convention](#file-hierarchy-convention)
+      - [Managing authentication](#managing-authentication)
+      - [Asserting conditions before running the flow](#asserting-conditions-before-running-the-flow)
+      - [Pending actions](#pending-actions)
+    - [Notes](#notes-1)
+    - [Deleting your flow](#deleting-your-flow)
+    - [Making a Step](#making-a-step)
+      - [Code example](#code-example-1)
+      - [Passing data down to steps](#passing-data-down-to-steps)
+      - [Reusability](#reusability)
+      - [Renaming steps](#renaming-steps)
+    - [State management](#state-management)
+      - [Typed state](#typed-state)
+    - [Creating a site](#creating-a-site)
+      - [Miscellaneous fields](#miscellaneous-fields)
+  - [The API](#the-api)
+  - [Useful utilities and hooks](#useful-utilities-and-hooks)
+  - [Troubleshooting](#troubleshooting)
+    - [TypeScript is complaining about the type of `useStepProps`](#typescript-is-complaining-about-the-type-of-usestepprops)
+    - [TypeScript is complaining about the arguments I'm passing to `submit`](#typescript-is-complaining-about-the-arguments-im-passing-to-submit)
+  - [Help and feedback](#help-and-feedback)
 
 ## How does it work
 
@@ -93,11 +101,17 @@ async function initialize( calypsoReduxStore: Store ) {
 	const hasAnySites = userHasAnySites( calypsoReduxStore.getState() );
 
 	if ( includeDomainsStep ) {
-		return [ STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] as const;
+		return [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] as const;
 	}
 
 	if ( hasAnySites ) {
-		return [ STEPS.PICK_SITE, STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] as const;
+		return [
+			STEPS.PICK_SITE,
+			STEPS.DOMAIN_SEARCH,
+			STEPS.UNIFIED_PLANS,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+		] as const;
 	}
 
 	// We need `as const` to promise TS that these steps won't change later.
@@ -158,11 +172,11 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 							const createdSiteId = providedDependencies.siteId;
 							window.location = `/checkout/${ createdSiteId }`;
 						} else {
-							window.location = `/home/${ createdSiteId }`;							
+							window.location = `/home/${ createdSiteId }`;
 						}
 						break;
 					} else {
-						// an error has occurred. 
+						// an error has occurred.
 						navigate( 'error' );
 					}
 				}
@@ -189,10 +203,13 @@ Stepper takes care of authenticating your users. You should not have to worry ab
 ```ts
 function initialize() {
 	// Gate all the steps
-	return stepsWithRequiredLogin( [ STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] );
+	return stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] );
 
 	// Gate some
-	return [ STEPS.UNIFIED_DOMAINS, ...stepsWithRequiredLogin( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ) ] as const;
+	return [
+		STEPS.DOMAIN_SEARCH,
+		...stepsWithRequiredLogin( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
+	] as const;
 }
 ```
 
@@ -382,14 +399,14 @@ The `useStepProps` hooks allows you to pass props to your steps. TS will only al
 
 ```ts
 const flow = {
-	//👇 the TS red line will be here 
+	//👇 the TS red line will be here
 	useStepsProps() {
 		return {
 			domains: {
 				allowFree: true,
 			},
 			//👇 not here
-			nonExistentStep: {				
+			nonExistentStep: {
 				title: 'this step does not exist',
 			},
 		};
