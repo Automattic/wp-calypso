@@ -7,7 +7,7 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Button, Card, CardBody } from '@wordpress/components';
+import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -196,44 +196,48 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			{ mailboxEntities.map( ( mailboxEntity, index ) => (
-				<Card key={ index }>
-					<CardBody>
-						<MailboxForm
-							mailboxEntity={ mailboxEntity }
+			<form onSubmit={ handleSubmit }>
+				<VStack spacing={ 6 }>
+					{ mailboxEntities.map( ( mailboxEntity, index ) => (
+						<Card key={ index }>
+							<CardBody>
+								<MailboxForm
+									mailboxEntity={ mailboxEntity }
+									disabled={ disabled }
+									removeForm={ index > 0 ? () => removeForm( index ) : undefined }
+								/>
+							</CardBody>
+						</Card>
+					) ) }
+
+					<ButtonStack justify="flex-start">
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
 							disabled={ disabled }
-							removeForm={ index > 0 ? () => removeForm( index ) : undefined }
-						/>
-					</CardBody>
-				</Card>
-			) ) }
+							onClick={ () => {
+								setMailboxEntities( ( prevMailboxEntities ) => [
+									...prevMailboxEntities,
+									createNewMailbox(),
+								] );
+							} }
+						>
+							{ __( 'Add another mailbox' ) }
+						</Button>
+					</ButtonStack>
 
-			<ButtonStack justify="flex-start">
-				<Button
-					__next40pxDefaultSize
-					variant="secondary"
-					disabled={ disabled }
-					onClick={ () => {
-						setMailboxEntities( ( prevMailboxEntities ) => [
-							...prevMailboxEntities,
-							createNewMailbox(),
-						] );
-					} }
-				>
-					{ __( 'Add another mailbox' ) }
-				</Button>
-			</ButtonStack>
-
-			<ButtonStack justify="flex-start">
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					disabled={ disabled }
-					onClick={ handleSubmit }
-				>
-					{ __( 'Continue' ) }
-				</Button>
-			</ButtonStack>
+					<ButtonStack justify="flex-start">
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							disabled={ disabled }
+							onClick={ handleSubmit }
+						>
+							{ __( 'Continue' ) }
+						</Button>
+					</ButtonStack>
+				</VStack>
+			</form>
 		</PageLayout>
 	);
 };
