@@ -51,7 +51,11 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
-	const { data: pagesData, refetch: refetchPages } = useQuery( {
+	const {
+		data: pagesData,
+		isFetching: isFetchingPages,
+		refetch: refetchPages,
+	} = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
@@ -96,10 +100,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const { gmtOffset, timezoneString } = siteSettings;
 
 	const renderContent = () => {
-		if ( ! pagesData || ! currentPage ) {
-			return <ReportNoPagesNotice />;
-		}
-
 		if ( hasError( deviceToggle ) ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
 		}
@@ -108,8 +108,12 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			return <ReportLoading isSavedReport={ false } />;
 		}
 
-		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport ) {
+		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport || isFetchingPages ) {
 			return <ReportLoading isSavedReport />;
+		}
+
+		if ( ! pagesData || ! currentPage ) {
+			return <ReportNoPagesNotice />;
 		}
 
 		return (
