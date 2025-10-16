@@ -104,16 +104,17 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
 		}
 
+		if ( ! pagesData?.length && ! isFetchingPages ) {
+			return <ReportNoPagesNotice />;
+		}
+
 		if ( isLoadingNewReport( deviceToggle ) ) {
 			return <ReportLoading isSavedReport={ false } />;
 		}
 
-		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport || isFetchingPages ) {
+		// Our default loading state is loading the existing report.
+		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport || ! currentPage ) {
 			return <ReportLoading isSavedReport />;
-		}
-
-		if ( ! pagesData || ! currentPage ) {
-			return <ReportNoPagesNotice />;
 		}
 
 		return (
