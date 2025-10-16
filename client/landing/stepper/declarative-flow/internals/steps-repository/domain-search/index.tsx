@@ -12,7 +12,7 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
@@ -77,6 +77,7 @@ const DomainSearchStep: StepType< {
 	const source = useQuery().get( 'source' );
 	const backTo = useQuery().get( 'back_to' );
 	const sourceSlug = useQuery().get( 'sourceSlug' );
+	const { __ } = useI18n();
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -234,7 +235,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flow ] );
+	}, [ flow, __ ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {
@@ -249,7 +250,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow ] );
+	}, [ flow, __ ] );
 
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow
