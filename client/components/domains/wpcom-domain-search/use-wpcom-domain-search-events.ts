@@ -5,10 +5,7 @@ import { useDebounce } from '@wordpress/compose';
 import { type ComponentProps, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
-import {
-	recordUseYourDomainButtonClick,
-	recordDomainSearchStepSubmit,
-} from '../../domain-search-v2/register-domain-step/analytics';
+import { recordUseYourDomainButtonClick, recordDomainSearchStepSubmit } from './analytics';
 
 export const useWPCOMDomainSearchEvents = ( {
 	vendor,
