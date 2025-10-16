@@ -32,8 +32,8 @@ export function useDomainOwnerUserName(
 	//when Jetpack overrides this property, the original WordPress.com user Id
 	//ends stored as user.linked_user_ID, so in those cases, that's the ID we have to use.
 	const ownerUser = ( users as User[] )?.find(
-		( user ) => ( ( user as User ).linked_user_ID ?? user.id ) === domainSubscription?.user_id
+		( user ) => ( user.linked_user_ID ?? user.id ) === domainSubscription?.user_id
 	);
 
-	return ownerUser?.login ?? '';
+	return ownerUser?.slug ?? '';
 }
