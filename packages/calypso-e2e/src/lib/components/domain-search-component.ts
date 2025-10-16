@@ -1,11 +1,5 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
-
-const selectors = {
-	searchInput: '.search-component__input',
-	firstResultItem: '.domain-suggestion:first-child .domain-suggestion__content',
-	domainSuggestionRow: '.domain-suggestion',
-};
 
 /**
  * Component for the domain search feature.
@@ -40,9 +34,14 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
+			const searchAndPressEnter = async () => {
+				await page.getByRole( 'searchbox' ).fill( keyword );
+				await page.getByRole( 'searchbox' ).press( 'Enter' );
+			};
+
 			const [ response ] = await Promise.all( [
 				page.waitForResponse( /suggestions\?/ ),
-				page.getByRole( 'searchbox' ).fill( keyword ),
+				searchAndPressEnter(),
 			] );
 
 			if ( ! response ) {
@@ -56,6 +55,13 @@ export class DomainSearchComponent {
 		// Domain lookup service is external to Automattic and sometimes it returns an error.
 		// Retry a few times when this is encountered.
 		await reloadAndRetry( this.page, searchDomainClosure );
+	}
+
+	/**
+	 * Clicks on the button to bring over an external domain to WordPress.com
+	 */
+	async clickBringItOver(): Promise< void > {
+		await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
 	}
 
 	/**
@@ -73,36 +79,15 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Unique keyword to select domains.
 	 * @returns {string} Domain that was selected.
 	 */
-	async selectDomain( keyword: string, waitForContinueButton: boolean = true ): Promise< string > {
-		const targetRow = this.page.locator( selectors.domainSuggestionRow ).filter( {
-			has: this.page.getByLabel( keyword ),
-		} );
-		await targetRow.waitFor();
+	async selectDomain( keyword: string ): Promise< string > {
+		const targetRow = this.page.getByTitle( keyword );
+		const suggestion = await this.selectSuggestion( targetRow );
 
-		const target = targetRow.getByRole( 'button' );
-		await target.waitFor();
-
-		const selectedDomain = await targetRow.getByRole( 'heading' ).getAttribute( 'aria-label' );
-
-		if ( ! selectedDomain ) {
+		if ( ! suggestion ) {
 			throw new Error( `No domain found for keyword: ${ keyword }` );
 		}
 
-		await target.click();
-
-		if ( waitForContinueButton ) {
-			const continueButton = await waitForElementEnabled( this.page, 'button:text("Continue")', {
-				timeout: 30 * 1000,
-			} );
-
-			// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
-			await Promise.all( [
-				continueButton.dispatchEvent( 'click' ),
-				this.page.waitForNavigation(),
-			] );
-		}
-
-		return selectedDomain;
+		return suggestion;
 	}
 
 	/**
@@ -111,23 +96,72 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion(): Promise< string > {
-		const targetItem = await this.page.waitForSelector( selectors.firstResultItem );
-		// Heading element inside a given result contains the full domain name string.
-		const selectedDomain = await targetItem
-			.waitForSelector( 'h3' )
-			.then( ( el ) => el.innerText() );
+		const targetRow = this.page.getByRole( 'listitem' ).first();
+		const suggestion = await this.selectSuggestion( targetRow );
 
-		await Promise.all( [ this.page.waitForNavigation(), targetItem.click() ] );
+		if ( ! suggestion ) {
+			throw new Error( 'No domain found for first suggestion' );
+		}
+
+		return suggestion;
+	}
+
+	/**
+	 * Select a domain suggestion.
+	 *
+	 * @param {Locator} row The row to select.
+	 * @returns {string | null} Domain that was selected.
+	 */
+	private async selectSuggestion( row: Locator ): Promise< string | null > {
+		await row.waitFor();
+
+		const selectedDomain = await row.getAttribute( 'title' );
+
+		if ( ! selectedDomain ) {
+			return null;
+		}
+
+		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
+		await addToCartButton.waitFor();
+
+		await addToCartButton.click();
+		await addToCartButton.waitFor( { state: 'detached' } );
+
+		const continueButton = row.getByRole( 'button', { name: 'Continue' } );
+		await continueButton.waitFor();
 
 		return selectedDomain;
 	}
 
 	/**
-	 * Clicks on a button matching the text.
-	 *
-	 * @param {string} text Exact text to match on.
+	 * Clicks the "Continue" button.
 	 */
-	async clickButton( text: string ): Promise< void > {
-		await this.page.getByRole( 'button', { name: text, exact: true } ).click();
+	async continue(): Promise< void > {
+		const continueButton = await waitForElementEnabled( this.page, 'button:text("Continue")', {
+			timeout: 30 * 1000,
+		} );
+
+		// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
+		await Promise.all( [ continueButton.dispatchEvent( 'click' ), this.page.waitForNavigation() ] );
+	}
+
+	/**
+	 * Skips the domain search screen.
+	 */
+	async skipPurchase(): Promise< string > {
+		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
+
+		await button.waitFor();
+
+		let domain = await button.getAttribute( 'aria-label' );
+		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
+
+		if ( ! domain ) {
+			throw new Error( 'No domain found for skip purchase button' );
+		}
+
+		await button.click();
+
+		return domain;
 	}
 }

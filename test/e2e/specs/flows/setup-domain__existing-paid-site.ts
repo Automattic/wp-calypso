@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	BrowserManager,
-	RewrittenDomainSearchComponent,
+	DomainSearchComponent,
 	SelectItemsComponent,
 	CartCheckoutPage,
 	SignupPickPlanPage,
@@ -53,7 +53,7 @@ describe(
 			} );
 
 			it( 'Skip the domains step', async () => {
-				const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( DataHelper.getBlogName() );
 				await domainSearchComponent.skipPurchase();
 			} );
@@ -91,17 +91,17 @@ describe(
 			} );
 
 			it( 'Search for a domain', async function () {
-				const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( DataHelper.getBlogName() );
 			} );
 
 			it( 'Add the first suggestion to the cart', async function () {
-				const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+				const domainSearchComponent = new DomainSearchComponent( page );
 				selectedDomain = await domainSearchComponent.selectFirstSuggestion();
 			} );
 
 			it( 'Continue to next step', async function () {
-				const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.continue();
 			} );
 
