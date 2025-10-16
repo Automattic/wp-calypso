@@ -1,20 +1,13 @@
 import { productsQuery, domainCanRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
+import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
-import { useState, useMemo } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
-import { validateHostname } from '../../domains/name-servers/utils';
-import RedirectInputField from './redirect-input-field';
-
-interface SiteRedirectFormData {
-	redirect: string;
-}
+import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 export default function CreateSiteRedirect( {
 	siteSlug,
@@ -26,51 +19,22 @@ export default function CreateSiteRedirect( {
 	const { data: products } = useSuspenseQuery( productsQuery() );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const offsetRedirect = products?.offsite_redirect;
-	const [ formData, setFormData ] = useState< SiteRedirectFormData >( { redirect: '' } );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const [ currentRedirectValue, setCurrentRedirectValue ] = useState( '' );
 	const { refetch } = useQuery( {
-		...domainCanRedirectQuery( siteId, formData.redirect ),
+		...domainCanRedirectQuery( siteId, currentRedirectValue ),
 		enabled: false,
 	} );
-
-	const fields: Field< SiteRedirectFormData >[] = useMemo(
-		() => [
-			{
-				id: 'redirect',
-				type: 'text',
-				Edit: ( { field, data, onChange } ) => {
-					const { id, getValue } = field;
-					return (
-						<RedirectInputField
-							value={ getValue( { item: data } ) }
-							onChange={ ( value ) => onChange( { [ id ]: value } ) }
-						/>
-					);
-				},
-				isValid: {
-					required: true,
-					custom: ( formData: SiteRedirectFormData ) => {
-						const value = formData.redirect;
-						return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
-					},
-				},
-			},
-		],
-		[]
-	);
 
 	if ( ! offsetRedirect ) {
 		return null;
 	}
 
-	const form = {
-		layout: { type: 'regular' as const },
-		fields: [ 'redirect' ],
+	const handleFormDataChange = ( formData: SiteRedirectFormData ) => {
+		setCurrentRedirectValue( formData.redirect );
 	};
-	const isFormValid = isItemValid( formData, fields, form );
 
-	const handleSubmit = async ( e: React.FormEvent ) => {
-		e.preventDefault();
+	const handleSubmit = async ( formData: SiteRedirectFormData ) => {
 		setIsSubmitting( true );
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 		const { shoppingCartManagerClient } = await import(
@@ -107,29 +71,12 @@ export default function CreateSiteRedirect( {
 							{ cost: offsetRedirect?.cost_display }
 						) }
 					</Notice>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<DataForm< SiteRedirectFormData >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< SiteRedirectFormData > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									__next40pxDefaultSize
-									isBusy={ isSubmitting }
-									disabled={ isSubmitting || ! isFormValid }
-								>
-									{ __( 'Redirect' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
+					<SiteRedirectForm
+						onSubmit={ handleSubmit }
+						isSubmitting={ isSubmitting }
+						submitButtonText={ __( 'Redirect' ) }
+						onFormDataChange={ handleFormDataChange }
+					/>
 				</VStack>
 			</CardBody>
 		</Card>
