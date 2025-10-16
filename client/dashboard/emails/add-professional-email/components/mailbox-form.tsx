@@ -74,7 +74,9 @@ export const MailboxForm = ( {
 		if ( field.error || field.isTouched ) {
 			onRequestFieldValidation( field );
 		}
-		// field.dispatchState(); -> TODO: dunno what this state is for
+
+		field.dispatchState();
+
 		onFieldValueChanged( field );
 	};
 

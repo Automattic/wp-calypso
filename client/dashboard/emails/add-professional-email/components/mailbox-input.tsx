@@ -3,6 +3,7 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
+import { useEffect, useState } from 'react';
 import { Text } from '../../../components/text';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
 import { FormFieldNames, MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
@@ -24,6 +25,17 @@ export const MailboxInput = ( {
 		lowerCaseChangeValue?: boolean;
 	} ) => void;
 } & Omit< InputControlProps, 'onChange' > ) => {
+	const originalField = mailboxEntity.formFields[ fieldName ];
+
+	const [ { field }, setFieldState ] = useState( { field: originalField } );
+
+	useEffect( () => {
+		field.dispatchState = () => {
+			setFieldState( { field } );
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- We only want this to run once
+	}, [] );
+
 	return (
 		<VStack>
 			<InputControl
@@ -32,7 +44,7 @@ export const MailboxInput = ( {
 				onChange={ ( value ) => {
 					onChange( {
 						value,
-						field: mailboxEntity.formFields[ fieldName ],
+						field: originalField,
 						lowerCaseChangeValue,
 					} );
 				} }
