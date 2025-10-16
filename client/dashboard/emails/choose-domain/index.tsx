@@ -11,6 +11,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { arrowLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -24,6 +25,7 @@ import './styles.css';
 export default function ChooseDomain() {
 	const router = useRouter();
 	const { domains, isLoading } = useDomains();
+	const { recordTracksEvent } = useAnalytics();
 
 	// Aggregate eligible domains (exclude wpcom domains)
 	const eligibleDomains = useMemo( () => {
@@ -43,12 +45,24 @@ export default function ChooseDomain() {
 	}, [ eligibleDomains, search ] );
 
 	const handleDomainClick = ( d: SiteDomain ) => {
-		// Navigate based on existing email solution
+		// Determine next step and record click
+		let next_step = 'choose-email-solution';
 		if ( hasTitanMailWithUs( d ) ) {
+			next_step = 'add-titan-mailbox';
+		} else if ( hasGSuiteWithUs( d ) ) {
+			next_step = 'add-google-mailbox';
+		}
+		recordTracksEvent( 'calypso_dashboard_emails_choose_domain_domain_click', {
+			domain: d.domain,
+			next_step,
+		} );
+
+		// Navigate based on existing email solution
+		if ( next_step === 'add-titan-mailbox' ) {
 			router.navigate( { to: '/emails/add-titan-mailbox' } );
 			return;
 		}
-		if ( hasGSuiteWithUs( d ) ) {
+		if ( next_step === 'add-google-mailbox' ) {
 			router.navigate( { to: '/emails/add-google-mailbox' } );
 			return;
 		}
@@ -112,7 +126,7 @@ export default function ChooseDomain() {
 									</Item>
 								) ) }
 						</ItemGroup>
-						<AddNewDomain />
+						<AddNewDomain origin="choose-domain" />
 					</>
 				) }
 			</VStack>

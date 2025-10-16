@@ -6,8 +6,10 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import type { Email } from '../types';
 import type { Action } from '@wordpress/dataviews';
@@ -25,10 +27,20 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
 			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+			const { recordTracksEvent } = useAnalytics();
+
+			useEffect( () => {
+				recordTracksEvent( 'calypso_dashboard_emails_action_click', {
+					action_id: 'delete-titan-mailbox',
+				} );
+			}, [ recordTracksEvent ] );
 			const email = items[ 0 ];
 
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
 			const onConfirm = async () => {
+				recordTracksEvent( 'calypso_dashboard_emails_action_confirm_click', {
+					action_id: 'delete-titan-mailbox',
+				} );
 				try {
 					await deleteTitanMailbox( { domainName: email.domainName, mailbox: mailbox } );
 					createSuccessNotice(
@@ -52,6 +64,13 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 					);
 				}
 			};
+
+			const handleCancel = () => {
+				recordTracksEvent( 'calypso_dashboard_emails_action_cancel_click', {
+					action_id: 'delete-titan-mailbox',
+				} );
+				closeModal?.();
+			};
 			return (
 				<VStack spacing={ 4 }>
 					<Text>
@@ -68,7 +87,7 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							onClick={ () => closeModal?.() }
+							onClick={ handleCancel }
 							disabled={ isPending }
 							accessibleWhenDisabled
 						>

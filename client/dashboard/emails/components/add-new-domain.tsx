@@ -7,16 +7,27 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, plus } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
 import { domainsRoute } from '../../app/router/domains';
 import './add-new-domain.css';
 
-export default function AddNewDomain() {
+export type AddNewDomainOrigin = 'choose-domain' | 'add-forwarder' | 'emails';
+
+type Props = {
+	origin?: AddNewDomainOrigin;
+};
+
+export default function AddNewDomain( { origin = 'emails' }: Props ) {
 	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
 
 	return (
 		<ItemGroup className="add-new-domain__itemlist" isBordered isSeparated>
 			<Item
 				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_emails_add_new_domain_click', {
+						origin,
+					} );
 					navigate( { to: domainsRoute.fullPath } );
 				} }
 			>
