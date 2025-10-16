@@ -223,6 +223,18 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	page: async ( { page }, use ) => {
+		await page.context().addCookies( [
+			{
+				name: 'sensitive_pixel_options',
+				value: '{"ok":true,"buckets":{"essential":true,"analytics":false,"advertising":false}}',
+				domain: '.wordpress.com',
+				path: '/',
+			},
+		] );
+
+		await use( page );
+	},
 	accountAtomic: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'atomicUser' );
 		await use( testAccount );
