@@ -28,9 +28,6 @@ const FlexSiteCreation: StepType< {
 
 		setIsLoading( true );
 
-		// Store site title in ONBOARD_STORE so create-site step can use it
-		setSiteTitle( siteName );
-
 		submit?.( {
 			siteName,
 		} );
