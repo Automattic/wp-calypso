@@ -3,12 +3,12 @@ import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { commentAuthorAvatar, globe } from '@wordpress/icons';
-import type { ActivityActor } from '@automattic/api-core';
+import { ActivityActorDetails } from './types';
 import './activity-actor.scss';
 
 const ICON_SIZE = 24;
 
-function getActorPresentation( actor?: ActivityActor ) {
+function getActorPresentation( actor?: ActivityActorDetails ) {
 	let actorName = __( 'Unknown' );
 
 	if ( ! actor ) {
@@ -18,11 +18,11 @@ function getActorPresentation( actor?: ActivityActor ) {
 		};
 	}
 
-	const { name, type, icon } = actor;
+	const { actorName: name, actorType, actorAvatarUrl } = actor;
 	actorName = name || actorName;
 
 	// Map known application/brand actors (v1 parity)
-	switch ( type ) {
+	switch ( actorType ) {
 		case 'Application': {
 			if ( name === 'WordPress' ) {
 				return {
@@ -66,12 +66,12 @@ function getActorPresentation( actor?: ActivityActor ) {
 	}
 
 	// Default: avatar image if present; otherwise generic user icon
-	if ( icon?.url ) {
+	if ( actorAvatarUrl ) {
 		return {
 			icon: (
 				<img
 					className="site-activity-logs__actor-icon-avatar"
-					src={ icon.url }
+					src={ actorAvatarUrl }
 					alt={ actorName }
 					width={ ICON_SIZE }
 					height={ ICON_SIZE }
@@ -93,11 +93,7 @@ function getActorPresentation( actor?: ActivityActor ) {
 	};
 }
 
-type ActivityActorProps = {
-	actor?: ActivityActor;
-};
-
-export function ActivityActor( { actor }: ActivityActorProps ) {
+export function ActivityActor( { actor }: { actor?: ActivityActorDetails } ) {
 	const { icon, label } = getActorPresentation( actor );
 
 	return (

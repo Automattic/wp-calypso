@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Tooltip } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -43,10 +42,8 @@ export default function ToggleActivateMonitoring( {
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
-	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
-
 	const shouldDisplayUpgradePopover =
-		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor && ! site.is_atomic;
+		status === 'success' && ! site.has_paid_agency_monitor && ! site.is_atomic;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -131,7 +128,7 @@ export default function ToggleActivateMonitoring( {
 						) as string
 					}
 				>
-					{ isPaidTierEnabled && smsLimitReached ? (
+					{ smsLimitReached ? (
 						<img src={ alertIcon } alt={ translate( 'Alert' ) } />
 					) : (
 						<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
@@ -175,7 +172,7 @@ export default function ToggleActivateMonitoring( {
 		}
 
 		let tooltipText = tooltip;
-		if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
+		if ( smsLimitReached && status === 'success' ) {
 			tooltipText = translate( 'You have reached the SMS limit' );
 		}
 

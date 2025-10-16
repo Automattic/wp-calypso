@@ -42,6 +42,7 @@ export default function ClipboardInputControl( {
 	return (
 		<InputControl
 			{ ...props }
+			__next40pxDefaultSize
 			suffix={
 				<InputControlSuffixWrapper variant="control">
 					<Button

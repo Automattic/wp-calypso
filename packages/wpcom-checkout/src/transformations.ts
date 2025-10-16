@@ -140,7 +140,7 @@ function getDiscountReasonForIntroductoryOffer(
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean,
 	isPriceIncrease: boolean,
-	isStreamlinedPrice?: boolean
+	shouldShowComparison?: boolean
 ): string {
 	return getIntroductoryOfferIntervalDisplay( {
 		translate,
@@ -150,7 +150,7 @@ function getDiscountReasonForIntroductoryOffer(
 		isPriceIncrease,
 		context: 'checkout',
 		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
-		isStreamlinedPrice,
+		shouldShowComparison,
 	} );
 }
 
@@ -219,7 +219,7 @@ function makeIntroductoryOfferCostOverrideUnique(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean,
-	isStreamlinedPrice?: boolean
+	shouldShowComparison?: boolean
 ): ResponseCartCostOverride {
 	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
 		return costOverride;
@@ -246,7 +246,7 @@ function makeIntroductoryOfferCostOverrideUnique(
 			translate,
 			allowFreeText,
 			isPriceIncrease,
-			isStreamlinedPrice
+			shouldShowComparison
 		),
 	};
 }
@@ -341,7 +341,7 @@ export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartPro
 export function filterCostOverridesForLineItem(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
-	isStreamlinedPrice?: boolean
+	shouldShowComparison?: boolean
 ): LineItemCostOverrideForDisplay[] {
 	const costOverrides = product?.cost_overrides ?? [];
 
@@ -357,7 +357,7 @@ export function filterCostOverridesForLineItem(
 					product,
 					translate,
 					true,
-					isStreamlinedPrice
+					shouldShowComparison
 				)
 			)
 			.map( ( costOverride ) => {

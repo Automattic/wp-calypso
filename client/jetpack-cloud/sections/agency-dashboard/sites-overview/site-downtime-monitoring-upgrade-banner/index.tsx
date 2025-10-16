@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect } from 'react';
 import CelebrationIcon from 'calypso/assets/images/jetpack/celebration-icon.svg';
@@ -35,12 +34,8 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 		[ dispatch, preference, preferenceName ]
 	);
 
-	const isDowntimeMonitoringPaidTierEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-paid-tier'
-	);
-
 	useEffect( () => {
-		if ( isDowntimeMonitoringPaidTierEnabled && ! isDismissed && ! viewDate ) {
+		if ( ! isDismissed && ! viewDate ) {
 			savePreferenceType( 'view_date', Date.now() );
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_agency_dashboard_monitor_upgrade_banner_view' )
@@ -50,7 +45,7 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	if ( ! isDowntimeMonitoringPaidTierEnabled || isDismissed ) {
+	if ( isDismissed ) {
 		return null;
 	}
 

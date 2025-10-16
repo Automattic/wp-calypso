@@ -3,7 +3,7 @@ import {
 	codeDeploymentsQuery,
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -37,6 +37,7 @@ function DeploymentsList() {
 	const navigate = useNavigate( { from: siteDeploymentsListRoute.fullPath } );
 	const currentSearchParams = siteDeploymentsListRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const queryClient = useQueryClient();
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
 	const [ view, setView ] = useState< View >( () => {
@@ -149,6 +150,12 @@ function DeploymentsList() {
 		setView( nextView );
 	};
 
+	const handleDeploymentTriggered = () => {
+		queryClient.invalidateQueries( {
+			queryKey: codeDeploymentsQuery( site.ID ).queryKey,
+		} );
+	};
+
 	const getTriggerDeploymentTitle = () => {
 		if ( isLoadingDeployments ) {
 			return __( 'Loading repositories…' );
@@ -245,6 +252,7 @@ function DeploymentsList() {
 					<TriggerDeploymentModalForm
 						deployments={ deployments }
 						onClose={ closeModalTriggerDeployment }
+						onSuccess={ handleDeploymentTriggered }
 					/>
 				</Modal>
 			) }

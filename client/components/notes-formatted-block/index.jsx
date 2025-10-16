@@ -1,43 +1,19 @@
-import * as Blocks from './blocks';
+// Compatibility wrapper - forwards to new implementation
+import { renderFormattedContent } from 'calypso/dashboard/components/logs-activity-formatted-block';
 
-export const FormattedBlockRenderer =
-	( blockTypeMapping ) =>
-	( { content = {}, onClick = null, meta = {} } ) => {
-		if ( 'string' === typeof content ) {
-			return content;
-		}
+/**
+ * Legacy FormattedBlock component
+ * Now wraps the new implementation for backward compatibility
+ */
+const FormattedBlock = ( { content, onClick = null, meta = {} } ) => {
+	if ( typeof content === 'string' ) {
+		return <>{ content }</>;
+	}
 
-		const { children: nestedContent, text = null, type } = content;
+	const items = Array.isArray( content ) ? content : [ content ];
+	const rendered = renderFormattedContent( { items, onClick, meta } );
 
-		if ( undefined === type && ! nestedContent ) {
-			return text;
-		}
-
-		const children = nestedContent.map( ( child, key ) => (
-			// eslint-disable-next-line no-use-before-define
-			<FormattedBlock key={ key } content={ child } onClick={ onClick } meta={ meta } />
-		) );
-
-		const blockToRender = blockTypeMapping[ type ];
-		if ( blockToRender ) {
-			return blockToRender( { content, onClick, meta, children } );
-		}
-
-		return <>{ children }</>;
-	};
-
-const FormattedBlock = FormattedBlockRenderer( {
-	b: Blocks.Strong,
-	i: Blocks.Emphasis,
-	pre: Blocks.Preformatted,
-	a: Blocks.Link,
-	link: Blocks.Link,
-	filepath: Blocks.FilePath,
-	post: Blocks.Post,
-	person: Blocks.Person,
-	plugin: Blocks.Plugin,
-	theme: Blocks.Theme,
-	backup: Blocks.Backup,
-} );
+	return <>{ rendered }</>;
+};
 
 export default FormattedBlock;

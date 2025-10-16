@@ -20,10 +20,6 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -316,12 +312,7 @@ function LineItemWrapper( {
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
-	const isStreamlinedPrice =
-		! isStreamlinedPriceExperimentLoading &&
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
-		isWpComPlan( product.product_slug );
+	const shouldShowComparison = isWpComPlan( product.product_slug );
 
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
@@ -443,7 +434,7 @@ function LineItemWrapper( {
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
-				shouldShowComparison={ isStreamlinedPrice }
+				shouldShowComparison={ shouldShowComparison }
 				compareToPrice={ compareToPrice }
 			>
 				<DropdownWrapper>
