@@ -5,7 +5,7 @@ import type {
 	JetpackMonitorSettingsCreateResponse,
 } from '@automattic/api-core';
 
-type CreateVars = { siteId: number; body: JetpackMonitorSettings };
+type CreateVars = { siteId: number; body: Partial< JetpackMonitorSettings > };
 
 export const siteJetpackMonitorSettingsCreateMutation = () =>
 	mutationOptions( {
