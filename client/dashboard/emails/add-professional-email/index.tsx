@@ -188,20 +188,25 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			<Card>
-				<CardBody>
-					{ mailboxEntities.map( ( mailboxEntity, index ) => (
-						<MailboxForm key={ index } mailboxEntity={ mailboxEntity } disabled={ disabled } />
-					) ) }
-				</CardBody>
-			</Card>
+			{ mailboxEntities.map( ( mailboxEntity, index ) => (
+				<Card key={ index }>
+					<CardBody>
+						<MailboxForm mailboxEntity={ mailboxEntity } disabled={ disabled } />
+					</CardBody>
+				</Card>
+			) ) }
 
 			<ButtonStack justify="flex-start">
 				<Button
 					__next40pxDefaultSize
 					variant="secondary"
 					disabled={ disabled }
-					onClick={ () => {} }
+					onClick={ () => {
+						setMailboxEntities( ( prevMailboxEntities ) => [
+							...prevMailboxEntities,
+							createNewMailbox(),
+						] );
+					} }
 				>
 					{ __( 'Add another mailbox' ) }
 				</Button>
