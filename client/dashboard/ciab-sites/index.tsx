@@ -145,7 +145,7 @@ export default function CIABSites() {
 	return (
 		<>
 			{ isModalOpen && (
-				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+				<Modal title={ __( 'Add new store' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="ciab-sites-dashboard" />
 				</Modal>
 			) }
@@ -203,7 +203,7 @@ export default function CIABSites() {
 										variant="primary"
 										onClick={ () => setIsModalOpen( true ) }
 									>
-										{ __( 'Add new site' ) }
+										{ __( 'Add new store' ) }
 									</Button>
 								</>
 							}
