@@ -4,7 +4,6 @@ import { useDispatch } from '@wordpress/data';
 import { getQueryArg, addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	setSignupCompleteSlug,
@@ -27,7 +26,7 @@ const reblogging: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
-			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+			STEPS.DOMAIN_SEARCH,
 			STEPS.USE_MY_DOMAIN,
 			STEPS.PLANS,
 			STEPS.SITE_CREATION_STEP,
@@ -51,10 +50,6 @@ const reblogging: Flow = {
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					if ( ! shouldRenderRewrittenDomainSearch() ) {
-						return navigate( 'plans' );
-					}
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 

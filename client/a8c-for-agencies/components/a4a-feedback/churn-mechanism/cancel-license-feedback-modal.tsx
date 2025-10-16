@@ -214,22 +214,22 @@ const CancelLicenseFeedbackModal = ( {
 			extraActions={
 				<>
 					<Button
+						onClick={ onSpeakWithManager }
+						variant="secondary"
+						disabled={ isFetchingScheduleCallLink }
+						isBusy={ isFetchingScheduleCallLink }
+					>
+						{ translate( 'Speak with my Partner Manager' ) }
+					</Button>
+					<Button
 						isDestructive
 						onClick={ handleOnCancel }
-						variant="secondary"
+						variant="primary"
 						disabled={ isLoading || ( suggestion && ! suggestions.length ) }
 						isBusy={ isLoading }
 					>
 						{ translate( 'Cancel license' ) }
 						{ isAtomicSite && <Icon icon={ external } size={ 18 } /> }
-					</Button>
-					<Button
-						onClick={ onSpeakWithManager }
-						variant="primary"
-						disabled={ isFetchingScheduleCallLink }
-						isBusy={ isFetchingScheduleCallLink }
-					>
-						{ translate( 'Speak with my Partner Manager' ) }
 					</Button>
 				</>
 			}

@@ -10,7 +10,6 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
@@ -36,7 +35,7 @@ const newsletter: Flow = {
 		return stepsWithRequiredLogin( [
 			STEPS.NEWSLETTER_SETUP,
 			STEPS.NEWSLETTER_GOALS,
-			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+			STEPS.DOMAIN_SEARCH,
 			STEPS.USE_MY_DOMAIN,
 			STEPS.PLANS,
 			STEPS.PROCESSING,
@@ -110,10 +109,6 @@ const newsletter: Flow = {
 					return navigate( 'domains' );
 
 				case 'domains': {
-					if ( ! shouldRenderRewrittenDomainSearch() ) {
-						return navigate( 'plans' );
-					}
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 

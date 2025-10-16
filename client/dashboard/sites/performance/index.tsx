@@ -25,6 +25,7 @@ import Report from './report';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
+import ReportNoPagesNotice from './report-no-pages-notice';
 import Subtitle from './subtitle';
 import { useSitePerformanceData } from './use-site-performance-data';
 import type { DeviceToggleType } from './types';
@@ -87,14 +88,14 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		}
 	}, [ hasCompleted ] );
 
-	if ( ! pagesData || ! currentPage ) {
-		return null;
-	}
-
 	const currentReport = getReport( deviceToggle );
 	const { gmtOffset, timezoneString } = siteSettings;
 
 	const renderContent = () => {
+		if ( ! pagesData || ! currentPage ) {
+			return <ReportNoPagesNotice />;
+		}
+
 		if ( hasError( deviceToggle ) ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
 		}
@@ -135,30 +136,33 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 						/>
 					}
 					actions={
-						<HStack>
-							<PageSelector
-								siteUrl={ site.URL }
-								currentPage={ currentPage }
-								pages={ pagesData }
-								onChange={ ( pageId ) => {
-									setRunNewReport( false );
-									recordTracksEvent(
-										'calypso_dashboard_performance_profiler_page_selector_change',
-										{
-											is_home: pageId === '0',
-										}
-									);
+						pagesData &&
+						pagesData.length && (
+							<HStack>
+								<PageSelector
+									siteUrl={ site.URL }
+									currentPage={ currentPage }
+									pages={ pagesData }
+									onChange={ ( pageId ) => {
+										setRunNewReport( false );
+										recordTracksEvent(
+											'calypso_dashboard_performance_profiler_page_selector_change',
+											{
+												is_home: pageId === '0',
+											}
+										);
 
-									navigate( {
-										search: ( prev: Record< string, string > ) => ( {
-											...prev,
-											page_id: Number( pageId ),
-										} ),
-									} );
-								} }
-							/>
-							<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-						</HStack>
+										navigate( {
+											search: ( prev: Record< string, string > ) => ( {
+												...prev,
+												page_id: Number( pageId ),
+											} ),
+										} );
+									} }
+								/>
+								<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
+							</HStack>
+						)
 					}
 				/>
 			}
