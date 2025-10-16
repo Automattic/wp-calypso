@@ -16,5 +16,8 @@ export const getProductSlugForProviderAndInterval = (
 			return intervalLength === 'monthly'
 				? 'wp_google_workspace_business_starter_monthly'
 				: 'wp_google_workspace_business_starter_yearly';
+
+		default:
+			return '';
 	}
 };
