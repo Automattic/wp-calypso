@@ -10,14 +10,7 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
-import { recordUseYourDomainButtonClick } from '../analytics';
 import { useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
-
-jest.mock( '../analytics.js', () => ( {
-	recordUseYourDomainButtonClick: jest.fn().mockReturnValue( {
-		type: 'test',
-	} ),
-} ) );
 
 jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),

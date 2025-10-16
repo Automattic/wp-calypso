@@ -1,9 +1,10 @@
 import { DomainSearch } from '@automattic/domain-search';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { useMemo, type ComponentProps } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, type ComponentProps, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { mergeObjectFunctions } from '../../../lib/merge-object-functions';
+import { recordDomainSearchStepSubmit } from './analytics';
 import { useWPCOMDomainSearchCart } from './use-wpcom-domain-search-cart';
 import { useWPCOMDomainSearchEvents } from './use-wpcom-domain-search-events';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -33,6 +34,7 @@ export const useWPCOMDomainSearchProps = ( {
 	config: externalConfig,
 	events: externalEvents,
 }: WPCOMDomainSearchProps ) => {
+	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
 	const cartKey = currentSiteId ?? sitelessCartKey;
@@ -43,12 +45,21 @@ export const useWPCOMDomainSearchProps = ( {
 		...otherExternalEvents
 	} = externalEvents;
 
+	const onContinueWithStepSubmissionTracking = useCallback(
+		( items: ResponseCartProduct[] ) => {
+			const firstItem = items[ 0 ];
+			dispatch( recordDomainSearchStepSubmit( { domain_name: firstItem.meta }, analyticsSection ) );
+			externalOnContinue( items );
+		},
+		[ dispatch, analyticsSection, externalOnContinue ]
+	);
+
 	const { cart, isNextDomainFree, onContinue } = useWPCOMDomainSearchCart( {
 		cartKey,
 		flowName,
 		isFirstDomainFreeForFirstYear,
 		flowAllowsMultipleDomainsInCart,
-		onContinue: externalOnContinue,
+		onContinue: onContinueWithStepSubmissionTracking,
 		beforeAddDomainToCart: externalBeforeAddDomainToCart,
 	} );
 
