@@ -1,8 +1,7 @@
 import { SiteDomain } from '@automattic/api-core';
 import { siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
-
-const isJetpackSlug = ( slug: string ): boolean => String( slug ).startsWith( 'jetpack_' );
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 
 export const useDomains = (): { domains: SiteDomain[]; isLoading: boolean } => {
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
@@ -12,7 +11,7 @@ export const useDomains = (): { domains: SiteDomain[]; isLoading: boolean } => {
 			if ( product === null ) {
 				return true;
 			}
-			return ! isJetpackSlug( product );
+			return ! isSelfHostedJetpackConnected( site );
 		} )
 		.filter( ( site ) => site.capabilities.manage_options );
 	const siteIds = sites.map( ( site ) => site.ID );
