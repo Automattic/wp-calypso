@@ -18,6 +18,7 @@ import {
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
 	NEW_HOSTED_SITE_FLOW,
+	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -60,7 +61,6 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/legacy/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
@@ -110,6 +110,22 @@ const MIN_QUERY_LENGTH = 2;
 
 // session storage key for query cache
 const SESSION_STORAGE_QUERY_KEY = 'domain_step_query';
+
+/**
+ * Check if we should use multiple domains in domain flows.
+ */
+export function shouldUseMultipleDomainsInCart( flowName ) {
+	const enabledFlows = [
+		'domain',
+		'onboarding',
+		'domains',
+		'domains/add',
+		EXAMPLE_FLOW,
+		NEW_HOSTED_SITE_FLOW,
+	];
+
+	return enabledFlows.includes( flowName );
+}
 
 class RegisterDomainStep extends Component {
 	static propTypes = {

@@ -4,9 +4,11 @@ import { DomainSearch, getTld } from '@automattic/domain-search';
 import { useDebounce } from '@wordpress/compose';
 import { type ComponentProps, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
-import { recordUseYourDomainButtonClick } from '../../domain-search-v2/register-domain-step/analytics';
+import {
+	recordUseYourDomainButtonClick,
+	recordDomainSearchStepSubmit,
+} from '../../domain-search-v2/register-domain-step/analytics';
 
 export const useWPCOMDomainSearchEvents = ( {
 	vendor,
@@ -73,7 +75,7 @@ export const useWPCOMDomainSearchEvents = ( {
 						)
 					);
 					// We only offer free WPCOM subdomains during signup
-					dispatch( submitDomainStepSelection( suggestion, analyticsSection ) );
+					dispatch( recordDomainSearchStepSubmit( suggestion, analyticsSection ) );
 				} else {
 					// Skipped by clicking on "Choose a domain later"
 					const tracksProperties = {
