@@ -1,4 +1,5 @@
 import { EmailProvider } from '@automattic/api-core';
+import { TITAN_MAIL_YEARLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from '../constants';
 import { IntervalLength } from '../types';
 
 /**
@@ -10,7 +11,7 @@ export const getProductSlugForProviderAndInterval = (
 ) => {
 	switch ( provider ) {
 		case 'titan':
-			return intervalLength === 'monthly' ? 'wp_titan_mail_monthly' : 'wp_titan_mail_yearly';
+			return intervalLength === 'monthly' ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
 
 		case 'google_workspace':
 			return intervalLength === 'monthly'
