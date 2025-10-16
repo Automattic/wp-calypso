@@ -159,12 +159,14 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-						<VStack spacing={ spacing } justify="start">
-							<DomainsCard site={ site } isCompact={ isSmallViewport } />
-							<DIFMUpsellCard site={ site } />
-						</VStack>
-					) }
+					<VStack spacing={ spacing } justify="start">
+						{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+							<>
+								<DIFMUpsellCard site={ site } />
+								<DomainsCard site={ site } />
+							</>
+						) }
+					</VStack>
 				</HStack>
 			</VStack>
 			<GuidedTourContextProvider
