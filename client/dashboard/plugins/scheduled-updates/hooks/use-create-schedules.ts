@@ -6,10 +6,14 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback } from '@wordpress/element';
 import { useAnalytics } from '../../../app/analytics';
 import { CRON_CHECK_INTERVAL } from '../constants';
-import { prepareTimestamp, runWithConcurrency, createMonitorUrls } from '../helpers';
+import { prepareTimestamp, runWithConcurrency } from '../helpers';
 import { useEligibleSites } from './use-eligible-sites';
 import type { Frequency, Weekday } from '../types';
-import type { Site, CreateSiteUpdateScheduleBody } from '@automattic/api-core';
+import type {
+	Site,
+	CreateSiteUpdateScheduleBody,
+	JetpackMonitorSettings,
+} from '@automattic/api-core';
 
 export type CreateInputs = {
 	plugins: string[];
@@ -17,6 +21,19 @@ export type CreateInputs = {
 	weekday: Weekday;
 	time: string;
 };
+
+/**
+ * Build Jetpack Monitor URLs payload for a site.
+ * Matches legacy behavior: monitor the home URL and `/wp-cron.php` with the same interval.
+ */
+function createMonitorUrls( siteUrl: string ): JetpackMonitorSettings[ 'urls' ] {
+	return [
+		// The home URL needs to be one of the URLs monitored.
+		{ monitor_url: siteUrl, check_interval: CRON_CHECK_INTERVAL },
+		// Monitoring the wp-cron.php file to ensure that the cron jobs are running.
+		{ monitor_url: siteUrl + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
+	];
+}
 
 /**
  * Creates plugin update schedules for the provided sites and wires up monitor checks.
@@ -83,7 +100,7 @@ export function useCreateSchedules( siteIds: number[] ) {
 									try {
 										await createMonitorForSite( {
 											siteId: site.ID,
-											body: { urls: createMonitorUrls( site.URL, CRON_CHECK_INTERVAL ) },
+											body: { urls: createMonitorUrls( site.URL ) },
 										} );
 									} catch ( error ) {
 										if ( error instanceof Error && error.message === 'Monitor is not active.' ) {

@@ -1,8 +1,11 @@
 import { activateJetpackModule, createJetpackMonitorSettings } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
-import type { JetpackMonitorSettingsCreateResponse } from '@automattic/api-core';
+import type {
+	JetpackMonitorSettings,
+	JetpackMonitorSettingsCreateResponse,
+} from '@automattic/api-core';
 
-type CreateVars = { siteId: number; body: Record< string, unknown > };
+type CreateVars = { siteId: number; body: JetpackMonitorSettings };
 
 export const siteJetpackMonitorSettingsCreateMutation = () =>
 	mutationOptions( {
