@@ -1,11 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Step } from '@automattic/onboarding';
 import { TextControl, Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -16,7 +15,6 @@ const FlexSiteCreation: StepType< {
 } > = function FlexSiteCreation( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 
 	const [ siteName, setSiteName ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -29,9 +27,6 @@ const FlexSiteCreation: StepType< {
 		}
 
 		setIsLoading( true );
-
-		// Store site title in ONBOARD_STORE so create-site step can use it
-		setSiteTitle( siteName );
 
 		submit?.( {
 			siteName,
