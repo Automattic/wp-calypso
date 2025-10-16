@@ -24,6 +24,17 @@ export type WPCOMDomainSearchProps = Omit<
 	analyticsSection: string;
 };
 
+export const getCartKey = ( {
+	isLoggedIn,
+	currentSiteId,
+}: {
+	isLoggedIn: boolean;
+	currentSiteId?: number;
+} ) => {
+	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
+	return currentSiteId ?? sitelessCartKey;
+};
+
 export const useWPCOMDomainSearchProps = ( {
 	currentSiteId,
 	flowName,
@@ -36,8 +47,6 @@ export const useWPCOMDomainSearchProps = ( {
 }: WPCOMDomainSearchProps ) => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const sitelessCartKey = isLoggedIn ? 'no-site' : 'no-user';
-	const cartKey = currentSiteId ?? sitelessCartKey;
 
 	const {
 		onContinue: externalOnContinue,
@@ -55,7 +64,7 @@ export const useWPCOMDomainSearchProps = ( {
 	);
 
 	const { cart, isNextDomainFree, onContinue } = useWPCOMDomainSearchCart( {
-		cartKey,
+		cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
 		flowName,
 		isFirstDomainFreeForFirstYear,
 		flowAllowsMultipleDomainsInCart,
