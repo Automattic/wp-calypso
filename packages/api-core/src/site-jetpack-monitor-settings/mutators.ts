@@ -3,7 +3,7 @@ import type { JetpackMonitorSettings, JetpackMonitorSettingsCreateResponse } fro
 
 export async function createJetpackMonitorSettings(
 	siteId: number,
-	body: JetpackMonitorSettings
+	body: Partial<JetpackMonitorSettings>
 ): Promise< JetpackMonitorSettingsCreateResponse > {
 	return await wpcom.req.post( {
 		path: `/sites/${ siteId }/jetpack-monitor-settings`,
