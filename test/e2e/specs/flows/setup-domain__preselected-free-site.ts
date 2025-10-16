@@ -12,6 +12,7 @@ import {
 	SignupPickPlanPage,
 	UserSignupPage,
 	NewUserResponse,
+	PlansPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared/api-close-account';
@@ -77,7 +78,7 @@ describe(
 			} );
 
 			it( `Select ${ planName } plan`, async function () {
-				const plansPage = new SignupPickPlanPage( page );
+				const plansPage = new PlansPage( page );
 
 				await plansPage.selectPlan( planName );
 			} );
