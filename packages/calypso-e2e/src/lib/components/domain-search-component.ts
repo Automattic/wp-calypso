@@ -11,14 +11,24 @@ import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
  */
 export class DomainSearchComponent {
 	private page: Page;
-
+	private container?: Locator;
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, container?: Locator ) {
 		this.page = page;
+		this.container = container;
+	}
+
+	/**
+	 * Gets the container locator.
+	 *
+	 * @returns {Locator} The container locator.
+	 */
+	private getContainer(): Page | Locator {
+		return this.container ?? this.page;
 	}
 
 	/**
@@ -80,7 +90,7 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const targetRow = this.page.getByTitle( keyword );
+		const targetRow = this.getContainer().getByTitle( keyword );
 		const suggestion = await this.selectSuggestion( targetRow );
 
 		if ( ! suggestion ) {
@@ -96,7 +106,7 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion(): Promise< string > {
-		const targetRow = this.page.getByRole( 'listitem' ).first();
+		const targetRow = this.getContainer().getByRole( 'listitem' ).first();
 		const suggestion = await this.selectSuggestion( targetRow );
 
 		if ( ! suggestion ) {
