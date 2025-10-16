@@ -1,19 +1,28 @@
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 .dashboard-page-header {
 	align-self: center;
 }
 
 .billing-interval-selector {
-	width: 450px;
-	margin-inline-start: auto;
-	margin-inline-end: auto;
+	align-self: center;
+	width: 100%;
+
+	@include break-small {
+		width: 450px;
+	}
 }
 
 .email-providers {
 	border: 1px solid $gray-200;
 	border-radius: 8px;
 	display: flex;
+	flex-direction: column;
+
+	@include break-small {
+		flex-direction: row;
+	}
 }
 
 .email-provider {
@@ -21,7 +30,12 @@
 	justify-content: flex-start;
 
 	&:not(:first-child) {
-		border-inline-start: 1px solid $gray-200;
+		border-top: 1px solid $gray-200;
+
+		@include break-small {
+			border-top: none;
+			border-inline-start: 1px solid $gray-200;
+		}
 	}
 }
 
