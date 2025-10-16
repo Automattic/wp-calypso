@@ -12,6 +12,8 @@ import type {
 	User,
 	WhoisDataEntry,
 	Domain as FullDomain,
+	TitanEmailSubscription,
+	GoogleEmailSubscription,
 } from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
@@ -141,6 +143,19 @@ export function hasGSuiteWithUs( domain: SiteDomain | FullDomain ) {
 export function hasTitanMailWithUs( domain: SiteDomain | FullDomain ) {
 	const subscriptionStatus = domain.titan_mail_subscription?.status;
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
+}
+
+/**
+ * Returns the maximum number of mailboxes that can be provisioned for a domain. Because a Titan
+ * subscription must have at least one mailbox, `1` is the default return value even for domains
+ * without an active Titan subscription.
+ */
+export function getMaxTitanMailboxCount( domain: SiteDomain | FullDomain ): number {
+	return ( domain.titan_mail_subscription as TitanEmailSubscription )?.maximum_mailbox_count ?? 1;
+}
+
+export function getGSuiteMailboxCount( domain: SiteDomain | FullDomain ): number {
+	return ( domain?.google_apps_subscription as GoogleEmailSubscription )?.total_user_count ?? 0;
 }
 
 export function hasEmailForwards( domain: SiteDomain | FullDomain ) {
