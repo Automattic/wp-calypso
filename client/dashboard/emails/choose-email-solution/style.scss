@@ -19,6 +19,7 @@
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
+	background-color: #fff;
 
 	@include break-small {
 		flex-direction: row;
