@@ -104,7 +104,7 @@ describe( 'ResultsPage', () => {
 	} );
 
 	describe( 'TLD deemphasis', () => {
-		it( 'removes deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
+		it( 'does not remove deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test.com' },
 				availability: buildAvailability( {
@@ -127,7 +127,7 @@ describe( 'ResultsPage', () => {
 			const testCom = await screen.findByTitle( 'test.com' );
 
 			expect( testCom ).toBeInTheDocument();
-			expect( testCom ).not.toHaveTextContent( "It's available!" );
+			expect( testCom ).toHaveTextContent( "It's available!" );
 			expect( testCom ).not.toHaveTextContent( 'Recommended' );
 			expect( testCom ).not.toHaveTextContent( 'Best alternative' );
 		} );
@@ -176,6 +176,34 @@ describe( 'ResultsPage', () => {
 	} );
 
 	describe( 'FQDN suggestion', () => {
+		it( 'shows FQDN suggestion if it is available, even if it is not in the suggestions list', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-available.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-available.blog' } ),
+					buildSuggestion( { domain_name: 'test-available.org' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-available.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-available.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-available.com" config={ { deemphasizedTlds: [ 'com' ] } }>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.blog' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+		} );
+
 		it( 'removes FQDN suggestion from the list if availability query is not successful', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-unavailable.com' },
