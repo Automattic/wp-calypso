@@ -1,5 +1,10 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import { DOMAIN_FLOW, addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
+import {
+	DOMAIN_FLOW,
+	addPlanToCart,
+	addProductsToCart,
+	clearStepPersistedState,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -177,6 +182,12 @@ const domain: FlowV2< typeof initialize > = {
 						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );
 						setSignupCompleteSlug( siteSlug );
+						setDomainCartItem( providedDependencies.domainCartItem );
+						setDomainCartItems( [ providedDependencies.domainCartItem ] );
+
+						if ( ! siteHasPaidPlan( site ) ) {
+							return navigate( STEPS.UNIFIED_PLANS.slug );
+						}
 
 						setPendingAction( async () => {
 							await addProductsToCart( siteSlug, this.name, [
@@ -196,10 +207,8 @@ const domain: FlowV2< typeof initialize > = {
 					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
-						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
-						setDomainCartItems( [
-							providedDependencies.domainCartItem as MinimalRequestCartProduct,
-						] );
+						setDomainCartItem( providedDependencies.domainCartItem );
+						setDomainCartItems( [ providedDependencies.domainCartItem ] );
 					}
 
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
@@ -231,7 +240,9 @@ const domain: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_PICKER.slug: {
 					if ( ! siteHasPaidPlan( providedDependencies.site ) ) {
-						return navigate( STEPS.UNIFIED_PLANS.slug );
+						return navigate(
+							`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=${ providedDependencies.siteSlug }`
+						);
 					}
 
 					setPendingAction( async () => {
@@ -253,7 +264,11 @@ const domain: FlowV2< typeof initialize > = {
 					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 
+					const addOns = products.filter( ( product ) => product !== null );
+
 					setPlanCartItem( pickedPlan );
+					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
+					setProductCartItems( addOns );
 
 					if ( ! pickedPlan ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
@@ -272,10 +287,15 @@ const domain: FlowV2< typeof initialize > = {
 					} else if ( siteSlug ) {
 						setPendingAction( async () => {
 							if ( pickedPlan ) {
-								await addProductsToCart( siteSlug, this.name, [
-									pickedPlan,
-									...products.filter( ( product ) => product !== null ),
-								] );
+								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
+							}
+
+							if ( addOns.length > 0 ) {
+								await addProductsToCart( siteSlug, this.name, addOns );
+							}
+
+							if ( domainCartItems ) {
+								await addProductsToCart( siteSlug, this.name, domainCartItems );
 							}
 
 							return {
@@ -287,9 +307,6 @@ const domain: FlowV2< typeof initialize > = {
 
 						return navigate( STEPS.PROCESSING.slug );
 					}
-
-					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( this.name );
 					return navigate( STEPS.SITE_CREATION_STEP.slug, undefined, false );

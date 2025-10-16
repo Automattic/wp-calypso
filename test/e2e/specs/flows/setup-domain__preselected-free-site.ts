@@ -80,7 +80,10 @@ describe(
 			it( `Select ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
 
-				await plansPage.selectPlan( planName );
+				await Promise.all( [
+					plansPage.selectPlan( planName ),
+					page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
+				] );
 			} );
 
 			it( 'See plan and domain at checkout', async function () {
