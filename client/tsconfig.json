@@ -1,7 +1,6 @@
 {
 	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
 	"compilerOptions": {
-		"incremental": true,
 		"rootDir": ".",
 		"noEmit": true,
 		"types": [
