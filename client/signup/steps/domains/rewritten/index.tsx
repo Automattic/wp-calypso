@@ -352,6 +352,15 @@ const DomainSearchUI = (
 		);
 	};
 
+	// For /start flows, we want to show the free domain for a year discount for all flows
+	// except if we're in a site context or in the free or monthly plan flows
+	const isFirstDomainFreeForFirstYear = useMemo( () => {
+		if ( siteSlug || siteId || isMonthlyOrFreeFlow( flowName ) ) {
+			return false;
+		}
+		return true;
+	}, [ flowName, siteSlug, siteId ] );
+
 	return (
 		<StepWrapper
 			{ ...props }
@@ -375,7 +384,7 @@ const DomainSearchUI = (
 					config={ config }
 					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
 					slots={ slots }
-					isFirstDomainFreeForFirstYear={ ! isMonthlyOrFreeFlow( flowName ) }
+					isFirstDomainFreeForFirstYear={ isFirstDomainFreeForFirstYear }
 					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
 				/>
 			}
