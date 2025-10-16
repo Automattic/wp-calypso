@@ -31,10 +31,12 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 
 	// Reset selected image when clicking outside the component
 	useEffect( () => {
-		window.addEventListener( 'click', () => {
+		const resetSelection = () => {
 			setSelectedUrl( null );
 			onSelect( null );
-		} );
+		};
+		window.addEventListener( 'click', resetSelection );
+		return () => window.removeEventListener( 'click', resetSelection );
 	}, [ onSelect ] );
 
 	return (
