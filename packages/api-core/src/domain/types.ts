@@ -27,7 +27,7 @@ export interface Domain extends DomainSummary {
 		errors: {
 			[ key: string ]: string[];
 		};
-	};
+	} | null;
 	dnssec_records?: {
 		dnskey: string[];
 		ds_data: string[];

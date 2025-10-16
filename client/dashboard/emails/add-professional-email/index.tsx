@@ -119,14 +119,14 @@ const AddProfessionalEmail = () => {
 
 		if ( ! userCanAddEmail || ! validated ) {
 			if ( ! userCanAddEmail ) {
-				const errors = domain?.current_user_cannot_add_email_reason.errors;
+				const errors = domain?.current_user_cannot_add_email_reason?.errors;
 				const message = errors
 					? sprintf(
 							// Translators: %(errors)s is a list of errors separated by commas.
 							__( 'You cannot add emails to this domain: %(errors)s.' ),
 							{ errors: Object.values( errors ).join( ', ' ) }
 					  )
-					: __( 'You cannot add email to this domain.' );
+					: __( 'You cannot add emails to this domain.' );
 				createErrorNotice( message, { type: 'snackbar' } );
 			}
 
