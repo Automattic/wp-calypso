@@ -575,7 +575,7 @@ export const siteSettingsRedirectRoute = createRoute( {
 	path: 'site-redirect',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return Promise.all( [
+		return await Promise.all( [
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
 		] );
