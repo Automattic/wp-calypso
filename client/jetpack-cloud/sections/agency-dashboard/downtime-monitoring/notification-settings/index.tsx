@@ -96,11 +96,17 @@ export default function NotificationSettings( {
 	// Check if current site or all sites selected has a paid license.
 	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
 
+	const hasAtomicSites = sites.some( ( site ) => site.is_atomic );
+
 	let restriction: RestrictionType = 'none';
 
 	if ( ! hasPaidLicenses ) {
 		// We need to set the restriction type to determine correct messaging.
 		restriction = isBulkUpdate ? 'free_site_selected' : 'upgrade_required';
+	}
+
+	if ( hasAtomicSites ) {
+		restriction = 'atomic_site_selected';
 	}
 
 	const isContactListMatch = (
