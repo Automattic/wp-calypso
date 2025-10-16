@@ -31,10 +31,6 @@ const FlexSiteCreation: StepType< {
 		// Store site title in ONBOARD_STORE so create-site step can use it
 		setSiteTitle( siteName );
 
-		recordTracksEvent( 'calypso_flex_site_creation_submit', {
-			site_name: siteName,
-		} );
-
 		submit?.( {
 			siteName,
 		} );
