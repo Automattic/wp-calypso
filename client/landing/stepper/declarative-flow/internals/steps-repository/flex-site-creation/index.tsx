@@ -67,8 +67,6 @@ const FlexSiteCreation: StepType< {
 							/>
 						</FormFieldset>
 
-						<div className="flex-site-creation__form-row" />
-
 						<Button
 							className="flex-site-creation__submit-button"
 							variant="primary"
