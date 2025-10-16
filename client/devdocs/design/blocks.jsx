@@ -25,7 +25,6 @@ import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostLikes from 'calypso/blocks/post-likes/docs/example';
-import PostShare from 'calypso/blocks/post-share/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
@@ -39,7 +38,6 @@ import RelatedPostCard from 'calypso/blocks/reader-related-card/docs/example';
 import ReaderShare from 'calypso/blocks/reader-share/docs/example';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link/docs/example';
 import ReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/docs/example';
-import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane/docs/example';
 import Site from 'calypso/blocks/site/docs/example';
 import SitePlaceholder from 'calypso/blocks/site/docs/placeholder-example';
 import SiteIcon from 'calypso/blocks/site-icon/docs/example';
@@ -135,7 +133,6 @@ export default class AppComponents extends Component {
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<PlanPrice />
-					<PostShare readmeFilePath="post-share" />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />
 					<DismissibleCard readmeFilePath="dismissible-card" />
 					<ReaderAvatar readmeFilePath="reader-avatar" />
@@ -144,7 +141,6 @@ export default class AppComponents extends Component {
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
-					<SharingPreviewPane />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ConversationCommentList />
 					<PostComment />
