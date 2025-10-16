@@ -1,10 +1,10 @@
 import { TitanMailSlugs, GoogleWorkspaceSlugs } from '@automattic/api-core';
 import { productsQuery } from '@automattic/api-queries';
-import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
@@ -19,6 +19,7 @@ import poweredByTitanLogo from '../../../assets/images/email-providers/titan/pow
 import { useAuth } from '../../app/auth';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
@@ -183,19 +184,23 @@ export default function ChooseEmailSolution() {
 						<VStack
 							spacing={ 2 }
 							justify="flex-start"
-							style={ { ...( hasTitanFreeTrial && { minHeight: '76px' } ) } }
+							style={ { minHeight: hasTitanFreeTrial ? '96px' : '76px' } }
 						>
 							{ provider.available ? (
 								<>
-									<Text size={ 22 } weight={ 600 }>
-										{ formatCurrency(
-											provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0,
-											provider.product?.currency_code ?? 'USD',
-											{
-												stripZeros: true,
-											}
+									<HStack expanded={ false } alignment="bottomLeft">
+										<PriceDisplay
+											price={ provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0 }
+											currency={ provider.product?.currency_code ?? 'USD' }
+										/>
+										{ provider.hasFreeTrial && (
+											<PriceDisplay
+												price={ provider.product?.cost ?? 0 }
+												currency={ provider.product?.currency_code ?? 'USD' }
+												discounted
+											/>
 										) }
-									</Text>
+									</HStack>
 									<Text variant="muted">
 										{ billingInterval === 'annually'
 											? __( 'per year, per mailbox, excl. taxes.' )
