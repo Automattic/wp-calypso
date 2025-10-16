@@ -1,5 +1,5 @@
 import { Task } from '@automattic/launchpad';
-import { isStartWritingFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
@@ -15,12 +15,11 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 			return '';
 		}
 
-		if ( isStartWritingFlow( flow ) || isReadymadeFlow( flow ) ) {
+		if ( isStartWritingFlow( flow ) ) {
 			return addQueryArgs( `/setup/${ flow }/domains`, {
 				...getSiteIdOrSlug( flow, site, siteSlug ),
 				flowToReturnTo: flow,
 				new: site?.name,
-				domainAndPlanPackage: true,
 			} );
 		}
 
@@ -30,7 +29,6 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 			siteSlug,
 			backUrl,
 			suggestion: site?.name,
-			forceStepperFlow: true,
 		} );
 
 		return domainUpsellCompleted ? `/domains/manage/${ siteSlug }` : purchaseDomainUrl;

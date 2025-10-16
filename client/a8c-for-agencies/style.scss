@@ -128,7 +128,9 @@
 	}
 
 	.components-button.is-primary:disabled {
-		background-color: var(--color-primary-50);
+		&:hover {
+			background-color: var(--color-accent-5);
+		}
 	}
 
 	.components-button.is-link {
@@ -181,13 +183,15 @@
 
 	.components-button.is-primary.is-destructive,
 	.button.is-primary.is-scary {
-		background-color: var(--color-scary-50);
-		color: var(--color-text-inverted);
-
-		&:hover,
-		&:focus-visible {
-			background-color: var(--color-scary-60);
+		&:not(:disabled) {
+			background-color: var(--color-scary-50);
 			color: var(--color-text-inverted);
+
+			&:hover,
+			&:focus-visible {
+				background-color: var(--color-scary-60);
+				color: var(--color-text-inverted);
+			}
 		}
 	}
 

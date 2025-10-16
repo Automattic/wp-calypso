@@ -1,4 +1,4 @@
-import { SiteActivityLog, ActivityLogParams, LogType } from '@automattic/api-core';
+import { ActivityLogParams, LogType } from '@automattic/api-core';
 import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -11,6 +11,7 @@ import { filtersSignature } from '../../logs/dataviews/filters';
 import { syncFiltersSearchParams } from '../../logs/dataviews/url-sync';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
+import { transformActivityLogEntry } from '../activity-transformer';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
 import {
@@ -21,6 +22,7 @@ import {
 	getInitialSearchTermFromSearch,
 } from './filters';
 import { useActivityView } from './views';
+import type { Activity } from '../../../components/logs-activity/types';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 import './style.scss';
 
@@ -28,6 +30,7 @@ type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 	hasActivityLogsAccess: boolean;
 };
+
 const ACTIVITY_LOGS_DEFAULT_PAGE_SIZE = 20;
 function SiteActivityLogsDataViews( {
 	gmtOffset,
@@ -77,9 +80,16 @@ function SiteActivityLogsDataViews( {
 		activityLogQueryParams.group = activityLogTypeValues;
 	}
 
-	const { data: activityLogData, isFetching: isFetchingData } = useQuery(
-		siteActivityLogQuery( site.ID, activityLogQueryParams )
-	);
+	const { data: activityLogData, isFetching: isFetchingData } = useQuery( {
+		...siteActivityLogQuery( site.ID, activityLogQueryParams ),
+		select: ( data ) => {
+			// use the transformer to ensure the data is always in the expected format
+			return {
+				...data,
+				activityLogs: data.activityLogs?.map( transformActivityLogEntry ),
+			};
+		},
+	} );
 
 	/**
 	 * We're not passing the extra params, like text_search, to the query because that would make the group changes and
@@ -94,17 +104,6 @@ function SiteActivityLogsDataViews( {
 		} )
 	);
 	const isFetching = isFetchingData || isFetchingFilters;
-
-	const logs = useMemo( () => {
-		const currentPage = view.page ?? 1;
-		const suffix = `p${ currentPage }`;
-		const items = activityLogData?.activityLogs ?? [];
-
-		return items.map( ( activity: SiteActivityLog, index: number ) => ( {
-			...activity,
-			id: `${ activity.activity_id }|${ suffix }|${ String( index ) }`,
-		} ) );
-	}, [ activityLogData?.activityLogs, view.page ] );
 
 	const paginationInfo = {
 		totalItems: activityLogData?.totalItems ?? 0,
@@ -194,13 +193,14 @@ function SiteActivityLogsDataViews( {
 
 	return (
 		<>
-			<DataViews< SiteActivityLog >
-				data={ logs }
+			<DataViews< Activity >
+				data={ activityLogData?.activityLogs || [] }
 				isLoading={ isFetching }
 				paginationInfo={ paginationInfo }
-				fields={ fields as Field< SiteActivityLog >[] }
+				fields={ fields as Field< Activity >[] }
 				view={ view }
 				actions={ actions }
+				getItemId={ ( item ) => item.activityId.toString() }
 				config={
 					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
 				} // Disable changing perPage if no access

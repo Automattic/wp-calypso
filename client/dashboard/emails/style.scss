@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/variables";
+
 .email-redirect-field {
 	gap: 1px;
 }
@@ -29,4 +31,13 @@
 
 .add-forwarder__back-button {
 	padding: 0 !important;
+}
+
+.dashboard-section-header__actions {
+	align-items: center;
+}
+
+.emails__add-email-forwarder {
+	text-decoration: none !important;
+	font-size: $font-size-medium;
 }

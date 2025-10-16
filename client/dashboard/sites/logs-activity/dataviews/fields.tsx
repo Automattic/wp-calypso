@@ -4,8 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { ActivityActor } from '../../../components/logs-activity/activity-actor';
 import { ActivityEvent } from '../../../components/logs-activity/activity-event';
+import { Activity } from '../../../components/logs-activity/types';
 import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
-import type { SiteActivityLog, ActivityLogGroupCountResponse } from '@automattic/api-core';
+import type { ActivityLogGroupCountResponse } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 export type ActivityLogTypeOption = {
@@ -51,7 +52,7 @@ export function useActivityFields( {
 	timezoneString,
 	gmtOffset,
 	activityLogTypes,
-}: UseActivityFieldsArgs ): Field< SiteActivityLog >[] {
+}: UseActivityFieldsArgs ): Field< Activity >[] {
 	const locale = useLocale();
 	const isLargeScreen = useViewportMatch( 'huge', '>=' );
 	const dateTimeLabel = getDateTimeLabel( { timezoneString, gmtOffset, isLargeScreen } );
@@ -78,9 +79,9 @@ export function useActivityFields( {
 				label: dateTimeLabel,
 				enableHiding: true,
 				enableSorting: true,
-				getValue: ( { item } ) => item.published,
+				getValue: ( { item } ) => item.activityUnparsedTs,
 				render: ( { item } ) => {
-					const value = item.published;
+					const value = item.activityUnparsedTs;
 					return <span>{ formatDateCell( { value, timezoneString, gmtOffset, locale } ) }</span>;
 				},
 				filterBy: { operators: [] },
@@ -93,9 +94,9 @@ export function useActivityFields( {
 							label: __( 'Date & time (UTC)' ),
 							enableHiding: true,
 							enableSorting: true,
-							getValue: ( { item } ) => item.published,
+							getValue: ( { item } ) => item.activityUnparsedTs,
 							render: ( { item } ) => {
-								const value = item.published;
+								const value = item.activityUnparsedTs;
 								return (
 									<span>
 										{ formatDateCell( {
@@ -109,7 +110,7 @@ export function useActivityFields( {
 								);
 							},
 							filterBy: { operators: [] },
-						} as Field< SiteActivityLog >,
+						} as Field< Activity >,
 				  ]
 				: [] ),
 			{
@@ -118,14 +119,12 @@ export function useActivityFields( {
 				label: __( 'Event' ),
 				enableSorting: false,
 				enableHiding: false,
-				getValue: ( { item } ) => `${ item.summary }: ${ item.content?.text ?? '' }`,
-				render: ( { item } ) => (
-					<ActivityEvent
-						summary={ item.summary }
-						content={ item.content }
-						gridicon={ item.gridicon }
-					/>
-				),
+				getValue: ( { item } ) => {
+					return `${ item.activityTitle }: ${ item.activityDescription.textDescription }`;
+				},
+				render: ( { item } ) => {
+					return <ActivityEvent activity={ item } />;
+				},
 				filterBy: { operators: [] },
 			},
 			{
@@ -134,17 +133,19 @@ export function useActivityFields( {
 				label: __( 'User' ),
 				enableSorting: false,
 				enableHiding: false,
-				getValue: ( { item } ) => item.actor?.name || __( 'Unknown' ),
-				render: ( { item } ) => <ActivityActor actor={ item.actor } />,
+				getValue: ( { item } ) => item.activityActor?.actorName || __( 'Unknown' ),
+				render: ( { item } ) => <ActivityActor actor={ item.activityActor } />,
 				filterBy: { operators: [] },
 			},
 			{
 				id: 'activity_type',
 				type: 'text',
 				label: __( 'Activity type' ),
-				getValue: ( { item } ) => getActivityLogTypeSlugFromName( item.name ),
+				getValue: ( { item } ) => getActivityLogTypeSlugFromName( item.activityName ),
 				render: ( { item } ) => (
-					<span>{ getActivityLogTypeDescriptionFromName( item.name, activityLogTypes ) }</span>
+					<span>
+						{ getActivityLogTypeDescriptionFromName( item.activityName, activityLogTypes ) }
+					</span>
 				),
 				elements: activityLogTypeElements,
 				isVisible: () => false,

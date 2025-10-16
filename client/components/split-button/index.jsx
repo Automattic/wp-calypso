@@ -27,6 +27,7 @@ class SplitButton extends PureComponent {
 		popoverClassName: PropTypes.string,
 		href: PropTypes.string,
 		whiteSeparator: PropTypes.bool,
+		allowEventBubbling: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -42,6 +43,7 @@ class SplitButton extends PureComponent {
 		primary: false,
 		scary: false,
 		whiteSeparator: false,
+		allowEventBubbling: false,
 	};
 
 	state = {
@@ -50,13 +52,19 @@ class SplitButton extends PureComponent {
 
 	popoverContext = createRef();
 
+	handleStopPropagation = ( event ) => {
+		if ( ! this.props.allowEventBubbling ) {
+			event.stopPropagation();
+		}
+	};
+
 	handleMainClick = ( event ) => {
-		event.stopPropagation();
+		this.handleStopPropagation( event );
 		return this.props.onClick( event );
 	};
 
 	handleMenuClick = ( event ) => {
-		event.stopPropagation();
+		this.handleStopPropagation( event );
 		return this.toggleMenu( ! this.state.isMenuVisible );
 	};
 
