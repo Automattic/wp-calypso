@@ -1,4 +1,10 @@
-import { domainQuery, mailboxAccountsQuery, productsQuery } from '@automattic/api-queries';
+import { Product } from '@automattic/api-core';
+import {
+	domainQuery,
+	mailboxAccountsQuery,
+	productsQuery,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody } from '@wordpress/components';
@@ -10,6 +16,8 @@ import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { CartActionError } from '../../shopping-cart/errors';
+import { getEmailCheckoutPath } from '../../utils/email-paths';
 import {
 	FIELD_NAME,
 	FIELD_FIRSTNAME,
@@ -23,6 +31,8 @@ import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { FormFieldNames, MutableFormFieldNames, SupportedEmailProvider } from '../entities/types';
 import { IntervalLength } from '../types';
+import { getCartItems } from '../utils/get-cart-items';
+import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
 import { MailboxForm } from './components/mailbox-form';
 
@@ -50,6 +60,7 @@ const AddProfessionalEmail = () => {
 
 	const { data: domain } = useQuery( domainQuery( domainName ) );
 	const { data: products } = useQuery( productsQuery() );
+	const { data: site } = useQuery( siteBySlugQuery( domainName ) );
 	const { data: existingMailboxes, isFetched } = useQuery( {
 		// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
 		...mailboxAccountsQuery( domain?.blog_id, domainName ),
@@ -94,6 +105,10 @@ const AddProfessionalEmail = () => {
 	}
 
 	const handleSubmit = async () => {
+		const { shoppingCartManagerClient } = await import(
+			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
+		);
+
 		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
 		const mailboxOperations = new MailboxOperations( mailboxEntities, () => {} );
 
@@ -122,7 +137,35 @@ const AddProfessionalEmail = () => {
 
 		const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const product = products[ productSlug ];
+		const product = products?.[ productSlug ] as Product;
+
+		const numberOfMailboxes = mailboxOperations.mailboxes.length;
+
+		const emailProperties = getEmailProductProperties(
+			'titan',
+			domain,
+			product,
+			numberOfMailboxes
+		);
+
+		const checkoutPath = getEmailCheckoutPath(
+			domainName,
+			domain.domain,
+			router.state.location.pathname,
+			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
+		);
+
+		await shoppingCartManagerClient
+			.forCartKey( site?.ID )
+			// @ts-expect-error -- getCartItems response won't be void since the provider here is always 'titan'
+			.actions.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
+			.then( () => {
+				window.location.href = checkoutPath;
+			} )
+			.finally( () => setIsSubmitting( false ) )
+			.catch( ( error: CartActionError ) => {
+				createErrorNotice( error.message, { type: 'snackbar' } );
+			} );
 	};
 
 	return (
