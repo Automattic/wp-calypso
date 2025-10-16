@@ -66,8 +66,11 @@ export interface Domain extends DomainSummary {
 	subdomain_part: string;
 	transfer_status: DomainTransferStatus | null;
 	transfer_away_eligible_at: string;
+	wpcom_domain?: boolean;
 	registration_date: string;
 	email_forwards_count?: number;
 	google_apps_subscription: EmailSubscription;
 	titan_mail_subscription: EmailSubscription;
+	transfer_start_date?: string;
+	last_transfer_error: string;
 }

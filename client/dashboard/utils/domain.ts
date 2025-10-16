@@ -6,7 +6,7 @@ import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
 	Purchase,
-	SiteDomain,
+	Domain,
 	DomainSummary,
 	Site,
 	User,
@@ -129,21 +129,21 @@ export function canSetAsPrimary( {
 	);
 }
 
-export function hasGSuiteWithUs( domain: SiteDomain | FullDomain ) {
+export function hasGSuiteWithUs( domain: Domain | FullDomain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );
 }
 
-export function hasTitanMailWithUs( domain: SiteDomain | FullDomain ) {
+export function hasTitanMailWithUs( domain: Domain | FullDomain ) {
 	const subscriptionStatus = domain.titan_mail_subscription?.status;
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }
 
-export function hasEmailForwards( domain: SiteDomain | FullDomain ) {
+export function hasEmailForwards( domain: Domain | FullDomain ) {
 	return domain?.email_forwards_count ?? 0;
 }
 
-export const domainHasEmail = ( domain: SiteDomain ) =>
+export const domainHasEmail = ( domain: Domain ) =>
 	hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
 export function findRegistrantWhois( whoisContacts: WhoisDataEntry[] | undefined ) {

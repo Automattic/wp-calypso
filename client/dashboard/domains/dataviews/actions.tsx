@@ -135,7 +135,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
-						item.current_user_is_owner && item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+						item.current_user_is_owner === true &&
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
 					);
 				},
 			},

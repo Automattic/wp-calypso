@@ -1,4 +1,4 @@
-import { EmailAccount, EmailBox, SiteDomain, DomainSubtype } from '@automattic/api-core';
+import { EmailAccount, EmailBox, Domain, DomainSubtype } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -33,16 +33,16 @@ function Emails() {
 			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 		);
 
-		const domainsWithEmails = nonWpcomDomains.filter( domainHasEmail ) as SiteDomain[];
+		const domainsWithEmails = nonWpcomDomains.filter( domainHasEmail ) as Domain[];
 		const domainsWithoutEmails = nonWpcomDomains.filter(
 			( domain ) => ! domainHasEmail( domain )
-		) as SiteDomain[];
+		) as Domain[];
 
 		return { domainsWithEmails, domainsWithoutEmails };
 	}, [ domains, isLoadingDomains ] );
 
 	const mailboxQueries = useQueries( {
-		queries: domainsWithEmails.map( ( domain: SiteDomain ) =>
+		queries: domainsWithEmails.map( ( domain: Domain ) =>
 			mailboxAccountsQuery( domain.blog_id, domain.domain )
 		),
 	} );
