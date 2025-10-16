@@ -13,17 +13,16 @@ import type { Email } from '../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useDeleteEmailForwardAction = (): Action< Email > => {
-	const { mutateAsync: deleteEmailForward, isPending } = useMutation(
-		deleteEmailForwardMutation()
-	);
-
 	return {
 		id: 'delete-email-forward',
 		label: __( 'Delete forwarder' ),
 		isDestructive: true,
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-			const { createErrorNotice } = useDispatch( noticesStore );
+			const { mutateAsync: deleteEmailForward, isPending } = useMutation(
+				deleteEmailForwardMutation()
+			);
+			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 			const email = items[ 0 ];
 
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
@@ -34,6 +33,15 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 						mailbox,
 						destination: email.forwardingTo as string,
 					} );
+					createSuccessNotice(
+						sprintf(
+							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
+							__( 'Forwarder from %1$s to %2$s has been removed.' ),
+							email.emailAddress,
+							email.forwardingTo as string
+						),
+						{ type: 'snackbar' }
+					);
 					onActionPerformed?.( items );
 					closeModal?.();
 				} catch ( _e ) {
