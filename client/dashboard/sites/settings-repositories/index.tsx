@@ -9,8 +9,8 @@ import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
@@ -200,7 +200,7 @@ function SiteRepositories() {
 				>
 					<Button
 						variant="secondary"
-						icon={ chevronLeft }
+						icon={ isRTL() ? chevronRight : chevronLeft }
 						iconPosition="left"
 						onClick={ () => {
 							navigate( {
