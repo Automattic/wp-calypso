@@ -16,10 +16,12 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useState } from 'react';
 import poweredByTitanLogo from '../../../assets/images/email-providers/titan/powered-by-titan-caps.svg';
+import { useAuth } from '../../app/auth';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
+import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
 import { useDomains } from '../hooks/use-domains';
 
 import './style.scss';
@@ -39,8 +41,11 @@ const EMAIL_PRODUCTS = {
 
 const getAnnualSavings = (
 	provider: 'titan' | 'google',
-	products: Record< string, { cost: number } >
+	products: Record< string, { cost: number } > | undefined
 ) => {
+	if ( ! products ) {
+		return 0;
+	}
 	const monthlyProduct = products[ EMAIL_PRODUCTS[ provider ].monthly ];
 	const annuallyProduct = products[ EMAIL_PRODUCTS[ provider ].annually ];
 	return 100 - ( annuallyProduct.cost * 100 ) / ( monthlyProduct.cost * 12 );
@@ -63,12 +68,18 @@ export default function ChooseEmailSolution() {
 	const googleAnnuallySavings = getAnnualSavings( 'google', products );
 	const bestAnnuallySavings = Math.floor( Math.max( titanAnnuallySavings, googleAnnuallySavings ) );
 
-	const googleProduct = products[ EMAIL_PRODUCTS.google[ billingInterval ] ];
-	const titanProduct = products[ EMAIL_PRODUCTS.titan[ billingInterval ] ];
+	const googleProduct = products?.[ EMAIL_PRODUCTS.google[ billingInterval ] ] ?? null;
+	const titanProduct = products?.[ EMAIL_PRODUCTS.titan[ billingInterval ] ] ?? null;
 
 	const hasTitanFreeTrial =
 		( domain?.titan_mail_subscription?.is_eligible_for_introductory_offer ?? false ) &&
 		titanProduct.introductory_offer?.cost_per_interval === 0;
+
+	const { user } = useAuth();
+	const isGoogleSupported =
+		( user.is_valid_google_apps_country ?? false ) &&
+		domain &&
+		isGoogleWorkspaceSupportedDomain( domain );
 
 	const providers = [
 		{
@@ -90,6 +101,7 @@ export default function ChooseEmailSolution() {
 			},
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
+			available: true,
 		},
 		{
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -108,6 +120,7 @@ export default function ChooseEmailSolution() {
 				__( '24/7 support via email' ),
 			],
 			product: googleProduct,
+			available: isGoogleSupported,
 		},
 	];
 
@@ -172,25 +185,37 @@ export default function ChooseEmailSolution() {
 							justify="flex-start"
 							style={ { ...( hasTitanFreeTrial && { minHeight: '76px' } ) } }
 						>
-							<Text size={ 22 } weight={ 600 }>
-								{ formatCurrency(
-									provider.hasFreeTrial ? 0 : provider.product.cost,
-									provider.product.currency_code,
-									{
-										stripZeros: true,
-									}
-								) }
-							</Text>
-							<Text variant="muted">
-								{ billingInterval === 'annually'
-									? __( 'per year, per mailbox, excl. taxes.' )
-									: __( 'per month, per mailbox, excl. taxes.' ) }
-							</Text>
-							{ provider.hasFreeTrial && (
-								<div className="email-provider-trial">{ __( '3 month free trial' ) }</div>
+							{ provider.available ? (
+								<>
+									<Text size={ 22 } weight={ 600 }>
+										{ formatCurrency(
+											provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0,
+											provider.product?.currency_code ?? 'USD',
+											{
+												stripZeros: true,
+											}
+										) }
+									</Text>
+									<Text variant="muted">
+										{ billingInterval === 'annually'
+											? __( 'per year, per mailbox, excl. taxes.' )
+											: __( 'per month, per mailbox, excl. taxes.' ) }
+									</Text>
+									{ provider.hasFreeTrial && (
+										<div className="email-provider-trial">{ __( '3 month free trial' ) }</div>
+									) }
+								</>
+							) : (
+								<Text size={ 20 } weight={ 500 }>
+									{ __( 'Not available for this domain name' ) }
+								</Text>
 							) }
 						</VStack>
-						<Button className="email-provider-action" variant="primary">
+						<Button
+							className="email-provider-action"
+							variant="primary"
+							disabled={ ! provider.available }
+						>
 							{ provider.action }
 						</Button>
 						<ul className="email-provider-features">
