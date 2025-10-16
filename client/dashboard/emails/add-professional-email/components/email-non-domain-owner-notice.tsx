@@ -39,13 +39,13 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 				? getPurchaseNewEmailAccountPath( selectedSite?.slug, domain?.domain, '', 'login-redirect' )
 				: getEmailManagementPath( selectedSite?.slug, domain?.domain );
 
-		return `/log-in/${ buildQueryString( {
+		return `/log-in/?${ buildQueryString( {
 			email_address: ownerUserName,
 			redirect_to: redirectUrlParameter,
 		} ) }`;
 	};
 
-	const contactOwnerUrl = `https://privatewho.is/${ buildQueryString( {
+	const contactOwnerUrl = `https://privatewho.is/?${ buildQueryString( {
 		s: domain?.domain || '',
 	} ) }`;
 
