@@ -170,10 +170,15 @@ export default function DnsImportDialog( {
 				) }
 
 				<ButtonStack justify="flex-end">
-					<Button onClick={ onCancel } disabled={ updateDnsMutation.isPending }>
+					<Button
+						__next40pxDefaultSize
+						onClick={ onCancel }
+						disabled={ updateDnsMutation.isPending }
+					>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						isBusy={ updateDnsMutation.isPending }
 						onClick={ handleConfirm }

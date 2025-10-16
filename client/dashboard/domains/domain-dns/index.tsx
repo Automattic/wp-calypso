@@ -23,6 +23,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
+import DnsDescription from './dns-description';
 import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
@@ -319,12 +320,7 @@ export default function DomainDns() {
 								/>
 							</>
 						}
-						description={ createInterpolateElement(
-							__( 'DNS records change how your domain works. <link>Learn more</link>' ),
-							{
-								link: <InlineSupportLink supportContext="manage-your-dns-records" />,
-							}
-						) }
+						description={ <DnsDescription /> }
 					/>
 				</VStack>
 			}

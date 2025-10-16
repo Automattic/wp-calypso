@@ -1,6 +1,4 @@
 import { SiteDomain } from '@automattic/api-core';
-import { siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
-import { useQueries, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -18,47 +16,20 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
-import './styles.css';
 import AddNewDomain from '../components/add-new-domain';
+import { useDomains } from '../hooks/use-domains';
 
-const isJetpackSlug = ( slug: string ): boolean => String( slug ).startsWith( 'jetpack_' );
+import './styles.css';
 
 export default function ChooseDomain() {
 	const router = useRouter();
-	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const sites = ( allSites ?? [] )
-		.filter( ( site ) => {
-			const product = site?.plan?.product_slug ?? null;
-			if ( product === null ) {
-				return true;
-			}
+	const { domains, isLoading } = useDomains();
 
-			return ! isJetpackSlug( product );
-		} )
-		.filter( ( site ) => site.capabilities.manage_options );
-	const siteIds = sites.map( ( site ) => site.ID );
+	// Aggregate eligible domains (exclude wpcom domains)
+	const eligibleDomains = useMemo( () => {
+		return ( domains ?? [] ).filter( ( domain ) => ! domain.wpcom_domain );
+	}, [ domains ] );
 
-	// Fetch site domains for each managed site ID
-	const domainsQueries = useQueries( {
-		queries: siteIds.map( ( id ) => ( {
-			...siteDomainsQuery( id ),
-			enabled: Boolean( id ),
-		} ) ),
-	} );
-	const isLoadingDomains = domainsQueries.some( ( q ) => q.isLoading );
-
-	// Aggregate all domains into a single array
-	const { eligibleDomains } = useMemo( () => {
-		if ( isLoadingDomains ) {
-			return { eligibleDomains: [] };
-		}
-
-		const domains = domainsQueries
-			.flatMap( ( q ) => ( q.data as SiteDomain[] ) ?? [] )
-			.filter( ( domain ) => ! domain.wpcom_domain );
-
-		return { eligibleDomains: domains };
-	}, [ domainsQueries, isLoadingDomains ] );
 	// Prepare domain lists and search state
 	const firstTen = eligibleDomains.slice( 0, 10 );
 	const remaining = eligibleDomains.slice( 10 );
@@ -106,7 +77,7 @@ export default function ChooseDomain() {
 		>
 			<Text size={ 16 }>{ __( 'Which domain name would you like to add a mailbox for?' ) }</Text>
 			<VStack spacing={ 6 }>
-				{ isLoadingSites || isLoadingDomains ? (
+				{ isLoading ? (
 					<Text variant="muted">{ __( 'Loading domains…' ) }</Text>
 				) : (
 					<>

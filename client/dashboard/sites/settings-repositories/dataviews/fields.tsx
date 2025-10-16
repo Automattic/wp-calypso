@@ -26,6 +26,7 @@ export function useRepositoryFields() {
 				},
 				enableHiding: false,
 				enableSorting: true,
+				enableGlobalSearch: true,
 			},
 			{
 				id: 'owner',
@@ -37,6 +38,7 @@ export function useRepositoryFields() {
 				},
 				enableHiding: false,
 				enableSorting: true,
+				enableGlobalSearch: true,
 			},
 			{
 				id: 'branch',
@@ -47,6 +49,7 @@ export function useRepositoryFields() {
 				},
 				enableHiding: false,
 				enableSorting: true,
+				enableGlobalSearch: true,
 			},
 			{
 				id: 'target_dir',
@@ -55,6 +58,7 @@ export function useRepositoryFields() {
 				render: ( { item } ) => <TargetDirDisplay targetDir={ item.target_dir } />,
 				enableHiding: true,
 				enableSorting: true,
+				enableGlobalSearch: true,
 			},
 			{
 				id: 'auto_deploy',

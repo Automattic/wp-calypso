@@ -209,6 +209,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 						<form onSubmit={ handleSubmit }>
 							<ButtonStack justify="flex-start">
 								<Button
+									__next40pxDefaultSize
 									variant="primary"
 									type="submit"
 									isBusy={ isSubmitting }

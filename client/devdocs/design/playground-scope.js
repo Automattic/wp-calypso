@@ -93,7 +93,6 @@ export { default as SearchCard } from 'calypso/components/search-card';
 export { default as SectionHeader } from 'calypso/components/section-header';
 export { default as SectionNav } from 'calypso/components/section-nav';
 export { default as NavTabs } from 'calypso/components/section-nav/tabs';
-export { default as NavSegmented } from 'calypso/components/section-nav/segmented';
 export { default as NavItem } from 'calypso/components/section-nav/item';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';

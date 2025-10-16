@@ -31,7 +31,7 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/checkout-version": true,
-		"checkout/razorpay": false,
+		"checkout/razorpay": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2": true,

@@ -42,6 +42,14 @@ export class ImportContentPage {
 	}
 
 	/**
+	 * Get the Substack import button element.
+	 * @returns The Substack import button element.
+	 */
+	get substackImportButton() {
+		return this.page.getByRole( 'link', { name: 'Substack' } ); // It's a link, not a button.
+	}
+
+	/**
 	 * Get the Medium import button element.
 	 * @returns The WordPress import button element.
 	 */
