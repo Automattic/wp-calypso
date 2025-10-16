@@ -76,7 +76,7 @@ class DataMailboxFormField extends MailboxFormFieldBase< string > {
 	readonly typeName = 'data';
 }
 
-class TextMailboxFormField extends MailboxFormFieldBase< string > {
+export class TextMailboxFormField extends MailboxFormFieldBase< string > {
 	value = '';
 
 	hasValidValue(): boolean {

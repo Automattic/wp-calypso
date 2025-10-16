@@ -6,7 +6,12 @@ import { Icon, info } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { Text } from '../../../components/text';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
-import { FormFieldNames, MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
+import {
+	MailboxFormFieldBase,
+	SupportedEmailProvider,
+	TitanMailboxFormFields,
+	TextMailboxFormField,
+} from '../../entities/types';
 import type { InputControlProps } from '@wordpress/components/build-types/input-control/types';
 
 export const MailboxInput = ( {
@@ -16,7 +21,7 @@ export const MailboxInput = ( {
 	lowerCaseChangeValue = false,
 	...inputControlProps
 }: {
-	fieldName: FormFieldNames;
+	fieldName: 'mailbox' | 'password' | 'passwordResetEmail';
 	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
 	lowerCaseChangeValue?: boolean;
 	onChange: ( args: {
@@ -25,7 +30,9 @@ export const MailboxInput = ( {
 		lowerCaseChangeValue?: boolean;
 	} ) => void;
 } & Omit< InputControlProps, 'onChange' > ) => {
-	const originalField = mailboxEntity.formFields[ fieldName ];
+	const originalField = ( mailboxEntity.formFields as TitanMailboxFormFields )[
+		fieldName
+	] as TextMailboxFormField;
 
 	const [ { field }, setFieldState ] = useState( { field: originalField } );
 
