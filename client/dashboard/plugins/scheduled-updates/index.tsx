@@ -154,7 +154,7 @@ export default function PluginsScheduledUpdates() {
 	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
 		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
 		scheduleToDelete?.scheduleId ?? '',
-		{ optimisticHosting: true }
+		{ optimisticHosting: false }
 	);
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
