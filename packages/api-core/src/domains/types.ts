@@ -49,6 +49,7 @@ export interface DomainSummary {
 	expired: boolean;
 	expiry: string | false;
 	has_registration: boolean;
+	has_wpcom_nameservers: boolean;
 	is_domain_only_site: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;

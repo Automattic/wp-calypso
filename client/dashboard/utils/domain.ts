@@ -1,4 +1,4 @@
-import { DotcomFeatures, WhoisType, DomainSubtype } from '@automattic/api-core';
+import { DotcomFeatures, WhoisType, DomainSubtype, DomainTypes } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
@@ -27,7 +27,7 @@ export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase )
 	} );
 }
 
-export function isRegisteredDomain( domain: DomainSummary ) {
+export function isRegisteredDomain( domain: DomainSummary | SiteDomain ) {
 	return domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION;
 }
 
@@ -339,4 +339,34 @@ export function isSubdomain( domainName: string ): boolean {
 	);
 
 	return isValidSubdomain && getRootDomain( domainName ) !== domainName;
+}
+
+export function isGoogleWorkspaceSupportedDomain( domain: SiteDomain ) {
+	if ( domain.google_apps_subscription?.status === 'other_provider' ) {
+		return false;
+	}
+
+	// If the domain is registered through us, there is a provisioning period when
+	// `hasWpcomNameservers` will be false. We still want to let users buy Google Workspace
+	// during that period, even if we normally wouldn't let them under these conditions.
+	// Therefore, we check those conditions and return true if the registration happened less
+	// than 15 minutes ago. 15 minutes is an arbitrary number.
+	if (
+		isRegisteredDomain( domain ) &&
+		! domain.has_wpcom_nameservers &&
+		isRecentlyRegistered( domain.registration_date, 15 )
+	) {
+		return true;
+	}
+
+	const isHostedOnWpcom =
+		isRegisteredDomain( domain ) && ( domain.has_wpcom_nameservers || hasGSuiteWithUs( domain ) );
+	if (
+		! isHostedOnWpcom &&
+		! ( domain.type === DomainTypes.MAPPED && domain.has_wpcom_nameservers )
+	) {
+		return false;
+	}
+
+	return ! domain.domain.endsWith( '.wpcomstaging.com' );
 }
