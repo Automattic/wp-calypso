@@ -39,7 +39,7 @@ const formattedValue = ( inputType: InputType, value?: InputValue ) => {
 	return value;
 };
 
-const renderPreference = ( name: string, value: any ) => {
+const renderPreference = ( name: string, value: unknown ) => {
 	if ( typeof value === 'string' ) {
 		return <EditablePreference inputType="string" name={ name } value={ value } />;
 	}
@@ -59,7 +59,7 @@ const renderPreference = ( name: string, value: any ) => {
 	return null;
 };
 
-function ArrayPreference( { value }: { value: InputValue[] } ) {
+function ArrayPreference( { value }: { value: unknown[] } ) {
 	return (
 		<ul>
 			{ value.map( ( preference, index ) => (
@@ -76,7 +76,7 @@ function EditablePreference( {
 }: {
 	inputType: InputType;
 	name: string;
-	value: InputValue;
+	value: unknown;
 } ) {
 	const { mutate: savePreference } = useMutation(
 		userPreferenceMutation( name as keyof UserPreferences )
@@ -96,12 +96,12 @@ function EditablePreference( {
 			{
 				id: name,
 				Edit: ( { field, onChange, data } ) => {
-					const { id, getValue } = field;
+					const { id } = field;
 					if ( inputType === 'checkbox' ) {
 						return (
 							<CheckboxControl
 								__nextHasNoMarginBottom
-								checked={ getValue( { item: data } ) }
+								checked={ data[ id ] as unknown as boolean }
 								onChange={ ( newValue ) =>
 									onChange( { [ id ]: formattedValue( inputType, newValue ) } )
 								}
@@ -112,7 +112,7 @@ function EditablePreference( {
 					return (
 						<InputControl
 							type={ inputType }
-							value={ getValue( { item: data } ) }
+							value={ data[ id ] as unknown as string }
 							size="small"
 							onChange={ ( newValue ) =>
 								onChange( { [ id ]: formattedValue( inputType, newValue ) } )
@@ -153,7 +153,7 @@ function EditablePreference( {
 	);
 }
 
-function Preference( { name, value }: { name: string; value: any } ) {
+function Preference( { name, value }: { name: string; value: unknown } ) {
 	const { mutate: unsetPreference } = useMutation(
 		userPreferenceMutation( name as keyof UserPreferences )
 	);

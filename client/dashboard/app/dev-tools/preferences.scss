@@ -7,14 +7,14 @@
 }
 
 .preferences-helper__preference-content {
-	padding-inline-start: 36px;
+	padding-inline-start: $grid-unit-40;
 
 	ul {
 		margin: 0;
 		padding: 0;
 
 		li {
-			margin-bottom: 8px;
+			margin-bottom: $grid-unit-10;
 		}
 	}
 }
