@@ -188,7 +188,7 @@ const AddProfessionalEmail = () => {
 		} );
 	};
 
-	const showEmailPurchaseDisabledMessage = !! domain && ! userCanAddEmail && ! isDomainInCart;
+	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
 	let endDate = new Date();
@@ -230,7 +230,7 @@ const AddProfessionalEmail = () => {
 			}
 		>
 			<Text as="p">
-				{ hasOffer
+				{ hasOffer && ! showEmailPurchaseDisabledMessage
 					? sprintf(
 							// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
 							__(
