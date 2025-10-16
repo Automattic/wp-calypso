@@ -1,7 +1,7 @@
 import type { Site } from '@automattic/api-core';
 
 export function isSelfHostedJetpackConnected( site: Site ) {
-	return site.jetpack_connection && ! site.is_wpcom_atomic;
+	return site.jetpack_connection && ! site.is_wpcom_atomic && ! site.is_wpcom_flex;
 }
 
 export function isP2( site: Site ) {
