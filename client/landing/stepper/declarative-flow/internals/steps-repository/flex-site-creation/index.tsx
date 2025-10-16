@@ -33,14 +33,12 @@ const FlexSiteCreation: StepType< {
 		} );
 	};
 
-	const isSiteNameEmpty = ! siteName.trim();
-
 	return (
 		<>
 			<DocumentHead title={ __( 'Create a new site' ) } />
 			<Step.CenteredColumnLayout
 				className="flex-site-creation"
-				columnWidth={ 5 }
+				columnWidth={ 6 }
 				topBar={
 					<Step.TopBar
 						leftElement={
@@ -69,13 +67,11 @@ const FlexSiteCreation: StepType< {
 							/>
 						</FormFieldset>
 
-						<div className="flex-site-creation__form-row" />
-
 						<Button
 							className="flex-site-creation__submit-button"
 							variant="primary"
 							type="submit"
-							disabled={ isSiteNameEmpty || isLoading }
+							disabled={ isLoading }
 						>
 							{ __( 'Create a site' ) }
 						</Button>
