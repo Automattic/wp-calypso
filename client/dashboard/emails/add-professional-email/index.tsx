@@ -2,7 +2,9 @@ import { domainQuery, mailboxAccountsQuery, productsQuery } from '@automattic/ap
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
@@ -39,6 +41,7 @@ const possibleHiddenFieldNames: HiddenFieldNames[] = [
 
 const AddProfessionalEmail = () => {
 	const { user } = useAuth();
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 	// Extract params from the current match for this route
 	const match = router.state.matches[ router.state.matches.length - 1 ];
@@ -56,6 +59,7 @@ const AddProfessionalEmail = () => {
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
+
 	const createNewMailbox = useCallback( () => {
 		const mailbox = new MailboxFormEntity< SupportedEmailProvider >(
 			'titan',
@@ -96,16 +100,23 @@ const AddProfessionalEmail = () => {
 		setIsSubmitting( true );
 
 		const userCanAddEmail = domain?.current_user_can_add_email;
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const userCannotAddEmailReason = userCanAddEmail
-			? null
-			: domain?.current_user_cannot_add_email_reason;
-
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const validated = await mailboxOperations.validateAndCheck( false );
 
-		if ( ! validated ) {
+		if ( ! userCanAddEmail || ! validated ) {
+			if ( ! userCanAddEmail ) {
+				const errors = domain?.current_user_cannot_add_email_reason.errors;
+				const message = errors
+					? sprintf(
+							// Translators: %(errors)s is a list of errors separated by commas.
+							__( 'You cannot add emails to this domain: %(errors)s.' ),
+							{ errors: Object.values( errors ).join( ', ' ) }
+					  )
+					: __( 'You cannot add email to this domain.' );
+				createErrorNotice( message, { type: 'snackbar' } );
+			}
+
 			setIsSubmitting( false );
+
 			return;
 		}
 
