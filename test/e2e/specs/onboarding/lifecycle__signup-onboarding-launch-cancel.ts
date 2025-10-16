@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	BrowserManager,
-	DomainSearchComponent,
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
@@ -195,7 +194,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		it( 'Skip domain purchase', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( newSiteDetails.blog_details.site_slug );
-			await domainSearchComponent.clickButton( 'Skip Purchase' );
+			await domainSearchComponent.skipPurchase();
 		} );
 
 		it( 'Navigated to Home dashboard', async function () {

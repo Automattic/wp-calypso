@@ -66,11 +66,11 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 		} );
 
 		it( 'Choose the .live TLD', async function () {
-			selectedDomain = await domainSearchComponent.selectDomain( '.live', false );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live' );
 		} );
 
 		it( 'Decline Titan Email upsell', async function () {
-			await domainSearchComponent.clickButton( 'Skip' );
+			await page.getByRole( 'button', { name: 'Skip' } ).click();
 		} );
 
 		it( 'See secure payment', async function () {
