@@ -34,6 +34,7 @@ import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
+import { EmailNonDomainOwnerNotice } from './components/email-non-domain-owner-notice';
 import { MailboxForm } from './components/mailbox-form';
 
 type HiddenFieldNames = Exclude<
@@ -59,6 +60,7 @@ const AddProfessionalEmail = () => {
 	const { domain: domainName = '' } = params;
 
 	const { data: domain } = useQuery( domainQuery( domainName ) );
+	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { data: products } = useQuery( productsQuery() );
 	const { data: site } = useQuery( siteBySlugQuery( domainName ) );
 	const { data: existingMailboxes, isFetched } = useQuery( {
@@ -70,6 +72,8 @@ const AddProfessionalEmail = () => {
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
+
+	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 
 	const createNewMailbox = useCallback( () => {
 		const mailbox = new MailboxFormEntity< SupportedEmailProvider >(
@@ -114,7 +118,6 @@ const AddProfessionalEmail = () => {
 
 		setIsSubmitting( true );
 
-		const userCanAddEmail = domain?.current_user_can_add_email;
 		const validated = await mailboxOperations.validateAndCheck( false );
 
 		if ( ! userCanAddEmail || ! validated ) {
@@ -168,12 +171,27 @@ const AddProfessionalEmail = () => {
 			} );
 	};
 
+	const showEmailPurchaseDisabledMessage = !! domain && ! userCanAddEmail && ! isDomainInCart;
+	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
+
 	return (
-		<PageLayout header={ <PageHeader /> } size="small">
+		<PageLayout
+			header={ <PageHeader /> }
+			size="small"
+			notices={
+				showEmailPurchaseDisabledMessage && (
+					<EmailNonDomainOwnerNotice
+						selectedSite={ site }
+						domain={ domain }
+						source="email-comparison"
+					/>
+				)
+			}
+		>
 			<Card>
 				<CardBody>
 					{ mailboxEntities.map( ( mailboxEntity, index ) => (
-						<MailboxForm key={ index } mailboxEntity={ mailboxEntity } disabled={ isSubmitting } />
+						<MailboxForm key={ index } mailboxEntity={ mailboxEntity } disabled={ disabled } />
 					) ) }
 				</CardBody>
 			</Card>
@@ -182,7 +200,7 @@ const AddProfessionalEmail = () => {
 				<Button
 					__next40pxDefaultSize
 					variant="secondary"
-					disabled={ isSubmitting }
+					disabled={ disabled }
 					onClick={ () => {} }
 				>
 					{ __( 'Add another mailbox' ) }
@@ -193,7 +211,7 @@ const AddProfessionalEmail = () => {
 				<Button
 					__next40pxDefaultSize
 					variant="primary"
-					disabled={ isSubmitting }
+					disabled={ disabled }
 					onClick={ handleSubmit }
 				>
 					{ __( 'Continue' ) }
