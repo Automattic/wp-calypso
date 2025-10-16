@@ -1,13 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dropdown } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-<<<<<<< HEAD
 import { AuthProvider } from '../../dashboard/app/auth';
-=======
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { AuthContext } from '../../dashboard/app/auth';
->>>>>>> 185a5a577d7 (Show Flex site creation button for eligible users)
 import { AsyncContent } from './async';
 import AddNewSiteButton from './button';
 import type { AddNewSiteProps } from '../../dashboard/sites/add-new-site/types';
@@ -21,7 +15,6 @@ interface Props extends PropsWithChildren {
 
 export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 	const translate = useTranslate();
-	const user = useSelector( getCurrentUser ) as User;
 
 	return (
 		<AuthProvider>
