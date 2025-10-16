@@ -33,6 +33,7 @@ import {
 	domainManagementTransferToOtherSite,
 	domainMapping,
 } from 'calypso/my-sites/domains/paths';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { useQuery } from '../../../../hooks/use-query';
@@ -219,24 +220,38 @@ const DomainSearchStep: StepType< {
 		};
 	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
 
+	// For /setup flows, we want to show the free domain for a year discount for all flows
+	// except if we're in a site context or in the 100-year plan or domain flow
+	const isFirstDomainFreeForFirstYear = useMemo( () => {
+		if ( isDomainFlow( flow ) ) {
+			return ! site || ! siteHasPaidPlan( site );
+		}
+
+		if ( site || sourceSlug || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			return false;
+		}
+
+		return true;
+	}, [ flow, site, sourceSlug ] );
+
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+				if ( ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo />;
 			},
 			BeforeFullCartItems: () => {
-				if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
+				if ( ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flow ] );
+	}, [ isFirstDomainFreeForFirstYear ] );
 
 	const headerText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {
@@ -264,21 +279,6 @@ const DomainSearchStep: StepType< {
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow, __ ] );
-
-	// For /setup flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context or in the 100-year plan or domain flow
-	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if (
-			siteSlug ||
-			siteId ||
-			sourceSlug ||
-			isHundredYearPlanFlow( flow ) ||
-			isHundredYearDomainFlow( flow )
-		) {
-			return false;
-		}
-		return true;
-	}, [ flow, siteSlug, siteId, sourceSlug ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch

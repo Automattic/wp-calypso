@@ -23,7 +23,7 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import { type FlowV2, type SubmitHandler } from '../../internals/types';
+import { AssertConditionState, type FlowV2, type SubmitHandler } from '../../internals/types';
 
 function initialize() {
 	const steps = [
@@ -49,6 +49,15 @@ const domain: FlowV2< typeof initialize > = {
 	isSignupFlow: false,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
+	useAssertConditions() {
+		const { site, siteSlug } = useSiteData();
+
+		if ( ! siteSlug ) {
+			return { state: AssertConditionState.SUCCESS };
+		}
+
+		return { state: site ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING };
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const {
 			setDomainCartItem,
