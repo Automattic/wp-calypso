@@ -69,7 +69,7 @@ const AddProfessionalEmail = () => {
 		interval = 'annually';
 	}
 
-	const { data: domain } = useQuery( domainQuery( domainName ) );
+	const { data: domain, isFetched: isDomainFetched } = useQuery( domainQuery( domainName ) );
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { data: products } = useQuery( productsQuery() );
 	const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
@@ -84,6 +84,12 @@ const AddProfessionalEmail = () => {
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
+
+	useEffect( () => {
+		if ( isDomainFetched && ! domain ) {
+			router.navigate( { to: '/emails' } );
+		}
+	}, [ domain, isDomainFetched, router ] );
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 
