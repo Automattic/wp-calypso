@@ -12,6 +12,8 @@ import { areHostingFeaturesSupported } from './features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 import type { ComponentType } from 'react';
 
+import './style.scss';
+
 export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
@@ -84,11 +86,7 @@ export function hostingFeaturesCallout(
 					</HostingFeatureCallout>
 				);
 
-			context.primary = (
-				<PageLayout>
-					<CalloutOverlay callout={ callout } />
-				</PageLayout>
-			);
+			context.primary = <div className="hosting-features-callout">{ callout }</div>;
 		}
 
 		next();

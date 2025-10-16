@@ -29,7 +29,7 @@ describe( 'getDesignEditedTask', () => {
 		expect( getDomainUpSellTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path:
-				'/setup/start-writing/domains?siteId=211078228&flowToReturnTo=start-writing&new=site.wordpress.com&domainAndPlanPackage=true',
+				'/setup/start-writing/domains?siteId=211078228&flowToReturnTo=start-writing&new=site.wordpress.com',
 		} );
 	} );
 

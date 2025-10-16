@@ -22,6 +22,7 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 	updateUsername: jest.fn(),
 } ) );
 
+// Mock email validator
 // Mock the API queries (return query configurations, not data)
 jest.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: jest.fn( () => ( {
@@ -295,6 +296,102 @@ describe( 'PersonalDetailsSection', () => {
 						type: 'snackbar',
 					} )
 				);
+			} );
+		} );
+	} );
+
+	describe( 'Email validation and Save button', () => {
+		it( 'disables save when email is invalid', async () => {
+			const user = userEvent.setup();
+			renderWithUserData();
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
+			} );
+
+			const emailInput = screen.getByLabelText( 'Email address' );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'invalid-email' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeDisabled();
+			} );
+		} );
+
+		it( 'disables save when email is invalid even if other fields are edited', async () => {
+			const user = userEvent.setup();
+			renderWithUserData();
+
+			await waitFor( () => {
+				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
+			} );
+
+			// Edit first name
+			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'UpdatedName' );
+
+			// Enter invalid email
+			const emailInput = screen.getByLabelText( 'Email address' );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'invalid-email' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeDisabled();
+			} );
+		} );
+
+		it( 'enables save when email becomes valid after being invalid', async () => {
+			const user = userEvent.setup();
+			renderWithUserData();
+
+			await waitFor( () => {
+				expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
+			} );
+
+			// Edit first name to make form dirty
+			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'UpdatedName' );
+
+			// Enter invalid email
+			const emailInput = screen.getByLabelText( 'Email address' );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'invalid' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeDisabled();
+			} );
+
+			// Fix email to be valid
+			await user.clear( emailInput );
+			await user.type( emailInput, 'valid@example.com' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeEnabled();
+			} );
+		} );
+
+		it( 'keeps save enabled when email is unchanged and other fields are edited', async () => {
+			const user = userEvent.setup();
+			renderWithUserData();
+
+			await waitFor( () => {
+				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
+			} );
+
+			// Only edit first name, leave email unchanged
+			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
+			await user.clear( firstNameInput );
+			await user.type( firstNameInput, 'UpdatedName' );
+
+			await waitFor( () => {
+				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+				expect( saveButton ).toBeEnabled();
 			} );
 		} );
 	} );

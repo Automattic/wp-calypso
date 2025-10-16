@@ -8,7 +8,6 @@ import { addPlanToCart, addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automat
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
@@ -18,13 +17,7 @@ import { AssertConditionState, ProvidedDependencies } from '../../internals/type
 import type { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-const isUsingRewrittenDomainSearch = shouldRenderRewrittenDomainSearch();
-
-const DOMAIN_UPSELL_STEPS = [
-	isUsingRewrittenDomainSearch ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
-	STEPS.USE_MY_DOMAIN,
-	STEPS.PLANS,
-];
+const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PLANS ];
 
 const domainUpsell: Flow = {
 	name: DOMAIN_AND_PLAN_FLOW,
@@ -56,7 +49,7 @@ const domainUpsell: Flow = {
 		const submittedDomains = useRef( false );
 
 		function goBack() {
-			if ( currentStep === STEPS.DOMAINS.slug ) {
+			if ( currentStep === STEPS.DOMAIN_SEARCH.slug ) {
 				return window.location.assign( returnUrl );
 			}
 			if ( currentStep === STEPS.PLANS.slug ) {
@@ -64,11 +57,11 @@ const domainUpsell: Flow = {
 					return window.location.assign( returnUrl );
 				}
 
-				return navigate( STEPS.DOMAINS.slug );
+				return navigate( STEPS.DOMAIN_SEARCH.slug );
 			}
 
 			if ( currentStep === STEPS.USE_MY_DOMAIN.slug ) {
-				return navigate( STEPS.DOMAINS.slug );
+				return navigate( STEPS.DOMAIN_SEARCH.slug );
 			}
 
 			throw new Error( `Step back button not handled: ${ currentStep }` );
@@ -76,25 +69,7 @@ const domainUpsell: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case STEPS.DOMAINS.slug: {
-					if ( ! isUsingRewrittenDomainSearch ) {
-						if ( providedDependencies?.deferDomainSelection ) {
-							try {
-								if ( siteSlug ) {
-									await updateLaunchpadSettings( siteSlug, {
-										checklist_statuses: { domain_upsell_deferred: true },
-									} );
-								}
-							} catch ( error ) {}
-
-							return window.location.assign( returnUrl );
-						}
-
-						submittedDomains.current = true;
-						navigate( STEPS.PLANS.slug );
-						return;
-					}
-
+				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';

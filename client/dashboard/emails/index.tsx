@@ -5,15 +5,13 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
 import { emailsRoute } from '../app/router/emails';
 import { DataViewsCard } from '../components/dataviews-card';
-import { OptInWelcome } from '../components/opt-in-welcome';
-import { PageHeader } from '../components/page-header';
-import PageLayout from '../components/page-layout';
 import { domainHasEmail } from '../utils/domain';
 import { persistViewToUrl, useSetInitialViewFromUrl } from '../utils/persist-view-to-url';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import { DEFAULT_EMAILS_VIEW, getEmailFields, useEmailActions } from './dataviews';
 import { useDomains } from './hooks/use-domains';
+import { Layout } from './layout';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
 import type { View } from '@wordpress/dataviews';
@@ -99,7 +97,7 @@ function Emails() {
 	}
 
 	return (
-		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
+		<Layout>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
@@ -117,7 +115,7 @@ function Emails() {
 					empty={ emptyState }
 				/>
 			</DataViewsCard>
-		</PageLayout>
+		</Layout>
 	);
 }
 
