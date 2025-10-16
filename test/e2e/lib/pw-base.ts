@@ -27,6 +27,7 @@ import {
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	DashboardPage,
+	DashboardPerformancePage,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
 	EditorPage,
@@ -141,6 +142,10 @@ export const test = base.extend< {
 	 * Page object representing the WordPress.com dashboard.
 	 */
 	pageDashboard: DashboardPage;
+	/**
+	 * Page object representing the WordPress.com dashboard performance page.
+	 */
+	pageDashboardPerformance: DashboardPerformancePage;
 	/**
 	 * Page object representing the WordPress.com dashboard visibility settings page.
 	 */
@@ -291,6 +296,10 @@ export const test = base.extend< {
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
 		await use( dashboardPage );
+	},
+	pageDashboardPerformance: async ( { page }, use ) => {
+		const dashboardPerformancePage = new DashboardPerformancePage( page );
+		await use( dashboardPerformancePage );
 	},
 	pageDashboardVisibilitySettings: async ( { page }, use ) => {
 		const dashboardVisibilitySettingsPage = new DashboardVisibilitySettingsPage( page );
