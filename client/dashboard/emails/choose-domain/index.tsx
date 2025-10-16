@@ -1,4 +1,4 @@
-import { SiteDomain } from '@automattic/api-core';
+import { Domain } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -37,12 +37,12 @@ export default function ChooseDomain() {
 	const filteredRemaining = useMemo( () => {
 		const q = search.trim().toLowerCase();
 		if ( ! q ) {
-			return [] as SiteDomain[];
+			return [] as Domain[];
 		}
 		return eligibleDomains.filter( ( d ) => d.domain.toLowerCase().includes( q ) );
 	}, [ eligibleDomains, search ] );
 
-	const handleDomainClick = ( d: SiteDomain ) => {
+	const handleDomainClick = ( d: Domain ) => {
 		router.navigate( {
 			to: chooseEmailSolutionRoute.to,
 			params: { domain: d.domain },
@@ -95,7 +95,7 @@ export default function ChooseDomain() {
 								) ) }
 							{ remaining.length > 0 &&
 								search.trim() &&
-								filteredRemaining.map( ( d: SiteDomain ) => (
+								filteredRemaining.map( ( d: Domain ) => (
 									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>

@@ -10,10 +10,15 @@ export const EmailSubscriptionStatus = {
 export type EmailSubscriptionStatus =
 	( typeof EmailSubscriptionStatus )[ keyof typeof EmailSubscriptionStatus ];
 
-export type EmailSubscription = {
-	status: EmailSubscriptionStatus;
-	is_eligible_for_introductory_offer: boolean;
-};
+interface EmailSubscription {
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription';
+}
+
+export interface GoogleEmailSubscription extends EmailSubscription {}
+
+export interface TitanEmailSubscription extends EmailSubscription {
+	order_id: number;
+}
 
 export interface Domain extends DomainSummary {
 	auth_code_required: boolean;
@@ -49,6 +54,7 @@ export interface Domain extends DomainSummary {
 	is_hundred_year_domain: boolean;
 	is_subdomain: boolean;
 	is_pending_icann_verification: boolean;
+	is_wpcom_staging_domain?: boolean;
 	move_to_new_site_pending: boolean;
 	nominet_pending_contact_verification_request: boolean;
 	nominet_domain_suspended: boolean;
@@ -69,8 +75,9 @@ export interface Domain extends DomainSummary {
 	wpcom_domain?: boolean;
 	registration_date: string;
 	email_forwards_count?: number;
-	google_apps_subscription: EmailSubscription;
-	titan_mail_subscription: EmailSubscription;
+	google_apps_subscription?: GoogleEmailSubscription | null;
+	titan_mail_subscription?: TitanEmailSubscription | null;
 	transfer_start_date?: string;
 	last_transfer_error: string;
+	current_user_can_add_email: boolean;
 }

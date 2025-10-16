@@ -1,17 +1,3 @@
-import type { DomainSummary } from '../domains';
-
-interface EmailSubscription {
-	status: 'active' | 'pending' | 'suspended' | 'no_subscription';
-}
-
-export interface GoogleEmailSubscription extends EmailSubscription {}
-
-export interface TitanEmailSubscription extends EmailSubscription {
-	order_id: number;
-}
-
-export type SiteDomain = DomainSummary & {
+export type SiteDomain = {
 	email_forwards_count?: number;
-	google_apps_subscription?: GoogleEmailSubscription | null;
-	titan_mail_subscription?: TitanEmailSubscription | null;
 };
