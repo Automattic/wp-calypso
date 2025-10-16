@@ -197,6 +197,9 @@ const domain: FlowV2< typeof initialize > = {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
+						setDomainCartItems( [
+							providedDependencies.domainCartItem as MinimalRequestCartProduct,
+						] );
 					}
 
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
