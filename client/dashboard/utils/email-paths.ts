@@ -22,7 +22,7 @@ export const emailManagementAllSitesPrefix = '/email/all';
 export const domainsManagementPrefix = '/domains/manage/all/email';
 export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
-function buildQueryString( params: QueryStringParameters | undefined ): string {
+export function buildQueryString( params: QueryStringParameters | undefined ): string {
 	if ( ! params ) {
 		return '';
 	}

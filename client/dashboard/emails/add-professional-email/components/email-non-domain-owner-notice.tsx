@@ -3,7 +3,11 @@ import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDomainOwnerUserName } from '../../../domains/hooks/use-domain-owner-username';
-import { getEmailManagementPath, getPurchaseNewEmailAccountPath } from '../../../utils/email-paths';
+import {
+	buildQueryString,
+	getEmailManagementPath,
+	getPurchaseNewEmailAccountPath,
+} from '../../../utils/email-paths';
 
 const CALYPSO_CONTACT = '/help/contact';
 
@@ -11,20 +15,6 @@ type EmailNonDomainOwnerMessageProps = {
 	domain?: Domain;
 	selectedSite?: Site | null;
 	source: 'email-comparison' | 'email-management';
-};
-
-const buildQueryString = ( parameters: Record< string, string > ): string => {
-	const params = new URLSearchParams();
-
-	for ( const [ key, val ] of Object.entries( parameters ) ) {
-		if ( ! val ) {
-			continue;
-		}
-
-		params.append( key, String( val ) );
-	}
-
-	return params.toString();
 };
 
 export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProps ) => {
@@ -39,13 +29,13 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 				? getPurchaseNewEmailAccountPath( selectedSite?.slug, domain?.domain, '', 'login-redirect' )
 				: getEmailManagementPath( selectedSite?.slug, domain?.domain );
 
-		return `/log-in/?${ buildQueryString( {
+		return `/log-in/${ buildQueryString( {
 			email_address: ownerUserName,
 			redirect_to: redirectUrlParameter,
 		} ) }`;
 	};
 
-	const contactOwnerUrl = `https://privatewho.is/?${ buildQueryString( {
+	const contactOwnerUrl = `https://privatewho.is/${ buildQueryString( {
 		s: domain?.domain || '',
 	} ) }`;
 
