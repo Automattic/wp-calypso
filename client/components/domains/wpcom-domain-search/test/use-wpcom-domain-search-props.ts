@@ -10,11 +10,19 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
+import { recordUseYourDomainButtonClick } from '../analytics';
 import { useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
 
 jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),
 	useShoppingCart: jest.fn(),
+} ) );
+
+jest.mock( '../analytics', () => ( {
+	...jest.requireActual( '../analytics' ),
+	recordUseYourDomainButtonClick: jest.fn().mockReturnValue( {
+		type: 'test',
+	} ),
 } ) );
 
 const mockUseShoppingCart = useShoppingCart as jest.MockedFunction< typeof useShoppingCart >;
@@ -607,6 +615,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		result.current.events.onExternalDomainClick( 'my-domain.com' );
 
 		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'my-domain.com' );
+
 		expect( recordUseYourDomainButtonClick ).toHaveBeenCalledWith(
 			'analytics-section',
 			null,
