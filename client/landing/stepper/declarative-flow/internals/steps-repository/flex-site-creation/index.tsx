@@ -6,7 +6,6 @@ import { FormEvent, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -33,10 +32,6 @@ const FlexSiteCreation: StepType< {
 
 		// Store site title in ONBOARD_STORE so create-site step can use it
 		setSiteTitle( siteName );
-
-		recordTracksEvent( 'calypso_flex_site_creation_submit', {
-			site_name: siteName,
-		} );
 
 		submit?.( {
 			siteName,
@@ -93,7 +88,7 @@ const FlexSiteCreation: StepType< {
 
 					<div className="flex-site-creation__footer">
 						<span className="flex-site-creation__footer-text">
-							{ __( 'Already have an existing site?' ) }{ ' ' }
+							{ __( 'Already have an existing site?' ) }
 						</span>
 						<a
 							href="/setup/site-migration-flow"
