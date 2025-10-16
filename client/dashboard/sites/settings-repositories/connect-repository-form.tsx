@@ -27,7 +27,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -125,6 +125,7 @@ const RepositorySelector = ( {
 
 type GithubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
 	onAddGithubAccount: () => void;
+	shouldRestoreFocus: boolean;
 };
 
 const GithubAccountSelector = ( {
@@ -132,8 +133,16 @@ const GithubAccountSelector = ( {
 	onChange,
 	data,
 	onAddGithubAccount,
+	shouldRestoreFocus,
 }: GithubAccountSelectorProps ) => {
 	const { id, getValue } = field;
+	const selectRef = useRef< HTMLSelectElement | null >( null );
+
+	useEffect( () => {
+		if ( selectRef.current && shouldRestoreFocus ) {
+			selectRef.current.focus();
+		}
+	}, [ selectRef, shouldRestoreFocus ] );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -158,6 +167,7 @@ const GithubAccountSelector = ( {
 						? field.elements
 						: [ { label: __( 'Select a GitHub account' ), value: '' } ]
 				}
+				ref={ selectRef }
 			/>
 		</VStack>
 	);
@@ -204,6 +214,7 @@ export const ConnectRepositoryForm = ( {
 		isLoading: isLoadingInstallations,
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
+	const [ shouldRestoreInstallationFocus, setShouldRestoreInstallationFocus ] = useState( false );
 	const { installGithub } = useInstallGithub();
 
 	const selectedInstallation: GithubInstallation | undefined = useMemo( () => {
@@ -286,8 +297,16 @@ export const ConnectRepositoryForm = ( {
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
+		let shouldRestoreFocus = false;
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
+
+			if (
+				'selectedInstallationId' in updates &&
+				updates.selectedInstallationId !== prev.selectedInstallationId
+			) {
+				shouldRestoreFocus = true;
+			}
 
 			if ( 'targetDir' in updates ) {
 				const trimmedValue = updates.targetDir?.trim() || '';
@@ -337,6 +356,11 @@ export const ConnectRepositoryForm = ( {
 
 			return newFormData;
 		} );
+		if ( shouldRestoreFocus ) {
+			setShouldRestoreInstallationFocus( true );
+		} else {
+			setShouldRestoreInstallationFocus( false );
+		}
 	};
 
 	useEffect( () => {
@@ -518,7 +542,11 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: ( props ) => {
 					return (
-						<GithubAccountSelector { ...props } onAddGithubAccount={ handleAddGithubAccount } />
+						<GithubAccountSelector
+							{ ...props }
+							onAddGithubAccount={ handleAddGithubAccount }
+							shouldRestoreFocus={ shouldRestoreInstallationFocus }
+						/>
 					);
 				},
 				elements: installationOptions,
@@ -569,8 +597,9 @@ export const ConnectRepositoryForm = ( {
 		repositoryOptions,
 		repositoryHelpText,
 		branchOptions,
-		isLoadingBranches,
 		handleAddGithubAccount,
+		shouldRestoreInstallationFocus,
+		isLoadingBranches,
 		allBranchesConnected,
 	] );
 
