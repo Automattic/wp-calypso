@@ -19,6 +19,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
+import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
@@ -29,7 +30,6 @@ import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getISOWeekDate } from '../utils/datetime';
-import { Experiment } from 'calypso/lib/explat';
 import { useActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
