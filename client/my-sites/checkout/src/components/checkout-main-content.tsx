@@ -624,7 +624,7 @@ export default function CheckoutMainContent( {
 								</div>
 							) }
 
-							<WPCheckoutOrderSummary siteId={ siteId } />
+							<WPCheckoutOrderSummary />
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
 								areThereDomainProductsInCart={ areThereDomainProductsInCart }

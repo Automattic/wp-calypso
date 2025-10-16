@@ -1,8 +1,11 @@
 import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, WordPressLogo } from '@automattic/components';
+import { FLOWS_ZENDESK_FLOWNAME } from '@automattic/help-center/src/constants';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -175,12 +178,27 @@ export default function HundredYearThankYou( {
 			targetDomain = null;
 	}
 
+	const { mutateAsync: submitUserFields } = useUpdateZendeskUserFields();
+
 	useEffect( () => {
 		dispatch( hideMasterbar() );
 		if ( isReceiptLoading && receiptId ) {
 			dispatch( fetchReceipt( receiptId ) );
 		}
 	}, [ dispatch, isReceiptLoading, receiptId ] );
+
+	useEffect( () => {
+		if ( productSlug && submitUserFields && siteId ) {
+			submitUserFields( {
+				messaging_flow:
+					FLOWS_ZENDESK_FLOWNAME[
+						productSlug === PLAN_100_YEARS ? HUNDRED_YEAR_PLAN_FLOW : HUNDRED_YEAR_DOMAIN_FLOW
+					],
+				messaging_site_id: siteId,
+				messaging_url: window.location.href,
+			} );
+		}
+	}, [ siteId, submitUserFields, productSlug ] );
 
 	if (
 		! isReceiptLoading &&

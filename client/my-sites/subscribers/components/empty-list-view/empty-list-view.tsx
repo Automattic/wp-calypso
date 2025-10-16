@@ -5,6 +5,7 @@ import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -13,13 +14,31 @@ import './style.scss';
 type EmptyListCTALinkProps = {
 	icon: JSX.Element;
 	text: string;
-	url: string;
+	url?: string;
 	eventName: string;
+	openInHelpCenter?: boolean;
+	supportContext?: string;
 };
 
-const EmptyListCTALink = ( { icon, text, url, eventName }: EmptyListCTALinkProps ) => {
-	const handleClick = () => {
+const EmptyListCTALink = ( {
+	icon,
+	text,
+	url,
+	eventName,
+	openInHelpCenter = false,
+	supportContext,
+}: EmptyListCTALinkProps ) => {
+	const { openSupportDoc } = useSupportDocData( {
+		supportContext,
+	} );
+
+	const handleClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( eventName );
+
+		if ( openInHelpCenter ) {
+			event.preventDefault();
+			openSupportDoc();
+		}
 	};
 
 	return (
@@ -53,13 +72,17 @@ const EmptyListView = () => {
 	const siteId = selectedSite?.ID || null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
-	const subscribeBlockUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
-		: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/';
+	const subscribeBlockUrl = isWPCOMSite
+		? 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
+		: 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/';
+	const subscribeBlockContext = isWPCOMSite ? 'subscribe-block' : 'subscribe-block-jetpack';
 
-	const importSubscribersUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/newsletter/import-subscribers/'
-		: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
+	const importSubscribersContext = isWPCOMSite
+		? 'import-subscribers'
+		: 'import-subscribers-jetpack';
+	const importSubscribersUrl = isWPCOMSite
+		? 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+		: 'https://jetpack.com/support/newsletter/import-subscribers/';
 
 	return (
 		<div className="empty-list-view">
@@ -73,13 +96,17 @@ const EmptyListView = () => {
 				icon={ chartBar }
 				text={ translate( 'How to turn your visitors into subscribers' ) }
 				url={ localizeUrl( subscribeBlockUrl ) }
+				supportContext={ subscribeBlockContext }
 				eventName="calypso_subscribers_empty_view_subscribe_block_clicked"
+				openInHelpCenter={ isWPCOMSite ?? false }
 			/>
 			<EmptyListCTALink
 				icon={ people }
 				text={ translate( 'How to import existing subscribers' ) }
+				supportContext={ importSubscribersContext }
 				url={ localizeUrl( importSubscribersUrl ) }
 				eventName="calypso_subscribers_empty_view_import_subscribers_clicked"
+				openInHelpCenter={ isWPCOMSite ?? false }
 			/>
 			{ isWPCOMSite && (
 				<EmptyListCTALink

@@ -16,7 +16,6 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
@@ -41,7 +40,7 @@ const startWriting: Flow = {
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
-			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+			STEPS.DOMAIN_SEARCH,
 			STEPS.USE_MY_DOMAIN,
 			STEPS.PLANS,
 			STEPS.SETUP_BLOG,
@@ -179,20 +178,6 @@ const startWriting: Flow = {
 					return postFlowNavigator( { siteId, siteSlug } );
 				}
 				case 'domains': {
-					if ( ! shouldRenderRewrittenDomainSearch() ) {
-						if ( siteId ) {
-							await updateLaunchpadSettings( siteId, {
-								checklist_statuses: { domain_upsell_deferred: true },
-							} );
-						}
-
-						if ( providedDependencies?.freeDomain ) {
-							return navigate( addQueryArgs( 'launchpad', { siteId: site?.ID } ) );
-						}
-
-						return navigate( 'plans' );
-					}
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 
