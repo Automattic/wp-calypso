@@ -56,9 +56,13 @@ export function DeploymentLogsModalContent( {
 				</Heading>
 
 				<HStack spacing={ 1 } alignment="left">
-					<Text size={ 15 } weight={ 700 } style={ { flexShrink: 0 } }>
-						{ shortSha }
-					</Text>
+					<ExternalLink
+						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
+					>
+						<Text as="code" size={ 15 } weight={ 700 } style={ { flexShrink: 0 } }>
+							{ shortSha }
+						</Text>
+					</ExternalLink>
 					<Text size={ 15 } truncate numberOfLines={ 1 } weight={ 500 }>
 						{ commit_message }
 					</Text>
