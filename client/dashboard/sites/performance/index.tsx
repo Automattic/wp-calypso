@@ -53,7 +53,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	} );
 	const {
 		data: pagesData,
-		isFetching: isFetchingPages,
+		isLoading: isLoadingPages,
 		refetch: refetchPages,
 	} = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
@@ -104,7 +104,11 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
 		}
 
-		if ( ! pagesData?.length && ! isFetchingPages ) {
+		if ( isLoadingPages ) {
+			return <ReportLoading isLoadingPages />;
+		}
+
+		if ( ! pagesData?.length ) {
 			return <ReportNoPagesNotice />;
 		}
 
