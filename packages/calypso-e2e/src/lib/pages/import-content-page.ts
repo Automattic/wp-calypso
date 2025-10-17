@@ -1,11 +1,12 @@
 import { Page } from 'playwright';
-import { DataHelper } from '../..';
+import { DataHelper, ImportFileContentPage } from '../..';
 
 /**
- * Represents the Import Content page.
+ * Represents the generic Import Content page.
  */
 export class ImportContentPage {
 	private page: Page;
+	importFileContentPage: ImportFileContentPage;
 
 	/**
 	 * Constructs an instance of the page.
@@ -14,6 +15,7 @@ export class ImportContentPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.importFileContentPage = new ImportFileContentPage( page );
 	}
 
 	/**
@@ -50,11 +52,19 @@ export class ImportContentPage {
 	}
 
 	/**
-	 * Get the Medium import button element.
+	 * Get the WordPress import button element.
 	 * @returns The WordPress import button element.
 	 */
 	get wordPressImportButton() {
 		return this.page.getByRole( 'link', { name: 'WordPress' } ); // It's a link, not a button.
+	}
+
+	/**
+	 * Get the Squarespace import button element.
+	 * @returns The Squarespace import button element.
+	 */
+	get squarespaceImportButton() {
+		return this.page.getByRole( 'button', { name: 'Squarespace' } );
 	}
 
 	/**
@@ -74,26 +84,10 @@ export class ImportContentPage {
 	}
 
 	/**
-	 * Get the text element indicating the uploaded file is ready to be imported.
-	 * @returns The text element indicating the uploaded file is ready to be imported.
+	 * Get the heading for the Squarespace import page.
+	 * @returns The heading element for the Squarespace import page.
 	 */
-	get yourFileIsReadyText() {
-		return this.page.getByText( 'Your file is ready to be imported' );
-	}
-
-	/**
-	 * Get the Import button element.
-	 * @returns The Import button element.
-	 */
-	get importButton() {
-		return this.page.getByRole( 'button', { name: 'Import' } );
-	}
-
-	/**
-	 * 	Uploads a Medium export file via the file input.
-	 * @param filePath Path to the Medium export file to upload.
-	 */
-	async uploadExportFile( filePath: string ): Promise< void > {
-		await this.page.locator( 'input[type="file"][name="exportFile"]' ).setInputFiles( filePath );
+	get squarespaceHeading() {
+		return this.page.getByRole( 'heading', { name: 'Squarespace' } );
 	}
 }
