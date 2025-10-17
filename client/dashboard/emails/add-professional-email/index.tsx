@@ -11,16 +11,12 @@ import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpre
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { add } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { Text } from '../../components/text';
 import { CartActionError } from '../../shopping-cart/errors';
-import { formatDate } from '../../utils/datetime';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
 import {
 	FIELD_NAME,
@@ -38,9 +34,9 @@ import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
-import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
 import { EmailNonDomainOwnerNotice } from './components/email-non-domain-owner-notice';
 import { MailboxForm } from './components/mailbox-form';
+import { PricingNotice } from './components/pricing-notice';
 
 type HiddenFieldNames = Exclude<
 	MutableFormFieldNames,
@@ -58,7 +54,6 @@ const possibleHiddenFieldNames: HiddenFieldNames[] = [
 const AddProfessionalEmail = () => {
 	const { user } = useAuth();
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const locale = useLocale();
 	const router = useRouter();
 	// Extract params from the current match for this route
 	const match = router.state.matches[ router.state.matches.length - 1 ];
@@ -192,27 +187,6 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
-	let endDate = new Date();
-	const hasOffer = domain && isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
-	if ( hasOffer ) {
-		const count = product?.introductory_offer?.interval_count;
-		const unit = product?.introductory_offer?.interval_unit;
-		switch ( unit ) {
-			case 'year':
-				endDate = add( new Date(), { years: count } );
-				break;
-			case 'month':
-				endDate = add( new Date(), { months: count } );
-				break;
-			case 'week':
-				endDate = add( new Date(), { weeks: count } );
-				break;
-			case 'day':
-				endDate = add( new Date(), { days: count } );
-				break;
-		}
-	}
-
 	return (
 		<PageLayout
 			header={ <PageHeader /> }
@@ -227,30 +201,11 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			<Text as="p">
-				{ hasOffer && ! showEmailPurchaseDisabledMessage
-					? sprintf(
-							// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
-							__(
-								'Add as many mailboxes as you need. Each one will renew at the regular price of %(cost)s per %(termLocalized)s (excl. taxes) when your free trial ends on %(endDate)s.'
-							),
-							{
-								cost: product.combined_cost_display,
-								termLocalized: product.product_term_localized,
-								endDate: formatDate( endDate, locale, { dateStyle: 'long' } ),
-							}
-					  )
-					: sprintf(
-							// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year").
-							__(
-								'Add as many mailboxes as you need. Each one has a price of %(cost)s per %(termLocalized)s (excl. taxes).'
-							),
-							{
-								cost: product.combined_cost_display,
-								termLocalized: product.product_term_localized,
-							}
-					  ) }
-			</Text>
+			<PricingNotice
+				domain={ domain }
+				product={ product }
+				showEmailPurchaseDisabledMessage={ showEmailPurchaseDisabledMessage }
+			/>
 
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>

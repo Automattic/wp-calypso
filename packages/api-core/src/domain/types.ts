@@ -14,14 +14,23 @@ interface EmailSubscription {
 	status: 'active' | 'pending' | 'suspended' | 'no_subscription';
 }
 
+export interface EmailCost {
+	amount: number;
+	currency: string;
+	text: string;
+}
+
 export interface GoogleEmailSubscription extends EmailSubscription {
 	total_user_count: number;
 }
 
 export interface TitanEmailSubscription extends EmailSubscription {
+	expiry_date: string;
 	order_id: number;
 	maximum_mailbox_count: number;
 	is_eligible_for_introductory_offer?: boolean;
+	purchase_cost_per_mailbox?: EmailCost;
+	renewal_cost_per_mailbox?: EmailCost;
 }
 
 export interface Domain extends DomainSummary {
