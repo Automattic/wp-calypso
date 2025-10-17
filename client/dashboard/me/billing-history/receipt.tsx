@@ -1,7 +1,12 @@
 import { PaymentPartners } from '@automattic/api-core';
-import { receiptQuery } from '@automattic/api-queries';
+import {
+	receiptQuery,
+	sendReceiptEmailMutation,
+	userTaxDetailsQuery,
+} from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
@@ -13,6 +18,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -171,7 +177,109 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 					</Text>
 				</VStack>
 			) }
+
+			<VatDetails receipt={ receipt } />
 		</VStack>
+	);
+}
+
+function UserVatDetails( { receipt }: { receipt: Receipt } ) {
+	const { data: vatDetails, isLoading, error } = useQuery( userTaxDetailsQuery() );
+	const sendEmailMutation = useMutation( {
+		...sendReceiptEmailMutation(),
+		meta: {
+			snackbar: {
+				success: __( 'Your receipt was sent by email successfully.' ),
+				error: __(
+					'There was a problem sending your receipt. Please try again later or contact support.'
+				),
+			},
+		},
+	} );
+
+	const handleEmailReceipt = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.preventDefault();
+		sendEmailMutation.mutate( String( receipt.id ) );
+	};
+
+	if ( isLoading || error || ! vatDetails?.id ) {
+		return null;
+	}
+
+	return (
+		<VStack spacing={ 1 } alignment="flex-start">
+			<Text upperCase variant="muted" size={ 11 }>
+				{ __( 'VAT Details' ) }
+			</Text>
+			<VStack spacing={ 0.5 } alignment="flex-start">
+				<div>{ vatDetails.name }</div>
+				<div>{ vatDetails.address }</div>
+				<div>
+					{ sprintf(
+						/* translators: 1: VAT country code, 2: VAT ID number */
+						__( 'VAT #: %1$s %2$s' ),
+						vatDetails.country ?? '',
+						vatDetails.id
+					) }
+				</div>
+				<Text variant="muted" size={ 11 } className="receipt-vat-details-description">
+					{ createInterpolateElement(
+						__(
+							'You can edit your VAT details <vatDetailsLink>on this page</vatDetailsLink>. This is not an official VAT receipt. For an official VAT receipt, <emailReceiptButton>email yourself a copy</emailReceiptButton>.'
+						),
+						{
+							vatDetailsLink: <Link to="/me/billing/tax-details" />,
+							emailReceiptButton: (
+								<Button
+									className="receipt-email-button"
+									variant="link"
+									onClick={ handleEmailReceipt }
+									disabled={ sendEmailMutation.isPending }
+								/>
+							),
+						}
+					) }
+				</Text>
+			</VStack>
+		</VStack>
+	);
+}
+
+function VatVendorDetails( { receipt }: { receipt: Receipt } ) {
+	const vendorInfo = receipt.tax_vendor_info;
+	if ( ! vendorInfo ) {
+		return null;
+	}
+
+	return (
+		<VStack spacing={ 1 } alignment="flex-start">
+			<Text upperCase variant="muted" size={ 11 }>
+				{ sprintf(
+					/* translators: %s: tax name (e.g., "VAT", "GST") */
+					__( 'Vendor %s Details' ),
+					Object.keys( vendorInfo.tax_name_and_vendor_id_array ).join( '/' )
+				) }
+			</Text>
+			<VStack spacing={ 0.5 } alignment="flex-start">
+				{ vendorInfo.address.map( ( addressLine ) => (
+					<div key={ addressLine }>{ addressLine }</div>
+				) ) }
+				{ Object.entries( vendorInfo.tax_name_and_vendor_id_array ).map( ( [ taxName, taxID ] ) => (
+					<div key={ taxName }>
+						<strong>{ taxName }</strong> { taxID }
+					</div>
+				) ) }
+			</VStack>
+		</VStack>
+	);
+}
+
+function VatDetails( { receipt }: { receipt: Receipt } ) {
+	return (
+		<>
+			<UserVatDetails receipt={ receipt } />
+			<VatVendorDetails receipt={ receipt } />
+		</>
 	);
 }
 
