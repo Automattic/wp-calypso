@@ -124,7 +124,7 @@ export default function ChooseEmailSolution() {
 					hideLabelFromVision
 					value={ billingInterval }
 					onChange={ ( newBillingInterval ) =>
-						setBillingInterval( newBillingInterval as BillingInterval )
+						setBillingInterval( newBillingInterval as IntervalLength )
 					}
 				>
 					<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
