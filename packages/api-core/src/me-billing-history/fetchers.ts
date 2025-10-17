@@ -9,5 +9,5 @@ export async function fetchReceipt( receiptId: number ): Promise< Receipt > {
 }
 
 export async function sendBillingReceiptEmail( receiptId: string ): Promise< unknown > {
-	return wpcom.req.post( `/me/billing-history/receipt/${ receiptId }/email` );
+	return wpcom.req.get( `/me/billing-history/receipt/${ receiptId }/email` );
 }
