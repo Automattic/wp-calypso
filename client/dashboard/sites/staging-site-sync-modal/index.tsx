@@ -485,7 +485,7 @@ function StagingSiteSyncModalInner( {
 
 							<div
 								hidden={ ! isFileBrowserVisible }
-								style={ { border: '1px solid #dcdcde', borderRadius: '2px', padding: '12px 32px' } }
+								style={ { border: '1px solid #dcdcde', borderRadius: '2px', padding: '12px 24px' } }
 							>
 								<VStack spacing={ 4 }>
 									<HStack>
