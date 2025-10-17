@@ -1,5 +1,4 @@
-import { EmailProvider } from '@automattic/api-core';
-import { TITAN_MAIL_YEARLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from '../constants';
+import { EmailProvider, GoogleWorkspaceSlugs, TitanMailSlugs } from '@automattic/api-core';
 import { IntervalLength } from '../types';
 
 /**
@@ -11,12 +10,14 @@ export const getProductSlugForProviderAndInterval = (
 ) => {
 	switch ( provider ) {
 		case 'titan':
-			return intervalLength === 'monthly' ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
+			return intervalLength === 'monthly'
+				? TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG
+				: TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG;
 
 		case 'google_workspace':
 			return intervalLength === 'monthly'
-				? 'wp_google_workspace_business_starter_monthly'
-				: 'wp_google_workspace_business_starter_yearly';
+				? GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY
+				: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
 
 		default:
 			return '';

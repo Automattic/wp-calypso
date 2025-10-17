@@ -1,5 +1,5 @@
+import { TitanMailSlugs } from '@automattic/api-core';
 import { MinimalRequestCartProduct, RequestCartProductExtra } from '../../shopping-cart/types';
-import { TITAN_MAIL_YEARLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from '../constants';
 import { MailboxForm } from '../entities/mailbox-form';
 import { SupportedEmailProvider } from '../entities/types';
 import { EmailProperties } from './get-email-product-properties';
@@ -60,14 +60,14 @@ function titanMailProduct(
  * Creates a new shopping cart item for Titan Mail Yearly.
  */
 export function titanMailYearly( properties: TitanProductProps ): MinimalRequestCartProduct {
-	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
+	return titanMailProduct( properties, TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG );
 }
 
 /**
  * Creates a new shopping cart item for Titan Mail Monthly.
  */
 export function titanMailMonthly( properties: TitanProductProps ): MinimalRequestCartProduct {
-	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
+	return titanMailProduct( properties, TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG );
 }
 
 const getTitanCartItems = (

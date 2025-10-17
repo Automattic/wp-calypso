@@ -1,6 +1,5 @@
-import { Product } from '@automattic/api-core';
-import { TITAN_MAIL_MONTHLY_SLUG } from '../constants';
+import { Product, TitanMailSlugs } from '@automattic/api-core';
 
 export function isTitanMonthlyProduct( titanMailProduct: Product ): boolean {
-	return titanMailProduct?.product_slug === TITAN_MAIL_MONTHLY_SLUG;
+	return titanMailProduct?.product_slug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG;
 }
