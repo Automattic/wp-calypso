@@ -1,6 +1,7 @@
 import { isDomainMoveInternal } from '@automattic/calypso-products';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { useDomainSearch } from '../page/context';
+import { useDomainSuggestions } from './use-domains-suggestions';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 export enum DomainPriceRule {
@@ -48,29 +49,34 @@ const getPriceRuleForSuggestion = ( {
 };
 
 export const useSuggestion = ( domainName: string ) => {
-	const { query, queries, config, events } = useDomainSearch();
+	const { config, events } = useDomainSearch();
+	const { suggestions } = useDomainSuggestions();
 
-	const { data: suggestion } = useQuery( {
-		...queries.domainSuggestions( query ),
-		select: ( data ) => {
-			const suggestionPosition = data.findIndex(
-				( suggestion ) => suggestion.domain_name === domainName
-			);
+	const suggestion = useMemo( () => {
+		if ( ! suggestions ) {
+			return null;
+		}
 
-			if ( suggestionPosition === -1 ) {
-				events.onSuggestionNotFound( domainName );
-				throw new Error( `Suggestion not found for domain: ${ domainName }` );
-			}
+		const suggestionPosition = suggestions.findIndex(
+			( suggestion ) => suggestion.domain_name === domainName
+		);
 
-			const suggestion = data[ suggestionPosition ];
+		if ( suggestionPosition === -1 ) {
+			events.onSuggestionNotFound( domainName );
+			throw new Error( `Suggestion not found for domain: ${ domainName }` );
+		}
 
-			return {
-				...suggestion,
-				position: suggestionPosition,
-				price_rule: getPriceRuleForSuggestion( { suggestion, priceRules: config.priceRules } ),
-			};
-		},
-	} );
+		const suggestionData = suggestions[ suggestionPosition ];
+
+		return {
+			...suggestionData,
+			position: suggestionPosition,
+			price_rule: getPriceRuleForSuggestion( {
+				suggestion: suggestionData,
+				priceRules: config.priceRules,
+			} ),
+		};
+	}, [ suggestions, domainName, events, config.priceRules ] );
 
 	if ( ! suggestion ) {
 		throw new Error( `Suggestion not found for domain: ${ domainName }` );

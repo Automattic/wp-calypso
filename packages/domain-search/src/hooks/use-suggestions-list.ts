@@ -5,6 +5,7 @@ import { getTld } from '../helpers';
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
+import { useDomainSuggestions } from './use-domains-suggestions';
 
 const hasDataAndIsSupportedPremiumDomain = (
 	result: UseQueryResult< DomainAvailability, Error >
@@ -26,10 +27,7 @@ const availablePremiumDomainsCombinator = (
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
-	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
-		...queries.domainSuggestions( query ),
-		enabled: true,
-	} );
+	const { suggestions = [], isLoading: isLoadingSuggestions } = useDomainSuggestions();
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
 		...queries.freeSuggestion( query ),
