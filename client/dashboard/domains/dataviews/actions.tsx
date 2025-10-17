@@ -114,8 +114,9 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
-					return [ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
-						item.subtype.id
+					return (
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
 					);
 				},
 			},
