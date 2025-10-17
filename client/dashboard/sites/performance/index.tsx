@@ -108,7 +108,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			return <ReportLoading isLoadingPages />;
 		}
 
-		if ( ! pagesData?.length ) {
+		if ( ! pagesData?.length || ! currentPage ) {
 			return <ReportNoPagesNotice />;
 		}
 
@@ -117,7 +117,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		}
 
 		// Our default loading state is loading the existing report.
-		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport || ! currentPage ) {
+		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport ) {
 			return <ReportLoading isSavedReport />;
 		}
 
@@ -149,33 +149,30 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 						/>
 					}
 					actions={
-						pagesData &&
-						pagesData.length && (
-							<HStack>
-								<PageSelector
-									siteUrl={ site.URL }
-									currentPage={ currentPage }
-									pages={ pagesData }
-									onChange={ ( pageId ) => {
-										setRunNewReport( false );
-										recordTracksEvent(
-											'calypso_dashboard_performance_profiler_page_selector_change',
-											{
-												is_home: pageId === '0',
-											}
-										);
+						<HStack>
+							<PageSelector
+								siteUrl={ site.URL }
+								currentPage={ currentPage }
+								pages={ pagesData }
+								onChange={ ( pageId ) => {
+									setRunNewReport( false );
+									recordTracksEvent(
+										'calypso_dashboard_performance_profiler_page_selector_change',
+										{
+											is_home: pageId === '0',
+										}
+									);
 
-										navigate( {
-											search: ( prev: Record< string, string > ) => ( {
-												...prev,
-												page_id: Number( pageId ),
-											} ),
-										} );
-									} }
-								/>
-								<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-							</HStack>
-						)
+									navigate( {
+										search: ( prev: Record< string, string > ) => ( {
+											...prev,
+											page_id: Number( pageId ),
+										} ),
+									} );
+								} }
+							/>
+							<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
+						</HStack>
 					}
 				/>
 			}
