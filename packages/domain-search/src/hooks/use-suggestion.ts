@@ -55,45 +55,33 @@ export const useSuggestion = ( domainName: string ) => {
 		...queries.domainAvailability( domainName ),
 	} );
 
-	const { data: suggestion } = useQuery( {
+	const { data: suggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
-		select: ( data ) => {
-			const suggestionPosition = data.findIndex(
-				( suggestion ) => suggestion.domain_name === domainName
-			);
-
-			if ( suggestionPosition === -1 ) {
-				// If there's no suggestion matching the domain name, the user might have
-				// provided a FQDN and the filters do not match the FQDN's TLD
-				if ( fqdnAvailability && query === fqdnAvailability.domain_name ) {
-					const suggestionObject = convertAvailabilityToSuggestion( fqdnAvailability );
-					return {
-						...suggestionObject,
-						position: 0,
-						price_rule: getPriceRuleForSuggestion( {
-							suggestion: suggestionObject,
-							priceRules: config.priceRules,
-						} ),
-					};
-				}
-
-				events.onSuggestionNotFound( domainName );
-				throw new Error( `Suggestion not found for domain: ${ domainName }` );
-			}
-
-			const suggestion = data[ suggestionPosition ];
-
-			return {
-				...suggestion,
-				position: suggestionPosition,
-				price_rule: getPriceRuleForSuggestion( { suggestion, priceRules: config.priceRules } ),
-			};
-		},
 	} );
 
-	if ( ! suggestion ) {
-		throw new Error( `Suggestion not found for domain: ${ domainName }` );
+	// Add FQDN availability to the suggestions list if it's an exact match
+	if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
+		suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
 	}
 
-	return suggestion;
+	if ( suggestions ) {
+		const suggestionPosition = suggestions.findIndex(
+			( suggestion ) => suggestion.domain_name === domainName
+		);
+
+		if ( suggestionPosition === -1 ) {
+			events.onSuggestionNotFound( domainName );
+			throw new Error( `Suggestion not found for domain: ${ domainName }` );
+		}
+
+		const suggestion = suggestions[ suggestionPosition ];
+
+		return {
+			...suggestion,
+			position: suggestionPosition,
+			price_rule: getPriceRuleForSuggestion( { suggestion, priceRules: config.priceRules } ),
+		};
+	}
+
+	throw new Error( `Suggestion not found for domain: ${ domainName }` );
 };
