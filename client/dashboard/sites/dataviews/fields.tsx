@@ -1,11 +1,11 @@
 import { __ } from '@wordpress/i18n';
-import TimeSince from '../components/time-since';
-import { getSiteDisplayName } from '../utils/site-name';
-import { getSitePlanDisplayName } from '../utils/site-plan';
-import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../utils/site-provider';
-import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
-import { getSiteDisplayUrl } from '../utils/site-url';
-import { getFormattedWordPressVersion } from '../utils/wp-version';
+import TimeSince from '../../components/time-since';
+import { getSiteDisplayName } from '../../utils/site-name';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
+import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
+import { STATUS_LABELS, getSiteStatus } from '../../utils/site-status';
+import { getSiteDisplayUrl } from '../../utils/site-url';
+import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import {
 	EngagementStat,
 	LastBackup,
@@ -18,7 +18,7 @@ import {
 	URL,
 	Uptime,
 	SiteIconLink,
-} from './site-fields';
+} from '../site-fields';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 

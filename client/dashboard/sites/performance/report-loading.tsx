@@ -66,9 +66,6 @@ export default function ReportLoading( { isSavedReport }: { isSavedReport: boole
 					</HStack>
 				) ) }
 			</VStack>
-			{ ! isSavedReport && (
-				<Text variant="muted">{ __( 'Testing your site may take around 30 seconds.' ) }</Text>
-			) }
 		</>
 	);
 }

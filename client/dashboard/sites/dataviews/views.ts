@@ -1,6 +1,6 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { DEFAULT_FIELDS } from './fields';
-import type { AnalyticsClient } from '../app/analytics';
+import type { AnalyticsClient } from '../../app/analytics';
 import type { User, SitesView, SitesViewPreferences } from '@automattic/api-core';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
 
@@ -27,8 +27,6 @@ const DEFAULT_LAYOUT_FIELDS: SupportedLayouts = {
 		fields: [ 'status' ],
 	},
 };
-
-export type { SitesView, SitesViewPreferences };
 
 // All possible keys that can be stored as view preferences.
 const VIEW_PREFERENCES_KEYS = [

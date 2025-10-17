@@ -11,6 +11,9 @@ function PrimaryMenu() {
 				<ResponsiveMenu.Item to="/overview">{ __( 'Overview' ) }</ResponsiveMenu.Item>
 			) }
 			{ supports.sites && <ResponsiveMenu.Item to="/sites">{ __( 'Sites' ) }</ResponsiveMenu.Item> }
+			{ supports.ciabSites && (
+				<ResponsiveMenu.Item to="/sites">{ __( 'Stores' ) }</ResponsiveMenu.Item>
+			) }
 			{ supports.domains && (
 				<ResponsiveMenu.Item to="/domains">{ __( 'Domains' ) }</ResponsiveMenu.Item>
 			) }
