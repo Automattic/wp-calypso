@@ -54,7 +54,10 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
+	const { page_id, url } = useSearch( { from: sitePerformanceRoute.fullPath } ) as {
+		page_id?: string;
+		url?: string;
+	};
 
 	const currentPage = useMemo( () => {
 		if ( page_id ) {
@@ -72,7 +75,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		getReport,
 		hasCompleted,
 	} = useSitePerformanceData(
-		currentPage?.link,
+		url ?? currentPage?.link,
 		currentPage?.wpcom_performance_report_hash,
 		runNewReport
 	);
