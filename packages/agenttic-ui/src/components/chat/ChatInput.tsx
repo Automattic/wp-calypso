@@ -101,6 +101,25 @@ export function ChatInput( {
 		focusOnMountRef.current = false;
 	}, [ focusOnMountRef, textareaRef ] );
 
+	const handleTextareaKeyDown = (
+		e: React.KeyboardEvent< HTMLTextAreaElement >
+	) => {
+		const key = e.key.toLowerCase();
+
+		// Undo/Redo shortcuts (all major OS):
+		// Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z, Ctrl+Y
+		const isUndoOrRedo =
+			( ( e.metaKey || e.ctrlKey ) && key === 'z' ) ||
+			( e.ctrlKey && key === 'y' );
+
+		// Prevent undo/redo from affecting parent components (e.g., Gutenberg editor)
+		if ( isUndoOrRedo ) {
+			e.stopPropagation();
+		}
+
+		onKeyDown?.( e );
+	};
+
 	const renderCustomActions = () => {
 		return customActions.map( ( action ) => (
 			<Button
@@ -194,7 +213,7 @@ export function ChatInput( {
 					ref={ textareaRef }
 					value={ value }
 					onChange={ ( e ) => onChange( e.target.value ) }
-					onKeyDown={ onKeyDown }
+					onKeyDown={ handleTextareaKeyDown }
 					onBlur={ onBlur }
 					onClick={ onClick }
 					placeholder={
