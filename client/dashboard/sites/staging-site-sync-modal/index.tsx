@@ -410,10 +410,14 @@ function StagingSiteSyncModalInner( {
 					<DirectionArrow />
 					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
 				</HStack>
-				<CardDivider />
-				<Heading lineHeight="28px" size={ 11 } weight={ 500 } upperCase>
-					{ syncConfig[ environment ].subTitle }
-				</Heading>
+				{ ! shouldDisableGranularSync && (
+					<>
+						<CardDivider />
+						<Heading lineHeight="28px" size={ 11 } weight={ 500 } upperCase>
+							{ syncConfig[ environment ].subTitle }
+						</Heading>
+					</>
+				) }
 				{ /* File selection and database controls */ }
 				<VStack spacing={ 5 }>
 					{ shouldDisableGranularSync ? (
