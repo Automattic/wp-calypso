@@ -1,28 +1,61 @@
 import { __experimentalHStack as HStack, Button, DropdownMenu } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
-import React, { type ComponentProps } from 'react';
+import React, { useEffect, useRef, useState, type ComponentProps } from 'react';
 import Menu from '../menu';
 import RouterLinkMenuItem from '../router-link-menu-item';
 
 type ResponsiveMenuProps = {
+	prefix?: React.ReactNode;
 	children: React.ReactNode;
 	icon?: React.ReactElement;
 	label?: string;
 	dropdownPlacement?: 'bottom-end' | 'bottom-start' | 'bottom';
+	forceCollapsed?: boolean;
+	onCollapseChange?: ( collapsed: boolean ) => void;
 };
 
 function ResponsiveMenu( {
+	prefix,
 	children,
 	icon = menu,
 	label = 'Menu',
 	dropdownPlacement = 'bottom-end',
+	forceCollapsed,
+	onCollapseChange,
 }: ResponsiveMenuProps ) {
-	const isDesktop = useViewportMatch( 'medium' );
+	const wrapperRef = useRef< HTMLDivElement | null >( null );
+	const measureRef = useRef< HTMLDivElement | null >( null );
+	const [ isCollapsed, setIsCollapsed ] = useState( false );
 
-	if ( isDesktop ) {
-		return (
+	const checkOverflow = () => {
+		const measure = measureRef.current;
+		const wrapper = wrapperRef.current;
+		if ( ! measure || ! wrapper ) {
+			return;
+		}
+
+		const containerWidth = wrapper.clientWidth;
+		const contentWidth = measure.scrollWidth;
+		const collapsed = contentWidth > containerWidth;
+
+		if ( collapsed !== isCollapsed ) {
+			setIsCollapsed( collapsed );
+			onCollapseChange?.( collapsed );
+		}
+	};
+
+	useEffect( () => {
+		const observer = new ResizeObserver( checkOverflow );
+		if ( wrapperRef.current ) {
+			observer.observe( wrapperRef.current );
+		}
+		return () => observer.disconnect();
+	}, [ isCollapsed, onCollapseChange ] );
+
+	const inlineMenu = (
+		<HStack spacing={ 3 }>
+			{ prefix }
 			<Menu>
 				{ React.Children.map( children, ( child ) => {
 					if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
@@ -43,10 +76,10 @@ function ResponsiveMenu( {
 					return child;
 				} ) }
 			</Menu>
-		);
-	}
+		</HStack>
+	);
 
-	return (
+	const dropdownMenu = (
 		<DropdownMenu
 			icon={ icon }
 			label={ label }
@@ -77,6 +110,37 @@ function ResponsiveMenu( {
 				</>
 			) }
 		</DropdownMenu>
+	);
+
+	if ( forceCollapsed ) {
+		return dropdownMenu;
+	}
+
+	return (
+		<div
+			ref={ wrapperRef }
+			style={ {
+				position: 'relative',
+				width: '100%',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: isCollapsed ? 'flex-end' : 'flex-start',
+			} }
+		>
+			{ isCollapsed ? dropdownMenu : inlineMenu }
+
+			<div
+				ref={ measureRef }
+				style={ {
+					position: 'absolute',
+					visibility: 'hidden',
+					pointerEvents: 'none',
+					whiteSpace: 'nowrap',
+				} }
+			>
+				{ inlineMenu }
+			</div>
+		</div>
 	);
 }
 

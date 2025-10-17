@@ -1,7 +1,7 @@
 import './style.scss';
 
-function MenuDivider() {
-	return <div className="dashboard-menu-divider" />;
+function MenuDivider( { style }: { style?: React.CSSProperties } ) {
+	return <div className="dashboard-menu-divider" style={ style } />;
 }
 
 export default MenuDivider;

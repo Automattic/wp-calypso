@@ -2,11 +2,14 @@ import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { useAppContext } from '../context';
 
-function PrimaryMenu() {
+function PrimaryMenu( props: {
+	forceCollapsed?: boolean;
+	onCollapseChange?: ( collapsed: boolean ) => void;
+} ) {
 	const { supports } = useAppContext();
 
 	return (
-		<ResponsiveMenu>
+		<ResponsiveMenu { ...props }>
 			{ supports.overview && (
 				<ResponsiveMenu.Item to="/overview">{ __( 'Overview' ) }</ResponsiveMenu.Item>
 			) }

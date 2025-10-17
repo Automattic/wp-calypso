@@ -8,7 +8,6 @@ import {
 	Icon,
 	Modal,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
@@ -30,7 +29,6 @@ import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
 	const { onboardingLinkSourceQueryArg } = useAppContext();
-	const isDesktop = useViewportMatch( 'medium' );
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } );
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
@@ -46,7 +44,7 @@ function Site() {
 		<>
 			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
 			<HeaderBar>
-				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
+				<HStack spacing={ 3 }>
 					<HeaderBar.Title>
 						<Switcher
 							items={ sites }
@@ -90,12 +88,7 @@ function Site() {
 							<AddNewSite context={ onboardingLinkSourceQueryArg } />
 						</Modal>
 					) }
-					{ ! isSiteMigrationInProgress( site ) && (
-						<>
-							{ isDesktop && <MenuDivider /> }
-							<SiteMenu site={ site } />
-						</>
-					) }
+					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
 				</HStack>
 			</HeaderBar>
 			<Outlet />

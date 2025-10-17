@@ -1,13 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
+import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 
 const DomainMenu = ( { domainName }: { domainName: string } ) => {
 	const { supports } = useAppContext();
 
 	return (
-		<ResponsiveMenu label={ __( 'Domain Menu' ) }>
+		<ResponsiveMenu label={ __( 'Domain Menu' ) } prefix={ <MenuDivider /> }>
 			<ResponsiveMenu.Item to={ `/domains/${ domainName }` }>
 				{ __( 'Overview' ) }
 			</ResponsiveMenu.Item>
