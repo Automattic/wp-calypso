@@ -68,6 +68,7 @@
 		"google-drive": true,
 		"google-my-business": true,
 		"help": true,
+		"help-center-menu-panel": true,
 		"help/gpt-response": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,

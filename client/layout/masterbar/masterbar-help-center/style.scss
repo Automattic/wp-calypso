@@ -1,0 +1,23 @@
+.masterbar__item-wrapper.is-menu-panel {
+	.masterbar__item-subitems {
+		padding: 16px;
+	}
+}
+
+.masterbar__help-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	svg {
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+
+	span {
+		flex: 1;
+	}
+}
+
