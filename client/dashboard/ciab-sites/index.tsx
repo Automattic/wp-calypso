@@ -14,17 +14,19 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import deepmerge from 'deepmerge';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
+import { useAppContext } from '../app/context';
+import { useHelpCenter } from '../app/help-center';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import AddNewSite from '../sites/add-new-site';
 import {
 	SitesDataViews,
 	useActions,
@@ -64,6 +66,8 @@ export default function CIABSites() {
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
+	const { onboardingLinks } = useAppContext();
+	const { setShowHelpCenter } = useHelpCenter();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
 	const { mutate: updateViewPreferences } = useMutation(
@@ -90,7 +94,12 @@ export default function CIABSites() {
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const handleAddNewStore = () => {
+		setShowHelpCenter( false );
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'big-sky',
+		} );
+	};
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.type === 'list' ) {
@@ -143,20 +152,21 @@ export default function CIABSites() {
 		}
 	}, [ sites, queryClient ] );
 
+	const addNewStoreUrl = addQueryArgs( onboardingLinks?.withAI.href || '/setup/ai-site-builder', {
+		source: 'ciab-sites-dashboard',
+		ref: 'new-site-popover',
+	} );
+
 	return (
 		<>
-			{ isModalOpen && (
-				<Modal title={ __( 'Add new store' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="ciab-sites-dashboard" />
-				</Modal>
-			) }
 			<PageLayout
 				header={
 					<PageHeader
 						actions={
 							<Button
 								variant="primary"
-								onClick={ () => setIsModalOpen( true ) }
+								href={ addNewStoreUrl }
+								onClick={ handleAddNewStore }
 								__next40pxDefaultSize
 							>
 								{ __( 'Add new store' ) }
@@ -202,7 +212,8 @@ export default function CIABSites() {
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
-										onClick={ () => setIsModalOpen( true ) }
+										href={ addNewStoreUrl }
+										onClick={ handleAddNewStore }
 									>
 										{ __( 'Add new store' ) }
 									</Button>
