@@ -26,6 +26,15 @@ const useStorageStatusText = (
 						args: { daysOfBackupsSaved },
 					}
 				);
+			case StorageUsageLevels.FullButForecastOk:
+				return translate(
+					'You have reached your storage limit with %(daysOfBackupsSaved)d day of backups saved. Based on your current site size, your next backup will bring storage within limits and backups will resume automatically.',
+					'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. Based on your current site size, your next backup will bring storage within limits and backups will resume automatically.',
+					{
+						count: daysOfBackupsSaved,
+						args: { daysOfBackupsSaved },
+					}
+				);
 			case StorageUsageLevels.BackupsDiscarded:
 				return translate(
 					'We removed your oldest backup(s) to make space for new ones. We will continue to remove old backups as needed, up to the last %(minDaysOfBackupsAllowed)d days.',
