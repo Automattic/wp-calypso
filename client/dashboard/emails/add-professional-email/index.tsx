@@ -38,6 +38,7 @@ import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
+import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
 import { EmailNonDomainOwnerNotice } from './components/email-non-domain-owner-notice';
 import { MailboxForm } from './components/mailbox-form';
 
@@ -192,10 +193,7 @@ const AddProfessionalEmail = () => {
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
 	let endDate = new Date();
-	const hasOffer =
-		product?.introductory_offer &&
-		product?.introductory_offer.interval_count > 0 &&
-		product?.introductory_offer?.interval_unit;
+	const hasOffer = domain && isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
 	if ( hasOffer ) {
 		const count = product?.introductory_offer?.interval_count;
 		const unit = product?.introductory_offer?.interval_unit;

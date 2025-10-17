@@ -21,6 +21,7 @@ export interface GoogleEmailSubscription extends EmailSubscription {
 export interface TitanEmailSubscription extends EmailSubscription {
 	order_id: number;
 	maximum_mailbox_count: number;
+	is_eligible_for_introductory_offer?: boolean;
 }
 
 export interface Domain extends DomainSummary {
