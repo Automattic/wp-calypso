@@ -1,5 +1,6 @@
 import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
+import { convertAvailabilityToSuggestion } from '../helpers/convert-availability-to-suggestion';
 import { useDomainSearch } from '../page/context';
 import type { DomainSuggestion } from '@automattic/api-core';
 
@@ -65,7 +66,15 @@ export const useSuggestion = ( domainName: string ) => {
 				// If there's no suggestion matching the domain name, the user might have
 				// provided a FQDN and the filters do not match the FQDN's TLD
 				if ( fqdnAvailability && query === fqdnAvailability.domain_name ) {
-					return fqdnAvailability;
+					const suggestionObject = convertAvailabilityToSuggestion( fqdnAvailability );
+					return {
+						...suggestionObject,
+						position: 0,
+						price_rule: getPriceRuleForSuggestion( {
+							suggestion: suggestionObject,
+							priceRules: config.priceRules,
+						} ),
+					};
 				}
 
 				events.onSuggestionNotFound( domainName );
