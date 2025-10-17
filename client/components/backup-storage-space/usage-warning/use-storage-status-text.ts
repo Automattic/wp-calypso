@@ -2,6 +2,8 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { StorageUsageLevelName, StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 
+// @TODO: migrate translations to use `@wordpress/i18n` to comply with using core components
+// @see https://github.com/Automattic/wp-calypso/blob/trunk/client/dashboard/docs/i18n.md
 const useStorageStatusText = (
 	usageLevel: StorageUsageLevelName,
 	daysOfBackupsSaved: number,
@@ -28,11 +30,11 @@ const useStorageStatusText = (
 				);
 			case StorageUsageLevels.FullButForecastOk:
 				return translate(
-					'You have reached your storage limit with %(daysOfBackupsSaved)d day of backups saved. If your site size stays the same, backups will resume automatically in the next few days as older backups are replaced.',
-					'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. If your site size stays the same, backups will resume automatically in the next few days as older backups are replaced.',
+					'You have reached your storage limit with %d day of backups saved. If your site size stays the same, backups will resume automatically in the next few days as older backups are replaced.',
+					'You have reached your storage limit with %d days of backups saved. If your site size stays the same, backups will resume automatically in the next few days as older backups are replaced.',
 					{
 						count: daysOfBackupsSaved,
-						args: { daysOfBackupsSaved },
+						args: [ daysOfBackupsSaved ],
 					}
 				);
 			case StorageUsageLevels.BackupsDiscarded:
