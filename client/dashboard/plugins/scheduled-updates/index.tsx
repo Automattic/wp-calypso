@@ -1,7 +1,4 @@
-// no imports from api-queries needed here
-// Toggle uses v2 hook with optimistic updates
 import { useLocale } from '@automattic/i18n-utils';
-//
 import { useNavigate } from '@tanstack/react-router';
 import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
