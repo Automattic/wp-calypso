@@ -211,6 +211,14 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
 	},
+	'map-domain-change-name-servers': {
+		link: 'https://wordpress.com/support/domains/connect-existing-domain/#step-2-change-your-domains-name-servers',
+		post_id: 2789,
+	},
+	'map-domain-update-a-records': {
+		link: 'https://wordpress.com/support/domains/connect-a-domain-alternative-method/',
+		post_id: 219751,
+	},
 	mcp: {
 		link: 'https://wordpress.com/support/model-context-protocol-mcp-settings/',
 		post_id: 418160,

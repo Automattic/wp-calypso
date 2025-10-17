@@ -21,6 +21,7 @@ import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
+import OverviewFlexUsageCard from '../overview-flex-usage-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
 import PerformanceCard from '../overview-performance-card';
@@ -93,6 +94,7 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+	const showFlexUsageCard = site.is_wpcom_flex;
 
 	return (
 		<PageLayout
@@ -164,6 +166,7 @@ function SiteOverview( {
 						spacing={ spacing }
 						justify="start"
 					>
+            { showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 						{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 							<>
 								<DIFMUpsellCard site={ site } />

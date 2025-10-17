@@ -70,7 +70,7 @@ export function Done( {
 				</Text>
 				<Text as="p" align="center">
 					{ __(
-						"If your site isn't loading at your custom domain after a few hours, check that your DNS changes have been saved correctly at your domain provider."
+						'If your site isn’t loading at your custom domain after a few hours, check that your DNS changes have been saved correctly at your domain provider.'
 					) }
 				</Text>
 			</>
@@ -88,12 +88,12 @@ export function Done( {
 				</HStack>
 				<Text as="p" align="center">
 					{ __(
-						"We're checking if your domain is properly connected to WordPress.com. This may take a few moments."
+						'We’re checking if your domain is properly connected to WordPress.com. This may take a few moments.'
 					) }
 				</Text>
 				<Text as="p" align="center">
 					{ __(
-						"DNS changes can take up to 72 hours to fully propagate. If the verification doesn't complete immediately, that's normal."
+						'DNS changes can take up to 72 hours to fully propagate. If the verification doesn’t complete immediately, that’s normal.'
 					) }
 				</Text>
 			</>

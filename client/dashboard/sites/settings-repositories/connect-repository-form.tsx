@@ -67,6 +67,26 @@ export interface ConnectRepositoryFormData {
 	workflowPath: string;
 }
 
+const sanitizePath = ( input: string ): string => {
+	// Keep only alphanumeric, hyphens, underscores, dots, and slashes
+	let sanitized = input.replace( /[^\w\-_./]/g, '' );
+
+	// Remove multiple consecutive slashes
+	sanitized = sanitized.replace( /\/+/g, '/' );
+
+	// Ensure it starts with /
+	if ( sanitized && ! sanitized.startsWith( '/' ) ) {
+		sanitized = '/' + sanitized;
+	}
+
+	// Remove trailing slash unless it's the root path
+	if ( sanitized.length > 1 && sanitized.endsWith( '/' ) ) {
+		sanitized = sanitized.slice( 0, -1 );
+	}
+
+	return sanitized;
+};
+
 // Custom repository selector component with search functionality
 const RepositorySelector = ( {
 	field,
@@ -290,10 +310,7 @@ export const ConnectRepositoryForm = ( {
 			const newFormData = { ...prev, ...updates };
 
 			if ( 'targetDir' in updates ) {
-				const trimmedValue = updates.targetDir?.trim() || '';
-				newFormData.targetDir = trimmedValue.startsWith( '/' )
-					? trimmedValue
-					: `/${ trimmedValue }`;
+				newFormData.targetDir = sanitizePath( updates.targetDir || '' );
 			}
 
 			if ( 'deploymentMode' in updates ) {

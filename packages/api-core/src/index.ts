@@ -73,6 +73,7 @@ export * from './site-backup-restore';
 export * from './site-backups';
 export * from './site-do-it-for-me';
 export * from './site-domains';
+export * from './site-flex-usage';
 export * from './site-hosting';
 export * from './site-hosting-code-deployments';
 export * from './site-hosting-edge-cache';

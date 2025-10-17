@@ -13,6 +13,7 @@ export * from './import-content-from-medium-page';
 export * from './import-let-us-migrate-your-site.page';
 export * from './import-content-from-wordpress-page';
 export * from './import-content-platform-file-page';
+export * from './import-content-from-substack-page';
 export * from './import-content-wordpress-question.page';
 export * from './import-file-content-page';
 export * from './import-lets-find-your-site-page';

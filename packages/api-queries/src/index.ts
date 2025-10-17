@@ -64,6 +64,7 @@ export * from './site-defensive-mode';
 export * from './site-deployments';
 export * from './site-do-it-for-me';
 export * from './site-domains';
+export * from './site-flex-usage';
 export * from './site-jetpack-connection';
 export * from './site-jetpack-keys';
 export * from './site-jetpack-modules';

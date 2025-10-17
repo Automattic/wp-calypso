@@ -344,9 +344,11 @@ const PlansFeaturesMain = ( {
 
 	const isDisplayingPlansNeededForFeature =
 		!! selectedFeature &&
-		isValidFeatureKey( selectedFeature ) && // For plans-upgrade intent, enable feature filtering without requiring selectedPlan
+		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
+		// that may not be in the feature key list (e.g. because they're grouped into a broader feature).
 		( intent === 'plans-upgrade' ||
-			( !! selectedPlan &&
+			( isValidFeatureKey( selectedFeature ) &&
+				!! selectedPlan &&
 				!! getPlan( selectedPlan ) &&
 				! isPersonalPlan( selectedPlan ) &&
 				( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) ) ) );

@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	sitePerformancePagesQuery,
@@ -56,8 +55,13 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
+
 	const currentPage = useMemo( () => {
-		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+		if ( page_id ) {
+			const foundPage = getPageFromID( pagesData, page_id );
+			return foundPage || pagesData?.[ 0 ];
+		}
+		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
 	const {
@@ -179,7 +183,6 @@ function SitePerformance() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.PERFORMANCE }
 			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getPerformanceCalloutProps() }
 		>

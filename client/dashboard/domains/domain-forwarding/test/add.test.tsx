@@ -37,11 +37,11 @@ test( 'renders domain forwarding form with correct fields', async () => {
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	expect( screen.getByText( 'Source URL' ) ).toBeInTheDocument();
-	expect( screen.getByText( 'Subdomain' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Subdomain/ ) ).toBeInTheDocument();
 	expect( screen.getByRole( 'button', { name: 'Add' } ) ).toBeInTheDocument();
 } );
 
@@ -49,19 +49,19 @@ test( 'hides source URL selector when forceSubdomain is true', async () => {
 	renderForm( { forceSubdomain: true } );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Should not show the source type selector when forceSubdomain is true
 	expect( screen.queryByText( 'Source URL' ) ).not.toBeInTheDocument();
-	expect( screen.getByText( 'Subdomain' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Subdomain/ ) ).toBeInTheDocument();
 } );
 
 test( 'shows both root domain and subdomain options when forceSubdomain is false', async () => {
 	renderForm( { forceSubdomain: false } );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Should show the source type selector when forceSubdomain is false
@@ -75,7 +75,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 	renderForm( { onSubmit: mockOnSubmit } );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in the subdomain field (default sourceType is empty '' meaning subdomain)
@@ -104,7 +104,7 @@ test( 'disables submit button when isSubmitting is true', async () => {
 	renderForm( { isSubmitting: true } );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	const submitButton = screen.getByRole( 'button', { name: 'Add' } );
@@ -116,7 +116,7 @@ test( 'shows advanced settings panel', async () => {
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Advanced settings panel should be present
@@ -138,7 +138,7 @@ test( 'shows validation error when subdomain starts with dash and is blurred', a
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in an invalid subdomain starting with dash and blur
@@ -158,7 +158,7 @@ test( 'shows validation error when target URL is empty and blurred', async () =>
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -182,7 +182,7 @@ test( 'shows validation error when target URL is invalid and blurred', async () 
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -206,7 +206,7 @@ test( 'shows validation error when target URL redirects to same domain without p
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -231,7 +231,7 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	renderForm( { onSubmit: mockOnSubmit } );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -265,7 +265,7 @@ test( 'allows target URL without protocol (normalizes input)', async () => {
 	renderForm( { onSubmit: mockOnSubmit } );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain

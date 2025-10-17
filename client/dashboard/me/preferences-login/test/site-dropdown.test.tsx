@@ -75,6 +75,10 @@ function createMockSite( overrides: Partial< Site > = {} ): Site {
 		was_migration_trial: false,
 		was_hosting_trial: false,
 		was_upgraded_from_trial: false,
+		is_garden: false,
+		garden_name: null,
+		garden_partner: null,
+		garden_is_provisioned: null,
 		...overrides,
 	};
 }

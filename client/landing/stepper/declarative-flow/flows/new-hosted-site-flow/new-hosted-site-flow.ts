@@ -1,5 +1,5 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
-import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,8 +14,13 @@ import {
 	getSignupCompleteSiteID,
 	setSignupCompleteSiteID,
 	getSignupCompleteSlug,
+	clearSignupDestinationCookie,
+	clearSignupCompleteFlowName,
+	clearSignupCompleteSlug,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
@@ -31,6 +36,13 @@ async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	await resetOnboardStore();
+	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+	reduxStore.dispatch( setSelectedSiteId( null ) );
+	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
+	clearSignupDestinationCookie();
+	clearSignupCompleteFlowName();
+	clearSignupCompleteSlug();
+	clearSignupCompleteSiteID();
 
 	const queryParams = getCurrentQueryParams();
 	const showDomainStep = queryParams.has( 'showDomainStep' );

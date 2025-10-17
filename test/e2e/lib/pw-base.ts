@@ -37,6 +37,7 @@ import {
 	GitHubLoginPage,
 	ImportContentFromAnotherPlatformOrFilePage,
 	ImportContentFromMediumPage,
+	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
 	ImportContentWordPressQuestionPage,
@@ -166,6 +167,10 @@ export const test = base.extend< {
 	 */
 	pageImportContentFromMedium: ImportContentFromMediumPage;
 	/**
+	 * Page object representing the Import Content from Substack page.
+	 */
+	pageImportContentFromSubstack: ImportContentFromSubstackPage;
+	/**
 	 * Page object representing the Import Content from WordPress page.
 	 */
 	pageImportContentFromWordPress: ImportContentFromWordPressPage;
@@ -218,6 +223,18 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	page: async ( { page }, use ) => {
+		await page.context().addCookies( [
+			{
+				name: 'sensitive_pixel_options',
+				value: '{"ok":true,"buckets":{"essential":true,"analytics":false,"advertising":false}}',
+				domain: '.wordpress.com',
+				path: '/',
+			},
+		] );
+
+		await use( page );
+	},
 	accountAtomic: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'atomicUser' );
 		await use( testAccount );
@@ -308,14 +325,18 @@ export const test = base.extend< {
 		const importContentPage = new ImportContentPage( page );
 		await use( importContentPage );
 	},
-	pageImportContentFromMedium: async ( { page }, use ) => {
-		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
-		await use( importContentFromMediumPage );
-	},
 	pageImportContentFromAnotherPlatformOrFile: async ( { page }, use ) => {
 		const importContentFromAnotherPlatformOrFilePage =
 			new ImportContentFromAnotherPlatformOrFilePage( page );
 		await use( importContentFromAnotherPlatformOrFilePage );
+	},
+	pageImportContentFromMedium: async ( { page }, use ) => {
+		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
+		await use( importContentFromMediumPage );
+	},
+	pageImportContentFromSubstack: async ( { page }, use ) => {
+		const importContentFromSubstackPage = new ImportContentFromSubstackPage( page );
+		await use( importContentFromSubstackPage );
 	},
 	pageImportContentFromWordPress: async ( { page }, use ) => {
 		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
