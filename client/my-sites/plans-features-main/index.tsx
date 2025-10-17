@@ -889,7 +889,7 @@ const PlansFeaturesMain = ( {
 											showSimplifiedFeatures && intent !== 'plans-wordpress-hosting'
 										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-										showStreamlinedBillingDescription={ isInSignup }
+										showSimplifiedBillingDescription={ isInSignup }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -952,7 +952,7 @@ const PlansFeaturesMain = ( {
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-													showStreamlinedBillingDescription={ isInSignup }
+													showSimplifiedBillingDescription={ isInSignup }
 												/>
 											) }
 											<ComparisonGridToggle
