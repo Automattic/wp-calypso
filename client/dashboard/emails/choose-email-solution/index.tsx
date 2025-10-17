@@ -15,7 +15,7 @@ import PageLayout from '../../components/page-layout';
 import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
-import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
+import { hasEmailForwards, isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
@@ -23,6 +23,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength } from '../types';
 import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
+import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
 
@@ -98,13 +99,16 @@ export default function ChooseEmailSolution() {
 			header={ <PageHeader /> }
 			size="small"
 			notices={
-				! canAddEmail && (
-					<EmailNonDomainOwnerNotice
-						selectedSite={ site }
-						domain={ domain }
-						source="email-comparison"
-					/>
-				)
+				<>
+					{ ! canAddEmail && (
+						<EmailNonDomainOwnerNotice
+							selectedSite={ site }
+							domain={ domain }
+							source="email-comparison"
+						/>
+					) }
+					{ hasEmailForwards( domain ) && <ExistingForwardsNotice /> }
+				</>
 			}
 		>
 			{ /* Billing interval selector */ }
