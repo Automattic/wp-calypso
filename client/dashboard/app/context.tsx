@@ -40,7 +40,7 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 	};
-	onboardingLinkSourceQueryArg: 'sites-dashboard' | 'ciab-sites-dashboard' | '';
+	onboardingLinkSourceQueryArg?: 'sites-dashboard' | 'ciab-sites-dashboard';
 	onboardingLinks?: {
 		default: OnboardingLink;
 		withAI: OnboardingLink;
@@ -67,7 +67,7 @@ const AppContext = createContext< AppConfig >( {
 		me: false,
 		commandPalette: false,
 	},
-	onboardingLinkSourceQueryArg: '',
+	onboardingLinkSourceQueryArg: undefined,
 	onboardingLinks: undefined,
 } );
 
