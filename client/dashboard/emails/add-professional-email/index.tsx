@@ -1,5 +1,4 @@
-import { Product } from '@automattic/api-core';
-import { mailboxAccountsQuery, productsQuery, siteByIdQuery } from '@automattic/api-queries';
+import { mailboxAccountsQuery, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
@@ -26,10 +25,10 @@ import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { FormFieldNames, MutableFormFieldNames, SupportedEmailProvider } from '../entities/types';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
+import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
-import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
 import { EmailNonDomainOwnerNotice } from './components/email-non-domain-owner-notice';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
@@ -63,9 +62,7 @@ const AddProfessionalEmail = () => {
 
 	const { domain } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { data: products } = useQuery( productsQuery() );
-	const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
-	const product = products?.[ productSlug ] as Product;
+	const { product } = useEmailProduct( 'titan', interval );
 	// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
 	const { data: site } = useQuery( { ...siteByIdQuery( domain?.blog_id ), enabled: !! domain } );
 	const { data: existingMailboxes, isFetched } = useQuery( {

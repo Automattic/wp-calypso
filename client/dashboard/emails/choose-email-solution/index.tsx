@@ -1,6 +1,3 @@
-import { TitanMailSlugs, GoogleWorkspaceSlugs } from '@automattic/api-core';
-import { productsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -22,47 +19,22 @@ import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
+import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
+import { useEmailProduct } from '../hooks/use-email-product';
+import { IntervalLength } from '../types';
 
 import './style.scss';
 
-type BillingInterval = 'monthly' | 'annually';
-
-const EMAIL_PRODUCTS = {
-	titan: {
-		monthly: TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG,
-		annually: TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG,
-	},
-	google: {
-		monthly: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
-		annually: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	},
-};
-
-const getAnnualSavings = (
-	provider: 'titan' | 'google',
-	products: Record< string, { cost: number } > | undefined
-) => {
-	if ( ! products ) {
-		return 0;
-	}
-	const monthlyProduct = products[ EMAIL_PRODUCTS[ provider ].monthly ];
-	const annuallyProduct = products[ EMAIL_PRODUCTS[ provider ].annually ];
-	return 100 - ( annuallyProduct.cost * 100 ) / ( monthlyProduct.cost * 12 );
-};
-
 export default function ChooseEmailSolution() {
-	const { domain } = useDomainFromUrlParam();
+	const { domain, domainName, isLoadingDomain } = useDomainFromUrlParam();
 
-	const [ billingInterval, setBillingInterval ] = useState( 'annually' as BillingInterval );
+	const [ billingInterval, setBillingInterval ] = useState( 'annually' as IntervalLength );
 
-	const { data: products } = useQuery( productsQuery() );
-	const titanAnnuallySavings = getAnnualSavings( 'titan', products );
-	const googleAnnuallySavings = getAnnualSavings( 'google', products );
-	const bestAnnuallySavings = Math.floor( Math.max( titanAnnuallySavings, googleAnnuallySavings ) );
+	const { bestAnnualSavings } = useAnnualSavings();
 
-	const googleProduct = products?.[ EMAIL_PRODUCTS.google[ billingInterval ] ] ?? null;
-	const titanProduct = products?.[ EMAIL_PRODUCTS.titan[ billingInterval ] ] ?? null;
+	const { product: googleProduct } = useEmailProduct( 'google', billingInterval );
+	const { product: titanProduct } = useEmailProduct( 'titan', billingInterval );
 
 	const hasTitanFreeTrial =
 		( domain?.titan_mail_subscription?.is_eligible_for_introductory_offer ?? false ) &&
@@ -117,7 +89,7 @@ export default function ChooseEmailSolution() {
 		},
 	];
 
-	if ( ! domain && ! isLoadingDomains ) {
+	if ( ! domain && ! isLoadingDomain ) {
 		return (
 			<PageLayout size="small">
 				<Card>
@@ -158,7 +130,7 @@ export default function ChooseEmailSolution() {
 					<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
 					<ToggleGroupControlOption
 						/* translators: %d is the annual savings percentage. */
-						label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnuallySavings ) }
+						label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
 						value="annually"
 					/>
 				</ToggleGroupControl>

@@ -9,7 +9,11 @@ export const useDomainFromUrlParam = () => {
 	const match = router.state.matches[ router.state.matches.length - 1 ];
 	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
 	const { domain: domainName = '' } = params;
-	const { data: domain, isFetched: isDomainFetched } = useQuery( domainQuery( domainName ) );
+	const {
+		data: domain,
+		isFetched: isDomainFetched,
+		isLoading: isLoadingDomain,
+	} = useQuery( domainQuery( domainName ) );
 
 	useEffect( () => {
 		if ( isDomainFetched && ! domain ) {
@@ -18,8 +22,9 @@ export const useDomainFromUrlParam = () => {
 	}, [ domain, isDomainFetched, router ] );
 
 	return {
-		domainName,
 		domain,
+		domainName,
 		isDomainFetched,
+		isLoadingDomain,
 	};
 };
