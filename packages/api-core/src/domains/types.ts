@@ -66,7 +66,6 @@ export interface DomainSummary {
 	site_slug: string;
 	auto_renewing: boolean;
 	current_user_is_owner: boolean | null;
-	has_wpcom_nameservers: boolean;
 	is_domain_only_site: boolean;
 	expiry: string | false;
 	expired: boolean;

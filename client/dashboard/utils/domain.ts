@@ -34,7 +34,7 @@ export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase )
 	} );
 }
 
-export function isRegisteredDomain( domain: DomainSummary | SiteDomain ) {
+export function isRegisteredDomain( domain: DomainSummary ) {
 	return domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION;
 }
 
@@ -357,7 +357,7 @@ export function isSubdomain( domainName: string ): boolean {
 	return isValidSubdomain && getRootDomain( domainName ) !== domainName;
 }
 
-export function isGoogleWorkspaceSupportedDomain( domain: SiteDomain ) {
+export function isGoogleWorkspaceSupportedDomain( domain: Domain ) {
 	if ( domain.google_apps_subscription?.status === 'other_provider' ) {
 		return false;
 	}
