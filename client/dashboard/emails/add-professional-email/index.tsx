@@ -11,7 +11,7 @@ import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpre
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
@@ -118,7 +118,9 @@ const AddProfessionalEmail = () => {
 		isFetched && setMailboxEntities( [ createNewMailbox() ] );
 	}, [ createNewMailbox, isFetched ] );
 
-	const handleSubmit = async () => {
+	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+
 		const { shoppingCartManagerClient } = await import(
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);
