@@ -47,6 +47,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 	}
 
 	return {
+		site_filters: [ 'commerce-garden' ],
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || isRestoringAccount ? 'all' : 'visible',
