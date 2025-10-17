@@ -13,6 +13,7 @@ interface DeploymentRunMetadata {
 	commit_message: string;
 	commit_sha: string;
 	job_id: number;
+	workflow_run_id?: number;
 	author: {
 		avatar_url: string;
 		id: number;

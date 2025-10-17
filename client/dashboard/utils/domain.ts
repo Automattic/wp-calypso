@@ -1,4 +1,4 @@
-import { DotcomFeatures, WhoisType, DomainSubtype } from '@automattic/api-core';
+import { DotcomFeatures, WhoisType, DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
@@ -6,12 +6,11 @@ import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
 	Purchase,
-	SiteDomain,
+	Domain,
 	DomainSummary,
 	Site,
 	User,
 	WhoisDataEntry,
-	Domain as FullDomain,
 	TitanEmailSubscription,
 	GoogleEmailSubscription,
 } from '@automattic/api-core';
@@ -48,17 +47,17 @@ export function isDomainRenewable( domain: DomainSummary ) {
 
 	return (
 		!! domain.subscription_id &&
-		! domain.pending_renewal &&
-		! domain.pending_registration_at_registry &&
-		! domain.pending_registration &&
-		domain.current_user_can_manage &&
-		( domain.is_renewable || domain.is_redeemable ) &&
-		! domain.aftermarket_auction
+		! [
+			DomainStatus.PENDING_RENEWAL,
+			DomainStatus.PENDING_TRANSFER,
+			DomainStatus.PENDING_REGISTRATION,
+			DomainStatus.EXPIRED_IN_AUCTION,
+		].includes( domain.domain_status.id )
 	);
 }
 
 export function isDomainUpdatable( domain: DomainSummary ) {
-	return ! domain.pending_transfer && ! domain.expired;
+	return domain.domain_status.id !== DomainStatus.PENDING_TRANSFER && ! domain.expired;
 }
 
 export function isDomainInGracePeriod( domain: DomainSummary ) {
@@ -104,10 +103,7 @@ export function shouldUpgradeToMakeDomainPrimary( {
 		[ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
 			domain.subtype.id
 		) &&
-		! domain.current_user_can_create_site_from_domain_only &&
 		! domain.primary_domain &&
-		! domain.wpcom_domain &&
-		! domain.is_wpcom_staging_domain &&
 		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
 		!! site.plan?.is_free &&
 		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
@@ -126,7 +122,6 @@ export function canSetAsPrimary( {
 	return (
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
-		! domain.aftermarket_auction &&
 		! shouldUpgradeToMakeDomainPrimary( {
 			domain,
 			site,
@@ -135,12 +130,12 @@ export function canSetAsPrimary( {
 	);
 }
 
-export function hasGSuiteWithUs( domain: SiteDomain | FullDomain ) {
+export function hasGSuiteWithUs( domain: Domain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );
 }
 
-export function hasTitanMailWithUs( domain: SiteDomain | FullDomain ) {
+export function hasTitanMailWithUs( domain: Domain ) {
 	const subscriptionStatus = domain.titan_mail_subscription?.status;
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }
@@ -150,19 +145,19 @@ export function hasTitanMailWithUs( domain: SiteDomain | FullDomain ) {
  * subscription must have at least one mailbox, `1` is the default return value even for domains
  * without an active Titan subscription.
  */
-export function getMaxTitanMailboxCount( domain: SiteDomain | FullDomain ): number {
+export function getMaxTitanMailboxCount( domain: Domain ): number {
 	return ( domain.titan_mail_subscription as TitanEmailSubscription )?.maximum_mailbox_count ?? 1;
 }
 
-export function getGSuiteMailboxCount( domain: SiteDomain | FullDomain ): number {
+export function getGSuiteMailboxCount( domain: Domain ): number {
 	return ( domain?.google_apps_subscription as GoogleEmailSubscription )?.total_user_count ?? 0;
 }
 
-export function hasEmailForwards( domain: SiteDomain | FullDomain ) {
+export function hasEmailForwards( domain: Domain ) {
 	return domain?.email_forwards_count ?? 0;
 }
 
-export const domainHasEmail = ( domain: SiteDomain ) =>
+export const domainHasEmail = ( domain: Domain ) =>
 	hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
 export function findRegistrantWhois( whoisContacts: WhoisDataEntry[] | undefined ) {

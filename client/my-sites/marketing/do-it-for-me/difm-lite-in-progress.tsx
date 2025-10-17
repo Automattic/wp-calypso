@@ -1,5 +1,7 @@
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { useFlowCustomOptions } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { DIFM_FLOW } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -40,9 +42,11 @@ function SupportLink( { children }: { children?: JSX.Element } ) {
 	const { setNavigateToRoute, setShowHelpCenter, setSubject } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
+	const flowCustomOptions = useFlowCustomOptions( DIFM_FLOW );
+
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
 		'disable-gpt': 'true',
-		'skip-resources': 'true',
+		'simplified-form': 'true',
 	} ).toString() }`;
 
 	return (
@@ -52,7 +56,7 @@ function SupportLink( { children }: { children?: JSX.Element } ) {
 			onClick={ () => {
 				setNavigateToRoute( emailUrl );
 				setSubject( translate( 'I have a question about my project' ) );
-				setShowHelpCenter( true );
+				setShowHelpCenter( true, flowCustomOptions );
 			} }
 		>
 			{ children }

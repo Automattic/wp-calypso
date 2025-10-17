@@ -1,9 +1,9 @@
-import { SiteDomain } from '@automattic/api-core';
+import { Domain } from '@automattic/api-core';
 import { siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 
-export const useDomains = (): { domains: SiteDomain[]; isLoading: boolean } => {
+export const useDomains = (): { domains: Domain[]; isLoading: boolean } => {
 	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const sites = ( allSites ?? [] )
 		.filter( ( site ) => {
@@ -25,7 +25,7 @@ export const useDomains = (): { domains: SiteDomain[]; isLoading: boolean } => {
 	} );
 
 	// Aggregate all domains into a single array
-	const domains = domainsQueries.flatMap( ( q ) => ( q.data as SiteDomain[] ) ?? [] );
+	const domains = domainsQueries.flatMap( ( q ) => ( q.data as Domain[] ) ?? [] );
 
 	return {
 		domains,

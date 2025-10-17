@@ -5,7 +5,6 @@ import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { Text } from '../../components/text';
-import { isRecentlyRegistered } from '../../utils/domain';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainExpiryField } from './field-expiry';
@@ -13,7 +12,6 @@ import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
-const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
 export const useFields = ( {
 	site,
@@ -78,7 +76,7 @@ export const useFields = ( {
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},
 			{
-				id: 'type',
+				id: 'subtype',
 				label: __( 'Type' ),
 				enableHiding: false,
 				enableSorting: false,
@@ -86,11 +84,12 @@ export const useFields = ( {
 					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Domain name registration' ) },
 					{ value: DomainSubtype.DOMAIN_TRANSFER, label: __( 'Domain name transfer' ) },
 					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Domain name connection' ) },
+					{ value: DomainSubtype.DEFAULT_ADDRESS, label: __( 'Default site address' ) },
 				],
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.id ?? '',
+				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.id,
 			},
 			// {
 			// 	id: 'owner',
@@ -159,12 +158,10 @@ export const useFields = ( {
 					// TODO: move this inside the DomainExpiryField component?
 					if (
 						inOverview &&
-						site &&
 						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
-						! item.points_to_wpcom &&
-						! isRecentlyRegistered( item.registration_date, THREE_DAYS_IN_MINUTES )
+						item.domain_status.id === 'connection_error'
 					) {
-						return <Text intent="error">{ __( 'Connection error' ) }</Text>;
+						return <Text intent={ item.domain_status.type }>{ item.domain_status.label }</Text>;
 					}
 
 					return (
@@ -189,9 +186,9 @@ export const useFields = ( {
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item } ) => item.domain_status?.status_type,
+				getValue: ( { item } ) => item.domain_status.label,
 				render: ( { item } ) => {
-					return item.domain_status?.status || <IneligibleIndicator />;
+					return <Text intent={ item.domain_status.type }>{ item.domain_status.label }</Text>;
 				},
 			},
 		],

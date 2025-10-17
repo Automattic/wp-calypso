@@ -3,6 +3,7 @@ import {
 	sitePerformancePagesQuery,
 	siteSettingsQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -58,7 +59,10 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	} = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
+	const { page_id, url } = useSearch( { from: sitePerformanceRoute.fullPath } ) as {
+		page_id?: string;
+		url?: string;
+	};
 
 	const currentPage = useMemo( () => {
 		if ( page_id ) {
@@ -68,6 +72,10 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
+	const performanceUrl = [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) )
+		? url ?? currentPage?.link
+		: currentPage?.link;
+
 	const {
 		hasError,
 		createNewReport,
@@ -76,7 +84,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		getReport,
 		hasCompleted,
 	} = useSitePerformanceData(
-		currentPage?.link,
+		performanceUrl,
 		currentPage?.wpcom_performance_report_hash,
 		runNewReport
 	);

@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -24,6 +25,17 @@ function Domains() {
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',
+		filters: [
+			{
+				field: 'subtype',
+				operator: 'isAny',
+				value: [
+					DomainSubtype.DOMAIN_REGISTRATION,
+					DomainSubtype.DOMAIN_TRANSFER,
+					DomainSubtype.DOMAIN_CONNECTION,
+				],
+			},
+		],
 	} ) );
 
 	const { data: domains, isLoading } = useQuery( domainsQuery() );

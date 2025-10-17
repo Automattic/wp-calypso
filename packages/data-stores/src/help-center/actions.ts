@@ -151,9 +151,9 @@ export const setContextTerm = ( contextTerm: string ) =>
 		contextTerm,
 	} ) as const;
 
-export const setAllowPremiumSupport = ( allow: boolean ) =>
+export const setHasPremiumSupport = ( allow: boolean ) =>
 	( {
-		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
+		type: 'HELP_CENTER_SET_HAS_PREMIUM_SUPPORT',
 		allow,
 	} ) as const;
 
@@ -164,8 +164,11 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 
 export const setShowHelpCenter = function* (
 	show: boolean,
-	allowPremiumSupport = false,
-	options: HelpCenterShowOptions = { hideBackButton: false, contextTerm: '' },
+	options: HelpCenterShowOptions = {
+		hasPremiumSupport: false,
+		hideBackButton: false,
+		contextTerm: '',
+	},
 	/**
 	 * When the Help Center is minimized and someone clicks the (?) toggle button, we should maximize it.
 	 * But this means ignoring the `show=false` value the button will send. The problem is we'll also ignore the `show=false` when the close (x) buttons is clicked too.
@@ -201,11 +204,11 @@ export const setShowHelpCenter = function* (
 	yield setContextTerm( options?.contextTerm || '' );
 	yield setIsMinimized( false );
 
-	if ( allowPremiumSupport ) {
-		yield setAllowPremiumSupport( true );
+	if ( options?.hasPremiumSupport ) {
+		yield setHasPremiumSupport( true );
 	}
 
-	if ( options?.hideBackButton ) {
+	if ( options ) {
 		yield setHelpCenterOptions( options );
 	}
 
@@ -300,7 +303,7 @@ export type HelpCenterAction =
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
-			| typeof setAllowPremiumSupport
+			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >

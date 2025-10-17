@@ -56,9 +56,13 @@ export function DeploymentLogsModalContent( {
 				</Heading>
 
 				<HStack spacing={ 1 } alignment="left">
-					<Text size={ 15 } weight={ 700 } style={ { flexShrink: 0 } }>
-						{ shortSha }
-					</Text>
+					<ExternalLink
+						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
+					>
+						<Text as="code" size={ 15 } weight={ 700 } style={ { flexShrink: 0 } }>
+							{ shortSha }
+						</Text>
+					</ExternalLink>
 					<Text size={ 15 } truncate numberOfLines={ 1 } weight={ 500 }>
 						{ commit_message }
 					</Text>
@@ -144,11 +148,13 @@ export function DeploymentLogsModalContent( {
 					) }
 
 				<HStack alignment="right" spacing={ 5 }>
-					<ExternalLink
-						href={ `https://github.com/${ deployment.repository_name }/commit/${ deployment.metadata.commit_sha }` }
-					>
-						{ __( 'View deployment in Github' ) }
-					</ExternalLink>
+					{ deployment.metadata.workflow_run_id && (
+						<ExternalLink
+							href={ `https://github.com/${ deployment.repository_name }/actions/runs/${ deployment.metadata.workflow_run_id }` }
+						>
+							{ __( 'View workflow run in GitHub' ) }
+						</ExternalLink>
+					) }
 					<Button variant="primary" onClick={ onRequestClose }>
 						{ __( 'Close' ) }
 					</Button>
