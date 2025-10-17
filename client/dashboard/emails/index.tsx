@@ -118,7 +118,7 @@ function Emails() {
 
 	return (
 		<Layout>
-			{ ! isLoadingDomains && ! isLoadingMailboxes && domainsWithUnusedMailbox.length > 0 && (
+			{ ! isLoadingDomains && ! isLoadingMailboxes && (
 				<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
 			) }
 			<DataViewsCard>
