@@ -65,7 +65,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			{
 				label: (
 					<div className="masterbar__help-menu-item">
-						<Icon icon={ comment } size={ 20 } />
+						<Icon icon={ comment } size={ 24 } />
 						<span>{ translate( 'Chat support' ) }</span>
 					</div>
 				),
@@ -74,16 +74,24 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			{
 				label: (
 					<div className="masterbar__help-menu-item">
-						<Icon icon={ backup } size={ 20 } />
+						<Icon icon={ backup } size={ 24 } />
 						<span>{ translate( 'Chat history' ) }</span>
 					</div>
 				),
 				onClick: () => handleToggleHelpCenter( '/chat-history' ),
 			},
+		],
+		[
+			{
+				label: <hr />,
+				className: 'masterbar__help-menu-divider',
+			},
+		],
+		[
 			{
 				label: (
 					<div className="masterbar__help-menu-item">
-						<Icon icon={ page } size={ 20 } />
+						<Icon icon={ page } size={ 24 } />
 						<span>{ translate( 'Support guides' ) }</span>
 					</div>
 				),
@@ -92,7 +100,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			{
 				label: (
 					<div className="masterbar__help-menu-item">
-						<Icon icon={ video } size={ 20 } />
+						<Icon icon={ video } size={ 24 } />
 						<span>{ translate( 'Courses' ) }</span>
 					</div>
 				),
@@ -101,7 +109,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			{
 				label: (
 					<div className="masterbar__help-menu-item">
-						<Icon icon={ rss } size={ 20 } />
+						<Icon icon={ rss } size={ 24 } />
 						<span>{ translate( 'Product updates' ) }</span>
 					</div>
 				),
@@ -125,6 +133,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 				onClick={ isMenuPanelEnabled ? undefined : handleToggleHelpCenter }
 				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
+					'is-menu-panel': isMenuPanelEnabled,
 				} ) }
 				wrapperClassName={ clsx( {
 					'is-menu-panel': isMenuPanelEnabled,
