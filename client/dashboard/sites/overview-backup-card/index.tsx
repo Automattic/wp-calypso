@@ -13,7 +13,7 @@ import type { Site, SiteActivityLog } from '@automattic/api-core';
 const CARD_PROPS = {
 	icon: backup,
 	title: __( 'Last backup' ),
-	tracksId: 'backup',
+	tracksId: 'site-overview-backups',
 };
 
 const SUCCESSFUL_BACKUP_ACTIVITIES = [
@@ -106,7 +106,8 @@ export default function BackupCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.BACKUPS }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.tracksId }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-backups"
 			upsellHeading={ __( 'Back up your site' ) }
 			upsellDescription={ __( 'Get back online quickly with one-click restores.' ) }
 			upsellLink={ getBackupUrl( site ) }

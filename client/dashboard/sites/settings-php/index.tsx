@@ -92,7 +92,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.PHP }
-				tracksFeatureId="settings-php"
+				upsellId="site-settings-php"
 			>
 				<Card>
 					<CardBody>

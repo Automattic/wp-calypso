@@ -7,7 +7,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
-import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
@@ -34,26 +33,20 @@ const DomainUpsellCardContent = ( {
 	title,
 	description,
 	upsellCTAButtonText,
-	tracksId,
+	upsellId,
+	upsellType,
 }: {
 	site: Site;
 	title: string;
 	description: string;
 	upsellCTAButtonText: string;
-	tracksId: string;
+	upsellId: string;
+	upsellType: string;
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
-	const { recordTracksEvent } = useAnalytics();
 
 	const backUrl = window.location.href.replace( window.location.origin, '' );
-
-	const handleChooseYourOwn = () => {
-		recordTracksEvent( 'calypso_dashboard_upsell_click', {
-			feature: tracksId,
-			type: 'link',
-		} );
-	};
 
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
@@ -101,7 +94,14 @@ const DomainUpsellCardContent = ( {
 						) : (
 							<TextBlur>{ search }</TextBlur>
 						),
-						link: <a href={ chooseYourOwnUrl } onClick={ handleChooseYourOwn } />,
+						link: (
+							<UpsellCTAButton
+								variant="link"
+								href={ chooseYourOwnUrl }
+								upsellId="site-overview-choose-your-own-domain"
+								upsellType={ upsellType }
+							/>
+						),
 					} ) }
 				</Text>
 			}
@@ -119,7 +119,8 @@ const DomainUpsellCardContent = ( {
 					text={ upsellCTAButtonText }
 					variant="primary"
 					size="compact"
-					tracksId={ tracksId }
+					upsellId={ upsellId }
+					upsellType={ upsellType }
 					isBusy={ isSubmitting }
 					onClick={ handleUpsell }
 				/>
@@ -142,8 +143,9 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				description={ __(
 					'<domain /> is included free for one year with your paid plan. Claim this domain or <link>choose your own</link>.'
 				) }
+				upsellId="site-overview-claim-this-domain"
+				upsellType="domain-purchase"
 				upsellCTAButtonText={ __( 'Claim this domain' ) }
-				tracksId="claim-this-domain"
 			/>
 		);
 	}
@@ -155,8 +157,9 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 			description={ __(
 				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
 			) }
+			upsellId="site-overview-get-this-domain"
+			upsellType="plan-and-domain-purchase"
 			upsellCTAButtonText={ __( 'Get this domain' ) }
-			tracksId="get-this-domain"
 		/>
 	);
 };

@@ -56,7 +56,7 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.SECURITY_SETTINGS }
-				tracksFeatureId="settings-security"
+				upsellId="site-settings-wpcom-login"
 			>
 				{ ! ssoAvailable && (
 					<Notice>

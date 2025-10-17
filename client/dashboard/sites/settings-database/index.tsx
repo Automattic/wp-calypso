@@ -92,7 +92,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.DATABASE }
-				tracksFeatureId="settings-database"
+				upsellId="site-settings-database"
 				upsellIcon={ blockTable }
 				upsellImage={ upsellIllustrationUrl }
 				upsellTitle={ __( 'Fast, familiar database access' ) }

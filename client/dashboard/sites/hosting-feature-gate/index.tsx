@@ -6,7 +6,8 @@ import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 export interface HostingFeatureGateProps {
 	site: Site;
 	feature: HostingFeatureSlug;
-	tracksFeatureId: string;
+	upsellId: string;
+	upsellFeatureId?: string;
 	children: ReactNode;
 	renderUpsellComponent: () => ReactNode;
 	renderActivationComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
@@ -15,7 +16,8 @@ export interface HostingFeatureGateProps {
 export default function HostingFeatureGate( {
 	site,
 	feature,
-	tracksFeatureId,
+	upsellId,
+	upsellFeatureId,
 	children,
 	renderUpsellComponent,
 	renderActivationComponent,
@@ -29,7 +31,7 @@ export default function HostingFeatureGate( {
 			<HostingFeatureActivation
 				site={ site }
 				feature={ feature }
-				tracksFeatureId={ tracksFeatureId }
+				tracksFeatureId={ upsellFeatureId ?? upsellId }
 				renderActivationComponent={ renderActivationComponent }
 			/>
 		);
