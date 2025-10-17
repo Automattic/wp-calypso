@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 import { createContext, useContext } from 'react';
 
 export type AnalyticsClient = {
@@ -5,10 +7,12 @@ export type AnalyticsClient = {
 	recordPageView: ( url: string, title: string ) => void;
 };
 
-const AnalyticsContext = createContext< AnalyticsClient >( {
+const defaultNoopAnalyticsClient = {
 	recordTracksEvent() {},
 	recordPageView() {},
-} );
+};
+
+const AnalyticsContext = createContext< AnalyticsClient >( defaultNoopAnalyticsClient );
 
 interface AnalyticsProviderProps {
 	children: React.ReactNode;
@@ -20,5 +24,29 @@ export function AnalyticsProvider( { children, client }: AnalyticsProviderProps 
 }
 
 export function useAnalytics() {
-	return useContext( AnalyticsContext );
+	const context = useContext( AnalyticsContext );
+
+	if (
+		! config< string >( 'env_id' ).includes( 'production' ) &&
+		context === defaultNoopAnalyticsClient
+	) {
+		// eslint-disable-next-line no-console
+		console.error( 'useAnalytics() must be used with a <AnalyticsProvider>' );
+	}
+
+	return context;
+}
+
+export function bumpStat( group: string, name: string ) {
+	if ( typeof window === 'undefined' || ! config( 'mc_analytics_enabled' ) ) {
+		return;
+	}
+
+	const url = addQueryArgs( document.location.protocol + '//pixel.wp.com/g.gif', {
+		v: 'wpcom-no-pv',
+		[ `x_${ group }` ]: name,
+		t: Math.random().toString(),
+	} );
+
+	new window.Image().src = url;
 }

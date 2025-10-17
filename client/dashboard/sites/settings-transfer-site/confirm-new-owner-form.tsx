@@ -1,6 +1,6 @@
+import { siteOwnerTransferEligibilityCheckMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -11,9 +11,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
+import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export type ConfirmNewOwnerFormData = {
@@ -29,7 +29,7 @@ const fields: Field< ConfirmNewOwnerFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'email' ],
 };
 
@@ -104,7 +104,7 @@ export function ConfirmNewOwnerForm( {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
-				<HStack justify="flex-start">
+				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
 						type="submit"
@@ -113,7 +113,7 @@ export function ConfirmNewOwnerForm( {
 					>
 						{ __( 'Continue' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

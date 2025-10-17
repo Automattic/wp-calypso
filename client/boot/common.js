@@ -1,4 +1,8 @@
 import accessibleFocus from '@automattic/accessible-focus';
+import {
+	clearQueryClient as clearHostingDashboardQueryClient,
+	disablePersistQueryClient as disablePersistHostingDashboardQueryClient,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
@@ -323,6 +327,10 @@ const boot = async ( currentUser, registerRoutes ) => {
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
+	onDisablePersistence( () => {
+		disablePersistHostingDashboardQueryClient();
+		clearHostingDashboardQueryClient();
+	} );
 	setupLocale( currentUser, reduxStore );
 	setupCountryCode();
 	configureReduxStore( currentUser, reduxStore );

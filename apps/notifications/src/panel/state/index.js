@@ -32,6 +32,7 @@ function init( { customEnhancer } = {} ) {
 	const create = customEnhancer ? customEnhancer( middle ) : middle;
 
 	store = create( reducer );
+	return store;
 }
 
 export { store, init };

@@ -28,6 +28,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDisplayName,
 	isExpired,
@@ -310,13 +311,11 @@ export function PurchaseItemStatus( {
 	purchase,
 	translate,
 	moment,
-	isJetpack,
 	isDisconnectedSite,
 }: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
-	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
 	const expiry = moment( purchase.expiryDate );
@@ -380,7 +379,7 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		if ( isJetpack ) {
+		if ( purchase.isJetpackPlanOrProduct ) {
 			return (
 				<span className="purchase-item__is-error">
 					{ translate( 'Disconnected from WordPress.com' ) }
@@ -649,7 +648,13 @@ export function PurchaseItemPaymentMethod( {
 		e.preventDefault();
 		e.stopPropagation();
 
-		page( `/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add` );
+		if ( isJetpackCloud() ) {
+			window.open(
+				`https://wordpress.com/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add`
+			);
+		} else {
+			page( `/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add` );
+		}
 	};
 
 	if (
@@ -728,7 +733,15 @@ export function BackupPaymentMethodNotice() {
 		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
 		{
 			components: {
-				link: <a href="/me/purchases/payment-methods" />,
+				link: (
+					<a
+						href={
+							isJetpackCloud()
+								? 'https://wordpress.com/me/purchases/payment-methods'
+								: '/me/purchases/payment-methods'
+						}
+					/>
+				),
 			},
 		}
 	);
@@ -756,7 +769,6 @@ class PurchaseItem extends Component<
 			iconUrl,
 			isBackupMethodAvailable,
 			moment,
-			isJetpack,
 			isDisconnectedSite,
 			transferredOwnershipPurchases = [],
 		} = this.props;
@@ -802,7 +814,6 @@ class PurchaseItem extends Component<
 						purchase={ purchase }
 						translate={ translate }
 						moment={ moment }
-						isJetpack={ isJetpack }
 						isDisconnectedSite={ isDisconnectedSite }
 					/>
 				</div>
@@ -836,7 +847,6 @@ class PurchaseItem extends Component<
 			getManagePurchaseUrlFor,
 			purchase,
 			slug,
-			isJetpack,
 			transferredOwnershipPurchases = [],
 		} = this.props;
 
@@ -856,7 +866,11 @@ class PurchaseItem extends Component<
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
-			if ( ! isDisconnectedSite || isJetpack || isTemporarySitePurchase( purchase ) ) {
+			if (
+				! isDisconnectedSite ||
+				purchase.isJetpackPlanOrProduct ||
+				isTemporarySitePurchase( purchase )
+			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};

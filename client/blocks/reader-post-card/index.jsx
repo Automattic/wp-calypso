@@ -48,6 +48,7 @@ class ReaderPostCard extends Component {
 		hasOrganization: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
+		commentsApiDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -188,6 +189,7 @@ class ReaderPostCard extends Component {
 				onCommentClick={ onCommentClick }
 				className="ignore-click"
 				iconSize={ 20 }
+				commentsApiDisabled={ this.props.commentsApiDisabled }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -282,7 +284,7 @@ class ReaderPostCard extends Component {
 						siteId={ +post.site_ID }
 						postId={ +post.ID }
 						isVisible={ this.state.isSuggestedFollowsModalOpen }
-						author={ post.author }
+						author={ feed?.blog_owner }
 					/>
 				) }
 				{ shouldShowPostCardComments && (

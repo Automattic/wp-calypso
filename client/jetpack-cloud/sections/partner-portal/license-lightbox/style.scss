@@ -1,12 +1,12 @@
 .license-lightbox__pricing {
-	background-color: var(--studio-white);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	border: 1px solid var(--color-link);
+	background-color: var( --studio-white );
+	border-radius: 8px;
+	border: 1px solid var( --color-link );
 	padding: 1rem;
 }
 
 .license-lightbox__jetpack-manage-license-title {
-	color: var(--studio-black);
+	color: var( --studio-black );
 	font-size: 1rem;
 	font-weight: 700;
 	margin-block-end: 8px;
@@ -27,7 +27,7 @@
 	}
 
 	&.is-primary .license-lightbox__cta-button-external-link {
-		color: var(--studio-white);
+		color: var( --studio-white );
 	}
 }
 
@@ -40,21 +40,21 @@
 	&::before,
 	&::after {
 		flex: 1;
-		content: "";
+		content: '';
 		padding: 0.5px;
-		background: var(--studio-gray-5);
+		background: var( --studio-gray-5 );
 		margin: 2rem 15px;
 	}
 }
 
 .review-licenses__notice {
-	color: var(--studio-gray-50);
-	font-size: rem(12px);
+	color: var( --studio-gray-50 );
+	font-size: rem( 12px );
 	margin-block-end: 16px;
 	padding-top: 1rem;
 
 	a {
 		text-decoration: underline;
-		color: var(--studio-black);
+		color: var( --studio-black );
 	}
 }

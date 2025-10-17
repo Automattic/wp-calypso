@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { institution } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canViewHundredYearPlanSettings } from '../features';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function HundredYearPlanSummary( {

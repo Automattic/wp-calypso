@@ -1,31 +1,29 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/mixins';
 @import '@wordpress/dataviews/build-style/style.css';
 
 $padding-standard: 16px;
 
 body.is-section-subscribers,
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers {
-	.layout:not(.has-no-sidebar),
+	.layout:not( .has-no-sidebar ),
 	.has-no-masterbar {
 		.layout__content {
-			background: var(--studio-gray-0);
-			padding: calc(var(--masterbar-height) + #{$padding-standard})
-				 $padding-standard
-				 $padding-standard
-				 calc(var(--sidebar-width-max) + #{$padding-standard});
+			background: var( --studio-gray-0 );
+			padding: calc( var( --masterbar-height ) + #{$padding-standard} ) $padding-standard
+				$padding-standard calc( var( --sidebar-width-max ) + #{$padding-standard} );
 
 			// Full width rules when sidebar is collapsed
-			&:where(body.is-section-subscribers *) {
-				@media( max-width: $break-medium ) {
+			&:where( body.is-section-subscribers * ) {
+				@media ( max-width: $break-medium ) {
 					padding-left: 0;
 					padding-right: 0;
 				}
 			}
 
-			&:where(.theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers *) {
-				@media( max-width: 660px ) {
+			&:where( .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers * ) {
+				@media ( max-width: 660px ) {
 					padding-left: 0;
 					padding-right: 0;
 				}
@@ -37,7 +35,8 @@ body.is-section-subscribers,
 		padding-top: 0;
 	}
 
-	.subscribers.main, .main.is-wide-layout {
+	.subscribers.main,
+	.main.is-wide-layout {
 		max-width: none;
 		padding: 0;
 		margin: 0;
@@ -48,15 +47,13 @@ body.is-section-subscribers,
 			flex: 1 1 auto;
 			position: relative;
 			gap: 24px;
-			height: calc(
-				100vh - var(--masterbar-height) - #{$padding-standard * 2}
-			);
+			height: calc( 100vh - var( --masterbar-height ) - #{$padding-standard * 2} );
 
 			@media ( max-width: $break-small ) {
 				padding: 0;
 			}
 
-			button:not(.jetpack-empty-list-view__cta-link) {
+			button:not( .jetpack-empty-list-view__cta-link ) {
 				cursor: pointer;
 				max-width: 100%;
 				border: none;
@@ -72,7 +69,7 @@ body.is-section-subscribers,
 			}
 
 			.subscriber-data-views__tooltip-text {
-				border-bottom: 1px dotted var(--studio-gray-60);
+				border-bottom: 1px dotted var( --studio-gray-60 );
 				cursor: pointer;
 			}
 
@@ -81,7 +78,6 @@ body.is-section-subscribers,
 				transition: width 0.15s ease-in-out;
 				width: 100%;
 				background: var( --color-surface );
-				/* stylelint-disable-next-line scales/radii */
 				border-radius: 8px;
 				overflow: hidden;
 				display: flex;
@@ -129,7 +125,7 @@ body.is-section-subscribers,
 							left: 0;
 							width: 100%;
 							height: 100%;
-							box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+							box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.1 );
 							border-radius: inherit;
 						}
 
@@ -164,7 +160,6 @@ body.is-section-subscribers,
 					display: block;
 					flex: 1 1 auto;
 					background: var( --color-surface );
-					/* stylelint-disable-next-line scales/radii */
 					border-radius: 8px;
 					padding: 24px;
 					overflow: auto;
@@ -190,8 +185,8 @@ body.is-section-subscribers,
 
 						&__footer {
 							.subscriber-details__delete-button {
-								background: var(--color-error);
-								color: var(--color-text-inverted);
+								background: var( --color-error );
+								color: var( --color-text-inverted );
 								border: none;
 								border-radius: 2px;
 								box-shadow: none;

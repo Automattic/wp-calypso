@@ -110,6 +110,32 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							return true;
 						} );
 					}
+				} else if ( 'plans-wordpress-hosting' === intent ) {
+					// Use visual split features for WordPress hosting intent
+					if ( planConstantObj?.getVisualSplitBusinessFeatures ) {
+						wpcomFeatures = getPlanFeaturesObject(
+							allFeaturesList,
+							planConstantObj.getVisualSplitBusinessFeatures() ?? []
+						);
+					} else if ( planConstantObj?.getVisualSplitCommerceFeatures ) {
+						wpcomFeatures = getPlanFeaturesObject(
+							allFeaturesList,
+							planConstantObj.getVisualSplitCommerceFeatures() ?? []
+						);
+					} else {
+						// Fallback to default features if visual split features aren't available
+						wpcomFeatures = getPlanFeaturesObject(
+							allFeaturesList,
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+								isSummerSpecial,
+							} ) ?? []
+						);
+					}
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+					);
 				} else {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,

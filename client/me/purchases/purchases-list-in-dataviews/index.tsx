@@ -214,14 +214,7 @@ function PurchasesContent( {
 	// If the user has no regular subscriptions, no memberships subscriptions,
 	// and no sites, render the "no sites" page.
 	if ( ! sites.length ) {
-		return (
-			<Main wideLayout className="purchases-list">
-				<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-				<PurchasesNavigation section="activeUpgrades" />
-				<NoSitesMessage />
-			</Main>
-		);
+		return <NoSitesMessage />;
 	}
 
 	// If the user has no regular subscriptions, no memberships subscriptions,

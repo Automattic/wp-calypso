@@ -1,25 +1,20 @@
+import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import DoNotSellCard from './do-not-sell-card';
+import DpaCard from './dpa-card';
+import UsageInformationCard from './usage-information-card';
 
-function Privacy() {
+export default function Privacy() {
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					title={ __( 'Privacy' ) }
-					description={ __( 'Manage your privacy settings.' ) }
-				/>
-			}
-		>
-			<VStack spacing={ 4 }>
-				<RouterLinkSummaryButton title={ __( 'Details' ) } to="/me/privacy" />
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Privacy' ) } /> }>
+			<VStack spacing={ 8 }>
+				<UsageInformationCard />
+				<DpaCard />
+				{ config.isEnabled( 'cookie-banner' ) && <DoNotSellCard /> }
 			</VStack>
 		</PageLayout>
 	);
 }
-
-export default Privacy;

@@ -156,7 +156,7 @@ class Security2faDisable extends Component {
 						{ translate(
 							'To verify that you wish to disable two-step authentication, ' +
 								'enter the verification code from your device or a backup code, ' +
-								'and click "Disable two-step."'
+								'and click “Disable two-step authentication.”'
 						) }
 					</p>
 					<Security2faCodePrompt

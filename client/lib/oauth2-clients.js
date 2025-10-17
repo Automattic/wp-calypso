@@ -6,8 +6,16 @@ export const isAndroidOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 2697;
 };
 
+export const isIosOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 11;
+};
+
 export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 978;
+};
+
+export const isWPJobManagerOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 90057;
 };
 
 export const isGravatarFlowOAuth2Client = ( oauth2Client ) => {
@@ -18,12 +26,11 @@ export const isGravatarOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 1854 || isGravatarFlowOAuth2Client( oauth2Client );
 };
 
-export const isIosOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 11;
-};
+// Gravatar flow clients owned by Gravatar, e.g., Gravatar iOS app, Gravatar Android app, etc.
+export const isGravatarOwnedOAuth2Client = ( oauth2Client ) => {
+	const isOwnedByGravatar = [ 119371, 119387 ].includes( oauth2Client?.id );
 
-export const isWPJobManagerOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 90057;
+	return isGravatarFlowOAuth2Client( oauth2Client ) && isOwnedByGravatar;
 };
 
 export const isGravPoweredOAuth2Client = ( oauth2Client ) => {

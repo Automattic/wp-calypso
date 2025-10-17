@@ -1,0 +1,18 @@
+// The Dropdown component doesn't support to hide the header if the `expandOnMobile` is enabled.
+.dashboard-notifications.components-popover.is-expanded {
+	.components-popover__header {
+		display: none;
+	}
+
+	.components-popover__content {
+		height: 100%;
+	}
+}
+
+.dashboard-notifications__icon {
+	svg {
+		circle {
+			fill: var(--wp-admin-theme-color);
+		}
+	}
+}

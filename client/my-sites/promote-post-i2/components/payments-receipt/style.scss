@@ -1,0 +1,272 @@
+.payment-receipt {
+	background: #fff;
+	color: var(--color-neutral-80);
+	padding: 48px;
+	box-shadow: 0 0 3px 1px rgb(0 0 0 / 13%);
+	border-radius: 4px;
+	max-width: 800px;
+	margin: auto;
+
+	@media (max-width: 600px) {
+		padding: 24px;
+	}
+
+	&--loading,
+	&--error {
+		min-height: 200px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__error-container {
+		text-align: center;
+
+		p {
+			color: var(--color-error);
+			margin: 0;
+		}
+	}
+
+	&__loading-container {
+		text-align: center;
+
+		.components-spinner {
+			margin: 0 auto 12px;
+		}
+
+		p {
+			margin: 0;
+			color: var(--color-neutral-50);
+		}
+	}
+
+	&__section {
+		margin-bottom: 24px;
+	}
+
+	&__section-title {
+		font-size: 1.25rem;
+		margin-bottom: 16px;
+		padding-bottom: 8px;
+		border-bottom: 2px solid var(--color-neutral-5);
+	}
+
+	&__label {
+		font-weight: bold;
+		margin-right: 16px;
+	}
+
+	.wpcom-print-logo {
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	&__value {
+		color: var(--color-neutral-60);
+		font-size: 0.875rem;
+	}
+
+	&__value-bold {
+		font-weight: bold;
+	}
+
+
+	&__row {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 8px;
+	}
+
+	&__secondary-text {
+		color: var(--color-neutral-50);
+		font-size: 0.875rem;
+
+		&.payment-receipt__campaigns-loading,
+		&.payment-receipt__no-campaigns {
+			font-style: italic;
+			margin-bottom: 16px;
+		}
+	}
+
+	&__inline-loading {
+		display: flex;
+		align-items: center;
+		margin-bottom: 16px;
+
+		.components-spinner {
+			margin: 0 8px 0 0;
+			height: 16px;
+			width: 16px;
+		}
+	}
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 48px;
+		align-items: flex-start;
+	}
+
+	&__organization-container {
+		display: flex;
+		align-items: flex-start;
+		flex-grow: 1;
+	}
+
+	&__organization-logo {
+		width: 65px;
+		height: 65px;
+		flex-shrink: 0;
+
+		svg {
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	&__organization-details {
+		margin-left: 16px;
+		flex-grow: 1;
+	}
+
+	&__organization-name {
+		font-weight: bold;
+		font-size: 1rem;
+		margin-bottom: 4px;
+	}
+
+	&__date {
+		text-align: right;
+
+		@media (max-width: 900px) {
+			display: none; /* Hide date in header on mobile */
+		}
+	}
+
+	// On desktop, the date shows to the right of the header. On mobile, it's stacked like the payment ID.
+	&__date-mobile {
+		display: none;
+
+		@media (max-width: 900px) {
+			display: flex;
+		}
+	}
+
+	&__billing-details {
+		margin-top: 24px;
+	}
+
+	&__billing-instructions {
+		font-weight: normal;
+		margin-top: 4px;
+		margin-bottom: 4px;
+		font-size: 0.75rem;
+	}
+
+	&__billing-textarea {
+		width: 100%;
+		height: 80px;
+		padding: 8px;
+		margin-top: 8px;
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 4px;
+	}
+
+	&__billing-text {
+		line-height: 1.5;
+		white-space: pre-line;
+		margin-top: 8px;
+	}
+
+	&__payment-details {
+		margin-bottom: 16px;
+	}
+
+	&__payment-method {
+		padding-bottom: 16px;
+		border-bottom: 1px solid var(--color-neutral-5);
+		margin-bottom: 16px;
+	}
+
+	&__payment-amounts {
+		margin-top: 16px;
+	}
+
+	// Domain groups styling for receipt
+	.payment-receipt {
+		&__domain-group {
+			margin-bottom: 16px;
+
+			&:not(:first-child) {
+				margin-top: 16px;
+				padding-top: 8px;
+			}
+		}
+
+		&__domain-header {
+			margin-bottom: 16px;
+			padding-bottom: 4px;
+			border-bottom: 1px solid var(--color-neutral-10);
+		}
+
+		&__domain-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: var(--color-neutral-70);
+			margin: 0;
+		}
+
+		&__campaign-item {
+			margin-bottom: 8px;
+		}
+	}
+
+	&__list-item {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 16px;
+		padding-bottom: 16px;
+		border-bottom: 1px solid var(--color-neutral-5);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	&__item-content {
+		flex-grow: 1;
+	}
+
+	&__print {
+		margin-top: 32px;
+		text-align: center;
+	}
+
+	&__print-button {
+		background-color: var(--color-accent);
+		color: var(--color-accent-0);
+		border: none;
+		border-radius: 4px;
+		padding: 8px 16px;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		margin-bottom: 8px !important;
+
+		&:hover {
+			background-color: var(--color-accent-dark);
+		}
+	}
+
+	/* Print-specific styles */
+	@media print {
+		box-shadow: none;
+		border: none;
+		padding: 24px 0;
+		margin-top: 20px;
+	}
+}
+
+
+
+

@@ -19,12 +19,14 @@ export default function useGetConsolidatedPayoutData(
 			previousQuarterExpectedCommission: getEstimatedCommission(
 				referrals,
 				productsArray,
-				getNextPayoutDateActivityWindow( currentDate )
+				getNextPayoutDateActivityWindow( currentDate ),
+				true // use previous quarter
 			),
 			currentQuarterExpectedCommission: getEstimatedCommission(
 				referrals,
 				productsArray,
-				getCurrentCycleActivityWindow( currentDate )
+				getCurrentCycleActivityWindow( currentDate ),
+				false // use current quarter
 			),
 		};
 	}, [ referrals, products ] );

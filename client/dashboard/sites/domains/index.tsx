@@ -1,31 +1,42 @@
+import { siteBySlugQuery, domainsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { siteRoute } from '../../app/router';
-import DataViewsCard from '../../components/dataviews-card';
+import { useAuth } from '../../app/auth';
+import { siteRoute } from '../../app/router/sites';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
-import type { SiteDomain } from '../../data/types';
+import { AddDomainButton } from '../../domains/add-domain-button';
+import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
+import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainsView } from '../../domains/dataviews';
+import type { DomainSummary } from '@automattic/api-core';
 
-function getDomainId( domain: SiteDomain ) {
+function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
 }
 
 function SiteDomains() {
 	const { siteSlug } = siteRoute.useParams();
+	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteDomains, isLoading } = useQuery( siteDomainsQuery( site.ID ) );
+	const { data: siteDomains, isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.blog_id === site.ID );
+		},
+	} );
+
 	const fields = useFields( {
 		site,
 	} );
 
+	const actions = useActions( { user, site } );
+
 	const [ view, setView ] = useState< DomainsView >( () => ( {
-		...DEFAULT_VIEW,
+		...SITE_CONTEXT_VIEW,
 		type: 'table',
 	} ) );
 
@@ -36,9 +47,19 @@ function SiteDomains() {
 	);
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Domains' ) } /> }>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={ <AddDomainButton siteSlug={ site.slug } /> }
+				/>
+			}
+		>
+			{ ! isLoading && siteDomains && (
+				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
+			) }
 			<DataViewsCard>
-				<DataViews< SiteDomain >
+				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }

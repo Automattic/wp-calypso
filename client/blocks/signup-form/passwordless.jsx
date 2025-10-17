@@ -115,7 +115,7 @@ class PasswordlessSignupForm extends Component {
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				...( flowName === 'wpcc' && {
+				...( ( flowName === 'wpcc' || flowName === 'crowdsignal' ) && {
 					oauth2_client_id,
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
@@ -198,7 +198,7 @@ class PasswordlessSignupForm extends Component {
 			marketing_price_group,
 			bearer_token: response.bearer_token,
 			is_new_account: true,
-			...( flowName === 'wpcc'
+			...( [ 'wpcc', 'crowdsignal' ].includes( flowName )
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
 		} );
@@ -333,10 +333,6 @@ class PasswordlessSignupForm extends Component {
 
 		const terms = ! this.props.disableTosText && this.props.renderTerms?.();
 
-		const elements = this.props.secondaryFooterButton
-			? [ this.formFooter(), terms ]
-			: [ terms, this.formFooter() ];
-
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
@@ -359,7 +355,17 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ elements }
+					{ this.props.secondaryFooterButton ? (
+						<>
+							{ this.formFooter() }
+							{ terms }
+						</>
+					) : (
+						<>
+							{ terms }
+							{ this.formFooter() }
+						</>
+					) }
 				</LoggedOutForm>
 			</div>
 		);

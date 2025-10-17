@@ -1,4 +1,4 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 /* Override very specific css on an attribute */
 .sidebar {
@@ -15,17 +15,19 @@
 
 body.is-section-reader {
 	&.rtl .layout__content {
-		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;
+		padding: calc( var( --masterbar-height ) + var( --content-padding-top ) )
+			calc( var( --sidebar-width-max ) ) var( --content-padding-bottom ) 16px;
 	}
 
 	.layout__content {
 		// Add border around everything
 		overflow: hidden;
 		min-height: 100vh;
-		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
-		padding-bottom: var(--content-padding-bottom);
-		@media only screen and (min-width: 782px) {
-			padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) calc(var(--sidebar-width-max)) !important;
+		padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
+		padding-bottom: var( --content-padding-bottom );
+		@media only screen and ( min-width: 782px ) {
+			padding: calc( var( --masterbar-height ) + var( --content-padding-top ) ) 16px
+				var( --content-padding-bottom ) calc( var( --sidebar-width-max ) ) !important;
 		}
 		.layout_primary > div {
 			padding-bottom: 0;
@@ -37,79 +39,83 @@ body.is-section-reader {
 	}
 
 	.has-no-masterbar .layout__content .main {
-		padding-top: var(--content-padding-top);
+		padding-top: var( --content-padding-top );
 	}
 
-	@media only screen and (max-width: 600px) {
+	@media only screen and ( max-width: 600px ) {
 		.navigation-header__main {
 			justify-content: normal;
 			align-items: center;
 		}
 	}
 
-	@media only screen and (max-width: 781px) {
+	@media only screen and ( max-width: 781px ) {
 		.layout__primary > div {
-			background: var(--color-surface);
+			background: var( --color-surface );
 			margin: 0;
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+			border-radius: 8px;
+			height: calc(
+				100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+						--content-padding-bottom
+					)
+			);
 		}
 	}
 }
 
 :root .theme-default .is-section-reader .global-sidebar {
-		.sidebar-menu-container {
-			display: flex;
-			flex-direction: column;
-			gap: 20px;
-			padding: 0 16px;
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		padding: 0 16px;
+	}
+	.sidebar__menu {
+		.sidebar__expandable-content {
+			padding: 0;
+			margin: 0;
 		}
-		.sidebar__menu {
-			.sidebar__expandable-content {
-				padding: 0;
-				margin: 0;
-			}
+		.sidebar__heading {
+			margin: 0;
+		}
+		&:not( .is-togglable ) {
+			gap: 3px;
+		}
+		.sidebar__menu-link {
+			margin: 0;
+		}
+		.sidebar__menu--selected {
 			.sidebar__heading {
-				margin: 0;
-			}
-			&:not(.is-togglable){
-				gap: 3px;
-			}
-			.sidebar__menu-link {
-				margin: 0;
-			}
-			.sidebar__menu--selected {
-				.sidebar__heading{
-					color: var(--color-sidebar-menu-selected-text);
-					background-color: var(--color-sidebar-menu-hover-background);
-					&:hover {
-						background-color: var(--color-sidebar-menu-hover-background);
-						color: var(--color-sidebar-menu-selected-text);
+				color: var( --color-sidebar-menu-selected-text );
+				background-color: var( --color-sidebar-menu-hover-background );
+				&:hover {
+					background-color: var( --color-sidebar-menu-hover-background );
+					color: var( --color-sidebar-menu-selected-text );
 
-						.sidebar__expandable-arrow {
-							fill: currentColor;
-						}
+					.sidebar__expandable-arrow {
+						fill: currentColor;
 					}
 				}
+			}
 
-				.sidebar__expandable-title {
-					color: currentColor;
-				}
-				.sidebar__menu-icon {
-					fill: currentColor;
-					&.sidebar_svg-a8c {
+			.sidebar__expandable-title {
+				color: currentColor;
+			}
+			.sidebar__menu-icon {
+				fill: currentColor;
+				&.sidebar_svg-a8c {
+					fill: none;
+					g {
 						fill: none;
-						g {
-							fill: none;
-						}
 					}
 				}
-				.sidebar__expandable-button {
-					color: currentColor;
-				}
+			}
+			.sidebar__expandable-button {
+				color: currentColor;
+			}
 
-				.sidebar__expandable-arrow {
-					fill: currentColor;
+			.sidebar__expandable-arrow {
+				fill: currentColor;
 			}
 		}
 	}
@@ -128,7 +134,7 @@ body.is-section-reader {
 		}
 
 		p {
-			color: var(--studio-gray-50);
+			color: var( --studio-gray-50 );
 			font-size: $font-body-small;
 			margin: 0;
 		}
@@ -167,15 +173,15 @@ body.is-section-reader {
 	}
 
 	.sidebar__menu-link:hover .count {
-		border-color: var(--color-sidebar-menu-hover-text);
+		border-color: var( --color-sidebar-menu-hover-text );
 		outline-color: #f00;
-		color: var(--color-sidebar-menu-hover-text);
+		color: var( --color-sidebar-menu-hover-text );
 	}
 
 	.selected .sidebar__menu-link .count {
 		background: transparent;
-		border-color: var(--color-sidebar-menu-selected-text);
-		color: var(--color-sidebar-menu-selected-text);
+		border-color: var( --color-sidebar-menu-selected-text );
+		color: var( --color-sidebar-menu-selected-text );
 	}
 
 	.sidebar__menu-item-siteicon {
@@ -189,7 +195,7 @@ body.is-section-reader {
 		display: block;
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-style: italic;
-		color: var(--color-sidebar-text-alternative);
+		color: var( --color-sidebar-text-alternative );
 	}
 
 	.sidebar__separator {
@@ -205,20 +211,19 @@ body.is-section-reader {
 		margin-right: 8px;
 
 		// If the site name is marked with ltr or rtl, ensure we use that directionality.
-		&:has( span[direction="ltr"]) {
+		&:has( span[direction='ltr'] ) {
 			/*!rtl:ignore*/
 			direction: ltr;
 		}
 
-		&:has( span[direction="rtl"]) {
+		&:has( span[direction='rtl'] ) {
 			/*!rtl:ignore*/
 			direction: rtl;
 		}
 	}
 
-
 	.sidebar-streams__following-load-more {
-		color: var(--color-link);
+		color: var( --color-link );
 		cursor: pointer;
 		font-size: $font-body-extra-small;
 		text-align: center;
@@ -227,7 +232,7 @@ body.is-section-reader {
 		width: 100%;
 
 		&:hover {
-			color: var(--color-link-dark);
+			color: var( --color-link-dark );
 		}
 	}
 	.sidebar-streams__tags {
@@ -242,8 +247,8 @@ body.is-section-reader {
 }
 
 .theme-default .global-sidebar .sidebar .sidebar__menu {
-	&:is(.is-togglable) {
-		&.is-toggle-open{
+	&:is( .is-togglable ) {
+		&.is-toggle-open {
 			outline: 1px solid #e0e0e0;
 			border-radius: 4px;
 			.sidebar__heading {
@@ -261,12 +266,12 @@ body.is-section-reader {
 			box-sizing: content-box;
 
 			&.view-more-link {
-				color: var(--color-link);
+				color: var( --color-link );
 				text-decoration: underline;
 				cursor: pointer;
 			}
 
-			&:has(> :nth-child(1):last-child) > :first-child {
+			&:has( > :nth-child( 1 ):last-child ) > :first-child {
 				grid-column-start: 2;
 			}
 		}
@@ -276,27 +281,28 @@ body.is-section-reader {
 				font-weight: 600;
 			}
 
-			svg:not(.sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations){
+			svg:not( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 				fill: currentColor;
 			}
 
-			svg:is(.sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations) {
+			svg:is( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 				fill: none;
 				g {
 					stroke: currentColor;
 				}
 			}
 
-
-			&:hover, &:focus {
-				color: var(--color-sidebar-submenu-selected-hover-text);
+			&:hover,
+			&:focus {
+				color: var( --color-sidebar-submenu-selected-hover-text );
 				--color-sidebar-gridicon-fill: currentColor;
 				--color-sidebar-gridicon-hover-fill: currentColor;
 				--color-sidebar-menu-hover-text: currentColor;
 			}
 		}
 	}
-	.sidebar_svg-a8c-conversations, .sidebar_svg-a8c {
+	.sidebar_svg-a8c-conversations,
+	.sidebar_svg-a8c {
 		fill: none;
 		g {
 			stroke: currentColor;
@@ -304,9 +310,8 @@ body.is-section-reader {
 	}
 	.selected {
 		.sidebar__menu-link {
-			color: var(--color-sidebar-menu-selected-text);
+			color: var( --color-sidebar-menu-selected-text );
 			--color-sidebar-gridicon-fill: currentColor;
 		}
 	}
 }
-

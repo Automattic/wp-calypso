@@ -15,8 +15,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isJetpackCloudEnvironment from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
 	isWooOAuth2Client,
@@ -32,7 +31,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -40,6 +39,7 @@ import {
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
@@ -80,6 +80,7 @@ const LayoutLoggedOut = ( {
 	clearLastActionRequiresLogin,
 	userAllowedToHelpCenter,
 	colorScheme,
+	isJetpackCloud,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -109,7 +110,7 @@ const LayoutLoggedOut = ( {
 	const isWpcomMagicLogin =
 		isMagicLogin &&
 		! hasGravPoweredClientClass &&
-		! isJetpackCloudOAuth2Client( oauth2Client ) &&
+		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
@@ -143,7 +144,7 @@ const LayoutLoggedOut = ( {
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-		'jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+		'jetpack-cloud': isJetpackCloud,
 	};
 
 	let masterbar = null;
@@ -253,7 +254,7 @@ const LayoutLoggedOut = ( {
 					<div className="layout__header-section-content">{ renderHeaderSection() }</div>
 				) }
 			</div>
-			{ isJetpackCloud() && (
+			{ isJetpackCloudEnvironment() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
 			{ isA8CForAgencies() && (
@@ -328,9 +329,7 @@ export default withCurrentRoute(
 			const sectionGroup = currentSection?.group ?? null;
 			const sectionName = currentSection?.name ?? null;
 			const sectionTitle = currentSection?.title ?? '';
-			const isAkismet = isAkismetRedirect(
-				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
-			);
+			const isAkismet = getIsAkismet( state );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
@@ -384,6 +383,7 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 				twoFactorEnabled,
 				colorScheme,
+				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 			};
 		},
 		{ clearLastActionRequiresLogin }

@@ -10,35 +10,34 @@ interface HostingFeatureGatedWithOverviewCardProps
 	featureIcon: OverviewCardProps[ 'icon' ];
 	upsellHeading: OverviewCardProps[ 'heading' ];
 	upsellDescription: OverviewCardProps[ 'description' ];
-	upsellExternalLink: OverviewCardProps[ 'externalLink' ];
+	upsellLink: OverviewCardProps[ 'link' ];
 }
 
 export default function HostingFeatureGatedWithOverviewCard( {
 	featureIcon,
 	upsellHeading,
 	upsellDescription,
-	upsellExternalLink,
+	upsellLink = '',
 	...props
 }: HostingFeatureGatedWithOverviewCardProps ) {
 	const { tracksFeatureId } = props;
 
-	const cardProps = {
+	const cardProps: Partial< OverviewCardProps > = {
 		heading: upsellHeading,
 		icon: upsell,
 		description: upsellDescription,
-		variant: 'upsell' as const,
+		intent: 'upsell' as const,
+		link: upsellLink,
 	};
 
 	return (
 		<HostingFeatureGate
 			{ ...props }
-			renderUpsellComponent={ ( { onClick } ) => (
+			renderUpsellComponent={ () => (
 				<OverviewCard
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
-					externalLink={ upsellExternalLink }
 					tracksId={ tracksFeatureId }
-					onClick={ onClick }
 				/>
 			) }
 			renderActivationComponent={ ( { onClick } ) => (

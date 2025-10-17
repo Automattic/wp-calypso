@@ -7,7 +7,6 @@ import {
 	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	Icon,
 } from '@wordpress/components';
@@ -16,7 +15,9 @@ import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { Text } from '../../components/text';
 import { TextSkeleton } from '../../components/text-skeleton';
+import { isRelativeUrl } from '../../utils/url';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
@@ -24,18 +25,27 @@ export interface OverviewCardProps {
 	icon?: ReactElement;
 	title: string;
 	heading?: ReactNode;
-	description?: string;
+	description?: ReactNode;
 	progress?: {
 		value: number;
 		max: number;
 		label: string;
 		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
 	};
-	intent?: 'upsell' | 'success' | 'error';
+	intent?: 'upsell' | 'success' | 'warning' | 'error';
 	disabled?: boolean;
 	isLoading?: boolean;
+
+	/**
+	 * Will open in the same tab if the link is relative, otherwise it will open in a new tab.
+	 */
 	link?: string;
+
+	/**
+	 * Will always open in a new tab.
+	 */
 	externalLink?: string;
+
 	tracksId?: string;
 	bottom?: ReactNode;
 	onClick?: () => void;
@@ -51,7 +61,7 @@ export default function OverviewCard( {
 	disabled,
 	isLoading,
 	link,
-	externalLink,
+	externalLink: externalLinkProp,
 	tracksId,
 	bottom,
 	onClick,
@@ -78,6 +88,19 @@ export default function OverviewCard( {
 		return <>&nbsp;</>;
 	};
 
+	const isRelativeLink = link && isRelativeUrl( link );
+
+	let relativeLink: string | undefined = undefined;
+	let externalLink: string | undefined = undefined;
+
+	if ( externalLinkProp ) {
+		externalLink = externalLinkProp;
+	} else if ( isRelativeLink ) {
+		relativeLink = link;
+	} else {
+		externalLink = link;
+	}
+
 	const topContent = (
 		<HStack
 			className="dashboard-overview-card__content"
@@ -99,7 +122,7 @@ export default function OverviewCard( {
 							{ title }
 						</Text>
 					</HStack>
-					{ link && ! progress && (
+					{ relativeLink && ! progress && (
 						<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
 					) }
 					{ externalLink && ! progress && (
@@ -125,8 +148,8 @@ export default function OverviewCard( {
 							{ renderHeading() }
 						</Heading>
 						<Text
-							className="dashboard-overview-card__description"
-							variant="muted"
+							intent={ intent === 'warning' || intent === 'error' ? intent : undefined }
+							variant={ intent === 'warning' || intent === 'error' ? undefined : 'muted' }
 							lineHeight="16px"
 							size={ 12 }
 						>
@@ -172,9 +195,9 @@ export default function OverviewCard( {
 	};
 
 	const renderContent = () => {
-		if ( link ) {
+		if ( relativeLink ) {
 			return (
-				<Link to={ link } className="dashboard-overview-card__link" onClick={ handleClick }>
+				<Link to={ relativeLink } className="dashboard-overview-card__link" onClick={ handleClick }>
 					{ topContent }
 				</Link>
 			);
@@ -186,7 +209,7 @@ export default function OverviewCard( {
 					href={ externalLink }
 					className="dashboard-overview-card__link"
 					target="_blank"
-					rel="noreferrer"
+					rel="external noreferrer noopener"
 					onClick={ handleClick }
 				>
 					{ topContent }

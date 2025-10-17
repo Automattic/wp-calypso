@@ -2,6 +2,6 @@
 
 .dashboard-menu-divider {
 	height: $grid-unit-20;
-	border-left: $border-width solid var( --dashboard-header__divider-color );
+	border-inline-start: $border-width solid var( --dashboard-header__divider-color );
 	transform: skew( -10deg );
 }

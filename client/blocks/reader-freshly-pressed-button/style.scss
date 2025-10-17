@@ -1,0 +1,78 @@
+:root .freshly-pressed {
+	--color-foreground: var(--color-text-subtle);
+	display: flex;
+	gap: 4px;
+	align-items: center;
+
+
+	&--is-status-suggested, &--is-status-published {
+		--color-foreground: var(--color-success);
+	}
+
+	&--is-status-eligible &__button {
+		--color-foreground: var(--color-primary-dark);
+	}
+
+
+
+
+	&__button {
+		margin: 0;
+		padding: 0;
+		display: flex;
+		gap: 4px;
+		flex-direction: column;
+		height: auto;
+		color: var(--color-foreground);
+		fill: var(--color-foreground);
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+		font-size: 13px;
+
+
+		&--has-tooltip {
+			@include tooltip-base;
+			@include tooltip-top;
+		}
+
+		@include break-medium {
+			// min-width: unset;
+			flex-direction: row;
+			white-space: nowrap;
+		}
+		&:focus {
+			outline: thin dotted;
+		}
+
+		.accessible-focus &:focus {
+			border-radius: 2px;
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+
+		&:hover {
+			border-color: var(--color-primary);
+			--color-foreground: var(--color-primary);
+		}
+	}
+
+	&__spinner {
+		margin: 0;
+		padding: 2px;
+		width: 16px;
+		height: 16px;
+	}
+
+	&--is-status-not-eligible {
+
+		button {
+			--color-foreground: var(--studio-gray-20);
+			cursor: not-allowed;
+			&:hover {
+				--color-foreground: var(--studio-gray-30);
+			}
+		}
+	}
+
+}

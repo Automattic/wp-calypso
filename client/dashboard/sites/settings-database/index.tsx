@@ -1,7 +1,7 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { HostingFeatures, fetchPhpMyAdminToken } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -14,18 +14,20 @@ import { __ } from '@wordpress/i18n';
 import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { ButtonStack } from '../../components/button-stack';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
-import { fetchPhpMyAdminToken } from '../../data/site-hosting';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import ResetPasswordModal from './reset-password-modal';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
 	const [ isResetPasswordModalOpen, setIsResetPasswordModalOpen ] = useState( false );
@@ -73,10 +75,16 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Database' ) }
-					description={ __(
-						'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+					description={ createInterpolateElement(
+						__(
+							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="hosting-mysql" />,
+						}
 					) }
 				/>
 			}
@@ -112,7 +120,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 									) }
 								</Notice>
 							</VStack>
-							<HStack justify="flex-start" expanded={ false } as="span">
+							<ButtonStack justify="flex-start" expanded={ false } as="span">
 								<Button
 									variant="primary"
 									isBusy={ isFetchingToken }
@@ -120,7 +128,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 								>
 									{ __( 'Open phpMyAdmin ↗' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 							<Text variant="muted" lineHeight="20px">
 								{ createInterpolateElement(
 									__( 'Having problems with access? Try <link>resetting the password</link>.' ),

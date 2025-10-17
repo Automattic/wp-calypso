@@ -12,8 +12,13 @@ export default function SiteMigrationIcon( {
 					d="M0 4C0 1.79086 1.79086 0 4 0H52C54.2091 0 56 1.79086 56 4V52C56 54.2091 54.2091 56 52 56H4C1.79086 56 0 54.2091 0 52V4Z"
 					fill="#3858E9"
 				/>
+				<path
+					d="M0 4C0 1.79086 1.79086 0 4 0H52C54.2091 0 56 1.79086 56 4V52C56 54.2091 54.2091 56 52 56H4C1.79086 56 0 54.2091 0 52V4Z"
+					fill="url(#overlay_gradient)"
+				/>
 				<g opacity="0.1">
-					<circle cx="27.7286" cy="24.7286" r="8.72857" fill="#3858E9" />
+					<circle cx="27.7286" cy="24.7286" r="8.72857" fill="currentColor" />
+					<circle cx="27.7286" cy="24.7286" r="8.72857" fill="url(#overlay_gradient)" />
 					<path
 						fillRule="evenodd"
 						clipRule="evenodd"
@@ -21,7 +26,8 @@ export default function SiteMigrationIcon( {
 						fill="white"
 					/>
 				</g>
-				<circle cx="27.5" cy="27.5" r="11.5" fill="#3858E9" />
+				<circle cx="27.5" cy="27.5" r="11.5" fill="currentColor" />
+				<circle cx="27.5" cy="27.5" r="11.5" fill="url(#overlay_gradient)" />
 				<g opacity="0.35">
 					<path
 						fillRule="evenodd"
@@ -31,7 +37,8 @@ export default function SiteMigrationIcon( {
 					/>
 				</g>
 				<g filter="url(#filter0_d_3923_15349)">
-					<circle cx="33.5" cy="27.5" r="11.5" fill="#3858E9" />
+					<circle cx="33.5" cy="27.5" r="11.5" fill="currentColor" />
+					<circle cx="33.5" cy="27.5" r="11.5" fill="url(#overlay_gradient)" />
 					<path
 						fillRule="evenodd"
 						clipRule="evenodd"
@@ -75,6 +82,10 @@ export default function SiteMigrationIcon( {
 						fill="white"
 					/>
 				</clipPath>
+				<linearGradient id="overlay_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+					<stop offset="0%" stopColor="rgba(255,255,255,0.32)" />
+					<stop offset="100%" stopColor="rgba(255,255,255,0.32)" />
+				</linearGradient>
 			</defs>
 		</svg>
 	);

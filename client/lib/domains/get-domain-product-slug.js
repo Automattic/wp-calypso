@@ -1,4 +1,4 @@
-import { getTld } from './get-tld';
+import { getTld } from '@automattic/domain-search';
 
 export function getDomainProductSlug( domain ) {
 	const tld = getTld( domain );

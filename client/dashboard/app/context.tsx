@@ -6,11 +6,22 @@ export type SiteFeatureSupports = {
 	monitoring: boolean;
 	logs: boolean;
 	backups: boolean;
+	scan: boolean;
 	domains: boolean;
 	emails: boolean;
 };
 
+export type MeSupports = {
+	privacy: boolean;
+	apps: boolean;
+};
+
+export type OnboardingLink = {
+	href: string;
+};
+
 export type AppConfig = {
+	name: string;
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -18,16 +29,26 @@ export type AppConfig = {
 	supports: {
 		overview: boolean;
 		sites: SiteFeatureSupports | false;
+		ciabSites: boolean;
+		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
+		themes: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
-		me: boolean;
+		me: MeSupports | false;
+		commandPalette: boolean;
+	};
+	onboardingLinkSourceQueryArg?: 'sites-dashboard' | 'ciab-sites-dashboard';
+	onboardingLinks?: {
+		default: OnboardingLink;
+		withAI: OnboardingLink;
 	};
 };
 
 const AppContext = createContext< AppConfig >( {
+	name: '',
 	basePath: '',
 	mainRoute: '',
 	Logo: null,
@@ -35,13 +56,19 @@ const AppContext = createContext< AppConfig >( {
 	supports: {
 		overview: false,
 		sites: false,
+		ciabSites: false,
+		plugins: false,
 		domains: false,
 		emails: false,
+		themes: false,
 		reader: false,
 		help: false,
 		notifications: false,
 		me: false,
+		commandPalette: false,
 	},
+	onboardingLinkSourceQueryArg: undefined,
+	onboardingLinks: undefined,
 } );
 
 interface AppProviderProps {

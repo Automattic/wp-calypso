@@ -1,25 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
+import { siteDomainsQuery, siteSettingsMutation } from '@automattic/api-queries';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
 	Button,
 	CheckboxControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
-import type { Site, SiteSettings } from '../../data/types';
-import type { UseMutationResult } from '@tanstack/react-query';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 // The raw SiteSettings don't map nicely to the controls in the form. Mapping from SiteSettings to
@@ -51,7 +48,7 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 				label: __( 'Private' ),
 				value: 'private',
 				description: __(
-					'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+					'Your site is only visible to you and to logged-in members you approve. Everyone else will see a login screen.'
 				),
 			},
 		],
@@ -59,8 +56,10 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 ];
 
 const visibilityForm = {
-	type: 'regular',
-	fields: [ { id: 'visibility', labelPosition: 'none' } ],
+	layout: {
+		type: 'regular' as const,
+	},
+	fields: [ { id: 'visibility', layout: { type: 'regular', labelPosition: 'none' } } ],
 } satisfies Form;
 
 // This form also has access to `isPrimaryDomainStaging` which isn't a persisted setting, but is data
@@ -113,26 +112,25 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 ];
 
 const robotForm = {
-	type: 'regular',
+	layout: { type: 'regular' as const },
 	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 
-export function PrivacyForm( {
-	site,
-	settings,
-	mutation,
-}: {
-	site: Site;
-	settings: SiteSettings;
-	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
-} ) {
+export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
 	const { data: domains = [] } = useQuery( siteDomainsQuery( site.ID ) );
+	const mutation = useMutation( {
+		...siteSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Site visibility settings saved.' ),
+				error: __( 'Failed to save site visibility settings.' ),
+			},
+		},
+	} );
 
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
 	const isPrimaryDomainStaging = Boolean( primaryDomain?.is_wpcom_staging_domain );
 	const hasNonWpcomDomain = domains.some( ( domain ) => ! domain.wpcom_domain );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const initialData = fromSiteSettings( settings );
 	const [ formData, setFormData ] = useState( () => ( {
@@ -148,16 +146,7 @@ export function PrivacyForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( toSiteSettings( formData ), {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Site visibility settings saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save site visibility settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( toSiteSettings( formData ) );
 	};
 
 	const handleChange = ( edits: Partial< PrivacyFormData > ) => {
@@ -192,49 +181,57 @@ export function PrivacyForm( {
 								form={ visibilityForm }
 								onChange={ handleChange }
 							/>
-							{ formData.visibility === 'public' && isPrimaryDomainStaging && (
-								<Notice
-									variant="warning"
-									density="medium"
-									actions={
-										hasNonWpcomDomain ? (
-											<Button variant="secondary" href={ `/domains/manage/${ site.slug }` }>
-												{ __( 'Manage domains' ) }
-											</Button>
-										) : (
-											<Button
-												variant="secondary"
-												href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-													redirect_to: window.location.pathname,
-												} ) }
-											>
-												{ __( 'Add new domain' ) }
-											</Button>
-										)
-									}
-								>
-									{ createInterpolateElement(
-										__(
-											/* translators: <domain /> is a placeholder for the site's domain name. */
-											'Your site’s current primary domain is <domain />. This domain is intended for temporary use and will not be indexed by search engines. To ensure your site can be indexed, please register or connect a custom primary domain.'
-										),
-										{
-											domain: (
-												<strong style={ { overflowWrap: 'anywhere' } }>
-													{ primaryDomain?.domain }
-												</strong>
-											),
+							{ formData.visibility === 'public' &&
+								isPrimaryDomainStaging &&
+								( site.is_wpcom_staging_site ? (
+									<Notice variant="warning" density="medium">
+										{ __(
+											'Staging sites are intended for testing purposes and will not be indexed by search engines.'
+										) }
+									</Notice>
+								) : (
+									<Notice
+										variant="warning"
+										density="medium"
+										actions={
+											hasNonWpcomDomain ? (
+												<Button variant="secondary" href={ `/domains/manage/${ site.slug }` }>
+													{ __( 'Manage domains' ) }
+												</Button>
+											) : (
+												<Button
+													variant="secondary"
+													href={ addQueryArgs( `/domains/add/${ site.slug }`, {
+														redirect_to: window.location.pathname,
+													} ) }
+												>
+													{ __( 'Add new domain' ) }
+												</Button>
+											)
 										}
-									) }
-								</Notice>
-							) }
+									>
+										{ createInterpolateElement(
+											__(
+												/* translators: <domain /> is a placeholder for the site's domain name. */
+												'Your site’s current primary domain is <domain />. This domain is intended for temporary use and will not be indexed by search engines. To ensure your site can be indexed, please register or connect a custom primary domain.'
+											),
+											{
+												domain: (
+													<strong style={ { overflowWrap: 'anywhere' } }>
+														{ primaryDomain?.domain }
+													</strong>
+												),
+											}
+										) }
+									</Notice>
+								) ) }
 							<DataForm< PrivacyFormData & { isPrimaryDomainStaging: boolean } >
 								data={ { ...formData, isPrimaryDomainStaging } }
 								fields={ robotFields }
 								form={ robotForm }
 								onChange={ ( { isPrimaryDomainStaging, ...edits } ) => handleChange( edits ) }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
@@ -244,7 +241,7 @@ export function PrivacyForm( {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

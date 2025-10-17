@@ -17,27 +17,42 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'premier-partner',
+		],
 	},
 	{
 		title: translate( 'Earning opportunities' ),
 		description: translate(
-			"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products."
+			"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products. Premier partners receive the highest earning opportunities."
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'premier-partner',
+		],
 	},
 	{
 		title: translate( 'Support' ),
 		description: preventWidows(
 			translate(
-				'All program partners receive unified program and product support. Pro partners receive access to priority support across Automattic products.'
+				'All program partners receive unified program and product support. Pro partners receive access to priority support across Automattic products. Premier partners receive the highest level of support and escalation.'
 			)
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'premier-partner',
+		],
 	},
 	{
 		title: translate( 'Training & resources' ),
@@ -50,7 +65,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 			),
 		],
 		isComingSoon: true,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'premier-partner',
+		],
 	},
 	{
 		title: translate( 'Networking & community' ),
@@ -59,7 +79,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: true,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'premier-partner',
+		],
 	},
 	{
 		title: translate( 'Directory visibility & badging' ),
@@ -70,7 +95,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [ 'agency-partner', 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
 		title: translate( 'Early access' ),
@@ -79,16 +104,16 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [ 'agency-partner', 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
 		title: translate( 'Co-marketing' ),
 		description: translate(
-			'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise.'
+			'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise. Premier partners can access marketing development funds upon successful application.'
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
 		title: translate( 'Pre-qualified sales leads' ),
@@ -97,7 +122,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
 		title: translate( 'Dedicated agency partner manager' ),
@@ -106,7 +131,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
 		title: translate( 'Automattic advisory board' ),
@@ -115,7 +140,16 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'premier-partner' ],
+	},
+	{
+		title: translate( 'Free products' ),
+		description: translate(
+			'Free agency site on WordPress.com or Pressable. Premier partners receive a complimentary three-month Parse.ly trial, and free WooCommerce and Jetpack extensions.'
+		),
+		features: [],
+		isComingSoon: true,
+		availableTiers: [ 'premier-partner' ],
 	},
 ];
 

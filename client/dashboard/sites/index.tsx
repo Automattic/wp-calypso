@@ -1,31 +1,42 @@
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import {
+	isAutomatticianQuery,
+	userPreferenceQuery,
+	userPreferenceMutation,
+	sitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import {
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+	useMutation,
+	keepPreviousData,
+} from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import deepmerge from 'deepmerge';
+import { useState, useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { isAutomatticianQuery } from '../app/queries/me-a8c';
-import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-preferences';
-import { sitesQuery } from '../app/queries/sites';
-import { sitesRoute } from '../app/router';
-import DataViewsCard from '../components/dataviews-card';
+import { sitesRoute } from '../app/router/sites';
+import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { getActions } from './actions';
 import AddNewSite from './add-new-site';
-import { getFields } from './fields';
-import { SitesNotices } from './notices';
 import {
+	SitesDataViews,
+	useActions,
+	getFields,
 	getView,
 	mergeViews,
-	DEFAULT_LAYOUTS,
 	recordViewChanges,
-	DEFAULT_PER_PAGE_SIZES,
-} from './views';
-import type { ViewSearchParams } from './views';
-import type { FetchSitesOptions, Site } from '../data/types';
+} from './dataviews';
+import noSitesIllustration from './no-sites-illustration.svg';
+import { SitesNotices } from './notices';
+import type { ViewSearchParams } from './dataviews/views';
+import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
@@ -51,7 +62,7 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const router = useRouter();
+	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
@@ -69,14 +80,18 @@ export default function Sites() {
 		viewSearchParams,
 	} );
 
-	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) )
-	);
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isPlaceholderData,
+	} = useQuery( {
+		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		placeholderData: keepPreviousData,
+	} );
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
-	const actions = getActions( router );
+	const actions = useActions();
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const handleViewChange = ( nextView: View ) => {
@@ -103,10 +118,37 @@ export default function Sites() {
 		updateViewPreferences( updatedViewPreferences );
 	};
 
+	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+
+	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+
+	let emptyDescription = __( 'Get started by creating a new site.' );
+	if ( view.search ) {
+		emptyDescription = sprintf(
+			// Translators: %s is the search term used when looking for sites by title or domain name.
+			__(
+				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
+			),
+			view.search
+		);
+	} else if ( hasFilterOrSearch ) {
+		emptyDescription = __( 'Your search did not match any sites.' );
+	}
+
+	useEffect( () => {
+		if ( sites ) {
+			sites.forEach( ( site ) => {
+				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
+				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
+				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
+			} );
+		}
+	}, [ sites, queryClient ] );
+
 	return (
 		<>
 			{ isModalOpen && (
-				<Modal title={ __( 'Add New Site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="sites-dashboard" />
 				</Modal>
 			) }
@@ -120,27 +162,59 @@ export default function Sites() {
 								onClick={ () => setIsModalOpen( true ) }
 								__next40pxDefaultSize
 							>
-								{ __( 'Add New Site' ) }
+								{ __( 'Add new site' ) }
 							</Button>
 						}
 					/>
 				}
+				notices={ <SitesNotices /> }
 			>
-				<SitesNotices />
-				<DataViewsCard>
-					<DataViews< Site >
-						getItemId={ ( item ) => item.ID.toString() }
-						data={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						view={ view }
-						isLoading={ isLoadingSites }
-						onChangeView={ handleViewChange }
-						defaultLayouts={ DEFAULT_LAYOUTS }
-						paginationInfo={ paginationInfo }
-						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
-					/>
-				</DataViewsCard>
+				<SitesDataViews
+					view={ view }
+					sites={ sites ?? [] }
+					fields={ fields }
+					actions={ actions }
+					isLoading={ isLoadingSites || ( isPlaceholderData && sites.length === 0 ) }
+					empty={
+						<DataViewsEmptyState
+							title={ emptyTitle }
+							description={ emptyDescription }
+							illustration={
+								<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
+							}
+							actions={
+								<>
+									{ view.search && (
+										<Button
+											__next40pxDefaultSize
+											variant="secondary"
+											onClick={ () => {
+												navigate( {
+													search: {
+														...currentSearchParams,
+														view: Object.fromEntries(
+															Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+														),
+													},
+												} );
+											} }
+										>
+											{ __( 'Clear search' ) }
+										</Button>
+									) }
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										onClick={ () => setIsModalOpen( true ) }
+									>
+										{ __( 'Add new site' ) }
+									</Button>
+								</>
+							}
+						/>
+					}
+					handleViewChange={ handleViewChange }
+				/>
 			</PageLayout>
 		</>
 	);

@@ -2,14 +2,14 @@ import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
+import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -28,8 +28,6 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 		return true;
 	} catch ( error ) {
 		// fail silently here, just log an error and return false, Big Sky will still launch
-		// eslint-disable-next-line no-console
-		console.error( `Failed to delete page ${ pageId } for site ${ siteId }:`, error );
 		return false;
 	}
 };
@@ -40,7 +38,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.ERROR,
-		STEPS.UNIFIED_DOMAINS,
+		STEPS.DOMAIN_SEARCH,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_LAUNCH,
 		STEPS.PROCESSING,
@@ -56,28 +54,81 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	useSideEffect() {
 		const dispatch = useDispatch();
-		const siteId = useQuery().get( 'siteId' );
-		const prompt = useQuery().get( 'prompt' );
+		const { setGardenName, setGardenPartnerName } = useWpDataDispatch( ONBOARD_STORE );
+		const queryParams = useQuery();
+		const siteId = queryParams.get( 'siteId' );
+		const prompt = queryParams.get( 'prompt' );
+		const createGardenSite = queryParams.get( 'create_garden_site' );
+
 		useEffect( () => {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
-		}, [ siteId ] );
+		}, [ siteId, dispatch ] );
+
 		useEffect( () => {
 			if ( prompt && prompt.length > 0 ) {
 				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
 			}
 		}, [ prompt ] );
+
+		useEffect( () => {
+			// Set the garden values based on the query parameter
+			// The parameter should be exactly "1" to enable garden site creation
+			if ( createGardenSite === '1' ) {
+				setGardenName( 'commerce' );
+				setGardenPartnerName( 'wpcom' );
+			} else {
+				setGardenName( null );
+				setGardenPartnerName( null );
+			}
+		}, [ createGardenSite, setGardenName, setGardenPartnerName ] );
 	},
 	initialize,
 	useStepNavigation( _, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
+		const { gardenName } = useSelect(
+			( select ) => ( {
+				gardenName: ( select( ONBOARD_STORE ) as any ).getGardenName(),
+				gardenPartnerName: ( select( ONBOARD_STORE ) as any ).getGardenPartnerName(),
+			} ),
+			[]
+		);
 
-		const { addBlogSticker } = useAddBlogStickerMutation();
+		const { addBlogSticker } = useAddBlogStickerMutation( {
+			onError: () => {
+				// Fail silently - blog sticker addition is not essential for site creation
+			},
+		} );
 
 		const queryParams = useQuery();
+
+		const goToCheckout = async () => {
+			const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+			const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
+			const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
+				siteId: siteIdFromSiteData,
+				checkout: 'success',
+			} );
+			window.location.assign(
+				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
+					redirect_to:
+						queryParams.get( 'redirect' ) === 'site-launch'
+							? siteLaunchUrl
+							: addQueryArgs( bigSkyUrl, {
+									checkout: 'success',
+							  } ),
+					checkoutBackUrl: addQueryArgs( bigSkyUrl, {
+						checkout: 'cancel',
+					} ),
+					signup: 1,
+					'big-sky-checkout': 1,
+				} )
+			);
+		};
+
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -98,8 +149,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							const { siteSlug, siteId } = providedDependencies;
 							// We are setting up big sky now.
 							if ( ! siteId || ! siteSlug ) {
-								// eslint-disable-next-line no-console
-								console.error( 'No siteId or siteSlug', providedDependencies );
 								return;
 							}
 							// get the prompt from the get url
@@ -107,40 +156,69 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							let promptParam = '';
 
 							const source = queryParams.get( 'source' );
+							const specId = queryParams.get( 'spec_id' );
 							let sourceParam = '';
-
-							addBlogSticker( siteId, 'big-sky-free-trial' );
+							let specIdParam = '';
 
 							const pendingActions = [
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
 							];
 
-							// Create a new home page if one is not set yet.
-							pendingActions.push(
-								wpcomRequest( {
-									path: '/sites/' + siteId + '/pages',
-									method: 'POST',
-									apiNamespace: 'wp/v2',
-									body: {
-										title: 'Home',
-										status: 'publish',
-										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-									},
-								} )
-							);
+							if ( ! gardenName ) {
+								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
+								addBlogSticker( siteId, 'big-sky-free-trial' );
 
-							pendingActions.push(
-								setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
-							);
+								// Create a new home page if one is not set yet (only for non-garden sites)
+								pendingActions.push(
+									wpcomRequest( {
+										path: '/sites/' + siteId + '/pages',
+										method: 'POST',
+										apiNamespace: 'wp/v2',
+										body: {
+											title: 'Home',
+											status: 'publish',
+											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+										},
+									} )
+								);
+							}
+
+							// Only apply design and delete page for non-garden sites
+							if ( ! gardenName ) {
+								pendingActions.push(
+									setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+								);
+								pendingActions.push( deletePage( siteId || '', 1 ) );
+							}
 							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
 
-							// Delete the existing boilerplate about page, always has a page ID of 1
-							pendingActions.push( deletePage( siteId || '', 1 ) );
-							const results = await Promise.all( pendingActions );
-							const siteURL = results[ 0 ].URL;
+							// Execute operations individually to identify which one fails
+							const results = [];
+							try {
+								// Execute all actions sequentially with logging
+								for ( let i = 0; i < pendingActions.length; i++ ) {
+									const result = await pendingActions[ i ];
+									results.push( result );
+								}
+							} catch ( error ) {
+								return;
+							}
 
-							const homePagePostId = results[ 1 ].id;
-							await setStaticHomepageOnSite( siteId, homePagePostId );
+							// Defensive check for site data (always first)
+							const siteData = results[ 0 ];
+							if ( ! siteData || ! siteData.URL ) {
+								return;
+							}
+							const siteURL = siteData.URL;
+
+							// Handle page creation result (only exists for non-garden sites)
+							if ( ! gardenName && results.length > 1 ) {
+								const pageCreationResult = results[ 1 ];
+								if ( pageCreationResult && pageCreationResult.id ) {
+									const homePagePostId = pageCreationResult.id;
+									await setStaticHomepageOnSite( siteId, homePagePostId );
+								}
+							}
 
 							if ( prompt ) {
 								promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
@@ -154,19 +232,32 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							if ( source ) {
 								sourceParam = `&source=${ encodeURIComponent( source ) }`;
 							}
+							if ( specId ) {
+								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
+							}
+
 							window.location.replace(
-								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }`
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
 							);
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
 							);
-							window.location.replace( site.URL );
+							let bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
+							const checkout = queryParams.get( 'checkout' );
+							if ( checkout ) {
+								bigSkyUrl += '&checkout=success';
+							}
+							window.location.replace( bigSkyUrl );
 						}
 					}
 					return;
 				}
 				case 'domains': {
+					if ( ! providedDependencies ) {
+						throw new Error( 'No provided dependencies found' );
+					}
+
 					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
 						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
 							providedDependencies.domainItem as MinimalRequestCartProduct,
@@ -175,6 +266,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							console.log( 'ADD TO CART', res );
 						} );
 					}
+
+					// Flow is plan => domain and we are on domains: go to checkout
+					if ( queryParams.get( 'flow' ) === 'plan-domain' ) {
+						await goToCheckout();
+						return;
+					}
+
 					return navigate( 'plans' );
 				}
 
@@ -191,26 +289,12 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 						);
 					}
 
-					const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
-					const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
-					const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
-						siteId: siteIdFromSiteData,
-					} );
-					window.location.assign(
-						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
-							redirect_to:
-								queryParams.get( 'redirect' ) === 'site-launch'
-									? siteLaunchUrl
-									: addQueryArgs( bigSkyUrl, {
-											checkout: 'success',
-									  } ),
-							checkoutBackUrl: addQueryArgs( bigSkyUrl, {
-								checkout: 'cancel',
-							} ),
-							signup: 1,
-							'big-sky-checkout': 1,
-						} )
-					);
+					// Flow is plan => domain and we are on plans: go to domains
+					if ( queryParams.get( 'flow' ) === 'plan-domain' ) {
+						return navigate( 'domains' );
+					}
+
+					await goToCheckout();
 				}
 
 				case 'site-launch': {

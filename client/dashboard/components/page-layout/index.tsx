@@ -1,9 +1,10 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import type { CSSProperties } from 'react';
 import './style.scss';
 
-const sizes = {
-	large: { maxWidth: '1344px' },
-	small: { maxWidth: '660px' },
+const PAGE_LAYOUT_SIZES = {
+	large: { '--page-layout-max-width': '1344px' },
+	small: { '--page-layout-max-width': '660px' },
 };
 
 function PageLayout( {
@@ -21,7 +22,7 @@ function PageLayout( {
 		<VStack
 			spacing={ 8 }
 			className={ `dashboard-page-layout is-${ size }` }
-			style={ sizes[ size ] }
+			style={ PAGE_LAYOUT_SIZES[ size ] as CSSProperties }
 		>
 			{ header }
 			{ notices }

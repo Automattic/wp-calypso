@@ -24,10 +24,31 @@ interface Props {
 	isSocialFirst?: boolean;
 	isWooJPC?: boolean;
 	isWCCOM?: boolean;
+	isBlazePro?: boolean;
 	isFromAkismet?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
 	isGravPoweredClient?: boolean;
+	isUserLoggedIn?: boolean;
 }
+
+const getLoggedInUserHeaderText = ( {
+	isSocialFirst,
+	isWooJPC,
+	isWCCOM,
+	isBlazePro,
+	translate,
+}: {
+	isSocialFirst?: boolean;
+	isWooJPC?: boolean;
+	isWCCOM?: boolean;
+	isBlazePro?: boolean;
+	translate: ( arg0: string, arg1?: object ) => TranslateResult;
+} ): TranslateResult | null => {
+	if ( isSocialFirst && ( isWooJPC || isWCCOM || isBlazePro ) ) {
+		return translate( 'Connect your account' );
+	}
+	return null;
+};
 
 /**
  * This function is used to get the header text for the login page.
@@ -44,13 +65,28 @@ export function getHeaderText( {
 	isWooJPC,
 	isJetpack,
 	isWCCOM,
+	isBlazePro,
 	isFromAkismet,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	currentQuery,
 	translate,
 	twoStepNonce,
+	isUserLoggedIn,
 }: Props ): TranslateResult {
+	if ( isUserLoggedIn ) {
+		const loggedInText = getLoggedInUserHeaderText( {
+			isSocialFirst,
+			isWooJPC,
+			isWCCOM,
+			isBlazePro,
+			translate,
+		} );
+		if ( loggedInText ) {
+			return loggedInText;
+		}
+	}
+
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
@@ -84,14 +120,14 @@ export function getHeaderText( {
 					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
 					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
 						args: { client: clientName },
-						components: { span: <span className="wp-login__login-block-header-client-name" /> },
+						components: { span: <span className="wp-login__one-login-header-client-name" /> },
 					} ),
 					oldCopy: translate( 'Log in to WordPress.com' ),
 			  } ) as TranslateResult )
 			: translate( 'Log in to WordPress.com' );
 	}
 
-	if ( twoFactorAuthType === 'authenticator' ) {
+	if ( twoFactorAuthType === 'authenticator' || twoFactorAuthType === 'email' ) {
 		headerText = translate( 'Continue with an authentication code' );
 	}
 
@@ -118,7 +154,7 @@ export function getHeaderText( {
 	}
 
 	if ( action === 'lostpassword' ) {
-		headerText = translate( 'Forgot your password?' );
+		headerText = translate( 'Lost your password?' );
 	} else if ( currentQuery?.lostpassword_flow === 'true' ) {
 		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {

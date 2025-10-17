@@ -23,10 +23,6 @@ export const getManagePluginsUrl = ( slug: string ) => {
 	return `/plugins/manage/${ slug }`;
 };
 
-export const getHostingConfigUrl = ( slug: string ) => {
-	return `/hosting-config/${ slug }`;
-};
-
 export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };

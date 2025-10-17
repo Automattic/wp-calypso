@@ -1,8 +1,16 @@
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '@automattic/api-core';
+import {
+	siteLatestAtomicTransferQuery,
+	siteLastBackupQuery,
+	siteMediaStorageQuery,
+	sitePHPVersionQuery,
+	siteEngagementStatsQuery,
+	siteUptimeQuery,
+} from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
-	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
@@ -12,29 +20,22 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
-import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
-import { siteLastBackupQuery } from '../../app/queries/site-backups';
-import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
-import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
-import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
-import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
+import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, Site } from '../../data/types';
-
-import './style.scss';
+import type { AtomicTransferStatus, Site } from '@automattic/api-core';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -44,14 +45,14 @@ function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
 }
 
-function getSiteManagementUrl( site: Site ) {
+export function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
 		return `/sites/${ site.slug }`;
 	}
 	return site.options?.admin_url;
 }
 
-const titleFieldTextOverflowStyles = {
+export const titleFieldTextOverflowStyles = {
 	overflowX: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
@@ -95,7 +96,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ site.URL }
+			href={ getSiteFormattedUrl( site ) }
 		>
 			{ value }
 		</ExternalLink>
@@ -124,7 +125,13 @@ export function Preview( { site }: { site: Site } ) {
 		<Link
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { display: 'block', height: '100%', width: '100%' } }
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
 		>
 			{ resizeListener }
 			{ iframeDisabled && (
@@ -355,7 +362,7 @@ export function Status( { site }: { site: Site } ) {
 	const label = getSiteStatusLabel( site );
 
 	if ( status === 'deleted' ) {
-		return <Text isDestructive>{ label }</Text>;
+		return <Text intent="error">{ label }</Text>;
 	}
 
 	if ( status === 'difm_lite_in_progress' ) {
@@ -373,7 +380,7 @@ export function Status( { site }: { site: Site } ) {
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
-				<Text isDestructive>{ __( 'Plan expired' ) }</Text>
+				<Text intent="error">{ __( 'Plan expired' ) }</Text>
 				<PlanRenewNag site={ site } source="status" />
 			</VStack>
 		);
@@ -409,10 +416,6 @@ export function Status( { site }: { site: Site } ) {
 
 export function Plan( { site }: { site: Site } ) {
 	const planName = getSitePlanDisplayName( site );
-	if ( site.is_wpcom_staging_site ) {
-		// translator: this is the label of a staging site.
-		return __( 'Staging' );
-	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		if ( ! site.jetpack ) {
@@ -429,7 +432,7 @@ export function Plan( { site }: { site: Site } ) {
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
-				<Text isDestructive>
+				<Text intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),

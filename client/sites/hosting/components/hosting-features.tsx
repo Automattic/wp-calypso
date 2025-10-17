@@ -54,7 +54,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 
 	let redirectUrl = redirectToRef.current as string;
 	if ( ! redirectUrl ) {
-		redirectUrl = hasSftpFeature ? `/hosting-config/${ siteSlug }` : `/overview/${ siteId }`;
+		redirectUrl = hasSftpFeature ? `/sites/${ siteSlug }/settings` : `/overview/${ siteId }`;
 	}
 
 	const hasEnTranslation = useHasEnTranslation();

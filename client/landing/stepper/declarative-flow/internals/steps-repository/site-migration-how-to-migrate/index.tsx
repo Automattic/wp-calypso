@@ -76,7 +76,7 @@ const SiteMigrationHowToMigrate: StepType< {
 
 	const goBack = useCallback( () => {
 		cancelMigration();
-		navigation.goBack?.();
+		navigation?.goBack?.();
 	}, [ cancelMigration, navigation ] );
 
 	const renderSubHeaderText = () => {

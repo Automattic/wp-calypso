@@ -99,7 +99,7 @@ export default function SocialAuthToS() {
 
 	return getToSComponent(
 		translate(
-			'If you continue with Google, Apple or GitHub, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			'By continuing with any of the options listed, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			toSLinks
 		)
 	);

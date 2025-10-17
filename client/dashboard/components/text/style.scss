@@ -1,0 +1,11 @@
+.dashboard-text--success {
+	--wp-components-color-foreground: var(--dashboard__foreground-color-success);
+}
+
+.dashboard-text--warning {
+	--wp-components-color-foreground: var(--dashboard__foreground-color-warning);
+}
+
+.dashboard-text--error {
+	--wp-components-color-foreground: var(--dashboard__foreground-color-error);
+}

@@ -1,8 +1,7 @@
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "@automattic/components/src/styles/typography";
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
+@import '@automattic/components/src/styles/typography';
 
 .is-section-reader {
-
 	.user-profile {
 		position: relative;
 
@@ -13,9 +12,7 @@
 		}
 
 		div.user-profile__wrapper {
-
 			.back-button {
-
 				@media ( max-width: 1300px ) {
 					padding: 24px 24px 0;
 				}
@@ -46,7 +43,7 @@
 			margin: 0 auto;
 
 			&-link {
-				color: var(--color-neutral-100);
+				color: var( --color-neutral-100 );
 				cursor: pointer;
 				display: block;
 				line-height: 29px;
@@ -70,8 +67,8 @@
 	.user-profile__recommended-blog-item {
 		display: flex;
 		align-items: flex-start;
-		border-radius: 8px; // stylelint-disable-line scales/radii
-		border: 1px solid var(--color-border-subtle);
+		border-radius: 8px;
+		border: 1px solid var( --color-border-subtle );
 		padding: 20px;
 		margin-bottom: 20px;
 		position: relative;
@@ -79,7 +76,7 @@
 
 		@include breakpoint-deprecated( '<660px' ) {
 			border: none;
-			border-bottom: 5px solid var(--color-neutral-5);
+			border-bottom: 5px solid var( --color-neutral-5 );
 			border-radius: 0;
 			margin-bottom: 0;
 		}
@@ -87,7 +84,7 @@
 		.user-profile__recommended-blog-site-icon .site-icon {
 			border-radius: 50%;
 			flex-shrink: 0;
-			border: 1px solid var(--color-border-subtle);
+			border: 1px solid var( --color-border-subtle );
 
 			img {
 				object-fit: cover;

@@ -439,10 +439,21 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
-		const archivesData = get( data, dataPath, [] );
+		const archivesData = get( data, dataPath, {} );
+
+		// Add null check for archivesData
+		// TODO: ensure API always returns an object here. Now it return an empty array when there's no items.
+		if ( ! archivesData || typeof archivesData !== 'object' || Array.isArray( archivesData ) ) {
+			return [];
+		}
 
 		const archives = Object.keys( archivesData ).reduce( ( accumulatedArchives, archiveKey ) => {
 			const archiveItems = archivesData[ archiveKey ];
+
+			// Add null check for archiveItems
+			if ( ! archiveItems ) {
+				return accumulatedArchives;
+			}
 
 			// Taxonomy items are grouped by taxonomy term.
 			if ( 'tax' === archiveKey ) {

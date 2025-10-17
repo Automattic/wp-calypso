@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
+import { getTld } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getTransferCostText } from './get-transfer-cost-text';

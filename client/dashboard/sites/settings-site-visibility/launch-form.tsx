@@ -1,3 +1,4 @@
+import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -8,19 +9,10 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
-import { useAnalytics } from '../../app/analytics';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
-import { DotcomPlans } from '../../data/constants';
-import {
-	isSitePlanLaunchable as getIsSitePlanLaunchable,
-	isSitePlanBigSkyTrial,
-	isSitePlanPaid,
-} from '../plans';
+import { SiteLaunchButton } from '../site-launch-button';
 import TrialUpsellNotice from './trial-upsell-notice';
-import type { AgencyBlog, Site } from '../../data/types';
+import type { AgencyBlog, Site } from '@automattic/api-core';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
 	if ( ! agency ) {
@@ -62,13 +54,7 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 	);
 }
 
-export function LaunchAgencyDevelopmentSiteForm( {
-	site,
-	onLaunchClick,
-}: {
-	site: Site;
-	onLaunchClick: () => void;
-} ) {
+export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 	const { data, isError } = useQuery( siteAgencyBlogQuery( site.ID ) );
 
 	const billingMessage = getAgencyBillingMessage( data, isError );
@@ -81,9 +67,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
 				<>
-					<Button size="compact" variant="primary" onClick={ () => onLaunchClick() }>
-						{ __( 'Launch site' ) }
-					</Button>
+					<SiteLaunchButton site={ site } tracksContext="agency_site_settings" />
 					{ shouldShowReferClientButton && (
 						<Button
 							size="compact"
@@ -106,82 +90,14 @@ export function LaunchAgencyDevelopmentSiteForm( {
 	);
 }
 
-export function LaunchForm( {
-	site,
-	isLaunching,
-	onLaunchClick,
-}: {
-	site: Site;
-	isLaunching: boolean;
-	onLaunchClick: () => void;
-} ) {
-	const { data: domains = [], isLoading } = useQuery( siteDomainsQuery( site.ID ) );
-	const { recordTracksEvent } = useAnalytics();
-	const buttonClickEvent = 'calypso_dashboard_site_settings_launch_site_click';
-
-	const handleLaunchClick = () => {
-		recordTracksEvent( buttonClickEvent );
-		onLaunchClick();
-	};
-
-	if ( isLoading ) {
-		return null;
-	}
-
-	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
-	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
-	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
-	const shouldImmediatelyLaunch = isSitePlanPaidWithDomains || isSitePlanHostingTrial;
-
-	const getLaunchUrl = () => {
-		if ( isSitePlanBigSkyTrial( site ) ) {
-			return addQueryArgs( '/setup/ai-site-builder/domains', {
-				siteId: site.ID,
-				source: 'general-settings',
-				redirect: 'site-launch',
-				new: site.name,
-				search: 'yes',
-			} );
-		}
-
-		return addQueryArgs( '/start/launch-site', {
-			siteSlug: site.slug,
-			new: site.name,
-			hide_initial_query: 'yes',
-		} );
-	};
-
-	const renderButton = () => {
-		const commonProps = {
-			size: 'compact' as const,
-			variant: 'primary' as const,
-			disabled: ! isSitePlanLaunchable,
-			isBusy: isLaunching,
-		};
-
-		if ( shouldImmediatelyLaunch ) {
-			return (
-				<Button { ...commonProps } onClick={ handleLaunchClick }>
-					{ __( 'Launch site' ) }
-				</Button>
-			);
-		}
-
-		return (
-			<Button
-				{ ...commonProps }
-				onClick={ () => recordTracksEvent( buttonClickEvent ) }
-				href={ getLaunchUrl() }
-			>
-				{ __( 'Launch site' ) }
-			</Button>
-		);
-	};
-
+export function LaunchForm( { site }: { site: Site } ) {
 	return (
 		<>
 			<TrialUpsellNotice site={ site } />
-			<Notice title={ __( 'Your site hasn’t been launched yet' ) } actions={ renderButton() }>
+			<Notice
+				title={ __( 'Your site hasn’t been launched yet' ) }
+				actions={ <SiteLaunchButton site={ site } tracksContext="site_settings" /> }
+			>
 				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 			</Notice>
 		</>

@@ -3,7 +3,6 @@ import { HUNDRED_YEAR_DOMAIN_FLOW, addProductsToCart } from '@automattic/onboard
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -15,7 +14,7 @@ import { STEPS } from '../../internals/steps';
 import type { ProvidedDependencies, Flow } from '../../internals/types';
 import './style.scss';
 
-const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
+const steps = [ STEPS.DOMAIN_SEARCH, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
 
 const HundredYearDomainFlow: Flow = {
 	name: HUNDRED_YEAR_DOMAIN_FLOW,
@@ -43,19 +42,11 @@ const HundredYearDomainFlow: Flow = {
 		);
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const { domainName, productSlug } = providedDependencies;
-
-			const submittedDomainCartItem = domainRegistration( {
-				productSlug: productSlug as string,
-				domain: domainName as string,
-				extra: { is_hundred_year_domain: true, flow_name: HUNDRED_YEAR_DOMAIN_FLOW },
-				volume: 100,
-			} );
-
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
-					setDomainCartItem( submittedDomainCartItem );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+
 					return navigate( 'processing' );
 
 				case 'processing':

@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -14,6 +15,7 @@ import {
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
@@ -24,6 +26,7 @@ import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-upsell';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -33,10 +36,18 @@ import {
 	getEligibility,
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
+import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice } from 'calypso/state/notices/actions';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 import 'calypso/blocks/eligibility-warnings/style.scss';
@@ -44,6 +55,7 @@ import 'calypso/blocks/eligibility-warnings/style.scss';
 interface BlockingHoldNoticeProps {
 	siteId: number;
 	productName: string;
+	suppressInstallNotice?: boolean;
 }
 
 // This gets the values of the object transferStates.
@@ -64,6 +76,8 @@ export interface AtomicContentSwitch {
 		content: string;
 	};
 	getProductUrl: ( siteSlug: string ) => string;
+	/** Optional hook for product-specific activation handling */
+	onActivationResolved?: () => void;
 }
 
 const vaultpressContent: AtomicContentSwitch = {
@@ -84,9 +98,13 @@ const vaultpressContent: AtomicContentSwitch = {
 	getProductUrl: ( siteSlug: string ) => `/backup/${ siteSlug }`,
 };
 
-function BlockingHoldNotice( { siteId, productName }: BlockingHoldNoticeProps ) {
+function BlockingHoldNotice( {
+	siteId,
+	productName,
+	suppressInstallNotice = false,
+}: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
-	if ( ! holds ) {
+	if ( ! holds || suppressInstallNotice ) {
 		return null;
 	}
 
@@ -135,6 +153,9 @@ export default function WPCOMBusinessAT( {
 }: { content?: AtomicContentSwitch } = {} ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
+	const rewindState = useSelector( ( state: AppState ) =>
+		getRewindState( state, siteId )
+	) as RewindState;
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
@@ -158,6 +179,7 @@ export default function WPCOMBusinessAT( {
 	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
 	const onClose = () => setShowDialog( false );
+	const [ isRewindActivating, setIsRewindActivating ] = useState( false );
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
@@ -167,7 +189,29 @@ export default function WPCOMBusinessAT( {
 	}, [ dispatch, siteId ] );
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
+
+	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
+
+	useEffect( () => {
+		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
+			setIsRewindActivating( false );
+			// Notify product-specific callback when activation settles
+			content.onActivationResolved?.();
+		}
+	}, [ isRewindActivating, rewindAtomicDeactivated, content.onActivationResolved ] );
+
+	// Check if features are loaded
+	const featuresNotLoaded = useSelector(
+		( state ) =>
+			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
+	);
+
+	// Check if the site has the backup feature
+	const hasBackupFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
+	);
 
 	useEffect( () => {
 		// Check if a reverted site still has the COMPLETE status
@@ -201,9 +245,8 @@ export default function WPCOMBusinessAT( {
 				}
 			)
 		);
-		// Reload the page, whatever siteSlug is
-		page( content.getProductUrl( siteSlug ) );
-	}, [ automatedTransferStatus, isJetpack ] );
+		content.onActivationResolved?.();
+	}, [ automatedTransferStatus, isJetpack, content.onActivationResolved ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
@@ -214,6 +257,31 @@ export default function WPCOMBusinessAT( {
 			setShowDialog( true );
 		}
 	};
+
+	// If features are not loaded yet, show loading state
+	if ( featuresNotLoaded ) {
+		return (
+			<Main className="wpcom-business-at">
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
+				<DocumentHead title={ content.documentHeadTitle } />
+				<FormattedHeader
+					id="wpcom-business-at-header"
+					className="wpcom-business-at__header"
+					headerText={ content.header }
+					align="left"
+					brandFont
+				/>
+				<div className="wpcom-business-at__loading">
+					<p>{ translate( 'Loading…' ) }</p>
+				</div>
+			</Main>
+		);
+	}
+
+	// If the site doesn't have the backup feature, show the upsell instead
+	if ( ! hasBackupFeature ) {
+		return <WPCOMUpsellPage />;
+	}
 
 	return (
 		<Main className="wpcom-business-at">
@@ -228,7 +296,11 @@ export default function WPCOMBusinessAT( {
 				align="left"
 				brandFont
 			/>
-			<BlockingHoldNotice siteId={ siteId } productName={ content.header } />
+			<BlockingHoldNotice
+				siteId={ siteId }
+				productName={ content.header }
+				suppressInstallNotice={ rewindAtomicDeactivated }
+			/>
 			<TransferFailureNotice
 				transferStatus={ automatedTransferStatus as TransferStatus }
 				productName={ content.header }
@@ -245,10 +317,21 @@ export default function WPCOMBusinessAT( {
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={
 							automatedTransferStatus === START ||
-							( automatedTransferStatus === COMPLETE && ! isJetpack )
+							( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
+							isRewindActivating
 						}
-						onClick={ initiateATOrShowWarnings }
-						disabled={ cannotInitiateTransfer }
+						onClick={ () => {
+							if ( rewindAtomicDeactivated ) {
+								setIsRewindActivating( true );
+								dispatch( autoConfigCredentials( siteId ) );
+								page( content.getProductUrl( siteSlug ) );
+								return;
+							}
+							initiateATOrShowWarnings();
+						} }
+						disabled={
+							( cannotInitiateTransfer && ! rewindAtomicDeactivated ) || isRewindActivating
+						}
 					/>
 				</div>
 			</PromoCard>

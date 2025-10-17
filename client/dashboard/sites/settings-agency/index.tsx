@@ -1,7 +1,12 @@
+import {
+	siteAgencyBlogQuery,
+	siteBySlugQuery,
+	siteSettingsMutation,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -9,19 +14,16 @@ import {
 	CheckboxControl,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SettingsPageHeader from '../settings-page-header';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 export function canUpdateA4AFullyManagedSetting( site: Site ) {
@@ -52,19 +54,26 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ { id: 'is_fully_managed_agency_site' } as SimpleFormField ],
 };
 
 export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
 	const { data: agencyBlog, isLoading: isLoadingAgencyBlog } = useQuery( {
 		...siteAgencyBlogQuery( site.ID ),
 		enabled: site.is_wpcom_atomic,
 	} );
-	const mutation = useMutation( siteSettingsMutation( site.ID ) );
+	const mutation = useMutation( {
+		...siteSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Agency settings saved.' ),
+				error: __( 'Failed to save agency settings.' ),
+			},
+		},
+	} );
 
 	const [ formData, setFormData ] = useState( {
 		is_fully_managed_agency_site: siteSettings?.is_fully_managed_agency_site,
@@ -91,17 +100,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 
 		const handleSubmit = ( e: React.FormEvent ) => {
 			e.preventDefault();
-			mutation.mutate(
-				{ ...formData },
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Agency settings saved.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save agency settings.' ), { type: 'snackbar' } );
-					},
-				}
-			);
+			mutation.mutate( { ...formData } );
 		};
 
 		return (
@@ -117,7 +116,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -126,7 +125,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>
@@ -138,7 +137,8 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Agency settings' ) }
 					description={ createInterpolateElement(
 						__(

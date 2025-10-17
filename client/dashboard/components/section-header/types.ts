@@ -4,7 +4,7 @@ export interface SectionHeaderProps {
 	/**
 	 * The main heading text that identifies the page or section.
 	 */
-	title: string;
+	title: React.ReactNode;
 	/**
 	 * Optional supporting text that provides additional context or
 	 * guidance beneath the title.

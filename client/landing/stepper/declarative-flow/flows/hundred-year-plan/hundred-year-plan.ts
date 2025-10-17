@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { UserSelect } from '@automattic/data-stores';
+import { OnboardActions, UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -14,6 +14,7 @@ import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import type { ProvidedDependencies, Flow } from '../../internals/types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HundredYearPlanFlow: Flow = {
 	name: HUNDRED_YEAR_PLAN_FLOW,
@@ -40,7 +41,7 @@ const HundredYearPlanFlow: Flow = {
 			// If the user has a site, we show them a different flow
 			...( hasSite ? [ STEPS.NEW_OR_EXISTING_SITE, STEPS.HUNDRED_YEAR_PLAN_SITE_PICKER ] : [] ),
 			STEPS.HUNDRED_YEAR_PLAN_SETUP,
-			STEPS.DOMAINS,
+			STEPS.DOMAIN_SEARCH,
 			STEPS.PROCESSING,
 			STEPS.SITE_CREATION_STEP,
 		];
@@ -54,7 +55,9 @@ const HundredYearPlanFlow: Flow = {
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPlanCartItem, setPendingAction, setDomainCartItem } = useDispatch(
+			ONBOARD_STORE
+		) as OnboardActions;
 		const currentUser = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 			[]
@@ -102,9 +105,12 @@ const HundredYearPlanFlow: Flow = {
 				case 'setup':
 					return navigate( 'domains' );
 				case 'domains':
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+
 					setPlanCartItem( {
 						product_slug: PLAN_100_YEARS,
 					} );
+
 					return navigate( 'create-site' );
 				case 'create-site':
 					return navigate( 'processing' );

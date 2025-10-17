@@ -3,7 +3,7 @@ import { external, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import useFetchScheduleCallLink from 'calypso/a8c-for-agencies/data/agencies/use-fetch-schedule-call-link';
+import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -21,23 +21,15 @@ export default function OverviewSidebarGrowthAcceleratorCta( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { refetch: fetchScheduleCallLink, isFetching: isFetchingScheduleCallLink } =
-		useFetchScheduleCallLink();
+	const { scheduleCall, isLoading: isFetchingScheduleCallLink } = useScheduleCall( {
+		onSuccess: onRequestSuccess,
+	} );
 
 	const onRequestCallClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_overview_growth_accelerator_schedule_call_click' ) );
 		dispatch( savePreference( GROWTH_ACCELERATOR_REQUESTED_PREFERENCE, true ) );
-
-		fetchScheduleCallLink().then( ( result ) => {
-			onRequestSuccess?.();
-			window.open(
-				result.data
-					? result.data
-					: 'https://meetings.hubspot.com/automattic-for-agencies/discovery-meeting',
-				'_blank'
-			);
-		} );
-	}, [ dispatch, fetchScheduleCallLink, onRequestSuccess ] );
+		scheduleCall();
+	}, [ dispatch, scheduleCall ] );
 
 	return (
 		<Button

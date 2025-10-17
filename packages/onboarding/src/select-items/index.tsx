@@ -68,11 +68,12 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 							</div>
 							{ actionText && (
 								<Button
+									label={ `${ title }. ${ actionText }` }
 									variant="secondary"
 									className="select-items__item-button"
 									onClick={ () => onSelect( value ) }
-									aria-hidden="true"
-									tabIndex={ -1 }
+									aria-hidden={ allItemClickable ? 'true' : 'false' }
+									tabIndex={ allItemClickable ? -1 : 0 }
 								>
 									{ actionText }
 								</Button>

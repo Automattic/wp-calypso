@@ -294,6 +294,10 @@ export const WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED = 'premium-themes';
  * WPCOM) to `premium-themes-limited` so it better reflects the actual feature.
  */
 export const WPCOM_FEATURES_PREMIUM_THEMES_LIMITED = 'personal-themes';
+export const WPCOM_FEATURES_PARTNER_THEMES = 'partner-themes';
+export const WPCOM_FEATURES_COMMUNITY_THEMES = 'community-themes';
+export const WPCOM_FEATURES_WOOCOMMERCE_THEMES = 'woocommerce-themes';
+export const WPCOM_FEATURES_SENSEI_THEMES = 'sensei-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
@@ -313,6 +317,7 @@ export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
 export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
 export const WPCOM_FEATURES_SITE_PREVIEW_LINKS = 'site-preview-links';
+export const WPCOM_FEATURES_GITHUB_DEPLOYMENTS = 'github-deployments';
 
 // Signup flow related features
 export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';
@@ -351,6 +356,7 @@ export const FEATURE_POST_EDITS_HISTORY = 'post-edits-history';
 export const FEATURE_SECURITY_BRUTE_FORCE = 'security-brute-force';
 export const FEATURE_SMART_REDIRECTS = 'smart-redirects';
 export const FEATURE_ALWAYS_ONLINE = 'always-online';
+export const FEATURE_99_999_UPTIME = '99-999-uptime';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';

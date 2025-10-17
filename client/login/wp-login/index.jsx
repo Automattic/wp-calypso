@@ -28,6 +28,7 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -38,13 +39,16 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
-import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import isWooJPCFlow, {
+	isWooCommercePaymentsOnboardingFlow,
+} from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import { LoginContext } from '../login-context';
 import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
 import getHeadingSubText from './hooks/get-heading-subtext';
+import getNoThanksRedirectUrl from './hooks/get-no-thanks-redirect';
 
 import './style.scss';
 
@@ -104,6 +108,7 @@ export class Login extends Component {
 			'isWooJPC',
 			'isJetpack',
 			'isWCCOM',
+			'isBlazePro',
 			'isFromAkismet',
 			'isFromAutomatticForAgenciesPlugin',
 			'isGravPoweredClient',
@@ -208,6 +213,17 @@ export class Login extends Component {
 		);
 	}
 
+	getSupportLink() {
+		return (
+			<a
+				className="one-login__footer-link"
+				href="/support/category/manage-your-account/account-settings/"
+			>
+				{ this.props.translate( 'Support' ) }
+			</a>
+		);
+	}
+
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -232,6 +248,7 @@ export class Login extends Component {
 			isGravPoweredClient &&
 			! currentRoute.startsWith( '/log-in/push' ) &&
 			! currentRoute.startsWith( '/log-in/authenticator' ) &&
+			! currentRoute.startsWith( '/log-in/email' ) &&
 			! currentRoute.startsWith( '/log-in/sms' ) &&
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
@@ -258,6 +275,7 @@ export class Login extends Component {
 							isLoginView={ isLoginView }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
+							supportLink={ this.getSupportLink() }
 						/>
 					)
 				}
@@ -280,11 +298,13 @@ export class Login extends Component {
 			isWooJPC,
 			isJetpack,
 			isWCCOM,
+			isBlazePro,
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
 			currentQuery,
 			translate,
+			isUserLoggedIn: isLoggedIn,
 		} = this.props;
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
@@ -301,11 +321,13 @@ export class Login extends Component {
 			isWooJPC,
 			isJetpack,
 			isWCCOM,
+			isBlazePro,
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
 			currentQuery,
 			translate,
+			isUserLoggedIn: isLoggedIn,
 		} );
 
 		const headingSubText = getHeadingSubText( {
@@ -323,8 +345,17 @@ export class Login extends Component {
 		} );
 	}
 
+	getNoThanksRedirectUrl() {
+		const { currentRoute, currentQuery } = this.props;
+
+		return getNoThanksRedirectUrl( {
+			currentRoute,
+			currentQuery,
+		} );
+	}
+
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, isFromAkismet } =
+		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, action } =
 			this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
@@ -361,13 +392,16 @@ export class Login extends Component {
 			</Main>
 		);
 
+		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+
 		return (
 			<>
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
-						isFromAkismet={ isFromAkismet }
 						signupUrl={ this.props.signupUrl }
+						isLostPasswordView={ isLostPasswordView }
+						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 					>
 						{ mainContent }
 					</OneLoginLayout>
@@ -422,6 +456,8 @@ export default connect(
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+			isUserLoggedIn: isUserLoggedIn( state ),
+			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
 		};
 	},
 	{

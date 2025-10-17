@@ -24,16 +24,23 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 					action
 				),
 			onSuccess: ( action ) => {
+				const defaultSuccessMessage =
+					action.listSlug === 'recommended-blogs'
+						? translate( 'Recommendation successfully removed.' )
+						: translate( 'Feed removed from list successfully.' );
 				// Support custom success messages
-				const successMessage =
-					action.successMessage || translate( 'Feed removed from list successfully.' );
+				const successMessage = action.successMessage || defaultSuccessMessage;
 				return successNotice( successMessage, {
 					duration: action.noticeDuration || DEFAULT_NOTICE_DURATION,
 				} );
 			},
 			onError: ( action ) => {
+				const defaultErrorMessage =
+					action.listSlug === 'recommended-blogs'
+						? translate( 'Unable to remove recommendation.' )
+						: translate( 'Unable to remove feed from list.' );
 				// Support custom error messages
-				const errorMessage = action.errorMessage || translate( 'Unable to remove feed from list.' );
+				const errorMessage = action.errorMessage || defaultErrorMessage;
 				return [
 					errorNotice( errorMessage ),
 					// Revert the optimistic remove by dispatching an add action that bypasses the data layer

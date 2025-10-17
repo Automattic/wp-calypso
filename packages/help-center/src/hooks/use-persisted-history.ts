@@ -62,12 +62,20 @@ class MemoryHistory {
 		const location = this.createLocation( path.pathname + path.search + path.hash, state );
 		this.entries = this.entries.slice( 0, this.index + 1 );
 		this.entries.push( location );
-		this.index++;
+		// Limit the number of entries to 50 to avoid the history getting too long.
+		if ( this.entries.length > 50 ) {
+			this.entries.shift();
+			this.entries.shift();
+			// Keep the start at root so the back button always works.
+			this.entries.unshift( this.createLocation( '/' ) );
+		} else {
+			this.index++;
+		}
 		this.notifyListeners( Action.Push );
 	}
 
-	replace( path: string, state?: any ) {
-		const location = this.createLocation( path, state );
+	replace( path: Location, state?: any ) {
+		const location = this.createLocation( path.pathname + path.search + path.hash, state );
 		this.entries[ this.index ] = location;
 		this.notifyListeners( Action.Replace );
 	}

@@ -1,10 +1,10 @@
+import { siteMetricsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import filesize from 'filesize';
-import { siteMetricsQuery } from '../../app/queries/site-metrics';
 import { Stat } from '../../components/stat';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function getCurrentMonthRangeTimestamps() {
 	const now = new Date();

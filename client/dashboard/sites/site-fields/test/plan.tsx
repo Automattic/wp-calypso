@@ -4,23 +4,27 @@
 import { render as testingLibraryRender } from '@testing-library/react';
 import { AuthContext } from '../../../app/auth';
 import { Plan } from '../index';
-import type { User, Site } from '../../../data/types';
+import type { User, Site } from '@automattic/api-core';
 
 const userId = 1;
 
 function render( ui: React.ReactElement ) {
 	return testingLibraryRender(
-		<AuthContext.Provider value={ { user: { ID: userId } as User } }>{ ui }</AuthContext.Provider>
+		<AuthContext.Provider
+			value={ { user: { ID: userId } as User, logout: () => Promise.resolve() } }
+		>
+			{ ui }
+		</AuthContext.Provider>
 	);
 }
 
 describe( '<Plan>', () => {
-	test( 'for staging sites, it renders "Staging"', () => {
+	test( 'for staging sites, it renders "Staging site"', () => {
 		const site = {
 			is_wpcom_staging_site: true,
 		} as Site;
 		const { container } = render( <Plan site={ site } /> );
-		expect( container.textContent ).toBe( 'Staging' );
+		expect( container.textContent ).toBe( 'Staging site' );
 	} );
 
 	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {

@@ -39,6 +39,7 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	const { author, siteId, postId } = query;
 	const userLogin = author?.wpcom_login || author?.ID;
 	const enabled = options?.enabled ?? true;
+	const hasUserLogin = Boolean( userLogin );
 
 	const {
 		data: recommendedFeeds,
@@ -49,14 +50,15 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	} );
 
 	const hasRecommendedFeeds = recommendedFeeds && recommendedFeeds.length > 0;
-	const shouldLoadRelatedSites = enabled && isFetchedRecommendedFeeds && ! hasRecommendedFeeds;
+	const shouldLoadRelatedSites =
+		! hasUserLogin || ( isFetchedRecommendedFeeds && ! hasRecommendedFeeds );
 
 	const {
 		data: relatedSites,
 		isLoading: isLoadingRelatedSites,
 		isFetched: isFetchedRelatedSites,
 	} = useRelatedSites( siteId, postId, {
-		enabled: shouldLoadRelatedSites,
+		enabled: shouldLoadRelatedSites && enabled,
 	} );
 
 	const data = recommendedFeeds?.length > 0 ? recommendedFeeds : relatedSites;

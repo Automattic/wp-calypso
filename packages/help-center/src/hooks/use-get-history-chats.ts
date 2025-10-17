@@ -127,9 +127,9 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	}, [] );
 
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
+		useGetSupportInteractions( 'zendesk' );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
-		useGetSupportInteractions( 'odie', 100, [ 'open', 'resolved' ] );
+		useGetSupportInteractions( 'odie' );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
 

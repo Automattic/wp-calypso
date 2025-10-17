@@ -1,29 +1,23 @@
+import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
 	TextareaControl,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	siteJetpackSettingsQuery,
-	siteJetpackSettingsMutation,
-} from '../../app/queries/site-jetpack-settings';
+import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
-import type { SiteSettings } from '../../data/site-settings';
-import type { Site } from '../../data/types';
+import type { JetpackSettings, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-const fields: Field< SiteSettings >[] = [
+const fields: Field< JetpackSettings >[] = [
 	{
 		id: 'jetpack_waf_ip_allow_list_enabled',
 		label: __( 'Enable allowing specific IP addresses' ),
@@ -54,36 +48,33 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'jetpack_waf_ip_allow_list_enabled', 'jetpack_waf_ip_allow_list' ],
 };
 
 export default function AllowListForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
-	const mutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteJetpackSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Allowed IP addresses saved.' ),
+				error: __( 'Failed to save allowed IP addresses.' ),
+			},
+		},
+	} );
 
 	const currentEnabled = jetpackSettings?.jetpack_waf_ip_allow_list_enabled ?? false;
 	const currentList = jetpackSettings?.jetpack_waf_ip_allow_list ?? '';
 
-	const [ formData, setFormData ] = useState< SiteSettings >( {
+	const [ formData, setFormData ] = useState< JetpackSettings >( {
 		jetpack_waf_ip_allow_list_enabled: currentEnabled,
 		jetpack_waf_ip_allow_list: currentList,
 	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{ ...formData },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Allowed IP addresses saved.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save allowed IP addresses.' ), { type: 'snackbar' } );
-				},
-			}
-		);
+		mutation.mutate( { ...formData } );
 	};
 
 	const isDirty =
@@ -105,11 +96,11 @@ export default function AllowListForm( { site }: { site: Site } ) {
 							) }
 							level={ 3 }
 						/>
-						<DataForm< SiteSettings >
+						<DataForm< JetpackSettings >
 							data={ formData }
 							fields={ fields }
 							form={ form }
-							onChange={ ( edits: Partial< SiteSettings > ) => {
+							onChange={ ( edits: Partial< JetpackSettings > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
@@ -123,7 +114,7 @@ export default function AllowListForm( { site }: { site: Site } ) {
 								{ strong: <strong /> }
 							) }
 						</Text>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -132,7 +123,7 @@ export default function AllowListForm( { site }: { site: Site } ) {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

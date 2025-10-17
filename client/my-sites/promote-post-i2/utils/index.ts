@@ -25,6 +25,15 @@ export const campaignStatus = {
 	SUSPENDED: 'suspended',
 };
 
+export const paymentStatus = {
+	COMPLETED: 'COMPLETED',
+	FAILED: 'FAILED',
+	PENDING: 'PENDING',
+	ON_HOLD: 'ON-HOLD',
+	REFUNDED: 'REFUNDED',
+	CANCELED: 'CANCELED',
+};
+
 export const getPostType = ( type: string ) => {
 	switch ( type ) {
 		case 'post': {
@@ -390,4 +399,54 @@ export const cvsStatsDownload = ( csvData: string, fileName: string = 'report.cs
 	link.download = fileName;
 	link.click();
 	URL.revokeObjectURL( link.href );
+};
+
+export const getPaymentStatusBadgeColor = ( status?: string ) => {
+	switch ( status ) {
+		case paymentStatus.COMPLETED: {
+			return 'info-green';
+		}
+		case paymentStatus.FAILED: {
+			return 'error';
+		}
+		case paymentStatus.PENDING: {
+			return 'info';
+		}
+		case paymentStatus.ON_HOLD: {
+			return 'info-blue';
+		}
+		case paymentStatus.REFUNDED: {
+			return 'info-blue';
+		}
+		case paymentStatus.CANCELED: {
+			return 'error';
+		}
+		default:
+			return 'warning';
+	}
+};
+
+export const getPaymentStatus = ( status?: string ) => {
+	switch ( status ) {
+		case paymentStatus.COMPLETED: {
+			return __( 'Completed' );
+		}
+		case paymentStatus.FAILED: {
+			return __( 'Failed' );
+		}
+		case paymentStatus.PENDING: {
+			return __( 'Pending' );
+		}
+		case paymentStatus.ON_HOLD: {
+			return __( 'On hold' );
+		}
+		case paymentStatus.REFUNDED: {
+			return __( 'Refunded' );
+		}
+		case paymentStatus.CANCELED: {
+			return __( 'Canceled' );
+		}
+		default:
+			return status;
+	}
 };

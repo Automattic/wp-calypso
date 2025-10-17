@@ -113,8 +113,15 @@ const LaunchBigSky: Step = function ( props ) {
 					promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
 				}
 
+				const specId = urlQuery.get( 'spec_id' );
+				let specIdParam = '';
+
+				if ( specId ) {
+					specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
+				}
+
 				window.location.replace(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }${ promptParam }&source=${ flow }`
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }${ promptParam }&source=${ flow }${ specIdParam }`
 				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console

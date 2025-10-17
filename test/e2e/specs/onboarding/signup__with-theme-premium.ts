@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	BrowserManager,
-	DomainSearchComponent,
 	UserSignupPage,
 	SignupPickPlanPage,
 	CartCheckoutPage,
@@ -20,6 +19,7 @@ import {
 	ThemesDetailPage,
 	ThemesPage,
 	cancelAtomicPurchaseFlow,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -83,7 +83,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			const domainSearch = new DomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
+			await domainSearch.skipPurchase();
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {

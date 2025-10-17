@@ -3,23 +3,18 @@ import type { ReactNode } from 'react';
 import './style.scss';
 
 interface CalloutOverlayProps {
-	showCallout: boolean;
 	callout: ReactNode;
-	main: ReactNode;
+	main?: ReactNode;
 }
 
-export function CalloutOverlay( { showCallout, callout, main }: CalloutOverlayProps ) {
-	if ( ! showCallout ) {
-		return main;
-	}
-
+export function CalloutOverlay( { callout, main }: CalloutOverlayProps ) {
 	return (
-		<>
+		<div style={ { position: 'relative' } }>
+			{ /* The inert attribute is too new for our version of React to understand */ }
+			<div ref={ ( el ) => el?.setAttribute( 'inert', '' ) }>{ main }</div>
 			<VStack className="dashboard-callout-overlay" alignment="center">
 				{ callout }
 			</VStack>
-			{ /* The inert attribute is too new for our version of React to understand */ }
-			<div ref={ ( el ) => el?.setAttribute( 'inert', '' ) }>{ main }</div>
-		</>
+		</div>
 	);
 }

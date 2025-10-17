@@ -1,4 +1,4 @@
-import { FEATURE_SFTP } from '@automattic/calypso-products';
+import { FEATURE_SFTP, FEATURE_UPLOAD_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -84,18 +84,20 @@ class PluginUpload extends Component {
 	};
 
 	renderUploadCard() {
-		const { inProgress, complete, isJetpack, hasSftpFeature } = this.props;
+		const { inProgress, complete, isJetpack, hasSftpFeature, hasUploadPluginsFeature } = this.props;
 
 		const uploadAction = isJetpack
 			? this.props.uploadPlugin
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
-		const WrapperComponent = ! hasSftpFeature ? FeatureExample : Fragment;
+		// Allow upload if user has either SFTP feature or UPLOAD_PLUGINS feature
+		const canUpload = hasSftpFeature || hasUploadPluginsFeature;
+		const WrapperComponent = ! canUpload ? FeatureExample : Fragment;
 		return (
 			<WrapperComponent>
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ ! hasSftpFeature } />
+						<UploadDropZone doUpload={ uploadAction } disabled={ ! canUpload } />
 					) }
 				</Card>
 			</WrapperComponent>
@@ -124,8 +126,16 @@ class PluginUpload extends Component {
 	};
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug, isJetpack, isTrialSite, isAtomic } =
-			this.props;
+		const {
+			translate,
+			isJetpackMultisite,
+			siteId,
+			siteSlug,
+			isJetpack,
+			isTrialSite,
+			isAtomic,
+			hasUploadPluginsFeature,
+		} = this.props;
 		const { showEligibility, isTransferring } = this.state;
 
 		const showEligibilityWarnings = showEligibility && ! isTransferring && ! isTrialSite;
@@ -146,7 +156,9 @@ class PluginUpload extends Component {
 						onProceed={ this.onProceedClick }
 					/>
 				) }
-				{ ( ( ! isJetpackMultisite && ! showEligibility ) || isAtomic || isTrialSite ) &&
+				{ ( ( ! isJetpackMultisite && ( ! showEligibility || hasUploadPluginsFeature ) ) ||
+					isAtomic ||
+					isTrialSite ) &&
 					this.renderUploadCard() }
 			</Main>
 		);
@@ -161,6 +173,7 @@ const mapStateToProps = ( state ) => {
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
+	const hasUploadPluginsFeature = siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
@@ -175,6 +188,7 @@ const mapStateToProps = ( state ) => {
 		isJetpack,
 		isAtomic,
 		hasSftpFeature,
+		hasUploadPluginsFeature,
 		inProgress: isPluginUploadInProgress( state, siteId ),
 		complete: isPluginUploadComplete( state, siteId ),
 		failed: !! error,

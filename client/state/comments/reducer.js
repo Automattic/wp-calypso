@@ -27,6 +27,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE_ERROR,
 	COMMENTS_SET_ACTIVE_REPLY,
+	COMMENTS_API_DISABLED,
 } from 'calypso/state/action-types';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
@@ -568,6 +569,25 @@ export const inlineExpansion = ( state = {}, action ) => {
 	return state;
 };
 
+/**
+ * Stores whether comments API is disabled for a site
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
+ */
+export const apiDisabled = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENTS_API_DISABLED: {
+			const { siteId } = action;
+			return {
+				...state,
+				[ siteId ]: true,
+			};
+		}
+	}
+	return state;
+};
+
 const combinedReducer = combineReducers( {
 	counts,
 	items,
@@ -579,6 +599,7 @@ const combinedReducer = combineReducers( {
 	activeReplies,
 	ui,
 	inlineExpansion,
+	apiDisabled,
 } );
 const commentsReducer = withStorageKey( 'comments', combinedReducer );
 export default commentsReducer;

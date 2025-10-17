@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
-import VideoEditor from 'calypso/blocks/video-editor';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
@@ -379,7 +378,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	getModalButtons() {
-		if ( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ].includes( this.props.view ) ) {
+		if ( [ ModalViews.IMAGE_EDITOR ].includes( this.props.view ) ) {
 			return;
 		}
 
@@ -432,7 +431,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	shouldClose() {
-		return ! [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ].includes( this.props.view );
+		return ! [ ModalViews.IMAGE_EDITOR ].includes( this.props.view );
 	}
 
 	updateSettings = ( gallerySettings ) => {
@@ -505,22 +504,6 @@ export class EditorMediaModal extends Component {
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }
 						{ ...imageEditorProps }
-					/>
-				);
-
-				break;
-			}
-
-			case ModalViews.VIDEO_EDITOR: {
-				const { selectedItems: items } = this.props;
-				const selectedIndex = this.getDetailSelectedIndex();
-				const media = get( items, selectedIndex, null );
-
-				content = (
-					<VideoEditor
-						media={ media }
-						onCancel={ this.handleCancel }
-						onUpdatePoster={ this.handleUpdatePoster }
 					/>
 				);
 

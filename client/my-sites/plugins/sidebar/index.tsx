@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { SyntheticEvent } from '@wordpress/element';
 import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -8,7 +9,9 @@ import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
@@ -17,10 +20,11 @@ import './style.scss';
 interface Props {
 	path: string;
 	isCollapsed: boolean;
+	hasOptIn: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -42,21 +46,24 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					"Enhance your site's features with plugins, or schedule updates to fit your needs."
 				)
 			}
+			footer={ isEnabled( 'dashboard/v2' ) && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
-				<SidebarItem
-					className="sidebar__menu-item--plugins"
-					link="/plugins"
-					label={ translate( 'Marketplace' ) }
-					tooltip={ isCollapsed && translate( 'Marketplace' ) }
-					onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
-					selected={
-						path.startsWith( '/plugins' ) &&
-						! path.startsWith( '/plugins/scheduled-updates' ) &&
-						! isManagedPluginSelected
-					}
-					customIcon={ <SidebarIconPlugins /> }
-				/>
+				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
+					<SidebarItem
+						className="sidebar__menu-item--plugins"
+						link="/plugins"
+						label={ translate( 'Marketplace' ) }
+						tooltip={ isCollapsed && translate( 'Marketplace' ) }
+						onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
+						selected={
+							path.startsWith( '/plugins' ) &&
+							! path.startsWith( '/plugins/scheduled-updates' ) &&
+							! isManagedPluginSelected
+						}
+						customIcon={ <SidebarIconPlugins /> }
+					/>
+				) }
 
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
@@ -76,6 +83,24 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					selected={ path.startsWith( '/plugins/scheduled-updates' ) }
 					customIcon={ <SidebarIconCalendar /> }
 				/>
+
+				{ isEnabled( 'plugins/universal-header' ) && hasOptIn && (
+					<SidebarItem
+						className="sidebar__menu-item--plugins"
+						link="/plugins"
+						label={ translate( 'Marketplace' ) }
+						tooltip={ isCollapsed && translate( 'Marketplace' ) }
+						onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
+						selected={
+							path.startsWith( '/plugins' ) &&
+							! path.startsWith( '/plugins/scheduled-updates' ) &&
+							! isManagedPluginSelected
+						}
+						customIcon={ <SidebarIconPlugins /> }
+						forceExternalLink
+						sidebarIsCollapsed={ isCollapsed }
+					/>
+				) }
 			</SidebarMenu>
 		</GlobalSidebar>
 	);
@@ -90,8 +115,10 @@ export default withCurrentRoute(
 			section: currentSection,
 			route: currentRoute,
 		} );
+
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
+			hasOptIn: hasHostingDashboardOptIn( state ),
 		};
 	} )( PluginsSidebar )
 );

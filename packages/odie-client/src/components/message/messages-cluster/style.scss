@@ -1,0 +1,71 @@
+@import '@wordpress/base-styles/variables';
+
+.odie-chatbox-messages-cluster { 
+	width: 100%;
+	padding: 0;
+	box-sizing: border-box;
+
+	&.role-attachment {
+		padding: 0 16px;
+
+		img {
+			display: block;
+		}
+
+		.odie-chatbox-message-user {
+			max-width: 100%;
+			border-radius: 0;
+			padding: 0;
+		}
+
+		animation: fadeInAttachment 0.2s ease-in-out forwards;
+		transform-origin: center top;
+
+		@keyframes fadeInAttachment {
+			from {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
+		}
+	}
+
+	&.role-bot {
+		padding: 0 16px;
+
+		// Bot messages should be separated
+		// because bots always send separate messages with separate thoughts.
+		.odie-chatbox-message {
+			margin-bottom: 16px;
+		}
+	}
+
+	&.role-business {
+		display: flex;
+		flex-direction: column;
+		align-self: flex-start;
+		gap: 8px;
+		margin-left: 16px;
+		max-width: calc( 100% - 32px );
+
+		.odie-chatbox-message-business {
+			padding: 8px 16px;
+			width: max-content;
+			border: 1px solid $gray-200;
+			border-radius: 24px 8px 24px 8px;
+		}
+
+		.message-header {
+			font-weight: $font-weight-medium;
+			margin-right: 16px;
+		}
+	}
+
+	&.role-user {
+		display: flex;
+		align-items: flex-end;
+		flex-direction: column;
+		gap: 8px;
+	}
+}

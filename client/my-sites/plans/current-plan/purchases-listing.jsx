@@ -97,11 +97,7 @@ class PurchasesListing extends Component {
 	}
 
 	getProductPurchases() {
-		return (
-			this.props.purchases?.filter(
-				( purchase ) => purchase.active && isJetpackProduct( purchase )
-			) ?? []
-		);
+		return this.props.purchases?.filter( ( purchase ) => isJetpackProduct( purchase ) ) ?? [];
 	}
 
 	getTitle( purchase ) {

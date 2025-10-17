@@ -1,9 +1,11 @@
 
 import _self.bashNodeScript
 import _self.yarn_install_cmd
+import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
@@ -55,6 +57,7 @@ project {
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 	buildType(SmartBuildLauncher)
+	template(CalypsoE2ETestsBuildTemplate)
 
 	params {
 		// Force color support in chalk. For some reason it doesn't detect TeamCity
@@ -222,7 +225,7 @@ object BuildBaseImages : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 40
+		executionTimeoutMin = 50
 	}
 
 	features {
@@ -230,6 +233,25 @@ object BuildBaseImages : BuildType({
 		}
 		dockerSupport {
 			cleanupPushedImages = true
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#calypso"
+				messageFormat = verboseMessageFormat {
+					addChanges = false
+					addStatusText = true
+					addBranch = true
+				}
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
 		}
 	}
 })

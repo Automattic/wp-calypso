@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -52,21 +53,6 @@ const initialState = {
 	},
 };
 
-jest.mock( '@automattic/domain-picker', () => {
-	return {
-		useDomainSuggestions: () => {
-			return {
-				allDomainSuggestions: [
-					{
-						is_free: false,
-						product_slug: 'mydomain.com',
-					},
-				],
-			};
-		},
-	};
-} );
-
 const domainUpsellHeadingFreePlan = 'Own your online identity with a custom domain';
 
 describe( 'index', () => {
@@ -75,9 +61,11 @@ describe( 'index', () => {
 		const store = mockStore( initialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell context="profile" />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(
@@ -101,9 +89,11 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell context="profile" />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(
@@ -135,9 +125,11 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell context="profile" />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(
@@ -165,9 +157,11 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell context="profile" />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(

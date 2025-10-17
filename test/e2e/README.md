@@ -1,5 +1,3 @@
-<img alt="Abstract concept" src="https://cldup.com/gBB3Y0iOWl.jpg" />
-
 # WordPress.com End to End Tests
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
@@ -103,10 +101,10 @@ yarn workspace wp-e2e-tests build --watch
 yarn workspace wp-e2e-tests test -- <test_path>
 ```
 
-To run on calypso.localhost, don't forget the environment variable:
+By default this should run on <http://calypso.localhost:3000>, if you wish to run on another environment such as <https://wpcalypso.wordpress.com> you can set an environment variable:
 
 ```bash
-CALYPSO_BASE_URL=http://calypso.localhost:3000 yarn workspace wp-e2e-tests test -- <test_path>
+CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test -- <test_path>
 ```
 
 ## Advanced setup

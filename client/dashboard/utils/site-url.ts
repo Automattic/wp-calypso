@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 /**
  * Returns a user-friendly version of the site's URL.
@@ -9,7 +9,20 @@ import type { Site } from '../data/types';
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
+	if ( site.options?.is_redirect ) {
+		return site.slug;
+	}
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
+}
+
+/**
+ * Returns the actual formatted URL for the site considering site redirects
+ */
+export function getSiteFormattedUrl( site: Site ) {
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		return site.options.unmapped_url;
+	}
+	return site.URL;
 }
 
 /**

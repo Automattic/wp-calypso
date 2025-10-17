@@ -1,0 +1,42 @@
+@import '@wordpress/base-styles/variables';
+
+.domain-search-trademark-claims-modal {
+	.components-modal__content {
+		display: flex;
+	}
+}
+
+.domain-search-trademark-claims-modal__body {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: $grid-unit-20;
+}
+
+.domain-search-trademark-claims-modal__content {
+	flex: 1;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-20;
+	font-size: $font-size-large;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.domain-search-trademark-claims-modal__content-claim-item {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-10;
+}
+
+.domain-search-trademark-claims-modal__content-claim-item-label {
+	font-weight: 600;
+}
+
+.domain-search-trademark-claims-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+}

@@ -153,7 +153,7 @@ export class Notifications extends PureComponent {
 						data={ globalData }
 						global={ globalData }
 						isShowing={ this.props.isShowing }
-						locale={ this.props.local }
+						locale={ this.props.locale }
 					/>
 				</RestClientContext.Provider>
 			</Provider>

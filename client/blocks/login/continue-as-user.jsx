@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
-import SocialToS from '../authentication/social/social-tos';
 
 import './continue-as-user.scss';
 
@@ -79,22 +78,10 @@ export default function ContinueAsUser( {
 		</div>
 	);
 
-	if ( isWoo ) {
+	if ( isWoo || isBlazePro ) {
 		return (
 			<div className="continue-as-user">
-				<div className="continue-as-user__user-info">
-					{ gravatarLink }
-					<div className="continue-as-user__not-you">
-						<Button
-							variant="tertiary"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						>
-							{ translate( 'Sign in as a different user' ) }
-						</Button>
-					</div>
-				</div>
+				<div className="continue-as-user__user-info">{ gravatarLink }</div>
 				<Button
 					variant="primary"
 					className="continue-as-user__continue-button"
@@ -104,38 +91,14 @@ export default function ContinueAsUser( {
 				>
 					{ translate( 'Continue' ) }
 				</Button>
-			</div>
-		);
-	}
-
-	if ( isBlazePro ) {
-		return (
-			<div className="continue-as-user">
-				<div className="continue-as-user__user-info">
-					{ gravatarLink }
-					<div className="continue-as-user__not-you">
-						<Button
-							variant="tertiary"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						>
-							{ translate( 'Sign in as a different user' ) }
-						</Button>
-					</div>
-				</div>
 				<Button
-					variant="primary"
-					className="continue-as-user__continue-button"
-					isBusy={ validatingPath }
-					href={ validatedPath || '/' }
-					__next40pxDefaultSize
+					variant="link"
+					id="loginAsAnotherUser"
+					className="continue-as-user__change-user-link"
+					onClick={ onChangeAccount }
 				>
-					{ `${ translate( 'Continue as', {
-						context: 'Continue as an existing WordPress.com user',
-					} ) } ${ userName }` }
+					{ translate( 'Log in with a different account' ) }
 				</Button>
-				<SocialToS />
 			</div>
 		);
 	}

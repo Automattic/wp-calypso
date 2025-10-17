@@ -5,12 +5,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { FunctionComponent } from 'react';
-import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
-import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
@@ -19,43 +13,60 @@ export interface FileBrowserConfig {
 	restrictedPaths?: string[];
 	restrictedTypes?: string[];
 	excludeTypes?: string[];
+	expandDirectoriesOnClick?: boolean;
 	alwaysInclude?: string[];
-	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
+	/**
+	 * @deprecated This prop will be removed once the new Staging Sync Modal
+	 * in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live.
+	 * The backup time display is now handled directly in the modal components.
+	 */
 	showBackupTime?: boolean;
+	showSeparateExpandButton?: boolean;
 	siteId?: number;
+	showHeader?: boolean;
 }
 
 interface FileBrowserProps {
 	rewindId: number;
+	siteId: number;
+	siteSlug: string;
 	fileBrowserConfig?: FileBrowserConfig;
-	siteId?: number;
+
+	// Optional site data props
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+	/**
+	 * @deprecated This prop will be removed once the new Staging Sync Modal
+	 * in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live.
+	 * The backup time display is now handled directly in the modal components.
+	 */
+	displayBackupDate?: string;
+
+	// Tracks analytics callback
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+
+	// Source context for Track events (defaults to 'calypso')
+	source?: 'calypso' | 'dashboard';
+
+	// Granular restore action callback
+	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
 }
 
-const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
+function FileBrowser( {
 	rewindId,
 	fileBrowserConfig,
 	siteId,
-} ) => {
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	displayBackupDate,
+	onTrackEvent,
+	source = 'calypso',
+	onRequestGranularRestore = () => {},
+}: FileBrowserProps ) {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
-	const selectedSiteId = useSelector( getSelectedSiteId ) as number;
-	const effectiveSiteId = siteId ?? selectedSiteId;
-
-	const effectiveSiteSlug = useSelector( ( state ) => getSiteSlug( state, effectiveSiteId ) ) || '';
-	const getDisplayDate = useGetDisplayDate( effectiveSiteId );
-
-	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt(
-		effectiveSiteId,
-		{
-			sortOrder: 'desc',
-			successOnly: true,
-		}
-	);
-
-	const displayBackupDate = lastKnownBackupAttempt
-		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
-		: null;
 
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
@@ -69,26 +80,20 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 
 	return (
 		<div>
-			<FileBrowserHeader
-				rewindId={ rewindId }
-				showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
-				siteId={ effectiveSiteId }
-			/>
-			{ fileBrowserConfig?.showBackupTime && (
+			{ ( fileBrowserConfig?.showHeader ?? true ) && <FileBrowserHeader rewindId={ rewindId } /> }
+			{ /* @TODO: remove this block once the new Staging Sync Modal in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live */ }
+			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text
 						color="var(--studio-gray-40)"
 						style={ { marginInlineStart: '14px', marginTop: '10px' } }
 					>
 						{ displayBackupDate
-							? createInterpolateElement( __( 'Listing files from the latest backup: <date />.' ), {
+							? createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
 									date: <span>{ displayBackupDate }</span>,
 							  } )
 							: __( 'There are no backups.' ) }{ ' ' }
-						<ExternalLink
-							href={ `/backup/${ effectiveSiteSlug }` }
-							children={ __( 'Create fresh backup now' ) }
-						/>
+						<ExternalLink href={ `/backup/${ siteSlug }` } children={ __( 'Create new backup' ) } />
 					</Text>
 				</HStack>
 			) }
@@ -100,10 +105,16 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
 				fileBrowserConfig={ fileBrowserConfig }
-				siteId={ effectiveSiteId }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				hasCredentials={ hasCredentials }
+				isRestoreEnabled={ isRestoreEnabled }
+				onTrackEvent={ onTrackEvent }
+				source={ source }
+				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 		</div>
 	);
-};
+}
 
 export default FileBrowser;

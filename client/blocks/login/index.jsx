@@ -488,20 +488,6 @@ class Login extends Component {
 							isBlazePro={ isBlazePro }
 							isWoo={ isWCCOM }
 						/>
-						<LoginForm
-							disableAutoFocus={ disableAutoFocus }
-							onSuccess={ this.handleValidLogin }
-							socialService={ socialService }
-							socialServiceResponse={ socialServiceResponse }
-							domain={ domain }
-							locale={ locale }
-							userEmail={ userEmail }
-							handleUsernameChange={ handleUsernameChange }
-							signupUrl={ signupUrl }
-							showSocialLoginFormOnly
-							sendMagicLoginLink={ this.sendMagicLoginLink }
-							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-						/>
 					</div>
 				);
 			}

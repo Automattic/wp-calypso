@@ -1,8 +1,9 @@
 import { Task } from '@automattic/launchpad';
-import { isStartWritingFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { isDomainUpsellCompleted, getSiteIdOrSlug } from '../../task-helper';
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
+import { getSiteIdOrSlug, isDomainUpsellCompleted } from '../../task-helper';
 import { TaskAction } from '../../types';
 
 export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
@@ -10,22 +11,27 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
-		if ( isStartWritingFlow( flow ) || isReadymadeFlow( flow ) ) {
+		if ( ! siteSlug ) {
+			return '';
+		}
+
+		if ( isStartWritingFlow( flow ) ) {
 			return addQueryArgs( `/setup/${ flow }/domains`, {
 				...getSiteIdOrSlug( flow, site, siteSlug ),
 				flowToReturnTo: flow,
 				new: site?.name,
-				domainAndPlanPackage: true,
 			} );
 		}
 
-		return domainUpsellCompleted
-			? `/domains/manage/${ siteSlug }`
-			: addQueryArgs( '/setup/domain-upsell/domains', {
-					...getSiteIdOrSlug( flow, site, siteSlug ),
-					flowToReturnTo: flow,
-					new: site?.name,
-			  } );
+		const backUrl = `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
+
+		const purchaseDomainUrl = getDomainAndPlanUpsellUrl( {
+			siteSlug,
+			backUrl,
+			suggestion: site?.name,
+		} );
+
+		return domainUpsellCompleted ? `/domains/manage/${ siteSlug }` : purchaseDomainUrl;
 	};
 
 	return {

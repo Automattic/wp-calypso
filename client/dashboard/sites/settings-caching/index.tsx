@@ -1,21 +1,4 @@
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Button,
-	Tooltip,
-} from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteEdgeCacheStatusQuery,
 	siteEdgeCacheStatusMutation,
@@ -23,16 +6,32 @@ import {
 	siteEdgeCacheLastClearedTimestampQuery,
 	siteObjectCacheClearMutation,
 	siteObjectCacheLastClearedTimestampQuery,
-} from '../../app/queries/site-cache';
+	siteBySlugQuery,
+} from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Button,
+	Tooltip,
+} from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ActionList } from '../../components/action-list';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@wordpress/dataviews';
 
@@ -49,7 +48,7 @@ const fields: Field< CachingFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'active' ],
 };
 
@@ -72,12 +71,6 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		enabled: canView,
 	} );
 
-	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( site.ID ) );
-	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( site.ID ) );
-	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( site.ID ) );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
 	const isEdgeCacheAvailable = site && getIsEdgeCacheAvailable( site );
 	const isEdgeCacheEnabled = isEdgeCacheAvailable && isEdgeCacheActive;
 
@@ -85,48 +78,50 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		active: isEdgeCacheEnabled ?? false,
 	} );
 
+	const edgeCacheStatusMutation = useMutation( {
+		...siteEdgeCacheStatusMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: formData.active
+					? __( 'Global edge cache enabled.' )
+					: __( 'Global edge cache disabled.' ),
+				error: __( 'Failed to save global edge cache settings.' ),
+			},
+		},
+	} );
+	const edgeCacheClearMutation = useMutation( {
+		...siteEdgeCacheClearMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Global edge cache cleared.' ),
+				error: __( 'Failed to clear global edge cache.' ),
+			},
+		},
+	} );
+	const objectCacheClearMutation = useMutation( {
+		...siteObjectCacheClearMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Object cache cleared.' ),
+				error: __( 'Failed to clear object cache.' ),
+			},
+		},
+	} );
+
 	const isDirty = isEdgeCacheEnabled !== formData.active;
 	const { isPending } = edgeCacheStatusMutation;
 
 	const handleUpdateEdgeCacheStatus = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		edgeCacheStatusMutation.mutate( formData.active, {
-			onSuccess: () => {
-				createSuccessNotice(
-					formData.active
-						? __( 'Global edge cache enabled.' )
-						: __( 'Global edge cache disabled.' ),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save global edge cache settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		edgeCacheStatusMutation.mutate( formData.active );
 	};
 
 	const handleClearEdgeCache = () => {
-		edgeCacheClearMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Global edge cache cleared.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to clear edge cache.' ), { type: 'snackbar' } );
-			},
-		} );
+		edgeCacheClearMutation.mutate( undefined );
 	};
 
 	const handleClearObjectCache = () => {
-		objectCacheClearMutation.mutate( 'Manually clearing again.', {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Object cache cleared.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to clear object cache.' ), { type: 'snackbar' } );
-			},
-		} );
+		objectCacheClearMutation.mutate( 'Manually clearing again.' );
 	};
 
 	const [ isClearingAllCaches, setIsClearingAllCaches ] = useState( false );
@@ -180,7 +175,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 								} }
 							/>
 
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -189,7 +184,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>
@@ -322,7 +317,13 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Caching' ) }
+					description={ description }
+				/>
+			}
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }

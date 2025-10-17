@@ -508,7 +508,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
-
 		{
 			name: 'premium-2y',
 			steps: [ userSocialStep, 'domains', 'plans-premium-2y' ],

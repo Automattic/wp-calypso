@@ -2,12 +2,7 @@ import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
-type MarketingPageTab =
-	| 'Marketing Tools'
-	| 'Traffic'
-	| 'Connections'
-	| 'Sharing Buttons'
-	| 'Business Tools';
+type MarketingPageTab = 'Marketing Tools' | 'Connections' | 'Business Tools';
 type SEOPageTitleStructureCategories = 'Front Page' | 'Posts' | 'Pages' | 'Tags' | 'Archives';
 type SEOExternalServices = 'Google search' | 'Facebook' | 'Twitter';
 type SocialConnection = 'Facebook' | 'LinkedIn' | 'Tumblr' | 'Mastodon' | 'Instagram Business';

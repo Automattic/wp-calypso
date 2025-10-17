@@ -1,48 +1,14 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
+import '@automattic/agenttic-ui/index.css';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import {
-	useAttachFileToConversation,
-	useAuthenticateZendeskMessaging,
-} from '@automattic/zendesk-client';
-import { DropZone, Spinner } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
-import { SendMessageIcon } from '../../assets/send-message-icon';
-import { getOdieWrongFileTypeMessage } from '../../constants';
+import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
-import { zendeskMessageConverter } from '../../utils';
-import { Notices } from '../notices';
-import useMessageSizeErrorNotice from '../notices/use-message-size-error-notice';
-import { AttachmentButton } from './attachment-button';
-import { ResizableTextarea } from './resizable-textarea';
-
-import './style.scss';
-
-const getFileType = ( file: File ) => {
-	if ( file.type.startsWith( 'image/' ) ) {
-		return 'image-placeholder';
-	}
-
-	return 'text';
-};
-
-const getPlaceholderAttachmentMessage = ( file: File ) => {
-	return zendeskMessageConverter( {
-		role: 'user',
-		type: getFileType( file ),
-		displayName: '',
-		text: '',
-		id: String( new Date().getTime() ),
-		received: new Date().getTime(),
-		source: { type: 'web', id: '', integrationId: '' },
-		mediaUrl: URL.createObjectURL( file ),
-	} );
-};
+import { AgentUIFooter } from '../chat-footer';
+import { useConnectionStatusNotice, useMessageSizeErrorNotice } from '../notices';
+import { useAttachmentHandler } from './use-attachment-handler';
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
@@ -53,140 +19,120 @@ const getTextAreaPlaceholder = (
 	}
 	return shouldDisableInputField
 		? __( 'Just a moment…', __i18n_text_domain__ )
-		: __( 'Type a message…', __i18n_text_domain__ );
+		: __( 'Ask anything…', __i18n_text_domain__ );
 };
 
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const inputRef = useRef< HTMLTextAreaElement >( null );
-	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const {
-		trackEvent,
-		chat,
-		addMessage,
-		isUserEligibleForPaidSupport,
-		canConnectToZendesk,
-		forceEmailSupport,
-	} = useOdieAssistantContext();
+	const textareaRef = useRef< HTMLTextAreaElement >( null );
+	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
 		false;
-	const sendMessage = useSendChatMessage();
+	const { sendMessage } = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
-	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
+	const [ inputValue, setInputValue ] = useState( '' );
+	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
+	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
-	// Focus input when chat is ready
+	// Focus the textarea when the component mounts
 	useEffect( () => {
-		if ( ! isInitialLoading ) {
-			inputRef.current?.focus();
+		textareaRef.current?.focus();
+	}, [ textareaRef ] );
+
+	useEffect( () => {
+		if ( isLiveChat ) {
+			if ( inputValue.length > 0 ) {
+				Smooch.startTyping();
+			} else {
+				Smooch.stopTyping();
+			}
 		}
-	}, [ isInitialLoading ] );
+	}, [ inputValue, isLiveChat ] );
 
-	const { isMessageLengthValid, setMessageLengthErrorNotice, clearMessageLengthErrorNotice } =
-		useMessageSizeErrorNotice();
+	const {
+		attachmentPreviews,
+		sendAttachments,
+		handleImagePaste,
+		attachmentAction,
+		isAttachingFile,
+		showAttachmentButton,
+		AttachmentDropZone,
+		badFormatNotice,
+	} = useAttachmentHandler();
 
-	const { data: authData } = useAuthenticateZendeskMessaging(
-		isUserEligibleForPaidSupport,
-		'messenger'
-	);
-	const { zendeskClientId } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			zendeskClientId: helpCenterSelect.getZendeskClientId(),
-		};
-	}, [] );
-	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
+	// Prioritize connection status notice over message size notice
+	const notice = connectionNotice || messageSizeNotice || badFormatNotice;
 
-	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
-		useAttachFileToConversation();
+	useEffect( () => {
+		function handleBlur() {
+			Smooch.stopTyping();
+		}
+		if ( isLiveChat ) {
+			const textarea = textareaRef.current;
+			if ( textarea ) {
+				textarea.addEventListener( 'blur', handleBlur );
+
+				return () => {
+					textarea.removeEventListener( 'blur', handleBlur );
+				};
+			}
+		}
+	}, [ textareaRef, isLiveChat ] );
 
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
-	const handleFileUpload = useCallback(
-		async ( file: File ) => {
-			if ( file.type.startsWith( 'image/' ) ) {
-				if ( authData && chat.conversationId && inferredClientId && file ) {
-					attachFileToConversation( {
-						authData,
-						file,
-						conversationId: chat.conversationId,
-						clientId: inferredClientId,
-					} ).then( () => {
-						addMessage( getPlaceholderAttachmentMessage( file ) );
-						trackEvent( 'send_message_attachment', { type: file.type } );
-					} );
-				}
-			} else {
-				addMessage( getOdieWrongFileTypeMessage() );
-			}
-		},
-		[
-			authData,
-			chat.conversationId,
-			inferredClientId,
-			attachFileToConversation,
-			addMessage,
-			trackEvent,
-		]
-	);
-
-	const onFilesDrop = ( files: File[] ) => {
-		const file = files?.[ 0 ];
-		if ( file ) {
-			handleFileUpload( file );
-		}
-	};
-
-	const onPaste = ( event: React.ClipboardEvent ) => {
-		const items = event.clipboardData.items;
-		const file = items?.[ 0 ]?.getAsFile();
-		if ( file ) {
-			event.preventDefault();
-			handleFileUpload( file );
-		}
-	};
+	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
 
 	const sendMessageHandler = useCallback( async () => {
-		const message = inputRef.current?.value.trim();
+		const message = inputValue.trim().substring( 0, 4096 );
 		if ( message === '' || isChatBusy ) {
 			return;
 		}
 
-		if ( ! isMessageLengthValid( message ) ) {
-			setMessageLengthErrorNotice();
-			return;
-		}
-
-		const messageString = inputRef.current?.value;
-		// Immediately remove the message from the input field
+		// Immediately clear the input field
 		if ( chat?.provider === 'odie' ) {
-			inputRef.current!.value = '';
+			setInputValue( '' );
+		} else if ( chat.conversationId ) {
+			Smooch.stopTyping();
+			sendAttachments();
 		}
 
 		try {
 			trackEvent( 'chat_message_action_send', {
-				message_length: messageString?.length,
+				message_length: inputValue.length,
 				provider: chat?.provider,
 			} );
 
-			const message = {
-				content: messageString,
+			const messageObj = {
+				content: inputValue,
 				role: 'user',
 				type: 'message',
 			} as Message;
 
-			setSubmitDisabled( true );
-
-			await sendMessage( message );
-			// Removes the message from the input field after it has been sent
 			if ( chat?.provider === 'zendesk' ) {
-				inputRef.current!.value = '';
+				messageObj.metadata = {
+					temporary_id: crypto.randomUUID(),
+					local_timestamp: Date.now() / 1000,
+				};
+			}
+
+			sendMessage( messageObj ).catch( ( error ) => {
+				if ( error?.type === 'abort' ) {
+					setInputValue( inputValue );
+				}
+			} );
+
+			// Clear input after zendesk messages are sent
+			if ( chat?.provider === 'zendesk' ) {
+				setInputValue( '' );
 			}
 
 			trackEvent( 'chat_message_action_receive', {
-				message_length: messageString?.length,
+				message_length: inputValue.length,
 				provider: chat?.provider,
 			} );
 		} catch ( e ) {
@@ -195,92 +141,60 @@ export const OdieSendMessageButton = () => {
 				error: error?.message,
 			} );
 		} finally {
-			setSubmitDisabled( false );
-			inputRef.current?.focus();
+			textareaRef.current?.focus();
 		}
 	}, [
+		inputValue,
 		isChatBusy,
 		chat?.provider,
-		trackEvent,
 		sendMessage,
-		isMessageLengthValid,
-		setMessageLengthErrorNotice,
+		trackEvent,
+		chat.conversationId,
+		sendAttachments,
 	] );
 
-	const inputContainerClasses = clsx(
-		'odie-chat-message-input-container',
-		attachmentButtonRef?.current && 'odie-chat-message-input-container__attachment-button-visible'
-	);
-
-	const buttonClasses = clsx(
-		'odie-send-message-inner-button',
-		'odie-send-message-inner-button__flag'
-	);
-
-	const showAttachmentButton = chat.conversationId && inferredClientId;
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
-	const handleOnKeyUp = useCallback( () => {
-		const message = inputRef.current?.value.trim();
-		if ( isMessageLengthValid( message ) ) {
-			clearMessageLengthErrorNotice();
-		}
-	}, [ clearMessageLengthErrorNotice, isMessageLengthValid ] );
+	// Handle key events including Enter submission and paste
+	const handleKeyDown = useCallback(
+		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
+			if ( e.key === 'Enter' && ! e.shiftKey ) {
+				e.preventDefault();
+				sendMessageHandler();
+			}
+			handleImagePaste( e );
+		},
+		[ sendMessageHandler, handleImagePaste ]
+	);
+
+	const isDisabled = !! messageSizeNotice;
+	// When there is a reason to disable the input, we should not convey a processing state.
+	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 
 	return (
 		<>
-			<div className={ inputContainerClasses } ref={ divContainerRef }>
-				<Notices />
-				<div className="odie-send-message-container">
-					{ isEmailFallback ? (
-						<EmailFallbackNotice />
-					) : (
-						<form
-							onSubmit={ ( event ) => {
-								event.preventDefault();
-								sendMessageHandler();
-							} }
-							className="odie-send-message-input-container"
-						>
-							<ResizableTextarea
-								shouldDisableInputField={
-									isChatBusy || isAttachingFile || cantTransferToZendesk || isEmailFallback
-								}
-								sendMessageHandler={ sendMessageHandler }
-								className="odie-send-message-input"
-								inputRef={ inputRef }
-								setSubmitDisabled={ setSubmitDisabled }
-								keyUpHandle={ handleOnKeyUp }
-								onPasteHandle={ onPaste }
-								placeholder={ textAreaPlaceholder }
-							/>
-							{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-							{ showAttachmentButton && (
-								<AttachmentButton
-									attachmentButtonRef={ attachmentButtonRef }
-									onFileUpload={ handleFileUpload }
-									isAttachingFile={ isAttachingFile }
-									isDisabled={ isEmailFallback }
-								/>
-							) }
-							<button
-								type="submit"
-								className={ buttonClasses }
-								disabled={ submitDisabled }
-								aria-label={ __( 'Send message', __i18n_text_domain__ ) }
-							>
-								<SendMessageIcon />
-							</button>
-						</form>
-					) }
-				</div>
+			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
+				{ isEmailFallback ? (
+					<EmailFallbackNotice />
+				) : (
+					<AgentUIFooter
+						value={ inputValue }
+						onChange={ setInputValue }
+						onSubmit={ sendMessageHandler }
+						attachmentPreviews={ attachmentPreviews }
+						onKeyDown={ handleKeyDown }
+						textareaRef={ textareaRef }
+						disabled={ isDisabled }
+						notice={ notice }
+						placeholder={ textAreaPlaceholder }
+						isProcessing={ isProcessing }
+						focusOnMount={ ! isInitialLoading }
+						customActions={ customActions }
+						actionOrder="before-submit"
+					/>
+				) }
 			</div>
-			{ showAttachmentButton && (
-				<DropZone
-					onFilesDrop={ onFilesDrop }
-					label={ __( 'Share this image with our Happiness Engineers', __i18n_text_domain__ ) }
-				/>
-			) }
+			<AttachmentDropZone />
 		</>
 	);
 };

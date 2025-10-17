@@ -1,18 +1,18 @@
+import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+// eslint-disable-next-line no-restricted-imports
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { useAnalytics } from '../../app/analytics';
-import { domainSuggestionsQuery } from '../../app/queries/domains';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];
@@ -71,10 +71,10 @@ const DomainUpsellCardContent = ( {
 		}
 
 		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
-			window.location.href = addQueryArgs( `/plans/yearly/${ site.slug }`, {
-				domain: true,
-				domainAndPlanPackage: true,
-				back_to: backUrl,
+			window.location.href = getDomainAndPlanUpsellUrl( {
+				siteSlug: site.slug,
+				backUrl,
+				step: 'plans',
 			} );
 		} else {
 			window.location.href = addQueryArgs( `/checkout/${ site.slug }`, {
@@ -83,6 +83,11 @@ const DomainUpsellCardContent = ( {
 			} );
 		}
 	};
+
+	const chooseYourOwnUrl = getDomainAndPlanUpsellUrl( {
+		siteSlug: site.slug,
+		backUrl,
+	} );
 
 	return (
 		<Callout
@@ -96,16 +101,7 @@ const DomainUpsellCardContent = ( {
 						) : (
 							<TextBlur>{ search }</TextBlur>
 						),
-						link: (
-							<Link
-								to={ addQueryArgs( `${ window.location.origin }/domains/add/${ site.slug }`, {
-									domainAndPlanPackage: true,
-									domain: true,
-									back_to: backUrl,
-								} ) }
-								onClick={ handleChooseYourOwn }
-							/>
-						),
+						link: <a href={ chooseYourOwnUrl } onClick={ handleChooseYourOwn } />,
 					} ) }
 				</Text>
 			}

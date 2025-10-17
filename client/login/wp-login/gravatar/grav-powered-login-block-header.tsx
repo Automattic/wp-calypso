@@ -2,7 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import VisitSite from 'calypso/blocks/visit-site';
 import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
-import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
+	isGravatarOwnedOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -81,7 +85,10 @@ const GravPoweredLoginBlockHeader = ( {
 			<GravatarLoginLogo
 				iconUrl={ oauth2Client?.icon }
 				alt={ oauth2Client?.title || '' }
-				isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
+				isCoBrand={
+					isGravatarFlowOAuth2Client( oauth2Client ) &&
+					! isGravatarOwnedOAuth2Client( oauth2Client )
+				}
 			/>
 			<div className="grav-powered-login__form-header">{ headerText }</div>
 			{ postHeader }

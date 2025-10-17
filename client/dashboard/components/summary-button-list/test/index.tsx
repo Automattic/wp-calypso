@@ -4,7 +4,6 @@
 import '@testing-library/jest-dom';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { render, screen } from '@testing-library/react';
-import * as React from 'react';
 import { SummaryButtonList } from '../index';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

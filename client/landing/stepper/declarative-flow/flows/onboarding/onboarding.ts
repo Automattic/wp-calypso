@@ -1,13 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useEffect } from 'react';
+import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -16,31 +17,19 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
-import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
-
-const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
-	const isDomainsStep = currentStepSlug === 'domains';
-	const isPlansStepWithQuery =
-		currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' );
-
-	if ( isDomainsStep || isPlansStepWithQuery ) {
-		const { pathname, search } = window.location;
-		const newURL = removeQueryArgs( pathname + search, 'step', 'initialQuery', 'lastQuery' );
-		window.history.replaceState( {}, document.title, newURL );
-	}
-};
+import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
@@ -48,7 +37,7 @@ const withLocale = ( url: string, locale: string ) => {
 
 function initialize() {
 	const steps = [
-		STEPS.UNIFIED_DOMAINS,
+		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
@@ -75,6 +64,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
+			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
@@ -86,8 +76,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const coupon = useQuery().get( 'coupon' );
 
-		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 		const { setShouldShowNotification } = usePurchasePlanNotification();
+
+		const playgroundId = useQuery().get( 'playground' );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -99,7 +90,6 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -112,7 +102,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 
 			/**
-			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new hosting Dashboard.
+			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new Hosting Dashboard.
 			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
 			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
 			 * we'll redirect the user to the new Dashboard here.
@@ -142,49 +132,39 @@ const onboarding: FlowV2< typeof initialize > = {
 			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
 		};
 
-		clearUseMyDomainsQueryParams( currentStepSlug );
-
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
 				case 'domains':
+					if ( ! providedDependencies ) {
+						throw new Error( 'No provided dependencies found' );
+					}
+
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery: providedDependencies.lastQuery,
+						} );
+
+						return navigate( useMyDomainURL as typeof currentStepSlug );
+					}
+
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( providedDependencies.navigateToUseMyDomain ) {
-						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
-
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
-
-						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
-							?.lastQuery;
-
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
-
-						setUseMyDomainTracksEventProps( {
-							site_url: providedDependencies.siteUrl,
-							signup_domain_origin: signupDomainOrigin,
-							domain_item: providedDependencies.domainItem,
-						} );
-						return navigate( useMyDomainURL as typeof currentStepSlug );
-					}
-
 					return navigate( 'plans' );
-				case 'use-my-domain':
-					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-					if ( providedDependencies?.mode && providedDependencies?.domain ) {
-						setUseMyDomainTracksEventProps( {
-							...useMyDomainTracksEventProps,
-							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
-							site_url: providedDependencies.domain,
-						} );
+				case 'use-my-domain': {
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
 						const destination = addQueryArgs( '/use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
@@ -193,17 +173,14 @@ const onboarding: FlowV2< typeof initialize > = {
 						return navigate( destination as typeof currentStepSlug );
 					}
 
-					// We trigger the event here, because we skip it in the domains step if
-					// the user chose use-my-domain
-					recordStepNavigation( {
-						event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-						flow: this.name,
-						intent: '',
-						step: 'domains',
-						providedDependencies: useMyDomainTracksEventProps,
-					} );
+					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						setDomainCartItem( providedDependencies.domainCartItem );
+					}
 
 					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
@@ -287,7 +264,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-
 		return { submit };
 	},
 	useSideEffect( currentStepSlug ) {
@@ -307,12 +283,25 @@ const onboarding: FlowV2< typeof initialize > = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
+				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
-		// Load Survicate
+		/**
+		 * Load Survicate and set visitor traits on each step navigation.
+		 *
+		 * This runs on every step change to ensure:
+		 * - Survicate script loads successfully (retries if initial load failed)
+		 * - Visitor traits are updated when user authentication state changes
+		 * - Analytics tracking works correctly throughout the onboarding flow
+		 */
 		useEffect( () => {
 			addSurvicate();
+		}, [ currentStepSlug ] );
+
+		// Preload the visual split experiment
+		useEffect( () => {
+			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
 	},
 };

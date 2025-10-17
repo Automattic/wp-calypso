@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
+	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
@@ -14,7 +15,10 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
+	DOMAIN_AND_PLAN_FLOW,
+	PLAN_UPGRADE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -39,6 +43,15 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "onboarding-unified-flow" */ './flows/onboarding-unified/onboarding-unified'
 		),
+
+	[ DOMAIN_FLOW ]: () => import( /* webpackChunkName: "domain-flow" */ './flows/domain/domain' ),
+
+	[ AI_SITE_BUILDER_SPEC_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "ai-site-builder-spec-flow" */ './flows/ai-site-builder-spec/ai-site-builder-spec'
+		),
+	[ PLAN_UPGRADE_FLOW ]: () =>
+		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 };
 
 /**
@@ -70,8 +83,10 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	'update-options': () =>
 		import( /* webpackChunkName: "update-options-flow" */ './flows/update-options/update-options' ),
 
-	'domain-upsell': () =>
-		import( /* webpackChunkName: "update-design-flow" */ './flows/domain-upsell/domain-upsell' ),
+	[ DOMAIN_AND_PLAN_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "domain-and-plan-flow" */ './flows/domain-and-plan/domain-and-plan'
+		),
 
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 

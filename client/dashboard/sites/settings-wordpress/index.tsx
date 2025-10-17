@@ -1,29 +1,29 @@
+import {
+	siteBySlugQuery,
+	siteWordPressVersionQuery,
+	siteWordPressVersionMutation,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import {
-	siteWordPressVersionQuery,
-	siteWordPressVersionMutation,
-} from '../../app/queries/site-wordpress-version';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { ButtonStack } from '../../components/button-stack';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
-import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
@@ -34,8 +34,15 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		...siteWordPressVersionQuery( site.ID ),
 		enabled: canView,
 	} );
-	const mutation = useMutation( siteWordPressVersionMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteWordPressVersionMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'WordPress version saved.' ),
+				error: __( 'Failed to save WordPress version.' ),
+			},
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
@@ -54,7 +61,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'version' ],
 	};
 
@@ -63,16 +70,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData.version, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'WordPress version saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save WordPress version.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( formData.version );
 	};
 
 	const renderForm = () => {
@@ -89,7 +87,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -98,7 +96,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>
@@ -121,11 +119,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
-									'Switch to a <a>staging site</a> to test a beta version of the next WordPress release.'
+									'Switch to a staging site to test a beta version of the next WordPress release. <learnMoreLink>Learn more</learnMoreLink>'
 								),
 								{
-									// TODO: use correct v2 staging site URL when it's available.
-									a: <a href={ `/staging-site/${ site.slug }` } />,
+									learnMoreLink: <InlineSupportLink supportContext="switch-to-staging-site" />,
 								}
 							) }
 						</Text>
@@ -136,7 +133,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	};
 
 	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
+		<PageLayout
+			size="small"
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title="WordPress" /> }
+		>
 			{ canView ? renderForm() : renderNotice() }
 		</PageLayout>
 	);

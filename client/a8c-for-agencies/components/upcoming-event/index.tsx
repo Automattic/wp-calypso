@@ -19,11 +19,16 @@ const UpcomingEvent = ( {
 	dateClassName,
 	imageClassName,
 	extraContent,
+	displayDate: overrideDisplayDate,
 	id,
 }: UpcomingEventProps ): JSX.Element => {
 	const dispatch = useDispatch();
 
 	const displayDate = useMemo( () => {
+		if ( overrideDisplayDate ) {
+			return overrideDisplayDate;
+		}
+
 		if ( ! date ) {
 			return '';
 		}
@@ -39,7 +44,7 @@ const UpcomingEvent = ( {
 		}
 
 		return `${ date.from.format( 'MMMM Do' ) }–${ date.to.format( 'MMMM Do' ) }`;
-	}, [ date ] );
+	}, [ date, overrideDisplayDate ] );
 
 	const dateTimeString = useMemo( () => {
 		if ( ! date ) {

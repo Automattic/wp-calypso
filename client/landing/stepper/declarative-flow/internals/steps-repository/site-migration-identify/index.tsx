@@ -9,7 +9,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -73,18 +72,21 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
+	const isScanning = isFetching || ( isFetched && ! hasError );
+
 	useEffect( () => {
 		if ( siteInfo ) {
 			onComplete( siteInfo );
 		}
 	}, [ onComplete, siteInfo ] );
 
-	if ( isFetching || ( isFetched && ! hasError ) ) {
-		onVisibilityChange?.( false );
+	useEffect( () => {
+		onVisibilityChange?.( ! isScanning );
+	}, [ isScanning, onVisibilityChange ] );
+
+	if ( isScanning ) {
 		return <ScanningStep />;
 	}
-
-	onVisibilityChange?.( true );
 
 	const hostingDetailItems = {
 		'blazing-fast-speed': {
@@ -166,27 +168,6 @@ const SiteMigrationIdentify: StepType< {
 	);
 
 	const urlQueryParams = useQuery();
-	const { get } = useFlowState();
-
-	const shouldShowBackButton = () => {
-		const ref = get( 'flow' )?.entryPoint;
-
-		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
-		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
-	};
-
-	const getBackButton = () => {
-		if ( ! shouldShowBackButton() ) {
-			return null;
-		}
-
-		const backToUrl = urlQueryParams.get( 'back_to' );
-		return backToUrl ? (
-			<Step.BackButton href={ backToUrl ?? '' } />
-		) : (
-			<Step.BackButton onClick={ navigation?.goBack } />
-		);
-	};
 
 	const [ isVisible, setIsVisible ] = useState( false );
 
@@ -204,14 +185,19 @@ const SiteMigrationIdentify: StepType< {
 		/>
 	);
 
-	const backButton = getBackButton();
 	return (
 		<>
 			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<Step.CenteredColumnLayout
 				className="step-container-v2--site-migration-identify"
 				columnWidth={ 4 }
-				topBar={ <Step.TopBar leftElement={ backButton } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
+				}
 				heading={
 					isVisible ? (
 						<Step.Heading

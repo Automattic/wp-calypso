@@ -8,25 +8,28 @@ import { TestAccountName } from '.';
 
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
-		VIEWPORT_NAME: 'desktop',
-		TEST_LOCALES: [ ...getMag16Locales() ],
-		HEADLESS: false,
-		SLOW_MO: 0,
-		TIMEOUT: 10000,
+		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
+		ALLURE_RESULTS_PATH: '',
+		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
+		ATOMIC_VARIATION: 'default',
+		AUTHENTICATE_ACCOUNTS: [],
+		BROWSER_NAME: 'chromium',
+		CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
+		COBLOCKS_EDGE: false,
+		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
-		COBLOCKS_EDGE: false,
-		AUTHENTICATE_ACCOUNTS: [],
-		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
-		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
-		TEST_ON_ATOMIC: false,
-		ATOMIC_VARIATION: 'default',
+		HEADLESS: false,
 		JETPACK_TARGET: 'wpcom-production',
-		CALYPSO_BASE_URL: 'https://wordpress.com',
-		BROWSER_NAME: 'chromium',
-		ALLURE_RESULTS_PATH: '',
-		RUN_ID: '',
 		RETRY_COUNT: 0,
+		RUN_ID: '',
+		SLOW_MO: 0,
+		TEST_LOCALES: [ ...getMag16Locales() ],
+		TEST_ON_ATOMIC: false,
+		TIMEOUT: 10000,
+		VIEWPORT_NAME: 'desktop',
+		WOO_BASE_URL: 'https://woocommerce.com',
+		WPCOM_BASE_URL: 'https://wordpress.com',
 	};
 
 	get VIEWPORT_NAME(): string {
@@ -182,23 +185,53 @@ class EnvVariables implements SupportedEnvVariables {
 		}
 		return value as JetpackTarget;
 	}
-
-	get CALYPSO_BASE_URL(): string {
-		const value = process.env.CALYPSO_BASE_URL;
-		if ( ! value ) {
-			return this._defaultEnvVariables.CALYPSO_BASE_URL;
-		}
+	/**
+	 * Helper to get and validate a URL environment variable.
+	 */
+	private getValidatedUrlEnvVar( envVarName: keyof SupportedEnvVariables ): string {
+		const value = process.env[ envVarName as string ];
+		const defaultValue = this._defaultEnvVariables[ envVarName ];
+		const url = value ?? defaultValue;
 
 		try {
-			// Disabling eslint because this constructor is really the simplest way to validate a URL.
 			// eslint-disable-next-line no-new
-			new URL( value );
+			new URL( url as string );
 		} catch ( error ) {
-			throw new Error(
-				`Invalid CALYPSO_BASE_URL value: ${ value }.\nYou must provide a valid URL.`
-			);
+			throw new Error( `Invalid ${ envVarName } value: ${ url }.\nYou must provide a valid URL.` );
 		}
-		return value;
+		return url as string;
+	}
+
+	/**
+	 * Returns the A8C for Agencies URL.
+	 * @example 'https://agencies.automattic.com'
+	 */
+	get A8C_FOR_AGENCIES_URL(): string {
+		return this.getValidatedUrlEnvVar( 'A8C_FOR_AGENCIES_URL' );
+	}
+
+	/**
+	 * Returns the Calypso base URL.
+	 * @example 'http://localhost:3000'
+	 */
+	get CALYPSO_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'CALYPSO_BASE_URL' );
+	}
+
+	/**
+	 * Returns the WooCommerce base URL.
+	 * @example 'https://woocommerce.com'
+	 */
+	get WOO_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'WOO_BASE_URL' );
+	}
+
+	/**
+	 * Returns the WordPress.com base URL typically used for testing non-Calypso Marketing pages.
+	 * @example 'https://wordpress.com'
+	 */
+	get WPCOM_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'WPCOM_BASE_URL' );
 	}
 
 	get BROWSER_NAME(): string {

@@ -1,3 +1,9 @@
+import { DotcomFeatures } from '@automattic/api-core';
+import {
+	sitePreviewLinksQuery,
+	sitePreviewLinkCreateMutation,
+	sitePreviewLinkDeleteMutation,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -9,16 +15,10 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import {
-	sitePreviewLinksQuery,
-	sitePreviewLinkCreateMutation,
-	sitePreviewLinkDeleteMutation,
-} from '../../app/queries/site-preview-links';
 import { SectionHeader } from '../../components/section-header';
 import SitePreviewLink from '../../components/site-preview-link';
-import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 interface SitePreviewLinkProps {
@@ -28,41 +28,48 @@ interface SitePreviewLinkProps {
 }
 
 export default function SitePreviewLinks( { site, title, description }: SitePreviewLinkProps ) {
-	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
-	const createMutation = useMutation( sitePreviewLinkCreateMutation( site.ID ) );
-	const deleteMutation = useMutation( sitePreviewLinkDeleteMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const linksPermitted = hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS );
 
-	if ( ! hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) ) {
+	const { data: links = [] } = useQuery( {
+		...sitePreviewLinksQuery( site.ID ),
+		enabled: linksPermitted,
+	} );
+	const createMutation = useMutation( {
+		...sitePreviewLinkCreateMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Preview link enabled.' ),
+				error: __( 'Failed to enable preview link.' ),
+			},
+		},
+	} );
+	const deleteMutation = useMutation( {
+		...sitePreviewLinkDeleteMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Preview link disabled.' ),
+				error: __( 'Failed to disable preview link.' ),
+			},
+		},
+	} );
+	const { createSuccessNotice } = useDispatch( noticesStore );
+
+	if ( ! linksPermitted ) {
 		return null;
 	}
 
 	const handleChange = ( { enabled }: { enabled?: boolean } ) => {
 		if ( enabled ) {
-			createMutation.mutate( undefined, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Preview link enabled.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to enable preview link.' ), { type: 'snackbar' } );
-				},
-			} );
+			createMutation.mutate( undefined );
 		} else {
-			links?.forEach( ( { code } ) => {
-				deleteMutation.mutate( code, {
-					onSuccess: () => {
-						createSuccessNotice( __( 'Preview link disabled.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to disable preview link.' ), { type: 'snackbar' } );
-					},
-				} );
+			links.forEach( ( { code } ) => {
+				deleteMutation.mutate( code );
 			} );
 		}
 	};
 
 	const handleCopy = () => {
-		createSuccessNotice( __( 'Copied the share link to clipboard.' ), {
+		createSuccessNotice( __( 'Copied the preview link to clipboard.' ), {
 			type: 'snackbar',
 		} );
 	};
@@ -73,7 +80,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const fields: Field< { enabled: boolean } >[] = [
 			{
 				id: 'enabled',
-				label: 'Enable share link',
+				label: __( 'Enable preview link' ),
 				Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 					const { id, label, getValue } = field;
 					return (
@@ -90,7 +97,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		];
 
 		const form = {
-			type: 'regular' as const,
+			layout: { type: 'regular' as const },
 			fields: [ 'enabled' ],
 		};
 
@@ -105,10 +112,10 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 						form={ form }
 						onChange={ handleChange }
 					/>
-					{ links?.map( ( link ) => (
+					{ links.map( ( link ) => (
 						<SitePreviewLink
 							key={ link.code }
-							label={ __( 'share link' ) }
+							label={ __( 'Preview link' ) }
 							hideLabelFromVision
 							{ ...link }
 							siteUrl={ site.URL }

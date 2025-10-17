@@ -1,17 +1,17 @@
+import { getDataCenterOptions, HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery, sitePrimaryDataCenterQuery } from '@automattic/api-queries';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
-import { getDataCenterOptions } from 'calypso/data/data-center';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
+import Breadcrumbs from '../../app/breadcrumbs';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import SettingsPageHeader from '../settings-page-header';
+import type { DataCenterOption } from '@automattic/api-core';
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();
@@ -22,7 +22,9 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();
-	const primaryDataCenterName = primaryDataCenter ? dataCenterOptions[ primaryDataCenter ] : null;
+	const primaryDataCenterName = primaryDataCenter
+		? dataCenterOptions[ primaryDataCenter as DataCenterOption ]
+		: null;
 
 	if ( ! primaryDataCenterName ) {
 		router.navigate( { to: `/sites/${ siteSlug }/settings` } );
@@ -33,7 +35,8 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Primary data center' ) }
 					description={ __(
 						'The primary data center is where your site is physically located. For redundancy, your site also replicates in real-time to a second data center in a different region.'

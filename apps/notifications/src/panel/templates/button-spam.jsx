@@ -16,7 +16,7 @@ const SpamButton = ( { note, translate, spamNote } ) => {
 			icon="spam"
 			isActive={ false }
 			hotkey={ keys.KEY_S }
-			onToggle={ () => spamNote( note, restClient ) }
+			onToggle={ () => spamNote( note, false, restClient ) }
 			text={ translate( 'Spam', { context: 'verb: Mark as Spam' } ) }
 			title={ translate( 'Mark comment as spam', { context: 'verb: imperative' } ) }
 		/>

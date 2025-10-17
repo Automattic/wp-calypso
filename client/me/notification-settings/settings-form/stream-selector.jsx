@@ -8,7 +8,7 @@ const options = [ 'timeline', 'email' ];
 function NotificationSettingsFormStreamSelector( { selectedStream, onChange } ) {
 	const { data: devices = [] } = useNotificationDevicesQuery();
 
-	options
+	const selectOptions = options
 		.map( ( stream ) => (
 			<option key={ `device-notifications-${ stream }` } value={ stream }>
 				{ getLabelForStream( stream ) }
@@ -25,7 +25,7 @@ function NotificationSettingsFormStreamSelector( { selectedStream, onChange } ) 
 	return (
 		<div className="notification-settings-form-stream-selector">
 			<FormSelect value={ selectedStream } onChange={ ( event ) => onChange( event.target.value ) }>
-				{ options }
+				{ selectOptions }
 			</FormSelect>
 		</div>
 	);

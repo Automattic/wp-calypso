@@ -1,4 +1,3 @@
-import type { useOpeningCoordinates } from './hooks/use-opening-coordinates';
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
@@ -8,7 +7,6 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
-	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
 }
 
 export interface PostObject {
@@ -36,6 +34,7 @@ export interface SitePicker {
 	ownershipResult: AnalysisReport;
 	isSelfDeclaredSite: boolean;
 	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
+	disabled?: boolean;
 }
 
 export interface Article {
@@ -54,6 +53,16 @@ export interface FeatureFlags {
 }
 
 export interface SearchResult {
+	railcar: {
+		railcar?: string;
+		fetch_algo?: string;
+		fetch_lang?: string;
+		fetch_position?: string;
+		fetch_query?: string;
+		rec_post_id?: number;
+		rec_blog_id?: number;
+		session_id?: string;
+	};
 	link: string;
 	title: string;
 	content?: string;

@@ -1,0 +1,60 @@
+/* Wrapping multi-line fields */
+.site-logs-wrap {
+	overflow: visible;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+/* Truncate single-line message */
+.site-logs-ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* Badges */
+.site-logs-card,
+.site-logs-details-modal {
+	.badge--POST,
+	.badge--deprecated {
+		background-color: #bbe0fa;
+		color: #02395c;
+	}
+
+	.badge--GET {
+		background-color: #b8e6bf;
+		color: #00450c;
+	}
+
+	.badge--DELETE,
+	.badge--error,
+	.badge--fatal {
+		background-color: #facfd2;
+		color: #691c1c;
+	}
+
+	.badge--fatal {
+		white-space: nowrap;
+	}
+
+	.badge--warning {
+		background-color: #fff2d7;
+		color: #4f3500;
+	}
+
+	.badge--user {
+		background-color: #dcdcee;
+		color: #2c3338;
+	}
+}
+
+/* Scroll to top button */
+.site-logs-card .site-logs-scroll-to-top {
+	position: absolute;
+	inset-inline-end: 5px;
+	bottom: 5px;
+	border: none;
+	border-radius: 50%;
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+	cursor: pointer;
+}

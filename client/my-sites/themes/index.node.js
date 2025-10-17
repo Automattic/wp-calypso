@@ -1,6 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { setupPreferences } from 'calypso/controller/preferences';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -33,6 +34,7 @@ export default function ( router ) {
 	router(
 		showcaseRoutes,
 		ssrSetupLocale,
+		setupPreferences,
 		fetchThemeFilters,
 		validateVertical,
 		validateFilters,
@@ -62,5 +64,5 @@ export default function ( router ) {
 			redirectToThemeDetails( res.redirect, site, theme, section, next )
 	);
 	// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
-	router( '/themes/*', fetchThemeData, renderThemes, makeLayout );
+	router( '/themes/*', setupPreferences, fetchThemeData, renderThemes, makeLayout );
 }

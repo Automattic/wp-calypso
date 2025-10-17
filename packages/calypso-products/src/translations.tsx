@@ -1375,7 +1375,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const creatorIncludesInfo = [
 		translate( '40+ Jetpack blocks' ),
 		translate( 'Display ads with WordAds' ),
-		translate( 'Pay with PayPal' ),
+		translate( 'PayPal Payment Buttons' ),
 		translate( 'Paid content gating' ),
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),
@@ -2848,7 +2848,7 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 	];
 	const growthPlanIncludesInfo = [
 		translate( 'Display ads with WordAds' ),
-		translate( 'Pay with PayPal' ),
+		translate( 'PayPal Payment Buttons' ),
 		translate( 'Paid content gating' ),
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),

@@ -99,7 +99,14 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
 			mockReferrals,
 			mockProducts,
-			mockActivityWindow
+			mockActivityWindow,
+			false // use current quarter
+		);
+		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
+			mockReferrals,
+			mockProducts,
+			mockActivityWindow,
+			true // use previous quarter
 		);
 		expect( result.current.previousQuarterExpectedCommission ).toBe( 50 );
 	} );
@@ -112,7 +119,14 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
 			mockReferrals,
 			mockProducts,
-			mockActivityWindow
+			mockActivityWindow,
+			false // use current quarter
+		);
+		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
+			mockReferrals,
+			mockProducts,
+			mockActivityWindow,
+			true // use previous quarter
 		);
 		expect( result.current.currentQuarterExpectedCommission ).toBe( 50 );
 	} );
@@ -210,12 +224,14 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
 			referralsWithRevokedPurchase,
 			mockProducts,
-			previousQuarterWindow
+			currentQuarterWindow,
+			false // use current quarter
 		);
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
 			referralsWithRevokedPurchase,
 			mockProducts,
-			currentQuarterWindow
+			previousQuarterWindow,
+			true // use previous quarter
 		);
 		expect( result.current.previousQuarterExpectedCommission ).toBe( 75 );
 		expect( result.current.currentQuarterExpectedCommission ).toBe( 50 );

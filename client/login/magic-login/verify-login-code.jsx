@@ -78,7 +78,9 @@ const VerifyLoginCode = ( {
 
 	// Update local error state when authError changes
 	useEffect( () => {
-		setShowError( !! authError );
+		if ( authError ) {
+			setShowError( true );
+		}
 	}, [ authError ] );
 
 	// Focus the last input when an auth error is detected
@@ -181,8 +183,20 @@ const VerifyLoginCode = ( {
 		authenticate( loginToken, redirectTo, null, true );
 	};
 
+	const handleResendEmail = () => {
+		// Reset all form states when resending email
+		setCodeCharacters( Array( CODE_LENGTH ).fill( '' ) );
+		setShowError( false );
+
+		// Focus the first input field
+		inputRefs?.current[ 0 ]?.current?.focus();
+
+		// Call the parent's resend function
+		onResendEmail();
+	};
+
 	const isDisabled = isValidating || isRedirecting;
-	const submitEnabled = getVerificationCode().length === CODE_LENGTH && ! isDisabled;
+	const submitEnabled = getVerificationCode().length === CODE_LENGTH && ! isDisabled && ! showError;
 
 	return (
 		<div className="magic-login__successfully-jetpack">
@@ -217,7 +231,7 @@ const VerifyLoginCode = ( {
 
 				{ showError && (
 					<div className="magic-login__verify-code-error-message">
-						{ translate( "Oops, that's the wrong code. Please verify it." ) }
+						{ translate( "Oops, that's the wrong code. Please verify or resend the email." ) }
 					</div>
 				) }
 
@@ -244,7 +258,7 @@ const VerifyLoginCode = ( {
 									<Button
 										className="magic-login__resend-button"
 										variant="link"
-										onClick={ onResendEmail }
+										onClick={ handleResendEmail }
 										disabled={ isRedirecting }
 									/>
 								),

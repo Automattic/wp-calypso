@@ -2,6 +2,10 @@ import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import {
+	recordMigrationCredentialsEvent,
+	recordMigrationRequestSubmittedFacebookEvent,
+} from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { CredentialsForm } from './components/credentials-form';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -22,6 +26,11 @@ const SiteMigrationFallbackCredentials: StepType< {
 
 	const handleSubmit = ( from?: string ) => {
 		const action = 'submit';
+
+		// Fire Google Ads tracking event when credentials are submitted
+		recordMigrationCredentialsEvent( 'SiteMigrationFallbackCredentials' );
+		recordMigrationRequestSubmittedFacebookEvent( 'SiteMigrationFallbackCredentials' );
+
 		return navigation.submit?.( { action, from } );
 	};
 
@@ -44,7 +53,13 @@ const SiteMigrationFallbackCredentials: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 5 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
+				}
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
 				{ content }

@@ -1,26 +1,23 @@
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { HostingFeatures } from '@automattic/api-core';
 import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+	sitePHPVersionQuery,
+	sitePHPVersionMutation,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { ButtonStack } from '../../components/button-stack';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
@@ -29,8 +26,15 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		...sitePHPVersionQuery( site.ID ),
 		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
-	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...sitePHPVersionMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'PHP version saved.' ),
+				error: __( 'Failed to save PHP version.' ),
+			},
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
@@ -54,7 +58,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'version' ],
 	};
 
@@ -63,16 +67,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData.version, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'PHP version saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save PHP version.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( formData.version );
 	};
 
 	const description = hasPlanFeature( site, HostingFeatures.PHP )
@@ -86,7 +81,13 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title="PHP" description={ description } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="PHP"
+					description={ description }
+				/>
+			}
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
@@ -105,7 +106,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										variant="primary"
 										type="submit"
@@ -114,7 +115,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 									>
 										{ __( 'Save' ) }
 									</Button>
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</CardBody>

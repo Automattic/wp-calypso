@@ -48,6 +48,16 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	requestAllBlogsAccess: jest.fn(),
 } ) );
 
+// Mock @automattic/agenttic-ui to resolve dependency issues
+jest.mock(
+	'@automattic/agenttic-ui',
+	() => ( {
+		__esModule: true,
+		ThinkingMessage: jest.fn( () => 'Thinking...' ),
+	} ),
+	{ virtual: true }
+);
+
 // Mock crypto.randomUUID with its Node.js implementation
 global.crypto.randomUUID = () => nodeCrypto.randomUUID();
 

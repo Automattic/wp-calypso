@@ -8,8 +8,8 @@ import {
 	BrowserManager,
 	NewUserResponse,
 	RestAPIClient,
-	DomainSearchComponent,
 	EditorPage,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -61,15 +61,11 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		await page.getByRole( 'link', { name: 'Select to choose a domain' } ).click();
 		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.search( 'test' );
-		await page
-			.locator( '.domain-search-results' )
-			.getByRole( 'button', { name: 'Select' } )
-			.first()
-			.waitFor();
 	} );
 
 	it( 'Skip the domain selection step', async function () {
-		await page.getByText( 'Decide later' ).click();
+		const domainSearchComponent = new DomainSearchComponent( page );
+		await domainSearchComponent.skipPurchase();
 	} );
 
 	it( 'Select WordPress.com Free plan', async function () {
@@ -84,9 +80,9 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
 	} );
 
-	it( 'Ensure "Connect to social" navigates to Marketing page', async function () {
+	it( 'Ensure "Connect to social" navigates to Jetpack Social', async function () {
 		await page.getByRole( 'button', { name: 'Connect to social' } ).click();
-		await page.getByText( 'Marketing and Integrations' ).waitFor();
+		await page.getByText( 'Write once, post everywhere' ).waitFor();
 	} );
 
 	afterAll( async function () {

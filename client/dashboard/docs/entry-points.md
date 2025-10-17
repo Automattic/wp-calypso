@@ -8,8 +8,10 @@ The dashboard architecture is designed to support multiple entry points, where e
 - Shared core functionality
 
 Currently, during the prototyping phase, the dashboard supports two main entry points:
+
 - WordPress.com (dotcom) at `/v2`
 - Automattic for Agencies (a4a) at `/v2-a4a`
+- CIAB at `/ciab`
 
 This multi-entry point approach allows us to reuse the same codebase while tailoring the user experience to specific products and user types.
 
@@ -34,6 +36,7 @@ export const DASHBOARD_NEWPRODUCT_SECTION_DEFINITION = {
 Create a new directory under `client/dashboard` called `app-newproduct` with the following files:
 
 #### `index.tsx`
+
 ```typescript
 import boot from '../app/boot';
 import Logo from './logo';
@@ -57,6 +60,7 @@ boot( {
 ```
 
 #### `logo.tsx`
+
 ```typescript
 function Logo() {
   return (
@@ -71,6 +75,7 @@ export default Logo;
 ```
 
 #### `style.scss`
+
 ```scss
 // Product-specific styles
 // These will be loaded when your entry point is active
@@ -133,6 +138,7 @@ supports: {
 ```
 
 This configuration:
+
 1. Controls which routes are created in the router
 2. Controls which menu items appear in the primary menu
 3. Determines the default route (`mainRoute`)

@@ -1,10 +1,13 @@
+import { DomainSuggestion } from '@automattic/api-core';
 import { getPlanPath } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -21,7 +24,7 @@ import {
 	type ProvidedDependencies,
 	type StepperStep,
 } from '../../internals/types';
-import type { SiteSelect } from '@automattic/data-stores';
+import type { OnboardActions, SiteSelect } from '@automattic/data-stores';
 
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
@@ -68,7 +71,8 @@ function useIsValidSite() {
 }
 
 const COPY_SITE_STEPS = [
-	STEPS.DOMAINS,
+	STEPS.DOMAIN_SEARCH,
+	STEPS.USE_MY_DOMAIN,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
 	STEPS.AUTOMATED_COPY_SITE,
@@ -93,10 +97,61 @@ const copySite: Flow = {
 		const urlQueryParams = useQuery();
 		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
 		const sourceSite = useSite( sourceSiteSlug );
+		const {
+			setHideFreePlan,
+			setSignupDomainOrigin,
+			setDomainCartItem,
+			setSiteUrl,
+			setDomain,
+			setDomainCartItems,
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( _currentStepSlug ) {
 				case 'domains': {
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
+							...currentQueryArgs,
+							initialQuery: providedDependencies.lastQuery,
+						} );
+
+						return navigate( useMyDomainURL );
+					}
+
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					return navigate( 'create-site', {
+						sourceSlug: sourceSiteSlug,
+					} );
+				}
+
+				case 'use-my-domain': {
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
+							step: providedDependencies.mode,
+							initialQuery: providedDependencies.domain,
+						} );
+						return navigate( destination as typeof _currentStepSlug );
+					}
+
+					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setHideFreePlan( true );
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
+					}
+
 					return navigate( 'create-site', {
 						sourceSlug: sourceSiteSlug,
 					} );
@@ -139,14 +194,6 @@ const copySite: Flow = {
 			return providedDependencies;
 		};
 
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
-			return;
-		};
-
 		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
@@ -155,7 +202,7 @@ const copySite: Flow = {
 			window.location.assign( location );
 		};
 
-		return { goNext, goBack, goToStep, submit, exitFlow };
+		return { goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions() {

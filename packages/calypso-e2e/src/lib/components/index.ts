@@ -35,6 +35,7 @@ export * from './full-side-editor-nav-sidebar-component';
 export * from './full-side-editor-data-views-component';
 export * from './editor-dimensions-component';
 export * from './jetpack-instant-search-modal-component';
+export * from './select-items-component';
 export * from './wp-admin-notice-component';
 export * from './wp-admin-sidebar-component';
 

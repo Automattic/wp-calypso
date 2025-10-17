@@ -8,7 +8,7 @@ import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useChatStatus, useShouldUseWapuu, useLastSupportInteraction } from '../hooks';
+import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
@@ -22,6 +22,7 @@ export function HelpCenterChat( {
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
+	const { sectionName } = useHelpCenterContext();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
 	const { currentUser, site } = useHelpCenterContext();
@@ -31,8 +32,8 @@ export function HelpCenterChat( {
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
+
 	const { forceEmailSupport } = useChatStatus();
-	useLastSupportInteraction( { isUserEligibleForPaidSupport, userFieldFlowName } );
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -55,6 +56,7 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
+			sectionName={ sectionName }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

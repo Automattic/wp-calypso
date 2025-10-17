@@ -1,0 +1,113 @@
+import {
+	Card,
+	CardBody,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Button,
+	Notice,
+} from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import type { DomainInCart } from './types';
+
+export const DomainsFullCartItem = ( {
+	domain,
+	disabled,
+	isBusy,
+	onRemove,
+	errorMessage,
+	removeErrorMessage,
+}: {
+	domain: DomainInCart;
+	disabled: boolean;
+	isBusy: boolean;
+	onRemove: () => void;
+	errorMessage?: string;
+	removeErrorMessage: () => void;
+} ) => {
+	const { __ } = useI18n();
+
+	const domainName = `${ domain.domain }.${ domain.tld }`;
+
+	return (
+		<Card title={ domainName }>
+			<CardBody size="small">
+				<VStack spacing={ 4 }>
+					<HStack alignment="top" justify="space-between" spacing={ 6 }>
+						<VStack spacing={ 2 } alignment="left">
+							<Text size="medium" aria-label={ domainName } style={ { wordBreak: 'break-all' } }>
+								{ domain.domain }
+								<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
+									.{ domain.tld }
+								</Text>
+							</Text>
+							<Button
+								disabled={ disabled }
+								isBusy={ isBusy }
+								variant="link"
+								className="domains-full-cart-items__remove"
+								onClick={ onRemove }
+							>
+								{ __( 'Remove' ) }
+							</Button>
+						</VStack>
+						<VStack className="domains-full-cart-items__price">
+							<HStack alignment="right" spacing={ 2 }>
+								{ domain.salePrice ? (
+									<>
+										<Text
+											size="small"
+											className="domains-full-cart-items__original-price"
+											aria-label={ sprintf(
+												// translators: %(price)s is the original price of the domain.
+												__( 'Original price: %(price)s/year' ),
+												{ price: domain.price }
+											) }
+										>
+											{ sprintf(
+												// translators: %(price)s is the price of the domain.
+												__( '%(price)s/year' ),
+												{ price: domain.price }
+											) }
+										</Text>
+										<Text
+											size="small"
+											aria-label={ sprintf(
+												// translators: %(price)s is the sale price of the domain.
+												__( 'Sale price: %(price)s/year' ),
+												{ price: domain.salePrice }
+											) }
+										>
+											{ domain.salePrice }
+										</Text>
+									</>
+								) : (
+									<Text
+										size="small"
+										aria-label={ sprintf(
+											// translators: %(price)s is the price of the domain.
+											__( 'Price: %(price)s/year' ),
+											{ price: domain.price }
+										) }
+									>
+										{ sprintf(
+											// translators: %(price)s is the price of the domain.
+											__( '%(price)s/year' ),
+											{ price: domain.price }
+										) }
+									</Text>
+								) }
+							</HStack>
+						</VStack>
+					</HStack>
+					{ errorMessage && (
+						<Notice status="error" onRemove={ removeErrorMessage }>
+							{ errorMessage }
+						</Notice>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+};

@@ -1,10 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { sitesRoute } from '../app/router';
+import { sitesRoute } from '../app/router/sites';
 import InlineSupportLink from '../components/inline-support-link';
 import Notice from '../components/notice';
+import { OptInWelcome } from '../components/opt-in-welcome';
+import { isDashboardBackport } from '../utils/is-dashboard-backport';
 
 const RestoringSitesNotices = ( { onClose }: { onClose?: () => void } ) => {
 	return (
@@ -30,9 +31,15 @@ export const SitesNotices = () => {
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
-	if ( isRestoringAccount ) {
-		return (
-			<VStack className="sites-notices">
+	if ( isDashboardBackport() ) {
+		// Notices should not appear in the backported sites list.
+		return null;
+	}
+
+	return (
+		<>
+			<OptInWelcome tracksContext="sites" />
+			{ isRestoringAccount && (
 				<RestoringSitesNotices
 					onClose={ () =>
 						navigate( {
@@ -44,9 +51,7 @@ export const SitesNotices = () => {
 						} )
 					}
 				/>
-			</VStack>
-		);
-	}
-
-	return null;
+			) }
+		</>
+	);
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import type { IconType } from '@wordpress/components';
 
 type NoticeDensity = 'low' | 'medium' | 'high';
 
@@ -7,7 +8,6 @@ export type NoticeVariant = 'warning' | 'success' | 'error' | 'info';
 export interface NoticeProps {
 	/**
 	 * Indicates visually the message tone. These can be four: Info, Warning, Success, and Error.
-	 *
 	 * @default 'info'
 	 */
 	variant?: NoticeVariant;
@@ -20,7 +20,7 @@ export interface NoticeProps {
 	/**
 	 * The main body content informing and guiding users about the system status change.
 	 */
-	children: React.ReactNode;
+	children?: React.ReactNode;
 
 	/**
 	 * Optional actions that serve as a call to action.
@@ -30,10 +30,14 @@ export interface NoticeProps {
 	/**
 	 * Adjusts internal spacings according to the section where the component is placed.
 	 * High density reduces padding.
-	 *
 	 * @default 'low'
 	 */
 	density?: NoticeDensity;
+
+	/**
+	 * Custom icon to use instead of the default one for each variant.
+	 */
+	icon?: IconType;
 
 	/**
 	 * An optional action to close the component.

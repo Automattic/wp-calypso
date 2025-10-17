@@ -34,6 +34,11 @@ function DownloadLink( {
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_wordpress_pro_partner.zip',
 				icon: <img src={ WordPressogo } alt="WordPress.com" />,
 			},
+			'premier-partner': {
+				name: translate( 'WordPress.com Premier Agency Partner' ),
+				href: 'https://automattic.com/wp-content/uploads/2025/08/agency_tier_wordpresscom_premier_partner.zip',
+				icon: <img src={ WordPressogo } alt="WordPress.com" />,
+			},
 		},
 		woocommerce: {
 			'agency-partner': {
@@ -44,6 +49,11 @@ function DownloadLink( {
 			'pro-agency-partner': {
 				name: translate( 'Woo Pro Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2025/02/agency_tier_woo_pro_partner.zip',
+				icon: <img src={ WooLogo } alt="WooCommerce" />,
+			},
+			'premier-partner': {
+				name: translate( 'Woo Premier Agency Partner' ),
+				href: 'https://automattic.com/wp-content/uploads/2025/08/agency_tier_woo_premier_partner.zip',
 				icon: <img src={ WooLogo } alt="WooCommerce" />,
 			},
 		},
@@ -58,6 +68,11 @@ function DownloadLink( {
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_jetpack_pro_partner.zip',
 				icon: <JetpackLogo size={ 32 } />,
 			},
+			'premier-partner': {
+				name: translate( 'Jetpack Premier Agency Partner' ),
+				href: 'https://automattic.com/wp-content/uploads/2025/08/agency_tier_jetpack_premier_partner.zip',
+				icon: <JetpackLogo size={ 32 } />,
+			},
 		},
 		pressable: {
 			'agency-partner': {
@@ -68,6 +83,11 @@ function DownloadLink( {
 			'pro-agency-partner': {
 				name: translate( 'Pressable Pro Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_pressable_pro_partner.zip',
+				icon: <img src={ PressableLogo } alt="Pressable" />,
+			},
+			'premier-partner': {
+				name: translate( 'Pressable Premier Agency Partner' ),
+				href: 'https://automattic.com/wp-content/uploads/2025/08/agency_tier_pressable_premier_partner.zip',
 				icon: <img src={ PressableLogo } alt="Pressable" />,
 			},
 		},
@@ -86,6 +106,7 @@ function DownloadLink( {
 	return (
 		<Button
 			href={ data.href }
+			target="_blank"
 			onClick={ () => {
 				dispatch(
 					recordTracksEvent( 'calypso_a8c_agency_tier_badges_download_modal_download_click', {

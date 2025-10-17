@@ -1,54 +1,34 @@
-.reader-post-actions {
-	align-items: center;
-	box-sizing: border-box;
+:root .reader-post-actions {
 	display: flex;
-	font-family: $sans;
 	flex-direction: row;
-	height: auto;
-	justify-content: flex-start;
-	list-style-type: none;
-	margin: 10px 0 0;
+	flex-wrap: wrap;
+	gap: 4px;
+	list-style: none;
+	margin: 0;
+	padding-top: 20px;
+	justify-content: space-between;
 
-	@include breakpoint-deprecated( "<660px" ) {
-		justify-content: space-around;
-	}
-}
-
-.reader-post-actions .reader-post-actions__item {
-	margin-right: 24px;
-
-	& > button {
-		margin: 0;
-		padding: 0;
-
-		&:focus {
-			outline: thin dotted;
-		}
-
-		.accessible-focus &:focus {
-			border-radius: 2px;
-			border-color: var(--color-primary);
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
+	@include break-medium {
+		justify-content: flex-start;
+		gap: 24px;
 	}
 
-	.follow-button__label {
-		display: none;
-	}
+	.reader-post-actions__item {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 10px;
+		flex-direction: column;
 
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-right: 18px;
-		height: auto;
-		&:first-of-type {
-			margin-left: 18px;
-		}
-
-		.reader-share__button,
-		.like-button,
-		.comment-button {
+		button {
 			display: flex;
 			flex-direction: column;
 			height: auto;
+			min-width: 60px;
+			@include break-medium {
+				min-width: unset;
+				flex-direction: row;
+			}
 		}
 	}
 }

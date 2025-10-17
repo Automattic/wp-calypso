@@ -5,15 +5,18 @@ import {
 	Card,
 	CardBody,
 	Icon,
+	type IconType,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { info, published, error, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+import { ButtonStack } from '../button-stack';
 import { caution } from './icons';
 import type { NoticeVariant, NoticeProps } from './types';
 import './style.scss';
 
-const icons: { [ key in NoticeVariant ]: any } = {
+const icons: { [ key in NoticeVariant ]: IconType } = {
 	info,
 	warning: caution,
 	success: published,
@@ -44,7 +47,7 @@ const icons: { [ key in NoticeVariant ]: any } = {
  * ```
  */
 function UnforwardedNotice(
-	{ variant = 'info', title, children, actions, density = 'low', onClose }: NoticeProps,
+	{ variant = 'info', title, children, actions, density = 'low', onClose, icon }: NoticeProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	const hasLowDensity = density === 'low';
@@ -56,20 +59,21 @@ function UnforwardedNotice(
 		>
 			<CardBody className="dashboard-notice__body">
 				<HStack spacing={ hasLowDensity ? 2 : 1 } justify="flex-start" alignment="flex-start">
-					<Icon className="dashboard-notice__icon" icon={ icons[ variant ] } />
+					<Icon className="dashboard-notice__icon" icon={ icon ?? icons[ variant ] } />
 					<VStack className="dashboard-notice__content" spacing={ 3 }>
 						<VStack className="dashboard-notice__heading" spacing={ 1 }>
 							{ title && <span className="dashboard-notice__title">{ title }</span> }
-							<span className="dashboard-notice__description">{ children }</span>
+							{ children && <span className="dashboard-notice__description">{ children }</span> }
 						</VStack>
 						{ actions && (
-							<HStack className="dashboard-notice__actions" spacing={ 3 } justify="flex-start">
+							<ButtonStack className="dashboard-notice__actions" justify="flex-start">
 								{ actions }
-							</HStack>
+							</ButtonStack>
 						) }
 					</VStack>
 					{ !! onClose && (
 						<Button
+							aria-label={ __( 'Dismiss' ) }
 							className="dashboard-notice__close-button"
 							icon={ closeSmall }
 							onClick={ onClose }

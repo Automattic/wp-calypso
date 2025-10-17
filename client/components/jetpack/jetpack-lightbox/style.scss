@@ -1,31 +1,31 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .jetpack-lightbox__modal {
 	padding: 0;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	border-radius: 8px;
 	width: 85%;
 	height: auto;
-	background-color: var(--studio-white);
+	background-color: var( --studio-white );
 	transition: all 0.25s ease;
 	font-family: Inter, $sans;
 	max-width: 1080px;
 	max-height: 100%;
 
-	@media (prefers-reduced-motion: no-preference) {
-		transform: translateY(20px);
+	@media ( prefers-reduced-motion: no-preference ) {
+		transform: translateY( 20px );
 	}
 
 	&.ReactModal__Content--after-open {
-		transform: translateY(0);
+		transform: translateY( 0 );
 	}
 
 	p {
 		margin-bottom: 0.5rem;
 	}
 
-	:is(.button[disabled], .button:disabled, .button.disabled) {
-		background-color: var(--studio-gray-5);
+	:is( .button[disabled], .button:disabled, .button.disabled ) {
+		background-color: var( --studio-gray-5 );
 	}
 }
 
@@ -44,7 +44,7 @@
 	box-sizing: border-box;
 
 	&.ReactModal__Overlay--after-open {
-		background-color: rgb(0 0 0 / 70%);
+		background-color: rgb( 0 0 0 / 70% );
 		max-height: 100vh;
 		overflow-y: auto;
 	}
@@ -63,8 +63,8 @@
 	height: 100%;
 	width: 60%;
 	overflow-y: auto;
-	background-color: var(--studio-white);
-	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
+	background-color: var( --studio-white );
+	border-radius: 8px 0 0 8px;
 	max-height: 85vh;
 
 	hr {
@@ -75,9 +75,9 @@
 .jetpack-lightbox__content-aside {
 	padding: 40px;
 	width: 40%;
-	background-color: var(--studio-gray-0);
-	border-radius: 0 8px 8px 0; /* stylelint-disable-line scales/radii */
-	box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+	background-color: var( --studio-gray-0 );
+	border-radius: 0 8px 8px 0;
+	box-shadow: 0 4px 8px rgb( 0 0 0 / 30% );
 	overflow-y: auto;
 	max-height: 85vh;
 
@@ -85,14 +85,14 @@
 		box-shadow: none;
 	}
 
-	@media (max-width: $break-large) {
+	@media ( max-width: $break-large ) {
 		padding: 24px;
 	}
 }
 
 .jetpack-lightbox__content-footer {
-	background-color: var(--studio-white);
-	border-block-start: 1px solid var(--studio-gray-0);
+	background-color: var( --studio-white );
+	border-block-start: 1px solid var( --studio-gray-0 );
 	margin: 0 -40px 40px;
 	padding: 16px 40px;
 
@@ -115,7 +115,7 @@
 	}
 }
 
-@media screen and (max-width: $break-medium) and (orientation: portrait) {
+@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
 	.jetpack-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -149,21 +149,21 @@
 		padding: 24px;
 		box-sizing: border-box;
 		transition: transform 0.2s;
-		transform: translateY(100%);
+		transform: translateY( 100% );
 		max-height: 100%;
 
 		&.is-expanded {
-			transform: translateY(0);
+			transform: translateY( 0 );
 		}
 	}
 
 	.jetpack-lightbox__close-button {
 		z-index: 1;
-		background-color: var(--studio-white);
+		background-color: var( --studio-white );
 	}
 }
 
-@media screen and (max-height: 630px) and (orientation: landscape) {
+@media screen and ( max-height: 630px ) and ( orientation: landscape ) {
 	.jetpack-lightbox__modal {
 		display: flex;
 		border-radius: 0;
@@ -178,10 +178,10 @@
 	}
 }
 
-@media screen and (max-height: 365px) and (orientation: landscape) {
+@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
 	.jetpack-lightbox__content-aside {
 		padding: 1.5rem;
-		background: var(--studio-gray-0);
+		background: var( --studio-gray-0 );
 	}
 }
 

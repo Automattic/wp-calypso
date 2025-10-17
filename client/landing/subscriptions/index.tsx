@@ -1,4 +1,3 @@
-import 'calypso/components/environment-badge/style.scss';
 import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
@@ -20,6 +19,7 @@ import {
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
+import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -52,6 +52,8 @@ async function main() {
 	const { queryClient } = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
+
+	loadDevHelpers( reduxStore );
 
 	ReactDom.render(
 		<CalypsoI18nProvider>

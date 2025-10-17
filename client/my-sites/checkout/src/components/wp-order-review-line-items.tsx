@@ -1,10 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	isAkismetProduct,
-	isJetpackPurchasableItem,
-	AKISMET_PRO_500_PRODUCTS,
-	isWpComPlan,
-} from '@automattic/calypso-products';
+import { AKISMET_PRO_500_PRODUCTS, isWpComPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
@@ -22,13 +17,9 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
+import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -321,12 +312,7 @@ function LineItemWrapper( {
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
-	const isStreamlinedPrice =
-		! isStreamlinedPriceExperimentLoading &&
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
-		isWpComPlan( product.product_slug );
+	const shouldShowComparison = isWpComPlan( product.product_slug );
 
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
@@ -405,31 +391,22 @@ function LineItemWrapper( {
 		return true;
 	} )();
 
-	const isJetpack = responseCart.products.some( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
-	const variantsFilterCallback = ( variant: WPCOMProductVariant ) => {
-		// Only show term variants which are equal to or longer than the variant that
-		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
-		// See https://github.com/Automattic/wp-calypso/issues/69633
-		if ( ! initialVariantTerm ) {
-			return true;
-		}
-		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
-		const isMarketplace = product.extra?.is_marketplace_product;
-		const isA4A = product.extra?.isA4ASitelessCheckout;
-
-		if ( isJetpack || isAkismet || isMarketplace || isA4A ) {
-			return true;
+	const variantsFilterCallback: ( variant: WPCOMProductVariant ) => boolean = ( variant ) => {
+		if ( signupFlowName === 'onboarding-pm' && isWpComPlan( product.product_slug ) ) {
+			const domainRegistrations = getDomainRegistrations( responseCart );
+			// Hide monthly variant when a paid domain is in the cart
+			if (
+				variant.termIntervalInMonths === 1 &&
+				variant.termIntervalInMonths !== initialVariantTerm &&
+				domainRegistrations.length > 0
+			) {
+				return false;
+			}
 		}
 
-		return variant.termIntervalInMonths >= initialVariantTerm;
+		return true;
 	};
-	const variants = useGetProductVariants(
-		product,
-		! isStreamlinedPrice ? variantsFilterCallback : undefined
-	);
+	const variants = useGetProductVariants( product, variantsFilterCallback );
 
 	const areThereVariants = variants.length > 1;
 
@@ -457,7 +434,7 @@ function LineItemWrapper( {
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
-				shouldShowComparison={ isStreamlinedPrice }
+				shouldShowComparison={ shouldShowComparison }
 				compareToPrice={ compareToPrice }
 			>
 				<DropdownWrapper>

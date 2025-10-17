@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	BrowserManager,
-	DomainSearchComponent,
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
@@ -13,7 +12,6 @@ import {
 	CartCheckoutPage,
 	StartSiteFlow,
 	SecretsManager,
-	SignupDomainPage,
 	MyHomePage,
 	ComingSoonPage,
 	NewSiteResponse,
@@ -23,6 +21,7 @@ import {
 	MeSidebarComponent,
 	NoticeComponent,
 	PurchasesPage,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -69,9 +68,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Skip domain selection', async function () {
-			const signupDomainPage = new SignupDomainPage( page );
-			await signupDomainPage.searchForFooDomains();
-			await signupDomainPage.skipDomainSelection();
+			const signupDomainPage = new DomainSearchComponent( page );
+			await signupDomainPage.search( 'foo' );
+			await signupDomainPage.skipPurchase();
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -195,7 +194,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		it( 'Skip domain purchase', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( newSiteDetails.blog_details.site_slug );
-			await domainSearchComponent.clickButton( 'Skip Purchase' );
+			await domainSearchComponent.skipPurchase();
 		} );
 
 		it( 'Navigated to Home dashboard', async function () {

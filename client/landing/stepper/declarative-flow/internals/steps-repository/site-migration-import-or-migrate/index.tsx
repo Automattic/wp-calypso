@@ -5,12 +5,16 @@ import { Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import {
+	recordMigrationStartEvent,
+	recordMigrationStartFacebookEvent,
+} from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -65,6 +69,12 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
 
+	// Fire Google Ads tracking event when component loads
+	useEffect( () => {
+		recordMigrationStartEvent( 'SiteMigrationImportOrMigrate' );
+		recordMigrationStartFacebookEvent( 'SiteMigrationImportOrMigrate' );
+	}, [] );
+
 	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
 		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
@@ -108,7 +118,13 @@ const SiteMigrationImportOrMigrate: StepType< {
 			<DocumentHead title={ pageTitle } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 5 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
+				}
 				heading={ <Step.Heading text={ pageTitle } subText={ pageSubTitle } /> }
 				className="import-or-migrate-v2"
 			>

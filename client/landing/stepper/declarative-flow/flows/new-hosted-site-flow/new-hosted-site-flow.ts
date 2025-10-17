@@ -1,5 +1,5 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
-import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,8 +14,13 @@ import {
 	getSignupCompleteSiteID,
 	setSignupCompleteSiteID,
 	getSignupCompleteSlug,
+	clearSignupDestinationCookie,
+	clearSignupCompleteFlowName,
+	clearSignupCompleteSlug,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
@@ -23,13 +28,21 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/api-core';
+import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	await resetOnboardStore();
+	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+	reduxStore.dispatch( setSelectedSiteId( null ) );
+	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
+	clearSignupDestinationCookie();
+	clearSignupCompleteFlowName();
+	clearSignupCompleteSlug();
+	clearSignupCompleteSiteID();
 
 	const queryParams = getCurrentQueryParams();
 	const showDomainStep = queryParams.has( 'showDomainStep' );
@@ -40,7 +53,7 @@ async function initialize( reduxStore: Store ) {
 	const steps = [];
 
 	if ( showDomainStep ) {
-		steps.push( STEPS.UNIFIED_DOMAINS );
+		steps.push( STEPS.DOMAIN_SEARCH );
 	}
 
 	const utmSource = queryParams.get( 'utm_source' );
@@ -112,7 +125,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const getGoBack = () => {
 			if ( _currentStepSlug === STEPS.UNIFIED_PLANS.slug && showDomainStep ) {
-				return () => navigate( STEPS.UNIFIED_DOMAINS.slug );
+				return () => navigate( STEPS.DOMAIN_SEARCH.slug );
 			}
 
 			if ( _currentStepSlug === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
@@ -124,7 +137,15 @@ const hosting: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
-				case STEPS.UNIFIED_DOMAINS.slug: {
+				case STEPS.DOMAIN_SEARCH.slug: {
+					if ( ! providedDependencies ) {
+						throw new Error( 'No provided dependencies found' );
+					}
+
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						throw new Error( 'Navigation to use my domain is not supported for this flow' );
+					}
+
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );

@@ -1,25 +1,21 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
-	section,
 	createdFrom,
 	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
-	section?: string | null;
 	createdFrom?: string;
 	isFromError?: boolean;
-} ) => Promise< void > ) => {
+} ) => Promise< string > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -28,13 +24,9 @@ export const useCreateZendeskConversation = (): ( ( {
 		setChat,
 		chat,
 		trackEvent,
+		sectionName,
 	} = useOdieAssistantContext();
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
@@ -43,24 +35,34 @@ export const useCreateZendeskConversation = (): ( ( {
 	const createConversation = async ( {
 		avoidTransfer = false,
 		interactionId = '',
-		section = '',
 		createdFrom = '',
 		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
-		section?: string | null;
 		createdFrom?: string;
 		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
+
+		trackEvent( 'create_zendesk_conversation', {
+			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
+			chat_conversation_id: chat.conversationId,
+			chat_status: chat.status,
+			chat_provider: chat.provider,
+			interaction_id: currentInteractionID,
+			created_from: createdFrom,
+			avoid_transfer: avoidTransfer,
+			is_from_error: isFromError,
+		} );
+
 		if (
 			isSubmittingZendeskUserFields ||
 			chat.conversationId ||
 			chat.status === 'transfer' ||
 			chat.provider === 'zendesk'
 		) {
-			return;
+			return chat.conversationId || '';
 		}
 
 		setChat( ( prevChat ) => ( {
@@ -74,14 +76,33 @@ export const useCreateZendeskConversation = (): ( ( {
 			status: 'transfer',
 		} ) );
 
-		await submitUserFields( {
-			messaging_initial_message: userFieldMessage || undefined,
-			messaging_site_id: selectedSiteId || null,
-			messaging_ai_chat_id: chatId || undefined,
-			messaging_url: selectedSiteURL || null,
-			messaging_flow: userFieldFlowName || null,
-			messaging_source: section,
-		} );
+		try {
+			trackEvent( 'submitting_zendesk_user_fields', {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			await submitUserFields( {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			trackEvent( 'submitted_zendesk_user_fields' );
+		} catch ( error ) {
+			trackEvent( 'error_submitting_zendesk_user_fields', {
+				error_message:
+					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+			} );
+		}
+
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
@@ -110,12 +131,17 @@ export const useCreateZendeskConversation = (): ( ( {
 			} );
 		}
 
+		// We need to load the conversation to get typing events. Load simply means "focus on"..
+		Smooch.loadConversation( conversation.id );
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
 			conversationId: conversation.id,
 			provider: 'zendesk',
 			status: 'loaded',
 		} ) );
+
+		return conversation.id;
 	};
 
 	return createConversation;

@@ -56,9 +56,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
-	DOMAINS: {
+	DOMAIN_SEARCH: {
 		slug: 'domains',
-		asyncComponent: () => import( './steps-repository/domains' ),
+		asyncComponent: () => import( './steps-repository/domain-search' ),
 	},
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
@@ -137,6 +137,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-squarespace' ),
 	},
 
+	IMPORTER_SUBSTACK: {
+		slug: 'importerSubstack',
+		asyncComponent: () => import( './steps-repository/importer-substack' ),
+	},
+
 	IMPORTER_WIX: {
 		slug: 'importerWix',
 		asyncComponent: () => import( './steps-repository/importer-wix' ),
@@ -160,6 +165,11 @@ export const STEPS = {
 	LAUNCH_BIG_SKY: {
 		slug: 'launch-big-sky',
 		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
+	},
+
+	SITE_SPEC: {
+		slug: 'site-spec',
+		asyncComponent: () => import( './steps-repository/site-spec' ),
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
@@ -315,13 +325,6 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
-	},
-	UNIFIED_DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
-			),
 	},
 	UNIFIED_PLANS: {
 		slug: 'plans',

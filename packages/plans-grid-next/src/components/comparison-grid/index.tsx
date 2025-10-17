@@ -1157,7 +1157,7 @@ const WrappedComparisonGrid = ( {
 	featureGroupMap,
 	enableTermSavingsPriceDisplay,
 	reflectStorageSelectionInPlanPrices,
-	showStreamlinedBillingDescription,
+	showSimplifiedBillingDescription,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -1193,6 +1193,7 @@ const WrappedComparisonGrid = ( {
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
+				key={ intent }
 				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
@@ -1205,7 +1206,7 @@ const WrappedComparisonGrid = ( {
 				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				reflectStorageSelectionInPlanPrices={ reflectStorageSelectionInPlanPrices }
-				showStreamlinedBillingDescription={ showStreamlinedBillingDescription }
+				showSimplifiedBillingDescription={ showSimplifiedBillingDescription }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }

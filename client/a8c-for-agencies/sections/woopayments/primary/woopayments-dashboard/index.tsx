@@ -1,8 +1,7 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
@@ -28,19 +27,28 @@ import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice'
 import WooPaymentsDashboardEmptyState from './empty-state';
 import type { Site } from '../../../sites/types';
 import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../../types';
-import type { License } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
-const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState ) => {
-	// Sites without state go first
-	if ( ! a.state && b.state ) {
-		return -1;
-	}
-	if ( a.state && ! b.state ) {
-		return 1;
-	}
-	return 0;
+const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState ): number => {
+	// Order: sites without state, active, disconnected
+	const getStateOrder = ( state: string | undefined | null ): number => {
+		if ( ! state ) {
+			return 0;
+		}
+		if ( state === 'active' ) {
+			return 1;
+		}
+		if ( state === 'disconnected' ) {
+			return 2;
+		}
+		return 3;
+	};
+
+	const orderA = getStateOrder( a.state );
+	const orderB = getStateOrder( b.state );
+
+	return orderA - orderB;
 };
 
 const WooPaymentsDashboard = () => {
@@ -49,12 +57,6 @@ const WooPaymentsDashboard = () => {
 	const isDesktop = useDesktopBreakpoint();
 
 	const title = translate( 'WooPayments commissions' );
-
-	const [ sitesWithPluginsStates, setSitesWithPluginsStates ] = useState<
-		SitesWithWooPaymentsState[]
-	>( [] );
-
-	const [ isWooPaymentsDataLoading, setIsWooPaymentsDataLoading ] = useState( false );
 
 	const { data: licensesWithWooPayments, isLoading: isLoadingLicensesWithWooPayments } =
 		useFetchAllLicenses(
@@ -68,63 +70,45 @@ const WooPaymentsDashboard = () => {
 		[ 'woocommerce-payments/woocommerce-payments' ]
 	);
 
+	const sitesWithWooPaymentsPlugins = useMemo( () => {
+		return (
+			sitesWithPlugins?.map( ( site: SitesWithWooPaymentsPlugins ) => {
+				return {
+					blogId: site.blog_id,
+					siteUrl: site.url,
+					state: site.state,
+				};
+			} ) || []
+		);
+	}, [ sitesWithPlugins ] );
+
+	// Combine sites with WooPayments licenses (assigned via A4A) and plugins
+	const allSitesWithWooPayments = useMemo( () => {
+		return [ ...( licensesWithWooPayments?.items || [] ), ...sitesWithWooPaymentsPlugins ];
+	}, [ licensesWithWooPayments, sitesWithWooPaymentsPlugins ] );
+
 	const testConnections = useFetchTestConnections(
 		true,
-		licensesWithWooPayments?.items.map( ( license: License ) => {
+		allSitesWithWooPayments.map( ( site: SitesWithWooPaymentsState ) => {
 			return {
-				blog_id: license.blogId,
+				blog_id: site.blogId,
 				is_connection_healthy: true,
 			} as Site;
 		} ) || []
 	);
 
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
-	const showEmptyState = ! isLoading && ! sitesWithPluginsStates.length;
+	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
 
 	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useFetchWooPaymentsData(
-		isWooPaymentsDataLoading,
-		!! sitesWithPluginsStates.length
+		!! allSitesWithWooPayments.length // Only fetch data if there are sites with WooPayments plugins or licenses
 	);
 
-	const isInProgress =
-		woopaymentsData?.status === 'in_progress' && !! sitesWithPluginsStates.length;
-
-	useEffect( () => {
-		if ( isInProgress ) {
-			setIsWooPaymentsDataLoading( true );
-		} else {
-			setIsWooPaymentsDataLoading( false );
-		}
-	}, [ isInProgress, sitesWithPluginsStates ] );
-
-	const createInitialSiteState = useCallback(
-		( license: License ) => {
-			const sitePlugin = sitesWithPlugins?.find(
-				( site: SitesWithWooPaymentsPlugins ) => site.blog_id === license.blogId
-			);
-
-			return {
-				blogId: license.blogId,
-				siteUrl: license.siteUrl,
-				state: sitePlugin?.state || null,
-			} as SitesWithWooPaymentsState;
-		},
-		[ sitesWithPlugins ]
-	);
-
-	useEffect( () => {
-		if ( ! licensesWithWooPayments?.items ) {
-			return;
-		}
-
-		const states = licensesWithWooPayments.items.map( createInitialSiteState );
-
-		setSitesWithPluginsStates( states );
-	}, [ sitesWithPlugins, licensesWithWooPayments, createInitialSiteState ] );
-
-	const sitesWithPluginsStatesSorted = useMemo( () => {
-		return sitesWithPluginsStates
-			.map( ( site ) => {
+	const sortedSitesWithWooPayments = useMemo( () => {
+		return Array.from(
+			new Map( allSitesWithWooPayments.map( ( site ) => [ site.blogId, site ] ) ).values() // Remove duplicates
+		)
+			.map( ( site: SitesWithWooPaymentsState ) => {
 				const connection = testConnections?.find( ( connection ) => connection.ID === site.blogId );
 				return {
 					...site,
@@ -132,7 +116,7 @@ const WooPaymentsDashboard = () => {
 				};
 			} )
 			.sort( sortByState );
-	}, [ sitesWithPluginsStates, testConnections ] );
+	}, [ allSitesWithWooPayments, testConnections ] );
 
 	const content = useMemo( () => {
 		if ( isLoading ) {
@@ -161,21 +145,16 @@ const WooPaymentsDashboard = () => {
 				value={ {
 					woopaymentsData,
 					isLoadingWooPaymentsData,
-					sitesWithPluginsStates: sitesWithPluginsStatesSorted,
+					sitesWithPluginsStates: sortedSitesWithWooPayments,
 				} }
 			>
 				<LayoutTop isFullWidth={ isFullWidth }>
-					{ !! sitesWithPluginsStates.length && <MissingPaymentSettingsNotice /> }
+					{ !! allSitesWithWooPayments.length && <MissingPaymentSettingsNotice /> }
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>
 							<MobileSidebarNavigation />
 							<div className="woopayments-dashboard__actions">
-								{ isInProgress && (
-									<div className="woopayments-dashboard__spinner">
-										<Spinner /> { translate( 'Loading and refreshing data' ) }
-									</div>
-								) }
 								{ ! isLoading && <AddWooPaymentsToSite /> }
 							</div>
 						</Actions>

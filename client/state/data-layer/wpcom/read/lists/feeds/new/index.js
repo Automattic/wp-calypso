@@ -29,9 +29,12 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => {
+				const defaultSuccessMessage =
+					action.listSlug === 'recommended-blogs'
+						? translate( 'Recommendation successfully added.' )
+						: translate( 'Feed added to list successfully.' );
 				// Support custom success messages
-				const successMessage =
-					action.successMessage || translate( 'Feed added to list successfully.' );
+				const successMessage = action.successMessage || defaultSuccessMessage;
 				return [
 					receiveAddReaderListFeed(
 						action.listId,
@@ -45,8 +48,12 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 				];
 			},
 			onError: ( action ) => {
+				const defaultErrorMessage =
+					action.listSlug === 'recommended-blogs'
+						? translate( 'Unable to add recommendation.' )
+						: translate( 'Unable to add feed to list.' );
 				// Support custom error messages
-				const errorMessage = action.errorMessage || translate( 'Unable to add feed to list.' );
+				const errorMessage = action.errorMessage || defaultErrorMessage;
 				return [
 					errorNotice( errorMessage ),
 					// Revert the optimistic add by dispatching a remove action that bypasses the data layer

@@ -77,6 +77,9 @@ export type PlansIntent =
 	| 'plans-site-selected-legacy'
 	| 'plans-playground'
 	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
+	| 'plans-upgrade'
+	| 'plans-wordpress-hosting'
+	| 'plans-website-builder'
 	| 'default';
 
 export interface PlanActionOverrides {
@@ -245,9 +248,9 @@ export type GridContextProps = {
 	reflectStorageSelectionInPlanPrices?: boolean;
 
 	/**
-	 * Enable streamlined billing description
+	 * Enable simplified billing description
 	 */
-	showStreamlinedBillingDescription?: boolean;
+	showSimplifiedBillingDescription?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

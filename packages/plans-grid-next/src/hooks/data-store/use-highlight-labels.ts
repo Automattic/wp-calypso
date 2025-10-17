@@ -34,6 +34,8 @@ const useHighlightLabels = ( {
 	isDomainOnlySite,
 }: Props ) => {
 	const translate = useTranslate();
+	const isVisualSplitIntent =
+		intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder';
 
 	return planSlugs.reduce(
 		( acc, planSlug ) => {
@@ -72,9 +74,9 @@ const useHighlightLabels = ( {
 				}
 			} else if ( 'plans-affiliate' === intent && isBusinessPlan( planSlug ) ) {
 				label = translate( 'Popular' );
-			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan ) {
+			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
 				label = translate( 'Best for devs' );
-			} else if ( isPopularPlan( planSlug ) && ! selectedPlan ) {
+			} else if ( isPopularPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
 				label = translate( 'Popular' );
 			}
 

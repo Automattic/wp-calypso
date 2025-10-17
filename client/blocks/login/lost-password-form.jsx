@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { Button, Spinner } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { Button, Spinner, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -171,7 +172,7 @@ const LostPasswordForm = ( {
 			onSubmit={ onSubmit }
 		>
 			<div className="login__form-userdata">
-				<FormLabel htmlFor="userLogin">{ translate( 'Username or email address' ) }</FormLabel>
+				<FormLabel htmlFor="userLogin">{ translate( 'Email address or username' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -194,6 +195,15 @@ const LostPasswordForm = ( {
 					ref={ inputRef }
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
+				<ExternalLink
+					href={ localizeUrl(
+						'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
+						locale
+					) }
+					className="login__lostpassword-form-external-link"
+				>
+					{ translate( 'Need More Help?' ) }
+				</ExternalLink>
 			</div>
 			<div className="login__form-action">
 				<Button

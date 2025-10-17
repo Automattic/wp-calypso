@@ -60,7 +60,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_thank_you_back_to_hosting' );
 
-		window.location.href = `/hosting-config/${ selectedSite.slug }`;
+		window.location.href = `/sites/${ selectedSite.slug }/settings`;
 	};
 
 	visitScheduler = ( event ) => {

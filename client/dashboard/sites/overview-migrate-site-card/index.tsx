@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { shuffle } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import OverviewCard from '../overview-card';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 export default function MigrateSiteCard( { site }: { site: Site } ) {
 	return (

@@ -50,16 +50,16 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { sectionName } = useHelpCenterContext();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 
-	const { navigateToRoute, isMinimized, allowPremiumSupport } = useSelect( ( select ) => {
+	const { navigateToRoute, isMinimized, hasPremiumSupport } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			navigateToRoute: store.getNavigateToRoute(),
 			isMinimized: store.getIsMinimized(),
-			allowPremiumSupport: store.getAllowPremiumSupport(),
+			hasPremiumSupport: store.getHasPremiumSupport(),
 		};
 	}, [] );
 	const isUserEligibleForPaidSupport =
-		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
+		Boolean( data?.eligibility?.is_user_eligible ) || hasPremiumSupport;
 
 	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
 
@@ -86,13 +86,33 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	useEffect( () => {
-		if (
-			containerRef.current &&
-			! location.hash &&
-			! location.pathname.includes( '/odie' ) &&
-			! location.pathname.includes( '/post' )
-		) {
-			containerRef.current.scrollTo( 0, 0 );
+		function handler( event: Event ) {
+			const target = event.currentTarget as HTMLDivElement;
+			const { clientHeight, scrollHeight, scrollTop } = target;
+
+			// Sadly, Safari doesn't support animation-timeline yet, once it does, you can use the CSS linked below and delete the JS.
+			// https://github.com/Automattic/wp-calypso/pull/105777/commits/e07a4f09b045ed5008c1892641f45acd1ebfc514
+			target.style.setProperty(
+				'--scroll-progress',
+				// This keeps opacity at 1 until the scroll reaches bottom - BLENDER_HEIGHT.
+				( scrollHeight - clientHeight - scrollTop ).toString()
+			);
+		}
+
+		if ( containerRef.current ) {
+			const container = containerRef.current;
+			container.addEventListener( 'scroll', handler );
+
+			if (
+				! location.hash &&
+				! location.pathname.includes( '/odie' ) &&
+				! location.pathname.includes( '/post' )
+			) {
+				container.scrollTo( 0, 0 );
+			}
+			return () => {
+				container?.removeEventListener( 'scroll', handler );
+			};
 		}
 	}, [ location ] );
 

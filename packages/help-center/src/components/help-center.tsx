@@ -15,8 +15,6 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useActionHooks } from '../hooks';
-import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -31,17 +29,14 @@ const HelpCenter: React.FC< Container > = ( {
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
-	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
+	const isHelpCenterShown = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
-			isMinimized: helpCenterSelect.getIsMinimized(),
-		};
+		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
 	const { currentUser } = useHelpCenterContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open' );
+		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
@@ -52,10 +47,6 @@ const HelpCenter: React.FC< Container > = ( {
 			initializeAnalytics( currentUser, null );
 		}
 	}, [ currentUser ] );
-
-	useActionHooks();
-
-	const openingCoordinates = useOpeningCoordinates( ! isHelpCenterShown, isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -69,9 +60,8 @@ const HelpCenter: React.FC< Container > = ( {
 
 		return () => {
 			document.body.removeChild( portalParent );
-			handleClose();
 		};
-	}, [ portalParent, handleClose ] );
+	}, [ portalParent ] );
 
 	return createPortal(
 		<>
@@ -79,7 +69,6 @@ const HelpCenter: React.FC< Container > = ( {
 				handleClose={ handleClose }
 				hidden={ hidden }
 				currentRoute={ currentRoute }
-				openingCoordinates={ openingCoordinates }
 			/>
 			{ canConnectToZendesk && (
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />

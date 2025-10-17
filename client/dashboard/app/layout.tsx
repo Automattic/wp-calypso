@@ -1,3 +1,5 @@
+import { queryClient } from '@automattic/api-queries';
+// eslint-disable-next-line no-restricted-imports
 import {
 	initializeAnalytics,
 	recordTracksEvent,
@@ -12,7 +14,6 @@ import { getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { AppProvider, type AppConfig } from './context';
 import { I18nProvider } from './i18n';
-import { queryClient } from './query-client';
 import { getRouter } from './router';
 
 function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {

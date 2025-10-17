@@ -24,7 +24,7 @@ const getHeadingSubText = ( {
 	}
 
 	const tos = (
-		<span className="wp-login__tos">
+		<span className="wp-login__one-login-layout-tos">
 			{ translate(
 				'Just a little reminder that by continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				{

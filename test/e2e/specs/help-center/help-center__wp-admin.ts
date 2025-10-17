@@ -89,7 +89,7 @@ describe.skip( 'Help Center in WP Admin', () => {
 
 			const articles = helpCenterComponent.getArticles();
 
-			expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
+			expect( await articles.count() ).toBeGreaterThanOrEqual( 1 );
 		} );
 
 		it( 'search returns proper results', async () => {

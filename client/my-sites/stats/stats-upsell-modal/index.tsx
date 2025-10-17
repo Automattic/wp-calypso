@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon, PlanPrice } from '@automattic/components';
 import { Plans, PlanNext } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -13,7 +12,6 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -26,6 +24,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const plans = Plans.usePlans( { coupon: undefined } );
 	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 	const planKey = statTypeToPlan( statType );
@@ -37,12 +36,8 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		useCheckPlanAvailabilityForPurchase,
 	} )?.[ planKey ];
 	const planSlug = plan?.pathSlug ?? planKey;
-	const isLoading = plans.isLoading || ! pricing;
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
+	const isLoading = plans.isLoading;
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-	const isSimpleClassic = useSelector( ( state ) =>
-		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
-	);
 
 	const closeModal = () => {
 		dispatch( toggleUpsellModal( siteId, statType ) );
@@ -56,15 +51,11 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_modal_submit`, {
 			stat_type: statType,
 		} );
-		if ( isSimpleClassic ) {
-			const checkoutProductUrl = new URL(
-				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
-			);
-			checkoutProductUrl.searchParams.set( 'redirect_to', redirectTo );
-			window.open( checkoutProductUrl, '_self' );
-		} else {
-			page( `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }` );
-		}
+		const checkoutProductUrl = new URL(
+			`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
+		);
+		checkoutProductUrl.searchParams.set( 'redirect_to', redirectTo );
+		window.open( checkoutProductUrl, '_self' );
 	};
 
 	return (

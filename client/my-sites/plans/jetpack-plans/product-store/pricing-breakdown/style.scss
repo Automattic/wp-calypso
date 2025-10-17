@@ -1,10 +1,10 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .product-store__pricing-breakdown {
 	padding: 2rem 0;
 
-	@media (max-width: $break-medium) {
+	@media ( max-width: $break-medium ) {
 		padding: 1rem 0;
 	}
 
@@ -12,13 +12,12 @@
 		font-size: $font-body;
 		font-weight: 700;
 		line-height: 20px;
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 		padding: 1rem;
 		background: #eaefef;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 
-		@media (max-width: $break-medium) {
+		@media ( max-width: $break-medium ) {
 			margin-top: -1rem;
 		}
 	}
@@ -32,7 +31,7 @@
 		margin-top: 1rem;
 		margin-bottom: 1rem;
 
-		@media (max-width: $break-medium) {
+		@media ( max-width: $break-medium ) {
 			margin-top: 0.5rem;
 			margin-bottom: 0.5rem;
 		}
@@ -70,18 +69,18 @@
 			font-size: $font-body-large;
 			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 800;
-			color: var(--studio-black);
+			color: var( --studio-black );
 		}
 	}
 
-
 	&--details--items li {
-		background: url(../../../../../assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
+		background: url( ../../../../../assets/images/jetpack/jetpack-green-checkmark.svg ) no-repeat 0
+			2px;
 		background-size: 14px;
 		padding-left: 20px;
 		font-weight: 400;
 		font-size: $font-body-small;
-		color: var(--studio-gray-70);
+		color: var( --studio-gray-70 );
 		background-position-y: 5px;
 	}
 }

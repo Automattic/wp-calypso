@@ -1,9 +1,12 @@
 ## Unreleased
 
+## 3.0.2
+
 ### Breaking changes
 
 - Remove `CoreBadge` component. Use `Badge` from `@automattic/ui` instead ([#104188](https://github.com/Automattic/wp-calypso/pull/104188)).
 - Remove `DateCalendar` and `DateRangeCalendar` components. Use from `@automattic/ui` instead ([#104224](https://github.com/Automattic/wp-calypso/pull/104224)).
+- Move `@storybook/addon-actions` to dev dependencies ([#105615](https://github.com/Automattic/wp-calypso/pull/105615)).
 
 ## 3.0.0
 

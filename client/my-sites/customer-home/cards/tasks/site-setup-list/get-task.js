@@ -361,7 +361,7 @@ export const getTask = (
 					'Connect to your site via SSH to run commands and manage files on your server.'
 				),
 				actionText: translate( 'Setup' ),
-				actionUrl: `/hosting-config/${ siteSlug }#sftp-credentials`,
+				actionUrl: `/sites/${ siteSlug }/settings/sftp-ssh`,
 				isSkippable: false,
 			};
 			break;

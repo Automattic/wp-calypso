@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -140,11 +139,7 @@ export default function ItemViewHeader( {
 													WordPress{ ' ' }
 													<a
 														className="hosting-dashboard-item-view__header-env-data-item-link"
-														href={
-															isEnabled( 'dashboard/v2/backport/site-settings' )
-																? `/sites/${ selectedSite?.domain }/settings/wordpress`
-																: `/hosting-config/${ selectedSite?.domain }#wp`
-														}
+														href={ `/sites/${ selectedSite?.domain }/settings/wordpress` }
 														onClick={ handleWpVersionClick }
 													>
 														{ wpVersion }
@@ -159,11 +154,7 @@ export default function ItemViewHeader( {
 													<a
 														className="hosting-dashboard-item-view__header-env-data-item-link"
 														onClick={ handlePhpVersionClick }
-														href={
-															isEnabled( 'dashboard/v2/backport/site-settings' )
-																? `/sites/${ selectedSite?.domain }/settings/php`
-																: `/hosting-config/${ selectedSite?.domain }#php`
-														}
+														href={ `/sites/${ selectedSite?.domain }/settings/php` }
 													>
 														{ phpVersion }
 													</a>

@@ -6,6 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import StatsMoved from 'calypso/my-sites/stats/stats-moved/stats-moved';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -516,6 +517,12 @@ export function emailSummary( context, next ) {
 			query={ { quantity: MAX_ITEM_COUNT } }
 		/>
 	);
+
+	next();
+}
+
+export function statsMoved( context, next ) {
+	context.primary = <StatsMoved />;
 
 	next();
 }

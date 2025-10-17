@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .pressable-overview-plan-selection {
 	width: 100%;
@@ -19,7 +19,7 @@
 	row-gap: 32px;
 
 	@include break-large {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat( 2, 1fr );
 		column-gap: 32px;
 		row-gap: 8px;
 
@@ -29,11 +29,10 @@
 		}
 
 		// If there are 2 or more children, reset the grid span
-		> *:nth-child(1):nth-last-child(n+2),
-		> *:nth-child(2):nth-last-child(n+2) {
+		> *:nth-child( 1 ):nth-last-child( n + 2 ),
+		> *:nth-child( 2 ):nth-last-child( n + 2 ) {
 			grid-column: auto / span 1;
 		}
-
 	}
 }
 
@@ -49,12 +48,12 @@
 	gap: 32px;
 }
 
-.pressable-overview-plan-selection__details-card:not(.is-aside) {
-	background: var(--color-light-backdrop);
+.pressable-overview-plan-selection__details-card:not( .is-aside ) {
+	background: var( --color-light-backdrop );
 }
 
 .pressable-overview-plan-selection__details-card.is-aside {
-	border: 1px solid var(--color-neutral-5);
+	border: 1px solid var( --color-neutral-5 );
 }
 
 .pressable-overview-plan-selection__details-card-header-title {
@@ -76,7 +75,6 @@
 		@include body-small;
 		padding-block-end: 16px;
 	}
-
 }
 
 .pressable-overview-plan-selection__details-card-header-price {
@@ -92,7 +90,7 @@
 
 .pressable-overview-plan-selection__details-card-header-price-interval {
 	@include body-medium;
-	color: var(--color-neutral-60);
+	color: var( --color-neutral-60 );
 }
 
 .pressable-overview-plan-selection__details-card-cta-button {
@@ -111,7 +109,7 @@
 		flex-direction: row;
 		gap: 16px;
 
-		background-color: var(--color-neutral-0);
+		background-color: var( --color-neutral-0 );
 		padding: 8px 16px;
 		margin: 0 auto 32px;
 		border-radius: 4px;
@@ -132,7 +130,6 @@
 	.pressable-overview-plan-selection__filter-label {
 		@include heading-medium;
 		margin: 0;
-
 	}
 
 	.pressable-overview-plan-selection__filter-radio-control {
@@ -149,9 +146,9 @@
 			flex-direction: column;
 			gap: 16px;
 			padding: 16px;
-			// stylelint-disable-next-line scales/radii
+
 			border-radius: 8px;
-			background-color: var(--color-neutral-0);
+			background-color: var( --color-neutral-0 );
 
 			@include break-large {
 				flex-direction: row;
@@ -159,12 +156,12 @@
 			}
 		}
 
-		.components-radio-control__input[type="radio"]:checked {
-			background-color: var(--color-primary-50);
+		.components-radio-control__input[type='radio']:checked {
+			background-color: var( --color-primary-50 );
 		}
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: block;
 		margin: 0;
 		text-align: center;
@@ -188,7 +185,7 @@
 }
 
 .theme-a8c-for-agencies .components-button.pressable-overview-plan-selection__filter-button {
-	border: 1.5px solid var(--color-surface-backdrop);
+	border: 1.5px solid var( --color-surface-backdrop );
 	@include heading-medium;
 
 	/* stylelint-disable-next-line scales/radii */
@@ -200,8 +197,8 @@
 	}
 
 	&:focus-visible {
-		background: var(--color-neutral-60);
-		color: var(--color-text-inverted);
+		background: var( --color-neutral-60 );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -216,7 +213,7 @@
 }
 
 .a4a-pressable-filter-wrapper-visits {
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.a4a-slider__marker-label {
 			@include body-medium;
 		}
@@ -227,7 +224,7 @@
 	.pressable-overview-plan-selection__filter-type,
 	.pressable-overview-plan-selection__filter-slider {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background: var(--color-neutral-10);
+		background: var( --color-neutral-10 );
 		border-radius: 4px;
 	}
 
@@ -246,7 +243,6 @@
 	}
 }
 
-
 .pressable-overview-plan-selection__details.is-loader {
 	display: flex;
 	justify-content: space-between;
@@ -254,7 +250,7 @@
 
 	.pressable-overview-plan-selection__details-card {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background: var(--color-neutral-10);
+		background: var( --color-neutral-10 );
 		border-radius: 4px;
 		max-width: 350px;
 		height: 256px;
@@ -262,7 +258,6 @@
 }
 
 .is-new-hosting-page.pressable-overview-plan-selection {
-
 	@include break-huge {
 		width: 1000px;
 	}
@@ -279,7 +274,7 @@
 
 	.pressable-overview-plan-selection__details-card {
 		flex: 1;
-		border: 1px solid var(--color-neutral-5);
+		border: 1px solid var( --color-neutral-5 );
 		justify-content: space-between;
 	}
 
@@ -326,7 +321,7 @@
 	.components-tab-panel__tabs {
 		justify-content: center;
 		flex-wrap: wrap;
-		border: 1px solid var(--color-neutral-5);
+		border: 1px solid var( --color-neutral-5 );
 		border-radius: 4px;
 		padding: 7px 0;
 		margin: 0 auto 32px;
@@ -341,15 +336,16 @@
 				color: inherit;
 			}
 
-			&:disabled, &[aria-disabled="true"] {
-				color: var(--color-neutral-20);
+			&:disabled,
+			&[aria-disabled='true'] {
+				color: var( --color-neutral-20 );
 			}
 
 			&.pressable-overview-plan-selection__plan-category-tab-is-active {
-				background-color: var(--color-primary-50);
-				border-color: var(--color-primary-50);
-				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
+				background-color: var( --color-primary-50 );
+				border-color: var( --color-primary-50 );
+				fill: var( --color-text-inverted );
+				color: var( --color-text-inverted );
 			}
 		}
 	}

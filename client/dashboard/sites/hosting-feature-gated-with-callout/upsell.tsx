@@ -1,45 +1,46 @@
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import React from 'react';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
-import type { Site } from '../../data/types';
+import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 export interface UpsellCalloutProps {
 	upsellIcon?: CalloutProps[ 'icon' ];
 	upsellImage?: CalloutProps[ 'image' ];
 	upsellTitle?: CalloutProps[ 'title' ];
+	upsellTitleAs?: CalloutProps[ 'titleAs' ];
 	upsellDescription?: CalloutProps[ 'description' ];
+	feature?: HostingFeatureSlug;
 }
 
 export default function UpsellCallout( {
 	site,
 	tracksFeatureId,
-	onClick,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
+	upsellTitleAs,
 	upsellDescription,
+	feature,
 }: {
 	site: Site;
 	tracksFeatureId: string;
-	onClick: () => void;
 } & UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick();
-
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
-		window.location.href = addQueryArgs(
-			`/checkout/${ encodeURIComponent( site.slug ) }/business`,
-			{
-				cancel_to: backUrl,
-				redirect_to: backUrl,
-			}
-		);
+		window.location.href = addQueryArgs( '/setup/plan-upgrade/', {
+			siteSlug: site.slug,
+			cancel_to: backUrl,
+			redirect_to: backUrl,
+			...( feature && { feature } ),
+		} );
 	};
 
 	const defaultProps = {
@@ -56,11 +57,25 @@ export default function UpsellCallout( {
 			icon={ upsellIcon ?? defaultProps.icon }
 			image={ upsellImage ?? defaultProps.image }
 			title={ upsellTitle ?? defaultProps.title }
+			titleAs={ upsellTitleAs }
 			description={
 				<>
-					<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
+					{ React.isValidElement( upsellDescription ) ? (
+						upsellDescription
+					) : (
+						<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
+					) }
 					<Text variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
+						{ sprintf(
+							// translators: %(businessPlanName)s is the name of the Business plan, %(commercePlanName)s is the name of the Commerce plan
+							__(
+								'Available on the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.'
+							),
+							{
+								businessPlanName: getPlanNames()[ DotcomPlans.BUSINESS ],
+								commercePlanName: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+							}
+						) }
 					</Text>
 				</>
 			}

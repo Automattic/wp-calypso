@@ -1,0 +1,12 @@
+.domain-suggestion-cta--error {
+	flex: 1;
+}
+
+.domain-suggestion-cta-error {
+	margin-top: auto;
+	display: flex;
+}
+
+.domain-suggestion-cta-error__tooltip {
+	max-width: calc( var( --popover-available-width ) - 64px );
+}

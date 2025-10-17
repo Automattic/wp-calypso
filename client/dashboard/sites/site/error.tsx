@@ -1,11 +1,11 @@
+import { DashboardDataError } from '@automattic/api-core';
 import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import UnknownError from '../../app/500';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { DashboardDataError } from '../../data/error';
 
 export default function Error( { error }: { error: Error } ) {
 	switch ( error instanceof DashboardDataError && error.code ) {

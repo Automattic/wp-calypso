@@ -2,7 +2,6 @@ import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
@@ -10,6 +9,28 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW':
 			return action.show;
+	}
+	return state;
+};
+
+const typingConversationStatus: Reducer<
+	Record< string, boolean > | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_TYPING_STATUS':
+			return { ...state, [ action.conversationId ]: action.isTyping };
+	}
+	return state;
+};
+
+const zendeskConnectionStatus: Reducer<
+	'disconnected' | 'reconnecting' | 'connected' | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ZENDESK_CONNECTION_STATUS':
+			return action.connectionStatus;
 	}
 	return state;
 };
@@ -40,16 +61,6 @@ const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( 
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
 			return action.show;
-	}
-	return state;
-};
-
-const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCenterAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION' ) {
-		return action.supportInteraction;
 	}
 	return state;
 };
@@ -161,9 +172,9 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
-const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+const hasPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT':
+		case 'HELP_CENTER_SET_HAS_PREMIUM_SUPPORT':
 			return action.allow;
 	}
 	return state;
@@ -187,16 +198,17 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 };
 
 const reducer = combineReducers( {
-	currentSupportInteraction,
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,
+	zendeskConnectionStatus,
 	subject,
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
 	isMinimized,
 	isChatLoaded,
+	typingConversationStatus,
 	areSoundNotificationsEnabled,
 	zendeskClientId,
 	unreadCount,
@@ -204,7 +216,7 @@ const reducer = combineReducers( {
 	odieInitialPromptText,
 	odieBotNameSlug,
 	helpCenterRouterHistory,
-	allowPremiumSupport,
+	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
 } );

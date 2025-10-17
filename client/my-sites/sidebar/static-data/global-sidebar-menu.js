@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { category, Icon, brush, globe } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
@@ -22,7 +23,7 @@ export const SidebarIconPlugins = () => (
 /**
  * Menu items that support all sites screen.
  */
-export default function globalSidebarMenu( { showP2s = false } = {} ) {
+export default function globalSidebarMenu( { showP2s = false, hasOptIn = false } = {} ) {
 	return [
 		{
 			icon: <Icon icon={ category } className="sidebar__menu-icon svg_all-sites" size={ 24 } />,
@@ -59,6 +60,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			navigationLabel: translate( 'Themes' ),
 			type: 'menu-item',
 			url: '/themes',
+			forceExternalLink: isEnabled( 'themes/universal-header' ) && hasOptIn,
 		},
 		{
 			icon: <SidebarIconPlugins />,
@@ -66,7 +68,8 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'Plugins' ),
 			type: 'menu-item',
-			url: '/plugins',
+			url:
+				isEnabled( 'plugins/universal-header' ) && hasOptIn ? '/plugins/manage/sites' : '/plugins',
 			forceChevronIcon: true,
 		},
 	];

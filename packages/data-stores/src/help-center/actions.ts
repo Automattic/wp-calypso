@@ -12,7 +12,6 @@ import type {
 	HelpCenterSelect,
 	HelpCenterShowOptions,
 } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 
 /**
@@ -53,13 +52,6 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 		} as APIFetchOptions ).catch( () => {} );
 	}
 };
-
-export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
-	return {
-		type: 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION',
-		supportInteraction,
-	} as const;
-}
 
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
@@ -120,6 +112,21 @@ export const setZendeskClientId = ( zendeskClientId: string ) =>
 		zendeskClientId,
 	} ) as const;
 
+export const setZendeskConnectionStatus = (
+	connectionStatus: 'disconnected' | 'reconnecting' | 'connected'
+) =>
+	( {
+		type: 'HELP_CENTER_SET_ZENDESK_CONNECTION_STATUS',
+		connectionStatus,
+	} ) as const;
+
+export const setSupportTypingStatus = ( conversationId: string, isTyping: false ) =>
+	( {
+		type: 'HELP_CENTER_SET_TYPING_STATUS',
+		conversationId,
+		isTyping,
+	} ) as const;
+
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -144,9 +151,9 @@ export const setContextTerm = ( contextTerm: string ) =>
 		contextTerm,
 	} ) as const;
 
-export const setAllowPremiumSupport = ( allow: boolean ) =>
+export const setHasPremiumSupport = ( allow: boolean ) =>
 	( {
-		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
+		type: 'HELP_CENTER_SET_HAS_PREMIUM_SUPPORT',
 		allow,
 	} ) as const;
 
@@ -157,8 +164,11 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 
 export const setShowHelpCenter = function* (
 	show: boolean,
-	allowPremiumSupport = false,
-	options: HelpCenterShowOptions = { hideBackButton: false, contextTerm: '' },
+	options: HelpCenterShowOptions = {
+		hasPremiumSupport: false,
+		hideBackButton: false,
+		contextTerm: '',
+	},
 	/**
 	 * When the Help Center is minimized and someone clicks the (?) toggle button, we should maximize it.
 	 * But this means ignoring the `show=false` value the button will send. The problem is we'll also ignore the `show=false` when the close (x) buttons is clicked too.
@@ -194,11 +204,11 @@ export const setShowHelpCenter = function* (
 	yield setContextTerm( options?.contextTerm || '' );
 	yield setIsMinimized( false );
 
-	if ( allowPremiumSupport ) {
-		yield setAllowPremiumSupport( true );
+	if ( options?.hasPremiumSupport ) {
+		yield setHasPremiumSupport( true );
 	}
 
-	if ( options?.hideBackButton ) {
+	if ( options ) {
 		yield setHelpCenterOptions( options );
 	}
 
@@ -288,11 +298,12 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
+			| typeof setSupportTypingStatus
+			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
-			| typeof setCurrentSupportInteraction
-			| typeof setAllowPremiumSupport
+			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >

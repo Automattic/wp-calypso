@@ -98,7 +98,6 @@ export class LoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
 		locale: PropTypes.string,
-		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
@@ -930,28 +929,12 @@ export class LoginForm extends Component {
 	render() {
 		const {
 			currentQuery,
-			showSocialLoginFormOnly,
 			isWoo,
 			isBlazePro,
 			isSocialFirst,
-			isJetpack,
 			isOneTapAuth,
 			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
-
-		if ( showSocialLoginFormOnly ) {
-			return config.isEnabled( 'signup/social' ) ? (
-				<Fragment>
-					<FormDivider />
-					<SocialLoginForm
-						handleLogin={ this.handleSocialLogin }
-						trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-						socialServiceResponse={ this.props.socialServiceResponse }
-						isJetpack={ isJetpack }
-					/>
-				</Fragment>
-			) : null;
-		}
 
 		return (
 			<>

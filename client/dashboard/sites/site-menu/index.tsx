@@ -1,8 +1,11 @@
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
+import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFeatureSupports ) => {
 	return supports.sites && supports.sites[ feature ];
@@ -11,6 +14,46 @@ const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFe
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
+	if ( hasSiteTrialEnded( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
+					{ __( 'Trial ended' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
+	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
+					{ __( 'Site building' ) }
+				</ResponsiveMenu.Item>
+				{ hasAppSupport( supports, 'domains' ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+						{ __( 'Domains' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ hasAppSupport( supports, 'emails' ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
+						{ __( 'Emails' ) }
+					</ResponsiveMenu.Item>
+				) }
+			</ResponsiveMenu>
+		);
+	}
 
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
@@ -37,6 +80,11 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Logs' ) }
 				</ResponsiveMenu.Item>
 			) }
+			{ hasAppSupport( supports, 'scan' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
+					{ __( 'Scan' ) }
+				</ResponsiveMenu.Item>
+			) }
 			{ hasAppSupport( supports, 'backups' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
 					{ __( 'Backups' ) }
@@ -45,11 +93,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			{ hasAppSupport( supports, 'domains' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
-				</ResponsiveMenu.Item>
-			) }
-			{ hasAppSupport( supports, 'emails' ) && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
-					{ __( 'Emails' ) }
 				</ResponsiveMenu.Item>
 			) }
 			{ site.capabilities.manage_options && (

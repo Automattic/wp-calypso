@@ -195,7 +195,7 @@ const sections = [
 	},
 	{
 		name: 'settings-podcast',
-		paths: [ '/settings/podcasting', '/settings/jetpack-podcasting' ],
+		paths: [ '/settings/podcasting' ],
 		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},
@@ -404,6 +404,14 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/reader/feeds/[^\\/]+', '/reader/blogs/[^\\/]+', '/reader/a8c', '/reader/p2' ],
+		module: 'calypso/reader',
+		group: 'reader',
+		enableLoggedOut: true,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/reader/feeds/lookup/.*' ],
 		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,

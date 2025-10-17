@@ -123,7 +123,6 @@ $z-layers: (
 		".legal-updates-banner": 185,
 		".detail-page__backdrop": 190,
 		".layout__loader": 200,
-		".environment-badge": 999,
 		".app-banner": 1000,
 		".module-overlay": 1000,
 		".drop-zone": 1000,
@@ -173,7 +172,6 @@ $z-layers: (
 		".wpcom-site__global-noscript": 300000,
 
 		".is-section-woocommerce .global-notices": 999999,
-		".webpack-build-monitor": 99999999,
 		".people-list-item.card.is-compact:focus": 1,
 		".reader-join-conversation-dialog__overlay": 10000001,
 	),
@@ -188,10 +186,6 @@ $z-layers: (
 	".ribbon": (
 		".ribbon__title::before": -1,
 		".ribbon__title::after": -1,
-	),
-	".environment-badge": (
-		".environment-badge .environment::before": -1,
-		".environment-badge .bug-report": 1000,
 	),
 	".masterbar": (
 		".reader-back": 99999,

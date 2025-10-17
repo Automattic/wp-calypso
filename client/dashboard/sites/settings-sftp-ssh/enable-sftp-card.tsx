@@ -1,6 +1,6 @@
+import { siteSftpUsersCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -10,11 +10,9 @@ import {
 	Panel,
 	PanelBody,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { siteSftpUsersCreateMutation } from '../../app/queries/site-sftp';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 
@@ -27,27 +25,18 @@ export default function EnableSftpCard( {
 	siteId: number;
 	canUseSsh: boolean;
 } ) {
-	const mutation = useMutation( siteSftpUsersCreateMutation( siteId ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteSftpUsersCreateMutation( siteId ),
+		meta: {
+			snackbar: {
+				success: __( 'SFTP/SSH credentials saved.' ),
+				error: __( 'Failed to save SFTP/SSH credentials. Please refresh the page and try again.' ),
+			},
+		},
+	} );
 
 	const handleCreateCredentials = () => {
-		mutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Credentials have been successfully created.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice(
-					__(
-						'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-		} );
+		mutation.mutate( undefined );
 	};
 
 	return (
@@ -104,7 +93,7 @@ export default function EnableSftpCard( {
 							}
 						) }
 					</Text>
-					<HStack justify="flex-start">
+					<ButtonStack justify="flex-start">
 						<Button
 							variant="primary"
 							isBusy={ mutation.isPending }
@@ -112,7 +101,7 @@ export default function EnableSftpCard( {
 						>
 							{ __( 'Create credentials' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</CardBody>
 		</Card>

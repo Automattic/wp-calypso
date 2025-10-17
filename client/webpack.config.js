@@ -188,6 +188,7 @@ const webpackConfig = {
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
 		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'app-a4a' ) ],
+		'entry-dashboard-ciab': [ path.join( __dirname, 'dashboard', 'app-ciab' ) ],
 		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
@@ -286,6 +287,8 @@ const webpackConfig = {
 			// and use `mainFields` to decide what is the main file.
 			'@wordpress/data': findPackage( '@wordpress/data' ),
 			'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
+			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
+			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,

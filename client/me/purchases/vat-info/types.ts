@@ -10,12 +10,14 @@ export interface VatFormData {
 export type VatField = Field< VatFormData > & {
 	isDisabled?: boolean;
 	isVatAlreadySet?: boolean;
+	canUserEdit?: boolean;
 	taxName?: string;
 };
 
 export type VatNormalizedField = NormalizedField< VatFormData > & {
 	isDisabled?: boolean;
 	isVatAlreadySet?: boolean;
+	canUserEdit?: boolean;
 	taxName?: string;
 };
 

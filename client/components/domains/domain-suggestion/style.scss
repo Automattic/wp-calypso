@@ -336,6 +336,14 @@
 	}
 }
 
+.domain-registration-suggestion__info-badge {
+	.info-popover {
+		height: 16px;
+		vertical-align: middle;
+		margin: 0 0 2px 4px;
+	}
+}
+
 .domain-product-price {
 	display: flex;
 	flex-direction: column;

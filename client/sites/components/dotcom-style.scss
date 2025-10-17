@@ -1,8 +1,8 @@
-@import "@automattic/typography/styles/variables";
-@import "@automattic/global-styles/src/components/search-control-styles";
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@automattic/typography/styles/variables';
+@import '@automattic/global-styles/src/components/search-control-styles';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 // Add new Dotcom specific styles to this file.
 .wpcom-site .layout__primary .main {
@@ -10,7 +10,11 @@
 }
 
 .wpcom-site .hosting-dashboard-layout-with-columns__container {
-	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+	height: calc(
+		100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+				--content-padding-bottom
+			)
+	);
 
 	.hosting-dashboard-layout__top-wrapper {
 		> * {
@@ -49,7 +53,6 @@
 				white-space: nowrap;
 			}
 		}
-
 	}
 }
 
@@ -67,12 +70,12 @@
 		.pagination__page-number.pagination__list-item.is-selected button,
 		.segmented-control__item.is-selected a:hover,
 		.segmented-control__item.is-selected a {
-			color: var(--studio-white);
-			background-color: var(--studio-gray-50);
-			border-color: var(--studio-gray-50);
+			color: var( --studio-white );
+			background-color: var( --studio-gray-50 );
+			border-color: var( --studio-gray-50 );
 		}
 		.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
-			border-left-color: var(--studio-gray-50);
+			border-left-color: var( --studio-gray-50 );
 		}
 	}
 }
@@ -85,10 +88,14 @@
 		min-height: 100vh;
 	}
 	.layout__secondary {
-		transition: transform 0.15s ease-in-out, width 220ms ease-out;
+		transition:
+			transform 0.15s ease-in-out,
+			width 220ms ease-out;
 
-		@media (max-width: $break-mobile) {
-			transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+		@media ( max-width: $break-mobile ) {
+			transition:
+				transform 0.15s ease-in-out,
+				opacity 0.15s ease-out;
 		}
 
 		.sidebar__header,
@@ -120,7 +127,7 @@
 		}
 	}
 	&.is-global-sidebar-collapsed {
-		@media (min-width: 661px) {
+		@media ( min-width: 661px ) {
 			.layout__secondary {
 				transition: all 220ms ease-out;
 
@@ -147,7 +154,7 @@
 						}
 						.sidebar__menu-link {
 							width: fit-content;
-							min-width: calc(100% - 30px);
+							min-width: calc( 100% - 30px );
 
 							> :first-child {
 								transition: all 220ms ease-out;
@@ -166,7 +173,7 @@
 		}
 	}
 
-	.sites-dashboard:not(.preview-hidden) {
+	.sites-dashboard:not( .preview-hidden ) {
 		.sites-manage-all-domains-button {
 			display: none;
 		}
@@ -199,7 +206,7 @@
 		box-sizing: border-box;
 		overflow-x: auto;
 
-		@media (max-width: $break-large) {
+		@media ( max-width: $break-large ) {
 			padding: 0 8px;
 		}
 	}
@@ -217,20 +224,22 @@
 				flex-wrap: wrap;
 			}
 
-			@media (max-width: $break-large) {
+			@media ( max-width: $break-large ) {
 				padding: 0;
 			}
 		}
 
-		.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-summary {
+		.hosting-dashboard-item-view__header-content
+			.hosting-dashboard-item-view__header-title-summary
+			.hosting-dashboard-item-view__header-summary {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.5rem;
 			.hosting-dashboard-item-view__header-summary-link {
-				color: var(--studio-gray-70, #3c434a);
+				color: var( --studio-gray-70, #3c434a );
 				text-decoration: none;
 				&:hover {
-					color: var(--color-accent, #3858e9);
+					color: var( --color-accent, #3858e9 );
 				}
 			}
 		}
@@ -243,7 +252,7 @@
 			height: 16px;
 			padding-left: 0;
 			padding-right: 0;
-			color: var(--color-link);
+			color: var( --color-link );
 
 			@include break-medium {
 				height: 32px;
@@ -252,8 +261,8 @@
 	}
 	.hosting-dashboard-item-view__content {
 		padding: 32px 24px 24px;
-		font-size: rem(14px);
-		color: var(--studio-gray-100);
+		font-size: rem( 14px );
+		color: var( --studio-gray-100 );
 
 		.navigation-header {
 			padding: 0;
@@ -277,18 +286,18 @@
 		}
 
 		.dashboard-callout-overlay {
-			background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, #FFF 100%);
-			backdrop-filter: blur(2px);
+			background: linear-gradient( 180deg, rgba( 255, 255, 255, 0.65 ) 0%, #fff 100% );
+			backdrop-filter: blur( 2px );
 		}
 
-		@media (max-width: $break-large) {
+		@media ( max-width: $break-large ) {
 			padding-top: 24px;
 			padding-left: 24px;
 			padding-right: 24px;
 		}
 	}
 
-	&:has(.hosting-dashboard-item-view__navigation.is-hidden) {
+	&:has( .hosting-dashboard-item-view__navigation.is-hidden ) {
 		.hosting-dashboard-item-view__content {
 			padding-top: 15px;
 		}
@@ -298,14 +307,14 @@
 		position: relative;
 
 		.item-preview__admin-button.is-primary {
-			background-color: var(--studio-yellow-20);
-			color: var(--studio-yellow-80);
-			border-color: var(--studio-yellow-20);
+			background-color: var( --studio-yellow-20 );
+			color: var( --studio-yellow-80 );
+			border-color: var( --studio-yellow-20 );
 		}
 	}
 
 	.is-staging-site::before {
-		content: "";
+		content: '';
 		position: absolute;
 		z-index: 300;
 		top: 0;
@@ -314,22 +323,22 @@
 		bottom: 0;
 		border-radius: inherit;
 		pointer-events: none;
-		box-shadow: inset 0 0 0 3px var(--studio-yellow-20);
+		box-shadow: inset 0 0 0 3px var( --studio-yellow-20 );
 	}
 
 	.domains-table-header .list__header-column {
 		font-style: normal;
 		font-weight: 400;
-		font-size: rem(13px);
+		font-size: rem( 13px );
 		line-height: 20px;
-		color: var(--studio-gray-50);
+		color: var( --studio-gray-50 );
 		text-transform: initial;
 	}
 }
 
-.wpcom-site .hosting-dashboard-layout.sites-dashboard:not(.domains-overview) .site-preview-pane {
+.wpcom-site .hosting-dashboard-layout.sites-dashboard:not( .domains-overview ) .site-preview-pane {
 	.hosting-dashboard-item-view__content {
-		> *:not(.site-logs) {
+		> *:not( .site-logs ) {
 			max-width: 1400px;
 			overflow-wrap: break-word;
 		}
@@ -337,18 +346,19 @@
 }
 
 // Use flexbox to structure of fly-out panel.
-.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+.wpcom-site
+	.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not( .preview-hidden ) {
 	&.hosting-dashboard-layout,
 	.hosting-dashboard-layout-column,
 	.hosting-dashboard-layout-with-columns__container {
 		overflow: hidden;
-		height: calc(100vh - 32px - var(--masterbar-height));
+		height: calc( 100vh - 32px - var( --masterbar-height ) );
 	}
 
 	.hosting-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
-		height: calc(100vh - 32px - var(--masterbar-height));
+		height: calc( 100vh - 32px - var( --masterbar-height ) );
 
 		.hosting-dashboard-layout__top-wrapper {
 			display: flex;
@@ -373,7 +383,7 @@
 
 	&.domains-overview {
 		.hosting-dashboard-item-view__navigation {
-			border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
+			border-radius: 8px 8px 0 0;
 		}
 	}
 }
@@ -386,16 +396,20 @@
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
 		height: 100vh;
-		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
-		padding-bottom: var(--content-padding-bottom);
+		padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
+		padding-bottom: var( --content-padding-bottom );
 
 		@include break-medium {
-			padding-left: calc(var(--sidebar-width-max));
+			padding-left: calc( var( --sidebar-width-max ) );
 			padding-right: 16px;
 
 			// TODO: height should be the same across platforms after the redesign.
 			.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout {
-				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
+				height: calc(
+					100vh - var( --masterbar-height ) - var( --content-padding-bottom ) - var(
+							--content-padding-top
+						)
+				);
 			}
 		}
 

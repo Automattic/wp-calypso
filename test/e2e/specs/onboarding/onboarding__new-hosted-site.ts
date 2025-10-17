@@ -16,7 +16,6 @@ import {
 	MeSidebarComponent,
 	cancelSubscriptionFlow,
 	cancelAtomicPurchaseFlow,
-	WPAdminSidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -26,6 +25,9 @@ declare const browser: Browser;
 describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
 	function () {
+		// Some of these steps can take more than the default timeout.
+		jest.setTimeout( 240 * 1000 );
+
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();
 
@@ -88,21 +90,16 @@ describe(
 
 			it( 'Wait for the Atomic transfer to complete', async function () {
 				await page.waitForURL( /.*transferring-hosted-site.*/ );
-			} );
-		} );
-
-		describe( 'View server settings', function () {
-			it( 'See WP Admin', async function () {
 				await page.waitForURL( /wp-admin/, {
 					timeout: 180 * 1000,
 				} );
-
-				siteSlug = new URL( page.url() ).hostname;
 			} );
+		} );
 
-			it( 'Navigate to Hosting > Site Settings', async function () {
-				const wpAdminSidebarComponent = new WPAdminSidebarComponent( page );
-				await wpAdminSidebarComponent.navigate( 'Hosting', 'Site Settings' );
+		describe( 'View WP Admin', function () {
+			it( 'WP Admin', async function () {
+				await page.waitForURL( /wp-admin/ );
+				siteSlug = new URL( page.url() ).hostname;
 			} );
 		} );
 

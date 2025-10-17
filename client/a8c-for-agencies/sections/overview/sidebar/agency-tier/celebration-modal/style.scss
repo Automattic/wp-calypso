@@ -5,6 +5,7 @@ $video-pink: #f5baff;
 $video-blue: #002d3e;
 $video-green: #0e5837;
 $announcement-blue: #032836;
+$dark-golden-beige: #d8a55f;
 
 .agency-tier-celebration-modal {
 	&.a4a-themed-modal .components-modal__content.hide-header {
@@ -103,6 +104,17 @@ $announcement-blue: #032836;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		position: relative;
+	}
+
+	&.premier-partner {
+		.a4a-themed-modal__sidebar-image {
+			width: 370px;
+		}
+
+		&.a4a-themed-modal .components-modal__content.hide-header {
+			background: $dark-golden-beige;
+		}
 	}
 }
 

@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { Card, CardBody } from '@wordpress/components';
@@ -6,16 +7,16 @@ import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteBySlugQuery } from '../../app/queries/site';
+import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { canTransferSite } from '../features';
-import SettingsPageHeader from '../settings-page-header';
 import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owner-form';
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
 import { StartSiteTransferForm } from './start-site-transfer-form';
-import type { SiteOwnerTransferContext } from '../../data/types';
+import type { SiteOwnerTransferContext } from '@automattic/api-core';
 
 const MIN_STEP = 0;
 
@@ -26,11 +27,12 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Transfer site' ) }
 					description={ createInterpolateElement(
 						__(
-							'Transfer this site to a new or existing site member with just a few clicks. <link>Learn more</link>.'
+							'Transfer this site to a new or existing site member with just a few clicks. <link>Learn more</link>'
 						),
 						{
 							link: <InlineSupportLink supportContext="site-transfer" />,

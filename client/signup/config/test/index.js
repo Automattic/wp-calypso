@@ -147,6 +147,14 @@ describe( 'index', () => {
 		// deciding whether user-social or user is used.
 		definedSteps.delete( 'user' );
 
+		// Do not consider the domain steps as deprecated since there is still a config flag
+		// deciding whether the domain-search step or the old ones are being used.
+		definedSteps.delete( 'domain-only' );
+		definedSteps.delete( 'domains' );
+		definedSteps.delete( 'domains-launch' );
+		definedSteps.delete( 'domains-theme-preselected' );
+		definedSteps.delete( 'mailbox-domain' );
+
 		expect( definedSteps ).toEqual( new Set() );
 	} );
 } );

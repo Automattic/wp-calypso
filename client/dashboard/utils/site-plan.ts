@@ -1,3 +1,9 @@
+import {
+	DotcomPlans,
+	JetpackFeatures,
+	type JetpackFeatureSlug,
+	type Site,
+} from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -9,9 +15,7 @@ import {
 	shield,
 	video,
 } from '@wordpress/icons';
-import { DotcomPlans, JetpackFeatures } from '../data/constants';
 import { hasPlanFeature } from '../utils/site-features';
-import type { Site } from '../data/types';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -70,12 +74,21 @@ export const JETPACK_PRODUCTS = [
 
 export function getJetpackProductsForSite( site: Site ) {
 	return JETPACK_PRODUCTS.filter( ( product ) =>
-		hasPlanFeature( site, product.id as JetpackFeatures )
+		hasPlanFeature( site, product.id as JetpackFeatureSlug )
 	);
 }
 
 export function getSitePlanDisplayName( site: Site ) {
-	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
+	if ( site.is_wpcom_staging_site ) {
+		return __( 'Staging site' );
+	}
+
+	const plan = site.plan;
+	if ( ! plan ) {
+		return '';
+	}
+
+	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
 		const products = getJetpackProductsForSite( site );
 		if ( products.length === 1 ) {
 			return products[ 0 ].label;
@@ -85,5 +98,11 @@ export function getSitePlanDisplayName( site: Site ) {
 		}
 	}
 
-	return site.plan?.product_name || site.plan?.product_name_short || '';
+	// Display the short name for WP.com plans.
+	// Determine if the plan is a WP.com plan by checking if the license key is empty.
+	if ( ! plan.license_key ) {
+		return plan.product_name_short;
+	}
+
+	return plan.product_name || plan.product_name_short;
 }

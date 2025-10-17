@@ -1,3 +1,9 @@
+import {
+	siteByIdQuery,
+	siteLatestAtomicTransferQuery,
+	isDeletingStagingSiteQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import React, { useState } from 'react';
@@ -5,9 +11,13 @@ import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
-import { queryClient } from 'calypso/dashboard/app/query-client';
+import {
+	isAtomicTransferInProgress,
+	isAtomicTransferredSite,
+} from 'calypso/dashboard/utils/site-atomic-transfers';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { StagingSiteCreationBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-creation-banner';
+import { StagingSiteDeletionBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-deletion-banner';
 import ItemViewContent from './item-view-content';
 import ItemViewHeader from './item-view-header';
 import ItemViewBreadcrumbsHeader from './item-view-header/breadcrumbs';
@@ -51,10 +61,50 @@ export default function ItemView( {
 }: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
+	// The is_wpcom_staging_site flag isn't site while the site is being transferred
+	// so it can't be used here to determine if the site is a staging site
+	const isStagingSite = itemData.subtitle?.toString().startsWith( 'staging-' );
+
 	const { data: isStagingSiteDeletionInProgress } = useQuery(
-		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+		{
+			...isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+			enabled: !! itemData.blogId && isStagingSite,
+		},
 		queryClient
 	);
+
+	const { data: atomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( itemData.blogId ?? 0 ),
+		refetchInterval: ( query ) => {
+			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 5000 : false;
+		},
+		enabled: !! itemData.blogId && isStagingSite,
+	} );
+
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( itemData.blogId ?? 0 ),
+		refetchInterval: ( query ) => {
+			if ( ! isStagingSite ) {
+				return false;
+			}
+
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return query.state.data.jetpack_connection && isAtomicTransferredSite( query.state.data )
+				? false
+				: 5000;
+		},
+		enabled: !! itemData.blogId && isStagingSite,
+	} );
+
+	const isStagingSiteTransferInProgress =
+		isStagingSite &&
+		stagingSite &&
+		isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
+		! stagingSite?.jetpack_connection &&
+		! isAtomicTransferredSite( stagingSite );
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
@@ -97,21 +147,39 @@ export default function ItemView( {
 
 	const shouldHideHeader = hideHeader || shouldShowBreadcrumbs;
 	const shouldHideNav =
-		( hideNavIfSingleTab && featureTabs.length <= 1 ) ||
-		isMobileApp ||
-		shouldShowBreadcrumbs ||
-		isStagingSiteDeletionInProgress;
+		( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp || shouldShowBreadcrumbs;
+
+	const renderHeader = () => {
+		if ( shouldHideHeader ) {
+			return null;
+		}
+
+		return (
+			<ItemViewHeader
+				closeItemView={ closeItemView }
+				itemData={ itemData }
+				isPreviewLoaded={ !! selectedFeature.preview }
+				extraProps={ itemViewHeaderExtraProps }
+			/>
+		);
+	};
+
+	if ( isStagingSiteTransferInProgress || isStagingSiteDeletionInProgress ) {
+		return (
+			<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
+				{ renderHeader() }
+				{ isStagingSiteDeletionInProgress ? (
+					<StagingSiteDeletionBanner siteId={ itemData.blogId ?? 0 } />
+				) : (
+					<StagingSiteCreationBanner />
+				) }
+			</div>
+		);
+	}
 
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
-			{ ! shouldHideHeader && (
-				<ItemViewHeader
-					closeItemView={ closeItemView }
-					itemData={ itemData }
-					isPreviewLoaded={ !! selectedFeature.preview }
-					extraProps={ itemViewHeaderExtraProps }
-				/>
-			) }
+			{ renderHeader() }
 			{ shouldShowBreadcrumbs && <ItemViewBreadcrumbsHeader breadcrumbs={ breadcrumbs } /> }
 			<div ref={ setNavRef }>
 				<SectionNav

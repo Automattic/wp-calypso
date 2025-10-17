@@ -41,7 +41,7 @@ import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
-	renderDomainTransactionVolumeSummary,
+	DomainTransactionVolumeSummary,
 	transactionIncludesTax,
 	isTransactionJetpackSearch10kTier,
 	renderJetpackSearch10kTierBreakdown,
@@ -566,9 +566,7 @@ function ReceiptLineItem( {
 		stripZeros: true,
 	} );
 
-	const isSitelessDomain = /^siteless\.(agencies\.automattic|a4a)\.com/.test( item.domain );
-	const shouldShowDomain =
-		item.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( item.domain );
+	const shouldShowDomain = item.domain && ! isInternalA4AAgencyDomain( item.domain );
 
 	return (
 		<>
@@ -584,7 +582,7 @@ function ReceiptLineItem( {
 					{ isTransactionJetpackSearch10kTier( item ) && (
 						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }
-					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
+					<DomainTransactionVolumeSummary item={ item } />
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(

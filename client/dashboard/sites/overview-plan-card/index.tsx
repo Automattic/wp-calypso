@@ -1,3 +1,5 @@
+import { DotcomPlans } from '@automattic/api-core';
+import { siteCurrentPlanQuery, siteByIdQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -9,9 +11,9 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
-import { sitePurchaseQuery } from '../../app/queries/site-purchases';
-import { DotcomPlans } from '../../data/constants';
+import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -21,7 +23,7 @@ import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
-import type { Site, Purchase } from '../../data/types';
+import type { Purchase, Site } from '@automattic/api-core';
 import './style.scss';
 
 function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
@@ -38,6 +40,15 @@ function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
 	}
 
 	return `${ products.map( ( product ) => product.label ).join( ', ' ) }.`;
+}
+
+function SitePlanStats( { site }: { site: Site } ) {
+	return (
+		<VStack spacing={ 4 }>
+			<SiteStorageStat site={ site } />
+			<SiteBandwidthStat site={ site } />
+		</VStack>
+	);
 }
 
 function JetpackPlanCard( {
@@ -95,21 +106,54 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const isFreePlan = site.plan?.is_free;
+
+	const getBillingLinkProps = () => {
+		if ( isFreePlan ) {
+			return { externalLink: `/plans/${ site.slug }` };
+		}
+
+		if ( ! isDashboardBackport() ) {
+			return { link: purchase ? getPurchaseUrlForId( purchase.ID ) : '/me/billing/purchases' };
+		}
+
+		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };
+	};
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			link={ site.plan?.is_free ? undefined : '/v2/me/billing/active-subscriptions' }
+			{ ...getBillingLinkProps() }
 			tracksId="plan"
 			isLoading={ isLoading }
-			bottom={
-				<VStack spacing={ 4 }>
-					<SiteStorageStat site={ site } />
-					<SiteBandwidthStat site={ site } />
-				</VStack>
-			}
+			bottom={ <SitePlanStats site={ site } /> }
+		/>
+	);
+}
+
+function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
+	const { data: productionSite, isLoading: isLoadingProductionSite } = useQuery(
+		siteByIdQuery( site.options?.wpcom_production_blog_id ?? 0 )
+	);
+
+	const description = sprintf(
+		/* translators: %s: the site plan name */
+		__( 'Included with your %s plan.' ),
+		productionSite?.plan?.product_name_short
+	);
+
+	return (
+		<OverviewCard
+			title={ __( 'Plan' ) }
+			icon={ wordpress }
+			heading={ getSitePlanDisplayName( site ) }
+			description={ description }
+			tracksId="plan"
+			isLoading={ isLoadingProductionSite }
+			bottom={ <SitePlanStats site={ site } /> }
 		/>
 	);
 }
@@ -120,16 +164,11 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ __( 'Managed by Automattic for Agencies' ) }
+			description={ __( 'Managed by Automattic for Agencies.' ) }
 			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
 			tracksId="plan"
 			isLoading={ isLoading }
-			bottom={
-				<VStack spacing={ 4 }>
-					<SiteStorageStat site={ site } />
-					<SiteBandwidthStat site={ site } />
-				</VStack>
-			}
+			bottom={ <SitePlanStats site={ site } /> }
 		/>
 	);
 }
@@ -137,7 +176,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...sitePurchaseQuery( site.ID, plan?.id ?? '' ),
+		...sitePurchaseQuery( site.ID, parseInt( plan?.id ?? '' ) ),
 		enabled: !! plan?.id,
 	} );
 
@@ -153,6 +192,10 @@ export default function PlanCard( { site }: { site: Site } ) {
 				isLoading={ isLoadingPlan || isLoadingPurchase }
 			/>
 		);
+	}
+
+	if ( site.is_wpcom_staging_site ) {
+		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
 	return (
@@ -175,16 +218,8 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 			: __( 'Upgrade to access more Jetpack tools.' );
 	}
 
-	if ( purchase?.expiry_message ) {
-		return purchase.expiry_message;
-	}
-
-	if ( purchase?.partner_name ) {
-		return sprintf(
-			/* translators: %s: the partner name, e.g.: "Jetpack" */
-			__( 'Managed by %s.' ),
-			purchase.partner_name
-		);
+	if ( purchase ) {
+		return <PurchaseExpiryStatus purchase={ purchase } />;
 	}
 
 	return undefined;

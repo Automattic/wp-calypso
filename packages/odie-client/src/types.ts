@@ -15,7 +15,6 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	notices: Record< string, string | ReactNode >;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
@@ -26,9 +25,9 @@ export type OdieAssistantContextInterface = {
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
-	setNotice: ( noticeId: string, content: string | ReactNode | null ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
+	sectionName: string;
 };
 
 export type OdieAssistantProviderProps = {
@@ -47,7 +46,7 @@ export type OdieAssistantProviderProps = {
 	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
-	setNotice?: ( noticeId: string, content: string | ReactNode | null ) => void;
+	sectionName: string;
 } & PropsWithChildren;
 
 export type CurrentUser = {
@@ -147,6 +146,7 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
+	| 'image-placeholder'
 	| 'introduction'
 	| 'form'
 	| 'formResponse';
@@ -173,6 +173,10 @@ export type Message = {
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
 	payload?: string;
+	/**
+	 * Timestamp of the message.
+	 */
+	received?: number;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
@@ -218,7 +222,6 @@ export type MessageAction = {
 };
 
 export type OdieMessage = {
-	displayName: string;
 	received: number;
 	role: string;
 	text: string;
@@ -301,4 +304,5 @@ export type SupportInteraction = {
 	last_updated: string;
 	users: SupportInteractionUser[];
 	events: SupportInteractionEvent[];
+	environment: 'staging' | 'production';
 };

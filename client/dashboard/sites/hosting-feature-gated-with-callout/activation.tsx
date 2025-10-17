@@ -1,10 +1,18 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
+import { CalloutOverlay } from '../../components/callout-overlay';
 import illustrationUrl from './upsell-illustration.svg';
+import type { ReactNode } from 'react';
 
-export default function ActivationCallout( { onClick }: { onClick: () => void } ) {
-	return (
+export default function ActivationCallout( {
+	main,
+	onClick,
+}: {
+	main?: ReactNode;
+	onClick: () => void;
+} ) {
+	const callout = (
 		<Callout
 			image={ illustrationUrl }
 			title={ __( 'Activate hosting features' ) }
@@ -42,4 +50,10 @@ export default function ActivationCallout( { onClick }: { onClick: () => void } 
 			}
 		/>
 	);
+
+	if ( main ) {
+		return <CalloutOverlay callout={ callout } main={ main } />;
+	}
+
+	return callout;
 }

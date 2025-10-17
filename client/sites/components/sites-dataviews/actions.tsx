@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getPlanPath, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
@@ -265,7 +264,7 @@ export function useActions( {
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	viewType: 'list' | 'table' | 'grid';
+	viewType: 'list' | 'table' | 'grid' | 'pickerGrid';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
@@ -386,9 +385,7 @@ export function useActions( {
 				id: 'prepare-for-launch',
 				label: __( 'Prepare for launch' ),
 				callback: ( sites ) => {
-					const url = isEnabled( 'dashboard/v2/backport/site-settings' )
-						? `/sites/${ sites[ 0 ].slug }/settings/site-visibility`
-						: `/sites/settings/site/${ sites[ 0 ].ID }`;
+					const url = `/sites/${ sites[ 0 ].slug }/settings/site-visibility`;
 
 					page( url );
 					dispatch(
