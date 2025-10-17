@@ -11,7 +11,6 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useState } from 'react';
-import poweredByTitanLogo from '../../../assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import { useAuth } from '../../app/auth';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -22,6 +21,7 @@ import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
+import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength } from '../types';
 import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
 
