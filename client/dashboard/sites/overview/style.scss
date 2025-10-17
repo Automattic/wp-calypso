@@ -14,11 +14,7 @@
 	> * {
 		flex-basis: 100%;
 
-		@media ( max-width: $break-xlarge ) {
-			&:empty {
-				display: none;
-			}
-		}
+
 	}
 
 	&.is-large {
@@ -26,6 +22,14 @@
 
 		> * {
 			flex-basis: 0;
+		}
+	}
+
+	@media ( max-width: $break-xlarge ) {
+		.site-overview-cards--secondary-callouts {
+			&:empty {
+				display: none;
+			}
 		}
 	}
 }

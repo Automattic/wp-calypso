@@ -159,7 +159,11 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					<VStack spacing={ spacing } justify="start">
+					<VStack
+						className="site-overview-cards--secondary-callouts"
+						spacing={ spacing }
+						justify="start"
+					>
 						{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 							<>
 								<DIFMUpsellCard site={ site } />
