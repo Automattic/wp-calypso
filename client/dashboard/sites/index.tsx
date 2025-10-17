@@ -17,6 +17,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
@@ -29,7 +30,6 @@ import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { getISOWeekDate } from '../utils/datetime';
 import { useActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
@@ -280,7 +280,9 @@ export default function Sites() {
 			 */ }
 			<Experiment
 				name={ ( () => {
-					const { year, week } = getISOWeekDate( new Date() );
+					const now = new Date();
+					const year = getISOWeekYear( now );
+					const week = String( getISOWeek( now ) ).padStart( 2, '0' );
 					return `explat_test_aa_weekly_calypso_${ year }_week_${ week }`;
 				} )() }
 				defaultExperience={ null }
