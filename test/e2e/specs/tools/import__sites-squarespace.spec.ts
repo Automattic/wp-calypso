@@ -93,7 +93,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Squarespace account', async ( {
+		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Squarespace site', async ( {
 			sitePublic,
 			pageImportContent,
 		} ) => {
