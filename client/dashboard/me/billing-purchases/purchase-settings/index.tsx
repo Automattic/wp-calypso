@@ -106,19 +106,36 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		return `/plans/storage/${ purchase.site_slug }`;
 	}
 
-	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( '/setup/plan-upgrade', {
-		siteSlug: purchase.site_slug,
-		redirect_to: backUrl,
-		cancel_to: backUrl,
-	} );
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return `/plans/${ purchase.site_slug }`;
+	}
+
+	return getWpcomPlanGridUrl( purchase.site_slug );
 }
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	if ( purchase.is_jetpack_backup_t1 ) {
 		return `/plans/storage/${ purchase.site_slug }`;
 	}
+
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return `/plans/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_plan ) {
+		return getWpcomPlanGridUrl( purchase.site_slug );
+	}
+
 	return `/plans/${ purchase.site_slug }`;
+}
+
+function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+	return addQueryArgs( '/setup/plan-upgrade', {
+		...( siteSlug && { siteSlug } ),
+		redirect_to: backUrl,
+		cancel_to: backUrl,
+	} );
 }
 
 function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
