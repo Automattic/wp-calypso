@@ -11,7 +11,6 @@ import type {
 	Site,
 	User,
 	WhoisDataEntry,
-	Domain as FullDomain,
 } from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
@@ -129,17 +128,17 @@ export function canSetAsPrimary( {
 	);
 }
 
-export function hasGSuiteWithUs( domain: Domain | FullDomain ) {
+export function hasGSuiteWithUs( domain: Domain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );
 }
 
-export function hasTitanMailWithUs( domain: Domain | FullDomain ) {
+export function hasTitanMailWithUs( domain: Domain ) {
 	const subscriptionStatus = domain.titan_mail_subscription?.status;
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }
 
-export function hasEmailForwards( domain: Domain | FullDomain ) {
+export function hasEmailForwards( domain: Domain ) {
 	return domain?.email_forwards_count ?? 0;
 }
 
