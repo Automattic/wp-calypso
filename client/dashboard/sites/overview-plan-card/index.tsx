@@ -111,7 +111,7 @@ function WpcomPlanCard( {
 
 	const getBillingLinkProps = () => {
 		if ( isFreePlan ) {
-			return { externalLink: `/plans/${ site.slug }` };
+			return { externalLink: `/setup/plan-upgrade?siteSlug=${ site.slug }` };
 		}
 
 		if ( ! isDashboardBackport() ) {
