@@ -77,13 +77,19 @@ export default function PageSelector( {
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				__experimentalRenderItem={ ( { item } ) => {
-					if ( item.value === '-1' ) {
+					const hasPages = pageOptions.length > 1;
+					if ( hasPages && item.value === '-1' ) {
 						return (
 							<Text variant="muted">
 								{ __( 'Performance testing is available for the 20 most popular pages.' ) }
 							</Text>
 						);
 					}
+
+					if ( ! hasPages && item.value === '-1' ) {
+						return <Text variant="muted">{ __( 'No pages found.' ) }</Text>;
+					}
+
 					return (
 						<VStack spacing="0">
 							<Text>{ item.label }</Text>
