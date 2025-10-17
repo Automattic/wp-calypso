@@ -10,7 +10,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import { getSiteDisplayUrl, getSiteFormattedUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
@@ -61,10 +61,12 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
+	const isCommerceGardenSite = isCommerceGarden( site );
 	const url = getSiteFormattedUrl( site );
-	const wpVersion = getFormattedWordPressVersion( site );
-	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
-	const hasSiteRedirect = site.options?.is_redirect;
+	const wpVersion = ! isCommerceGardenSite && getFormattedWordPressVersion( site );
+	const hasPHPFeature = ! isCommerceGardenSite && hasHostingFeature( site, HostingFeatures.PHP );
+	const hasSiteRedirect = ! isCommerceGardenSite && site.options?.is_redirect;
+	const hasProvider = ! isCommerceGardenSite;
 
 	return (
 		<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">
@@ -100,9 +102,11 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 					</Link>
 				</Field>
 			) }
-			<Field>
-				<HostingProvider site={ site } />
-			</Field>
+			{ hasProvider && (
+				<Field>
+					<HostingProvider site={ site } />
+				</Field>
+			) }
 		</HStack>
 	);
 };
