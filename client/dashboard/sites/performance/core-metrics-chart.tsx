@@ -209,55 +209,54 @@ export default function CoreMetricsChart( {
 					value={ formatThresholdValue( isOverall, 'bad' ) }
 				/>
 			</HStack>
-			<div style={ { maxWidth: '500px' } }>
-				{ lineChartData ? (
-					<LineChart
-						data={ lineChartData.seriesData }
-						withGradientFill={ false }
-						curveType="linear"
-						options={ {
-							yScale: lineChartData.yScale,
-							axis: {
-								y: {
-									tickFormat: ( value ) => `${ getFormattedNumber( value ) }`,
-								},
+			{ lineChartData ? (
+				<LineChart
+					height={ 300 }
+					data={ lineChartData.seriesData }
+					withGradientFill={ false }
+					curveType="linear"
+					options={ {
+						yScale: lineChartData.yScale,
+						axis: {
+							y: {
+								tickFormat: ( value ) => `${ getFormattedNumber( value ) }`,
 							},
-						} }
-						renderGlyph={ ( { key, x, y, datum } ) => {
-							const data = datum as { value: number };
-							const value = [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric )
-								? data.value * 1000
-								: data.value;
-							const valuation = mapThresholdsToStatus( metric, value );
-							const color = getColorForStatus( valuation );
-							const label = getStatusText( valuation );
-							if ( ! label.includes( key ) ) {
-								return null;
-							}
-							const GlyphComponent = StatusGlyph[ valuation ];
-							return <GlyphComponent top={ y } left={ x } size={ 100 } fill={ color } />;
-						} }
-						renderTooltip={ ( { tooltipData } ) => {
-							const nearestDatum = tooltipData?.nearestDatum?.datum;
-							if ( ! nearestDatum ) {
-								return null;
-							}
+						},
+					} }
+					renderGlyph={ ( { key, x, y, datum } ) => {
+						const data = datum as { value: number };
+						const value = [ 'lcp', 'fcp', 'ttfb', 'inp', 'tbt' ].includes( metric )
+							? data.value * 1000
+							: data.value;
+						const valuation = mapThresholdsToStatus( metric, value );
+						const color = getColorForStatus( valuation );
+						const label = getStatusText( valuation );
+						if ( ! label.includes( key ) ) {
+							return null;
+						}
+						const GlyphComponent = StatusGlyph[ valuation ];
+						return <GlyphComponent top={ y } left={ x } size={ 100 } fill={ color } />;
+					} }
+					renderTooltip={ ( { tooltipData } ) => {
+						const nearestDatum = tooltipData?.nearestDatum?.datum;
+						if ( ! nearestDatum ) {
+							return null;
+						}
 
-							const formattedDate = nearestDatum.date?.toLocaleDateString( undefined, {
-								month: 'short',
-								day: 'numeric',
-							} );
-							return [ formattedDate, nearestDatum.value ].join( ': ' );
-						} }
-					/>
-				) : (
-					<Notice title={ __( 'No history available' ) }>
-						{ __(
-							'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
-						) }
-					</Notice>
-				) }
-			</div>
+						const formattedDate = nearestDatum.date?.toLocaleDateString( undefined, {
+							month: 'short',
+							day: 'numeric',
+						} );
+						return [ formattedDate, nearestDatum.value ].join( ': ' );
+					} }
+				/>
+			) : (
+				<Notice title={ __( 'No history available' ) }>
+					{ __(
+						'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
+					) }
+				</Notice>
+			) }
 		</>
 	);
 }

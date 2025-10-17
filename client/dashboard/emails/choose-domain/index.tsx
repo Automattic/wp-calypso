@@ -1,4 +1,4 @@
-import { SiteDomain } from '@automattic/api-core';
+import { Domain } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -12,11 +12,11 @@ import { __ } from '@wordpress/i18n';
 import { arrowLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import AddNewDomain from '../components/add-new-domain';
 import { useDomains } from '../hooks/use-domains';
 
@@ -39,35 +39,19 @@ export default function ChooseDomain() {
 	const filteredRemaining = useMemo( () => {
 		const q = search.trim().toLowerCase();
 		if ( ! q ) {
-			return [] as SiteDomain[];
+			return [] as Domain[];
 		}
 		return eligibleDomains.filter( ( d ) => d.domain.toLowerCase().includes( q ) );
 	}, [ eligibleDomains, search ] );
 
-	const handleDomainClick = ( d: SiteDomain ) => {
-		// Determine next step and record click
-		let next_step = 'choose-email-solution';
-		if ( hasTitanMailWithUs( d ) ) {
-			next_step = 'add-titan-mailbox';
-		} else if ( hasGSuiteWithUs( d ) ) {
-			next_step = 'add-google-mailbox';
-		}
+	const handleDomainClick = ( d: Domain ) => {
 		recordTracksEvent( 'calypso_dashboard_emails_choose_domain_domain_click', {
 			domain: d.domain,
-			next_step,
 		} );
 
-		// Navigate based on existing email solution
-		if ( next_step === 'add-titan-mailbox' ) {
-			router.navigate( { to: '/emails/add-titan-mailbox' } );
-			return;
-		}
-		if ( next_step === 'add-google-mailbox' ) {
-			router.navigate( { to: '/emails/add-google-mailbox' } );
-			return;
-		}
 		router.navigate( {
-			to: `/emails/choose-email-solution/${ encodeURIComponent( d.domain ) }`,
+			to: chooseEmailSolutionRoute.to,
+			params: { domain: d.domain },
 		} );
 	};
 
@@ -80,7 +64,7 @@ export default function ChooseDomain() {
 							className="add-forwarder__back-button"
 							icon={ arrowLeft }
 							iconSize={ 12 }
-							to="/emails"
+							to={ emailsRoute.to }
 						>
 							<Text variant="muted">{ __( 'Emails' ) }</Text>
 						</RouterLinkButton>
@@ -117,7 +101,7 @@ export default function ChooseDomain() {
 								) ) }
 							{ remaining.length > 0 &&
 								search.trim() &&
-								filteredRemaining.map( ( d: SiteDomain ) => (
+								filteredRemaining.map( ( d: Domain ) => (
 									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>

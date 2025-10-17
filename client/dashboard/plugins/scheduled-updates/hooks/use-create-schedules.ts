@@ -9,7 +9,11 @@ import { CRON_CHECK_INTERVAL } from '../constants';
 import { prepareTimestamp, runWithConcurrency } from '../helpers';
 import { useEligibleSites } from './use-eligible-sites';
 import type { Frequency, Weekday } from '../types';
-import type { Site, CreateSiteUpdateScheduleBody } from '@automattic/api-core';
+import type {
+	Site,
+	CreateSiteUpdateScheduleBody,
+	JetpackMonitorSettings,
+} from '@automattic/api-core';
 
 export type CreateInputs = {
 	plugins: string[];
@@ -17,6 +21,19 @@ export type CreateInputs = {
 	weekday: Weekday;
 	time: string;
 };
+
+/**
+ * Build Jetpack Monitor URLs payload for a site.
+ * Matches legacy behavior: monitor the home URL and `/wp-cron.php` with the same interval.
+ */
+function createMonitorUrls( siteUrl: string ): JetpackMonitorSettings[ 'urls' ] {
+	return [
+		// The home URL needs to be one of the URLs monitored.
+		{ monitor_url: siteUrl, check_interval: CRON_CHECK_INTERVAL },
+		// Monitoring the wp-cron.php file to ensure that the cron jobs are running.
+		{ monitor_url: siteUrl + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
+	];
+}
 
 /**
  * Creates plugin update schedules for the provided sites and wires up monitor checks.
@@ -66,6 +83,7 @@ export function useCreateSchedules( siteIds: number[] ) {
 						const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
 						const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 
+						let anyRetryExhausted = false;
 						const monitorTasks = successfulSiteIds
 							.map( ( id ) => siteMap.get( id ) )
 							.filter( ( site ): site is Site => Boolean( site ) )
@@ -79,22 +97,29 @@ export function useCreateSchedules( siteIds: number[] ) {
 								} );
 
 								return async () => {
-									await createMonitorForSite( {
-										siteId: site.ID,
-										body: {
-											urls: [
-												{ monitor_url: site.URL, check_interval: CRON_CHECK_INTERVAL },
-												{
-													monitor_url: site.URL + '/wp-cron.php',
-													check_interval: CRON_CHECK_INTERVAL,
-												},
-											],
-										},
-									} );
+									try {
+										await createMonitorForSite( {
+											siteId: site.ID,
+											body: { urls: createMonitorUrls( site.URL ) },
+										} );
+									} catch ( error ) {
+										if ( error instanceof Error && error.message === 'Monitor is not active.' ) {
+											anyRetryExhausted = true;
+											recordTracksEvent(
+												'calypso_scheduled_updates_retry_monitor_settings_failed',
+												{ site_slug: site.slug }
+											);
+										}
+										// Swallow other errors; scheduling succeeded and monitor creation is best-effort
+									}
 								};
 							} );
 
 						await runWithConcurrency( monitorTasks, 4 );
+						// If any site had monitor retry exhaustion, emit batch-level failure once
+						if ( anyRetryExhausted ) {
+							recordTracksEvent( 'calypso_scheduled_updates_batch_retry_monitor_settings_failed' );
+						}
 						resolve();
 					},
 					onError: ( error ) => reject( error ),

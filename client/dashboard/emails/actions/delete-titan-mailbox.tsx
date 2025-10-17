@@ -15,10 +15,6 @@ import type { Email } from '../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useDeleteTitanMailboxAction = (): Action< Email > => {
-	const { mutateAsync: deleteTitanMailbox, isPending } = useMutation(
-		deleteTitanMailboxMutation()
-	);
-
 	return {
 		id: 'delete-titan-mailbox',
 		label: __( 'Delete mailbox' ),
@@ -26,6 +22,9 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 		// Using a modal to confirm deletion
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
+			const { mutateAsync: deleteTitanMailbox, isPending } = useMutation(
+				deleteTitanMailboxMutation()
+			);
 			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 			const { recordTracksEvent } = useAnalytics();
 

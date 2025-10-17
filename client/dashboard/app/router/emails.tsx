@@ -1,4 +1,4 @@
-import { SiteDomain } from '@automattic/api-core';
+import { Domain, DomainSubtype } from '@automattic/api-core';
 import {
 	queryClient,
 	rawUserPreferencesQuery,
@@ -35,7 +35,9 @@ export const emailsRoute = createRoute( {
 		);
 
 		// 3) From those domains, identify ones with email capability and preload their mailboxes
-		const allDomains = domainsArrays.flat().filter( ( d: SiteDomain ) => d && ! d.wpcom_domain );
+		const allDomains = domainsArrays
+			.flat()
+			.filter( ( d: Domain ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		const domainsWithEmails = allDomains.filter( ( d ) => domainHasEmail( d ) );
 
 		await Promise.all( [

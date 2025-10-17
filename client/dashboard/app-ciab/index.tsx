@@ -9,16 +9,8 @@ boot( {
 	Logo,
 	supports: {
 		overview: false,
-		sites: {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: false,
-			emails: false,
-		},
+		sites: false,
+		ciabSites: true,
 		domains: true,
 		emails: true,
 		themes: false,

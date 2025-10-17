@@ -10,6 +10,8 @@ import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
+import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -31,6 +33,7 @@ export interface FormData {
 }
 
 function AddEmailForwarder() {
+	const { basePath } = useAppContext();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
@@ -149,11 +152,18 @@ function AddEmailForwarder() {
 		const { localPart, domain, forwardingAddresses } = formData;
 
 		recordTracksEvent( 'calypso_dashboard_emails_add_forwarder_save_click' );
+		const redirectPath = `${ ( basePath || '' ).replace( /\/$/, '' ) }${ emailsRoute.to }`;
+		const redirectUrl =
+			typeof window !== 'undefined'
+				? new URL( redirectPath, window.location.origin ).href
+				: redirectPath;
+
 		addEmailForwarder(
 			{
 				domain,
 				mailbox: `${ localPart }@${ domain }`,
 				destinations: forwardingAddresses,
+				redirectUrl,
 			},
 			{
 				onSuccess: () => {

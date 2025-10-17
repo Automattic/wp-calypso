@@ -1,4 +1,4 @@
-import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -17,14 +17,7 @@ import {
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 } from '../../app/router/domains';
-import {
-	isRecentlyRegistered,
-	isDomainRenewable,
-	isDomainUpdatable,
-	isDomainInGracePeriod,
-	canSetAsPrimary,
-	getDomainRenewalUrl,
-} from '../../utils/domain';
+import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -53,7 +46,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const purchase = purchases?.find(
-						( p ) => p.ID === parseInt( domain.subscription_id, 10 )
+						( p ) => p.ID === parseInt( domain.subscription_id ?? '0', 10 )
 					);
 
 					if ( ! purchase ) {
@@ -80,7 +73,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					} );
 				},
 				isEligible: ( item: DomainSummary ) =>
-					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! item.points_to_wpcom,
+					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
+					item.domain_status.id === 'connection_error',
 			},
 			{
 				id: 'manage-domain',
@@ -120,10 +114,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
-					return (
-						item.can_manage_dns_records &&
-						item.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-						item.subtype.id !== DomainSubtype.SITE_REDIRECT
+					return [ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
+						item.subtype.id
 					);
 				},
 			},
@@ -143,11 +135,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
-						!! item.current_user_is_owner &&
-						item.can_update_contact_info &&
-						! item.wpcom_domain &&
-						item.has_registration &&
-						( isDomainUpdatable( item ) || isDomainInGracePeriod( item ) )
+						item.current_user_is_owner === true &&
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
 					);
 				},
 			},
@@ -188,11 +177,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					);
 				},
 				isEligible: ( item: DomainSummary ) => {
-					return (
-						!! site &&
-						canSetAsPrimary( { domain: item, site, user } ) &&
-						! isRecentlyRegistered( item.registration_date )
-					);
+					return !! site && canSetAsPrimary( { domain: item, site, user } );
 				},
 				disabled: setPrimaryDomainMutation.isPending,
 			},
