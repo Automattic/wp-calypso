@@ -123,9 +123,9 @@ export const addProfessionalEmailRoute = createRoute( {
 		const products = queryClient.ensureQueryData( productsQuery() );
 
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		const site = queryClient.ensureQueryData( siteByIdQuery( domain?.blog_id ) );
+		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
 		const mailboxAccounts = await queryClient.ensureQueryData(
-			mailboxAccountsQuery( domain?.blog_id, domainName )
+			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
 		await Promise.all( [ products, site, domain, mailboxAccounts ] );
