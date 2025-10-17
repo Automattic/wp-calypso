@@ -35,6 +35,11 @@ function Domains() {
 					DomainSubtype.DOMAIN_CONNECTION,
 				],
 			},
+			{
+				field: 'owner',
+				operator: 'isAny',
+				value: [ 'owned-by-me' ],
+			},
 		],
 	} ) );
 
