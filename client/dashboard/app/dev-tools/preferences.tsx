@@ -25,9 +25,8 @@ import type { Field } from '@wordpress/dataviews';
 import './preferences.scss';
 
 type InputType = 'string' | 'number' | 'checkbox';
-type InputValue = string | number | boolean;
 
-const formattedValue = ( inputType: InputType, value?: InputValue ) => {
+const formattedValue = ( inputType: InputType, value?: unknown ) => {
 	if ( inputType === 'number' ) {
 		return Number( value );
 	}
@@ -84,6 +83,7 @@ function EditablePreference( {
 	const [ formData, setFormData ] = useState( { [ name ]: value } );
 
 	const handleSave = () => {
+		// @ts-expect-error - formData[ name ] is unknown
 		savePreference( formData[ name ] );
 	};
 
@@ -91,7 +91,7 @@ function EditablePreference( {
 		setFormData( { [ name ]: value } );
 	};
 
-	const fields: Field< { [ name ]: InputValue } >[] = useMemo(
+	const fields: Field< { [ name ]: unknown } >[] = useMemo(
 		() => [
 			{
 				id: name,
@@ -130,7 +130,7 @@ function EditablePreference( {
 
 	return (
 		<VStack>
-			<DataForm< { [ name ]: InputValue } >
+			<DataForm< { [ name ]: unknown } >
 				data={ formData }
 				fields={ fields }
 				form={ {

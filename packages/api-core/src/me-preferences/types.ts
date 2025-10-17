@@ -34,5 +34,4 @@ export interface UserPreferences {
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;
 	'sites-view'?: SitesViewPreferences;
-	[ key: string ]: unknown;
 }
