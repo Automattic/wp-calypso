@@ -110,7 +110,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
-				event.action.error.statusCode === 403 &&
+				[ 401, 403 ].includes( event.action.error.statusCode ) &&
 				event.action.error.error === 'authorization_required'
 			) {
 				const currentPath = window.location.pathname;
