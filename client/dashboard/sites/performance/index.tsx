@@ -68,8 +68,9 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
-	const performanceUrl =
-		config( 'env_id' ) === 'production' ? url ?? currentPage?.link : currentPage?.link;
+	const performanceUrl = [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) )
+		? url ?? currentPage?.link
+		: currentPage?.link;
 
 	const {
 		hasError,
