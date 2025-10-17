@@ -24,7 +24,7 @@
 	}
 
 	@media ( max-width: $break-xlarge ) {
-		.site-overview-cards--secondary-callouts {
+		.site-overview-cards--secondary-aside {
 			&:empty {
 				display: none;
 			}

@@ -162,11 +162,11 @@ function SiteOverview( {
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 					<VStack
-						className="site-overview-cards--secondary-callouts"
+						className="site-overview-cards--secondary-aside"
 						spacing={ spacing }
 						justify="start"
 					>
-            { showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
+						{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 						{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 							<>
 								<DIFMUpsellCard site={ site } />
