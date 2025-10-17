@@ -153,7 +153,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 							<PageSelector
 								siteUrl={ site.URL }
 								currentPage={ currentPage }
-								pages={ pagesData }
+								pages={ pagesData || [] }
 								onChange={ ( pageId ) => {
 									setRunNewReport( false );
 									recordTracksEvent(
