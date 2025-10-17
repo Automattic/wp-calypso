@@ -22,10 +22,13 @@ async function initializeCurrentUser(): Promise< User > {
 	const useBootstrap = ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
 
 	if ( useBootstrap ) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ( ( window as any ).currentUser ) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			return ( window as any ).currentUser;
+		if ( window.currentUser ) {
+			// TODO: align the various `currentUser` types. The different types have
+			// different opinions on which fields are required and optional.
+			// - packages/api-core/src/me/types.ts
+			// - packages/data-stores/src/user/types.ts
+			// - client/lib/user/user.d.ts
+			return window.currentUser as any;
 		}
 	}
 
