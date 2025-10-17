@@ -3,7 +3,7 @@ import {
 	domainQuery,
 	mailboxAccountsQuery,
 	productsQuery,
-	siteBySlugQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -70,7 +70,8 @@ const AddProfessionalEmail = () => {
 	const { data: products } = useQuery( productsQuery() );
 	const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
 	const product = products?.[ productSlug ] as Product;
-	const { data: site } = useQuery( siteBySlugQuery( domainName ) );
+	// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
+	const { data: site } = useQuery( { ...siteByIdQuery( domain?.blog_id ), enabled: !! domain } );
 	const { data: existingMailboxes, isFetched } = useQuery( {
 		// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
 		...mailboxAccountsQuery( domain?.blog_id, domainName ),

@@ -7,7 +7,7 @@ import {
 	mailboxAccountsQuery,
 	domainQuery,
 	productsQuery,
-	siteBySlugQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -121,9 +121,9 @@ export const addProfessionalEmailRoute = createRoute( {
 	path: 'emails/add-professional-email/$domain',
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
-		const site = queryClient.ensureQueryData( siteBySlugQuery( domainName ) );
 
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const site = queryClient.ensureQueryData( siteByIdQuery( domain?.blog_id ) );
 		const mailboxAccounts = await queryClient.ensureQueryData(
 			mailboxAccountsQuery( domain?.blog_id, domainName )
 		);
