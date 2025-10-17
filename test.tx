@@ -1,0 +1,167 @@
+diff --git a/client/dashboard/domains/dataviews/fields.tsx b/client/dashboard/domains/dataviews/fields.tsx
+index c584dace261..d641abdcadf 100644
+--- a/client/dashboard/domains/dataviews/fields.tsx
++++ b/client/dashboard/domains/dataviews/fields.tsx
+@@ -137,19 +137,23 @@ export const useFields = ( {
+ 					return a.expiry.localeCompare( b.expiry ) * factor;
+ 				},
+ 				elements: [
+-					{ value: '2-next-07-days', label: __( 'Next 7 days' ) },
+-					{ value: '2-next-30-days', label: __( 'Next 30 days' ) },
+-					{ value: '2-next-90-days', label: __( 'Next 90 days' ) },
+-					{ value: '3-more-than-90-days', label: __( 'More than 90 days' ) },
+-					{ value: '1-expired', label: __( 'Expired' ) },
+-					{ value: '0-no-expiry', label: __( 'No expiry date' ) },
++					{ value: 'expired', label: __( 'Expired' ) },
++					{ value: 'next-7-days', label: __( 'Next 7 days' ) },
++					{ value: 'next-30-days', label: __( 'Next 30 days' ) },
++					{ value: 'next-90-days', label: __( 'Next 90 days' ) },
++					{ value: 'more-than-90-days', label: __( 'More than 90 days' ) },
++					{ value: 'no-expiry', label: __( 'No expiry date' ) },
+ 				],
+ 				filterBy: {
+ 					operators: [ 'isAny' as Operator ],
+ 				},
+ 				getValue: ( { item }: { item: DomainSummary } ) => {
+ 					if ( ! item.expiry ) {
+-						return '0-no-expiry';
++						return 'no-expiry';
++					}
++
++					if ( item.expired ) {
++						return 'expired';
+ 					}
+ 
+ 					const expiryDate = new Date( item.expiry );
+@@ -157,16 +161,15 @@ export const useFields = ( {
+ 					const diffInMs = expiryDate.getTime() - now.getTime();
+ 					const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
+ 
+-					if ( item.expired ) {
+-						return '1-expired';
+-					} else if ( diffInDays <= 90 ) {
+-						return '2-next-90-days';
++					// Return the most specific category for display purposes
++					if ( diffInDays <= 7 ) {
++						return 'next-7-days';
+ 					} else if ( diffInDays <= 30 ) {
+-						return '2-next-30-days';
+-					} else if ( diffInDays <= 7 ) {
+-						return '2-next-07-days';
++						return 'next-30-days';
++					} else if ( diffInDays <= 90 ) {
++						return 'next-90-days';
+ 					}
+-					return '3-more-than-90-days';
++					return 'more-than-90-days';
+ 				},
+ 				render: ( { item } ) => {
+ 					return (
+@@ -197,7 +200,7 @@ export const useFields = ( {
+ 				},
+ 			},
+ 		],
+-		[ site, showPrimaryDomainBadge, siteElements ]
++		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
+ 	);
+ 
+ 	return fields;
+diff --git a/client/dashboard/domains/index.tsx b/client/dashboard/domains/index.tsx
+index ef07236f449..691391f3823 100644
+--- a/client/dashboard/domains/index.tsx
++++ b/client/dashboard/domains/index.tsx
+@@ -3,7 +3,7 @@ import { domainsQuery } from '@automattic/api-queries';
+ import { useQuery } from '@tanstack/react-query';
+ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+ import { __ } from '@wordpress/i18n';
+-import { useState } from 'react';
++import { useState, useMemo } from 'react';
+ import { useAuth } from '../app/auth';
+ import { DataViewsCard } from '../components/dataviews-card';
+ import { OptInWelcome } from '../components/opt-in-welcome';
+@@ -13,11 +13,55 @@ import { AddDomainButton } from './add-domain-button';
+ import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
+ import type { DomainsView } from './dataviews';
+ import type { DomainSummary } from '@automattic/api-core';
++import type { Filter } from '@wordpress/dataviews';
+ 
+ export function getDomainId( domain: DomainSummary ): string {
+ 	return `${ domain.domain }-${ domain.blog_id }`;
+ }
+ 
++// Custom filtering function to handle overlapping expiry ranges
++function customFilterDomains( domains: DomainSummary[], filters: Filter[] ): DomainSummary[] {
++	const expiryFilter = filters.find( ( filter ) => filter.field === 'expiry' );
++
++	if ( ! expiryFilter || ! expiryFilter.value ) {
++		return domains;
++	}
++
++	const filterValues = Array.isArray( expiryFilter.value )
++		? expiryFilter.value
++		: [ expiryFilter.value ];
++
++	return domains.filter( ( domain ) => {
++		if ( ! domain.expiry ) {
++			return filterValues.includes( 'no-expiry' );
++		}
++
++		if ( domain.expired ) {
++			return filterValues.includes( 'expired' );
++		}
++
++		const expiryDate = new Date( domain.expiry );
++		const now = new Date();
++		const diffInMs = expiryDate.getTime() - now.getTime();
++		const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
++
++		return filterValues.some( ( value ) => {
++			switch ( value ) {
++				case 'next-7-days':
++					return diffInDays <= 7;
++				case 'next-30-days':
++					return diffInDays <= 30;
++				case 'next-90-days':
++					return diffInDays <= 90;
++				case 'more-than-90-days':
++					return diffInDays > 90;
++				default:
++					return false;
++			}
++		} );
++	} );
++}
++
+ function Domains() {
+ 	const { user } = useAuth();
+ 	const fields = useFields();
+@@ -39,9 +83,27 @@ function Domains() {
+ 	} ) );
+ 
+ 	const { data: domains, isLoading } = useQuery( domainsQuery() );
++
++	// Apply custom expiry filtering first
++	const customFilteredDomains = useMemo( () => {
++		if ( ! domains ) {
++			return [];
++		}
++		return customFilterDomains( domains, view.filters ?? [] );
++	}, [ domains, view.filters ] );
++
++	// Create a view without expiry filters for standard filtering
++	const viewWithoutExpiryFilters = useMemo(
++		() => ( {
++			...view,
++			filters: ( view.filters ?? [] ).filter( ( filter ) => filter.field !== 'expiry' ),
++		} ),
++		[ view ]
++	);
++
+ 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+-		domains ?? [],
+-		view,
++		customFilteredDomains,
++		viewWithoutExpiryFilters,
+ 		fields
+ 	);
+ 
