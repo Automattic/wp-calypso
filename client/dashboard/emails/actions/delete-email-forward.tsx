@@ -89,7 +89,7 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							onClick={ () => closeModal?.() }
+							onClick={ handleCancel }
 							disabled={ isPending }
 							accessibleWhenDisabled
 						>
