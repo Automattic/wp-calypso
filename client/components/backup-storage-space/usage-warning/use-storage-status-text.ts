@@ -30,8 +30,8 @@ const useStorageStatusText = (
 				);
 			case StorageUsageLevels.FullButForecastOk:
 				return translate(
-					'You have reached your storage limit with %d day of backups saved. If your site size stays the same, backups will resume automatically in the next few days as older backups are replaced.',
-					'You have reached your storage limit with %d days of backups saved. If your site size stays the same, backups will resume automatically in the next few days as older backups are replaced.',
+					'You have reached your storage limit with %d day of backups saved. If your site size stays the same, storage will come back within limits in the next few days as backups continue and older ones are replaced.',
+					'You have reached your storage limit with %d days of backups saved. If your site size stays the same, storage will come back within limits in the next few days as backups continue and older ones are replaced.',
 					{
 						count: daysOfBackupsSaved,
 						args: [ daysOfBackupsSaved ],
