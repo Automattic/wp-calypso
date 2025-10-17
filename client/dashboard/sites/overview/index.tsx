@@ -34,6 +34,7 @@ import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
+import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
 
@@ -71,6 +72,42 @@ function getGridLayout( {
 	};
 }
 
+function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: number } ) {
+	if ( isCommerceGarden( site ) ) {
+		return (
+			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+				<PlanCard site={ site } />
+				<VisibilityCard site={ site } />
+			</Grid>
+		);
+	}
+
+	return (
+		<>
+			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+				<VisibilityCard site={ site } />
+				<BackupCard site={ site } />
+			</Grid>
+			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+				{ ( () => {
+					if ( site.is_a4a_dev_site ) {
+						return <AgencySiteShareCard site={ site } />;
+					}
+					if ( isSelfHostedJetpackConnected( site ) ) {
+						return <SubscribersCard site={ site } />;
+					}
+					if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
+						return <MigrateSiteCard site={ site } />;
+					}
+					return <PerformanceCard site={ site } />;
+				} )() }
+				<ScanCard site={ site } />
+			</Grid>
+			<PlanCard site={ site } />
+		</>
+	);
+}
+
 function SiteOverview( {
 	siteSlug,
 	hideSitePreview = false,
@@ -85,8 +122,9 @@ function SiteOverview( {
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
 	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const isCommerceGardenSite = isCommerceGarden( site );
 	const gridLayout = getGridLayout( {
-		count: showSitePreview ? 4 : 3,
+		count: ( isCommerceGardenSite ? 1 : 3 ) + Number( showSitePreview ),
 		isLargeViewport,
 		isSmallViewport,
 	} );
@@ -94,7 +132,6 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
-	const isCommerceGardenSite = isCommerceGarden( site );
 	const showFlexUsageCard = site.is_wpcom_flex;
 
 	const renderActions = () => {
@@ -109,9 +146,8 @@ function SiteOverview( {
 					__next40pxDefaultSize
 					variant="primary"
 					href={ site.options.admin_url }
-					icon={ wordpress }
 				>
-					{ isCommerceGardenSite ? __( 'Store dashboard' ) : __( 'WP Admin' ) }
+					{ __( 'Store dashboard' ) }
 				</Button>
 			);
 		}
@@ -126,7 +162,7 @@ function SiteOverview( {
 					href={ site.options.admin_url }
 					icon={ wordpress }
 				>
-					{ isCommerceGardenSite ? __( 'Store dashboard' ) : __( 'WP Admin' ) }
+					{ __( 'WP Admin' ) }
 				</Button>
 				<SiteActionMenu site={ site } />
 			</>
@@ -135,6 +171,7 @@ function SiteOverview( {
 
 	return (
 		<PageLayout
+			size={ isCommerceGardenSite ? 'small' : 'large' }
 			header={
 				<VStack>
 					<PageHeader title={ getSiteDisplayName( site ) } actions={ renderActions() } />
@@ -146,49 +183,34 @@ function SiteOverview( {
 				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
-						<VisibilityCard site={ site } />
-						<BackupCard site={ site } />
-					</Grid>
-					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
-						{ ( () => {
-							if ( site.is_a4a_dev_site ) {
-								return <AgencySiteShareCard site={ site } />;
-							}
-							if ( isSelfHostedJetpackConnectedSite ) {
-								return <SubscribersCard site={ site } />;
-							}
-							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
-								return <MigrateSiteCard site={ site } />;
-							}
-							return <PerformanceCard site={ site } />;
-						} )() }
-						<ScanCard site={ site } />
-					</Grid>
-					<PlanCard site={ site } />
+					<SiteOverviewPrimaryCards site={ site } spacing={ spacing } />
 				</Grid>
-				<Divider
-					orientation="horizontal"
-					style={ { color: 'var(--dashboard-overview__divider-color)' } }
-				/>
-				<HStack
-					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
-						'is-large': isLargeViewport,
-					} ) }
-					spacing={ spacing }
-					alignment="flex-start"
-				>
-					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					<VStack spacing={ spacing } justify="start">
-						{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
-						{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-							<>
-								<DIFMUpsellCard site={ site } />
-								<DomainsCard site={ site } />
-							</>
-						) }
-					</VStack>
-				</HStack>
+				{ ! isCommerceGardenSite && (
+					<>
+						<Divider
+							orientation="horizontal"
+							style={ { color: 'var(--dashboard-overview__divider-color)' } }
+						/>
+						<HStack
+							className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
+								'is-large': isLargeViewport,
+							} ) }
+							spacing={ spacing }
+							alignment="flex-start"
+						>
+							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+							<VStack spacing={ spacing } justify="start">
+								{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
+								{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+									<>
+										<DIFMUpsellCard site={ site } />
+										<DomainsCard site={ site } />
+									</>
+								) }
+							</VStack>
+						</HStack>
+					</>
+				) }
 			</VStack>
 			<GuidedTourContextProvider
 				tourId="hosting-dashboard-tours-site-overview"
