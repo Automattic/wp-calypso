@@ -104,6 +104,7 @@ export function ChatInput( {
 	const handleTextareaKeyDown = (
 		e: React.KeyboardEvent< HTMLTextAreaElement >
 	) => {
+		// Normalize for case-insensitive match (Shift/Caps Lock may produce "Z")
 		const key = e.key.toLowerCase();
 
 		// Undo/Redo shortcuts (all major OS):
