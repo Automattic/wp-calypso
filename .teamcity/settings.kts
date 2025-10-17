@@ -239,7 +239,6 @@ object BuildBaseImages : BuildType({
 				connection = "PROJECT_EXT_11"
 				sendTo = "#calypso"
 				messageFormat = verboseMessageFormat {
-					addChanges = true
 					addStatusText = true
 					addBranch = true
 				}
