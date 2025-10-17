@@ -1,7 +1,7 @@
-import { type DomainSuggestion, DomainAvailabilityStatus } from '@automattic/api-core';
 import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../page/context';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 export enum DomainPriceRule {
 	ONE_TIME_PRICE = 'ONE_TIME_PRICE',
@@ -64,7 +64,7 @@ export const useSuggestion = ( domainName: string ) => {
 			if ( suggestionPosition === -1 ) {
 				// If there's no suggestion matching the domain name, the user might have
 				// provided a FQDN and the filters do not match the FQDN's TLD
-				if ( fqdnAvailability && fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ) {
+				if ( fqdnAvailability && query === fqdnAvailability.domain_name ) {
 					return fqdnAvailability;
 				}
 

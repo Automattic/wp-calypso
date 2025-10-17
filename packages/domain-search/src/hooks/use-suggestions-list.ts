@@ -1,4 +1,8 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
+import {
+	type DomainAvailability,
+	DomainAvailabilityStatus,
+	DomainSuggestion,
+} from '@automattic/api-core';
 import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getTld } from '../helpers';
@@ -20,6 +24,29 @@ const availablePremiumDomainsCombinator = (
 		availablePremiumDomains: results
 			.filter( hasDataAndIsSupportedPremiumDomain )
 			.map( ( { data: availabilityQuery } ) => availabilityQuery.domain_name ),
+	};
+};
+
+const convertAvailabilityToSuggestion = ( availability: DomainAvailability ): DomainSuggestion => {
+	return {
+		domain_name: availability.domain_name,
+		cost: availability.cost,
+		currency_code: availability.currency_code,
+		product_id: availability.product_id ?? 0,
+		product_slug: availability.product_slug ?? 'domain_registration',
+		raw_price: availability.raw_price ?? 0,
+		relevance: 1, // It's an exact match
+		max_reg_years: 10,
+		multi_year_reg_allowed: true,
+		supports_privacy: availability.supports_privacy,
+		vendor: availability.vendor ?? 'availability',
+		is_premium:
+			availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM ? true : undefined,
+		renew_cost: availability.renew_cost,
+		sale_cost: availability.sale_cost,
+		hsts_required: availability.hsts_required,
+		dot_gay_notice_required: availability.dot_gay_notice_required,
+		match_reasons: availability.match_reasons,
 	};
 };
 
@@ -67,6 +94,15 @@ export const useSuggestionsList = () => {
 		isLoadingQueryAvailability ||
 		isLoadingAvailablePremiumDomains;
 
+	if ( fqdnAvailability ) {
+		const isAvailabilityAlreadyInSuggestions = suggestions.some(
+			( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
+		);
+		if ( ! isAvailabilityAlreadyInSuggestions ) {
+			suggestions.push( convertAvailabilityToSuggestion( fqdnAvailability ) );
+		}
+	}
+
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		return partitionSuggestions( {
 			suggestions: suggestions
@@ -92,7 +128,6 @@ export const useSuggestionsList = () => {
 				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
-			fqdnAvailability,
 		} );
 	}, [
 		suggestions,
