@@ -68,6 +68,7 @@ export const useSuggestionsList = () => {
 		isLoadingQueryAvailability ||
 		isLoadingAvailablePremiumDomains;
 
+	// Add FQDN availability to the suggestions list if it isn't already there
 	if ( fqdnAvailability ) {
 		const isFQDNAlreadyInSuggestions = suggestions.some(
 			( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
