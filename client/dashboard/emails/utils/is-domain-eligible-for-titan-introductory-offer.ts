@@ -4,7 +4,7 @@ export const isDomainEligibleForTitanIntroductoryOffer = ( {
 	domain,
 	product,
 }: {
-	domain: Domain;
+	domain: Domain | undefined;
 	product: Product;
 } ) => {
 	return !! (

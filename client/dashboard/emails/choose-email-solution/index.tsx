@@ -23,6 +23,7 @@ import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
+import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
 
 import './style.scss';
 
@@ -36,9 +37,10 @@ export default function ChooseEmailSolution() {
 	const { product: googleProduct } = useEmailProduct( 'google', billingInterval );
 	const { product: titanProduct } = useEmailProduct( 'titan', billingInterval );
 
-	const hasTitanFreeTrial =
-		( domain?.titan_mail_subscription?.is_eligible_for_introductory_offer ?? false ) &&
-		titanProduct.introductory_offer?.cost_per_interval === 0;
+	const hasTitanFreeTrial = isDomainEligibleForTitanIntroductoryOffer( {
+		domain,
+		product: titanProduct,
+	} );
 
 	const { user } = useAuth();
 	const isGoogleSupported =
