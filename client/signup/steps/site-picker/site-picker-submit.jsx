@@ -17,6 +17,8 @@ export class SitePickerSubmit extends Component {
 	UNSAFE_componentWillMount() {
 		const { stepSectionName, stepName, goToStep, selectedSite } = this.props;
 		const hasPaidPlan = siteHasPaidPlan( selectedSite );
+		const isWpcomFlex = Boolean( selectedSite && selectedSite.is_wpcom_flex );
+		const shouldSkipPlans = hasPaidPlan || isWpcomFlex;
 		const { ID: siteId, slug: siteSlug } = selectedSite;
 
 		this.props.submitSignupStep(
@@ -29,7 +31,7 @@ export class SitePickerSubmit extends Component {
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
 
-		if ( hasPaidPlan ) {
+		if ( shouldSkipPlans ) {
 			this.props.submitSignupStep(
 				{ stepName: 'plans-site-selected', wasSkipped: true },
 				{ cartItems: null, themeSlugWithRepo: 'pub/twentysixteen' }
