@@ -284,9 +284,9 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
-	const isFlex = isWpcomFlexSite( state, siteId );
+	const isFlexSite = isWpcomFlexSite( state, siteId );
 
-	if ( siteId && isJetpack && ! isFlex ) {
+	if ( siteId && isJetpack && ! isFlexSite ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
