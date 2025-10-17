@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	RewrittenDomainSearchComponent,
+	DomainSearchComponent,
 	SelectItemsComponent,
 	CartCheckoutPage,
 	RestAPIClient,
@@ -42,12 +42,12 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site'
 	} );
 
 	it( 'Search for a domain', async function () {
-		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.search( targetDomain );
 	} );
 
 	it( 'Click the bring it over button', async function () {
-		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.clickBringItOver();
 	} );
 

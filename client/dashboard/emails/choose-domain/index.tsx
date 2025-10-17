@@ -11,11 +11,11 @@ import {
 import { __ } from '@wordpress/i18n';
 import { arrowLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import AddNewDomain from '../components/add-new-domain';
 import { useDomains } from '../hooks/use-domains';
 
@@ -43,17 +43,9 @@ export default function ChooseDomain() {
 	}, [ eligibleDomains, search ] );
 
 	const handleDomainClick = ( d: SiteDomain ) => {
-		// Navigate based on existing email solution
-		if ( hasTitanMailWithUs( d ) ) {
-			router.navigate( { to: '/emails/add-titan-mailbox' } );
-			return;
-		}
-		if ( hasGSuiteWithUs( d ) ) {
-			router.navigate( { to: '/emails/add-google-mailbox' } );
-			return;
-		}
 		router.navigate( {
-			to: `/emails/choose-email-solution/${ encodeURIComponent( d.domain ) }`,
+			to: chooseEmailSolutionRoute.to,
+			params: { domain: d.domain },
 		} );
 	};
 
@@ -66,7 +58,7 @@ export default function ChooseDomain() {
 							className="add-forwarder__back-button"
 							icon={ arrowLeft }
 							iconSize={ 12 }
-							to="/emails"
+							to={ emailsRoute.to }
 						>
 							<Text variant="muted">{ __( 'Emails' ) }</Text>
 						</RouterLinkButton>

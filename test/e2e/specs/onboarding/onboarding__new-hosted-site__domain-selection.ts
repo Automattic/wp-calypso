@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	RestAPIClient,
-	RewrittenDomainSearchComponent,
+	DomainSearchComponent,
 	NewUserResponse,
 	UserSignupPage,
 	CartCheckoutPage,
@@ -47,7 +47,7 @@ describe(
 		} );
 
 		it( 'Select a domain name', async function () {
-			const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
 			selectedDomain = await domainSearchComponent.selectFirstSuggestion();
 			await domainSearchComponent.continue();

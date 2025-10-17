@@ -33,7 +33,7 @@ export function useSitePerformanceData(
 	hash: string | undefined,
 	runNewReport?: boolean
 ): PerformanceData {
-	const shouldFetchToken = runNewReport ?? ! hash;
+	const shouldFetchToken = ! hash || !! runNewReport;
 
 	const {
 		data: basicMetricsData,

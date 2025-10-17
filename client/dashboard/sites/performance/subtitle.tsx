@@ -1,8 +1,7 @@
-import { Button } from '@wordpress/components';
+import { __experimentalText as Text, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
-import InlineSupportLink from '../../components/inline-support-link';
 
 export default function Subtitle( {
 	timestamp,
@@ -26,14 +25,7 @@ export default function Subtitle( {
 	);
 
 	if ( ! timestamp ) {
-		return createInterpolateElement(
-			__(
-				'Optimize your site for lightning-fast performance. <learnMoreLink>Learn more</learnMoreLink>'
-			),
-			{
-				learnMoreLink: <InlineSupportLink supportContext="site-performance" />,
-			}
-		);
+		return <Text variant="muted">{ __( 'Testing your site may take around 30 seconds.' ) }</Text>;
 	}
 
 	return createInterpolateElement(
