@@ -5,8 +5,6 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
 	Icon,
-	Card,
-	CardMedia,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
@@ -18,6 +16,7 @@ import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
+import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
@@ -28,7 +27,7 @@ import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-el
 import './style.scss';
 
 export default function ChooseEmailSolution() {
-	const { domain, domainName, isLoadingDomain } = useDomainFromUrlParam();
+	const { domain, site } = useDomainFromUrlParam();
 
 	const [ billingInterval, setBillingInterval ] = useState( 'annually' as IntervalLength );
 
@@ -37,6 +36,8 @@ export default function ChooseEmailSolution() {
 	const { product: googleProduct } = useEmailProduct( 'google', billingInterval );
 	const { product: titanProduct } = useEmailProduct( 'titan', billingInterval );
 
+	const canAddEmail = domain.current_user_can_add_email;
+
 	const hasTitanFreeTrial = isDomainEligibleForTitanIntroductoryOffer( {
 		domain,
 		product: titanProduct,
@@ -44,6 +45,7 @@ export default function ChooseEmailSolution() {
 
 	const { user } = useAuth();
 	const isGoogleSupported =
+		canAddEmail &&
 		( user.is_valid_google_apps_country ?? false ) &&
 		domain &&
 		isGoogleWorkspaceSupportedDomain( domain );
@@ -68,7 +70,7 @@ export default function ChooseEmailSolution() {
 			},
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
-			available: true,
+			available: canAddEmail,
 		},
 		{
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -91,31 +93,20 @@ export default function ChooseEmailSolution() {
 		},
 	];
 
-	if ( ! domain && ! isLoadingDomain ) {
-		return (
-			<PageLayout size="small">
-				<Card>
-					<CardMedia>
-						<div
-							style={ {
-								background: 'var(--dashboard__background-color-error)',
-								color: '#fff',
-								padding: 16,
-							} }
-						>
-							{
-								/* translators: %s is the domain name. */
-								sprintf( __( 'You cannot add a mailbox to %s.' ), domainName )
-							}
-						</div>
-					</CardMedia>
-				</Card>
-			</PageLayout>
-		);
-	}
-
 	return (
-		<PageLayout header={ <PageHeader /> } size="small">
+		<PageLayout
+			header={ <PageHeader /> }
+			size="small"
+			notices={
+				! canAddEmail && (
+					<EmailNonDomainOwnerNotice
+						selectedSite={ site }
+						domain={ domain }
+						source="email-comparison"
+					/>
+				)
+			}
+		>
 			{ /* Billing interval selector */ }
 			<div className="billing-interval-selector">
 				<ToggleGroupControl

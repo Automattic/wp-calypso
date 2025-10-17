@@ -6,7 +6,7 @@ import {
 	buildQueryString,
 	getEmailManagementPath,
 	getPurchaseNewEmailAccountPath,
-} from '../../../utils/email-paths';
+} from '../../utils/email-paths';
 
 const CALYPSO_CONTACT = '/help/contact';
 

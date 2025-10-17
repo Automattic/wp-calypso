@@ -1,5 +1,5 @@
-import { domainQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { domainQuery, siteByIdQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
@@ -13,7 +13,9 @@ export const useDomainFromUrlParam = () => {
 		data: domain,
 		isFetched: isDomainFetched,
 		isLoading: isLoadingDomain,
-	} = useQuery( domainQuery( domainName ) );
+	} = useSuspenseQuery( domainQuery( domainName ) );
+
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	useEffect( () => {
 		if ( isDomainFetched && ! domain ) {
@@ -26,5 +28,6 @@ export const useDomainFromUrlParam = () => {
 		domainName,
 		isDomainFetched,
 		isLoadingDomain,
+		site,
 	};
 };
