@@ -16,7 +16,7 @@ import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guid
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
@@ -94,32 +94,50 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+	const isCommerceGardenSite = isCommerceGarden( site );
 	const showFlexUsageCard = site.is_wpcom_flex;
+
+	const renderActions = () => {
+		if ( ! site.options?.admin_url ) {
+			return null;
+		}
+
+		if ( isCommerceGardenSite ) {
+			return (
+				<Button
+					ref={ wpAdminButtonRef }
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					icon={ wordpress }
+				>
+					{ isCommerceGardenSite ? __( 'Store dashboard' ) : __( 'WP Admin' ) }
+				</Button>
+			);
+		}
+
+		return (
+			<>
+				<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+				<Button
+					ref={ wpAdminButtonRef }
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					icon={ wordpress }
+				>
+					{ isCommerceGardenSite ? __( 'Store dashboard' ) : __( 'WP Admin' ) }
+				</Button>
+				<SiteActionMenu site={ site } />
+			</>
+		);
+	};
 
 	return (
 		<PageLayout
 			header={
 				<VStack>
-					<PageHeader
-						title={ getSiteDisplayName( site ) }
-						actions={
-							site.options?.admin_url && (
-								<>
-									<StagingSiteSyncDropdown siteSlug={ siteSlug } />
-									<Button
-										ref={ wpAdminButtonRef }
-										__next40pxDefaultSize
-										variant="primary"
-										href={ site.options.admin_url }
-										icon={ wordpress }
-									>
-										{ __( 'WP Admin' ) }
-									</Button>
-									<SiteActionMenu site={ site } />
-								</>
-							)
-						}
-					/>
+					<PageHeader title={ getSiteDisplayName( site ) } actions={ renderActions() } />
 					<SiteOverviewFields site={ site } />
 				</VStack>
 			}
