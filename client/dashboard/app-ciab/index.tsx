@@ -1,5 +1,6 @@
 import boot from '../app/boot';
 import Logo from './logo';
+import './translations';
 import './style.scss';
 
 boot( {
