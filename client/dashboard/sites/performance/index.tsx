@@ -3,6 +3,7 @@ import {
 	sitePerformancePagesQuery,
 	siteSettingsQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -67,6 +68,9 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
+	const performanceUrl =
+		config( 'env_id' ) === 'production' ? url ?? currentPage?.link : currentPage?.link;
+
 	const {
 		hasError,
 		createNewReport,
@@ -75,7 +79,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		getReport,
 		hasCompleted,
 	} = useSitePerformanceData(
-		url ?? currentPage?.link,
+		performanceUrl,
 		currentPage?.wpcom_performance_report_hash,
 		runNewReport
 	);
