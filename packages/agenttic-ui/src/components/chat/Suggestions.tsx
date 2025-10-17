@@ -28,8 +28,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	translateY = '-100%',
 } ) => {
 	const handleSuggestionClick = ( suggestion: Suggestion ) => {
-		if ( onSubmit ) {
+		if ( onSubmit && suggestion.prompt ) {
 			onSubmit( suggestion.prompt );
+		} else if ( suggestion.action ) {
+			suggestion.action();
 		}
 	};
 
@@ -66,9 +68,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 								} }
 							>
 								<Button
-									onClick={ () =>
-										handleSuggestionClick( suggestion )
-									}
+									onClick={ ( e ) => {
+										e.stopPropagation();
+										handleSuggestionClick( suggestion );
+									} }
 									variant={
 										layout === 'vertical'
 											? 'transparent'

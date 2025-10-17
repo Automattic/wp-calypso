@@ -20,7 +20,8 @@ const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
 export interface Suggestion {
 	id: string;
 	label: string;
-	prompt: string;
+	prompt?: string;
+	action?: () => void | Promise< void >;
 }
 
 
