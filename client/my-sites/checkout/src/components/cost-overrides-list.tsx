@@ -319,7 +319,7 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	}
 `;
 
-const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
+const SimplifiedSingleProductAndCostOverridesListWrapper = styled(
 	SingleProductAndCostOverridesListWrapper
 )`
 	padding-left: 24px;
@@ -331,7 +331,7 @@ const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
 	}
 `;
 
-const StreamlinedLineItemPriceWrapper = styled.span`
+const SimplifiedLineItemPriceWrapper = styled.span`
 	display: flex;
 	flex: 0 0 auto;
 	gap: 4px;
@@ -352,7 +352,7 @@ const StreamlinedLineItemPriceWrapper = styled.span`
 	}
 `;
 
-const StreamlinedLineItemPrice = function ( {
+const SimplifiedLineItemPrice = function ( {
 	actualAmount,
 	crossedOutAmount,
 }: {
@@ -360,10 +360,10 @@ const StreamlinedLineItemPrice = function ( {
 	crossedOutAmount?: string;
 } ) {
 	return (
-		<StreamlinedLineItemPriceWrapper>
+		<SimplifiedLineItemPriceWrapper>
 			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
 			<span>{ actualAmount }</span>
-		</StreamlinedLineItemPriceWrapper>
+		</SimplifiedLineItemPriceWrapper>
 	);
 };
 
@@ -421,17 +421,17 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	}
 
 	return (
-		<StreamlinedSingleProductAndCostOverridesListWrapper>
+		<SimplifiedSingleProductAndCostOverridesListWrapper>
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
 				<span className="cost-overrides-list-product__title">{ label }</span>
-				<StreamlinedLineItemPrice
+				<SimplifiedLineItemPrice
 					actualAmount={ actualAmountDisplay }
 					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
 				/>
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
-		</StreamlinedSingleProductAndCostOverridesListWrapper>
+		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }
 
