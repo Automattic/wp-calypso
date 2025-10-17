@@ -43,7 +43,13 @@ function Domains() {
 		],
 	} ) );
 
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { data: domains, isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		domains ?? [],
 		view,
