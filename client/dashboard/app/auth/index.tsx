@@ -30,6 +30,7 @@ async function initializeCurrentUser(): Promise< User > {
 			// - client/lib/user/user.d.ts
 			return window.currentUser as any;
 		}
+		throw new Error( 'Failed to bootstrap user object' );
 	}
 
 	return fetchUser();
