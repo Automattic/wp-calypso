@@ -161,11 +161,7 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-					<VStack
-						className="site-overview-cards--secondary-aside"
-						spacing={ spacing }
-						justify="start"
-					>
+					<VStack spacing={ spacing } justify="start">
 						{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 						{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 							<>
