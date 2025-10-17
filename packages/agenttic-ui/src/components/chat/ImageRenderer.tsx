@@ -31,7 +31,7 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 
 	// Reset selected image when clicking outside the component
 	useEffect( () => {
-		if ( disabled ) {
+		if ( disabled || ! selectedUrl ) {
 			return;
 		}
 
@@ -41,7 +41,7 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 		};
 		window.addEventListener( 'click', resetSelection );
 		return () => window.removeEventListener( 'click', resetSelection );
-	}, [ onSelect, disabled ] );
+	}, [ onSelect, disabled, selectedUrl ] );
 
 	return (
 		<motion.div>
