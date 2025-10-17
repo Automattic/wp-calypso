@@ -1,10 +1,5 @@
 import { Product } from '@automattic/api-core';
-import {
-	domainQuery,
-	mailboxAccountsQuery,
-	productsQuery,
-	siteByIdQuery,
-} from '@automattic/api-queries';
+import { mailboxAccountsQuery, productsQuery, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
@@ -30,6 +25,7 @@ import {
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { FormFieldNames, MutableFormFieldNames, SupportedEmailProvider } from '../entities/types';
+import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
@@ -65,7 +61,7 @@ const AddProfessionalEmail = () => {
 		interval = 'annually';
 	}
 
-	const { data: domain, isFetched: isDomainFetched } = useQuery( domainQuery( domainName ) );
+	const { domain } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { data: products } = useQuery( productsQuery() );
 	const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
@@ -81,12 +77,6 @@ const AddProfessionalEmail = () => {
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
-
-	useEffect( () => {
-		if ( isDomainFetched && ! domain ) {
-			router.navigate( { to: '/emails' } );
-		}
-	}, [ domain, isDomainFetched, router ] );
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 

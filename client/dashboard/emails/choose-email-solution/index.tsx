@@ -1,7 +1,6 @@
 import { TitanMailSlugs, GoogleWorkspaceSlugs } from '@automattic/api-core';
 import { productsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -23,7 +22,7 @@ import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import { isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
-import { useDomains } from '../hooks/use-domains';
+import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 
 import './style.scss';
 
@@ -53,14 +52,7 @@ const getAnnualSavings = (
 };
 
 export default function ChooseEmailSolution() {
-	const router = useRouter();
-	// Extract params from the current match for this route
-	const match = router.state.matches[ router.state.matches.length - 1 ];
-	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
-	const { domain: domainName = '' } = params;
-
-	const { domains, isLoading: isLoadingDomains } = useDomains();
-	const domain = domains.find( ( d ) => d.domain === domainName );
+	const { domain } = useDomainFromUrlParam();
 
 	const [ billingInterval, setBillingInterval ] = useState( 'annually' as BillingInterval );
 
