@@ -31,7 +31,7 @@ const SiteChangeAddressContent = lazy(
 
 const noop = () => {};
 
-export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
+export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
@@ -146,11 +146,12 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
 				callback: ( domains: DomainSummary[] ) => {
+					const domain = domains[ 0 ];
+					const site = sites?.find( ( s ) => s.ID === domain.blog_id );
+
 					if ( ! site ) {
 						return;
 					}
-
-					const domain = domains[ 0 ];
 					setPrimaryDomainMutation.mutate(
 						{ siteId: site.ID, domain: domain.domain },
 						{
@@ -178,6 +179,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					);
 				},
 				isEligible: ( item: DomainSummary ) => {
+					const site = sites?.find( ( s ) => s.ID === item.blog_id );
 					return !! site && canSetAsPrimary( { domain: item, site, user } );
 				},
 				disabled: setPrimaryDomainMutation.isPending,
@@ -222,10 +224,12 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
+					const site = sites?.find( ( s ) => s.ID === item.blog_id );
 					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
 				},
-				RenderModal: ( { items, closeModal = noop } ) =>
-					site ? (
+				RenderModal: ( { items, closeModal = noop } ) => {
+					const site = sites?.find( ( s ) => s.ID === items[ 0 ].blog_id );
+					return site ? (
 						<Suspense fallback={ null }>
 							<SiteChangeAddressContent
 								site={ site }
@@ -233,7 +237,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 								onClose={ closeModal }
 							/>
 						</Suspense>
-					) : null,
+					) : null;
+				},
 			},
 			{
 				id: 'manage-auto-renew',
@@ -245,7 +250,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 		],
 		[
 			user,
-			site,
+			sites,
 			router,
 			purchases,
 			setPrimaryDomainMutation,
