@@ -16,7 +16,7 @@ import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 function initialize() {
-	const steps = [ STEPS.UNIFIED_DOMAINS, STEPS.USE_MY_DOMAIN, STEPS.UNIFIED_PLANS ];
+	const steps = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.UNIFIED_PLANS ];
 
 	return stepsWithRequiredLogin( steps );
 }
@@ -62,7 +62,7 @@ const wooHosted: FlowV2< typeof initialize > = {
 		const submittedDomains = useRef( false );
 
 		function goBack() {
-			if ( currentStep === STEPS.UNIFIED_DOMAINS.slug ) {
+			if ( currentStep === STEPS.DOMAIN_SEARCH.slug ) {
 				return window.location.assign( returnUrl );
 			}
 
@@ -71,11 +71,11 @@ const wooHosted: FlowV2< typeof initialize > = {
 					return window.location.assign( returnUrl );
 				}
 
-				return navigate( STEPS.UNIFIED_DOMAINS.slug );
+				return navigate( STEPS.DOMAIN_SEARCH.slug );
 			}
 
 			if ( currentStep === STEPS.USE_MY_DOMAIN.slug ) {
-				return navigate( STEPS.UNIFIED_DOMAINS.slug );
+				return navigate( STEPS.DOMAIN_SEARCH.slug );
 			}
 
 			return window.location.assign( returnUrl );
@@ -83,7 +83,7 @@ const wooHosted: FlowV2< typeof initialize > = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case STEPS.UNIFIED_DOMAINS.slug: {
+				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
 					}
