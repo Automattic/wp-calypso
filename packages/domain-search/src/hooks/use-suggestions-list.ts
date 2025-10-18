@@ -68,17 +68,17 @@ export const useSuggestionsList = () => {
 		isLoadingQueryAvailability ||
 		isLoadingAvailablePremiumDomains;
 
-	// Add FQDN availability to the suggestions list if it isn't already there
-	if ( fqdnAvailability ) {
-		const isFQDNAlreadyInSuggestions = suggestions.some(
-			( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
-		);
-		if ( ! isFQDNAlreadyInSuggestions ) {
-			suggestions.push( convertAvailabilityToSuggestion( fqdnAvailability ) );
-		}
-	}
-
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
+		// Add FQDN availability to the suggestions list if it isn't already there
+		if ( fqdnAvailability ) {
+			const isFQDNAlreadyInSuggestions = suggestions.some(
+				( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
+			);
+			if ( ! isFQDNAlreadyInSuggestions ) {
+				suggestions.push( convertAvailabilityToSuggestion( fqdnAvailability ) );
+			}
+		}
+
 		return partitionSuggestions( {
 			suggestions: suggestions
 				.filter( ( { domain_name: suggestion, is_premium } ) => {
