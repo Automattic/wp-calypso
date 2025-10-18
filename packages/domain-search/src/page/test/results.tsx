@@ -176,7 +176,7 @@ describe( 'ResultsPage', () => {
 	} );
 
 	describe( 'FQDN suggestion', () => {
-		it( 'shows FQDN suggestion if it is available, even if it is not in the suggestions list', async () => {
+		it( 'adds FQDN suggestion to the suggestions list if the availability query is successful and it is available, even if it is not in the suggestions list', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-available.com' },
 				suggestions: [
@@ -202,6 +202,59 @@ describe( 'ResultsPage', () => {
 			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
 			expect( screen.queryByTitle( 'test-available.blog' ) ).toBeInTheDocument();
 			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not add FQDN suggestion to the suggestions list if the availability query is successful but it is not available', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-available.blog' } ),
+					buildSuggestion( { domain_name: 'test-available.org' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-unavailable.com',
+					status: DomainAvailabilityStatus.NOT_AVAILABLE,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unavailable.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.blog' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not add FQDN suggestion to the suggestions list if the availability query fails', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-available.blog' } ),
+					buildSuggestion( { domain_name: 'test-available.org' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: new Error( 'Test error' ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unavailable.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.blog' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'removes FQDN suggestion from the list if availability query is not successful', async () => {
