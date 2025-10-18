@@ -176,7 +176,7 @@ describe( 'ResultsPage', () => {
 	} );
 
 	describe( 'FQDN suggestion', () => {
-		it( 'adds FQDN suggestion to the suggestions list if the availability query is successful and it is available, even if it is not in the suggestions list', async () => {
+		it( 'adds FQDN suggestion to the suggestions list if the availability query is successful and it is available', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-available.com' },
 				suggestions: [
