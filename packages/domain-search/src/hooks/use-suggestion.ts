@@ -59,8 +59,8 @@ export const useSuggestion = ( domainName: string ) => {
 		...queries.domainSuggestions( query ),
 	} );
 
-	// Add FQDN availability to the suggestions list if it's an exact match
-	if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
+	// Add FQDN availability to the suggestions list
+	if ( suggestions && fqdnAvailability ) {
 		suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
 	}
 
