@@ -1,5 +1,6 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import AddOnCard from 'calypso/sites/components/add-ons/add-ons-card';
 import StorageAddOnCard from './storage-add-ons-card';
 import type { AddOnMeta } from '@automattic/data-stores';
@@ -31,9 +32,11 @@ const AddOnsGrid = ( {
 	siteId,
 	storageOnly,
 }: Props ) => {
-	const nonStorageAddOns = storageOnly
-		? []
-		: addOns.filter( ( addOn ) => addOn?.productSlug !== PRODUCT_1GB_SPACE );
+	const nonStorageAddOns = useMemo(
+		() =>
+			storageOnly ? [] : addOns.filter( ( addOn ) => addOn?.productSlug !== PRODUCT_1GB_SPACE ),
+		[ addOns, storageOnly ]
+	);
 	return (
 		<Container>
 			{ nonStorageAddOns.map( ( addOn ) =>
