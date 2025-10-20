@@ -36,16 +36,18 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
-	let sitesByBlogId: Record< number, Site > = {};
-	if ( sites ) {
-		sitesByBlogId = sites.reduce(
+	const sitesByBlogId: Record< number, Site > = useMemo( () => {
+		if ( ! sites ) {
+			return {};
+		}
+		return sites.reduce(
 			( acc, site ) => {
 				acc[ site.ID ] = site;
 				return acc;
 			},
 			{} as Record< number, Site >
 		);
-	}
+	}, [ sites ] );
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
