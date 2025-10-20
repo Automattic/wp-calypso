@@ -9,7 +9,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
 		annotation: {
 			type: 'flowchart',
-			description: 'https://flowchart.fun/p/colossal-approval-guide',
+			description:
+				'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=toggle#pako:eNqNks1q20AQgF9lUCG0UJfIsR3bgUItOxAwTcgPPdQ5KKt1tVTaUXZXFUrINQ-QR8yTZOSVJTXGYaWLWH3zzezMPHoMI-5NvXWCBYtDZeB6tpJAj_R_r7yzNEM6-1xkvTBKhQR7wJWGpdDmy8q7hV4PrrmmwALp-zvIPgVe5XfahOwvvD6_wGXeBlJE7e9vaFHKNk-JuQLJC51w02UJ2sBa5wQvJP2zbJPm5nLZ0ERZNdOtmiFFSQNrhWkT1iZg2tY-ooibLMEwggeRwVokvK14ZJnjXWshTAwH9zmakwDlP-qPQAk6T9NQlfa81RxbzZg0BBsh806Osf05-TDHj9zEqCANs0zIP-_9fjOSc8mtzj8k3y9U0YXiWn9j1IP9g_EP66BqA5bcHIQZ6hNNzZCRbbsWplOyf0TcTzR0X8UB10DVqhIyFFR1zBX_b0tixbdFDdpLBvaSHemghoYVBEVILoMgdqc53R0nlb7dl-3BcLttK1lviSkTXjWLZpxMPwXjxSiYfGWYoJreJZWti_Vr7HTz7MOqPbXcbDZfnM72cdWGOvmYdvLRZrroaPOcbGM328TNRuvkpPN9R99R4wvm8_5-buDoG35QX_V6T2_qKqlu',
 		},
 	},
 	() => {
