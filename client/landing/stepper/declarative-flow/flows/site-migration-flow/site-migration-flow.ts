@@ -188,10 +188,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( userHasOtherWPComSites ) {
-						return navigate( paths.sitePickerPath( { from, platform } ) );
+						return navigate( paths.sitePickerPath( { from, platform, ssh: 'true' } ) );
 					}
 
-					return navigate( paths.siteCreationPath( { from, platform } ) );
+					return navigate( paths.siteCreationPath( { from, platform, ssh: 'true' } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
