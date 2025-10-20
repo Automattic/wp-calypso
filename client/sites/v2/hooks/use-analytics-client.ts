@@ -22,7 +22,7 @@ export const useAnalyticsClient = ( router?: AnyRouter, currentPath?: string ) =
 				dispatch( recordPageView( url, title ) );
 			},
 		} ),
-		[ router, dispatch ]
+		[ router, currentPath, dispatch ]
 	);
 
 	return analyticsClient;
