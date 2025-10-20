@@ -27,18 +27,20 @@ function Domains() {
 		type: 'table',
 		filters: [
 			{
-				field: 'subtype',
+				field: 'owner',
 				operator: 'isAny',
-				value: [
-					DomainSubtype.DOMAIN_REGISTRATION,
-					DomainSubtype.DOMAIN_TRANSFER,
-					DomainSubtype.DOMAIN_CONNECTION,
-				],
+				value: [ 'owned-by-me' ],
 			},
 		],
 	} ) );
 
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { data: domains, isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		domains ?? [],
 		view,

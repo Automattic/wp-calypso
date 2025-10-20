@@ -39,7 +39,11 @@ function AnalyticsProviderWithClient( {
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
-				recordTracksEvent( eventName, properties );
+				const path = router.basepath + router.state.matches.at( -1 )?.fullPath;
+				recordTracksEvent( eventName, {
+					path,
+					...properties,
+				} );
 			},
 
 			// The title property is used by Google Analytics not Tracks. The hosting
@@ -51,7 +55,7 @@ function AnalyticsProviderWithClient( {
 				} );
 			},
 		} ),
-		[]
+		[ router ]
 	);
 
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;

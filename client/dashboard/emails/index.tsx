@@ -9,6 +9,7 @@ import { domainHasEmail } from '../utils/domain';
 import { persistViewToUrl, useSetInitialViewFromUrl } from '../utils/persist-view-to-url';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
+import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_EMAILS_VIEW, getEmailFields, useEmailActions } from './dataviews';
 import { useDomains } from './hooks/use-domains';
 import { Layout } from './layout';
@@ -55,17 +56,36 @@ function Emails() {
 			return [];
 		}
 		return domainsWithEmails.flatMap( ( domain, index ) => {
-			const mailboxes = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
+			const emailAccounts = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
 
-			const skipFilterForwards = mailboxes.length === 1;
+			const skipFilterForwards = emailAccounts.length === 1;
 
-			return mailboxes
+			return emailAccounts
 				.filter( ( account ) => skipFilterForwards || account.account_type !== 'email_forwarding' )
 				.flatMap( ( account ) =>
 					account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account, domain ) )
 				)
 				.filter( ( email ) => email.canUserManage ) as Email[];
 		} );
+	}, [ domainsWithEmails, mailboxQueries ] );
+
+	// Gather domains with unused mailbox warnings
+	const domainsWithUnusedMailbox: string[] = useMemo( () => {
+		if ( ! domainsWithEmails.length ) {
+			return [];
+		}
+		return domainsWithEmails.reduce< string[] >( ( acc, domain, index ) => {
+			const emailAccounts = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
+			const hasUnusedWarning = emailAccounts.some( ( account ) =>
+				( account.warnings ?? [] ).some(
+					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
+				)
+			);
+			if ( hasUnusedWarning ) {
+				acc.push( domain.domain );
+			}
+			return acc;
+		}, [] );
 	}, [ domainsWithEmails, mailboxQueries ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
@@ -100,6 +120,9 @@ function Emails() {
 
 	return (
 		<Layout>
+			{ ! isLoadingDomains && ! isLoadingMailboxes && (
+				<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
+			) }
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }

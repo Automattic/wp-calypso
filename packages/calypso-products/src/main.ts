@@ -44,6 +44,7 @@ import {
 	TYPE_STARTER,
 	TYPE_JETPACK_GROWTH,
 	WOO_EXPRESS_PLANS,
+	WOO_HOSTED_PLANS,
 } from './constants';
 import {
 	resolveFeatureGroupsForComparisonGrid,
@@ -181,6 +182,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isWooHostedPlan( planKey ) ) {
+		return 'is-woo-hosted-plan';
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
@@ -411,6 +416,10 @@ export function isWooExpressSmallPlan( planSlug: string ): boolean {
 
 export function isWooExpressPlan( planSlug: string ): boolean {
 	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isWooHostedPlan( planSlug: string ): boolean {
+	return ( WOO_HOSTED_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
