@@ -1,4 +1,5 @@
 import { Domain, EmailCost, Product } from '@automattic/api-core';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -206,17 +207,36 @@ export const PricingNotice = ( {
 
 	let message;
 	if ( hasOffer && ! showEmailPurchaseDisabledMessage ) {
-		message = sprintf(
-			// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
-			__(
-				'Add as many mailboxes as you need. Each one will renew at the regular price of %(cost)s per %(termLocalized)s (excl. taxes) when your free trial ends on %(endDate)s.'
-			),
-			{
-				cost: product.combined_cost_display,
-				termLocalized: product.product_term_localized,
-				endDate: formatDate( endDate, locale, { dateStyle: 'long' } ),
-			}
-		);
+		if ( isTitanMonthlyProduct( product ) ) {
+			message = sprintf(
+				// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
+				__(
+					'Try free today - renews at the regular price of %(cost)s per %(termLocalized)s (excl. taxes) when your free trial ends on %(endDate)s.'
+				),
+				{
+					cost: product.combined_cost_display,
+					termLocalized: product.product_term_localized,
+					endDate: formatDate( endDate, locale, { dateStyle: 'long' } ),
+				}
+			);
+		} else {
+			message = sprintf(
+				// Translators: %(firstRenewalPrice)s is the price the product gets renewed at, %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
+				__(
+					'Try free today - first renewal at %(firstRenewalPrice)s (excl. taxes) after your free trial ends on %(endDate)s, regular price %(cost)s per %(termLocalized)s (excl. taxes).'
+				),
+				{
+					firstRenewalPrice: formatCurrency(
+						( ( product.cost ?? 0 ) * 9 ) / 12,
+						product.currency_code,
+						{ stripZeros: true }
+					),
+					cost: product.combined_cost_display,
+					termLocalized: product.product_term_localized,
+					endDate: formatDate( endDate, locale, { dateStyle: 'long' } ),
+				}
+			);
+		}
 	} else {
 		message = sprintf(
 			// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year").
