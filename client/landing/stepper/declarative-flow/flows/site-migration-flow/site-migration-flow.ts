@@ -152,7 +152,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 
 					if ( isSSHMigrationAvailable ) {
-<<<<<<< HEAD
 						if ( hasDestinationSite && canInstallPlugins ) {
 							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
 						}
@@ -166,17 +165,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 
 						return navigate( paths.siteCreationPath( { from, platform, ssh: 'true' } ) );
-=======
-						if ( hasDestinationSite ) {
-							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
-						}
-
-						if ( userHasOtherWPComSites ) {
-							return navigate( paths.sitePickerPath( { from, platform } ) );
-						}
-
-						return navigate( paths.siteCreationPath( { from, platform } ) );
->>>>>>> 77a67dec0a5 (SSH Migration: Add placeholder for the steps)
 					}
 
 					if ( hasDestinationSite ) {
