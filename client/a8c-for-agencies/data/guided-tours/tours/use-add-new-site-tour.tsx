@@ -11,7 +11,7 @@ export default function useAddNewSiteTour() {
 			description: (
 				<>
 					{ translate(
-						'The Add sites menu is your hub. Add sites you manage or create new ones. All sites will show in this site management view.'
+						'The Add sites menu is your hub2. Add sites you manage or create new ones. All sites will show in this site management view.'
 					) }
 				</>
 			),
