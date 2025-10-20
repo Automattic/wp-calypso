@@ -160,7 +160,7 @@ const AddProfessionalEmail = () => {
 		);
 
 		const checkoutPath = getEmailCheckoutPath(
-			domainName,
+			site?.slug || '',
 			domain.domain,
 			router.state.location.pathname,
 			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
@@ -195,11 +195,12 @@ const AddProfessionalEmail = () => {
 			header={ <PageHeader /> }
 			size="small"
 			notices={
-				showEmailPurchaseDisabledMessage && (
+				// showEmailPurchaseDisabledMessage && (
+				true && (
 					<EmailNonDomainOwnerNotice
 						selectedSite={ site }
 						domain={ domain }
-						source="email-comparison"
+						// source="email-comparison"
 					/>
 				)
 			}
