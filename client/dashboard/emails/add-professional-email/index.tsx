@@ -195,12 +195,11 @@ const AddProfessionalEmail = () => {
 			header={ <PageHeader /> }
 			size="small"
 			notices={
-				// showEmailPurchaseDisabledMessage && (
-				true && (
+				showEmailPurchaseDisabledMessage && (
 					<EmailNonDomainOwnerNotice
 						selectedSite={ site }
 						domain={ domain }
-						// source="email-comparison"
+						source="email-comparison"
 					/>
 				)
 			}
