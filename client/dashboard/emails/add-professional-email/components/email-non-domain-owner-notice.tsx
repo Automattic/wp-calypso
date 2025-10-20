@@ -2,7 +2,6 @@ import { Domain, Site } from '@automattic/api-core';
 import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useDomainOwnerUserName } from '../../../domains/hooks/use-domain-owner-username';
 import {
 	buildQueryString,
 	getEmailManagementPath,
@@ -20,7 +19,7 @@ type EmailNonDomainOwnerMessageProps = {
 export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProps ) => {
 	const { domain, selectedSite, source } = props;
 
-	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
+	const ownerUserName = domain?.owner;
 
 	const isPrivacyAvailable = domain?.privacy_available;
 	const buildLoginUrl = () => {
@@ -70,7 +69,6 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 				),
 				placeholders
 			),
-
 			elements
 		);
 	} else {
