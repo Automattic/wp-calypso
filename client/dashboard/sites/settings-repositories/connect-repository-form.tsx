@@ -27,7 +27,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef, forwardRef } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -145,53 +145,41 @@ const RepositorySelector = ( {
 
 type GithubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
 	onAddGithubAccount: () => void;
-	shouldRestoreFocus: boolean;
 };
 
-const GithubAccountSelector = ( {
-	field,
-	onChange,
-	data,
-	onAddGithubAccount,
-	shouldRestoreFocus,
-}: GithubAccountSelectorProps ) => {
-	const { id, getValue } = field;
-	const selectRef = useRef< HTMLSelectElement | null >( null );
+const GithubAccountSelector = forwardRef< HTMLSelectElement, GithubAccountSelectorProps >(
+	function GithubAccountSelectorInner( { field, onChange, data, onAddGithubAccount }, selectRef ) {
+		const { id, getValue } = field;
 
-	useEffect( () => {
-		if ( selectRef.current && shouldRestoreFocus ) {
-			selectRef.current.focus();
-		}
-	}, [ selectRef, shouldRestoreFocus ] );
-
-	return (
-		<VStack spacing={ 2 }>
-			<HStack justify="space-between" alignment="center">
-				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
-					{ __( 'GitHub account' ) }
-				</Text>
-				<Button variant="link" onClick={ onAddGithubAccount }>
-					{ __( 'Add GitHub account' ) }
-				</Button>
-			</HStack>
-			<SelectControl
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				aria-label={ __( 'GitHub account' ) }
-				value={ getValue?.( { item: data } ) }
-				onChange={ ( value ) => {
-					onChange( { [ id ]: Number( value ) } );
-				} }
-				options={
-					field.elements?.length
-						? field.elements
-						: [ { label: __( 'Select a GitHub account' ), value: '' } ]
-				}
-				ref={ selectRef }
-			/>
-		</VStack>
-	);
-};
+		return (
+			<VStack spacing={ 2 }>
+				<HStack justify="space-between" alignment="center">
+					<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
+						{ __( 'GitHub account' ) }
+					</Text>
+					<Button variant="link" onClick={ onAddGithubAccount }>
+						{ __( 'Add GitHub account' ) }
+					</Button>
+				</HStack>
+				<SelectControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					aria-label={ __( 'GitHub account' ) }
+					value={ getValue?.( { item: data } ) }
+					onChange={ ( value ) => {
+						onChange( { [ id ]: Number( value ) } );
+					} }
+					options={
+						field.elements?.length
+							? field.elements
+							: [ { label: __( 'Select a GitHub account' ), value: '' } ]
+					}
+					ref={ selectRef }
+				/>
+			</VStack>
+		);
+	}
+);
 
 const AutomatedToggle = ( {
 	field,
@@ -234,7 +222,6 @@ export const ConnectRepositoryForm = ( {
 		isLoading: isLoadingInstallations,
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
-	const [ shouldRestoreInstallationFocus, setShouldRestoreInstallationFocus ] = useState( false );
 	const { installGithub } = useInstallGithub();
 
 	const selectedInstallation: GithubInstallation | undefined = useMemo( () => {
@@ -316,8 +303,9 @@ export const ConnectRepositoryForm = ( {
 
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
+	const ghAccountRef = useRef< HTMLSelectElement | null >( null );
+
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
-		let shouldRestoreFocus = false;
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
 
@@ -325,7 +313,9 @@ export const ConnectRepositoryForm = ( {
 				'selectedInstallationId' in updates &&
 				updates.selectedInstallationId !== prev.selectedInstallationId
 			) {
-				shouldRestoreFocus = true;
+				setTimeout( () => {
+					ghAccountRef.current && ghAccountRef.current.focus();
+				}, 0 );
 			}
 
 			if ( 'targetDir' in updates ) {
@@ -373,7 +363,6 @@ export const ConnectRepositoryForm = ( {
 
 			return newFormData;
 		} );
-		setShouldRestoreInstallationFocus( shouldRestoreFocus );
 	};
 
 	useEffect( () => {
@@ -558,7 +547,7 @@ export const ConnectRepositoryForm = ( {
 						<GithubAccountSelector
 							{ ...props }
 							onAddGithubAccount={ handleAddGithubAccount }
-							shouldRestoreFocus={ shouldRestoreInstallationFocus }
+							ref={ ghAccountRef }
 						/>
 					);
 				},
@@ -611,7 +600,6 @@ export const ConnectRepositoryForm = ( {
 		repositoryHelpText,
 		branchOptions,
 		handleAddGithubAccount,
-		shouldRestoreInstallationFocus,
 		isLoadingBranches,
 		allBranchesConnected,
 	] );
