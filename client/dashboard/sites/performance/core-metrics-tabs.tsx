@@ -4,7 +4,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Text } from '../../components/text';
 import { metricsNames, mapThresholdsToStatus } from '../../utils/site-performance';
-import { OverallScore, MetricScore } from './core-metrics-score';
+import { MetricScore } from './core-metrics-score';
 import type { SitePerformanceReport } from '@automattic/api-core';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
@@ -37,17 +37,6 @@ const CoreMetricsTabs = ( {
 
 	return (
 		<Tabs.TabList style={ { maxWidth: '100%' } }>
-			<Tab tabId="overall_score">
-				<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
-					{ compact ? metricsNames.overall_score.shortName : metricsNames.overall_score.name }
-				</Text>
-				<OverallScore
-					lineHeight="32px"
-					status={ mapThresholdsToStatus( 'overall_score', report.overall_score ) }
-					size={ isSmall ? 20 : 16 }
-					value={ report.overall_score }
-				/>
-			</Tab>
 			{ Object.entries( metricsNames ).map(
 				( [ key, { name: displayName, shortName: shortDisplayName } ] ) => {
 					// Overall score is displayed in the first card

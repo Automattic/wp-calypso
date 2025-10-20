@@ -21,7 +21,7 @@ export default function CoreMetrics( {
 	report: SitePerformanceReport;
 	onRecommendationsFilterChange: ( filter: Metrics ) => void;
 } ) {
-	const [ activeTab, setActiveTab ] = useState< Metrics >( 'overall_score' );
+	const [ activeTab, setActiveTab ] = useState< Metrics >( 'fcp' );
 	const isDesktop = useViewportMatch( 'medium' );
 
 	return (

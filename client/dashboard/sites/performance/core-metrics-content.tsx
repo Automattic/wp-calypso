@@ -12,7 +12,7 @@ import {
 import CoreMetricsChart from './core-metrics-chart';
 import CoreMetricsExplanation from './core-metrics-explanation';
 import { CoreMetricsRecommendLink } from './core-metrics-recommend-link';
-import { OverallScore, MetricScore } from './core-metrics-score';
+import { MetricScore } from './core-metrics-score';
 import { CoreMetricsStatusBadge } from './core-metrics-status-badge';
 import { filterRecommendations } from './performance-insights';
 import type { SitePerformanceReport } from '@automattic/api-core';
@@ -36,7 +36,6 @@ export default function CoreMetricsContent( {
 	const value = report[ activeTab ];
 	const status = mapThresholdsToStatus( activeTab as Metrics, value );
 
-	const isOverall = activeTab === 'overall_score';
 	return (
 		<VStack spacing={ 4 }>
 			<HStack wrap spacing={ 4 } justify="space-between" alignment="flex-start">
@@ -48,16 +47,13 @@ export default function CoreMetricsContent( {
 						<CoreMetricsStatusBadge value={ status } />
 					</HStack>
 
-					{ isOverall ? (
-						<OverallScore size={ 32 } status={ status } value={ value } />
-					) : (
-						<MetricScore
-							size={ 32 }
-							metric={ activeTab as Metrics }
-							status={ status }
-							value={ value }
-						/>
-					) }
+					<MetricScore
+						size={ 32 }
+						metric={ activeTab as Metrics }
+						status={ status }
+						value={ value }
+					/>
+
 					<CoreMetricsExplanation activeTab={ activeTab } />
 				</VStack>
 				{ numberOfAuditsForMetric > 0 && (
