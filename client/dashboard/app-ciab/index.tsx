@@ -9,16 +9,8 @@ boot( {
 	Logo,
 	supports: {
 		overview: false,
-		sites: {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: false,
-			emails: false,
-		},
+		sites: false,
+		sitesCIAB: true,
 		domains: true,
 		emails: true,
 		themes: false,
@@ -41,4 +33,5 @@ boot( {
 			href: '/setup/ai-site-builder-spec',
 		},
 	},
+	optIn: false,
 } );

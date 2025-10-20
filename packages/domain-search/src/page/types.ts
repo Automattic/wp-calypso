@@ -9,6 +9,7 @@ import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
 	DomainAvailability,
+	DomainAvailabilityStatus,
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
@@ -48,14 +49,18 @@ export interface DomainSearchEvents {
 		isPremium: boolean,
 		rootVendor: string
 	) => void;
-	onQueryAvailabilityCheck: ( status: string, domainName: string, responseTime: number ) => void;
+	onQueryAvailabilityCheck: (
+		status: DomainAvailabilityStatus,
+		domainName: string,
+		responseTime: number
+	) => void;
 	onDomainAddAvailabilityPreCheck: (
 		availabilityStatus: DomainAvailability,
 		domainName: string,
 		rootVendor: string
 	) => void;
 	onFilterApplied: ( filter: FilterState ) => void;
-	onFilterReset: ( filter: FilterState, keysToReset?: string[] ) => void;
+	onFilterReset: ( filter: FilterState, keysToReset: string[] ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,

@@ -31,12 +31,11 @@ export default function HostingFeatureGatedWithCallout( {
 	return (
 		<HostingFeatureGate
 			{ ...props }
-			renderUpsellComponent={ ( { onClick } ) => {
+			renderUpsellComponent={ () => {
 				const callout = (
 					<UpsellCallout
 						site={ site }
 						tracksFeatureId={ tracksFeatureId }
-						onClick={ onClick }
 						upsellIcon={ upsellIcon }
 						upsellImage={ upsellImage }
 						upsellTitle={ upsellTitle }

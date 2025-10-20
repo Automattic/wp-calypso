@@ -20,7 +20,6 @@ import {
 	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/legacy/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -247,7 +246,6 @@ class DomainRegistrationSuggestion extends Component {
 			pendingCheckSuggestion,
 			premiumDomain,
 			isCartPendingUpdateDomain,
-			flowName,
 			temporaryCart,
 			domainRemovalQueue,
 		} = this.props;
@@ -283,20 +281,6 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
-
-			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-				buttonStyles = { ...buttonStyles, borderless: true };
-
-				buttonContent = translate( '{{checkmark/}} Selected', {
-					context: 'Domain is already added to shopping cart',
-					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
-				} );
-				ariaLabel = translate( 'Selected domain %(domainName)s', {
-					args: { domainName: suggestion.domain_name },
-					context:
-						'Accessible label for domain that is selected. %(domainName)s is the domain name.',
-				} );
-			}
 		} else {
 			const shouldUpgrade =
 				! isSignupStep &&
@@ -349,10 +333,6 @@ class DomainRegistrationSuggestion extends Component {
 			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name !== domain )
 		) {
 			buttonStyles = { ...buttonStyles, disabled: true };
-		}
-
-		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-			buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
 		}
 
 		return {

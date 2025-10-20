@@ -9,7 +9,7 @@ import {
 	DomainTransferStatus,
 } from '@automattic/api-core';
 import {
-	domainsQuery,
+	domainQuery,
 	purchaseQuery,
 	userPurchaseSetAutoRenewQuery,
 	siteDifmWebsiteContentQuery,
@@ -809,11 +809,13 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 	const locale = useLocale();
-	const domains = useQuery( domainsQuery() ).data;
+	const { data: domain } = useQuery( {
+		...domainQuery( purchase?.meta ?? '' ),
+		enabled: Boolean( purchase.meta ),
+	} );
 	if ( purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ) {
 		return null;
 	}
-	const domain = domains?.find( ( domain ) => domain.domain === purchase.meta );
 	if ( ! domain ) {
 		return null;
 	}

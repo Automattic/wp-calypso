@@ -50,7 +50,7 @@ const fields: Field< OptInFormData >[] = [
 	},
 ];
 
-export default function PreferencesLanguageForm() {
+export default function PreferencesOptInForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );

@@ -340,8 +340,7 @@ export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartPro
 
 export function filterCostOverridesForLineItem(
 	product: ResponseCartProduct,
-	translate: ReturnType< typeof useTranslate >,
-	shouldShowComparison?: boolean
+	translate: ReturnType< typeof useTranslate >
 ): LineItemCostOverrideForDisplay[] {
 	const costOverrides = product?.cost_overrides ?? [];
 
@@ -352,13 +351,7 @@ export function filterCostOverridesForLineItem(
 			.filter( ( costOverride ) => costOverride.override_code !== 'coupon-discount' )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
-				makeIntroductoryOfferCostOverrideUnique(
-					costOverride,
-					product,
-					translate,
-					true,
-					shouldShowComparison
-				)
+				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true, true )
 			)
 			.map( ( costOverride ) => {
 				// Introductory offers which are renewals may have a prorated

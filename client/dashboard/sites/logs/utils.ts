@@ -7,6 +7,23 @@ import type { PHPLog, ServerLog } from '@automattic/api-core';
 type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;
+const SECONDS_PER_DAY = 86_400;
+
+/**
+ * Helper function to convert a date to epoch seconds (UTC).
+ */
+const toUtcSecForSiteClock = (
+	d: Date,
+	hours: number,
+	minutes: number,
+	seconds: number,
+	offsetHours: number
+) =>
+	Math.floor(
+		( Date.UTC( d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes, seconds ) -
+			offsetHours * HOUR_MS ) /
+			1000
+	);
 
 /**
  * Convert a local date range to inclusive epoch-second boundaries (UTC).
@@ -28,13 +45,9 @@ export function buildTimeRangeInSeconds(
 		}
 	}
 	if ( typeof gmtOffset === 'number' ) {
-		const startLocal = startOfDay( start ).getTime();
-		const endLocal = endOfDay( end ).getTime();
-		const shiftMs = gmtOffset * HOUR_MS;
-		return {
-			startSec: Math.floor( ( startLocal - shiftMs ) / 1000 ),
-			endSec: Math.floor( ( endLocal - shiftMs ) / 1000 ),
-		};
+		const startSec = toUtcSecForSiteClock( start, 0, 0, 0, gmtOffset );
+		const endSec = toUtcSecForSiteClock( end, 0, 0, 0, gmtOffset ) + SECONDS_PER_DAY - 1;
+		return { startSec, endSec };
 	}
 	// last-resort fallback: browser local
 	const startSec = Math.floor( startOfDay( start ).getTime() / 1000 );

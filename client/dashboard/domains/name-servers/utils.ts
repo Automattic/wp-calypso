@@ -15,11 +15,8 @@ export const shouldShowUpsellNudge = ( user: User, domain: Domain, site?: Site )
 		! user.meta.data.flags.active_flags.includes(
 			'calypso_allow_nonprimary_domains_without_plan'
 		) ||
-		! domain.points_to_wpcom ||
-		domain.wpcom_domain ||
 		domain.primary_domain ||
-		domain.is_domain_only_site ||
-		domain.is_wpcom_staging_domain
+		domain.is_domain_only_site
 	) {
 		return false;
 	}

@@ -113,6 +113,7 @@ export interface Agency {
 	};
 	approval_status: ApprovalStatus | '';
 	created_at: string;
+	billing_system?: 'billingdragon' | 'legacy';
 }
 
 export type UserBillingType = 'legacy' | 'billingdragon';

@@ -84,32 +84,34 @@ export const AdvancedWorkflowStyle = ( {
 	};
 
 	return (
-		<VStack spacing={ 4 }>
-			<SelectControl
-				label={ __( 'Deployment workflow' ) }
-				value={ workflowPath ?? '' }
-				onChange={ onChooseWorkflow }
-				disabled={ isLoading }
-				options={ workflowOptions }
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-			/>
+		<VStack spacing={ 6 }>
+			<VStack spacing={ 2 }>
+				<SelectControl
+					label={ __( 'Deployment workflow' ) }
+					value={ workflowPath ?? '' }
+					onChange={ onChooseWorkflow }
+					disabled={ isLoading }
+					options={ workflowOptions }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+				/>
 
-			<Text variant="muted">
-				{ createInterpolateElement(
-					__(
-						'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
-					),
-					{
-						a: (
-							<ExternalLink
-								href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
-								children={ null }
-							/>
+				<Text variant="muted">
+					{ createInterpolateElement(
+						__(
+							'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
 						),
-					}
-				) }
-			</Text>
+						{
+							a: (
+								<ExternalLink
+									href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
+									children={ null }
+								/>
+							),
+						}
+					) }
+				</Text>
+			</VStack>
 
 			{ isLoading ? null : getContent() }
 		</VStack>

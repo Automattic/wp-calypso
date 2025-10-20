@@ -34,11 +34,7 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
 
 	function toggleHelpCenter() {
-		setShowHelpCenter(
-			! isShowingHelpCenter,
-			flowCustomOptions?.hasPremiumSupport,
-			flowCustomOptions
-		);
+		setShowHelpCenter( ! isShowingHelpCenter, flowCustomOptions );
 		if ( flowCustomOptions?.hasPremiumSupport ) {
 			setNewMessagingChat( {
 				initialMessage: userFieldMessage || '',
