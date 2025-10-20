@@ -39,7 +39,27 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		config.isEnabled( 'help-center-menu-panel' ) &&
 		queryParams[ 'help-center-menu-panel' ] === 'true';
 
-	const handleToggleHelpCenter = ( destination = null ) => {
+	const handleToggleHelpCenter = () => {
+		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		setShowHelpCenter( ! helpCenterVisible );
+	};
+
+	const handleMenuClick = ( destination, isExternal = false ) => {
+		recordTracksEvent( `calypso_menu_panel_click`, {
+			location: 'help-center',
+			section: sectionName,
+			destination,
+		} );
+
+		if ( isExternal ) {
+			window.open( destination, '_blank', 'noopener,noreferrer' );
+		}
+
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
@@ -47,16 +67,8 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			destination,
 		} );
 
-		if ( destination ) {
-			setNavigateToRoute( destination );
-		}
+		setNavigateToRoute( destination );
 		setShowHelpCenter( ! helpCenterVisible );
-	};
-
-	const handleExternalLink = ( url ) => {
-		return () => {
-			window.open( url, '_blank', 'noopener,noreferrer' );
-		};
 	};
 
 	// Menu items for the new panel
@@ -69,7 +81,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						<span>{ translate( 'Chat support' ) }</span>
 					</div>
 				),
-				onClick: () => handleToggleHelpCenter( '/odie' ),
+				onClick: () => handleMenuClick( '/odie' ),
 			},
 			{
 				label: (
@@ -78,7 +90,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						<span>{ translate( 'Chat history' ) }</span>
 					</div>
 				),
-				onClick: () => handleToggleHelpCenter( '/chat-history' ),
+				onClick: () => handleMenuClick( '/chat-history' ),
 			},
 		],
 		[
@@ -95,7 +107,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						<span>{ translate( 'Support guides' ) }</span>
 					</div>
 				),
-				onClick: () => handleToggleHelpCenter( '/' ),
+				onClick: () => handleMenuClick( '/' ),
 			},
 			{
 				label: (
@@ -104,7 +116,8 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						<span>{ translate( 'Courses' ) }</span>
 					</div>
 				),
-				onClick: handleExternalLink( localizeUrl( 'https://wordpress.com/support/courses/' ) ),
+				onClick: () =>
+					handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true ),
 			},
 			{
 				label: (
@@ -113,9 +126,11 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						<span>{ translate( 'Product updates' ) }</span>
 					</div>
 				),
-				onClick: handleExternalLink(
-					localizeUrl( 'https://wordpress.com/blog/category/product-features/' )
-				),
+				onClick: () =>
+					handleMenuClick(
+						localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+						true
+					),
 			},
 		],
 	];
@@ -130,7 +145,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	return (
 		<>
 			<Item
-				onClick={ isMenuPanelEnabled ? undefined : () => handleToggleHelpCenter( '/' ) }
+				onClick={ isMenuPanelEnabled ? undefined : handleToggleHelpCenter }
 				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
 					'is-menu-panel': isMenuPanelEnabled,
