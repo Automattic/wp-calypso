@@ -456,7 +456,7 @@ function StagingSiteSyncModalInner( {
 								spacing={ 2 }
 								justify="space-between"
 								alignment="center"
-								style={ { paddingBottom: '4px', marginTop: '-4px' } }
+								style={ { padding: '4px 0', marginTop: '-8px' } }
 							>
 								<CheckboxControl
 									__nextHasNoMarginBottom
@@ -518,8 +518,8 @@ function StagingSiteSyncModalInner( {
 								alignment="left"
 								spacing={ 2 }
 								style={ {
-									padding: '15px 0',
-									marginTop: isFileBrowserVisible ? '16px' : '0',
+									padding: '16px 0',
+									marginTop: isFileBrowserVisible ? '12px' : '0',
 								} }
 							>
 								<CheckboxControl
