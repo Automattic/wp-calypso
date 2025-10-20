@@ -36,6 +36,16 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
+	let sitesByBlogId: Record< number, Site > = {};
+	if ( sites ) {
+		sitesByBlogId = sites.reduce(
+			( acc, site ) => {
+				acc[ site.ID ] = site;
+				return acc;
+			},
+			{} as Record< number, Site >
+		);
+	}
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -147,7 +157,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: false,
 				callback: ( domains: DomainSummary[] ) => {
 					const domain = domains[ 0 ];
-					const site = sites?.find( ( s ) => s.ID === domain.blog_id );
+					const site = sitesByBlogId[ domain.blog_id ];
 
 					if ( ! site ) {
 						return;
@@ -179,7 +189,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					);
 				},
 				isEligible: ( item: DomainSummary ) => {
-					const site = sites?.find( ( s ) => s.ID === item.blog_id );
+					const site = sitesByBlogId[ item.blog_id ];
 					return !! site && canSetAsPrimary( { domain: item, site, user } );
 				},
 				disabled: setPrimaryDomainMutation.isPending,
@@ -224,11 +234,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: false,
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
-					const site = sites?.find( ( s ) => s.ID === item.blog_id );
+					const site = sitesByBlogId[ item.blog_id ];
 					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
-					const site = sites?.find( ( s ) => s.ID === items[ 0 ].blog_id );
+					const site = sitesByBlogId[ items[ 0 ].blog_id ];
 					return site ? (
 						<Suspense fallback={ null }>
 							<SiteChangeAddressContent
@@ -250,12 +260,12 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 		],
 		[
 			user,
-			sites,
 			router,
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,
 			createErrorNotice,
+			sitesByBlogId,
 		]
 	);
 
