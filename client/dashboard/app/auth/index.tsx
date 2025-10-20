@@ -9,7 +9,7 @@ import {
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
-import { createContext, useContext, useMemo, useEffect, useRef } from 'react';
+import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -54,7 +54,11 @@ async function initializeCurrentUser(): Promise< User > {
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
 	const queryClient = useQueryClient();
-	const { data: user, isLoading: userIsLoading } = useQuery( {
+	const {
+		data: user,
+		isLoading: userIsLoading,
+		isError: userIsError,
+	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
 		queryFn: initializeCurrentUser,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
@@ -103,6 +107,18 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
+	const handleAuthError = useCallback( () => {
+		// Prevents repeated calls to redirect
+		if ( authErrorHandled.current ) {
+			return;
+		}
+
+		authErrorHandled.current = true;
+		const currentPath = window.location.pathname;
+		const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
+		window.location.href = loginUrl;
+	}, [] );
+
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
@@ -115,10 +131,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				event.action.error.error === 'authorization_required' &&
 				! authErrorHandled.current // Prevents repeated calls to redirect
 			) {
-				authErrorHandled.current = true;
-				const currentPath = window.location.pathname;
-				const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
-				window.location.href = loginUrl;
+				handleAuthError();
 			}
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
@@ -127,7 +140,16 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			unsubMutationCache();
 			unsubQueryCache();
 		};
-	}, [ queryClient ] );
+	}, [ queryClient, handleAuthError ] );
+
+	// Handles _all_ errors fetching the user object, regardless of whether they are
+	// `authorization_required` errors or not.
+	if ( userIsError ) {
+		if ( typeof window !== 'undefined' ) {
+			handleAuthError();
+		}
+		return null;
+	}
 
 	if ( userIsLoading || ! user ) {
 		return null;
