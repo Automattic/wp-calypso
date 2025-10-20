@@ -13,7 +13,7 @@ export interface Message {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'image_url' | 'component' | 'context';
 		text?: string;
 		image_url?: string;
 		component?: React.ComponentType;

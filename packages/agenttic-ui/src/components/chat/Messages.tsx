@@ -2,6 +2,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
+import { getVisibleMessages } from '../../utils/message-helpers';
 import { Message } from './Message';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
@@ -28,15 +29,18 @@ export function Messages( {
 	const isFirstRender = useRef( true );
 	const liveRegionRef = useRef< HTMLDivElement >( null );
 
+	// Filter out context messages (type: 'context' should not be displayed in UI)
+	const visibleMessages = getVisibleMessages( messages );
+
 	useEffect( () => {
 		// Check if a new message was added
 		const hasNewMessage =
-			messages.length > previousMessagesRef.current.length;
+			visibleMessages.length > previousMessagesRef.current.length;
 
 		// Handle initial render - always scroll to bottom instantly when expanding
 		if (
 			isFirstRender.current &&
-			messages.length > 0 &&
+			visibleMessages.length > 0 &&
 			scrollAreaRef.current
 		) {
 			scrollAreaRef.current.scrollTop =
@@ -56,7 +60,7 @@ export function Messages( {
 
 		// Check if a new AI agent message was added for live region announcements
 		if ( hasNewMessage && liveRegionRef.current ) {
-			const newMessages = messages.slice(
+			const newMessages = visibleMessages.slice(
 				previousMessagesRef.current.length
 			);
 			const newAgentMessages = newMessages.filter(
@@ -82,10 +86,10 @@ export function Messages( {
 			isFirstRender.current = false;
 		}
 
-		previousMessagesRef.current = messages;
-	}, [ messages ] );
+		previousMessagesRef.current = visibleMessages;
+	}, [ visibleMessages ] );
 
-	if ( messages.length === 0 ) {
+	if ( visibleMessages.length === 0 ) {
 		if ( emptyView ) {
 			return (
 				<div
@@ -121,7 +125,7 @@ export function Messages( {
 				ref={ scrollAreaRef }
 			>
 				<AnimatePresence mode="popLayout">
-					{ messages.map( ( message ) => (
+					{ visibleMessages.map( ( message ) => (
 						<Message
 							key={ message.id }
 							message={ message }

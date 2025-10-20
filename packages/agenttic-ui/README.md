@@ -244,6 +244,69 @@ Stop button appears automatically during processing:
 />
 ```
 
+### Content Types
+
+Content items can have different types that determine how they're displayed:
+
+- `type: 'text'` - Normal text content (visible)
+- `type: 'image_url'` - Image content (visible)
+- `type: 'component'` - React component (visible)
+- `type: 'context'` - Context information sent as text to the agent but hidden from UI
+
+```tsx
+// Example: Mixing visible and context content
+const messages = [
+	{
+		id: '1',
+		role: 'user',
+		content: [ { type: 'text', text: 'Take me to the dashboard' } ],
+		timestamp: Date.now(),
+		archived: false,
+		showIcon: true,
+	},
+	{
+		id: '2',
+		role: 'user',
+		content: [
+			{
+				type: 'context', // Hidden from UI, sent to agent for context
+				text: 'Navigation completed. Dashboard loaded successfully.',
+			},
+		],
+		timestamp: Date.now(),
+		archived: false,
+		showIcon: true,
+	},
+	{
+		id: '3',
+		role: 'agent',
+		content: [
+			{ type: 'text', text: "I've taken you to the dashboard." },
+		],
+		timestamp: Date.now(),
+		archived: false,
+		showIcon: true,
+	},
+];
+
+<AgentUI messages={ messages } />;
+// Only messages 1 and 3 will be visible (message 2 has only context content)
+
+// Example: Message with both visible and context content
+const mixedMessage = {
+	id: '4',
+	role: 'user',
+	content: [
+		{ type: 'text', text: 'Here are your analytics' },
+		{ type: 'context', text: 'page: /analytics, loaded: true' },
+	],
+	timestamp: Date.now(),
+	archived: false,
+	showIcon: true,
+};
+// The context content will be filtered out, only "Here are your analytics" is visible
+```
+
 ### Custom Message Renderer
 
 ```tsx
@@ -310,7 +373,7 @@ interface Message {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'image_url' | 'component' | 'context';
 		text?: string;
 		image_url?: string;
 		component?: React.ComponentType;
@@ -321,6 +384,7 @@ interface Message {
 	showIcon: boolean;
 	icon?: string;
 	actions?: MessageAction[];
+	disabled?: boolean;
 }
 
 interface MessageAction {

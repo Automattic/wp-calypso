@@ -32,6 +32,13 @@ export type TaskState =
 	| 'canceled'
 	| 'failed';
 
+/**
+ * Content type for text parts
+ * - 'text': Normal visible text content
+ * - 'context': Hidden context information sent to agent but not displayed in UI
+ */
+export type ContentType = 'text' | 'context';
+
 export interface TextPart {
 	type: 'text';
 	text: string;

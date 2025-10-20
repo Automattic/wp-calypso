@@ -1,4 +1,9 @@
-import type { DataPart, Message, TextPart } from '../client/types/index';
+import type {
+	ContentType,
+	DataPart,
+	Message,
+	TextPart,
+} from '../client/types/index';
 import { logger } from '../client/utils/logger';
 import { generateMessageId } from '../client/utils/core';
 
@@ -10,7 +15,9 @@ const STORAGE_KEY = 'a8c_agenttic_conversation_history';
 interface StoredMessage {
 	role: 'user' | 'agent';
 	content: string;
+	contentType?: ContentType;
 	timestamp: number;
+	archived?: boolean;
 	toolCalls?: Array< {
 		toolCallId: string;
 		toolId: string;
@@ -37,11 +44,19 @@ interface StoredConversation {
  * @param message - The Message to extract content from
  */
 function extractStorableContent( message: Message ): StoredMessage {
-	// Extract text content
-	const textParts = message.parts
-		.filter( ( part ): part is TextPart => part.type === 'text' )
+	const textPartsWithMeta = message.parts.filter(
+		( part ): part is TextPart => part.type === 'text'
+	);
+
+	const textParts = textPartsWithMeta
 		.map( ( part ) => part.text )
 		.join( '\n' );
+
+	const contentType = textPartsWithMeta.some(
+		( part ) => part.metadata?.contentType === 'context'
+	)
+		? 'context'
+		: undefined;
 
 	// Extract tool calls
 	const toolCalls = message.parts
@@ -79,10 +94,15 @@ function extractStorableContent( message: Message ): StoredMessage {
 	// Extract timestamp from message metadata or use current time as fallback
 	const timestamp = ( message.metadata?.timestamp as number ) ?? Date.now();
 
+	// Extract archived flag from message metadata
+	const archived = ( message.metadata?.archived as boolean ) ?? undefined;
+
 	return {
 		role: storageRole,
 		content: textParts || '(No text content)',
 		timestamp,
+		...( archived !== undefined && { archived } ),
+		...( contentType && { contentType } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
 	};
@@ -95,11 +115,16 @@ function extractStorableContent( message: Message ): StoredMessage {
 function restoreMessage( stored: StoredMessage ): Message {
 	const parts: Message[ 'parts' ] = [];
 
-	// Add text part
+	// Add text part with content type in metadata
 	if ( stored.content && stored.content !== '(No text content)' ) {
 		parts.push( {
 			type: 'text',
 			text: stored.content,
+			...( stored.contentType && {
+				metadata: {
+					contentType: stored.contentType,
+				},
+			} ),
 		} );
 	}
 
@@ -138,6 +163,10 @@ function restoreMessage( stored: StoredMessage ): Message {
 		messageId: generateMessageId(),
 		metadata: {
 			timestamp: stored.timestamp,
+			// only store archived if it was already present.
+			...( stored.archived !== undefined && {
+				archived: stored.archived,
+			} ),
 		},
 	};
 }
