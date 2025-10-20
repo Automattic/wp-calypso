@@ -10,7 +10,6 @@ import {
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { parse } from 'qs';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -34,7 +33,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)
-	const isMenuPanelEnabled =  config.isEnabled( 'help-center-menu-panel' );
+	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
