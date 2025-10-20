@@ -175,7 +175,13 @@ const AddProfessionalEmail = () => {
 			} )
 			.finally( () => setIsSubmitting( false ) )
 			.catch( ( error: CartActionError ) => {
-				createErrorNotice( error.message, { type: 'snackbar' } );
+				const actions = [];
+
+				if ( error.code === 'already-contains-an-email-product' ) {
+					actions.push( { label: __( 'Shopping cart' ), url: checkoutPath } );
+				}
+
+				createErrorNotice( error.message, { actions, type: 'snackbar' } );
 			} );
 	};
 
