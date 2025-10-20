@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isUnderDomainManagementAll,
 	isUnderDomainSiteContext,
@@ -259,26 +258,6 @@ export const getEmailCheckoutPath = (
 export const getMailboxesPath = ( siteName?: string ) =>
 	siteName ? `/mailboxes/${ siteName }` : '/mailboxes';
 
-// Generates URL: /email/:domain/manage/:site
-export const getEmailManagementPath: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo = undefined,
-	urlParameters = {},
-	inSiteContext = false
-) => {
-	if (
-		inSiteContext ||
-		isUnderDomainManagementAll( relativeTo ) ||
-		( isUnderCheckoutRoute( relativeTo ) && isEnabled( 'calypso/all-domain-management' ) )
-	) {
-		const prefix =
-			inSiteContext || isUnderDomainSiteContext( relativeTo )
-				? emailSiteContextPrefix
-				: domainsManagementPrefix;
-
-		return `${ prefix }/${ domainName }/${ siteName }${ buildQueryString( urlParameters ) }`;
-	}
-
-	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+export const getEmailManagementPath: EmailPathUtilityFunction = ( _siteName, domainName ) => {
+	return `/v2/emails?domainName=${ domainName }`;
 };
