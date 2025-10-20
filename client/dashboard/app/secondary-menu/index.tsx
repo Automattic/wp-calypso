@@ -9,6 +9,7 @@ import {
 	MenuItem,
 	Spinner,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { help, commentAuthorAvatar } from '@wordpress/icons';
 import { Suspense, lazy, useCallback, useState } from 'react';
@@ -144,13 +145,14 @@ function UserProfile() {
 
 function SecondaryMenu() {
 	const { supports } = useAppContext();
+	const isDesktop = useViewportMatch( 'medium' );
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
 			{ supports.reader && (
 				<Button
 					className="dashboard-secondary-menu__item"
-					icon={ <ReaderIcon /> }
+					icon={ isDesktop ? <ReaderIcon /> : null }
 					text={ __( 'Reader' ) }
 					href="/reader"
 				/>
