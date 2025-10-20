@@ -76,6 +76,9 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 		);
 	}, [ dispatch, usageLevel, bytesUsed ] );
 
+	const isStorageFull =
+		StorageUsageLevels.Full === usageLevel || StorageUsageLevels.FullButForecastOk === usageLevel;
+
 	return (
 		<div
 			className={ clsx( 'backup-storage-space__progress-bar-container', {
@@ -83,10 +86,16 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 			} ) }
 		>
 			<div className="backup-storage-space__progress-heading">
-				<span hidden={ StorageUsageLevels.Full !== usageLevel }>
-					<Gridicon className="backup-storage-space__storage-full-icon" icon="notice" size={ 24 } />
-				</span>
-				<span>{ translate( 'Cloud storage space' ) } </span>
+				{ isStorageFull && (
+					<span>
+						<Gridicon
+							className="backup-storage-space__storage-full-icon"
+							icon="notice"
+							size={ 24 }
+						/>
+					</span>
+				) }
+				<span>{ __( 'Cloud storage space' ) } </span>
 			</div>
 			<div className="backup-storage-space__progress-bar">
 				<ProgressBar
@@ -98,7 +107,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 			<div className="backup-storage-space__progress-usage-container">
 				<div
 					className={ clsx( 'backup-storage-space__progress-storage-usage-text', {
-						'is-storage-full': StorageUsageLevels.Full === usageLevel,
+						'is-storage-full': isStorageFull,
 					} ) }
 				>
 					<span>{ loading ? loadingText : storageUsageText }</span>
