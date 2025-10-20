@@ -30,8 +30,8 @@ const useStorageStatusText = (
 				return sprintf(
 					// translators: %(daysOfBackupsSaved)d is a number of days.
 					_n(
-						'You have reached your storage limit with %(daysOfBackupsSaved)d day of backups saved. If your site size stays the same, storage will come back within limits in the next few days as backups continue and older ones are replaced.',
-						'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. If your site size stays the same, storage will come back within limits in the next few days as backups continue and older ones are replaced.',
+						'You have reached your storage limit with %(daysOfBackupsSaved)d day of backups saved. Your backups are still running, and if your site size stays the same, storage will come back within limits in the next few days as older backups are replaced.',
+						'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. Your backups are still running, and if your site size stays the same, storage will come back within limits in the next few days as older backups are replaced.',
 						daysOfBackupsSaved
 					),
 					{ daysOfBackupsSaved }
