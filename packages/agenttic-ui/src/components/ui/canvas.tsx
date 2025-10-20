@@ -1,22 +1,21 @@
 import * as React from 'react';
 import { cn } from '../../utils/classNames';
 import styles from './canvas.module.css';
+import { ThinkingMessage } from '../chat/ThinkingMessage';
 
 export interface CanvasProps {
-	/** Content to display in the canvas */
-	children: React.ReactNode;
 	/** Additional CSS class */
 	className?: string;
 	/** Inline styles */
 	style?: React.CSSProperties;
-	/** How content should fit within the canvas */
-	fit?: 'contain' | 'cover' | 'fill' | 'none';
-	/** Background color or pattern */
-	background?: string;
 	/** Whether to show a loading state */
-	isLoading?: boolean;
-	/** Loading message to display */
-	loadingMessage?: string;
+	isProcessing?: boolean;
+	/** Loader to display */
+	loader?: React.ReactNode;
+	/** Message to display */
+	message?: string;
+	/** Children to display */
+	children?: React.ReactNode;
 }
 
 /**
@@ -33,42 +32,44 @@ export interface CanvasProps {
  * </Canvas>
  * ```
  */
-export const Canvas = React.forwardRef< HTMLDivElement, CanvasProps >(
-	function Canvas(
-		{
-			children,
-			className,
-			style,
-			fit = 'contain',
-			background,
-			isLoading = false,
-			loadingMessage = 'Loading...',
-		},
-		ref
-	) {
-		return (
+const Canvas = React.forwardRef< HTMLDivElement, CanvasProps >( function Canvas(
+	{ className, style, isProcessing = false, loader, message = '', children },
+	ref
+) {
+	return (
+		<div
+			ref={ ref }
+			className={ cn( styles.canvas, className ) }
+			data-slot="canvas"
+			style={ {
+				...style,
+			} }
+		>
 			<div
-				ref={ ref }
-				className={ cn( styles.canvas, styles[ fit ], className ) }
-				style={ {
-					...style,
-					...( background ? { background } : {} ),
-				} }
-				data-slot="canvas"
+				className={ cn(
+					styles.canvas,
+					isProcessing ? styles.processing : ''
+				) }
 			>
-				{ isLoading ? (
-					<div className={ styles.loading }>
-						<div className={ styles.loadingSpinner } />
-						<span className={ styles.loadingText }>
-							{ loadingMessage }
+				{ message && (
+					<div className={ styles.message }>
+						<span className={ styles.messageText }>
+							{ message }
 						</span>
 					</div>
-				) : (
-					children
 				) }
+
+				{ isProcessing && (
+					<div className={ styles.loader }>
+						{ loader ?? <ThinkingMessage /> }
+					</div>
+				) }
+				<div className={ styles.content }>{ children }</div>
 			</div>
-		);
-	}
-);
+		</div>
+	);
+} );
 
 Canvas.displayName = 'Canvas';
+
+export { Canvas };

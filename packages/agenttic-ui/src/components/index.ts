@@ -4,6 +4,7 @@ export * from './chat';
 // UI components
 export { Button } from './ui/button';
 export { Textarea } from './ui/textarea';
+export { Canvas } from './ui/canvas';
 
 // Feature components
 export { Suggestions } from './chat/Suggestions';
@@ -22,6 +23,9 @@ export { StylesIcon } from './icons/StylesIcon';
 export { ThumbsDownIcon } from './icons/ThumbsDownIcon';
 export { ThumbsUpIcon } from './icons/ThumbsUpIcon';
 export { XIcon } from './icons/XIcon';
+export { RegenerateIcon } from './icons/RegenerateIcon';
+export { OptimizeIcon } from './icons/OptimizeIcon';
+export { AltIcon } from './icons/AltIcon';
 
 // Animations
 export * from './animations';
