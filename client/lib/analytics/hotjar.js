@@ -13,12 +13,17 @@ export function mayWeLoadHotJarScript() {
 }
 
 export function getHotjarSiteSettings() {
+	// A8C for Agencies
 	if ( isA8CForAgencies() ) {
-		return { hjid: 6527274, hjsv: 6 }; // A8C for Agencies
+		return { hjid: 6527274, hjsv: 6 };
 	}
-	return isJetpackCloud()
-		? { hjid: 3165344, hjsv: 6 } // Calypso green (cloud.jetpack.com)
-		: { hjid: 227769, hjsv: 5 }; // Calypso blue (wordpress.com)
+
+	// Calypso green (cloud.jetpack.com)
+	if ( isJetpackCloud() ) {
+		return { hjid: 3165344, hjsv: 6 };
+	}
+
+	return { hjid: 227769, hjsv: 5 }; // Calypso blue (wordpress.com)
 }
 
 export function addHotJarScript() {
