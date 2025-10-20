@@ -40,6 +40,15 @@ export enum DomainStatus {
 	PENDING_REGISTRATION = 'pending_registration',
 }
 
+export const DomainStatusCta = {
+	VIEW_DOMAIN: 'view_domain',
+	VIEW_PURCHASE: 'view_purchase',
+	VIEW_DOMAIN_SETUP: 'view_domain_setup',
+	VIEW_TRANSFER_SETUP: 'view_transfer_setup',
+} as const;
+
+export type DomainStatusCta = ( typeof DomainStatusCta )[ keyof typeof DomainStatusCta ];
+
 export interface DomainSummary {
 	domain: string;
 	subtype: {
@@ -60,7 +69,7 @@ export interface DomainSummary {
 		id: DomainStatus;
 		label: string;
 		type: 'success' | 'warning' | 'error';
-		cta: string;
+		cta?: DomainStatusCta;
 	};
 	subscription_id: string | null;
 	tags: string[];
