@@ -152,8 +152,9 @@ function SecondaryMenu() {
 			{ supports.reader && (
 				<Button
 					className="dashboard-secondary-menu__item"
-					icon={ isDesktop ? <ReaderIcon /> : null }
-					text={ __( 'Reader' ) }
+					icon={ <ReaderIcon /> }
+					label={ __( 'Reader' ) }
+					text={ isDesktop ? __( 'Reader' ) : undefined }
 					href="/reader"
 				/>
 			) }
