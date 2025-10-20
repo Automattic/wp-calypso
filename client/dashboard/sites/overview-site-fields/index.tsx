@@ -61,12 +61,22 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
-	const isCommerceGardenSite = isCommerceGarden( site );
 	const url = getSiteFormattedUrl( site );
-	const wpVersion = ! isCommerceGardenSite && getFormattedWordPressVersion( site );
-	const hasPHPFeature = ! isCommerceGardenSite && hasHostingFeature( site, HostingFeatures.PHP );
-	const hasSiteRedirect = ! isCommerceGardenSite && site.options?.is_redirect;
-	const hasProvider = ! isCommerceGardenSite;
+	const wpVersion = getFormattedWordPressVersion( site );
+	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
+	const hasSiteRedirect = site.options?.is_redirect;
+
+	if ( isCommerceGarden( site ) ) {
+		return (
+			<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">
+				<Field>
+					<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+						{ getSiteDisplayUrl( site ) }
+					</ExternalLink>
+				</Field>
+			</HStack>
+		);
+	}
 
 	return (
 		<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">
@@ -102,11 +112,9 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 					</Link>
 				</Field>
 			) }
-			{ hasProvider && (
-				<Field>
-					<HostingProvider site={ site } />
-				</Field>
-			) }
+			<Field>
+				<HostingProvider site={ site } />
+			</Field>
 		</HStack>
 	);
 };
