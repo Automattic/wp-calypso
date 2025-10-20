@@ -8,10 +8,8 @@ import { addPlanToCart, addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automat
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
-import wpcom from 'calypso/lib/wp';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
-import { useSite } from '../../../hooks/use-site';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
@@ -33,7 +31,6 @@ const domainUpsell: Flow = {
 		const backTo = useQuery().get( 'back_to' );
 		const flowName = this.name;
 		const siteSlug = useSiteSlug()!;
-		const site = useSite();
 		const { getDomainCartItem, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
@@ -112,27 +109,6 @@ const domainUpsell: Flow = {
 							initialQuery: providedDependencies.domain,
 						} );
 						return navigate( destination as typeof currentStep );
-					}
-
-					// For garden sites with domain mapping, skip plans and map directly
-					const domainCartItem = providedDependencies?.domainCartItem as
-						| MinimalRequestCartProduct
-						| undefined;
-
-					if (
-						site &&
-						( site as { is_garden?: boolean } ).is_garden &&
-						domainCartItem &&
-						domainCartItem.product_slug === 'domain_map'
-					) {
-						const domain = domainCartItem.meta as string;
-
-						try {
-							await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
-							return window.location.assign( `/ciab/sites/${ domain }` );
-						} catch ( error ) {
-							// If mapping fails, fall through to plans step
-						}
 					}
 
 					submittedDomains.current = true;
