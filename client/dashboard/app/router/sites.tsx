@@ -1,5 +1,8 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	codeDeploymentQuery,
+	codeDeploymentsQuery,
+	githubInstallationsQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -203,6 +206,10 @@ export const siteDeploymentsRoute = createRoute( {
 export const siteDeploymentsListRoute = createRoute( {
 	getParentRoute: () => siteDeploymentsRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/deployments-list' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments-list' )( {
@@ -953,6 +960,11 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 export const siteSettingsRepositoriesIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
+		queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories' )( {
@@ -971,6 +983,9 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'connect',
+	loader: () => {
+		queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
@@ -985,6 +1000,10 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
+	loader: async ( { params: { siteSlug, deploymentId } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-manage' )( {
