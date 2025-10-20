@@ -1,6 +1,6 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -37,7 +37,6 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) ) || 0;
@@ -53,9 +52,9 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	// current site size
 	const lastBackupSize = useSelector( ( state ) => getBackupCurrentSiteSize( state, siteId ) ) || 0;
 	const { upsellSlug } = useUpsellInfo( siteId );
-	const loadingText = translate( 'Calculating…', {
-		comment: 'Loading text displayed while storage usage is being calculated',
-	} );
+
+	// translators: Loading text displayed while storage usage is being calculated
+	const loadingText = __( 'Calculating…' );
 
 	let forecastInDays = 0;
 	if ( bytesAvailable > 0 && lastBackupSize > 0 ) {
