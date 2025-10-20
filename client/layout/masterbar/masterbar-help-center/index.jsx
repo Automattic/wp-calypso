@@ -130,7 +130,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	return (
 		<>
 			<Item
-				onClick={ isMenuPanelEnabled ? undefined : handleToggleHelpCenter }
+				onClick={ isMenuPanelEnabled ? undefined : () => handleToggleHelpCenter( '/' ) }
 				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
 					'is-menu-panel': isMenuPanelEnabled,
