@@ -70,12 +70,12 @@ export const useSuggestionsList = () => {
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		// Add FQDN availability to the suggestions list if it isn't already there
-		if ( fqdnAvailability ) {
+		if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
 			const isFQDNAlreadyInSuggestions = suggestions.some(
 				( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
 			);
 			if ( ! isFQDNAlreadyInSuggestions ) {
-				suggestions.push( convertAvailabilityToSuggestion( fqdnAvailability ) );
+				suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
 			}
 		}
 

@@ -61,7 +61,12 @@ export const useSuggestion = ( domainName: string ) => {
 
 	// Add FQDN availability to the suggestions list
 	if ( suggestions && fqdnAvailability ) {
-		suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
+		const isFQDNAlreadyInSuggestions = suggestions.some(
+			( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
+		);
+		if ( ! isFQDNAlreadyInSuggestions ) {
+			suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
+		}
 	}
 
 	if ( suggestions ) {

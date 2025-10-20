@@ -5,7 +5,10 @@ import { DomainSuggestionCTA } from '..';
 import { DomainPriceRule } from '../../../hooks/use-suggestion';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCartItem } from '../../../test-helpers/factories/cart';
-import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
+import {
+	buildSuggestionFromAvailability,
+	buildSuggestion,
+} from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
 import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
@@ -77,6 +80,79 @@ describe( 'DomainSuggestionCTA', () => {
 					availability,
 					'test-add-to-cart.com',
 					'donuts'
+				);
+			} );
+		} );
+
+		it( 'allows adding a domain to the cart if the user searched for a FQDN', async () => {
+			const user = userEvent.setup();
+
+			// test-add-to-cart.com is not in the suggestions list possibly due to TLD filtering
+			const suggestion = buildSuggestion( {
+				domain_name: 'test-add-to-cart.blog',
+				vendor: 'donuts',
+				is_premium: true,
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-add-to-cart.com' },
+				suggestions: [ suggestion ],
+			} );
+
+			const availability = buildAvailability( {
+				domain_name: 'test-add-to-cart.com',
+				status: DomainAvailabilityStatus.AVAILABLE,
+				product_id: 123,
+				product_slug: 'dotcom_domain',
+				raw_price: 40,
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-add-to-cart.com' },
+				availability,
+			} );
+
+			const onAddDomainToCart = jest.fn();
+			const onDomainAddAvailabilityPreCheck = jest.fn();
+			const onSuggestionInteract = jest.fn();
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="test-add-to-cart.com"
+					events={ { onAddDomainToCart, onDomainAddAvailabilityPreCheck, onSuggestionInteract } }
+				>
+					<DomainSuggestionsList>
+						<DomainSuggestionCTA domainName="test-add-to-cart.com" />
+					</DomainSuggestionsList>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+
+			expect( addToCartCta ).toBeInTheDocument();
+
+			await user.click( addToCartCta );
+
+			const availabilitySuggestion = buildSuggestionFromAvailability( availability );
+
+			await waitFor( () => {
+				expect( onSuggestionInteract ).toHaveBeenCalledWith( {
+					...availabilitySuggestion,
+					position: 0,
+					price_rule: DomainPriceRule.PRICE,
+				} );
+
+				expect( onAddDomainToCart ).toHaveBeenCalledWith(
+					'test-add-to-cart.com',
+					0, // position
+					false, // is_premium
+					'availability' // vendor
+				);
+
+				expect( onDomainAddAvailabilityPreCheck ).toHaveBeenCalledWith(
+					availability,
+					'test-add-to-cart.com',
+					'availability' // root_vendor
 				);
 			} );
 		} );

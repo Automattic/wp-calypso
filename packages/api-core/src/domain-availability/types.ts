@@ -137,7 +137,7 @@ export interface DomainAvailability {
 	vendor?: string;
 
 	/**
-	 * This is a domain suggestion property, but availability checks can return it when the domain is available for registration
+	 * This is a domain suggestion property, but availability checks return it when the domain is available for registration
 	 * @example [ "exact-match", "tld-exact" ]
 	 */
 	match_reasons?: string[];

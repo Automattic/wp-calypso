@@ -1,4 +1,8 @@
-import type { DomainSuggestion, FreeDomainSuggestion } from '@automattic/api-core';
+import type {
+	DomainSuggestion,
+	FreeDomainSuggestion,
+	DomainAvailability,
+} from '@automattic/api-core';
 
 export const buildFreeSuggestion = (
 	suggestion: Partial< FreeDomainSuggestion > = {}
@@ -26,5 +30,24 @@ export const buildSuggestion = (
 		vendor: 'donuts',
 		cost: suggestion.cost ?? '$5',
 		...suggestion,
+	};
+};
+
+export const buildSuggestionFromAvailability = (
+	availability: Partial< DomainAvailability > = {}
+): DomainSuggestion => {
+	return {
+		domain_name: availability.domain_name ?? 'example.com',
+		currency_code: 'USD',
+		max_reg_years: 10,
+		multi_year_reg_allowed: true,
+		product_id: 123,
+		product_slug: 'dotcom_domain',
+		raw_price: 40,
+		relevance: 1,
+		supports_privacy: true,
+		vendor: 'availability',
+		cost: availability.cost ?? '$5',
+		...availability,
 	};
 };
