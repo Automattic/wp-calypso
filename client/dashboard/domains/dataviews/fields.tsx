@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { Text } from '../../components/text';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
+import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
@@ -188,7 +189,7 @@ export const useFields = ( {
 				},
 				getValue: ( { item } ) => item.domain_status.label,
 				render: ( { item } ) => {
-					return <Text intent={ item.domain_status.type }>{ item.domain_status.label }</Text>;
+					return <DomainStatusField domain={ item } value={ item.domain_status.label } />;
 				},
 			},
 		],

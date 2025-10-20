@@ -31,6 +31,7 @@ export * from './me';
 export * from './me-account';
 export * from './me-allowed-payment-methods';
 export * from './me-account-recovery';
+export * from './me-billing-history';
 export * from './me-blocked-sites';
 export * from './me-connected-applications';
 export * from './me-dpa';

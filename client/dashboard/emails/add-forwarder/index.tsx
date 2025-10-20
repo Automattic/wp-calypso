@@ -9,6 +9,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -34,6 +35,8 @@ export interface FormData {
 function AddEmailForwarder() {
 	const { basePath } = useAppContext();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
+
 	const { mutate: addEmailForwarder, isPending: isAddingEmailForwarder } = useMutation(
 		addEmailForwarderMutation()
 	);
@@ -148,6 +151,7 @@ function AddEmailForwarder() {
 
 		const { localPart, domain, forwardingAddresses } = formData;
 
+		recordTracksEvent( 'calypso_dashboard_emails_add_forwarder_save_click' );
 		const redirectPath = `${ ( basePath || '' ).replace( /\/$/, '' ) }${ emailsRoute.to }`;
 		const redirectUrl =
 			typeof window !== 'undefined'
@@ -163,12 +167,14 @@ function AddEmailForwarder() {
 			},
 			{
 				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_emails_add_forwarder_save_success' );
 					createSuccessNotice( __( 'Email forwarder added.' ), { type: 'snackbar' } );
 					navigate( {
 						to: '/emails',
 					} );
 				},
 				onError: ( resp, variables ) => {
+					recordTracksEvent( 'calypso_dashboard_emails_add_forwarder_save_error' );
 					if ( resp ) {
 						const message =
 							typeof resp.message === 'object' ? resp.message.error_message : resp.message;
@@ -228,7 +234,7 @@ function AddEmailForwarder() {
 					<Text size={ 16 }>
 						{ __( 'You do not have any domains eligible for email forwarding.' ) }
 					</Text>
-					<AddNewDomain />
+					<AddNewDomain origin="add-forwarder" />
 				</>
 			) : (
 				<>

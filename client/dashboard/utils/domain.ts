@@ -37,7 +37,7 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 	);
 }
 
-export function isDomainRenewable( domain: DomainSummary ) {
+export function isDomainRenewable( domain: DomainSummary ): boolean {
 	// Only registered domains can be manually renewed
 	if ( ! isRegisteredDomain( domain ) ) {
 		return false;
@@ -45,6 +45,7 @@ export function isDomainRenewable( domain: DomainSummary ) {
 
 	return (
 		!! domain.subscription_id &&
+		!! domain.current_user_is_owner &&
 		! [
 			DomainStatus.PENDING_RENEWAL,
 			DomainStatus.PENDING_TRANSFER,

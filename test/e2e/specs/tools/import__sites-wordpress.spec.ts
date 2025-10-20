@@ -141,17 +141,19 @@ test.describe(
 			} );
 
 			await test.step( 'When I upload a valid WordPress export file', async function () {
-				await pageImportContent.uploadExportFile( TEST_WORDPRESS_EXPORT_FILE_PATH );
+				await pageImportContent.importFileContentPage.uploadExportFile(
+					TEST_WORDPRESS_EXPORT_FILE_PATH
+				);
 			} );
 
 			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
 				await expect( pageImportContent.heading ).toBeVisible();
 				await expect( pageImportContent.wordPressHeading ).toBeVisible();
-				await expect( pageImportContent.yourFileIsReadyText ).toBeVisible( {
+				await expect( pageImportContent.importFileContentPage.yourFileIsReadyText ).toBeVisible( {
 					timeout: 30000,
 				} );
-				await expect( pageImportContent.importButton ).toBeVisible();
-				await expect( pageImportContent.importButton ).toBeEnabled();
+				await expect( pageImportContent.importFileContentPage.importButton ).toBeVisible();
+				await expect( pageImportContent.importFileContentPage.importButton ).toBeEnabled();
 			} );
 		} );
 

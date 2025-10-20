@@ -29,7 +29,7 @@ export type AppConfig = {
 	supports: {
 		overview: boolean;
 		sites: SiteFeatureSupports | false;
-		ciabSites: boolean;
+		sitesCIAB: boolean;
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
@@ -45,6 +45,7 @@ export type AppConfig = {
 		default: OnboardingLink;
 		withAI: OnboardingLink;
 	};
+	optIn: boolean;
 };
 
 const AppContext = createContext< AppConfig >( {
@@ -56,7 +57,7 @@ const AppContext = createContext< AppConfig >( {
 	supports: {
 		overview: false,
 		sites: false,
-		ciabSites: false,
+		sitesCIAB: false,
 		plugins: false,
 		domains: false,
 		emails: false,
@@ -69,6 +70,7 @@ const AppContext = createContext< AppConfig >( {
 	},
 	onboardingLinkSourceQueryArg: undefined,
 	onboardingLinks: undefined,
+	optIn: false,
 } );
 
 interface AppProviderProps {

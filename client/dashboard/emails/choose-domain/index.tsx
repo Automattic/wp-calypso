@@ -11,6 +11,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { arrowLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -24,6 +25,7 @@ import './styles.css';
 export default function ChooseDomain() {
 	const router = useRouter();
 	const { domains, isLoading } = useDomains();
+	const { recordTracksEvent } = useAnalytics();
 
 	// Aggregate eligible domains (exclude wpcom domains)
 	const eligibleDomains = useMemo( () => {
@@ -43,6 +45,10 @@ export default function ChooseDomain() {
 	}, [ eligibleDomains, search ] );
 
 	const handleDomainClick = ( d: Domain ) => {
+		recordTracksEvent( 'calypso_dashboard_emails_choose_domain_domain_click', {
+			domain: d.domain,
+		} );
+
 		router.navigate( {
 			to: chooseEmailSolutionRoute.to,
 			params: { domain: d.domain },
@@ -104,7 +110,7 @@ export default function ChooseDomain() {
 									</Item>
 								) ) }
 						</ItemGroup>
-						<AddNewDomain />
+						<AddNewDomain origin="choose-domain" />
 					</>
 				) }
 			</VStack>

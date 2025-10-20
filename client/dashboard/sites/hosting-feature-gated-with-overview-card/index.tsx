@@ -22,23 +22,22 @@ export default function HostingFeatureGatedWithOverviewCard( {
 }: HostingFeatureGatedWithOverviewCardProps ) {
 	const { tracksFeatureId } = props;
 
-	const cardProps = {
+	const cardProps: Partial< OverviewCardProps > = {
 		heading: upsellHeading,
 		icon: upsell,
 		description: upsellDescription,
-		variant: 'upsell' as const,
+		intent: 'upsell' as const,
 		link: upsellLink,
 	};
 
 	return (
 		<HostingFeatureGate
 			{ ...props }
-			renderUpsellComponent={ ( { onClick } ) => (
+			renderUpsellComponent={ () => (
 				<OverviewCard
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
 					tracksId={ tracksFeatureId }
-					onClick={ onClick }
 				/>
 			) }
 			renderActivationComponent={ ( { onClick } ) => (
