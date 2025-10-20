@@ -34,10 +34,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)
-	const queryParams = parse( window.location.search.replace( /^\?/, '' ) );
-	const isMenuPanelEnabled =
-		config.isEnabled( 'help-center-menu-panel' ) &&
-		queryParams[ 'help-center-menu-panel' ] === 'true';
+	const isMenuPanelEnabled =  config.isEnabled( 'help-center-menu-panel' );
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
