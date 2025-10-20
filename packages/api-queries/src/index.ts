@@ -29,6 +29,7 @@ export * from './me-billing-history';
 export * from './me-blocked-sites';
 export * from './me-connected-applications';
 export * from './me-dpa';
+export * from './me-flex-usage';
 export * from './me-monetize';
 export * from './me-notifications-devices';
 export * from './me-notifications-settings';
