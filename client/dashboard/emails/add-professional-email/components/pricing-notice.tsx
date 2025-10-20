@@ -127,14 +127,14 @@ export const PricingNotice = ( {
 	product,
 	showEmailPurchaseDisabledMessage,
 }: {
-	domain?: Domain;
+	domain: Domain;
 	product: Product;
 	showEmailPurchaseDisabledMessage: boolean;
 } ) => {
 	const locale = useLocale();
 
-	const purchaseCost = domain?.titan_mail_subscription?.purchase_cost_per_mailbox;
-	const renewalCost = domain?.titan_mail_subscription?.renewal_cost_per_mailbox;
+	const purchaseCost = domain.titan_mail_subscription?.purchase_cost_per_mailbox;
+	const renewalCost = domain.titan_mail_subscription?.renewal_cost_per_mailbox;
 
 	if ( purchaseCost && doesAdditionalPriceMatchStandardPrice( product, purchaseCost ) ) {
 		const placeholders = { price: purchaseCost.text };
@@ -185,7 +185,7 @@ export const PricingNotice = ( {
 	} );
 
 	let endDate = new Date();
-	const hasOffer = domain && isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
+	const hasOffer = isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
 	if ( hasOffer ) {
 		const count = product?.introductory_offer?.interval_count;
 		const unit = product?.introductory_offer?.interval_unit;

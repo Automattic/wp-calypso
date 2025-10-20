@@ -101,6 +101,14 @@ export const chooseEmailSolutionRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-email-solution/$domain',
+	loader: async ( { params: { domain: domainName } } ) => {
+		const products = queryClient.ensureQueryData( productsQuery() );
+
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
+
+		await Promise.all( [ products, site, domain ] );
+	},
 } ).lazy( () =>
 	import( '../../emails/choose-email-solution' ).then( ( d ) =>
 		createLazyRoute( 'choose-email-solution' )( {
