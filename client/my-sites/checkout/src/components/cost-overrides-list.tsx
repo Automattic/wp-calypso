@@ -17,21 +17,15 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
-	LineItemPrice,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPriceCheckoutTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useSelector } from 'calypso/state';
 import {
 	getIsOnboardingAffiliateFlow,
@@ -47,29 +41,23 @@ const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
-const CostOverridesListStyle = styled.div< {
-	isStreamlinedPrice?: boolean;
-} >`
+const CostOverridesListStyle = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			padding-left: 24px;
-			position: relative;
+	position: relative;
 
-			.rtl & {
-				padding-right: 24px;
-				padding-left: 0;
-			}
-			& svg {
-				top: 0px;
-			}
-		` }
+	&:has( svg ) {
+		padding-left: 24px;
+	}
+
+	.rtl &:has( svg ) {
+		padding-right: 24px;
+		padding-left: 0;
+	}
 
 	& .cost-overrides-list-item {
 		display: grid;
@@ -94,12 +82,11 @@ const CostOverridesListStyle = styled.div< {
 
 	& .cost-overrides-list-item__discount {
 		white-space: nowrap;
-		${ ( props ) =>
-			props.isStreamlinedPrice &&
-			css`
-				color: ${ COLOR_GREEN_60 };
-				font-weight: 500;
-			` }
+	}
+
+	&:has( svg ) .cost-overrides-list-item__discount {
+		color: ${ COLOR_GREEN_60 };
+		font-weight: 500;
 	}
 `;
 
@@ -257,7 +244,6 @@ function LineItemCostOverride( {
 	product: ResponseCartProduct;
 } ) {
 	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	if ( isPriceIncrease ) {
 		return (
 			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -266,9 +252,7 @@ function LineItemCostOverride( {
 		);
 	}
 
-	const shouldShowDiscount =
-		! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ||
-		isWpComPlan( product.product_slug );
+	const shouldShowDiscount = isWpComPlan( product.product_slug );
 
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -335,7 +319,7 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	}
 `;
 
-const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
+const SimplifiedSingleProductAndCostOverridesListWrapper = styled(
 	SingleProductAndCostOverridesListWrapper
 )`
 	padding-left: 24px;
@@ -347,7 +331,7 @@ const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
 	}
 `;
 
-const StreamlinedLineItemPriceWrapper = styled.span`
+const SimplifiedLineItemPriceWrapper = styled.span`
 	display: flex;
 	flex: 0 0 auto;
 	gap: 4px;
@@ -368,7 +352,7 @@ const StreamlinedLineItemPriceWrapper = styled.span`
 	}
 `;
 
-const StreamlinedLineItemPrice = function ( {
+const SimplifiedLineItemPrice = function ( {
 	actualAmount,
 	crossedOutAmount,
 }: {
@@ -376,10 +360,10 @@ const StreamlinedLineItemPrice = function ( {
 	crossedOutAmount?: string;
 } ) {
 	return (
-		<StreamlinedLineItemPriceWrapper>
+		<SimplifiedLineItemPriceWrapper>
 			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
 			<span>{ actualAmount }</span>
-		</StreamlinedLineItemPriceWrapper>
+		</SimplifiedLineItemPriceWrapper>
 	);
 };
 
@@ -387,7 +371,7 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
 	position: absolute;
-	top: 1px;
+	top: 0;
 	left: 0;
 
 	.rtl & {
@@ -400,70 +384,54 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	const costOverridesList = filterCostOverridesForLineItem(
-		product,
-		translate,
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
-	);
+	const costOverridesList = filterCostOverridesForLineItem( product, translate );
 	const label = getLabel( product );
-	const actualAmountDisplay = formatCurrency(
-		product.item_original_subtotal_integer,
-		product.currency,
-		{
-			isSmallestUnit: true,
-			stripZeros: true,
-		}
-	);
 
 	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
-	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
-		let streamlinedActualAmountDisplay;
 
-		const originalAmountInteger =
-			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
-		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
+	const originalAmountInteger =
+		monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
+	const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const itemSubtotalInteger =
+		product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
+	const isDiscounted = Boolean(
+		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
+	);
+
+	// For WPCOM plans always show the renewal amount for legal reasons.
+	// Introductory offer discount would be shown in LineItemCostOverrides.
+	let actualAmountDisplay;
+	if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
+		actualAmountDisplay = formatCurrency(
+			product.item_original_subtotal_integer,
+			product.currency,
+			{
+				isSmallestUnit: true,
+				stripZeros: true,
+			}
+		);
+	} else {
+		actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
-		const itemSubtotalInteger =
-			product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
-		streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} );
-		const isDiscounted = Boolean(
-			itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
-		);
-
-		// For WPCOM plans always show the renewal amount for legal reasons.
-		// Introductory offer discount would be shown in LineItemCostOverrides.
-		if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
-			streamlinedActualAmountDisplay = actualAmountDisplay;
-		}
-
-		return (
-			<StreamlinedSingleProductAndCostOverridesListWrapper>
-				<WPCheckoutCheckIcon />
-				<ProductTitleAreaForCostOverridesList>
-					<span className="cost-overrides-list-product__title">{ label }</span>
-					<StreamlinedLineItemPrice
-						actualAmount={ streamlinedActualAmountDisplay }
-						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
-					/>
-				</ProductTitleAreaForCostOverridesList>
-				<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
-			</StreamlinedSingleProductAndCostOverridesListWrapper>
-		);
 	}
+
 	return (
-		<SingleProductAndCostOverridesListWrapper>
+		<SimplifiedSingleProductAndCostOverridesListWrapper>
+			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
 				<span className="cost-overrides-list-product__title">{ label }</span>
-				<LineItemPrice actualAmount={ actualAmountDisplay } />
+				<SimplifiedLineItemPrice
+					actualAmount={ actualAmountDisplay }
+					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+				/>
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
-		</SingleProductAndCostOverridesListWrapper>
+		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }
 
@@ -479,7 +447,6 @@ export function CouponCostOverride( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -493,14 +460,8 @@ export function CouponCostOverride( {
 	const label =
 		isOnboardingAffiliateFlow || isOnboardingUnifiedFlow ? getAffiliateCouponLabel() : couponLabel;
 	return (
-		<CostOverridesListStyle
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
-		>
-			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
-				<WPCheckoutCheckIcon />
-			) }
+		<CostOverridesListStyle>
+			<WPCheckoutCheckIcon />
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }

@@ -20,6 +20,7 @@ import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import { TypingPlaceholder } from './typing-placeholder';
+import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
 import ChatMessage from '.';
 import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
@@ -151,8 +152,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				aria-atomic="false"
 				aria-relevant="additions"
 			>
-				{ chat.messages.map( ( message, index ) => (
-					<div key={ index }>
+				{ chat.messages.map( ( message ) => (
+					<div key={ getMessageUniqueIdentifier( message ) }>
 						{ [ 'bot', 'business' ].includes( message.role ) && message.content }
 					</div>
 				) ) }

@@ -63,7 +63,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const query = useQuery();
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
-		const backTo = query.get( 'back_to' );
+		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external
 		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : '/sites';

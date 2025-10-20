@@ -21,16 +21,14 @@ const localesToTest: Array< locale > = [
 	'zh-cn',
 	'zh-tw',
 ];
-test.describe( 'I18N: Editor', { tag: tags.I18N }, () => {
+test.describe( 'I18N: Editor', { tag: [ tags.I18N, tags.DESKTOP_ONLY ] }, () => {
 	test.describe.configure( { mode: 'serial' } ); // Since all tests use the same account which changes its locale, they should not be run in parallel
 	for ( const locale of localesToTest ) {
 		test( `As an i18n visitor using '${ locale }' as my locale I can see localised editor content`, async ( {
 			page,
 			accounti18n,
 			pageEditor,
-		}, workerInfo ) => {
-			test.skip( workerInfo.project.name !== 'chrome', 'The i18n editor tests only run in Chrome' );
-
+		} ) => {
 			await test.step( `Given I am authenticated as '${ accounti18n.accountName }'`, async function () {
 				await accounti18n.authenticate( page );
 			} );

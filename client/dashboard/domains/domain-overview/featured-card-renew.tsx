@@ -15,7 +15,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 	const locale = useLocale();
 	const date = domain.auto_renewing ? domain.auto_renewal_date : domain.expiry;
 
-	if ( ! date ) {
+	if ( ! date || domain.subscription_id === null ) {
 		return null;
 	}
 

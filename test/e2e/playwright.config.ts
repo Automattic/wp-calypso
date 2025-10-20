@@ -1,4 +1,5 @@
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+import { tags } from './lib/pw-base';
 
 const outputPath = './output';
 const reporter: ReporterDescription[] = [
@@ -66,14 +67,17 @@ export default defineConfig( {
 		{
 			name: 'pixel',
 			use: { ...devices[ 'Pixel 7' ] },
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'galaxy',
 			use: { ...devices[ 'Galaxy S24' ] },
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'iphone',
 			use: { ...devices[ 'iPhone 15 Pro' ] },
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
 			name: 'authentication',

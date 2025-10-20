@@ -1,15 +1,29 @@
 @import '@wordpress/base-styles/variables';
 
-.preferences-helper__current-preferences {
+.preferences-helper__preference {
 	font-size: $font-size-small;
 	text-transform: none;
+	font-weight: normal;
 }
 
-.environment.is-prefs:not(:hover) .preferences-helper__current-preferences {
+.preferences-helper__preference-content {
+	padding-inline-start: $grid-unit-40;
+
+	ul {
+		margin: 0;
+		padding: 0;
+
+		li {
+			margin-bottom: $grid-unit-10;
+		}
+	}
+}
+
+.environment.is-prefs:not(:hover) .preferences-helper__preferences {
 	display: none;
 }
 
-.environment.is-prefs:hover .preferences-helper__current-preferences {
+.environment.is-prefs:hover .preferences-helper__preferences {
 	display: block;
 	inset-inline-end: 0;
 	max-height: 80vh;

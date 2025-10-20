@@ -11,7 +11,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useContactFormValidation from './hooks/use-contact-form-validation';
-import TosModal from './tos-modal';
 
 import './style.scss';
 
@@ -23,7 +22,6 @@ type Props = {
 
 const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
-	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
 		useContactFormValidation( { withEmail } );
 
@@ -184,26 +182,21 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				} }
 				initialCountryCode="US"
 			/>
-			<TosModal
-				show={ showTosModal }
-				onClose={ () => {
-					setShowTosModal( false );
-				} }
-			/>
 
 			<div className="signup-contact-form__tos">
 				<p>
 					{ translate(
-						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement ↗{{/link}}",
+						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{/link}} ↗",
 						{
 							components: {
 								break: <br />,
 								link: (
-									<button
-										type="button"
+									<a
+										href="https://automattic.com/for-agencies/platform-agreement/"
 										className="signup-contact-form__tos-link"
-										onClick={ () => setShowTosModal( true ) }
-									></button>
+										target="_blank"
+										rel="noopener noreferrer"
+									></a>
 								),
 							},
 						}

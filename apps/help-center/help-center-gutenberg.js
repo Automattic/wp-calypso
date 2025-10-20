@@ -45,7 +45,7 @@ function HelpCenterContent() {
 	}, [] );
 
 	const closeCallback = useCallback(
-		() => setShowHelpCenter( false, undefined, undefined, true ),
+		() => setShowHelpCenter( false, undefined, true ),
 		[ setShowHelpCenter ]
 	);
 

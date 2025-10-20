@@ -1,7 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SiteDomain } from './types';
+import type { Domain } from '../domain/types';
 
-export async function fetchSiteDomains( siteId: number ): Promise< SiteDomain[] > {
+export async function fetchSiteDomains( siteId: number ): Promise< Domain[] > {
 	const { domains } = await wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/domains`,

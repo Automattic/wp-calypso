@@ -8,14 +8,15 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { securitySocialLoginsRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
 import ConfirmModal from '../../components/confirm-modal';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import AppleIcon from '../../images/apple-logo.svg';
 import GitHubIcon from '../../images/github-logo.svg';
 import GoogleIcon from '../../images/google-logo.svg';
-import SecurityPageHeader from '../security-page-header';
 import AppleLogin from './apple-login';
 import GitHubLogin from './github-login';
 import GoogleLogin from './google-login';
@@ -159,7 +160,8 @@ export default function SecuritySocialLogins() {
 		<PageLayout
 			size="small"
 			header={
-				<SecurityPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Social logins' ) }
 					description={ __( 'Log in faster with the accounts you already use.' ) }
 				/>

@@ -8,7 +8,7 @@ import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
-import type { Site } from '@automattic/api-core';
+import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 export interface UpsellCalloutProps {
 	upsellIcon?: CalloutProps[ 'icon' ];
@@ -16,34 +16,31 @@ export interface UpsellCalloutProps {
 	upsellTitle?: CalloutProps[ 'title' ];
 	upsellTitleAs?: CalloutProps[ 'titleAs' ];
 	upsellDescription?: CalloutProps[ 'description' ];
+	feature?: HostingFeatureSlug;
 }
 
 export default function UpsellCallout( {
 	site,
 	tracksFeatureId,
-	onClick,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
 	upsellTitleAs,
 	upsellDescription,
+	feature,
 }: {
 	site: Site;
 	tracksFeatureId: string;
-	onClick?: () => void;
 } & UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick?.();
-
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
-		window.location.href = addQueryArgs(
-			`/checkout/${ encodeURIComponent( site.slug ) }/business`,
-			{
-				cancel_to: backUrl,
-				redirect_to: backUrl,
-			}
-		);
+		window.location.href = addQueryArgs( '/setup/plan-upgrade/', {
+			siteSlug: site.slug,
+			cancel_to: backUrl,
+			redirect_to: backUrl,
+			...( feature && { feature } ),
+		} );
 	};
 
 	const defaultProps = {

@@ -4,7 +4,7 @@ import type { Field } from '@wordpress/dataviews';
 
 export const updateAvailableField: Field< PluginListRow > = {
 	id: 'updateAvailable',
-	label: __( 'Update Available' ),
+	label: __( 'Update available' ),
 	getValue: ( { item } ) => {
 		if ( item.areAutoUpdatesAllowed === 'none' ) {
 			return 0;

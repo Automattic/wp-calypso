@@ -8,7 +8,6 @@ import { useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -38,7 +37,7 @@ const withLocale = ( url: string, locale: string ) => {
 
 function initialize() {
 	const steps = [
-		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
+		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
@@ -144,17 +143,9 @@ const onboarding: FlowV2< typeof initialize > = {
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 
-						const initialQuery =
-							// eslint-disable-next-line no-nested-ternary
-							'lastQuery' in providedDependencies
-								? providedDependencies.lastQuery
-								: 'domainForm' in providedDependencies
-								? providedDependencies.domainForm?.lastQuery
-								: undefined;
-
 						const useMyDomainURL = addQueryArgs( 'use-my-domain', {
 							...currentQueryArgs,
-							initialQuery,
+							initialQuery: providedDependencies.lastQuery,
 						} );
 
 						return navigate( useMyDomainURL as typeof currentStepSlug );

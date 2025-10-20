@@ -173,7 +173,10 @@ export type Message = {
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
 	payload?: string;
-	isSending?: boolean;
+	/**
+	 * Timestamp of the message.
+	 */
+	received?: number;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';

@@ -213,13 +213,15 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		}
 	);
 
-	const isChat = pathname.startsWith( '/odie' );
+	const userAskingSupport =
+		pathname.startsWith( '/odie' ) || pathname.startsWith( '/contact-form' );
 	const isHelpCenterHome = pathname === '/';
 	// Show the back button if it's not the help center home page and:
 	// - it's a chat and the hideBackButton option is not set
 	// - it's not a chat
 	const shouldShowBackButton =
-		! isHelpCenterHome && ( ( isChat && ! helpCenterOptions?.hideBackButton ) || ! isChat );
+		! isHelpCenterHome &&
+		( ( userAskingSupport && ! helpCenterOptions?.hideBackButton ) || ! userAskingSupport );
 
 	if ( isMinimized ) {
 		return (

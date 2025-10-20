@@ -10,7 +10,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -38,6 +38,22 @@ function McpComponent( { path } ) {
 	// Site selector state for disabling MCP access on specific sites
 	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
 
+	// Reauth state
+	const [ reauthRequired, setReauthRequired ] = useState( false );
+
+	// Monitor reauth status
+	useEffect( () => {
+		const checkReauth = () => {
+			const reauth = twoStepAuthorization.isReauthRequired();
+			setReauthRequired( reauth );
+		};
+
+		twoStepAuthorization.on( 'change', checkReauth );
+		checkReauth(); // Initial check
+
+		return () => twoStepAuthorization.off( 'change', checkReauth );
+	}, [] ); // Empty dependency array - only run once on mount
+
 	// Use the standard userSettingsMutation with simple auto-save
 	const mutation = useMutation( {
 		...userSettingsMutation(),
@@ -56,10 +72,32 @@ function McpComponent( { path } ) {
 		},
 	} );
 
-	// Handle loading and error states
-	if ( isLoadingUserSettings || userSettingsError ) {
+	// Handle error states only - allow loading to continue so reauth can show
+	if ( userSettingsError ) {
 		return null;
 	}
+
+	// Common layout wrapper
+	const renderLayout = ( children ) => (
+		<Main wideLayout className="mcp">
+			<PageViewTracker path={ path } title="MCP Account Settings" />
+			<DocumentHead title={ translate( 'Model Context Protocol (MCP) Account Settings' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'MCP Account Settings' ) }
+				subtitle={ translate(
+					'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
+						},
+					}
+				) }
+			/>
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+			{ ! isLoadingUserSettings && ! reauthRequired && children }
+		</Main>
+	);
 
 	// Get account-level tools from user settings using the new nested structure
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -295,26 +333,7 @@ function McpComponent( { path } ) {
 		return null;
 	}
 
-	return (
-		<Main wideLayout className="mcp">
-			<PageViewTracker path={ path } title="MCP Account Settings" />
-			<DocumentHead title={ translate( 'Model Context Protocol (MCP) Account Settings' ) } />
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'MCP Account Settings' ) }
-				subtitle={ translate(
-					'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
-						},
-					}
-				) }
-			/>
-			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-			{ renderContent() }
-		</Main>
-	);
+	return renderLayout( renderContent() );
 }
 
 export default McpComponent;

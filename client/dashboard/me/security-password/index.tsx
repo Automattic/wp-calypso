@@ -17,10 +17,11 @@ import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import FlashMessage, { addFlashMessage } from '../../components/flash-message';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -121,7 +122,8 @@ export default function SecurityPassword() {
 		<PageLayout
 			size="small"
 			header={
-				<SecurityPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Password' ) }
 					description={ __(
 						'Strong passwords have at least six characters, and use upper and lower case letters, numbers, and symbols like ! ” ? $ % ^ & ).'

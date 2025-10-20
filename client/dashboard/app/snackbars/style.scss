@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/variables';
 
 .dashboard-snackbars {
 	position: fixed;
@@ -8,4 +8,8 @@
 	flex-direction: column;
 	align-items: flex-start;
 	margin: $grid-unit-20;
+}
+
+body:has( .repositories-back-button ) .dashboard-snackbars {
+	margin-bottom: calc( $grid-unit-20 + 52px );
 }

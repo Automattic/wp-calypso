@@ -1,3 +1,5 @@
+import { smsCountryCodesQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	CheckboxControl,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
@@ -8,6 +10,8 @@ import { type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
+import PhoneNumberInput from '../../components/phone-number-input';
+import { validatePhone } from '../../utils/phone-number';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
@@ -51,8 +55,62 @@ export const getContactFormFields = (
 			id: 'phone',
 			label: __( 'Phone' ),
 			type: 'text',
+			Edit: ( { field, data, onChange } ) => {
+				const { getValue } = field;
+				const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
+				const phoneValue = getValue( { item: data } );
+
+				// Our backend stores phone number in the format: +country_code.phone_number
+				const [ countryNumericCode, phoneNumber ] = phoneValue.split( '.' ) ?? [ '', '' ];
+
+				// Find country code from the numeric code using SMS country codes
+				const smsCountry = smsCountryCodes?.find(
+					( country ) => country.numeric_code === countryNumericCode
+				);
+
+				const validationMessage = field.isValid?.custom?.( data, field );
+
+				return (
+					<PhoneNumberInput
+						customValidity={
+							validationMessage ? { type: 'invalid', message: validationMessage } : undefined
+						}
+						data={ {
+							countryCode: smsCountry?.code || '',
+							phoneNumber: phoneNumber,
+							countryNumericCode: countryNumericCode,
+						} }
+						onChange={ ( edits ) => {
+							// Format the phone value back to the expected format: +country_code.phone_number
+							const formattedPhone = edits.countryNumericCode
+								? `${ edits.countryNumericCode }.${ edits.phoneNumber || '' }`
+								: '';
+
+							onChange( {
+								phone: formattedPhone,
+							} );
+						} }
+					/>
+				);
+			},
 			isValid: {
 				required: true,
+				custom: ( item, field ) => {
+					const raw = field.getValue ? field.getValue( { item } ) : '';
+					if ( ! raw ) {
+						return null;
+					}
+					const fullPhoneNumber = String( raw ).split( '.' ).join( '' );
+					const [ , phoneNumberOnly ] = String( raw ).split( '.' ) ?? [ '', '' ];
+					const result = validatePhone( fullPhoneNumber );
+
+					if ( 'error' in result && result.error === 'phone_number_too_short' ) {
+						const resultWithoutCountryCode = validatePhone( phoneNumberOnly );
+						return 'error' in resultWithoutCountryCode ? resultWithoutCountryCode.message : null;
+					}
+
+					return 'error' in result ? result.message : null;
+				},
 			},
 		},
 		{

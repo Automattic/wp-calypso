@@ -127,7 +127,7 @@ export function RenderDomainUpsell( {
 
 	const backUrl = window.location.href.replace( window.location.origin, '' );
 
-	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl, domain: true } );
+	const searchLink = getDomainAndPlanUpsellUrl( { siteSlug, backUrl } );
 
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
@@ -141,7 +141,6 @@ export function RenderDomainUpsell( {
 		siteSlug,
 		backUrl,
 		step: 'plans',
-		domain: true,
 	} );
 
 	const purchaseLink = ! isFreePlan && ! isMonthlyPlan ? `/checkout/${ siteSlug }` : plansPageLink;

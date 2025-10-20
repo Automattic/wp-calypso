@@ -39,13 +39,13 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -357,7 +357,6 @@ export default withCurrentRoute(
 		const siteId = getSelectedSiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isDomainAndPlanPackageFlow = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
@@ -380,7 +379,6 @@ export default withCurrentRoute(
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
-			isDomainAndPlanPackageFlow ||
 			isReaderTagEmbedPage( window?.location );
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
@@ -403,7 +401,7 @@ export default withCurrentRoute(
 		const isEligibleForJITM = [ 'home', 'plans', 'themes', 'plugins', 'comments' ].includes(
 			sectionName
 		);
-		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
+		const sidebarIsHidden = ! secondary || isWcMobileApp();
 		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
 
 		const colorScheme = isWooJPC
@@ -426,17 +424,24 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
+		const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+
+		const isEnabledThemeUniversalHeader =
+			config.isEnabled( 'themes/universal-header' ) &&
+			[ 'themes', 'theme' ].includes( sectionName );
+
+		const isEnabledPluginsUniversalHeader =
+			config.isEnabled( 'plugins/universal-header' ) &&
+			[ 'plugins' ].includes( sectionName ) &&
+			! (
+				currentRoute.startsWith( '/plugins/manage' ) ||
+				currentRoute.startsWith( '/plugins/scheduled-updates' )
+			);
+
 		const hasUniversalHeader =
-			( config.isEnabled( 'themes/universal-header' ) &&
-				! siteId &&
-				[ 'themes', 'theme' ].includes( sectionName ) ) ||
-			( config.isEnabled( 'plugins/universal-header' ) &&
-				! siteId &&
-				[ 'plugins' ].includes( sectionName ) &&
-				! (
-					currentRoute.startsWith( '/plugins/manage' ) ||
-					currentRoute.startsWith( '/plugins/scheduled-updates' )
-				) );
+			hostingDashboardOptIn &&
+			! siteId &&
+			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
 		return {
 			masterbarIsHidden,

@@ -11,7 +11,11 @@
 .site-activity-logs__event {
 	color: $gray-900;
 }
+
 .site-activity-logs__event-content {
 	flex: 1 0 0;
 	flex-wrap: wrap;
+	span {
+		color: $gray-700;
+	}
 }

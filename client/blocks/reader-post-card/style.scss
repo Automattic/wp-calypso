@@ -41,7 +41,8 @@
 	}
 }
 
-.reader-post-card.card {
+.reader-post-card.card,
+.reader-post-card.card.is-compact {
 	border-bottom: 5px solid var(--color-neutral-5);
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	margin: 0;

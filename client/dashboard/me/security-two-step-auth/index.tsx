@@ -1,8 +1,9 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SecurityPageHeader from '../security-page-header';
 import SecurityTwoStepAuthEmptyState from './empty-state';
 import SecurityTwoStepAuthMainPage from './main-page';
 
@@ -24,7 +25,8 @@ export default function SecurityTwoStepAuth() {
 		<PageLayout
 			size="small"
 			header={
-				<SecurityPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Two-step authentication' ) }
 					description={
 						two_step_enabled

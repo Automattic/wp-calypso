@@ -9,7 +9,7 @@ import {
 	NewUserResponse,
 	RestAPIClient,
 	EditorPage,
-	RewrittenDomainSearchComponent,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -59,12 +59,12 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 
 	it( 'Ensure domain search is working', async function () {
 		await page.getByRole( 'link', { name: 'Select to choose a domain' } ).click();
-		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.search( 'test' );
 	} );
 
 	it( 'Skip the domain selection step', async function () {
-		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.skipPurchase();
 	} );
 
