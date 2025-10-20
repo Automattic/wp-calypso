@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
@@ -48,6 +49,8 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 	STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
+	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
@@ -144,6 +147,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 						action: SiteMigrationIdentifyAction;
 					};
 					const hasDestinationSite = hasSite( siteId, siteSlug );
+					// TODO: Remove the call and use a actual check for the hosting
+					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+
+					if ( isSSHMigrationAvailable ) {
+						if ( hasDestinationSite ) {
+							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+						}
+
+						if ( userHasOtherWPComSites ) {
+							return navigate( paths.sitePickerPath( { from, platform } ) );
+						}
+
+						return navigate( paths.siteCreationPath( { from, platform } ) );
+					}
+
 					if ( hasDestinationSite ) {
 						if ( platform !== 'wordpress' || action === 'skip_platform_identification' ) {
 							if ( isPlatformImportable( platform ) && from ) {
@@ -507,6 +525,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
+					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
+				}
+
+				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
+					return navigate( paths.sshInProgressPath( { siteId, siteSlug } ) );
+				}
+
+				case STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug: {
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 			}
