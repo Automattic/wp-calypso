@@ -1,6 +1,6 @@
 import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
-import { convertAvailabilityToSuggestion } from '../helpers/convert-availability-to-suggestion';
+import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
 import { useDomainSearch } from '../page/context';
 import type { DomainSuggestion } from '@automattic/api-core';
 
@@ -59,14 +59,8 @@ export const useSuggestion = ( domainName: string ) => {
 		...queries.domainSuggestions( query ),
 	} );
 
-	// Add FQDN availability to the suggestions list
 	if ( suggestions && fqdnAvailability ) {
-		const isFQDNAlreadyInSuggestions = suggestions.some(
-			( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
-		);
-		if ( ! isFQDNAlreadyInSuggestions ) {
-			suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
-		}
+		addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
 	}
 
 	if ( suggestions ) {
