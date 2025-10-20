@@ -34,6 +34,7 @@ import {
 	siteTrialEndedRoute,
 	siteDifmLiteInProgressRoute,
 	siteMigrationOverviewRoute,
+	siteDomainsRoute,
 } from './sites';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -111,6 +112,7 @@ export const createSitesCIABRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteDomainsRoute,
 	];
 
 	return [ sitesCIABRoute, siteCIABRoute.addChildren( siteCIABRoutes ) ];
