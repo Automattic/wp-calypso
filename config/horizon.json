@@ -30,6 +30,7 @@
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domain-search-rewrite": true,
+		"domain-verification-redesign": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": false,
 		"help": true,
