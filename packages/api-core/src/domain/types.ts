@@ -12,6 +12,7 @@ export type EmailSubscriptionStatus =
 
 interface EmailSubscription {
 	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
+	product_slug: string;
 }
 
 export interface EmailCost {

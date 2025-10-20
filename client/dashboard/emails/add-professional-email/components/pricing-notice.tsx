@@ -9,7 +9,7 @@ import { Text } from '../../../components/text';
 import { formatDate } from '../../../utils/datetime';
 import { getTitanExpiryDate } from '../../utils/get-titan-expiry-date';
 import { isDomainEligibleForTitanIntroductoryOffer } from '../../utils/is-domain-eligible-for-titan-introductory-offer';
-import { isTitanMonthlyProduct } from '../../utils/is-titan-monthly-product';
+import { isMonthlyEmailProduct } from '../../utils/is-monthly-email-product';
 import { isUserOnTitanFreeTrial } from '../../utils/is-user-on-titan-free-trial';
 
 const doesAdditionalPriceMatchStandardPrice = (
@@ -142,7 +142,7 @@ export const PricingNotice = ( {
 		return (
 			<Text as="p">
 				{ createInterpolateElement(
-					isTitanMonthlyProduct( product )
+					isMonthlyEmailProduct( product )
 						? sprintf(
 								// Translators: %(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50).
 								__(
@@ -168,7 +168,7 @@ export const PricingNotice = ( {
 	const priceMessage = getPriceMessage( domain );
 	const priceMessageExplanation = getPriceMessageExplanation( {
 		domain,
-		isMonthlyBilling: isTitanMonthlyProduct( product ),
+		isMonthlyBilling: isMonthlyEmailProduct( product ),
 		mailboxPurchaseCost: purchaseCost,
 		mailboxRenewalCost: renewalCost,
 	} );

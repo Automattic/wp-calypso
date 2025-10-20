@@ -1,3 +1,5 @@
+import { GoogleEmailSubscription, TitanEmailSubscription } from '@automattic/api-core';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,14 +10,20 @@ import {
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../app/auth';
+import { addProfessionalEmailRoute, addGoogleMailboxRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
-import { hasEmailForwards, isGoogleWorkspaceSupportedDomain } from '../../utils/domain';
+import {
+	hasEmailForwards,
+	hasGSuiteWithUs,
+	hasTitanMailWithUs,
+	isGoogleWorkspaceSupportedDomain,
+} from '../../utils/domain';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
@@ -23,6 +31,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength } from '../types';
 import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
+import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
@@ -44,12 +53,35 @@ export default function ChooseEmailSolution() {
 		product: titanProduct,
 	} );
 
+	const isTitanAvailable = canAddEmail && ! hasGSuiteWithUs( domain );
+
 	const { user } = useAuth();
-	const isGoogleSupported =
+	const isGoogleAvailable =
 		canAddEmail &&
 		( user.is_valid_google_apps_country ?? false ) &&
-		domain &&
-		isGoogleWorkspaceSupportedDomain( domain );
+		isGoogleWorkspaceSupportedDomain( domain ) &&
+		! hasTitanMailWithUs( domain );
+
+	const navigate = useNavigate();
+	useEffect( () => {
+		if ( hasTitanMailWithUs( domain ) && isTitanAvailable ) {
+			navigate( {
+				to:
+					addProfessionalEmailRoute.fullPath +
+					( isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription )
+						? '?interval=monthly'
+						: '' ),
+			} );
+		} else if ( hasGSuiteWithUs( domain ) && isGoogleAvailable ) {
+			navigate( {
+				to:
+					addGoogleMailboxRoute.fullPath +
+					( isMonthlyEmailProduct( domain.google_apps_subscription as GoogleEmailSubscription )
+						? '?interval=monthly'
+						: '' ),
+			} );
+		}
+	}, [ domain, isGoogleAvailable, isTitanAvailable, navigate ] );
 
 	const providers = [
 		{
@@ -71,7 +103,7 @@ export default function ChooseEmailSolution() {
 			},
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
-			available: canAddEmail,
+			available: isTitanAvailable,
 		},
 		{
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -90,7 +122,7 @@ export default function ChooseEmailSolution() {
 				__( '24/7 support via email' ),
 			],
 			product: googleProduct,
-			available: isGoogleSupported,
+			available: isGoogleAvailable,
 		},
 	];
 

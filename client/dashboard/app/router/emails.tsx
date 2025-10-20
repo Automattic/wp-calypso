@@ -180,7 +180,7 @@ export const addGoogleMailboxRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => rootRoute,
-	path: 'emails/add-google-mailbox',
+	path: 'emails/add-google-mailbox/$domain',
 } ).lazy( () =>
 	import( '../../emails/add-google-mailbox' ).then( ( d ) =>
 		createLazyRoute( 'add-google-mailbox' )( {

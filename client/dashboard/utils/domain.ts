@@ -160,7 +160,7 @@ export function getGSuiteMailboxCount( domain: Domain ): number {
 }
 
 export function hasEmailForwards( domain: Domain ) {
-	return domain?.email_forwards_count ?? 0;
+	return !! ( domain?.email_forwards_count ?? 0 );
 }
 
 export const domainHasEmail = ( domain: Domain ) =>
