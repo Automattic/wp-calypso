@@ -5,7 +5,9 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainForwarding } from '@automattic/api-core';
@@ -26,10 +28,10 @@ const DomainForwardingDeleteModal = ( {
 		meta: {
 			snackbar: {
 				success: __( 'Domain forwarding rule deleted.' ),
-				error: __( 'Failed to delete domain forwarding rule.' ),
 			},
 		},
 	} );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	const onConfirm = () => {
@@ -43,12 +45,16 @@ const DomainForwardingDeleteModal = ( {
 
 				onClose?.();
 			},
-			onError: ( error ) => {
+			onError: ( error: Error ) => {
 				recordTracksEvent( 'calypso_dashboard_domain_forwarding_delete_record_failure', {
 					domain: domainName,
 					fqdn: domainForwarding.fqdn,
 					target_host: domainForwarding.target_host,
 					error_message: error.message,
+				} );
+
+				createErrorNotice( error.message, {
+					type: 'snackbar',
 				} );
 
 				onClose?.();
