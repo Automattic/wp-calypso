@@ -1,11 +1,12 @@
 import { Page } from 'playwright';
-import { DataHelper } from '../..';
+import { DataHelper, ImportFileContentPage } from '../..';
 
 /**
  * Represents the Import Content from Substack page.
  */
 export class ImportContentFromSubstackPage {
 	private page: Page;
+	importFileContentPage: ImportFileContentPage;
 
 	/**
 	 * Constructs an instance of the page.
@@ -14,6 +15,7 @@ export class ImportContentFromSubstackPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.importFileContentPage = new ImportFileContentPage( page );
 	}
 
 	/**
@@ -90,14 +92,6 @@ export class ImportContentFromSubstackPage {
 	 */
 	async clickContinue(): Promise< void > {
 		await this.page.getByRole( 'button', { name: 'Continue' } ).click();
-	}
-
-	/**
-	 * Uploads a Substack export file.
-	 * @param filePath The path to the export file.
-	 */
-	async uploadExportFile( filePath: string ): Promise< void > {
-		await this.page.locator( 'input[type="file"][name="exportFile"]' ).setInputFiles( filePath );
 	}
 
 	/**

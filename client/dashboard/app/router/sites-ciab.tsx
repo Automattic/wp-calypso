@@ -8,7 +8,7 @@ import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { rootRoute } from './root';
 import {
-	siteRoute as ciabSiteRoute,
+	siteRoute as siteCIABRoute,
 	siteOverviewRoute,
 	siteSettingsRoute,
 	siteSettingsIndexRoute,
@@ -34,11 +34,12 @@ import {
 	siteTrialEndedRoute,
 	siteDifmLiteInProgressRoute,
 	siteMigrationOverviewRoute,
+	siteDomainsRoute,
 } from './sites';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
 
-export const ciabSitesRoute = createRoute( {
+export const sitesCIABRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -71,19 +72,19 @@ export const ciabSitesRoute = createRoute( {
 		return search;
 	},
 } ).lazy( () =>
-	import( '../../ciab-sites' ).then( ( d ) =>
-		createLazyRoute( 'ciab-sites' )( {
+	import( '../../sites-ciab' ).then( ( d ) =>
+		createLazyRoute( 'sites-ciab' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const createCIABSitesRoutes = ( config: AppConfig ) => {
-	if ( ! config.supports.ciabSites ) {
+export const createSitesCIABRoutes = ( config: AppConfig ) => {
+	if ( ! config.supports.sitesCIAB ) {
 		return [];
 	}
 
-	const ciabSiteRoutes: AnyRoute[] = [
+	const siteCIABRoutes: AnyRoute[] = [
 		siteOverviewRoute,
 		siteSettingsRoute.addChildren( [
 			siteSettingsIndexRoute,
@@ -111,7 +112,8 @@ export const createCIABSitesRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteDomainsRoute,
 	];
 
-	return [ ciabSitesRoute, ciabSiteRoute.addChildren( ciabSiteRoutes ) ];
+	return [ sitesCIABRoute, siteCIABRoute.addChildren( siteCIABRoutes ) ];
 };

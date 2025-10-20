@@ -1,6 +1,7 @@
 import { useRouter } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
 import { useState, useRef, useEffect } from 'react';
+import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 
 interface UseDateRangeOptions {
@@ -33,8 +34,15 @@ export function useDateRange( {
 
 		// Sync from/to to the URL as UNIX seconds
 		const url = new URL( window.location.href );
-		url.searchParams.set( 'from', String( getUnixTime( next.start ) ) );
-		url.searchParams.set( 'to', String( getUnixTime( next.end ) ) );
+		const { startSec, endSec } = buildTimeRangeInSeconds(
+			next.start,
+			next.end,
+			timezoneString,
+			gmtOffset
+		);
+
+		url.searchParams.set( 'from', String( startSec ) );
+		url.searchParams.set( 'to', String( endSec ) );
 		window.history.replaceState( null, '', url.pathname + url.search );
 	};
 

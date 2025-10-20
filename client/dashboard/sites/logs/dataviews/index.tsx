@@ -69,10 +69,51 @@ function SiteLogsDataViews( {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const { startSec, endSec } = useMemo(
+	// We want to parse 'from' and 'to' from the URL.
+	const parseUrlSeconds = useMemo( () => {
+		const searchParams = new URLSearchParams( search );
+
+		const readSeconds = ( key: 'from' | 'to' ) => {
+			const raw = searchParams.get( key );
+			if ( ! raw ) {
+				return null;
+			}
+			const number = Number.parseInt( raw, 10 );
+			if ( ! Number.isFinite( number ) ) {
+				return null;
+			}
+			// Enforce seconds-only here. The page-level normalizer will rewrite ms→s on mount.
+			return number > 1e11 ? null : number;
+		};
+
+		const from = readSeconds( 'from' );
+		const to = readSeconds( 'to' );
+		return from != null && to != null ? { from, to } : null;
+	}, [ search ] );
+
+	const computed = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
-		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
+		[ dateRange.start, dateRange.end, timezoneString, gmtOffset ]
 	);
+
+	const startSec = parseUrlSeconds ? parseUrlSeconds.from : computed.startSec;
+	const endSec = parseUrlSeconds ? parseUrlSeconds.to : computed.endSec;
+
+	// Sync URL when time or filters change. Guard against first render before filters hydrate.
+	useEffect( () => {
+		if ( typeof view.filters === 'undefined' ) {
+			return;
+		}
+		const url = new URL( window.location.href );
+		// Re-apply filters currently in view to the URL
+		const allowed = getAllowedFields( logType );
+		const sourceFilters = ( view.filters ?? [] ) as Filter[];
+		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
+		// Always set canonical time params (seconds)
+		url.searchParams.set( 'from', String( startSec ) );
+		url.searchParams.set( 'to', String( endSec ) );
+		window.history.replaceState( null, '', url.toString() );
+	}, [ startSec, endSec, view.filters, logType, search ] );
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
@@ -190,9 +231,12 @@ function SiteLogsDataViews( {
 			next.sort?.direction !== view.sort?.direction ||
 			filtersSignature( sourceFilters, allowed ) !== filtersSignature( view.filters, allowed );
 
-		// Sync allowed filters to URL using sourceFilters
+		// Sync allowed filters to URL using sourceFilters and preserve from/to params
 		const url = new URL( window.location.href );
 		syncFiltersSearchParams( url.searchParams, allowed, sourceFilters );
+		// Always keep canonical time range params
+		url.searchParams.set( 'from', String( startSec ) );
+		url.searchParams.set( 'to', String( endSec ) );
 		window.history.replaceState( null, '', url.pathname + url.search );
 
 		// Apply view with only allowed filters; reset page if dataset changed

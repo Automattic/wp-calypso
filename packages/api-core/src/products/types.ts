@@ -20,8 +20,10 @@ export interface Product {
 	available: boolean;
 	is_domain_registration: boolean;
 	cost_display: string;
+	combined_cost_display?: string;
 	cost: number;
 	cost_smallest_unit: number;
+	cost_per_month_display?: string;
 	currency_code: string;
 	introductory_offer?: ProductIntroductoryOffer;
 	price_tier_list: PriceTierEntry[];
@@ -36,5 +38,7 @@ export interface Product {
 	sale_cost?: number;
 	is_privacy_protection_product_purchase_allowed?: boolean;
 	product_term?: string;
+	product_term_localized?: string;
 	billing_product_slug: string;
+	tld?: string;
 }

@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { Text } from '../../components/text';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
+import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
@@ -91,12 +92,27 @@ export const useFields = ( {
 				},
 				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.id,
 			},
-			// {
-			// 	id: 'owner',
-			// 	label: __( 'Owner' ),
-			// 	enableHiding: false,
-			// 	enableSorting: true,
-			// },
+			{
+				id: 'owner',
+				label: __( 'Owner' ),
+				enableHiding: true,
+				enableSorting: true,
+				elements: [
+					{ value: 'owned-by-me', label: __( 'Me' ) },
+					{ value: 'owned-by-someone-else', label: __( 'Someone else' ) },
+				],
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				getValue: ( { item }: { item: DomainSummary } ) =>
+					item?.current_user_is_owner ? 'owned-by-me' : 'owned-by-someone-else',
+				render: ( { field, item } ) =>
+					field.getValue( { item } ) === 'owned-by-me' ? (
+						<Text intent="success">{ __( 'Owned by me' ) }</Text>
+					) : (
+						<IneligibleIndicator />
+					),
+			},
 			{
 				id: 'blog_name',
 				label: __( 'Site' ),
@@ -188,7 +204,7 @@ export const useFields = ( {
 				},
 				getValue: ( { item } ) => item.domain_status.label,
 				render: ( { item } ) => {
-					return <Text intent={ item.domain_status.type }>{ item.domain_status.label }</Text>;
+					return <DomainStatusField domain={ item } value={ item.domain_status.label } />;
 				},
 			},
 		],

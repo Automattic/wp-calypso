@@ -11,6 +11,8 @@ import type {
 	Site,
 	User,
 	WhoisDataEntry,
+	TitanEmailSubscription,
+	GoogleEmailSubscription,
 } from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
@@ -37,7 +39,7 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 	);
 }
 
-export function isDomainRenewable( domain: DomainSummary ) {
+export function isDomainRenewable( domain: DomainSummary ): boolean {
 	// Only registered domains can be manually renewed
 	if ( ! isRegisteredDomain( domain ) ) {
 		return false;
@@ -45,12 +47,13 @@ export function isDomainRenewable( domain: DomainSummary ) {
 
 	return (
 		!! domain.subscription_id &&
-		! [
-			DomainStatus.PENDING_RENEWAL,
-			DomainStatus.PENDING_TRANSFER,
-			DomainStatus.PENDING_REGISTRATION,
-			DomainStatus.EXPIRED_IN_AUCTION,
-		].includes( domain.domain_status.id )
+		!! domain.current_user_is_owner &&
+		! (
+			domain.domain_status.id === DomainStatus.PENDING_RENEWAL ||
+			domain.domain_status.id === DomainStatus.PENDING_TRANSFER ||
+			domain.domain_status.id === DomainStatus.PENDING_REGISTRATION ||
+			domain.domain_status.id === DomainStatus.EXPIRED_IN_AUCTION
+		)
 	);
 }
 
@@ -98,9 +101,8 @@ export function shouldUpgradeToMakeDomainPrimary( {
 	user: User;
 } ) {
 	return (
-		[ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
-			domain.subtype.id
-		) &&
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ) &&
 		! domain.primary_domain &&
 		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
 		!! site.plan?.is_free &&
@@ -136,6 +138,19 @@ export function hasGSuiteWithUs( domain: Domain ) {
 export function hasTitanMailWithUs( domain: Domain ) {
 	const subscriptionStatus = domain.titan_mail_subscription?.status;
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
+}
+
+/**
+ * Returns the maximum number of mailboxes that can be provisioned for a domain. Because a Titan
+ * subscription must have at least one mailbox, `1` is the default return value even for domains
+ * without an active Titan subscription.
+ */
+export function getMaxTitanMailboxCount( domain: Domain ): number {
+	return ( domain.titan_mail_subscription as TitanEmailSubscription )?.maximum_mailbox_count ?? 1;
+}
+
+export function getGSuiteMailboxCount( domain: Domain ): number {
+	return ( domain?.google_apps_subscription as GoogleEmailSubscription )?.total_user_count ?? 0;
 }
 
 export function hasEmailForwards( domain: Domain ) {

@@ -19,7 +19,7 @@ boot( {
 			domains: true,
 			emails: true,
 		},
-		ciabSites: false,
+		sitesCIAB: false,
 		domains: true,
 		emails: true,
 		themes: true,
@@ -42,4 +42,5 @@ boot( {
 			href: '/setup/ai-site-builder',
 		},
 	},
+	optIn: true,
 } );
