@@ -829,4 +829,558 @@ describe( 'Client', () => {
 			} ).rejects.toThrow( 'Streaming error: API rate limit exceeded' );
 		} );
 	} );
+
+	describe( 'Ability execution', () => {
+		it( 'should execute ability callback when exact name matches', async () => {
+			let abilityExecuted = false;
+			const ability = {
+				name: 'test/ability',
+				label: 'Test Ability',
+				description: 'A test ability',
+				category: 'test',
+				callback: async ( input: any ) => {
+					abilityExecuted = true;
+					return { result: 'ability executed', input };
+				},
+			};
+
+			const mockToolProvider: ToolProvider = {
+				abilities: [ ability ],
+				async getAvailableTools() {
+					return [];
+				},
+				async executeTool() {
+					throw new Error( 'Should not call executeTool' );
+				},
+			};
+
+			// Mock SSE stream with ability call using exact name
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const sseData = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								id: 'test-task-id',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'message-123',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-123',
+													toolId: 'test/ability', // Exact name
+													arguments: {
+														value: 'test',
+													},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
+
+			// Mock follow-up response
+			const createFollowUpStream = () => {
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const encoder = new TextEncoder();
+						const completionEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Done!',
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} );
+						controller.enqueue(
+							encoder.encode( `data: ${ completionEvent }\n\n` )
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createFollowUpStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act
+			const userMessage = createTextMessage( 'Test' );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert
+			expect( abilityExecuted ).toBe( true );
+		} );
+
+		it( 'should execute ability callback when sanitized name matches', async () => {
+			// Arrange: Create ability with slashes and hyphens
+			let capturedInput: any;
+			const ability = {
+				name: 'demo/get-user-info',
+				label: 'Get User Info',
+				description: 'Gets user information',
+				category: 'user',
+				callback: async ( input: any ) => {
+					capturedInput = input;
+					return { name: 'Test User', email: 'test@example.com' };
+				},
+			};
+
+			const mockToolProvider: ToolProvider = {
+				abilities: [ ability ],
+				async getAvailableTools() {
+					return [];
+				},
+				async executeTool() {
+					throw new Error( 'Should not call executeTool' );
+				},
+			};
+
+			// Mock SSE stream with sanitized ability name (demo__get_user_info)
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const sseData = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								id: 'test-task-id',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'message-123',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-123',
+													toolId: 'demo__get_user_info', // Sanitized name
+													arguments: {
+														includePreferences:
+															true,
+													},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
+
+			// Mock follow-up response
+			const createFollowUpStream = () => {
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const encoder = new TextEncoder();
+						const completionEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Done!',
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} );
+						controller.enqueue(
+							encoder.encode( `data: ${ completionEvent }\n\n` )
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createFollowUpStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act
+			const userMessage = createTextMessage( 'Get user info' );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert - ability should have been executed with the right input
+			expect( capturedInput ).toEqual( { includePreferences: true } );
+		} );
+
+		it( 'should fall through to executeTool when no ability matches', async () => {
+			// Arrange: Create ability with different name
+			const ability = {
+				name: 'other/ability',
+				label: 'Other Ability',
+				description: 'Another ability',
+				category: 'test',
+				callback: async () => {
+					throw new Error( 'Should not execute this ability' );
+				},
+			};
+
+			let toolExecuted = false;
+			const mockToolProvider: ToolProvider = {
+				abilities: [ ability ],
+				async getAvailableTools() {
+					return [
+						{
+							id: 'test_tool',
+							name: 'Test Tool',
+							description: 'A test tool',
+							input_schema: {
+								type: 'object',
+								properties: {},
+							},
+						},
+					];
+				},
+				async executeTool( toolId: string ) {
+					if ( toolId === 'test_tool' ) {
+						toolExecuted = true;
+						return { result: 'tool executed' };
+					}
+					throw new Error( `Unknown tool: ${ toolId }` );
+				},
+			};
+
+			// Mock SSE stream with regular tool call
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const sseData = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								id: 'test-task-id',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'message-123',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-123',
+													toolId: 'test_tool', // Different from ability
+													arguments: {},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
+
+			// Mock follow-up response
+			const createFollowUpStream = () => {
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const encoder = new TextEncoder();
+						const completionEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Done!',
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} );
+						controller.enqueue(
+							encoder.encode( `data: ${ completionEvent }\n\n` )
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createFollowUpStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act
+			const userMessage = createTextMessage( 'Test' );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert - regular tool should have been executed
+			expect( toolExecuted ).toBe( true );
+		} );
+
+		it( 'should handle errors in ability callbacks gracefully', async () => {
+			// Arrange: Create ability that throws error
+			const ability = {
+				name: 'failing/ability',
+				label: 'Failing Ability',
+				description: 'An ability that fails',
+				category: 'test',
+				callback: async () => {
+					throw new Error( 'Ability execution failed' );
+				},
+			};
+
+			const mockToolProvider: ToolProvider = {
+				abilities: [ ability ],
+				async getAvailableTools() {
+					return [];
+				},
+				async executeTool() {
+					throw new Error( 'Should not call executeTool' );
+				},
+			};
+
+			// Mock SSE stream with ability call
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const sseData = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								id: 'test-task-id',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'message-123',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-123',
+													toolId: 'failing__ability',
+													arguments: {},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
+
+			// Mock follow-up response
+			const createFollowUpStream = () => {
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const encoder = new TextEncoder();
+						const completionEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Error handled',
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} );
+						controller.enqueue(
+							encoder.encode( `data: ${ completionEvent }\n\n` )
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createFollowUpStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act - should not throw, error should be handled gracefully
+			const userMessage = createTextMessage( 'Test' );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert - should complete successfully despite ability error
+			expect( updates ).toHaveLength( 3 ); // working, tool result, completed
+			expect( updates[ 2 ].status.state ).toBe( 'completed' );
+		} );
+	} );
 } );

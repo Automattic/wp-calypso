@@ -1,4 +1,6 @@
 import type {
+	Ability,
+	AbilityDataPart,
 	ClientContext,
 	ContextDataPart,
 	JsonRpcId,
@@ -118,6 +120,26 @@ export function createToolDataPart( tool: Tool ): ToolDataPart {
 			toolName: tool.name,
 			description: tool.description,
 			inputSchema: tool.input_schema,
+		},
+		metadata: {},
+	};
+}
+
+/**
+ * Create an AbilityDataPart from an Ability
+ * @param ability - The WordPress Ability to convert to a data part
+ */
+export function createAbilityDataPart( ability: Ability ): AbilityDataPart {
+	return {
+		type: 'data',
+		data: {
+			name: ability.name,
+			label: ability.label,
+			description: ability.description,
+			category: ability.category,
+			input_schema: ability.input_schema,
+			output_schema: ability.output_schema,
+			meta: ability.meta,
 		},
 		metadata: {},
 	};

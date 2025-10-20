@@ -1,12 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { logger } from '../client/utils/logger';
-import type {
-	Ability,
-	ExecuteAbilityFunction,
-	Tool,
-	ToolProvider,
-} from '../client/types/index';
-import { convertAbilitiesToTools } from '../utils/wordpressAbilities';
+import type { Ability, Tool, ToolProvider } from '../client/types/index';
 
 /**
  * Callback function type for getting tools
@@ -28,7 +22,6 @@ export interface UseClientToolsWithAbilitiesConfig {
 	getClientTools?: GetClientToolsCallback;
 	executeTool?: ExecuteToolCallback;
 	abilities?: Ability[];
-	executeAbility?: ExecuteAbilityFunction;
 }
 
 /**
@@ -38,38 +31,17 @@ export interface UseClientToolsWithAbilitiesConfig {
  * @param root0.getClientTools - Function to get tools
  * @param root0.executeTool    - Function to execute tools
  * @param root0.abilities      - Array of abilities
- * @param root0.executeAbility - Function to execute abilities
  * @return ToolProvider instance or undefined
  */
 function useToolProviderFromConfig( {
 	getClientTools,
 	executeTool,
 	abilities,
-	executeAbility,
 }: {
 	getClientTools?: GetClientToolsCallback;
 	executeTool?: ExecuteToolCallback;
 	abilities?: Ability[];
-	executeAbility?: ExecuteAbilityFunction;
 } ): ToolProvider | undefined {
-	const abilityTools = useMemo( () => {
-		if ( ! abilities || abilities.length === 0 ) {
-			return [];
-		}
-		return convertAbilitiesToTools( abilities );
-	}, [ abilities ] );
-
-	const abilityMap = useMemo( () => {
-		if ( ! abilities || abilities.length === 0 ) {
-			return new Map< string, Ability >();
-		}
-		// Map converted tool IDs (with "-") to original abilities for execution
-		// Abilities use "/" as separator, but tool IDs use "-"
-		return new Map(
-			abilities.map( ( a ) => [ a.name.replace( /\//g, '-' ), a ] )
-		);
-	}, [ abilities ] );
-
 	const getAvailableTools = useCallback( async (): Promise< Tool[] > => {
 		const tools: Tool[] = [];
 
@@ -82,47 +54,11 @@ function useToolProviderFromConfig( {
 			}
 		}
 
-		if ( abilityTools.length > 0 ) {
-			tools.push( ...abilityTools );
-		}
-
 		return tools;
-	}, [ getClientTools, abilityTools ] );
+	}, [ getClientTools ] );
 
 	const executeToolCallback = useCallback(
 		async ( toolId: string, args: any ): Promise< any > => {
-			const ability = abilityMap.get( toolId );
-
-			if ( ability ) {
-				try {
-					// Execute with the original ability name (with "/")
-					// toolId has "/" replaced with "-", but executeAbility needs the original name
-					const result = await executeAbility!( ability.name, args );
-					logger( `Executed Ability: ${ ability.name }` );
-					return {
-						result,
-						returnToAgent: true,
-					};
-				} catch ( error ) {
-					logger(
-						'Error executing ability %s: %O',
-						ability.name,
-						error
-					);
-					return {
-						result: {
-							error:
-								error instanceof Error
-									? error.message
-									: String( error ),
-							success: false,
-						},
-						returnToAgent: true,
-					};
-				}
-			}
-
-			// Not an ability, execute as regular tool
 			if ( ! executeTool ) {
 				throw new Error( 'No executeTool callback provided' );
 			}
@@ -134,7 +70,7 @@ function useToolProviderFromConfig( {
 				throw error;
 			}
 		},
-		[ executeTool, abilityMap, executeAbility ]
+		[ executeTool ]
 	);
 
 	// Create the ToolProvider instance
@@ -183,7 +119,6 @@ export function useClientTools(
 		getClientTools,
 		executeTool,
 		abilities: undefined,
-		executeAbility: undefined,
 	} );
 }
 
@@ -193,35 +128,24 @@ export function useClientTools(
  * This hook converts WordPress Abilities to tools and provides a ToolProvider
  * that executes them using the WordPress Abilities API.
  *
- * @param abilities      - Array of WordPress Abilities from @wordpress/abilities
- * @param executeAbility - Function to execute abilities (from @wordpress/abilities)
+ * @param abilities - Array of WordPress Abilities from @wordpress/abilities
  * @return ToolProvider instance or undefined if no abilities provided
  *
  * @example
  * ```typescript
- * import { getAbilities, executeAbility } from '@wordpress/abilities';
+ * import { getAbilities } from '@wordpress/abilities';
  *
  * const abilities = await getAbilities();
- * const toolProvider = useClientAbilities(abilities, executeAbility);
+ * const toolProvider = useClientAbilities(abilities);
  * ```
  */
 export function useClientAbilities(
-	abilities: Ability[],
-	executeAbility: ExecuteAbilityFunction
+	abilities: Ability[]
 ): ToolProvider | undefined {
-	// Validate that executeAbility is provided
-	if ( abilities.length > 0 && ! executeAbility ) {
-		throw new Error(
-			'executeAbility is required when providing abilities. ' +
-				'Please provide the executeAbility function from @wordpress/abilities.'
-		);
-	}
-
 	return useToolProviderFromConfig( {
 		getClientTools: undefined,
 		executeTool: undefined,
 		abilities,
-		executeAbility,
 	} );
 }
 
@@ -229,29 +153,27 @@ export function useClientAbilities(
  * React hook that creates a ToolProvider for both tools and WordPress Abilities
  *
  * This hook accepts a configuration object that supports both regular tools
- * and WordPress Abilities. Abilities are automatically converted to tools and
- * merged with regular tools.
+ * and WordPress Abilities.
  *
- * @param config - Configuration object with tools, abilities, and execution functions
+ * @param config - Configuration object with tools and abilities
  * @return ToolProvider instance or undefined if no tools/abilities provided
  *
  * @example
  * ```typescript
- * import { getAbilities, executeAbility } from '@wordpress/abilities';
+ * import { getAbilities } from '@wordpress/abilities';
  *
  * const abilities = await getAbilities();
  * const toolProvider = useClientToolsWithAbilities({
  *   getClientTools: async () => [...myTools],
  *   executeTool: async (toolId, args) => { ... },
  *   abilities,
- *   executeAbility,
  * });
  * ```
  */
 export function useClientToolsWithAbilities(
 	config: UseClientToolsWithAbilitiesConfig
 ): ToolProvider | undefined {
-	const { getClientTools, executeTool, abilities, executeAbility } = config;
+	const { getClientTools, executeTool, abilities } = config;
 
 	// Validate that at least one type is provided
 	if ( ! getClientTools && ( ! abilities || abilities.length === 0 ) ) {
@@ -267,17 +189,9 @@ export function useClientToolsWithAbilities(
 		);
 	}
 
-	if ( abilities && abilities.length > 0 && ! executeAbility ) {
-		throw new Error(
-			'executeAbility is required when providing abilities. ' +
-				'Please provide the executeAbility function from @wordpress/abilities.'
-		);
-	}
-
 	return useToolProviderFromConfig( {
 		getClientTools,
 		executeTool,
 		abilities,
-		executeAbility,
 	} );
 }

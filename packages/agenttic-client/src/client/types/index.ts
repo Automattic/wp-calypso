@@ -103,6 +103,91 @@ export interface ConversationHistoryPart extends DataPart {
 	};
 }
 
+/**
+ * WordPress Ability interface
+ *
+ * This is a copy of the Ability interface from @wordpress/abilities.
+ * We maintain our own copy to avoid runtime dependencies. The interface is stable as part of WordPress core.
+ *
+ * @see https://github.com/WordPress/abilities-api
+ */
+export interface Ability {
+	/**
+	 * The unique name/identifier of the ability, with its namespace.
+	 * Example: 'my-plugin/my-ability'
+	 * @see WP_Ability::get_name()
+	 */
+	name: string;
+
+	/**
+	 * The human-readable label for the ability.
+	 * @see WP_Ability::get_label()
+	 */
+	label: string;
+
+	/**
+	 * The detailed description of the ability.
+	 * @see WP_Ability::get_description()
+	 */
+	description: string;
+
+	/**
+	 * The category this ability belongs to.
+	 * Must be a valid category slug (lowercase alphanumeric with dashes).
+	 * Example: 'data-retrieval', 'user-management'
+	 * @see WP_Ability::get_category()
+	 */
+	category: string;
+
+	/**
+	 * JSON Schema for the ability's input parameters.
+	 * @see WP_Ability::get_input_schema()
+	 */
+	input_schema?: Record< string, any >;
+
+	/**
+	 * JSON Schema for the ability's output format.
+	 * @see WP_Ability::get_output_schema()
+	 */
+	output_schema?: Record< string, any >;
+
+	/**
+	 * Callback function for client-side abilities.
+	 * If present, the ability will be executed locally in the browser.
+	 * If not present, the ability will be executed via REST API on the server.
+	 */
+	callback?: ( input: any ) => any | Promise< any >;
+
+	/**
+	 * Client permission callback for abilities.
+	 * Called before executing the ability to check if it's allowed.
+	 * If it returns false, the ability execution will be denied.
+	 */
+	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
+
+	/**
+	 * Metadata about the ability.
+	 * @see WP_Ability::get_meta()
+	 */
+	meta?: {
+		annotations?: {
+			instructions?: string;
+			readonly?: boolean;
+			destructive?: boolean;
+			idempotent?: boolean;
+		};
+		[ key: string ]: any;
+	};
+}
+
+/**
+ * AbilityDataPart - A2A protocol data part for WordPress Abilities.
+ * This transmits the full ability structure (minus client-side callbacks) over the wire.
+ */
+export interface AbilityDataPart extends DataPart {
+	data: Omit< Ability, 'callback' | 'permissionCallback' >;
+}
+
 export type Part =
 	| TextPart
 	| FilePart
@@ -110,7 +195,8 @@ export type Part =
 	| ToolDataPart
 	| ToolCallDataPart
 	| ToolResultDataPart
-	| ContextDataPart;
+	| ContextDataPart
+	| AbilityDataPart;
 
 export interface Message {
 	role: 'user' | 'agent';
@@ -262,64 +348,6 @@ export interface ToolCallResult {
 	toolId: string;
 	result: any;
 	error?: string;
-}
-
-/**
- * WordPress Ability interface
- *
- * This is a copy of the Ability interface from @wordpress/abilities.
- * We maintain our own copy to avoid runtime dependencies. The interface is stable as part of WordPress core.
- *
- * @see https://github.com/WordPress/abilities-api
- */
-export interface Ability {
-	/**
-	 * The unique name/identifier of the ability, with its namespace.
-	 * Example: 'my-plugin/my-ability'
-	 */
-	name: string;
-
-	/**
-	 * The human-readable label for the ability.
-	 */
-	label: string;
-
-	/**
-	 * The detailed description of the ability.
-	 */
-	description: string;
-
-	/**
-	 * JSON Schema for the ability's input parameters.
-	 */
-	input_schema?: Record< string, any >;
-
-	/**
-	 * JSON Schema for the ability's output format.
-	 * Note: This is not directly used by Agenttic tools but preserved for validation and used by the Ability API.
-	 */
-	output_schema?: Record< string, any >;
-
-	/**
-	 * Callback function for client-side abilities.
-	 * If present, the ability will be executed locally in the browser.
-	 * If not present, the ability will be executed via REST API on the server.
-	 */
-	callback?: ( input: any ) => any | Promise< any >;
-
-	/**
-	 * Client permission callback for abilities.
-	 * Called before executing the ability to check if it's allowed.
-	 */
-	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
-
-	/**
-	 * Metadata about the ability.
-	 */
-	meta?: {
-		type?: 'resource' | 'tool';
-		[ key: string ]: any;
-	};
 }
 
 /**

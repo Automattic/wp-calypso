@@ -48,7 +48,8 @@ describe( 'WordPress Abilities Integration', () => {
 		it( 'should convert an ability to a tool', () => {
 			const tool = convertAbilityToTool( sampleAbility );
 
-			expect( tool.id ).toBe( 'test-plugin/sample-ability' );
+			// Tool ID should sanitize "/" to "-" for compatibility
+			expect( tool.id ).toBe( 'test-plugin-sample-ability' );
 			expect( tool.name ).toBe( 'Sample Ability' );
 			expect( tool.description ).toBe( 'A sample ability for testing' );
 			expect( tool.input_schema ).toEqual( sampleAbility.input_schema );
@@ -78,8 +79,9 @@ describe( 'WordPress Abilities Integration', () => {
 			const tools = convertAbilitiesToTools( abilities );
 
 			expect( tools ).toHaveLength( 2 );
-			expect( tools[ 0 ].id ).toBe( 'test-plugin/sample-ability' );
-			expect( tools[ 1 ].id ).toBe( 'test-plugin/client-ability' );
+			// Tool IDs should sanitize "/" to "-" for compatibility
+			expect( tools[ 0 ].id ).toBe( 'test-plugin-sample-ability' );
+			expect( tools[ 1 ].id ).toBe( 'test-plugin-client-ability' );
 		} );
 
 		it( 'should handle empty array', () => {
