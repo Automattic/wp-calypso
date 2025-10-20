@@ -1,5 +1,4 @@
 import * as tus from 'tus-js-client';
-import Media from './site.media';
 
 /**
  * This class is an adapted version of wpcom's TUS uploader use-uploader.js.
@@ -30,7 +29,7 @@ export default class TusUploader {
 			const uploader = this.resumableUploader( {
 				onError: ( error ) => reject( error ),
 				onSuccess: ( args ) => {
-					const media = new Media( args.mediaId, this._sid, this.wpcom );
+					const media = this.wpcom.site( this._sid ).media( args.mediaId );
 					media
 						.get()
 						.then( ( res ) => resolve( { media: [ res ] } ) )
