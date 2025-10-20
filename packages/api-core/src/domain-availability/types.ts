@@ -127,7 +127,7 @@ export interface DomainAvailability {
 	product_slug?: string;
 
 	/**
-	 * Raw price of the domain
+	 * Raw price of the domain, returned when the domain is available for registration
 	 */
 	raw_price?: number;
 

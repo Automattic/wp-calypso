@@ -2,13 +2,11 @@ import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DomainSuggestionCTA } from '..';
+import { convertAvailabilityToSuggestion } from '../../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../../hooks/use-suggestion';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCartItem } from '../../../test-helpers/factories/cart';
-import {
-	buildSuggestionFromAvailability,
-	buildSuggestion,
-} from '../../../test-helpers/factories/suggestions';
+import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
 import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
@@ -84,14 +82,16 @@ describe( 'DomainSuggestionCTA', () => {
 			} );
 		} );
 
-		it( 'allows adding a domain to the cart if the user searched for a FQDN', async () => {
+		/**
+		 * The scenario in this test case can happen when the user searches for a FQDN with a
+		 * TLD that's not present in the TLDs filter
+		 */
+		it( 'allows adding a domain to the cart if the user searched for a FQDN that is not in the suggestion list', async () => {
 			const user = userEvent.setup();
 
-			// test-add-to-cart.com is not in the suggestions list possibly due to TLD filtering
 			const suggestion = buildSuggestion( {
 				domain_name: 'test-add-to-cart.blog',
 				vendor: 'donuts',
-				is_premium: true,
 			} );
 
 			mockGetSuggestionsQuery( {
@@ -133,7 +133,7 @@ describe( 'DomainSuggestionCTA', () => {
 
 			await user.click( addToCartCta );
 
-			const availabilitySuggestion = buildSuggestionFromAvailability( availability );
+			const availabilitySuggestion = convertAvailabilityToSuggestion( availability );
 
 			await waitFor( () => {
 				expect( onSuggestionInteract ).toHaveBeenCalledWith( {
