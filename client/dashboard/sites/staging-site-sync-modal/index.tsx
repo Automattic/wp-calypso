@@ -456,7 +456,7 @@ function StagingSiteSyncModalInner( {
 								spacing={ 2 }
 								justify="space-between"
 								alignment="center"
-								style={ { paddingBottom: '4px' } }
+								style={ { paddingBottom: '4px', marginTop: '-4px' } }
 							>
 								<CheckboxControl
 									__nextHasNoMarginBottom
