@@ -63,25 +63,32 @@ export default function ChooseEmailSolution() {
 		! hasTitanMailWithUs( domain );
 
 	const navigate = useNavigate();
+	let redirectTo = null;
+	if ( hasTitanMailWithUs( domain ) && isTitanAvailable ) {
+		redirectTo =
+			addProfessionalEmailRoute.fullPath +
+			( isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription )
+				? '?interval=monthly'
+				: '' );
+	} else if ( hasGSuiteWithUs( domain ) && isGoogleAvailable ) {
+		redirectTo =
+			addGoogleMailboxRoute.fullPath +
+			( isMonthlyEmailProduct( domain.google_apps_subscription as GoogleEmailSubscription )
+				? '?interval=monthly'
+				: '' );
+	}
+
 	useEffect( () => {
-		if ( hasTitanMailWithUs( domain ) && isTitanAvailable ) {
+		if ( redirectTo ) {
 			navigate( {
-				to:
-					addProfessionalEmailRoute.fullPath +
-					( isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription )
-						? '?interval=monthly'
-						: '' ),
-			} );
-		} else if ( hasGSuiteWithUs( domain ) && isGoogleAvailable ) {
-			navigate( {
-				to:
-					addGoogleMailboxRoute.fullPath +
-					( isMonthlyEmailProduct( domain.google_apps_subscription as GoogleEmailSubscription )
-						? '?interval=monthly'
-						: '' ),
+				to: redirectTo,
 			} );
 		}
-	}, [ domain, isGoogleAvailable, isTitanAvailable, navigate ] );
+	}, [ navigate, redirectTo ] );
+
+	if ( redirectTo ) {
+		return null;
+	}
 
 	const providers = [
 		{
