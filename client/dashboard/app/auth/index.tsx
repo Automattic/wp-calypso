@@ -1,6 +1,7 @@
 import { fetchUser } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext, useMemo } from 'react';
@@ -13,6 +14,30 @@ interface AuthContextType {
 	logout: () => Promise< void >;
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
+
+async function initializeCurrentUser(): Promise< User > {
+	// In support user session the `currentUser` refers to the wrong person so we should request
+	// the user object. Note we do not check `isSupportNextSession()` because in "next" support
+	// sessions the server does bootstrap the correct `currentUser`.
+	const useBootstrap = ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
+
+	if ( useBootstrap ) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		if ( ( window as any ).currentUser ) {
+			// TODO: align the various `currentUser` types. The different types have
+			// different opinions on which fields are required and optional.
+			// - packages/api-core/src/me/types.ts
+			// - packages/data-stores/src/user/types.ts
+			// - client/lib/user/user.d.ts
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return ( window as any ).currentUser;
+		}
+		throw new Error( 'Failed to bootstrap user object' );
+	}
+
+	return fetchUser();
+}
 
 /**
  * This component:
@@ -28,7 +53,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		isError: userIsError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
-		queryFn: fetchUser,
+		queryFn: initializeCurrentUser,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 		retry: false, // Don't retry on 401 errors
 		meta: {

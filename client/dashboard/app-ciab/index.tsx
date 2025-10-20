@@ -33,4 +33,5 @@ boot( {
 			href: '/setup/ai-site-builder-spec',
 		},
 	},
+	optIn: false,
 } );

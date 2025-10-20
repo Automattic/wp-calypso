@@ -1,4 +1,4 @@
-import { EmailAccount, EmailBox, SiteDomain } from '@automattic/api-core';
+import { EmailAccount, EmailBox, Domain } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import type { Email } from '../types';
@@ -6,7 +6,7 @@ import type { Email } from '../types';
 export const mapMailboxToEmail = (
 	box: EmailBox,
 	emailAccount: EmailAccount,
-	domain: SiteDomain
+	domain: Domain
 ): Email => {
 	const provider = emailAccount.account_type;
 

@@ -9,9 +9,18 @@ import { border, published } from '@wordpress/icons';
 import { Text } from '../../components/text';
 import useLoadingSteps from './use-loading-steps';
 
-export default function ReportLoading( { isSavedReport }: { isSavedReport: boolean } ) {
-	const { step, steps } = useLoadingSteps( {
-		steps: isSavedReport
+export default function ReportLoading( {
+	isSavedReport = true,
+	isLoadingPages = false,
+}: {
+	isSavedReport?: boolean;
+	isLoadingPages?: boolean;
+} ) {
+	const getSteps = () => {
+		if ( isLoadingPages ) {
+			return [ __( 'Getting your site pages.' ) ];
+		}
+		return isSavedReport
 			? [ __( 'Checking for an existing report.' ) ]
 			: [
 					__( 'Running a new report.' ),
@@ -20,7 +29,11 @@ export default function ReportLoading( { isSavedReport }: { isSavedReport: boole
 					__( 'Fetching historic data.' ),
 					__( 'Identifying performance improvements.' ),
 					__( 'Finalizing your results.' ),
-			  ],
+			  ];
+	};
+
+	const { step, steps } = useLoadingSteps( {
+		steps: getSteps(),
 		duration: 5000, // 5 seconds
 	} );
 

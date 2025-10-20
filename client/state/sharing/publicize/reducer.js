@@ -13,7 +13,6 @@ import {
 	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import sharePostActions from './publicize-actions/reducer';
 import { connectionsSchema } from './schema';
 
 export const sharePostStatus = ( state = {}, action ) => {
@@ -166,5 +165,4 @@ export default combineReducers( {
 	fetchedConnections,
 	connections,
 	sharePostStatus,
-	sharePostActions,
 } );

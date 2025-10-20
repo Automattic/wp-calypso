@@ -1,6 +1,7 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	isAutomatticianQuery,
+	productsQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
 	siteBackupActivityLogEntriesQuery,
@@ -21,6 +22,7 @@ import {
 	sitePrimaryDataCenterQuery,
 	sitePurchaseQuery,
 	sitePurchasesQuery,
+	siteRedirectQuery,
 	siteScanQuery,
 	siteSettingsQuery,
 	siteSftpUsersQuery,
@@ -573,6 +575,31 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRedirectRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Site Redirect' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'site-redirect',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		return await Promise.all( [
+			queryClient.ensureQueryData( productsQuery() ),
+			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-redirect' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-redirect' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1111,6 +1138,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
 			siteSettingsWpcomLoginRoute,
+			siteSettingsRedirectRoute,
 		] ),
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,

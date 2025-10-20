@@ -22,7 +22,7 @@ export const DomainExpiryField = ( {
 
 	const isAutoRenewing = Boolean( domain.auto_renewing );
 	const isExpired = new Date( domain.expiry ) < new Date();
-	const isHundredYearDomain = Boolean( domain.is_hundred_year_domain );
+	const isHundredYearDomain = Boolean( domain.tags.includes( 'hundred_year_domain' ) );
 	const renderExpiry = () => {
 		if ( isHundredYearDomain ) {
 			return sprintf(

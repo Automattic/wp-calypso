@@ -22,7 +22,6 @@ export interface UpsellCalloutProps {
 export default function UpsellCallout( {
 	site,
 	tracksFeatureId,
-	onClick,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
@@ -32,11 +31,8 @@ export default function UpsellCallout( {
 }: {
 	site: Site;
 	tracksFeatureId: string;
-	onClick?: () => void;
 } & UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick?.();
-
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
 		window.location.href = addQueryArgs( '/setup/plan-upgrade/', {

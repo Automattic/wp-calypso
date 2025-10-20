@@ -6,11 +6,11 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button, Snackbar, __experimentalHStack as HStack } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { keyboardReturn, Icon } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
@@ -190,24 +190,34 @@ function SiteRepositories() {
 				</HostingFeatureGatedWithCallout>
 			</PageLayout>
 			{ showBackToDeployments && (
-				<HStack className="dashboard-snackbars">
-					<Snackbar
-						icon={ <Icon icon={ keyboardReturn } style={ { fill: 'currentcolor' } } /> }
-						actions={ [
-							{
-								label: __( 'Navigate' ),
-								onClick: () => {
-									navigate( {
-										to: siteDeploymentsListRoute.fullPath,
-										params: { siteSlug },
-									} );
-								},
-							},
-						] }
+				<div
+					className="repositories-back-button"
+					style={ {
+						position: 'fixed',
+						bottom: '16px',
+						insetInlineStart: '16px',
+					} }
+				>
+					<Button
+						variant="secondary"
+						icon={ isRTL() ? chevronRight : chevronLeft }
+						iconPosition="left"
+						onClick={ () => {
+							navigate( {
+								to: siteDeploymentsListRoute.fullPath,
+								params: { siteSlug },
+							} );
+						} }
+						style={ {
+							backgroundColor: '#1e1e1e',
+							color: '#ffffff',
+							borderColor: '#1e1e1e',
+							boxShadow: 'none',
+						} }
 					>
 						{ __( 'Back to Deployments' ) }
-					</Snackbar>
-				</HStack>
+					</Button>
+				</div>
 			) }
 		</>
 	);

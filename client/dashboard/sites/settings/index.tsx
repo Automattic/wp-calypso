@@ -13,6 +13,7 @@ import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
+import SiteRedirectSettingsSummary from '../settings-redirect/summary';
 import RepositoriesSettingsSummary from '../settings-repositories/summary';
 import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
@@ -34,6 +35,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<SectionHeader title={ __( 'General' ) } level={ 3 } />
 				<SummaryButtonList>
 					<SiteVisibilitySettingsSummary site={ site } />
+					<SiteRedirectSettingsSummary site={ site } />
 					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 					<AgencySettingsSummary site={ site } />
 					<HundredYearPlanSettingsSummary site={ site } settings={ settings } />

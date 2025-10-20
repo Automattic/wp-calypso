@@ -45,6 +45,7 @@ export type AppConfig = {
 		default: OnboardingLink;
 		withAI: OnboardingLink;
 	};
+	optIn: boolean;
 };
 
 const AppContext = createContext< AppConfig >( {
@@ -69,6 +70,7 @@ const AppContext = createContext< AppConfig >( {
 	},
 	onboardingLinkSourceQueryArg: undefined,
 	onboardingLinks: undefined,
+	optIn: false,
 } );
 
 interface AppProviderProps {

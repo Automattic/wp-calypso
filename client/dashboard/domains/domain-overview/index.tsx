@@ -23,7 +23,7 @@ export default function DomainOverview() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: purchase } = useSuspenseQuery(
-		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
+		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 
 	const wrappableDomainName = useMemo( () => {
