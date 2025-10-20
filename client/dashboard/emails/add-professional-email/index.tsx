@@ -59,10 +59,9 @@ const AddProfessionalEmail = () => {
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { product } = useEmailProduct( 'titan', interval );
-	const { data: existingMailboxes, isFetched } = useQuery( {
-		...mailboxAccountsQuery( domain.blog_id, domainName ),
-		enabled: !! domain,
-	} );
+	const { data: existingMailboxes, isFetched } = useQuery(
+		mailboxAccountsQuery( domain.blog_id, domainName )
+	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
