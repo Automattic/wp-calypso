@@ -18,7 +18,7 @@ test.describe(
 		},
 	},
 	() => {
-		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "Squarespace Run Importer" link on the wp-admin Importers List page to import my content from my Squarespace account', async ( {
+		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "Squarespace Run Importer" link on the wp-admin Importers List page to import my content from my Squarespace site', async ( {
 			pageImportContentFromSquarespace,
 			sitePublic,
 		} ) => {
@@ -52,7 +52,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com import link" on the wp-admin Importers List page to import my content from my Squarespace account', async ( {
+		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com import link" on the wp-admin Importers List page to import my content from my Squarespace site', async ( {
 			pageImportContentFromSquarespace,
 			pageImportLetsFindYourSite,
 			sitePublic,
