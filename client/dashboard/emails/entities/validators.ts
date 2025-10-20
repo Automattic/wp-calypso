@@ -358,6 +358,7 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 				apiNamespace: 'wpcom/v2',
 			} );
 			return { message: response.message, status: 200 };
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- We don't have proper typing for this error response
 		} catch ( error: any ) {
 			return { message: error?.message, status: error?.statusCode };
 		}
