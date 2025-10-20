@@ -82,6 +82,10 @@ export function hostingFeaturesCallout(
 					<HostingActivationCallout siteId={ site.ID } />
 				) : (
 					<HostingFeatureCallout>
+						<PageViewTracker
+							title="Sites > Hosting Feature Callout"
+							path={ getRouteFromContext( context ) }
+						/>
 						<CalloutComponent siteSlug={ site.slug } titleAs="h3" />
 					</HostingFeatureCallout>
 				);
