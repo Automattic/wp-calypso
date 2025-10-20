@@ -7,6 +7,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
+	JetpackPlans,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -102,7 +103,7 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
 	}
 
-	if ( purchase.is_jetpack_backup_t1 ) {
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
 		return `/plans/storage/${ purchase.site_slug }`;
 	}
 
@@ -114,7 +115,7 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 }
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
-	if ( purchase.is_jetpack_backup_t1 ) {
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
 		return `/plans/storage/${ purchase.site_slug }`;
 	}
 
@@ -127,6 +128,15 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	return `/plans/${ purchase.site_slug }`;
+}
+
+function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
+	const securityT1Slugs = [
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+	] as const;
+	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
