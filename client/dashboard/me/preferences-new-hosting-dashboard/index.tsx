@@ -14,7 +14,6 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
-import { useAppContext } from '../../app/context';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
@@ -51,8 +50,7 @@ const fields: Field< OptInFormData >[] = [
 	},
 ];
 
-export default function PreferencesLanguageForm() {
-	const { optIn: supportsOptIn } = useAppContext();
+export default function PreferencesOptInForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
@@ -63,10 +61,6 @@ export default function PreferencesLanguageForm() {
 		enabled: optIn.value === 'opt-in',
 	} );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
-
-	if ( ! supportsOptIn ) {
-		return null;
-	}
 
 	const isDirty = formData.enabled !== ( optIn.value === 'opt-in' );
 
