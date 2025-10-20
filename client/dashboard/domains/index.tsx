@@ -27,15 +27,6 @@ function Domains() {
 		type: 'table',
 		filters: [
 			{
-				field: 'subtype',
-				operator: 'isAny',
-				value: [
-					DomainSubtype.DOMAIN_REGISTRATION,
-					DomainSubtype.DOMAIN_TRANSFER,
-					DomainSubtype.DOMAIN_CONNECTION,
-				],
-			},
-			{
 				field: 'owner',
 				operator: 'isAny',
 				value: [ 'owned-by-me' ],
