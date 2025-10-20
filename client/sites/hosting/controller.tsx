@@ -59,8 +59,8 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-function HostingFeatureCallout( { children }: { children: React.ReactNode } ) {
-	const analyticsClient = useAnalyticsClient();
+function HostingFeatureCallout( { path, children }: { path: string; children: React.ReactNode } ) {
+	const analyticsClient = useAnalyticsClient( undefined, path );
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }
 
@@ -73,6 +73,7 @@ export function hostingFeaturesCallout(
 	return ( context: Context, next: () => void ) => {
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
+		const path = getRouteFromContext( context );
 
 		if ( site && ! areHostingFeaturesSupported( site ) ) {
 			const callout =
@@ -81,7 +82,7 @@ export function hostingFeaturesCallout(
 				site.plan?.features.active.includes( FEATURE_SFTP ) ? (
 					<HostingActivationCallout siteId={ site.ID } />
 				) : (
-					<HostingFeatureCallout>
+					<HostingFeatureCallout path={ path }>
 						<CalloutComponent siteSlug={ site.slug } titleAs="h3" />
 					</HostingFeatureCallout>
 				);
