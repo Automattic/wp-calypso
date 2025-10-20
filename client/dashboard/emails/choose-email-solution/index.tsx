@@ -65,24 +65,28 @@ export default function ChooseEmailSolution() {
 	const navigate = useNavigate();
 	let redirectTo = null;
 	if ( hasTitanMailWithUs( domain ) && isTitanAvailable ) {
-		redirectTo =
-			addProfessionalEmailRoute.fullPath +
-			( isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription )
-				? '?interval=monthly'
-				: '' );
+		redirectTo = {
+			to: addProfessionalEmailRoute.fullPath,
+			...( isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription ) && {
+				search: {
+					interval: 'monthly',
+				},
+			} ),
+		};
 	} else if ( hasGSuiteWithUs( domain ) && isGoogleAvailable ) {
-		redirectTo =
-			addGoogleMailboxRoute.fullPath +
-			( isMonthlyEmailProduct( domain.google_apps_subscription as GoogleEmailSubscription )
-				? '?interval=monthly'
-				: '' );
+		redirectTo = {
+			to: addGoogleMailboxRoute.fullPath,
+			...( isMonthlyEmailProduct( domain.google_apps_subscription as GoogleEmailSubscription ) && {
+				search: {
+					interval: 'monthly',
+				},
+			} ),
+		};
 	}
 
 	useEffect( () => {
 		if ( redirectTo ) {
-			navigate( {
-				to: redirectTo,
-			} );
+			navigate( redirectTo );
 		}
 	}, [ navigate, redirectTo ] );
 
@@ -111,6 +115,7 @@ export default function ChooseEmailSolution() {
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
 			available: isTitanAvailable,
+			route: addProfessionalEmailRoute.fullPath,
 		},
 		{
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -130,6 +135,7 @@ export default function ChooseEmailSolution() {
 			],
 			product: googleProduct,
 			available: isGoogleAvailable,
+			route: addGoogleMailboxRoute.fullPath,
 		},
 	];
 
@@ -220,6 +226,9 @@ export default function ChooseEmailSolution() {
 							className="email-provider-action"
 							variant="primary"
 							disabled={ ! provider.available }
+							onClick={ () =>
+								navigate( { to: provider.route, search: { interval: billingInterval } } )
+							}
 						>
 							{ provider.action }
 						</Button>
