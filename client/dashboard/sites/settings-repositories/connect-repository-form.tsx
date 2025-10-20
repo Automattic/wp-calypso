@@ -373,11 +373,7 @@ export const ConnectRepositoryForm = ( {
 
 			return newFormData;
 		} );
-		if ( shouldRestoreFocus ) {
-			setShouldRestoreInstallationFocus( true );
-		} else {
-			setShouldRestoreInstallationFocus( false );
-		}
+		setShouldRestoreInstallationFocus( shouldRestoreFocus );
 	};
 
 	useEffect( () => {
