@@ -105,7 +105,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
 		const flowName = this.name;
-		const { siteId, siteSlug } = useSiteData();
+		const { siteId, siteSlug, site } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
@@ -117,6 +117,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { get, sessionId } = useFlowState();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
+		const canInstallPlugins = site?.plan?.features?.active.find(
+			( feature: string ) => feature === 'install-plugins'
+		)
+			? true
+			: false;
 		const exitFlow = ( to: string, replace = false ) => {
 			if ( replace ) {
 				return window.location.replace(
@@ -152,14 +157,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					if ( isSSHMigrationAvailable ) {
 						if ( hasDestinationSite ) {
-							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+							if ( canInstallPlugins ) {
+								return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+							}
+							return navigate( paths.upgradePlanPath( { siteId, siteSlug, from, ssh: 'true' } ) );
 						}
 
 						if ( userHasOtherWPComSites ) {
-							return navigate( paths.sitePickerPath( { from, platform } ) );
+							return navigate( paths.sitePickerPath( { from, platform, ssh: 'true' } ) );
 						}
 
-						return navigate( paths.siteCreationPath( { from, platform } ) );
+						return navigate( paths.siteCreationPath( { from, platform, ssh: 'true' } ) );
 					}
 
 					if ( hasDestinationSite ) {
@@ -183,10 +191,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( userHasOtherWPComSites ) {
-						return navigate( paths.sitePickerPath( { from, platform } ) );
+						return navigate( paths.sitePickerPath( { from, platform, ssh: 'true' } ) );
 					}
 
-					return navigate( paths.siteCreationPath( { from, platform } ) );
+					return navigate( paths.siteCreationPath( { from, platform, ssh: 'true' } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -213,6 +221,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						case 'select-site': {
 							const { ID: siteId, slug: siteSlug } = providedDependencies.site as SiteExcerptData;
+							const selectedSite = providedDependencies.site as SiteExcerptData;
+							const selectedSiteCanInstallPlugins = selectedSite?.plan?.features?.active.find(
+								( feature: string ) => feature === 'install-plugins'
+							)
+								? true
+								: false;
+
+							// Check if this is an SSH migration flow
+							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+								if ( selectedSiteCanInstallPlugins ) {
+									return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+								}
+								return navigate(
+									paths.upgradePlanPath( { siteId, siteSlug, from: fromQueryParam, ssh: 'true' } )
+								);
+							}
 
 							if ( 'migrate' === actionQueryParam ) {
 								return navigate(
@@ -244,13 +268,20 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 						}
-						case 'create-site':
-							return navigate(
-								paths.siteCreationPath( {
-									from: fromQueryParam,
-									platform: platformQueryParam,
-								} )
-							);
+						case 'create-site': {
+							const queryParams: {
+								from: string | null;
+								platform: ImporterPlatform;
+								ssh?: string;
+							} = {
+								from: fromQueryParam,
+								platform: platformQueryParam,
+							};
+							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+								queryParams.ssh = 'true';
+							}
+							return navigate( paths.siteCreationPath( queryParams ) );
+						}
 					}
 				}
 
@@ -278,6 +309,18 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					recordSignupComplete( { siteId } );
+
+					// Check if this is an SSH migration flow
+					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+						return replace(
+							paths.upgradePlanPath( {
+								siteId,
+								from: fromQueryParam,
+								siteSlug,
+								ssh: 'true',
+							} )
+						);
+					}
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {
@@ -377,7 +420,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
-						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug;
+						} else if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 						const destination = addQueryArgs(
@@ -403,6 +448,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 									: {},
 						} );
 						return;
+					}
+
+					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+						return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
 					}
 
 					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
