@@ -108,6 +108,52 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 	);
 }
 
+function SiteOverviewSecondaryCards( {
+	site,
+	spacing,
+	isLargeViewport,
+	isSmallViewport,
+}: {
+	site: Site;
+	spacing: number;
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
+} ) {
+	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+	const showFlexUsageCard = site.is_wpcom_flex;
+
+	if ( isCommerceGarden( site ) ) {
+		return null;
+	}
+
+	return (
+		<>
+			<Divider
+				orientation="horizontal"
+				style={ { color: 'var(--dashboard-overview__divider-color)' } }
+			/>
+			<HStack
+				className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
+					'is-large': isLargeViewport,
+				} ) }
+				spacing={ spacing }
+				alignment="flex-start"
+			>
+				<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+				<VStack spacing={ spacing } justify="start">
+					{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
+					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+						<>
+							<DIFMUpsellCard site={ site } />
+							<DomainsCard site={ site } />
+						</>
+					) }
+				</VStack>
+			</HStack>
+		</>
+	);
+}
+
 function SiteOverview( {
 	siteSlug,
 	hideSitePreview = false,
@@ -130,9 +176,6 @@ function SiteOverview( {
 	} );
 
 	const wpAdminButtonRef = useRef( null );
-
-	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
-	const showFlexUsageCard = site.is_wpcom_flex;
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -185,32 +228,12 @@ function SiteOverview( {
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<SiteOverviewPrimaryCards site={ site } spacing={ spacing } />
 				</Grid>
-				{ ! isCommerceGardenSite && (
-					<>
-						<Divider
-							orientation="horizontal"
-							style={ { color: 'var(--dashboard-overview__divider-color)' } }
-						/>
-						<HStack
-							className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
-								'is-large': isLargeViewport,
-							} ) }
-							spacing={ spacing }
-							alignment="flex-start"
-						>
-							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-							<VStack spacing={ spacing } justify="start">
-								{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
-								{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-									<>
-										<DIFMUpsellCard site={ site } />
-										<DomainsCard site={ site } />
-									</>
-								) }
-							</VStack>
-						</HStack>
-					</>
-				) }
+				<SiteOverviewSecondaryCards
+					site={ site }
+					spacing={ spacing }
+					isLargeViewport={ isLargeViewport }
+					isSmallViewport={ isSmallViewport }
+				/>
 			</VStack>
 			<GuidedTourContextProvider
 				tourId="hosting-dashboard-tours-site-overview"
