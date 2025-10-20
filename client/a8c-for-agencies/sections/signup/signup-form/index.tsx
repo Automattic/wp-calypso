@@ -6,10 +6,9 @@ import AgencyDetailsForm from 'calypso/a8c-for-agencies/sections/signup/agency-d
 import useCreateAgencyMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-agency-mutation';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import CardHeading from 'calypso/components/card-heading';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import {
@@ -82,8 +81,8 @@ export default function SignupForm() {
 		// We need to include HubSpot tracking code on the signup form.
 		loadScript( '//js.hs-scripts.com/45522507.js' );
 		// Load Hotjar tracking script
-		addHotJarScript();
-	}, [] );
+		dispatch( loadTrackingTool( 'HotJar' ) );
+	}, [ dispatch ] );
 
 	return (
 		<Card className="agency-signup-form">
