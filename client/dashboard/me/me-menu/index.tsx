@@ -28,6 +28,7 @@ const MeMenu = () => {
 			{ hasAppSupport( supports, 'apps' ) && (
 				<ResponsiveMenu.Item to="/me/apps">{ __( 'Apps' ) }</ResponsiveMenu.Item>
 			) }
+			<ResponsiveMenu.Item to="/me/usage">{ __( 'Usage' ) }</ResponsiveMenu.Item>
 		</ResponsiveMenu>
 	);
 };

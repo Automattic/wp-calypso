@@ -107,6 +107,24 @@ export const billingRoute = createRoute( {
 	path: 'billing',
 } );
 
+const usageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Usage' ),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'usage',
+} ).lazy( () =>
+	import( '../../me/usage' ).then( ( d ) =>
+		createLazyRoute( 'usage' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const billingIndexRoute = createRoute( {
 	getParentRoute: () => billingRoute,
 	path: '/',
@@ -713,7 +731,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ profileRoute, preferencesRoute ];
+	const meRoutes: AnyRoute[] = [ profileRoute, preferencesRoute, usageRoute ];
 
 	meRoutes.push(
 		billingRoute.addChildren( [
