@@ -9,7 +9,7 @@ import {
 	productsQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
-import { createLazyRoute, createRoute } from '@tanstack/react-router';
+import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { domainHasEmail } from '../../utils/domain';
 import { rootRoute } from './root';
@@ -119,6 +119,13 @@ export const addProfessionalEmailRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/add-professional-email/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		try {
+			await queryClient.ensureQueryData( domainQuery( domainName ) );
+		} catch ( error ) {
+			throw redirect( { to: `/emails?domainName=${ domainName }` } );
+		}
+	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
 
