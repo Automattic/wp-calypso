@@ -9,7 +9,7 @@ import {
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
-import { createContext, useContext, useMemo, useEffect } from 'react';
+import { createContext, useContext, useMemo, useEffect, useRef } from 'react';
 import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -52,6 +52,7 @@ async function initializeCurrentUser(): Promise< User > {
  * 4. Redirects to login if unauthorized
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
+	const authErrorHandled = useRef( false );
 	const queryClient = useQueryClient();
 	const { data: user, isLoading: userIsLoading } = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
@@ -111,8 +112,10 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
 				[ 401, 403 ].includes( event.action.error.statusCode ) &&
-				event.action.error.error === 'authorization_required'
+				event.action.error.error === 'authorization_required' &&
+				! authErrorHandled.current // Prevents repeated calls to redirect
 			) {
+				authErrorHandled.current = true;
 				const currentPath = window.location.pathname;
 				const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
 				window.location.href = loginUrl;
