@@ -18,6 +18,7 @@ interface GoToCheckoutProps {
 	forceRedirection?: boolean;
 	extraQueryParams?: Record< string, string >;
 	historyBack?: boolean;
+	isSignup?: boolean;
 }
 
 export const goToCheckout = ( {
@@ -30,20 +31,23 @@ export const goToCheckout = ( {
 	extraProducts = [],
 	historyBack = false,
 	extraQueryParams: extraParams = {},
+	isSignup = true, // Default to true for backwards compatibility.
 }: GoToCheckoutProps ) => {
 	const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
 	const params = {
 		redirect_to: destination,
 		cancel_to: cancelDestination || relativeCurrentPath,
-		signup: '1',
+		...( isSignup && { signup: '1' } ),
 		...( historyBack && { history_back: '1' } ),
 		...extraParams,
 	};
 
-	persistSignupDestination( destination );
-	setSignupCompleteSlug( siteSlug );
-	setSignupCompleteFlowName( flowName );
-	setSignupCompleteStepName( stepName );
+	if ( isSignup ) {
+		persistSignupDestination( destination );
+		setSignupCompleteSlug( siteSlug );
+		setSignupCompleteFlowName( flowName );
+		setSignupCompleteStepName( stepName );
+	}
 
 	const products = [ ...( plan ? [ plan ] : [] ), ...extraProducts ];
 	const productSlugs = products.length > 0 ? `/${ products.join( ',' ) }` : '';
