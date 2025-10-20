@@ -247,12 +247,7 @@ const AddProfessionalEmail = () => {
 					</ButtonStack>
 
 					<ButtonStack justify="flex-start">
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							disabled={ disabled }
-							onClick={ handleSubmit }
-						>
+						<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
 							{ __( 'Continue' ) }
 						</Button>
 					</ButtonStack>
