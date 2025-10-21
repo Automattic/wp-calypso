@@ -207,7 +207,7 @@ export const PricingNotice = ( {
 
 	let message;
 	if ( hasOffer && ! showEmailPurchaseDisabledMessage ) {
-		if ( isTitanMonthlyProduct( product ) ) {
+		if ( isMonthlyEmailProduct( product ) ) {
 			message = sprintf(
 				// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
 				__(
