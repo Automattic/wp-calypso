@@ -27,6 +27,7 @@ const defaultView: View = {
 	fields: [ 'active', 'autoupdate', 'update' ],
 	sort: { field: 'name', direction: 'asc' },
 	titleField: 'domain',
+	perPage: 10,
 };
 
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
