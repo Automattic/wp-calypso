@@ -32,7 +32,7 @@ import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getMonetizeSubscriptionsUrl } from '../../me/monetize-subscriptions/urls';
+import { getMonetizeSubscriptionsUrl } from '../../me/billing-monetize-subscriptions/urls';
 import { formatDate } from '../../utils/datetime';
 
 function AutoRenewButton( {
