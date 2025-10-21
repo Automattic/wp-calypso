@@ -103,26 +103,18 @@ describe( 'ResultsPage', () => {
 			expect( testOrg ).not.toHaveTextContent( 'Best alternative' );
 		} );
 
-		it( 'renders the "show more results" button if there are more than 10 suggestions', async () => {
+		it( 'renders the "show more results" button if there are more than config.numberOfDomainsResultsPerPage suggestions', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test' },
 				suggestions: [
 					buildSuggestion( { domain_name: 'test1.com' } ),
 					buildSuggestion( { domain_name: 'test2.com' } ),
 					buildSuggestion( { domain_name: 'test3.com' } ),
-					buildSuggestion( { domain_name: 'test4.com' } ),
-					buildSuggestion( { domain_name: 'test5.com' } ),
-					buildSuggestion( { domain_name: 'test6.com' } ),
-					buildSuggestion( { domain_name: 'test7.com' } ),
-					buildSuggestion( { domain_name: 'test8.com' } ),
-					buildSuggestion( { domain_name: 'test9.com' } ),
-					buildSuggestion( { domain_name: 'test10.com' } ),
-					buildSuggestion( { domain_name: 'test11.com' } ),
 				],
 			} );
 
 			render(
-				<TestDomainSearch query="test">
+				<TestDomainSearch config={ { numberOfDomainsResultsPerPage: 2 } } query="test">
 					<ResultsPage />
 				</TestDomainSearch>
 			);
@@ -130,25 +122,17 @@ describe( 'ResultsPage', () => {
 			expect( await screen.findByText( 'Show more results' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not render the "show more results" button if there are 10 or less suggestions', async () => {
+		it( 'does not render the "show more results" button if there are config.numberOfDomainsResultsPerPage or less suggestions', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test' },
 				suggestions: [
 					buildSuggestion( { domain_name: 'test1.com' } ),
 					buildSuggestion( { domain_name: 'test2.com' } ),
-					buildSuggestion( { domain_name: 'test3.com' } ),
-					buildSuggestion( { domain_name: 'test4.com' } ),
-					buildSuggestion( { domain_name: 'test5.com' } ),
-					buildSuggestion( { domain_name: 'test6.com' } ),
-					buildSuggestion( { domain_name: 'test7.com' } ),
-					buildSuggestion( { domain_name: 'test8.com' } ),
-					buildSuggestion( { domain_name: 'test9.com' } ),
-					buildSuggestion( { domain_name: 'test10.com' } ),
 				],
 			} );
 
 			render(
-				<TestDomainSearch query="test">
+				<TestDomainSearch config={ { numberOfDomainsResultsPerPage: 2 } } query="test">
 					<ResultsPage />
 				</TestDomainSearch>
 			);

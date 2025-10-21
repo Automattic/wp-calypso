@@ -84,6 +84,7 @@ export interface DomainSearchConfig {
 	allowsUsingOwnDomain: boolean;
 	allowedTlds: string[];
 	includeOwnedDomainInSuggestions: boolean;
+	numberOfDomainsResultsPerPage: number;
 }
 
 export interface DomainSearchProps {

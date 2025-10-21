@@ -14,7 +14,8 @@ export const ResultsPage = () => {
 	const { slots, config } = useDomainSearch();
 
 	const { isLoading, featuredSuggestions, regularSuggestions } = useSuggestionsList();
-	const numberOfInitialVisibleSuggestions = 10 - featuredSuggestions.length;
+	const numberOfInitialVisibleSuggestions =
+		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 
 	useRequestTracking();
 
