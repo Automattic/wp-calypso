@@ -194,7 +194,7 @@ export default function ChooseEmailSolution() {
 						>
 							{ provider.available ? (
 								<>
-									<HStack expanded={ false } alignment="bottomLeft">
+									<HStack alignment="bottomLeft">
 										<PriceDisplay
 											price={ provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0 }
 											currency={ provider.product?.currency_code ?? 'USD' }
