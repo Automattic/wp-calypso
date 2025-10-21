@@ -9,7 +9,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { layout, swatch } from '@wordpress/icons';
 import './domain-connection-verification.scss';
@@ -18,21 +17,14 @@ import { siteOverviewRoute } from '../../app/router/sites';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { gridiconToWordPressIcon } from '../../utils/gridicons';
-import type { Field } from '@wordpress/dataviews';
+import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 
 import './style.scss';
-
-interface DomainConnectionNextStep {
-	id: string;
-	title: string;
-	description: string;
-	gridicon: string;
-}
 
 interface DomainConnectionVerificationProps {
 	domainName: string;
 	siteSlug: string;
+	status: 'verifying' | 'connected';
 }
 
 export default function DomainConnectionVerification( {
@@ -40,58 +32,6 @@ export default function DomainConnectionVerification( {
 	siteSlug,
 }: DomainConnectionVerificationProps ) {
 	const { setShowHelpCenter } = useHelpCenter();
-	const data: DomainConnectionNextStep[] = [
-		{
-			id: 'automatic-verification',
-			title: __( 'Automatic verification' ),
-			description: __( 'We’ll check your DNS records and verify your domain connection.' ),
-			gridicon: 'rotateRight',
-		},
-		{
-			id: 'global-propagation',
-			title: __( 'Global propagation' ),
-			description: __(
-				'Once name servers are verified, your domain name will gradually become live globally.'
-			),
-			gridicon: 'globe',
-		},
-		{
-			id: 'cache-propagation',
-			title: __( 'We’ll notify you when it’s ready' ),
-			description: __( 'No need to refresh this page. We’ll email you as soon as it’s done.' ),
-			gridicon: 'published',
-		},
-	];
-
-	const fields: Field< DomainConnectionNextStep >[] = [
-		{
-			id: 'gridicon',
-			render: ( { item } ) => (
-				<Icon
-					icon={ gridiconToWordPressIcon( item.gridicon ) }
-					size={ 32 }
-					className="dashboard-domain-connection-verification__icon"
-				/>
-			),
-		},
-		{
-			id: 'title',
-			getValue: ( { item } ) => item.title,
-		},
-		{
-			id: 'description',
-			getValue: ( { item } ) => item.description,
-		},
-	];
-
-	const view = {
-		fields: [ 'description' ],
-		type: 'list' as const,
-		titleField: 'title',
-		mediaField: 'gridicon',
-		showMedia: true,
-		groupByField: 'type',
-	};
 
 	return (
 		<Card className="dashboard-domain-connection-verification">
@@ -121,26 +61,7 @@ export default function DomainConnectionVerification( {
 						) }
 						decoration={ <Icon icon={ layout } /> }
 					/>
-					<Card>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<Text size="medium" weight={ 500 }>
-									{ __( 'What happens next' ) }
-								</Text>
-								<DataViews< DomainConnectionNextStep >
-									data={ data }
-									fields={ fields }
-									view={ view }
-									onChangeView={ () => {} }
-									getItemId={ ( item ) => item.id }
-									paginationInfo={ { totalItems: data.length, totalPages: 1 } }
-									defaultLayouts={ { list: {} } }
-								>
-									<DataViews.Layout />
-								</DataViews>
-							</VStack>
-						</CardBody>
-					</Card>
+					<VerificationInProgressNextSteps />
 					<Text size="medium" weight={ 500 }>
 						{ __( 'Need help?' ) }
 					</Text>

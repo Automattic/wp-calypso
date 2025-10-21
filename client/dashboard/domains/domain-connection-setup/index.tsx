@@ -215,8 +215,14 @@ export default function DomainConnectionSetup() {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain connection setup' ) } /> }>
-			{ currentStep.stepType === StepType.VERIFYING && redesign ? (
-				<DomainConnectionVerification domainName={ domainName } siteSlug={ siteSlug } />
+			{ ( currentStep.stepType === StepType.VERIFYING ||
+				currentStep.stepType === StepType.CONNECTED ) &&
+			redesign ? (
+				<DomainConnectionVerification
+					domainName={ domainName }
+					siteSlug={ siteSlug }
+					status={ currentStep.stepType }
+				/>
 			) : (
 				renderLegacyLayout()
 			) }
