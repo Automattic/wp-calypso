@@ -77,3 +77,11 @@ By default, tests should run on <http://calypso.localhost:3000>. If you wish to 
 ```bash
 CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw -- <test_path>
 ```
+
+13. Install and use Playwright VSCode extension
+
+Install the [Playwright VSCode Extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright).
+
+When opening the `wp-calypso` directory the extension should automatically detect the Playwright Test projects:
+
+![Playwright Test Extension](./files/PWT-extension.png)

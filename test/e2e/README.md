@@ -4,7 +4,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 Tests were originally written using Playwright + Jest, and are now being migrated to Playwright Test.
 
-To understand the new Playwright Test framework see the [new doco](docs-new/overview.md).
+To understand the new Playwright Test framework see the [new documentation](docs-new/overview.md).
 
 ## Resources
 
