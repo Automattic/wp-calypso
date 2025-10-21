@@ -9,8 +9,16 @@ boot( {
 	Logo,
 	supports: {
 		overview: false,
-		sites: false,
-		sitesCIAB: true,
+		sites: {
+			deployments: false,
+			performance: false,
+			monitoring: false,
+			logs: false,
+			backups: false,
+			scan: false,
+			domains: true,
+			emails: false,
+		},
 		domains: true,
 		emails: true,
 		themes: false,
@@ -34,4 +42,7 @@ boot( {
 		},
 	},
 	optIn: false,
+	components: {
+		sites: () => import( '../sites-ciab' ),
+	},
 } );

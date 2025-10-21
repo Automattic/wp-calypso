@@ -20,7 +20,6 @@ boot( {
 			domains: false,
 			emails: false,
 		},
-		sitesCIAB: false,
 		domains: false,
 		emails: false,
 		themes: false,
@@ -44,4 +43,7 @@ boot( {
 		},
 	},
 	optIn: false,
+	components: {
+		sites: () => import( '../sites' ),
+	},
 } );
