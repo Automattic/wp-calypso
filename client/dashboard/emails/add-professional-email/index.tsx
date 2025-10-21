@@ -30,6 +30,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
+import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
@@ -230,6 +231,8 @@ const AddProfessionalEmail = () => {
 							{ __( 'Continue' ) }
 						</Button>
 					</ButtonStack>
+
+					<Cart />
 				</VStack>
 			</form>
 		</PageLayout>
