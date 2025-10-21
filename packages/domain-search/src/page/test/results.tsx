@@ -1,5 +1,6 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
@@ -643,6 +644,40 @@ describe( 'ResultsPage', () => {
 					[ 'test.com', 'test.net', 'test.org' ],
 					expect.any( Number )
 				);
+			} );
+		} );
+
+		it( 'fires the onShowMoreResults event when the show more results button is clicked', async () => {
+			const user = userEvent.setup();
+			const onShowMoreResults = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test query' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test1.com' } ),
+					buildSuggestion( { domain_name: 'test2.com' } ),
+					buildSuggestion( { domain_name: 'test3.com' } ),
+					buildSuggestion( { domain_name: 'test4.com' } ),
+					buildSuggestion( { domain_name: 'test5.com' } ),
+					buildSuggestion( { domain_name: 'test6.com' } ),
+					buildSuggestion( { domain_name: 'test7.com' } ),
+					buildSuggestion( { domain_name: 'test8.com' } ),
+					buildSuggestion( { domain_name: 'test9.com' } ),
+					buildSuggestion( { domain_name: 'test10.com' } ),
+					buildSuggestion( { domain_name: 'test11.com' } ),
+				],
+			} );
+
+			render(
+				<TestDomainSearch events={ { onShowMoreResults } } query="test query">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByText( 'Show more results' ) );
+
+			await waitFor( () => {
+				expect( onShowMoreResults ).toHaveBeenCalledWith( 2 ); // show second page of results
 			} );
 		} );
 
