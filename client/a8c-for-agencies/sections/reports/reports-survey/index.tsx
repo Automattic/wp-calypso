@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { Button, Modal } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -68,15 +67,8 @@ export default function ReportsSurvey() {
 				) }
 			</p>
 			<div className="reports-survey-modal__buttons">
-				<Button
-					variant="primary"
-					href={ SURVEY_URL }
-					target="_blank"
-					onClick={ handleSurveyClick }
-					icon={ <Icon icon={ external } /> }
-					iconPosition="right"
-				>
-					{ translate( 'Take 2 minute survey' ) }
+				<Button variant="primary" href={ SURVEY_URL } target="_blank" onClick={ handleSurveyClick }>
+					{ translate( 'Take 2 minute survey ↗' ) }
 				</Button>
 			</div>
 		</Modal>

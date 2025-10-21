@@ -106,7 +106,8 @@ export function shouldUpgradeToMakeDomainPrimary( {
 		! domain.primary_domain &&
 		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
 		!! site.plan?.is_free &&
-		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
+		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN ) &&
+		! site.is_garden
 	);
 }
 

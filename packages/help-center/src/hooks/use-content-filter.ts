@@ -8,6 +8,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 
+function canParse( url: string, baseUrl?: string ): URL | false {
+	try {
+		return new URL( url, baseUrl );
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Temporary: the Odie backend returns links with no protocol.
  * This function ensures that the link has a protocol.
@@ -17,12 +25,7 @@ import { HELP_CENTER_STORE } from '../stores';
  * @todo Remove this function when the Odie backend is updated.
  */
 function ensureProtocolAndParse( url: string, baseUrl?: string ) {
-	if ( URL.canParse( url, baseUrl ) ) {
-		return new URL( url, baseUrl );
-	} else if ( URL.canParse( 'https://' + url, baseUrl ) ) {
-		return new URL( 'https://' + url, baseUrl );
-	}
-	return null;
+	return canParse( url, baseUrl ) || canParse( 'https://' + url, baseUrl );
 }
 
 export const useContentFilter = ( node: HTMLDivElement | null ) => {
