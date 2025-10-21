@@ -27,6 +27,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onDomainAddAvailabilityPreCheck: noop,
 		onFilterApplied: noop,
 		onFilterReset: noop,
+		onShowMoreResults: noop,
 		onSuggestionsReceive: noop,
 		onSuggestionRender: noop,
 		onSuggestionInteract: noop,

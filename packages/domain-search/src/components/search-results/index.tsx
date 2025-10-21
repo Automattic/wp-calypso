@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSuggestionsList,
@@ -15,10 +15,18 @@ const SearchResults = ( {
 	suggestions: string[];
 	numberOfInitialVisibleSuggestions?: number;
 } ) => {
-	const { filter, resetFilter } = useDomainSearch();
+	const { filter, resetFilter, events } = useDomainSearch();
 	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState(
 		numberOfInitialVisibleSuggestions ?? 10
 	);
+	const [ pageNumber, setPageNumber ] = useState( 1 );
+
+	const showMoreResults = useCallback( () => {
+		events.onShowMoreResults( pageNumber + 1 );
+		setPageNumber( pageNumber + 1 );
+		setnumberOfVisibleSuggestions( numberOfVisibleSuggestions + 10 );
+	}, [ events, pageNumber ] );
+
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
 	if ( suggestions.length === 0 ) {
@@ -39,11 +47,7 @@ const SearchResults = ( {
 					<SearchResultsItem key={ suggestion } domainName={ suggestion } />
 				) ) }
 			</DomainSuggestionsList>
-			{ shouldShowMoreResultsButton && (
-				<DomainSuggestionLoadMore
-					onClick={ () => setnumberOfVisibleSuggestions( numberOfVisibleSuggestions + 10 ) }
-				/>
-			) }
+			{ shouldShowMoreResultsButton && <DomainSuggestionLoadMore onClick={ showMoreResults } /> }
 		</>
 	);
 };

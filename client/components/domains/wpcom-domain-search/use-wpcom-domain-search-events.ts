@@ -154,6 +154,14 @@ export const useWPCOMDomainSearchEvents = ( {
 				debouncedDomainSearchEvent( query ?? '' );
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
+			onShowMoreResults: ( pageNumber ) => {
+				recordTracksEvent( 'calypso_domain_search_show_more_results', {
+					search_query: query ?? '',
+					flow_name: flowName,
+					page_number: pageNumber,
+					section: analyticsSection,
+				} );
+			},
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
 				dispatch(
 					recordSearchResultsReceive( query, suggestions, responseTime, analyticsSection, flowName )
