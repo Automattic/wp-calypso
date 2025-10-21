@@ -14,22 +14,24 @@ export function generateMockMeFlexUsage(
 		} ) );
 
 	const periods = 12;
+	// Ensure non-zero across all three so the pie shows multiple slices
+	// Return realistic orders of magnitude for each metric so fraction-of-cap appears balanced
 	const data = {
-		storage: makePoints( periods, 12_000_000_000 ),
-		bandwidth: makePoints( periods, 80_000_000 ),
-		compute: makePoints( periods, 60_000 ),
+		storage: makePoints( periods, 100_000_000_000 ), // byte-seconds
+		bandwidth: makePoints( periods, 30_000_000 ), // bytes per period
+		compute: makePoints( periods, 1_200_000 ), // seconds per period (~20 minutes)
 	};
 
 	const bySite: Record< string, typeof data > = {
 		'1': {
-			storage: makePoints( periods, 5_000_000_000 ),
-			bandwidth: makePoints( periods, 30_000_000 ),
-			compute: makePoints( periods, 25_000 ),
+			storage: makePoints( periods, 1_500_000_000 ),
+			bandwidth: makePoints( periods, 1_000_000_000 ),
+			compute: makePoints( periods, 500_000_000 ),
 		},
 		'2': {
-			storage: makePoints( periods, 7_000_000_000 ),
-			bandwidth: makePoints( periods, 50_000_000 ),
-			compute: makePoints( periods, 35_000 ),
+			storage: makePoints( periods, 1_500_000_000 ),
+			bandwidth: makePoints( periods, 1_000_000_000 ),
+			compute: makePoints( periods, 500_000_000 ),
 		},
 	};
 

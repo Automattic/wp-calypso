@@ -9,6 +9,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
 import FlexUsageCard from './components/flex-usage-card';
+import PlanUsageChart from './components/plan-usage-chart';
 
 function getMonthToDateRange( locale: string ) {
 	const now = new Date();
@@ -33,11 +34,12 @@ function FlexUsage() {
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
-					<FlexUsageCard
-						title={ __( 'Plan usage' ) }
-						description={ __( 'This section provides an overview of your plan usage.' ) }
-						isLoading={ false }
-					></FlexUsageCard>
+					<PlanUsageChart
+						start={ Math.floor(
+							Date.UTC( new Date().getUTCFullYear(), new Date().getUTCMonth(), 1 ) / 1000
+						) }
+						end={ Math.floor( Date.now() / 1000 ) }
+					/>
 					<FlexUsageCard
 						title={ __( 'Sites usage' ) }
 						description={ __( 'See how each site contributes to your total resource usage.' ) }
