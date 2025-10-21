@@ -106,7 +106,7 @@ const RepositorySelector = ( {
 				input.focus();
 			}
 		}
-	}, [ shouldRestoreFocus, currentValue, field.elements ] );
+	}, [ shouldRestoreFocus ] );
 
 	return (
 		<VStack spacing={ 2 }>
