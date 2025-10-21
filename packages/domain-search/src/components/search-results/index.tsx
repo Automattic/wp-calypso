@@ -15,17 +15,19 @@ const SearchResults = ( {
 	suggestions: string[];
 	numberOfInitialVisibleSuggestions?: number;
 } ) => {
-	const { filter, resetFilter, events } = useDomainSearch();
+	const { filter, resetFilter, events, config } = useDomainSearch();
 	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState(
-		numberOfInitialVisibleSuggestions ?? 10
+		numberOfInitialVisibleSuggestions ?? config.numberOfDomainsResultsPerPage
 	);
 	const [ pageNumber, setPageNumber ] = useState( 1 );
 
 	const showMoreResults = useCallback( () => {
 		events.onShowMoreResults( pageNumber + 1 );
 		setPageNumber( pageNumber + 1 );
-		setnumberOfVisibleSuggestions( numberOfVisibleSuggestions + 10 );
-	}, [ events, pageNumber, numberOfVisibleSuggestions ] );
+		setnumberOfVisibleSuggestions(
+			numberOfVisibleSuggestions + config.numberOfDomainsResultsPerPage
+		);
+	}, [ events, pageNumber, numberOfVisibleSuggestions, config.numberOfDomainsResultsPerPage ] );
 
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
