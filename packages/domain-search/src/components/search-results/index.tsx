@@ -25,7 +25,7 @@ const SearchResults = ( {
 		events.onShowMoreResults( pageNumber + 1 );
 		setPageNumber( pageNumber + 1 );
 		setnumberOfVisibleSuggestions( numberOfVisibleSuggestions + 10 );
-	}, [ events, pageNumber ] );
+	}, [ events, pageNumber, numberOfVisibleSuggestions ] );
 
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
