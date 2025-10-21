@@ -218,10 +218,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						case 'select-site': {
 							const { ID: siteId, slug: siteSlug } = providedDependencies.site as SiteExcerptData;
+							const selectedSite = providedDependencies.site as SiteExcerptData;
+							const selectedSiteCanInstallPlugins = selectedSite?.plan?.features?.active.find(
+								( feature: string ) => feature === 'install-plugins'
+							)
+								? true
+								: false;
 
 							// Check if this is an SSH migration flow
 							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-								if ( canInstallPlugins ) {
+								if ( selectedSiteCanInstallPlugins ) {
 									return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
 								}
 								return navigate(
