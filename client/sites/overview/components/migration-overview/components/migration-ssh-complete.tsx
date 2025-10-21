@@ -3,13 +3,14 @@ import { useTranslate } from 'i18n-calypso';
 import { HostingCard } from 'calypso/components/hosting-card';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToDomain } from 'calypso/lib/url';
 import { Container, Header } from './layout';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const sourceSiteDomain = site?.options?.migration_source_site_domain
-		? site?.options?.migration_source_site_domain?.replace( /^https?:\/\/|\/+$/g, '' )
+		? urlToDomain( site.options.migration_source_site_domain )
 		: 'yourwebsite.com';
 
 	const title = translate( 'Welcome to your new home 🎉' );

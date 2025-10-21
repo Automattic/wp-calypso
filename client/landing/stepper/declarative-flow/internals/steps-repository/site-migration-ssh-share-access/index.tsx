@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { cleanUrl } from '../../../helpers';
+import { urlToDomain } from 'calypso/lib/url';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
@@ -32,7 +32,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
 	}, [ navigation ] );
 
-	const displaySiteName = cleanUrl( fromUrl );
+	const displaySiteName = urlToDomain( fromUrl );
 
 	const title = translate( 'Securely share your access' );
 	const subtitle = translate(
