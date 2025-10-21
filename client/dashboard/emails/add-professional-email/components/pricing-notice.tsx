@@ -257,7 +257,9 @@ export const PricingNotice = ( {
 					{ priceMessage } { priceMessageExplanation } { priceMessageRenewal }
 				</Notice>
 			) : (
-				<Text as="p">{ message }</Text>
+				<Text size={ 16 } as="p">
+					{ message }
+				</Text>
 			) }
 		</>
 	);
