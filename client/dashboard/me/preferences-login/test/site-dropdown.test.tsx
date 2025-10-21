@@ -87,7 +87,7 @@ describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 	describe( 'Site icon rendering logic', () => {
 		test( 'renders image when site has valid icon', () => {
 			const siteWithIcon = createMockSite( {
-				icon: { ico: 'https://example.com/icon.png' },
+				icon: { ico: 'https://example.com/icon.png', img: 'https://example.com/icon.png' },
 			} );
 
 			const { container } = render(
@@ -112,7 +112,7 @@ describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 
 		test( 'renders fallback globe icon when site icon ico is missing', () => {
 			const siteWithEmptyIcon = createMockSite( {
-				icon: { ico: '' },
+				icon: { ico: '', img: 'https://example.com/icon.png' },
 			} );
 
 			const { getByTestId } = render(
