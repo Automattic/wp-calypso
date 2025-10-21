@@ -39,13 +39,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import {
-	moreVertical,
-	calendar,
-	currencyDollar,
-	siteLogo,
-	commentAuthorAvatar,
-} from '@wordpress/icons';
+import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -58,6 +52,7 @@ import { useFormattedTime } from '../../../components/formatted-time';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import SiteIcon from '../../../components/site-icon';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getBillPeriodLabel,
@@ -1064,7 +1059,7 @@ export default function PurchaseSettings() {
 					<PurchasePriceCard purchase={ purchase } />
 					{ site && (
 						<OverviewCard
-							icon={ siteLogo }
+							icon={ <SiteIcon site={ site } /> }
 							title={ __( 'Site' ) }
 							heading={ site.name }
 							description={ purchase.site_slug }

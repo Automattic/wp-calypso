@@ -10,7 +10,7 @@ import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
-import SiteIcon from '../../sites/site-icon';
+import SiteIcon from '../../components/site-icon';
 import {
 	isRenewing,
 	isTransferredOwnership,

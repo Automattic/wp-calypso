@@ -5,7 +5,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { layout } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
-import SiteIcon from '../../sites/site-icon';
+import SiteIcon from '../../components/site-icon';
 
 interface Props {
 	domain: Domain;

@@ -18,13 +18,13 @@ import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
+import SiteIcon from '../../components/site-icon';
 import Switcher from '../../components/switcher';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import AddNewSite from '../add-new-site';
 import { canManageSite, canSwitchEnvironment } from '../features';
-import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 
