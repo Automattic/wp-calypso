@@ -8,40 +8,52 @@ An example is:
 
 ```mermaid
 flowchart TB
-    wpa["Import (wp-admin Importers List)"] -- Test One --> n2["Squarespace → Run Importer"]
-    n2 --> icm["Import content from Squarespace"]
-    icm --> n4["Upload zip file"]
-    n4 --> n5["Import content from Squarespace (Confirm authors)"]
-    n5 --> n6["Import"]
-    wpa -- Test Two --> n7["WordPress.com → Run Importer"]
-    n7 --> n8@{ label: "Let's find your site" }
-    n8 --> n9["Enter Squarespace site address"]
-    n11["Not sure of entry point here"] --> n12["Import Content"]
-    n12 --> n13["I want to import content from: Squarespace"] & n18["Choose from full list"]
-    n13 -- Test Three --> n14["Import Content (Upload zip file)"]
-    n14 --> n15["Upload zip file"]
-    n15 --> n16["Import Content (Confirm authors)"]
-    n16 --> n17["Import"]
-    n9 --> icm
-    n18 --> wpa
+    %% --- Main paths ---
+    n1["Import (wp-admin Importers List)"]
+    n2["WordPress → Run Importer"]
+    icm["Import content from WordPress"]
+    n4["Upload XML file"]
+    n5["Confirm authors"]
+    n6["Import"]
 
-    style wpa fill:#C8E6C9,color:black
-    style n2 fill:#FFFFFF,color:black
-    style icm fill:#BBDEFB,color:black
-    style n4 fill:#FFFFFF,color:black
-    style n5 fill:#BBDEFB,color:black
-    style n6 fill:#FFFFFF,color:black
-    style n7 fill:#FFFFFF,color:black
-    style n8 fill:#BBDEFB,color:black
-    style n9 fill:#FFFFFF,color:black
-    style n11 fill:#FFCDD2,color:black
-    style n12 fill:#BBDEFB,color:black
-    style n13 fill:#FFFFFF,color:black
-    style n18 fill:#FFFFFF,color:black
-    style n14 fill:#BBDEFB,color:black
-    style n15 fill:#FFFFFF,color:black
-    style n16 fill:#BBDEFB,color:black
-    style n17 fill:#FFFFFF,color:black
+    n7["WordPress.com → Run Importer"]
+    n8["Let's find your site"]
+    n9["Enter WordPress site"]
+    wdywtd["What do you want to do?"]
+    n11["Import content only"]
+    n13["Migrate site"]
+    n14["Let us migrate your site"]
+    n15["Get started"]
+
+    n16["Unknown entry point"]
+    n17["Import Content"]
+    n18["I want to import content from: WordPress"]
+    n19["Let's find your site"]
+    n20["Enter WordPress site"]
+    n22["Pick your current platform"]
+    n23["Import content from another platform or file"]
+    n24["WordPress"]
+
+    %% --- Flows ---
+    n1 -- Test One --> n2 --> icm --> n4 --> n5 --> n6
+    n1 -- Test Two --> n7 --> n8 --> n9 --> wdywtd
+    wdywtd -- Tests Two & Three --> n11 --> icm
+    wdywtd -- Test Four --> n13 --> n14 --> n15
+
+    n16 --> n17 --> n18 --> n19
+    n19 -- Test Three --> n20 --> wdywtd
+    n19 -- Test Four --> n22 --> n23 --> n24 --> wdywtd
+
+    %% --- Styles (grouped for clarity) ---
+    classDef white fill:#FFFFFF,color:black
+    classDef blue fill:#BBDEFB,color:black
+    classDef green fill:#C8E6C9,color:black
+    classDef red fill:#FFCDD2,color:black
+
+    class n1 green
+    class n2,n4,n6,n7,n9,n11,n13,n15,n18,n20,n22,n24 white
+    class icm,n5,n8,wdywtd,n14,n17,n19,n23 blue
+    class n16 red
 ```
 
 You can easily annotate a Playwright Test test with a link to the MermaidJS flow chart URL like:
