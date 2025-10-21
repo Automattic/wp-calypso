@@ -122,5 +122,17 @@ describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 
 			expect( getByTestId( 'icon-globe' ) ).toBeInTheDocument();
 		} );
+
+		test( 'renders fallback globe icon when site has no icon', () => {
+			const siteWithoutIcon = createMockSite( {
+				icon: undefined,
+			} );
+
+			const { getByTestId } = render(
+				<PreferencesLoginSiteDropdown sites={ [ siteWithoutIcon ] } onChange={ jest.fn() } />
+			);
+
+			expect( getByTestId( 'icon-globe' ) ).toBeInTheDocument();
+		} );
 	} );
 } );
