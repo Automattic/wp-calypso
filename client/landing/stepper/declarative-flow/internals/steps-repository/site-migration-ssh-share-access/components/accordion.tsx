@@ -12,6 +12,18 @@ interface AccordionStepProps {
 	index: number;
 }
 
+const AccordionStatusIcon = ( { completed }: { completed: boolean } ) => {
+	return (
+		<div className="migration-site-ssh__accordion-status-icon">
+			{ completed ? (
+				<Icon icon={ check } className="migration-site-ssh__accordion-icon-completed" size={ 20 } />
+			) : (
+				<Icon icon={ swatch } className="migration-site-ssh__accordion-icon-pending" size={ 20 } />
+			) }
+		</div>
+	);
+};
+
 export const AccordionStep: FC< AccordionStepProps > = ( { step, index } ) => {
 	const onClick = step.onClick ?? function () {};
 	return (
@@ -30,21 +42,7 @@ export const AccordionStep: FC< AccordionStepProps > = ( { step, index } ) => {
 				aria-expanded={ step.expandable?.isOpen ?? false }
 			>
 				<div className="migration-site-ssh__accordion-title">
-					<div className="migration-site-ssh__accordion-status-icon">
-						{ step.task.completed ? (
-							<Icon
-								icon={ check }
-								className="migration-site-ssh__accordion-icon-completed"
-								size={ 20 }
-							/>
-						) : (
-							<Icon
-								icon={ swatch }
-								className="migration-site-ssh__accordion-icon-pending"
-								size={ 20 }
-							/>
-						) }
-					</div>
+					<AccordionStatusIcon completed={ step.task.completed } />
 					<span className="migration-site-ssh__accordion-title-text">
 						{ index + 1 }. { step.task.title }
 					</span>
