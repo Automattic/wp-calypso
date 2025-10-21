@@ -1,4 +1,5 @@
 import { productsQuery, siteMediaStorageQuery, sitePurchasesQuery } from '@automattic/api-queries';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Modal,
@@ -17,6 +18,7 @@ import {
 	getPurchasedStorageAddOn,
 	getStorageTierOptions,
 	getPurchasedStorageQuantity,
+	getStorageTierYearlyPrice,
 	type StorageTierOption,
 } from './storage-utils';
 import type { Site } from '@automattic/api-core';
@@ -41,6 +43,10 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 	const purchasedStorageAddOn = getPurchasedStorageAddOn( purchases );
 	const tierOptions = getStorageTierOptions( storageProduct );
 	const currentPurchasedQuantity = getPurchasedStorageQuantity( purchasedStorageAddOn );
+	const currentPurchasedYearlyPrice = getStorageTierYearlyPrice(
+		tierOptions,
+		currentPurchasedQuantity
+	);
 
 	// Filter out tiers that are less than or equal to what's already purchased
 	const availableTiers = tierOptions.filter( ( tier ) => tier.quantity > currentPurchasedQuantity );
@@ -59,25 +65,40 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 		mediaStorage.max_storage_bytes - mediaStorage.max_storage_bytes_from_add_ons;
 	const selectedAddOnStorageBytes = ( selectedTier?.quantity ?? 0 ) * 1024 * 1024 * 1024;
 
-	// Build select options
-	const selectOptions: SelectOption[] = availableTiers.map( ( tier ) => ( {
-		key: String( tier.quantity ),
-		name: sprintf(
-			// translators: %1$d: storage amount in GB, %2$s: formatted monthly price, e.g., "50 GB Storage (£40.71/month, billed yearly)"
-			__( '%1$d GB Storage (%2$s/month, billed yearly)' ),
-			tier.quantity,
-			tier.formattedMonthlyPrice
-		),
-	} ) );
+	// Build select options - show additional storage and incremental price.
+	// That is, it is presented as the user choosing further additional amounts rather than choosing a new total storage.
+	// e.g. if they have 50gb the list shows +50gb, +100gb, +200gb, +250gb, +300gb rather than 100gb, 150gb, 250gb, 300gb, 350gb.
+	// Functionally, this is the same but it emphasises what extra they're getting and how much more it'll cost them today.
+	const selectOptions: SelectOption[] = availableTiers.map( ( tier ) => {
+		const additionalGB = tier.quantity - currentPurchasedQuantity;
+		const incrementalMonthlyPrice = ( tier.yearlyPrice - currentPurchasedYearlyPrice ) / 12;
+		const formattedIncrementalPrice = formatCurrency( incrementalMonthlyPrice, tier.currencyCode, {
+			isSmallestUnit: true,
+		} );
+
+		return {
+			key: String( tier.quantity ),
+			name: sprintf(
+				// translators: %1$d: additional storage amount in GB, %2$s: formatted cost of additional storage, e.g., "+ 50 GB Storage (£40.71/month, billed yearly)"
+				__( '+ %1$d GB Storage (%2$s/month, billed yearly)' ),
+				additionalGB,
+				formattedIncrementalPrice
+			),
+		};
+	} );
 
 	const selectedOption = selectedTier
 		? {
 				key: String( selectedTier.quantity ),
 				name: sprintf(
-					// translators: %1$d: storage amount in GB, %2$s: formatted monthly price
-					__( '%1$d GB Storage (%2$s/month, billed yearly)' ),
-					selectedTier.quantity,
-					selectedTier.formattedMonthlyPrice
+					// translators: %1$d: additional storage amount in GB, %2$s: formatted cost of additional storage.
+					__( '+ %1$d GB Storage (%2$s/month, billed yearly)' ),
+					selectedTier.quantity - currentPurchasedQuantity,
+					formatCurrency(
+						( selectedTier.yearlyPrice - currentPurchasedYearlyPrice ) / 12,
+						selectedTier.currencyCode,
+						{ isSmallestUnit: true }
+					)
 				),
 		  }
 		: selectOptions[ 0 ];

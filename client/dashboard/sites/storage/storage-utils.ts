@@ -78,3 +78,15 @@ export function getPurchasedStorageQuantity( purchase: Purchase | null ): number
 	// For tiered products, the quantity is stored in renewal_price_tier_usage_quantity
 	return purchase.renewal_price_tier_usage_quantity ?? 0;
 }
+
+/**
+ * Gets the yearly price for a specific storage tier quantity.
+ * Returns 0 if the tier is not found.
+ */
+export function getStorageTierYearlyPrice(
+	tierOptions: StorageTierOption[],
+	quantity: number
+): number {
+	const tier = tierOptions.find( ( t ) => t.quantity === quantity );
+	return tier?.yearlyPrice ?? 0;
+}
