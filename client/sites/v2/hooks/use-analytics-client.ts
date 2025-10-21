@@ -4,13 +4,13 @@ import { recordTracksEvent, recordPageView } from 'calypso/state/analytics/actio
 import type { AnyRouter } from '@tanstack/react-router';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 
-export const useAnalyticsClient = ( router?: AnyRouter ) => {
+export const useAnalyticsClient = ( router?: AnyRouter, currentPath?: string ) => {
 	const dispatch = useDispatch();
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
-				const path = router?.state.matches.at( -1 )?.fullPath;
+				const path = currentPath || router?.state.matches.at( -1 )?.fullPath;
 				dispatch(
 					recordTracksEvent( eventName, {
 						path,
@@ -22,7 +22,7 @@ export const useAnalyticsClient = ( router?: AnyRouter ) => {
 				dispatch( recordPageView( url, title ) );
 			},
 		} ),
-		[ router, dispatch ]
+		[ router, currentPath, dispatch ]
 	);
 
 	return analyticsClient;

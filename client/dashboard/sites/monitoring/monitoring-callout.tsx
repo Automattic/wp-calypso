@@ -7,8 +7,8 @@ import type { Site } from '@automattic/api-core';
 
 export function getMonitoringCalloutProps() {
 	return {
-		tracksFeatureId: 'monitoring',
 		feature: HostingFeatures.MONITOR,
+		upsellId: 'site-monitoring',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Monitor server stats' ),
 		upsellImage: illustrationUrl,

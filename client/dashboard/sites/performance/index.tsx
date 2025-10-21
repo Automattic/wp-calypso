@@ -3,6 +3,7 @@ import {
 	sitePerformancePagesQuery,
 	siteSettingsQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -51,13 +52,29 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
-	const { data: pagesData, refetch: refetchPages } = useQuery( {
+	const {
+		data: pagesData,
+		isLoading: isLoadingPages,
+		refetch: refetchPages,
+	} = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
+	const { page_id, url } = useSearch( { from: sitePerformanceRoute.fullPath } ) as {
+		page_id?: string;
+		url?: string;
+	};
+
 	const currentPage = useMemo( () => {
-		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+		if ( page_id ) {
+			const foundPage = getPageFromID( pagesData, page_id );
+			return foundPage || pagesData?.[ 0 ];
+		}
+		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
+
+	const performanceUrl = [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) )
+		? url ?? currentPage?.link
+		: currentPage?.link;
 
 	const {
 		hasError,
@@ -67,7 +84,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		getReport,
 		hasCompleted,
 	} = useSitePerformanceData(
-		currentPage?.link,
+		performanceUrl,
 		currentPage?.wpcom_performance_report_hash,
 		runNewReport
 	);
@@ -91,18 +108,23 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const { gmtOffset, timezoneString } = siteSettings;
 
 	const renderContent = () => {
-		if ( ! pagesData || ! currentPage ) {
-			return <ReportNoPagesNotice />;
-		}
-
 		if ( hasError( deviceToggle ) ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
+		}
+
+		if ( isLoadingPages ) {
+			return <ReportLoading isLoadingPages />;
+		}
+
+		if ( ! pagesData?.length || ! currentPage ) {
+			return <ReportNoPagesNotice />;
 		}
 
 		if ( isLoadingNewReport( deviceToggle ) ) {
 			return <ReportLoading isSavedReport={ false } />;
 		}
 
+		// Our default loading state is loading the existing report.
 		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport ) {
 			return <ReportLoading isSavedReport />;
 		}
@@ -135,33 +157,30 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 						/>
 					}
 					actions={
-						pagesData &&
-						pagesData.length && (
-							<HStack>
-								<PageSelector
-									siteUrl={ site.URL }
-									currentPage={ currentPage }
-									pages={ pagesData }
-									onChange={ ( pageId ) => {
-										setRunNewReport( false );
-										recordTracksEvent(
-											'calypso_dashboard_performance_profiler_page_selector_change',
-											{
-												is_home: pageId === '0',
-											}
-										);
+						<HStack>
+							<PageSelector
+								siteUrl={ site.URL }
+								currentPage={ currentPage }
+								pages={ pagesData || [] }
+								onChange={ ( pageId ) => {
+									setRunNewReport( false );
+									recordTracksEvent(
+										'calypso_dashboard_performance_profiler_page_selector_change',
+										{
+											is_home: pageId === '0',
+										}
+									);
 
-										navigate( {
-											search: ( prev: Record< string, string > ) => ( {
-												...prev,
-												page_id: Number( pageId ),
-											} ),
-										} );
-									} }
-								/>
-								<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-							</HStack>
-						)
+									navigate( {
+										search: ( prev: Record< string, string > ) => ( {
+											...prev,
+											page_id: Number( pageId ),
+										} ),
+									} );
+								} }
+							/>
+							<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
+						</HStack>
 					}
 				/>
 			}

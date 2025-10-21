@@ -12,6 +12,7 @@ import { getSiteData } from '../lib/site-data';
 import {
 	SiteColumn,
 	WooPaymentsStatusColumn,
+	TransactionsColumn,
 	CommissionsPaidColumn,
 	TimeframeCommissionsColumn,
 } from './site-columns';
@@ -36,6 +37,17 @@ export default function SitesWithWooPaymentsMobileView( {
 						<ListItemCardContent title={ translate( 'Site' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								<SiteColumn site={ item.siteUrl } />
+							</div>
+						</ListItemCardContent>
+						<ListItemCardContent title={ translate( 'Transactions' ) }>
+							<div className="sites-with-woopayments-list-mobile-view__column">
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<TransactionsColumn
+										transactions={ getSiteData( woopaymentsData, item.blogId ).transactions }
+									/>
+								) }
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Commissions Paid' ) }>

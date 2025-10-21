@@ -7,8 +7,8 @@ import type { Site } from '@automattic/api-core';
 
 export function getLogsCalloutProps() {
 	return {
-		tracksFeatureId: 'logs',
 		feature: HostingFeatures.LOGS,
+		upsellId: 'site-logs',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Access detailed logs' ),
 		upsellImage: illustrationUrl,

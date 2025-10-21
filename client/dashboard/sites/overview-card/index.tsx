@@ -47,6 +47,9 @@ export interface OverviewCardProps {
 	externalLink?: string;
 
 	tracksId?: string;
+
+	upsellFeatureId?: string;
+
 	bottom?: ReactNode;
 	onClick?: () => void;
 }
@@ -63,6 +66,7 @@ export default function OverviewCard( {
 	link,
 	externalLink: externalLinkProp,
 	tracksId,
+	upsellFeatureId,
 	bottom,
 	onClick,
 }: OverviewCardProps ) {
@@ -182,12 +186,12 @@ export default function OverviewCard( {
 		if ( tracksId ) {
 			if ( intent === 'upsell' ) {
 				recordTracksEvent( 'calypso_dashboard_upsell_click', {
-					feature: tracksId,
-					type: 'card',
+					upsell_id: tracksId,
+					upsell_feature_id: upsellFeatureId,
 				} );
 			} else {
 				recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-					type: tracksId,
+					card_id: tracksId,
 					intent,
 				} );
 			}
@@ -244,12 +248,15 @@ export default function OverviewCard( {
 					( intent === 'upsell' ? (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_upsell_impression"
-							properties={ { feature: tracksId, type: 'card' } }
+							properties={ {
+								upsell_id: tracksId,
+								upsell_feature_id: upsellFeatureId,
+							} }
 						/>
 					) : (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_overview_card_impression"
-							properties={ { feature: tracksId, intent } }
+							properties={ { card_id: tracksId, intent } }
 						/>
 					) ) }
 				{ renderContent() }

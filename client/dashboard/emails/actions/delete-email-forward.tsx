@@ -6,34 +6,54 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import type { Email } from '../types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useDeleteEmailForwardAction = (): Action< Email > => {
-	const { mutateAsync: deleteEmailForward, isPending } = useMutation(
-		deleteEmailForwardMutation()
-	);
-
 	return {
 		id: 'delete-email-forward',
 		label: __( 'Delete forwarder' ),
 		isDestructive: true,
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-			const { createErrorNotice } = useDispatch( noticesStore );
+			const { mutateAsync: deleteEmailForward, isPending } = useMutation(
+				deleteEmailForwardMutation()
+			);
+			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+			const { recordTracksEvent } = useAnalytics();
+
+			useEffect( () => {
+				recordTracksEvent( 'calypso_dashboard_emails_action_click', {
+					action_id: 'delete-email-forward',
+				} );
+			}, [ recordTracksEvent ] );
 			const email = items[ 0 ];
 
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
 			const onConfirm = async () => {
+				recordTracksEvent( 'calypso_dashboard_emails_action_confirm_click', {
+					action_id: 'delete-email-forward',
+				} );
 				try {
 					await deleteEmailForward( {
 						domainName: email.domainName,
 						mailbox,
 						destination: email.forwardingTo as string,
 					} );
+					createSuccessNotice(
+						sprintf(
+							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
+							__( 'Forwarder from %1$s to %2$s has been removed.' ),
+							email.emailAddress,
+							email.forwardingTo as string
+						),
+						{ type: 'snackbar' }
+					);
 					onActionPerformed?.( items );
 					closeModal?.();
 				} catch ( _e ) {
@@ -47,6 +67,13 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 						{ type: 'snackbar' }
 					);
 				}
+			};
+
+			const handleCancel = () => {
+				recordTracksEvent( 'calypso_dashboard_emails_action_cancel_click', {
+					action_id: 'delete-email-forward',
+				} );
+				closeModal?.();
 			};
 			return (
 				<VStack spacing={ 4 }>
@@ -62,7 +89,7 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							onClick={ () => closeModal?.() }
+							onClick={ handleCancel }
 							disabled={ isPending }
 							accessibleWhenDisabled
 						>

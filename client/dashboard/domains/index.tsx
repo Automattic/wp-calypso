@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -24,9 +25,22 @@ function Domains() {
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',
+		filters: [
+			{
+				field: 'owner',
+				operator: 'isAny',
+				value: [ 'owned-by-me' ],
+			},
+		],
 	} ) );
 
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { data: domains, isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		domains ?? [],
 		view,

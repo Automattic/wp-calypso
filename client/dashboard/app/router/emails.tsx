@@ -1,12 +1,15 @@
-import { SiteDomain } from '@automattic/api-core';
+import { Domain, DomainSubtype } from '@automattic/api-core';
 import {
 	queryClient,
 	rawUserPreferencesQuery,
 	sitesQuery,
 	siteDomainsQuery,
 	mailboxAccountsQuery,
+	domainQuery,
+	productsQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
-import { createLazyRoute, createRoute } from '@tanstack/react-router';
+import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { domainHasEmail } from '../../utils/domain';
 import { rootRoute } from './root';
@@ -35,7 +38,9 @@ export const emailsRoute = createRoute( {
 		);
 
 		// 3) From those domains, identify ones with email capability and preload their mailboxes
-		const allDomains = domainsArrays.flat().filter( ( d: SiteDomain ) => d && ! d.wpcom_domain );
+		const allDomains = domainsArrays
+			.flat()
+			.filter( ( d: Domain ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		const domainsWithEmails = allDomains.filter( ( d ) => domainHasEmail( d ) );
 
 		await Promise.all( [
@@ -104,6 +109,42 @@ export const chooseEmailSolutionRoute = createRoute( {
 	)
 );
 
+export const addProfessionalEmailRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Professional Email' ),
+			},
+		],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'emails/add-professional-email/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		try {
+			await queryClient.ensureQueryData( domainQuery( domainName ) );
+		} catch ( error ) {
+			throw redirect( { to: `/emails?domainName=${ domainName }` } );
+		}
+	},
+	loader: async ( { params: { domain: domainName } } ) => {
+		const products = queryClient.ensureQueryData( productsQuery() );
+
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
+		const mailboxAccounts = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		await Promise.all( [ products, site, domain, mailboxAccounts ] );
+	},
+} ).lazy( () =>
+	import( '../../emails/add-professional-email' ).then( ( d ) =>
+		createLazyRoute( 'add-professional-email' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const addTitanmailMailboxRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -163,6 +204,7 @@ export const createEmailsRoutes = () => {
 		emailsRoute,
 		chooseDomainRoute,
 		chooseEmailSolutionRoute,
+		addProfessionalEmailRoute,
 		addTitanmailMailboxRoute,
 		addGoogleMailboxRoute,
 		addEmailForwarderRoute,

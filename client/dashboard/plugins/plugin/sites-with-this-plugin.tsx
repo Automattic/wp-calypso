@@ -9,7 +9,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
@@ -27,6 +27,7 @@ const defaultView: View = {
 	fields: [ 'active', 'autoupdate', 'update' ],
 	sort: { field: 'name', direction: 'asc' },
 	titleField: 'domain',
+	perPage: 10,
 };
 
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
@@ -55,11 +56,12 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 		setSiteToUpdate( null );
 	};
 
-	const fields = useMemo(
+	const fields: Field< SiteWithPluginData >[] = useMemo(
 		() => [
 			{
 				id: 'domain',
 				label: __( 'Site' ),
+				type: 'text',
 				getValue: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				render: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				enableHiding: false,
@@ -69,6 +71,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'active',
 				label: __( 'Active' ),
+				type: 'boolean',
 				getValue: ( { item }: { item: SiteWithPluginData } ) =>
 					pluginBySiteId.get( item.ID )?.active ?? false,
 				render: ( { item }: { item: SiteWithPluginData } ) => {
@@ -116,6 +119,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'autoupdate',
 				label: __( 'Autoupdate' ),
+				type: 'boolean',
 				getValue: ( { item }: { item: SiteWithPluginData } ) =>
 					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
 				render: ( { item }: { item: SiteWithPluginData } ) => {
@@ -192,9 +196,9 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							__next40pxDefaultSize
 						>
 							{ sprintf(
-								// translators: %(version) is the new version of the plugin.
-								__( 'Update to version %(version)s', update.new_version ),
-								{ version: update.new_version }
+								// translators: %s is the new version of the plugin.
+								__( 'Update to version %s' ),
+								update.new_version
 							) }
 						</Button>
 					);

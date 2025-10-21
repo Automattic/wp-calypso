@@ -32,10 +32,10 @@ export class ImportFileContentPage {
 	}
 
 	/**
-	 * 	Uploads a Medium export file via the file input.
-	 * @param filePath Path to the Medium export file to upload.
+	 * 	Uploads an export file via the file input.
+	 * @param filePath Path to the export file to upload.
 	 */
 	async uploadExportFile( filePath: string ): Promise< void > {
-		await this.page.locator( 'input[type="file"]' ).setInputFiles( filePath );
+		await this.page.locator( 'input[type="file"][name="exportFile"]' ).setInputFiles( filePath );
 	}
 }
