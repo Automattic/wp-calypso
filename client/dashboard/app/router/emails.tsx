@@ -1,4 +1,4 @@
-import { Domain, DomainSubtype } from '@automattic/api-core';
+import { Domain, DomainSubtype, isWpError } from '@automattic/api-core';
 import {
 	queryClient,
 	rawUserPreferencesQuery,
@@ -63,6 +63,25 @@ export const emailsRoute = createRoute( {
 	)
 );
 
+const redirectIfUnallowedDomain = async ( domainName: string ) => {
+	try {
+		await queryClient.ensureQueryData( domainQuery( domainName ) );
+	} catch ( error ) {
+		if (
+			isWpError( error ) &&
+			error.error === 'authorization_required' &&
+			error.statusCode === 403
+		) {
+			throw redirect( {
+				to: emailsRoute.fullPath,
+				search: {
+					domainName,
+				},
+			} );
+		}
+	}
+};
+
 export const chooseDomainRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -101,6 +120,9 @@ export const chooseEmailSolutionRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-email-solution/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		await redirectIfUnallowedDomain( domainName );
+	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
 
@@ -128,11 +150,7 @@ export const addProfessionalEmailRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails/add-professional-email/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
-		try {
-			await queryClient.ensureQueryData( domainQuery( domainName ) );
-		} catch ( error ) {
-			throw redirect( { to: `/emails?domainName=${ domainName }` } );
-		}
+		await redirectIfUnallowedDomain( domainName );
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
