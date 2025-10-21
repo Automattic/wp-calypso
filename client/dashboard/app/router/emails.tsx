@@ -1,4 +1,4 @@
-import { Domain, DomainSubtype } from '@automattic/api-core';
+import { Domain, DomainSubtype, isWpError } from '@automattic/api-core';
 import {
 	queryClient,
 	rawUserPreferencesQuery,
@@ -63,6 +63,25 @@ export const emailsRoute = createRoute( {
 	)
 );
 
+const redirectIfUnallowedDomain = async ( domainName: string ) => {
+	try {
+		await queryClient.ensureQueryData( domainQuery( domainName ) );
+	} catch ( error ) {
+		if (
+			isWpError( error ) &&
+			error.error === 'authorization_required' &&
+			error.statusCode === 403
+		) {
+			throw redirect( {
+				to: emailsRoute.fullPath,
+				search: {
+					domainName,
+				},
+			} );
+		}
+	}
+};
+
 export const chooseDomainRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -95,12 +114,23 @@ export const chooseEmailSolutionRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Choose email solution' ),
+				title: __( 'Choose an email solution' ),
 			},
 		],
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-email-solution/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		await redirectIfUnallowedDomain( domainName );
+	},
+	loader: async ( { params: { domain: domainName } } ) => {
+		const products = queryClient.ensureQueryData( productsQuery() );
+
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
+
+		await Promise.all( [ products, site, domain ] );
+	},
 } ).lazy( () =>
 	import( '../../emails/choose-email-solution' ).then( ( d ) =>
 		createLazyRoute( 'choose-email-solution' )( {
@@ -120,11 +150,7 @@ export const addProfessionalEmailRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails/add-professional-email/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
-		try {
-			await queryClient.ensureQueryData( domainQuery( domainName ) );
-		} catch ( error ) {
-			throw redirect( { to: `/emails?domainName=${ domainName }` } );
-		}
+		await redirectIfUnallowedDomain( domainName );
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
@@ -172,7 +198,7 @@ export const addGoogleMailboxRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => rootRoute,
-	path: 'emails/add-google-mailbox',
+	path: 'emails/add-google-mailbox/$domain',
 } ).lazy( () =>
 	import( '../../emails/add-google-mailbox' ).then( ( d ) =>
 		createLazyRoute( 'add-google-mailbox' )( {

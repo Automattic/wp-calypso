@@ -1,4 +1,4 @@
-import type { DomainSummary, DomainTransferStatus } from '../domains';
+import { DomainSummary, DomainTransferStatus, DomainTypes } from '../domains';
 
 export const EmailSubscriptionStatus = {
 	NO_SUBSCRIPTION: 'no_subscription',
@@ -11,7 +11,8 @@ export type EmailSubscriptionStatus =
 	( typeof EmailSubscriptionStatus )[ keyof typeof EmailSubscriptionStatus ];
 
 interface EmailSubscription {
-	status: 'active' | 'pending' | 'suspended' | 'no_subscription';
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
+	product_slug: string;
 }
 
 export interface EmailCost {
@@ -90,6 +91,7 @@ export interface Domain extends DomainSummary {
 	subdomain_part: string;
 	transfer_status: DomainTransferStatus | null;
 	transfer_away_eligible_at: string;
+	type: DomainTypes;
 	wpcom_domain?: boolean;
 	registration_date: string;
 	email_forwards_count?: number;
