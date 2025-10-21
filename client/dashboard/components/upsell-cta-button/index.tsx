@@ -8,19 +8,17 @@ import './style.scss';
 
 type UpsellCTAButtonProps = ComponentProps< typeof Button > & {
 	upsellId: string;
-	upsellType: string;
 	upsellFeatureId?: string;
 	onClick?: ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => void;
 };
 
 export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
-	const { upsellId, upsellType, upsellFeatureId, onClick, ...buttonProps } = props;
+	const { upsellId, upsellFeatureId, onClick, ...buttonProps } = props;
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => {
 		recordTracksEvent( 'calypso_dashboard_upsell_click', {
 			upsell_id: upsellId,
-			upsell_type: upsellType,
 			upsell_feature_id: upsellFeatureId,
 		} );
 		onClick?.( event );
@@ -32,7 +30,6 @@ export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
 				eventName="calypso_dashboard_upsell_impression"
 				properties={ {
 					upsell_id: upsellId,
-					upsell_type: upsellType,
 					upsell_feature_id: upsellFeatureId,
 				} }
 			/>

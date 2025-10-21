@@ -34,14 +34,12 @@ const DomainUpsellCardContent = ( {
 	description,
 	upsellCTAButtonText,
 	upsellId,
-	upsellType,
 }: {
 	site: Site;
 	title: string;
 	description: string;
 	upsellCTAButtonText: string;
 	upsellId: string;
-	upsellType: string;
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
@@ -99,7 +97,7 @@ const DomainUpsellCardContent = ( {
 								variant="link"
 								href={ chooseYourOwnUrl }
 								upsellId="site-overview-choose-your-own-domain"
-								upsellType={ upsellType }
+								upsellFeatureId="domain"
 							/>
 						),
 					} ) }
@@ -120,7 +118,7 @@ const DomainUpsellCardContent = ( {
 					variant="primary"
 					size="compact"
 					upsellId={ upsellId }
-					upsellType={ upsellType }
+					upsellFeatureId="domain"
 					isBusy={ isSubmitting }
 					onClick={ handleUpsell }
 				/>
@@ -144,7 +142,6 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 					'<domain /> is included free for one year with your paid plan. Claim this domain or <link>choose your own</link>.'
 				) }
 				upsellId="site-overview-claim-this-domain"
-				upsellType="domain-purchase"
 				upsellCTAButtonText={ __( 'Claim this domain' ) }
 			/>
 		);
@@ -158,7 +155,6 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
 			) }
 			upsellId="site-overview-get-this-domain"
-			upsellType="plan-and-domain-purchase"
 			upsellCTAButtonText={ __( 'Get this domain' ) }
 		/>
 	);

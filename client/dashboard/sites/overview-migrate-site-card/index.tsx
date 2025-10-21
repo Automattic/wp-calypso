@@ -14,7 +14,7 @@ export default function MigrateSiteCard( { site }: { site: Site } ) {
 			externalLink={ addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } ) }
 			intent="upsell"
 			tracksId="site-overview-migrate-site"
-			upsellType="site-migration"
+			upsellFeatureId="site-migration"
 		/>
 	);
 }

@@ -86,7 +86,6 @@ export default function UpsellCallout( {
 					variant="primary"
 					onClick={ handleUpsellClick }
 					upsellId={ upsellId }
-					upsellType="plan-upgrade"
 					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			}

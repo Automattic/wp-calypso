@@ -104,7 +104,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 								<UpsellCTAButton
 									text={ __( 'Purchase plan' ) }
 									upsellId="site-trial-ended"
-									upsellType="plan-upgrade"
+									upsellFeatureId="site-trial"
 									variant="primary"
 									href={ addQueryArgs( `/checkout/${ site.slug }/${ product.pathSlug }`, {
 										cancel_to: backUrl,

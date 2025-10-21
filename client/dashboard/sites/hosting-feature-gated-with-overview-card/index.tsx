@@ -38,7 +38,6 @@ export default function HostingFeatureGatedWithOverviewCard( {
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
 					tracksId={ upsellId }
-					upsellType="plan-upgrade"
 					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			) }

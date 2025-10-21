@@ -32,7 +32,7 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 				variant="link"
 				href={ `/plans/${ site.slug }` }
 				upsellId={ `site-settings-visibility-trial-notice:${ getTrialType() }` }
-				upsellType="plan-upgrade"
+				upsellFeatureId="site-trial"
 			/>
 		);
 

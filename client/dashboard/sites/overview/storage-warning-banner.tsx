@@ -55,7 +55,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 				<UpsellCTAButton
 					variant="primary"
 					upsellId={ upsellId }
-					upsellType="add-on-storage-purchase"
+					upsellFeatureId="site-storage"
 					href={ `/add-ons/${ site.slug }` }
 				>
 					{ __( 'Add more storage' ) }

@@ -24,7 +24,7 @@ export default function DomainTransferUpsellCard() {
 					text={ __( 'Transfer domain' ) }
 					size="compact"
 					upsellId="site-overview-transfer-domain"
-					upsellType="domain-transfer"
+					upsellFeatureId="domain"
 					variant="secondary"
 				/>
 			}

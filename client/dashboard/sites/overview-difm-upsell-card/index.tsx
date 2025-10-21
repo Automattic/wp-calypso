@@ -42,7 +42,7 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 					text={ __( 'Build it for me' ) }
 					variant="secondary"
 					upsellId="site-overview-difm"
-					upsellType="site-difm"
+					upsellFeatureId="site-difm"
 				/>
 			}
 		/>
