@@ -3102,6 +3102,10 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		type: TYPE_WOO_HOSTED_BASIC,
 		getBillingTimeFrame: () => translate( 'per month' ),
+		availableFor: ( plan ) =>
+			[
+				PLAN_JETPACK_FREE, // Placeholder, until we define a Woo Free plan.
+			].includes( plan ),
 		getProductId: () => 4001,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC_MONTHLY,
 		getPathSlug: () => 'woo-hosted-basic-monthly',
@@ -3112,7 +3116,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOO_HOSTED_BASIC,
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: ( plan ) => [ PLAN_WOO_HOSTED_BASIC_MONTHLY ].includes( plan ),
+		availableFor: ( plan ) =>
+			[
+				PLAN_JETPACK_FREE, // Placeholder, until we define a Woo Free plan.
+				PLAN_WOO_HOSTED_BASIC_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 4002,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC,
 		getPathSlug: () => 'woo-hosted-basic',
@@ -3123,6 +3131,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		type: TYPE_WOO_HOSTED_PRO,
 		getBillingTimeFrame: () => translate( 'per month' ),
+		availableFor: ( plan ) =>
+			[
+				PLAN_JETPACK_FREE, // Placeholder, until we define a Woo Free plan.
+				PLAN_WOO_HOSTED_BASIC_MONTHLY,
+				PLAN_WOO_HOSTED_BASIC,
+			].includes( plan ),
 		getProductId: () => 4003,
 		getStoreSlug: () => PLAN_WOO_HOSTED_PRO_MONTHLY,
 		getPathSlug: () => 'woo-hosted-pro-monthly',
@@ -3135,6 +3149,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOO_HOSTED_PRO,
 		availableFor: ( plan ) =>
 			[
+				PLAN_JETPACK_FREE, // Placeholder, until we define a Woo Free plan.
 				PLAN_WOO_HOSTED_BASIC_MONTHLY,
 				PLAN_WOO_HOSTED_BASIC,
 				PLAN_WOO_HOSTED_PRO_MONTHLY,
