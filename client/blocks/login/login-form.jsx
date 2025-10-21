@@ -22,6 +22,7 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
+import DashboardNotice from 'calypso/dashboard/components/notice';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -701,9 +702,10 @@ export class LoginForm extends Component {
 				) : (
 					<>
 						{ isWoo && <ErrorNotice /> }
+
 						<div className="login__form-userdata">
 							{ ! isWoo && linkingSocialUser && (
-								<p>
+								<DashboardNotice variant="error">
 									{ this.props.translate(
 										'We found a WordPress.com account with the email address "%(email)s". ' +
 											'Log in to this account to connect it to your %(service)s profile, ' +
@@ -715,7 +717,7 @@ export class LoginForm extends Component {
 											},
 										}
 									) }
-								</p>
+								</DashboardNotice>
 							) }
 
 							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
