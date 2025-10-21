@@ -308,16 +308,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
 	},
 
-	SITE_MIGRATION_SSH_SHARE_ACCESS: {
-		slug: 'site-migration-ssh-share-access',
-		asyncComponent: () => import( './steps-repository/site-migration-ssh-share-access' ),
-	},
-
-	SITE_MIGRATION_SSH_IN_PROGRESS: {
-		slug: 'site-migration-ssh-in-progress',
-		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
-	},
-
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),
