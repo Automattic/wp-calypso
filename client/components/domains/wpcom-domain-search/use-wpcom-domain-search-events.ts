@@ -21,6 +21,7 @@ import {
 	recordDomainClickMissing,
 	recordFiltersReset,
 	recordFiltersSubmit,
+	recordShowMoreResults,
 } from './analytics';
 
 export const useWPCOMDomainSearchEvents = ( {
@@ -155,12 +156,7 @@ export const useWPCOMDomainSearchEvents = ( {
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
 			onShowMoreResults: ( pageNumber ) => {
-				recordTracksEvent( 'calypso_domain_search_show_more_results', {
-					search_query: query ?? '',
-					flow_name: flowName,
-					page_number: pageNumber,
-					section: analyticsSection,
-				} );
+				dispatch( recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName ) );
 			},
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
 				dispatch(
