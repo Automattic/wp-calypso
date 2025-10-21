@@ -1,8 +1,8 @@
 import { meFlexUsageQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import { TEMP_CAPS } from '../../constants';
 import { generateMockMeFlexUsage } from '../../mock-flex-usage';
-import type { FlexUsageResponse } from '@automattic/api-core';
+import type { MeFlexUsageResponse } from '@automattic/api-core';
 
 export type PlanUsageStats = {
 	storageBytes: number;
@@ -20,42 +20,54 @@ export type PlanUsageFractions = {
 const toEpoch = ( ts: string ) => Math.floor( Date.parse( ts.replace( ' ', 'T' ) + 'Z' ) / 1000 );
 const toNumbers = ( arr: Array< { timestamp: string; usage: string } > ) =>
 	arr.map( ( p ) => Number( p.usage || 0 ) );
+const clamp = ( n: number ) => Math.max( 0, Math.min( 1, n ) );
 
+/**
+ * usePlanUsage
+ *
+ * Input series (from `/me/flex-usage`):
+ *  - storage: byte-seconds per period
+ *  - bandwidth: bytes per period
+ *  - compute: seconds per period
+ *  - _meta.start/_meta.end: UTC window bounds
+ *  - _meta.caps (optional): { storageBytes, bandwidthBytes, computeHours }
+ *
+ * Transform totals over the window:
+ *  - storageBytes = sum(byteSeconds) / periodSeconds  // average bytes across window
+ *  - bandwidthBytes = sum(bytes)
+ *  - computeHours = sum(seconds) / 3600
+ *
+ * Fractions (unitless 0..1 for pie composition - each metric divided by its cap to get a percentage):
+ *  - storage = clamp( storageBytes / storageBytesCap )
+ *  - bandwidth = clamp( bandwidthBytes / bandwidthBytesCap )
+ *  - compute = clamp( computeHours / computeHoursCap )
+ *    Caps are taken from _meta.caps when present, otherwise TEMP_CAPS.
+ */
 export function usePlanUsage(
 	start: number,
 	end: number,
 	resolution: 'hour' | 'day' | 'month' = 'day'
 ) {
-	const base = meFlexUsageQuery( { start, end, resolution } );
-	const mockEnabled = config.isEnabled( 'mock-me-flex-usage' );
-
 	const { data, isPending } = useQuery( {
-		...base,
-		queryFn: mockEnabled
-			? () => Promise.resolve( generateMockMeFlexUsage( start, end ) )
-			: base.queryFn,
+		...meFlexUsageQuery( { start, end, resolution } ),
 		select: (
-			resp: FlexUsageResponse & { bySite?: Record< string, unknown >; _meta: unknown }
+			resp: MeFlexUsageResponse
 		): { stats: PlanUsageStats; fractions: PlanUsageFractions } => {
 			const periodSeconds = Math.max( 1, toEpoch( resp._meta.end ) - toEpoch( resp._meta.start ) );
 			const storageBytes =
 				toNumbers( resp.data.storage ).reduce( ( a, b ) => a + b, 0 ) / periodSeconds;
 			const bandwidthBytes = toNumbers( resp.data.bandwidth ).reduce( ( a, b ) => a + b, 0 );
 			const computeHours = toNumbers( resp.data.compute ).reduce( ( a, b ) => a + b, 0 ) / 3600;
-			const TEMP_CAPS = {
-				storageBytes: 400 * 1024 * 1024 * 1024, // 400GB
-				bandwidthBytes: 1 * 1024 * 1024 * 1024, // 1GB
-				computeHours: 1, // 1 hour
-			};
-			const clamp01 = ( n: number ) => Math.max( 0, Math.min( 1, n ) );
+			const caps = resp._meta.caps ?? TEMP_CAPS;
 			const fractions = {
-				storage: clamp01( storageBytes / TEMP_CAPS.storageBytes ),
-				bandwidth: clamp01( bandwidthBytes / TEMP_CAPS.bandwidthBytes ),
-				compute: clamp01( computeHours / TEMP_CAPS.computeHours ),
+				storage: clamp( storageBytes / caps.storageBytes ),
+				bandwidth: clamp( bandwidthBytes / caps.bandwidthBytes ),
+				compute: clamp( computeHours / caps.computeHours ),
 			};
-			return { stats: { storageBytes, bandwidthBytes, computeHours, caps: TEMP_CAPS }, fractions };
+
+			return { stats: { storageBytes, bandwidthBytes, computeHours, caps }, fractions };
 		},
-		placeholderData: () => ( mockEnabled ? generateMockMeFlexUsage( start, end ) : undefined ),
+		initialData: generateMockMeFlexUsage( start, end ),
 	} );
 
 	return {

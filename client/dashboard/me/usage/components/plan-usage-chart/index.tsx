@@ -2,7 +2,7 @@ import { DataPointPercentage, Legend, PieChart } from '@automattic/charts';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { chartColors } from '../../constants';
+import { CHART_COLORS } from '../../constants';
 import FlexUsageCard from '../flex-usage-card';
 import { usePlanUsage } from './use-plan-usage';
 
@@ -26,7 +26,7 @@ export function PlanUsageChart( { start, end }: { start: number; end: number } )
 				value: item.value,
 				percentage,
 				valueDisplay: `${ Math.round( percentage ) }%`,
-				color: chartColors[ i % chartColors.length ],
+				color: CHART_COLORS[ i % CHART_COLORS.length ],
 			} as DataPointPercentage;
 		} );
 	}, [ fractions.bandwidth, fractions.storage, fractions.compute ] );
