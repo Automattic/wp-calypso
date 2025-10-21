@@ -153,19 +153,15 @@ export const useFields = ( {
 					return a.expiry.localeCompare( b.expiry ) * factor;
 				},
 				elements: [
-					{ value: '2-next-07-days', label: __( 'Next 7 days' ) },
-					{ value: '2-next-30-days', label: __( 'Next 30 days' ) },
-					{ value: '2-next-90-days', label: __( 'Next 90 days' ) },
-					{ value: '3-more-than-90-days', label: __( 'More than 90 days' ) },
+					{ value: '2-next-90-days', label: __( '90 days' ) },
 					{ value: '1-expired', label: __( 'Expired' ) },
-					{ value: '0-no-expiry', label: __( 'No expiry date' ) },
 				],
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
 				getValue: ( { item }: { item: DomainSummary } ) => {
 					if ( ! item.expiry ) {
-						return '0-no-expiry';
+						return null;
 					}
 
 					const expiryDate = new Date( item.expiry );
@@ -177,10 +173,6 @@ export const useFields = ( {
 						return '1-expired';
 					} else if ( diffInDays <= 90 ) {
 						return '2-next-90-days';
-					} else if ( diffInDays <= 30 ) {
-						return '2-next-30-days';
-					} else if ( diffInDays <= 7 ) {
-						return '2-next-07-days';
 					}
 					return '3-more-than-90-days';
 				},
