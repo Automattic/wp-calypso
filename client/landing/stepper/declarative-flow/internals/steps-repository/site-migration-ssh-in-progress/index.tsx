@@ -4,6 +4,7 @@ import { Card, CardBody } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { cleanUrl } from '../../../helpers';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -73,15 +74,14 @@ const SiteMigrationSshInProgress: StepType< {
 		</div>
 	);
 
-	// Clean the URL for display: remove protocol and trailing slashes
-	const cleanUrl = fromUrl ? fromUrl.replace( /^https?:\/\//, '' ).replace( /\/+$/, '' ) : '';
+	const siteDomain = fromUrl ? cleanUrl( fromUrl ) : '';
 
 	const pageTitle = translate( 'Your migration is underway' );
 	const pageSubTitle = fromUrl
 		? translate(
-				"We're carefully making a copy of {{strong}}%(cleanUrl)s{{/strong}} on WordPress.com.",
+				"We're carefully making a copy of {{strong}}%(siteDomain)s{{/strong}} on WordPress.com.",
 				{
-					args: { cleanUrl },
+					args: { siteDomain },
 					components: { strong: <strong /> },
 				}
 		  )

@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { cleanUrl } from '../../../helpers';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
@@ -30,11 +31,6 @@ const SiteMigrationSshShareAccess: StepType< {
 	const navigateToDoItForMe = useCallback( () => {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
 	}, [ navigation ] );
-
-	// Clean the URL for display: remove protocol and trailing slashes
-	const cleanUrl = ( url: string ) => {
-		return url.replace( /^https?:\/\//, '' ).replace( /\/+$/, '' );
-	};
 
 	const displaySiteName = cleanUrl( fromUrl );
 
