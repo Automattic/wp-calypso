@@ -8,10 +8,8 @@ interface VaultIdResponse {
 }
 
 export const useVaultId = ( testMode: boolean = true ) => {
-	// get the site id
-	const siteId = useSelector( getSelectedSiteId );
 	return useQuery< VaultIdResponse >( {
-		queryKey: [ 'vault-id', siteId, testMode ],
+		queryKey: [ 'vault-id', testMode ],
 		queryFn: async () => {
 			return await wpcom.req.get( {
 				path: '/transact/vgs/wpcom/vault-id',
