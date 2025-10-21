@@ -152,10 +152,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 
 					if ( isSSHMigrationAvailable ) {
+						if ( hasDestinationSite && canInstallPlugins ) {
+							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+						}
+
 						if ( hasDestinationSite ) {
-							if ( canInstallPlugins ) {
-								return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
-							}
 							return navigate( paths.upgradePlanPath( { siteId, siteSlug, from, ssh: 'true' } ) );
 						}
 
