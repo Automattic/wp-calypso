@@ -35,6 +35,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
+
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {
@@ -192,7 +193,8 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					return !! site && canSetAsPrimary( { domain: item, site, user } );
+					const hasRedirect = site?.options?.is_redirect ?? false;
+					return !! site && canSetAsPrimary( { domain: item, site, user } ) && ! hasRedirect;
 				},
 				disabled: setPrimaryDomainMutation.isPending,
 			},
