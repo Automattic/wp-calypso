@@ -14,6 +14,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
@@ -68,8 +69,13 @@ const useSiteMenuItems = () => {
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
+	const hostingDashboardOptIn = useSelector( ( state ) => hasHostingDashboardOptIn( state ) );
+
 	if ( shouldShowGlobalSidebar ) {
-		return globalSidebarMenu( { showP2s: showP2s } );
+		return globalSidebarMenu( {
+			showP2s: showP2s,
+			hasOptIn: hostingDashboardOptIn,
+		} );
 	}
 
 	/**

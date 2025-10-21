@@ -21,7 +21,7 @@ export const emailManagementAllSitesPrefix = '/email/all';
 export const domainsManagementPrefix = '/domains/manage/all/email';
 export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
-function buildQueryString( params: QueryStringParameters | undefined ): string {
+export function buildQueryString( params: QueryStringParameters | undefined ): string {
 	if ( ! params ) {
 		return '';
 	}
@@ -181,30 +181,6 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => getPath( siteName, domainName, 'titan/control-panel', relativeTo, urlParameters );
 
-// Generates URL: /email/:domain/manage/:site
-export const getEmailManagementPath: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo = undefined,
-	urlParameters = {},
-	inSiteContext = false
-) => {
-	if (
-		inSiteContext ||
-		isUnderDomainManagementAll( relativeTo ) ||
-		isUnderCheckoutRoute( relativeTo )
-	) {
-		const prefix =
-			inSiteContext || isUnderDomainSiteContext( relativeTo )
-				? emailSiteContextPrefix
-				: domainsManagementPrefix;
-
-		return `${ prefix }/${ domainName }/${ siteName }${ buildQueryString( urlParameters ) }`;
-	}
-
-	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
-};
-
 export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>
 	getPath( siteName, domainName, 'forwarding', relativeTo );
 
@@ -281,3 +257,7 @@ export const getEmailCheckoutPath = (
 
 export const getMailboxesPath = ( siteName?: string ) =>
 	siteName ? `/mailboxes/${ siteName }` : '/mailboxes';
+
+export const getEmailManagementPath: EmailPathUtilityFunction = ( _siteName, domainName ) => {
+	return `/v2/emails?domainName=${ domainName }`;
+};

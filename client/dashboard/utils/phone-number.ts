@@ -11,17 +11,17 @@ export function validatePhone( phoneNumber: string ) {
 		};
 	}
 
-	if ( phoneNumberWithoutPlus.length < 8 ) {
-		return {
-			error: 'phone_number_too_short',
-			message: __( 'This number is too short' ),
-		};
-	}
-
 	if ( phoneNumber.search( /[a-z,A-Z]/ ) > -1 ) {
 		return {
 			error: 'phone_number_contains_letters',
 			message: __( 'Phone numbers cannot contain letters' ),
+		};
+	}
+
+	if ( phoneNumberWithoutPlus.length < 8 ) {
+		return {
+			error: 'phone_number_too_short',
+			message: __( 'This number is too short' ),
 		};
 	}
 

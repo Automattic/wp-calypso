@@ -38,6 +38,7 @@ const RestoreButton: FunctionComponent< RestoreButtonProps > = ( {
 				href={ ! isRestoreDisabled && backupRestorePath( siteSlug, rewindId ) }
 				label={ buttonLabel }
 				onClick={ onRestoreClick }
+				allowEventBubbling
 				primary
 				whiteSeparator
 			>

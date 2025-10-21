@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
@@ -6,7 +7,8 @@ import type { Site } from '@automattic/api-core';
 
 export function getLogsCalloutProps() {
 	return {
-		tracksFeatureId: 'logs',
+		feature: HostingFeatures.LOGS,
+		upsellId: 'site-logs',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Access detailed logs' ),
 		upsellImage: illustrationUrl,

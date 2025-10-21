@@ -3,10 +3,11 @@ import {
 	codeDeploymentsQuery,
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
@@ -16,6 +17,7 @@ import {
 	siteDeploymentsListRoute,
 } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -35,6 +37,7 @@ function DeploymentsList() {
 	const navigate = useNavigate( { from: siteDeploymentsListRoute.fullPath } );
 	const currentSearchParams = siteDeploymentsListRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const queryClient = useQueryClient();
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
 	const [ view, setView ] = useState< View >( () => {
@@ -147,6 +150,12 @@ function DeploymentsList() {
 		setView( nextView );
 	};
 
+	const handleDeploymentTriggered = () => {
+		queryClient.invalidateQueries( {
+			queryKey: codeDeploymentsQuery( site.ID ).queryKey,
+		} );
+	};
+
 	const getTriggerDeploymentTitle = () => {
 		if ( isLoadingDeployments ) {
 			return __( 'Loading repositories…' );
@@ -160,6 +169,14 @@ function DeploymentsList() {
 			header={
 				<PageHeader
 					title={ __( 'Deployments' ) }
+					description={ createInterpolateElement(
+						__(
+							'Automate updates from GitHub to streamline workflows. <learnMoreLink>Learn more</learnMoreLink>'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="github-deployments" />,
+						}
+					) }
 					actions={
 						<>
 							<RouterLinkButton
@@ -235,6 +252,7 @@ function DeploymentsList() {
 					<TriggerDeploymentModalForm
 						deployments={ deployments }
 						onClose={ closeModalTriggerDeployment }
+						onSuccess={ handleDeploymentTriggered }
 					/>
 				</Modal>
 			) }

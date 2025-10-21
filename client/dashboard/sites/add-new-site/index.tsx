@@ -21,7 +21,7 @@ import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite( { context }: AddNewSiteProps ) {
+function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { onboardingLinks } = useAppContext();
 

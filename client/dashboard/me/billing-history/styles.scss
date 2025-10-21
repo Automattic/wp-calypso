@@ -1,0 +1,40 @@
+.receipt-icon {
+	width: 68px;
+	height: 68px;
+}
+
+.receipt-date {
+	// This text is inside a flexbox (HStack) which has `min-width: 0` set on
+	// all its children, but this overrides the default of `min-width: auto`
+	// and allows elements to shrink beyond their minimum content size. This
+	// causes the text area to shrink slighly and the content overflows its
+	// padding on the right (due to `justify-content: flex-start`). This seems
+	// like a bug in `HStack` to me but for now this fixes it.
+	min-width: max-content;
+}
+
+.receipt-monospace {
+	font-family: monospace;
+}
+
+.receipt-billing-details {
+	width: 100%;
+}
+
+.receipt-text-control {
+	width: 100%;
+}
+
+.receipt-table {
+	width: 100%;
+}
+
+.receipt-discount-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.receipt-email-button {
+	font-size: 11px;
+}

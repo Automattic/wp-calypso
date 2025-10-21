@@ -1,14 +1,13 @@
 import {
 	siteBySlugQuery,
-	githubInstallationsQuery,
 	updateCodeDeploymentMutation,
 	codeDeploymentQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, CardBody, Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,
@@ -24,7 +23,6 @@ export default function ConfigureRepository() {
 	const { data: existingDeployment } = useSuspenseQuery(
 		codeDeploymentQuery( site.ID, deploymentId )
 	);
-	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
 	const navigateFrom = siteSettingsRepositoriesManageRoute.fullPath;
 	const navigate = useNavigate( {
 		from: navigateFrom,
@@ -35,10 +33,6 @@ export default function ConfigureRepository() {
 	};
 
 	const updateMutation = useMutation( updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ) );
-
-	const selectedInstallation = installations.find(
-		( inst ) => inst.external_id === existingDeployment.installation_id
-	);
 
 	const initialValues = {
 		selectedInstallationId: existingDeployment.installation_id,
@@ -57,6 +51,7 @@ export default function ConfigureRepository() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Configure Repository' ) }
 					description={ __(
 						'Update the GitHub repository connection to deploy code to your WordPress site.'
@@ -68,19 +63,8 @@ export default function ConfigureRepository() {
 				<CardBody>
 					<ConnectRepositoryForm
 						formTitle={ __( 'Update connection details' ) }
-						formDescription={ createInterpolateElement(
-							__(
-								'Update the connection used to deploy a GitHub repository to your WordPress.com site. Missing GitHub repositories? <a>Adjust permissions on GitHub</a>'
-							),
-							{
-								a: (
-									<Button
-										variant="link"
-										target="_blank"
-										href={ `https://github.com/settings/installations/${ selectedInstallation?.external_id }` }
-									/>
-								),
-							}
+						formDescription={ __(
+							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
 						) }
 						onCancel={ handleCancel }
 						mutation={ updateMutation }

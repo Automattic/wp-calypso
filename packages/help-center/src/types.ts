@@ -34,6 +34,7 @@ export interface SitePicker {
 	ownershipResult: AnalysisReport;
 	isSelfDeclaredSite: boolean;
 	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
+	disabled?: boolean;
 }
 
 export interface Article {

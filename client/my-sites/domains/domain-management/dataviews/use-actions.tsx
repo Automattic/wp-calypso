@@ -160,6 +160,7 @@ export function useActions(
 				const canSetPrimaryDomainForSite =
 					site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false;
 				const isSiteOnFreePlan = site?.plan?.is_free ?? true;
+				const isFlexSite = site?.is_wpcom_flex ?? false;
 
 				return (
 					! isAllSitesView &&
@@ -170,6 +171,7 @@ export function useActions(
 							canSetPrimaryDomainForSite,
 							userCanSetPrimaryDomains,
 							isSiteOnFreePlan,
+							isFlexSite,
 						} )
 					) &&
 					! isRecentlyRegistered( domain.registrationDate )

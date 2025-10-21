@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { globe, Icon } from '@wordpress/icons';
@@ -8,7 +7,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { isP2Site } from 'calypso/sites-dashboard/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -57,11 +55,7 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 
 		const domainUpsellUrl = getDomainAndPlanUpsellUrl( { siteSlug: site.slug } );
 
-		if ( shouldRenderRewrittenDomainSearch() ) {
-			return window.location.assign( domainUpsellUrl );
-		}
-
-		page( domainUpsellUrl );
+		return window.location.assign( domainUpsellUrl );
 	};
 
 	return (

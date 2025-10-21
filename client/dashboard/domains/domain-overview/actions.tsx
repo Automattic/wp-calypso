@@ -40,7 +40,7 @@ export default function Actions() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: purchase } = useQuery(
-		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
+		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
 		disconnectDomainMutation( domainName )

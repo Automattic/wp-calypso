@@ -83,6 +83,7 @@ import {
 	getSitePlanSlug,
 	getSiteSlug,
 } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -938,9 +939,11 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const shouldShowNavigation = config.isEnabled( 'themes/universal-header' )
-		? selectedSite
-		: isUserLoggedIn( state );
+	const hostingDashboardOptIn = hasHostingDashboardOptIn( state );
+	const shouldShowNavigation =
+		config.isEnabled( 'themes/universal-header' ) && hostingDashboardOptIn
+			? selectedSite
+			: isUserLoggedIn( state );
 	if ( shouldShowNavigation ) {
 		navigation( context, next );
 	}

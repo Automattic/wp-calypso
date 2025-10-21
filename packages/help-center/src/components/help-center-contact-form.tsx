@@ -154,9 +154,9 @@ export const HelpCenterContactForm = () => {
 		! ( params.get( 'disable-gpt' ) === 'true' ) &&
 		! wapuuFlow;
 
-	const showingSearchResults = params.get( 'show-results' ) === 'true';
-	const skipResources = params.get( 'skip-resources' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
+	const showingSearchResults = params.get( 'show-results' ) === 'true';
+	const simplifiedForm = params.get( 'simplified-form' ) === 'true';
 
 	const redirectToArticle = useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
@@ -229,7 +229,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow && ! skipResources ) {
+		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow && ! simplifiedForm ) {
 			params.set( 'show-results', 'true' );
 			navigateToContactForm();
 			return;
@@ -358,7 +358,7 @@ export const HelpCenterContactForm = () => {
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
-		if ( ! showingGPTResponse && ! showingSearchResults && ! skipResources ) {
+		if ( ! showingGPTResponse && ! showingSearchResults && ! simplifiedForm ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
@@ -464,16 +464,19 @@ export const HelpCenterContactForm = () => {
 								ownershipResult={ ownershipResult }
 								isSelfDeclaredSite={ isSelfDeclaredSite }
 								onSelfDeclaredSite={ setIsSelfDeclaredSite }
+								disabled={ simplifiedForm }
 							/>
 
-							<section>
-								<TextControl
-									className="help-center-contact-form__subject"
-									label={ __( 'Subject', __i18n_text_domain__ ) }
-									value={ subject ?? '' }
-									onChange={ setSubject }
-								/>
-							</section>
+							{ ! simplifiedForm && (
+								<section>
+									<TextControl
+										className="help-center-contact-form__subject"
+										label={ __( 'Subject', __i18n_text_domain__ ) }
+										value={ subject ?? '' }
+										onChange={ setSubject }
+									/>
+								</section>
+							) }
 							<section>
 								<label
 									className="help-center-contact-form__label"
@@ -489,6 +492,16 @@ export const HelpCenterContactForm = () => {
 									className="help-center-contact-form__message"
 								/>
 							</section>
+							{ getHEsTraySection() }
+							{ ! simplifiedForm && (
+								<HelpCenterSearchResults
+									onSelect={ redirectToArticle }
+									searchQuery={ message || '' }
+									openAdminInNewTab
+									placeholderLines={ 4 }
+									location="help-center-contact-form"
+								/>
+							) }
 						</main>
 						<div className="contact-form-submit">
 							<Button
@@ -513,14 +526,6 @@ export const HelpCenterContactForm = () => {
 								/>
 							) }
 						</div>
-						{ getHEsTraySection() }
-						<HelpCenterSearchResults
-							onSelect={ redirectToArticle }
-							searchQuery={ message || '' }
-							openAdminInNewTab
-							placeholderLines={ 4 }
-							location="help-center-contact-form"
-						/>
 					</div>
 				) }
 			</div>

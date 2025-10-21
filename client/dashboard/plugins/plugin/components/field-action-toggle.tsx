@@ -39,6 +39,7 @@ export default function FieldActionToggle( {
 
 	return (
 		<ToggleControl
+			__nextHasNoMarginBottom
 			label={ label }
 			checked={ checked }
 			onClick={ ( e ) => {

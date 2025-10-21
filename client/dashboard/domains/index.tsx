@@ -1,4 +1,5 @@
-import { domainsQuery } from '@automattic/api-queries';
+import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -20,13 +21,27 @@ export function getDomainId( domain: DomainSummary ): string {
 function Domains() {
 	const { user } = useAuth();
 	const fields = useFields();
-	const actions = useActions( { user } );
+	const { data: sites } = useQuery( sitesQuery() );
+	const actions = useActions( { user, sites } );
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',
+		filters: [
+			{
+				field: 'owner',
+				operator: 'isAny',
+				value: [ 'owned-by-me' ],
+			},
+		],
 	} ) );
 
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { data: domains, isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		domains ?? [],
 		view,

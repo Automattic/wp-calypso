@@ -96,7 +96,7 @@ export function TransferAuthCode( { domainName, siteId }: TransferStepComponentP
 
 						<Text as="p">
 							{ __(
-								"Once you've entered the authorization code, click on the button below to proceed."
+								'Once you’ve entered the authorization code, click on the button below to proceed.'
 							) }
 						</Text>
 

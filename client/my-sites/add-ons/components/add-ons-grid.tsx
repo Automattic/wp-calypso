@@ -1,5 +1,6 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import AddOnCard from 'calypso/sites/components/add-ons/add-ons-card';
 import StorageAddOnCard from './storage-add-ons-card';
 import type { AddOnMeta } from '@automattic/data-stores';
@@ -9,6 +10,7 @@ import type { SiteId } from 'calypso/types';
 interface Props extends Omit< CardProps, 'addOnMeta' > {
 	addOns: ( AddOnMeta | null )[];
 	siteId?: SiteId;
+	storageOnly?: boolean;
 }
 
 const Container = styled.div`
@@ -28,8 +30,13 @@ const AddOnsGrid = ( {
 	actionSecondary,
 	highlightFeatured,
 	siteId,
+	storageOnly,
 }: Props ) => {
-	const nonStorageAddOns = addOns.filter( ( addOn ) => addOn?.productSlug !== PRODUCT_1GB_SPACE );
+	const nonStorageAddOns = useMemo(
+		() =>
+			storageOnly ? [] : addOns.filter( ( addOn ) => addOn?.productSlug !== PRODUCT_1GB_SPACE ),
+		[ addOns, storageOnly ]
+	);
 	return (
 		<Container>
 			{ nonStorageAddOns.map( ( addOn ) =>

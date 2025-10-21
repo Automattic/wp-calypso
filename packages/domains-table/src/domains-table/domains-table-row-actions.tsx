@@ -36,6 +36,7 @@ interface DomainsTableRowActionsProps {
 	isAllSitesView: boolean;
 	canSetPrimaryDomainForSite: boolean;
 	isSiteOnFreePlan: boolean;
+	isFlexSite: boolean;
 	isSimpleSite: boolean;
 	isHostingOverview?: boolean;
 	context?: DomainsTableContext;
@@ -47,6 +48,7 @@ export const DomainsTableRowActions = ( {
 	isAllSitesView,
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
+	isFlexSite,
 	isSimpleSite,
 	isHostingOverview,
 	context,
@@ -78,6 +80,7 @@ export const DomainsTableRowActions = ( {
 				canSetPrimaryDomainForSite,
 				userCanSetPrimaryDomains,
 				isSiteOnFreePlan,
+				isFlexSite,
 			} )
 		) &&
 		! isRecentlyRegistered( domain.registrationDate );

@@ -994,26 +994,42 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 	name = "Pre-Release E2E Tests (Playwright Test)"
 	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
 
-	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile")
-			))
-		}
-	}
-
 	params {
 		text("TEST_GROUP", "@calypso-release")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 	}
 
-	steps {
-		bashNodeScript {
-			name = "Test step"
-			scriptContent = """
-				echo "Running pre-release Playwright tests for project %PROJECT%"
-			"""
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:<default>
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+			""".trimIndent()
 		}
 	}
 })

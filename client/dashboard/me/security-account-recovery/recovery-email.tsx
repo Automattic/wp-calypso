@@ -120,7 +120,7 @@ export default function RecoveryEmail() {
 				label: __( 'Email address' ),
 				description:
 					/* translators: %s: email address */
-					sprintf( __( 'Your primary email address is %s' ), serverData?.user_email ),
+					sprintf( __( 'Your primary email address is %s.' ), serverData?.user_email ),
 				type: 'email',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;

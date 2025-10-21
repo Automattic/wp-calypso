@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
@@ -19,7 +18,6 @@ function SiteDeployments() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.DEPLOYMENT }
 			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getDeploymentsCalloutProps() }
 		>

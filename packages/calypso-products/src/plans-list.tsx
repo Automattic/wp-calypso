@@ -116,6 +116,9 @@ import {
 	FEATURE_REPUBLICIZE,
 	FEATURE_SCAN_V2,
 	FEATURE_SEO_PREVIEW_TOOLS,
+	FEATURE_SECURITY_SETTINGS,
+	FEATURE_SFTP,
+	FEATURE_SSH,
 	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SFTP_DATABASE,
 	FEATURE_SHIPPING_CARRIERS,
@@ -227,6 +230,7 @@ import {
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_UNLIMITED_EMAILS,
 	FEATURE_UNLIMITED_SUBSCRIBERS,
@@ -317,6 +321,10 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_BASIC,
+	PLAN_WOO_HOSTED_PRO_MONTHLY,
+	PLAN_WOO_HOSTED_PRO,
 	FEATURE_JETPACK_SOCIAL_ADVANCED,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	FEATURE_JETPACK_BOOST_BI_YEARLY,
@@ -374,6 +382,8 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_WOOEXPRESS_MEDIUM,
+	TYPE_WOO_HOSTED_BASIC,
+	TYPE_WOO_HOSTED_PRO,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -455,6 +465,7 @@ import {
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
 	FEATURE_GOOGLE_LISTING_ADS,
+	WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -1149,6 +1160,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_SCAN,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
+		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+		FEATURE_SFTP,
+		FEATURE_SSH,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_SECURITY_SETTINGS,
+		WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1288,6 +1305,16 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 		),
 } );
 
+const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanWooExpressMediumDetails(),
+	getTitle: () => i18n.translate( 'Pro' ),
+	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
+		),
+} );
+
 const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
@@ -1317,6 +1344,17 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
+		),
+} );
+
+const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanWooExpressSmallDetails(),
+	getTitle: () => i18n.translate( 'Basic' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
 		),
 } );
 
@@ -1814,6 +1852,12 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_SCAN,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
+		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+		FEATURE_SFTP,
+		FEATURE_SSH,
+		FEATURE_SITE_STAGING_SITES,
+		FEATURE_SECURITY_SETTINGS,
+		WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
 	],
 	getInferiorFeatures: () => [],
 	getSenseiFeatures: ( term ) => () =>
@@ -3050,6 +3094,54 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => '',
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_WOOEXPRESS_PLUS,
+	},
+
+	// CIAB Plans. Features are a placeholder.
+	[ PLAN_WOO_HOSTED_BASIC_MONTHLY ]: {
+		...getPlanWooHostedBasicDetails(),
+		...getMonthlyTimeframe(),
+		type: TYPE_WOO_HOSTED_BASIC,
+		getBillingTimeFrame: () => translate( 'per month' ),
+		getProductId: () => 4001,
+		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC_MONTHLY,
+		getPathSlug: () => 'woo-hosted-basic-monthly',
+	},
+
+	[ PLAN_WOO_HOSTED_BASIC ]: {
+		...getPlanWooHostedBasicDetails(),
+		type: TYPE_WOO_HOSTED_BASIC,
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) => [ PLAN_WOO_HOSTED_BASIC_MONTHLY ].includes( plan ),
+		getProductId: () => 4002,
+		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC,
+		getPathSlug: () => 'woo-hosted-basic',
+	},
+
+	[ PLAN_WOO_HOSTED_PRO_MONTHLY ]: {
+		...getPlanWooHostedProDetails(),
+		...getMonthlyTimeframe(),
+		type: TYPE_WOO_HOSTED_PRO,
+		getBillingTimeFrame: () => translate( 'per month' ),
+		getProductId: () => 4003,
+		getStoreSlug: () => PLAN_WOO_HOSTED_PRO_MONTHLY,
+		getPathSlug: () => 'woo-hosted-pro-monthly',
+	},
+
+	[ PLAN_WOO_HOSTED_PRO ]: {
+		...getPlanWooHostedProDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		type: TYPE_WOO_HOSTED_PRO,
+		availableFor: ( plan ) =>
+			[
+				PLAN_WOO_HOSTED_BASIC_MONTHLY,
+				PLAN_WOO_HOSTED_BASIC,
+				PLAN_WOO_HOSTED_PRO_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 4004,
+		getStoreSlug: () => PLAN_WOO_HOSTED_PRO,
+		getPathSlug: () => 'woo-hosted-pro',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

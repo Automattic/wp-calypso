@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -119,7 +118,6 @@ function SiteMonitoring() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.MONITOR }
 			overlay={ <PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> } /> }
 			{ ...getMonitoringCalloutProps() }
 		>

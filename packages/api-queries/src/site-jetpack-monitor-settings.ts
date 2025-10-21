@@ -1,12 +1,11 @@
 import { activateJetpackModule, createJetpackMonitorSettings } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
+import type {
+	JetpackMonitorSettings,
+	JetpackMonitorSettingsCreateResponse,
+} from '@automattic/api-core';
 
-type MonitorSettingsCreateResponse = {
-	success: boolean;
-	settings?: { monitor_active?: boolean };
-};
-
-type CreateVars = { siteId: number; body: Record< string, unknown > };
+type CreateVars = { siteId: number; body: Partial< JetpackMonitorSettings > };
 
 export const siteJetpackMonitorSettingsCreateMutation = () =>
 	mutationOptions( {
@@ -16,7 +15,7 @@ export const siteJetpackMonitorSettingsCreateMutation = () =>
 			await activateJetpackModule( siteId, 'monitor' );
 			// Allow time for module activation to propagate
 			await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
-			const response: MonitorSettingsCreateResponse = await createJetpackMonitorSettings(
+			const response: JetpackMonitorSettingsCreateResponse = await createJetpackMonitorSettings(
 				siteId,
 				body
 			);

@@ -13,8 +13,10 @@ export interface User {
 	avatar_URL?: string;
 	language: string;
 	locale_variant: string;
+	logout_URL?: string;
 	email: string;
 	email_verified: boolean;
+	is_valid_google_apps_country: boolean;
 	has_unseen_notes: boolean;
 	site_count: number;
 	visible_site_count: number;
