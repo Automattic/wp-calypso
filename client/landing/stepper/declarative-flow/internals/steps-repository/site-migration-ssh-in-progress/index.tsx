@@ -42,7 +42,7 @@ const SiteMigrationSshInProgress: StepType< {
 } > = function () {
 	const translate = useTranslate();
 	const queryParams = useQuery();
-	const fromUrl = queryParams.get( 'from' ) || 'badubatron.com';
+	const fromUrl = queryParams.get( 'from' ) ?? null;
 
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
@@ -74,18 +74,18 @@ const SiteMigrationSshInProgress: StepType< {
 	);
 
 	// Clean the URL for display: remove protocol and trailing slashes
-	const cleanUrl = ( url: string ) => {
-		return url.replace( /^https?:\/\//, '' ).replace( /\/+$/, '' );
-	};
+	const cleanUrl = fromUrl ? fromUrl.replace( /^https?:\/\//, '' ).replace( /\/+$/, '' ) : '';
 
 	const pageTitle = translate( 'Your migration is underway' );
-	const pageSubTitle = translate(
-		"We're carefully making a copy of {{strong}}%(fromUrl)s{{/strong}} on WordPress.com.",
-		{
-			args: { fromUrl: cleanUrl( fromUrl ) },
-			components: { strong: <strong /> },
-		}
-	);
+	const pageSubTitle = fromUrl
+		? translate(
+				"We're carefully making a copy of {{strong}}%(cleanUrl)s{{/strong}} on WordPress.com.",
+				{
+					args: { cleanUrl },
+					components: { strong: <strong /> },
+				}
+		  )
+		: null;
 
 	return (
 		<>
