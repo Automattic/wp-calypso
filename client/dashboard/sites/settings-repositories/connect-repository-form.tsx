@@ -27,7 +27,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import {
+	useEffect,
+	useMemo,
+	useState,
+	useCallback,
+	useRef,
+	forwardRef,
+	useImperativeHandle,
+} from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -87,14 +95,33 @@ const sanitizePath = ( input: string ): string => {
 	return sanitized;
 };
 
+interface RepositorySelectorRef {
+	getTheFocus: ( repositoryId: number | '' ) => void;
+}
+
 // Custom repository selector component with search functionality
-const RepositorySelector = ( {
-	field,
-	onChange,
-	data,
-}: DataFormControlProps< ConnectRepositoryFormData > ) => {
+const RepositorySelector = forwardRef<
+	RepositorySelectorRef,
+	DataFormControlProps< ConnectRepositoryFormData >
+>( ( { field, onChange, data }, ref ) => {
 	const { id, getValue, description } = field;
 	const currentValue = getValue?.( { item: data } );
+
+	useImperativeHandle( ref, () => ( {
+		getTheFocus: ( repositoryId: number | '' ) => {
+			if ( repositoryId === '' ) {
+				return;
+			}
+			const repositoryLabel = field.elements?.find(
+				( element ) => element.value === repositoryId.toString()
+			)?.label;
+			const selector = `.components-combobox-control input[value="${ repositoryLabel }"]`;
+			setTimeout( () => {
+				const input = document.querySelector< HTMLInputElement >( selector );
+				input?.focus();
+			}, 1000 );
+		},
+	} ) );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -109,6 +136,7 @@ const RepositorySelector = ( {
 			<ComboboxControl
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
+				expandOnFocus={ false }
 				allowReset
 				value={ currentValue === '' ? '' : currentValue?.toString() || '' }
 				onChange={ ( value ) => {
@@ -141,7 +169,9 @@ const RepositorySelector = ( {
 			/>
 		</VStack>
 	);
-};
+} );
+
+RepositorySelector.displayName = 'RepositorySelector';
 
 type GithubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
 	onAddGithubAccount: () => void;
@@ -235,6 +265,8 @@ export const ConnectRepositoryForm = ( {
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
 	const [ shouldRestoreInstallationFocus, setShouldRestoreInstallationFocus ] = useState( false );
+	const [ shouldRestoreRepositoryFocus, setShouldRestoreRepositoryFocus ] = useState( false );
+	const repositorySelectorRef = useRef< RepositorySelectorRef >( null );
 	const { installGithub } = useInstallGithub();
 
 	const selectedInstallation: GithubInstallation | undefined = useMemo( () => {
@@ -317,7 +349,7 @@ export const ConnectRepositoryForm = ( {
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
-		let shouldRestoreFocus = false;
+		let shouldRestoreInstallationFocus = false;
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
 
@@ -325,7 +357,14 @@ export const ConnectRepositoryForm = ( {
 				'selectedInstallationId' in updates &&
 				updates.selectedInstallationId !== prev.selectedInstallationId
 			) {
-				shouldRestoreFocus = true;
+				shouldRestoreInstallationFocus = true;
+			}
+
+			if (
+				'selectedRepositoryId' in updates &&
+				updates.selectedRepositoryId !== prev.selectedRepositoryId
+			) {
+				repositorySelectorRef.current?.getTheFocus( updates.selectedRepositoryId ?? '' );
 			}
 
 			if ( 'targetDir' in updates ) {
@@ -373,7 +412,7 @@ export const ConnectRepositoryForm = ( {
 
 			return newFormData;
 		} );
-		setShouldRestoreInstallationFocus( shouldRestoreFocus );
+		setShouldRestoreInstallationFocus( shouldRestoreInstallationFocus );
 	};
 
 	useEffect( () => {
@@ -569,7 +608,7 @@ export const ConnectRepositoryForm = ( {
 				id: 'selectedRepositoryId',
 				label: __( 'Repository' ),
 				type: 'text' as const,
-				Edit: RepositorySelector,
+				Edit: ( props ) => <RepositorySelector { ...props } ref={ repositorySelectorRef } />,
 				elements: repositoryOptions,
 				description: repositoryHelpText as string,
 			},
