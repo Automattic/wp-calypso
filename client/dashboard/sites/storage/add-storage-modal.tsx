@@ -1,0 +1,146 @@
+import { productsQuery, siteMediaStorageQuery, sitePurchasesQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+	Modal,
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	CustomSelectControl,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+import filesize from 'filesize';
+import { useState } from 'react';
+import { StorageCapacityStat } from './storage-capacity-stat';
+import {
+	getStorageAddOnProduct,
+	getPurchasedStorageAddOn,
+	getStorageTierOptions,
+	getPurchasedStorageQuantity,
+	type StorageTierOption,
+} from './storage-utils';
+import type { Site } from '@automattic/api-core';
+
+interface AddStorageModalProps {
+	site: Site;
+	isOpen: boolean;
+	onClose: () => void;
+}
+
+interface SelectOption {
+	key: string;
+	name: string;
+}
+
+export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps ) {
+	const { data: products } = useSuspenseQuery( productsQuery() );
+	const { data: purchases } = useSuspenseQuery( sitePurchasesQuery( site.ID ) );
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+
+	const storageProduct = getStorageAddOnProduct( products );
+	const purchasedStorageAddOn = getPurchasedStorageAddOn( purchases );
+	const tierOptions = getStorageTierOptions( storageProduct );
+	const currentPurchasedQuantity = getPurchasedStorageQuantity( purchasedStorageAddOn );
+
+	// Filter out tiers that are less than or equal to what's already purchased
+	const availableTiers = tierOptions.filter( ( tier ) => tier.quantity > currentPurchasedQuantity );
+
+	// Default to the first available tier
+	const [ selectedTier, setSelectedTier ] = useState< StorageTierOption | null >(
+		availableTiers[ 0 ] ?? null
+	);
+
+	if ( ! isOpen ) {
+		return null;
+	}
+
+	// Calculate storage breakdown
+	const planStorageBytes =
+		mediaStorage.max_storage_bytes - mediaStorage.max_storage_bytes_from_add_ons;
+	const selectedAddOnStorageBytes = ( selectedTier?.quantity ?? 0 ) * 1024 * 1024 * 1024;
+
+	// Build select options
+	const selectOptions: SelectOption[] = availableTiers.map( ( tier ) => ( {
+		key: String( tier.quantity ),
+		name: sprintf(
+			// translators: %1$d: storage amount in GB, %2$s: formatted monthly price, e.g., "50 GB Storage (£40.71/month, billed yearly)"
+			__( '%1$d GB Storage (%2$s/month, billed yearly)' ),
+			tier.quantity,
+			tier.formattedMonthlyPrice
+		),
+	} ) );
+
+	const selectedOption = selectedTier
+		? {
+				key: String( selectedTier.quantity ),
+				name: sprintf(
+					// translators: %1$d: storage amount in GB, %2$s: formatted monthly price
+					__( '%1$d GB Storage (%2$s/month, billed yearly)' ),
+					selectedTier.quantity,
+					selectedTier.formattedMonthlyPrice
+				),
+		  }
+		: selectOptions[ 0 ];
+
+	const handleSelectChange = ( { selectedItem }: { selectedItem: SelectOption } ) => {
+		const tier = tierOptions.find( ( t ) => String( t.quantity ) === selectedItem.key );
+		if ( tier ) {
+			setSelectedTier( tier );
+		}
+	};
+
+	const handleBuyStorage = () => {
+		if ( ! selectedTier ) {
+			return;
+		}
+
+		const backUrl = window.location.href.replace( window.location.origin, '' );
+		const checkoutUrl = addQueryArgs(
+			`/checkout/${ site.slug }/${ storageProduct.product_slug }:-q-${ selectedTier.quantity }`,
+			{
+				cancel_to: backUrl,
+				return_to: backUrl,
+			}
+		);
+
+		window.location.href = checkoutUrl;
+	};
+
+	return (
+		<Modal title={ __( 'Add more storage' ) } onRequestClose={ onClose }>
+			<VStack spacing={ 4 }>
+				<Text>{ __( 'Make more space for high-quality photos, videos, and other media.' ) }</Text>
+
+				<VStack spacing={ 2 }>
+					<Text weight={ 600 }>{ __( 'Storage add-on' ) }</Text>
+					<CustomSelectControl
+						__next40pxDefaultSize
+						hideLabelFromVision
+						label={ __( 'Select storage amount' ) }
+						options={ selectOptions }
+						value={ selectedOption }
+						onChange={ handleSelectChange }
+					/>
+				</VStack>
+
+				<VStack spacing={ 2 }>
+					<Text weight={ 600 }>{ __( 'New storage capacity' ) }</Text>
+					<StorageCapacityStat
+						description={ filesize( mediaStorage.storage_used_bytes, { round: 1 } ) + ' used' }
+						currentCapacityBytes={ planStorageBytes }
+						addOnCapacityBytes={ selectedAddOnStorageBytes }
+					/>
+				</VStack>
+
+				<VStack spacing={ 2 } direction="row" justify="flex-end">
+					<Button variant="tertiary" onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button variant="primary" onClick={ handleBuyStorage } disabled={ ! selectedTier }>
+						{ __( 'Buy storage' ) }
+					</Button>
+				</VStack>
+			</VStack>
+		</Modal>
+	);
+}

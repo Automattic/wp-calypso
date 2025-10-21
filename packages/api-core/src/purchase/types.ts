@@ -24,8 +24,10 @@ export interface PriceTierEntry {
 	maximum_units?: null | number;
 	minimum_price: number;
 	minimum_price_display: string;
+	minimum_price_monthly_display?: string;
 	maximum_price: number;
 	maximum_price_display?: string | null;
+	maximum_price_monthly_display?: string;
 
 	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
