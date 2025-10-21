@@ -68,7 +68,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 	// Build select options - show additional storage and incremental price.
 	// That is, it is presented as the user choosing further additional amounts rather than choosing a new total storage.
 	// e.g. if they have 50gb the list shows +50gb, +100gb, +200gb, +250gb, +300gb rather than 100gb, 150gb, 250gb, 300gb, 350gb.
-	// Functionally, this is the same but it emphasises what extra they're getting and how much more it'll cost them today.
+	// Functionally, this is the same but it emphasises what extra they're getting and how much more it'll cost them today, pro-rating their previous upgrade.
 	const selectOptions: SelectOption[] = availableTiers.map( ( tier ) => {
 		const additionalGB = tier.quantity - currentPurchasedQuantity;
 		const incrementalMonthlyPrice = ( tier.yearlyPrice - currentPurchasedYearlyPrice ) / 12;
