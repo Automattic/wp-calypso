@@ -88,10 +88,10 @@ export function ChatInput( {
 
 			// Stop undo/redo from bubbling to parent (e.g., Gutenberg editor)
 			// Supports: Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z, Ctrl+Y
-			if (
+			const isUndoOrRedo =
 				( ( e.metaKey || e.ctrlKey ) && key === 'z' ) ||
-				( e.ctrlKey && key === 'y' )
-			) {
+				( e.ctrlKey && key === 'y' );
+			if ( isUndoOrRedo ) {
 				e.stopPropagation();
 			}
 
