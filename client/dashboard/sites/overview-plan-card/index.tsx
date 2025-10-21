@@ -71,7 +71,7 @@ function JetpackPlanCard( {
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			externalLink={ `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }` }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
 				<VStack spacing={ 3 }>
@@ -128,7 +128,7 @@ function WpcomPlanCard( {
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			{ ...getBillingLinkProps() }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
@@ -152,7 +152,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ description }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoadingProductionSite }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
@@ -167,7 +167,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
 			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>

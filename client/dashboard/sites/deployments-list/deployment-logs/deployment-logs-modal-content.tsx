@@ -55,23 +55,27 @@ export function DeploymentLogsModalContent( {
 					{ repositoryName }
 				</Heading>
 
-				<HStack spacing={ 1 } alignment="left">
-					<ExternalLink
-						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
-					>
-						<Text as="code" size={ 15 } weight={ 700 } style={ { flexShrink: 0 } }>
-							{ shortSha }
-						</Text>
-					</ExternalLink>
-					<Text size={ 15 } truncate numberOfLines={ 1 } weight={ 500 }>
-						{ commit_message }
-					</Text>
-				</HStack>
+				<Text size={ 15 } truncate numberOfLines={ 1 } weight={ 500 }>
+					{ commit_message }
+				</Text>
 
 				<HStack spacing={ 3 } alignment="left">
 					{ deployment.is_active_deployment && (
 						<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
 					) }
+
+					<ExternalLink
+						style={ { flexShrink: 0 } }
+						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
+					>
+						<Text
+							as="code"
+							size="small"
+							style={ { color: 'var(--wp-admin-theme-color-darker-20)' } }
+						>
+							{ shortSha }
+						</Text>
+					</ExternalLink>
 
 					<div style={ { width: 'auto', flexShrink: 0, maxWidth: '50%' } }>
 						<BranchDisplay branchName={ deployment.branch_name } />
@@ -115,9 +119,8 @@ export function DeploymentLogsModalContent( {
 						<VStack spacing={ 2 }>
 							<div
 								style={ {
-									height: '216px',
-									maxHeight: '100%',
-									overflowY: 'auto',
+									maxHeight: '15lh',
+									overflowY: 'scroll',
 									backgroundColor: 'var(--dashboard__text-color)',
 									borderRadius: '4px',
 								} }

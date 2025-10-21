@@ -41,7 +41,8 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 					target="_blank"
 					text={ __( 'Build it for me' ) }
 					variant="secondary"
-					tracksId="difm"
+					upsellId="site-overview-difm"
+					upsellFeatureId="site-difm"
 				/>
 			}
 		/>

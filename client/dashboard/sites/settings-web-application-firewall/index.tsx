@@ -57,7 +57,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.SECURITY_SETTINGS }
-				tracksFeatureId="settings-security"
+				upsellId="site-settings-waf"
 			>
 				{ ! modulesAvailable && (
 					<Notice>

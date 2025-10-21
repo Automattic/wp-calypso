@@ -8,6 +8,7 @@ import {
 	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
+	sitesQuery,
 	queryClient,
 	domainTransferRequestQuery,
 	domainWhoisQuery,
@@ -47,6 +48,7 @@ export const domainsRoute = createRoute( {
 	path: 'domains',
 	loader: async () => {
 		queryClient.ensureQueryData( domainsQuery() );
+		queryClient.ensureQueryData( sitesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } ).lazy( () =>

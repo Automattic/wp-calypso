@@ -5,16 +5,20 @@ import { setHelpCenterRouterHistory, setIsMinimized } from './actions';
 import type { APIFetchOptions } from './types';
 import type { Location } from 'history';
 
+type Preferences = {
+	calypso_preferences: {
+		help_center_open: boolean;
+		help_center_minimized: boolean;
+		help_center_router_history: {
+			entries: Location[];
+			index: number;
+		};
+	};
+};
+
 export function* isHelpCenterShown() {
 	try {
-		const preferences: {
-			help_center_open: boolean;
-			help_center_minimized: boolean;
-			help_center_router_history: {
-				entries: Location[];
-				index: number;
-			};
-		} = canAccessWpcomApis()
+		const { calypso_preferences: preferences }: Preferences = canAccessWpcomApis()
 			? yield wpcomRequest( {
 					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',

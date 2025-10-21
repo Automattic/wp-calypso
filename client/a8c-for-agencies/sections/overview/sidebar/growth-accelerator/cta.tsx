@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { external, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -39,8 +38,7 @@ export default function OverviewSidebarGrowthAcceleratorCta( {
 			isBusy={ isFetchingScheduleCallLink }
 			onClick={ onRequestCallClick }
 		>
-			{ translate( 'Schedule a call' ) }
-			<Icon icon={ external } size={ 16 } />
+			{ translate( 'Schedule a call ↗' ) }
 		</Button>
 	);
 }

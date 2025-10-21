@@ -8,8 +8,8 @@ import type { Site } from '@automattic/api-core';
 
 export function getActivityLogsCalloutProps() {
 	return {
-		tracksFeatureId: 'logs-activity',
 		feature: HostingFeatures.ACTIVITY_LOG,
+		upsellId: 'site-logs-activity',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Track every action with Jetpack Activity' ),
 		upsellImage: illustrationUrl,

@@ -27,7 +27,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -92,9 +92,21 @@ const RepositorySelector = ( {
 	field,
 	onChange,
 	data,
-}: DataFormControlProps< ConnectRepositoryFormData > ) => {
+	shouldRestoreFocus,
+}: DataFormControlProps< ConnectRepositoryFormData > & { shouldRestoreFocus: boolean } ) => {
 	const { id, getValue, description } = field;
 	const currentValue = getValue?.( { item: data } );
+	const comboboxRef = useRef< HTMLDivElement | null >( null );
+	useEffect( () => {
+		if ( shouldRestoreFocus && comboboxRef.current ) {
+			const input =
+				comboboxRef.current.querySelector< HTMLInputElement >( 'input[role="combobox"]' );
+
+			if ( input ) {
+				input.focus();
+			}
+		}
+	}, [ shouldRestoreFocus ] );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -106,45 +118,49 @@ const RepositorySelector = ( {
 					{ __( 'Create a new repository' ) }
 				</ExternalLink>
 			</HStack>
-			<ComboboxControl
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				allowReset
-				value={ currentValue === '' ? '' : currentValue?.toString() || '' }
-				onChange={ ( value ) => {
-					if ( ! value ) {
-						onChange( { [ id ]: '' } );
-						return;
-					}
-					onChange( { [ id ]: Number( value ) } );
-				} }
-				options={ field.elements || [] }
-				placeholder={ __( 'Select a repository' ) }
-				help={ description }
-				__experimentalRenderItem={ ( { item } ) => {
-					if ( item.private ) {
-						return (
-							<HStack alignment="left" spacing={ 1 }>
-								<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
-								<Icon
-									icon={ lock }
-									size={ 16 }
-									style={ {
-										fill: 'currentColor',
-									} }
-								/>
-							</HStack>
-						);
-					}
-					return <Text style={ { color: 'currentColor' } }>{ item.label }</Text>;
-				} }
-			/>
+			<div ref={ comboboxRef }>
+				<ComboboxControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					allowReset
+					expandOnFocus={ false }
+					value={ currentValue === '' ? '' : currentValue?.toString() || '' }
+					onChange={ ( value ) => {
+						if ( ! value ) {
+							onChange( { [ id ]: '' } );
+							return;
+						}
+						onChange( { [ id ]: Number( value ) } );
+					} }
+					options={ field.elements || [] }
+					placeholder={ __( 'Select a repository' ) }
+					help={ description }
+					__experimentalRenderItem={ ( { item } ) => {
+						if ( item.private ) {
+							return (
+								<HStack alignment="left" spacing={ 1 }>
+									<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
+									<Icon
+										icon={ lock }
+										size={ 16 }
+										style={ {
+											fill: 'currentColor',
+										} }
+									/>
+								</HStack>
+							);
+						}
+						return <Text style={ { color: 'currentColor' } }>{ item.label }</Text>;
+					} }
+				/>
+			</div>
 		</VStack>
 	);
 };
 
 type GithubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
 	onAddGithubAccount: () => void;
+	shouldRestoreFocus: boolean;
 };
 
 const GithubAccountSelector = ( {
@@ -152,8 +168,16 @@ const GithubAccountSelector = ( {
 	onChange,
 	data,
 	onAddGithubAccount,
+	shouldRestoreFocus,
 }: GithubAccountSelectorProps ) => {
 	const { id, getValue } = field;
+	const selectRef = useRef< HTMLSelectElement | null >( null );
+
+	useEffect( () => {
+		if ( selectRef.current && shouldRestoreFocus ) {
+			selectRef.current.focus();
+		}
+	}, [ shouldRestoreFocus ] );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -178,6 +202,7 @@ const GithubAccountSelector = ( {
 						? field.elements
 						: [ { label: __( 'Select a GitHub account' ), value: '' } ]
 				}
+				ref={ selectRef }
 			/>
 		</VStack>
 	);
@@ -224,6 +249,8 @@ export const ConnectRepositoryForm = ( {
 		isLoading: isLoadingInstallations,
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
+	const [ shouldRestoreInstallationFocus, setShouldRestoreInstallationFocus ] = useState( false );
+	const [ shouldRestoreRepositoryFocus, setShouldRestoreRepositoryFocus ] = useState( false );
 	const { installGithub } = useInstallGithub();
 
 	const selectedInstallation: GithubInstallation | undefined = useMemo( () => {
@@ -306,8 +333,21 @@ export const ConnectRepositoryForm = ( {
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
+		let shouldRestoreInstallationFocus = false;
+		let shouldRestoreRepositoryFocus = false;
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
+
+			if (
+				'selectedInstallationId' in updates &&
+				updates.selectedInstallationId !== prev.selectedInstallationId
+			) {
+				shouldRestoreInstallationFocus = true;
+			}
+
+			if ( 'selectedRepositoryId' in updates ) {
+				shouldRestoreRepositoryFocus = true;
+			}
 
 			if ( 'targetDir' in updates ) {
 				newFormData.targetDir = sanitizePath( updates.targetDir || '' );
@@ -354,6 +394,8 @@ export const ConnectRepositoryForm = ( {
 
 			return newFormData;
 		} );
+		setShouldRestoreInstallationFocus( shouldRestoreInstallationFocus );
+		setShouldRestoreRepositoryFocus( shouldRestoreRepositoryFocus );
 	};
 
 	useEffect( () => {
@@ -535,7 +577,11 @@ export const ConnectRepositoryForm = ( {
 				type: 'text' as const,
 				Edit: ( props ) => {
 					return (
-						<GithubAccountSelector { ...props } onAddGithubAccount={ handleAddGithubAccount } />
+						<GithubAccountSelector
+							{ ...props }
+							onAddGithubAccount={ handleAddGithubAccount }
+							shouldRestoreFocus={ shouldRestoreInstallationFocus }
+						/>
 					);
 				},
 				elements: installationOptions,
@@ -545,7 +591,11 @@ export const ConnectRepositoryForm = ( {
 				id: 'selectedRepositoryId',
 				label: __( 'Repository' ),
 				type: 'text' as const,
-				Edit: RepositorySelector,
+				Edit: ( props ) => {
+					return (
+						<RepositorySelector { ...props } shouldRestoreFocus={ shouldRestoreRepositoryFocus } />
+					);
+				},
 				elements: repositoryOptions,
 				description: repositoryHelpText as string,
 			},
@@ -586,8 +636,10 @@ export const ConnectRepositoryForm = ( {
 		repositoryOptions,
 		repositoryHelpText,
 		branchOptions,
-		isLoadingBranches,
 		handleAddGithubAccount,
+		shouldRestoreInstallationFocus,
+		shouldRestoreRepositoryFocus,
+		isLoadingBranches,
 		allBranchesConnected,
 	] );
 

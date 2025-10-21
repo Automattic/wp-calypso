@@ -53,4 +53,62 @@ describe( 'getUsageLevel', () => {
 			expect( result ).toEqual( StorageUsageLevels.Normal );
 		}
 	);
+
+	test( 'returns FullButForecastOk when storage is full but forecast looks good', () => {
+		const bytesUsed = 100;
+		const bytesAvailable = 100;
+		const allowedDaysOfBackups = 7;
+		const planRetentionDays = 30;
+		const daysOfBackupsSaved = 1;
+		const lastBackupSize = 10; // 100 / 10 = 10 days forecast >= 7 days required ✓
+
+		const result = getUsageLevel(
+			bytesUsed,
+			bytesAvailable,
+			MINIMUM_DAYS_OF_BACKUPS,
+			allowedDaysOfBackups,
+			planRetentionDays,
+			daysOfBackupsSaved,
+			lastBackupSize
+		);
+		expect( result ).toEqual( StorageUsageLevels.FullButForecastOk );
+	} );
+
+	test( 'returns Full when storage is full and forecast is not good enough', () => {
+		const bytesUsed = 100;
+		const bytesAvailable = 100;
+		const allowedDaysOfBackups = 7;
+		const planRetentionDays = 30;
+		const daysOfBackupsSaved = 1;
+		const lastBackupSize = 20; // 100 / 20 = 5 days forecast < 7 days required ✗
+
+		const result = getUsageLevel(
+			bytesUsed,
+			bytesAvailable,
+			MINIMUM_DAYS_OF_BACKUPS,
+			allowedDaysOfBackups,
+			planRetentionDays,
+			daysOfBackupsSaved,
+			lastBackupSize
+		);
+		expect( result ).toEqual( StorageUsageLevels.Full );
+	} );
+
+	test( 'returns Full when storage is full and lastBackupSize is not provided', () => {
+		const bytesUsed = 100;
+		const bytesAvailable = 100;
+		const allowedDaysOfBackups = 7;
+		const planRetentionDays = 30;
+		const daysOfBackupsSaved = 1;
+
+		const result = getUsageLevel(
+			bytesUsed,
+			bytesAvailable,
+			MINIMUM_DAYS_OF_BACKUPS,
+			allowedDaysOfBackups,
+			planRetentionDays,
+			daysOfBackupsSaved
+		);
+		expect( result ).toEqual( StorageUsageLevels.Full );
+	} );
 } );
