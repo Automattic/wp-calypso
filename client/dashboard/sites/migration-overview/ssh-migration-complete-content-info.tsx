@@ -20,13 +20,11 @@ export function SSHMigrationCompleteContentInfo( { site }: { site: Site } ) {
 
 	const handleGetStarted = () => {
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_get_started_click' );
-		// TODO: Navigate to domain connection flow
 		window.location.href = `/domains/add/${ site.slug }`;
 	};
 
 	const handleDoLater = () => {
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_do_later_click' );
-		// TODO: Navigate to site overview
 		window.location.href = `/sites/${ site.slug }`;
 	};
 

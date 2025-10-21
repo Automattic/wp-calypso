@@ -25,8 +25,7 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 
 	const handleDoLater = () => {
 		recordTracksEvent( 'calypso_migration_ssh_complete_do_later_click' );
-		// TODO: Navigate to site overview
-		window.location.href = `/overview/${ site.slug }`;
+		window.location.href = `/sites/${ site.slug }`;
 	};
 
 	const handlePreviewClick = () => {

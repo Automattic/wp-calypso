@@ -1,17 +1,12 @@
 import { getMigrationState } from 'calypso/data/site-migration';
 import { MigrationInProgress } from './components/migration-in-progress';
 import { MigrationPending } from './components/migration-pending';
-import { MigrationSSHComplete } from './components/migration-ssh-complete';
 import { MigrationStartedDIFM } from './components/migration-started-difm';
 import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	const state = getMigrationState( site?.site_migration );
-
-	if ( state?.type === 'ssh' ) {
-		return <MigrationSSHComplete site={ site } />;
-	}
 
 	if ( state?.status === 'pending' ) {
 		return <MigrationPending site={ site } />;
