@@ -178,7 +178,8 @@ function SiteRepositories() {
 				<HostingFeatureGatedWithCallout
 					site={ site }
 					feature={ HostingFeatures.DEPLOYMENT }
-					tracksFeatureId="settings-repositories"
+					upsellId="site-settings-repositories"
+					upsellFeatureId="site-deployments"
 					upsellIcon={ <GithubIcon aria-label={ __( 'GitHub logo' ) } /> }
 					upsellImage={ illustrationUrl }
 					upsellTitle={ __( 'Deploy from GitHub' ) }

@@ -9,7 +9,7 @@ import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	title: __( 'Visibility' ),
-	trackId: 'visibility',
+	trackId: 'site-overview-visibility',
 };
 
 function getVisibilityURL( site: Site ) {

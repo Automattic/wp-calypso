@@ -253,8 +253,8 @@ function SiteBackups() {
 		<HostingFeatureGatedWithCallout
 			site={ site }
 			feature={ HostingFeatures.BACKUPS }
-			tracksFeatureId="backups"
 			overlay={ <PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> } /> }
+			upsellId="site-backups"
 			upsellIcon={ backup }
 			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
 			upsellImage={ illustrationUrl }

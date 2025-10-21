@@ -7,8 +7,8 @@ import type { Site } from '@automattic/api-core';
 
 export function getDeploymentsCalloutProps() {
 	return {
-		tracksFeatureId: 'deployments',
 		feature: HostingFeatures.DEPLOYMENT,
+		upsellId: 'site-deployments',
 		upsellIcon: <GithubIcon aria-label={ __( 'GitHub logo' ) } />,
 		upsellTitle: __( 'Deploy from GitHub' ),
 		upsellImage: illustrationUrl,
