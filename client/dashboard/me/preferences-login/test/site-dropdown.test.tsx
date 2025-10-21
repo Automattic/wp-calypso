@@ -96,7 +96,7 @@ describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 
 			const img = container.querySelector( 'img' );
 			expect( img ).not.toBeNull();
-			expect( img.src ).toContain( 'https://example.com/image.png' );
+			expect( img?.src ).toContain( 'https://example.com/image.png' );
 		} );
 
 		test( 'renders fallback icon when site has no image', () => {
@@ -110,7 +110,7 @@ describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 
 			const img = container.querySelector( 'img' );
 			expect( img ).not.toBeNull();
-			expect( img.src ).toContain( 'https://example.com/icon.png' );
+			expect( img?.src ).toContain( 'https://example.com/icon.png' );
 		} );
 
 		test( 'renders fallback globe icon when site icon img/ico is missing', () => {
