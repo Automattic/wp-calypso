@@ -13,6 +13,7 @@ import {
 	getRewindDaysOfBackupsAllowed,
 	getRewindDaysOfBackupsSaved,
 	getBackupRetentionDays,
+	getBackupCurrentSiteSize,
 } from 'calypso/state/rewind/selectors';
 import { setUsageLevel } from 'calypso/state/rewind/storage/action';
 import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
@@ -43,6 +44,7 @@ const BackupStorageSpace: React.FC = () => {
 		useSelector( ( state ) => getRewindDaysOfBackupsAllowed( state, siteId ) ) || 0;
 	const backupRetentionDays = useSelector( ( state ) => getBackupRetentionDays( state, siteId ) );
 	const retentionDays = backupRetentionDays || planRetentionDays;
+	const lastBackupSize = useSelector( ( state ) => getBackupCurrentSiteSize( state, siteId ) );
 	const usageLevel =
 		getUsageLevel(
 			bytesUsed,
@@ -50,7 +52,8 @@ const BackupStorageSpace: React.FC = () => {
 			minDaysOfBackupsAllowed,
 			daysOfBackupsAllowed,
 			retentionDays,
-			daysOfBackupsSaved
+			daysOfBackupsSaved,
+			lastBackupSize
 		) ?? StorageUsageLevels.Normal;
 
 	const showUpsell = usageLevel !== StorageUsageLevels.Normal;
