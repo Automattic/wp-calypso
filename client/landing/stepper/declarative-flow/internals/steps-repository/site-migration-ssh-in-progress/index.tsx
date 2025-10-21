@@ -7,6 +7,34 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
+type SiteMigrationSshInProgressChecklistItem = {
+	icon: string;
+	text: string;
+};
+
+const SiteMigrationSshInProgressChecklist = ( {
+	items,
+}: {
+	items: SiteMigrationSshInProgressChecklistItem[];
+} ) => {
+	return (
+		<div className="site-migration-ssh-in-progress__checklist-items">
+			{ items.map( ( item ) => (
+				<div className="site-migration-ssh-in-progress__checklist-item">
+					<div className="site-migration-ssh-in-progress__checklist-item-icon">
+						<Gridicon
+							icon={ item.icon }
+							size={ 16 }
+							className="site-migration-ssh-in-progress__icon"
+						/>
+					</div>
+					<div className="site-migration-ssh-in-progress__checklist-item-text">{ item.text }</div>
+				</div>
+			) ) }
+		</div>
+	);
+};
+
 const SiteMigrationSshInProgress: StepType< {
 	submits: {
 		action: 'continue';
@@ -18,49 +46,44 @@ const SiteMigrationSshInProgress: StepType< {
 
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
-			<div>
+			<div className="site-migration-ssh-in-progress__progress">
 				<ProgressBar value={ 40 } total={ 100 } compact={ true } isPulsing={ false } />
 			</div>
 
 			<Card className="site-migration-ssh-in-progress__card">
 				<CardBody>
-					<h3 className="site-migration-ssh-in-progress__checklist-title">
+					<div className="site-migration-ssh-in-progress__checklist-title">
 						{ translate( "Here's what to expect" ) }
-					</h3>
-					<div className="site-migration-ssh-in-progress__checklist-items">
-						<div className="site-migration-ssh-in-progress__checklist-item">
-							<Gridicon
-								icon="checkmark"
-								size={ 24 }
-								className="site-migration-ssh-in-progress__icon"
-							/>
-							<span className="site-migration-ssh-in-progress__checklist-text">
-								{ translate( 'Your site stays live for visitors throughout.' ) }
-							</span>
-						</div>
-						<div className="site-migration-ssh-in-progress__checklist-item">
-							<Gridicon icon="time" size={ 24 } className="site-migration-ssh-in-progress__icon" />
-							<span className="site-migration-ssh-in-progress__checklist-text">
-								{ translate( 'Can take up to 30 minutes.' ) }
-							</span>
-						</div>
-						<div className="site-migration-ssh-in-progress__checklist-item">
-							<Gridicon icon="mail" size={ 24 } className="site-migration-ssh-in-progress__icon" />
-							<span className="site-migration-ssh-in-progress__checklist-text">
-								{ translate( "We'll email you when your new site is ready to explore." ) }
-							</span>
-						</div>
 					</div>
+					<SiteMigrationSshInProgressChecklist
+						items={ [
+							{
+								icon: 'checkmark',
+								text: translate( 'Your site stays live for visitors throughout.' ),
+							},
+							{ icon: 'time', text: translate( 'Can take up to 30 minutes.' ) },
+							{
+								icon: 'mail',
+								text: translate( "We'll email you when your new site is ready to explore." ),
+							},
+						] }
+					/>
 				</CardBody>
 			</Card>
 		</div>
 	);
 
+	// Clean the URL for display: remove protocol and trailing slashes
+	const cleanUrl = ( url: string ) => {
+		return url.replace( /^https?:\/\//, '' ).replace( /\/+$/, '' );
+	};
+
 	const pageTitle = translate( 'Your migration is underway' );
 	const pageSubTitle = translate(
-		"We're carefully making a copy of %(fromUrl)s on WordPress.com.",
+		"We're carefully making a copy of {{strong}}%(fromUrl)s{{/strong}} on WordPress.com.",
 		{
-			args: { fromUrl },
+			args: { fromUrl: cleanUrl( fromUrl ) },
+			components: { strong: <strong /> },
 		}
 	);
 
