@@ -1,9 +1,9 @@
-import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	sitePerformancePagesQuery,
 	siteSettingsQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -25,6 +25,7 @@ import Report from './report';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
+import ReportNoPagesNotice from './report-no-pages-notice';
 import Subtitle from './subtitle';
 import { useSitePerformanceData } from './use-site-performance-data';
 import type { DeviceToggleType } from './types';
@@ -51,13 +52,29 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
-	const { data: pagesData, refetch: refetchPages } = useQuery( {
+	const {
+		data: pagesData,
+		isLoading: isLoadingPages,
+		refetch: refetchPages,
+	} = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } ) as { page_id?: string };
+	const { page_id, url } = useSearch( { from: sitePerformanceRoute.fullPath } ) as {
+		page_id?: string;
+		url?: string;
+	};
+
 	const currentPage = useMemo( () => {
-		return page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+		if ( page_id ) {
+			const foundPage = getPageFromID( pagesData, page_id );
+			return foundPage || pagesData?.[ 0 ];
+		}
+		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
+
+	const performanceUrl = [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) )
+		? url ?? currentPage?.link
+		: currentPage?.link;
 
 	const {
 		hasError,
@@ -67,7 +84,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		getReport,
 		hasCompleted,
 	} = useSitePerformanceData(
-		currentPage?.link,
+		performanceUrl,
 		currentPage?.wpcom_performance_report_hash,
 		runNewReport
 	);
@@ -87,10 +104,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		}
 	}, [ hasCompleted ] );
 
-	if ( ! pagesData || ! currentPage ) {
-		return null;
-	}
-
 	const currentReport = getReport( deviceToggle );
 	const { gmtOffset, timezoneString } = siteSettings;
 
@@ -99,10 +112,19 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			return <ReportErrorNotice onRetestClick={ handleReportRefetch } />;
 		}
 
+		if ( isLoadingPages ) {
+			return <ReportLoading isLoadingPages />;
+		}
+
+		if ( ! pagesData?.length || ! currentPage ) {
+			return <ReportNoPagesNotice />;
+		}
+
 		if ( isLoadingNewReport( deviceToggle ) ) {
 			return <ReportLoading isSavedReport={ false } />;
 		}
 
+		// Our default loading state is loading the existing report.
 		if ( isLoadingExistingReport( deviceToggle ) || ! currentReport ) {
 			return <ReportLoading isSavedReport />;
 		}
@@ -139,7 +161,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 							<PageSelector
 								siteUrl={ site.URL }
 								currentPage={ currentPage }
-								pages={ pagesData }
+								pages={ pagesData || [] }
 								onChange={ ( pageId ) => {
 									setRunNewReport( false );
 									recordTracksEvent(
@@ -175,7 +197,6 @@ function SitePerformance() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.PERFORMANCE }
 			overlay={ <PageLayout header={ <PageHeader /> } /> }
 			{ ...getPerformanceCalloutProps() }
 		>

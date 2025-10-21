@@ -1,6 +1,10 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	codeDeploymentQuery,
+	codeDeploymentsQuery,
+	githubInstallationsQuery,
 	isAutomatticianQuery,
+	productsQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
 	siteBackupActivityLogEntriesQuery,
@@ -21,6 +25,7 @@ import {
 	sitePrimaryDataCenterQuery,
 	sitePurchaseQuery,
 	sitePurchasesQuery,
+	siteRedirectQuery,
 	siteScanQuery,
 	siteSettingsQuery,
 	siteSftpUsersQuery,
@@ -201,6 +206,10 @@ export const siteDeploymentsRoute = createRoute( {
 export const siteDeploymentsListRoute = createRoute( {
 	getParentRoute: () => siteDeploymentsRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/deployments-list' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments-list' )( {
@@ -418,8 +427,20 @@ export const siteBackupsIndexRoute = createRoute( {
 );
 
 export const siteBackupDetailRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Backups' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId',
+} );
+
+export const siteBackupDetailIndexRoute = createRoute( {
+	getParentRoute: () => siteBackupDetailRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-detail' )( {
@@ -436,8 +457,8 @@ export const siteBackupRestoreRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => siteBackupsRoute,
-	path: '$rewindId/restore',
+	getParentRoute: () => siteBackupDetailRoute,
+	path: 'restore',
 } ).lazy( () =>
 	import( '../../sites/backup-restore' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-restore' )( {
@@ -450,12 +471,12 @@ export const siteBackupDownloadRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Sites' ),
+				title: __( 'Download backup' ),
 			},
 		],
 	} ),
-	getParentRoute: () => siteBackupsRoute,
-	path: '$rewindId/download',
+	getParentRoute: () => siteBackupDetailRoute,
+	path: 'download',
 	validateSearch: ( search ) => {
 		const downloadId = Number( search.downloadId );
 		return {
@@ -556,6 +577,31 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsRedirectRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Site Redirect' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'site-redirect',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		return await Promise.all( [
+			queryClient.ensureQueryData( productsQuery() ),
+			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-redirect' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-redirect' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -914,6 +960,11 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 export const siteSettingsRepositoriesIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( codeDeploymentsQuery( site.ID ) );
+		queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories' )( {
@@ -932,6 +983,9 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'connect',
+	loader: () => {
+		queryClient.ensureQueryData( githubInstallationsQuery() );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
@@ -941,11 +995,22 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 );
 
 export const siteSettingsRepositoriesManageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Configure repository' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'manage/$deploymentId',
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
+	loader: async ( { params: { siteSlug, deploymentId } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-manage' )( {
@@ -1099,6 +1164,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
 			siteSettingsWpcomLoginRoute,
+			siteSettingsRedirectRoute,
 		] ),
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
@@ -1131,10 +1197,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
 			siteBackupsRoute.addChildren( [
-				siteBackupDetailRoute,
 				siteBackupsIndexRoute,
-				siteBackupRestoreRoute,
-				siteBackupDownloadRoute,
+				siteBackupDetailRoute.addChildren( [
+					siteBackupDetailIndexRoute,
+					siteBackupRestoreRoute,
+					siteBackupDownloadRoute,
+				] ),
 			] )
 		);
 	}

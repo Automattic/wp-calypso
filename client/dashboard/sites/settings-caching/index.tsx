@@ -328,7 +328,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.CACHING }
-				tracksFeatureId="settings-caching"
+				upsellId="site-settings-caching"
 			>
 				{ renderForm() }
 				{ renderActions() }

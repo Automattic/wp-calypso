@@ -9,7 +9,7 @@ import {
 	DomainTransferStatus,
 } from '@automattic/api-core';
 import {
-	domainsQuery,
+	domainQuery,
 	purchaseQuery,
 	userPurchaseSetAutoRenewQuery,
 	siteDifmWebsiteContentQuery,
@@ -809,11 +809,13 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 	const locale = useLocale();
-	const domains = useQuery( domainsQuery() ).data;
+	const { data: domain } = useQuery( {
+		...domainQuery( purchase?.meta ?? '' ),
+		enabled: Boolean( purchase.meta ),
+	} );
 	if ( purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ) {
 		return null;
 	}
-	const domain = domains?.find( ( domain ) => domain.domain === purchase.meta );
 	if ( ! domain ) {
 		return null;
 	}
@@ -1056,7 +1058,7 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase?.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase?.renew_date ?? '' );
-	if ( ! purchase || ! site ) {
+	if ( ! purchase ) {
 		return null;
 	}
 	const upgradeUrl = getUpgradeUrl( purchase );
@@ -1139,13 +1141,15 @@ export default function PurchaseSettings() {
 					<PurchasePriceCard purchase={ purchase } />
 				</HStack>
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
-					<PurchaseSettingsCard
-						icon={ siteLogo }
-						title={ __( 'Site' ) }
-						heading={ site.name }
-						description={ purchase.site_slug }
-						link={ `/v2/sites/${ purchase.site_slug }` }
-					/>
+					{ site && (
+						<PurchaseSettingsCard
+							icon={ siteLogo }
+							title={ __( 'Site' ) }
+							heading={ site.name }
+							description={ purchase.site_slug }
+							link={ `/v2/sites/${ purchase.site_slug }` }
+						/>
+					) }
 					<PurchaseSettingsCard
 						icon={ commentAuthorAvatar }
 						title={ __( 'Owner' ) }

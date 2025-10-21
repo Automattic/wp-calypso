@@ -48,16 +48,16 @@ export default function ConnectRepository() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Connect Repository' ) }
-					description={ __( 'Connect a GitHub repository to deploy code to your WordPress site.' ) }
+					description={ __( 'Deploy code from GitHub to your WordPress.com site.' ) }
 				/>
 			}
 		>
 			<Card>
 				<CardBody>
 					<ConnectRepositoryForm
-						formTitle={ __( 'Configure repository connection' ) }
+						formTitle={ __( 'Set up connection' ) }
 						formDescription={ __(
-							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
+							'Choose your GitHub account and repository to connect with WordPress.com.'
 						) }
 						onCancel={ handleCancel }
 						mutation={ createMutation }

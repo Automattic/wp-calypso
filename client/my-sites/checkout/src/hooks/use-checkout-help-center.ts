@@ -48,7 +48,7 @@ export const useCheckoutHelpCenter = (): {
 			location: 'thank-you-help-center',
 		} );
 
-		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
+		setShowHelpCenter( ! isShowingHelpCenter, { hasPremiumSupport, ...helpCenterOptions } );
 		if ( hasPremiumSupport ) {
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,

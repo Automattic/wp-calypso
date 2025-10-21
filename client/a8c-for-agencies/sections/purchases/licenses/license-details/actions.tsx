@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
 import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-feedback/churn-mechanism/cancel-license-feedback-modal';
@@ -135,7 +134,7 @@ export default function LicenseDetailsActions( {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
+					{ translate( 'Manage in Pressable ↗' ) }
 				</Button>
 			) }
 

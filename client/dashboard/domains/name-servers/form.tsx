@@ -1,4 +1,3 @@
-import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
 	__experimentalText as Text,
@@ -179,7 +178,7 @@ export default function NameServersForm( {
 										__( '<link>Look up</link> the name servers for popular hosts.' ),
 										{
 											link: (
-												<InlineSupportLink supportLink={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } />
+												<InlineSupportLink supportContext="change-name-servers-finding-out-new-ns" />
 											),
 										}
 									) }

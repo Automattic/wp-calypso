@@ -43,13 +43,21 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					title: __( 'Your site is out of storage' ),
 			  };
 
-	const tracksId = alertLevel === 'warning' ? 'storage-warning-low' : 'storage-warning-exceeded';
+	const upsellId =
+		alertLevel === 'warning'
+			? 'site-overview-storage-warning-low'
+			: 'site-overview-storage-warning-exceeded';
 
 	return (
 		<Notice
 			{ ...noticeProps }
 			actions={
-				<UpsellCTAButton variant="primary" tracksId={ tracksId } href={ `/add-ons/${ site.slug }` }>
+				<UpsellCTAButton
+					variant="primary"
+					upsellId={ upsellId }
+					upsellFeatureId="site-storage"
+					href={ `/add-ons/${ site.slug }` }
+				>
 					{ __( 'Add more storage' ) }
 				</UpsellCTAButton>
 			}

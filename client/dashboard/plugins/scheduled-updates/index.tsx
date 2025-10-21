@@ -1,6 +1,5 @@
-import { hostingUpdateScheduleDeleteMutation } from '@automattic/api-queries';
+// no imports from api-queries needed here
 import { useLocale } from '@automattic/i18n-utils';
-import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -21,6 +20,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { SiteIconLink } from '../../sites/site-fields';
 import { formatDate } from '../../utils/datetime';
 import { prepareScheduleName } from './helpers';
+import { useDeleteSchedules } from './hooks/use-delete-schedules';
 import { useScheduledUpdates } from './hooks/use-scheduled-updates';
 import { ScheduledUpdateRow } from './types';
 
@@ -144,14 +144,17 @@ export const defaultView: View = {
 export default function PluginsScheduledUpdates() {
 	const [ view, setView ] = useState( defaultView );
 	const [ scheduleToDelete, setScheduleToDelete ] = useState< ScheduledUpdateRow | null >( null );
+	const [ isDeletingSchedule, setIsDeletingSchedule ] = useState( false );
 	const locale = useLocale();
 	const navigate = useNavigate();
 	const fields = useMemo( () => getFields( locale ), [ locale ] );
 
 	const { isLoading, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutate: deleteSchedule, isPending: isDeletingSchedule } = useMutation(
-		hostingUpdateScheduleDeleteMutation()
+	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
+		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
+		scheduleToDelete?.scheduleId ?? '',
+		{ optimistic: false }
 	);
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
@@ -161,27 +164,20 @@ export default function PluginsScheduledUpdates() {
 		setScheduleToDelete( schedule );
 	};
 
-	const handleDeleteConfirm = () => {
-		if ( scheduleToDelete ) {
-			deleteSchedule(
-				{
-					siteId: scheduleToDelete.site.ID,
-					scheduleId: scheduleToDelete.scheduleId,
-				},
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Schedule deleted successfully.' ), { type: 'snackbar' } );
-					},
-					onError: ( error: Error ) => {
-						createErrorNotice( error.message || __( 'Failed to delete schedule.' ), {
-							type: 'snackbar',
-						} );
-					},
-					onSettled: () => {
-						setScheduleToDelete( null );
-					},
-				}
-			);
+	const handleDeleteConfirm = async () => {
+		if ( ! scheduleToDelete ) {
+			return;
+		}
+		try {
+			setIsDeletingSchedule( true );
+			await deleteSchedules();
+			createSuccessNotice( __( 'Schedule deleted successfully.' ), { type: 'snackbar' } );
+		} catch ( e ) {
+			const message = e instanceof Error ? e.message : __( 'Failed to delete schedule.' );
+			createErrorNotice( message, { type: 'snackbar' } );
+		} finally {
+			setScheduleToDelete( null );
+			setIsDeletingSchedule( false );
 		}
 	};
 

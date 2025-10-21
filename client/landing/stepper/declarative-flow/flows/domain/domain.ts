@@ -5,6 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import {
 	clearSignupCompleteSlug,
@@ -132,6 +133,23 @@ const domain: FlowV2< typeof initialize > = {
 					}
 
 					if ( siteSlug && providedDependencies && 'domainCartItem' in providedDependencies ) {
+						// For garden sites with domain mapping, skip plans and map directly
+						if (
+							site &&
+							( site as { is_garden?: boolean } ).is_garden &&
+							providedDependencies.domainCartItem &&
+							providedDependencies.domainCartItem?.product_slug === 'domain_map'
+						) {
+							const domain = providedDependencies.domainCartItem.meta as string;
+
+							try {
+								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
+								return window.location.assign( `/ciab/sites/${ domain }/domains` );
+							} catch ( error ) {
+								// If mapping fails, fall through to original flow
+							}
+						}
+
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );

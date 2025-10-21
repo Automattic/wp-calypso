@@ -3,6 +3,7 @@ import {
 	userSettingsQuery,
 	userPurchasesQuery,
 	purchaseQuery,
+	receiptQuery,
 	sitesQuery,
 	queryClient,
 	accountRecoveryQuery,
@@ -127,6 +128,11 @@ export const billingHistoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingRoute,
 	path: '/billing-history',
+} );
+
+export const billingHistoryIndexRoute = createRoute( {
+	getParentRoute: () => billingHistoryRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -135,19 +141,25 @@ export const billingHistoryRoute = createRoute( {
 	)
 );
 
-export const changePaymentMethodRoute = createRoute( {
+export const receiptRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Change payment method' ),
+				title: __( 'Receipt' ),
 			},
 		],
 	} ),
-	getParentRoute: () => billingRoute,
-	path: '/purchases/$purchaseId/payment-method/change',
+	getParentRoute: () => billingHistoryRoute,
+	loader: async ( { params: { receiptId } } ) => {
+		const receipt = await queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) );
+		return {
+			receipt,
+		};
+	},
+	path: '$receiptId',
 } ).lazy( () =>
-	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
-		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
+	import( '../../me/billing-history/receipt' ).then( ( d ) =>
+		createLazyRoute( 'billing-history-receipt' )( {
 			component: d.default,
 		} )
 	)
@@ -203,9 +215,32 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
+} );
+
+export const purchaseSettingsIndexRoute = createRoute( {
+	getParentRoute: () => purchaseSettingsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const changePaymentMethodRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Change payment method' ),
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'payment-method/change',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
 			component: d.default,
 		} )
 	)
@@ -683,13 +718,18 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	meRoutes.push(
 		billingRoute.addChildren( [
 			billingIndexRoute,
-			billingHistoryRoute,
+			billingHistoryRoute.addChildren( [ billingHistoryIndexRoute, receiptRoute ] ),
 			monetizeSubscriptionsRoute.addChildren( [
 				monetizeSubscriptionsIndexRoute,
 				monetizeSubscriptionRoute,
 			] ),
-			purchasesRoute.addChildren( [ purchasesIndexRoute, purchaseSettingsRoute ] ),
-			changePaymentMethodRoute,
+			purchasesRoute.addChildren( [
+				purchasesIndexRoute,
+				purchaseSettingsRoute.addChildren( [
+					purchaseSettingsIndexRoute,
+					changePaymentMethodRoute,
+				] ),
+			] ),
 			paymentMethodsRoute,
 			taxDetailsRoute,
 		] )

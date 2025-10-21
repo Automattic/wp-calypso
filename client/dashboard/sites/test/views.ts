@@ -1,4 +1,5 @@
-import { recordViewChanges, type SitesView } from '../views';
+import { recordViewChanges } from '../dataviews/views';
+import type { SitesView } from '@automattic/api-core';
 
 describe( 'recordViewChanges', () => {
 	test( 'nothing relevant changed', () => {

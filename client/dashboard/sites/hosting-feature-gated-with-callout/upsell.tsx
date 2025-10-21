@@ -8,42 +8,40 @@ import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
-import type { Site } from '@automattic/api-core';
+import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 export interface UpsellCalloutProps {
+	site: Site;
+	upsellId: string;
+	upsellFeatureId?: string;
 	upsellIcon?: CalloutProps[ 'icon' ];
 	upsellImage?: CalloutProps[ 'image' ];
 	upsellTitle?: CalloutProps[ 'title' ];
 	upsellTitleAs?: CalloutProps[ 'titleAs' ];
 	upsellDescription?: CalloutProps[ 'description' ];
+	feature?: HostingFeatureSlug;
 }
 
 export default function UpsellCallout( {
 	site,
-	tracksFeatureId,
-	onClick,
+	upsellId,
+	upsellFeatureId,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
 	upsellTitleAs,
 	upsellDescription,
-}: {
-	site: Site;
-	tracksFeatureId: string;
-	onClick?: () => void;
-} & UpsellCalloutProps ) {
+	feature,
+}: UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick?.();
-
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
-		window.location.href = addQueryArgs(
-			`/checkout/${ encodeURIComponent( site.slug ) }/business`,
-			{
-				cancel_to: backUrl,
-				redirect_to: backUrl,
-			}
-		);
+		window.location.href = addQueryArgs( '/setup/plan-upgrade/', {
+			siteSlug: site.slug,
+			cancel_to: backUrl,
+			redirect_to: backUrl,
+			...( feature && { feature } ),
+		} );
 	};
 
 	const defaultProps = {
@@ -85,9 +83,10 @@ export default function UpsellCallout( {
 			actions={
 				<UpsellCTAButton
 					text={ __( 'Upgrade plan' ) }
-					tracksId={ tracksFeatureId }
 					variant="primary"
 					onClick={ handleUpsellClick }
+					upsellId={ upsellId }
+					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			}
 		/>

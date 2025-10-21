@@ -12,6 +12,8 @@ import { areHostingFeaturesSupported } from './features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 import type { ComponentType } from 'react';
 
+import './style.scss';
+
 export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
@@ -57,8 +59,8 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-function HostingFeatureCallout( { children }: { children: React.ReactNode } ) {
-	const analyticsClient = useAnalyticsClient();
+function HostingFeatureCallout( { path, children }: { path: string; children: React.ReactNode } ) {
+	const analyticsClient = useAnalyticsClient( undefined, path );
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }
 
@@ -71,6 +73,7 @@ export function hostingFeaturesCallout(
 	return ( context: Context, next: () => void ) => {
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
+		const path = getRouteFromContext( context );
 
 		if ( site && ! areHostingFeaturesSupported( site ) ) {
 			const callout =
@@ -79,15 +82,19 @@ export function hostingFeaturesCallout(
 				site.plan?.features.active.includes( FEATURE_SFTP ) ? (
 					<HostingActivationCallout siteId={ site.ID } />
 				) : (
-					<HostingFeatureCallout>
+					<HostingFeatureCallout path={ path }>
 						<CalloutComponent siteSlug={ site.slug } titleAs="h3" />
 					</HostingFeatureCallout>
 				);
 
 			context.primary = (
-				<PageLayout>
-					<CalloutOverlay callout={ callout } />
-				</PageLayout>
+				<div className="hosting-features-callout">
+					<PageViewTracker
+						title="Sites > Hosting Feature Callout"
+						path={ getRouteFromContext( context ) }
+					/>
+					{ callout }
+				</div>
 			);
 		}
 

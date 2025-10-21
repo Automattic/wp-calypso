@@ -152,13 +152,13 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 					<Text size={ 14 } weight={ 500 }>
 						{ backup.content.text }
 					</Text>
-					<HStack alignment="left" spacing={ 4 }>
+					<HStack alignment="left" spacing={ 1 }>
 						<Text variant="muted">{ formattedTime }</Text>
 						{ backup.actor?.name && (
 							<Text variant="muted">
 								{
 									/* translators: %s is the name of the person/system who performed the backup */
-									sprintf( __( 'By %s' ), backup.actor.name )
+									sprintf( __( 'by %s' ), backup.actor.name )
 								}
 							</Text>
 						) }

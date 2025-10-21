@@ -4,12 +4,20 @@
 
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
+import { recordSearchFormSubmit } from '../analytics';
 import { useWPCOMDomainSearchEvents } from '../use-wpcom-domain-search-events';
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	...jest.requireActual( '@automattic/calypso-analytics' ),
 	getNewRailcarId: jest.fn().mockReturnValue( 'railcar-id' ),
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( '../analytics', () => ( {
+	...jest.requireActual( '../analytics' ),
+	recordSearchFormSubmit: jest.fn().mockReturnValue( {
+		type: 'test',
+	} ),
 } ) );
 
 const mockGetNewRailcarId = getNewRailcarId as jest.MockedFunction< typeof getNewRailcarId >;
@@ -26,6 +34,7 @@ const defaultProps = {
 	flowName: 'flow-name',
 	flowAllowsMultipleDomainsInCart: false,
 	analyticsSection: 'analytics-section',
+	vendor: 'vendor',
 };
 
 describe( 'useWPCOMDomainSearchEvents', () => {
@@ -35,15 +44,17 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchEvents( defaultProps ) );
 
 		result.current.onQueryChange( 'my-domain.com' );
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordSearchFormSubmit ).not.toHaveBeenCalled();
 
 		jest.advanceTimersByTime( 10_000 );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_domain_search',
-			expect.objectContaining( {
-				search_box_value: 'my-domain.com',
-			} )
+		expect( recordSearchFormSubmit ).toHaveBeenCalledWith(
+			'my-domain.com',
+			'analytics-section',
+			0,
+			1,
+			'vendor',
+			'flow-name'
 		);
 
 		jest.useRealTimers();

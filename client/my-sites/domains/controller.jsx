@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { get, includes, map } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,7 +9,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
@@ -26,7 +24,7 @@ import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isWpcomFlexSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -34,7 +32,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import RedirectComponent from './domain-redirect-to-site';
 import DomainSearch from './domain-search';
-import LegacyDomainSearch from './domain-search/legacy';
 import SiteRedirect from './domain-search/site-redirect';
 import EmailProvidersUpsell from './email-providers-upsell';
 
@@ -67,61 +64,15 @@ const domainSearch = ( context, next ) => {
 		window.scrollTo( 0, 0 );
 	}
 
-	const getContent = () => {
-		if ( shouldRenderRewrittenDomainSearch() ) {
-			return (
-				<CalypsoShoppingCartProvider>
-					<DomainSearch />
-				</CalypsoShoppingCartProvider>
-			);
-		}
-
-		return (
-			<CalypsoShoppingCartProvider>
-				<LegacyDomainSearch
-					basePath={ sectionify( context.path ) }
-					context={ context }
-					isAddNewDomainContext={ context.path.includes( 'domains/add' ) }
-					domainAndPlanUpsellFlow={
-						context.query.domainAndPlanPackage !== undefined
-							? context.query.domainAndPlanPackage === 'true'
-							: undefined
-					}
-				/>
-			</CalypsoShoppingCartProvider>
-		);
-	};
-
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
-			{ getContent() }
+			<CalypsoShoppingCartProvider>
+				<DomainSearch />
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
-	next();
-};
-
-/**
- * If the user enters /domains/add/:domain?domainAndPlanPackage=true,
- * we redirect them to the domain upsell flow.
- *
- * This is necessary because we have some back-end logic that sends the user directly,
- * and the concept of feature flags don't exist there. So we need to redirect here.
- *
- * Once the feature flag is removed and the back-end logic is updated, this can be removed.
- *
- * Remove this when working on DOMAINS-1590.
- */
-const redirectToDomainUpsellFlowIfRewrittenDomainSearchIsEnabled = ( context, next ) => {
-	const isBrowsingDomainAndPlanPackageFlow = context.query.domainAndPlanPackage === 'true';
-
-	if ( shouldRenderRewrittenDomainSearch() && isBrowsingDomainAndPlanPackageFlow ) {
-		return window.location.replace(
-			addQueryArgs( '/setup/domain-and-plan', { siteSlug: context.params.domain } )
-		);
-	}
-
 	next();
 };
 
@@ -333,8 +284,9 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
+	const isFlexSite = isWpcomFlexSite( state, siteId );
 
-	if ( siteId && isJetpack ) {
+	if ( siteId && isJetpack && ! isFlexSite ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
@@ -373,7 +325,6 @@ export default {
 	siteRedirect,
 	mapDomain,
 	mapDomainSetup,
-	redirectToDomainUpsellFlowIfRewrittenDomainSearchIsEnabled,
 	redirectToDomainSearchSuggestion,
 	redirectIfNoSite,
 	redirectToUseYourDomainIfVipSite,

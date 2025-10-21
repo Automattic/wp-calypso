@@ -6,10 +6,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { starEmpty } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import Notice from '../../components/notice';
 import ComponentViewTracker from '../component-view-tracker';
 
 export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
+	const { optIn } = useAppContext();
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
 	);
@@ -24,6 +26,10 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 			context: tracksContext,
 		} );
 	};
+
+	if ( ! optIn ) {
+		return null;
+	}
 
 	// Optimistically hide the banner assuming the preference will get saved.
 	if ( isDismissing || isDismissedPersisted ) {

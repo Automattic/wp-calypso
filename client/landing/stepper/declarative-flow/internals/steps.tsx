@@ -56,11 +56,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
-	DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () => import( './steps-repository/domains' ),
-	},
-
 	DOMAIN_SEARCH: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domain-search' ),
@@ -313,6 +308,16 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
 	},
 
+	SITE_MIGRATION_SSH_SHARE_ACCESS: {
+		slug: 'site-migration-ssh-share-access',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-share-access' ),
+	},
+
+	SITE_MIGRATION_SSH_IN_PROGRESS: {
+		slug: 'site-migration-ssh-in-progress',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
+	},
+
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),
@@ -330,13 +335,6 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
-	},
-	UNIFIED_DOMAINS: {
-		slug: 'domains',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
-			),
 	},
 	UNIFIED_PLANS: {
 		slug: 'plans',
