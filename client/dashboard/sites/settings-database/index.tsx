@@ -21,6 +21,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import ResetPasswordModal from './reset-password-modal';
 import upsellIllustrationUrl from './upsell-illustration.svg';
@@ -71,6 +72,17 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		);
 	};
 
+	const description = hasPlanFeature( site, HostingFeatures.DATABASE )
+		? createInterpolateElement(
+				__(
+					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
+				),
+				{
+					link: <InlineSupportLink supportContext="hosting-mysql" />,
+				}
+		  )
+		: undefined;
+
 	return (
 		<PageLayout
 			size="small"
@@ -78,14 +90,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Database' ) }
-					description={ createInterpolateElement(
-						__(
-							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
-						),
-						{
-							link: <InlineSupportLink supportContext="hosting-mysql" />,
-						}
-					) }
+					description={ description }
 				/>
 			}
 		>

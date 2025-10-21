@@ -1,6 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Card, Button } from '@wordpress/components';
-import { close, external } from '@wordpress/icons';
+import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -99,14 +99,12 @@ export default function PressablePremiumPlanMigrationCard() {
 					<Button
 						className="is-light pressable-premium-plan-migration-card__chat-to-us-button"
 						variant="secondary"
-						icon={ external }
-						iconPosition="right"
 						iconSize={ 16 }
 						onClick={ handleChatToUs }
 						isBusy={ isLoading }
 						disabled={ isLoading }
 					>
-						{ translate( 'Chat to us about this offer' ) }
+						{ translate( 'Chat to us about this offer ↗' ) }
 					</Button>
 				</div>
 

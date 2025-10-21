@@ -1,0 +1,97 @@
+.migration-site-ssh__accordion-ctas {
+	display: flex;
+	gap: 12px;
+	margin-top: 24px;
+	align-items: center;
+}
+
+.migration-site-ssh__accordion {
+	display: flex;
+	flex-direction: column;
+}
+
+.migration-site-ssh__accordion-step {
+	border-bottom: 1px solid var(--color-neutral-5, #dcdcde);
+	transition: all 0.2s ease;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&.is-completed {
+		.migration-site-ssh-accordion__icon-completed {
+			color: var(--color-success, #00a32a);
+		}
+	}
+}
+
+.migration-site-ssh__accordion-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 1rem 0;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	text-align: left;
+}
+
+.migration-site-ssh__accordion-title {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex: 1;
+}
+
+.migration-site-ssh__accordion-status-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+}
+
+.migration-site-ssh__accordion-icon-pending {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-neutral-70, #646970);
+}
+
+.migration-site-ssh__accordion-icon-completed {
+	color: var(--color-success, #00a32a);
+}
+
+.migration-site-ssh__accordion-title-text {
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 24px;
+	color: var(--color-neutral-70, #1d2327);
+}
+
+.migration-site-ssh__accordion-chevron {
+	display: flex;
+	align-items: center;
+	color: var(--color-neutral-50, #646970);
+	transition: transform 0.2s ease;
+}
+
+.migration-site-ssh__accordion-content {
+	padding: 0 0 1.5rem 2.5rem;
+	animation: migration-site-ssh-slideDown 0.2s ease;
+	font-size: 0.875rem;
+}
+
+.migration-site-ssh__continue-button {
+	button {
+		width: 100%;
+	}
+}

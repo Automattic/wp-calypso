@@ -7,6 +7,7 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,
@@ -50,6 +51,7 @@ export default function ConfigureRepository() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Configure Repository' ) }
 					description={ __(
 						'Update the GitHub repository connection to deploy code to your WordPress site.'

@@ -12,3 +12,7 @@ export const shouldRedirectToSiteMigration = (
 		( origin === STEPS.SITE_MIGRATION_IDENTIFY.slug || entryPoint === 'wp-admin-importers-list' )
 	);
 };
+
+export const cleanUrl = ( url: string ) => {
+	return url.replace( /^https?:\/\//, '' ).replace( /\/+$/, '' );
+};
