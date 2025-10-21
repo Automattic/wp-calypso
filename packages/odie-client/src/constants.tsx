@@ -198,7 +198,7 @@ export const getZendeskInitialGreetingMessages = (): Message[] => {
 	return [
 		{
 			content: __(
-				'Thanks for reaching out! A Happiness Engineer will be with you shortly.',
+				'We’re connecting you with our support team. A Happiness Engineer will join the chat as soon as they’re available.',
 				__i18n_text_domain__
 			),
 			role: 'bot',
@@ -214,7 +214,10 @@ export const getZendeskInitialGreetingMessages = (): Message[] => {
 			},
 		},
 		{
-			content: __( 'Your second message here', __i18n_text_domain__ ),
+			content: __(
+				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				__i18n_text_domain__
+			),
 			role: 'bot',
 			type: 'message',
 			internal_message_id: 'zendesk-initial-greeting-2',
