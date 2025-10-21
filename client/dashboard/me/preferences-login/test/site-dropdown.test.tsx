@@ -85,9 +85,9 @@ function createMockSite( overrides: Partial< Site > = {} ): Site {
 
 describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 	describe( 'Site icon rendering logic', () => {
-		test( 'renders image when site has valid icon', () => {
+		test( 'renders image when site has valid image', () => {
 			const siteWithIcon = createMockSite( {
-				icon: { ico: 'https://example.com/icon.png' },
+				icon: { ico: 'https://example.com/icon.png', img: 'https://example.com/image.png' },
 			} );
 
 			const { container } = render(
@@ -95,24 +95,25 @@ describe( 'PreferencesLoginSiteDropdown - Business Logic', () => {
 			);
 
 			const img = container.querySelector( 'img' );
-			expect( img ).toBeInTheDocument();
+			expect( img?.src ).toContain( 'https://example.com/image.png' );
 		} );
 
-		test( 'renders fallback globe icon when site has no icon', () => {
-			const siteWithoutIcon = createMockSite( {
-				icon: undefined,
+		test( 'renders fallback icon when site has no image', () => {
+			const siteWithoutImg = createMockSite( {
+				icon: { ico: 'https://example.com/icon.png', img: '' },
 			} );
 
-			const { getByTestId } = render(
-				<PreferencesLoginSiteDropdown sites={ [ siteWithoutIcon ] } onChange={ jest.fn() } />
+			const { container } = render(
+				<PreferencesLoginSiteDropdown sites={ [ siteWithoutImg ] } onChange={ jest.fn() } />
 			);
 
-			expect( getByTestId( 'icon-globe' ) ).toBeInTheDocument();
+			const img = container.querySelector( 'img' );
+			expect( img?.src ).toContain( 'https://example.com/icon.png' );
 		} );
 
-		test( 'renders fallback globe icon when site icon ico is missing', () => {
+		test( 'renders fallback globe icon when site icon img/ico is missing', () => {
 			const siteWithEmptyIcon = createMockSite( {
-				icon: { ico: '' },
+				icon: { ico: '', img: '' },
 			} );
 
 			const { getByTestId } = render(
