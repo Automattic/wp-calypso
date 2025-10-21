@@ -241,8 +241,14 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
-		return isSendingEmail || ( ! socialAccountIsLinking && ! hasAccountTypeLoaded );
+		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail, accountType } =
+			this.props;
+
+		return (
+			isSendingEmail ||
+			( ! socialAccountIsLinking && ! hasAccountTypeLoaded ) ||
+			isPasswordlessAccount( accountType )
+		);
 	}
 
 	resetView = ( event ) => {
