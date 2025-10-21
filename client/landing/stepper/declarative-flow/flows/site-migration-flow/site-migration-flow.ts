@@ -117,11 +117,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { get, sessionId } = useFlowState();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
-		const canInstallPlugins = site?.plan?.features?.active.find(
-			( feature: string ) => feature === 'install-plugins'
-		)
-			? true
-			: false;
+		const canInstallPlugins = site?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
 		const exitFlow = ( to: string, replace = false ) => {
 			if ( replace ) {
 				return window.location.replace(
