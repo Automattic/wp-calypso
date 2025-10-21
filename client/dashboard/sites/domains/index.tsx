@@ -1,11 +1,14 @@
-import { siteBySlugQuery, domainsQuery } from '@automattic/api-queries';
+import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteRoute } from '../../app/router/sites';
+import { siteRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { AddDomainButton } from '../../domains/add-domain-button';
@@ -28,6 +31,8 @@ function SiteDomains() {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
+	const { data: redirect } = useQuery( siteRedirectQuery( site.ID ) );
+	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
 
 	const fields = useFields( {
 		site,
@@ -57,6 +62,25 @@ function SiteDomains() {
 		>
 			{ ! isLoading && siteDomains && (
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
+			) }
+			{ hasRedirect && (
+				<Notice variant="warning">
+					{ createInterpolateElement(
+						__(
+							'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
+						),
+						{
+							site: <b>{ site.slug }</b>,
+							redirect: <b>{ redirect.location }</b>,
+							link: (
+								<Link
+									to={ siteSettingsRedirectRoute.fullPath }
+									params={ { siteSlug: site.slug } }
+								/>
+							),
+						}
+					) }
+				</Notice>
 			) }
 			<DataViewsCard>
 				<DataViews< DomainSummary >

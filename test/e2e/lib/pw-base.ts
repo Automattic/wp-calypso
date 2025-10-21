@@ -37,6 +37,7 @@ import {
 	GitHubLoginPage,
 	ImportContentFromAnotherPlatformOrFilePage,
 	ImportContentFromMediumPage,
+	ImportContentFromSquarespacePage,
 	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
@@ -166,6 +167,10 @@ export const test = base.extend< {
 	 * Page object representing the Import Content from Medium page.
 	 */
 	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Import Content from Squarespace page.
+	 */
+	pageImportContentFromSquarespace: ImportContentFromSquarespacePage;
 	/**
 	 * Page object representing the Import Content from Substack page.
 	 */
@@ -333,6 +338,10 @@ export const test = base.extend< {
 	pageImportContentFromMedium: async ( { page }, use ) => {
 		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
 		await use( importContentFromMediumPage );
+	},
+	pageImportContentFromSquarespace: async ( { page }, use ) => {
+		const importContentFromSquarespacePage = new ImportContentFromSquarespacePage( page );
+		await use( importContentFromSquarespacePage );
 	},
 	pageImportContentFromSubstack: async ( { page }, use ) => {
 		const importContentFromSubstackPage = new ImportContentFromSubstackPage( page );

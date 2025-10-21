@@ -548,9 +548,9 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
+	// Gravatar Theme
 	let gravatarColors = {};
 	let gravatarFontWeights = {};
-
 	if ( isGravatarDomain ) {
 		gravatarColors = {
 			primary: '#1d4fc4',
@@ -565,18 +565,25 @@ export default function CheckoutMain( {
 		};
 	}
 
-	const jetpackColors = isJetpackNotAtomic
-		? {
-				primary: colors[ 'Jetpack Green' ],
-				primaryBorder: colors[ 'Jetpack Green 80' ],
-				primaryOver: colors[ 'Jetpack Green 60' ],
-				success: colors[ 'Jetpack Green' ],
-				discount: colors[ 'Jetpack Green' ],
-				highlight: colors[ 'WordPress Blue 50' ],
-				highlightBorder: colors[ 'WordPress Blue 80' ],
-				highlightOver: colors[ 'WordPress Blue 60' ],
-		  }
-		: {};
+	// Jetpack Theme
+	// Woo Hosted sites are technically Jetpack, but are supposed to default to
+	// WPcom colors. We should update this once we have a better way to identify
+	// Garden sites outside of the Hosting Dashboard.
+	const jetpackColors =
+		isJetpackNotAtomic && ! updatedSiteSlug?.endsWith( '.commerce-garden.com' )
+			? {
+					primary: colors[ 'Jetpack Green' ],
+					primaryBorder: colors[ 'Jetpack Green 80' ],
+					primaryOver: colors[ 'Jetpack Green 60' ],
+					success: colors[ 'Jetpack Green' ],
+					discount: colors[ 'Jetpack Green' ],
+					highlight: colors[ 'WordPress Blue 50' ],
+					highlightBorder: colors[ 'WordPress Blue 80' ],
+					highlightOver: colors[ 'WordPress Blue 60' ],
+			  }
+			: {};
+
+	// A4A Theme
 	const a4aColors =
 		sitelessCheckoutType === 'a4a'
 			? {
@@ -588,6 +595,7 @@ export default function CheckoutMain( {
 					highlightOver: colors[ 'Automattic Blue 60' ],
 			  }
 			: {};
+
 	const theme = {
 		...checkoutTheme,
 		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },

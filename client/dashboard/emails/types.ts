@@ -23,3 +23,5 @@ export interface Email {
 		| 'no_subscription'
 		| 'unused_mailboxes';
 }
+
+export type IntervalLength = 'monthly' | 'annually';

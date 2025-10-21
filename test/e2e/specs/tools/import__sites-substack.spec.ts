@@ -41,7 +41,9 @@ test.describe(
 			} );
 
 			await test.step( 'When I upload a valid Substack export file', async function () {
-				await pageImportContentFromSubstack.uploadExportFile( TEST_SUBSTACK_EXPORT_FILE_PATH );
+				await pageImportContentFromSubstack.importFileContentPage.uploadExportFile(
+					TEST_SUBSTACK_EXPORT_FILE_PATH
+				);
 			} );
 
 			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
@@ -69,6 +71,12 @@ test.describe(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
 				).toBeVisible();
 				await expect( pageImportContentFromSubstack.authorMappingHeading ).toBeVisible();
+				await expect(
+					pageImportContentFromSubstack.importFileContentPage.importButton
+				).toBeVisible();
+				await expect(
+					pageImportContentFromSubstack.importFileContentPage.importButton
+				).toBeEnabled();
 			} );
 		} );
 
@@ -95,7 +103,9 @@ test.describe(
 			} );
 
 			await test.step( 'When I upload a valid Substack export file', async function () {
-				await pageImportContentFromSubstack.uploadExportFile( TEST_SUBSTACK_EXPORT_FILE_PATH );
+				await pageImportContentFromSubstack.importFileContentPage.uploadExportFile(
+					TEST_SUBSTACK_EXPORT_FILE_PATH
+				);
 			} );
 
 			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
@@ -123,6 +133,12 @@ test.describe(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
 				).toBeVisible();
 				await expect( pageImportContentFromSubstack.authorMappingHeading ).toBeVisible();
+				await expect(
+					pageImportContentFromSubstack.importFileContentPage.importButton
+				).toBeVisible();
+				await expect(
+					pageImportContentFromSubstack.importFileContentPage.importButton
+				).toBeEnabled();
 			} );
 		} );
 
@@ -159,7 +175,9 @@ test.describe(
 			} );
 
 			await test.step( 'When I upload a valid Substack export file', async function () {
-				await pageImportContentFromSubstack.uploadExportFile( TEST_SUBSTACK_EXPORT_FILE_PATH );
+				await pageImportContentFromSubstack.importFileContentPage.uploadExportFile(
+					TEST_SUBSTACK_EXPORT_FILE_PATH
+				);
 			} );
 
 			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
@@ -185,6 +203,12 @@ test.describe(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
 				).toBeVisible();
 				await expect( pageImportContentFromSubstack.authorMappingHeading ).toBeVisible();
+				await expect(
+					pageImportContentFromSubstack.importFileContentPage.importButton
+				).toBeVisible();
+				await expect(
+					pageImportContentFromSubstack.importFileContentPage.importButton
+				).toBeEnabled();
 			} );
 		} );
 	}

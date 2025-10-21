@@ -1058,7 +1058,7 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase?.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase?.renew_date ?? '' );
-	if ( ! purchase || ! site ) {
+	if ( ! purchase ) {
 		return null;
 	}
 	const upgradeUrl = getUpgradeUrl( purchase );
@@ -1141,13 +1141,15 @@ export default function PurchaseSettings() {
 					<PurchasePriceCard purchase={ purchase } />
 				</HStack>
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
-					<PurchaseSettingsCard
-						icon={ siteLogo }
-						title={ __( 'Site' ) }
-						heading={ site.name }
-						description={ purchase.site_slug }
-						link={ `/v2/sites/${ purchase.site_slug }` }
-					/>
+					{ site && (
+						<PurchaseSettingsCard
+							icon={ siteLogo }
+							title={ __( 'Site' ) }
+							heading={ site.name }
+							description={ purchase.site_slug }
+							link={ `/v2/sites/${ purchase.site_slug }` }
+						/>
+					) }
 					<PurchaseSettingsCard
 						icon={ commentAuthorAvatar }
 						title={ __( 'Owner' ) }
