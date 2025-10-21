@@ -180,7 +180,7 @@ export class FeedbackInboxPage {
 			.getByRole( 'tab', { name: new RegExp( folderName, 'i' ) } )
 			.or(
 				this.page.getByRole( 'radio', {
-					name: new RegExp( `^${ folderName }\\s*\\(\\d+\\)$`, 'i' ),
+					name: new RegExp( `^${ folderName }\\s*\\(\\d+,\\)$`, 'i' ),
 				} )
 			)
 			.click();
