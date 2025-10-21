@@ -9,7 +9,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate, View, type Field } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
@@ -55,12 +55,12 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 		setSiteToUpdate( null );
 	};
 
-	const fields = useMemo(
+	const fields: Field< SiteWithPluginData >[] = useMemo(
 		() => [
 			{
 				id: 'domain',
 				label: __( 'Site' ),
-				type: 'string',
+				type: 'text',
 				getValue: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				render: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				enableHiding: false,
