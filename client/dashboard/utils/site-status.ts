@@ -3,7 +3,7 @@ import type { Site } from '@automattic/api-core';
 
 export interface MigrationStatus {
 	status: 'pending' | 'started' | 'completed';
-	type: 'difm' | 'diy' | 'ssh';
+	type: 'difm' | 'diy';
 }
 
 const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];

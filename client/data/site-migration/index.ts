@@ -1,7 +1,7 @@
 import { SiteExcerptData } from '@automattic/sites';
 
 type MigrationStatus = 'pending' | 'started' | 'completed';
-type MigrationType = 'difm' | 'diy' | 'ssh';
+type MigrationType = 'difm' | 'diy';
 
 export type MigrationStatusInfo = SiteExcerptData[ 'site_migration' ];
 
@@ -11,7 +11,7 @@ export type MigrationState = {
 };
 
 const POSSIBLE_STATUSES = [ 'pending', 'started', 'completed' ] as const;
-const POSSIBLE_TYPES = [ 'difm', 'diy', 'ssh' ] as const;
+const POSSIBLE_TYPES = [ 'difm', 'diy' ] as const;
 
 export const getMigrationState = (
 	site: MigrationStatusInfo | undefined
