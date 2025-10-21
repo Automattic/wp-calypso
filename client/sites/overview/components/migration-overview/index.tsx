@@ -1,6 +1,7 @@
 import { getMigrationState } from 'calypso/data/site-migration';
 import { MigrationInProgress } from './components/migration-in-progress';
 import { MigrationPending } from './components/migration-pending';
+import { MigrationSSHComplete } from './components/migration-ssh-complete';
 import { MigrationStartedDIFM } from './components/migration-started-difm';
 import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
@@ -14,6 +15,10 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 
 	if ( state?.type === 'difm' ) {
 		return <MigrationStartedDIFM site={ site } />;
+	}
+
+	if ( state?.type === 'ssh' ) {
+		return <MigrationSSHComplete site={ site } />;
 	}
 
 	return <MigrationInProgress site={ site } />;

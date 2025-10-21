@@ -4,6 +4,7 @@ import PageLayout from '../../components/page-layout';
 import { getSiteMigrationState } from '../../utils/site-status';
 import { InProgressContentInfo } from './in-progress-content-info';
 import { PendingContentInfo } from './pending-content-info';
+import { SSHMigrationCompleteContentInfo } from './ssh-migration-complete-content-info';
 import { StartedDIFMContentInfo } from './started-difm-content-info';
 
 export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string } ) {
@@ -22,6 +23,14 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 		return (
 			<PageLayout size="small">
 				<StartedDIFMContentInfo site={ site } />
+			</PageLayout>
+		);
+	}
+
+	if ( migrationState?.type === 'ssh' ) {
+		return (
+			<PageLayout>
+				<SSHMigrationCompleteContentInfo site={ site } />
 			</PageLayout>
 		);
 	}
