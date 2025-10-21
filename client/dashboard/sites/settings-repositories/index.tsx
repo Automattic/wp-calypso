@@ -139,6 +139,17 @@ function RepositoriesList() {
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => item.id.toString() }
 				empty={ <p>{ emptyTitle }</p> }
+				onChangeSelection={ ( selection ) => {
+					if ( selection.length > 0 ) {
+						const item = filteredData.find( ( d ) => d.id.toString() === selection[ 0 ] );
+						if ( item ) {
+							router.navigate( {
+								to: siteSettingsRepositoriesManageRoute.fullPath,
+								params: { siteSlug, deploymentId: item.id },
+							} );
+						}
+					}
+				} }
 			/>
 		</DataViewsCard>
 	);
