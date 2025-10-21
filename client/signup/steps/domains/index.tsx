@@ -8,9 +8,8 @@ import {
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
@@ -74,6 +73,7 @@ const DomainSearchUI = (
 
 	const siteSlug = queryObject.siteSlug;
 	const siteId = queryObject.siteId;
+	const { __ } = useI18n();
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -282,7 +282,7 @@ const DomainSearchUI = (
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flowName, isOnboardingWithEmailFlow ] );
+	}, [ flowName, isOnboardingWithEmailFlow, __ ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( isDomainForGravatarFlow( flowName ) ) {
@@ -290,7 +290,7 @@ const DomainSearchUI = (
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flowName ] );
+	}, [ flowName, __ ] );
 
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 
@@ -334,7 +334,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ flowName, previousStepName, goBack, userSiteCount ] );
+	}, [ flowName, previousStepName, goBack, userSiteCount, __ ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
@@ -495,4 +495,4 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 	);
 }
 
-export default localize( DomainSearchStep );
+export default DomainSearchStep;
