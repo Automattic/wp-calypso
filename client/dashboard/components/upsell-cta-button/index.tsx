@@ -7,8 +7,18 @@ import type { ComponentProps } from 'react';
 import './style.scss';
 
 type UpsellCTAButtonProps = ComponentProps< typeof Button > & {
+	/**
+	 * A unique ID for the upsell. Should also indicate the location where the upsell is being shown.
+	 * Example: `site-overview-claim-this-domain`
+	 */
 	upsellId: string;
+
+	/**
+	 * The feature that is being upsold. Multiple upsells which upsell the same feature should have the same `upsellFeatureId`.
+	 * Example: `domain`
+	 */
 	upsellFeatureId?: string;
+
 	onClick?: ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => void;
 };
 
