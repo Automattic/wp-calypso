@@ -109,7 +109,7 @@ export class FeedbackInboxPage {
 				.fill( search );
 			await this.page
 				.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
-				.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\(\d+\)$/ } ) )
+				.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
 				.waitFor();
 			return;
 		}
@@ -131,7 +131,7 @@ export class FeedbackInboxPage {
 		await responseRequestPromise;
 		await this.page
 			.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
-			.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\(\d+\)$/ } ) )
+			.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
 			.waitFor();
 	}
 
