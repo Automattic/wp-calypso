@@ -1,0 +1,37 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.site-migration-ssh-in-progress__progress {
+	margin-top: 16px;
+}
+
+.site-migration-ssh-in-progress__card {
+	max-width: 100%;
+	margin-top: 2rem;
+}
+
+.site-migration-ssh-in-progress__checklist-title {
+	font-weight: 600;
+}
+
+.site-migration-ssh-in-progress__checklist-items {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.site-migration-ssh-in-progress__checklist-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.site-migration-ssh-in-progress__icon {
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.site-migration-ssh-in-progress__checklist-text {
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var(--studio-gray-70, #3c434a);
+}
