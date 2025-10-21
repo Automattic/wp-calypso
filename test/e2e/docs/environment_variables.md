@@ -6,32 +6,19 @@ Environment Variables control much of the runtime configuration for E2E tests.
 
 ## Current Environment Variables
 
-| Name                  | Description                                                                                                     | Default                                           |
-| --------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).                                                        | ./results/                                        |
-| AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use.                                             | simpleSitePersonalPlanUser,atomicUser,defaultUser |
-| CALYPSO_BASE_URL      | The base URL to use for Calypso                                                                                 | <http://calypso.localhost:3000>                   |
-| COBLOCKS_EDGE         | Use the bleeding edge CoBlocks build.                                                                           | false                                             |
-| COOKIES_PATH          | Path on disk to the saved authenticated cookies.                                                                | ./cookies/                                        |
-| GUTENBERG_EDGE        | Use the bleeding edge Gutenberg build.                                                                          | false                                             |
-| HEADLESS              | Configure browser headless/headful mode.                                                                        | false                                             |
-| JETPACK_TARGET        | Which Jetpack install ("wpcom-production", "wpcom-deployment", "remote-site") we are targeting through Calypso. | wpcom-production                                  |
-| SLOW_MO               | Slow down the execution by given milliseconds.                                                                  | 0                                                 |
-| TEST_LOCALES          | The locales to target for I18N testing                                                                          | A long list of currently supported locales.       |
-| TEST_ON_ATOMIC        | Use a user with an Atomic site.                                                                                 | false                                             |
-| VIEWPORT_NAME         | Specify the viewport to be used.                                                                                | desktop                                           |
-| WOO_BASE_URL          | The base URL to use for WooCommerce.com marketing pages, typically accessed when not logged in                  | <https://woocommerce.com>                         |
-| WPCOM_BASE_URL        | The base URL to use for WordPress.com marketing pages, typically accessed when not logged in                    | <https://wordpress.com>                           |
-
-<!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
-
-cd test/e2e/docs
-head -n 38 environment_variables.md | tail +33 | sort --field-separator=\| --key=1
-
-Adjust the value of `head -n <x>` to be the last row of the table to be sorted.
-Adjust the value of `tail +x` to be the first row of the table to be sorted.
-
-eg. head -n 28 environment_variables.md | tail +27 | sort --field-separator=\| --key=1
-
--> sorts from row 27 to 28.
- -->
+| Name                  | Description                                                                                                          | Default                                             | Required |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | -------- |
+| ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).                                                             | `./results/`                                        | Optional |
+| AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use.                                                  | `simpleSitePersonalPlanUser,atomicUser,defaultUser` | Optional |
+| CALYPSO_BASE_URL      | The base URL to use for Calypso.                                                                                     | `http://calypso.localhost:3000`                     | Optional |
+| COBLOCKS_EDGE         | Use the bleeding edge CoBlocks build.                                                                                | `false`                                             | Optional |
+| COOKIES_PATH          | Path on disk to the saved authenticated cookies.                                                                     | `./cookies/`                                        | Optional |
+| GUTENBERG_EDGE        | Use the bleeding edge Gutenberg build.                                                                               | `false`                                             | Optional |
+| HEADLESS              | Configure browser headless/headful mode.                                                                             | `false`                                             | Optional |
+| JETPACK_TARGET        | Which Jetpack install (`wpcom-production`, `wpcom-deployment`, `remote-site`) we are targeting through Calypso.      | `wpcom-production`                                  | Optional |
+| SLOW_MO               | Slow down the execution by given milliseconds.                                                                       | `0`                                                 | Optional |
+| TEST_LOCALES          | The locales to target for I18N testing (see more: [supported locales](../../../packages/i18n-utils/src/locales.ts)). | `en, es, fr`                                        | Optional |
+| TEST_ON_ATOMIC        | Use a user with an Atomic site.                                                                                      | `false`                                             | Optional |
+| VIEWPORT_NAME         | Specify the viewport to be used.                                                                                     | `desktop`                                           | Optional |
+| WOO_BASE_URL          | The base URL to use for WooCommerce.com marketing pages, typically accessed when not logged in.                      | `https://woocommerce.com`                           | Optional |
+| WPCOM_BASE_URL        | The base URL to use for WordPress.com marketing pages, typically accessed when not logged in.                        | `https://wordpress.com`                             | Optional |

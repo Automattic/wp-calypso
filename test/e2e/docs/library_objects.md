@@ -1,8 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./writing_tests.md"><-- Writing tests</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./style_guide.md">Style Guide --></a> </div>
-
-<br><br>
+[← Writing tests](./writing_tests.md) | [Top](../README.md) | [Style Guide →](./style_guide.md)
 
 # Library Objects
 
@@ -26,13 +22,13 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 
 There exists clear distinction between pages and components.
 
-**Components** - these form the smallest unit of functionality in a Page Object Model based library. Components represent functionality that are often embedded across distinct pages. For instance, if the same search bar is embedded on multiple pages, the search bar functionality is best abstracted as a SearchBarComponent.
+**Components** - these form the smallest unit of functionality in a Page Object Model based library. Components represent functionality that is often embedded across distinct pages. For instance, if the same search bar is embedded on multiple pages, the search bar functionality is best abstracted as a SearchBarComponent.
 
 Example: [NotificationComponent](../../../packages/calypso-e2e/src/lib/components/notifications-component.ts)
 
 **Pages** - these are the most common objects in a Page Object Model. Each Page contains methods to interact with the page and any necessary helper methods. Selectors to support the methods should also be located in the file, but as a top-level constant.
 
-There is less clear distinction between Pages and Flows and the general recommendation is to prefer Pages unless Flows absolutely make sense.
+The distinction between Pages and Flows is less clear, and the general recommendation is to prefer Pages unless Flows absolutely make sense.
 
 Example: [EditorPage](../../../packages/calypso-e2e/src/lib/pages/editor-page.ts)
 
@@ -47,13 +43,8 @@ Components represent a sub-portion of the page, and are typically shared across 
 The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
 
 ```typescript
-const selectors = {
-	sidebar: '.sidebar',
-	myHome: '.my-home',
-};
-
 /**
- * JSDoc is expected for Class definitions.
+ * Represents a reusable component for interacting with the sidebar.
  */
 export class SomeComponent {
 	/**
@@ -78,27 +69,22 @@ export class SomeComponent {
 // Then, in a test file, page, or flow...
 
 const someComponent = new SomeComponent( page );
-await someComponent.clickOnMenu();
+await someComponent.clickOnMenu( 'My Home' );
 ```
 
 ---
 
 ## Page
 
-Pages are to be used to represent a page in Calypso. It can hold attributes, class methods to interact with the page and define other helper functions. Pages can also import components and/or other pages to call their methdods.
+Pages are to be used to represent a page in Calypso. It can hold attributes, class methods to interact with the page and define other helper functions. Pages can also import components and/or other pages to call their methods.
 
 A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand. Code reuse is promoted via the following principles:
 
 - **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
-- **maintainability**: if a page changes, update the page object at one spot.
+- **Readability**: named variables and functions are much easier to decipher than series of strings.
 - **readability**: named variables and functions are much easier to decipher than series of strings.
 
 ```typescript
-const selectors = {
-	staticSelector: '.editor-post-title__input',
-	dynamicSelector: (text: string) => `button:has-text("${text}")`,
-};
-
 /**
  * JSDoc is expected for Class definitions.
  */
@@ -124,7 +110,7 @@ export class FormPage {
 		await this.page.waitForLoadState( 'networkidle' );
 
 		// Some tricky section of code
-		await this.page.fill(selectors.staticSelector),
+		await this.page.fill( selectors.staticSelector );
 	}
 }
 
@@ -143,32 +129,5 @@ it( 'Test case', async function () {
 Flows capture a process that spans across multiple pages or components. Its purpose is to abstract a multi-step flow into one call which clearly articulates its intention.
 
 ```typescript
-/**
- * JSDoc is expected for flow class.
- */
-export class SignupFlow {
-	constructor( page: Page ) {
-		// construct here
-	}
 
-	/**
-	 * JSDoc is expected for methods.
-	 */
-	async signup( { user: string, email: string, password: string } ): Promise< void > {
-		const componentA = new ComponentA( page );
-		await componentA.fillSignupForm( user, email, password );
-
-		const pageB = new PageB( page );
-		await pageB.agreeToEULA();
-		await pageB.submit();
-
-		const componentC = new ComponentC( page );
-		await componentC.navigateToDashboard();
-	}
-}
-
-// Then in a test file...
-
-const signupFlow = new SignupFlow( page );
-await signupFlow.signup( ...params );
 ```

@@ -1,6 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./style_guide.md"><-- Style Guide</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./debugging.md">Debugging --></a> </div>
+[← Style Guide](./style_guide.md) | [Top](./../README.md) | [Debugging →](./debugging.md)
 
 # Patterns, Tricks, and Gotchas
 
@@ -47,7 +45,7 @@ You can validate something about a given page under test by leveraging Playwrigh
 
 Because these functions throw an error if the provided selector is not found within the timeout period, they can be used for validation, as the thrown error will fail the test. This, combined with [Playwright's powerful syntax for text-based selectors](https://playwright.dev/docs/selectors#text-selector), can provide an effective way to do wait-safe validation during a test.
 
-If you are doing a simple text validation, you can can include the `waitForSelector` call directly in the testing spec. However, if the selector is more complicated or has logic, it should be included in the POM class in a function prefixed with `validate*`.
+If you are doing a simple text validation, you can include the `waitForSelector` call directly in the testing spec. However, if the selector is more complicated or has logic, it should be included in the POM class in a function prefixed with `validate*`.
 
 Example:
 
@@ -55,9 +53,9 @@ Example:
 // In the POM class...
 async validateActiveTab( name: string ): Promise< void > {
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		this.page.waitForSelector( selectors.mobileActiveTab( name ) );
+		await this.page.waitForSelector( selectors.mobileActiveTab( name ) );
 	} else {
-		this.page.waitForSelector( selectors.desktopActiveTab( name ) );
+		await this.page.waitForSelector( selectors.desktopActiveTab( name ) );
 	}
 }
 
@@ -73,7 +71,7 @@ Good news! Playwright has a lot of [built-in auto-waiting](https://playwright.de
 
 Bad news... Sometimes that's not enough in Calypso.
 
-Because Calypso is a React app and Playwright is blazingly fast, there are rare race conditions that can happen on pages where an elements attributes may not accurately reflect it's immediate actionability. For example, there may be a button in the DOM that is loaded and rendered as part of some on-page asynchronous operation. That button may be visible and not marked as `disabled`, but it event handler isn't registered yet. Playwright can sometimes be so fast it clicks on that button before the handler is registered! In this case, Playwright thinks the element is visible and enabled, and so proceeds with the click. That click is swallowed by the void, and the test then fails.
+Because Calypso is a React app and Playwright is blazingly fast, there are rare race conditions that can happen on pages where an elements attributes may not accurately reflect it's immediate actionability. For example, there may be a button in the DOM that is loaded and rendered as part of some on-page asynchronous operation. That button may be visible and not marked as `disabled`, but its event handler isn't registered yet. Playwright can sometimes be so fast it clicks on that button before the handler is registered! In this case, Playwright thinks the element is visible and enabled, and so proceeds with the click. That click is swallowed by the void, and the test then fails.
 
 So what can you do when this happens??
 
