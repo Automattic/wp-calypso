@@ -52,21 +52,12 @@ export class UserSignupPage {
 		const targetUrl = path ? `start/${ path }` : 'start';
 		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
-
 	/**
-	 * Fill out required information then submit the form to complete the signup.
-	 *
-	 * @param {string} email Email address of the new user.
-	 * @param {string} username Username of the new user.
-	 * @param {string} password Password of the new user.
-	 * @returns Response from the REST API.
+	 * Captures the response from the user creation API endpoint.
+	 * @returns {Promise<NewUserResponse>}
 	 */
-	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
-		await this.page.fill( selectors.emailInput, email );
-		await this.page.fill( selectors.usernameInput, username );
-		await this.page.fill( selectors.passwordInput, password );
-
-		const responsePromise = new Promise< NewUserResponse >( ( resolve, reject ) => {
+	private captureNewUserResponse(): Promise< NewUserResponse > {
+		return new Promise< NewUserResponse >( ( resolve, reject ) => {
 			this.page.route(
 				/.*\/users\/new\?.*/,
 				async ( route ) => {
@@ -84,6 +75,23 @@ export class UserSignupPage {
 				{ times: 1 }
 			);
 		} );
+	}
+
+	/**
+	 * Fill out required information then submit the form to complete the signup.
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @param {string} username Username of the new user.
+	 * @param {string} password Password of the new user.
+	 * @returns Response from the REST API.
+	 */
+	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		await this.page.fill( selectors.emailInput, email );
+		await this.page.fill( selectors.usernameInput, username );
+		await this.page.fill( selectors.passwordInput, password );
+
+		const responsePromise = this.captureNewUserResponse();
+
 		// Trigger the signup and wait for the captured response.
 		await this.page.click( selectors.submitButton );
 		return responsePromise;
@@ -101,24 +109,7 @@ export class UserSignupPage {
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		const responsePromise = new Promise< NewUserResponse >( ( resolve, reject ) => {
-			this.page.route(
-				/.*\/users\/new\?.*/,
-				async ( route ) => {
-					try {
-						const response = await route.fetch();
-						const body = await response.body();
-						// Fulfill the original request
-						await route.fulfill( { response } );
-						// Resolve the promise with the parsed body
-						resolve( JSON.parse( body.toString() ) as NewUserResponse );
-					} catch ( error ) {
-						reject( error );
-					}
-				},
-				{ times: 1 }
-			);
-		} );
+		const responsePromise = this.captureNewUserResponse();
 
 		// Trigger the signup.
 		await this.page.click( selectors.submitButton );
