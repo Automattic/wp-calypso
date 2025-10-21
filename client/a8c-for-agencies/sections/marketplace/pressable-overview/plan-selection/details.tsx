@@ -1,6 +1,5 @@
 import { Button, Tooltip } from '@automattic/components';
 import { formatCurrency, formatNumber, formatNumberCompact } from '@automattic/number-formatters';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -160,7 +159,7 @@ export default function PlanSelectionDetails( {
 							href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 							primary
 						>
-							{ translate( 'Contact support' ) } <Icon icon={ external } size={ 16 } />
+							{ translate( 'Contact support ↗' ) }
 						</Button>
 					</div>
 				) : (
@@ -184,9 +183,8 @@ export default function PlanSelectionDetails( {
 											disabled={ ! isOwner }
 										>
 											{ isOwner
-												? translate( 'Manage in Pressable' )
+												? translate( 'Manage in Pressable ↗' )
 												: translate( 'Managed by agency owner' ) }
-											{ isOwner && <Icon icon={ external } size={ 18 } /> }
 										</Button>
 									</div>
 								) : (
@@ -219,7 +217,7 @@ export default function PlanSelectionDetails( {
 								href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 								primary
 							>
-								{ translate( 'Contact us' ) } <Icon icon={ external } size={ 16 } />
+								{ translate( 'Contact us ↗' ) }
 							</Button>
 						) }
 					</>
@@ -249,7 +247,7 @@ export default function PlanSelectionDetails( {
 					href={ PRESSABLE_CONTACT_LINK }
 					target="_blank"
 				>
-					{ translate( 'Schedule a Demo' ) } <Icon icon={ external } size={ 18 } />
+					{ translate( 'Schedule a Demo ↗' ) }
 				</Button>
 			</div>
 			<div className="pressable-overview-plan-selection__details-hint">

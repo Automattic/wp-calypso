@@ -1,7 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -72,16 +71,14 @@ export default function PremiumPlanSection( {
 							className="premium-plan-section__cta-button"
 							onClick={ onTalkToUsClick }
 							variant="secondary"
-							icon={ external }
-							iconPosition="right"
 							iconSize={ 16 }
 							__next40pxDefaultSize
 							isBusy={ isLoading }
 							disabled={ isLoading }
 						>
 							{ isDesktop
-								? translate( 'Buying for your agency? Talk to us' )
-								: translate( 'For your agency? Talk to us' ) }
+								? translate( 'Buying for your agency? Talk to us ↗' )
+								: translate( 'For your agency? Talk to us ↗' ) }
 						</Button>
 					</div>
 				</div>

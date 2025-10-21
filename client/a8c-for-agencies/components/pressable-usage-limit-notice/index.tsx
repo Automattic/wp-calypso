@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -100,8 +99,7 @@ export const PressableUsageLimitNotice = () => {
 							);
 						} }
 					>
-						{ translate( 'Learn more' ) }
-						<Icon icon={ external } size={ 18 } />
+						{ translate( 'Learn more ↗' ) }
 					</Button>
 				) }
 			</div>

@@ -38,7 +38,7 @@ function SiteDomains() {
 		site,
 	} );
 
-	const actions = useActions( { user, site } );
+	const actions = useActions( { user, sites: [ site ] } );
 
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...SITE_CONTEXT_VIEW,
