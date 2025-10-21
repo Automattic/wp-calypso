@@ -139,3 +139,19 @@ export const sortMessagesByTime = ( messages: Message[] ): Message[] => {
 export const getActiveMessages = ( messages: Message[] ): Message[] => {
 	return messages.filter( ( message ) => ! message.archived );
 };
+
+/**
+ * Filter out context content from messages and remove messages that only have context content
+ * @param messages
+ */
+export const getVisibleMessages = ( messages: Message[] ): Message[] => {
+	return messages
+		.map( ( message ) => ( {
+			...message,
+			// Filter out context content items
+			content: message.content.filter(
+				( content ) => content.type !== 'context'
+			),
+		} ) )
+		.filter( ( message ) => message.content.length > 0 ); // Remove messages with no visible content
+};

@@ -1,25 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import {
-	useClientAbilities,
-	useClientTools,
-	useClientToolsWithAbilities,
-} from '../useClientTools';
+import { useClientToolsWithAbilities } from '../useClientTools';
 
 describe( 'useClientTools hooks', () => {
 	describe( 'validation', () => {
-		it( 'useClientAbilities should throw if executeAbility not provided', () => {
-			const ability = {
-				name: 'test',
-				label: 'Test',
-				description: 'Test ability',
-			};
-
-			expect( () => {
-				// This will throw synchronously during validation
-				useClientAbilities( [ ability ], undefined as any );
-			} ).toThrow( 'executeAbility is required' );
-		} );
-
 		it( 'useClientToolsWithAbilities should throw if neither provided', () => {
 			expect( () => {
 				useClientToolsWithAbilities( {} );
@@ -34,20 +17,6 @@ describe( 'useClientTools hooks', () => {
 					getClientTools: mockGetTools,
 				} );
 			} ).toThrow( 'executeTool is required' );
-		} );
-
-		it( 'useClientToolsWithAbilities should throw if abilities without executeAbility', () => {
-			const ability = {
-				name: 'test',
-				label: 'Test',
-				description: 'Test ability',
-			};
-
-			expect( () => {
-				useClientToolsWithAbilities( {
-					abilities: [ ability ],
-				} );
-			} ).toThrow( 'executeAbility is required' );
 		} );
 	} );
 } );

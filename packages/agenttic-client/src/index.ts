@@ -32,6 +32,7 @@ export type {
 	JsonRpcResponse,
 	JsonRpcError,
 	TaskState,
+	ContentType,
 	TextPart,
 	FilePart,
 	DataPart,
@@ -76,6 +77,7 @@ export type {
 	UseAgentChatReturn,
 	UIMessage,
 	Suggestion,
+	SubmitOptions,
 } from './react/useAgentChat';
 
 // Constants

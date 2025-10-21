@@ -1,12 +1,16 @@
 import type { ContextProvider, Message, ToolProvider } from '../../types/index';
 import { logger } from '../logger';
-import { createContextDataPart, createToolDataPart } from '../core';
+import {
+	createAbilityDataPart,
+	createContextDataPart,
+	createToolDataPart,
+} from '../core';
 
 /**
- * Enhance a message with available tools from the tool provider
+ * Enhance a message with available tools and abilities from the tool provider
  *
  * @param message      - The message to enhance
- * @param toolProvider - Optional tool provider to get tools from
+ * @param toolProvider - Optional tool provider to get tools and abilities from
  * @return Promise resolving to the enhanced message
  */
 export async function enhanceMessageWithTools(
@@ -19,14 +23,29 @@ export async function enhanceMessageWithTools(
 
 	try {
 		const tools = await toolProvider.getAvailableTools();
-		if ( tools.length === 0 ) {
+		const parts = [];
+
+		// Add tool data parts for regular tools
+		if ( tools.length > 0 ) {
+			const toolParts = tools.map( createToolDataPart );
+			parts.push( ...toolParts );
+		}
+
+		// Add ability data parts for WordPress Abilities
+		if ( toolProvider.abilities && toolProvider.abilities.length > 0 ) {
+			const abilityParts = toolProvider.abilities.map(
+				createAbilityDataPart
+			);
+			parts.push( ...abilityParts );
+		}
+
+		if ( parts.length === 0 ) {
 			return message;
 		}
 
-		const toolParts = tools.map( createToolDataPart );
 		return {
 			...message,
-			parts: [ ...message.parts, ...toolParts ],
+			parts: [ ...message.parts, ...parts ],
 		};
 	} catch ( error ) {
 		logger( 'Warning: Failed to get tools: %s', error );

@@ -1,4 +1,6 @@
 import type {
+	Ability,
+	AbilityDataPart,
 	ClientContext,
 	ContextDataPart,
 	JsonRpcId,
@@ -48,12 +50,18 @@ export function createTaskId(): string {
 
 /**
  * Create a simple text part for a message
- * @param text
+ *
+ * @param text     The text content
+ * @param metadata Optional metadata for the text part
  */
-export function createTextPart( text: string ): TextPart {
+export function createTextPart(
+	text: string,
+	metadata?: Record< string, unknown >
+): TextPart {
 	return {
 		type: 'text',
 		text,
+		...( metadata && { metadata } ),
 	};
 }
 
@@ -112,6 +120,26 @@ export function createToolDataPart( tool: Tool ): ToolDataPart {
 			toolName: tool.name,
 			description: tool.description,
 			inputSchema: tool.input_schema,
+		},
+		metadata: {},
+	};
+}
+
+/**
+ * Create an AbilityDataPart from an Ability
+ * @param ability - The WordPress Ability to convert to a data part
+ */
+export function createAbilityDataPart( ability: Ability ): AbilityDataPart {
+	return {
+		type: 'data',
+		data: {
+			name: ability.name,
+			label: ability.label,
+			description: ability.description,
+			category: ability.category,
+			input_schema: ability.input_schema,
+			output_schema: ability.output_schema,
+			meta: ability.meta,
 		},
 		metadata: {},
 	};
@@ -179,16 +207,25 @@ export function createContextDataPart(
 
 /**
  * Create a simple text message with user role
- * @param text
+ *
+ * @param text     The text content
+ * @param metadata Optional metadata. contentType is stored in TextPart.metadata, all other fields in Message.metadata
  */
-export function createTextMessage( text: string ): Message {
+export function createTextMessage(
+	text: string,
+	metadata?: Record< string, unknown >
+): Message {
+	const { contentType, ...messageMetadata } = metadata || {};
+	const partMetadata = contentType ? { contentType } : undefined;
+
 	return {
 		role: 'user',
-		parts: [ createTextPart( text ) ],
+		parts: [ createTextPart( text, partMetadata ) ],
 		kind: 'message',
 		messageId: generateMessageId(),
 		metadata: {
 			timestamp: Date.now(),
+			...messageMetadata,
 		},
 	};
 }

@@ -217,3 +217,76 @@ export const WithError: Story = {
 		error: 'Sorry, I encountered an error while processing your request. Please try again.',
 	},
 };
+
+export const WithContextMessages: Story = {
+	args: {
+		messages: [
+			{
+				id: '1',
+				content: [
+					{
+						type: 'text',
+						text: 'Show me my analytics',
+					},
+				],
+				role: 'user',
+				timestamp: Date.now() - 180000,
+				archived: false,
+				showIcon: true,
+			},
+			{
+				id: '2',
+				content: [
+					{
+						type: 'context', // Context content is hidden from UI
+						text: 'Navigation completed successfully. Analytics page loaded.',
+					},
+				],
+				role: 'user',
+				timestamp: Date.now() - 170000,
+				archived: false,
+				showIcon: true,
+			},
+			{
+				id: '3',
+				content: [
+					{
+						type: 'text',
+						text: "I'll help you view your analytics. Here's what I found:",
+					},
+				],
+				role: 'agent',
+				timestamp: Date.now() - 120000,
+				archived: false,
+				showIcon: true,
+			},
+			{
+				id: '4',
+				content: [
+					{
+						type: 'context', // Context content is hidden from UI
+						text: 'Current page: /analytics, Context: Analytics data loaded successfully',
+					},
+				],
+				role: 'agent',
+				timestamp: Date.now() - 110000,
+				archived: false,
+				showIcon: true,
+			},
+			{
+				id: '5',
+				content: [
+					{
+						type: 'text',
+						text: 'Your store had 142 orders last month with $8,450 in revenue.',
+					},
+				],
+				role: 'agent',
+				timestamp: Date.now() - 60000,
+				archived: false,
+				showIcon: true,
+			},
+		],
+		isProcessing: false,
+	},
+};

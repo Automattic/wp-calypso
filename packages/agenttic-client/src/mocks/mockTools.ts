@@ -1,5 +1,56 @@
+import type { Ability } from '../client/types/index';
+
 export const getClientTools = ( addMessage: ( message: any ) => void ) => {
+	// Define abilities with their callbacks
+	const abilities: Ability[] = [
+		{
+			name: 'demo/get-user-info',
+			label: 'Get User Info',
+			description:
+				'Retrieves information about the current user including name, email, and preferences',
+			category: 'user',
+			input_schema: {
+				type: 'object' as const,
+				properties: {
+					includePreferences: {
+						type: 'boolean' as const,
+						description: 'Whether to include user preferences',
+					},
+				},
+			},
+			output_schema: {
+				type: 'object' as const,
+				properties: {
+					name: { type: 'string' as const },
+					email: { type: 'string' as const },
+					preferences: {
+						type: 'object' as const,
+					},
+				},
+			},
+			meta: {
+				annotations: {
+					instructions:
+						'Use this ability when the user asks about their account information or profile',
+					readonly: true,
+					destructive: false,
+					idempotent: true,
+				},
+			},
+			callback: async ( input: any ) => {
+				return {
+					name: 'Demo User',
+					email: 'demo@example.com',
+					preferences: input.includePreferences
+						? { theme: 'dark', language: 'en' }
+						: undefined,
+				};
+			},
+		},
+	];
+
 	return {
+		abilities,
 		getAvailableTools: async () => [
 			{
 				id: 'display_graph',

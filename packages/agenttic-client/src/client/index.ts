@@ -1,4 +1,5 @@
 import type {
+	Ability,
 	Client,
 	ClientConfig,
 	DataPart,
@@ -27,11 +28,83 @@ import {
 	generateMessageId,
 	processToolExecutionResult,
 } from './utils/index';
+import { logger } from './utils/logger';
 
 /**
  * Default timeout for requests (2 minutes)
  */
 const DEFAULT_TIMEOUT = 120000;
+
+/**
+ * Execute a tool or ability with automatic routing.
+ *
+ * This function checks if the toolId matches any registered abilities
+ * and executes the ability's callback if found. Otherwise, it falls through to the regular
+ * tool execution.
+ *
+ * @param toolProvider - The tool provider containing abilities and executeTool
+ * @param toolId       - The tool/ability ID to execute (may be sanitized)
+ * @param args         - Arguments to pass to the tool/ability
+ * @param messageId    - Optional message ID for context
+ * @param toolCallId   - Optional tool call ID for tracking
+ * @return Promise resolving to tool execution result
+ */
+async function executeToolOrAbility(
+	toolProvider: any,
+	toolId: string,
+	args: any,
+	messageId?: string,
+	toolCallId?: string
+): Promise< any > {
+	// Check abilities first
+	if ( toolProvider.abilities && toolProvider.abilities.length > 0 ) {
+		for ( const ability of toolProvider.abilities as Ability[] ) {
+			// The abilities array stores original names (e.g., "demo/get-user-info"),
+			// but OpenAI function names can't contain "/" so the backend sanitizes them
+			// (e.g., "demo__get_user_info"). so we check both formats because:
+			// 1. Client sends original name in AbilityDataPart
+			// 2. Backend converts to sanitized for OpenAI function signature
+			// 3. OpenAI calls with sanitized name
+			// 4. We receive sanitized toolId back from backend for LLM tool calls
+			const toolName = ability.name
+				.replace( /\//g, '__' )
+				.replace( /-/g, '_' );
+
+			if ( toolId === toolName || toolId === ability.name ) {
+				if ( ability.callback ) {
+					try {
+						const result = await ability.callback( args );
+						return { result, returnToAgent: true };
+					} catch ( error ) {
+						logger(
+							'Error executing ability %s: %O',
+							ability.name,
+							error
+						);
+						return {
+							result: {
+								error:
+									error instanceof Error
+										? error.message
+										: String( error ),
+								success: false,
+							},
+							returnToAgent: true,
+						};
+					}
+				}
+			}
+		}
+	}
+
+	// Not an ability, execute as regular tool
+	return await toolProvider.executeTool(
+		toolId,
+		args,
+		messageId,
+		toolCallId
+	);
+}
 
 /**
  * Map to track tool result promises and their resolved values by tool call ID
@@ -144,7 +217,8 @@ async function executeToolCallBatch(
 		const { toolCallId, toolId, arguments: args } = toolCall.data;
 
 		try {
-			const executionResult = await toolProvider.executeTool(
+			const executionResult = await executeToolOrAbility(
+				toolProvider,
 				toolId as string,
 				args,
 				messageId,
@@ -428,20 +502,19 @@ async function* processAgentResponseStream(
 				const { toolCallId, toolId, arguments: args } = toolCall.data;
 
 				// Execute tool async (fire and forget)
-				toolProvider
-					.executeTool(
-						toolId as string,
-						args,
-						update.status?.message?.messageId,
-						toolCallId as string
-					)
-					.catch( ( error: any ) => {
-						// Log error but don't block stream
-						console.error(
-							`Tool execution failed for ${ toolId }:`,
-							error
-						);
-					} );
+				executeToolOrAbility(
+					toolProvider,
+					toolId as string,
+					args,
+					update.status?.message?.messageId,
+					toolCallId as string
+				).catch( ( error: any ) => {
+					// Log error but don't block stream
+					console.error(
+						`Tool execution failed for ${ toolId }:`,
+						error
+					);
+				} );
 			}
 
 			// Yield running state update with tool results marker
@@ -488,7 +561,8 @@ async function* processAgentResponseStream(
 						arguments: args,
 					} = toolCall.data;
 					try {
-						const executionResult = await toolProvider.executeTool(
+						const executionResult = await executeToolOrAbility(
+							toolProvider,
 							toolId as string,
 							args,
 							update.status?.message?.messageId,
@@ -946,7 +1020,8 @@ export function createClient( config: ClientConfig ): Client {
 					} = toolCall.data;
 
 					try {
-						const executionResult = await toolProvider.executeTool(
+						const executionResult = await executeToolOrAbility(
+							toolProvider,
 							toolId as string,
 							args
 						);

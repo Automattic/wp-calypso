@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useCallback, useEffect, useId, useRef } from 'react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { ArrowUpIcon } from '../icons/ArrowUpIcon';
@@ -73,6 +73,19 @@ export function ChatInput( {
 		useAgentUIContext();
 	const canSubmit =
 		( value.trim() || isProcessing ) && ! disabled && ! isInputOverLimit;
+
+	// Override onKeyDown based on canSubmit
+	// https://linear.app/a8c/issue/DES-306
+	const handleTextareaKeyDown = useCallback(
+		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
+			if ( e.key === 'Enter' && ! e.shiftKey && ! canSubmit ) {
+				e.preventDefault();
+				return;
+			}
+			onKeyDown( e );
+		},
+		[ canSubmit, onKeyDown ]
+	);
 
 	// Helper function to ensure text has ellipsis
 	const addEllipsis = ( text: string ) =>
@@ -221,7 +234,6 @@ export function ChatInput( {
 						isAnimated ? '' : ( formattedPlaceholder as string )
 					}
 					rows={ 1 }
-					disabled={ disabled }
 					aria-label={ __( 'Chat input', 'a8c-agenttic' ) }
 				/>
 			</motion.div>

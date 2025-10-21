@@ -1,12 +1,10 @@
 import type {
 	Client,
 	ClientConfig,
-	DataPart,
 	Message,
 	SendMessageParams,
 	Task,
 	TaskUpdate,
-	TextPart,
 } from '../client/types/index';
 import {
 	clearToolResultPromises,
@@ -304,9 +302,14 @@ function createAgentManager(): AgentManager {
 			const {
 				withHistory = true,
 				abortSignal,
+				metadata,
 				...otherOptions
 			} = options;
 			const { client } = managedAgent;
+
+			const messageMetadata = metadata
+				? ( ( { contentType, ...rest } ) => rest )( metadata as any )
+				: undefined;
 
 			// Create our own abort controller for this stream
 			const abortController = new AbortController();
@@ -352,8 +355,34 @@ function createAgentManager(): AgentManager {
 					resolvedConversationHistory
 				);
 
+			// Add metadata to the message object that will be sent to the agent
+			if ( options.metadata && ! options.message ) {
+				const { contentType: msgContentType, ...msgMetadata } =
+					options.metadata as any;
+
+				// Add contentType to the TextPart metadata if provided
+				if ( msgContentType ) {
+					const lastPart =
+						messageObj.parts[ messageObj.parts.length - 1 ];
+					if ( lastPart && lastPart.type === 'text' ) {
+						lastPart.metadata = {
+							...lastPart.metadata,
+							contentType: msgContentType,
+						};
+					}
+				}
+
+				if ( Object.keys( msgMetadata ).length > 0 ) {
+					messageObj.metadata = {
+						...messageObj.metadata,
+						...msgMetadata,
+					};
+				}
+			}
+
 			// Add user message to local conversation history before streaming (always)
-			const userMessage = createTextMessage( message );
+			// createTextMessage automatically splits contentType into TextPart metadata
+			const userMessage = createTextMessage( message, options.metadata );
 			currentConversationHistory = [
 				...currentConversationHistory,
 				userMessage,
@@ -374,6 +403,10 @@ function createAgentManager(): AgentManager {
 				withHistory,
 				abortSignal: abortController.signal,
 				...otherOptions,
+				...( messageMetadata &&
+					Object.keys( messageMetadata ).length > 0 && {
+						metadata: messageMetadata,
+					} ),
 			} ) ) {
 				// Save tool interactions when input is required (this saves the agent message with tool calls)
 				if (

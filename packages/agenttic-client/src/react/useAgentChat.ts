@@ -5,6 +5,7 @@ import { getAgentManager } from './agentManager';
 import type {
 	AuthProvider,
 	Message as ClientMessage,
+	ContentType,
 	ContextProvider,
 	ToolProvider,
 } from '../client/types/index';
@@ -24,13 +25,18 @@ export interface Suggestion {
 	action?: () => void | Promise< void >;
 }
 
+// Extra options for submitting a message
+export interface SubmitOptions {
+	type?: ContentType; // Content type: 'text' for normal visible text (default), 'context' for hidden context content
+	archived?: boolean;
+}
 
 // UI Message format (simplified for UI components)
 export interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'image_url' | 'component' | 'context';
 		text?: string;
 		image_url?: string;
 		component?: React.ComponentType;
@@ -107,8 +113,12 @@ const transformClientMessageToUI = (
 
 	const content = clientMessage.parts.map( ( part ) => {
 		if ( part.type === 'text' ) {
+			// Check metadata for content type (e.g., 'text', 'context')
+			const contentType =
+				( part.metadata?.contentType as ContentType | undefined ) ||
+				'text';
 			return {
-				type: 'text' as const,
+				type: contentType,
 				text: part.text,
 			};
 		}
@@ -152,7 +162,7 @@ const transformClientMessageToUI = (
 		role: clientMessage.role === 'agent' ? 'agent' : 'user',
 		content,
 		timestamp,
-		archived: false,
+		archived: Boolean( clientMessage.metadata?.archived ),
 		showIcon: clientMessage.role === 'agent',
 		icon: clientMessage.role === 'agent' ? 'assistant' : undefined,
 	};
@@ -218,7 +228,7 @@ export interface UseAgentChatReturn {
 	messages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
-	onSubmit: ( message: string ) => Promise< void >;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	suggestions: Suggestion[];
 
 	// UI management methods
@@ -351,7 +361,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Send message function
 	const onSubmit = useCallback(
-		async ( message: string ) => {
+		async ( message: string, options?: SubmitOptions ) => {
 			if ( ! isValidConfig ) {
 				throw new Error( 'Invalid agent configuration' );
 			}
@@ -363,12 +373,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const messageTimestamp = Date.now();
 
 			// Create user message immediately for UI
+			const contentType = options?.type || 'text';
 			const userMessage: UIMessage = {
 				id: `user-${ messageTimestamp }`,
 				role: 'user',
-				content: [ { type: 'text', text: message } ],
+				content: [ { type: contentType, text: message } ],
 				timestamp: messageTimestamp,
-				archived: false,
+				archived: options?.archived ?? false,
 				showIcon: false,
 			};
 
@@ -385,9 +396,19 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				let streamingMessageId: string | null = null;
 				let finalMessageAdded = false;
 
+				// Pass metadata including archived flag and content type if provided
+				const messageOptions: any = {};
+				if ( options?.archived || options?.type ) {
+					messageOptions.metadata = {
+						...( options?.archived && { archived: true } ),
+						...( options?.type && { contentType: options.type } ),
+					};
+				}
+
 				for await ( const update of agentManager.sendMessageStream(
 					agentKey,
-					message
+					message,
+					messageOptions
 				) ) {
 					// Handle incremental text updates during streaming
 					if ( ! update.final && update.text ) {
@@ -577,8 +598,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			suggestions: [],
 		} ) );
 	}, [] );
-
-
 
 	// Re-transform messages when registrations change
 	useEffect( () => {
