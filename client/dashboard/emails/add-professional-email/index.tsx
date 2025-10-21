@@ -1,10 +1,4 @@
-import { Product } from '@automattic/api-core';
-import {
-	domainQuery,
-	mailboxAccountsQuery,
-	productsQuery,
-	siteByIdQuery,
-} from '@automattic/api-queries';
+import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
@@ -18,6 +12,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { CartActionError } from '../../shopping-cart/errors';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
+import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import {
 	FIELD_NAME,
 	FIELD_FIRSTNAME,
@@ -30,11 +25,11 @@ import {
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { FormFieldNames, MutableFormFieldNames, SupportedEmailProvider } from '../entities/types';
+import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
+import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
-import { getProductSlugForProviderAndInterval } from '../utils/get-product-slug-for-provider-and-interval';
-import { EmailNonDomainOwnerNotice } from './components/email-non-domain-owner-notice';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
@@ -55,38 +50,22 @@ const AddProfessionalEmail = () => {
 	const { user } = useAuth();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
-	// Extract params from the current match for this route
-	const match = router.state.matches[ router.state.matches.length - 1 ];
-	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
-	const { domain: domainName = '' } = params;
 
 	let interval: IntervalLength = router.state.location.search.interval;
 	if ( interval !== 'monthly' && interval !== 'annually' ) {
 		interval = 'annually';
 	}
 
-	const { data: domain, isFetched: isDomainFetched } = useQuery( domainQuery( domainName ) );
+	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { data: products } = useQuery( productsQuery() );
-	const productSlug = getProductSlugForProviderAndInterval( 'titan', interval );
-	const product = products?.[ productSlug ] as Product;
-	// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
-	const { data: site } = useQuery( { ...siteByIdQuery( domain?.blog_id ), enabled: !! domain } );
-	const { data: existingMailboxes, isFetched } = useQuery( {
-		// @ts-expect-error the query is only enabled when domain has a value, so blog_id won't be undefined
-		...mailboxAccountsQuery( domain?.blog_id, domainName ),
-		enabled: !! domain,
-	} );
+	const { product } = useEmailProduct( 'titan', interval );
+	const { data: existingMailboxes, isFetched } = useQuery(
+		mailboxAccountsQuery( domain.blog_id, domainName )
+	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
-
-	useEffect( () => {
-		if ( isDomainFetched && ! domain ) {
-			router.navigate( { to: '/emails' } );
-		}
-	}, [ domain, isDomainFetched, router ] );
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 

@@ -3,7 +3,7 @@ import { MinimalRequestCartProduct, RequestCartProductExtra } from '../../shoppi
 import { MailboxForm } from '../entities/mailbox-form';
 import { SupportedEmailProvider } from '../entities/types';
 import { EmailProperties } from './get-email-product-properties';
-import { isTitanMonthlyProduct } from './is-titan-monthly-product';
+import { isMonthlyEmailProduct } from './is-monthly-email-product';
 
 export interface TitanProductProps {
 	domain?: string;
@@ -76,7 +76,7 @@ const getTitanCartItems = (
 ) => {
 	const { emailProduct, newQuantity, quantity } = mailProperties;
 	const email_users = mailboxes.map( ( mailbox ) => mailbox.getAsCartItem() );
-	const cartItemFunction = isTitanMonthlyProduct( emailProduct )
+	const cartItemFunction = isMonthlyEmailProduct( emailProduct )
 		? titanMailMonthly
 		: titanMailYearly;
 	return cartItemFunction( {

@@ -9,7 +9,7 @@ import { Text } from '../../../components/text';
 import { formatDate } from '../../../utils/datetime';
 import { getTitanExpiryDate } from '../../utils/get-titan-expiry-date';
 import { isDomainEligibleForTitanIntroductoryOffer } from '../../utils/is-domain-eligible-for-titan-introductory-offer';
-import { isTitanMonthlyProduct } from '../../utils/is-titan-monthly-product';
+import { isMonthlyEmailProduct } from '../../utils/is-monthly-email-product';
 import { isUserOnTitanFreeTrial } from '../../utils/is-user-on-titan-free-trial';
 
 const doesAdditionalPriceMatchStandardPrice = (
@@ -127,14 +127,14 @@ export const PricingNotice = ( {
 	product,
 	showEmailPurchaseDisabledMessage,
 }: {
-	domain?: Domain;
+	domain: Domain;
 	product: Product;
 	showEmailPurchaseDisabledMessage: boolean;
 } ) => {
 	const locale = useLocale();
 
-	const purchaseCost = domain?.titan_mail_subscription?.purchase_cost_per_mailbox;
-	const renewalCost = domain?.titan_mail_subscription?.renewal_cost_per_mailbox;
+	const purchaseCost = domain.titan_mail_subscription?.purchase_cost_per_mailbox;
+	const renewalCost = domain.titan_mail_subscription?.renewal_cost_per_mailbox;
 
 	if ( purchaseCost && doesAdditionalPriceMatchStandardPrice( product, purchaseCost ) ) {
 		const placeholders = { price: purchaseCost.text };
@@ -142,7 +142,7 @@ export const PricingNotice = ( {
 		return (
 			<Text as="p">
 				{ createInterpolateElement(
-					isTitanMonthlyProduct( product )
+					isMonthlyEmailProduct( product )
 						? sprintf(
 								// Translators: %(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50).
 								__(
@@ -168,7 +168,7 @@ export const PricingNotice = ( {
 	const priceMessage = getPriceMessage( domain );
 	const priceMessageExplanation = getPriceMessageExplanation( {
 		domain,
-		isMonthlyBilling: isTitanMonthlyProduct( product ),
+		isMonthlyBilling: isMonthlyEmailProduct( product ),
 		mailboxPurchaseCost: purchaseCost,
 		mailboxRenewalCost: renewalCost,
 	} );
@@ -185,7 +185,7 @@ export const PricingNotice = ( {
 	} );
 
 	let endDate = new Date();
-	const hasOffer = domain && isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
+	const hasOffer = isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
 	if ( hasOffer ) {
 		const count = product?.introductory_offer?.interval_count;
 		const unit = product?.introductory_offer?.interval_unit;
@@ -207,7 +207,7 @@ export const PricingNotice = ( {
 
 	let message;
 	if ( hasOffer && ! showEmailPurchaseDisabledMessage ) {
-		if ( isTitanMonthlyProduct( product ) ) {
+		if ( isMonthlyEmailProduct( product ) ) {
 			message = sprintf(
 				// Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
 				__(
