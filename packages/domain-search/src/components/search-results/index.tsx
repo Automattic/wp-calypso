@@ -1,10 +1,16 @@
+import { useState } from 'react';
 import { useDomainSearch } from '../../page/context';
-import { DomainSuggestionsList, DomainSuggestionFilterReset } from '../../ui';
+import {
+	DomainSuggestionsList,
+	DomainSuggestionFilterReset,
+	DomainSuggestionLoadMore,
+} from '../../ui';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 
 const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
 	const { filter, resetFilter } = useDomainSearch();
+	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState( 10 );
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
 	if ( suggestions.length === 0 ) {
@@ -15,12 +21,22 @@ const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
 		return null;
 	}
 
+	const shouldShowMoreResultsButton = numberOfVisibleSuggestions < suggestions.length;
+	const suggestionsToShow = suggestions.slice( 0, numberOfVisibleSuggestions );
+
 	return (
-		<DomainSuggestionsList>
-			{ suggestions.map( ( suggestion ) => (
-				<SearchResultsItem key={ suggestion } domainName={ suggestion } />
-			) ) }
-		</DomainSuggestionsList>
+		<>
+			<DomainSuggestionsList>
+				{ suggestionsToShow.map( ( suggestion ) => (
+					<SearchResultsItem key={ suggestion } domainName={ suggestion } />
+				) ) }
+			</DomainSuggestionsList>
+			{ shouldShowMoreResultsButton && (
+				<DomainSuggestionLoadMore
+					onClick={ () => setnumberOfVisibleSuggestions( numberOfVisibleSuggestions + 10 ) }
+				/>
+			) }
+		</>
 	);
 };
 
