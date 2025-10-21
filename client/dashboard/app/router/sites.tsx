@@ -980,6 +980,13 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 );
 
 export const siteSettingsRepositoriesManageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Configure repository' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteSettingsRepositoriesRoute,
 	path: 'manage/$deploymentId',
 	parseParams: ( params ) => ( {
