@@ -32,7 +32,7 @@ test.describe(
 				console.log( newUserDetails );
 			} );
 
-			await test.step( 'Then I am taken to the editor to publish my first post', async function () {
+			await test.step( 'And I am taken to the editor and publish my first post', async function () {
 				await pageEditor.waitUntilLoaded();
 				await pageEditor.closeWelcomeGuideIfNeeded();
 				await pageEditor.enterTitle( helperData.getRandomPhrase() );
