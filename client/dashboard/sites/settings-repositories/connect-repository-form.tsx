@@ -96,13 +96,12 @@ const RepositorySelector = ( {
 }: DataFormControlProps< ConnectRepositoryFormData > & { shouldRestoreFocus: boolean } ) => {
 	const { id, getValue, description } = field;
 	const currentValue = getValue?.( { item: data } );
+	const comboboxRef = useRef< HTMLDivElement | null >( null );
 	useEffect( () => {
-		if ( shouldRestoreFocus ) {
-			const currentValueLabel = field.elements?.find(
-				( element ) => element.value === currentValue?.toString()
-			)?.label;
-			const selector = `.components-combobox-control input[value="${ currentValueLabel }"]`;
-			const input = document.querySelector< HTMLInputElement >( selector );
+		if ( shouldRestoreFocus && comboboxRef.current ) {
+			const input =
+				comboboxRef.current.querySelector< HTMLInputElement >( 'input[role="combobox"]' );
+
 			if ( input ) {
 				input.focus();
 			}
@@ -119,40 +118,42 @@ const RepositorySelector = ( {
 					{ __( 'Create a new repository' ) }
 				</ExternalLink>
 			</HStack>
-			<ComboboxControl
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				allowReset
-				expandOnFocus={ false }
-				value={ currentValue === '' ? '' : currentValue?.toString() || '' }
-				onChange={ ( value ) => {
-					if ( ! value ) {
-						onChange( { [ id ]: '' } );
-						return;
-					}
-					onChange( { [ id ]: Number( value ) } );
-				} }
-				options={ field.elements || [] }
-				placeholder={ __( 'Select a repository' ) }
-				help={ description }
-				__experimentalRenderItem={ ( { item } ) => {
-					if ( item.private ) {
-						return (
-							<HStack alignment="left" spacing={ 1 }>
-								<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
-								<Icon
-									icon={ lock }
-									size={ 16 }
-									style={ {
-										fill: 'currentColor',
-									} }
-								/>
-							</HStack>
-						);
-					}
-					return <Text style={ { color: 'currentColor' } }>{ item.label }</Text>;
-				} }
-			/>
+			<div ref={ comboboxRef }>
+				<ComboboxControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					allowReset
+					expandOnFocus={ false }
+					value={ currentValue === '' ? '' : currentValue?.toString() || '' }
+					onChange={ ( value ) => {
+						if ( ! value ) {
+							onChange( { [ id ]: '' } );
+							return;
+						}
+						onChange( { [ id ]: Number( value ) } );
+					} }
+					options={ field.elements || [] }
+					placeholder={ __( 'Select a repository' ) }
+					help={ description }
+					__experimentalRenderItem={ ( { item } ) => {
+						if ( item.private ) {
+							return (
+								<HStack alignment="left" spacing={ 1 }>
+									<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
+									<Icon
+										icon={ lock }
+										size={ 16 }
+										style={ {
+											fill: 'currentColor',
+										} }
+									/>
+								</HStack>
+							);
+						}
+						return <Text style={ { color: 'currentColor' } }>{ item.label }</Text>;
+					} }
+				/>
+			</div>
 		</VStack>
 	);
 };
@@ -176,7 +177,7 @@ const GithubAccountSelector = ( {
 		if ( selectRef.current && shouldRestoreFocus ) {
 			selectRef.current.focus();
 		}
-	}, [ selectRef, shouldRestoreFocus ] );
+	}, [ shouldRestoreFocus ] );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -344,10 +345,7 @@ export const ConnectRepositoryForm = ( {
 				shouldRestoreInstallationFocus = true;
 			}
 
-			if (
-				'selectedRepositoryId' in updates &&
-				updates.selectedRepositoryId !== prev.selectedRepositoryId
-			) {
+			if ( 'selectedRepositoryId' in updates ) {
 				shouldRestoreRepositoryFocus = true;
 			}
 
