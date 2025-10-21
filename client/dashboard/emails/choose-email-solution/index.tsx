@@ -39,7 +39,7 @@ import './style.scss';
 export default function ChooseEmailSolution() {
 	const { domain, site } = useDomainFromUrlParam();
 
-	const [ billingInterval, setBillingInterval ] = useState( 'annually' as IntervalLength );
+	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >( 'annually' );
 
 	const { bestAnnualSavings } = useAnnualSavings();
 
