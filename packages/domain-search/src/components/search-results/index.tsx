@@ -13,11 +13,11 @@ const SearchResults = ( {
 	numberOfInitialVisibleSuggestions,
 }: {
 	suggestions: string[];
-	numberOfInitialVisibleSuggestions: number;
+	numberOfInitialVisibleSuggestions?: number;
 } ) => {
 	const { filter, resetFilter } = useDomainSearch();
 	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState(
-		numberOfInitialVisibleSuggestions
+		numberOfInitialVisibleSuggestions ?? 10
 	);
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
