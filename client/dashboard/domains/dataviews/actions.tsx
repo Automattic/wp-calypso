@@ -35,7 +35,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
-
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {
