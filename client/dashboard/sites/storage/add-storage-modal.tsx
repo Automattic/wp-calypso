@@ -87,21 +87,9 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 		};
 	} );
 
-	const selectedOption = selectedTier
-		? {
-				key: String( selectedTier.quantity ),
-				name: sprintf(
-					// translators: %1$d: additional storage amount in GB, %2$s: formatted cost of additional storage.
-					__( '+ %1$d GB Storage (%2$s/month, billed yearly)' ),
-					selectedTier.quantity - currentPurchasedQuantity,
-					formatCurrency(
-						( selectedTier.yearlyPrice - currentPurchasedYearlyPrice ) / 12,
-						selectedTier.currencyCode,
-						{ isSmallestUnit: true }
-					)
-				),
-		  }
-		: selectOptions[ 0 ];
+	const selectedOption =
+		selectOptions.find( ( option ) => option.key === String( selectedTier?.quantity ) ) ||
+		selectOptions[ 0 ];
 
 	const handleSelectChange = ( { selectedItem }: { selectedItem: SelectOption } ) => {
 		const tier = tierOptions.find( ( t ) => String( t.quantity ) === selectedItem.key );
