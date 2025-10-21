@@ -20,6 +20,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info, warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -171,6 +172,7 @@ export default function PaymentMethods() {
 			size="large"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Payment methods' ) }
 					actions={
 						<Button __next40pxDefaultSize variant="primary" href={ addPaymentMethodUrl }>
