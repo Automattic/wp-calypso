@@ -101,27 +101,29 @@ export class UserSignupPage {
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		// Set up a listener to capture the response body as soon as it's available.
 		const responsePromise = new Promise< NewUserResponse >( ( resolve, reject ) => {
-			const responseHandler = async ( response: Response ) => {
-				// The signup response is for a request to the /users/new endpoint.
-				if ( response.url().includes( '/users/new?' ) ) {
+			this.page.route(
+				/.*\/users\/new\?.*/,
+				async ( route ) => {
 					try {
-						// Remove the listener to avoid capturing other responses.
-						this.page.removeListener( 'response', responseHandler );
+						const response = await route.fetch();
 						const body = await response.body();
+						// Fulfill the original request
+						await route.fulfill( { response } );
+						// Resolve the promise with the parsed body
 						resolve( JSON.parse( body.toString() ) as NewUserResponse );
 					} catch ( error ) {
-						// This can happen if the response body is empty or the page closes prematurely.
 						reject( error );
 					}
-				}
-			};
-			this.page.on( 'response', responseHandler );
+				},
+				{ times: 1 }
+			);
 		} );
 
-		// Trigger the signup and wait for the captured response.
+		// Trigger the signup.
 		await this.page.click( selectors.submitButton );
+
+		// Wait for the promise to be resolved by the route handler.
 		return responsePromise;
 	}
 
