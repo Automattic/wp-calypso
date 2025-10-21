@@ -115,9 +115,8 @@ export function DeploymentLogsModalContent( {
 						<VStack spacing={ 2 }>
 							<div
 								style={ {
-									height: '216px',
-									maxHeight: '100%',
-									overflowY: 'auto',
+									maxHeight: '15lh',
+									overflowY: 'scroll',
 									backgroundColor: 'var(--dashboard__text-color)',
 									borderRadius: '4px',
 								} }
