@@ -60,6 +60,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'domain',
 				label: __( 'Site' ),
+				type: 'string',
 				getValue: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				render: ( { item }: { item: SiteWithPluginData } ) => item.URL,
 				enableHiding: false,
@@ -69,6 +70,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'active',
 				label: __( 'Active' ),
+				type: 'boolean',
 				getValue: ( { item }: { item: SiteWithPluginData } ) =>
 					pluginBySiteId.get( item.ID )?.active ?? false,
 				render: ( { item }: { item: SiteWithPluginData } ) => {
@@ -116,6 +118,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'autoupdate',
 				label: __( 'Autoupdate' ),
+				type: 'boolean',
 				getValue: ( { item }: { item: SiteWithPluginData } ) =>
 					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
 				render: ( { item }: { item: SiteWithPluginData } ) => {
@@ -192,9 +195,9 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 							__next40pxDefaultSize
 						>
 							{ sprintf(
-								// translators: %(version) is the new version of the plugin.
-								__( 'Update to version %(version)s', update.new_version ),
-								{ version: update.new_version }
+								// translators: %s is the new version of the plugin.
+								__( 'Update to version %s' ),
+								update.new_version
 							) }
 						</Button>
 					);
