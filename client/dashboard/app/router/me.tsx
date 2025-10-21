@@ -316,7 +316,7 @@ export const taxDetailsRoute = createRoute( {
 	getParentRoute: () => billingRoute,
 	path: '/tax-details',
 } ).lazy( () =>
-	import( '../../me/tax-details' ).then( ( d ) =>
+	import( '../../me/billing-tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
 			component: d.default,
 		} )
