@@ -19,8 +19,8 @@ const SiteMigrationSshInProgressChecklist = ( {
 } ) => {
 	return (
 		<div className="site-migration-ssh-in-progress__checklist-items">
-			{ items.map( ( item ) => (
-				<div className="site-migration-ssh-in-progress__checklist-item">
+			{ items.map( ( item, index ) => (
+				<div key={ index } className="site-migration-ssh-in-progress__checklist-item">
 					<div className="site-migration-ssh-in-progress__checklist-item-icon">
 						<Gridicon
 							icon={ item.icon }
@@ -47,7 +47,7 @@ const SiteMigrationSshInProgress: StepType< {
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
 			<div className="site-migration-ssh-in-progress__progress">
-				<ProgressBar value={ 40 } total={ 100 } compact={ true } isPulsing={ false } />
+				<ProgressBar value={ 40 } total={ 100 } compact isPulsing={ false } />
 			</div>
 
 			<Card className="site-migration-ssh-in-progress__card">
