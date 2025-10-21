@@ -74,14 +74,27 @@ export function ChatInput( {
 	const canSubmit =
 		( value.trim() || isProcessing ) && ! disabled && ! isInputOverLimit;
 
-	// Override onKeyDown based on canSubmit
-	// https://linear.app/a8c/issue/DES-306
 	const handleTextareaKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
-			if ( e.key === 'Enter' && ! e.shiftKey && ! canSubmit ) {
+			// Normalize key to lowercase for easier comparison
+			const key = e.key.toLowerCase();
+
+			// Override onKeyDown based on canSubmit
+			// https://linear.app/a8c/issue/DES-306
+			if ( key === 'enter' && ! e.shiftKey && ! canSubmit ) {
 				e.preventDefault();
 				return;
 			}
+
+			// Stop undo/redo from bubbling to parent (e.g., Gutenberg editor)
+			// Supports: Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z, Ctrl+Y
+			const isUndoOrRedo =
+				( ( e.metaKey || e.ctrlKey ) && key === 'z' ) ||
+				( e.ctrlKey && key === 'y' );
+			if ( isUndoOrRedo ) {
+				e.stopPropagation();
+			}
+
 			onKeyDown( e );
 		},
 		[ canSubmit, onKeyDown ]
