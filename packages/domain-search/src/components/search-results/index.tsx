@@ -8,9 +8,17 @@ import {
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 
-const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
+const SearchResults = ( {
+	suggestions,
+	numberOfInitialVisibleSuggestions,
+}: {
+	suggestions: string[];
+	numberOfInitialVisibleSuggestions: number;
+} ) => {
 	const { filter, resetFilter } = useDomainSearch();
-	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState( 10 );
+	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState(
+		numberOfInitialVisibleSuggestions
+	);
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
 	if ( suggestions.length === 0 ) {

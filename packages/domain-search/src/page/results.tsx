@@ -14,6 +14,7 @@ export const ResultsPage = () => {
 	const { slots, config } = useDomainSearch();
 
 	const { isLoading, featuredSuggestions, regularSuggestions } = useSuggestionsList();
+	const numberOfInitialVisibleSuggestions = 10 - featuredSuggestions.length;
 
 	useRequestTracking();
 
@@ -37,7 +38,10 @@ export const ResultsPage = () => {
 				{ isLoading ? (
 					<SearchResults.Placeholder />
 				) : (
-					<SearchResults suggestions={ regularSuggestions } />
+					<SearchResults
+						suggestions={ regularSuggestions }
+						numberOfInitialVisibleSuggestions={ numberOfInitialVisibleSuggestions }
+					/>
 				) }
 			</VStack>
 			<Cart />
