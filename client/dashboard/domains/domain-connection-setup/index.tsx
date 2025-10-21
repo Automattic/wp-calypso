@@ -45,6 +45,8 @@ export default function DomainConnectionSetup() {
 
 	// Load domain data
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const siteSlug = domain.site_slug;
+	const redesign = config.isEnabled( 'domain-connection-redesign/verification' );
 
 	// Load domain connection setup info
 	const router = useRouter();
@@ -211,12 +213,10 @@ export default function DomainConnectionSetup() {
 		);
 	};
 
-	const redesign = config.isEnabled( 'domain-connection-redesign/verification' );
-
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain connection setup' ) } /> }>
 			{ currentStep.stepType === StepType.VERIFYING && redesign ? (
-				<DomainConnectionVerification domainName={ domainName } />
+				<DomainConnectionVerification domainName={ domainName } siteSlug={ siteSlug } />
 			) : (
 				renderLegacyLayout()
 			) }

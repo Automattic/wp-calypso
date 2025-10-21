@@ -211,6 +211,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
 	},
+	'map-domain-setup-instructions': {
+		link: 'https://wordpress.com/support/domains/connect-existing-domain/',
+		post_id: 2789,
+	},
 	'map-domain-change-name-servers': {
 		link: 'https://wordpress.com/support/domains/connect-existing-domain/#step-2-change-your-domains-name-servers',
 		post_id: 2789,
