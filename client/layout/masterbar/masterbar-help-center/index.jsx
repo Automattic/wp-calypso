@@ -52,7 +52,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		} );
 
 		if ( isExternal ) {
-			window.open( destination, '_blank', 'noopener,noreferrer' );
+			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
