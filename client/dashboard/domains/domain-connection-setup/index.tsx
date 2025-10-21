@@ -4,6 +4,7 @@ import {
 	domainQuery,
 	updateConnectionModeMutation,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -23,11 +24,12 @@ import { isSubdomain } from '../../utils/domain';
 import HelpMessage from './components/help-message';
 import Progress from './components/progress';
 import SwitchSetup from './components/switch-setup';
+import DomainConnectionVerification from './domain-connection-verification';
 import {
 	connectADomainDomainConnectionStepsMap,
 	connectASubdomainDomainConnectionStepsMap,
 } from './steps-map';
-import { DomainConnectionStepsMap, StepName, type StepNameValue } from './types';
+import { DomainConnectionStepsMap, StepName, type StepNameValue, StepType } from './types';
 import { getProgressStepList, isMappingVerificationSuccess, resolveStepName } from './utils';
 
 export default function DomainConnectionSetup() {
@@ -154,56 +156,70 @@ export default function DomainConnectionSetup() {
 		return null;
 	}
 
+	const renderLegacyLayout = () => {
+		return (
+			<>
+				{ currentStep.prev && (
+					<HStack>
+						<Button icon={ isRTL() ? chevronRight : chevronLeft } onClick={ goBack }>
+							{ __( 'Back' ) }
+						</Button>
+					</HStack>
+				) }
+				{ showProgress && (
+					<Progress
+						steps={ getProgressStepList( currentStep.mode, stepsDefinition ) }
+						currentStepName={ currentStepName }
+					/>
+				) }
+				<VStack spacing={ 6 }>
+					<StepsComponent
+						domainName={ domainName }
+						stepName={ currentStepName }
+						stepType={ currentStep.stepType }
+						mode={ currentStep.mode }
+						onNextStep={ setNextStepName }
+						setPage={ setCurrentStepName }
+						domainSetupInfo={ domainConnectionSetupInfo }
+						verificationStatus={ verificationStatus }
+						onVerifyConnection={ verifyConnection }
+						verificationInProgress={ isUpdatingConnectionMode }
+						showErrors={ showErrors === 'true' || showErrors === '1' }
+						isFirstVisit={ isFirstVisit === 'true' || isFirstVisit === '1' }
+						queryError={ queryError }
+						queryErrorDescription={ queryErrorDescription }
+						isOwnershipVerificationFlow={ false }
+					/>
+					<VStack spacing={ 2 }>
+						{ ( currentStep.mode === DomainConnectionSetupMode.SUGGESTED ||
+							currentStep.mode === DomainConnectionSetupMode.ADVANCED ||
+							currentStep.mode === DomainConnectionSetupMode.DONE ) && (
+							<HelpMessage mode={ currentStep.mode } />
+						) }
+						<SwitchSetup
+							currentStepType={ currentStep.stepType }
+							currentMode={ currentStep.mode }
+							supportsDomainConnect={
+								!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting
+							}
+							isSubdomain={ isSubdomain( domainName ) }
+							setPage={ setCurrentStepName }
+						/>
+					</VStack>
+				</VStack>
+			</>
+		);
+	};
+
+	const redesign = config.isEnabled( 'domain-connection-redesign/verification' );
+
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain connection setup' ) } /> }>
-			{ currentStep.prev && (
-				<HStack>
-					<Button icon={ isRTL() ? chevronRight : chevronLeft } onClick={ goBack }>
-						{ __( 'Back' ) }
-					</Button>
-				</HStack>
+			{ currentStep.stepType === StepType.VERIFYING && redesign ? (
+				<DomainConnectionVerification domainName={ domainName } />
+			) : (
+				renderLegacyLayout()
 			) }
-			{ showProgress && (
-				<Progress
-					steps={ getProgressStepList( currentStep.mode, stepsDefinition ) }
-					currentStepName={ currentStepName }
-				/>
-			) }
-			<VStack spacing={ 6 }>
-				<StepsComponent
-					domainName={ domainName }
-					stepName={ currentStepName }
-					stepType={ currentStep.stepType }
-					mode={ currentStep.mode }
-					onNextStep={ setNextStepName }
-					setPage={ setCurrentStepName }
-					domainSetupInfo={ domainConnectionSetupInfo }
-					verificationStatus={ verificationStatus }
-					onVerifyConnection={ verifyConnection }
-					verificationInProgress={ isUpdatingConnectionMode }
-					showErrors={ showErrors === 'true' || showErrors === '1' }
-					isFirstVisit={ isFirstVisit === 'true' || isFirstVisit === '1' }
-					queryError={ queryError }
-					queryErrorDescription={ queryErrorDescription }
-					isOwnershipVerificationFlow={ false }
-				/>
-				<VStack spacing={ 2 }>
-					{ ( currentStep.mode === DomainConnectionSetupMode.SUGGESTED ||
-						currentStep.mode === DomainConnectionSetupMode.ADVANCED ||
-						currentStep.mode === DomainConnectionSetupMode.DONE ) && (
-						<HelpMessage mode={ currentStep.mode } />
-					) }
-					<SwitchSetup
-						currentStepType={ currentStep.stepType }
-						currentMode={ currentStep.mode }
-						supportsDomainConnect={
-							!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting
-						}
-						isSubdomain={ isSubdomain( domainName ) }
-						setPage={ setCurrentStepName }
-					/>
-				</VStack>
-			</VStack>
 		</PageLayout>
 	);
 }

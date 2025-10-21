@@ -1,0 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
+.domain-connection-verification-title {
+	@include body-large;
+}
