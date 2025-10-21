@@ -1,4 +1,4 @@
-import { Page, Locator, Frame, Response } from 'playwright';
+import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
 const selectors = {
@@ -66,23 +66,23 @@ export class UserSignupPage {
 		await this.page.fill( selectors.usernameInput, username );
 		await this.page.fill( selectors.passwordInput, password );
 
-		// Set up a listener to capture the response body as soon as it's available.
 		const responsePromise = new Promise< NewUserResponse >( ( resolve, reject ) => {
-			const responseHandler = async ( response: Response ) => {
-				// The signup response is for a request to the /users/new endpoint.
-				if ( response.url().includes( '/users/new?' ) ) {
+			this.page.route(
+				/.*\/users\/new\?.*/,
+				async ( route ) => {
 					try {
-						// Remove the listener to avoid capturing other responses.
-						this.page.removeListener( 'response', responseHandler );
+						const response = await route.fetch();
 						const body = await response.body();
+						// Fulfill the original request
+						await route.fulfill( { response } );
+						// Resolve the promise with the parsed body
 						resolve( JSON.parse( body.toString() ) as NewUserResponse );
 					} catch ( error ) {
-						// This can happen if the response body is empty or the page closes prematurely.
 						reject( error );
 					}
-				}
-			};
-			this.page.on( 'response', responseHandler );
+				},
+				{ times: 1 }
+			);
 		} );
 		// Trigger the signup and wait for the captured response.
 		await this.page.click( selectors.submitButton );
