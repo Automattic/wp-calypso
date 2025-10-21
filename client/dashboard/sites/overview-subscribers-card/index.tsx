@@ -12,7 +12,7 @@ export default function SubscribersCard( { site }: { site: Site } ) {
 			description={ __( 'Total subscribers.' ) }
 			externalLink={ `https://cloud.jetpack.com/subscribers/${ site.slug }` }
 			intent="success"
-			tracksId="subscribers"
+			tracksId="site-overview-subscribers"
 		/>
 	);
 }

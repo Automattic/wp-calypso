@@ -279,6 +279,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 										false
 									}
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+									isFlexSite={ site?.is_wpcom_flex ?? false }
 									isSimpleSite={ ! site?.is_wpcom_atomic }
 									isHostingOverview={ isHostingOverview }
 									context={ context }

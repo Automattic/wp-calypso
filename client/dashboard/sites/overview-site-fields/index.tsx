@@ -10,7 +10,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import { getSiteDisplayUrl, getSiteFormattedUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
@@ -65,6 +65,18 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 	const wpVersion = getFormattedWordPressVersion( site );
 	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 	const hasSiteRedirect = site.options?.is_redirect;
+
+	if ( isCommerceGarden( site ) ) {
+		return (
+			<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">
+				<Field>
+					<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+						{ getSiteDisplayUrl( site ) }
+					</ExternalLink>
+				</Field>
+			</HStack>
+		);
+	}
 
 	return (
 		<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">

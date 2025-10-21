@@ -135,6 +135,8 @@ export const WorkflowValidationList = ( {
 		<VStack spacing={ 3 }>
 			<SectionHeader
 				title={ __( 'Workflow check' ) }
+				level={ 3 }
+				description={ summaryMessage() }
 				actions={
 					<Button
 						variant="secondary"
@@ -146,8 +148,6 @@ export const WorkflowValidationList = ( {
 					</Button>
 				}
 			/>
-
-			{ summaryMessage() }
 
 			{ ! workflowChecks && ! isFetchingWorkflowChecks && (
 				<Notice status="info" isDismissible={ false }>

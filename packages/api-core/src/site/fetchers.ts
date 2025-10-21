@@ -32,6 +32,10 @@ export const SITE_FIELDS = [
 	'was_migration_trial',
 	'was_hosting_trial',
 	'was_upgraded_from_trial',
+	'is_garden',
+	'garden_name',
+	'garden_partner',
+	'garden_is_provisioned',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );

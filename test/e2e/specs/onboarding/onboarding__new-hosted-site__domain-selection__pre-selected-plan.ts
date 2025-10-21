@@ -8,7 +8,7 @@ import {
 	NewUserResponse,
 	UserSignupPage,
 	CartCheckoutPage,
-	RewrittenDomainSearchComponent,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -53,7 +53,7 @@ describe(
 		} );
 
 		it( 'Select a domain name', async function () {
-			const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
 
 			selectedDomain = await domainSearchComponent.selectFirstSuggestion();

@@ -35,7 +35,7 @@ export default function usePlanBillingDescription( {
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-	const { reflectStorageSelectionInPlanPrices, showStreamlinedBillingDescription } =
+	const { reflectStorageSelectionInPlanPrices, showSimplifiedBillingDescription } =
 		usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
@@ -284,8 +284,8 @@ export default function usePlanBillingDescription( {
 				}
 			);
 		}
-	} else if ( showStreamlinedBillingDescription ) {
-		// When streamlined price experiment is active, use simplified billing description
+	} else if ( showSimplifiedBillingDescription ) {
+		// Use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 			return translate( 'per month, billed every %(months)s months', {
 				args: { months: 12 },

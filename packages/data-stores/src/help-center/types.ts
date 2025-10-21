@@ -10,6 +10,7 @@ export type Location = {
 	key?: string;
 };
 export interface HelpCenterShowOptions {
+	hasPremiumSupport: boolean;
 	hideBackButton: boolean;
 	contextTerm: string;
 }

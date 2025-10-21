@@ -7,8 +7,8 @@ import type { Site } from '@automattic/api-core';
 
 export function getPerformanceCalloutProps() {
 	return {
-		tracksFeatureId: 'performance',
 		feature: HostingFeatures.PERFORMANCE,
+		upsellId: 'site-performance',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Optimize your site’s performance' ),
 		upsellImage: illustrationUrl,

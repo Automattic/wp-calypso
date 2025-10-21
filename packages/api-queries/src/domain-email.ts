@@ -26,6 +26,7 @@ type Variables = {
 	domain: string;
 	mailbox: string;
 	destinations: string[];
+	redirectUrl?: string;
 };
 
 export const addEmailForwarderMutation = () =>
@@ -34,11 +35,13 @@ export const addEmailForwarderMutation = () =>
 			domain,
 			mailbox,
 			destinations,
+			redirectUrl,
 		}: {
 			domain: string;
 			mailbox: string;
 			destinations: string[];
-		} ) => addEmailForwarder( domain, mailbox, destinations ),
+			redirectUrl?: string;
+		} ) => addEmailForwarder( domain, mailbox, destinations, redirectUrl ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
 			queryClient.invalidateQueries( {

@@ -1,15 +1,15 @@
-import { useRouter } from '@tanstack/react-router';
+import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 
 export function PageViewTracker() {
-	const router = useRouter();
+	const routerState = useRouterState();
 	const { recordPageView } = useAnalytics();
 	const lastPath = useRef();
 
 	useEffect( () => {
-		return router.subscribe( 'onResolved', () => {
-			const leafMatch = router.state.matches.at( -1 );
+		if ( routerState.status !== 'pending' ) {
+			const leafMatch = routerState.matches.at( -1 );
 			const basePath = leafMatch?.context?.config?.basePath;
 			const path = ( basePath !== '/' ? basePath : '' ) + leafMatch?.routeId;
 
@@ -17,8 +17,8 @@ export function PageViewTracker() {
 				recordPageView( path, document.title );
 				lastPath.current = path;
 			}
-		} );
-	}, [ router, recordPageView ] );
+		}
+	}, [ routerState.status, routerState.location.href, recordPageView ] );
 
 	return null;
 }

@@ -11,6 +11,9 @@ import type { CalloutProps } from '../../components/callout/types';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 export interface UpsellCalloutProps {
+	site: Site;
+	upsellId: string;
+	upsellFeatureId?: string;
 	upsellIcon?: CalloutProps[ 'icon' ];
 	upsellImage?: CalloutProps[ 'image' ];
 	upsellTitle?: CalloutProps[ 'title' ];
@@ -21,22 +24,16 @@ export interface UpsellCalloutProps {
 
 export default function UpsellCallout( {
 	site,
-	tracksFeatureId,
-	onClick,
+	upsellId,
+	upsellFeatureId,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
 	upsellTitleAs,
 	upsellDescription,
 	feature,
-}: {
-	site: Site;
-	tracksFeatureId: string;
-	onClick?: () => void;
-} & UpsellCalloutProps ) {
+}: UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick?.();
-
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
 		window.location.href = addQueryArgs( '/setup/plan-upgrade/', {
@@ -86,9 +83,10 @@ export default function UpsellCallout( {
 			actions={
 				<UpsellCTAButton
 					text={ __( 'Upgrade plan' ) }
-					tracksId={ tracksFeatureId }
 					variant="primary"
 					onClick={ handleUpsellClick }
+					upsellId={ upsellId }
+					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			}
 		/>

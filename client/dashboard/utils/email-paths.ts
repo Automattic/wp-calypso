@@ -21,7 +21,7 @@ export const emailManagementAllSitesPrefix = '/email/all';
 export const domainsManagementPrefix = '/domains/manage/all/email';
 export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
-function buildQueryString( params: QueryStringParameters | undefined ): string {
+export function buildQueryString( params: QueryStringParameters | undefined ): string {
 	if ( ! params ) {
 		return '';
 	}
@@ -257,3 +257,7 @@ export const getEmailCheckoutPath = (
 
 export const getMailboxesPath = ( siteName?: string ) =>
 	siteName ? `/mailboxes/${ siteName }` : '/mailboxes';
+
+export const getEmailManagementPath: EmailPathUtilityFunction = ( _siteName, domainName ) => {
+	return `/v2/emails?domainName=${ domainName }`;
+};

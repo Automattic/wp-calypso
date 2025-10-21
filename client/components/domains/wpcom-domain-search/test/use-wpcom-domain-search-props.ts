@@ -10,18 +10,22 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
-import { recordUseYourDomainButtonClick } from '../../../domain-search-v2/register-domain-step/analytics.js';
-import { useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
-
-jest.mock( '../../../domain-search-v2/register-domain-step/analytics.js', () => ( {
-	recordUseYourDomainButtonClick: jest.fn().mockReturnValue( {
-		type: 'test',
-	} ),
-} ) );
+import { recordDomainSearchStepSubmit, recordUseYourDomainButtonClick } from '../analytics';
+import { getCartKey, useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
 
 jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),
 	useShoppingCart: jest.fn(),
+} ) );
+
+jest.mock( '../analytics', () => ( {
+	...jest.requireActual( '../analytics' ),
+	recordDomainSearchStepSubmit: jest.fn().mockReturnValue( {
+		type: 'test',
+	} ),
+	recordUseYourDomainButtonClick: jest.fn().mockReturnValue( {
+		type: 'test',
+	} ),
 } ) );
 
 const mockUseShoppingCart = useShoppingCart as jest.MockedFunction< typeof useShoppingCart >;
@@ -467,6 +471,51 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 	} );
 
+	describe( 'cart key', () => {
+		it( 'returns the site id if provided', () => {
+			expect( getCartKey( { isLoggedIn: false, currentSiteId: 123 } ) ).toBe( 123 );
+		} );
+
+		it( 'returns the no-site cart key if the user is logged in and no site id is provided', () => {
+			expect( getCartKey( { isLoggedIn: true, currentSiteId: undefined } ) ).toBe( 'no-site' );
+		} );
+
+		it( 'returns the no-user cart key if the user is not logged in and no site id is provided', () => {
+			expect( getCartKey( { isLoggedIn: false, currentSiteId: undefined } ) ).toBe( 'no-user' );
+		} );
+	} );
+
+	it( 'calls the step submission tracking when onContinue is invoked', () => {
+		mockUseShoppingCart.mockReturnValue(
+			buildShoppingCart( {
+				responseCart: {
+					products: [
+						buildProduct( {
+							meta: 'my-domain.com',
+							product_slug: 'dotcom_domain',
+							is_domain_registration: true,
+						} ),
+					],
+				},
+			} )
+		);
+
+		const onContinue = jest.fn();
+		const { result } = renderHookWithProvider( () =>
+			useWPCOMDomainSearchProps( {
+				...defaultProps,
+				events: { ...defaultProps.events, onContinue },
+			} )
+		);
+
+		result.current.events.onContinue();
+
+		expect( recordDomainSearchStepSubmit ).toHaveBeenCalledWith(
+			{ domain_name: 'my-domain.com' },
+			'analytics-section'
+		);
+	} );
+
 	it( 'calls onContinue with the domain items when events.onContinue is invoked', () => {
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {
@@ -614,6 +663,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		result.current.events.onExternalDomainClick( 'my-domain.com' );
 
 		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'my-domain.com' );
+
 		expect( recordUseYourDomainButtonClick ).toHaveBeenCalledWith(
 			'analytics-section',
 			null,

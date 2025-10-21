@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
@@ -40,6 +40,38 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	);
 
 	const siteId = site.ID;
+
+	// Normalize any incoming ?from/&to query params to Unix seconds (canonical form)
+	useEffect( () => {
+		try {
+			const url = new URL( window.location.href );
+			const searchParams = url.searchParams;
+			let changed = false;
+			let sawParam = false;
+			( [ 'from', 'to' ] as const ).forEach( ( key ) => {
+				const raw = searchParams.get( key );
+				if ( ! raw ) {
+					return;
+				}
+				sawParam = true;
+				const number = Number.parseInt( raw, 10 );
+				if ( ! Number.isFinite( number ) ) {
+					return;
+				}
+				if ( number > 1e12 ) {
+					searchParams.set( key, String( Math.floor( number / 1000 ) ) );
+					changed = true;
+				}
+			} );
+
+			// Only rewrite if we saw a param and actually changed it; preserve hash
+			if ( sawParam && changed ) {
+				history.replaceState( null, '', url.toString() );
+			}
+		} catch ( _e ) {
+			// noop: if URL is not parseable, skip normalization
+		}
+	}, [] );
 
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),

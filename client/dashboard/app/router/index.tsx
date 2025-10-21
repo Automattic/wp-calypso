@@ -8,6 +8,7 @@ import { createOverviewRoutes } from './overview';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import { createSitesCIABRoutes } from './sites-ciab';
 import type { AppConfig } from '../context';
 
 interface RouteContext {
@@ -35,6 +36,10 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.sites ) {
 		children.push( ...createSitesRoutes( config ) );
+	}
+
+	if ( config.supports.sitesCIAB ) {
+		children.push( ...createSitesCIABRoutes( config ) );
 	}
 
 	if ( config.supports.plugins ) {

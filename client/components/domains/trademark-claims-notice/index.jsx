@@ -247,7 +247,10 @@ class TrademarkClaimsNotice extends Component {
 	}
 }
 
-export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = ( domainName ) =>
+export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = (
+	domainName,
+	section = 'domains'
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -257,11 +260,14 @@ export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = ( domainNam
 		),
 		recordTracksEvent( 'calypso_show_trademark_notice_click', {
 			domain_name: domainName,
-			section: 'domains',
+			section,
 		} )
 	);
 
-export const recordChooseAnotherDomainButtonClickInTrademarkNotice = ( domainName ) =>
+export const recordChooseAnotherDomainButtonClickInTrademarkNotice = (
+	domainName,
+	section = 'domains'
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -271,11 +277,14 @@ export const recordChooseAnotherDomainButtonClickInTrademarkNotice = ( domainNam
 		),
 		recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
 			domain_name: domainName,
-			section: 'domains',
+			section,
 		} )
 	);
 
-export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = ( domainName ) =>
+export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = (
+	domainName,
+	section = 'domains'
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -285,7 +294,7 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = ( domainNa
 		),
 		recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
 			domain_name: domainName,
-			section: 'domains',
+			section,
 		} )
 	);
 
