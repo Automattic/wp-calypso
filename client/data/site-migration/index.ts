@@ -1,7 +1,7 @@
 import { SiteExcerptData } from '@automattic/sites';
 
 type MigrationStatus = 'pending' | 'started' | 'completed';
-type MigrationType = 'difm' | 'diy';
+type MigrationType = 'difm' | 'diy' | 'ssh';
 
 export type MigrationStatusInfo = SiteExcerptData[ 'site_migration' ];
 

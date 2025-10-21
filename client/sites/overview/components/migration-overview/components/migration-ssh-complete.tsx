@@ -11,7 +11,6 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 	const sourceSiteDomain = site?.options?.migration_source_site_domain
 		? site?.options?.migration_source_site_domain?.replace( /^https?:\/\/|\/+$/g, '' )
 		: 'yourwebsite.com';
-	const stagingUrl = `${ site.slug }.wpcomstaging.com`;
 
 	const title = translate( 'Welcome to your new home 🎉' );
 	const subTitle = translate(
@@ -43,7 +42,7 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 						components: {
 							previewLink: (
 								<a
-									href={ `https://${ stagingUrl }` }
+									href={ `https://${ site.slug }` }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ handlePreviewClick }
@@ -54,7 +53,7 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 							),
 						},
 						args: {
-							stagingUrl,
+							stagingUrl: site.slug,
 							siteDomain: sourceSiteDomain,
 						},
 					}

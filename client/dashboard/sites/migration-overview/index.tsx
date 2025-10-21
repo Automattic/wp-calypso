@@ -11,6 +11,14 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const migrationState = getSiteMigrationState( site );
 
+	if ( migrationState?.type === 'ssh' ) {
+		return (
+			<PageLayout>
+				<SSHMigrationCompleteContentInfo site={ site } />
+			</PageLayout>
+		);
+	}
+
 	if ( migrationState?.status === 'pending' ) {
 		return (
 			<PageLayout>
@@ -23,14 +31,6 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 		return (
 			<PageLayout size="small">
 				<StartedDIFMContentInfo site={ site } />
-			</PageLayout>
-		);
-	}
-
-	if ( migrationState?.type === 'ssh' ) {
-		return (
-			<PageLayout>
-				<SSHMigrationCompleteContentInfo site={ site } />
 			</PageLayout>
 		);
 	}

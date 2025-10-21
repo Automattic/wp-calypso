@@ -9,16 +9,16 @@ import './style.scss';
 const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	const state = getMigrationState( site?.site_migration );
 
+	if ( state?.type === 'ssh' ) {
+		return <MigrationSSHComplete site={ site } />;
+	}
+
 	if ( state?.status === 'pending' ) {
 		return <MigrationPending site={ site } />;
 	}
 
 	if ( state?.type === 'difm' ) {
 		return <MigrationStartedDIFM site={ site } />;
-	}
-
-	if ( state?.type === 'ssh' ) {
-		return <MigrationSSHComplete site={ site } />;
 	}
 
 	return <MigrationInProgress site={ site } />;

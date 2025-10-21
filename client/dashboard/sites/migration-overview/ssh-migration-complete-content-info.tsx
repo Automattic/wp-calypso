@@ -17,7 +17,6 @@ export function SSHMigrationCompleteContentInfo( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const sourceSiteDomain = site.options?.migration_source_site_domain;
 	const siteDomain = sourceSiteDomain?.replace( /^https?:\/\/|\/+$/g, '' ) || 'yourwebsite.com';
-	const stagingUrl = `${ site.slug }.wpcomstaging.com`;
 
 	const handleGetStarted = () => {
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_get_started_click' );
@@ -51,21 +50,21 @@ export function SSHMigrationCompleteContentInfo( { site }: { site: Site } ) {
 						</Text>
 						<Text as="p" variant="muted">
 							{ createInterpolateElement(
-								/* translators: %1$s is the staging URL, %2$s is the site domain */
 								__(
-									'You can preview your new site at <a>%1$s</a>. Connecting your domain will make it available at %2$s.'
-								)
-									.replace( '%1$s', stagingUrl )
-									.replace( '%2$s', siteDomain ),
+									'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
+								),
 								{
-									a: (
+									siteLink: (
 										<a
-											href={ `https://${ stagingUrl }` }
+											href={ `https://${ site.slug }` }
 											target="_blank"
 											rel="noopener noreferrer"
 											onClick={ handlePreviewClick }
-										/>
+										>
+											<strong>{ site.slug }</strong>
+										</a>
 									),
+									remoteDomain: <>{ siteDomain }</>,
 								}
 							) }
 						</Text>
