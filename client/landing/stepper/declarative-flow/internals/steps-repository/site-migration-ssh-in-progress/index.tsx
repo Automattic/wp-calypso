@@ -18,7 +18,7 @@ const SiteMigrationSshInProgress: StepType< {
 
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
-			<div className="site-migration-ssh-in-progress__progress">
+			<div>
 				<ProgressBar value={ 40 } total={ 100 } compact={ true } isPulsing={ false } />
 			</div>
 
