@@ -22,7 +22,7 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 
 	const { recordTracksEvent } = useAnalytics();
 	const sourceSiteDomain = site.options?.migration_source_site_domain;
-	const siteDomain = sourceSiteDomain?.replace( /^https?:\/\/|\/+$/g, '' ) || 'yourwebsite.com';
+	const siteDomain = sourceSiteDomain?.replace( /^https?:\/\/|\/+$/g, '' );
 
 	const handleGetStarted = () => {
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_get_started_click' );
@@ -38,6 +38,12 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_preview_click' );
 	};
 
+	const previewLink = (
+		<ExternalLink href={ `https://${ site.slug }` } onClick={ handlePreviewClick }>
+			<strong>{ site.slug }</strong>
+		</ExternalLink>
+	);
+
 	return (
 		<PageLayout size="small">
 			<VStack spacing={ 8 }>
@@ -52,22 +58,23 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 						<VStack spacing={ 4 }>
 							<SectionHeader title={ __( 'Connect your domain' ) } level={ 3 } />
 							<Text as="p" variant="muted">
-								{ createInterpolateElement(
-									__(
-										'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
-									),
-									{
-										siteLink: (
-											<ExternalLink
-												href={ `https://${ site.slug }` }
-												onClick={ handlePreviewClick }
-											>
-												<strong>{ site.slug }</strong>
-											</ExternalLink>
+								{ siteDomain &&
+									createInterpolateElement(
+										__(
+											'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
 										),
-										remoteDomain: <>{ siteDomain }</>,
-									}
-								) }
+										{
+											siteLink: previewLink,
+											remoteDomain: <>{ siteDomain }</>,
+										}
+									) }
+								{ ! siteDomain &&
+									createInterpolateElement(
+										__( 'You can preview your new site at <siteLink />.' ),
+										{
+											siteLink: previewLink,
+										}
+									) }
 							</Text>
 							<HStack justify="flex-start" spacing={ 2 }>
 								<ButtonStack justify="flex-start" expanded={ false }>

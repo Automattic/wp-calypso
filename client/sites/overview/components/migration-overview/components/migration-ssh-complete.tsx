@@ -11,7 +11,7 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const sourceSiteDomain = site?.options?.migration_source_site_domain
 		? urlToDomain( site.options.migration_source_site_domain )
-		: 'yourwebsite.com';
+		: null;
 
 	const title = translate( 'Welcome to your new home 🎉' );
 	const subTitle = translate(
@@ -20,7 +20,6 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 
 	const handleGetStarted = () => {
 		recordTracksEvent( 'calypso_migration_ssh_complete_get_started_click' );
-		// TODO: Navigate to domain connection flow
 		window.location.href = `/domains/add/${ site.slug }`;
 	};
 
@@ -33,26 +32,34 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 		recordTracksEvent( 'calypso_migration_ssh_complete_preview_click' );
 	};
 
+	const previewLink = (
+		<ExternalLink href={ `https://${ site.slug }` } onClick={ handlePreviewClick }>
+			<strong>{ site.slug }</strong>
+		</ExternalLink>
+	);
+
 	const cardContent = (
 		<div className="migration-ssh-complete__card-content">
 			<p>
-				{ translate(
-					'You can preview your new site at {{previewLink}}%(stagingUrl)s{{/previewLink}}. Connecting your domain will make it available at %(siteDomain)s.',
-					{
-						components: {
-							previewLink: (
-								<ExternalLink href={ `https://${ site.slug }` } onClick={ handlePreviewClick }>
-									{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-									<span className="external-link-icon">↗</span>
-								</ExternalLink>
-							),
-						},
-						args: {
-							stagingUrl: site.slug,
-							siteDomain: sourceSiteDomain,
-						},
-					}
-				) }
+				{ sourceSiteDomain &&
+					translate(
+						'You can preview your new site at {{previewLink}}%(stagingUrl)s{{/previewLink}}. Connecting your domain will make it available at %(siteDomain)s.',
+						{
+							components: { previewLink },
+							args: {
+								stagingUrl: site.slug,
+								siteDomain: sourceSiteDomain,
+							},
+						}
+					) }
+				{ ! sourceSiteDomain &&
+					translate(
+						'You can preview your new site at {{previewLink}}%(stagingUrl)s{{/previewLink}}.',
+						{
+							components: { previewLink },
+							args: { stagingUrl: site.slug },
+						}
+					) }
 			</p>
 			<div className="migration-ssh-complete__buttons">
 				<HostingHeroButton onClick={ handleGetStarted }>
