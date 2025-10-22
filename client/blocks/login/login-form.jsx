@@ -215,6 +215,8 @@ export class LoginForm extends Component {
 		} );
 		this.onChangeField( event );
 		this.debouncedEmailSuggestion( event.target.value );
+		this.props.cancelSocialAccountConnectLinking();
+		this.props.resetAuthAccountType();
 	};
 
 	onChangeField = ( event ) => {
