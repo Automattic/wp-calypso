@@ -19,7 +19,6 @@ boot( {
 			domains: true,
 			emails: true,
 		},
-		sitesCIAB: false,
 		domains: true,
 		emails: true,
 		themes: true,
@@ -43,4 +42,7 @@ boot( {
 		},
 	},
 	optIn: true,
+	components: {
+		sites: () => import( '../sites' ),
+	},
 } );

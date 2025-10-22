@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { upsell } from '../../components/icons';
+import OverviewCard from '../../components/overview-card';
 import HostingFeatureGate from '../hosting-feature-gate';
-import OverviewCard from '../overview-card';
+import type { OverviewCardProps } from '../../components/overview-card';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
-import type { OverviewCardProps } from '../overview-card';
 
 interface HostingFeatureGatedWithOverviewCardProps
 	extends Omit< HostingFeatureGateProps, 'renderUpsellComponent' | 'renderActivationComponent' > {

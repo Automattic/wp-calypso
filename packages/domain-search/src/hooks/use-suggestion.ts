@@ -1,5 +1,6 @@
 import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
+import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
 import { useDomainSearch } from '../page/context';
 import type { DomainSuggestion } from '@automattic/api-core';
 
@@ -50,31 +51,36 @@ const getPriceRuleForSuggestion = ( {
 export const useSuggestion = ( domainName: string ) => {
 	const { query, queries, config, events } = useDomainSearch();
 
-	const { data: suggestion } = useQuery( {
-		...queries.domainSuggestions( query ),
-		select: ( data ) => {
-			const suggestionPosition = data.findIndex(
-				( suggestion ) => suggestion.domain_name === domainName
-			);
-
-			if ( suggestionPosition === -1 ) {
-				events.onSuggestionNotFound( domainName );
-				throw new Error( `Suggestion not found for domain: ${ domainName }` );
-			}
-
-			const suggestion = data[ suggestionPosition ];
-
-			return {
-				...suggestion,
-				position: suggestionPosition,
-				price_rule: getPriceRuleForSuggestion( { suggestion, priceRules: config.priceRules } ),
-			};
-		},
+	const { data: fqdnAvailability } = useQuery( {
+		...queries.domainAvailability( domainName ),
 	} );
 
-	if ( ! suggestion ) {
-		throw new Error( `Suggestion not found for domain: ${ domainName }` );
+	const { data: suggestions } = useQuery( {
+		...queries.domainSuggestions( query ),
+	} );
+
+	if ( suggestions && fqdnAvailability ) {
+		addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
 	}
 
-	return suggestion;
+	if ( suggestions ) {
+		const suggestionPosition = suggestions.findIndex(
+			( suggestion ) => suggestion.domain_name === domainName
+		);
+
+		if ( suggestionPosition === -1 ) {
+			events.onSuggestionNotFound( domainName );
+			throw new Error( `Suggestion not found for domain: ${ domainName }` );
+		}
+
+		const suggestion = suggestions[ suggestionPosition ];
+
+		return {
+			...suggestion,
+			position: suggestionPosition,
+			price_rule: getPriceRuleForSuggestion( { suggestion, priceRules: config.priceRules } ),
+		};
+	}
+
+	throw new Error( `Suggestion not found for domain: ${ domainName }` );
 };

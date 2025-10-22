@@ -25,7 +25,8 @@ export const partitionSuggestions = ( {
 }: PartitionSuggestionsParams ): PartitionedSuggestions => {
 	const exactMatch = suggestions.find( ( suggestion ) => suggestion === query );
 
-	if ( exactMatch && ! deemphasizedTlds.some( ( tld ) => getTld( exactMatch ) === tld ) ) {
+	// If we have an exact match, we always want to show it at the top, even if the TLD is deemphasized
+	if ( exactMatch ) {
 		return {
 			featuredSuggestions: [
 				{
