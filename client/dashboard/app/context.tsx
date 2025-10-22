@@ -62,7 +62,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	LoadingLogo: undefined,
 	supports: {
 		overview: false,
-		sites: false,
+		sites: false as const,
 		plugins: false,
 		domains: false,
 		emails: false,
@@ -70,7 +70,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		reader: false,
 		help: false,
 		notifications: false,
-		me: false,
+		me: false as const,
 		commandPalette: false,
 	},
 	optIn: false,

@@ -3,8 +3,8 @@ import Root from '../root';
 import type { AuthContextType } from '../auth';
 import type { AppConfig } from '../context';
 
-type RootRouterContext = {
-	auth: AuthContextType;
+export type RootRouterContext = {
+	auth: AuthContextType | undefined;
 	config: AppConfig;
 };
 
