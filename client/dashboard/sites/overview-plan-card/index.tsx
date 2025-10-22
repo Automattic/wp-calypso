@@ -185,7 +185,7 @@ function CommerceGardenPlanCard( {
 } ) {
 	const getBillingLinkProps = () => {
 		if ( site.plan?.is_free ) {
-			return { externalLink: `/plans/${ site.slug }` };
+			return { externalLink: `/setup/woo-hosted/domains?siteSlug=${ site.slug }` };
 		}
 
 		if ( ! isDashboardBackport() ) {
