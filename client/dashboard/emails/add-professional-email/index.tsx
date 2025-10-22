@@ -297,7 +297,13 @@ const AddProfessionalEmail = () => {
 						totalItems={ cartProduct?.extra.new_quantity || 0 }
 						totalPrice={ cartProduct?.item_total || 0 }
 						onContinue={ () => {
-							// TODO: bind to onsubmit
+							const checkoutPath = getEmailCheckoutPath(
+								site?.slug || '',
+								domain.domain,
+								router.state.location.pathname
+							);
+
+							window.location.href = checkoutPath;
 						} }
 						isCartBusy={ isSubmitting }
 					/>
