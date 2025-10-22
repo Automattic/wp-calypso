@@ -29,7 +29,6 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 			site_id: selectedSiteId ?? null,
 			flags: {
 				forward_to_human_support: true,
-				canned_response: false,
 				hide_disclaimer_content: false,
 				show_contact_support_msg: true,
 				show_ai_avatar: true,
