@@ -1,7 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -76,16 +75,14 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 										}
 									) }
 							</Text>
-							<HStack justify="flex-start" spacing={ 2 }>
-								<ButtonStack justify="flex-start" expanded={ false }>
-									<Button variant="primary" onClick={ handleGetStarted }>
-										{ __( 'Get started' ) }
-									</Button>
-									<Button variant="secondary" onClick={ handleDoLater }>
-										{ __( 'I’ll do this later' ) }
-									</Button>
-								</ButtonStack>
-							</HStack>
+							<ButtonStack justify="flex-start" expanded={ false }>
+								<Button variant="primary" onClick={ handleGetStarted }>
+									{ __( 'Get started' ) }
+								</Button>
+								<Button variant="secondary" onClick={ handleDoLater }>
+									{ __( 'I’ll do this later' ) }
+								</Button>
+							</ButtonStack>
 						</VStack>
 					</CardBody>
 				</Card>
