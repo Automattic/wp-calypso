@@ -215,6 +215,7 @@ export class LoginForm extends Component {
 		} );
 		this.onChangeField( event );
 		this.debouncedEmailSuggestion( event.target.value );
+		this.resetLastUsedAuthenticationMethod();
 		this.props.cancelSocialAccountConnectLinking();
 		this.props.resetAuthAccountType();
 	};
@@ -579,6 +580,7 @@ export class LoginForm extends Component {
 			},
 			( error ) => {
 				if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
+					this.resetLastUsedAuthenticationMethod();
 					this.props.createSocialUserFailed( result, error, 'login' );
 					return;
 				}
@@ -653,7 +655,8 @@ export class LoginForm extends Component {
 			lastUsedAuthenticationMethod &&
 			lastUsedAuthenticationMethod !== 'password' &&
 			lastUsedAuthenticationMethod !== 'magic-login' &&
-			isSocialFirst;
+			isSocialFirst &&
+			! linkingSocialUser;
 
 		const signUpUrlWithEmail = addQueryArgs(
 			{
