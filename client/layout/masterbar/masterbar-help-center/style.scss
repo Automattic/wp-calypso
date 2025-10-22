@@ -1,39 +1,44 @@
 .masterbar__item-wrapper.is-menu-panel {
 	.masterbar__item-subitems {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
 		padding: 12px 10px;
-		border-bottom-left-radius: 0 0 4px 4px;
+		border-radius: 0 0 4px 4px;
 
 		button.is-link {
 			padding: 0;
 		}
 
 		svg {
-			color: var(--studio-gray-50);
+			color: var( --studio-gray-50 );
+		}
+	}
+
+	&:hover {
+		.masterbar__item-subitems {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
 		}
 	}
 
 	.masterbar__help-menu-divider {
 		hr {
-			background: var(--color-neutral-5);
+			background: var( --color-neutral-5 );
 			margin: 0;
 		}
 	}
 
-	.masterbar__item-subitems-item:not(.masterbar__help-menu-divider) {
+	.masterbar__item-subitems-item:not( .masterbar__help-menu-divider ) {
 		display: flex;
 		align-items: center;
 		height: 20px;
 
 		&:hover {
 			svg {
-				color: var(--color-link);
+				color: var( --color-link );
 			}
 		}
 	}
-} 
+}
 
 .masterbar__help-menu-item {
 	display: flex;
@@ -51,4 +56,3 @@
 		flex: 1;
 	}
 }
-
