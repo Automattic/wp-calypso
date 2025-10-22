@@ -9,18 +9,13 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft, wordpress } from '@wordpress/icons';
+import { wordpress } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import {
-	addGoogleMailboxRoute,
-	addProfessionalEmailRoute,
-	emailsRoute,
-} from '../../app/router/emails';
+import { addGoogleMailboxRoute, addProfessionalEmailRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PriceDisplay } from '../../components/price-display';
-import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import {
@@ -29,6 +24,7 @@ import {
 	hasTitanMailWithUs,
 	isGoogleWorkspaceSupportedDomain,
 } from '../../utils/domain';
+import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
@@ -146,20 +142,7 @@ export default function ChooseEmailSolution() {
 
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					prefix={
-						<RouterLinkButton
-							className="add-forwarder__back-button"
-							icon={ arrowLeft }
-							iconSize={ 12 }
-							to={ emailsRoute.to }
-						>
-							<Text variant="muted">{ __( 'Emails' ) }</Text>
-						</RouterLinkButton>
-					}
-				/>
-			}
+			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
 			size="small"
 			notices={
 				<>

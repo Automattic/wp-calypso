@@ -4,18 +4,15 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
-import { Text } from '../../components/text';
 import { CartActionError } from '../../shopping-cart/errors';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
+import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import {
 	FIELD_FIRSTNAME,
@@ -186,20 +183,7 @@ const AddProfessionalEmail = () => {
 
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					prefix={
-						<RouterLinkButton
-							className="add-forwarder__back-button"
-							icon={ arrowLeft }
-							iconSize={ 12 }
-							to={ emailsRoute.to }
-						>
-							<Text variant="muted">{ __( 'Emails' ) }</Text>
-						</RouterLinkButton>
-					}
-				/>
-			}
+			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
 			size="small"
 			notices={
 				showEmailPurchaseDisabledMessage && (
