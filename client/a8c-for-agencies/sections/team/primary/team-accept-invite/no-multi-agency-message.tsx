@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import {
 	A4A_OVERVIEW_LINK,
@@ -106,8 +105,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#accepting-an-invitation-a-team-member-s-guide"
 					onClick={ onLearnMoreClick }
 				>
-					{ translate( 'Team members Knowledge Base article' ) }
-					<Icon icon={ external } size={ 18 } />
+					{ translate( 'Team members Knowledge Base article ↗' ) }
 				</Button>
 				<br />
 				<Button
@@ -117,8 +115,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					href={ `${ A4A_OVERVIEW_LINK }#contact-support` }
 					onClick={ onContactSupportClick }
 				>
-					{ translate( 'Contact support' ) }
-					<Icon icon={ external } size={ 18 } />
+					{ translate( 'Contact support ↗' ) }
 				</Button>
 			</StepSection>
 		</>

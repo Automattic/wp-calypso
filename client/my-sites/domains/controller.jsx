@@ -24,7 +24,7 @@ import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isWpcomFlexSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -284,8 +284,9 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
+	const isFlexSite = isWpcomFlexSite( state, siteId );
 
-	if ( siteId && isJetpack ) {
+	if ( siteId && isJetpack && ! isFlexSite ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker

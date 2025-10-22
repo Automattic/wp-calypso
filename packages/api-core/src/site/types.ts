@@ -44,6 +44,7 @@ export interface Site {
 	name: string;
 	URL: string;
 	icon?: {
+		img: string;
 		ico: string;
 	};
 	plan?: SitePlan;
@@ -75,4 +76,8 @@ export interface Site {
 	was_migration_trial: boolean;
 	was_hosting_trial: boolean;
 	was_upgraded_from_trial: boolean;
+	is_garden: boolean;
+	garden_name: string | null;
+	garden_partner: string | null;
+	garden_is_provisioned: boolean | null;
 }

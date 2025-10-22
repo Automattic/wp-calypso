@@ -159,8 +159,16 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					<DateInputs
 						fromStr={ fromStr }
 						toStr={ toStr }
-						onFromChange={ ( value ) => setFromStr( value ) }
-						onToChange={ ( value ) => setToStr( value ) }
+						onFromChange={ ( value ) => {
+							setFromStr( value );
+							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
+							setFromDraft( parsed );
+						} }
+						onToChange={ ( value ) => {
+							setToStr( value );
+							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
+							setToDraft( parsed );
+						} }
 						todayStr={ todayStr }
 						stack
 						fromStyle={ { minWidth: 140 } }
@@ -179,8 +187,16 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					<DateInputs
 						fromStr={ fromStr }
 						toStr={ toStr }
-						onFromChange={ ( v ) => setFromStr( v ) }
-						onToChange={ ( v ) => setToStr( v ) }
+						onFromChange={ ( value ) => {
+							setFromStr( value );
+							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
+							setFromDraft( parsed );
+						} }
+						onToChange={ ( value ) => {
+							setToStr( value );
+							const parsed = value ? parseYmdLocal( value ) || undefined : undefined;
+							setToDraft( parsed );
+						} }
 						todayStr={ todayStr }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }

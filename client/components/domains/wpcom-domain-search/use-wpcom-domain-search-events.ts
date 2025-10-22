@@ -4,9 +4,25 @@ import { DomainSearch, getTld } from '@automattic/domain-search';
 import { useDebounce } from '@wordpress/compose';
 import { type ComponentProps, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { submitDomainStepSelection } from 'calypso/signup/steps/domains/legacy';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
-import { recordUseYourDomainButtonClick } from '../../domain-search-v2/register-domain-step/analytics';
+import {
+	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
+	recordChooseAnotherDomainButtonClickInTrademarkNotice,
+	recordShowTrademarkNoticeButtonClickInTrademarkNotice,
+} from '../trademark-claims-notice';
+import {
+	recordUseYourDomainButtonClick,
+	recordDomainSearchStepSubmit,
+	recordSearchFormView,
+	recordSearchResultsReceive,
+	recordDomainAvailabilityReceive,
+	recordSearchFormSubmit,
+	recordDomainAddAvailabilityPreCheck,
+	recordDomainClickMissing,
+	recordFiltersReset,
+	recordFiltersSubmit,
+	recordShowMoreResults,
+} from './analytics';
 
 export const useWPCOMDomainSearchEvents = ( {
 	vendor,
@@ -33,16 +49,18 @@ export const useWPCOMDomainSearchEvents = ( {
 			);
 			lastSearchTime.current = Date.now();
 
-			recordTracksEvent( 'calypso_domain_search', {
-				search_box_value: query,
-				search_count: searchCount.current,
-				search_vendor: vendor,
-				section: analyticsSection,
-				seconds_from_last_search: searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
-				flow_name: flowName,
-			} );
+			dispatch(
+				recordSearchFormSubmit(
+					query,
+					analyticsSection,
+					searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
+					searchCount.current,
+					vendor,
+					flowName
+				)
+			);
 		},
-		[ vendor, flowName, analyticsSection ]
+		[ vendor, flowName, analyticsSection, dispatch ]
 	);
 
 	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10_000 );
@@ -50,10 +68,7 @@ export const useWPCOMDomainSearchEvents = ( {
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			onPageView: () => {
-				recordTracksEvent( 'calypso_domain_search_pageview', {
-					section: analyticsSection,
-					flow_name: flowName,
-				} );
+				dispatch( recordSearchFormView( analyticsSection, flowName ) );
 			},
 			onQueryChange: ( query ) => {
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
@@ -73,7 +88,7 @@ export const useWPCOMDomainSearchEvents = ( {
 						)
 					);
 					// We only offer free WPCOM subdomains during signup
-					dispatch( submitDomainStepSelection( suggestion, analyticsSection ) );
+					dispatch( recordDomainSearchStepSubmit( suggestion, analyticsSection ) );
 				} else {
 					// Skipped by clicking on "Choose a domain later"
 					const tracksProperties = {
@@ -87,26 +102,30 @@ export const useWPCOMDomainSearchEvents = ( {
 				}
 			},
 			onAddDomainToCart: ( domainName, position, isPremium, rootVendor ) => {
-				recordTracksEvent( 'calypso_domain_search_add_button_click', {
-					domain: domainName,
-					position,
-					section: analyticsSection,
-					is_premium: isPremium,
-					flow_name: flowName,
-					root_vendor: rootVendor,
-				} );
+				dispatch(
+					recordAddDomainButtonClick(
+						domainName,
+						analyticsSection,
+						position,
+						isPremium,
+						flowName,
+						rootVendor
+					)
+				);
 			},
 			onExternalDomainClick: () => {
 				dispatch( recordUseYourDomainButtonClick( analyticsSection, null, flowName ) );
 			},
 			onQueryAvailabilityCheck: ( status, domainName, responseTime ) => {
-				recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
-					available_status: status,
-					flow_name: flowName,
-					response_time: responseTime,
-					search_query: domainName,
-					section: analyticsSection,
-				} );
+				dispatch(
+					recordDomainAvailabilityReceive(
+						domainName,
+						status,
+						responseTime,
+						analyticsSection,
+						flowName
+					)
+				);
 			},
 			onDomainAddAvailabilityPreCheck: ( availability, domainName, rootVendor ) => {
 				const isAvailable = DomainAvailabilityStatus.AVAILABLE === availability.status;
@@ -118,42 +137,31 @@ export const useWPCOMDomainSearchEvents = ( {
 				const unavailableStatus =
 					isAvailable || isAvailableSupportedPremiumDomain ? null : availability.status;
 
-				recordTracksEvent( 'calypso_domain_add_availability_precheck', {
-					domain: domainName,
-					flow_name: flowName,
-					root_vendor: rootVendor,
-					section: analyticsSection,
-					unavailable_status: unavailableStatus,
-				} );
+				dispatch(
+					recordDomainAddAvailabilityPreCheck(
+						domainName,
+						unavailableStatus,
+						analyticsSection,
+						flowName,
+						rootVendor
+					)
+				);
 			},
 			onFilterApplied: ( filter ) => {
 				debouncedDomainSearchEvent( query ?? '' );
-				recordTracksEvent( 'calypso_domain_search_filters_submit', {
-					flow_name: flowName,
-					filters_tlds: filter.tlds?.join( ',' ),
-					filters_exact_sld_matches_only: filter.exactSldMatchesOnly,
-					section: analyticsSection,
-				} );
+				dispatch( recordFiltersSubmit( filter, analyticsSection, flowName ) );
 			},
 			onFilterReset: ( filter, keysToReset ) => {
 				debouncedDomainSearchEvent( query ?? '' );
-				recordTracksEvent( 'calypso_domain_search_filters_reset', {
-					keys_to_reset: keysToReset?.join( ',' ),
-					filter_exact_sld_matches_only: filter.exactSldMatchesOnly,
-					filter_tlds: filter.tlds?.join( ',' ),
-					flow_name: flowName,
-					section: analyticsSection,
-				} );
+				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
+			},
+			onShowMoreResults: ( pageNumber ) => {
+				dispatch( recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName ) );
 			},
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
-				recordTracksEvent( 'calypso_domain_search_results_suggestions_receive', {
-					search_query: query,
-					results: suggestions.length > 0 ? suggestions.join( ';' ) : 'empty_results',
-					response_time_ms: responseTime,
-					result_count: suggestions.length,
-					flow_name: flowName,
-					section: analyticsSection,
-				} );
+				dispatch(
+					recordSearchResultsReceive( query, suggestions, responseTime, analyticsSection, flowName )
+				);
 			},
 			onSuggestionRender: ( suggestion, reason ) => {
 				let resultSuffix = '';
@@ -184,31 +192,33 @@ export const useWPCOMDomainSearchEvents = ( {
 				} );
 			},
 			onSuggestionNotFound: ( domainName ) => {
-				recordTracksEvent( 'calypso_domain_click_missing_from_results', {
-					domain: domainName,
-					section: analyticsSection,
-					flow_name: flowName,
-					search_query: query,
-					type: 'domain',
-				} );
+				dispatch(
+					recordDomainClickMissing( domainName, analyticsSection, flowName, query ?? '', 'domain' )
+				);
 			},
 			onTrademarkClaimsNoticeShown: ( suggestion ) => {
-				recordTracksEvent( 'calypso_show_trademark_notice_click', {
-					domain_name: suggestion.domain_name,
-					section: analyticsSection,
-				} );
+				dispatch(
+					recordShowTrademarkNoticeButtonClickInTrademarkNotice(
+						suggestion.domain_name,
+						analyticsSection
+					)
+				);
 			},
 			onTrademarkClaimsNoticeClosed: ( suggestion ) => {
-				recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
-					domain_name: suggestion.domain_name,
-					section: analyticsSection,
-				} );
+				dispatch(
+					recordChooseAnotherDomainButtonClickInTrademarkNotice(
+						suggestion.domain_name,
+						analyticsSection
+					)
+				);
 			},
 			onTrademarkClaimsNoticeAccepted: ( suggestion ) => {
-				recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
-					domain_name: suggestion.domain_name,
-					section: analyticsSection,
-				} );
+				dispatch(
+					recordAcknowledgeTrademarkButtonClickInTrademarkNotice(
+						suggestion.domain_name,
+						analyticsSection
+					)
+				);
 			},
 		};
 	}, [ flowName, vendor, query, debouncedDomainSearchEvent, analyticsSection, dispatch ] );

@@ -15,7 +15,6 @@ import {
 } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -23,26 +22,22 @@ import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { useAppContext } from '../app/context';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsCard } from '../components/dataviews-card';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
-import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useActions } from './actions';
 import AddNewSite from './add-new-site';
-import { getFields } from './fields';
-import noSitesIllustration from './no-sites-illustration.svg';
-import { SitesNotices } from './notices';
 import {
+	SitesDataViews,
+	useActions,
+	getFields,
 	getView,
 	mergeViews,
-	DEFAULT_LAYOUTS,
 	recordViewChanges,
-	DEFAULT_PER_PAGE_SIZES,
-} from './views';
-import type { ViewSearchParams } from './views';
+} from './dataviews';
+import noSitesIllustration from './no-sites-illustration.svg';
+import { SitesNotices } from './notices';
+import type { ViewSearchParams } from './dataviews/views';
 import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -67,7 +62,6 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 };
 
 export default function Sites() {
-	const { onboardingLinkSourceQueryArg } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
@@ -100,7 +94,6 @@ export default function Sites() {
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const handleViewChange = ( nextView: View ) => {
@@ -152,13 +145,13 @@ export default function Sites() {
 				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
 			} );
 		}
-	}, [ sites ] );
+	}, [ sites, queryClient ] );
 
 	return (
 		<>
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context={ onboardingLinkSourceQueryArg } />
+					<AddNewSite context="sites-dashboard" />
 				</Modal>
 			) }
 			<PageLayout
@@ -178,94 +171,52 @@ export default function Sites() {
 				}
 				notices={ <SitesNotices /> }
 			>
-				<DataViewsCard>
-					<DataViews< Site >
-						getItemId={ ( item ) => item.ID.toString() }
-						data={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						view={ view }
-						isLoading={ isLoadingSites || ( isPlaceholderData && filteredData.length === 0 ) }
-						onChangeView={ handleViewChange }
-						defaultLayouts={ DEFAULT_LAYOUTS }
-						paginationInfo={ paginationInfo }
-						config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
-						empty={
-							<DataViewsEmptyState
-								title={ emptyTitle }
-								description={ emptyDescription }
-								illustration={
-									<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
-								}
-								actions={
-									<>
-										{ view.search && (
-											<Button
-												__next40pxDefaultSize
-												variant="secondary"
-												onClick={ () => {
-													navigate( {
-														search: {
-															...currentSearchParams,
-															view: Object.fromEntries(
-																Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
-															),
-														},
-													} );
-												} }
-											>
-												{ __( 'Clear search' ) }
-											</Button>
-										) }
+				<SitesDataViews
+					view={ view }
+					sites={ sites ?? [] }
+					fields={ fields }
+					actions={ actions }
+					isLoading={ isLoadingSites || ( isPlaceholderData && sites.length === 0 ) }
+					empty={
+						<DataViewsEmptyState
+							title={ emptyTitle }
+							description={ emptyDescription }
+							illustration={
+								<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
+							}
+							actions={
+								<>
+									{ view.search && (
 										<Button
 											__next40pxDefaultSize
-											variant="primary"
-											onClick={ () => setIsModalOpen( true ) }
+											variant="secondary"
+											onClick={ () => {
+												navigate( {
+													search: {
+														...currentSearchParams,
+														view: Object.fromEntries(
+															Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+														),
+													},
+												} );
+											} }
 										>
-											{ __( 'Add new site' ) }
+											{ __( 'Clear search' ) }
 										</Button>
-									</>
-								}
-							/>
-						}
-					/>
-				</DataViewsCard>
-				<GuidedTourContextProvider
-					tourId="hosting-dashboard-tours-sites"
-					isSkippable
-					guidedTours={ [
-						{
-							id: 'hosting-dashboard-tours-sites-switch-layouts',
-							title: __( 'Switch layouts' ),
-							description: __(
-								'Choose between a visual grid view and a more compact table view of your sites.'
-							),
-						},
-						{
-							id: 'hosting-dashboard-tours-sites-appearance-options',
-							title: __( 'Appearance options' ),
-							description: __(
-								'Choose which site properties you see as well as sorting, density, and the number of sites displayed on each page.'
-							),
-						},
-					] }
-				>
-					<GuidedTourStep
-						id="hosting-dashboard-tours-sites-switch-layouts"
-						selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
-						placement="bottom"
-						inline
-						// The footer in DataViews uses a z-index of 2, so we need to apply the same value to ensure our element does not appear behind it.
-						popoverStyle={ { zIndex: 2 } }
-					/>
-					<GuidedTourStep
-						id="hosting-dashboard-tours-sites-appearance-options"
-						selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
-						placement="bottom"
-						inline
-						popoverStyle={ { zIndex: 2 } }
-					/>
-				</GuidedTourContextProvider>
+									) }
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										onClick={ () => setIsModalOpen( true ) }
+									>
+										{ __( 'Add new site' ) }
+									</Button>
+								</>
+							}
+						/>
+					}
+					handleViewChange={ handleViewChange }
+				/>
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *

@@ -42,4 +42,8 @@ boot( {
 			href: '/setup/ai-site-builder',
 		},
 	},
+	optIn: false,
+	components: {
+		sites: () => import( '../sites' ),
+	},
 } );

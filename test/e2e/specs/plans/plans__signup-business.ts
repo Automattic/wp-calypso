@@ -11,7 +11,7 @@ import {
 	CartCheckoutPage,
 	TestAccount,
 	NewSiteResponse,
-	RewrittenDomainSearchComponent,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiDeleteSite } from '../shared';
@@ -47,7 +47,7 @@ describe(
 			} );
 
 			it( 'Skip domain selection', async function () {
-				const signupDomainPage = new RewrittenDomainSearchComponent( page );
+				const signupDomainPage = new DomainSearchComponent( page );
 				await signupDomainPage.search( 'foo' );
 				await signupDomainPage.skipPurchase();
 			} );

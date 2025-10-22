@@ -16,7 +16,7 @@ boot( {
 			logs: false,
 			backups: false,
 			scan: false,
-			domains: false,
+			domains: true,
 			emails: false,
 		},
 		domains: true,
@@ -40,5 +40,9 @@ boot( {
 		withAI: {
 			href: '/setup/ai-site-builder-spec',
 		},
+	},
+	optIn: false,
+	components: {
+		sites: () => import( '../sites-ciab' ),
 	},
 } );

@@ -7,6 +7,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useCountdownTimer from 'calypso/jetpack-cloud/sections/hooks/use-countdown-timer';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import DashboardModalFormFooter from '../../dashboard-modal-form/footer';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
@@ -54,6 +56,8 @@ export default function VerifyContactForm( {
 	sites,
 }: Props ) {
 	const translate = useTranslate();
+
+	const agencyId = useSelector( getActiveAgencyId );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
@@ -113,6 +117,7 @@ export default function VerifyContactForm( {
 		requestVerificationCode( {
 			...getContactInfoPayload( type, contactInfo ),
 			site_ids: sites?.map( ( site ) => site.blog_id ) ?? [],
+			agency_id: agencyId,
 		} );
 	};
 
@@ -130,6 +135,7 @@ export default function VerifyContactForm( {
 			submitVerificationCode( {
 				...getContactInfoPayload( type, contactInfo ),
 				verification_code: Number( contactInfo.verificationCode ),
+				agency_id: agencyId,
 			} );
 		}
 	};
@@ -157,6 +163,7 @@ export default function VerifyContactForm( {
 		resendVerificationCode( {
 			type,
 			value: contactInfoValue,
+			agency_id: agencyId,
 		} );
 		// Disabled because we don't want to re-run this effect when resendingVerificationCode changes
 		// eslint-disable-next-line react-hooks/exhaustive-deps

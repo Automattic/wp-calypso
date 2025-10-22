@@ -13,7 +13,7 @@ import type { SiteScan, Site } from '@automattic/api-core';
 const CARD_PROPS = {
 	icon: shield,
 	title: __( 'Last scan' ),
-	tracksId: 'scan',
+	tracksId: 'site-overview-scan',
 };
 
 function getScanURL( site: Site ) {
@@ -92,7 +92,8 @@ export default function ScanCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.SCAN }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.tracksId }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-scan"
 			upsellHeading={ __( 'Scan for security threats' ) }
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
 			upsellLink={ getScanURL( site ) }

@@ -54,11 +54,11 @@ export function TransferUnlock( {
 	const getErrorMessage = () => {
 		if ( allowSkip ) {
 			return __(
-				"Can't get the domain's lock status. If you've already unlocked it, wait a few minutes and try again."
+				'Can’t get the domain’s lock status. If you’ve already unlocked it, wait a few minutes and try again.'
 			);
 		}
 		return __(
-			"Your domain is still locked. If you've already unlocked it, wait a few minutes and try again."
+			'Your domain is still locked. If you’ve already unlocked it, wait a few minutes and try again.'
 		);
 	};
 
@@ -73,7 +73,7 @@ export function TransferUnlock( {
 		if ( isInitiallyUnknown || allowSkip ) {
 			return __( 'Skip domain lock verification' );
 		}
-		return __( "I've unlocked my domain" );
+		return __( 'I’ve unlocked my domain' );
 	};
 
 	return (
@@ -93,7 +93,7 @@ export function TransferUnlock( {
 								<>{ __( 'Please check that your domain is unlocked.' ) } </>
 							) }
 							{ __(
-								"Domain providers lock domains to prevent unauthorized transfers. You'll need to unlock it on your domain provider's settings page. Some domain providers require you to contact them via their customer support to unlock it."
+								'Domain providers lock domains to prevent unauthorized transfers. You’ll need to unlock it on your domain provider’s settings page. Some domain providers require you to contact them via their customer support to unlock it.'
 							) }
 						</Text>
 						<Text as="p">

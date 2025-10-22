@@ -20,25 +20,25 @@ export default function HostingFeatureGatedWithOverviewCard( {
 	upsellLink = '',
 	...props
 }: HostingFeatureGatedWithOverviewCardProps ) {
-	const { tracksFeatureId } = props;
+	const { upsellId, upsellFeatureId } = props;
 
-	const cardProps = {
+	const cardProps: Partial< OverviewCardProps > = {
 		heading: upsellHeading,
 		icon: upsell,
 		description: upsellDescription,
-		variant: 'upsell' as const,
+		intent: 'upsell' as const,
 		link: upsellLink,
 	};
 
 	return (
 		<HostingFeatureGate
 			{ ...props }
-			renderUpsellComponent={ ( { onClick } ) => (
+			renderUpsellComponent={ () => (
 				<OverviewCard
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
-					tracksId={ tracksFeatureId }
-					onClick={ onClick }
+					tracksId={ upsellId }
+					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			) }
 			renderActivationComponent={ ( { onClick } ) => (

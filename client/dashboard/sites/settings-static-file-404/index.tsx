@@ -93,7 +93,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.STATIC_FILE_404 }
-				tracksFeatureId="settings-static-file-404"
+				upsellId="site-settings-static-file-404"
 			>
 				<Card>
 					<CardBody>

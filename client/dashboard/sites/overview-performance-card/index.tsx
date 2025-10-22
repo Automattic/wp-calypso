@@ -15,7 +15,7 @@ import type { SitePerformanceReport, Site } from '@automattic/api-core';
 const CARD_PROPS = {
 	icon: chartBar,
 	title: __( 'Performance' ),
-	tracksId: 'performance',
+	tracksId: 'site-overview-performance',
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
@@ -163,7 +163,8 @@ export default function PerformanceCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.PERFORMANCE }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.tracksId }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-performance"
 			upsellHeading={ __( 'Test site performance' ) }
 			upsellDescription={ __( 'Get detailed metrics and recommendations.' ) }
 			upsellLink={ getPerformanceUrl( site ) }

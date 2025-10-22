@@ -1,0 +1,17 @@
+.add-new-domain__itemlist {
+	background: #fff;
+	border-radius: 8px;
+}
+
+.add-new-domain__itemlist .components-item {
+	height: 56px;
+	display: flex;
+	padding: 0 24px;
+	font-size: 14px;
+}
+
+.add-new-domain__icon {
+	color: #757575;
+	fill: #757575;
+	stroke: #757575;
+}

@@ -290,7 +290,7 @@ describe( 'EnvironmentSwitcher', () => {
 			await user.click( screen.getByText( 'Add staging site' ) );
 
 			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-				'We are adding your staging site. We will send you an email when it is done.',
+				'Setting up your staging site — this may take a few minutes. We’ll email you when it’s ready.',
 				{ type: 'snackbar' }
 			);
 

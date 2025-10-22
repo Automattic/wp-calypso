@@ -13,7 +13,8 @@ export default function MigrateSiteCard( { site }: { site: Site } ) {
 			description={ __( 'Bring your site to WordPress.com.' ) }
 			externalLink={ addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } ) }
 			intent="upsell"
-			tracksId="migrate-site"
+			tracksId="site-overview-migrate-site"
+			upsellFeatureId="site-migration"
 		/>
 	);
 }

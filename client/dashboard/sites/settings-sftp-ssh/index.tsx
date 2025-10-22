@@ -43,7 +43,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.SFTP }
-				tracksFeatureId="settings-sftp-ssh"
+				upsellId="site-settings-sftp-ssh"
 				upsellIcon={ file }
 				upsellImage={ upsellIllustrationUrl }
 				upsellTitle={ __( 'Direct access to your site’s files' ) }

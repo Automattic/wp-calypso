@@ -134,9 +134,11 @@ export class CartCheckoutPage {
 	 *
 	 * @param {string} cartItemName Name of the item to remove from the cart.
 	 */
-	async removeCartItem( cartItemName: string ): Promise< void > {
+	async removeCartItem( cartItemName: string, closeCheckout: boolean = true ): Promise< void > {
 		await this.page.click( selectors.removeCartItemButton( cartItemName ) );
-		await this.page.click( selectors.modalContinueButton );
+		if ( closeCheckout ) {
+			await this.page.click( selectors.modalContinueButton );
+		}
 	}
 
 	/**

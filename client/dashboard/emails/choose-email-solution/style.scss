@@ -1,0 +1,74 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.dashboard-page-header {
+	align-self: center;
+}
+
+.billing-interval-selector {
+	align-self: center;
+	width: 100%;
+
+	@include break-small {
+		width: 450px;
+	}
+}
+
+.email-providers {
+	border: 1px solid $gray-200;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	background-color: #fff;
+
+	@include break-small {
+		flex-direction: row;
+	}
+}
+
+.email-provider {
+	padding: 20px;
+	justify-content: flex-start;
+
+	&:not(:first-child) {
+		border-top: 1px solid $gray-200;
+
+		@include break-small {
+			border-top: none;
+			border-inline-start: 1px solid $gray-200;
+		}
+	}
+}
+
+.email-provider-logo {
+	margin-inline-start: -2px;
+}
+
+.email-provider-name {
+	font-family: Recoleta, sans-serif;
+}
+
+.email-provider-trial {
+	padding: 0 10px;
+	border-radius: 3px;
+	background-color: #68de86;
+	color: #003008;
+	font-size: 12px;
+	line-height: 20px;
+	font-weight: 500;
+	width: fit-content;
+}
+
+.email-provider-action {
+	justify-content: center;
+}
+
+.email-provider-features {
+	padding: 0;
+	line-height: 28px;
+	list-style: none;
+}
+
+.email-provider-powered-by {
+	width: 145px;
+}
