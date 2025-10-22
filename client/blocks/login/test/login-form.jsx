@@ -23,4 +23,13 @@ describe( 'LoginForm', () => {
 		const btn = screen.getByRole( 'button', { name: /continue$/i } );
 		expect( btn ).toBeInTheDocument();
 	} );
+
+	test( 'displays notice when social account is linking', async () => {
+		render( <LoginForm />, {
+			initialState: { login: { socialAccountLink: { isLinking: true } } },
+		} );
+
+		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
+		expect( notice ).toBeInTheDocument();
+	} );
 } );
