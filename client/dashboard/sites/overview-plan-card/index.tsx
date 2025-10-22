@@ -222,7 +222,7 @@ export default function PlanCard( { site }: { site: Site } ) {
 	}
 
 	if ( isCommerceGarden( site ) ) {
-		return <CommerceGardenPlanCard site={ site } isLoading={ isLoading } />;
+		return <CommerceGardenPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
