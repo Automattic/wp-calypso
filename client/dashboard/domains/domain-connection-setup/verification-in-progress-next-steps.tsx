@@ -49,7 +49,7 @@ export default function VerificationInProgressNextSteps() {
 				<Icon
 					icon={ gridiconToWordPressIcon( item.gridicon ) }
 					size={ 32 }
-					className="dashboard-domain-connection-verification__icon"
+					className="verification-in-progress-next-steps__icon"
 				/>
 			),
 		},

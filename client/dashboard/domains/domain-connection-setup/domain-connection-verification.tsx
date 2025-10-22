@@ -9,8 +9,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { layout, swatch } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { layout, swatch, atSymbol, published } from '@wordpress/icons';
 import './domain-connection-verification.scss';
 import { useHelpCenter } from '../../app/help-center';
 import { siteOverviewRoute } from '../../app/router/sites';
@@ -30,28 +30,52 @@ interface DomainConnectionVerificationProps {
 export default function DomainConnectionVerification( {
 	domainName,
 	siteSlug,
+	status,
 }: DomainConnectionVerificationProps ) {
 	const { setShowHelpCenter } = useHelpCenter();
 
 	return (
-		<Card className="dashboard-domain-connection-verification">
+		<Card
+			className={ `dashboard-domain-connection-verification dashboard-domain-connection-verification--${ status }` }
+		>
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<HStack justify="flex-start">
-						<Icon icon={ swatch } />
+						<Icon
+							className="domain-connection-verification-icon"
+							icon={ status === 'verifying' ? swatch : published }
+						/>
 						<Text className="domain-connection-verification-title" size={ 10 }>
 							{ domainName }
 						</Text>
-						<Badge intent="warning">Verifying</Badge>
+						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>
+							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
+						</Badge>
 					</HStack>
-					<Notice variant="info">
-						{ __(
-							'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-						) }
-					</Notice>
-					<Text size="medium" weight={ 500 }>
-						{ __( 'While you wait' ) }
-					</Text>
+					{ status === 'verifying' && (
+						<>
+							<Notice variant="info">
+								{ __(
+									'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+								) }
+							</Notice>
+							<Text size="medium" weight={ 500 }>
+								{ __( 'While you wait' ) }
+							</Text>
+						</>
+					) }
+					{ status === 'connected' && (
+						<RouterLinkSummaryButton
+							to={ siteOverviewRoute.fullPath }
+							params={ { siteSlug } }
+							/* Translators: %s is the domain name. */
+							title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
+							description={ __(
+								'It’s the URL visitors see in their browser’s address bar. Learn more'
+							) }
+							decoration={ <Icon icon={ atSymbol } /> }
+						/>
+					) }
 					<RouterLinkSummaryButton
 						to={ siteOverviewRoute.fullPath }
 						params={ { siteSlug } }
@@ -61,7 +85,7 @@ export default function DomainConnectionVerification( {
 						) }
 						decoration={ <Icon icon={ layout } /> }
 					/>
-					<VerificationInProgressNextSteps />
+					{ status === 'verifying' && <VerificationInProgressNextSteps /> }
 					<Text size="medium" weight={ 500 }>
 						{ __( 'Need help?' ) }
 					</Text>
