@@ -2,9 +2,12 @@ import { Gridicon, ProgressBar } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { Card, CardBody } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
+import { useSSHMigrationStatus } from './hooks/use-ssh-migration-status';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -40,15 +43,39 @@ const SiteMigrationSshInProgress: StepType< {
 	submits: {
 		action: 'continue';
 	};
-} > = function () {
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
+	const site = useSite();
+	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? null;
+
+	// Poll migration status
+	const { data: migrationStatus } = useSSHMigrationStatus( {
+		siteId,
+		enabled: siteId > 0,
+	} );
+
+	// Handle migration completion or failure
+	useEffect( () => {
+		if ( ! migrationStatus ) {
+			return;
+		}
+
+		if ( migrationStatus.status === 'completed' ) {
+			// Navigate to success/completion screen
+			navigation.submit?.( { action: 'continue' } );
+		} else if ( migrationStatus.status === 'failed' ) {
+			// Could navigate to an error screen or show an error message
+			// For now, we'll let it stay on this screen
+			// You might want to add error handling here
+		}
+	}, [ migrationStatus, navigation ] );
 
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
 			<div className="site-migration-ssh-in-progress__progress">
-				<ProgressBar value={ 40 } total={ 100 } compact isPulsing={ false } />
+				<ProgressBar value={ 40 } total={ 100 } compact isPulsing />
 			</div>
 
 			<Card className="site-migration-ssh-in-progress__card">
