@@ -43,7 +43,7 @@ export async function updateCreditCard(
 ): Promise< StoredPaymentMethod > {
 	return await wpcom.req.post( {
 		path: `/upgrades/${ params.purchaseId }/update-credit-card`,
-		apiVersion: '1.1',
+		apiVersion: '1.2',
 		body: {
 			payment_partner: params.paymentPartner,
 			paygate_token: params.paygateToken,
@@ -63,7 +63,7 @@ export async function updateCreditCard(
 export async function assignPaymentMethod( params: AssignPaymentMethodParams ): Promise< unknown > {
 	return await wpcom.req.post( {
 		path: `/upgrades/${ params.subscriptionId }/assign-payment-method`,
-		apiVersion: '1',
+		apiVersion: '1.2',
 		body: {
 			stored_details_id: params.storedDetailsId,
 		},
