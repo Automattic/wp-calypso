@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { Accordion } from './components/accordion';
@@ -21,6 +22,8 @@ const SiteMigrationSshShareAccess: StepType< {
 		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
 	};
 } > = function ( { navigation } ) {
+	const site = useSite();
+	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 	const host = queryParams.get( 'host' ) ?? undefined;
@@ -29,7 +32,19 @@ const SiteMigrationSshShareAccess: StepType< {
 		navigation.submit?.( { destination: 'no-ssh-access' } );
 	}, [ navigation ] );
 
-	const { steps } = useSteps( { host, onNoSSHAccess: handleNoSSHAccess } );
+	// Steps orchestration
+	const onCompleteSteps = () => {
+		navigation.submit?.( { destination: 'migration-started' } );
+	};
+
+	const { steps } = useSteps( {
+		fromUrl,
+		siteId,
+		siteName: site?.name ?? '',
+		onComplete: onCompleteSteps,
+		host,
+		onNoSSHAccess: handleNoSSHAccess,
+	} );
 
 	const handleContinue = () => {
 		navigation.submit?.( { destination: 'migration-started' } );

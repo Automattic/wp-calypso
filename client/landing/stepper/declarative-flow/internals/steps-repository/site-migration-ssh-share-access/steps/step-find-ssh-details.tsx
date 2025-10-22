@@ -1,22 +1,21 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
-import { HelpLink } from './help-link';
-import { getSSHSupportUrl, getSSHHostDisplayName } from './ssh-host-support-urls';
+import { FC, ReactNode } from 'react';
 
 interface StepFindSSHDetailsProps {
 	onSuccess: () => void;
 	onNoSSHAccess?: () => void;
-	host?: string;
+	hostDisplayName?: string;
+	helpLink: ReactNode;
 }
 
 export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 	onSuccess,
 	onNoSSHAccess,
-	host,
+	hostDisplayName,
+	helpLink,
 } ) => {
 	const translate = useTranslate();
-	const hostDisplayName = getSSHHostDisplayName( host );
 
 	const instructionText = hostDisplayName
 		? translate(
@@ -32,7 +31,7 @@ export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 	return (
 		<div>
 			<p>{ instructionText }</p>
-			<HelpLink href={ getSSHSupportUrl( host ) } />
+			{ helpLink }
 			<div className="migration-site-ssh__find-ssh-details-buttons">
 				<Button variant="primary" onClick={ onSuccess }>
 					{ translate( 'I found my SSH details' ) }

@@ -112,6 +112,30 @@
 	font-size: 0.875rem;
 }
 
+.migration-site-ssh__step-add-server-address-form {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.migration-site-ssh__step-add-server-address-port-field {
+	flex: 2;
+}
+
+.migration-site-ssh__step-add-server-address-server-address-field {
+	flex: 4;
+}
+
+.migration-site-ssh__step-add-server-address-label {
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.migration-site-ssh__step-add-server-address-note {
+	margin: 0.5rem 0 1rem 0;
+	color: var(--color-neutral-70);
+}
+
 .migration-site-ssh__continue-button {
 	margin-left: 2.5rem;
 	button {
