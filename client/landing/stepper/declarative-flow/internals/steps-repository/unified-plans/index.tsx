@@ -30,7 +30,7 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
-import { getIntervalType, getVisualSplitPlansIntent } from './util';
+import { getIntervalType, getVisualSplitPlansIntent, SupportedIntervalTypes } from './util';
 import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -90,7 +90,7 @@ type ProvidedDependencies = {
 const PlansStepAdaptor: StepType< {
 	submits: ProvidedDependencies;
 	accepts: {
-		displayedIntervals?: [];
+		displayedIntervals?: SupportedIntervalTypes[];
 		isInSignup?: boolean;
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
