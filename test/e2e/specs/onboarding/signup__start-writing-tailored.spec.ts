@@ -1,5 +1,6 @@
-import { NewUserResponse } from '@automattic/calypso-e2e';
+import { NewTestUserDetails, NewUserResponse, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
+import { apiCloseAccount } from '../shared';
 
 test.describe(
 	'Signup: Tailored Start Writing Flow',
@@ -8,145 +9,146 @@ test.describe(
 		annotation: { type: 'flowchart', description: 'TBA' },
 	},
 	() => {
+		let newUserDetailsStartWriting: NewUserResponse;
+		let testUserStartWriting: NewTestUserDetails;
+
 		test( 'One: As a new WordPress.com blogger I can sign up for a new free site and start writing straight away', async ( {
-			page,
+			flowStartWriting,
 			helperData,
-			pageUserSignUp,
-			pageEditor,
 		} ) => {
-			const testUser = helperData.getNewTestUser( {
+			testUserStartWriting = helperData.getNewTestUser( {
 				usernamePrefix: 'start_writing',
 			} );
-			let newUserDetails: NewUserResponse;
 
 			await test.step( 'When I visit the /setup/start-writing page', async function () {
-				await page.goto( helperData.getCalypsoURL( '/setup/start-writing' ) );
+				await flowStartWriting.visit();
 			} );
 
 			await test.step( 'Then I see the Create your account page', async function () {
-				await expect( pageUserSignUp.createYourAccountHeading ).toBeVisible();
+				await expect( flowStartWriting.userSignupPage.createYourAccountHeading ).toBeVisible();
 			} );
 
 			await test.step( 'When I sign up with my email', async function () {
-				newUserDetails = await pageUserSignUp.signupWithEmail( testUser.email );
-				console.log( newUserDetails );
+				newUserDetailsStartWriting = await flowStartWriting.userSignupPage.signupWithEmail(
+					testUserStartWriting.email
+				);
 			} );
 
-			await test.step( 'And I am taken to the editor and publish my first post', async function () {
-				await pageEditor.waitUntilLoaded();
-				await pageEditor.closeWelcomeGuideIfNeeded();
-				await pageEditor.enterTitle( helperData.getRandomPhrase() );
-				await pageEditor.publish();
-				await page.getByText( "Your blog's almost ready!" ).waitFor();
+			await test.step( 'Then I am taken to the editor', async function () {
+				await flowStartWriting.editorPage.waitUntilLoaded();
+				await flowStartWriting.editorPage.closeWelcomeGuideIfNeeded();
 			} );
+
+			await test.step( 'When I publish my first post', async function () {
+				await flowStartWriting.editorPage.enterTitle( helperData.getRandomPhrase() );
+				await flowStartWriting.editorPage.publish();
+			} );
+
+			await test.step( 'Then I see see "Your blog\'s almost ready!" message', async function () {
+				await expect( flowStartWriting.blogsAlmostReadyHeading ).toBeVisible();
+				await expect( flowStartWriting.keepUpMomentumText ).toBeVisible();
+			} );
+
+			await test.step( 'And I see "Write your first post" as Completed', async function () {
+				await expect( flowStartWriting.completedWriteFirstPostItem ).toBeVisible();
+			} );
+
+			await test.step( 'And I see my progress as 1/5', async function () {
+				await expect( flowStartWriting.progressBar ).toHaveText( '1/5' );
+			} );
+
+			await test.step( 'When I add my blog name and description', async function () {
+				await flowStartWriting.selectToNameYourBlogLink.click();
+				await flowStartWriting.blogNameInput.fill( 'Cacti Chronicles' );
+				await flowStartWriting.blogDescriptionInput.fill( 'The Call of the Desert' );
+				await flowStartWriting.saveBlogNameAndContinueButton.click();
+			} );
+
+			await test.step( 'Then I see see "Your blog\'s almost ready!" message', async function () {
+				await expect( flowStartWriting.blogsAlmostReadyHeading ).toBeVisible();
+				await expect( flowStartWriting.keepUpMomentumText ).toBeVisible();
+			} );
+
+			await test.step( 'And I see "Name your blog" as Completed', async function () {
+				await expect( flowStartWriting.completedNameYourBlogItem ).toBeVisible();
+			} );
+
+			await test.step( 'And I see my progress as 2/5', async function () {
+				await expect( flowStartWriting.progressBar ).toHaveText( '2/5' );
+			} );
+
+			await test.step( 'When I search for a domain and skip the domain selection step', async function () {
+				await flowStartWriting.selectToChooseDomainLink.click();
+				await flowStartWriting.domainSearchComponent.search( 'cactus' );
+				await flowStartWriting.domainSearchComponent.skipPurchase();
+			} );
+
+			await test.step( 'Then I see see "Your blog\'s almost ready!" message', async function () {
+				await expect( flowStartWriting.blogsAlmostReadyHeading ).toBeVisible();
+				await expect( flowStartWriting.keepUpMomentumText ).toBeVisible();
+			} );
+
+			await test.step( 'And I see "Choose a domain" as Completed', async function () {
+				await expect( flowStartWriting.completedChooseADomainItem ).toBeVisible();
+			} );
+
+			await test.step( 'And I see my progress as 3/5', async function () {
+				await expect( flowStartWriting.progressBar ).toHaveText( '3/5' );
+			} );
+
+			await test.step( 'When I select a plan', async function () {
+				await flowStartWriting.selectToChoosePlanLink.click();
+				await flowStartWriting.startWithFreePlanButton.click();
+			} );
+
+			await test.step( 'Then I see see "Your blog\'s almost ready!" message', async function () {
+				await expect( flowStartWriting.blogsAlmostReadyHeading ).toBeVisible();
+				await expect( flowStartWriting.keepUpMomentumText ).toBeVisible();
+			} );
+
+			await test.step( 'And I see "Choose a plan" as Completed', async function () {
+				await expect( flowStartWriting.completedChooseAPlanItem ).toBeVisible();
+			} );
+
+			await test.step( 'And I see my progress as 4/5', async function () {
+				await expect( flowStartWriting.progressBar ).toHaveText( '4/5' );
+			} );
+
+			await test.step( 'When I launch my blog', async function () {
+				await flowStartWriting.launchYourBlogButton.click();
+			} );
+
+			await test.step( 'Then I see see "Your blog\'s ready!" message', async function () {
+				await expect( flowStartWriting.yourBlogsReadyHeading ).toBeVisible( { timeout: 20000 } );
+				await expect( flowStartWriting.nowItsTimeToConnectYourSocialAccountsText ).toBeVisible();
+			} );
+
+			await test.step( 'When I choose "Connect to social"', async function () {
+				await flowStartWriting.connectToSocialButton.click();
+			} );
+
+			await test.step( 'Then I see I am taken to the Jetpack Social page', async function () {
+				await expect( flowStartWriting.jetpackSocialPageHeading ).toBeVisible();
+				await expect( flowStartWriting.connectAccountsButton ).toBeVisible();
+			} );
+		} );
+
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			if ( newUserDetailsStartWriting ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: testUserStartWriting.username,
+						password: testUserStartWriting.password,
+					},
+					newUserDetailsStartWriting.body.bearer_token
+				);
+
+				await apiCloseAccount( restAPIClient, {
+					userID: newUserDetailsStartWriting.body.user_id,
+					username: newUserDetailsStartWriting.body.username,
+					email: testUserStartWriting.email,
+				} );
+			}
 		} );
 	}
 );
-
-// /**
-//  * @group calypso-release
-//  */
-// import {
-// 	DataHelper,
-// 	ElementHelper,
-// 	UserSignupPage,
-// 	BrowserManager,
-// 	NewUserResponse,
-// 	RestAPIClient,
-// 	EditorPage,
-// 	DomainSearchComponent,
-// } from '@automattic/calypso-e2e';
-// import { Page, Browser } from 'playwright';
-// import { apiCloseAccount } from '../shared';
-
-// declare const browser: Browser;
-
-// describe( 'Signup: Tailored Start Writing Flow', () => {
-// 	const testUser = DataHelper.getNewTestUser( {
-// 		usernamePrefix: 'start_writing',
-// 	} );
-// 	let page: Page;
-// 	let newUserDetails: NewUserResponse;
-
-// 	beforeAll( async () => {
-// 		page = await browser.newPage();
-// 		await BrowserManager.setStoreCookie( page, { currency: 'EUR' } );
-// 	} );
-
-// 	it( 'Navigate to /setup/start-writing', async function () {
-// 		await page.goto( DataHelper.getCalypsoURL( '/setup/start-writing' ) );
-// 	} );
-
-// 	it( 'Sign up with email', async function () {
-// 		const userSignupPage = new UserSignupPage( page );
-// 		newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
-// 	} );
-
-// 	it( 'Publish first post', async function () {
-// 		const editorPage = new EditorPage( page );
-// 		await editorPage.waitUntilLoaded();
-// 		await editorPage.closeWelcomeGuideIfNeeded();
-// 		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
-// 		await editorPage.publish();
-// 		await page.getByText( "Your blog's almost ready!" ).waitFor();
-// 	} );
-
-// 	it( 'Add blog name and description', async function () {
-// 		await page.getByRole( 'link', { name: 'Select to name your blog' } ).click();
-
-// 		await page.locator( 'input[name="setup-form-input-name"]' ).fill( 'The Land of Foo' );
-// 		await page
-// 			.locator( 'textarea[name="setup-form-input-description"]' )
-// 			.fill( 'A blog about Foo' );
-
-// 		await page.locator( 'button.setup-form__submit' ).click();
-// 	} );
-
-// 	it( 'Ensure domain search is working', async function () {
-// 		await page.getByRole( 'link', { name: 'Select to choose a domain' } ).click();
-// 		const domainSearchComponent = new DomainSearchComponent( page );
-// 		await domainSearchComponent.search( 'test' );
-// 	} );
-
-// 	it( 'Skip the domain selection step', async function () {
-// 		const domainSearchComponent = new DomainSearchComponent( page );
-// 		await domainSearchComponent.skipPurchase();
-// 	} );
-
-// 	it( 'Select WordPress.com Free plan', async function () {
-// 		await page.getByRole( 'link', { name: 'Select to choose a plan' } ).click();
-// 		// See https://github.com/Automattic/wp-calypso/pull/84468
-// 		await ElementHelper.reloadAndRetry( page, async function () {
-// 			await page.getByRole( 'button', { name: 'Start with Free' } ).click();
-// 		} );
-// 	} );
-
-// 	it( 'Launch the blog', async function () {
-// 		await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
-// 	} );
-
-// 	it( 'Ensure "Connect to social" navigates to Jetpack Social', async function () {
-// 		await page.getByRole( 'button', { name: 'Connect to social' } ).click();
-// 		await page.getByText( 'Write once, post everywhere' ).waitFor();
-// 	} );
-
-// 	afterAll( async function () {
-// 		if ( ! newUserDetails ) {
-// 			return;
-// 		}
-
-// 		const restAPIClient = new RestAPIClient(
-// 			{
-// 				username: testUser.username,
-// 				password: testUser.password,
-// 			},
-// 			newUserDetails.body.bearer_token
-// 		);
-
-// 		await apiCloseAccount( restAPIClient, {
-// 			userID: newUserDetails.body.user_id,
-// 			username: newUserDetails.body.username,
-// 			email: testUser.email,
-// 		} );
-// 	} );
-// } );

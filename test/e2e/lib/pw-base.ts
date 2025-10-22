@@ -57,6 +57,7 @@ import {
 	SecretsManager,
 	SidebarComponent,
 	SiteSelectComponent,
+	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -119,6 +120,10 @@ export const test = base.extend< {
 	 * Environment variables for the tests.
 	 */
 	environment: typeof envVariables;
+	/**
+	 * Flow encapsulating the Start Writing onboarding process.
+	 */
+	flowStartWriting: StartWritingFlow;
 	/**
 	 * Helper data and utilities for tests.
 	 */
@@ -292,6 +297,10 @@ export const test = base.extend< {
 	},
 	environment: async ( {}, use ) => {
 		await use( envVariables );
+	},
+	flowStartWriting: async ( { page }, use ) => {
+		const startWritingFlow = new StartWritingFlow( page );
+		await use( startWritingFlow );
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
