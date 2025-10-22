@@ -3,13 +3,13 @@ import { DataHelper, DomainSearchComponent, EditorPage } from '../..';
 import { UserSignupPage } from '../pages/signup/user-signup-page';
 
 /**
- * Class encapsulating the flow when starting a new writing blog /setup/start-writing
+ * Class encapsulating the flow when starting a new writing blog (`/setup/start-writing`)
  */
 export class StartWritingFlow {
 	private page: Page;
-	userSignupPage: UserSignupPage;
-	editorPage: EditorPage;
-	domainSearchComponent: DomainSearchComponent;
+	readonly userSignupPage: UserSignupPage;
+	readonly editorPage: EditorPage;
+	readonly domainSearchComponent: DomainSearchComponent;
 
 	/**
 	 * Constructs an instance of the flow.
@@ -49,6 +49,7 @@ export class StartWritingFlow {
 
 	/**
 	 * Locator for a completed item by its name.
+	 * Used only by public getters to encapsulate the logic for completed items.
 	 * @param itemName
 	 * @returns {Locator}
 	 */
