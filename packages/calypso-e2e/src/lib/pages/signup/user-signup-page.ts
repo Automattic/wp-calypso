@@ -26,6 +26,7 @@ const selectors = {
  */
 export class UserSignupPage {
 	private page: Page;
+	readonly createYourAccountHeading: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -34,13 +35,9 @@ export class UserSignupPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-	}
-
-	/**
-	 * Heading locator for the "Create your account" page.
-	 */
-	get createYourAccountHeading(): Locator {
-		return this.page.getByRole( 'heading', { name: 'Create your account' } );
+		this.createYourAccountHeading = this.page.getByRole( 'heading', {
+			name: 'Create your account',
+		} );
 	}
 
 	/**

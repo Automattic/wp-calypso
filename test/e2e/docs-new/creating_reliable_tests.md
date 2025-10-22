@@ -122,3 +122,5 @@ A fixture is a reusable setup or resource in your tests, such as a test site, us
 For example, you might use a fixture to automatically create a new WordPress.com site before each test and delete it afterwards, ensuring that each test runs with a fresh site and does not interfere with others.
 
 Fortunately the [custom fixtures](./custom-fixtures.md), specifically the public site fixture `sitePublic`, allow you to quickly spin up and tear down a public site that can easily be used to independently test things like changing site visibility settings or importing site content.
+
+Please note that unless you are behind an a8c proxy (Trialmattician or external contributor) spawning multiple new sites in quick sucession will hit an API rate limit.
