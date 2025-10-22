@@ -27,27 +27,19 @@ const startSSHMigration = async (
 	params: StartSSHMigrationParams
 ): Promise< StartSSHMigrationResponse > => {
 	try {
-		const body: Record< string, string > = {
+		const optionalFields = {
+			...( params.remotePass && { remote_pass: params.remotePass } ),
+			...( params.remoteDocroot && { remote_docroot: params.remoteDocroot } ),
+			...( params.sshId && { ssh_id: params.sshId } ),
+			...( params.sshIdPass && { ssh_id_pass: params.sshIdPass } ),
+		};
+
+		const body = {
 			remote_host: params.remoteHost,
 			remote_user: params.remoteUser,
 			remote_domain: params.remoteDomain,
+			...optionalFields,
 		};
-
-		if ( params.remotePass ) {
-			body.remote_pass = params.remotePass;
-		}
-
-		if ( params.remoteDocroot ) {
-			body.remote_docroot = params.remoteDocroot;
-		}
-
-		if ( params.sshId ) {
-			body.ssh_id = params.sshId;
-		}
-
-		if ( params.sshIdPass ) {
-			body.ssh_id_pass = params.sshIdPass;
-		}
 
 		const response = await wpcom.req.post( {
 			path: `/sites/${ params.siteId }/ssh-migration/start`,
