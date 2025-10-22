@@ -16,7 +16,7 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: '/v2',
+	basePath: '/manage',
 	mainRoute: '/sites',
 	Logo,
 	supports: {
