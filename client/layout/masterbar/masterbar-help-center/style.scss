@@ -8,12 +8,11 @@
 		}
 	}
 
-	&:hover {
-		.masterbar__item-subitems {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-		}
+	&:hover .masterbar__item-subitems,
+	.masterbar__item-help.is-open + .masterbar__item-subitems {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	.masterbar__help-menu-divider {
@@ -30,7 +29,7 @@
 
 		&:hover {
 			svg {
-				color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
+				color: var( --color-masterbar-submenu-hover-text, var( --color-masterbar-highlight ) );
 			}
 		}
 	}
