@@ -54,6 +54,8 @@ import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import SiteIcon from '../../../components/site-icon';
+import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
+import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getBillPeriodLabel,
@@ -71,13 +73,14 @@ import {
 	isJetpackCrmProduct,
 	isTitanMail,
 	isGoogleWorkspace,
+	isWpcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
-import type { User, Purchase } from '@automattic/api-core';
+import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -472,6 +475,23 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
 		</VStack>
+	);
+}
+
+function WPComResourceMeters( { purchase, site }: { purchase: Purchase; site: Site } ) {
+	if ( ! isWpcomPlan( purchase ) ) {
+		return null;
+	}
+
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<SiteStorageStat site={ site } />
+					<SiteBandwidthStat site={ site } />
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -1103,6 +1123,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 				</Grid>
+				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
