@@ -1,9 +1,10 @@
 import { productsQuery, siteMediaStorageQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
+	Spinner,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	CustomSelectControl,
@@ -35,9 +36,31 @@ interface SelectOption {
 }
 
 export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps ) {
-	const { data: products } = useSuspenseQuery( productsQuery() );
-	const { data: purchases } = useSuspenseQuery( sitePurchasesQuery( site.ID ) );
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: products, isLoading: isLoadingProducts } = useQuery( productsQuery() );
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
+		sitePurchasesQuery( site.ID )
+	);
+	const { data: mediaStorage, isLoading: isLoadingStorage } = useQuery(
+		siteMediaStorageQuery( site.ID )
+	);
+
+	const [ userSelectedTier, setUserSelectedTier ] = useState< StorageTierOption | null >( null );
+
+	if ( ! isOpen ) {
+		return null;
+	}
+
+	const isLoading = isLoadingProducts || isLoadingPurchases || isLoadingStorage;
+
+	if ( isLoading || ! products || ! purchases || ! mediaStorage ) {
+		return (
+			<Modal title={ __( 'Add more storage' ) } onRequestClose={ onClose }>
+				<VStack spacing={ 4 } alignment="center">
+					<Spinner />
+				</VStack>
+			</Modal>
+		);
+	}
 
 	const storageProduct = getStorageAddOnProduct( products );
 	const purchasedStorageAddOn = getPurchasedStorageAddOn( purchases );
@@ -51,14 +74,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 	// Filter out tiers that are less than or equal to what's already purchased
 	const availableTiers = tierOptions.filter( ( tier ) => tier.quantity > currentPurchasedQuantity );
 
-	// Default to the first available tier
-	const [ selectedTier, setSelectedTier ] = useState< StorageTierOption | null >(
-		availableTiers[ 0 ] ?? null
-	);
-
-	if ( ! isOpen ) {
-		return null;
-	}
+	const selectedTier = userSelectedTier ?? availableTiers[ 0 ] ?? null;
 
 	// Calculate storage breakdown
 	const planStorageBytes =
@@ -94,7 +110,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 	const handleSelectChange = ( { selectedItem }: { selectedItem: SelectOption } ) => {
 		const tier = tierOptions.find( ( t ) => String( t.quantity ) === selectedItem.key );
 		if ( tier ) {
-			setSelectedTier( tier );
+			setUserSelectedTier( tier );
 		}
 	};
 
