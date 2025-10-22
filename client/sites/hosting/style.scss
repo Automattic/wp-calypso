@@ -3,6 +3,7 @@
 	display: flex;
 	justify-content: center;
 	height: 100%;
+	max-width: none !important;
 
 	.dashboard-callout {
 		max-width: 600px;

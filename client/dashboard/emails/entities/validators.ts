@@ -315,7 +315,7 @@ class PreviouslySpecifiedMailboxNamesValidator extends ExistingMailboxNamesValid
 			sprintf(
 				// Translators: %(emailAddress)s is the email address that has already been specified in this form.
 				__(
-					'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} has already been specified before.'
+					'Please use unique email addresses. <strong>%(emailAddress)s</strong> has already been specified before.'
 				),
 				{ emailAddress: `${ existingMailboxName }@${ domainName }` }
 			),

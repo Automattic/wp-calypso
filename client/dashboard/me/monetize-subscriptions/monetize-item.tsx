@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import SiteIcon from '../../sites/site-icon';
+import SiteIcon from '../../components/site-icon';
 import { formatDate } from '../../utils/datetime';
 
 export const MonetizeSubscriptionTerms = ( {

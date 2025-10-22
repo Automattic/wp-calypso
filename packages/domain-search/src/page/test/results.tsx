@@ -1,5 +1,6 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
@@ -101,10 +102,49 @@ describe( 'ResultsPage', () => {
 			expect( testOrg ).not.toHaveTextContent( 'Recommended' );
 			expect( testOrg ).not.toHaveTextContent( 'Best alternative' );
 		} );
+
+		it( 'renders the "show more results" button if there are more than config.numberOfDomainsResultsPerPage suggestions', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test1.com' } ),
+					buildSuggestion( { domain_name: 'test2.com' } ),
+					buildSuggestion( { domain_name: 'test3.com' } ),
+				],
+			} );
+
+			render(
+				<TestDomainSearch config={ { numberOfDomainsResultsPerPage: 2 } } query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Show more results' ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not render the "show more results" button if there are config.numberOfDomainsResultsPerPage or less suggestions', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test1.com' } ),
+					buildSuggestion( { domain_name: 'test2.com' } ),
+				],
+			} );
+
+			render(
+				<TestDomainSearch config={ { numberOfDomainsResultsPerPage: 2 } } query="test">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			// This is just to wait for the suggestions to be loaded
+			await screen.findByTitle( 'test1.com' );
+			expect( screen.queryByText( 'Show more results' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'TLD deemphasis', () => {
-		it( 'removes deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
+		it( 'does not remove deemphasized TLDs from featured suggestions if searching for a FQDN', async () => {
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test.com' },
 				availability: buildAvailability( {
@@ -127,7 +167,7 @@ describe( 'ResultsPage', () => {
 			const testCom = await screen.findByTitle( 'test.com' );
 
 			expect( testCom ).toBeInTheDocument();
-			expect( testCom ).not.toHaveTextContent( "It's available!" );
+			expect( testCom ).toHaveTextContent( "It's available!" );
 			expect( testCom ).not.toHaveTextContent( 'Recommended' );
 			expect( testCom ).not.toHaveTextContent( 'Best alternative' );
 		} );
@@ -176,6 +216,87 @@ describe( 'ResultsPage', () => {
 	} );
 
 	describe( 'FQDN suggestion', () => {
+		it( 'adds FQDN suggestion to the suggestions list if the availability query is successful and it is available', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-available.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-available.blog' } ),
+					buildSuggestion( { domain_name: 'test-available.org' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-available.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-available.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-available.com" config={ { deemphasizedTlds: [ 'com' ] } }>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.com' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.blog' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not add FQDN suggestion to the suggestions list if the availability query is successful but it is not available', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-available.blog' } ),
+					buildSuggestion( { domain_name: 'test-available.org' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-unavailable.com',
+					status: DomainAvailabilityStatus.NOT_AVAILABLE,
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unavailable.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.blog' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not add FQDN suggestion to the suggestions list if the availability query fails', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-unavailable.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test-available.blog' } ),
+					buildSuggestion( { domain_name: 'test-available.org' } ),
+				],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-unavailable.com' },
+				availability: new Error( 'Test error' ),
+			} );
+
+			render(
+				<TestDomainSearch query="test-unavailable.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'test-available.blog' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-available.org' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'test-unavailable.com' ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'removes FQDN suggestion from the list if availability query is not successful', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-unavailable.com' },
@@ -588,6 +709,40 @@ describe( 'ResultsPage', () => {
 					[ 'test.com', 'test.net', 'test.org' ],
 					expect.any( Number )
 				);
+			} );
+		} );
+
+		it( 'fires the onShowMoreResults event when the show more results button is clicked', async () => {
+			const user = userEvent.setup();
+			const onShowMoreResults = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test query' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'test1.com' } ),
+					buildSuggestion( { domain_name: 'test2.com' } ),
+					buildSuggestion( { domain_name: 'test3.com' } ),
+					buildSuggestion( { domain_name: 'test4.com' } ),
+					buildSuggestion( { domain_name: 'test5.com' } ),
+					buildSuggestion( { domain_name: 'test6.com' } ),
+					buildSuggestion( { domain_name: 'test7.com' } ),
+					buildSuggestion( { domain_name: 'test8.com' } ),
+					buildSuggestion( { domain_name: 'test9.com' } ),
+					buildSuggestion( { domain_name: 'test10.com' } ),
+					buildSuggestion( { domain_name: 'test11.com' } ),
+				],
+			} );
+
+			render(
+				<TestDomainSearch events={ { onShowMoreResults } } query="test query">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByText( 'Show more results' ) );
+
+			await waitFor( () => {
+				expect( onShowMoreResults ).toHaveBeenCalledWith( 2 ); // show second page of results
 			} );
 		} );
 

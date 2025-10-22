@@ -1,43 +1,103 @@
-import { NextButton, StepContainer } from '@automattic/onboarding';
+import { Gridicon, ProgressBar } from '@automattic/components';
+import { Step } from '@automattic/onboarding';
+import { Card, CardBody } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Step } from '../../types';
+import DocumentHead from 'calypso/components/data/document-head';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { cleanUrl } from '../../../helpers';
+import type { Step as StepType } from '../../types';
+import './style.scss';
 
-const SiteMigrationSshInProgress: Step< {
+type SiteMigrationSshInProgressChecklistItem = {
+	icon: string;
+	text: string;
+};
+
+const SiteMigrationSshInProgressChecklist = ( {
+	items,
+}: {
+	items: SiteMigrationSshInProgressChecklistItem[];
+} ) => {
+	return (
+		<div className="site-migration-ssh-in-progress__checklist-items">
+			{ items.map( ( item, index ) => (
+				<div key={ index } className="site-migration-ssh-in-progress__checklist-item">
+					<div className="site-migration-ssh-in-progress__checklist-item-icon">
+						<Gridicon
+							icon={ item.icon }
+							size={ 16 }
+							className="site-migration-ssh-in-progress__icon"
+						/>
+					</div>
+					<div className="site-migration-ssh-in-progress__checklist-item-text">{ item.text }</div>
+				</div>
+			) ) }
+		</div>
+	);
+};
+
+const SiteMigrationSshInProgress: StepType< {
 	submits: {
 		action: 'continue';
 	};
-} > = function ( { navigation } ) {
+} > = function () {
 	const translate = useTranslate();
-
-	const handleContinue = () => {
-		navigation.submit?.( { action: 'continue' } );
-	};
+	const queryParams = useQuery();
+	const fromUrl = queryParams.get( 'from' ) ?? null;
 
 	const stepContent = (
-		<div>
-			<p>{ translate( 'SSH Migration In Progress - Coming Soon' ) }</p>
-			<NextButton onClick={ handleContinue }>{ translate( 'Go to Dashboard' ) }</NextButton>
+		<div className="site-migration-ssh-in-progress">
+			<div className="site-migration-ssh-in-progress__progress">
+				<ProgressBar value={ 40 } total={ 100 } compact isPulsing={ false } />
+			</div>
+
+			<Card className="site-migration-ssh-in-progress__card">
+				<CardBody>
+					<div className="site-migration-ssh-in-progress__checklist-title">
+						{ translate( "Here's what to expect" ) }
+					</div>
+					<SiteMigrationSshInProgressChecklist
+						items={ [
+							{
+								icon: 'checkmark',
+								text: translate( 'Your site stays live for visitors throughout.' ),
+							},
+							{ icon: 'time', text: translate( 'Can take up to 30 minutes.' ) },
+							{
+								icon: 'mail',
+								text: translate( "We'll email you when your new site is ready to explore." ),
+							},
+						] }
+					/>
+				</CardBody>
+			</Card>
 		</div>
 	);
 
+	const siteDomain = fromUrl ? cleanUrl( fromUrl ) : '';
+
+	const pageTitle = translate( 'Your migration is underway' );
+	const pageSubTitle = fromUrl
+		? translate(
+				"We're carefully making a copy of {{strong}}%(siteDomain)s{{/strong}} on WordPress.com.",
+				{
+					args: { siteDomain },
+					components: { strong: <strong /> },
+				}
+		  )
+		: null;
+
 	return (
-		<StepContainer
-			stepName="site-migration-ssh-in-progress"
-			isFullLayout
-			formattedHeader={
-				<FormattedHeader
-					headerText={ translate( 'Migration In Progress' ) }
-					subHeaderText={ translate( 'This step is under development.' ) }
-					align="center"
-				/>
-			}
-			hideSkip
-			hideBack
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ pageTitle } />
+			<Step.CenteredColumnLayout
+				columnWidth={ 5 }
+				topBar={ <Step.TopBar /> }
+				heading={ <Step.Heading text={ pageTitle } subText={ pageSubTitle } /> }
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
+		</>
 	);
 };
 

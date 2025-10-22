@@ -81,13 +81,7 @@ export const sitesRoute = createRoute( {
 		}
 		return search;
 	},
-} ).lazy( () =>
-	import( '../../sites' ).then( ( d ) =>
-		createLazyRoute( 'sites' )( {
-			component: d.default,
-		} )
-	)
-);
+} );
 
 export const siteRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
@@ -1221,7 +1215,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
+	return [
+		sitesRoute.lazy( () =>
+			config.components.sites().then( ( d ) =>
+				createLazyRoute( 'sites' )( {
+					component: d.default,
+				} )
+			)
+		),
+		siteRoute.addChildren( siteRoutes ),
+	];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
