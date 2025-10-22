@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 
@@ -11,9 +12,9 @@ export const HelpLink: FC< HelpLinkProps > = ( { href } ) => {
 	return (
 		<p className="migration-site-ssh__help-link">
 			{ translate( 'Need help?' ) }{ ' ' }
-			<a href={ href } target="_blank" rel="noopener noreferrer">
+			<ExternalLink href={ href } icon iconSize={ 14 }>
 				{ translate( 'Follow our guide' ) }
-			</a>
+			</ExternalLink>
 		</p>
 	);
 };

@@ -54,6 +54,16 @@
 	height: 24px;
 }
 
+.migration-site-ssh__accordion-icon-container-completed {
+	border: 0.1rem solid var(--color-success, #00a32a);
+	border-radius: 50%;
+	width: 15px;
+	height: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .migration-site-ssh__accordion-icon-pending {
 	display: flex;
 	align-items: center;
@@ -133,7 +143,8 @@
 
 .migration-site-ssh__step-add-server-address-note {
 	margin: 0.5rem 0 1rem 0;
-	color: var(--color-neutral-70);
+	color: var(--studio-gray-40);
+	font-size: 0.875rem;
 }
 
 .migration-site-ssh__continue-button {

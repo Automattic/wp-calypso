@@ -1,4 +1,5 @@
-import { Icon, check, chevronDown, chevronUp, swatch } from '@wordpress/icons';
+import { Gridicon } from '@automattic/components';
+import { Icon, chevronDown, chevronUp, swatch } from '@wordpress/icons';
 import clsx from 'clsx';
 import React, { FC } from 'react';
 import type { Steps as StepsType } from '../steps/use-steps';
@@ -12,11 +13,17 @@ interface AccordionStepProps {
 	index: number;
 }
 
-const AccordionStatusIcon = ( { completed }: { completed: boolean } ) => {
+const AccordionStatusIcon: FC< { completed: boolean } > = ( { completed } ) => {
 	return (
 		<div className="migration-site-ssh__accordion-status-icon">
 			{ completed ? (
-				<Icon icon={ check } className="migration-site-ssh__accordion-icon-completed" size={ 20 } />
+				<div className="migration-site-ssh__accordion-icon-container-completed">
+					<Gridicon
+						icon="checkmark"
+						className="migration-site-ssh__accordion-icon-completed"
+						size={ 12 }
+					/>
+				</div>
 			) : (
 				<Icon icon={ swatch } className="migration-site-ssh__accordion-icon-pending" size={ 20 } />
 			) }

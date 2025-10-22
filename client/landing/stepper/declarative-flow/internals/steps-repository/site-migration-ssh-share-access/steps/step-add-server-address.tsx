@@ -1,6 +1,6 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
-import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { AccordionNotice } from '../components/accordion-notice';
 import { useVerifySSHConnection } from '../hooks/use-verify-ssh-connection';
@@ -112,9 +112,14 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 				{ translate( 'This may be different than your website address.' ) }
 			</p>
 
-			<FormButton onClick={ handleVerify } disabled={ ! canVerify } busy={ isPending } primary>
+			<Button
+				variant="secondary"
+				onClick={ handleVerify }
+				disabled={ ! canVerify }
+				isBusy={ isPending }
+			>
 				{ translate( 'Verify server address' ) }
-			</FormButton>
+			</Button>
 		</div>
 	);
 };
