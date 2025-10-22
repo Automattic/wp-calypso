@@ -1,6 +1,6 @@
-import { Gridicon, ProgressBar } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { Card, CardBody } from '@wordpress/components';
+import { Card, CardBody, ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -83,7 +83,7 @@ const SiteMigrationSshInProgress: StepType< {
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
 			<div className="site-migration-ssh-in-progress__progress">
-				<ProgressBar value={ 40 } total={ 100 } compact isPulsing />
+				<ProgressBar className="site-migration-ssh-in-progress__progress-container" />
 			</div>
 
 			<Card className="site-migration-ssh-in-progress__card">
