@@ -24,6 +24,12 @@
 		display: flex;
 		align-items: center;
 		height: 20px;
+
+		&:hover {
+			svg {
+				color: var(--color-link);
+			}
+		}
 	}
 } 
 
