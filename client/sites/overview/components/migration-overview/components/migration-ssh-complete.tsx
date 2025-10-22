@@ -66,7 +66,7 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 					{ translate( 'Get started' ) }
 				</HostingHeroButton>
 				<Button variant="secondary" className="hosting-hero-button" onClick={ handleDoLater }>
-					{ translate( "I'll do this later" ) }
+					{ translate( 'I’ll do this later' ) }
 				</Button>
 			</div>
 		</div>

@@ -82,7 +82,7 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 										{ __( 'Get started' ) }
 									</Button>
 									<Button variant="secondary" onClick={ handleDoLater }>
-										{ __( "I'll do this later" ) }
+										{ __( 'I’ll do this later' ) }
 									</Button>
 								</ButtonStack>
 							</HStack>
