@@ -102,7 +102,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						<span>{ translate( 'Support guides' ) }</span>
 					</div>
 				),
-				onClick: () => handleMenuClick( '/' ),
+				onClick: () => handleMenuClick( '/support-guides' ),
 			},
 			{
 				label: (

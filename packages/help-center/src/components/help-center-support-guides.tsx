@@ -3,32 +3,25 @@ import { __ } from '@wordpress/i18n';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useHelpCenterSearch } from '../hooks';
-import { HelpCenterLaunchpad } from './help-center-launchpad';
-import { HelpCenterMoreResources } from './help-center-more-resources';
-import HelpCenterRecentConversations from './help-center-recent-conversations';
 import HelpCenterSearchResults from './help-center-search-results';
-import { BlockedZendeskNotice } from './notices';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 
-type HelpCenterSearchProps = {
+type HelpCenterSupportGuidesProps = {
 	onSearchChange?: ( query: string ) => void;
 	currentRoute?: string;
 };
 
-export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
-	const { sectionName, site, currentUser } = useHelpCenterContext();
+export const HelpCenterSupportGuides = ( {
+	onSearchChange,
+	currentRoute,
+}: HelpCenterSupportGuidesProps ) => {
+	const { sectionName } = useHelpCenterContext();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
-	const isSiteOwner = site?.site_owner === currentUser?.ID;
-	const launchpadEnabled = site?.options?.launchpad_screen === 'full' && isSiteOwner;
-
 	return (
 		<div className="inline-help__search">
-			<HelpCenterRecentConversations />
-			<BlockedZendeskNotice />
-			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }
 				onSearch={ setSearchQueryAndEmailSubject }
@@ -46,7 +39,6 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				location="help-center"
 				currentRoute={ currentRoute }
 			/>
-			{ ! searchQuery && <HelpCenterMoreResources /> }
 		</div>
 	);
 };
