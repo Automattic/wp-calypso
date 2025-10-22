@@ -44,7 +44,7 @@ test.describe(
 				await flowStartWriting.editorPage.publish();
 			} );
 
-			await test.step( 'Then I see see "Your blog\'s almost ready!" message', async function () {
+			await test.step( 'Then I see "Your blog\'s almost ready!" message', async function () {
 				await expect( flowStartWriting.blogsAlmostReadyHeading ).toBeVisible();
 				await expect( flowStartWriting.keepUpMomentumText ).toBeVisible();
 			} );
@@ -64,7 +64,7 @@ test.describe(
 				await flowStartWriting.saveBlogNameAndContinueButton.click();
 			} );
 
-			await test.step( 'Then I see see "Your blog\'s almost ready!" message', async function () {
+			await test.step( 'Then I see "Your blog\'s almost ready!" message', async function () {
 				await expect( flowStartWriting.blogsAlmostReadyHeading ).toBeVisible();
 				await expect( flowStartWriting.keepUpMomentumText ).toBeVisible();
 			} );
@@ -118,7 +118,7 @@ test.describe(
 				await flowStartWriting.launchYourBlogButton.click();
 			} );
 
-			await test.step( 'Then I see see "Your blog\'s ready!" message', async function () {
+			await test.step( 'Then I see "Your blog\'s ready!" message', async function () {
 				await expect( flowStartWriting.yourBlogsReadyHeading ).toBeVisible( { timeout: 20000 } );
 				await expect( flowStartWriting.nowItsTimeToConnectYourSocialAccountsText ).toBeVisible();
 			} );
@@ -134,7 +134,7 @@ test.describe(
 		} );
 
 		test.afterAll( 'Delete all user accounts generated', async function () {
-			if ( newUserDetailsStartWriting ) {
+			if ( newUserDetailsStartWriting && testUserStartWriting ) {
 				const restAPIClient = new RestAPIClient(
 					{
 						username: testUserStartWriting.username,
