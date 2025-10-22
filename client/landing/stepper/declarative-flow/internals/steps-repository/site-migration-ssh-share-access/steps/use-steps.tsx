@@ -29,7 +29,7 @@ interface StepsDataOptions {
 	onServerVerify: () => void;
 	onFindSSHDetailsSuccess: () => void;
 	host?: string;
-	onNoSSHAccess?: () => void;
+	onNoSSHAccess: () => void;
 }
 
 interface StepData {
@@ -114,6 +114,7 @@ export const useSteps = ( {
 	siteId,
 	siteName,
 	onNoSSHAccess,
+	host,
 }: UseStepsOptions ): StepsObject => {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
@@ -163,6 +164,7 @@ export const useSteps = ( {
 		onServerVerify: handleServerVerify,
 		onFindSSHDetailsSuccess: handleFindSSHDetailsSuccess,
 		onNoSSHAccess,
+		host,
 	} );
 
 	const isComplete = ( stepKey: string ) => {
