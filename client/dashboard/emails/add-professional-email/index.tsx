@@ -237,12 +237,41 @@ const AddProfessionalEmail = () => {
 		setMailboxEntities( ( prevMailboxEntities ) => [ ...prevMailboxEntities, createNewMailbox() ] );
 	};
 
-	const removeForm = ( index: number ) => {
-		setMailboxEntities( ( prevMailboxEntities ) => {
-			const newMailboxEntities = [ ...prevMailboxEntities ];
+	const removeForm = async ( index: number ) => {
+		setIsSubmitting( true );
+
+		if ( cartProduct?.extra.new_quantity === 1 ) {
+			setMailboxEntities( [] );
+
+			await shoppingCartManager.actions.removeProductFromCart( cartProduct?.uuid );
+		} else {
+			const newMailboxEntities = [ ...mailboxEntities ];
 			newMailboxEntities.splice( index, 1 );
-			return newMailboxEntities;
-		} );
+			setMailboxEntities( newMailboxEntities );
+			// console.debug( 'newMailboxEntities', newMailboxEntities );
+			const mailboxOperations = new MailboxOperations(
+				// exclude empty forms
+				newMailboxEntities.filter(
+					( mailboxForm ) => !! mailboxForm.getFieldValue< string >( FIELD_MAILBOX )
+				),
+				persistMailboxesToState
+			);
+			const emailProperties = getEmailProductProperties(
+				'titan',
+				domain,
+				product,
+				mailboxOperations.mailboxes.length
+			);
+
+			const cartItems = getCartItems(
+				mailboxOperations.mailboxes,
+				emailProperties
+			) as MinimalRequestCartProduct;
+
+			await shoppingCartManager.actions.replaceProductInCart( cartProduct?.uuid, cartItems );
+		}
+
+		setIsSubmitting( false );
 	};
 
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
@@ -276,7 +305,8 @@ const AddProfessionalEmail = () => {
 								<MailboxForm
 									mailboxEntity={ mailboxEntity }
 									disabled={ disabled }
-									removeForm={ index > 0 ? () => removeForm( index ) : undefined }
+									// TODO: When to enable
+									removeForm={ () => removeForm( index ) }
 								/>
 							</CardBody>
 						</Card>
