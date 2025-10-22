@@ -76,15 +76,21 @@ export function Name( { site, value }: { site: Site; value: string } ) {
 	};
 
 	return (
+		<HStack alignment="center" spacing={ 1 }>
+			{ site.is_deleted ? (
+				<Text variant="muted">{ value }</Text>
+			) : (
+				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+			) }
+			<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
+		</HStack>
+	);
+}
+
+export function NameLink( { site, value }: { site: Site; value: string } ) {
+	return (
 		<Link to={ getSiteManagementUrl( site ) } disabled={ site.is_deleted }>
-			<HStack alignment="center" spacing={ 1 }>
-				{ site.is_deleted ? (
-					<Text variant="muted">{ value }</Text>
-				) : (
-					<span style={ titleFieldTextOverflowStyles }>{ value }</span>
-				) }
-				<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
-			</HStack>
+			<Name site={ site } value={ value } />
 		</Link>
 	);
 }
