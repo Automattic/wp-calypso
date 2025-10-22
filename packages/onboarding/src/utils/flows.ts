@@ -167,3 +167,7 @@ export const isPlaygroundFlow = ( flowName: string | null ) => {
 export const isDomainFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_FLOW ].includes( flowName ) );
 };
+
+export const isWooHostedFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WOO_HOSTED_FLOW ].includes( flowName ) );
+};
