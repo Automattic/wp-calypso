@@ -2,12 +2,14 @@ import {
 	Card,
 	CardBody,
 	Icon,
-	__experimentalText as Text,
+	PanelBody,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { DataViews, type Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
+
+import './style.scss';
 
 interface DomainConnectionNextStep {
 	id: string;
@@ -71,24 +73,23 @@ export default function VerificationInProgressNextSteps() {
 	};
 
 	return (
-		<Card>
+		<Card className="verification-in-progress-next-steps">
 			<CardBody>
-				<VStack spacing={ 4 }>
-					<Text size="medium" weight={ 500 }>
-						{ __( 'What happens next' ) }
-					</Text>
-					<DataViews< DomainConnectionNextStep >
-						data={ data }
-						fields={ fields }
-						view={ view }
-						onChangeView={ () => {} }
-						getItemId={ ( item ) => item.id }
-						paginationInfo={ { totalItems: data.length, totalPages: 1 } }
-						defaultLayouts={ { list: {} } }
-					>
-						<DataViews.Layout />
-					</DataViews>
-				</VStack>
+				<PanelBody title={ __( 'What happens next' ) } initialOpen={ false }>
+					<VStack spacing={ 4 }>
+						<DataViews< DomainConnectionNextStep >
+							data={ data }
+							fields={ fields }
+							view={ view }
+							onChangeView={ () => {} }
+							getItemId={ ( item ) => item.id }
+							paginationInfo={ { totalItems: data.length, totalPages: 1 } }
+							defaultLayouts={ { list: {} } }
+						>
+							<DataViews.Layout />
+						</DataViews>
+					</VStack>
+				</PanelBody>
 			</CardBody>
 		</Card>
 	);

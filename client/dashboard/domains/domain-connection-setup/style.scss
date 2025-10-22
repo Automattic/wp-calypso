@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .dashboard-domain-connection-verification {
 	// Hacks to make DataViews look non-interactive
 	.dataviews-view-list {
@@ -16,6 +18,21 @@
 							color: $gray-700;
 					}
 			}
+	}
+}
+
+.verification-in-progress-next-steps {
+	.components-card__body {
+		padding: $grid-unit-10;
+	}
+	.components-panel__body {
+		border: none;
+	}
+	.components-panel__body-toggle.components-button {
+		@include heading-large();
+		.components-panel__arrow {
+			fill: #757575;
+		}
 	}
 }
 
