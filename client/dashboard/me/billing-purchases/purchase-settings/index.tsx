@@ -23,17 +23,15 @@ import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
+	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
 	Card,
 	CardBody,
 	Button,
-	Icon,
 	ToggleControl,
 	Notice,
 	ExternalLink,
@@ -44,7 +42,6 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	moreVertical,
 	calendar,
-	chevronRight,
 	currencyDollar,
 	siteLogo,
 	commentAuthorAvatar,
@@ -58,6 +55,7 @@ import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { formatDate } from '../../../utils/datetime';
@@ -84,7 +82,6 @@ import { getPurchaseUrlForId } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-import type { ReactNode, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -236,23 +233,6 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 			) }
 		</DropdownMenu>
 	);
-}
-
-function PurchaseSettingsCardLinkWrapper( {
-	link,
-	children,
-}: {
-	link?: string;
-	children: ReactNode;
-} ) {
-	if ( link ) {
-		return (
-			<Link to={ link } className="purchase-settings-card__link">
-				{ children }
-			</Link>
-		);
-	}
-	return children;
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
@@ -476,63 +456,6 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-export function PurchaseSettingsCard( {
-	icon,
-	title,
-	heading,
-	description,
-	link,
-}: {
-	icon?: ReactElement;
-	title: ReactNode;
-	heading?: ReactNode;
-	description?: ReactNode;
-	link?: string;
-} ) {
-	return (
-		<PurchaseSettingsCardLinkWrapper link={ link }>
-			<Card className="purchase-settings-card">
-				<CardBody>
-					<VStack>
-						<HStack justify="space-between">
-							<HStack spacing={ 2 } justify="flex-start" alignment="center">
-								{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-								<Text
-									className="dashboard-overview-card__title"
-									variant="muted"
-									lineHeight="16px"
-									size={ 11 }
-									weight={ 500 }
-									upperCase
-								>
-									{ title }
-								</Text>
-							</HStack>
-							{ link && (
-								<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
-							) }
-						</HStack>
-						<HStack spacing={ 2 } justify="flex-start" alignment="center">
-							<VStack>
-								{ heading && (
-									<Heading level={ 2 } size={ 20 } weight={ 500 }>
-										{ heading }
-									</Heading>
-								) }
-								{ description && (
-									<Text variant="muted" lineHeight="16px" size={ 12 }>
-										{ description }
-									</Text>
-								) }
-							</VStack>
-						</HStack>
-					</VStack>
-				</CardBody>
-			</Card>
-		</PurchaseSettingsCardLinkWrapper>
-	);
-}
-
 function getFields( {
 	isMutationPending,
 	user,
@@ -639,7 +562,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.partner_name ) {
 		return (
-			<PurchaseSettingsCard
+			<OverviewCard
 				icon={ currencyDollar }
 				title={
 					// translators: partnerName is the name of a business partner through which this product was sold
@@ -652,7 +575,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	}
 	if ( isOneTimePurchase( purchase ) ) {
 		return (
-			<PurchaseSettingsCard
+			<OverviewCard
 				icon={ currencyDollar }
 				title={ __( 'Price' ) }
 				heading={ formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
@@ -663,7 +586,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 	return (
-		<PurchaseSettingsCard
+		<OverviewCard
 			icon={ currencyDollar }
 			title={ __( 'Renewal price' ) }
 			heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
@@ -1108,8 +1031,8 @@ export default function PurchaseSettings() {
 		>
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
-				<HStack spacing={ 6 } justify="flex-start" alignment="center">
-					<PurchaseSettingsCard
+				<Grid columns={ 2 } rows={ 2 } gap={ 6 }>
+					<OverviewCard
 						icon={ calendar }
 						title={ expiryDateTitle }
 						heading={ ( () => {
@@ -1139,10 +1062,8 @@ export default function PurchaseSettings() {
 						} )() }
 					/>
 					<PurchasePriceCard purchase={ purchase } />
-				</HStack>
-				<HStack spacing={ 6 } justify="flex-start" alignment="center">
 					{ site && (
-						<PurchaseSettingsCard
+						<OverviewCard
 							icon={ siteLogo }
 							title={ __( 'Site' ) }
 							heading={ site.name }
@@ -1150,7 +1071,7 @@ export default function PurchaseSettings() {
 							link={ `/v2/sites/${ purchase.site_slug }` }
 						/>
 					) }
-					<PurchaseSettingsCard
+					<OverviewCard
 						icon={ commentAuthorAvatar }
 						title={ __( 'Owner' ) }
 						heading={
@@ -1162,7 +1083,7 @@ export default function PurchaseSettings() {
 							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
 						}
 					/>
-				</HStack>
+				</Grid>
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

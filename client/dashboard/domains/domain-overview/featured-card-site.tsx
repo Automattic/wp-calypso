@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { layout } from '@wordpress/icons';
-import OverviewCard from '../../sites/overview-card';
+import OverviewCard from '../../components/overview-card';
 import SiteIcon from '../../sites/site-icon';
 
 interface Props {

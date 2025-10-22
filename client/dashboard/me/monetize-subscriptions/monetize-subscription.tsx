@@ -11,8 +11,8 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
+	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	Card,
 	Button,
 	Notice,
@@ -29,11 +29,11 @@ import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
 import { addFlashMessage } from '../../components/flash-message';
 import { useFormattedTime } from '../../components/formatted-time';
+import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getMonetizeSubscriptionsUrl } from '../../me/monetize-subscriptions/urls';
 import { formatDate } from '../../utils/datetime';
-import { PurchaseSettingsCard } from '../billing-purchases/purchase-settings';
 
 function AutoRenewButton( {
 	disableAutoRenew,
@@ -261,16 +261,16 @@ export default function MonetizeSubscriptionDetails() {
 			) }
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
-				<VStack spacing={ 4 }>
-					<HStack spacing={ 6 } justify="flex-start" alignment="center">
-						<PurchaseSettingsCard
+				<VStack spacing={ 6 }>
+					<Grid columns={ 2 } rows={ 2 } gap={ 6 }>
+						<OverviewCard
 							icon={ siteLogo }
 							title={ __( 'Site' ) }
 							heading={ subscription.site_title }
 							description={ subscription.site_url }
 							link={ subscription.site_url }
 						/>
-						<PurchaseSettingsCard
+						<OverviewCard
 							icon={ calendar }
 							title={ expiryDateTitle }
 							heading={ ( () => {
@@ -289,10 +289,9 @@ export default function MonetizeSubscriptionDetails() {
 								return __( 'Auto-renew is disabled.' );
 							} )() }
 						/>
-					</HStack>
-					<HStack spacing={ 6 } justify="flex-start" alignment="center">
+
 						{ isOneTimePurchase && (
-							<PurchaseSettingsCard
+							<OverviewCard
 								icon={ currencyDollar }
 								title={ __( 'Price' ) }
 								heading={ formatCurrency(
@@ -307,7 +306,7 @@ export default function MonetizeSubscriptionDetails() {
 						) }
 
 						{ ! isOneTimePurchase && (
-							<PurchaseSettingsCard
+							<OverviewCard
 								icon={ currencyDollar }
 								title={ __( 'Renewal price' ) }
 								heading={ formatCurrency(
@@ -319,12 +318,12 @@ export default function MonetizeSubscriptionDetails() {
 								) }
 							/>
 						) }
-						<PurchaseSettingsCard
+						<OverviewCard
 							icon={ rotateRight }
 							title={ __( 'Renewal interval' ) }
 							heading={ subscription.renew_interval || '-' }
 						/>
-					</HStack>
+					</Grid>
 
 					{ isRenewable && (
 						<AutoRenewButton
