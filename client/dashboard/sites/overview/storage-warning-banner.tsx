@@ -77,13 +77,11 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					}
 				) }
 			</Notice>
-			{ isModalOpen && (
-				<AddStorageModal
-					site={ site }
-					isOpen={ isModalOpen }
-					onClose={ () => setIsModalOpen( false ) }
-				/>
-			) }
+			<AddStorageModal
+				site={ site }
+				isOpen={ isModalOpen }
+				onClose={ () => setIsModalOpen( false ) }
+			/>
 		</>
 	);
 }
