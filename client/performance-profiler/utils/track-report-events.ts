@@ -14,7 +14,7 @@ export const trackReportCompletedEvent = ( report: PageSpeedReport, url: string,
 		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
 			url,
 			hash,
-			duration: testMeasure.duration,
+			duration: Math.round( testMeasure.duration ),
 			version: profilerVersion(),
 			mobile_score: report.mobile.overall_score,
 			desktop_score: report.desktop.overall_score,
