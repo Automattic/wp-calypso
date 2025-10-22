@@ -23,7 +23,7 @@
 .cart__content {
 	box-sizing: border-box;
 	width: 100%;
-	max-width: 1040px;
+	max-width: var( --page-layout-max-width );
 }
 
 .cart-summary__total {
