@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { AccordionNotice } from '../components/accordion-notice';
+import { useState } from 'react';
+import { StepFindSSHDetails } from './step-find-ssh-details';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const FIND_SSH_DETAILS = 'find-ssh-details';
@@ -26,19 +27,34 @@ interface StepsObject {
 	steps: Steps;
 }
 
-const useStepsData = (): StepsData => {
-	const translate = useTranslate();
+interface UseStepsOptions {
+	host?: string;
+	onNoSSHAccess?: () => void;
+}
 
-	return [
+export const useSteps = ( options?: UseStepsOptions ): StepsObject => {
+	const translate = useTranslate();
+	const [ completedSteps, setCompletedSteps ] = useState< Set< string > >( new Set() );
+	const { host, onNoSSHAccess } = options || {};
+
+	const isComplete = ( stepKey: string ): boolean => {
+		return completedSteps.has( stepKey );
+	};
+
+	const handleStepComplete = ( stepKey: string ) => {
+		setCompletedSteps( ( prev ) => new Set( prev ).add( stepKey ) );
+	};
+
+	const stepsData: StepsData = [
 		{
 			key: FIND_SSH_DETAILS,
 			title: translate( 'Find your SSH details' ),
 			content: (
-				<div>
-					<AccordionNotice variant="error">
-						<p>Find your SSH details</p>
-					</AccordionNotice>
-				</div>
+				<StepFindSSHDetails
+					onSuccess={ () => handleStepComplete( FIND_SSH_DETAILS ) }
+					onNoSSHAccess={ onNoSSHAccess }
+					host={ host }
+				/>
 			),
 		},
 		{
@@ -52,17 +68,6 @@ const useStepsData = (): StepsData => {
 			content: <div>Share SSH access</div>,
 		},
 	];
-};
-
-export const useSteps = (): StepsObject => {
-	const stepsData = useStepsData();
-
-	const isComplete = ( stepKey: string ): boolean => {
-		switch ( stepKey ) {
-			default:
-				return false;
-		}
-	};
 
 	const steps: Steps = stepsData.map( ( step, index ) => {
 		// Render the content with the step-specific elements

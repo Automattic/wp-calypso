@@ -1129,6 +1129,24 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
+export const siteSSHMigrationCompleteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Welcome to your new home' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'ssh-migration-complete',
+} ).lazy( () =>
+	import( '../../sites/ssh-migration-complete' ).then( ( d ) =>
+		createLazyRoute( 'ssh-migration-complete' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.sites ) {
 		return [];
@@ -1163,6 +1181,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteSSHMigrationCompleteRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {

@@ -110,14 +110,9 @@ const RepositorySelector = ( {
 
 	return (
 		<VStack spacing={ 2 }>
-			<HStack justify="space-between" alignment="center">
-				<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
-					{ __( 'Repository' ) }
-				</Text>
-				<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-repo-existing-source/">
-					{ __( 'Create a new repository' ) }
-				</ExternalLink>
-			</HStack>
+			<Text weight={ 500 } size="11" style={ { textTransform: 'uppercase' } }>
+				{ __( 'Repository' ) }
+			</Text>
 			<div ref={ comboboxRef }>
 				<ComboboxControl
 					__next40pxDefaultSize
@@ -507,11 +502,19 @@ export const ConnectRepositoryForm = ( {
 		}
 
 		return createInterpolateElement(
-			__( 'Missing GitHub repositories? <a>Adjust permissions on GitHub</a>' ),
+			__(
+				'Missing GitHub repositories? <adjustPermissions>Adjust permissions on GitHub</adjustPermissions> or <createRepo>learn how to create a repository</createRepo>.'
+			),
 			{
-				a: (
+				adjustPermissions: (
 					<ExternalLink
 						href={ `https://github.com/settings/installations/${ selectedInstallation.external_id }` }
+						children={ null }
+					/>
+				),
+				createRepo: (
+					<ExternalLink
+						href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-repo-existing-source/"
 						children={ null }
 					/>
 				),

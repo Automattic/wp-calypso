@@ -90,7 +90,30 @@
 	font-size: 0.875rem;
 }
 
+@keyframes migration-site-ssh__slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.migration-site-ssh__find-ssh-details-buttons {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+
+.migration-site-ssh__help-link {
+	margin: 1rem 0;
+	font-size: 0.875rem;
+}
+
 .migration-site-ssh__continue-button {
+	margin-left: 2.5rem;
 	button {
 		width: 100%;
 	}
