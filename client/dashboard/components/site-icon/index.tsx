@@ -9,7 +9,7 @@ import './style.scss';
 
 export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
 	const dims = { width: size, height: size };
-	const ico = site.icon?.ico;
+	const ico = site.icon?.img || site.icon?.ico;
 	const src = useMemo( () => {
 		if ( ! ico ) {
 			return;

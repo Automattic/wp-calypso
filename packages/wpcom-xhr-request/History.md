@@ -1,5 +1,13 @@
 # History
 
+## 1.3.1 / 2025-10-21
+
+- Update dependencies to latest versions to address security alerts:
+  - Upgrade 'superagent' from 3.8.3 to 10.2.3
+  - Upgrade 'debug' from 4.4.1 to 4.4.3
+  - Upgrade 'postcss' from 8.5.3 to 8.5.6
+  - Upgrade 'webpack' from 5.99.8 to 5.102.1
+
 ## 1.3.0 / 2025-10-10
 
 - Add support for `token` parameter for OAuth authentication

@@ -61,6 +61,7 @@ export interface DomainSearchEvents {
 	) => void;
 	onFilterApplied: ( filter: FilterState ) => void;
 	onFilterReset: ( filter: FilterState, keysToReset: string[] ) => void;
+	onShowMoreResults: ( pageNumber: number ) => void;
 	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,
@@ -83,6 +84,7 @@ export interface DomainSearchConfig {
 	allowsUsingOwnDomain: boolean;
 	allowedTlds: string[];
 	includeOwnedDomainInSuggestions: boolean;
+	numberOfDomainsResultsPerPage: number;
 }
 
 export interface DomainSearchProps {

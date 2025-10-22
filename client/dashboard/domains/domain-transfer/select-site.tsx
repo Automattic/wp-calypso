@@ -8,8 +8,8 @@ import {
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState, useCallback, useRef } from 'react';
+import SiteIcon from '../../components/site-icon';
 import { canManageSite } from '../../sites/features';
-import SiteIcon from '../../sites/site-icon';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';

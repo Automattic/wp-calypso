@@ -1407,12 +1407,16 @@ function CheckoutLineItem( {
 		stripZeros: true,
 	} );
 
+	// Calculate months per bill period with introductory offers.
+	let months_per_bill_period = product.months_per_bill_period ?? 1;
+	if ( product.introductory_offer_terms?.interval_unit === 'month' ) {
+		months_per_bill_period = product.introductory_offer_terms?.interval_count ?? 1;
+	}
+
 	let pricePerMonth = 0;
 	let originalPricePerMonth = 0;
 	if ( shouldShowComparison ) {
-		pricePerMonth = Math.round(
-			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 )
-		);
+		pricePerMonth = Math.round( product.item_subtotal_integer / months_per_bill_period );
 		originalPricePerMonth = product.item_original_monthly_cost_integer;
 	}
 

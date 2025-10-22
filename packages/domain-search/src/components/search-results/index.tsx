@@ -1,10 +1,34 @@
+import { useCallback, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
-import { DomainSuggestionsList, DomainSuggestionFilterReset } from '../../ui';
+import {
+	DomainSuggestionsList,
+	DomainSuggestionFilterReset,
+	DomainSuggestionLoadMore,
+} from '../../ui';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 
-const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
-	const { filter, resetFilter } = useDomainSearch();
+const SearchResults = ( {
+	suggestions,
+	numberOfInitialVisibleSuggestions,
+}: {
+	suggestions: string[];
+	numberOfInitialVisibleSuggestions?: number;
+} ) => {
+	const { filter, resetFilter, events, config } = useDomainSearch();
+	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState(
+		numberOfInitialVisibleSuggestions ?? config.numberOfDomainsResultsPerPage
+	);
+	const [ pageNumber, setPageNumber ] = useState( 1 );
+
+	const showMoreResults = useCallback( () => {
+		events.onShowMoreResults( pageNumber + 1 );
+		setPageNumber( pageNumber + 1 );
+		setnumberOfVisibleSuggestions(
+			numberOfVisibleSuggestions + config.numberOfDomainsResultsPerPage
+		);
+	}, [ events, pageNumber, numberOfVisibleSuggestions, config.numberOfDomainsResultsPerPage ] );
+
 	const hasActiveFilters = filter.exactSldMatchesOnly || filter.tlds.length > 0;
 
 	if ( suggestions.length === 0 ) {
@@ -15,12 +39,18 @@ const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
 		return null;
 	}
 
+	const shouldShowMoreResultsButton = numberOfVisibleSuggestions < suggestions.length;
+	const suggestionsToShow = suggestions.slice( 0, numberOfVisibleSuggestions );
+
 	return (
-		<DomainSuggestionsList>
-			{ suggestions.map( ( suggestion ) => (
-				<SearchResultsItem key={ suggestion } domainName={ suggestion } />
-			) ) }
-		</DomainSuggestionsList>
+		<>
+			<DomainSuggestionsList>
+				{ suggestionsToShow.map( ( suggestion ) => (
+					<SearchResultsItem key={ suggestion } domainName={ suggestion } />
+				) ) }
+			</DomainSuggestionsList>
+			{ shouldShowMoreResultsButton && <DomainSuggestionLoadMore onClick={ showMoreResults } /> }
+		</>
 	);
 };
 

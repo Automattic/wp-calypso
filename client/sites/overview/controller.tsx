@@ -25,7 +25,7 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 	const { site: siteSlug } = context.params;
 	const site = getSelectedSite( context.store.getState() ) as SiteExcerptData;
 
-	if ( isMigrationInProgress( site ) ) {
+	if ( isMigrationInProgress( site ) || context.query?.[ 'ssh-migration' ] === 'complete' ) {
 		// Temporarily show the v1 site migration overview page.
 		// @todo implement the page in v2.
 		return overview( context, next );

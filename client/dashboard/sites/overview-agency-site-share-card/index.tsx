@@ -2,7 +2,7 @@ import { sitePreviewLinksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { link } from '@wordpress/icons';
-import OverviewCard from '../overview-card';
+import OverviewCard from '../../components/overview-card';
 import type { Site } from '@automattic/api-core';
 
 export default function AgencySiteShareCard( { site }: { site: Site } ) {

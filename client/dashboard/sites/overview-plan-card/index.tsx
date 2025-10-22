@@ -12,6 +12,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { commerceGardenPlan } from '../../components/icons';
+import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -21,7 +22,6 @@ import {
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
-import OverviewCard from '../overview-card';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
 import type { Purchase, Site } from '@automattic/api-core';

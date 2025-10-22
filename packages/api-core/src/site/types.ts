@@ -44,6 +44,7 @@ export interface Site {
 	name: string;
 	URL: string;
 	icon?: {
+		img: string;
 		ico: string;
 	};
 	plan?: SitePlan;

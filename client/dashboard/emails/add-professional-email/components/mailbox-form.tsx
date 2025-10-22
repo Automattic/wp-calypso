@@ -1,4 +1,3 @@
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
@@ -19,6 +18,7 @@ import {
 } from '../../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
 import { MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
+import { useDomainFromUrlParam } from '../../hooks/use-domain-from-url-param';
 import { sanitizeMailboxValue } from '../../utils/sanitize-mailbox-value';
 import { MailboxInput } from './mailbox-input';
 
@@ -33,11 +33,7 @@ export const MailboxForm = ( {
 	disabled: boolean;
 	removeForm?: () => void;
 } ) => {
-	const router = useRouter();
-	// Extract params from the current match for this route
-	const match = router.state.matches[ router.state.matches.length - 1 ];
-	const params = ( match?.params ?? {} ) as { domain?: string; type?: string };
-	const { domain = '' } = params;
+	const { domainName } = useDomainFromUrlParam();
 
 	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState( false );
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
@@ -54,6 +50,16 @@ export const MailboxForm = ( {
 
 		mailboxEntity.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
 		mailboxEntity.validateField( FIELD_MAILBOX );
+	};
+
+	const onBlur = ( { field }: { field: MailboxFormFieldBase< string > } ) => {
+		if ( ! field.isTouched ) {
+			field.isTouched = field.value?.length > 0;
+		}
+		if ( field.isTouched ) {
+			onRequestFieldValidation( field );
+		}
+		field.dispatchState();
 	};
 
 	const onChange = ( {
@@ -90,9 +96,10 @@ export const MailboxForm = ( {
 				lowerCaseChangeValue
 				suffix={
 					<InputControlSuffixWrapper>
-						<Text variant="muted">{ `@${ domain }` }</Text>
+						<Text variant="muted">{ `@${ domainName }` }</Text>
 					</InputControlSuffixWrapper>
 				}
+				onBlur={ onBlur }
 				onChange={ onChange }
 			/>
 
@@ -115,6 +122,7 @@ export const MailboxForm = ( {
 					}
 					// Hint to LastPass not to attempt autofill
 					data-lpignore="true"
+					onBlur={ onBlur }
 					onChange={ onChange }
 				/>
 
@@ -152,6 +160,7 @@ export const MailboxForm = ( {
 					mailboxEntity={ mailboxEntity }
 					label={ __( 'Password reset email address' ) }
 					disabled={ disabled }
+					onBlur={ onBlur }
 					onChange={ onChange }
 				/>
 			) }
