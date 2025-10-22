@@ -4,6 +4,7 @@
 		flex-direction: column;
 		gap: 8px;
 		padding: 12px 10px;
+		border-bottom-left-radius: 0 0 4px 4px;
 
 		button.is-link {
 			padding: 0;
@@ -16,6 +17,7 @@
 
 	.masterbar__help-menu-divider {
 		hr {
+			background: var(--color-neutral-5);
 			margin: 0;
 		}
 	}
