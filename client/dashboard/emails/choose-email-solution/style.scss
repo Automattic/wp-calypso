@@ -1,19 +1,6 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-.dashboard-page-header {
-	align-self: center;
-}
-
-.billing-interval-selector {
-	align-self: center;
-	width: 100%;
-
-	@include break-small {
-		width: 450px;
-	}
-}
-
 .email-providers {
 	border: 1px solid $gray-200;
 	border-radius: 8px;

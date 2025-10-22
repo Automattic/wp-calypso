@@ -157,26 +157,24 @@ export default function ChooseEmailSolution() {
 			}
 		>
 			{ /* Billing interval selector */ }
-			<div className="billing-interval-selector">
-				<ToggleGroupControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					isBlock
-					label={ __( 'Billing interval' ) }
-					hideLabelFromVision
-					value={ billingInterval }
-					onChange={ ( newBillingInterval ) =>
-						setBillingInterval( newBillingInterval as IntervalLength )
-					}
-				>
-					<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
-					<ToggleGroupControlOption
-						/* translators: %d is the annual savings percentage. */
-						label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
-						value="annually"
-					/>
-				</ToggleGroupControl>
-			</div>
+			<ToggleGroupControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				isBlock
+				label={ __( 'Billing interval' ) }
+				hideLabelFromVision
+				value={ billingInterval }
+				onChange={ ( newBillingInterval ) =>
+					setBillingInterval( newBillingInterval as IntervalLength )
+				}
+			>
+				<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
+				<ToggleGroupControlOption
+					/* translators: %d is the annual savings percentage. */
+					label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
+					value="annually"
+				/>
+			</ToggleGroupControl>
 
 			{ /* Split card for providers */ }
 			<div className="email-providers">
