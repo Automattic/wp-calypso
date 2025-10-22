@@ -62,7 +62,9 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			destination,
 		} );
 
-		setNavigateToRoute( destination );
+		if ( ! helpCenterVisible ) {
+			setNavigateToRoute( destination );
+		}
 		setShowHelpCenter( ! helpCenterVisible );
 	};
 

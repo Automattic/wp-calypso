@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -10,10 +11,20 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { help, commentAuthorAvatar } from '@wordpress/icons';
+import {
+	Icon,
+	comment,
+	backup,
+	page,
+	video,
+	rss,
+	help,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
+import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
@@ -26,7 +37,9 @@ const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' 
 
 function Help() {
 	const { user } = useAuth();
-	const { isLoading, isShown, setShowHelpCenter } = useHelpCenter();
+	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
+	const { recordTracksEvent } = useAnalytics();
+	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
 
 	const handleToggleHelpCenter = () => {
 		setShowHelpCenter( ! isShown );
@@ -35,6 +48,130 @@ function Help() {
 	const handleCloseHelpCenterApp = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
+
+	const handleMenuClick = ( destination: string, isExternal = false ) => {
+		recordTracksEvent( 'calypso_help_center_menu_panel_click', {
+			section: 'dashboard',
+			destination,
+			help_center_visible: isShown,
+		} );
+
+		if ( isExternal ) {
+			return window.open( destination, '_blank', 'noopener,noreferrer' );
+		}
+
+		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
+			force_site_id: true,
+			location: 'help-center',
+			section: 'dashboard',
+			destination,
+		} );
+
+		if ( ! isShown ) {
+			setNavigateToRoute( destination );
+		}
+		setShowHelpCenter( ! isShown );
+	};
+
+	if ( isMenuPanelEnabled ) {
+		return (
+			<>
+				<DropdownMenu
+					popoverProps={ {
+						placement: 'bottom-end',
+						offset: 8,
+					} }
+					label={ __( 'Help' ) }
+					icon={ help }
+					toggleProps={ {
+						className: 'dashboard-secondary-menu__item',
+						variant: 'tertiary',
+					} }
+				>
+					{ ( { onClose } ) => (
+						<>
+							<MenuGroup>
+								<MenuItem
+									onClick={ () => {
+										handleMenuClick( '/odie' );
+										onClose();
+									} }
+								>
+									<HStack spacing={ 2 }>
+										<Icon icon={ comment } size={ 24 } />
+										<span>{ __( 'Chat support' ) }</span>
+									</HStack>
+								</MenuItem>
+								<MenuItem
+									onClick={ () => {
+										handleMenuClick( '/chat-history' );
+										onClose();
+									} }
+								>
+									<HStack spacing={ 2 }>
+										<Icon icon={ backup } size={ 24 } />
+										<span>{ __( 'Chat history' ) }</span>
+									</HStack>
+								</MenuItem>
+							</MenuGroup>
+							<MenuGroup>
+								<MenuItem
+									onClick={ () => {
+										handleMenuClick( '/support-guides' );
+										onClose();
+									} }
+								>
+									<HStack spacing={ 2 }>
+										<Icon icon={ page } size={ 24 } />
+										<span>{ __( 'Support guides' ) }</span>
+									</HStack>
+								</MenuItem>
+								<MenuItem
+									onClick={ () => {
+										handleMenuClick(
+											localizeUrl( 'https://wordpress.com/support/courses/' ),
+											true
+										);
+										onClose();
+									} }
+								>
+									<HStack spacing={ 2 }>
+										<Icon icon={ video } size={ 24 } />
+										<span>{ __( 'Courses' ) }</span>
+									</HStack>
+								</MenuItem>
+								<MenuItem
+									onClick={ () => {
+										handleMenuClick(
+											localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+											true
+										);
+										onClose();
+									} }
+								>
+									<HStack spacing={ 2 }>
+										<Icon icon={ rss } size={ 24 } />
+										<span>{ __( 'Product updates' ) }</span>
+									</HStack>
+								</MenuItem>
+							</MenuGroup>
+						</>
+					) }
+				</DropdownMenu>
+				<Suspense fallback={ null }>
+					{ isShown && (
+						<AsyncHelpCenterApp
+							currentUser={ user }
+							handleClose={ handleCloseHelpCenterApp }
+							locale={ user.language }
+							onboardingUrl={ config( 'wpcom_signup_url' ) }
+							sectionName="dashboard"
+						/>
+					) }
+				</Suspense>
+			</>
+		);
+	}
 
 	return (
 		<>
