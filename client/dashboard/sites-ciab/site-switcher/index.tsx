@@ -1,0 +1,67 @@
+import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { MenuGroup, MenuItem, Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { plus } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
+import { siteRoute } from '../../app/router/sites';
+import SiteIcon from '../../components/site-icon';
+import Switcher from '../../components/switcher';
+import { getSiteDisplayName } from '../../utils/site-name';
+
+const CIABSiteSwitcher = () => {
+	const { recordTracksEvent } = useAnalytics();
+	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
+	const { data: sites } = useQuery( {
+		...sitesQuery( {
+			site_filters: [ 'commerce-garden' ],
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+		} ),
+		enabled: isSwitcherOpen,
+	} );
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const buildCurrentRouteLink = useBuildCurrentRouteLink();
+	const handleAddNewStore = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+			action: 'big-sky',
+			context: 'ciab-sites-dashboard',
+		} );
+
+		const addNewStoreUrl = addQueryArgs( '/setup/ai-site-builder-spec', {
+			source: 'ciab-sites-dashboard',
+			ref: 'new-site-popover',
+		} );
+
+		window.location.href = addNewStoreUrl;
+	};
+
+	return (
+		<Switcher
+			items={ sites }
+			value={ site }
+			getItemName={ getSiteDisplayName }
+			getItemUrl={ ( site ) => buildCurrentRouteLink( { params: { siteSlug: site.slug } } ) }
+			renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
+			open={ isSwitcherOpen }
+			onToggle={ setIsSwitcherOpen }
+		>
+			{ () => (
+				<MenuGroup>
+					<MenuItem onClick={ handleAddNewStore }>
+						<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+							<Icon icon={ plus } />
+							{ __( 'Add new store', 'Commerce in a box' ) }
+						</div>
+					</MenuItem>
+				</MenuGroup>
+			) }
+		</Switcher>
+	);
+};
+
+export default CIABSiteSwitcher;

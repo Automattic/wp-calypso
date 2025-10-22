@@ -16,10 +16,6 @@ export type MeSupports = {
 	apps: boolean;
 };
 
-export type OnboardingLink = {
-	href: string;
-};
-
 export type AppConfig = {
 	name: string;
 	basePath: string;
@@ -38,11 +34,6 @@ export type AppConfig = {
 		notifications: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
-	};
-	onboardingLinkSourceQueryArg?: 'sites-dashboard' | 'ciab-sites-dashboard';
-	onboardingLinks?: {
-		default: OnboardingLink;
-		withAI: OnboardingLink;
 	};
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
@@ -67,8 +58,6 @@ const AppContext = createContext< AppConfig >( {
 		me: false,
 		commandPalette: false,
 	},
-	onboardingLinkSourceQueryArg: undefined,
-	onboardingLinks: undefined,
 	optIn: false,
 	components: {},
 } );

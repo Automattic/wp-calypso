@@ -33,17 +33,9 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 	},
-	onboardingLinkSourceQueryArg: 'ciab-sites-dashboard',
-	onboardingLinks: {
-		default: {
-			href: '/start',
-		},
-		withAI: {
-			href: '/setup/ai-site-builder-spec',
-		},
-	},
 	optIn: false,
 	components: {
 		sites: () => import( '../sites-ciab' ),
+		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},
 } );
