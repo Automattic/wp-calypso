@@ -47,7 +47,11 @@ export default function SSHMigrationFailed() {
 								<HStack justify="flex-start" key={ index } spacing={ 3 }>
 									<Card size="extraSmall" style={ { minWidth: '40px' } }>
 										<CardBody style={ { lineHeight: '0' } }>
-											<Icon icon={ item.icon } size={ 24 } style={ { fill: '#646970' } } />
+											<Icon
+												icon={ item.icon }
+												size={ 24 }
+												style={ { fill: 'var(--wp-admin-theme-color-muted, #646970)' } }
+											/>
 										</CardBody>
 									</Card>
 									<Text variant="muted">{ item.text }</Text>
