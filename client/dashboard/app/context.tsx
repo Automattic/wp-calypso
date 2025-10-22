@@ -1,3 +1,4 @@
+import { sitesQuery } from '@automattic/api-queries';
 import { createContext, useContext } from 'react';
 
 export type SiteSettingsGeneralSupports = {
@@ -48,6 +49,9 @@ export type AppConfig = {
 	};
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
+	queries: {
+		sitesQuery: typeof sitesQuery;
+	};
 };
 
 export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
@@ -71,6 +75,9 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	},
 	optIn: false,
 	components: {},
+	queries: {
+		sitesQuery,
+	},
 };
 
 const AppContext = createContext< AppConfig >( APP_CONTEXT_DEFAULT_CONFIG );

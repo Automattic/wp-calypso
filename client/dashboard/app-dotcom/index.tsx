@@ -1,3 +1,4 @@
+import { sitesQuery } from '@automattic/api-queries';
 import boot from '../app/boot';
 import Logo from './logo';
 import './style.scss';
@@ -43,5 +44,8 @@ boot( {
 	components: {
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
+	},
+	queries: {
+		sitesQuery,
 	},
 } );

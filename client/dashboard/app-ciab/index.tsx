@@ -1,3 +1,4 @@
+import { sitesQuery } from '@automattic/api-queries';
 import boot from '../app/boot';
 import Logo from './logo';
 import './translations';
@@ -44,5 +45,9 @@ boot( {
 	components: {
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
+	},
+	queries: {
+		sitesQuery: ( fetchSitesOptions ) =>
+			sitesQuery( Object.assign( {}, fetchSitesOptions, { site_filters: [ 'commerce-garden' ] } ) ),
 	},
 } );

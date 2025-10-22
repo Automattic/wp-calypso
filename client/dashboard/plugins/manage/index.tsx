@@ -3,12 +3,12 @@ import {
 	marketplacePluginsQuery,
 	marketplaceSearchQuery,
 	pluginsQuery,
-	sitesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { useAppContext } from '../../app/context';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
@@ -22,8 +22,9 @@ import type { PluginListRow } from './types';
 import './style.scss';
 
 export default function PluginsList() {
+	const { queries } = useAppContext();
 	const { data: sitesPlugins, isLoading: isLoadingPlugins } = useQuery( pluginsQuery() );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 	const actions = getActions();
 	const [ view, setView ] = useState( defaultView );
 	const data = useMemo(

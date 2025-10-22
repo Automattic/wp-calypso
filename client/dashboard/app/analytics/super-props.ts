@@ -53,6 +53,7 @@ function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | 
 		return site;
 	}
 
+	// TODO: We need to get different sites across apps
 	const sites = queryClient.getQueryData< Site[] >( sitesQuery().queryKey );
 	return sites?.find( ( s ) => s.slug === siteSlug );
 }

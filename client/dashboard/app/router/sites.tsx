@@ -29,7 +29,6 @@ import {
 	siteScanQuery,
 	siteSettingsQuery,
 	siteSftpUsersQuery,
-	sitesQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
@@ -59,9 +58,9 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		queryClient.ensureQueryData( sitesQuery() );
+		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),

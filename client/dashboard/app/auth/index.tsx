@@ -14,10 +14,11 @@ import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
-interface AuthContextType {
+export interface AuthContextType {
 	user: User;
 	logout: () => Promise< void >;
 }
+
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
 async function initializeCurrentUser(): Promise< User > {
