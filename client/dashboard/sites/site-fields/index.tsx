@@ -36,6 +36,7 @@ import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { AtomicTransferStatus, Site } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -57,6 +58,17 @@ export const titleFieldTextOverflowStyles = {
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
 } as const;
+
+export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+	return (
+		<Link
+			{ ...props }
+			to={ getSiteManagementUrl( site ) }
+			disabled={ site.is_deleted }
+			style={ { textDecoration: 'none' } }
+		/>
+	);
+}
 
 export function Name( { site, value }: { site: Site; value: string } ) {
 	const renderBadge = () => {
