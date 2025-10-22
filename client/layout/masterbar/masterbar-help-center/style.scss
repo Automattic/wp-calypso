@@ -1,6 +1,6 @@
 .masterbar__item-wrapper.is-menu-panel {
 	.masterbar__item-subitems {
-		padding: 12px 10px;
+		padding: 4px 10px;
 
 		button.is-link {
 			padding: 0;
@@ -10,7 +10,20 @@
 			color: var(--studio-gray-50);
 		}
 	}
-}
+
+	.masterbar__help-menu-divider {
+		height: 1px;
+		padding: 0;
+		margin: 8px 0;
+	}
+
+	.masterbar__item-subitems-item:not(.masterbar__help-menu-divider) {
+		display: flex;
+		align-items: center;
+		height: 20px;
+		padding: 4px 6px;
+	}
+} 
 
 .masterbar__help-menu-item {
 	display: flex;
