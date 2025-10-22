@@ -1,21 +1,26 @@
 import { GoogleEmailSubscription, TitanEmailSubscription } from '@automattic/api-core';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalVStack as VStack,
 	Button,
 	Icon,
 } from '@wordpress/components';
-import { sprintf, __ } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
-import { useState, useEffect } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { arrowLeft, wordpress } from '@wordpress/icons';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { addProfessionalEmailRoute, addGoogleMailboxRoute } from '../../app/router/emails';
+import {
+	addGoogleMailboxRoute,
+	addProfessionalEmailRoute,
+	emailsRoute,
+} from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PriceDisplay } from '../../components/price-display';
+import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import {
@@ -141,7 +146,20 @@ export default function ChooseEmailSolution() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader /> }
+			header={
+				<PageHeader
+					prefix={
+						<RouterLinkButton
+							className="add-forwarder__back-button"
+							icon={ arrowLeft }
+							iconSize={ 12 }
+							to={ emailsRoute.to }
+						>
+							<Text variant="muted">{ __( 'Emails' ) }</Text>
+						</RouterLinkButton>
+					}
+				/>
+			}
 			size="small"
 			notices={
 				<>

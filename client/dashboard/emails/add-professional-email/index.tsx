@@ -1,26 +1,30 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
+import { Text } from '../../components/text';
 import { CartActionError } from '../../shopping-cart/errors';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import {
-	FIELD_NAME,
 	FIELD_FIRSTNAME,
-	FIELD_LASTNAME,
 	FIELD_IS_ADMIN,
-	FIELD_PASSWORD_RESET_EMAIL,
+	FIELD_LASTNAME,
 	FIELD_MAILBOX,
+	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from '../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
@@ -182,7 +186,20 @@ const AddProfessionalEmail = () => {
 
 	return (
 		<PageLayout
-			header={ <PageHeader /> }
+			header={
+				<PageHeader
+					prefix={
+						<RouterLinkButton
+							className="add-forwarder__back-button"
+							icon={ arrowLeft }
+							iconSize={ 12 }
+							to={ emailsRoute.to }
+						>
+							<Text variant="muted">{ __( 'Emails' ) }</Text>
+						</RouterLinkButton>
+					}
+				/>
+			}
 			size="small"
 			notices={
 				showEmailPurchaseDisabledMessage && (
