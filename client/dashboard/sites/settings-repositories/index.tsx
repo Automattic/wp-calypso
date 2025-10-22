@@ -9,8 +9,7 @@ import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
@@ -28,6 +27,7 @@ import illustrationUrl from '../deployments/deployments-callout-illustration.svg
 import GithubIcon from '../deployments/icons/github';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { BackToDeploymentsButton } from './back-to-deployments-button';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
@@ -190,36 +190,7 @@ function SiteRepositories() {
 					<RepositoriesList />
 				</HostingFeatureGatedWithCallout>
 			</PageLayout>
-			{ showBackToDeployments && (
-				<div
-					className="repositories-back-button"
-					style={ {
-						position: 'fixed',
-						bottom: '16px',
-						insetInlineStart: '16px',
-					} }
-				>
-					<Button
-						variant="secondary"
-						icon={ isRTL() ? chevronRight : chevronLeft }
-						iconPosition="left"
-						onClick={ () => {
-							navigate( {
-								to: siteDeploymentsListRoute.fullPath,
-								params: { siteSlug },
-							} );
-						} }
-						style={ {
-							backgroundColor: '#1e1e1e',
-							color: '#ffffff',
-							borderColor: '#1e1e1e',
-							boxShadow: 'none',
-						} }
-					>
-						{ __( 'Back to Deployments' ) }
-					</Button>
-				</div>
-			) }
+			{ showBackToDeployments && <BackToDeploymentsButton /> }
 		</>
 	);
 }
