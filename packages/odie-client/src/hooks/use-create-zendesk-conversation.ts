@@ -24,7 +24,6 @@ export const useCreateZendeskConversation = (): ( ( {
 		setChat,
 		chat,
 		trackEvent,
-		sectionName,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -83,7 +82,7 @@ export const useCreateZendeskConversation = (): ( ( {
 				messaging_ai_chat_id: chatId || undefined,
 				messaging_url: selectedSiteURL || window.location.href,
 				messaging_flow: userFieldFlowName || null,
-				messaging_source: sectionName,
+				messaging_source: window.location.href,
 			} );
 
 			await submitUserFields( {
@@ -92,7 +91,7 @@ export const useCreateZendeskConversation = (): ( ( {
 				messaging_ai_chat_id: chatId || undefined,
 				messaging_url: selectedSiteURL || window.location.href,
 				messaging_flow: userFieldFlowName || null,
-				messaging_source: sectionName,
+				messaging_source: window.location.href,
 			} );
 
 			trackEvent( 'submitted_zendesk_user_fields' );
