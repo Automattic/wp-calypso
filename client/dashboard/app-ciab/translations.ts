@@ -38,6 +38,7 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 };
 
 const i18nGettextCallback = ( translation: string, text: string, domain: string ) => {
+	// The hook is for text that doesn’t belong to the Commerce in a Box domain.
 	if ( domain === ciabDomain ) {
 		return translation;
 	}
@@ -51,6 +52,7 @@ const i18nNgettextCallback = (
 	number: number,
 	domain: string
 ) => {
+	// The hook is for text that doesn’t belong to the Commerce in a Box domain.
 	if ( domain === ciabDomain ) {
 		return translation;
 	}
