@@ -2,7 +2,6 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, notFound } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { Suspense, useMemo, lazy } from 'react';
 import { useAppContext } from '../../app/context';
 import { siteRoute } from '../../app/router/sites';
@@ -16,7 +15,6 @@ import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
-	const isDesktop = useViewportMatch( 'medium' );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { components } = useAppContext();
@@ -30,7 +28,7 @@ function Site() {
 		<Suspense fallback={ null }>
 			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
 			<HeaderBar>
-				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
+				<HStack spacing={ 3 }>
 					<HeaderBar.Title>
 						<SiteSwitcher />
 						{ canSwitchEnvironment( site ) && (
@@ -40,12 +38,7 @@ function Site() {
 							</>
 						) }
 					</HeaderBar.Title>
-					{ ! isSiteMigrationInProgress( site ) && (
-						<>
-							{ isDesktop && <MenuDivider /> }
-							<SiteMenu site={ site } />
-						</>
-					) }
+					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
 				</HStack>
 			</HeaderBar>
 			<Outlet />
