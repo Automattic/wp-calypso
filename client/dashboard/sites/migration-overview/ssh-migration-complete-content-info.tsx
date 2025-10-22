@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import type { Site } from '@automattic/api-core';
 
@@ -43,9 +44,7 @@ export function SSHMigrationCompleteContentInfo( { site }: { site: Site } ) {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<Text as="h2" size="20px" weight={ 500 } lineHeight="28px">
-							{ __( 'Connect your domain' ) }
-						</Text>
+						<SectionHeader title={ __( 'Connect your domain' ) } level={ 3 } />
 						<Text as="p" variant="muted">
 							{ createInterpolateElement(
 								__(
