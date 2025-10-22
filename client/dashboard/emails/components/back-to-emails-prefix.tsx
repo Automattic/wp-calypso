@@ -3,6 +3,7 @@ import { arrowLeft } from '@wordpress/icons';
 import { emailsRoute } from '../../app/router/emails';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
+import './back-to-emails-prefix.scss';
 
 /**
  * PageHeaderPrefix
