@@ -12,4 +12,4 @@ Please improve the instructions on how to test this flow.
 
 ## Context
 
-https://ciabp2.wordpress.com/2025/07/31/ciab-plans-and-pricing-where-we-are-and-next-steps/
+<https://wp.me/pgzWbf-ND>
