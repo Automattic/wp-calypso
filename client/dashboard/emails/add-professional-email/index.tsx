@@ -93,6 +93,10 @@ const AddProfessionalEmail = () => {
 		return mailbox;
 	}, [ domainName, existingMailboxes, user.email ] );
 
+	const persistMailboxesToState = useCallback( () => {
+		setMailboxEntities( [ ...mailboxEntities ] );
+	}, [ mailboxEntities ] );
+
 	useEffect( () => {
 		isFetched && setMailboxEntities( [ createNewMailbox() ] );
 	}, [ createNewMailbox, isFetched ] );
@@ -105,7 +109,8 @@ const AddProfessionalEmail = () => {
 		);
 
 		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
-		const mailboxOperations = new MailboxOperations( mailboxEntities, () => {} );
+		persistMailboxesToState();
+		const mailboxOperations = new MailboxOperations( mailboxEntities, persistMailboxesToState );
 
 		setIsSubmitting( true );
 

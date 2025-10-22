@@ -115,6 +115,32 @@ export interface DomainAvailability {
 	 * Trademark claims notice info
 	 */
 	trademark_claims_notice_info?: TrademarkClaimsNoticeInfo;
+
+	/**
+	 * Domain product ID, returned when the domain is available for registration
+	 */
+	product_id?: number;
+
+	/**
+	 * Product slug, returned when the domain is available for registration
+	 */
+	product_slug?: string;
+
+	/**
+	 * Raw price of the domain, returned when the domain is available for registration
+	 */
+	raw_price?: number;
+
+	/**
+	 * Search provider vendor, it's value is `availability` when the domain is available for registration
+	 */
+	vendor?: string;
+
+	/**
+	 * This is a domain suggestion property, but availability checks return it when the domain is available for registration
+	 * @example [ "exact-match", "tld-exact" ]
+	 */
+	match_reasons?: string[];
 }
 
 export enum DomainAvailabilityStatus {

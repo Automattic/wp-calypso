@@ -1,13 +1,13 @@
 import { Domain, DomainSubtype, isWpError } from '@automattic/api-core';
 import {
+	domainQuery,
+	mailboxAccountsQuery,
+	productsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
-	sitesQuery,
-	siteDomainsQuery,
-	mailboxAccountsQuery,
-	domainQuery,
-	productsQuery,
 	siteByIdQuery,
+	siteDomainsQuery,
+	sitesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -171,24 +171,6 @@ export const addProfessionalEmailRoute = createRoute( {
 	)
 );
 
-export const addTitanmailMailboxRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Add Titan Mail mailbox' ),
-			},
-		],
-	} ),
-	getParentRoute: () => rootRoute,
-	path: 'emails/add-titan-mailbox',
-} ).lazy( () =>
-	import( '../../emails/add-titan-mailbox' ).then( ( d ) =>
-		createLazyRoute( 'add-titan-mailbox' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const addGoogleMailboxRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -231,7 +213,6 @@ export const createEmailsRoutes = () => {
 		chooseDomainRoute,
 		chooseEmailSolutionRoute,
 		addProfessionalEmailRoute,
-		addTitanmailMailboxRoute,
 		addGoogleMailboxRoute,
 		addEmailForwarderRoute,
 	];

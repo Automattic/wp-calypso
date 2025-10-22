@@ -1,0 +1,52 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.site-migration-ssh-in-progress {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.site-migration-ssh-in-progress__card {
+	max-width: 440px;
+	margin-top: 3rem;
+}
+
+.site-migration-ssh-in-progress__checklist-title {
+	font-weight: 500;
+	margin: 0.5rem 0 1.5rem;
+	color: var(--studio-gray-100);
+}
+
+.site-migration-ssh-in-progress__checklist-items {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+.site-migration-ssh-in-progress__checklist-item-icon {
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 4px;
+	padding: 0.75rem;
+	line-height: 0;
+	svg {
+		margin: 0;
+	}
+}
+
+.site-migration-ssh-in-progress__progress {
+	line-height: 0;
+	width: 100%;
+}
+
+.site-migration-ssh-in-progress__checklist-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 0.875rem;
+	color: var(--studio-gray-50);
+}
+
+.site-migration-ssh-in-progress__icon {
+	flex-shrink: 0;
+	margin-top: 2px;
+}

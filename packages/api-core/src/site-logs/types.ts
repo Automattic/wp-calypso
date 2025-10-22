@@ -7,7 +7,7 @@ export interface SiteLogsAPIResponse {
 	};
 }
 
-interface PHPLogFromEndpoint {
+export interface PHPLogFromEndpoint {
 	timestamp: string;
 	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
 	message: string;

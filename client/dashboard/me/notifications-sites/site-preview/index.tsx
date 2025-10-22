@@ -1,7 +1,7 @@
 import { Site } from '@automattic/api-core';
 import { __experimentalGrid as Grid, __experimentalHStack as HStack } from '@wordpress/components';
+import SiteIcon from '../../../components/site-icon';
 import { Name, URL } from '../../../sites/site-fields';
-import SiteIcon from '../../../sites/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
 
 import './index.scss';

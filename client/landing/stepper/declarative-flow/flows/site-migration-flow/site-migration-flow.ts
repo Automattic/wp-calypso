@@ -188,10 +188,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( userHasOtherWPComSites ) {
-						return navigate( paths.sitePickerPath( { from, platform, ssh: 'true' } ) );
+						return navigate( paths.sitePickerPath( { from, platform } ) );
 					}
 
-					return navigate( paths.siteCreationPath( { from, platform, ssh: 'true' } ) );
+					return navigate( paths.siteCreationPath( { from, platform } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -572,6 +572,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
+					const { destination } = providedDependencies as {
+						destination?: 'migration-started' | 'no-ssh-access';
+					};
+
+					// User doesn't have SSH access, redirect to credentials flow
+					if ( destination === 'no-ssh-access' ) {
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+					}
+
 					return navigate( paths.sshInProgressPath( { siteId, siteSlug } ) );
 				}
 

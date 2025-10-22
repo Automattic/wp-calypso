@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
+import OverviewCard from '../../components/overview-card';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import OverviewCard from '../overview-card';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {

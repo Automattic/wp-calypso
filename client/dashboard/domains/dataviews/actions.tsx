@@ -192,7 +192,8 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					return !! site && canSetAsPrimary( { domain: item, site, user } );
+					const hasRedirect = site?.options?.is_redirect ?? false;
+					return !! site && canSetAsPrimary( { domain: item, site, user } ) && ! hasRedirect;
 				},
 				disabled: setPrimaryDomainMutation.isPending,
 			},
