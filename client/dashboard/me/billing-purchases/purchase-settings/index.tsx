@@ -7,7 +7,6 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
-	JetpackPlans,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -73,6 +72,7 @@ import {
 	isTitanMail,
 	isGoogleWorkspace,
 	getRenewalUrlFromPurchase,
+	isJetpackT1SecurityPlan,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId } from '../urls';
@@ -128,15 +128,6 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	return `/plans/${ purchase.site_slug }`;
-}
-
-function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
-	const securityT1Slugs = [
-		JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
-		JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
-		JetpackPlans.PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
-	] as const;
-	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
