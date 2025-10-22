@@ -6,7 +6,11 @@ test.describe(
 	'Signup: Tailored Start Writing Flow',
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
-		annotation: { type: 'flowchart', description: 'TBA' },
+		annotation: {
+			type: 'flowchart',
+			description:
+				'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=toggle#pako:eNqN0lFr2zAQAOC_cvWgbLCsVeLETgp9SJY-jDECHZSx7EGR1ERMlowkU8zYf-8psuOstEP2m-67093ZfzJmuMgW2aMyT-xArYfvy60GfDT5uc3ufTh6sNJLvYe19raFjZHaw3snfFNfuQBGTxF82Ga_YDS6BT3G3JUV1AtoTWOBMmYa7THeFR9HN0GHVYWNTFRUKqCcW-HcgCcR54gfjOWbEP3ETIWtOA9rLr2xg86jnqLeNDsl3QEepUVYox7Y9Mh21KL7ES7fKbO_pIhuHFBVhdI4AW8vTjmIY-0Cc77RqhsuJIbJL3Fn12HwgzFOAAVucB7dhybnoVrRU2CGga-00ewAVdtX67os4oXlaU8hDF56hVU0By4cs7L20ughiVzHLEJOabGVY4oTSrCzRZBuvSR_pcHezDpTvLatF2tC1enQ9spojfeBN-AMk1SdubJzc3RfhK8p-w33RwQ13YtBlv3H6jPJy4N8OIhHzre4I03w4yu1eHd3fD4yo4xd7BTe9A8bd2y5_Ly-W77JJmnV8o6tyvVsNX-TTZOqhb8uqbkirTn8O9Jc4rD4byS5Mm0KQhJdnuiKRFcmjjv_z8cNb_b3GaN5rPQ',
+		},
 	},
 	() => {
 		let newUserDetailsStartWriting: NewUserResponse;

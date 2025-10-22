@@ -40,6 +40,7 @@ Using a consistent prefix convention helps new contributors quickly identify the
 | client      | `EmailClient` or `RestAPIClient`          | `clientEmail`      |
 | component   | `packages/calypso-e2e/src/lib/components` | `componentSidebar` |
 | environment | `EnvVariables`                            | `environment`      |
+| flow        | `packages/calypso-e2e/src/lib/flows`      | `flowStartWriting` |
 | helper      | `DataHelper` or `MediaHelper`             | `helperData`       |
 | page        | `packages/calypso-e2e/src/lib/pages`      | `pageAdvertising`  |
 | secrets     | `Secrets`                                 | `secrets`          |
