@@ -1,7 +1,6 @@
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
-import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -23,11 +22,10 @@ function renderServiceNameDescription(
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
-	const shouldShowDomain = transaction.domain && ! isInternalA4AAgencyDomain( transaction.domain );
 	return (
 		<div>
 			<strong>{ plan }</strong>
-			{ shouldShowDomain && <small>{ transaction.domain }</small> }
+			{ transaction.domain && <small>{ transaction.domain }</small> }
 			{ termLabel && <small>{ termLabel }</small> }
 			{ transaction.licensed_quantity && (
 				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>

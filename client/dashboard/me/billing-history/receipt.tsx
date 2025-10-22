@@ -380,8 +380,6 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 		stripZeros: true,
 	} );
 
-	const shouldShowDomain = item.domain && ! item.domain.includes( 'a8cagency.blog' );
-
 	return (
 		<VStack className="receipt-line-item">
 			<HStack justify="space-between" alignment="flex-start">
@@ -392,7 +390,7 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 						</Text>
 						<VStack spacing={ 0 }>
 							{ termLabel && <Text>{ termLabel }</Text> }
-							{ shouldShowDomain && <Text variant="muted">{ item.domain }</Text> }
+							{ item.domain && <Text variant="muted">{ item.domain }</Text> }
 							{ item.licensed_quantity && (
 								<Text>{ renderTransactionQuantitySummary( item ) }</Text>
 							) }
