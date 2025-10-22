@@ -97,7 +97,7 @@ function Help() {
 										onClose();
 									} }
 								>
-									<HStack spacing={ 2 }>
+									<HStack spacing={ 2 } justify="left">
 										<Icon icon={ comment } size={ 24 } />
 										<span>{ __( 'Chat support' ) }</span>
 									</HStack>
@@ -108,7 +108,7 @@ function Help() {
 										onClose();
 									} }
 								>
-									<HStack spacing={ 2 }>
+									<HStack spacing={ 2 } justify="left">
 										<Icon icon={ backup } size={ 24 } />
 										<span>{ __( 'Chat history' ) }</span>
 									</HStack>
@@ -121,7 +121,7 @@ function Help() {
 										onClose();
 									} }
 								>
-									<HStack spacing={ 2 }>
+									<HStack spacing={ 2 } justify="left">
 										<Icon icon={ page } size={ 24 } />
 										<span>{ __( 'Support guides' ) }</span>
 									</HStack>
@@ -135,7 +135,7 @@ function Help() {
 										onClose();
 									} }
 								>
-									<HStack spacing={ 2 }>
+									<HStack spacing={ 2 } justify="left">
 										<Icon icon={ video } size={ 24 } />
 										<span>{ __( 'Courses' ) }</span>
 									</HStack>
@@ -149,7 +149,7 @@ function Help() {
 										onClose();
 									} }
 								>
-									<HStack spacing={ 2 }>
+									<HStack spacing={ 2 } justify="left">
 										<Icon icon={ rss } size={ 24 } />
 										<span>{ __( 'Product updates' ) }</span>
 									</HStack>
@@ -265,7 +265,7 @@ function UserProfile() {
 								logout().catch( () => setIsLoggingOut( false ) );
 							} }
 						>
-							<HStack>
+							<HStack justify="left">
 								<span>{ isLoggingOut ? __( 'Logging out…' ) : __( 'Log out' ) }</span>
 								{ isLoggingOut && (
 									<Spinner style={ { width: 24, height: 24, padding: 4, margin: 0 } } />
