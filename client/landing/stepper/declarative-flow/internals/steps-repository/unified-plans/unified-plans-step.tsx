@@ -6,6 +6,7 @@ import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
+	isWooHostedFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
 	Step,
@@ -390,6 +391,10 @@ function UnifiedPlansStep( {
 			return translate( 'The right plan for the right project' );
 		}
 
+		if ( isWooHostedFlow( flowName ) ) {
+			return translate( 'Select a plan to launch your store' );
+		}
+
 		if ( intent === 'plans-wordpress-hosting' ) {
 			return translate( 'Managed hosting without limits' );
 		} else if ( intent === 'plans-website-builder' ) {
@@ -433,6 +438,12 @@ function UnifiedPlansStep( {
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
 				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
+		if ( isWooHostedFlow( flowName ) ) {
+			return translate(
+				'Your free trial ends in 14 days - select a plan to keep your online store.'
 			);
 		}
 

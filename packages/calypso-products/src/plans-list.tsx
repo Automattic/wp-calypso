@@ -1308,7 +1308,8 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanWooExpressMediumDetails(),
 	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Maximize business growth with our most powerful ecommerce tools.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'

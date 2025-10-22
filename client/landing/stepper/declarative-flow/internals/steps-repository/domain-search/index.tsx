@@ -8,6 +8,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	isWooHostedFlow,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -234,6 +235,10 @@ const DomainSearchStep: StepType< {
 			return __( 'Find the perfect domain' );
 		}
 
+		if ( isWooHostedFlow( flow ) ) {
+			return __( 'Make your store unforgettable' );
+		}
+
 		return __( 'Claim your space on the web' );
 	}, [ flow, __ ] );
 
@@ -245,8 +250,13 @@ const DomainSearchStep: StepType< {
 		if ( isCopySiteFlow( flow ) ) {
 			return __( 'Make your copied site unique with a custom domain all of its own.' );
 		}
+
 		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
 			return __( 'Secure your 100-Year domain and start building your legacy.' );
+		}
+
+		if ( isWooHostedFlow( flow ) ) {
+			return __( 'Choose a site address that puts your brand front and center.' );
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
