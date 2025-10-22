@@ -8,8 +8,21 @@ interface SSHMigrationStatusParams {
 
 interface SSHMigrationStatusResponse {
 	success: boolean;
-	status: 'not_started' | 'in_progress' | 'completed' | 'failed';
-	step: string;
+	status: 'in-progress' | 'migrating' | 'completed' | 'failed';
+	step:
+		| 'starting-migration'
+		| 'quickforget-read'
+		| 'quickforget-decode'
+		| 'migration-create'
+		| 'migration-created'
+		| 'migration-update'
+		| 'preflight'
+		| 'preflight-success'
+		| 'preflight-running'
+		| 'migration-success'
+		| 'migration-starting'
+		| 'migration-running'
+		| 'completed';
 }
 
 /**

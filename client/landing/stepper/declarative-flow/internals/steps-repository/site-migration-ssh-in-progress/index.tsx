@@ -41,7 +41,7 @@ const SiteMigrationSshInProgressChecklist = ( {
 
 const SiteMigrationSshInProgress: StepType< {
 	submits: {
-		action: 'continue';
+		action: 'migration-completed' | 'migration-failed' | 'preflight' | 'unexpected-status';
 	};
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
@@ -50,25 +50,33 @@ const SiteMigrationSshInProgress: StepType< {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? null;
 
-	// Poll migration status
 	const { data: migrationStatus } = useSSHMigrationStatus( {
 		siteId,
 		enabled: siteId > 0,
 	} );
 
-	// Handle migration completion or failure
 	useEffect( () => {
 		if ( ! migrationStatus ) {
 			return;
 		}
 
-		if ( migrationStatus.status === 'completed' ) {
-			// Navigate to success/completion screen
-			navigation.submit?.( { action: 'continue' } );
-		} else if ( migrationStatus.status === 'failed' ) {
-			// Could navigate to an error screen or show an error message
-			// For now, we'll let it stay on this screen
-			// You might want to add error handling here
+		// Handle different migration statuses
+		switch ( migrationStatus.status ) {
+			case 'completed':
+				navigation.submit?.( { action: 'migration-completed' } );
+				break;
+			case 'failed':
+				if ( ! [ 'migration-starting', 'migration-running' ].includes( migrationStatus.step ) ) {
+					navigation.submit?.( { action: 'unexpected-status' } );
+					break;
+				}
+				navigation.submit?.( { action: 'migration-failed' } );
+				break;
+			case 'migrating':
+				break;
+			default:
+				navigation.submit?.( { action: 'unexpected-status' } );
+				break;
 		}
 	}, [ migrationStatus, navigation ] );
 
