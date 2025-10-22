@@ -6,6 +6,7 @@ import {
 	Button,
 	Card,
 	CardBody,
+	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -57,14 +58,12 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 									),
 									{
 										siteLink: (
-											<a
+											<ExternalLink
 												href={ `https://${ site.slug }` }
-												target="_blank"
-												rel="noopener noreferrer"
 												onClick={ handlePreviewClick }
 											>
 												<strong>{ site.slug }</strong>
-											</a>
+											</ExternalLink>
 										),
 										remoteDomain: <>{ siteDomain }</>,
 									}

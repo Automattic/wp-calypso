@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { HostingCard } from 'calypso/components/hosting-card';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
@@ -41,15 +41,10 @@ export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 					{
 						components: {
 							previewLink: (
-								<a
-									href={ `https://${ site.slug }` }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ handlePreviewClick }
-								>
+								<ExternalLink href={ `https://${ site.slug }` } onClick={ handlePreviewClick }>
 									{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 									<span className="external-link-icon">↗</span>
-								</a>
+								</ExternalLink>
 							),
 						},
 						args: {
