@@ -1,4 +1,5 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
@@ -7,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { shoppingCartManagerClient } from '../../app/shopping-cart';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -30,7 +32,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
-import { Cart } from './components/cart';
+import { DomainsMiniCart } from './components/domains-mini-cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
@@ -68,6 +70,10 @@ const AddProfessionalEmail = () => {
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
 
+	useEffect( () => {
+		shoppingCartManagerClient.forCartKey( site?.ID ).actions.reloadFromServer();
+	}, [ site?.ID ] );
+
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 
 	const createNewMailbox = useCallback( () => {
@@ -104,10 +110,6 @@ const AddProfessionalEmail = () => {
 
 	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
-
-		const { shoppingCartManagerClient } = await import(
-			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
-		);
 
 		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
 		persistMailboxesToState();
@@ -181,6 +183,10 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
+	const { responseCart } = shoppingCartManagerClient.forCartKey( site?.ID ).getState();
+	// console.debug( 'responseCart', responseCart );
+	const cartProduct = responseCart.products.find( ( p ) => p.product_id === product.product_id );
+	// console.debug( 'cartProduct', cartProduct );
 	return (
 		<PageLayout
 			header={ <PageHeader /> }
@@ -220,7 +226,39 @@ const AddProfessionalEmail = () => {
 							__next40pxDefaultSize
 							variant="secondary"
 							disabled={ disabled }
-							onClick={ () => {
+							onClick={ async () => {
+								setIsSubmitting( true );
+
+								const mailboxOperations = new MailboxOperations(
+									mailboxEntities,
+									persistMailboxesToState
+								);
+								// const validated = await mailboxOperations.validateAndCheck( false );
+
+								const emailProperties = getEmailProductProperties(
+									'titan',
+									domain,
+									product,
+									mailboxOperations.mailboxes.length
+								);
+
+								const cartItems = getCartItems(
+									mailboxOperations.mailboxes,
+									emailProperties
+								) as MinimalRequestCartProduct;
+
+								if ( cartProduct ) {
+									await shoppingCartManagerClient
+										.forCartKey( site?.ID )
+										.actions.replaceProductInCart( cartProduct.uuid, cartItems )
+										.finally( () => setIsSubmitting( false ) );
+								} else {
+									await shoppingCartManagerClient
+										.forCartKey( site?.ID )
+										.actions.addProductsToCart( [ cartItems ] )
+										.finally( () => setIsSubmitting( false ) );
+								}
+
 								setMailboxEntities( ( prevMailboxEntities ) => [
 									...prevMailboxEntities,
 									createNewMailbox(),
@@ -237,7 +275,14 @@ const AddProfessionalEmail = () => {
 						</Button>
 					</ButtonStack>
 
-					<Cart />
+					<DomainsMiniCart
+						totalItems={ cartProduct?.extra.new_quantity || 0 }
+						totalPrice={ cartProduct?.item_total || 0 }
+						onContinue={ () => {
+							// TODO: bind to onsubmit
+						} }
+						isCartBusy={ isSubmitting }
+					/>
 				</VStack>
 			</form>
 		</PageLayout>

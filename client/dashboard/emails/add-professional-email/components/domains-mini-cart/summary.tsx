@@ -9,11 +9,9 @@ import { useI18n } from '@wordpress/react-i18n';
 export const DomainsMiniCartSummary = ( {
 	totalItems,
 	totalPrice,
-	openFullCart,
 }: {
 	totalItems: number;
 	totalPrice: string;
-	openFullCart: () => void;
 } ) => {
 	const { _n } = useI18n();
 
@@ -39,7 +37,7 @@ export const DomainsMiniCartSummary = ( {
 	);
 
 	return (
-		<Button onClick={ openFullCart } aria-label={ ariaLabel } className="domains-mini-cart-summary">
+		<Button onClick={ () => {} } aria-label={ ariaLabel } className="domains-mini-cart-summary">
 			<VStack spacing={ 2 } alignment="left">
 				<Text size="footnote">{ domainCount }</Text>
 				<Text className="domains-mini-cart-summary__total">{ totalPrice }</Text>

@@ -30,18 +30,14 @@ const animation = {
 
 export const DomainsMiniCart = ( {
 	className,
-	isMiniCartOpen,
 	totalItems,
 	totalPrice,
-	openFullCart,
 	onContinue,
 	isCartBusy,
 }: {
 	className?: string;
-	isMiniCartOpen: boolean;
 	totalItems: number;
 	totalPrice: string;
-	openFullCart: () => void;
 	onContinue: () => void;
 	isCartBusy: boolean;
 } ) => {
@@ -51,23 +47,15 @@ export const DomainsMiniCart = ( {
 			<motion.div
 				className={ clsx( 'domains-mini-cart__container', className ) }
 				initial={ animation.initial }
-				animate={ isMiniCartOpen ? animation.animateIn : animation.animateOut }
+				animate={ animation.animateIn }
 				transition={ { type: 'tween', duration: 0.25 } }
 			>
 				<Card isRounded={ false } elevation={ 2 } style={ { width: '100%' } }>
 					<div className="domains-mini-cart">
 						<div className="domains-mini-cart__content">
 							<HStack spacing={ 2 }>
-								<DomainsMiniCartSummary
-									totalItems={ totalItems }
-									totalPrice={ totalPrice }
-									openFullCart={ openFullCart }
-								/>
-								<DomainsMiniCartActions
-									openFullCart={ openFullCart }
-									onContinue={ onContinue }
-									isCartBusy={ isCartBusy }
-								/>
+								<DomainsMiniCartSummary totalItems={ totalItems } totalPrice={ totalPrice } />
+								<DomainsMiniCartActions onContinue={ onContinue } isCartBusy={ isCartBusy } />
 							</HStack>
 						</div>
 					</div>
