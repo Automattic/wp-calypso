@@ -5,8 +5,8 @@ import {
 	Card,
 } from '@wordpress/components';
 import clsx from 'clsx';
-import { DomainsMiniCartActions } from './actions';
-import { DomainsMiniCartSummary } from './summary';
+import { CartActions } from './actions';
+import { CartSummary } from './summary';
 
 import './style.scss';
 
@@ -28,7 +28,7 @@ const animation = {
 	},
 };
 
-export const DomainsMiniCart = ( {
+export const Cart = ( {
 	className,
 	totalItems,
 	totalPrice,
@@ -43,19 +43,19 @@ export const DomainsMiniCart = ( {
 } ) => {
 	return (
 		<>
-			<div className="domains-mini-cart__cushion" />
+			<div className="cart__cushion" />
 			<motion.div
-				className={ clsx( 'domains-mini-cart__container', className ) }
+				className={ clsx( 'cart__container', className ) }
 				initial={ animation.initial }
 				animate={ animation.animateIn }
 				transition={ { type: 'tween', duration: 0.25 } }
 			>
 				<Card isRounded={ false } elevation={ 2 } style={ { width: '100%' } }>
-					<div className="domains-mini-cart">
-						<div className="domains-mini-cart__content">
+					<div className="cart">
+						<div className="cart__content">
 							<HStack spacing={ 2 }>
-								<DomainsMiniCartSummary totalItems={ totalItems } totalPrice={ totalPrice } />
-								<DomainsMiniCartActions onContinue={ onContinue } isCartBusy={ isCartBusy } />
+								<CartSummary totalItems={ totalItems } totalPrice={ totalPrice } />
+								<CartActions onContinue={ onContinue } isCartBusy={ isCartBusy } />
 							</HStack>
 						</div>
 					</div>

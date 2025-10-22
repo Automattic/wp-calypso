@@ -32,7 +32,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
-import { DomainsMiniCart } from './components/domains-mini-cart';
+import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
@@ -70,9 +70,17 @@ const AddProfessionalEmail = () => {
 		MailboxFormEntity< SupportedEmailProvider >[]
 	>( [] );
 
+	const shoppingCartManager = shoppingCartManagerClient.forCartKey( site?.ID );
+
+	// TODO: Handle any mailbox product already in cart
 	useEffect( () => {
-		shoppingCartManagerClient.forCartKey( site?.ID ).actions.reloadFromServer();
-	}, [ site?.ID ] );
+		shoppingCartManager.fetchInitialCart().then( ( initialCart ) => {
+			// Reload from server if the email product is already in the cart
+			if ( initialCart.products.find( ( p ) => p.product_id === product.product_id ) ) {
+				shoppingCartManager.actions.reloadFromServer();
+			}
+		} );
+	}, [ shoppingCartManager, product.product_id ] );
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 
@@ -172,6 +180,63 @@ const AddProfessionalEmail = () => {
 			} );
 	};
 
+	const { responseCart } = shoppingCartManager.getState();
+	const cartProduct = responseCart.products.find( ( p ) => p.product_id === product.product_id );
+	// console.debug( 'responseCart', responseCart );
+	// console.debug( 'cartProduct', cartProduct );
+
+	const handleAdd = async () => {
+		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
+		persistMailboxesToState();
+		const mailboxOperations = new MailboxOperations( mailboxEntities, persistMailboxesToState );
+
+		setIsSubmitting( true );
+
+		const validated = await mailboxOperations.validateAndCheck( false );
+
+		if ( ! userCanAddEmail || ! validated ) {
+			if ( ! userCanAddEmail ) {
+				const errors = domain?.current_user_cannot_add_email_reason?.errors;
+				const message = errors
+					? sprintf(
+							// Translators: %(errors)s is a list of errors separated by commas.
+							__( 'You cannot add emails to this domain: %(errors)s.' ),
+							{ errors: Object.values( errors ).join( ', ' ) }
+					  )
+					: __( 'You cannot add emails to this domain.' );
+				createErrorNotice( message, { type: 'snackbar' } );
+			}
+
+			setIsSubmitting( false );
+
+			return;
+		}
+
+		const emailProperties = getEmailProductProperties(
+			'titan',
+			domain,
+			product,
+			mailboxOperations.mailboxes.length
+		);
+
+		const cartItems = getCartItems(
+			mailboxOperations.mailboxes,
+			emailProperties
+		) as MinimalRequestCartProduct;
+
+		if ( cartProduct ) {
+			await shoppingCartManager.actions
+				.replaceProductInCart( cartProduct.uuid, cartItems )
+				.finally( () => setIsSubmitting( false ) );
+		} else {
+			await shoppingCartManager.actions
+				.addProductsToCart( [ cartItems ] )
+				.finally( () => setIsSubmitting( false ) );
+		}
+
+		setMailboxEntities( ( prevMailboxEntities ) => [ ...prevMailboxEntities, createNewMailbox() ] );
+	};
+
 	const removeForm = ( index: number ) => {
 		setMailboxEntities( ( prevMailboxEntities ) => {
 			const newMailboxEntities = [ ...prevMailboxEntities ];
@@ -183,10 +248,6 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
-	const { responseCart } = shoppingCartManagerClient.forCartKey( site?.ID ).getState();
-	// console.debug( 'responseCart', responseCart );
-	const cartProduct = responseCart.products.find( ( p ) => p.product_id === product.product_id );
-	// console.debug( 'cartProduct', cartProduct );
 	return (
 		<PageLayout
 			header={ <PageHeader /> }
@@ -226,56 +287,13 @@ const AddProfessionalEmail = () => {
 							__next40pxDefaultSize
 							variant="secondary"
 							disabled={ disabled }
-							onClick={ async () => {
-								setIsSubmitting( true );
-
-								const mailboxOperations = new MailboxOperations(
-									mailboxEntities,
-									persistMailboxesToState
-								);
-								// const validated = await mailboxOperations.validateAndCheck( false );
-
-								const emailProperties = getEmailProductProperties(
-									'titan',
-									domain,
-									product,
-									mailboxOperations.mailboxes.length
-								);
-
-								const cartItems = getCartItems(
-									mailboxOperations.mailboxes,
-									emailProperties
-								) as MinimalRequestCartProduct;
-
-								if ( cartProduct ) {
-									await shoppingCartManagerClient
-										.forCartKey( site?.ID )
-										.actions.replaceProductInCart( cartProduct.uuid, cartItems )
-										.finally( () => setIsSubmitting( false ) );
-								} else {
-									await shoppingCartManagerClient
-										.forCartKey( site?.ID )
-										.actions.addProductsToCart( [ cartItems ] )
-										.finally( () => setIsSubmitting( false ) );
-								}
-
-								setMailboxEntities( ( prevMailboxEntities ) => [
-									...prevMailboxEntities,
-									createNewMailbox(),
-								] );
-							} }
+							onClick={ handleAdd }
 						>
 							{ __( 'Add another mailbox' ) }
 						</Button>
 					</ButtonStack>
 
-					<ButtonStack justify="flex-start">
-						<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
-							{ __( 'Continue' ) }
-						</Button>
-					</ButtonStack>
-
-					<DomainsMiniCart
+					<Cart
 						totalItems={ cartProduct?.extra.new_quantity || 0 }
 						totalPrice={ cartProduct?.item_total || 0 }
 						onContinue={ () => {
