@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
@@ -140,8 +140,9 @@ function AddEmailForwarder() {
 		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
 	);
 
+	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
 	const isValid =
-		isItemValid( formData, fields, form ) &&
+		isFormValid &&
 		! isDomainMaxForwardsReached &&
 		! willDomainMaxForwardsBeReached &&
 		! duplicateForwardAddress;
