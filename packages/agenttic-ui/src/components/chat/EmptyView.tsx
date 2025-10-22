@@ -6,7 +6,10 @@ import styles from './EmptyView.module.css';
 
 export interface EmptyViewProps {
 	suggestions?: Suggestion[];
-	onSuggestionClick?: ( prompt: string ) => void;
+	onSuggestionClick?: (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => void;
 	icon?: React.ReactNode;
 	heading?: string;
 	help?: string;

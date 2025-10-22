@@ -9,7 +9,10 @@ import styles from './Suggestions.module.css';
 export interface SuggestionsProps {
 	className?: string;
 	suggestions?: Suggestion[];
-	onSubmit?: ( message: string ) => void;
+	onSubmit?: (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => void;
 	layout?: 'horizontal' | 'vertical';
 	visible?: boolean;
 	onMouseEnter?: () => void;
@@ -27,11 +30,14 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	onMouseLeave,
 	translateY = '-100%',
 } ) => {
-	const handleSuggestionClick = ( suggestion: Suggestion ) => {
-		if ( onSubmit && suggestion.prompt ) {
-			onSubmit( suggestion.prompt );
-		} else if ( suggestion.action ) {
-			suggestion.action();
+	const handleSuggestionClick = (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => {
+		if ( onSubmit && selectedSuggestion.prompt ) {
+			onSubmit( selectedSuggestion, availableSuggestions );
+		} else if ( selectedSuggestion.action ) {
+			selectedSuggestion.action();
 		}
 	};
 
@@ -70,7 +76,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 								<Button
 									onClick={ ( e ) => {
 										e.stopPropagation();
-										handleSuggestionClick( suggestion );
+										handleSuggestionClick(
+											suggestion,
+											suggestions
+										);
 									} }
 									variant={
 										layout === 'vertical'

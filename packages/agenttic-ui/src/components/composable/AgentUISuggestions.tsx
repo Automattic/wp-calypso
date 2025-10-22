@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import { Suggestions } from '../chat/Suggestions';
+import type { Suggestion } from '../../types';
 
 export interface AgentUISuggestionsProps {
 	className?: string;
@@ -23,14 +24,19 @@ export function AgentUISuggestions( {
 	} = useAgentUIContext();
 
 	const handleSubmit = useCallback(
-		( message: string ) => {
+		(
+			selectedSuggestion: Suggestion,
+			availableSuggestions: Suggestion[]
+		) => {
 			try {
-				onSelect?.( message );
+				const value =
+					selectedSuggestion.prompt ?? selectedSuggestion.label;
+				onSelect?.( value );
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.warn( 'Suggestions onSelect callback failed:', error );
 			}
-			handleSuggestionSubmit( message );
+			handleSuggestionSubmit( selectedSuggestion, availableSuggestions );
 		},
 		[ onSelect, handleSuggestionSubmit ]
 	);

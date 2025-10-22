@@ -63,6 +63,10 @@ export interface AgentUIProps {
 	floatingChatState?: ChatState;
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
+	onSuggestionClick?: (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => void;
 	messageRenderer?: ComponentType< { children: string } >;
 	expandOnClick?: boolean;
 

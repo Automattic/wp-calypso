@@ -60,7 +60,11 @@ export function ChatFooter( {
 	actionOrder,
 }: ChatFooterProps ) {
 	const handleSuggestionSubmit = useCallback(
-		( value: string ) => {
+		(
+			selectedSuggestion: Suggestion,
+			availableSuggestions: Suggestion[]
+		) => {
+			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 			onInputChange( value );
 			clearSuggestions?.();
 		},

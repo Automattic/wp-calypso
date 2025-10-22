@@ -25,7 +25,10 @@ interface CompactViewProps {
 	onStop?: () => void;
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
-	handleSuggestionSubmit?: ( value: string ) => void;
+	handleSuggestionSubmit?: (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => void;
 	expandOnClick?: boolean;
 }
 

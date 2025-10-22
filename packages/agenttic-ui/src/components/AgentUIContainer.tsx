@@ -11,7 +11,7 @@ import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
-import type { AgentUIProps } from '../types';
+import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
 import { getChatPosition, setChatPosition } from '../utils/chatStorage';
 import { morphSpring } from './animations';
@@ -67,6 +67,7 @@ export function AgentUIContainer( {
 	floatingChatState,
 	suggestions,
 	clearSuggestions,
+	onSuggestionClick,
 	messageRenderer,
 	className,
 	inputValue: controlledInputValue,
@@ -183,7 +184,11 @@ export function AgentUIContainer( {
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
-		( value: string ) => {
+		(
+			selectedSuggestion: Suggestion,
+			availableSuggestions: Suggestion[]
+		) => {
+			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 			const valueWithSpace = value.endsWith( ' ' )
 				? value
 				: `${ value } `;
@@ -196,8 +201,9 @@ export function AgentUIContainer( {
 					valueWithSpace.length
 				);
 			}
+			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 		},
-		[ input.setValue, clearSuggestions ]
+		[ input.setValue, clearSuggestions, onSuggestionClick ]
 	);
 
 	// Handle opening the chat and call onOpen callback

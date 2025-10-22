@@ -42,7 +42,10 @@ export interface AgentUIContextValue {
 	// Suggestions
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
-	handleSuggestionSubmit: ( value: string ) => void;
+	handleSuggestionSubmit: (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => void;
 
 	// Notice
 	notice?: NoticeConfig;
