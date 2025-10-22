@@ -7,7 +7,7 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	return (
-		<PageLayout>
+		<PageLayout size="small">
 			<SSHMigrationCompleteContentInfo site={ site } />
 		</PageLayout>
 	);
