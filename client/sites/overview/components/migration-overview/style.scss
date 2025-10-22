@@ -80,6 +80,41 @@
 			}
 		}
 	}
+
+	.migration-ssh-failed {
+		display: flex;
+		flex-direction: column;
+		margin: 0 auto;
+		max-width: 500px;
+
+		.migration-ssh-failed__list {
+			display: flex;
+			flex-direction: column;
+			gap: .75rem;
+			margin: 0;
+		}
+
+		.migration-ssh-failed__item {
+			display: flex;
+			gap: .75rem;
+			font-size: 1rem;
+			align-items: center;
+		}
+
+		.migration-ssh-failed__icon {
+			fill: #3858E9;
+		}
+
+		.migration-ssh-failed__icon-wrapper {
+			width: 52px;
+			height: 52px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: #F7F8FE;
+			flex-shrink: 0;
+		}
+	}
 }
 
 .migration-started-difm__cancel-dialog {

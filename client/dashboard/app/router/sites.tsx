@@ -1134,6 +1134,24 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
+export const siteSSHMigrationFailedRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'We hit a snag, but we’re on it' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'ssh-migration-failed',
+} ).lazy( () =>
+	import( '../../sites/ssh-migration-failed' ).then( ( d ) =>
+		createLazyRoute( 'ssh-migration-failed' )( {
+			component: () => <d.default />,
+		} )
+	)
+);
+
 export const siteSSHMigrationCompleteRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1187,6 +1205,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
 		siteSSHMigrationCompleteRoute,
+		siteSSHMigrationFailedRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {
