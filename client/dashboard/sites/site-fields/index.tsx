@@ -65,7 +65,7 @@ export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { 
 			{ ...props }
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { textDecoration: 'none' } }
+			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
 		/>
 	);
 }
@@ -87,14 +87,16 @@ export function Name( { site, value }: { site: Site; value: string } ) {
 		return null;
 	};
 
+	const badge = renderBadge();
+
 	return (
-		<HStack alignment="center" spacing={ 1 }>
+		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
 			{ site.is_deleted ? (
 				<Text variant="muted">{ value }</Text>
 			) : (
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 			) }
-			<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
+			{ badge && <span style={ { flexShrink: 0 } }>{ badge }</span> }
 		</HStack>
 	);
 }
@@ -113,15 +115,11 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	);
 }
 
-export function SiteIconLink( { site }: { site: Site } ) {
+export function SiteIconLink( props: ComponentProps< typeof SiteIcon > ) {
 	return (
-		<Link
-			to={ getSiteManagementUrl( site ) }
-			disabled={ site.is_deleted }
-			style={ { textDecoration: 'none' } }
-		>
-			<SiteIcon site={ site } />
-		</Link>
+		<SiteLink site={ props.site } style={ { flexShrink: 0 } }>
+			<SiteIcon { ...props } />
+		</SiteLink>
 	);
 }
 
