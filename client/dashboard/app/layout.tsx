@@ -12,9 +12,10 @@ import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { AppProvider, type AppConfig } from './context';
+import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
+import type { AppConfig } from './context';
 
 function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {
 	const auth = useAuth();
@@ -29,12 +30,13 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
+	const { queries } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
-			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
+			initializeAnalytics( user, getSuperProps( { user, router, queryClient, queries } ) );
 		}
-	}, [ user, router ] );
+	}, [ user, router, queries ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
