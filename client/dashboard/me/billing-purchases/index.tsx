@@ -82,9 +82,23 @@ export default function PurchasesList() {
 			} );
 		},
 	} );
+
+	const sitesById = useMemo( () => {
+		if ( ! sites ) {
+			return {};
+		}
+		return sites.reduce( ( acc: Record< number, Site >, site ) => {
+			acc[ site.ID ] = site;
+			return acc;
+		}, {} );
+	}, [ sites ] );
+
 	const allSubscriptions = useMemo( () => {
-		return [ ...( purchases ?? [] ), ...( transferredPurchases ?? [] ) ];
-	}, [ purchases, transferredPurchases ] );
+		return [ ...( purchases ?? [] ), ...( transferredPurchases ?? [] ) ].filter(
+			( subscription ) => !! sitesById[ subscription.blog_id ]
+		);
+	}, [ purchases, transferredPurchases, sitesById ] );
+
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, currentView, purchasesDataFields );
 	}, [ allSubscriptions, currentView, purchasesDataFields ] );
