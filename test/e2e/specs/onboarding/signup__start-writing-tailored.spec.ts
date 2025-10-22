@@ -8,7 +8,7 @@ test.describe(
 		annotation: { type: 'flowchart', description: 'TBA' },
 	},
 	() => {
-		test( 'One: As a New WordPress.com blogger I can sign up for a new free site and start writing straight away', async ( {
+		test( 'One: As a new WordPress.com blogger I can sign up for a new free site and start writing straight away', async ( {
 			page,
 			helperData,
 			pageUserSignUp,
