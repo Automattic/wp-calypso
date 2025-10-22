@@ -30,6 +30,10 @@ export const useQueryHandler = ( {
 			return externalInitialQuery;
 		}
 
+		if ( currentSiteUrl?.endsWith( 'commerce-garden.com' ) ) {
+			return 'My Commerce Site';
+		}
+
 		if ( currentSiteUrl ) {
 			return new URL( currentSiteUrl ).host.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
 		}
