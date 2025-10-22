@@ -4,6 +4,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { AccordionNotice } from '../components/accordion-notice';
 import { useVerifySSHConnection } from '../hooks/use-verify-ssh-connection';
+import { validatePort } from '../utils/validation';
 
 interface StepAddServerAddressProps {
 	siteId: number;
@@ -45,7 +46,7 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 		);
 	};
 
-	const canVerify = serverAddress.length > 0 && port > 0 && port <= 65535 && ! isPending;
+	const canVerify = serverAddress.length > 0 && validatePort( port ) && ! isPending;
 
 	const instructionText = hostDisplayName
 		? translate(
@@ -98,9 +99,11 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 						id="ssh-port"
 						type="number"
 						value={ String( port ) }
-						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
-							onPortChange( parseInt( e.target.value, 10 ) || 22 )
-						}
+						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => {
+							const parsedPort = parseInt( e.target.value, 10 );
+							const newPort = Number.isNaN( parsedPort ) ? 22 : parsedPort;
+							onPortChange( newPort );
+						} }
 					/>
 				</div>
 			</div>
