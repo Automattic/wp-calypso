@@ -99,14 +99,6 @@ export function Name( { site, value }: { site: Site; value: string } ) {
 	);
 }
 
-export function NameLink( { site, value }: { site: Site; value: string } ) {
-	return (
-		<Link to={ getSiteManagementUrl( site ) } disabled={ site.is_deleted }>
-			<Name site={ site } value={ value } />
-		</Link>
-	);
-}
-
 export function URL( { site, value }: { site: Site; value: string } ) {
 	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
