@@ -30,7 +30,7 @@ const wooHosted: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
-				isInSignup: false,
+				//isInSignup: false,
 				displayedIntervals: [ 'monthly', 'yearly' ],
 			},
 		};
