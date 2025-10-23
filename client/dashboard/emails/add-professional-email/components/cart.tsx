@@ -52,25 +52,23 @@ export const Cart = ( {
 			>
 				<Card isRounded={ false } elevation={ 2 } style={ { width: '100%' } }>
 					<div className="cart">
-						<div className="cart__content">
-							<HStack spacing={ 2 }>
-								<VStack spacing={ 2 } alignment="left">
-									<Text size="footnote">{ mailboxCount }</Text>
-									<Text className="cart-summary__total">{ totalPrice }</Text>
-								</VStack>
+						<HStack className="cart__content" spacing={ 2 }>
+							<VStack spacing={ 2 } alignment="left">
+								<Text size="footnote">{ mailboxCount }</Text>
+								<Text className="cart-summary__total">{ totalPrice }</Text>
+							</VStack>
 
-								<HStack spacing={ 4 } style={ { width: 'auto' } }>
-									<Button
-										variant="primary"
-										__next40pxDefaultSize
-										disabled={ isCartBusy }
-										type="submit"
-									>
-										{ __( 'Continue' ) }
-									</Button>
-								</HStack>
+							<HStack spacing={ 4 } style={ { width: 'auto' } }>
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									disabled={ isCartBusy }
+									type="submit"
+								>
+									{ __( 'Continue' ) }
+								</Button>
 							</HStack>
-						</div>
+						</HStack>
 					</div>
 				</Card>
 			</motion.div>
