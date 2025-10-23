@@ -15,7 +15,7 @@ import {
 	transactionIncludesTax,
 } from './utils';
 import type { Receipt } from '@automattic/api-core';
-import type { Operator, SortDirection, View } from '@wordpress/dataviews';
+import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews';
 
 import './styles.scss';
 
@@ -101,7 +101,7 @@ export function getFieldDefinitions( receipts: Receipt[] ): Fields< Receipt > {
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt, secondReceipt, direction ) => {
+			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
 				return direction === 'asc'
 					? new Date( firstReceipt.date ).getTime() - new Date( secondReceipt.date ).getTime()
 					: new Date( secondReceipt.date ).getTime() - new Date( firstReceipt.date ).getTime();
@@ -132,7 +132,7 @@ export function getFieldDefinitions( receipts: Receipt[] ): Fields< Receipt > {
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt, secondReceipt, direction ) => {
+			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
 				const { label: firstLabel } = summarizeReceiptItems( firstReceipt.items );
 				const { label: secondLabel } = summarizeReceiptItems( secondReceipt.items );
 				return direction === 'asc'
@@ -187,7 +187,7 @@ export function getFieldDefinitions( receipts: Receipt[] ): Fields< Receipt > {
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt, secondReceipt, direction ) => {
+			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
 				return direction === 'asc'
 					? firstReceipt.amount_integer - secondReceipt.amount_integer
 					: secondReceipt.amount_integer - firstReceipt.amount_integer;

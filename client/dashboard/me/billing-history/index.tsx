@@ -17,6 +17,7 @@ import {
 	getFieldDefinitions,
 	useBillingHistoryActions,
 } from './dataviews';
+import type { Receipt } from '@automattic/api-core';
 
 export default function BillingHistory() {
 	const { data } = useSuspenseQuery( userReceiptsQuery() );
