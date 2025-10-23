@@ -9,7 +9,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
 
-import './style.scss';
+import './cart.scss';
 
 const animation = {
 	initial: {
