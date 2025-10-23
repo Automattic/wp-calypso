@@ -322,29 +322,26 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						authProvider: config.authProvider,
 						enableStreaming: config.enableStreaming,
 					} );
-
-					// Load conversation history and transform for UI
-					const clientHistory =
-						agentManager.getConversationHistory( agentKey );
-					setState( ( prev ) => {
-						const uiHistory = clientHistory
-							.map( ( msg ) =>
-								transformClientMessageToUI(
-									msg,
-									registrationsRef.current
-								)
-							)
-							.filter(
-								( msg ): msg is UIMessage => msg !== null
-							);
-
-						return {
-							...prev,
-							clientMessages: clientHistory,
-							uiMessages: uiHistory,
-						};
-					} );
 				}
+
+				const clientHistory =
+					agentManager.getConversationHistory( agentKey );
+				setState( ( prev ) => {
+					const uiHistory = clientHistory
+						.map( ( msg ) =>
+							transformClientMessageToUI(
+								msg,
+								registrationsRef.current
+							)
+						)
+						.filter( ( msg ): msg is UIMessage => msg !== null );
+
+					return {
+						...prev,
+						clientMessages: clientHistory,
+						uiMessages: uiHistory,
+					};
+				} );
 			}
 		};
 		initializeAgent();
