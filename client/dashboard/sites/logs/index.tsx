@@ -128,7 +128,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
 	// hide the datepicker if the user doesn't have access to activity logs or doesn't have logging feature at all
-	const shouldShowDateRangePicker = hasHostingFeature( site, HostingFeatures.LOGS );
+	const shouldShowDateRangePicker =
+		hasHostingFeature( site, HostingFeatures.LOGS ) ||
+		( hasActivityLogAccess && logType === LogType.ACTIVITY ); // simple sites might have access to activity logs only
 	return (
 		<PageLayout
 			header={
