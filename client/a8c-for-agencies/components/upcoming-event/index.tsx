@@ -99,7 +99,7 @@ const UpcomingEvent = ( {
 			</div>
 			<div
 				className={ clsx( 'a4a-event__image', imageClassName ) }
-				style={ { backgroundImage: `url(${ imageUrl })` } }
+				style={ { backgroundImage: imageUrl ? `url(${ imageUrl })` : undefined } }
 			></div>
 		</div>
 	);
