@@ -62,7 +62,6 @@ export const getRouter = ( config: AppConfig ) => {
 		routeTree,
 		basepath: config.basePath,
 		context: {
-			auth: undefined,
 			config,
 		},
 		defaultErrorComponent: UnknownError,

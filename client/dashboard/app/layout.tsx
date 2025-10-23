@@ -17,11 +17,6 @@ import { I18nProvider } from './i18n';
 import { getRouter } from './router';
 import type { AppConfig } from './context';
 
-function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {
-	const auth = useAuth();
-	return <RouterProvider router={ router } context={ { auth, config } } />;
-}
-
 function AnalyticsProviderWithClient( {
 	children,
 	router,
@@ -72,7 +67,7 @@ function Layout( { config }: { config: AppConfig } ) {
 				<AuthProvider>
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
-							<RouterProviderWithAuth router={ router } config={ config } />
+							<RouterProvider router={ router } context={ { config } } />
 						</AnalyticsProviderWithClient>
 					</I18nProvider>
 				</AuthProvider>

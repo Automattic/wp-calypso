@@ -8,7 +8,6 @@ export function getRouterOptions( config: AppConfig ) {
 	return {
 		basepath: config.basePath,
 		context: {
-			auth: undefined,
 			config,
 		},
 		defaultPreload: 'intent' as const,

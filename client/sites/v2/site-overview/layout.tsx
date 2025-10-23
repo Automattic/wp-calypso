@@ -3,16 +3,14 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
-import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
+import { AuthProvider } from 'calypso/dashboard/app/auth';
 import router, {
 	routerConfig,
 	syncBrowserHistoryToRouter,
 	syncMemoryRouterToBrowserHistory,
 } from './router';
 
-function RouterProviderWithAuth( { siteSlug }: { siteSlug?: string } ) {
-	const auth = useAuth();
-
+function RouterProviderWithConfig( { siteSlug }: { siteSlug?: string } ) {
 	useEffect( () => {
 		syncBrowserHistoryToRouter( router );
 	}, [ siteSlug ] );
@@ -31,7 +29,7 @@ function RouterProviderWithAuth( { siteSlug }: { siteSlug?: string } ) {
 		};
 	}, [] );
 
-	return <RouterProvider router={ router } context={ { auth, config: routerConfig } } />;
+	return <RouterProvider router={ router } context={ { config: routerConfig } } />;
 }
 
 function Layout( {
@@ -45,7 +43,7 @@ function Layout( {
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>
 				<AnalyticsProvider client={ analyticsClient }>
-					<RouterProviderWithAuth siteSlug={ siteSlug } />
+					<RouterProviderWithConfig siteSlug={ siteSlug } />
 				</AnalyticsProvider>
 			</AuthProvider>
 		</QueryClientProvider>

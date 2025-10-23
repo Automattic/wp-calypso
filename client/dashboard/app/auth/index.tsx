@@ -14,7 +14,7 @@ import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
-export interface AuthContextType {
+interface AuthContextType {
 	user: User;
 	logout: () => Promise< void >;
 }
