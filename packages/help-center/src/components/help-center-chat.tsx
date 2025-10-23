@@ -35,7 +35,7 @@ export function HelpCenterChat( {
 	const commerceGardenFlowName = isCommerceGarden ? 'messaging_flow_commerce_in_a_box' : null;
 	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
 
-	const { forceEmailSupport } = useChatStatus();
+	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -58,6 +58,7 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
+			isChatRestricted={ Boolean( isChatRestricted ) }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

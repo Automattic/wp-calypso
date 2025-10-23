@@ -55,7 +55,7 @@ export const SiteListSettings = () => {
 							{ createInterpolateElement(
 								sprintf(
 									// translators: %s is the search query
-									__( 'No sites found with the search query <strong>%(search)s</strong>' ),
+									__( 'No sites found with the search query <strong>%(search)s</strong>.' ),
 									{
 										search: search,
 									}

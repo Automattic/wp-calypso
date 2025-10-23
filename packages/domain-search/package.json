@@ -61,7 +61,7 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-a11y": "^8.6.14",
-		"@testing-library/dom": "^10.4.0",
+		"@testing-library/dom": "^10.4.1",
 		"@testing-library/react": "^16.3.0",
 		"@types/jest": "^29.5.14",
 		"@wordpress/base-styles": "^5.23.0",
