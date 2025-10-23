@@ -192,6 +192,16 @@ export const supportInstructionsPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 >( STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug );
 
+export const sshVerificationPath = buildPathHelper<
+	{
+		queryParams: {
+			siteId?: number | string;
+			siteSlug: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug
+>( STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug );
+
 export const sshShareAccessPath = buildPathHelper<
 	{
 		queryParams: {

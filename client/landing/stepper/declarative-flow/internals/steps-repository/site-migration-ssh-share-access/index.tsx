@@ -4,12 +4,14 @@ import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
+import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
@@ -27,6 +29,16 @@ const SiteMigrationSshShareAccess: StepType< {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 	const host = queryParams.get( 'host' ) ?? undefined;
+	const { get } = useFlowState();
+
+	// Get transfer_id from the verification step
+	const transferId = get( 'sshMigration' )?.transferId ?? null;
+
+	// Poll transfer status while user goes through the steps
+	// This keeps the atomic transfer progressing in the background
+	usePollSSHMigrationAtomicTransfer( siteId, transferId, {
+		enabled: !! transferId,
+	} );
 
 	const handleNoSSHAccess = useCallback( () => {
 		navigation.submit?.( { destination: 'no-ssh-access' } );
