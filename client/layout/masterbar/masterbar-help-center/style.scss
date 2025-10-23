@@ -5,6 +5,9 @@
 
 		button.is-link {
 			padding: 0;
+			&:focus {
+				outline: thin dotted;
+			}
 		}
 	}
 
