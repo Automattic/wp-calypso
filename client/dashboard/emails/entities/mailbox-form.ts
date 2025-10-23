@@ -15,6 +15,7 @@ export interface TitanProductUser {
 	password?: string;
 }
 
+import { MailboxProvider } from '../types';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
@@ -38,15 +39,10 @@ import {
 	RequiredIfVisibleValidator,
 	RequiredValidator,
 } from './validators';
-import type {
-	FormFieldNames,
-	MailboxFormFields,
-	SupportedEmailProvider,
-	ValidatorFieldNames,
-} from './types';
+import type { FormFieldNames, MailboxFormFields, ValidatorFieldNames } from './types';
 import type { Validator } from './validators';
 
-class MailboxForm< T extends SupportedEmailProvider > {
+class MailboxForm< T extends MailboxProvider > {
 	existingMailboxNames: string[];
 	formFields: MailboxFormFields;
 	provider: T;
@@ -65,8 +61,8 @@ class MailboxForm< T extends SupportedEmailProvider > {
 		const domainField = this.getFormField< string >( FIELD_DOMAIN );
 		const domainName = domainField?.value ?? '';
 		const mailboxHasDomainError = Boolean( domainField?.error );
-		const minimumPasswordLength = this.provider === 'titan' ? 10 : 12;
-		const areApostrophesSupported = this.provider === 'google_workspace';
+		const minimumPasswordLength = this.provider === MailboxProvider.Titan ? 10 : 12;
+		const areApostrophesSupported = this.provider === MailboxProvider.Google;
 
 		return [
 			[ FIELD_DOMAIN, new RequiredValidator< string >() ],

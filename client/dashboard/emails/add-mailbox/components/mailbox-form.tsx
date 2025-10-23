@@ -17,8 +17,9 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from '../../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
-import { MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
+import { MailboxFormFieldBase } from '../../entities/types';
 import { useDomainFromUrlParam } from '../../hooks/use-domain-from-url-param';
+import { MailboxProvider } from '../../types';
 import { sanitizeMailboxValue } from '../../utils/sanitize-mailbox-value';
 import { MailboxInput } from './mailbox-input';
 
@@ -30,7 +31,7 @@ export const MailboxForm = ( {
 	onChange,
 	removeForm = undefined,
 }: {
-	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
+	mailboxEntity: MailboxFormEntity< MailboxProvider >;
 	disabled: boolean;
 	onChange: () => void;
 	removeForm?: () => void;

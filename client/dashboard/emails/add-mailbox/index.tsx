@@ -8,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -26,10 +27,10 @@ import {
 } from '../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
-import { FormFieldNames, MutableFormFieldNames, SupportedEmailProvider } from '../entities/types';
+import { FormFieldNames, MutableFormFieldNames } from '../entities/types';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
-import { IntervalLength } from '../types';
+import { MailboxProvider } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getTotalCost } from '../utils/get-total-cost';
@@ -55,27 +56,24 @@ const AddProfessionalEmail = () => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 
-	let interval: IntervalLength = router.state.location.search.interval;
-	if ( interval !== 'monthly' && interval !== 'annually' ) {
-		interval = 'annually';
-	}
+	const { interval } = addMailboxRoute.useParams();
 
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { product } = useEmailProduct( 'titan', interval );
+	const { product } = useEmailProduct( MailboxProvider.Titan, interval );
 	const { data: existingMailboxes, isFetched } = useQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
-		MailboxFormEntity< SupportedEmailProvider >[]
+		MailboxFormEntity< MailboxProvider >[]
 	>( [] );
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 
 	const createNewMailbox = useCallback( () => {
-		const mailbox = new MailboxFormEntity< SupportedEmailProvider >(
-			'titan',
+		const mailbox = new MailboxFormEntity< MailboxProvider >(
+			MailboxProvider.Titan,
 			domainName,
 			( existingMailboxes ?? [] )
 				.flatMap( ( emailAccount ) => emailAccount.emails )
@@ -141,7 +139,7 @@ const AddProfessionalEmail = () => {
 		const numberOfMailboxes = mailboxOperations.mailboxes.length;
 
 		const emailProperties = getEmailProductProperties(
-			'titan',
+			MailboxProvider.Titan,
 			domain,
 			product,
 			numberOfMailboxes

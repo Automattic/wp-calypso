@@ -1,4 +1,4 @@
-import { EmailProvider } from '@automattic/api-core';
+import { MailboxProvider } from '../types';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
@@ -130,15 +130,11 @@ class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxF
 	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 }
 
-export type SupportedEmailProvider = Extract< EmailProvider, 'google_workspace' | 'titan' >;
-
-const MailboxFormFieldsMap: Record<
-	SupportedEmailProvider,
-	new ( domain: string ) => MailboxFormFields
-> = {
-	google_workspace: GoogleMailboxFormFields,
-	titan: TitanMailboxFormFields,
-};
+const MailboxFormFieldsMap: Record< MailboxProvider, new ( domain: string ) => MailboxFormFields > =
+	{
+		[ MailboxProvider.Google ]: GoogleMailboxFormFields,
+		[ MailboxProvider.Titan ]: TitanMailboxFormFields,
+	};
 
 type GoogleFormFieldNames = keyof GoogleMailboxFormFields;
 type TitanFormFieldNames = keyof TitanMailboxFormFields;

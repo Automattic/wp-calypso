@@ -1,4 +1,8 @@
-export type EmailProvider = 'titan' | 'google_workspace' | 'email_forwarding';
+export enum EmailProvider {
+	Forwarding = 'email_forwarding',
+	Google = 'google_workspace',
+	Titan = 'titan',
+}
 
 export interface Mailbox {
 	account_type: EmailProvider;

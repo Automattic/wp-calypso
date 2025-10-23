@@ -8,10 +8,10 @@ import { Text } from '../../../components/text';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
 import {
 	MailboxFormFieldBase,
-	SupportedEmailProvider,
 	TitanMailboxFormFields,
 	TextMailboxFormField,
 } from '../../entities/types';
+import { MailboxProvider } from '../../types';
 import type { InputControlProps } from '@wordpress/components/build-types/input-control/types';
 
 export const MailboxInput = ( {
@@ -23,7 +23,7 @@ export const MailboxInput = ( {
 	...inputControlProps
 }: {
 	fieldName: 'mailbox' | 'password' | 'passwordResetEmail';
-	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
+	mailboxEntity: MailboxFormEntity< MailboxProvider >;
 	lowerCaseChangeValue?: boolean;
 	onBlur: ( args: { field: MailboxFormFieldBase< string > } ) => void;
 	onChange: ( args: {

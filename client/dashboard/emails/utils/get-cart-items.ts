@@ -1,7 +1,7 @@
 import { TitanMailSlugs } from '@automattic/api-core';
 import { MinimalRequestCartProduct, RequestCartProductExtra } from '../../shopping-cart/types';
 import { MailboxForm } from '../entities/mailbox-form';
-import { SupportedEmailProvider } from '../entities/types';
+import { MailboxProvider } from '../types';
 import { EmailProperties } from './get-email-product-properties';
 import { isMonthlyEmailProduct } from './is-monthly-email-product';
 
@@ -71,7 +71,7 @@ export function titanMailMonthly( properties: TitanProductProps ): MinimalReques
 }
 
 const getTitanCartItems = (
-	mailboxes: MailboxForm< SupportedEmailProvider >[],
+	mailboxes: MailboxForm< MailboxProvider >[],
 	mailProperties: EmailProperties
 ) => {
 	const { emailProduct, newQuantity, quantity } = mailProperties;
@@ -92,12 +92,12 @@ const getTitanCartItems = (
 const getGSuiteCartItems = () => {};
 
 export const getCartItems = (
-	mailboxes: MailboxForm< SupportedEmailProvider >[],
+	mailboxes: MailboxForm< MailboxProvider >[],
 	mailProperties: EmailProperties
 ) => {
 	const provider = mailboxes[ 0 ].provider;
 
-	return provider === 'titan'
+	return provider === MailboxProvider.Titan
 		? getTitanCartItems( mailboxes, mailProperties )
 		: getGSuiteCartItems();
 };
