@@ -151,7 +151,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 				<VStack spacing={ 2 }>
 					<Text weight={ 600 }>{ __( 'New storage capacity' ) }</Text>
 					<StorageCapacityStat
-						description={ filesize( mediaStorage.storage_used_bytes, { round: 1 } ) + ' used' }
+						description={ filesize( mediaStorage.storage_used_bytes, { round: 0 } ) + ' used' }
 						currentCapacityBytes={ planStorageBytes }
 						addOnCapacityBytes={ selectedAddOnStorageBytes }
 					/>
