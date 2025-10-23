@@ -7,7 +7,6 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { Text } from '../../../components/text';
 
 import './style.scss';
@@ -31,12 +30,10 @@ const animation = {
 };
 
 export const Cart = ( {
-	className,
 	totalItems,
 	totalPrice,
 	isCartBusy,
 }: {
-	className?: string;
 	totalItems: number;
 	totalPrice: string;
 	isCartBusy: boolean;
@@ -53,7 +50,7 @@ export const Cart = ( {
 		<>
 			<div className="cart__cushion" />
 			<motion.div
-				className={ clsx( 'cart__container', className ) }
+				className="cart__container"
 				initial={ animation.initial }
 				animate={ animation.animateIn }
 				transition={ { type: 'tween', duration: 0.25 } }
