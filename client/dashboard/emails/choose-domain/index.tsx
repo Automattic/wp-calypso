@@ -9,15 +9,15 @@ import {
 	SearchControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { arrowLeft, chevronRight, Icon } from '@wordpress/icons';
+import { chevronRight, Icon } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
+import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
+import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { useDomains } from '../hooks/use-domains';
 
 import './styles.css';
@@ -56,23 +56,7 @@ export default function ChooseDomain() {
 	};
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					prefix={
-						<RouterLinkButton
-							className="add-forwarder__back-button"
-							icon={ arrowLeft }
-							iconSize={ 12 }
-							to={ emailsRoute.to }
-						>
-							<Text variant="muted">{ __( 'Emails' ) }</Text>
-						</RouterLinkButton>
-					}
-				/>
-			}
-			size="small"
-		>
+		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
 			<Text size={ 16 }>{ __( 'Which domain name would you like to add a mailbox for?' ) }</Text>
 			<VStack spacing={ 6 }>
 				{ isLoading ? (

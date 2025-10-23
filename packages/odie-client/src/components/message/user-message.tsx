@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
@@ -24,17 +23,11 @@ import type { Message } from '../../types';
 const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
-	messageContent: ReactNode,
-	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
-	}
-
-	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
-		return messageContent;
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
@@ -63,8 +56,6 @@ export const UserMessage = ( {
 		useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
-
-	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
 
@@ -75,8 +66,6 @@ export const UserMessage = ( {
 		? getDisplayMessage(
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
-				message.content,
-				hasCannedResponse,
 				forceEmailSupport,
 				message?.context?.flags?.is_error_message
 		  )
