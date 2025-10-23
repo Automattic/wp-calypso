@@ -393,7 +393,7 @@ export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
 	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
-export function isWpcomPlan( purchase: Purchase ): boolean {
+export function isDotcomPlan( purchase: Purchase ): boolean {
 	return purchase.is_plan && ! purchase.is_jetpack_plan_or_product;
 }
 

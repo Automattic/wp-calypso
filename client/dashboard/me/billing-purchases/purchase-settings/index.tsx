@@ -73,7 +73,7 @@ import {
 	isJetpackCrmProduct,
 	isTitanMail,
 	isGoogleWorkspace,
-	isWpcomPlan,
+	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 } from '../../../utils/purchase';
@@ -479,7 +479,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 }
 
 function WPComResourceMeters( { purchase, site }: { purchase: Purchase; site: Site } ) {
-	if ( ! isWpcomPlan( purchase ) ) {
+	if ( ! isDotcomPlan( purchase ) ) {
 		return null;
 	}
 
