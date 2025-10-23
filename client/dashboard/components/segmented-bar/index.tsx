@@ -23,12 +23,6 @@ export type SegmentedBarProps = {
 	 */
 	segments: SegmentedBarSegment[];
 	/**
-	 * When provided, percentages are computed against this number instead of
-	 * the sum of segment values. Useful if you need to normalize against a
-	 * known total that includes hidden buckets.
-	 */
-	total?: number;
-	/**
 	 * Minimum percentage shown for a non-zero segment to keep it visible.
 	 * Defaults to 2.5% to match small UI density.
 	 */
@@ -76,7 +70,6 @@ function normalizePercents( values: number[], minPercent: number ): number[] {
  */
 export default function SegmentedBar( {
 	segments,
-	total,
 	minPercent = 2.5,
 	ariaLabel,
 	height = 16,
@@ -87,10 +80,9 @@ export default function SegmentedBar( {
 }: SegmentedBarProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const values = segments.map( ( s ) => s.value );
-	const effectiveSum = typeof total === 'number' ? total : values.reduce( ( a, b ) => a + b, 0 );
+	const sum = values.reduce( ( a, b ) => a + b, 0 );
 
-	const percents =
-		effectiveSum > 0 ? normalizePercents( values, minPercent ) : values.map( () => 0 );
+	const percents = sum > 0 ? normalizePercents( values, minPercent ) : values.map( () => 0 );
 
 	const containerStyle: CSSProperties = {
 		height,
