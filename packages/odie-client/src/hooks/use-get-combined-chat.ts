@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferMessage, getZendeskInitialGreetingMessages } from '../constants';
+import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -130,17 +130,6 @@ export const useGetCombinedChat = (
 						// We need to load the conversation to get typing events. Load simply means "focus on".
 						Smooch.loadConversation( conversation.id );
 
-						// Filter out initial messages from Zendesk
-						const hasAnswerBotMessages = conversation.messages.some(
-							( message ) => message.metadata?.isAnswerBotMessage
-						);
-						const filteredConversationMessages = conversation.messages.filter(
-							( message ) => ! message.metadata?.isAnswerBotMessage
-						);
-
-						// Add initial greeting if answerBot messages were present
-						const initialMessages = hasAnswerBotMessages ? getZendeskInitialGreetingMessages() : [];
-
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,
@@ -148,11 +137,10 @@ export const useGetCombinedChat = (
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
 								...( odieChat ? getOdieTransferMessage() : [] ),
-								...initialMessages,
 								...( deduplicateZDMessages( [
 									// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 									...mainChatState.messages.filter( ( message ) => message.role === 'user' ),
-									...filteredConversationMessages,
+									...conversation.messages,
 								] ) as Message[] ),
 							],
 							provider: 'zendesk',

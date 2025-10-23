@@ -8,6 +8,9 @@ export const hasFeedbackForm = ( message: Message ) => message?.type === 'form';
 export const isAttachment = ( message: Message ) =>
 	message?.type === 'image' || message?.type === 'image-placeholder';
 
+export const isZendeskIntroMessage = ( message: Message ) =>
+	!! message?.metadata?.isZendeskIntroMessage;
+
 export const isTransitionToSupportMessage = ( message: Message ) =>
 	!! message?.context?.flags?.show_contact_support_msg;
 

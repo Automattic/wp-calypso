@@ -91,7 +91,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**
-	 * Handle the case where we are forwarding to Zendesk.
+	 * Handle the case where we are directly forwarding to Zendesk without AI first.
 	 */
 	useEffect( () => {
 		if (
