@@ -20,7 +20,7 @@ import {
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
@@ -1010,19 +1010,13 @@ export default function PurchaseSettings() {
 	const { user } = useAuth();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
-	const { data: purchase } = useQuery( {
-		...purchaseQuery( parseInt( purchaseId ) ),
-		enabled: Boolean( purchaseId ),
-	} );
+	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
-		...siteBySlugQuery( purchase?.site_slug ?? '' ),
-		enabled: Boolean( purchase?.site_slug ),
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ),
 	} );
-	const formattedExpiry = useFormattedTime( purchase?.expiry_date ?? '' );
-	const formattedRenewal = useFormattedTime( purchase?.renew_date ?? '' );
-	if ( ! purchase ) {
-		return null;
-	}
+	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
+	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
 	const expiryDateTitle = ( () => {
