@@ -6,8 +6,10 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
-const queryClient = new QueryClient();
+import { useSetupHelpCenterStore } from './use-setup-help-center-store';
 import './help-center.scss';
+
+const queryClient = new QueryClient();
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( 'automattic/help-center' );
@@ -15,6 +17,7 @@ function AdminHelpCenterContent() {
 		show: select( 'automattic/help-center' ).isHelpCenterShown(),
 		unreadCount: select( 'automattic/help-center' ).getUnreadCount(),
 	} ) );
+	useSetupHelpCenterStore();
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );

@@ -32,7 +32,7 @@ export const emptyChat: Chat = {
 export const OdieAssistantContext = createContext< OdieAssistantContextInterface >( {
 	addMessage: noop,
 	botName: 'Wapuu',
-	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
+	botNameSlug: 'ciab-workflow-support_chat' as OdieAllowedBots,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
@@ -82,7 +82,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 
 		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
 			? store.getOdieBotNameSlug()
-			: 'wpcom-support-chat';
+			: 'ciab-workflow-support_chat';
 
 		return {
 			botNameSlug: odieBotNameSlug as OdieAllowedBots,

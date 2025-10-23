@@ -13,6 +13,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { useCanvasMode } from './hooks/use-canvas-mode';
+import { useSetupHelpCenterStore } from './use-setup-help-center-store';
 import { getEditorType } from './utils';
 import './help-center.scss';
 
@@ -22,6 +23,8 @@ function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+
+	useSetupHelpCenterStore();
 
 	const show = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown() );
 
