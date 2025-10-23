@@ -77,10 +77,7 @@ const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	return (
 		<VStack spacing={ 1 }>
-			<HStack
-				spacing={ 2 }
-				style={ { transform: isRTL() ? 'translate(3px, 0)' : 'translate(-3px, 0)' } }
-			>
+			<HStack spacing={ 2 }>
 				<Environment environmentType={ environmentType } />
 				{ siteTitle && ! isSmallViewport && (
 					<Text
