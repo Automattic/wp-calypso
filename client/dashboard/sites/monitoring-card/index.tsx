@@ -1,13 +1,7 @@
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Spinner,
-} from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { Text } from '../../components/text';
+import { SectionHeader } from '../../components/section-header';
 import type { ReactNode } from 'react';
 import './style.scss';
 
@@ -30,13 +24,6 @@ export default function MonitoringCard( {
 	cardLabel,
 	className,
 }: MonitoringCardProps ) {
-	const renderDescription = () => {
-		if ( description ) {
-			return description;
-		}
-		return <>&nbsp;</>;
-	};
-
 	const renderContent = () => {
 		if ( isLoading ) {
 			return <Spinner />;
@@ -44,19 +31,6 @@ export default function MonitoringCard( {
 
 		return children;
 	};
-
-	const topContent = (
-		<HStack justify="space-between" alignment="flex-start">
-			<VStack spacing={ 4 } className="dashboard-monitoring-card__header">
-				<Text weight="bold" size="15px">
-					{ title }
-				</Text>
-				<HStack justify="flex-start" alignment="baseline">
-					<Text variant="muted">{ renderDescription() }</Text>
-				</HStack>
-			</VStack>
-		</HStack>
-	);
 
 	const contentClassNames = clsx(
 		'dashboard-monitoring-card__content',
@@ -74,7 +48,7 @@ export default function MonitoringCard( {
 							properties={ { feature: tracksId } }
 						/>
 					) }
-					{ topContent }
+					<SectionHeader level={ 3 } title={ title } description={ description } />
 					{ children && (
 						<VStack className={ contentClassNames } spacing={ 2 } justify="space-between">
 							{ renderContent() }
