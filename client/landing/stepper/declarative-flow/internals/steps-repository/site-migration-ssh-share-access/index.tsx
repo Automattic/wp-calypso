@@ -10,7 +10,6 @@ import { urlToDomain } from 'calypso/lib/url';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
-import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
@@ -37,12 +36,6 @@ const SiteMigrationSshShareAccess: StepType< {
 			navigation.submit?.( { destination: 'back-to-verification' } );
 		}
 	}, [ transferId, navigation ] );
-
-	// Poll transfer status while user goes through the steps
-	// This keeps the atomic transfer progressing in the background
-	usePollSSHMigrationAtomicTransfer( siteId, transferId, {
-		enabled: !! transferId,
-	} );
 
 	const handleNoSSHAccess = useCallback( () => {
 		navigation.submit?.( { destination: 'no-ssh-access' } );
