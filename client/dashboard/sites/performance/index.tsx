@@ -23,7 +23,6 @@ import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
 import Report from './report';
 import ReportErrorNotice from './report-error-notice';
-import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
 import ReportNoPagesNotice from './report-no-pages-notice';
 import Subtitle from './subtitle';
@@ -131,10 +130,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 
 		return (
 			<>
-				<ReportExpiredNotice
-					reportTimestamp={ currentReport.timestamp }
-					onRetest={ handleReportRefetch }
-				/>
 				<Report
 					report={ currentReport }
 					device={ deviceToggle }
