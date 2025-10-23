@@ -32,6 +32,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
+import { getTotalCost } from '../utils/get-total-cost';
 import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
@@ -187,7 +188,11 @@ const AddProfessionalEmail = () => {
 		( mailbox ) => !! mailbox.getFieldValue( FIELD_MAILBOX )
 	);
 	const totalItems = filledMailboxes.length;
-	const totalCost = totalItems * product.cost;
+	const totalCost = getTotalCost( {
+		amount: totalItems,
+		domain: domain,
+		product: product,
+	} );
 	const totalPrice = formatCurrency( totalCost, product.currency_code, {
 		stripZeros: true,
 	} );
