@@ -129,7 +129,6 @@ export const useGetCombinedChat = (
 					if ( conversation ) {
 						// We need to load the conversation to get typing events. Load simply means "focus on".
 						Smooch.loadConversation( conversation.id );
-
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,
