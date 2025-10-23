@@ -26,6 +26,8 @@ import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {
+	formatReceiptAmount,
+	formatReceiptTaxAmount,
 	groupDomainProducts,
 	getTransactionTermLabel,
 	renderTransactionQuantitySummary,
@@ -342,12 +344,7 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 						<VStack className="receipt-tax-row">
 							<HStack justify="space-between">
 								<span>{ __( 'Tax' ) }</span>
-								<span>
-									{ formatCurrency( receipt.tax_integer, receipt.currency, {
-										isSmallestUnit: true,
-										stripZeros: true,
-									} ) }
-								</span>
+								<span>{ formatReceiptTaxAmount( receipt ) }</span>
 							</HStack>
 						</VStack>
 					) }
@@ -356,12 +353,7 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 				<VStack className="receipt-total-row">
 					<HStack justify="space-between">
 						<Text weight={ 500 }>{ __( 'Total paid:' ) }</Text>
-						<Text weight={ 500 }>
-							{ formatCurrency( receipt.amount_integer, receipt.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-							} ) }
-						</Text>
+						<Text weight={ 500 }>{ formatReceiptAmount( receipt ) }</Text>
 					</HStack>
 				</VStack>
 			</VStack>
