@@ -132,7 +132,7 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 				isBusy={ isUpdating }
 				isOpen={ isConfirmDialogOpen }
 			/>
-			<VStack spacing={ 4 } alignment="start">
+			<VStack spacing={ 6 } alignment="start">
 				<SettingsPanel options={ options } onChange={ handleChange } disabled={ isUpdating } />
 				<Button onClick={ askForConfirmation } disabled={ isUpdating } variant="primary">
 					{ __( 'Apply to all sites' ) }

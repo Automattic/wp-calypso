@@ -121,7 +121,7 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 				isBusy={ isUpdating }
 				isOpen={ isConfirmDialogOpen }
 			/>
-			<VStack spacing={ 4 } alignment="start">
+			<VStack spacing={ 6 } alignment="start">
 				<SettingsPanel disabled={ isUpdating } options={ options } onChange={ handleChange } />
 				<Button onClick={ askForConfirmation } variant="primary" disabled={ isUpdating }>
 					{ __( 'Apply to all sites' ) }

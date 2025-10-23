@@ -17,20 +17,18 @@ export const SettingsPanel = ( { options, onChange, disabled }: Props ) => {
 	};
 
 	return (
-		<VStack alignment="start" spacing={ 8 }>
-			<VStack spacing={ 4 }>
-				{ options.map( ( item ) => (
-					<ToggleControl
-						disabled={ disabled }
-						__nextHasNoMarginBottom
-						className="stream-settings__toggle"
-						key={ item.id }
-						label={ item.label }
-						checked={ item.value }
-						onChange={ ( value ) => handleChange( { ...item, value } ) }
-					/>
-				) ) }
-			</VStack>
+		<VStack spacing={ 2 }>
+			{ options.map( ( item ) => (
+				<ToggleControl
+					disabled={ disabled }
+					__nextHasNoMarginBottom
+					className="stream-settings__toggle"
+					key={ item.id }
+					label={ item.label }
+					checked={ item.value }
+					onChange={ ( value ) => handleChange( { ...item, value } ) }
+				/>
+			) ) }
 		</VStack>
 	);
 };

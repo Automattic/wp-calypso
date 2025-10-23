@@ -146,44 +146,46 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 				isBusy={ isUpdating }
 				isOpen={ isConfirmDialogOpen }
 			/>
-			<VStack alignment="stretch" spacing={ 4 }>
-				<Text variant="muted">
-					{ createInterpolateElement(
-						__(
-							'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app</link>'
-						),
-						{
-							link: (
-								<ExternalLink
-									href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
-									children={ null }
-								/>
+			<VStack alignment="stretch" spacing={ 6 }>
+				<VStack spacing={ 6 }>
+					<Text variant="muted">
+						{ createInterpolateElement(
+							__(
+								'Get instant notifications from your sites directly on your device. Just install the <link>Jetpack app</link>'
 							),
-						}
-					) }
-				</Text>
-				<SelectControl
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					label={ __( 'Select device' ) }
-					value={ selectedDeviceId?.toString() }
-					onChange={ handleDeviceChange }
-					disabled={ isUpdating || ! hasDevices }
-				>
-					{ hasDevices &&
-						devices?.map( ( device ) => (
-							<option key={ device.device_id } value={ device.device_id }>
-								{ device.device_name }
-							</option>
-						) ) }
-					{ ! hasDevices && <option value="">{ __( 'No devices found' ) }</option> }
-				</SelectControl>
-				<SettingsPanel
-					options={ options }
-					disabled={ isUpdating || ! hasDevices }
-					onChange={ handleChange }
-				/>
-				<HStack spacing={ 4 } alignment="start" justify="flex-start">
+							{
+								link: (
+									<ExternalLink
+										href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
+										children={ null }
+									/>
+								),
+							}
+						) }
+					</Text>
+					<SelectControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						label={ __( 'Select device' ) }
+						value={ selectedDeviceId?.toString() }
+						onChange={ handleDeviceChange }
+						disabled={ isUpdating || ! hasDevices }
+					>
+						{ hasDevices &&
+							devices?.map( ( device ) => (
+								<option key={ device.device_id } value={ device.device_id }>
+									{ device.device_name }
+								</option>
+							) ) }
+						{ ! hasDevices && <option value="">{ __( 'No devices found' ) }</option> }
+					</SelectControl>
+					<SettingsPanel
+						options={ options }
+						disabled={ isUpdating || ! hasDevices }
+						onChange={ handleChange }
+					/>
+				</VStack>
+				<HStack alignment="start" justify="flex-start">
 					<Button
 						onClick={ askForConfirmation }
 						variant="primary"
