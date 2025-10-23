@@ -254,7 +254,11 @@ export function getFields( {
 						{ isTransferred ? (
 							getTitleForDisplay( item ) + '&nbsp;'
 						) : (
-							<Link to={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
+							<Link
+								to={ purchaseSettingsRoute.fullPath }
+								params={ { purchaseId: item.ID } }
+								title={ __( 'Manage purchase' ) }
+							>
 								{ getTitleForDisplay( item ) }
 							</Link>
 						) }
@@ -454,7 +458,8 @@ export function usePurchasesListActions( {
 				callback: ( items: Purchase[] ) => {
 					const item = items[ 0 ];
 					navigate( {
-						to: getPurchaseUrl( item ),
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: item.ID },
 					} );
 				},
 			},
