@@ -31,14 +31,14 @@ function SiteDomains() {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
-	const { data: redirect } = useQuery( siteRedirectQuery( site.ID ) );
+	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
 
 	const fields = useFields( {
 		site,
 	} );
 
-	const actions = useActions( { user, site } );
+	const actions = useActions( { user, sites: [ site ] } );
 
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...SITE_CONTEXT_VIEW,
@@ -60,7 +60,7 @@ function SiteDomains() {
 				/>
 			}
 		>
-			{ ! isLoading && siteDomains && (
+			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && (
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
 			) }
 			{ hasRedirect && (

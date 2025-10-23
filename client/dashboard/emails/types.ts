@@ -21,7 +21,8 @@ export interface Email {
 		| 'google_pending_tos_acceptance'
 		| 'unverified_forwards'
 		| 'no_subscription'
-		| 'unused_mailboxes';
+		| 'unused_mailboxes'
+		| 'other_provider';
 }
 
 export type IntervalLength = 'monthly' | 'annually';

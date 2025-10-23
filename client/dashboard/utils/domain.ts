@@ -1,4 +1,10 @@
-import { DotcomFeatures, WhoisType, DomainSubtype, DomainStatus } from '@automattic/api-core';
+import {
+	DotcomFeatures,
+	WhoisType,
+	DomainSubtype,
+	DomainStatus,
+	DomainTypes,
+} from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
@@ -106,7 +112,8 @@ export function shouldUpgradeToMakeDomainPrimary( {
 		! domain.primary_domain &&
 		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
 		!! site.plan?.is_free &&
-		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
+		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN ) &&
+		! site.is_garden
 	);
 }
 
@@ -154,7 +161,7 @@ export function getGSuiteMailboxCount( domain: Domain ): number {
 }
 
 export function hasEmailForwards( domain: Domain ) {
-	return domain?.email_forwards_count ?? 0;
+	return !! ( domain?.email_forwards_count ?? 0 );
 }
 
 export const domainHasEmail = ( domain: Domain ) =>
@@ -349,4 +356,34 @@ export function isSubdomain( domainName: string ): boolean {
 	);
 
 	return isValidSubdomain && getRootDomain( domainName ) !== domainName;
+}
+
+export function isGoogleWorkspaceSupportedDomain( domain: Domain ) {
+	if ( domain.google_apps_subscription?.status === 'other_provider' ) {
+		return false;
+	}
+
+	// If the domain is registered through us, there is a provisioning period when
+	// `hasWpcomNameservers` will be false. We still want to let users buy Google Workspace
+	// during that period, even if we normally wouldn't let them under these conditions.
+	// Therefore, we check those conditions and return true if the registration happened less
+	// than 15 minutes ago. 15 minutes is an arbitrary number.
+	if (
+		isRegisteredDomain( domain ) &&
+		! domain.has_wpcom_nameservers &&
+		isRecentlyRegistered( domain.registration_date, 15 )
+	) {
+		return true;
+	}
+
+	const isHostedOnWpcom =
+		isRegisteredDomain( domain ) && ( domain.has_wpcom_nameservers || hasGSuiteWithUs( domain ) );
+	if (
+		! isHostedOnWpcom &&
+		! ( domain.type === DomainTypes.MAPPED && domain.has_wpcom_nameservers )
+	) {
+		return false;
+	}
+
+	return ! domain.domain.endsWith( '.wpcomstaging.com' );
 }

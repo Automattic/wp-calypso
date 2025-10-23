@@ -48,6 +48,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			...( isDomainOnly && { isDomainOnly: 1 } ),
 			...( isGravatarDomain && { isGravatarDomain: 1 } ),
 			checkoutBackUrl: finalCheckoutBackUrl,
+			// Pass the final destination as redirect_to so checkout knows where to go after completion
+			...( destination && { redirect_to: destination } ),
 		},
 		checkoutURL
 	);
@@ -76,7 +78,12 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, redirect_to } ) {
+	// If a redirect_to parameter is provided, use it as the destination
+	if ( redirect_to ) {
+		return redirect_to;
+	}
+
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}

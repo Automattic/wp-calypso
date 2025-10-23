@@ -65,7 +65,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/jest-dom": "^6.9.1",
 		"@types/autosize": "^4.0.3",
 		"@types/jest": "^29.5.14",
 		"@types/react": "^18.3.23",

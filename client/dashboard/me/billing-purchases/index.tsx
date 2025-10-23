@@ -9,6 +9,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -97,7 +98,12 @@ export default function PurchasesList() {
 	};
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Active upgrades' ) } /> }>
+		<PageLayout
+			size="large"
+			header={
+				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Active upgrades' ) } />
+			}
+		>
 			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews

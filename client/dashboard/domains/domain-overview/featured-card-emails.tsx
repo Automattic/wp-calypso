@@ -6,7 +6,7 @@ import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { emailsRoute } from '../../app/router/emails';
-import OverviewCard from '../../sites/overview-card';
+import OverviewCard from '../../components/overview-card';
 import type { EmailProvider, Mailbox } from '@automattic/api-core';
 
 const getAccountTypeLabel = ( accountType: EmailProvider ) => {

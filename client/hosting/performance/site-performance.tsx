@@ -14,6 +14,7 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
+import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -127,7 +128,8 @@ const SitePerformanceContent = () => {
 		savePerformanceReportUrl,
 		currentPageId,
 		isSitePublic ? currentPage?.wpcom_performance_report_url : undefined,
-		activeTab
+		activeTab,
+		trackReportCompletedEvent
 	);
 
 	useEffect( () => {

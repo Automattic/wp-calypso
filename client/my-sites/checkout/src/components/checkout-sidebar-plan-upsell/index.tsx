@@ -179,7 +179,7 @@ export function CheckoutSidebarPlanUpsell() {
 		currentVariant
 	);
 	const percentSavings = getItemVariantDiscount( upsellVariant, currentVariant );
-	if ( percentSavings === 0 ) {
+	if ( percentSavings <= 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
 	}

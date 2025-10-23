@@ -6,6 +6,7 @@ import {
 	WPCOM_DIFM_LITE,
 	PRODUCT_1GB_SPACE,
 	JETPACK_SEARCH_PRODUCTS,
+	JetpackPlans,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
@@ -381,6 +382,15 @@ export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): bool
  */
 export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
 	return product.product_slug ? JETPACK_SEARCH_PRODUCTS.includes( product.product_slug ) : false;
+}
+
+export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
+	const securityT1Slugs = [
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+	] as const;
+	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
 function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {

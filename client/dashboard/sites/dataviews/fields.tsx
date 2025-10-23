@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import SiteIcon from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
@@ -17,7 +18,6 @@ import {
 	Status,
 	URL,
 	Uptime,
-	SiteIconLink,
 } from '../site-fields';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
@@ -41,7 +41,7 @@ export const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'icon.ico',
 		label: __( 'Site icon' ),
-		render: ( { item } ) => <SiteIconLink site={ item } />,
+		render: ( { item } ) => <SiteIcon site={ item } />,
 		enableSorting: false,
 	},
 	{

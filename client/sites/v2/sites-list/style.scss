@@ -37,4 +37,8 @@
 			max-width: unset;
 		}
 	}
+
+	a.dataviews-title-field:not(:hover) {
+		color: $gray-800;
+	}
 }

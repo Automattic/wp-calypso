@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType11 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import { A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -96,12 +95,10 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 									onClick={ onRequestDemoClick }
 									target="_blank"
 									variant="secondary"
-									icon={ external }
-									iconPosition="right"
 									iconSize={ 16 }
 									__next40pxDefaultSize
 								>
-									{ translate( 'Request a Demo' ) }
+									{ translate( 'Request a Demo ↗' ) }
 								</Button>
 							</>
 						) : (
@@ -112,12 +109,10 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 									onClick={ onRequestDemoClick }
 									target="_blank"
 									variant="primary"
-									icon={ external }
-									iconPosition="right"
 									iconSize={ 16 }
 									__next40pxDefaultSize
 								>
-									{ translate( 'Request a Demo' ) }
+									{ translate( 'Request a Demo ↗' ) }
 								</Button>
 
 								{ isVipPartnerOpportunityReferralsEnabled && (

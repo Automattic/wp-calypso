@@ -17,6 +17,7 @@ import type { InputControlProps } from '@wordpress/components/build-types/input-
 export const MailboxInput = ( {
 	fieldName,
 	mailboxEntity,
+	onBlur,
 	onChange,
 	lowerCaseChangeValue = false,
 	...inputControlProps
@@ -24,12 +25,13 @@ export const MailboxInput = ( {
 	fieldName: 'mailbox' | 'password' | 'passwordResetEmail';
 	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
 	lowerCaseChangeValue?: boolean;
+	onBlur: ( args: { field: MailboxFormFieldBase< string > } ) => void;
 	onChange: ( args: {
 		value: string | undefined;
 		field: MailboxFormFieldBase< string >;
 		lowerCaseChangeValue?: boolean;
 	} ) => void;
-} & Omit< InputControlProps, 'onChange' > ) => {
+} & Omit< InputControlProps, 'onBlur' | 'onChange' > ) => {
 	const originalField = ( mailboxEntity.formFields as TitanMailboxFormFields )[
 		fieldName
 	] as TextMailboxFormField;
@@ -48,6 +50,9 @@ export const MailboxInput = ( {
 			<InputControl
 				__next40pxDefaultSize
 				value={ mailboxEntity.getFieldValue( fieldName ) }
+				onBlur={ () => {
+					onBlur( { field: originalField } );
+				} }
 				onChange={ ( value ) => {
 					onChange( {
 						value,
@@ -61,7 +66,7 @@ export const MailboxInput = ( {
 			{ mailboxEntity.getFieldError( fieldName ) && (
 				<Text className="error-message" as="p" intent="error">
 					<Icon size={ 20 } icon={ info } />
-					{ mailboxEntity.getFieldError( fieldName ) }
+					<div>{ mailboxEntity.getFieldError( fieldName ) }</div>
 				</Text>
 			) }
 		</VStack>

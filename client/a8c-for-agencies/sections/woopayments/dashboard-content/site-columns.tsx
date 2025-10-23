@@ -2,7 +2,6 @@ import { BadgeType, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useState, useRef } from 'react';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
@@ -121,10 +120,7 @@ export const WooPaymentsStatusColumn = ( {
 				) }
 				target="_blank"
 			>
-				<>
-					{ translate( 'Learn more about the incentive' ) }
-					<Icon icon={ external } size={ 18 } />
-				</>
+				{ translate( 'Learn more about the incentive ↗' ) }
 			</Button>
 		</div>
 	);
