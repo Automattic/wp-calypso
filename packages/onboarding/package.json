@@ -62,7 +62,7 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@storybook/addon-a11y": "^8.6.14",
-		"@testing-library/dom": "^10.4.0",
+		"@testing-library/dom": "^10.4.1",
 		"@testing-library/react": "^16.3.0",
 		"@wordpress/base-styles": "^5.23.0",
 		"copyfiles": "^2.4.1",

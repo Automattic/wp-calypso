@@ -40,6 +40,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -71,6 +72,7 @@ import {
 	isTitanMail,
 	isGoogleWorkspace,
 	getRenewalUrlFromPurchase,
+	isJetpackT1SecurityPlan,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId } from '../urls';
@@ -101,18 +103,40 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
 	}
 
-	if ( purchase.is_jetpack_backup_t1 ) {
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
 		return `/plans/storage/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return `/plans/${ purchase.site_slug }`;
+	}
+
+	return getWpcomPlanGridUrl( purchase.site_slug );
+}
+
+function getExpiredNewPlanUrl( purchase: Purchase ): string {
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
+		return `/plans/storage/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return `/plans/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_plan ) {
+		return getWpcomPlanGridUrl( purchase.site_slug );
 	}
 
 	return `/plans/${ purchase.site_slug }`;
 }
 
-function getExpiredNewPlanUrl( purchase: Purchase ): string {
-	if ( purchase.is_jetpack_backup_t1 ) {
-		return `/plans/storage/${ purchase.site_slug }`;
-	}
-	return `/plans/${ purchase.site_slug }`;
+function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+	return addQueryArgs( '/setup/plan-upgrade', {
+		...( siteSlug && { siteSlug } ),
+		redirect_to: backUrl,
+		cancel_to: backUrl,
+	} );
 }
 
 function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
