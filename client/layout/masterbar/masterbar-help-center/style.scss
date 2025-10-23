@@ -20,8 +20,8 @@
 
 	.masterbar__help-menu-divider {
 		hr {
-			background: currentColor;
-			opacity: 0.8;
+			background: var( --color-masterbar-submenu-hover-text, var( --color-masterbar-highlight ) );
+			opacity: 0.2;
 			margin: 0;
 		}
 	}
