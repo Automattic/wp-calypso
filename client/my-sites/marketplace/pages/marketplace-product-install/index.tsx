@@ -1,3 +1,4 @@
+import { siteByIdQuery } from '@automattic/api-queries';
 import {
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_ATOMIC,
@@ -7,6 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -14,6 +16,7 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -272,9 +275,29 @@ const MarketplaceProductInstall = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
-	const pluginsUrl = useSelector( ( state ) =>
+	// Fetch fresh site data (including admin_url) post-transfer
+	const { data: freshSite } = useQuery( {
+		...siteByIdQuery( siteId ?? 0 ),
+		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
+		staleTime: 0,
+		refetchOnMount: 'always',
+	} );
+
+	const freshAdminUrl = freshSite?.options?.admin_url;
+	const isAtomicTransferReady = freshSite ? isAtomicTransferredSite( freshSite ) : false;
+	const pluginsUrlFresh = freshAdminUrl
+		? `${ freshAdminUrl }plugins.php?activate=true&plugin_status=active`
+		: null;
+
+	const pluginsUrlSelector = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true&plugin_status=active' )
 	);
+
+	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
+	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
+
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
 	} );
@@ -287,16 +310,24 @@ const MarketplaceProductInstall = ( {
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
 			( installedPlugin && pluginActive ) ||
 			// Transfer to atomic using a marketplace plugin
-			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus && canManagePlugins ) ||
+			( atomicFlow &&
+				transferStates.COMPLETE === automatedTransferStatus &&
+				canManagePlugins &&
+				isAtomicTransferReady ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
 				! isAtomic &&
 				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins )
+				canManagePlugins &&
+				isAtomicTransferReady )
 		) {
+			// Require a resolved pluginsUrlFinal before redirecting
+			if ( ! pluginsUrlFinal ) {
+				return;
+			}
 			waitFor( 1 ).then( () => {
-				window.location.href = pluginsUrl as string;
+				window.location.href = pluginsUrlFinal as string;
 			} );
 		}
 	}, [
@@ -308,7 +339,8 @@ const MarketplaceProductInstall = ( {
 		canManagePlugins,
 		installedPlugin,
 		uploadedPluginSlug,
-		pluginsUrl,
+		pluginsUrlFinal,
+		isAtomicTransferReady,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
