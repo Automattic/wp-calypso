@@ -279,6 +279,8 @@ const MarketplaceProductInstall = ( {
 	const { data: freshSite } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
 		staleTime: 0,
 		refetchOnMount: 'always',
 	} );
