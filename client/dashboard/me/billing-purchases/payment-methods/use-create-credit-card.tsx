@@ -9,7 +9,7 @@ export function useCreateCreditCard( {
 	hasExistingCardMethods,
 	allowUseForAllSubscriptions,
 }: {
-	currency: string | null | undefined;
+	currency?: string | null | undefined;
 	isStripeLoading: boolean;
 	stripeLoadingError: Error | null | undefined;
 	hasExistingCardMethods?: boolean;
