@@ -1,11 +1,9 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { AccordionNotice } from '../components/accordion-notice';
-import { HelpLink } from './help-link';
 
 interface StepShareSSHAccessProps {
 	authMethod: 'password' | 'key';
@@ -15,6 +13,7 @@ interface StepShareSSHAccessProps {
 	onAuthMethodChange: ( method: 'password' | 'key' ) => void;
 	onUsernameChange: ( username: string ) => void;
 	onPasswordChange: ( password: string ) => void;
+	helpLink: ReactNode;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
@@ -25,6 +24,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	onAuthMethodChange,
 	onUsernameChange,
 	onPasswordChange,
+	helpLink,
 } ) => {
 	const translate = useTranslate();
 
@@ -36,7 +36,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 				) }
 			</p>
 
-			<HelpLink href={ localizeUrl( 'https://wordpress.com/support/ssh-migration-guide/' ) } />
+			{ helpLink }
 
 			{ error && (
 				<AccordionNotice variant="error">

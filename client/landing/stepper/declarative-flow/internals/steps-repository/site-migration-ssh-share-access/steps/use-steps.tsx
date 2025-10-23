@@ -125,6 +125,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					onAuthMethodChange={ options.onAuthMethodChange }
 					onUsernameChange={ options.onUsernameChange }
 					onPasswordChange={ options.onPasswordChange }
+					helpLink={ helpLink }
 				/>
 			),
 		},
