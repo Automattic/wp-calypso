@@ -58,7 +58,7 @@ flowchart TB
 
 You can easily annotate a Playwright Test test with a link to the MermaidJS flow chart URL like:
 
-```ts
+```typescript
 annotation: {
 			type: 'flowchart',
 			description:
