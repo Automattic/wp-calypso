@@ -1,6 +1,6 @@
 import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { MenuGroup, MenuItem, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, MenuGroup, MenuItem, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -53,10 +53,10 @@ const CIABSiteSwitcher = () => {
 			{ () => (
 				<MenuGroup>
 					<MenuItem onClick={ handleAddNewStore }>
-						<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+						<HStack justify="flex-start" alignment="center">
 							<Icon icon={ plus } />
-							{ __( 'Add new store', 'Commerce in a box' ) }
-						</div>
+							<span>{ __( 'Add new store', 'Commerce in a box' ) }</span>
+						</HStack>
 					</MenuItem>
 				</MenuGroup>
 			) }
