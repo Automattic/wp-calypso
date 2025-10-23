@@ -30,7 +30,6 @@ describe(
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			// await BrowserManager.setStoreCookie( page, { currency: 'USD' } );
 		} );
 
 		it( 'Enter the flow', async function () {
