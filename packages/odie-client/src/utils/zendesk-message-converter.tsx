@@ -96,22 +96,22 @@ function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
 }
 
 export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
-	const context: Context = { site_id: null };
+	let type = message.type as MessageType;
+	let context: Context = { site_id: null };
+	let role = (
+		[ 'user', 'business' ].includes( message.role ) ? message.role : 'user'
+	) as MessageRole;
 
-	// Mark answerBot messages for filtering
 	if ( message?.source?.type === 'zd:answerBot' ) {
-		return {
-			...message,
-			content: getContentMessage( message ),
-			context,
-			role: 'bot',
-			type: 'message',
-			quotedMessageId: message.id,
-			metadata: {
-				...message.metadata,
-				isAnswerBotMessage: true, // marker to filter these out
+		type = 'message';
+		role = 'bot';
+		context = {
+			...context,
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: true,
+				show_ai_avatar: false,
 			},
-			feedbackOptions: message.actions,
 		};
 	}
 
@@ -119,10 +119,8 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 		...message,
 		content: getContentMessage( message ),
 		context,
-		role: ( [ 'user', 'business' ].includes( message.role )
-			? message.role
-			: 'user' ) as MessageRole,
-		type: message.type as MessageType,
+		role,
+		type,
 		quotedMessageId: message.id,
 		metadata: message.metadata,
 		feedbackOptions: message.actions,

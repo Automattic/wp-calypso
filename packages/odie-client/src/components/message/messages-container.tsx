@@ -179,7 +179,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						displayChatWithSupportLabel={ false }
 					/>
 				) }
-				<MessagesClusterizer messages={ chat.messages } />
+				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && (

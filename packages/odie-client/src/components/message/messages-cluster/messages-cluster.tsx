@@ -108,9 +108,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
-		const isZendeskIntro = group.messages.some( isZendeskIntroMessage );
 
-		const messagesToRender = isZendeskIntro ? getZendeskInitialGreetingMessages() : group.messages;
+		const messagesToRender =
+			group.role === 'zendesk-intro' ? getZendeskInitialGreetingMessages() : group.messages;
 
 		const messageHeader = () => {
 			// Only business messages have a header.
