@@ -25,38 +25,7 @@ import WordPressSettingsSummary from '../settings-wordpress/summary';
 import WpcomLoginSettingsSummary from '../settings-wpcom-login/summary';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
-import type { SiteSettingsGeneralSupports } from '../../app/context';
-import type { Site, SiteSettings } from '@automattic/api-core';
-
-const renderGeneralSettingsButtonList = (
-	supports: SiteSettingsGeneralSupports,
-	site: Site,
-	settings?: SiteSettings
-) => {
-	const buttonList = [ <SiteVisibilitySettingsSummary key="site-visibility" site={ site } /> ];
-
-	if ( supports.redirect ) {
-		buttonList.push( <SiteRedirectSettingsSummary key="site-redirect" site={ site } /> );
-	}
-
-	buttonList.push(
-		...[
-			<SubscriptionGiftingSettingsSummary
-				key="subscription-gifting"
-				site={ site }
-				settings={ settings }
-			/>,
-			<AgencySettingsSummary key="agency" site={ site } />,
-			<HundredYearPlanSettingsSummary
-				key="hundred-year-plan"
-				site={ site }
-				settings={ settings }
-			/>,
-		]
-	);
-
-	return buttonList;
-};
+import type { SiteSettings } from '@automattic/api-core';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -74,7 +43,13 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
-						{ renderGeneralSettingsButtonList( supportsSettings.general, site, settings ) }
+						<SiteVisibilitySettingsSummary site={ site } />
+						{ supportsSettings.general.redirect ? (
+							<SiteRedirectSettingsSummary site={ site } />
+						) : null }
+						<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+						<AgencySettingsSummary site={ site } />
+						<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 					</SummaryButtonList>
 				</VStack>
 			) }

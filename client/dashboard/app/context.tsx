@@ -59,7 +59,7 @@ export type AppConfig = {
 	components: Record< string, () => Promise< { default: React.FC } > >;
 };
 
-const AppContext = createContext< AppConfig >( {
+export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	name: '',
 	basePath: '',
 	mainRoute: '',
@@ -82,7 +82,9 @@ const AppContext = createContext< AppConfig >( {
 	onboardingLinks: undefined,
 	optIn: false,
 	components: {},
-} );
+};
+
+const AppContext = createContext< AppConfig >( APP_CONTEXT_DEFAULT_CONFIG );
 
 interface AppProviderProps {
 	children: React.ReactNode;
