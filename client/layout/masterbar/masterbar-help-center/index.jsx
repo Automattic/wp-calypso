@@ -7,6 +7,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -25,6 +26,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const sectionName = useSelector( getSectionName );
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
+	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
 	const { helpCenterVisible, unreadCount } = useDateStoreSelect( ( select ) => ( {
 		helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
@@ -55,17 +57,31 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
-		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-			destination,
-		} );
-
-		if ( ! helpCenterVisible ) {
+		if ( helpCenterVisible ) {
+			if ( destination !== helpCenterPage ) {
+				setNavigateToRoute( destination );
+				setHelpCenterPage( destination );
+			} else {
+				recordTracksEvent( `calypso_inlinehelp_close`, {
+					force_site_id: true,
+					location: 'help-center',
+					section: sectionName,
+				} );
+				setShowHelpCenter( false );
+				setHelpCenterPage( null );
+			}
+		} else {
 			setNavigateToRoute( destination );
+			setHelpCenterPage( destination );
+			setShowHelpCenter( true );
+
+			recordTracksEvent( `calypso_inlinehelp_show`, {
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+				destination,
+			} );
 		}
-		setShowHelpCenter( ! helpCenterVisible );
 	};
 
 	// Menu items for the new panel
