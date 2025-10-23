@@ -1,4 +1,5 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
@@ -31,6 +32,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
+import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
@@ -181,6 +183,15 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
+	const filledMailboxes = mailboxEntities.filter(
+		( mailbox ) => !! mailbox.getFieldValue( FIELD_MAILBOX )
+	);
+	const totalItems = filledMailboxes.length;
+	const totalCost = totalItems * product.cost;
+	const totalPrice = formatCurrency( totalCost, product.currency_code, {
+		stripZeros: true,
+	} );
+
 	return (
 		<PageLayout
 			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
@@ -231,11 +242,7 @@ const AddProfessionalEmail = () => {
 						</Button>
 					</ButtonStack>
 
-					<ButtonStack justify="flex-start">
-						<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
-							{ __( 'Continue' ) }
-						</Button>
-					</ButtonStack>
+					<Cart totalItems={ totalItems } totalPrice={ totalPrice } isCartBusy={ isSubmitting } />
 				</VStack>
 			</form>
 		</PageLayout>
