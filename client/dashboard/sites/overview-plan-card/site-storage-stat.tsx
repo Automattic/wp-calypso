@@ -63,15 +63,17 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 				</Text>
 			) }
 			{ alertLevel !== 'none' && (
-				<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
-					{ __( 'Add more storage' ) }
-				</Button>
+				<>
+					<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
+						{ __( 'Add more storage' ) }
+					</Button>
+					<AddStorageModal
+						site={ site }
+						isOpen={ isModalOpen }
+						onClose={ () => setIsModalOpen( false ) }
+					/>
+				</>
 			) }
-			<AddStorageModal
-				site={ site }
-				isOpen={ isModalOpen }
-				onClose={ () => setIsModalOpen( false ) }
-			/>
 		</VStack>
 	);
 }
