@@ -1,6 +1,6 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
-import type { NewUserResponse } from '../../../types/rest-api-client.types';
+import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
 const selectors = {
 	// Fields
 	emailInput: 'input[name="email"]',
@@ -101,6 +101,49 @@ export class UserSignupPage {
 		}
 
 		return await response.json();
+	}
+
+	/**
+	 * Signup with email and wait for site creation.
+	 *
+	 * This happens in the domain-only flow, where site creation happens after user login.
+	 *
+	 * @param email {string} Email address of the new user.
+	 * @returns {NewUserResponse, NewSiteResponse} Details of the new user and the newly created site.
+	 */
+	async signupWithEmailAndWaitForSiteCreation(
+		email: string
+	): Promise< [ NewUserResponse, NewSiteResponse ] > {
+		const newUserDetails = await this.signupWithEmail( email );
+		const newSiteDetails = await this.waitForSiteCreation();
+		return [ newUserDetails, newSiteDetails ];
+	}
+
+	/**
+	 * Waits for the site creation response and returns the details of the newly created site.
+	 *
+	 * Site creation happens with the `/sites/new` endpoint call
+	 *
+	 * @returns {NewSiteResponse} Details of the newly created site.
+	 */
+	private async waitForSiteCreation(): Promise< NewSiteResponse > {
+		const response = await this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to intercept response for new site creation.' );
+		}
+
+		const responseJSON = await response.json();
+		const body = responseJSON.body;
+
+		if ( ! body.blog_details.blogid ) {
+			console.error( body );
+			throw new Error( 'Failed to locate blog ID for the created site.' );
+		}
+
+		// Cast the blogID value to a number, in case it comes in as a string.
+		body.blog_details.blogid = Number( body.blog_details.blogid );
+		return body;
 	}
 
 	/**

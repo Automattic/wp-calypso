@@ -125,6 +125,28 @@ export class DomainSearchComponent {
 	}
 
 	/**
+	 * Click on the "Just buy a domain" option in the "Choose how to use your domain" page
+	 */
+	async selectJustBuyADomain(): Promise< void > {
+		const button = await this.getContainer().getByRole( 'button', {
+			name: /Just buy a domain.*/,
+		} );
+		await button.waitFor();
+		await button.click();
+	}
+
+	/**
+	 * Click on the "New site" option in the "Choose how to use your domain" page
+	 */
+	async selectNewSite(): Promise< void > {
+		const button = await this.getContainer().getByRole( 'button', {
+			name: /New site.*/,
+		} );
+		await button.waitFor();
+		await button.click();
+	}
+
+	/**
 	 * Select a domain matching the keyword.
 	 *
 	 * The keyword can be anything that uniquely identifies the desired domain name
