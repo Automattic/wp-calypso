@@ -1,10 +1,9 @@
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
@@ -20,7 +19,7 @@ import './styles.scss';
 
 const SiteMigrationSshShareAccess: StepType< {
 	submits: {
-		destination?: 'migration-started' | 'no-ssh-access';
+		destination?: 'migration-started' | 'no-ssh-access' | 'back-to-verification';
 		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
 	};
 } > = function ( { navigation } ) {
@@ -29,10 +28,15 @@ const SiteMigrationSshShareAccess: StepType< {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 	const host = queryParams.get( 'host' ) ?? undefined;
-	const { get } = useFlowState();
+	const transferIdParam = queryParams.get( 'transferId' );
+	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 
-	// Get transfer_id from the verification step
-	const transferId = get( 'sshMigration' )?.transferId ?? null;
+	// Redirect back to verification step if transferId is missing
+	useEffect( () => {
+		if ( ! transferId ) {
+			navigation.submit?.( { destination: 'back-to-verification' } );
+		}
+	}, [ transferId, navigation ] );
 
 	// Poll transfer status while user goes through the steps
 	// This keeps the atomic transfer progressing in the background

@@ -207,6 +207,7 @@ export const sshShareAccessPath = buildPathHelper<
 		queryParams: {
 			siteId?: number | string;
 			siteSlug: string;
+			transferId?: number | string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug

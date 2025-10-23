@@ -457,7 +457,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug: {
-					const { allowSiteMigration } = providedDependencies as {
+					const { allowSiteMigration, transferId } = providedDependencies as {
 						verified: boolean;
 						transferId?: number;
 						allowSiteMigration?: boolean;
@@ -469,7 +469,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					// Otherwise proceed to SSH share access
-					return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+					return navigate( paths.sshShareAccessPath( { siteId, siteSlug, transferId } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
@@ -590,8 +590,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
 					const { destination } = providedDependencies as {
-						destination?: 'migration-started' | 'no-ssh-access';
+						destination?: 'migration-started' | 'no-ssh-access' | 'back-to-verification';
 					};
+
+					// Missing transferId, redirect back to verification
+					if ( destination === 'back-to-verification' ) {
+						return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+					}
 
 					// User doesn't have SSH access, redirect to credentials flow
 					if ( destination === 'no-ssh-access' ) {
