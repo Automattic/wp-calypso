@@ -1,5 +1,15 @@
 import { createContext, useContext } from 'react';
 
+export type SiteSettingsGeneralSupports = {
+	redirect: boolean;
+};
+
+export type SiteSettingsSupports = {
+	general: SiteSettingsGeneralSupports;
+	server: boolean;
+	security: boolean;
+};
+
 export type SiteFeatureSupports = {
 	deployments: boolean;
 	performance: boolean;
@@ -9,6 +19,7 @@ export type SiteFeatureSupports = {
 	scan: boolean;
 	domains: boolean;
 	emails: boolean;
+	settings: SiteSettingsSupports | false;
 };
 
 export type MeSupports = {
