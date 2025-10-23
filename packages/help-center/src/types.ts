@@ -95,6 +95,7 @@ interface Availability {
 
 interface Eligibility {
 	is_user_eligible: boolean;
+	is_chat_restricted: boolean;
 	wapuu_assistant_enabled: boolean;
 	support_level:
 		| 'free'

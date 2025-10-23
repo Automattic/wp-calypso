@@ -24,6 +24,7 @@ const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
 	forceEmailSupport?: boolean,
+	isChatRestricted?: boolean,
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
@@ -31,7 +32,7 @@ const getDisplayMessage = (
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
-		return getOdieEmailFallbackMessageContent();
+		return getOdieEmailFallbackMessageContent( isChatRestricted );
 	}
 
 	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
@@ -52,8 +53,14 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, chat } =
-		useOdieAssistantContext();
+	const {
+		isUserEligibleForPaidSupport,
+		trackEvent,
+		canConnectToZendesk,
+		forceEmailSupport,
+		isChatRestricted,
+		chat,
+	} = useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
@@ -67,6 +74,7 @@ export const UserMessage = ( {
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
 				forceEmailSupport,
+				isChatRestricted,
 				message?.context?.flags?.is_error_message
 		  )
 		: message.content;
