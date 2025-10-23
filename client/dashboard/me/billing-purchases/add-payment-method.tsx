@@ -51,7 +51,7 @@ function AddPaymentMethod() {
 		);
 	}
 
-	if ( isStripeLoading ) {
+	if ( isStripeLoading || ! creditCardMethod ) {
 		return (
 			<PageLayout
 				size="small"
