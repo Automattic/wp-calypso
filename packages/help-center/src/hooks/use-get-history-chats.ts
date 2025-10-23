@@ -29,8 +29,13 @@ interface UseGetHistoryChatsResult {
  * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
  */
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
-	const lastMessage = getLastMessage( { conversation } );
+	// For Zendesk conversations, use lastUpdatedAt directly
+	if ( 'lastUpdatedAt' in conversation ) {
+		return ( conversation.lastUpdatedAt || 0 ) * 1000;
+	}
 
+	// For Odie conversations, get the last message timestamp
+	const lastMessage = getLastMessage( { conversation } );
 	return ( lastMessage?.received || 0 ) * 1000;
 };
 
@@ -78,8 +83,14 @@ const getAndUpdateOdieConversationsWithSupportInteractions = (
 
 /**
  * Checks whether the last message from the specified conversation is not empty nor a predefined '--' token.
+ * Zendesk conversations are always considered valid.
  */
 const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConversation ) => {
+	// Skip validation for Zendesk conversations
+	if ( 'lastUpdatedAt' in conversation ) {
+		return true;
+	}
+
 	const lastMessage = getLastMessage( { conversation } );
 
 	if ( ! lastMessage || lastMessage?.text === null || lastMessage?.text === undefined ) {
@@ -162,7 +173,6 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
 
 		const { recent, archived } = splitConversationsByRecency( conversations );
-
 		setRecentConversations( recent );
 		setArchivedConversations( archived );
 	}, [
