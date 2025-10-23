@@ -187,7 +187,6 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 					<Button
 						onClick={ askForConfirmation }
 						variant="primary"
-						isBusy={ isUpdating }
 						disabled={ isUpdating || ! hasDevices }
 					>
 						{ __( 'Apply to all sites' ) }

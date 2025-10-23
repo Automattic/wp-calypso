@@ -123,7 +123,7 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 			/>
 			<VStack spacing={ 4 } alignment="start">
 				<SettingsPanel disabled={ isUpdating } options={ options } onChange={ handleChange } />
-				<Button onClick={ askForConfirmation } variant="primary" isBusy={ isUpdating }>
+				<Button onClick={ askForConfirmation } variant="primary" disabled={ isUpdating }>
 					{ __( 'Apply to all sites' ) }
 				</Button>
 			</VStack>
