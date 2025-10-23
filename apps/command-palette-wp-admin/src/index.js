@@ -1,15 +1,5 @@
 import domReady from '@wordpress/dom-ready';
 
-// Set webpack publicPath to the CDN folder of this script
-// so dynamic imports resolve correctly.
-try {
-	// eslint-disable-next-line no-undef
-	__webpack_public_path__ = new URL( document.currentScript.src ).href.replace(
-		/build\.min\.js$/,
-		''
-	);
-} catch {}
-
 let appPromise;
 const loadApp = () => {
 	if ( ! appPromise ) {
