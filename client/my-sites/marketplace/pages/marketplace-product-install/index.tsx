@@ -275,7 +275,7 @@ const MarketplaceProductInstall = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
-	// Fetch fresh site data (including admin_url) via TanStack Query
+	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
