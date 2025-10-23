@@ -6,6 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Icon,
 	ToggleControl,
@@ -21,6 +22,7 @@ import { info, warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { addPaymentMethodRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -64,6 +66,7 @@ function getItemId( item: StoredPaymentMethod ): string {
 }
 
 export default function PaymentMethods() {
+	const navigate = useNavigate();
 	const [ removeDialogPaymentMethod, setRemoveDialogPaymentMethod ] = useState<
 		StoredPaymentMethod | undefined
 	>();
@@ -164,9 +167,6 @@ export default function PaymentMethods() {
 		},
 	];
 
-	// FIXME: allow adding a payment method
-	const addPaymentMethodUrl = '/me/purchases/add-payment-method';
-
 	return (
 		<PageLayout
 			size="large"
@@ -175,7 +175,13 @@ export default function PaymentMethods() {
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Payment methods' ) }
 					actions={
-						<Button __next40pxDefaultSize variant="primary" href={ addPaymentMethodUrl }>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ () => {
+								navigate( { to: addPaymentMethodRoute.to } );
+							} }
+						>
 							{ __( 'Add payment method' ) }
 						</Button>
 					}

@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -9,9 +10,9 @@ import {
 import { DataViews } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
+import { purchaseSettingsRoute } from '../../../app/router/me';
 import { getRelativeTimeString } from '../../../utils/datetime';
 import { getSubtitleForDisplay, isExpired, isRenewing } from '../../../utils/purchase';
-import { getPurchaseUrlForId } from '../urls';
 import type { Purchase } from '@automattic/api-core';
 import type { Field, View, Action } from '@wordpress/dataviews';
 
@@ -90,6 +91,7 @@ export function UpcomingRenewalsDialog( {
 	submitButtonText,
 	hideManagePurchaseLinks,
 }: Props ) {
+	const navigate = useNavigate();
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
@@ -139,13 +141,13 @@ export function UpcomingRenewalsDialog( {
 				supportsBulk: false,
 				callback: ( [ item ] ) => {
 					onClose();
-					window.location.href = getPurchaseUrlForId( item.ID );
+					navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: item.ID } } );
 				},
 			} );
 		}
 
 		return actionsList;
-	}, [ hideManagePurchaseLinks, onClose ] );
+	}, [ hideManagePurchaseLinks, onClose, navigate ] );
 
 	const handleConfirm = () => {
 		const selectedPurchaseIds = selection.map( Number );

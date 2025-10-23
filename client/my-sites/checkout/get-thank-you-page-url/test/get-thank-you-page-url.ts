@@ -597,6 +597,13 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo );
 	} );
 
+	it( 'redirects to external redirectTo url if the hostame is difmrequest.com', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'https://difmrequest.com/request-a-build-black-friday/';
+		const url = getThankYouPageUrl( { ...defaultArgs, adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
 			...getMockCart(),

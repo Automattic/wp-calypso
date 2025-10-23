@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
+import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString } from '../../../utils/datetime';
 import {
@@ -15,7 +16,6 @@ import {
 	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
-import { getPurchaseUrl } from '../urls';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
@@ -115,7 +115,9 @@ export function PurchaseExpiringNotice( {
 						}
 					),
 					{
-						managePurchase: <Link to={ getPurchaseUrl( currentPurchase ) } />,
+						managePurchase: (
+							<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+						),
 					}
 				) }
 			</Notice>

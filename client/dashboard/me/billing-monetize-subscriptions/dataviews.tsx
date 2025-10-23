@@ -3,12 +3,12 @@ import { Link } from '@tanstack/react-router';
 import { Fields } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { monetizeSubscriptionRoute } from '../../app/router/me';
 import {
 	MonetizeSubscriptionIcon,
 	MonetizeSubscriptionTerms,
 	MonetizeSubscriptionType,
 } from './monetize-item';
-import { getMonetizeSubscriptionUrl } from './urls';
 
 export function useMonetizeFieldDefinitions() {
 	return useMemo( () => {
@@ -32,7 +32,11 @@ export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
 			// Render the site icon
 			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
-					<Link title={ __( 'Manage purchase' ) } to={ getMonetizeSubscriptionUrl( item.ID ) }>
+					<Link
+						title={ __( 'Manage purchase' ) }
+						to={ monetizeSubscriptionRoute.fullPath }
+						params={ { subscriptionId: item.ID } }
+					>
 						<MonetizeSubscriptionIcon subscription={ item } />
 					</Link>
 				);
@@ -51,7 +55,11 @@ export function getMonetizeFieldDefinitions(): Fields< MonetizeSubscription > {
 			},
 			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
-					<Link title={ __( 'Manage purchase' ) } to={ getMonetizeSubscriptionUrl( item.ID ) }>
+					<Link
+						title={ __( 'Manage purchase' ) }
+						to={ monetizeSubscriptionRoute.fullPath }
+						params={ { subscriptionId: item.ID } }
+					>
 						{ item.title }
 					</Link>
 				);

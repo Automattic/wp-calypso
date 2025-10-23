@@ -20,7 +20,7 @@ import {
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
@@ -40,6 +40,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -53,6 +54,8 @@ import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import SiteIcon from '../../../components/site-icon';
+import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
+import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getBillPeriodLabel,
@@ -70,12 +73,13 @@ import {
 	isJetpackCrmProduct,
 	isTitanMail,
 	isGoogleWorkspace,
+	isDotcomPlan,
 	getRenewalUrlFromPurchase,
+	isJetpackT1SecurityPlan,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
-import { getPurchaseUrlForId } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
-import type { User, Purchase } from '@automattic/api-core';
+import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -101,18 +105,40 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
 	}
 
-	if ( purchase.is_jetpack_backup_t1 ) {
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
 		return `/plans/storage/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return `/plans/${ purchase.site_slug }`;
+	}
+
+	return getWpcomPlanGridUrl( purchase.site_slug );
+}
+
+function getExpiredNewPlanUrl( purchase: Purchase ): string {
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
+		return `/plans/storage/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return `/plans/${ purchase.site_slug }`;
+	}
+
+	if ( purchase.is_plan ) {
+		return getWpcomPlanGridUrl( purchase.site_slug );
 	}
 
 	return `/plans/${ purchase.site_slug }`;
 }
 
-function getExpiredNewPlanUrl( purchase: Purchase ): string {
-	if ( purchase.is_jetpack_backup_t1 ) {
-		return `/plans/storage/${ purchase.site_slug }`;
-	}
-	return `/plans/${ purchase.site_slug }`;
+function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+	return addQueryArgs( '/setup/plan-upgrade', {
+		...( siteSlug && { siteSlug } ),
+		redirect_to: backUrl,
+		cancel_to: backUrl,
+	} );
 }
 
 function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
@@ -451,6 +477,23 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function WPComResourceMeters( { purchase, site }: { purchase: Purchase; site: Site } ) {
+	if ( ! isDotcomPlan( purchase ) ) {
+		return null;
+	}
+
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<SiteStorageStat site={ site } />
+					<SiteBandwidthStat site={ site } />
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 function getFields( {
 	isMutationPending,
 	user,
@@ -478,7 +521,10 @@ function getFields( {
 					}
 					if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
 						return (
-							<Link to={ getPurchaseUrlForId( purchase.attached_to_purchase_id ) }>
+							<Link
+								to={ purchaseSettingsRoute.fullPath }
+								params={ { purchaseId: purchase.attached_to_purchase_id } }
+							>
 								{ __( 'Renews with plan' ) }
 							</Link>
 						);
@@ -966,19 +1012,13 @@ export default function PurchaseSettings() {
 	const { user } = useAuth();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
-	const { data: purchase } = useQuery( {
-		...purchaseQuery( parseInt( purchaseId ) ),
-		enabled: Boolean( purchaseId ),
-	} );
+	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
-		...siteBySlugQuery( purchase?.site_slug ?? '' ),
-		enabled: Boolean( purchase?.site_slug ),
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ),
 	} );
-	const formattedExpiry = useFormattedTime( purchase?.expiry_date ?? '' );
-	const formattedRenewal = useFormattedTime( purchase?.renew_date ?? '' );
-	if ( ! purchase ) {
-		return null;
-	}
+	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
+	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
 	const expiryDateTitle = ( () => {
@@ -1045,7 +1085,10 @@ export default function PurchaseSettings() {
 							}
 							if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
 								return (
-									<Link to={ getPurchaseUrlForId( purchase.attached_to_purchase_id ) }>
+									<Link
+										to={ purchaseSettingsRoute.fullPath }
+										params={ { purchaseId: purchase.attached_to_purchase_id } }
+									>
 										{ __( 'Renews with plan' ) }
 									</Link>
 								);
@@ -1079,6 +1122,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 				</Grid>
+				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

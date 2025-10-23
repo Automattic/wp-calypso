@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
@@ -24,21 +23,16 @@ import type { Message } from '../../types';
 const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
-	messageContent: ReactNode,
-	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
+	isChatRestricted?: boolean,
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
 	}
 
-	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
-		return messageContent;
-	}
-
 	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
-		return getOdieEmailFallbackMessageContent();
+		return getOdieEmailFallbackMessageContent( isChatRestricted );
 	}
 
 	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
@@ -59,12 +53,16 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, chat } =
-		useOdieAssistantContext();
+	const {
+		isUserEligibleForPaidSupport,
+		trackEvent,
+		canConnectToZendesk,
+		forceEmailSupport,
+		isChatRestricted,
+		chat,
+	} = useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
-
-	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
 
@@ -75,9 +73,8 @@ export const UserMessage = ( {
 		? getDisplayMessage(
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
-				message.content,
-				hasCannedResponse,
 				forceEmailSupport,
+				isChatRestricted,
 				message?.context?.flags?.is_error_message
 		  )
 		: message.content;

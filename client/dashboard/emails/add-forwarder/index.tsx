@@ -6,7 +6,6 @@ import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpre
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { arrowLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -16,9 +15,9 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
+import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { useDomains } from '../hooks/use-domains';
 import { useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
@@ -212,23 +211,7 @@ function AddEmailForwarder() {
 	};
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					prefix={
-						<RouterLinkButton
-							className="add-forwarder__back-button"
-							icon={ arrowLeft }
-							iconSize={ 12 }
-							to="/emails"
-						>
-							<Text variant="muted">{ __( 'Emails' ) }</Text>
-						</RouterLinkButton>
-					}
-				/>
-			}
-			size="small"
-		>
+		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
 			{ eligibleDomains.length === 0 ? (
 				<>
 					<Text size={ 16 }>

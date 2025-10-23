@@ -13,12 +13,14 @@ import {
 	userNotificationsSettingsQuery,
 	rawUserPreferencesQuery,
 	connectedApplicationsQuery,
+	siteBySlugQuery,
+	siteMediaStorageQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
-import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/urls';
-import { getTitleForDisplay } from '../../utils/purchase';
+import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import { getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -220,6 +222,19 @@ export const purchaseSettingsRoute = createRoute( {
 export const purchaseSettingsIndexRoute = createRoute( {
 	getParentRoute: () => purchaseSettingsRoute,
 	path: '/',
+	loader: async ( { params: { purchaseId } } ) => {
+		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+
+		// Preload site and storage data for wpcom plans
+		if ( purchase.site_slug && purchase.blog_id ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ),
+				isDotcomPlan( purchase )
+					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
+					: undefined,
+			] );
+		}
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings' )( {
@@ -232,7 +247,7 @@ export const changePaymentMethodRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Change payment method' ),
+				title: __( 'Update payment method' ),
 			},
 		],
 	} ),
@@ -255,10 +270,33 @@ export const paymentMethodsRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	path: '/payment-methods',
+	path: 'payment-methods',
+} );
+
+export const paymentMethodsIndexRoute = createRoute( {
+	getParentRoute: () => paymentMethodsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const addPaymentMethodRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add payment method' ),
+			},
+		],
+	} ),
+	getParentRoute: () => paymentMethodsRoute,
+	path: 'add',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/add-payment-method' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-add-payment-method' )( {
 			component: d.default,
 		} )
 	)
@@ -730,7 +768,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					changePaymentMethodRoute,
 				] ),
 			] ),
-			paymentMethodsRoute,
+			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
 			taxDetailsRoute,
 		] )
 	);

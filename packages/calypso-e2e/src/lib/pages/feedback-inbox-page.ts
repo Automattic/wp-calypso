@@ -51,7 +51,7 @@ export class FeedbackInboxPage {
 				.filter( { hasText: text } )
 				.waitFor();
 		} else {
-			await responseRowLocator.getByRole( 'button', { name: 'View response' } ).click();
+			await responseRowLocator.getByRole( 'button', { name: 'View' } ).click();
 			await this.page
 				.getByRole( 'dialog' )
 				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
@@ -227,7 +227,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMoveToTrashAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
-		await this.page.getByRole( 'button', { name: 'Move to trash' } ).last().click();
+		await this.page.getByRole( 'button', { name: 'Trash' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, the modal closes after the action
 			await this.page.waitForTimeout( 1000 );
@@ -298,5 +298,31 @@ export class FeedbackInboxPage {
 			.getByRole( 'button', { name: 'Previous', exact: true, disabled: true } )
 			.last()
 			.waitFor();
+	}
+
+	/**
+	 * Opens the actions menu (three dot menu) and verifies the specified action exists.
+	 *
+	 * @param {string} text The text to match in the row. Using the name field is a good choice.
+	 * @param {string} actionName The name of the action to verify in the dropdown menu.
+	 */
+	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
+		const responseRowLocator = this.page
+			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.filter( { hasText: text } )
+			.first();
+
+		// Click the Actions button (three dot menu)
+		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
+
+		// Wait for the dropdown menu to appear and assign it to a variable
+		const menu = this.page.getByRole( 'menu' ).last();
+		await menu.waitFor();
+
+		// Verify the specified action exists in the dropdown menu
+		await this.page.getByRole( 'menuitem', { name: actionName } ).waitFor();
+
+		// Close the menu by pressing Escape key (trying to click the "Dismiss popup" button didn't work)
+		await this.page.keyboard.press( 'Escape' );
 	}
 }

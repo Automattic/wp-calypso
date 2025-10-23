@@ -49,6 +49,7 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 	STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+	STEPS.SITE_MIGRATION_SSH_VERIFICATION,
 	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
 	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
 	STEPS.PICK_SITE,
@@ -153,7 +154,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					if ( isSSHMigrationAvailable ) {
 						if ( hasDestinationSite && canInstallPlugins ) {
-							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+							return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
 						}
 
 						if ( hasDestinationSite ) {
@@ -225,7 +226,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							// Check if this is an SSH migration flow
 							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
 								if ( selectedSiteCanInstallPlugins ) {
-									return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+									return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
 								}
 								return navigate(
 									paths.upgradePlanPath( { siteId, siteSlug, from: fromQueryParam, ssh: 'true' } )
@@ -445,7 +446,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-						return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+						return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
 					}
 
 					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
@@ -453,6 +454,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
+				}
+
+				case STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug: {
+					const { allowSiteMigration, transferId } = providedDependencies as {
+						verified: boolean;
+						transferId?: number;
+						allowSiteMigration?: boolean;
+					};
+
+					// If site migration is not allowed, redirect to fallback credentials flow
+					if ( allowSiteMigration === false ) {
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+					}
+
+					// Otherwise proceed to SSH share access
+					return navigate( paths.sshShareAccessPath( { siteId, siteSlug, transferId } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
@@ -573,8 +590,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
 					const { destination } = providedDependencies as {
-						destination?: 'migration-started' | 'no-ssh-access';
+						destination?: 'migration-started' | 'no-ssh-access' | 'back-to-verification';
 					};
+
+					// Missing transferId, redirect back to verification
+					if ( destination === 'back-to-verification' ) {
+						return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+					}
 
 					// User doesn't have SSH access, redirect to credentials flow
 					if ( destination === 'no-ssh-access' ) {

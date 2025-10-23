@@ -80,6 +80,7 @@ function HelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
+				isCommerceGarden={ helpCenterData.isCommerceGarden }
 			/>
 		</>
 	);
@@ -110,6 +111,7 @@ if ( helpCenterData.isNextAdmin ) {
 					hasPurchases={ false }
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
+					isCommerceGarden={ helpCenterData.isCommerceGarden }
 				/>
 			</QueryClientProvider>,
 			document.getElementById( 'jetpack-help-center' )

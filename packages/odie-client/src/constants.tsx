@@ -79,11 +79,20 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		__i18n_text_domain__
 	) }`;
 
-export const getOdieEmailFallbackMessageContent = (): string =>
-	`${ __(
-		"I’m sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
-		__i18n_text_domain__
-	) } \n\n ${ __( 'What can I help you with?', __i18n_text_domain__ ) }`;
+export const getOdieEmailFallbackMessageContent = ( isChatRestricted = false ): string => {
+	const unavailableMessage = isChatRestricted
+		? __(
+				"I'm sorry, our human chat support is unavailable, but I'm here and ready to assist.",
+				__i18n_text_domain__
+		  )
+		: __(
+				"I'm sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
+				__i18n_text_domain__
+		  );
+
+	const followUp = __( 'What can I help you with?', __i18n_text_domain__ );
+	return `${ unavailableMessage } \n\n ${ followUp }`;
+};
 
 export const getOdieEmailFallbackMessage = (): Message => ( {
 	content: getOdieEmailFallbackMessageContent(),
