@@ -11,9 +11,11 @@ import {
 	UserSignupPage,
 	NewUserResponse,
 	RestAPIClient,
+	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared/api-close-account';
+import { apiDeleteSite } from '../shared/api-delete-site';
 
 declare const browser: Browser;
 
@@ -24,6 +26,7 @@ describe(
 		const planName = 'Personal';
 		let page: Page;
 		let newUserDetails: NewUserResponse;
+		let newSiteDetails: NewSiteResponse;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
@@ -48,7 +51,7 @@ describe(
 
 		it( `Select ${ planName } plan`, async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
-			await signupPickPlanPage.selectPlan( planName );
+			newSiteDetails = await signupPickPlanPage.selectPlan( planName );
 		} );
 
 		it( 'See plan at checkout', async function () {
@@ -69,6 +72,12 @@ describe(
 				},
 				newUserDetails.body.bearer_token
 			);
+
+			await apiDeleteSite( restAPIClient, {
+				url: newSiteDetails.blog_details.url,
+				id: newSiteDetails.blog_details.blogid,
+				name: newSiteDetails.blog_details.blogname,
+			} );
 
 			await apiCloseAccount( restAPIClient, {
 				userID: newUserDetails.body.user_id,
