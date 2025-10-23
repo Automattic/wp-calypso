@@ -41,7 +41,22 @@ export function mount( { openImmediately = false } = {} ) {
 			currentSiteId={ siteId }
 			useSites={ useSites }
 			userCapabilities={ userCapabilities }
-			isOpenGlobal={ openImmediately }
 		/>
 	);
+	// If openImmediately is true, trigger the open after initial render
+	// This allows the palette to open once but still be closeable
+	if ( openImmediately ) {
+		// Use setTimeout to ensure the component is fully mounted before opening
+		setTimeout( () => {
+			// Simulate the keyboard shortcut that opens the palette (Cmd+K)
+			const event = new KeyboardEvent( 'keydown', {
+				key: 'k',
+				code: 'KeyK',
+				metaKey: true,
+				ctrlKey: false,
+				bubbles: true,
+			} );
+			document.dispatchEvent( event );
+		}, 0 );
+	}
 }
