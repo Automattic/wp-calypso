@@ -1,6 +1,5 @@
-import { Domain, DomainSubtype, DomainTransferStatus, Purchase, Site } from '@automattic/api-core';
+import { Domain, DomainSubtype, DomainTransferStatus, Purchase } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
-import { isAkismetProduct } from '../../utils/purchase';
 
 export const transferableTypes: DomainSubtype[] = [
 	DomainSubtype.DEFAULT_ADDRESS,
@@ -8,6 +7,18 @@ export const transferableTypes: DomainSubtype[] = [
 	DomainSubtype.DOMAIN_REGISTRATION,
 ];
 export const disconnectableTypes: DomainSubtype[] = [ DomainSubtype.DOMAIN_REGISTRATION ];
+
+export const canAutoRenewBeTurnedOff = ( purchase: Purchase ) => {
+	if ( [ 'included', 'expired' ].includes( purchase.expiry_status ) ) {
+		return false;
+	}
+
+	if ( purchase.is_refundable && purchase.refund_amount > 0 ) {
+		return true;
+	}
+
+	return purchase.is_auto_renew_enabled;
+};
 
 export const shouldShowTransferAction = ( domain: Domain ) => {
 	if (
@@ -38,22 +49,26 @@ export const shouldShowDisconnectAction = ( domain: Domain ) => {
 	return true;
 };
 
-export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase, site?: Site ) => {
+export const shouldShowRemoveAction = ( domain: Domain, purchase?: Purchase ) => {
 	if (
 		! domain.current_user_is_owner ||
 		domain.pending_registration ||
 		domain.move_to_new_site_pending ||
-		domain.transfer_status === DomainTransferStatus.PENDING_ASYNC
+		domain.transfer_status === DomainTransferStatus.PENDING_ASYNC ||
+		domain.is_hundred_year_domain
 	) {
 		return false;
 	}
 
-	if (
-		! purchase ||
-		! purchase.is_removable ||
-		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
-		( ! site && ! purchase.is_jetpack_plan_or_product && ! isAkismetProduct( purchase ) )
-	) {
+	if ( ! purchase ) {
+		return false;
+	}
+
+	if ( purchase.is_locked ) {
+		return false;
+	}
+
+	if ( canAutoRenewBeTurnedOff( purchase ) ) {
 		return false;
 	}
 
@@ -65,12 +80,28 @@ export const shouldShowCancelAction = ( domain: Domain, purchase?: Purchase ) =>
 		! domain.current_user_is_owner ||
 		domain.pending_registration ||
 		domain.move_to_new_site_pending ||
-		domain.transfer_status === DomainTransferStatus.PENDING_ASYNC
+		domain.transfer_status === DomainTransferStatus.PENDING_ASYNC ||
+		domain.is_hundred_year_domain
 	) {
 		return false;
 	}
 
-	if ( ! purchase || ! purchase.is_cancelable ) {
+	if ( ! purchase ) {
+		return false;
+	}
+
+	if ( purchase.is_locked ) {
+		return false;
+	}
+
+	if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
+		return false;
+	}
+
+	if (
+		purchase.product_slug === 'domain_transfer' &&
+		! ( purchase.is_refundable && purchase.refund_amount > 0 )
+	) {
 		return false;
 	}
 

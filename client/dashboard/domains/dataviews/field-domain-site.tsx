@@ -1,4 +1,3 @@
-import { DomainSubtype, type DomainSummary } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -6,16 +5,12 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { siteRoute } from '../../app/router/sites';
+import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
-import SiteIcon from '../../sites/site-icon';
-import { IneligibleIndicator } from './ineligible-indicator';
+import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainSiteField = ( { domain, value }: { domain: DomainSummary; value: string } ) => {
 	const { data: site } = useQuery( siteBySlugQuery( domain.site_slug ) );
-
-	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
-		return <IneligibleIndicator />;
-	}
 
 	if ( domain.is_domain_only_site ) {
 		return (

@@ -3,6 +3,7 @@ import {
 	userSettingsQuery,
 	userPurchasesQuery,
 	purchaseQuery,
+	receiptQuery,
 	sitesQuery,
 	queryClient,
 	accountRecoveryQuery,
@@ -16,7 +17,7 @@ import {
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
-import { getMonetizeSubscriptionsPageTitle } from '../../me/monetize-subscriptions/urls';
+import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/urls';
 import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -127,6 +128,11 @@ export const billingHistoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => billingRoute,
 	path: '/billing-history',
+} );
+
+export const billingHistoryIndexRoute = createRoute( {
+	getParentRoute: () => billingHistoryRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -135,25 +141,25 @@ export const billingHistoryRoute = createRoute( {
 	)
 );
 
-export const purchaseSettingsRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { purchase: Purchase } } ) => ( {
+export const receiptRoute = createRoute( {
+	head: () => ( {
 		meta: [
 			{
-				title: loaderData && getTitleForDisplay( loaderData.purchase ),
+				title: __( 'Receipt' ),
 			},
 		],
 	} ),
-	getParentRoute: () => billingRoute,
-	loader: async ( { params: { purchaseId } } ) => {
-		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+	getParentRoute: () => billingHistoryRoute,
+	loader: async ( { params: { receiptId } } ) => {
+		const receipt = await queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) );
 		return {
-			purchase,
+			receipt,
 		};
 	},
-	path: '/purchases/$purchaseId',
+	path: '$receiptId',
 } ).lazy( () =>
-	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
-		createLazyRoute( 'purchases-purchase-settings' )( {
+	import( '../../me/billing-history/receipt' ).then( ( d ) =>
+		createLazyRoute( 'billing-history-receipt' )( {
 			component: d.default,
 		} )
 	)
@@ -180,9 +186,61 @@ export const purchasesRoute = createRoute( {
 		};
 	},
 	path: '/purchases',
+} );
+
+export const purchasesIndexRoute = createRoute( {
+	getParentRoute: () => purchasesRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-purchases' ).then( ( d ) =>
 		createLazyRoute( 'purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const purchaseSettingsRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { purchase: Purchase } } ) => ( {
+		meta: [
+			{
+				title: loaderData && getTitleForDisplay( loaderData.purchase ),
+			},
+		],
+	} ),
+	getParentRoute: () => purchasesRoute,
+	loader: async ( { params: { purchaseId } } ) => {
+		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+		return {
+			purchase,
+		};
+	},
+	path: '$purchaseId',
+} );
+
+export const purchaseSettingsIndexRoute = createRoute( {
+	getParentRoute: () => purchaseSettingsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const changePaymentMethodRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Change payment method' ),
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'payment-method/change',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
 			component: d.default,
 		} )
 	)
@@ -214,10 +272,15 @@ export const monetizeSubscriptionsRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
-	path: 'billing/monetize-subscriptions',
+	getParentRoute: () => billingRoute,
+	path: 'monetize-subscriptions',
+} );
+
+export const monetizeSubscriptionsIndexRoute = createRoute( {
+	getParentRoute: () => monetizeSubscriptionsRoute,
+	path: '/',
 } ).lazy( () =>
-	import( '../../me/monetize-subscriptions' ).then( ( d ) =>
+	import( '../../me/billing-monetize-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscriptions' )( {
 			component: d.default,
 		} )
@@ -232,10 +295,10 @@ export const monetizeSubscriptionRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
-	path: 'billing/monetize-subscriptions/$subscriptionId',
+	getParentRoute: () => monetizeSubscriptionsRoute,
+	path: '$subscriptionId',
 } ).lazy( () =>
-	import( '../../me/monetize-subscriptions/monetize-subscription' ).then( ( d ) =>
+	import( '../../me/billing-monetize-subscriptions/monetize-subscription' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscription' )( {
 			component: d.default,
 		} )
@@ -253,7 +316,7 @@ export const taxDetailsRoute = createRoute( {
 	getParentRoute: () => billingRoute,
 	path: '/tax-details',
 } ).lazy( () =>
-	import( '../../me/tax-details' ).then( ( d ) =>
+	import( '../../me/billing-tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
 			component: d.default,
 		} )
@@ -349,6 +412,11 @@ export const securityTwoStepAuthRoute = createRoute( {
 			queryClient.ensureQueryData( smsCountryCodesQuery() ),
 		] );
 	},
+} );
+
+export const securityTwoStepAuthIndexRoute = createRoute( {
+	getParentRoute: () => securityTwoStepAuthRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth' ).then( ( d ) =>
 		createLazyRoute( 'security-two-step-auth' )( {
@@ -365,8 +433,8 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => securityRoute,
-	path: '/two-step-auth/app',
+	getParentRoute: () => securityTwoStepAuthRoute,
+	path: '/app',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -389,8 +457,8 @@ export const securityTwoStepAuthSMSRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => securityRoute,
-	path: '/two-step-auth/sms',
+	getParentRoute: () => securityTwoStepAuthRoute,
+	path: '/sms',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -413,8 +481,8 @@ export const securityTwoStepAuthBackupCodesRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => securityRoute,
-	path: '/two-step-auth/backup-codes',
+	getParentRoute: () => securityTwoStepAuthRoute,
+	path: '/backup-codes',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth-backup-codes' ).then( ( d ) =>
@@ -650,11 +718,18 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	meRoutes.push(
 		billingRoute.addChildren( [
 			billingIndexRoute,
-			billingHistoryRoute,
-			monetizeSubscriptionsRoute,
-			monetizeSubscriptionRoute,
-			purchasesRoute,
-			purchaseSettingsRoute,
+			billingHistoryRoute.addChildren( [ billingHistoryIndexRoute, receiptRoute ] ),
+			monetizeSubscriptionsRoute.addChildren( [
+				monetizeSubscriptionsIndexRoute,
+				monetizeSubscriptionRoute,
+			] ),
+			purchasesRoute.addChildren( [
+				purchasesIndexRoute,
+				purchaseSettingsRoute.addChildren( [
+					purchaseSettingsIndexRoute,
+					changePaymentMethodRoute,
+				] ),
+			] ),
 			paymentMethodsRoute,
 			taxDetailsRoute,
 		] )
@@ -665,10 +740,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			securityIndexRoute,
 			securityPasswordRoute,
 			securityAccountRecoveryRoute,
-			securityTwoStepAuthRoute,
-			securityTwoStepAuthAppRoute,
-			securityTwoStepAuthSMSRoute,
-			securityTwoStepAuthBackupCodesRoute,
+			securityTwoStepAuthRoute.addChildren( [
+				securityTwoStepAuthIndexRoute,
+				securityTwoStepAuthAppRoute,
+				securityTwoStepAuthSMSRoute,
+				securityTwoStepAuthBackupCodesRoute,
+			] ),
 			securitySshKeyRoute,
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,

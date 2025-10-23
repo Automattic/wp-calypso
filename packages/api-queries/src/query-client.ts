@@ -3,6 +3,11 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 
+// Key used to store the query cache in local storage.
+// This is the default key used by React Query, but making it explicit in case
+// of breaking changes to the default key in the future.
+const reactQueryCacheKey = 'REACT_QUERY_OFFLINE_CACHE';
+
 const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
@@ -23,11 +28,12 @@ const queryClient = new QueryClient( {
 
 const persister = createSyncStoragePersister( {
 	storage: typeof window !== 'undefined' && ! isSupportSession() ? window.localStorage : null,
+	key: reactQueryCacheKey,
 } );
 
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours
 
-const [ , persistQueryClientPromise ] = persistQueryClient( {
+const [ disablePersistQueryClient, persistQueryClientPromise ] = persistQueryClient( {
 	queryClient,
 	persister,
 	buster: '3', // Bump when query data shape changes.
@@ -43,4 +49,10 @@ const [ , persistQueryClientPromise ] = persistQueryClient( {
 	},
 } );
 
-export { queryClient, persistQueryClientPromise };
+export { queryClient, disablePersistQueryClient, persistQueryClientPromise };
+
+export function clearQueryClient() {
+	if ( typeof window !== 'undefined' && ! isSupportSession() ) {
+		localStorage.removeItem( reactQueryCacheKey );
+	}
+}

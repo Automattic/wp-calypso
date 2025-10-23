@@ -13,6 +13,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalHeading as Heading,
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
@@ -97,6 +98,7 @@ const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps
 };
 interface EnvironmentConfig {
 	title: string;
+	subTitle: string;
 	description: string;
 	syncFrom: EnvironmentType;
 	syncTo: EnvironmentType;
@@ -114,6 +116,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		return {
 			staging: {
 				title: __( 'Pull from Production' ),
+				subTitle: __( 'What would you like to pull?' ),
 				description: __(
 					'Pulling will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
@@ -122,6 +125,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			},
 			production: {
 				title: __( 'Pull from Staging' ),
+				subTitle: __( 'What would you like to pull?' ),
 				description: __(
 					'Pulling will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
@@ -136,6 +140,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	return {
 		staging: {
 			title: __( 'Push to Production' ),
+			subTitle: __( 'What would you like to push?' ),
 			description: __(
 				'Pushing will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
@@ -144,6 +149,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		},
 		production: {
 			title: __( 'Push to Staging' ),
+			subTitle: __( 'What would you like to push?' ),
 			description: __(
 				'Pushing will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
@@ -399,11 +405,19 @@ function StagingSiteSyncModalInner( {
 						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
-				<HStack spacing={ 4 } alignment="left">
+				<HStack spacing={ 4 } alignment="left" style={ { height: '40px' } }>
 					<EnvironmentLabel environmentType={ sourceEnvironment } siteTitle={ sourceSiteTitle } />
 					<DirectionArrow />
 					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
 				</HStack>
+				{ ! shouldDisableGranularSync && (
+					<>
+						<CardDivider />
+						<Heading lineHeight="28px" size={ 11 } weight={ 500 } upperCase>
+							{ syncConfig[ environment ].subTitle }
+						</Heading>
+					</>
+				) }
 				{ /* File selection and database controls */ }
 				<VStack spacing={ 5 }>
 					{ shouldDisableGranularSync ? (
@@ -442,7 +456,7 @@ function StagingSiteSyncModalInner( {
 								spacing={ 2 }
 								justify="space-between"
 								alignment="center"
-								style={ { padding: '4px 0' } }
+								style={ { padding: '4px 0', marginTop: '-8px' } }
 							>
 								<CheckboxControl
 									__nextHasNoMarginBottom
@@ -469,11 +483,21 @@ function StagingSiteSyncModalInner( {
 								/>
 							</HStack>
 
-							<div hidden={ ! isFileBrowserVisible }>
+							<div
+								hidden={ ! isFileBrowserVisible }
+								style={ { border: '1px solid #dcdcde', borderRadius: '2px', padding: '12px 24px' } }
+							>
 								<VStack spacing={ 4 }>
-									<CardDivider />
+									<HStack>
+										<FileBrowser
+											rewindId={ rewindId }
+											siteId={ querySiteId }
+											siteSlug={ querySiteSlug as string }
+											fileBrowserConfig={ fileBrowserConfig }
+										/>
+									</HStack>
 									{ displayBackupDate && (
-										<HStack alignment="left" spacing={ 1 } style={ { marginInlineStart: '14px' } }>
+										<HStack alignment="left" spacing={ 1 }>
 											<Text variant="muted">
 												{ createInterpolateElement(
 													__( 'Content from the latest backup: <date />.' ),
@@ -488,26 +512,14 @@ function StagingSiteSyncModalInner( {
 											</Text>
 										</HStack>
 									) }
-									<HStack style={ { marginInlineStart: '14px' } }>
-										<FileBrowser
-											rewindId={ rewindId }
-											siteId={ querySiteId }
-											siteSlug={ querySiteSlug as string }
-											fileBrowserConfig={ fileBrowserConfig }
-										/>
-									</HStack>
 								</VStack>
 							</div>
 							<HStack
 								alignment="left"
 								spacing={ 2 }
 								style={ {
-									borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-									borderBottom: hasWarning
-										? 'none'
-										: '1px solid var(--wp-components-color-gray-300, #ddd)',
-									padding: '15px 0',
-									marginTop: isFileBrowserVisible ? '16px' : '0',
+									padding: '16px 0',
+									marginTop: isFileBrowserVisible ? '12px' : '0',
 								} }
 							>
 								<CheckboxControl

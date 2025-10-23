@@ -1,11 +1,12 @@
 import { Domain } from '@automattic/api-core';
 import { mailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { emailsRoute } from '../../app/router/emails';
-import OverviewCard from '../../sites/overview-card';
+import OverviewCard from '../../components/overview-card';
 import type { EmailProvider, Mailbox } from '@automattic/api-core';
 
 const getAccountTypeLabel = ( accountType: EmailProvider ) => {
@@ -54,11 +55,18 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 		: // translators: %s is the mailbox name: youremail@example.com
 		  sprintf( __( 'youremail@%s' ), domain.domain );
 
+	const router = useRouter();
+
 	return (
 		<OverviewCard
 			title={ __( 'Emails' ) }
 			heading={ <span style={ { wordBreak: 'break-all' } }>{ email }</span> }
-			link={ emailsRoute.fullPath }
+			link={
+				router.buildLocation( {
+					to: emailsRoute.fullPath,
+					search: { domainName: domain.domain },
+				} ).href
+			}
 			icon={ <Icon icon={ envelope } /> }
 			description={ getDescription( mailboxes ) }
 		/>

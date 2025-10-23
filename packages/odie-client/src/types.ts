@@ -27,7 +27,6 @@ export type OdieAssistantContextInterface = {
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
-	sectionName: string;
 };
 
 export type OdieAssistantProviderProps = {
@@ -46,7 +45,6 @@ export type OdieAssistantProviderProps = {
 	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
-	sectionName: string;
 } & PropsWithChildren;
 
 export type CurrentUser = {
@@ -125,7 +123,6 @@ export type Context = {
 	};
 	flags?: {
 		forward_to_human_support?: boolean;
-		canned_response?: boolean;
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
@@ -173,7 +170,10 @@ export type Message = {
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
 	payload?: string;
-	isSending?: boolean;
+	/**
+	 * Timestamp of the message.
+	 */
+	received?: number;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';

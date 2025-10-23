@@ -14,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -22,6 +23,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
+import DnsDescription from './dns-description';
 import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
@@ -282,7 +284,7 @@ export default function DomainDns() {
 			header={
 				<VStack>
 					<PageHeader
-						title={ __( 'DNS records' ) }
+						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
 							<>
 								<ImportBindFileButton
@@ -318,12 +320,7 @@ export default function DomainDns() {
 								/>
 							</>
 						}
-						description={ createInterpolateElement(
-							__( 'DNS records change how your domain works. <link>Learn more</link>' ),
-							{
-								link: <InlineSupportLink supportContext="manage-your-dns-records" />,
-							}
-						) }
+						description={ <DnsDescription /> }
 					/>
 				</VStack>
 			}

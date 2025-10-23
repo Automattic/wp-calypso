@@ -17,6 +17,7 @@ export const SITE_FIELDS = [
 	'is_coming_soon',
 	'is_private',
 	'is_wpcom_atomic',
+	'is_wpcom_flex',
 	'is_wpcom_staging_site',
 	'hosting_provider_guess',
 	'lang',
@@ -31,6 +32,10 @@ export const SITE_FIELDS = [
 	'was_migration_trial',
 	'was_hosting_trial',
 	'was_upgraded_from_trial',
+	'is_garden',
+	'garden_name',
+	'garden_partner',
+	'garden_is_provisioned',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
@@ -38,6 +43,7 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 export const SITE_OPTIONS = [
 	'admin_url',
 	'created_at',
+	'unmapped_url',
 	'is_difm_lite_in_progress',
 	'is_summer_special_2025',
 	'is_domain_only',

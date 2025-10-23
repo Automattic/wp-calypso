@@ -45,11 +45,6 @@ export default class DesignAssets extends Component {
           <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
       </NavTabs>
 
-      <NavSegmented label="Author">
-          <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
-          <NavItem path="/posts" selected={ true }>Everyone</NavItem>
-      </NavSegmented>
-
       <Search
           pinned
           fitsContainer

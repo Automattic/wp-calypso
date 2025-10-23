@@ -92,7 +92,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		<HostingFeatureGatedWithCallout
 			site={ site }
 			feature={ HostingFeatures.SCAN }
-			tracksFeatureId="scan"
+			upsellId="site-scan"
 			overlay={ <PageLayout header={ <PageHeader title={ __( 'Scan' ) } /> } /> }
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }

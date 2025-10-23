@@ -1,61 +1,46 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useEvent } from '@wordpress/compose';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { getTld } from '../helpers';
+import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
+import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
+const hasDataAndIsSupportedPremiumDomain = (
+	result: UseQueryResult< DomainAvailability, Error >
+): result is DefinedUseQueryResult< DomainAvailability, Error > => {
+	return !! result.data && isSupportedPremiumDomain( result.data );
+};
+
+const availablePremiumDomainsCombinator = (
+	results: UseQueryResult< DomainAvailability, Error >[]
+) => {
+	return {
+		isLoadingAvailablePremiumDomains: results.some( ( result ) => result.isLoading ),
+		availablePremiumDomains: results
+			.filter( hasDataAndIsSupportedPremiumDomain )
+			.map( ( { data: availabilityQuery } ) => availabilityQuery.domain_name ),
+	};
+};
+
 export const useSuggestionsList = () => {
-	const { query, queries, config, events } = useDomainSearch();
+	const { query, queries, config } = useDomainSearch();
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
 		enabled: true,
 	} );
 
-	const lastQueryChangeTime = useRef( 0 );
-
-	useEffect( () => {
-		lastQueryChangeTime.current = Date.now();
-	}, [ query ] );
-
-	const triggerSuggestionsReceiveEvent = useEvent( () => {
-		const suggestionsReceiveResponseTime = Date.now() - lastQueryChangeTime.current;
-		events.onSuggestionsReceive(
-			query,
-			suggestions.map( ( suggestion ) => suggestion.domain_name ),
-			suggestionsReceiveResponseTime
-		);
+	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
+		...queries.freeSuggestion( query ),
+		enabled: config.skippable,
 	} );
 
-	useEffect( () => {
-		if ( ! isLoadingSuggestions ) {
-			triggerSuggestionsReceiveEvent();
-		}
-	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions ] );
-
-	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
-
-	const { isLoading: isLoadingQueryAvailability, data: availabilityData } = useQuery( {
+	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: !! getTld( query ),
 	} );
-
-	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
-		const availabilityCheckResponseTime = Date.now() - lastQueryChangeTime.current;
-		events.onQueryAvailabilityCheck(
-			availabilityData!.status,
-			query,
-			availabilityCheckResponseTime
-		);
-	} );
-
-	useEffect( () => {
-		if ( ! isLoadingQueryAvailability && availabilityData ) {
-			triggerQueryAvailabilityCheckEvent();
-		}
-	}, [ triggerQueryAvailabilityCheckEvent, isLoadingQueryAvailability, availabilityData ] );
 
 	const premiumSuggestions = useMemo(
 		() =>
@@ -65,51 +50,62 @@ export const useSuggestionsList = () => {
 		[ suggestions ]
 	);
 
-	const unavailablePremiumDomainsCombinator = useCallback(
-		( results: UseQueryResult< DomainAvailability, Error >[] ) => {
-			return {
-				isLoadingUnavailablePremiumDomains: results.some( ( result ) => result.isLoading ),
-				unavailablePremiumDomains: premiumSuggestions.filter( ( _, index ) => {
-					const availabilityQuery = results[ index ];
-
-					if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
-						return true;
-					}
-
-					const { status, is_supported_premium_domain } = availabilityQuery.data;
-
-					return (
-						DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain
-					);
-				} ),
-			};
-		},
-		[ premiumSuggestions ]
-	);
-
-	const { isLoadingUnavailablePremiumDomains, unavailablePremiumDomains } = useQueries( {
+	const availabilityResults = useQueries( {
 		queries: premiumSuggestions.map( ( suggestion ) => ( {
 			...queries.domainAvailability( suggestion ),
 			enabled: true,
 		} ) ),
-		combine: unavailablePremiumDomainsCombinator,
 	} );
+
+	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } = useMemo(
+		() => availablePremiumDomainsCombinator( availabilityResults ),
+		[ availabilityResults ]
+	);
 
 	const isLoading =
 		isLoadingSuggestions ||
 		isLoadingFreeSuggestion ||
 		isLoadingQueryAvailability ||
-		isLoadingUnavailablePremiumDomains;
+		isLoadingAvailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
+		if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
+			addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
+		}
+
 		return partitionSuggestions( {
 			suggestions: suggestions
-				.map( ( suggestion ) => suggestion.domain_name )
-				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
+				.filter( ( { domain_name: suggestion, is_premium } ) => {
+					if ( suggestion !== query ) {
+						return ! is_premium || availablePremiumDomains.includes( suggestion );
+					}
+
+					if ( ! fqdnAvailability ) {
+						return false;
+					}
+
+					if (
+						fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ||
+						( config.includeOwnedDomainInSuggestions &&
+							fqdnAvailability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER )
+					) {
+						return true;
+					}
+
+					return isSupportedPremiumDomain( fqdnAvailability );
+				} )
+				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
 		} );
-	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
+	}, [
+		suggestions,
+		query,
+		config.deemphasizedTlds,
+		availablePremiumDomains,
+		fqdnAvailability,
+		config.includeOwnedDomainInSuggestions,
+	] );
 
 	return {
 		isLoading,

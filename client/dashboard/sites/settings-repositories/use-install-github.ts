@@ -1,9 +1,9 @@
-import { githubInstallationsQuery, saveGitHubCredentialsMutation } from '@automattic/api-queries';
+import { githubInstallationsQuery, saveGithubCredentialsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useI18n } from '@wordpress/react-i18n';
 import { postLoginRequest } from '../../../state/login/utils';
 import { useAnalytics } from '../../app/analytics';
 
@@ -62,9 +62,8 @@ const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
 export const useInstallGithub = () => {
 	const { error: githubInstallationsError } = useQuery( githubInstallationsQuery() );
 	const { recordTracksEvent } = useAnalytics();
-	const { __ } = useI18n();
 	const { createInfoNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutate: saveGitHubCredentials } = useMutation( saveGitHubCredentialsMutation() );
+	const { mutate: saveGithubCredentials } = useMutation( saveGithubCredentialsMutation() );
 
 	recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' );
 
@@ -77,7 +76,7 @@ export const useInstallGithub = () => {
 		} );
 
 		if ( response.body.data.access_token ) {
-			await saveGitHubCredentials( { accessToken: response.body.data.access_token } );
+			await saveGithubCredentials( { accessToken: response.body.data.access_token } );
 		}
 	};
 

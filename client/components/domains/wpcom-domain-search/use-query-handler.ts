@@ -14,6 +14,10 @@ const setSessionStorageQuery = ( query: string ) => {
 	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
 };
 
+const clearSessionStorageQuery = () => {
+	sessionStorage.removeItem( SESSION_STORAGE_QUERY_KEY );
+};
+
 export const useQueryHandler = ( {
 	initialQuery: externalInitialQuery,
 	currentSiteUrl,
@@ -41,5 +45,6 @@ export const useQueryHandler = ( {
 	return {
 		query: localQuery,
 		setQuery,
+		clearQuery: clearSessionStorageQuery,
 	};
 };

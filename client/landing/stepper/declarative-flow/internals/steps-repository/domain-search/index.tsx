@@ -12,7 +12,7 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
@@ -23,10 +23,18 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
+import {
+	domainAddNew,
+	domainManagementList,
+	domainManagementRoot,
+	domainManagementTransferIn,
+	domainManagementTransferToOtherSite,
+	domainMapping,
+} from 'calypso/my-sites/domains/paths';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
+import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
@@ -63,15 +71,20 @@ const DomainSearchStep: StepType< {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
+	const siteId = useSiteIdParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
 	const tldQuery = useQuery().get( 'tld' );
 	const source = useQuery().get( 'source' );
 	const backTo = useQuery().get( 'back_to' );
+	const sourceSlug = useQuery().get( 'sourceSlug' );
+	const { __ } = useI18n();
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+	// eslint-disable-next-line no-nested-ternary
+	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
 	} );
@@ -100,6 +113,7 @@ const DomainSearchStep: StepType< {
 				isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow )
 					? HUNDRED_YEAR_DOMAIN_TLDS
 					: allowedTlds,
+			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
 				! isNewHostedSiteCreationFlow( flow ) &&
@@ -127,10 +141,29 @@ const DomainSearchStep: StepType< {
 				return product;
 			},
 			onQueryChange: setQuery,
+			onQueryClear: clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				window.location.assign(
 					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
 				);
+			},
+			onMakePrimaryAddressClick: () => {
+				if ( ! siteSlug ) {
+					return;
+				}
+
+				window.location.assign( domainManagementList( siteSlug ) );
+			},
+			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
+				window.location.assign( domainAddNew( otherSiteDomain, domainName ) );
+			},
+			onCheckTransferStatusClick: ( domainName: string ) => {
+				window.location.assign(
+					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
+				);
+			},
+			onMapDomainClick: ( domainName: string ) => {
+				window.location.assign( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
 				if ( domainName && isHundredYearDomainFlow( flow ) ) {
@@ -171,7 +204,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, flow ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -202,7 +235,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flow ] );
+	}, [ flow, __ ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {
@@ -217,7 +250,22 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow ] );
+	}, [ flow, __ ] );
+
+	// For /setup flows, we want to show the free domain for a year discount for all flows
+	// except if we're in a site context or in the 100-year plan or domain flow
+	const isFirstDomainFreeForFirstYear = useMemo( () => {
+		if (
+			siteSlug ||
+			siteId ||
+			sourceSlug ||
+			isHundredYearPlanFlow( flow ) ||
+			isHundredYearDomainFlow( flow )
+		) {
+			return false;
+		}
+		return true;
+	}, [ flow, siteSlug, siteId, sourceSlug ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
@@ -226,14 +274,12 @@ const DomainSearchStep: StepType< {
 					? 'domain-search--step-container-v2'
 					: 'domain-search--step-container'
 			}
-			currentSiteId={ site?.ID }
+			currentSiteId={ currentSiteId }
 			currentSiteUrl={ currentSiteUrl }
 			flowName={ flow }
 			config={ config }
 			query={ query }
-			isFirstDomainFreeForFirstYear={
-				! isHundredYearDomainFlow( flow ) && ! isHundredYearPlanFlow( flow )
-			}
+			isFirstDomainFreeForFirstYear={ isFirstDomainFreeForFirstYear }
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||

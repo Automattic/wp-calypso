@@ -211,6 +211,14 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
 	},
+	'map-domain-change-name-servers': {
+		link: 'https://wordpress.com/support/domains/connect-existing-domain/#step-2-change-your-domains-name-servers',
+		post_id: 2789,
+	},
+	'map-domain-update-a-records': {
+		link: 'https://wordpress.com/support/domains/connect-a-domain-alternative-method/',
+		post_id: 219751,
+	},
 	mcp: {
 		link: 'https://wordpress.com/support/model-context-protocol-mcp-settings/',
 		post_id: 418160,
@@ -451,6 +459,18 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/',
 		post_id: 170164,
 	},
+	'subscribe-block-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/',
+		post_id: 51572,
+	},
+	'import-subscribers': {
+		link: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/',
+		post_id: 220199,
+	},
+	'import-subscribers-jetpack': {
+		link: 'https://jetpack.com/support/newsletter/import-subscribers/',
+		post_id: 198813,
+	},
 	tags: {
 		link: 'https://wordpress.com/support/posts/tags/',
 		post_id: 8586,
@@ -514,7 +534,7 @@ const contextLinks = {
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'site-monitoring-logs': {
-		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/#php-logs-and-webserver-logs',
+		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/#3-php-logs-and-web-server-logs',
 		post_id: 99421,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
@@ -615,6 +635,10 @@ const contextLinks = {
 	'security-wpcom-login': {
 		link: 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/',
 		post_id: 175831,
+	},
+	'switch-to-staging-site': {
+		link: 'https://wordpress.com/support/check-your-wordpress-version/#switch-to-a-previous-or-future-version-of-wordpress',
+		post_id: 225525,
 	},
 };
 

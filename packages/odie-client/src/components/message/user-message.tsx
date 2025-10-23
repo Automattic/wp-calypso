@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
@@ -9,7 +8,11 @@ import {
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
-import { interactionHasZendeskEvent, getIsRequestingHumanSupport } from '../../utils';
+import {
+	interactionHasZendeskEvent,
+	getIsRequestingHumanSupport,
+	getIsLastBotMessage,
+} from '../../utils';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -20,17 +23,11 @@ import type { Message } from '../../types';
 const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
-	messageContent: ReactNode,
-	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
-	}
-
-	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
-		return messageContent;
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
@@ -55,13 +52,12 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport } =
+	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport, chat } =
 		useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
-
-	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
+	const isLastBotMessage = getIsLastBotMessage( chat, message );
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
@@ -70,8 +66,6 @@ export const UserMessage = ( {
 		? getDisplayMessage(
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
-				message.content,
-				hasCannedResponse,
 				forceEmailSupport,
 				message?.context?.flags?.is_error_message
 		  )
@@ -91,6 +85,16 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
+					{ isRequestingHumanSupport && isLastBotMessage && (
+						<GetSupport
+							onClickAdditionalEvent={ ( destination ) => {
+								trackEvent( 'chat_get_support', {
+									location: 'user-message',
+									destination,
+								} );
+							} }
+						/>
+					) }{ ' ' }
 					{ ! isRequestingHumanSupport && (
 						<>
 							{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
@@ -104,18 +108,6 @@ export const UserMessage = ( {
 							</div>
 						</>
 					) }
-					<div>
-						{ isRequestingHumanSupport && (
-							<GetSupport
-								onClickAdditionalEvent={ ( destination ) => {
-									trackEvent( 'chat_get_support', {
-										location: 'user-message',
-										destination,
-									} );
-								} }
-							/>
-						) }
-					</div>
 				</>
 			) }
 		</>

@@ -33,4 +33,9 @@ boot( {
 		plugins: true,
 		commandPalette: false,
 	},
+	optIn: false,
+	components: {
+		sites: () => import( '../sites' ),
+		siteSwitcher: () => import( '../sites/site-switcher' ),
+	},
 } );

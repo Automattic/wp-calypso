@@ -1,6 +1,6 @@
-import { domainsQuery } from '@automattic/api-queries';
+import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -9,6 +9,7 @@ import { DataViewsCard } from '../components/dataviews-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { AddDomainButton } from './add-domain-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
 import type { DomainSummary } from '@automattic/api-core';
@@ -20,13 +21,27 @@ export function getDomainId( domain: DomainSummary ): string {
 function Domains() {
 	const { user } = useAuth();
 	const fields = useFields();
-	const actions = useActions( { user } );
+	const { data: sites } = useQuery( sitesQuery() );
+	const actions = useActions( { user, sites } );
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',
+		filters: [
+			{
+				field: 'owner',
+				operator: 'isAny',
+				value: [ 'owned-by-me' ],
+			},
+		],
 	} ) );
 
-	const { data: domains, isLoading } = useQuery( domainsQuery() );
+	const { data: domains, isLoading } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		domains ?? [],
 		view,
@@ -35,16 +50,7 @@ function Domains() {
 
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={
-						<Button variant="primary" __next40pxDefaultSize href="/setup/domain">
-							{ __( 'Add New Domain' ) }
-						</Button>
-					}
-				/>
-			}
+			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
 			notices={ <OptInWelcome tracksContext="domains" /> }
 		>
 			<DataViewsCard>

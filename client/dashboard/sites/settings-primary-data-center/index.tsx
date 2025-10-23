@@ -6,10 +6,11 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
+import Breadcrumbs from '../../app/breadcrumbs';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
-import SettingsPageHeader from '../settings-page-header';
 import type { DataCenterOption } from '@automattic/api-core';
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
@@ -34,7 +35,8 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Primary data center' ) }
 					description={ __(
 						'The primary data center is where your site is physically located. For redundancy, your site also replicates in real-time to a second data center in a different region.'

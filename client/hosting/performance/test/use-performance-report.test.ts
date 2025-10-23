@@ -54,7 +54,8 @@ describe( 'usePerformanceReport', () => {
 				mockSavePerformanceReportUrl,
 				'123',
 				{ url: 'test.com', hash: 'test-hash' },
-				'mobile'
+				'mobile',
+				() => {}
 			)
 		);
 
@@ -82,7 +83,8 @@ describe( 'usePerformanceReport', () => {
 				mockSavePerformanceReportUrl,
 				'123',
 				{ url: 'test.com', hash: 'test-hash' },
-				'mobile'
+				'mobile',
+				() => {}
 			)
 		);
 
@@ -117,7 +119,8 @@ describe( 'usePerformanceReport', () => {
 				mockSavePerformanceReportUrl,
 				'123',
 				{ url: 'test.com', hash: 'test-hash' },
-				'mobile'
+				'mobile',
+				() => {}
 			)
 		);
 
@@ -170,7 +173,8 @@ describe( 'usePerformanceReport', () => {
 				mockSavePerformanceReportUrl,
 				'123',
 				{ url: 'test.com', hash: 'test-hash' },
-				'mobile'
+				'mobile',
+				() => {}
 			)
 		);
 
@@ -202,12 +206,88 @@ describe( 'usePerformanceReport', () => {
 				mockSavePerformanceReportUrl,
 				'123',
 				{ url: 'test.com', hash: 'test-hash' },
-				'mobile'
+				'mobile',
+				() => {}
 			)
 		);
 
 		expect( result.current.isLoading ).toBe( false );
 		expect( result.current.isError ).toBe( false );
 		expect( result.current.performanceReport?.performance ).toEqual( 90 );
+	} );
+
+	it( 'should call reportCompletedCallback with correct parameters when report status is completed', () => {
+		const mockReportCompletedCallback = jest.fn();
+		const mockPageSpeedReport = {
+			status: 'completed',
+			mobile: {
+				performance: 90,
+				overall_score: 85,
+			},
+			desktop: {
+				performance: 95,
+				overall_score: 92,
+			},
+		};
+
+		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				pagespeed: mockPageSpeedReport,
+			},
+			status: 'success',
+			isError: false,
+			isLoading: false,
+		} );
+
+		renderHook( () =>
+			usePerformanceReport(
+				mockSetIsSaving,
+				mockRefetchPages,
+				mockSavePerformanceReportUrl,
+				'123',
+				{ url: 'test.com', hash: 'test-hash' },
+				'mobile',
+				mockReportCompletedCallback
+			)
+		);
+
+		expect( mockReportCompletedCallback ).toHaveBeenCalledWith(
+			mockPageSpeedReport,
+			'test.com',
+			'test-hash'
+		);
+		expect( mockReportCompletedCallback ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should not call reportCompletedCallback when report status is not completed', () => {
+		const mockReportCompletedCallback = jest.fn();
+		const mockPageSpeedReport = {
+			status: 'pending',
+			mobile: 'pending',
+			desktop: 'pending',
+		};
+
+		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				pagespeed: mockPageSpeedReport,
+			},
+			status: 'success',
+			isError: false,
+			isLoading: false,
+		} );
+
+		renderHook( () =>
+			usePerformanceReport(
+				mockSetIsSaving,
+				mockRefetchPages,
+				mockSavePerformanceReportUrl,
+				'123',
+				{ url: 'test.com', hash: 'test-hash' },
+				'mobile',
+				mockReportCompletedCallback
+			)
+		);
+
+		expect( mockReportCompletedCallback ).not.toHaveBeenCalled();
 	} );
 } );

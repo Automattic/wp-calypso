@@ -29,11 +29,6 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
-import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
-import {
-	useStreamlinedPriceExperiment,
-	isStreamlinedPricePlansTreatment,
-} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -127,6 +122,7 @@ export interface UnifiedPlansStepProps {
 	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
+	selectedFeature?: string;
 	fallbackSubHeaderText?: string;
 
 	/**
@@ -176,6 +172,17 @@ export interface UnifiedPlansStepProps {
 	isCustomDomainAllowedOnFreePlan?: boolean;
 
 	useStepContainerV2?: boolean;
+
+	/**
+	 * Whether this step is being used in a signup flow context.
+	 * Defaults to true to preserve existing behavior.
+	 */
+	isInSignup?: boolean;
+
+	/**
+	 * Whether this step is being used in a stepper upgrade flow context.
+	 */
+	isStepperUpgradeFlow?: boolean;
 }
 
 /**
@@ -225,6 +232,9 @@ function UnifiedPlansStep( {
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
 	onIntentChange,
+	isInSignup = true,
+	isStepperUpgradeFlow = false,
+	selectedFeature,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -232,8 +242,6 @@ function UnifiedPlansStep( {
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
 
 	useSiteGlobalStylesOnPersonal();
 
@@ -487,18 +495,7 @@ function UnifiedPlansStep( {
 		}
 	}
 
-	const { shouldRestrict3YearPlans } = useFCCARestrictions();
-	let defaultIntervalType = 'yearly';
-	const experimentValue = streamlinedPriceExperimentAssignment as string;
-	if (
-		! isStreamlinedPriceExperimentLoading &&
-		isStreamlinedPricePlansTreatment( experimentValue ) &&
-		experimentValue.startsWith( 'plans_3y' )
-	) {
-		defaultIntervalType = shouldRestrict3YearPlans() ? '2yearly' : '3yearly';
-	}
-
-	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
+	const intervalTypeValue = intervalType || getIntervalType( path );
 
 	let freeWPComSubdomain: string | undefined;
 	if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
@@ -527,7 +524,7 @@ function UnifiedPlansStep( {
 				siteId={ selectedSite?.ID }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-				isInSignup
+				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				intervalType={
 					intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
@@ -539,6 +536,7 @@ function UnifiedPlansStep( {
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
+				isStepperUpgradeFlow={ isStepperUpgradeFlow }
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
@@ -550,6 +548,7 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
+				selectedFeature={ selectedFeature }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;

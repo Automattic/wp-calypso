@@ -19,6 +19,10 @@ jest.mock( '../../../app/auth', () => ( {
 	} ),
 } ) );
 
+jest.mock( '@wordpress/react-i18n', () => ( {
+	useI18n: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),

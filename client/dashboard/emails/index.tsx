@@ -1,38 +1,27 @@
-import { Email, SiteDomain } from '@automattic/api-core';
-import { emailsQuery, siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { EmailAccount, EmailBox, Domain, DomainSubtype } from '@automattic/api-core';
+import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
+import { emailsRoute } from '../app/router/emails';
 import { DataViewsCard } from '../components/dataviews-card';
-import { OptInWelcome } from '../components/opt-in-welcome';
-import { PageHeader } from '../components/page-header';
-import PageLayout from '../components/page-layout';
+import { domainHasEmail } from '../utils/domain';
+import { persistViewToUrl, useSetInitialViewFromUrl } from '../utils/persist-view-to-url';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
-import { createEmailActions, DEFAULT_EMAILS_VIEW, emailFields } from './dataviews';
-import { domainHasEmail } from './utils/email-utils';
+import UnusedMailboxNotice from './components/unused-mailbox-notice';
+import { DEFAULT_EMAILS_VIEW, getEmailFields, useEmailActions } from './dataviews';
+import { useDomains } from './hooks/use-domains';
+import { Layout } from './layout';
+import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import type { Email } from './types';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
 function Emails() {
-	const navigate = useNavigate();
-
-	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const sites = ( allSites ?? [] ).filter( ( site ) => site.capabilities.manage_options );
-	const siteIds = sites.map( ( site ) => site.ID );
-
-	const { data: allEmails, isLoading: isLoadingEmails } = useQuery( emailsQuery() );
-
-	// Fetch site domains for each managed site ID
-	const domainsQueries = useQueries( {
-		queries: siteIds.map( ( id ) => ( {
-			...siteDomainsQuery( id ),
-			enabled: Boolean( id ),
-		} ) ),
-	} );
-	const isLoadingDomains = domainsQueries.some( ( q ) => q.isLoading );
+	const { domainName }: { domainName?: string } = emailsRoute.useSearch();
+	const { domains, isLoading: isLoadingDomains } = useDomains();
 
 	// Aggregate all domains into a single array
 	const { domainsWithEmails, domainsWithoutEmails } = useMemo( () => {
@@ -41,45 +30,106 @@ function Emails() {
 		}
 
 		// We filter the same way v1 does.
-		const domains = domainsQueries
-			.flatMap( ( q ) => ( q.data as SiteDomain[] ) ?? [] )
-			.filter( ( domain ) => ! domain.wpcom_domain );
-
-		const domainsWithEmails = domains.filter( domainHasEmail ) as SiteDomain[];
-		const domainsWithoutEmails = domains.filter(
-			( domain ) => ! domainHasEmail( domain )
-		) as SiteDomain[];
-		return { domainsWithEmails, domainsWithoutEmails };
-	}, [ domainsQueries, isLoadingDomains ] );
-
-	// Filter emails to those belonging to managed sites by either siteId or matching one of the managed domains
-	const emails = ( allEmails ?? [] ).filter( ( email ) => {
-		const siteIdMatch = email.siteId && siteIds.includes( Number( email.siteId ) );
-		const domainMatch = domainsWithEmails.filter(
-			( domain: SiteDomain ) => domain.domain === email?.domainName
+		const nonWpcomDomains = domains.filter(
+			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 		);
-		return Boolean( siteIdMatch && domainMatch );
+
+		const domainsWithEmails = nonWpcomDomains.filter( domainHasEmail ) as Domain[];
+		const domainsWithoutEmails = nonWpcomDomains.filter(
+			( domain ) => ! domainHasEmail( domain )
+		) as Domain[];
+
+		return { domainsWithEmails, domainsWithoutEmails };
+	}, [ domains, isLoadingDomains ] );
+
+	const mailboxQueries = useQueries( {
+		queries: domainsWithEmails.map( ( domain: Domain ) =>
+			mailboxAccountsQuery( domain.blog_id, domain.domain )
+		),
 	} );
+
+	const isLoadingMailboxes = mailboxQueries.some( ( q ) => q.isLoading );
+
+	// Build emails by pairing each domain with its corresponding mailboxes query
+	const emails: Email[] = useMemo( () => {
+		if ( ! domainsWithEmails.length ) {
+			return [];
+		}
+		return domainsWithEmails.flatMap( ( domain, index ) => {
+			const emailAccounts = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
+
+			const skipFilterForwards = emailAccounts.length === 1;
+
+			return emailAccounts
+				.filter( ( account ) => skipFilterForwards || account.account_type !== 'email_forwarding' )
+				.flatMap( ( account ) =>
+					account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account, domain ) )
+				)
+				.filter( ( email ) => email.canUserManage ) as Email[];
+		} );
+	}, [ domainsWithEmails, mailboxQueries ] );
+
+	// Gather domains with unused mailbox warnings
+	const domainsWithUnusedMailbox: string[] = useMemo( () => {
+		if ( ! domainsWithEmails.length ) {
+			return [];
+		}
+		return domainsWithEmails.reduce< string[] >( ( acc, domain, index ) => {
+			const emailAccounts = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
+			const hasUnusedWarning = emailAccounts.some( ( account ) =>
+				( account.warnings ?? [] ).some(
+					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
+				)
+			);
+			if ( hasUnusedWarning ) {
+				acc.push( domain.domain );
+			}
+			return acc;
+		}, [] );
+	}, [ domainsWithEmails, mailboxQueries ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 	const [ view, setView ] = useState< View >( DEFAULT_EMAILS_VIEW );
+	useSetInitialViewFromUrl( {
+		fieldName: 'domainName',
+		fieldValue: domainName,
+		setView,
+	} );
 
-	const actions = useMemo(
-		() => createEmailActions( navigate, setSelection ),
-		[ navigate, setSelection ]
-	);
+	const actions = useEmailActions();
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, emailFields );
+	const emailFields = getEmailFields( domainsWithEmails );
+
+	const onChangeView = ( newView: View ) => {
+		persistViewToUrl( newView, 'domainName' );
+		setView( newView );
+	};
+
+	const { data: filteredData, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( emails, view, emailFields );
+	}, [ emails, view, emailFields ] );
+
+	let emptyState = null;
+	if ( emails.length === 0 ) {
+		emptyState = domainsWithoutEmails ? (
+			<NoEmailsAvailableEmptyState />
+		) : (
+			<NoDomainsAvailableEmptyState />
+		);
+	}
 
 	return (
-		<PageLayout header={ <PageHeader /> } notices={ <OptInWelcome tracksContext="emails" /> }>
-			<DataViewsCard className="emails__dataviews">
+		<Layout>
+			{ ! isLoadingDomains && ! isLoadingMailboxes && (
+				<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
+			) }
+			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
-					isLoading={ isLoadingEmails || isLoadingSites || isLoadingDomains }
+					isLoading={ isLoadingDomains || isLoadingMailboxes }
 					fields={ emailFields }
 					view={ view }
-					onChangeView={ setView }
+					onChangeView={ onChangeView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
@@ -87,16 +137,10 @@ function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					empty={
-						domainsWithoutEmails ? (
-							<NoEmailsAvailableEmptyState />
-						) : (
-							<NoDomainsAvailableEmptyState />
-						)
-					}
+					empty={ emptyState }
 				/>
 			</DataViewsCard>
-		</PageLayout>
+		</Layout>
 	);
 }
 

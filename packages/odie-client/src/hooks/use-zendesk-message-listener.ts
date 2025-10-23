@@ -5,6 +5,7 @@ import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { zendeskMessageConverter } from '../utils';
+import { deduplicateZDMessages } from './use-get-combined-chat';
 import type { ZendeskMessage } from '../types';
 
 /**
@@ -28,7 +29,8 @@ export const useZendeskMessageListener = () => {
 				const convertedMessage = zendeskMessageConverter( zendeskMessage );
 				setChat( ( prevChat ) => ( {
 					...prevChat,
-					messages: [ ...prevChat.messages, convertedMessage ],
+					// During connection recovery, some duplication due to auto-redownload and the message listener firing.
+					messages: deduplicateZDMessages( [ ...prevChat.messages, convertedMessage ] ),
 					status: 'loaded',
 				} ) );
 				Smooch.markAllAsRead( data.conversation.id );

@@ -35,6 +35,8 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 	};
+	optIn: boolean;
+	components: Record< string, () => Promise< { default: React.FC } > >;
 };
 
 const AppContext = createContext< AppConfig >( {
@@ -56,6 +58,8 @@ const AppContext = createContext< AppConfig >( {
 		me: false,
 		commandPalette: false,
 	},
+	optIn: false,
+	components: {},
 } );
 
 interface AppProviderProps {

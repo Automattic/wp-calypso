@@ -60,9 +60,8 @@ const HelpCenter: React.FC< Container > = ( {
 
 		return () => {
 			document.body.removeChild( portalParent );
-			handleClose();
 		};
-	}, [ portalParent, handleClose ] );
+	}, [ portalParent ] );
 
 	return createPortal(
 		<>

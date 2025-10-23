@@ -15,12 +15,14 @@ import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SettingsPageHeader from '../settings-page-header';
 import ResetPasswordModal from './reset-password-modal';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
@@ -70,27 +72,32 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		);
 	};
 
+	const description = hasPlanFeature( site, HostingFeatures.DATABASE )
+		? createInterpolateElement(
+				__(
+					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
+				),
+				{
+					link: <InlineSupportLink supportContext="hosting-mysql" />,
+				}
+		  )
+		: undefined;
+
 	return (
 		<PageLayout
 			size="small"
 			header={
-				<SettingsPageHeader
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Database' ) }
-					description={ createInterpolateElement(
-						__(
-							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
-						),
-						{
-							link: <InlineSupportLink supportContext="hosting-mysql" />,
-						}
-					) }
+					description={ description }
 				/>
 			}
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.DATABASE }
-				tracksFeatureId="settings-database"
+				upsellId="site-settings-database"
 				upsellIcon={ blockTable }
 				upsellImage={ upsellIllustrationUrl }
 				upsellTitle={ __( 'Fast, familiar database access' ) }

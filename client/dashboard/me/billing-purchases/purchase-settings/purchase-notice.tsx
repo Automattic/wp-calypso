@@ -16,9 +16,10 @@ import {
 	isCloseToExpiration,
 	needsToRenewSoon,
 	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
-import { getPurchaseUrl } from '../urls';
+import { getPurchaseUrl, getAddPaymentMethodUrlFor, getChangePaymentMethodUrlFor } from '../urls';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
@@ -336,28 +337,39 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 }
 
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
-	const siteSlug = purchase.site_slug ?? purchase.blog_id;
 	const changePaymentMethodPath = purchase.payment_card_id
-		? `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/change/${ purchase.payment_card_id }`
-		: `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/add`;
+		? getChangePaymentMethodUrlFor( purchase )
+		: getAddPaymentMethodUrlFor( purchase );
+
+	const cardDetails = {
+		cardType: purchase.payment_card_type,
+		cardNumber: purchase.payment_card_id,
+		cardExpiry: purchase.payment_expiry,
+	};
+
+	const linkComponent = {
+		link: <Link to={ changePaymentMethodPath } />,
+	};
+
+	const translatedMessage = creditCardHasAlreadyExpired( purchase )
+		? sprintf(
+				// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+				__(
+					'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
+				),
+				cardDetails
+		  )
+		: sprintf(
+				// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+				__(
+					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
+				),
+				cardDetails
+		  );
+
 	return (
 		<Notice variant={ shouldShowCardExpiringWarning( purchase ) ? 'error' : 'info' }>
-			{ createInterpolateElement(
-				sprintf(
-					// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
-					__(
-						'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
-					),
-					{
-						cardType: purchase.payment_card_type,
-						cardNumber: purchase.payment_card_id,
-						cardExpiry: purchase.payment_expiry,
-					}
-				),
-				{
-					link: <a href={ changePaymentMethodPath } />,
-				}
-			) }
+			{ createInterpolateElement( translatedMessage, linkComponent ) }
 		</Notice>
 	);
 }

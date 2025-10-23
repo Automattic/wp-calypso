@@ -12,6 +12,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
 import type { ReactElement } from 'react';
@@ -91,8 +92,11 @@ const NoAccess = () => {
 const AddOnsMain = () => {
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = AddOns.useAddOns( { selectedSiteId: selectedSite?.ID } );
+	const queryArguments = useSelector( getCurrentQueryArguments );
 
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
+
+	const storageOnly = queryArguments?.product === 'storage';
 
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
@@ -132,6 +136,7 @@ const AddOnsMain = () => {
 					addOns={ addOns }
 					siteId={ selectedSite?.ID }
 					highlightFeatured
+					storageOnly={ storageOnly }
 				/>
 			</ContentWithHeader>
 		</>

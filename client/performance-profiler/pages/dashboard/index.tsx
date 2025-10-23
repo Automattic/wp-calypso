@@ -22,6 +22,7 @@ import {
 } from 'calypso/performance-profiler/components/message-display';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
+import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
 import { LoadingScreen } from '../loading-screen';
 
 import './style.scss';
@@ -45,6 +46,13 @@ const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps 
 	} = useUrlBasicMetricsQuery( url, hash, true, translate.localeSlug );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data, isError: isPerformanceInsightsError } = useUrlPerformanceInsightsQuery( url, hash );
+
+	useEffect( () => {
+		if ( data?.pagespeed && data.pagespeed.status === 'completed' && url && hash ) {
+			trackReportCompletedEvent( data.pagespeed, url, hash );
+		}
+	}, [ data?.pagespeed, url, hash ] );
+
 	const performanceInsights = data?.pagespeed;
 
 	const isError =

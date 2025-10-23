@@ -7,10 +7,12 @@ import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
+	Spinner,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { help, commentAuthorAvatar } from '@wordpress/icons';
-import { Suspense, lazy, useCallback } from 'react';
+import { Suspense, lazy, useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
@@ -32,7 +34,7 @@ function Help() {
 	};
 
 	const handleCloseHelpCenterApp = useCallback( () => {
-		setShowHelpCenter( false, undefined, undefined, true );
+		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
 
 	return (
@@ -62,9 +64,10 @@ function Help() {
 
 // User profile dropdown component
 function UserProfile() {
-	const { user } = useAuth();
+	const { user, logout } = useAuth();
 	const { supports } = useAppContext();
 	const openCommandPalette = useOpenCommandPalette();
+	const [ isLoggingOut, setIsLoggingOut ] = useState( false );
 
 	return (
 		<DropdownMenu
@@ -119,7 +122,20 @@ function UserProfile() {
 						</MenuGroup>
 					) }
 					<MenuGroup>
-						<MenuItem onClick={ () => {} }>{ __( 'Log out' ) }</MenuItem>
+						<MenuItem
+							disabled={ isLoggingOut }
+							onClick={ () => {
+								setIsLoggingOut( true );
+								logout().catch( () => setIsLoggingOut( false ) );
+							} }
+						>
+							<HStack>
+								<span>{ isLoggingOut ? __( 'Logging out…' ) : __( 'Log out' ) }</span>
+								{ isLoggingOut && (
+									<Spinner style={ { width: 24, height: 24, padding: 4, margin: 0 } } />
+								) }
+							</HStack>
+						</MenuItem>
 					</MenuGroup>
 				</VStack>
 			) }
@@ -129,6 +145,7 @@ function UserProfile() {
 
 function SecondaryMenu() {
 	const { supports } = useAppContext();
+	const isDesktop = useViewportMatch( 'medium' );
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -136,7 +153,8 @@ function SecondaryMenu() {
 				<Button
 					className="dashboard-secondary-menu__item"
 					icon={ <ReaderIcon /> }
-					text={ __( 'Reader' ) }
+					label={ __( 'Reader' ) }
+					text={ isDesktop ? __( 'Reader' ) : undefined }
 					href="/reader"
 				/>
 			) }

@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { POST_STATUSES } from '../constants';
 
 import 'calypso/state/posts/init';
 
@@ -52,59 +51,4 @@ export function getAllPostCount( state, siteId, postType, status ) {
  */
 export function getMyPostCounts( state, siteId, postType ) {
 	return get( state.posts.counts.counts, [ siteId, postType, 'mine' ], null );
-}
-
-/**
- * Returns an object of normalized post counts, summing publish/private and
- * pending/draft counts.
- * @param  {Object}   state         Global state tree
- * @param  {number}   siteId        Site ID
- * @param  {string}   postType      Post type
- * @param  {Function} countSelector Selector from which to retrieve raw counts
- * @returns {number}                 Normalized post counts
- */
-export function getNormalizedPostCounts(
-	state,
-	siteId,
-	postType,
-	countSelector = getAllPostCounts
-) {
-	const counts = countSelector( state, siteId, postType );
-
-	return POST_STATUSES.reduce( ( memo, status ) => {
-		const count = get( counts, status, 0 );
-
-		let key;
-		switch ( status ) {
-			case 'publish':
-			case 'private':
-				key = 'publish';
-				break;
-
-			case 'draft':
-			case 'pending':
-				key = 'draft';
-				break;
-
-			default:
-				key = status;
-		}
-
-		return {
-			...memo,
-			[ key ]: ( memo[ key ] || 0 ) + count,
-		};
-	}, {} );
-}
-
-/**
- * Returns an object of normalized post counts for current user, summing
- * publish/private and pending/draft counts.
- * @param  {Object} state    Global state tree
- * @param  {number} siteId   Site ID
- * @param  {string} postType Post type
- * @returns {number}          Normalized post counts
- */
-export function getNormalizedMyPostCounts( state, siteId, postType ) {
-	return getNormalizedPostCounts( state, siteId, postType, getMyPostCounts );
 }

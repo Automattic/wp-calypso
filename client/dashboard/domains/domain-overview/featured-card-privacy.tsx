@@ -3,7 +3,7 @@ import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { unseen } from '@wordpress/icons';
-import OverviewCard from '../../sites/overview-card';
+import OverviewCard from '../../components/overview-card';
 
 interface Props {
 	domain: Domain;

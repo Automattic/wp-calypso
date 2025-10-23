@@ -7,3 +7,22 @@
 		}
 	}
 }
+
+.dataviews-wrapper .screen-reader-text {
+	clip: rect(1px, 1px, 1px, 1px);
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+}
+
+.logs-downloader__tooltip {
+	background: linear-gradient(
+		to bottom right,
+		var(--wp-admin-theme-color, #3858e9) 48%,
+		var(--wp-admin-theme-color-darker-20, #183ad6) 52%
+	);
+	color: #fff; /* for contrast */
+}

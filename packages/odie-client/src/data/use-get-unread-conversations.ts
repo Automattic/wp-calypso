@@ -16,8 +16,7 @@ export const calculateUnread = (
 
 	conversations.forEach( ( conversation ) => {
 		const unreadCount = conversation?.participants?.[ 0 ]?.unreadCount ?? 0;
-
-		if ( unreadCount > 0 ) {
+		if ( conversation.metadata?.supportInteractionId && unreadCount > 0 ) {
 			numberOfUnreadConversations++;
 			numberOfUnreadMessages += unreadCount;
 		}

@@ -50,16 +50,16 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { sectionName } = useHelpCenterContext();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 
-	const { navigateToRoute, isMinimized, allowPremiumSupport } = useSelect( ( select ) => {
+	const { navigateToRoute, isMinimized, hasPremiumSupport } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			navigateToRoute: store.getNavigateToRoute(),
 			isMinimized: store.getIsMinimized(),
-			allowPremiumSupport: store.getAllowPremiumSupport(),
+			hasPremiumSupport: store.getHasPremiumSupport(),
 		};
 	}, [] );
 	const isUserEligibleForPaidSupport =
-		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
+		Boolean( data?.eligibility?.is_user_eligible ) || hasPremiumSupport;
 
 	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
 

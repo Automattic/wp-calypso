@@ -1,11 +1,11 @@
 import { Domain, DomainSubtype } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { ButtonStack } from '../../components/button-stack';
-import OverviewCard from '../../sites/overview-card';
-import SiteIcon from '../../sites/site-icon';
+import { layout } from '@wordpress/icons';
+import OverviewCard from '../../components/overview-card';
+import SiteIcon from '../../components/site-icon';
 
 interface Props {
 	domain: Domain;
@@ -25,29 +25,22 @@ export default function FeaturedCardSite( { domain }: Props ) {
 
 	return (
 		<OverviewCard
-			title={ __( 'Site' ) }
-			heading={ <span style={ { wordBreak: 'break-all' } }>{ site.name }</span> }
+			title={ shouldShowAddAttachSite ? __( 'Attach to a site' ) : __( 'Site' ) }
+			heading={
+				<span style={ { wordBreak: 'break-all' } }>
+					{ shouldShowAddAttachSite ? __( 'No site attached' ) : site.name }
+				</span>
+			}
 			link={
 				shouldShowAddAttachSite
 					? `/domains/${ domain.domain }/transfer/other-site`
 					: `/sites/${ site.slug }`
 			}
-			icon={ <SiteIcon site={ site } /> }
+			icon={ shouldShowAddAttachSite ? <Icon icon={ layout } /> : <SiteIcon site={ site } /> }
 			description={
-				shouldShowAddAttachSite ? __( 'Attach to an existing site' ) : domain.site_slug
-			}
-			bottom={
-				shouldShowAddAttachSite && (
-					<ButtonStack>
-						<Button
-							size="compact"
-							variant="primary"
-							href={ `/start/site-selected/?siteSlug=${ site.slug }&siteId=${ site.ID }` }
-						>
-							{ __( 'Add a new site' ) }
-						</Button>
-					</ButtonStack>
-				)
+				shouldShowAddAttachSite
+					? __( 'Attach this domain name to an existing site.' )
+					: domain.site_slug
 			}
 		/>
 	);

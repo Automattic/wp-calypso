@@ -13,6 +13,7 @@ import {
 	needsToRenewSoon,
 	isRecentMonthlyPurchase,
 	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getRenewUrlForPurchases,
 } from '../../../utils/purchase';
 import { getPurchaseUrl, getAddPaymentMethodUrlFor } from '../urls';
@@ -647,6 +648,28 @@ export function OtherRenewablePurchasesNotice( {
 		}
 
 		if ( currentPurchase.payment_card_id ) {
+			const cardDetails = {
+				cardType: purchase.payment_card_type,
+				cardNumber: purchase.payment_card_id,
+				cardExpiry: purchase.payment_expiry,
+			};
+
+			const translatedMessage = creditCardHasAlreadyExpired( purchase )
+				? sprintf(
+						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+						__(
+							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+						),
+						cardDetails
+				  )
+				: sprintf(
+						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+						__(
+							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+						),
+						cardDetails
+				  );
+
 			return (
 				<NoticeContent
 					purchase={ purchase }
@@ -654,20 +677,7 @@ export function OtherRenewablePurchasesNotice( {
 					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus={ shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info' }
-					noticeText={ createInterpolateElement(
-						sprintf(
-							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
-							__(
-								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
-							),
-							{
-								cardType: purchase.payment_card_type,
-								cardNumber: purchase.payment_card_id,
-								cardExpiry: purchase.payment_expiry,
-							}
-						),
-						{ link }
-					) }
+					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
 					noticeActionHref={ getAddPaymentMethodUrlFor( purchase ) }
 					noticeActionText={ __( 'Update all' ) }
 				/>
@@ -826,6 +836,28 @@ export function OtherRenewablePurchasesNotice( {
 		}
 
 		if ( currentPurchase.payment_card_id ) {
+			const cardDetails = {
+				cardType: purchase.payment_card_type,
+				cardNumber: purchase.payment_card_id,
+				cardExpiry: purchase.payment_expiry,
+			};
+
+			const translatedMessage = creditCardHasAlreadyExpired( purchase )
+				? sprintf(
+						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+						__(
+							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+						),
+						cardDetails
+				  )
+				: sprintf(
+						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+						__(
+							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
+						),
+						cardDetails
+				  );
+
 			return (
 				<NoticeContent
 					purchase={ purchase }
@@ -833,20 +865,7 @@ export function OtherRenewablePurchasesNotice( {
 					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus="info"
-					noticeText={ createInterpolateElement(
-						sprintf(
-							// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
-							__(
-								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
-							),
-							{
-								cardType: purchase.payment_card_type,
-								cardNumber: purchase.payment_card_id,
-								cardExpiry: purchase.payment_expiry,
-							}
-						),
-						{ link }
-					) }
+					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
 					noticeActionHref={ getAddPaymentMethodUrlFor( purchase ) }
 					noticeActionText={ __( 'Update all' ) }
 				/>

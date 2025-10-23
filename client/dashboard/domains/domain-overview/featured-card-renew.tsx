@@ -3,8 +3,8 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
 import { useLocale } from '../../app/locale';
+import OverviewCard from '../../components/overview-card';
 import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
-import OverviewCard from '../../sites/overview-card';
 import { formatDate } from '../../utils/datetime';
 
 interface Props {
@@ -15,7 +15,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 	const locale = useLocale();
 	const date = domain.auto_renewing ? domain.auto_renewal_date : domain.expiry;
 
-	if ( ! date ) {
+	if ( ! date || domain.subscription_id === null ) {
 		return null;
 	}
 

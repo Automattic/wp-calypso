@@ -2,6 +2,7 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { type SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
+import { useAnalytics } from '../../../../app/analytics';
 import { getFieldLabel } from '../../helpers/translations';
 import { useSiteSettings, useSettingsMutation } from '../../hooks';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
@@ -10,20 +11,32 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const { recordTracksEvent } = useAnalytics();
 
 	const timelineSettings = useMemo( () => blogSettings?.timeline ?? null, [ blogSettings ] );
 
 	const handleChange = ( updated: SettingsOption ) => {
-		updateSettings( {
-			data: {
-				blogs: [
-					{
-						blog_id: siteId,
-						timeline: { ...timelineSettings, [ updated.id ]: updated.value },
-					},
-				],
+		updateSettings(
+			{
+				data: {
+					blogs: [
+						{
+							blog_id: siteId,
+							timeline: { ...timelineSettings, [ updated.id ]: updated.value },
+						},
+					],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_timeline_settings_updated', {
+						setting_name: updated.id,
+						setting_value: updated.value,
+						site_id: siteId,
+					} );
+				},
+			}
+		);
 	};
 
 	const askForConfirmation = () => {
@@ -35,12 +48,25 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 			return;
 		}
 
-		updateSettings( {
-			data: {
-				blogs: [ blogSettings ],
+		updateSettings(
+			{
+				data: {
+					blogs: [ blogSettings ],
+				},
+				applyToAll: true,
 			},
-			applyToAll: true,
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_settings_apply_to_all_sites', {
+						// It is the site's settings that are being applied to other sites.
+						stream: 'timeline',
+						site_to_be_used_as_template: siteId,
+					} );
+
+					setIsConfirmDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(

@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { people } from '@wordpress/icons';
-import OverviewCard from '../overview-card';
+import OverviewCard from '../../components/overview-card';
 import type { Site } from '@automattic/api-core';
 
 export default function SubscribersCard( { site }: { site: Site } ) {
@@ -12,7 +12,7 @@ export default function SubscribersCard( { site }: { site: Site } ) {
 			description={ __( 'Total subscribers.' ) }
 			externalLink={ `https://cloud.jetpack.com/subscribers/${ site.slug }` }
 			intent="success"
-			tracksId="subscribers"
+			tracksId="site-overview-subscribers"
 		/>
 	);
 }

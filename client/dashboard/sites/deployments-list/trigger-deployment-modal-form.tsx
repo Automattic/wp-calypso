@@ -58,7 +58,7 @@ export function TriggerDeploymentModalForm( {
 	repositoryId,
 	onSuccess,
 }: TriggerDeploymentModalFormProps ) {
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
 		selectedDeploymentId: repositoryId ?? '',
 	} );
@@ -108,6 +108,9 @@ export function TriggerDeploymentModalForm( {
 					createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
 					onClose?.();
 					onSuccess?.();
+				},
+				onError: ( error ) => {
+					createErrorNotice( error.message, { type: 'snackbar' } );
 				},
 			}
 		);

@@ -21,7 +21,7 @@ export function Login( {
 	domainName,
 	onNextStep,
 	isOwnershipVerificationFlow,
-}: StepComponentProps ) {
+}: Pick< StepComponentProps, 'domainName' | 'onNextStep' | 'isOwnershipVerificationFlow' > ) {
 	const { data: availability, isLoading: isLoadingAvailability } = useQuery( {
 		...domainAvailabilityQuery( domainName ),
 		enabled: isOwnershipVerificationFlow,
@@ -46,7 +46,7 @@ export function Login( {
 								{ __( 'We need to confirm that you are authorized to connect this domain.' ) }
 							</Text>
 						) }
-						{ ! isLoadingAvailability && ! isConnectSupported && (
+						{ isOwnershipVerificationFlow && ! isLoadingAvailability && ! isConnectSupported && (
 							<Notice variant="error">{ __( 'This domain cannot be connected.' ) }</Notice>
 						) }
 						{ ! isLoadingAvailability && (

@@ -1,9 +1,7 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
-	Button,
 	Card,
 	CardBody,
 	CardHeader,
@@ -12,12 +10,13 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useState } from '@wordpress/element';
-import { __, isRTL, sprintf } from '@wordpress/i18n';
-import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, cloud } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
-import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -53,8 +52,6 @@ function SiteBackupRestore() {
 	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 	const hasSelectedFiles = browserSelectedList.length > 0;
 	const hasSelectedAllFiles = browserSelectedList[ 0 ]?.path === '//';
-
-	const router = useRouter();
 
 	const handleRestoreInitiate = ( newRestoreId: number ) => {
 		recordTracksEvent( 'calypso_dashboard_backups_restore_started' );
@@ -117,22 +114,12 @@ function SiteBackupRestore() {
 		}
 	};
 
-	const backButton = (
-		<Button
-			className="dashboard-page-header__back-button"
-			icon={ isRTL() ? chevronRight : chevronLeft }
-			onClick={ () => {
-				router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug } } );
-			} }
-		>
-			{ __( 'Backups' ) }
-		</Button>
-	);
-
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
+			header={
+				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Site restore' ) } />
+			}
 		>
 			{ currentStep !== 'success' ? (
 				<Card>

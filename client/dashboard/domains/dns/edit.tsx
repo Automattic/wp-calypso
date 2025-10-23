@@ -4,9 +4,11 @@ import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DnsDescription from '../domain-dns/dns-description';
 import DNSRecordForm from './form';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import { getProcessedRecord } from './utils';
@@ -58,7 +60,12 @@ export default function DomainEditDNS() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit DNS record' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader prefix={ <Breadcrumbs length={ 3 } /> } description={ <DnsDescription /> } />
+			}
+		>
 			<DNSRecordForm
 				domainName={ domainName }
 				isBusy={ mutation.isPending }

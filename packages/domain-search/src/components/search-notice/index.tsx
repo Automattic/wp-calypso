@@ -1,7 +1,9 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
+import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
 
@@ -16,10 +18,7 @@ const AVAILABLE_DOMAIN_STATUSES = [
 ];
 
 /**
- * Determines whether the availability notice should be hidden for a given domain availability
- *
- * @param availability - Domain availability returned from the availability endpoint
- * @returns True if the availability notice should be hidden, false otherwise.
+ * Determines whether the availability notice should be hidden for a given domain availability.
  */
 const shouldHideAvailabilityNotice = (
 	availability: DomainAvailability,
@@ -36,10 +35,7 @@ const shouldHideAvailabilityNotice = (
 		return true;
 	}
 
-	if (
-		availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
-		availability.is_supported_premium_domain
-	) {
+	if ( isSupportedPremiumDomain( availability ) ) {
 		return true;
 	}
 
@@ -60,6 +56,18 @@ const shouldHideAvailabilityNotice = (
 	}
 
 	return false;
+};
+
+const shouldReturnGenericMappedMessage = ( availability: DomainAvailability ): boolean => {
+	const isDomainMapped = DomainAvailabilityStatus.MAPPED === availability.mappable;
+
+	return (
+		isDomainMapped &&
+		availability.status !== DomainAvailabilityStatus.REGISTERED_SAME_SITE &&
+		availability.status !== DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER &&
+		availability.status !== DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
+		availability.status !== DomainAvailabilityStatus.MAPPED_SAME_SITE_REGISTRABLE
+	);
 };
 
 export const SearchNotice = () => {
@@ -83,23 +91,14 @@ export const SearchNotice = () => {
 			return null;
 		}
 
-		let finalAvailability = availability;
-
-		const isDomainMapped = DomainAvailabilityStatus.MAPPED === availability.mappable;
-
-		if (
-			isDomainMapped &&
-			availability.status !== DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER &&
-			availability.status !== DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
-			availability.status !== DomainAvailabilityStatus.MAPPED_SAME_SITE_REGISTRABLE
-		) {
-			finalAvailability = {
-				...availability,
-				status: DomainAvailabilityStatus.MAPPED,
+		if ( shouldReturnGenericMappedMessage( availability ) ) {
+			return {
+				severity: 'error' as const,
+				message: __( 'This domain is already connected to a WordPress.com site.' ),
 			};
 		}
 
-		return getAvailabilityNotice( query, finalAvailability, events, currentSiteUrl );
+		return getAvailabilityNotice( query, availability, events, currentSiteUrl );
 	}, [ query, availability, events, currentSiteUrl, includeOwnedDomainInSuggestions ] );
 
 	const errorMessage = suggestionError?.message ?? availabilityError?.message;

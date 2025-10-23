@@ -1,5 +1,6 @@
 import boot from '../app/boot';
 import Logo from './logo';
+import './translations';
 import './style.scss';
 
 boot( {
@@ -16,7 +17,7 @@ boot( {
 			logs: false,
 			backups: false,
 			scan: false,
-			domains: false,
+			domains: true,
 			emails: false,
 		},
 		domains: true,
@@ -31,5 +32,10 @@ boot( {
 		},
 		plugins: false,
 		commandPalette: false,
+	},
+	optIn: false,
+	components: {
+		sites: () => import( '../sites-ciab' ),
+		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},
 } );

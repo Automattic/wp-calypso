@@ -15,13 +15,15 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
-import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
@@ -117,11 +119,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
-									'Switch to a <a>staging site</a> to test a beta version of the next WordPress release.'
+									'Switch to a staging site to test a beta version of the next WordPress release. <learnMoreLink>Learn more</learnMoreLink>'
 								),
 								{
-									// TODO: use correct v2 staging site URL when it's available.
-									a: <a href={ `/staging-site/${ site.slug }` } />,
+									learnMoreLink: <InlineSupportLink supportContext="switch-to-staging-site" />,
 								}
 							) }
 						</Text>
@@ -132,7 +133,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	};
 
 	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
+		<PageLayout
+			size="small"
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title="WordPress" /> }
+		>
 			{ canView ? renderForm() : renderNotice() }
 		</PageLayout>
 	);

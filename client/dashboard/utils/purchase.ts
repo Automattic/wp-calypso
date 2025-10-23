@@ -3,6 +3,10 @@ import {
 	AkismetPlans,
 	TitanMailSlugs,
 	GoogleWorkspaceSlugs,
+	WPCOM_DIFM_LITE,
+	PRODUCT_1GB_SPACE,
+	JETPACK_SEARCH_PRODUCTS,
+	JetpackPlans,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
@@ -339,16 +343,54 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 	);
 }
 
-export function isTitanMail( purchase: Purchase ): boolean {
-	return ( Object.values( TitanMailSlugs ) as string[] ).includes( purchase.product_slug );
+type ObjectWithProductSlug = { product_slug?: string };
+
+export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return (
+		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
+		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
+	);
 }
 
-export function isGoogleWorkspace( purchase: Purchase ): boolean {
-	return ( Object.values( GoogleWorkspaceSlugs ) as string[] ).includes( purchase.product_slug );
+export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return (
+		purchase.product_slug === GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY ||
+		purchase.product_slug === GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+	);
 }
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === 'offsite_redirect';
+}
+
+/**
+ * Checks if a product is a DIFM (Do It For Me) product.
+ */
+export function isDIFMProduct( product: ObjectWithProductSlug ): boolean {
+	return product.product_slug === WPCOM_DIFM_LITE;
+}
+
+/**
+ * Checks if a product is a tiered volume space addon.
+ */
+export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): boolean {
+	return product.product_slug === PRODUCT_1GB_SPACE;
+}
+
+/**
+ * Checks if a product is a Jetpack Search product.
+ */
+export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
+	return product.product_slug ? JETPACK_SEARCH_PRODUCTS.includes( product.product_slug ) : false;
+}
+
+export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
+	const securityT1Slugs = [
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		JetpackPlans.PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+	] as const;
+	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
 function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {

@@ -83,10 +83,6 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import useSelectedFeature from './hooks/use-selected-feature';
-import {
-	isStreamlinedPricePlansTreatment,
-	useStreamlinedPriceExperiment,
-} from './hooks/use-streamlined-price-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -289,14 +285,6 @@ const PlansFeaturesMain = ( {
 		};
 	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
 
-	const isDisplayingPlansNeededForFeature =
-		!! selectedFeature &&
-		isValidFeatureKey( selectedFeature ) &&
-		!! selectedPlan &&
-		!! getPlan( selectedPlan ) &&
-		! isPersonalPlan( selectedPlan ) &&
-		( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) );
-
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
@@ -349,6 +337,17 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
 	] );
+
+	const isDisplayingPlansNeededForFeature =
+		!! selectedFeature &&
+		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
+		// that may not be in the feature key list (e.g. because they're grouped into a broader feature).
+		( intent === 'plans-upgrade' ||
+			( isValidFeatureKey( selectedFeature ) &&
+				!! selectedPlan &&
+				!! getPlan( selectedPlan ) &&
+				! isPersonalPlan( selectedPlan ) &&
+				( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) ) ) );
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent &&
@@ -479,22 +478,14 @@ const PlansFeaturesMain = ( {
 		isVisualSplitEnabled ||
 		gridPlansForFeaturesGridRaw?.some( ( { planSlug } ) => planSlug === PLAN_FREE );
 
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
-
-	const showStreamlinedPriceExperiment =
-		isInSignup && isStreamlinedPricePlansTreatment( streamlinedPriceExperimentAssignment );
-
 	let hidePlanSelector = false;
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	// We are also hiding the plan interval selector and showing terms savings prices
-	// for the compatible streamlined price experiment variations.
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
 		hidePlanSelector = true;
 	}
-	if ( ! isStreamlinedPriceExperimentLoading && ! showStreamlinedPriceExperiment ) {
+	if ( ! isInSignup ) {
 		enableTermSavingsPriceDisplay = false;
 	}
 
@@ -531,22 +522,14 @@ const PlansFeaturesMain = ( {
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
-			let isDomainAndPlanFlow: string | null = '';
-			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
 
 			if ( typeof window !== 'undefined' ) {
-				isDomainAndPlanFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-					'domainAndPlanPackage'
-				);
 				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 			}
 
 			const pathOrQueryParam = getPlanTypeDestination( props, {
 				intervalType: interval,
-				domain: isDomainAndPlanFlow,
-				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 
@@ -824,6 +807,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
+						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {
@@ -866,7 +850,7 @@ const PlansFeaturesMain = ( {
 							data-e2e-plans="wpcom"
 						>
 							<div className="plans-wrapper">
-								{ gridPlansForFeaturesGrid && ! isStreamlinedPriceExperimentLoading && (
+								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
 										className="plans-features-main__features-grid"
@@ -905,7 +889,7 @@ const PlansFeaturesMain = ( {
 											showSimplifiedFeatures && intent !== 'plans-wordpress-hosting'
 										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-										showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
+										showSimplifiedBillingDescription={ isInSignup }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -934,45 +918,43 @@ const PlansFeaturesMain = ( {
 														coupon={ coupon }
 													/>
 												) }
-											{ gridPlansForComparisonGrid &&
-												gridPlansForPlanTypeSelector &&
-												! isStreamlinedPriceExperimentLoading && (
-													<ComparisonGrid
-														allFeaturesList={ getFeaturesList() }
-														className="plans-features-main__comparison-grid"
-														coupon={ coupon }
-														currentSitePlanSlug={ sitePlanSlug }
-														gridPlans={ gridPlansForComparisonGrid }
-														hideUnavailableFeatures={ hideUnavailableFeatures }
-														intent={ intent }
-														intervalType={ intervalType }
-														isInAdmin={ ! isInSignup }
-														isInSiteDashboard={ isInSiteDashboard }
-														isInSignup={ isInSignup }
-														onStorageAddOnClick={ handleStorageAddOnClick }
-														planTypeSelectorProps={
-															! hidePlanSelector
-																? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
-																: undefined
-														}
-														recordTracksEvent={ recordTracksEvent }
-														reflectStorageSelectionInPlanPrices
-														selectedFeature={ selectedFeature }
-														selectedPlan={ selectedPlan }
-														showUpgradeableStorage={ showUpgradeableStorage }
-														siteId={ siteId }
-														stickyRowOffset={ comparisonGridStickyRowOffset }
-														showRefundPeriod={ isAnyHostingFlow( flowName ) }
-														useAction={ useAction }
-														useCheckPlanAvailabilityForPurchase={
-															useCheckPlanAvailabilityForPurchase
-														}
-														enableFeatureTooltips
-														featureGroupMap={ featureGroupMapForComparisonGrid }
-														enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-														showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
-													/>
-												) }
+											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
+												<ComparisonGrid
+													allFeaturesList={ getFeaturesList() }
+													className="plans-features-main__comparison-grid"
+													coupon={ coupon }
+													currentSitePlanSlug={ sitePlanSlug }
+													gridPlans={ gridPlansForComparisonGrid }
+													hideUnavailableFeatures={ hideUnavailableFeatures }
+													intent={ intent }
+													intervalType={ intervalType }
+													isInAdmin={ ! isInSignup }
+													isInSiteDashboard={ isInSiteDashboard }
+													isInSignup={ isInSignup }
+													onStorageAddOnClick={ handleStorageAddOnClick }
+													planTypeSelectorProps={
+														! hidePlanSelector
+															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
+															: undefined
+													}
+													recordTracksEvent={ recordTracksEvent }
+													reflectStorageSelectionInPlanPrices
+													selectedFeature={ selectedFeature }
+													selectedPlan={ selectedPlan }
+													showUpgradeableStorage={ showUpgradeableStorage }
+													siteId={ siteId }
+													stickyRowOffset={ comparisonGridStickyRowOffset }
+													showRefundPeriod={ isAnyHostingFlow( flowName ) }
+													useAction={ useAction }
+													useCheckPlanAvailabilityForPurchase={
+														useCheckPlanAvailabilityForPurchase
+													}
+													enableFeatureTooltips
+													featureGroupMap={ featureGroupMapForComparisonGrid }
+													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
+													showSimplifiedBillingDescription={ isInSignup }
+												/>
+											) }
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
 												label={ translate( 'Hide comparison' ) }

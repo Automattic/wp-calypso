@@ -62,6 +62,7 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 											width: '100px',
 											flexShrink: 0,
 											padding: '2px', // Accomodate button focus box-shadow
+											paddingInlineEnd: index === screenshots.length - 1 ? '16px' : '0',
 										} }
 										key={ index }
 										spacing={ 2 }

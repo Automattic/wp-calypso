@@ -35,6 +35,16 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	GitHubLoginPage,
+	ImportContentFromAnotherPlatformOrFilePage,
+	ImportContentFromMediumPage,
+	ImportContentFromSquarespacePage,
+	ImportContentFromSubstackPage,
+	ImportContentFromWordPressPage,
+	ImportContentPage,
+	ImportContentWordPressQuestionPage,
+	ImportLetsFindYourSitePage,
+	ImportLetUsMigrateYourSitePage,
+	ImportPlansPage,
 	IncognitoPage,
 	JetpackTrafficPage,
 	LoginPage,
@@ -146,6 +156,46 @@ export const test = base.extend< {
 	 */
 	pageGitHubLogin: GitHubLoginPage;
 	/**
+	 * Page object representing the Import Content page.
+	 */
+	pageImportContent: ImportContentPage;
+	/**
+	 * Page object representing the Import Plans page.
+	 */
+	pageImportPlans: ImportPlansPage;
+	/**
+	 * Page object representing the Import Content from Medium page.
+	 */
+	pageImportContentFromMedium: ImportContentFromMediumPage;
+	/**
+	 * Page object representing the Import Content from Squarespace page.
+	 */
+	pageImportContentFromSquarespace: ImportContentFromSquarespacePage;
+	/**
+	 * Page object representing the Import Content from Substack page.
+	 */
+	pageImportContentFromSubstack: ImportContentFromSubstackPage;
+	/**
+	 * Page object representing the Import Content from WordPress page.
+	 */
+	pageImportContentFromWordPress: ImportContentFromWordPressPage;
+	/**
+	 * Page object representing the Import Content WordPress Question page.
+	 */
+	pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
+	/**
+	 * Page object representing the Import Content from Another Platform or File page.
+	 */
+	pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
+	/**
+	 * Page object representing the Let's Find Your Site page for importing content.
+	 */
+	pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
+	/**
+	 * Page object representing the Let Us Migrate Your Site page for importing content.
+	 */
+	pageImportLetUsMigrateYourSite: ImportLetUsMigrateYourSitePage;
+	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
 	pageIncognito: IncognitoPage;
@@ -178,6 +228,18 @@ export const test = base.extend< {
 	 */
 	sitePublic: NewSiteResponse;
 } >( {
+	page: async ( { page }, use ) => {
+		await page.context().addCookies( [
+			{
+				name: 'sensitive_pixel_options',
+				value: '{"ok":true,"buckets":{"essential":true,"analytics":false,"advertising":false}}',
+				domain: '.wordpress.com',
+				path: '/',
+			},
+		] );
+
+		await use( page );
+	},
 	accountAtomic: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'atomicUser' );
 		await use( testAccount );
@@ -264,6 +326,47 @@ export const test = base.extend< {
 		const gitHubLoginPage = new GitHubLoginPage( page );
 		await use( gitHubLoginPage );
 	},
+	pageImportContent: async ( { page }, use ) => {
+		const importContentPage = new ImportContentPage( page );
+		await use( importContentPage );
+	},
+	pageImportContentFromAnotherPlatformOrFile: async ( { page }, use ) => {
+		const importContentFromAnotherPlatformOrFilePage =
+			new ImportContentFromAnotherPlatformOrFilePage( page );
+		await use( importContentFromAnotherPlatformOrFilePage );
+	},
+	pageImportContentFromMedium: async ( { page }, use ) => {
+		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
+		await use( importContentFromMediumPage );
+	},
+	pageImportContentFromSquarespace: async ( { page }, use ) => {
+		const importContentFromSquarespacePage = new ImportContentFromSquarespacePage( page );
+		await use( importContentFromSquarespacePage );
+	},
+	pageImportContentFromSubstack: async ( { page }, use ) => {
+		const importContentFromSubstackPage = new ImportContentFromSubstackPage( page );
+		await use( importContentFromSubstackPage );
+	},
+	pageImportContentFromWordPress: async ( { page }, use ) => {
+		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
+		await use( importContentFromWordPressPage );
+	},
+	pageImportLetsFindYourSite: async ( { page }, use ) => {
+		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
+		await use( letsFindYourSitePage );
+	},
+	pageImportLetUsMigrateYourSite: async ( { page }, use ) => {
+		const importLetUsMigrateYourSitePage = new ImportLetUsMigrateYourSitePage( page );
+		await use( importLetUsMigrateYourSitePage );
+	},
+	pageImportPlans: async ( { page }, use ) => {
+		const importPlansPage = new ImportPlansPage( page );
+		await use( importPlansPage );
+	},
+	pageImportContentWordpressQuestion: async ( { page }, use ) => {
+		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
+		await use( importContentWordpressQuestionPage );
+	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
@@ -294,7 +397,7 @@ export const test = base.extend< {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, helperData }, use ) => {
+	sitePublic: async ( { page, clientEmail, helperData }, use ) => {
 		const testUser = helperData.getNewTestUser();
 		const siteName = helperData.getBlogName();
 		const loginPage = new LoginPage( page );
@@ -310,6 +413,14 @@ export const test = base.extend< {
 			name: siteName,
 			title: siteName,
 		} );
+		const message = await clientEmail.getLastMatchingMessage( {
+			inboxId: testUser.inboxId,
+			sentTo: testUser.email,
+			subject: 'Activate',
+		} );
+		const links = await clientEmail.getLinksFromMessage( message );
+		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
+		await page.goto( activationLink );
 		await use( site );
 		await restAPIClient.deleteSite( {
 			id: site.blog_details.blogid,
@@ -330,9 +441,11 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD: '@dashboard',
+	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
+	IMPORTS: '@imports',
 	JETPACK_REMOTE_SITE: '@jetpack-remote-site',
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',

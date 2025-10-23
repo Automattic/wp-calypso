@@ -3,17 +3,17 @@ import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
+import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
-import OverviewCard from '../overview-card';
 import type { SiteScan, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	icon: shield,
 	title: __( 'Last scan' ),
-	tracksId: 'scan',
+	tracksId: 'site-overview-scan',
 };
 
 function getScanURL( site: Site ) {
@@ -92,7 +92,8 @@ export default function ScanCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.SCAN }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.tracksId }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-scan"
 			upsellHeading={ __( 'Scan for security threats' ) }
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
 			upsellLink={ getScanURL( site ) }

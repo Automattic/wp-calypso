@@ -86,11 +86,9 @@ describe( 'index', () => {
 
 		const searchLink = screen.getByRole( 'link', { name: searchForDomainCta } );
 		expect( searchLink ).toBeInTheDocument();
-		expect(
-			searchLink.href.includes(
-				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
-			)
-		).toBeTruthy();
+		expect( searchLink.href ).toContain(
+			'/setup/domain-and-plan?siteSlug=example.wordpress.com&back_to=%2F'
+		);
 	} );
 
 	test( 'Should test the purchase button link on Free and Monthly plans', async () => {
@@ -133,8 +131,8 @@ describe( 'index', () => {
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
 		await waitFor( () => {
-			expect( pageLink ).toMatch(
-				/\/plans\/yearly\/example\.wordpress\.com\?domain=true&domainAndPlanPackage=true/
+			expect( pageLink ).toEqual(
+				'/setup/domain-and-plan/plans?siteSlug=example.wordpress.com&back_to=%2F'
 			);
 		} );
 	} );
@@ -241,11 +239,9 @@ describe( 'index', () => {
 
 		const searchLink = screen.getByRole( 'link', { name: searchForDomainCta } );
 		expect( searchLink ).toBeInTheDocument();
-		expect(
-			searchLink.href.includes(
-				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
-			)
-		).toBeTruthy();
+		expect( searchLink.href ).toContain(
+			'/setup/domain-and-plan?siteSlug=example.wordpress.com&back_to=%2F'
+		);
 	} );
 
 	test( 'Should NOT show Home domain upsell if paid plan with > 0 custom domains', async () => {

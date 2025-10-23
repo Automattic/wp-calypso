@@ -11,6 +11,7 @@ import UsernameUpdateConfirmationModal from '../confirmation-modal';
 const defaultProps = {
 	isOpen: true,
 	currentUsername: 'testuser',
+	newUsername: 'newuser',
 	onConfirm: jest.fn(),
 	onCancel: jest.fn(),
 	isBusy: false,
@@ -24,11 +25,23 @@ describe( 'UsernameUpdateConfirmationModal', () => {
 	describe( 'Modal content', () => {
 		it( 'displays warning message with current username', () => {
 			render(
-				<UsernameUpdateConfirmationModal { ...defaultProps } currentUsername="myusername" />
+				<UsernameUpdateConfirmationModal
+					{ ...defaultProps }
+					currentUsername="myusername"
+					newUsername="newusername"
+				/>
 			);
 
-			expect( screen.getByText( /You are about to change your username,/ ) ).toBeInTheDocument();
-			expect( screen.getByText( /myusername/ ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( ( content, element ) => {
+					return (
+						element?.textContent ===
+						'You are about to change your username, myusername, to newusername. ' +
+							'Once changed, you will not be able to revert it. ' +
+							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
+					);
+				} )
+			).toBeInTheDocument();
 		} );
 	} );
 

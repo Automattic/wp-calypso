@@ -17,6 +17,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'jetpack',
 	'jetpack_connection',
 	'is_wpcom_atomic',
+	'is_wpcom_flex',
 	'is_wpcom_staging_site',
 	'user_interactions',
 	'lang',

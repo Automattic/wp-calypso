@@ -1,4 +1,4 @@
-import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -17,14 +17,7 @@ import {
 	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 } from '../../app/router/domains';
-import {
-	isRecentlyRegistered,
-	isDomainRenewable,
-	isDomainUpdatable,
-	isDomainInGracePeriod,
-	canSetAsPrimary,
-	getDomainRenewalUrl,
-} from '../../utils/domain';
+import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -38,11 +31,23 @@ const SiteChangeAddressContent = lazy(
 
 const noop = () => {};
 
-export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
+export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
+	const sitesByBlogId: Record< number, Site > = useMemo( () => {
+		if ( ! sites ) {
+			return {};
+		}
+		return sites.reduce(
+			( acc, site ) => {
+				acc[ site.ID ] = site;
+				return acc;
+			},
+			{} as Record< number, Site >
+		);
+	}, [ sites ] );
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -53,7 +58,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const purchase = purchases?.find(
-						( p ) => p.ID === parseInt( domain.subscription_id, 10 )
+						( p ) => p.ID === parseInt( domain.subscription_id ?? '0', 10 )
 					);
 
 					if ( ! purchase ) {
@@ -80,7 +85,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					} );
 				},
 				isEligible: ( item: DomainSummary ) =>
-					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! item.points_to_wpcom,
+					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
+					item.domain_status.id === 'connection_error',
 			},
 			{
 				id: 'manage-domain',
@@ -121,9 +127,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
-						item.can_manage_dns_records &&
-						item.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-						item.subtype.id !== DomainSubtype.SITE_REDIRECT
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
 					);
 				},
 			},
@@ -143,11 +148,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
-						!! item.current_user_is_owner &&
-						item.can_update_contact_info &&
-						! item.wpcom_domain &&
-						item.has_registration &&
-						( isDomainUpdatable( item ) || isDomainInGracePeriod( item ) )
+						item.current_user_is_owner === true &&
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
 					);
 				},
 			},
@@ -156,11 +158,12 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
 				callback: ( domains: DomainSummary[] ) => {
+					const domain = domains[ 0 ];
+					const site = sitesByBlogId[ domain.blog_id ];
+
 					if ( ! site ) {
 						return;
 					}
-
-					const domain = domains[ 0 ];
 					setPrimaryDomainMutation.mutate(
 						{ siteId: site.ID, domain: domain.domain },
 						{
@@ -188,11 +191,9 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					);
 				},
 				isEligible: ( item: DomainSummary ) => {
-					return (
-						!! site &&
-						canSetAsPrimary( { domain: item, site, user } ) &&
-						! isRecentlyRegistered( item.registration_date )
-					);
+					const site = sitesByBlogId[ item.blog_id ];
+					const hasRedirect = site?.options?.is_redirect ?? false;
+					return !! site && canSetAsPrimary( { domain: item, site, user } ) && ! hasRedirect;
 				},
 				disabled: setPrimaryDomainMutation.isPending,
 			},
@@ -236,10 +237,12 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
+					const site = sitesByBlogId[ item.blog_id ];
 					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
 				},
-				RenderModal: ( { items, closeModal = noop } ) =>
-					site ? (
+				RenderModal: ( { items, closeModal = noop } ) => {
+					const site = sitesByBlogId[ items[ 0 ].blog_id ];
+					return site ? (
 						<Suspense fallback={ null }>
 							<SiteChangeAddressContent
 								site={ site }
@@ -247,7 +250,8 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 								onClose={ closeModal }
 							/>
 						</Suspense>
-					) : null,
+					) : null;
+				},
 			},
 			{
 				id: 'manage-auto-renew',
@@ -259,12 +263,12 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 		],
 		[
 			user,
-			site,
 			router,
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,
 			createErrorNotice,
+			sitesByBlogId,
 		]
 	);
 

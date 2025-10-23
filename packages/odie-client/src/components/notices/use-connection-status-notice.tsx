@@ -1,12 +1,15 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { Icon, check, warning, info } from '@wordpress/icons';
+import { Icon, check, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 
+const WARNING_THRESHOLD = 15; // seconds
+
 export default function useConnectionStatusNotice( isLiveChat: boolean = false ) {
 	const [ shouldWarn, setShouldWarn ] = useState( false );
+	const [ secondsSinceDisconnected, setSecondsSinceDisconnected ] = useState( 0 );
 	const { __ } = useI18n();
 
 	const connectionStatus = useSelect(
@@ -15,30 +18,35 @@ export default function useConnectionStatusNotice( isLiveChat: boolean = false )
 	);
 
 	useEffect( () => {
-		if ( ! isLiveChat ) {
-			setShouldWarn( false );
-			return;
-		}
-
 		if ( connectionStatus === 'disconnected' ) {
-			setShouldWarn( true );
+			const connectionTimeout = setTimeout( () => {
+				setSecondsSinceDisconnected( secondsSinceDisconnected + 1 );
+				if ( secondsSinceDisconnected >= WARNING_THRESHOLD ) {
+					setShouldWarn( true );
+				}
+			}, 1000 );
+			return () => clearTimeout( connectionTimeout );
+		} else if ( connectionStatus === 'connected' ) {
+			setSecondsSinceDisconnected( 0 );
+			// Show the "Connected" notice for 2 seconds then auto-hide it.
+			const hidingReconnectedTimeout = setTimeout( setShouldWarn, 2000, false );
+			return () => clearTimeout( hidingReconnectedTimeout );
 		}
+	}, [ connectionStatus, secondsSinceDisconnected ] );
 
-		if ( connectionStatus === 'connected' ) {
-			const timeout = setTimeout( setShouldWarn, 2000, false );
-			return () => clearTimeout( timeout );
-		}
-	}, [ connectionStatus, isLiveChat ] );
+	if ( secondsSinceDisconnected < WARNING_THRESHOLD && connectionStatus !== 'connected' ) {
+		return undefined;
+	}
 
-	if ( ! shouldWarn || ! connectionStatus ) {
+	if ( ! isLiveChat || ! shouldWarn || ! connectionStatus ) {
 		return undefined;
 	}
 
 	const connectionStatusMap = {
 		disconnected: {
-			icon: <Icon size={ 24 } icon={ warning } />,
-			message: __( 'Chat connection lost.', __i18n_text_domain__ ),
-			status: 'error' as const,
+			icon: <Icon size={ 24 } icon={ info } />,
+			message: __( 'Unstable internet connection.', __i18n_text_domain__ ),
+			status: 'warning' as const,
 			dismissible: false,
 		},
 		reconnecting: {
