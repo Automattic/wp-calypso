@@ -992,8 +992,8 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	// Set up v2 dashboard routing.
-	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
+	// Set up Multi-site Dashboard routing.
+	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/manage', 'entry-dashboard-dotcom' );
 
 	// Set up CIAB dashboard routing.
 	handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );

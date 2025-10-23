@@ -133,7 +133,7 @@ export default function () {
 	);
 
 	/**
-	 * Settings V2
+	 * Settings Multi-site Dashboard backport
 	 */
 	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
 	page(

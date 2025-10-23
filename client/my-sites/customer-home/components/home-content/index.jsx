@@ -187,7 +187,9 @@ const HomeContent = ( {
 			{ isAdmin && ! isP2 && (
 				<Button
 					primary
-					href={ hostingDashboardOptIn ? `/v2/sites/${ site.slug }` : `/overview/${ site.slug }` }
+					href={
+						hostingDashboardOptIn ? `/manage/sites/${ site.slug }` : `/overview/${ site.slug }`
+					}
 				>
 					{ hostingDashboardOptIn
 						? translate( 'Hosting Dashboard' )

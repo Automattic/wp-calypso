@@ -8,10 +8,10 @@ import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 /**
- * Dashboard page class for the new v2 dashboard.
+ * Dashboard page class for the new Multi-site Dashboard.
  *
  * This Page Object represents the new dashboard implementation
- * accessible under the /v2 path.
+ * accessible under the /manage path.
  */
 export class DashboardPage {
 	/**
@@ -34,7 +34,7 @@ export class DashboardPage {
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visit(): Promise< void > {
-		await this.page.goto( getCalypsoURL( 'v2' ) );
+		await this.page.goto( getCalypsoURL( 'manage' ) );
 		// Wait for the main content to be visible
 		await this.page.getByRole( 'main' ).waitFor();
 	}
@@ -46,7 +46,7 @@ export class DashboardPage {
 	 */
 	async isLoaded(): Promise< boolean > {
 		const isMainContentVisible = await this.page.getByRole( 'main' ).isVisible();
-		const hasCorrectUrl = this.page.url().includes( '/v2' );
+		const hasCorrectUrl = this.page.url().includes( '/manage' );
 		return isMainContentVisible && hasCorrectUrl;
 	}
 
@@ -76,12 +76,12 @@ export class DashboardPage {
 	/**
 	 * Visits a specific subpath within the dashboard.
 	 *
-	 * @param subpath - The subpath to visit under /v2.
+	 * @param subpath - The subpath to visit under /manage.
 	 * @returns Promise that resolves when navigation is complete.
 	 */
 	async visitPath( subpath: string ): Promise< void > {
 		const path = subpath.startsWith( '/' ) ? subpath : `/${ subpath }`;
-		await this.page.goto( getCalypsoURL( `v2${ path }` ) );
+		await this.page.goto( getCalypsoURL( `manage${ path }` ) );
 	}
 
 	/**

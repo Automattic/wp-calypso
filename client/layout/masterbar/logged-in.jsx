@@ -234,7 +234,7 @@ class MasterbarLoggedIn extends Component {
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
 		if ( hostingDashboardOptIn ) {
-			mySitesUrl = domainOnlySite ? '/v2/domains' : '/v2/sites';
+			mySitesUrl = domainOnlySite ? '/manage/domains' : '/manage/sites';
 		}
 		const icon = this.wordpressIcon();
 

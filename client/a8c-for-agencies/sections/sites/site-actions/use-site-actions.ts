@@ -85,7 +85,7 @@ export default function useSiteActions( {
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/sites/settings/v2/${ url }/site-visibility`,
+				href: `https://wordpress.com/sites/settings/manage/${ url }/site-visibility`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
 				isEnabled: isDevSite,
