@@ -152,70 +152,11 @@
 	button {
 		width: 100%;
 	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-.migration-site-ssh__find-ssh-details-buttons {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.migration-site-ssh__step-add-server-address-form {
-	display: flex;
-	flex-direction: row;
-	gap: 1rem;
-}
-.migration-site-ssh__step-add-server-address-port-field {
-	flex: 2;
-}
-.migration-site-ssh__step-add-server-address-server-address-field {
-	flex: 4;
-}
-.migration-site-ssh__step-add-server-address-label{
-	font-weight: 600;
-	line-height: 1.25;
-
-}
-.migration-site-ssh__step-add-server-address-note{
-	margin: 0.5rem 0 1rem 0;
-	color: var(--color-neutral-70);
-}
-
-.migration-site-ssh__help-link {
-	margin: 1rem 0;
-	font-size: 0.875rem;
 }
 
 .site-migration-ssh__step-share-ssh {
 	&-description {
 		margin-bottom: 1rem;
-	}
-
-	&-auth-method {
-		margin-bottom: 1rem;
-	}
-
-	&-auth-label {
-		font-weight: 600;
-		margin-bottom: 0.5rem;
-	}
-
-	&-radio-group {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	&-radio-option {
-		display: flex;
-		align-items: center;
-		.form-radio__label {
-			margin-left: 0;
-		}
 	}
 
 	&-form {
@@ -229,15 +170,4 @@
 		font-weight: 600;
 		margin-bottom: 0.5rem;
 	}
-
-	&-key-textarea {
-		min-height: 120px;
-	}
-}
-
-.migration-site-ssh__continue-button {
-	margin-left: 2.5rem;
-    button {
-        width: 100%;
-    }
 }
