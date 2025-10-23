@@ -2,6 +2,7 @@ import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/a
 import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getTld } from '../helpers';
+import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
@@ -68,6 +69,10 @@ export const useSuggestionsList = () => {
 		isLoadingAvailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
+		if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
+			addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
+		}
+
 		return partitionSuggestions( {
 			suggestions: suggestions
 				.filter( ( { domain_name: suggestion, is_premium } ) => {

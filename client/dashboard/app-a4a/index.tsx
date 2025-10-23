@@ -20,7 +20,6 @@ boot( {
 			domains: false,
 			emails: false,
 		},
-		sitesCIAB: false,
 		domains: false,
 		emails: false,
 		themes: false,
@@ -34,14 +33,9 @@ boot( {
 		plugins: true,
 		commandPalette: false,
 	},
-	onboardingLinkSourceQueryArg: 'sites-dashboard',
-	onboardingLinks: {
-		default: {
-			href: '/start',
-		},
-		withAI: {
-			href: '/setup/ai-site-builder',
-		},
-	},
 	optIn: false,
+	components: {
+		sites: () => import( '../sites' ),
+		siteSwitcher: () => import( '../sites/site-switcher' ),
+	},
 } );

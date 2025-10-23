@@ -94,7 +94,7 @@ export default function DomainTransferToOtherSite() {
 								selectedSite.name
 							) }
 						</Text>
-						{ selectedSite?.plan?.is_free && (
+						{ selectedSite?.plan?.is_free && ! selectedSite?.is_wpcom_flex && (
 							<Text as="p">
 								{ __(
 									'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'

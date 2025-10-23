@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { upsell } from '../../components/icons';
+import OverviewCard from '../../components/overview-card';
 import HostingFeatureGate from '../hosting-feature-gate';
-import OverviewCard from '../overview-card';
+import type { OverviewCardProps } from '../../components/overview-card';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
-import type { OverviewCardProps } from '../overview-card';
 
 interface HostingFeatureGatedWithOverviewCardProps
 	extends Omit< HostingFeatureGateProps, 'renderUpsellComponent' | 'renderActivationComponent' > {
@@ -20,7 +20,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 	upsellLink = '',
 	...props
 }: HostingFeatureGatedWithOverviewCardProps ) {
-	const { tracksFeatureId } = props;
+	const { upsellId, upsellFeatureId } = props;
 
 	const cardProps: Partial< OverviewCardProps > = {
 		heading: upsellHeading,
@@ -37,7 +37,8 @@ export default function HostingFeatureGatedWithOverviewCard( {
 				<OverviewCard
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
-					tracksId={ tracksFeatureId }
+					tracksId={ upsellId }
+					upsellFeatureId={ upsellFeatureId ?? upsellId }
 				/>
 			) }
 			renderActivationComponent={ ( { onClick } ) => (

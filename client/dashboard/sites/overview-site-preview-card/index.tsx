@@ -1,6 +1,6 @@
 import { Card } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import SiteIcon from '../site-icon';
+import SiteIcon from '../../components/site-icon';
 import SitePreview from '../site-preview';
 import type { Site } from '@automattic/api-core';
 

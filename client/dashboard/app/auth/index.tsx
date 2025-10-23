@@ -127,9 +127,8 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
-				[ 401, 403 ].includes( event.action.error.statusCode ) &&
-				event.action.error.error === 'authorization_required' &&
-				! authErrorHandled.current // Prevents repeated calls to redirect
+				event.action.error.statusCode === 401 &&
+				[ 'rest_forbidden', 'authorization_required' ].includes( event.action.error.error ?? '' )
 			) {
 				handleAuthError();
 			}

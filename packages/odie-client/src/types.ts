@@ -27,7 +27,6 @@ export type OdieAssistantContextInterface = {
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
-	sectionName: string;
 };
 
 export type OdieAssistantProviderProps = {
@@ -46,7 +45,6 @@ export type OdieAssistantProviderProps = {
 	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
-	sectionName: string;
 } & PropsWithChildren;
 
 export type CurrentUser = {

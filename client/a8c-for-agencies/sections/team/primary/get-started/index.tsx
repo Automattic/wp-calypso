@@ -1,6 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -94,8 +93,7 @@ export default function GetStarted() {
 						href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members"
 						onClick={ onLearnMoreClick }
 					>
-						{ translate( 'Team members Knowledge Base article' ) }
-						<Icon icon={ external } size={ 18 } />
+						{ translate( 'Team members Knowledge Base article ↗' ) }
 					</Button>
 					<br />
 				</StepSection>

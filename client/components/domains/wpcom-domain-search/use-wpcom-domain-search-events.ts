@@ -21,6 +21,7 @@ import {
 	recordDomainClickMissing,
 	recordFiltersReset,
 	recordFiltersSubmit,
+	recordShowMoreResults,
 } from './analytics';
 
 export const useWPCOMDomainSearchEvents = ( {
@@ -153,6 +154,9 @@ export const useWPCOMDomainSearchEvents = ( {
 			onFilterReset: ( filter, keysToReset ) => {
 				debouncedDomainSearchEvent( query ?? '' );
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
+			},
+			onShowMoreResults: ( pageNumber ) => {
+				dispatch( recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName ) );
 			},
 			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
 				dispatch(

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { shuffle } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import OverviewCard from '../overview-card';
+import OverviewCard from '../../components/overview-card';
 import type { Site } from '@automattic/api-core';
 
 export default function MigrateSiteCard( { site }: { site: Site } ) {
@@ -13,7 +13,8 @@ export default function MigrateSiteCard( { site }: { site: Site } ) {
 			description={ __( 'Bring your site to WordPress.com.' ) }
 			externalLink={ addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } ) }
 			intent="upsell"
-			tracksId="migrate-site"
+			tracksId="site-overview-migrate-site"
+			upsellFeatureId="site-migration"
 		/>
 	);
 }

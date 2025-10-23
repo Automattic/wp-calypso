@@ -1,5 +1,6 @@
 import boot from '../app/boot';
 import Logo from './logo';
+import './translations';
 import './style.scss';
 
 boot( {
@@ -9,8 +10,16 @@ boot( {
 	Logo,
 	supports: {
 		overview: false,
-		sites: false,
-		sitesCIAB: true,
+		sites: {
+			deployments: false,
+			performance: false,
+			monitoring: false,
+			logs: false,
+			backups: false,
+			scan: false,
+			domains: true,
+			emails: false,
+		},
 		domains: true,
 		emails: true,
 		themes: false,
@@ -24,14 +33,9 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 	},
-	onboardingLinkSourceQueryArg: 'ciab-sites-dashboard',
-	onboardingLinks: {
-		default: {
-			href: '/start',
-		},
-		withAI: {
-			href: '/setup/ai-site-builder-spec',
-		},
-	},
 	optIn: false,
+	components: {
+		sites: () => import( '../sites-ciab' ),
+		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
+	},
 } );

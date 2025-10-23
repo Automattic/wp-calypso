@@ -12,6 +12,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { commerceGardenPlan } from '../../components/icons';
+import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -21,7 +22,6 @@ import {
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
-import OverviewCard from '../overview-card';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
 import type { Purchase, Site } from '@automattic/api-core';
@@ -71,7 +71,7 @@ function JetpackPlanCard( {
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			externalLink={ `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }` }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
 				<VStack spacing={ 3 }>
@@ -128,7 +128,7 @@ function WpcomPlanCard( {
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			{ ...getBillingLinkProps() }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
@@ -152,7 +152,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ description }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoadingProductionSite }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
@@ -167,7 +167,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
 			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
-			tracksId="plan"
+			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
@@ -222,7 +222,7 @@ export default function PlanCard( { site }: { site: Site } ) {
 	}
 
 	if ( isCommerceGarden( site ) ) {
-		return <CommerceGardenPlanCard site={ site } isLoading={ isLoading } />;
+		return <CommerceGardenPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {

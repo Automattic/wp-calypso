@@ -45,6 +45,7 @@ export const siteCreationPath = buildPathHelper<
 		queryParams: {
 			from?: string | null;
 			platform: ImporterPlatform;
+			ssh?: string;
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -52,7 +53,7 @@ export const siteCreationPath = buildPathHelper<
 
 export const sitePickerPath = buildPathHelper<
 	{
-		queryParams: { from: string | null; platform: ImporterPlatform };
+		queryParams: { from: string | null; platform: ImporterPlatform; ssh?: string };
 	},
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
@@ -111,6 +112,7 @@ export const upgradePlanPath = buildPathHelper<
 			from?: string | null;
 			destination?: string;
 			how?: string;
+			ssh?: string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
@@ -189,6 +191,26 @@ export const supportInstructionsPath = buildPathHelper<
 	},
 	typeof STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 >( STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug );
+
+export const sshShareAccessPath = buildPathHelper<
+	{
+		queryParams: {
+			siteId?: number | string;
+			siteSlug: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug
+>( STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug );
+
+export const sshInProgressPath = buildPathHelper<
+	{
+		queryParams: {
+			siteId?: number | string;
+			siteSlug: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug
+>( STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug );
 
 export const identifyPath = buildPathHelper<
 	{

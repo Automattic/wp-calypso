@@ -5,8 +5,8 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { siteRoute } from '../../app/router/sites';
+import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
-import SiteIcon from '../../sites/site-icon';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainSiteField = ( { domain, value }: { domain: DomainSummary; value: string } ) => {

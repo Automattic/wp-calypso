@@ -1,9 +1,11 @@
-export enum DomainTypes {
-	MAPPED = 'mapping',
-	SITE_REDIRECT = 'redirect',
-	WPCOM = 'wpcom',
-	TRANSFER = 'transfer',
-}
+export const DomainTypes = {
+	MAPPED: 'mapping',
+	SITE_REDIRECT: 'redirect',
+	WPCOM: 'wpcom',
+	TRANSFER: 'transfer',
+} as const;
+
+export type DomainTypes = ( typeof DomainTypes )[ keyof typeof DomainTypes ];
 
 export const DomainTransferStatus = {
 	PENDING_OWNER: 'pending_owner',
@@ -17,28 +19,32 @@ export const DomainTransferStatus = {
 export type DomainTransferStatus =
 	( typeof DomainTransferStatus )[ keyof typeof DomainTransferStatus ];
 
-export enum DomainSubtype {
-	DEFAULT_ADDRESS = 'default_address',
-	DOMAIN_CONNECTION = 'domain_connection',
-	DOMAIN_REGISTRATION = 'domain_registration',
-	DOMAIN_TRANSFER = 'domain_transfer',
-	SITE_REDIRECT = 'site_redirect',
-}
+export const DomainSubtype = {
+	DEFAULT_ADDRESS: 'default_address',
+	DOMAIN_CONNECTION: 'domain_connection',
+	DOMAIN_REGISTRATION: 'domain_registration',
+	DOMAIN_TRANSFER: 'domain_transfer',
+	SITE_REDIRECT: 'site_redirect',
+} as const;
 
-export enum DomainStatus {
-	ACTIVE = 'active',
-	IN_PROGRESS = 'in_progress',
-	EXPIRED = 'expired',
-	EXPIRED_IN_AUCTION = 'expired_in_auction',
-	PENDING_RENEWAL = 'pending_renewal',
-	PENDING_TRANSFER = 'pending_transfer',
-	EXPIRING_SOON = 'expiring_soon',
-	TRANSFER_COMPLETED = 'transfer_completed',
-	CONNECTION_ERROR = 'connection_error',
-	TRANSFER_PENDING = 'transfer_pending',
-	TRANSFER_ERROR = 'transfer_error',
-	PENDING_REGISTRATION = 'pending_registration',
-}
+export type DomainSubtype = ( typeof DomainSubtype )[ keyof typeof DomainSubtype ];
+
+export const DomainStatus = {
+	ACTIVE: 'active',
+	IN_PROGRESS: 'in_progress',
+	EXPIRED: 'expired',
+	EXPIRED_IN_AUCTION: 'expired_in_auction',
+	PENDING_RENEWAL: 'pending_renewal',
+	PENDING_TRANSFER: 'pending_transfer',
+	EXPIRING_SOON: 'expiring_soon',
+	TRANSFER_COMPLETED: 'transfer_completed',
+	CONNECTION_ERROR: 'connection_error',
+	TRANSFER_PENDING: 'transfer_pending',
+	TRANSFER_ERROR: 'transfer_error',
+	PENDING_REGISTRATION: 'pending_registration',
+} as const;
+
+export type DomainStatus = ( typeof DomainStatus )[ keyof typeof DomainStatus ];
 
 export const DomainStatusCta = {
 	VIEW_DOMAIN: 'view_domain',

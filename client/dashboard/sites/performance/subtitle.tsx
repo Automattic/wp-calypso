@@ -1,47 +1,57 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useFormattedTime } from '../../components/formatted-time';
+import { useTimeSince } from '../../components/time-since';
+
+const REPORT_REFRESH_THRESHOLD_HOURS = 48;
+
+function isReportOlderThan( reportTimestamp: string, hours: number ): boolean {
+	const now = new Date();
+	const reportDate = new Date( reportTimestamp );
+
+	if ( isNaN( reportDate.getTime() ) ) {
+		return false;
+	}
+
+	return now.getTime() - reportDate.getTime() > hours * 60 * 60 * 1000;
+}
 
 export default function Subtitle( {
 	timestamp,
-	timezoneString,
-	gmtOffset,
 	onClick,
 }: {
 	timestamp: string | undefined;
-	timezoneString?: string;
-	gmtOffset?: number;
 	onClick: () => void;
 } ) {
-	const formattedTime = useFormattedTime(
-		timestamp ?? '',
-		{
-			dateStyle: 'long',
-			timeStyle: 'short',
-		},
-		timezoneString,
-		gmtOffset
-	);
+	const timeSince = useTimeSince( timestamp ?? '' );
 
 	if ( ! timestamp ) {
 		return <Text variant="muted">{ __( 'Testing your site may take around 30 seconds.' ) }</Text>;
 	}
 
+	if ( isReportOlderThan( timestamp, REPORT_REFRESH_THRESHOLD_HOURS ) ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: %s: relative time since last test run */
+				__(
+					'Last test ran <b>%s</b>. Test again if your site has changed. <button>Test again</button>'
+				),
+				timeSince
+			),
+			{
+				b: <strong />,
+				button: <Button variant="link" onClick={ onClick } />,
+			}
+		);
+	}
+
 	return createInterpolateElement(
 		sprintf(
-			// translators: %s is a date, e.g. March 12, 2025
-			__( 'Tested on <span>%s</span>. <button>Test again</button>' ),
-			formattedTime
+			/* translators: %s: relative time since last test run */
+			__( 'Last test ran %s. <button>Test again</button>' ),
+			timeSince
 		),
 		{
-			span: (
-				<span
-					css={ {
-						fontVariantNumeric: 'tabular-nums',
-					} }
-				/>
-			),
 			button: <Button variant="link" onClick={ onClick } />,
 		}
 	);

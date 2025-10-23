@@ -7,6 +7,7 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,
@@ -14,6 +15,7 @@ import {
 } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { BackToDeploymentsButton } from './back-to-deployments-button';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
@@ -26,6 +28,8 @@ export default function ConfigureRepository() {
 	const navigate = useNavigate( {
 		from: navigateFrom,
 	} );
+	const search = siteSettingsRepositoriesManageRoute.useSearch();
+	const showBackToDeployments = search?.from === 'deployments';
 
 	const handleCancel = () => {
 		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
@@ -46,37 +50,41 @@ export default function ConfigureRepository() {
 	};
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					title={ __( 'Configure Repository' ) }
-					description={ __(
-						'Update the GitHub repository connection to deploy code to your WordPress site.'
-					) }
-				/>
-			}
-		>
-			<Card>
-				<CardBody>
-					<ConnectRepositoryForm
-						formTitle={ __( 'Update connection details' ) }
-						formDescription={ __(
-							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
+		<>
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 3 } /> }
+						title={ __( 'Configure Repository' ) }
+						description={ __(
+							'Update the GitHub repository connection to deploy code to your WordPress site.'
 						) }
-						onCancel={ handleCancel }
-						mutation={ updateMutation }
-						initialValues={ initialValues }
-						submitText={ __( 'Update Connection' ) }
-						successMessage={ __( 'Repository settings updated successfully.' ) }
-						errorMessage={
-							// translators: "reason" is why updating the repository failed.
-							__( 'Failed to update repository: %(reason)s' )
-						}
-						navigateFrom={ navigateFrom }
 					/>
-				</CardBody>
-			</Card>
-		</PageLayout>
+				}
+			>
+				<Card>
+					<CardBody>
+						<ConnectRepositoryForm
+							formTitle={ __( 'Update connection details' ) }
+							formDescription={ __(
+								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
+							) }
+							onCancel={ handleCancel }
+							mutation={ updateMutation }
+							initialValues={ initialValues }
+							submitText={ __( 'Update Connection' ) }
+							successMessage={ __( 'Repository settings updated successfully.' ) }
+							errorMessage={
+								// translators: "reason" is why updating the repository failed.
+								__( 'Failed to update repository: %(reason)s' )
+							}
+							navigateFrom={ navigateFrom }
+						/>
+					</CardBody>
+				</Card>
+			</PageLayout>
+			{ showBackToDeployments && <BackToDeploymentsButton /> }
+		</>
 	);
 }

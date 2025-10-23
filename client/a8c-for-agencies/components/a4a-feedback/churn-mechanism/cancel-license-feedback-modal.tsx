@@ -1,6 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
-import { Icon, external, info } from '@wordpress/icons';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
@@ -228,8 +228,7 @@ const CancelLicenseFeedbackModal = ( {
 						disabled={ isLoading || ( suggestion && ! suggestions.length ) }
 						isBusy={ isLoading }
 					>
-						{ translate( 'Cancel license' ) }
-						{ isAtomicSite && <Icon icon={ external } size={ 18 } /> }
+						{ isAtomicSite ? translate( 'Cancel license ↗' ) : translate( 'Cancel license' ) }
 					</Button>
 				</>
 			}

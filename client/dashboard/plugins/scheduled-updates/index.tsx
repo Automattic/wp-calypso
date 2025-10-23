@@ -17,7 +17,8 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { SiteIconLink } from '../../sites/site-fields';
+import SiteIcon from '../../components/site-icon';
+import { SiteLink } from '../../sites/site-fields';
 import { formatDate } from '../../utils/datetime';
 import { prepareScheduleName } from './helpers';
 import { useDeleteSchedules } from './hooks/use-delete-schedules';
@@ -120,7 +121,7 @@ const getFields = ( locale: string ): Field< ScheduledUpdateRow >[] => {
 		{
 			id: 'icon.ico',
 			label: __( 'Site icon' ),
-			render: ( { item } ) => <SiteIconLink site={ item.site } />,
+			render: ( { item } ) => <SiteIcon site={ item.site } />,
 			enableSorting: false,
 			enableGlobalSearch: false,
 		},
@@ -247,6 +248,9 @@ export default function PluginsScheduledUpdates() {
 								},
 							},
 						] }
+						renderItemLink={ ( { item, ...props } ) => (
+							<SiteLink { ...props } site={ item.site } />
+						) }
 					/>
 				</DataViewsCard>
 			</PageLayout>

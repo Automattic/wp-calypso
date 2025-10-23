@@ -16,6 +16,7 @@ import { getSiteData } from '../lib/site-data';
 import SitesWithWooPaymentsMobileView from './mobile-view';
 import {
 	SiteColumn,
+	TransactionsColumn,
 	CommissionsPaidColumn,
 	TimeframeCommissionsColumn,
 	WooPaymentsStatusColumn,
@@ -46,7 +47,13 @@ export default function SitesWithWooPayments() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'site', 'commissionsPaid', 'timeframeCommissions', 'woopaymentsStatus' ],
+		fields: [
+			'site',
+			'transactions',
+			'commissionsPaid',
+			'timeframeCommissions',
+			'woopaymentsStatus',
+		],
 	} );
 
 	const fields = useMemo(
@@ -58,6 +65,20 @@ export default function SitesWithWooPayments() {
 				render: ( { item }: { item: SitesWithWooPaymentsState } ) => (
 					<SiteColumn site={ item.siteUrl } />
 				),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'transactions',
+				label: translate( 'Transactions' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item } ) => {
+					if ( isLoadingWooPaymentsData ) {
+						return <TextPlaceholder />;
+					}
+					const { transactions } = getSiteData( woopaymentsData, item.blogId );
+					return <TransactionsColumn transactions={ transactions } />;
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},

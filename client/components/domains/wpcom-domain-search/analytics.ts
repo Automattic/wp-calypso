@@ -202,3 +202,20 @@ export function recordDomainClickMissing(
 		} )
 	);
 }
+
+export function recordShowMoreResults(
+	searchQuery: string,
+	pageNumber: number,
+	section: string,
+	flowName: string
+) {
+	return composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
+		recordTracksEvent( 'calypso_domain_search_show_more_results', {
+			search_query: searchQuery,
+			page_number: pageNumber,
+			section,
+			flow_name: flowName,
+		} )
+	);
+}

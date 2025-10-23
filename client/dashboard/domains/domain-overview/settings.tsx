@@ -28,11 +28,9 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 	}
 
 	if (
-		[
-			DomainSubtype.DOMAIN_REGISTRATION,
-			DomainSubtype.DOMAIN_CONNECTION,
-			DomainSubtype.DOMAIN_TRANSFER,
-		].includes( domain.subtype.id ) &&
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
 		domain.can_manage_dns_records
 	) {
@@ -60,11 +58,9 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 	 * mapping. Right now I copied the code from the original code but it seems wrong
 	 */
 	if (
-		[
-			DomainSubtype.DOMAIN_REGISTRATION,
-			DomainSubtype.DOMAIN_CONNECTION,
-			DomainSubtype.DOMAIN_TRANSFER,
-		].includes( domain.subtype.id ) &&
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
 	) {
 		buttonListItems.push( <DomainSecuritySettingsSummary key="security" domain={ domain } /> );

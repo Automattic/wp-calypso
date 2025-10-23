@@ -1,4 +1,10 @@
-import { DotcomFeatures, WhoisType, DomainSubtype, DomainStatus } from '@automattic/api-core';
+import {
+	DotcomFeatures,
+	WhoisType,
+	DomainSubtype,
+	DomainStatus,
+	DomainTypes,
+} from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
@@ -11,6 +17,8 @@ import type {
 	Site,
 	User,
 	WhoisDataEntry,
+	TitanEmailSubscription,
+	GoogleEmailSubscription,
 } from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
@@ -46,12 +54,12 @@ export function isDomainRenewable( domain: DomainSummary ): boolean {
 	return (
 		!! domain.subscription_id &&
 		!! domain.current_user_is_owner &&
-		! [
-			DomainStatus.PENDING_RENEWAL,
-			DomainStatus.PENDING_TRANSFER,
-			DomainStatus.PENDING_REGISTRATION,
-			DomainStatus.EXPIRED_IN_AUCTION,
-		].includes( domain.domain_status.id )
+		! (
+			domain.domain_status.id === DomainStatus.PENDING_RENEWAL ||
+			domain.domain_status.id === DomainStatus.PENDING_TRANSFER ||
+			domain.domain_status.id === DomainStatus.PENDING_REGISTRATION ||
+			domain.domain_status.id === DomainStatus.EXPIRED_IN_AUCTION
+		)
 	);
 }
 
@@ -99,13 +107,13 @@ export function shouldUpgradeToMakeDomainPrimary( {
 	user: User;
 } ) {
 	return (
-		[ DomainSubtype.DOMAIN_CONNECTION, DomainSubtype.DOMAIN_REGISTRATION ].includes(
-			domain.subtype.id
-		) &&
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ) &&
 		! domain.primary_domain &&
 		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
 		!! site.plan?.is_free &&
-		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
+		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN ) &&
+		! site.is_garden
 	);
 }
 
@@ -139,8 +147,21 @@ export function hasTitanMailWithUs( domain: Domain ) {
 	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }
 
+/**
+ * Returns the maximum number of mailboxes that can be provisioned for a domain. Because a Titan
+ * subscription must have at least one mailbox, `1` is the default return value even for domains
+ * without an active Titan subscription.
+ */
+export function getMaxTitanMailboxCount( domain: Domain ): number {
+	return ( domain.titan_mail_subscription as TitanEmailSubscription )?.maximum_mailbox_count ?? 1;
+}
+
+export function getGSuiteMailboxCount( domain: Domain ): number {
+	return ( domain?.google_apps_subscription as GoogleEmailSubscription )?.total_user_count ?? 0;
+}
+
 export function hasEmailForwards( domain: Domain ) {
-	return domain?.email_forwards_count ?? 0;
+	return !! ( domain?.email_forwards_count ?? 0 );
 }
 
 export const domainHasEmail = ( domain: Domain ) =>
@@ -335,4 +356,34 @@ export function isSubdomain( domainName: string ): boolean {
 	);
 
 	return isValidSubdomain && getRootDomain( domainName ) !== domainName;
+}
+
+export function isGoogleWorkspaceSupportedDomain( domain: Domain ) {
+	if ( domain.google_apps_subscription?.status === 'other_provider' ) {
+		return false;
+	}
+
+	// If the domain is registered through us, there is a provisioning period when
+	// `hasWpcomNameservers` will be false. We still want to let users buy Google Workspace
+	// during that period, even if we normally wouldn't let them under these conditions.
+	// Therefore, we check those conditions and return true if the registration happened less
+	// than 15 minutes ago. 15 minutes is an arbitrary number.
+	if (
+		isRegisteredDomain( domain ) &&
+		! domain.has_wpcom_nameservers &&
+		isRecentlyRegistered( domain.registration_date, 15 )
+	) {
+		return true;
+	}
+
+	const isHostedOnWpcom =
+		isRegisteredDomain( domain ) && ( domain.has_wpcom_nameservers || hasGSuiteWithUs( domain ) );
+	if (
+		! isHostedOnWpcom &&
+		! ( domain.type === DomainTypes.MAPPED && domain.has_wpcom_nameservers )
+	) {
+		return false;
+	}
+
+	return ! domain.domain.endsWith( '.wpcomstaging.com' );
 }

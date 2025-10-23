@@ -232,7 +232,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.DEFENSIVE_MODE }
-				tracksFeatureId="settings-defensive-mode"
+				upsellId="site-settings-defensive-mode"
 			>
 				{ data?.enabled ? renderEnabled() : renderDisabled() }
 			</HostingFeatureGatedWithCallout>

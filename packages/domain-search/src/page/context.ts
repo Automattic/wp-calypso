@@ -27,6 +27,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onDomainAddAvailabilityPreCheck: noop,
 		onFilterApplied: noop,
 		onFilterReset: noop,
+		onShowMoreResults: noop,
 		onSuggestionsReceive: noop,
 		onSuggestionRender: noop,
 		onSuggestionInteract: noop,
@@ -63,6 +64,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		allowsUsingOwnDomain: false,
 		includeOwnedDomainInSuggestions: false,
 		allowedTlds: [],
+		numberOfDomainsResultsPerPage: 10,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,

@@ -1,4 +1,4 @@
-import type { DomainSummary, DomainTransferStatus } from '../domains';
+import { DomainSummary, DomainTransferStatus, DomainTypes } from '../domains';
 
 export const EmailSubscriptionStatus = {
 	NO_SUBSCRIPTION: 'no_subscription',
@@ -11,13 +11,27 @@ export type EmailSubscriptionStatus =
 	( typeof EmailSubscriptionStatus )[ keyof typeof EmailSubscriptionStatus ];
 
 interface EmailSubscription {
-	status: 'active' | 'pending' | 'suspended' | 'no_subscription';
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
+	product_slug: string;
 }
 
-export interface GoogleEmailSubscription extends EmailSubscription {}
+export interface EmailCost {
+	amount: number;
+	currency: string;
+	text: string;
+}
+
+export interface GoogleEmailSubscription extends EmailSubscription {
+	total_user_count: number;
+}
 
 export interface TitanEmailSubscription extends EmailSubscription {
+	expiry_date: string;
 	order_id: number;
+	maximum_mailbox_count: number;
+	is_eligible_for_introductory_offer?: boolean;
+	purchase_cost_per_mailbox?: EmailCost;
+	renewal_cost_per_mailbox?: EmailCost;
 }
 
 export interface Domain extends DomainSummary {
@@ -35,6 +49,11 @@ export interface Domain extends DomainSummary {
 	current_user_can_manage: boolean;
 	contact_info_disclosure_available: boolean;
 	contact_info_disclosed: boolean;
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ key: string ]: string[];
+		};
+	} | null;
 	dnssec_records?: {
 		dnskey: string[];
 		ds_data: string[];
@@ -72,6 +91,7 @@ export interface Domain extends DomainSummary {
 	subdomain_part: string;
 	transfer_status: DomainTransferStatus | null;
 	transfer_away_eligible_at: string;
+	type: DomainTypes;
 	wpcom_domain?: boolean;
 	registration_date: string;
 	email_forwards_count?: number;

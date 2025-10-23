@@ -4,18 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
-import OverviewCard from '../overview-card';
 import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	icon: chartBar,
 	title: __( 'Performance' ),
-	tracksId: 'performance',
+	tracksId: 'site-overview-performance',
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
@@ -163,7 +163,8 @@ export default function PerformanceCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.PERFORMANCE }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.tracksId }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-performance"
 			upsellHeading={ __( 'Test site performance' ) }
 			upsellDescription={ __( 'Get detailed metrics and recommendations.' ) }
 			upsellLink={ getPerformanceUrl( site ) }

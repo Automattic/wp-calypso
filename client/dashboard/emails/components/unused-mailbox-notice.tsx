@@ -1,11 +1,11 @@
 import { Link } from '@tanstack/react-router';
 import {
-	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { addTitanmailMailboxRoute } from '../../app/router/emails';
+import { addProfessionalEmailRoute } from '../../app/router/emails';
 import { Notice } from '../../components/notice';
 
 interface UnusedMailboxNoticeProps {
@@ -37,7 +37,7 @@ const UnusedMailboxNotice = ( { domains }: UnusedMailboxNoticeProps ) => {
 				<VStack spacing={ 2 }>
 					{ domains.map( ( domain ) => (
 						<HStack key={ domain }>
-							<Link to={ addTitanmailMailboxRoute.to }>
+							<Link to={ addProfessionalEmailRoute.to } params={ { domain } }>
 								{ sprintf(
 									// translators: %s is a domain name
 									__( 'Set up mailbox for %s' ),
