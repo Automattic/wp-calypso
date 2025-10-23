@@ -14,7 +14,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { useMonetizeFieldDefinitions } from './dataviews';
-import { getMonetizeSubscriptionsPageTitle } from './urls';
+import { getMonetizeSubscriptionsPageTitle } from './title';
 
 const defaultPerPage = 10;
 
