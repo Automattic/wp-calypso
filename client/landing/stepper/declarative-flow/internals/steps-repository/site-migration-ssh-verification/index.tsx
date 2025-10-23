@@ -1,6 +1,5 @@
 import { Step } from '@automattic/onboarding';
 import { useEffect } from 'react';
-import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useVerifySSHMigrationAtomicTransfer } from '../site-migration-ssh-share-access/hooks/use-verify-ssh-migration-atomic-transfer';
 import type { Step as StepType } from '../../types';
@@ -41,7 +40,6 @@ const SiteMigrationSshVerification: StepType< {
 
 	return (
 		<>
-			<DocumentHead title="" />
 			<Step.Loading delay={ 500 } />
 		</>
 	);
