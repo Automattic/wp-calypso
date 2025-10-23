@@ -3,9 +3,17 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTimeSince } from '../../components/time-since';
 
+const REPORT_REFRESH_THRESHOLD_HOURS = 48;
+
 function isReportOlderThan( reportTimestamp: string, hours: number ): boolean {
 	const now = new Date();
-	return now.getTime() - new Date( reportTimestamp ).getTime() > hours * 60 * 60 * 1000;
+	const reportDate = new Date( reportTimestamp );
+
+	if ( isNaN( reportDate.getTime() ) ) {
+		return false;
+	}
+
+	return now.getTime() - reportDate.getTime() > hours * 60 * 60 * 1000;
 }
 
 export default function Subtitle( {
@@ -21,7 +29,7 @@ export default function Subtitle( {
 		return <Text variant="muted">{ __( 'Testing your site may take around 30 seconds.' ) }</Text>;
 	}
 
-	if ( isReportOlderThan( timestamp, 48 ) ) {
+	if ( isReportOlderThan( timestamp, REPORT_REFRESH_THRESHOLD_HOURS ) ) {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: %s: relative time since last test run */
