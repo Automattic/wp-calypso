@@ -2,6 +2,7 @@ import { sitesQuery } from '@automattic/api-queries';
 import boot from '../app/boot';
 import Logo from './logo';
 import './translations';
+import type { FetchSitesOptions } from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -47,7 +48,7 @@ boot( {
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},
 	queries: {
-		sitesQuery: ( fetchSitesOptions ) =>
-			sitesQuery( Object.assign( {}, fetchSitesOptions, { site_filters: [ 'commerce-garden' ] } ) ),
+		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
+			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 	},
 } );

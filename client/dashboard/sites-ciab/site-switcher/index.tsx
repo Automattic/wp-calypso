@@ -28,7 +28,6 @@ const CIABSiteSwitcher = () => {
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( {
 		...queries.sitesQuery( {
-			site_filters: [ 'commerce-garden' ],
 			site_visibility: 'visible',
 			include_a8c_owned: false,
 		} ),

@@ -1,6 +1,7 @@
 import { sitesQuery } from '@automattic/api-queries';
 import boot from '../app/boot';
 import { Logo, LoadingLogo } from './logo';
+import type { FetchSitesOptions } from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -47,6 +48,6 @@ boot( {
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
 	queries: {
-		sitesQuery,
+		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 	},
 } );
