@@ -22,11 +22,6 @@ const animation = {
 		display: 'flex',
 		opacity: 1,
 	},
-	animateOut: {
-		y: '100%',
-		display: 'none',
-		opacity: 0,
-	},
 };
 
 export const Cart = ( {
