@@ -58,16 +58,9 @@ export const Cart = ( {
 								<Text className="cart-summary__total">{ totalPrice }</Text>
 							</VStack>
 
-							<HStack spacing={ 4 } style={ { width: 'auto' } }>
-								<Button
-									variant="primary"
-									__next40pxDefaultSize
-									disabled={ isCartBusy }
-									type="submit"
-								>
-									{ __( 'Continue' ) }
-								</Button>
-							</HStack>
+							<Button variant="primary" __next40pxDefaultSize disabled={ isCartBusy } type="submit">
+								{ __( 'Continue' ) }
+							</Button>
 						</HStack>
 					</div>
 				</Card>
