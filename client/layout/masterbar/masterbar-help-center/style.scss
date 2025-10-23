@@ -1,6 +1,6 @@
 .masterbar__item-wrapper.is-menu-panel {
 	.masterbar__item-subitems {
-		min-width: 252px !important;
+		min-width: 170px !important;
 		padding: 12px 10px;
 
 		button.is-link {
@@ -20,7 +20,8 @@
 
 	.masterbar__help-menu-divider {
 		hr {
-			background: var( --color-neutral-5 );
+			background: currentColor;
+			opacity: 0.8;
 			margin: 0;
 		}
 	}
