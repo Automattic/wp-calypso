@@ -108,7 +108,7 @@ export default function DomainGlueRecordsForm( {
 		fields: [ 'nameServer', 'ipAddress' ],
 	};
 
-	const { isValid } = useFormValidity( formData, fields, form );
+	const { validity, isValid } = useFormValidity( formData, fields, form );
 	const canSubmit = ! isSubmitting && isValid;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -130,6 +130,7 @@ export default function DomainGlueRecordsForm( {
 						<DataForm< FormData >
 							data={ formData }
 							fields={ fields }
+							validity={ validity }
 							form={ form }
 							onChange={ ( edits: Partial< FormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );

@@ -171,8 +171,9 @@ test( 'shows validation error when target URL is empty and blurred', async () =>
 	await user.tab(); // This will blur the field
 
 	// Validation error should appear after blur
+	// Note: jsdom uses "Constraints not satisfied" while browsers use locale-specific messages like "Please fill out this field"
 	await waitFor( () => {
-		expect( screen.getByText( /please enter a valid url/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /constraints not satisfied/i ) ).toBeInTheDocument();
 	} );
 } );
 

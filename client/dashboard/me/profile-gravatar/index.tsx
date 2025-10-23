@@ -108,7 +108,7 @@ export default function GravatarProfileSection( {
 	const isDirty = controlledKeys.some(
 		( key ) => data[ key as keyof UserSettings ] !== serverProfile[ key as keyof UserSettings ]
 	);
-	const { isValid } = useFormValidity( data, fields, form );
+	const { validity, isValid } = useFormValidity( data, fields, form );
 
 	const onChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
@@ -168,6 +168,7 @@ export default function GravatarProfileSection( {
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }
+							validity={ validity }
 							form={ form }
 							onChange={ onChange }
 						/>
