@@ -7,13 +7,13 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
-import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
-import { useDispatch } from 'calypso/state';
-import { resetSite } from 'calypso/state/sites/actions';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
+import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
 
@@ -56,7 +56,6 @@ const SiteMigrationSshShareAccess: StepType< {
 		fromUrl,
 		siteId,
 		siteName: site?.name ?? '',
-		onComplete: onCompleteSteps,
 		host,
 		onNoSSHAccess: handleNoSSHAccess,
 	} );
@@ -72,8 +71,6 @@ const SiteMigrationSshShareAccess: StepType< {
 				port: formState.port,
 				username: formState.username,
 				password: formState.authMethod === 'password' ? formState.password : undefined,
-				privateKey: formState.authMethod === 'key' ? formState.publicKey : undefined,
-				passphrase: formState.authMethod === 'key' ? formState.passphrase : undefined,
 			},
 			{
 				onSuccess: () => {

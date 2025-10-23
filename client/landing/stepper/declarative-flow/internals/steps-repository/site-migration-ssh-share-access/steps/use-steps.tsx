@@ -21,8 +21,6 @@ interface StepsDataOptions {
 	authMethod: 'password' | 'key';
 	username: string;
 	password: string;
-	publicKey: string;
-	passphrase: string;
 	migrationError?: Error | null;
 	onServerAddressChange: ( address: string ) => void;
 	onPortChange: ( port: number ) => void;
@@ -30,8 +28,6 @@ interface StepsDataOptions {
 	onAuthMethodChange: ( method: 'password' | 'key' ) => void;
 	onUsernameChange: ( username: string ) => void;
 	onPasswordChange: ( password: string ) => void;
-	onPublicKeyChange: ( key: string ) => void;
-	onPassphraseChange: ( passphrase: string ) => void;
 	onFindSSHDetailsSuccess: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
@@ -44,13 +40,6 @@ interface StepData {
 }
 
 type StepsData = StepData[];
-
-interface StepsOptions {
-	fromUrl: string;
-	siteId: number;
-	siteName: string;
-	onComplete: () => void;
-}
 
 interface Step {
 	task: Task;
@@ -74,7 +63,6 @@ interface UseStepsOptions {
 	fromUrl: string;
 	siteId: number;
 	siteName: string;
-	onComplete: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
 }
@@ -87,8 +75,6 @@ interface SSHFormState {
 	authMethod: 'password' | 'key';
 	username: string;
 	password: string;
-	publicKey: string;
-	passphrase: string;
 	migrationStarted: boolean;
 }
 
@@ -135,14 +121,10 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 					authMethod={ options.authMethod }
 					username={ options.username }
 					password={ options.password }
-					publicKey={ options.publicKey }
-					passphrase={ options.passphrase }
 					error={ options.migrationError }
 					onAuthMethodChange={ options.onAuthMethodChange }
 					onUsernameChange={ options.onUsernameChange }
 					onPasswordChange={ options.onPasswordChange }
-					onPublicKeyChange={ options.onPublicKeyChange }
-					onPassphraseChange={ options.onPassphraseChange }
 				/>
 			),
 		},
@@ -155,7 +137,6 @@ export const useSteps = ( {
 	fromUrl,
 	siteId,
 	siteName,
-	onComplete,
 	onNoSSHAccess,
 	host,
 }: UseStepsOptions ): StepsObject => {
@@ -172,8 +153,6 @@ export const useSteps = ( {
 		authMethod: 'password',
 		username: '',
 		password: '',
-		publicKey: '',
-		passphrase: '',
 		migrationStarted: false,
 	} );
 
@@ -206,14 +185,6 @@ export const useSteps = ( {
 		setFormState( ( prev ) => ( { ...prev, password } ) );
 	};
 
-	const handlePublicKeyChange = ( publicKey: string ) => {
-		setFormState( ( prev ) => ( { ...prev, publicKey } ) );
-	};
-
-	const handlePassphraseChange = ( passphrase: string ) => {
-		setFormState( ( prev ) => ( { ...prev, passphrase } ) );
-	};
-
 	const handleFindSSHDetailsSuccess = () => {
 		setFormState( ( prev ) => ( { ...prev, foundSSHDetails: true } ) );
 		setCurrentStep( 1 );
@@ -236,8 +207,6 @@ export const useSteps = ( {
 		authMethod: formState.authMethod,
 		username: formState.username,
 		password: formState.password,
-		publicKey: formState.publicKey,
-		passphrase: formState.passphrase,
 		migrationError,
 		onServerAddressChange: handleServerAddressChange,
 		onPortChange: handlePortChange,
@@ -245,8 +214,6 @@ export const useSteps = ( {
 		onAuthMethodChange: handleAuthMethodChange,
 		onUsernameChange: handleUsernameChange,
 		onPasswordChange: handlePasswordChange,
-		onPublicKeyChange: handlePublicKeyChange,
-		onPassphraseChange: handlePassphraseChange,
 		onFindSSHDetailsSuccess: handleFindSSHDetailsSuccess,
 		onNoSSHAccess,
 		host,
@@ -299,7 +266,7 @@ export const useSteps = ( {
 		formState.isServerVerified &&
 		formState.username.length > 0 &&
 		( ( formState.authMethod === 'password' && formState.password.length > 0 ) ||
-			( formState.authMethod === 'key' && formState.publicKey.length > 0 ) );
+			( formState.authMethod === 'key' && false ) );
 
 	return {
 		steps,

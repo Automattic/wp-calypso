@@ -4,7 +4,6 @@ import { FC } from 'react';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import { AccordionNotice } from '../components/accordion-notice';
 import { HelpLink } from './help-link';
 
@@ -12,28 +11,20 @@ interface StepShareSSHAccessProps {
 	authMethod: 'password' | 'key';
 	username: string;
 	password: string;
-	publicKey: string;
-	passphrase: string;
 	error?: Error | null;
 	onAuthMethodChange: ( method: 'password' | 'key' ) => void;
 	onUsernameChange: ( username: string ) => void;
 	onPasswordChange: ( password: string ) => void;
-	onPublicKeyChange: ( key: string ) => void;
-	onPassphraseChange: ( passphrase: string ) => void;
 }
 
 export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	authMethod,
 	username,
 	password,
-	publicKey,
-	passphrase,
 	error,
 	onAuthMethodChange,
 	onUsernameChange,
 	onPasswordChange,
-	onPublicKeyChange,
-	onPassphraseChange,
 } ) => {
 	const translate = useTranslate();
 
@@ -112,35 +103,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 						/>
 					</div>
 				) : (
-					<>
-						<div>
-							<label htmlFor="ssh-public-key" className="site-migration-ssh__step-share-ssh-label">
-								{ translate( 'Public key' ) }
-							</label>
-							<FormTextarea
-								id="ssh-public-key"
-								value={ publicKey }
-								onChange={ ( e: React.ChangeEvent< HTMLTextAreaElement > ) =>
-									onPublicKeyChange( e.target.value )
-								}
-								placeholder={ translate( 'Paste your SSH public key here' ) }
-								className="site-migration-ssh__step-share-ssh-key-textarea"
-							/>
-						</div>
-						<div>
-							<label htmlFor="ssh-passphrase" className="site-migration-ssh__step-share-ssh-label">
-								{ translate( 'Passphrase (optional)' ) }
-							</label>
-							<FormPasswordInput
-								id="ssh-passphrase"
-								value={ passphrase }
-								onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
-									onPassphraseChange( e.target.value )
-								}
-								placeholder={ translate( 'Enter passphrase if your key requires one' ) }
-							/>
-						</div>
-					</>
+					<>{ /* Private key form */ }</>
 				) }
 			</div>
 		</div>
