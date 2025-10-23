@@ -21,6 +21,7 @@ import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
@@ -32,10 +33,10 @@ import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
-import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { AtomicTransferStatus, Site } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -58,6 +59,17 @@ export const titleFieldTextOverflowStyles = {
 	whiteSpace: 'nowrap',
 } as const;
 
+export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+	return (
+		<Link
+			{ ...props }
+			to={ getSiteManagementUrl( site ) }
+			disabled={ site.is_deleted }
+			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+		/>
+	);
+}
+
 export function Name( { site, value }: { site: Site; value: string } ) {
 	const renderBadge = () => {
 		if ( site.is_wpcom_staging_site ) {
@@ -75,17 +87,17 @@ export function Name( { site, value }: { site: Site; value: string } ) {
 		return null;
 	};
 
+	const badge = renderBadge();
+
 	return (
-		<Link to={ getSiteManagementUrl( site ) } disabled={ site.is_deleted }>
-			<HStack alignment="center" spacing={ 1 }>
-				{ site.is_deleted ? (
-					<Text variant="muted">{ value }</Text>
-				) : (
-					<span style={ titleFieldTextOverflowStyles }>{ value }</span>
-				) }
-				<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
-			</HStack>
-		</Link>
+		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
+			{ site.is_deleted ? (
+				<Text variant="muted">{ value }</Text>
+			) : (
+				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+			) }
+			{ badge && <span style={ { flexShrink: 0 } }>{ badge }</span> }
+		</HStack>
 	);
 }
 
@@ -103,15 +115,11 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	);
 }
 
-export function SiteIconLink( { site }: { site: Site } ) {
+export function SiteIconLink( props: ComponentProps< typeof SiteIcon > ) {
 	return (
-		<Link
-			to={ getSiteManagementUrl( site ) }
-			disabled={ site.is_deleted }
-			style={ { textDecoration: 'none' } }
-		>
-			<SiteIcon site={ site } />
-		</Link>
+		<SiteLink site={ props.site } style={ { flexShrink: 0 } }>
+			<SiteIcon { ...props } />
+		</SiteLink>
 	);
 }
 

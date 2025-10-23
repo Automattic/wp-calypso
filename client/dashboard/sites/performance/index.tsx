@@ -1,8 +1,4 @@
-import {
-	siteBySlugQuery,
-	sitePerformancePagesQuery,
-	siteSettingsQuery,
-} from '@automattic/api-queries';
+import { siteBySlugQuery, sitePerformancePagesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
@@ -23,7 +19,6 @@ import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
 import Report from './report';
 import ReportErrorNotice from './report-error-notice';
-import ReportExpiredNotice from './report-expired-notice';
 import ReportLoading from './report-loading';
 import ReportNoPagesNotice from './report-no-pages-notice';
 import Subtitle from './subtitle';
@@ -45,13 +40,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
 	const [ runNewReport, setRunNewReport ] = useState( false );
 
-	const { data: siteSettings } = useSuspenseQuery( {
-		...siteSettingsQuery( site.ID ),
-		select: ( s ) => ( {
-			gmtOffset: Number( s?.gmt_offset ) || 0,
-			timezoneString: s?.timezone_string || undefined,
-		} ),
-	} );
 	const {
 		data: pagesData,
 		isLoading: isLoadingPages,
@@ -105,7 +93,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	}, [ hasCompleted ] );
 
 	const currentReport = getReport( deviceToggle );
-	const { gmtOffset, timezoneString } = siteSettings;
 
 	const renderContent = () => {
 		if ( hasError( deviceToggle ) ) {
@@ -131,10 +118,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 
 		return (
 			<>
-				<ReportExpiredNotice
-					reportTimestamp={ currentReport.timestamp }
-					onRetest={ handleReportRefetch }
-				/>
 				<Report
 					report={ currentReport }
 					device={ deviceToggle }
@@ -149,12 +132,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			header={
 				<PageHeader
 					description={
-						<Subtitle
-							timestamp={ currentReport?.timestamp }
-							timezoneString={ timezoneString }
-							gmtOffset={ gmtOffset }
-							onClick={ handleReportRefetch }
-						/>
+						<Subtitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
 					}
 					actions={
 						<HStack>

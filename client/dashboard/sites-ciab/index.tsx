@@ -21,7 +21,6 @@ import deepmerge from 'deepmerge';
 import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { useAppContext } from '../app/context';
 import { useHelpCenter } from '../app/help-center';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
@@ -66,7 +65,6 @@ export default function CIABSites() {
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
-	const { onboardingLinks } = useAppContext();
 	const { setShowHelpCenter } = useHelpCenter();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
@@ -96,7 +94,7 @@ export default function CIABSites() {
 
 	const handleAddNewStore = () => {
 		setShowHelpCenter( false );
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		recordTracksEvent( 'calypso_dashboard_sites_add_new_site_click', {
 			action: 'big-sky',
 		} );
 	};
@@ -152,7 +150,7 @@ export default function CIABSites() {
 		}
 	}, [ sites, queryClient ] );
 
-	const addNewStoreUrl = addQueryArgs( onboardingLinks?.withAI.href || '/setup/ai-site-builder', {
+	const addNewStoreUrl = addQueryArgs( '/setup/ai-site-builder-spec', {
 		source: 'ciab-sites-dashboard',
 		ref: 'new-site-popover',
 	} );

@@ -17,7 +17,7 @@ import {
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
-import { getMonetizeSubscriptionsPageTitle } from '../../me/monetize-subscriptions/urls';
+import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/urls';
 import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -280,7 +280,7 @@ export const monetizeSubscriptionsIndexRoute = createRoute( {
 	getParentRoute: () => monetizeSubscriptionsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../me/monetize-subscriptions' ).then( ( d ) =>
+	import( '../../me/billing-monetize-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscriptions' )( {
 			component: d.default,
 		} )
@@ -298,7 +298,7 @@ export const monetizeSubscriptionRoute = createRoute( {
 	getParentRoute: () => monetizeSubscriptionsRoute,
 	path: '$subscriptionId',
 } ).lazy( () =>
-	import( '../../me/monetize-subscriptions/monetize-subscription' ).then( ( d ) =>
+	import( '../../me/billing-monetize-subscriptions/monetize-subscription' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscription' )( {
 			component: d.default,
 		} )
@@ -316,7 +316,7 @@ export const taxDetailsRoute = createRoute( {
 	getParentRoute: () => billingRoute,
 	path: '/tax-details',
 } ).lazy( () =>
-	import( '../../me/tax-details' ).then( ( d ) =>
+	import( '../../me/billing-tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
 			component: d.default,
 		} )

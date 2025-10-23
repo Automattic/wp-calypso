@@ -1,18 +1,18 @@
 import { GoogleEmailSubscription, TitanEmailSubscription } from '@automattic/api-core';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalVStack as VStack,
 	Button,
 	Icon,
 } from '@wordpress/components';
-import { sprintf, __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { addProfessionalEmailRoute, addGoogleMailboxRoute } from '../../app/router/emails';
+import { addGoogleMailboxRoute, addProfessionalEmailRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PriceDisplay } from '../../components/price-display';
@@ -24,6 +24,7 @@ import {
 	hasTitanMailWithUs,
 	isGoogleWorkspaceSupportedDomain,
 } from '../../utils/domain';
+import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
@@ -141,7 +142,7 @@ export default function ChooseEmailSolution() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader /> }
+			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
 			size="small"
 			notices={
 				<>
@@ -157,26 +158,24 @@ export default function ChooseEmailSolution() {
 			}
 		>
 			{ /* Billing interval selector */ }
-			<div className="billing-interval-selector">
-				<ToggleGroupControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					isBlock
-					label={ __( 'Billing interval' ) }
-					hideLabelFromVision
-					value={ billingInterval }
-					onChange={ ( newBillingInterval ) =>
-						setBillingInterval( newBillingInterval as IntervalLength )
-					}
-				>
-					<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
-					<ToggleGroupControlOption
-						/* translators: %d is the annual savings percentage. */
-						label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
-						value="annually"
-					/>
-				</ToggleGroupControl>
-			</div>
+			<ToggleGroupControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				isBlock
+				label={ __( 'Billing interval' ) }
+				hideLabelFromVision
+				value={ billingInterval }
+				onChange={ ( newBillingInterval ) =>
+					setBillingInterval( newBillingInterval as IntervalLength )
+				}
+			>
+				<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
+				<ToggleGroupControlOption
+					/* translators: %d is the annual savings percentage. */
+					label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
+					value="annually"
+				/>
+			</ToggleGroupControl>
 
 			{ /* Split card for providers */ }
 			<div className="email-providers">

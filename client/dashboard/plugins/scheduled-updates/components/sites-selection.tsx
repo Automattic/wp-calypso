@@ -2,7 +2,8 @@ import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wor
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../components/dataviews-card';
-import { Name, URL, SiteIconLink } from '../../../sites/site-fields';
+import SiteIcon from '../../../components/site-icon';
+import { Name, URL, SiteLink } from '../../../sites/site-fields';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
 import { useEligibleSites } from '../hooks/use-eligible-sites';
@@ -26,7 +27,7 @@ const siteFields: Field< Site >[] = [
 	{
 		id: 'icon.ico',
 		label: __( 'Site icon' ),
-		render: ( { item } ) => <SiteIconLink site={ item } />,
+		render: ( { item } ) => <SiteIcon site={ item } />,
 		enableSorting: false,
 		enableGlobalSearch: false,
 	},
@@ -90,6 +91,7 @@ function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props
 					},
 				} }
 				paginationInfo={ paginationInfo }
+				renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
 			/>
 		</DataViewsCard>
 	);

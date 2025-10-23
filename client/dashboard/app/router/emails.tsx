@@ -63,14 +63,19 @@ export const emailsRoute = createRoute( {
 	)
 );
 
-const redirectIfUnallowedDomain = async ( domainName: string ) => {
+const redirectIfInvalidDomain = async ( domainName: string ) => {
 	try {
 		await queryClient.ensureQueryData( domainQuery( domainName ) );
 	} catch ( error ) {
+		const supportedErrors = [
+			[ 400, 'invalid_domain' ],
+			[ 403, 'authorization_required' ],
+		];
 		if (
 			isWpError( error ) &&
-			error.error === 'authorization_required' &&
-			error.statusCode === 403
+			supportedErrors.some(
+				( [ code, errorType ] ) => error.statusCode === code && error.error === errorType
+			)
 		) {
 			throw redirect( {
 				to: emailsRoute.fullPath,
@@ -121,7 +126,7 @@ export const chooseEmailSolutionRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-email-solution/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
-		await redirectIfUnallowedDomain( domainName );
+		await redirectIfInvalidDomain( domainName );
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
@@ -150,7 +155,7 @@ export const addProfessionalEmailRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails/add-professional-email/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
-		await redirectIfUnallowedDomain( domainName );
+		await redirectIfInvalidDomain( domainName );
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );

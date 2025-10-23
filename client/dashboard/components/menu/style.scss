@@ -1,7 +1,10 @@
+@import '@wordpress/base-styles/colors';
+
 .dashboard-menu__item.dashboard-menu__item {
 	color: var( --dashboard-menu-item__color );
 
 	&.active {
 		color: var( --dashboard-menu-item-active__color );
+		font-weight: $font-weight-medium;
 	}
 }

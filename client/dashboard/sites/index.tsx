@@ -16,8 +16,10 @@ import {
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
+import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { sitesRoute } from '../app/router/sites';
@@ -216,6 +218,28 @@ export default function Sites() {
 					handleViewChange={ handleViewChange }
 				/>
 			</PageLayout>
+			{ /* ExPlat's Evergreen A/A Test Experiment:
+			 *
+			 * This continually starts a new experiment every week that doesn't render anything and
+			 * shouldn't send any extra requests, just to help us ensure our experimentation system is
+			 * working smoothly.
+			 *
+			 * This particular spot isn't special, it just needs somewhere to live.
+			 *
+			 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
+			 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
+			 */ }
+			<Experiment
+				name={ ( () => {
+					const now = new Date();
+					const year = getISOWeekYear( now );
+					const week = String( getISOWeek( now ) ).padStart( 2, '0' );
+					return `explat_test_aa_weekly_calypso_${ year }_week_${ week }`;
+				} )() }
+				defaultExperience={ null }
+				treatmentExperience={ null }
+				loadingExperience={ null }
+			/>
 		</>
 	);
 }

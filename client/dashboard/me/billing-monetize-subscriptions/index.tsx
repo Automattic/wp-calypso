@@ -6,6 +6,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { DataViewsCard } from '../../components/dataviews-card';
 import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
@@ -91,7 +92,12 @@ function MonetizeSubscriptions() {
 	return (
 		<PageLayout
 			size="large"
-			header={ <PageHeader title={ getMonetizeSubscriptionsPageTitle() } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ getMonetizeSubscriptionsPageTitle() }
+				/>
+			}
 		>
 			<div ref={ ref }>
 				{ /* Show a flash message if the URL contains ?showSuccessRemoved=true when a subscription is removed */ }
