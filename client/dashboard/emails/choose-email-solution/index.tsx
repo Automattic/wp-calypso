@@ -1,4 +1,4 @@
-import { GoogleEmailSubscription, TitanEmailSubscription } from '@automattic/api-core';
+import { EmailSubscription } from '@automattic/api-core';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -31,7 +31,7 @@ import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider } from '../types';
-import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
+import { isEligibleForIntroductoryOffer } from '../utils/is-eligible-for-introductory-offer';
 import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
@@ -51,8 +51,8 @@ export default function ChooseEmailSolution() {
 
 	const canAddEmail = domain.current_user_can_add_email;
 
-	const hasTitanFreeTrial = isDomainEligibleForTitanIntroductoryOffer( {
-		domain,
+	const hasTitanFreeTrial = isEligibleForIntroductoryOffer( {
+		emailSubscription: domain.titan_mail_subscription as EmailSubscription,
 		product: titanProduct,
 	} );
 
@@ -73,7 +73,7 @@ export default function ChooseEmailSolution() {
 			params: {
 				domain: domainName,
 				provider: MailboxProvider.Titan,
-				interval: isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription )
+				interval: isMonthlyEmailProduct( domain.titan_mail_subscription as EmailSubscription )
 					? IntervalLength.Monthly
 					: IntervalLength.Annually,
 			},
@@ -84,9 +84,7 @@ export default function ChooseEmailSolution() {
 			params: {
 				domainName: domainName,
 				provider: MailboxProvider.Google,
-				interval: isMonthlyEmailProduct(
-					domain.google_apps_subscription as GoogleEmailSubscription
-				)
+				interval: isMonthlyEmailProduct( domain.google_apps_subscription as EmailSubscription )
 					? IntervalLength.Monthly
 					: IntervalLength.Annually,
 			},

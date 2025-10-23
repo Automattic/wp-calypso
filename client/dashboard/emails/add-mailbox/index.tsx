@@ -56,11 +56,11 @@ const AddProfessionalEmail = () => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 
-	const { interval } = addMailboxRoute.useParams();
+	const { provider, interval } = addMailboxRoute.useParams();
 
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { product } = useEmailProduct( MailboxProvider.Titan, interval );
+	const { product } = useEmailProduct( provider, interval );
 	const { data: existingMailboxes, isFetched } = useQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
@@ -73,7 +73,7 @@ const AddProfessionalEmail = () => {
 
 	const createNewMailbox = useCallback( () => {
 		const mailbox = new MailboxFormEntity< MailboxProvider >(
-			MailboxProvider.Titan,
+			provider,
 			domainName,
 			( existingMailboxes ?? [] )
 				.flatMap( ( emailAccount ) => emailAccount.emails )
@@ -139,7 +139,7 @@ const AddProfessionalEmail = () => {
 		const numberOfMailboxes = mailboxOperations.mailboxes.length;
 
 		const emailProperties = getEmailProductProperties(
-			MailboxProvider.Titan,
+			provider,
 			domain,
 			product,
 			numberOfMailboxes
