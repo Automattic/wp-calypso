@@ -67,4 +67,26 @@ export class SignupPickPlanPage {
 		body.blog_details.blogid = Number( body.blog_details.blogid );
 		return body;
 	}
+
+	/**
+	 * Selects a WordPress.com plan matching the name in the `plans-site-selected` signup step
+	 *
+	 * The domain-only flow is different from the other flows since, after plan selection, the user
+	 * is redirected to the user login step if they are logged out. Site creation happens after user login.
+	 *
+	 * @param name Name of the plan.
+	 * @returns {Promise<void>}
+	 */
+	async selectPlanInDomainOnlyFlow( name: Plans ): Promise< void > {
+		await this.page.waitForURL( /.*start\/domain\/plans-site-selected.*/ );
+
+		const redirectUrl = new RegExp( '.*start/domain/user-social.*' );
+
+		const actions = [
+			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.plansPage.selectPlan( name ),
+		];
+
+		await Promise.all( actions );
+	}
 }
