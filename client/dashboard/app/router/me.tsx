@@ -247,7 +247,7 @@ export const changePaymentMethodRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Change payment method' ),
+				title: __( 'Update payment method' ),
 			},
 		],
 	} ),
