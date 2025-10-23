@@ -40,9 +40,9 @@ export const usePollSSHMigrationAtomicTransfer = (
 		queryKey: usePollSSHMigrationAtomicTransferQueryKey( siteId, transferId ?? 0 ),
 		queryFn: () => pollSSHMigrationAtomicTransfer( siteId, transferId ?? 0 ),
 		enabled: enabled && !! siteId && !! transferId,
-		refetchInterval: ( data ) => {
+		refetchInterval: ( query ) => {
 			// Stop polling if we reach an end state
-			if ( data && endStates.includes( data.transfer_status ) ) {
+			if ( query.state.data && endStates.includes( query.state.data.transfer_status ) ) {
 				return false;
 			}
 			return refetchInterval;
