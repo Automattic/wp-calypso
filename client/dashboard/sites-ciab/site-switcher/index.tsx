@@ -27,7 +27,7 @@ const CIABSiteSwitcher = () => {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 	const handleAddNewStore = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		recordTracksEvent( 'calypso_dashboard_site_switcher_new_site_button_click', {
 			action: 'big-sky',
 			context: 'ciab-sites-dashboard',
 		} );
