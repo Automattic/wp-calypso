@@ -5,6 +5,7 @@ import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpre
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
@@ -144,12 +145,15 @@ const AddProfessionalEmail = () => {
 			numberOfMailboxes
 		);
 
-		const checkoutPath = getEmailCheckoutPath(
+		const checkoutBasePath = getEmailCheckoutPath(
 			site?.slug || '',
 			domain.domain,
 			router.state.location.pathname,
 			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
 		);
+
+		const backUrl = window.location.origin + '/v2/emails';
+		const checkoutPath = addQueryArgs( checkoutBasePath, { checkoutBackUrl: backUrl } );
 
 		await shoppingCartManagerClient
 			.forCartKey( site?.ID )
