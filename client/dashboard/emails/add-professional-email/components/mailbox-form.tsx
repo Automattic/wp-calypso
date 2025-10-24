@@ -27,10 +27,12 @@ import './style.scss';
 export const MailboxForm = ( {
 	mailboxEntity,
 	disabled = false,
+	onChange,
 	removeForm = undefined,
 }: {
 	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
 	disabled: boolean;
+	onChange: () => void;
 	removeForm?: () => void;
 } ) => {
 	const { domainName } = useDomainFromUrlParam();
@@ -62,7 +64,7 @@ export const MailboxForm = ( {
 		field.dispatchState();
 	};
 
-	const onChange = ( {
+	const changeHandler = ( {
 		value,
 		field,
 		lowerCaseChangeValue = false,
@@ -84,6 +86,8 @@ export const MailboxForm = ( {
 		field.dispatchState();
 
 		onFieldValueChanged( field );
+
+		onChange();
 	};
 
 	return (
@@ -100,7 +104,7 @@ export const MailboxForm = ( {
 					</InputControlSuffixWrapper>
 				}
 				onBlur={ onBlur }
-				onChange={ onChange }
+				onChange={ changeHandler }
 			/>
 
 			<VStack>
@@ -123,7 +127,7 @@ export const MailboxForm = ( {
 					// Hint to LastPass not to attempt autofill
 					data-lpignore="true"
 					onBlur={ onBlur }
-					onChange={ onChange }
+					onChange={ changeHandler }
 				/>
 
 				{ ! isPasswordResetEmailVisible && (
@@ -161,7 +165,7 @@ export const MailboxForm = ( {
 					label={ __( 'Password reset email address' ) }
 					disabled={ disabled }
 					onBlur={ onBlur }
-					onChange={ onChange }
+					onChange={ changeHandler }
 				/>
 			) }
 

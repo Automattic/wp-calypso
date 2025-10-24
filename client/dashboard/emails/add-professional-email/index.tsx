@@ -225,6 +225,7 @@ const AddProfessionalEmail = () => {
 								<MailboxForm
 									mailboxEntity={ mailboxEntity }
 									disabled={ disabled }
+									onChange={ persistMailboxesToState }
 									removeForm={ index > 0 ? () => removeForm( index ) : undefined }
 								/>
 							</CardBody>
