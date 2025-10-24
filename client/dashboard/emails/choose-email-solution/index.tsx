@@ -51,10 +51,18 @@ export default function ChooseEmailSolution() {
 
 	const canAddEmail = domain.current_user_can_add_email;
 
+	const googleEmailSubscription = domain.google_apps_subscription as EmailSubscription;
+	const titanEmailSubscription = domain.titan_mail_subscription as EmailSubscription;
+
+	const hasGoogleFreeTrial = isEligibleForIntroductoryOffer( {
+		emailSubscription: googleEmailSubscription,
+		product: googleProduct,
+	} );
 	const hasTitanFreeTrial = isEligibleForIntroductoryOffer( {
-		emailSubscription: domain.titan_mail_subscription as EmailSubscription,
+		emailSubscription: titanEmailSubscription,
 		product: titanProduct,
 	} );
+	const hasFreeTrial = hasGoogleFreeTrial || hasTitanFreeTrial;
 
 	const isTitanAvailable = canAddEmail && ! hasGSuiteWithUs( domain );
 
@@ -73,7 +81,7 @@ export default function ChooseEmailSolution() {
 			params: {
 				domain: domainName,
 				provider: MailboxProvider.Titan,
-				interval: isMonthlyEmailProduct( domain.titan_mail_subscription as EmailSubscription )
+				interval: isMonthlyEmailProduct( titanEmailSubscription )
 					? IntervalLength.Monthly
 					: IntervalLength.Annually,
 			},
@@ -84,7 +92,7 @@ export default function ChooseEmailSolution() {
 			params: {
 				domainName: domainName,
 				provider: MailboxProvider.Google,
-				interval: isMonthlyEmailProduct( domain.google_apps_subscription as EmailSubscription )
+				interval: isMonthlyEmailProduct( googleEmailSubscription )
 					? IntervalLength.Monthly
 					: IntervalLength.Annually,
 			},
@@ -141,7 +149,10 @@ export default function ChooseEmailSolution() {
 			],
 			poweredBy: null,
 			product: googleProduct,
-			hasFreeTrial: false,
+			hasFreeTrial: isEligibleForIntroductoryOffer( {
+				emailSubscription: googleEmailSubscription,
+				product: googleProduct,
+			} ),
 			available: isGoogleAvailable,
 		},
 	};
@@ -195,7 +206,7 @@ export default function ChooseEmailSolution() {
 						<VStack
 							spacing={ 2 }
 							justify="flex-start"
-							style={ { minHeight: hasTitanFreeTrial ? '96px' : '76px' } }
+							style={ { minHeight: hasFreeTrial ? '96px' : '76px' } }
 						>
 							{ provider.available ? (
 								<>
