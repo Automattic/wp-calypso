@@ -40,6 +40,10 @@ const CoreMetricsTabs = ( {
 
 	const availableMetrics = getAvailableMetrics( report );
 
+	if ( availableMetrics.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<Tabs.TabList style={ { maxWidth: '100%' } }>
 			{ availableMetrics.map( ( metricKey ) => {
