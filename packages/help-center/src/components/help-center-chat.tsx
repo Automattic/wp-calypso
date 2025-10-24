@@ -32,8 +32,9 @@ export function HelpCenterChat( {
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 
-	const commerceGardenFlowName = isCommerceGarden ? 'messaging_flow_commerce_in_a_box' : null;
-	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
+	const userFieldFlowName = isCommerceGarden
+		? 'messaging_flow_commerce_in_a_box'
+		: data?.eligibility?.user_field_flow_name;
 
 	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 
