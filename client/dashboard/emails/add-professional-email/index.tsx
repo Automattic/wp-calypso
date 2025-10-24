@@ -1,4 +1,5 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
@@ -31,6 +32,8 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
+import { getTotalCost } from '../utils/get-total-cost';
+import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
@@ -181,6 +184,17 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
+	const filledMailboxes = mailboxEntities.filter( ( mailbox ) => mailbox.isValid() );
+	const totalItems = filledMailboxes.length;
+	const totalCost = getTotalCost( {
+		amount: totalItems,
+		domain: domain,
+		product: product,
+	} );
+	const totalPrice = formatCurrency( totalCost, product.currency_code, {
+		stripZeros: true,
+	} );
+
 	return (
 		<PageLayout
 			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
@@ -209,6 +223,7 @@ const AddProfessionalEmail = () => {
 								<MailboxForm
 									mailboxEntity={ mailboxEntity }
 									disabled={ disabled }
+									onChange={ persistMailboxesToState }
 									removeForm={ index > 0 ? () => removeForm( index ) : undefined }
 								/>
 							</CardBody>
@@ -231,11 +246,7 @@ const AddProfessionalEmail = () => {
 						</Button>
 					</ButtonStack>
 
-					<ButtonStack justify="flex-start">
-						<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
-							{ __( 'Continue' ) }
-						</Button>
-					</ButtonStack>
+					<Cart totalItems={ totalItems } totalPrice={ totalPrice } isCartBusy={ isSubmitting } />
 				</VStack>
 			</form>
 		</PageLayout>
