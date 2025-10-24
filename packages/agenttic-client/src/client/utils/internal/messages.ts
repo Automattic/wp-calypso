@@ -22,21 +22,24 @@ export async function enhanceMessageWithTools(
 	}
 
 	try {
-		const tools = await toolProvider.getAvailableTools();
 		const parts = [];
 
 		// Add tool data parts for regular tools
-		if ( tools.length > 0 ) {
-			const toolParts = tools.map( createToolDataPart );
-			parts.push( ...toolParts );
+		if ( toolProvider.getAvailableTools ) {
+			const tools = await toolProvider.getAvailableTools();
+			if ( tools.length > 0 ) {
+				const toolParts = tools.map( createToolDataPart );
+				parts.push( ...toolParts );
+			}
 		}
 
 		// Add ability data parts for WordPress Abilities
-		if ( toolProvider.abilities && toolProvider.abilities.length > 0 ) {
-			const abilityParts = toolProvider.abilities.map(
-				createAbilityDataPart
-			);
-			parts.push( ...abilityParts );
+		if ( toolProvider.getAbilities ) {
+			const abilities = await toolProvider.getAbilities();
+			if ( abilities.length > 0 ) {
+				const abilityParts = abilities.map( createAbilityDataPart );
+				parts.push( ...abilityParts );
+			}
 		}
 
 		if ( parts.length === 0 ) {

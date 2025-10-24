@@ -333,14 +333,15 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolProvider {
-	getAvailableTools(): Promise< Tool[] >;
-	executeTool(
+	getAvailableTools?(): Promise< Tool[] >;
+	executeTool?(
 		toolId: string,
 		args: any,
 		messageId?: string,
 		toolCallId?: string
 	): Promise< any | ToolExecutionResult >;
-	abilities?: Ability[]; // Optional: WordPress Abilities being provided
+	getAbilities?: () => Promise< Ability[] >;
+	executeAbility?: ( name: string, args: any ) => Promise< any >;
 }
 
 export interface ToolCallResult {

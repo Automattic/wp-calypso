@@ -56,53 +56,94 @@ async function executeToolOrAbility(
 	messageId?: string,
 	toolCallId?: string
 ): Promise< any > {
-	// Check abilities first
-	if ( toolProvider.abilities && toolProvider.abilities.length > 0 ) {
-		for ( const ability of toolProvider.abilities as Ability[] ) {
-			// The abilities array stores original names (e.g., "demo/get-user-info"),
-			// but OpenAI function names can't contain "/" so the backend sanitizes them
-			// (e.g., "demo__get_user_info"). so we check both formats because:
-			// 1. Client sends original name in AbilityDataPart
-			// 2. Backend converts to sanitized for OpenAI function signature
-			// 3. OpenAI calls with sanitized name
-			// 4. We receive sanitized toolId back from backend for LLM tool calls
-			const toolName = ability.name
-				.replace( /\//g, '__' )
-				.replace( /-/g, '_' );
+	if ( toolProvider.getAbilities ) {
+		const abilities = await toolProvider.getAbilities();
+		if ( abilities.length > 0 ) {
+			for ( const ability of abilities ) {
+				// The abilities array stores original names (e.g., "demo/get-user-info"),
+				// but OpenAI function names can't contain "/" so the backend sanitizes them
+				// (e.g., "demo__get_user_info"). so we check both formats because:
+				// 1. Client sends original name in AbilityDataPart
+				// 2. Backend converts to sanitized for OpenAI function signature
+				// 3. OpenAI calls with sanitized name
+				// 4. We receive sanitized toolId back from backend for LLM tool calls
+				const toolName = ability.name
+					.replace( /\//g, '__' )
+					.replace( /-/g, '_' );
 
-			if ( toolId === toolName || toolId === ability.name ) {
-				if ( ability.callback ) {
-					try {
-						const result = await ability.callback( args );
-						return { result, returnToAgent: true };
-					} catch ( error ) {
-						logger(
-							'Error executing ability %s: %O',
-							ability.name,
-							error
-						);
-						return {
-							result: {
-								error:
-									error instanceof Error
-										? error.message
-										: String( error ),
-								success: false,
-							},
-							returnToAgent: true,
-						};
+				if ( toolId === toolName || toolId === ability.name ) {
+					// client side callback, execute it
+					if ( ability.callback ) {
+						try {
+							const result = await ability.callback( args );
+							return { result, returnToAgent: true };
+						} catch ( error ) {
+							logger(
+								'Error executing ability %s: %O',
+								ability.name,
+								error
+							);
+							return {
+								result: {
+									error:
+										error instanceof Error
+											? error.message
+											: String( error ),
+									success: false,
+								},
+								returnToAgent: true,
+							};
+						}
 					}
+
+					// server side: No callback, use executeAbility if provided (since Agenttic does not load the Ability API itself)
+					if ( ! ability.callback && toolProvider.executeAbility ) {
+						try {
+							const result = await toolProvider.executeAbility(
+								ability.name,
+								args
+							);
+							return { result, returnToAgent: true };
+						} catch ( error ) {
+							logger(
+								'Error executing ability %s: %O',
+								ability.name,
+								error
+							);
+							return {
+								result: {
+									error:
+										error instanceof Error
+											? error.message
+											: String( error ),
+									success: false,
+								},
+								returnToAgent: true,
+							};
+						}
+					}
+
+					throw new Error(
+						`Ability ${ ability.name } has no callback and no handler`
+					);
 				}
 			}
 		}
 	}
 
-	// Not an ability, execute as regular tool
-	return await toolProvider.executeTool(
-		toolId,
-		args,
-		messageId,
-		toolCallId
+	// Not an ability, execute as regular tool if handler exists
+	if ( toolProvider.executeTool ) {
+		return await toolProvider.executeTool(
+			toolId,
+			args,
+			messageId,
+			toolCallId
+		);
+	}
+
+	// No handler found
+	throw new Error(
+		`No handler found for tool: ${ toolId }. Tool provider must implement executeTool for non-ability tools.`
 	);
 }
 

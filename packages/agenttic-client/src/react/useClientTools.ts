@@ -16,12 +16,17 @@ export type ExecuteToolCallback = (
 ) => Promise< any >;
 
 /**
+ * Callback function type for getting abilities
+ */
+export type GetAbilitiesCallback = () => Promise< Ability[] >;
+
+/**
  * Configuration for useClientToolsWithAbilities hook
  */
 export interface UseClientToolsWithAbilitiesConfig {
 	getClientTools?: GetClientToolsCallback;
 	executeTool?: ExecuteToolCallback;
-	abilities?: Ability[];
+	getAbilities?: GetAbilitiesCallback;
 }
 
 /**
@@ -30,17 +35,17 @@ export interface UseClientToolsWithAbilitiesConfig {
  * @param root0                - Configuration object
  * @param root0.getClientTools - Function to get tools
  * @param root0.executeTool    - Function to execute tools
- * @param root0.abilities      - Array of abilities
+ * @param root0.getAbilities   - Function to get abilities
  * @return ToolProvider instance or undefined
  */
 function useToolProviderFromConfig( {
 	getClientTools,
 	executeTool,
-	abilities,
+	getAbilities,
 }: {
 	getClientTools?: GetClientToolsCallback;
 	executeTool?: ExecuteToolCallback;
-	abilities?: Ability[];
+	getAbilities?: GetAbilitiesCallback;
 } ): ToolProvider | undefined {
 	const getAvailableTools = useCallback( async (): Promise< Tool[] > => {
 		const tools: Tool[] = [];
@@ -75,16 +80,35 @@ function useToolProviderFromConfig( {
 
 	// Create the ToolProvider instance
 	const toolProvider = useMemo( (): ToolProvider | undefined => {
-		if ( ! getClientTools && ( ! abilities || abilities.length === 0 ) ) {
+		if ( ! getClientTools && ! getAbilities ) {
 			return undefined;
 		}
 
-		return {
-			getAvailableTools,
-			executeTool: executeToolCallback,
-			abilities,
-		};
-	}, [ getAvailableTools, executeToolCallback, getClientTools, abilities ] );
+		const provider: ToolProvider = {};
+
+		// Only include getAvailableTools if we have getClientTools
+		if ( getClientTools ) {
+			provider.getAvailableTools = getAvailableTools;
+		}
+
+		// Only include executeTool if we have executeTool callback
+		if ( executeTool ) {
+			provider.executeTool = executeToolCallback;
+		}
+
+		// Always include getAbilities if provided
+		if ( getAbilities ) {
+			provider.getAbilities = getAbilities;
+		}
+
+		return provider;
+	}, [
+		getAvailableTools,
+		executeToolCallback,
+		getClientTools,
+		executeTool,
+		getAbilities,
+	] );
 
 	return toolProvider;
 }
@@ -118,7 +142,7 @@ export function useClientTools(
 	return useToolProviderFromConfig( {
 		getClientTools,
 		executeTool,
-		abilities: undefined,
+		getAbilities: undefined,
 	} );
 }
 
@@ -128,24 +152,25 @@ export function useClientTools(
  * This hook converts WordPress Abilities to tools and provides a ToolProvider
  * that executes them using the WordPress Abilities API.
  *
- * @param abilities - Array of WordPress Abilities from @wordpress/abilities
- * @return ToolProvider instance or undefined if no abilities provided
+ * @param getAbilities - Function to fetch WordPress Abilities from @wordpress/abilities
+ * @return ToolProvider instance or undefined if no abilities callback provided
  *
  * @example
  * ```typescript
  * import { getAbilities } from '@wordpress/abilities';
  *
- * const abilities = await getAbilities();
- * const toolProvider = useClientAbilities(abilities);
+ * const toolProvider = useClientAbilities(async () => {
+ *   return await getAbilities();
+ * });
  * ```
  */
 export function useClientAbilities(
-	abilities: Ability[]
+	getAbilities: GetAbilitiesCallback
 ): ToolProvider | undefined {
 	return useToolProviderFromConfig( {
 		getClientTools: undefined,
 		executeTool: undefined,
-		abilities,
+		getAbilities,
 	} );
 }
 
@@ -162,23 +187,22 @@ export function useClientAbilities(
  * ```typescript
  * import { getAbilities } from '@wordpress/abilities';
  *
- * const abilities = await getAbilities();
  * const toolProvider = useClientToolsWithAbilities({
  *   getClientTools: async () => [...myTools],
  *   executeTool: async (toolId, args) => { ... },
- *   abilities,
+ *   getAbilities: async () => await getAbilities(),
  * });
  * ```
  */
 export function useClientToolsWithAbilities(
 	config: UseClientToolsWithAbilitiesConfig
 ): ToolProvider | undefined {
-	const { getClientTools, executeTool, abilities } = config;
+	const { getClientTools, executeTool, getAbilities } = config;
 
 	// Validate that at least one type is provided
-	if ( ! getClientTools && ( ! abilities || abilities.length === 0 ) ) {
+	if ( ! getClientTools && ! getAbilities ) {
 		throw new Error(
-			'At least one of getClientTools or abilities must be provided to useClientToolsWithAbilities.'
+			'At least one of getClientTools or getAbilities must be provided to useClientToolsWithAbilities.'
 		);
 	}
 
@@ -192,6 +216,6 @@ export function useClientToolsWithAbilities(
 	return useToolProviderFromConfig( {
 		getClientTools,
 		executeTool,
-		abilities,
+		getAbilities,
 	} );
 }
