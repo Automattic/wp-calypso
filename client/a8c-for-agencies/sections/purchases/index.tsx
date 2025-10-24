@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import {
+	EXTERNAL_WPCOM_PAYMENT_METHODS_URL,
+	EXTERNAL_WPCOM_BILLING_HISTORY_URL,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
@@ -30,10 +34,8 @@ export default function () {
 	page( '/purchases/licenses/*', '/purchases/licenses' ); // Redirect invalid license list filters back to the main portal page.
 
 	if ( isBillingDragonCheckoutEnabled ) {
-		const redirectToWpcomPaymentMethods = () =>
-			page.redirect( 'https://wordpress.com/me/purchases/payment-methods' );
-		const redirectToWpcomInvoices = () =>
-			page.redirect( 'https://wordpress.com/me/purchases/billing' );
+		const redirectToWpcomPaymentMethods = () => page.redirect( EXTERNAL_WPCOM_PAYMENT_METHODS_URL );
+		const redirectToWpcomInvoices = () => page.redirect( EXTERNAL_WPCOM_BILLING_HISTORY_URL );
 
 		// Payment methods (redirect to WPCOM)
 		page( '/purchases/payment-methods', requireAccessContext, redirectToWpcomPaymentMethods );

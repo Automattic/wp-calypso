@@ -8,6 +8,8 @@ import {
 	A4A_LICENSES_LINK,
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PURCHASES_LINK,
+	EXTERNAL_WPCOM_PAYMENT_METHODS_URL,
+	EXTERNAL_WPCOM_BILLING_HISTORY_URL,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -53,7 +55,7 @@ const usePurchasesMenuItems = ( path: string ) => {
 					icon: payment,
 					path: A4A_PURCHASES_LINK,
 					link: isBillingDragonCheckoutEnabled
-						? 'https://wordpress.com/me/purchases/payment-methods'
+						? EXTERNAL_WPCOM_PAYMENT_METHODS_URL
 						: A4A_PAYMENT_METHODS_LINK,
 					title: translate( 'Payment methods' ),
 					isExternalLink: isBillingDragonCheckoutEnabled,
@@ -71,7 +73,7 @@ const usePurchasesMenuItems = ( path: string ) => {
 					icon: receipt,
 					path: A4A_PURCHASES_LINK,
 					link: isBillingDragonCheckoutEnabled
-						? 'https://wordpress.com/me/purchases/billing'
+						? EXTERNAL_WPCOM_BILLING_HISTORY_URL
 						: A4A_INVOICES_LINK,
 					title: isBillingDragonCheckoutEnabled
 						? translate( 'Billing History' )
