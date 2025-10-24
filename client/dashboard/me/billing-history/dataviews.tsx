@@ -4,7 +4,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { getReceiptUrlFor } from './urls';
+import { receiptRoute } from '../../app/router/me';
 import {
 	formatReceiptAmount,
 	formatReceiptTaxAmount,
@@ -74,7 +74,8 @@ export function useBillingHistoryActions() {
 				callback: ( items: Receipt[] ) => {
 					const item = items[ 0 ];
 					navigate( {
-						to: getReceiptUrlFor( item ),
+						to: receiptRoute.fullPath,
+						params: { receiptId: item.id },
 					} );
 				},
 			},
@@ -149,7 +150,8 @@ export function getFieldDefinitions( receipts: Receipt[] ): Fields< Receipt > {
 			render: ( { item }: { item: Receipt } ) => {
 				return (
 					<Link
-						to={ getReceiptUrlFor( item ) }
+						to={ receiptRoute.fullPath }
+						params={ { receiptId: item.id } }
 						title={ __( 'View receipt' ) }
 						className="receipts-link-to-receipt"
 					>

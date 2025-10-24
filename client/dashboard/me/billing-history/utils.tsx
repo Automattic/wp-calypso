@@ -62,12 +62,12 @@ export const groupDomainProducts = ( originalItems: ReceiptItem[] ) => {
 	return [ ...otherProducts, ...groupedDomainProducts ];
 };
 
-interface summarizedReceiptItems {
+interface SummarizedReceiptItems {
 	groupedItems: ReceiptItem[];
 	label: string;
 }
 
-export function summarizeReceiptItems( originalItems: ReceiptItem[] ): summarizedReceiptItems {
+export function summarizeReceiptItems( originalItems: ReceiptItem[] ): SummarizedReceiptItems {
 	const groupedItems = groupDomainProducts( originalItems );
 
 	let label = '';

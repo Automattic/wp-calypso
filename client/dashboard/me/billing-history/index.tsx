@@ -21,9 +21,7 @@ import type { Receipt } from '@automattic/api-core';
 
 export default function BillingHistory() {
 	const { data } = useSuspenseQuery( userReceiptsQuery() );
-	const receipts = useMemo( () => {
-		return data ?? [];
-	}, [ data ] );
+	const receipts = data ?? [];
 
 	const [ currentView, setView ] = useState( defaultBillingHistoryView );
 
