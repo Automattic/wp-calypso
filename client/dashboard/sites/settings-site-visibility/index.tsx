@@ -4,8 +4,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { canViewSiteVisibilitySettings } from '../features';
 import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
 import { ShareSiteForm } from './share-site-form';
@@ -14,7 +16,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
-	if ( ! settings ) {
+	if ( ! settings && canViewSiteVisibilitySettings( site ) ) {
 		return null;
 	}
 
@@ -51,7 +53,11 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 				/>
 			}
 		>
-			{ renderContent() }
+			{ canViewSiteVisibilitySettings( site ) ? (
+				renderContent()
+			) : (
+				<Notice>{ __( 'Site Visibility is not available for Flex sites.' ) }</Notice>
+			) }
 		</PageLayout>
 	);
 }

@@ -17,6 +17,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { canViewSiteVisibilitySettings } from '../features';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
@@ -84,10 +85,15 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 
 	return (
 		<>
-			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
-				<VisibilityCard site={ site } />
-				<BackupCard site={ site } />
-			</Grid>
+			{ ( () => {
+				const showVisibilityCard = canViewSiteVisibilitySettings( site );
+				return (
+					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ spacing }>
+						{ showVisibilityCard && <VisibilityCard site={ site } /> }
+						<BackupCard site={ site } />
+					</Grid>
+				);
+			} )() }
 			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 				{ ( () => {
 					if ( site.is_a4a_dev_site ) {
