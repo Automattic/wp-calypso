@@ -28,14 +28,9 @@ export const getFileUploader = ( file, siteId, postId ) => {
 	// Determine upload mechanism by object type
 	const isUrl = 'string' === typeof file;
 
-	if ( isUrl ) {
-		file = postId ? { parent_id: postId, url: file, title: file.title } : file;
-		return wpcom.site( siteId ).addMediaUrls( {}, file );
-	}
+	const title = file.title;
 
-	// VideoPress TUS upload
-	const isVideo = getMime( file ).startsWith( 'video/' );
-	if ( file?.canUseVideoPress && isVideo ) {
+	if ( ! isUrl && file?.canUseVideoPress && getMime( file ).startsWith( 'video/' ) ) {
 		const tusFile = toTusFile( file );
 		return import(
 			/* webpackChunkName: "tus-uploader" */ 'calypso/lib/media/uploaders/tus-uploader'
@@ -45,11 +40,10 @@ export const getFileUploader = ( file, siteId, postId ) => {
 		} );
 	}
 
-	const title = file.title;
 	if ( postId ) {
 		file = {
 			parent_id: postId,
-			file: file,
+			[ isUrl ? 'url' : 'file' ]: file,
 		};
 	} else if ( file.fileContents ) {
 		//if there's no parent_id, but the file object is wrapping a Blob
@@ -64,6 +58,10 @@ export const getFileUploader = ( file, siteId, postId ) => {
 	}
 
 	debug( 'Uploading media to %d from %o', siteId, file );
+
+	if ( isUrl ) {
+		return wpcom.site( siteId ).addMediaUrls( {}, file );
+	}
 
 	return wpcom.site( siteId ).addMediaFiles( {}, file );
 };
