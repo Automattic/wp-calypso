@@ -78,7 +78,6 @@ import {
 	isJetpackT1SecurityPlan,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
-import { getPurchaseUrlForId } from '../urls';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -522,7 +521,10 @@ function getFields( {
 					}
 					if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
 						return (
-							<Link to={ getPurchaseUrlForId( purchase.attached_to_purchase_id ) }>
+							<Link
+								to={ purchaseSettingsRoute.fullPath }
+								params={ { purchaseId: purchase.attached_to_purchase_id } }
+							>
 								{ __( 'Renews with plan' ) }
 							</Link>
 						);
@@ -1083,7 +1085,10 @@ export default function PurchaseSettings() {
 							}
 							if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
 								return (
-									<Link to={ getPurchaseUrlForId( purchase.attached_to_purchase_id ) }>
+									<Link
+										to={ purchaseSettingsRoute.fullPath }
+										params={ { purchaseId: purchase.attached_to_purchase_id } }
+									>
 										{ __( 'Renews with plan' ) }
 									</Link>
 								);

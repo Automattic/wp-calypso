@@ -19,7 +19,7 @@ import {
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
-import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/urls';
+import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -247,7 +247,7 @@ export const changePaymentMethodRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Change payment method' ),
+				title: __( 'Update payment method' ),
 			},
 		],
 	} ),
@@ -270,10 +270,33 @@ export const paymentMethodsRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
-	path: '/payment-methods',
+	path: 'payment-methods',
+} );
+
+export const paymentMethodsIndexRoute = createRoute( {
+	getParentRoute: () => paymentMethodsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const addPaymentMethodRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add payment method' ),
+			},
+		],
+	} ),
+	getParentRoute: () => paymentMethodsRoute,
+	path: 'add',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/add-payment-method' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-add-payment-method' )( {
 			component: d.default,
 		} )
 	)
@@ -745,7 +768,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					changePaymentMethodRoute,
 				] ),
 			] ),
-			paymentMethodsRoute,
+			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
 			taxDetailsRoute,
 		] )
 	);

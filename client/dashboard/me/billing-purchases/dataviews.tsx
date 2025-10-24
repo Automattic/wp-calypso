@@ -9,6 +9,7 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
@@ -20,7 +21,6 @@ import {
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
-import { getPurchaseUrl } from './urls';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
@@ -216,7 +216,11 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<Link to={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
+					<Link
+						to={ purchaseSettingsRoute.fullPath }
+						params={ { purchaseId: item.ID } }
+						title={ __( 'Manage purchase' ) }
+					>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
 					</Link>
 				);
@@ -250,7 +254,11 @@ export function getFields( {
 						{ isTransferred ? (
 							getTitleForDisplay( item ) + '&nbsp;'
 						) : (
-							<Link to={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
+							<Link
+								to={ purchaseSettingsRoute.fullPath }
+								params={ { purchaseId: item.ID } }
+								title={ __( 'Manage purchase' ) }
+							>
 								{ getTitleForDisplay( item ) }
 							</Link>
 						) }
@@ -450,7 +458,8 @@ export function usePurchasesListActions( {
 				callback: ( items: Purchase[] ) => {
 					const item = items[ 0 ];
 					navigate( {
-						to: getPurchaseUrl( item ),
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: item.ID },
 					} );
 				},
 			},

@@ -11,7 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 interface ManageSiteRedirectProps {
@@ -57,7 +57,12 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 					{ purchase && (
 						<Text>
 							{ createInterpolateElement( __( '<link>Manage</link> your site redirect upgrade.' ), {
-								link: <Link to={ getPurchaseUrlForId( purchase.ID ) } />,
+								link: (
+									<Link
+										to={ purchaseSettingsRoute.fullPath }
+										params={ { purchaseId: purchase.ID } }
+									/>
+								),
 							} ) }
 						</Text>
 					) }

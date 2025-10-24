@@ -26,7 +26,7 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 	const site = getSelectedSite( context.store.getState() ) as SiteExcerptData;
 
 	const queryParams = new URLSearchParams( window.location.search );
-	const sshMigration = [ 'complete', 'failed' ].includes(
+	const sshMigration = [ 'completed', 'failed' ].includes(
 		queryParams.get( 'ssh-migration' ) ?? ''
 	);
 	if ( isMigrationInProgress( site ) || sshMigration ) {

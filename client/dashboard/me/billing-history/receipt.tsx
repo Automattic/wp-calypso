@@ -22,7 +22,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { receiptRoute } from '../../app/router/me';
+import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {
@@ -228,7 +228,7 @@ function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 							'You can edit your VAT details <vatDetailsLink>on this page</vatDetailsLink>. This is not an official VAT receipt. For an official VAT receipt, <emailReceiptButton>email yourself a copy</emailReceiptButton>.'
 						),
 						{
-							vatDetailsLink: <Link to="/me/billing/tax-details" />,
+							vatDetailsLink: <Link to={ taxDetailsRoute.fullPath } />,
 							emailReceiptButton: (
 								<Button
 									className="receipt-email-button"

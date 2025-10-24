@@ -32,7 +32,7 @@ export function createCreditCardMethod( {
 	hasExistingCardMethods,
 	allowUseForAllSubscriptions,
 }: {
-	currency: string | null | undefined;
+	currency?: string | null | undefined;
 	hasExistingCardMethods?: boolean;
 	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod {
