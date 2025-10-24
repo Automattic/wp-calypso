@@ -27,7 +27,7 @@ test( 'should login and load editor', async ( { pageEditor, pageLogin } ) => {
 
 ### Location of Fixtures
 
-All custom fixtures are located in `test/e2e/lib/pw-base.ts`. This file exports the customized version of Playwright Test's `test` constant which can be used in a spec by importing this constant:
+All custom fixtures are located in `test/e2e/lib/pw-base.ts`. This file exports the customized version of Playwright Test's `test` constant which can be used in a spec by importing this constant.
 
 ### Naming of Fixtures
 
