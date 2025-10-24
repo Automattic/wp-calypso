@@ -17,11 +17,7 @@ export default function CoreMetricsPerformance( {
 	const formattedScore = `${ score }/100`;
 
 	const RecommendationLink = (
-		<Button
-			variant="link"
-			size="compact"
-			onClick={ () => onRecommendationsFilterChange( 'overall_score' ) }
-		/>
+		<Button variant="link" onClick={ () => onRecommendationsFilterChange( 'overall_score' ) } />
 	);
 
 	if ( status === 'bad' ) {
