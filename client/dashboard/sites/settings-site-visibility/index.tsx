@@ -16,7 +16,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
-	if ( ! settings && canViewSiteVisibilitySettings( site ) ) {
+	if ( ! settings ) {
 		return null;
 	}
 
