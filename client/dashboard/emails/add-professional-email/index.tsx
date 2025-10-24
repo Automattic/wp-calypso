@@ -184,9 +184,7 @@ const AddProfessionalEmail = () => {
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
 
-	const filledMailboxes = mailboxEntities.filter(
-		( mailbox ) => !! mailbox.getFieldValue( FIELD_MAILBOX )
-	);
+	const filledMailboxes = mailboxEntities.filter( ( mailbox ) => mailbox.isValid() );
 	const totalItems = filledMailboxes.length;
 	const totalCost = getTotalCost( {
 		amount: totalItems,
