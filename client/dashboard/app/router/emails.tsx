@@ -214,15 +214,12 @@ export const setUpMailboxRoute = createRoute( {
 		}
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
-		const products = queryClient.ensureQueryData( productsQuery() );
-
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
 		const mailboxAccounts = await queryClient.ensureQueryData(
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
-		await Promise.all( [ products, site, domain, mailboxAccounts ] );
+		await Promise.all( [ domain, mailboxAccounts ] );
 	},
 } ).lazy( () =>
 	import( '../../emails/set-up-mailbox' ).then( ( d ) =>
