@@ -295,6 +295,33 @@ describe( 'reader stats', () => {
 			);
 		} );
 
+		it( 'should track calypso_traintracks_interact when the post has a railcar', () => {
+			const post = {
+				ID: 123,
+				site_ID: 456,
+				railcar: {
+					railcar: 'test_railcar',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				},
+			} as unknown as TrackPostData;
+
+			recordTrackForPost( 'calypso_reader_article_opened', post );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_traintracks_interact',
+				expect.objectContaining( {
+					railcar: 'test_railcar',
+					action: 'article_opened',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				} )
+			);
+		} );
+
 		it( 'should record track for post without railcar', () => {
 			const post = { ID: 123, site_ID: 456 } as unknown as TrackPostData;
 

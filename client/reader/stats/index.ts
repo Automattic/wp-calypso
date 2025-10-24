@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -254,7 +254,7 @@ export function recordTrackForPost(
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
-			pick( post, [ 'railcar' ] ),
+			get( post, 'railcar' ),
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
