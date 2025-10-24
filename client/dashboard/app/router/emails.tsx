@@ -225,8 +225,8 @@ export const setUpMailboxRoute = createRoute( {
 		await Promise.all( [ products, site, domain, mailboxAccounts ] );
 	},
 } ).lazy( () =>
-	import( '../../emails/add-professional-email' ).then( ( d ) =>
-		createLazyRoute( 'add-professional-email' )( {
+	import( '../../emails/set-up-mailbox' ).then( ( d ) =>
+		createLazyRoute( 'set-up-mailbox' )( {
 			component: d.default,
 		} )
 	)
