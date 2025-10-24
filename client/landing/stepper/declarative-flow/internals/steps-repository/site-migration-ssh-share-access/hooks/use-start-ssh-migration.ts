@@ -38,7 +38,6 @@ const startSSHMigration = async (
 			remote_host: params.remoteHost,
 			remote_user: params.remoteUser,
 			remote_domain: params.remoteDomain,
-			remote_docroot: '/var/www/html',
 			...optionalFields,
 		};
 
