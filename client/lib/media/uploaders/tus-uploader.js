@@ -29,9 +29,11 @@ export default class TusUploader {
 			const uploader = this.resumableUploader( {
 				onError: ( error ) => reject( error ),
 				onSuccess: ( args ) => {
-					const media = this.wpcom.site( this._sid ).media( args.mediaId );
-					media
-						.get()
+					const path = `/sites/${ this._sid }/media/${ args.mediaId }`;
+					const query = { apiVersion: '1.2' };
+
+					this.wpcom.req
+						.get( path, query )
 						.then( ( res ) => resolve( { media: [ res ] } ) )
 						.catch( ( err ) => reject( err ) );
 				},
