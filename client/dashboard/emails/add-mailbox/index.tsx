@@ -16,18 +16,10 @@ import { CartActionError } from '../../shopping-cart/errors';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
-import {
-	FIELD_FIRSTNAME,
-	FIELD_IS_ADMIN,
-	FIELD_LASTNAME,
-	FIELD_MAILBOX,
-	FIELD_NAME,
-	FIELD_PASSWORD,
-	FIELD_PASSWORD_RESET_EMAIL,
-} from '../entities/constants';
+import { FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
-import { FormFieldNames, MutableFormFieldNames } from '../entities/types';
+import { FormFieldNames } from '../entities/types';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import { MailboxProvider } from '../types';
@@ -37,19 +29,6 @@ import { getTotalCost } from '../utils/get-total-cost';
 import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
-
-type HiddenFieldNames = Exclude<
-	MutableFormFieldNames,
-	typeof FIELD_MAILBOX | typeof FIELD_PASSWORD
->;
-
-const possibleHiddenFieldNames: HiddenFieldNames[] = [
-	FIELD_NAME,
-	FIELD_FIRSTNAME,
-	FIELD_LASTNAME,
-	FIELD_IS_ADMIN,
-	FIELD_PASSWORD_RESET_EMAIL,
-];
 
 const AddProfessionalEmail = () => {
 	const { user } = useAuth();
@@ -80,11 +59,6 @@ const AddProfessionalEmail = () => {
 				.map( ( emailBox ) => emailBox.mailbox )
 		);
 
-		possibleHiddenFieldNames.forEach( ( fieldName ) => {
-			mailbox.setFieldIsVisible( fieldName, false );
-			mailbox.setFieldIsRequired( fieldName, false );
-		} );
-
 		// Set initial values
 		Object.entries( {
 			[ FIELD_PASSWORD_RESET_EMAIL ]: user.email,
@@ -110,7 +84,7 @@ const AddProfessionalEmail = () => {
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);
 
-		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
+		mailboxEntities.forEach( ( mailbox ) => mailbox.validate() );
 		persistMailboxesToState();
 		const mailboxOperations = new MailboxOperations( mailboxEntities, persistMailboxesToState );
 
@@ -154,7 +128,6 @@ const AddProfessionalEmail = () => {
 
 		await shoppingCartManagerClient
 			.forCartKey( site?.ID )
-			// @ts-expect-error -- getCartItems response won't be void since the provider here is always 'titan'
 			.actions.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
 			.then( () => {
 				window.location.href = checkoutPath;

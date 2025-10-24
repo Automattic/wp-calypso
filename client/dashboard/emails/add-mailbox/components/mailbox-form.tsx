@@ -1,5 +1,6 @@
 import {
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	Button,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 } from '@wordpress/components';
@@ -11,8 +12,8 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import {
 	FIELD_FIRSTNAME,
+	FIELD_LASTNAME,
 	FIELD_MAILBOX,
-	FIELD_NAME,
 	FIELD_PASSWORD,
 	FIELD_PASSWORD_RESET_EMAIL,
 } from '../../entities/constants';
@@ -44,9 +45,6 @@ export const MailboxForm = ( {
 	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
 		mailboxEntity.validateField( field.fieldName );
 	const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
-		if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
-			return;
-		}
 		if ( mailboxEntity.getIsFieldTouched( FIELD_MAILBOX ) ) {
 			return;
 		}
@@ -93,6 +91,26 @@ export const MailboxForm = ( {
 
 	return (
 		<VStack spacing={ 4 }>
+			{ mailboxEntity.provider === MailboxProvider.Google && (
+				<HStack>
+					<MailboxInput
+						fieldName={ FIELD_FIRSTNAME }
+						mailboxEntity={ mailboxEntity }
+						label={ __( 'Fist name' ) }
+						disabled={ disabled }
+						onBlur={ onBlur }
+						onChange={ onChange }
+					/>
+					<MailboxInput
+						fieldName={ FIELD_LASTNAME }
+						mailboxEntity={ mailboxEntity }
+						label={ __( 'Last name' ) }
+						disabled={ disabled }
+						onBlur={ onBlur }
+						onChange={ onChange }
+					/>
+				</HStack>
+			) }
 			<MailboxInput
 				fieldName={ FIELD_MAILBOX }
 				mailboxEntity={ mailboxEntity }

@@ -2,10 +2,8 @@ import { MailboxProvider } from '../types';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
-	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
-	FIELD_NAME,
 	FIELD_PASSWORD,
 	FIELD_PASSWORD_RESET_EMAIL,
 	FIELD_UUID,
@@ -84,11 +82,6 @@ export class TextMailboxFormField extends MailboxFormFieldBase< string > {
 	}
 }
 
-class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {
-	value = false;
-	readonly typeName = Boolean.name.toLowerCase();
-}
-
 interface IBaseMailboxFormFields {
 	readonly domain: DataMailboxFormField;
 	mailbox: TextMailboxFormField;
@@ -98,20 +91,18 @@ interface IBaseMailboxFormFields {
 }
 
 interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
-	firstName?: TextMailboxFormField;
-	lastName?: TextMailboxFormField;
+	firstName: TextMailboxFormField;
+	lastName: TextMailboxFormField;
 }
 
-interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
-	isAdmin?: BooleanMailboxFormField;
-	name?: TextMailboxFormField;
-}
+interface ITitanMailboxFormFields extends IBaseMailboxFormFields {}
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
 	readonly domain = new DataMailboxFormField( FIELD_DOMAIN );
 	mailbox = new TextMailboxFormField( FIELD_MAILBOX );
 	password = new TextMailboxFormField( FIELD_PASSWORD );
 	readonly uuid = new DataMailboxFormField( FIELD_UUID );
+	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 
 	constructor( domain: string ) {
 		this.domain.value = domain;
@@ -119,16 +110,11 @@ abstract class MailboxFormFields implements IBaseMailboxFormFields {
 }
 
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
-	firstName? = new TextMailboxFormField( FIELD_FIRSTNAME );
-	lastName? = new TextMailboxFormField( FIELD_LASTNAME );
-	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
+	firstName = new TextMailboxFormField( FIELD_FIRSTNAME );
+	lastName = new TextMailboxFormField( FIELD_LASTNAME );
 }
 
-class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
-	isAdmin? = new BooleanMailboxFormField( FIELD_IS_ADMIN, false );
-	name? = new TextMailboxFormField( FIELD_NAME );
-	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
-}
+class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {}
 
 const MailboxFormFieldsMap: Record< MailboxProvider, new ( domain: string ) => MailboxFormFields > =
 	{
@@ -139,7 +125,6 @@ const MailboxFormFieldsMap: Record< MailboxProvider, new ( domain: string ) => M
 type GoogleFormFieldNames = keyof GoogleMailboxFormFields;
 type TitanFormFieldNames = keyof TitanMailboxFormFields;
 type FormFieldNames = GoogleFormFieldNames | TitanFormFieldNames;
-type MutableFormFieldNames = Exclude< FormFieldNames, typeof FIELD_DOMAIN | typeof FIELD_UUID >;
 type ValidatorFieldNames = FormFieldNames | null;
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
@@ -159,7 +144,6 @@ export type {
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	MailboxFormFields,
-	MutableFormFieldNames,
 	TitanFormFieldNames,
 	TitanMailboxFormFields,
 	ValidatorFieldNames,

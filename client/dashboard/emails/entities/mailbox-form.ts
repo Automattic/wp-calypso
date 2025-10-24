@@ -19,10 +19,8 @@ import { MailboxProvider } from '../types';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
-	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
-	FIELD_NAME,
 	FIELD_PASSWORD,
 	FIELD_PASSWORD_RESET_EMAIL,
 	FIELD_UUID,
@@ -33,10 +31,9 @@ import {
 	MailboxNameAvailabilityValidator,
 	MailboxNameValidator,
 	MaximumStringLengthValidator,
-	PasswordValidator,
 	PasswordResetEmailValidator,
+	PasswordValidator,
 	PreviouslySpecifiedMailboxNamesValidator,
-	RequiredIfVisibleValidator,
 	RequiredValidator,
 } from './validators';
 import type { FormFieldNames, MailboxFormFields, ValidatorFieldNames } from './types';
@@ -71,8 +68,6 @@ class MailboxForm< T extends MailboxProvider > {
 			[ FIELD_LASTNAME, new RequiredValidator< string >() ],
 			[ FIELD_LASTNAME, new MaximumStringLengthValidator( 60 ) ],
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
-			[ FIELD_NAME, new RequiredIfVisibleValidator() ],
-			[ FIELD_NAME, new MaximumStringLengthValidator( 60 ) ],
 			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( domainName, this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
@@ -137,7 +132,7 @@ class MailboxForm< T extends MailboxProvider > {
 			password: this.getFieldValue< string >( FIELD_PASSWORD ),
 		};
 
-		return this.provider === 'google_workspace'
+		return this.provider === MailboxProvider.Google
 			? {
 					...commonFields,
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
@@ -147,8 +142,6 @@ class MailboxForm< T extends MailboxProvider > {
 			: {
 					...commonFields,
 					alternative_email: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
-					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
-					name: this.getFieldValue< string >( FIELD_NAME ),
 			  };
 	}
 
@@ -192,13 +185,6 @@ class MailboxForm< T extends MailboxProvider > {
 		return ! this.hasErrors() && this.hasValidValues();
 	}
 
-	setFieldIsVisible( fieldName: FormFieldNames, isVisible: boolean ) {
-		const field = this.getFormField( fieldName );
-		if ( field ) {
-			field.isVisible = isVisible;
-		}
-	}
-
 	setFieldIsRequired( fieldName: FormFieldNames, isRequired: boolean ) {
 		const field = this.getFormField( fieldName );
 		if ( field ) {
@@ -213,11 +199,7 @@ class MailboxForm< T extends MailboxProvider > {
 		}
 	}
 
-	private validateFieldByName(
-		fieldName: ValidatorFieldNames,
-		validator: Validator< unknown >,
-		skipInvisibleFields: boolean
-	) {
+	private validateFieldByName( fieldName: ValidatorFieldNames, validator: Validator< unknown > ) {
 		if ( ! fieldName ) {
 			return;
 		}
@@ -227,22 +209,14 @@ class MailboxForm< T extends MailboxProvider > {
 			return;
 		}
 
-		if ( skipInvisibleFields && ! field.isVisible ) {
-			return;
-		}
-
 		validator.validate( field );
 	}
 
-	validate(
-		skipInvisibleFields = false,
-		additionalValidators?: [ ValidatorFieldNames, Validator< unknown > ][]
-	) {
+	validate( additionalValidators?: [ ValidatorFieldNames, Validator< unknown > ][] ) {
 		this.clearErrors();
 
 		[ ...this.getValidators(), ...( additionalValidators ?? [] ) ].forEach(
-			( [ fieldName, validator ] ) =>
-				this.validateFieldByName( fieldName, validator, skipInvisibleFields )
+			( [ fieldName, validator ] ) => this.validateFieldByName( fieldName, validator )
 		);
 	}
 
