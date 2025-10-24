@@ -99,7 +99,7 @@ export const MailboxForm = ( {
 					<MailboxInput
 						fieldName={ FIELD_FIRSTNAME }
 						mailboxEntity={ mailboxEntity }
-						label={ __( 'Fist name' ) }
+						label={ __( 'First name' ) }
 						disabled={ disabled }
 						onBlur={ onBlur }
 						onChange={ changeHandler }
