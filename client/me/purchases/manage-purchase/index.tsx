@@ -198,7 +198,7 @@ export interface ManagePurchaseProps {
 	purchaseId: number;
 	redirectTo?: string;
 	siteSlug: string;
-	showRemovePurchaseDialog: boolean | null;
+	showRemovePurchaseDialog?: boolean | undefined;
 
 	/**
 	 * Note: this defaults to true.

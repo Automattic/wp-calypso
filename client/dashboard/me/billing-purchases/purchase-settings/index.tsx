@@ -257,7 +257,13 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function CancelOrRemoveActionButton( { site, purchase }: { site: Site; purchase: Purchase } ) {
+function CancelOrRemoveActionButton( {
+	siteSlug,
+	purchase,
+}: {
+	siteSlug: string | undefined;
+	purchase: Purchase;
+} ) {
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
@@ -273,7 +279,7 @@ function CancelOrRemoveActionButton( { site, purchase }: { site: Site; purchase:
 						onClick={ () =>
 							// FIXME: add refund, cancel, and downgrade action
 							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ site.slug }/${ purchase.ID }/cancel` )
+							( window.location.href = `/me/purchases/${ siteSlug }/${ purchase.ID }/cancel` )
 						}
 					>
 						{ __( 'Downgrade or cancel' ) }
@@ -294,7 +300,7 @@ function CancelOrRemoveActionButton( { site, purchase }: { site: Site; purchase:
 						onClick={ () =>
 							// FIXME: add remove action
 							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ site.slug }/${ purchase.ID }/remove` )
+							( window.location.href = `/me/purchases/${ siteSlug }/${ purchase.ID }/remove` )
 						}
 					>
 						{ __( 'Remove subscription' ) }
@@ -467,7 +473,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function PurchaseSettingsActions( { site, purchase }: { site: Site; purchase: Purchase } ) {
+function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
@@ -476,7 +482,7 @@ function PurchaseSettingsActions( { site, purchase }: { site: Site; purchase: Pu
 				<UpgradeActionButton purchase={ purchase } />
 				<ReSubscribeActionButton purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
-				<CancelOrRemoveActionButton site={ site } purchase={ purchase } />
+				<CancelOrRemoveActionButton siteSlug={ purchase.site_slug } purchase={ purchase } />
 			</ActionList>
 		</VStack>
 	);
@@ -1129,7 +1135,7 @@ export default function PurchaseSettings() {
 				</Grid>
 				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
 				<ManageSubscriptionCard purchase={ purchase } />
-				<PurchaseSettingsActions site={ site } purchase={ purchase } />
+				<PurchaseSettingsActions siteSlug={ purchase.site_slug } purchase={ purchase } />
 			</VStack>
 		</PageLayout>
 	);
