@@ -208,13 +208,20 @@ export function getFieldDefinitions( receipts: Receipt[] ): Fields< Receipt > {
 		},
 		{
 			id: 'extra_receipt_data_for_search',
+			// This empty space is a hack to prevent this hidden field from
+			// having its ID listed in the "Hidden" section, when you click the
+			// gear icon next to the view and scroll down to the bottom.
+			// Ideally there would be a cleaner way to add content to search
+			// without using a fake field like this at all.
+			label: ' ',
 			enableHiding: false,
 			enableSorting: false,
 			filterBy: false,
 			enableGlobalSearch: true,
 			// This function returns data from the other fields that could not
-			// be returned there because it would interfere with getValue()
-			// being used for sorting, filtering, etc.
+			// be returned there because it would interfere with their
+			// getValue() implementations being used for sorting, filtering,
+			// etc.
 			getValue: ( { item }: { item: Receipt } ) => {
 				const search_data = [];
 				// Date field: Add the full date in a couple of formats, so
