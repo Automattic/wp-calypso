@@ -292,8 +292,8 @@ function CancelOrRemoveActionButton( { site, purchase }: { site: Site; purchase:
 						variant="secondary"
 						size="compact"
 						onClick={ () =>
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
 							// FIXME: add remove action
+							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
 							( window.location.href = `/me/purchases/${ site.slug }/${ purchase.ID }/remove` )
 						}
 					>
