@@ -45,6 +45,9 @@ export const MailboxForm = ( {
 	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
 		mailboxEntity.validateField( field.fieldName );
 	const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
+		if ( ! [ FIELD_FIRSTNAME ].includes( field.fieldName ) ) {
+			return;
+		}
 		if ( mailboxEntity.getIsFieldTouched( FIELD_MAILBOX ) ) {
 			return;
 		}
@@ -99,7 +102,7 @@ export const MailboxForm = ( {
 						label={ __( 'Fist name' ) }
 						disabled={ disabled }
 						onBlur={ onBlur }
-						onChange={ onChange }
+						onChange={ changeHandler }
 					/>
 					<MailboxInput
 						fieldName={ FIELD_LASTNAME }
@@ -107,7 +110,7 @@ export const MailboxForm = ( {
 						label={ __( 'Last name' ) }
 						disabled={ disabled }
 						onBlur={ onBlur }
-						onChange={ onChange }
+						onChange={ changeHandler }
 					/>
 				</HStack>
 			) }

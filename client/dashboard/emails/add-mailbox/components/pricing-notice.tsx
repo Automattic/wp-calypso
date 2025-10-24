@@ -9,6 +9,7 @@ import { Text } from '../../../components/text';
 import { formatDate } from '../../../utils/datetime';
 import { MailboxProvider } from '../../types';
 import { doesAdditionalPriceMatchStandardPrice } from '../../utils/does-additional-price-match-standard-price';
+import { getEmailSubscription } from '../../utils/get-email-subscription';
 import { getExpiryDate } from '../../utils/get-expiry-date';
 import { getProductProvider } from '../../utils/get-product-provider';
 import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
@@ -16,7 +17,7 @@ import { isMonthlyEmailProduct } from '../../utils/is-monthly-email-product';
 import { isUserOnFreeTrial } from '../../utils/is-user-on-free-trial';
 
 function getPriceMessage( emailSubscription?: EmailSubscription ) {
-	if ( ! emailSubscription.purchase_cost_per_mailbox ) {
+	if ( ! emailSubscription?.purchase_cost_per_mailbox ) {
 		return '';
 	}
 
@@ -129,12 +130,7 @@ export const PricingNotice = ( {
 
 	const provider = getProductProvider( product );
 
-	let emailSubscription = undefined;
-	if ( provider === MailboxProvider.Titan && domain.titan_mail_subscription ) {
-		emailSubscription = domain.titan_mail_subscription as EmailSubscription;
-	} else if ( provider === MailboxProvider.Google && domain.google_apps_subscription ) {
-		emailSubscription = domain.google_apps_subscription as EmailSubscription;
-	}
+	const emailSubscription = getEmailSubscription( { domain, product } );
 
 	const purchaseCost = emailSubscription?.purchase_cost_per_mailbox;
 	const renewalCost = emailSubscription?.renewal_cost_per_mailbox;
