@@ -348,9 +348,9 @@ function getReceiptItemTypesForFiltering(
 ): Array< { value: string; label: string } > {
 	return [ ...new Set( receipts.map( getReceiptItemTypeForDisplay ) ) ]
 		.sort()
-		.map( ( service ) => ( {
-			value: service,
-			label: service,
+		.map( ( itemType ) => ( {
+			value: itemType,
+			label: itemType,
 		} ) );
 }
 
