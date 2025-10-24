@@ -6,6 +6,12 @@ interface SSHMigrationStatusParams {
 	enabled?: boolean;
 }
 
+/**
+ * Response from the SSH migration status endpoint
+ * @property success - Indicates if the status request was successful
+ * @property status - High-level migration status (in-progress, migrating, completed, or failed)
+ * @property step - Detailed migration step indicating current progress through the migration process
+ */
 interface SSHMigrationStatusResponse {
 	success: boolean;
 	status: 'in-progress' | 'migrating' | 'completed' | 'failed';
