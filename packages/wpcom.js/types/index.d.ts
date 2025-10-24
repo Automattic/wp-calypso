@@ -65,17 +65,8 @@ export class Request {
 }
 
 export interface WpcomInstance {
-	/** Optional OAuth token currently loaded on the instance */
-	token?: string;
-	/** Default API version (defaults to '1.1') */
-	apiVersion: string;
-	/** Low-level request executor injected by the host environment */
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	request: ( params: object, callback: any ) => any;
 	/** Convenience request wrapper with helpers and Promise support */
 	req: Request;
-	/** Pinghub instance for real-time updates */
-	pinghub: any;
 
 	/** Load or update the OAuth token at runtime */
 	loadToken( token?: string ): void;
