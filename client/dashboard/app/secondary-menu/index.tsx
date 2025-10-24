@@ -52,7 +52,7 @@ function Help() {
 	}, [ setShowHelpCenter ] );
 
 	const handleMenuClick = ( destination: string, isExternal = false ) => {
-		recordTracksEvent( 'calypso_help_center_menu_panel_click', {
+		recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 			section: 'dashboard',
 			destination,
 			help_center_visible: isShown,

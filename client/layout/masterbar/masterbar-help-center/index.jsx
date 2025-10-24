@@ -48,7 +48,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	};
 
 	const handleMenuClick = ( destination, isExternal = false ) => {
-		recordTracksEvent( `calypso_help_center_menu_panel_click`, {
+		recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
 			section: sectionName,
 			destination,
 		} );
