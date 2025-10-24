@@ -45,10 +45,10 @@ export function useActions(): Action< Site >[] {
 		},
 		{
 			id: 'domains',
-			label: __( 'Domains ↗' ),
+			label: __( 'Domains' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				window.open( `/domains/manage/${ site.slug }` );
+				router.navigate( { to: '/sites/$siteSlug/domains', params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) => canManageSite( item ),
 		},
