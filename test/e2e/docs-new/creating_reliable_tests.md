@@ -1,12 +1,12 @@
-## Creating Reliable Tests
+# Creating Reliable Tests
 
-### Table of contents
+## Table of contents
 
 - [Using `repeat-each` to test your tests](#using-repeat-each-to-test-your-tests)
 - [Use `expect.poll` to poll for expected values](#use-expectpoll-to-poll-for-expected-values)
 - [Repeatable tests using new WordPress.com sites](#repeatable-tests-using-new-wordpresscom-sites)
 
-### Using `repeat-each` to test your tests
+## Using `repeat-each` to test your tests
 
 [Playwright Test](https://playwright.dev/docs/test-intro) is a popular end-to-end testing framework for web applications. You can utilise Playwright Test's built-in `repeat-each` parameter to ensure that a new or updated test runs consistently in parallel and numerous times.
 
@@ -19,7 +19,7 @@ Running 100 tests using 10 workers
   100 passed (1.7m)
 ```
 
-### Use `expect.poll` to poll for expected values
+## Use `expect.poll` to poll for expected values
 
 Given the following function on a page object:
 
@@ -53,7 +53,7 @@ If you are not using a page object function to return the visibility, you can us
     await expect( page.getByRole( 'heading', { name: '404 Not Found' } ) ).toBeVisible();
 ```
 
-### Repeatable tests using new WordPress.com sites
+## Repeatable tests using new WordPress.com sites
 
 Tests should be repeatable so that they can be run in parallel across different devices. Any e2e test that updates a setting or performs an action with lasting effects should be run against a new site.
 

@@ -1,4 +1,4 @@
-## Running & Debugging Tests
+# Running & Debugging Tests
 
 ## Table of Contents
 
@@ -7,13 +7,13 @@
 - [Running via Terminal](#running-via-terminal)
   - [Running different types of tests via the Terminal](#running-different-types-of-tests-via-the-terminal)
 
-### Running via Playwright VSCode Extension
+## Running via Playwright VSCode Extension
 
 Once you have installed the [Playwright VSCode Extension](./setup.md) it is easy to run and debug tests via the extension pane, or directly from the test specifications themselves.
 
 ![Run and Debug Tests](./files/run-debug-tests.png)
 
-#### Setting custom environment variables for the Playwright VSCode Extension
+### Setting custom environment variables for the Playwright VSCode Extension
 
 You can easily set custom environment variables for the Playwright VSCode Extension. For example, the `CALYPSO_BASE_URL` variable controls the base URL of the Calypso application that your tests will target:
 
@@ -30,7 +30,7 @@ You can easily set custom environment variables for the Playwright VSCode Extens
 
 ![Playwright VSCode Extension Settings](./files/pw-extensionsettings.png)
 
-### Running via the Terminal
+## Running via the Terminal
 
 Before running the following commands, open your terminal and navigate to the `./test/e2e` directory from the project root:
 
@@ -48,7 +48,7 @@ where `<test_path>` is a directory of tests or a test file, e.g. `./specs/tools/
 
 > **Note:** The double underscore (`__`) in test file names (e.g., `import__sites-medium.spec.ts`) is used to separate the feature (`import`) from the scenario or specific case (`sites-medium`), improving organization and readability.
 
-#### Running different types of tests via the Terminal
+### Running different types of tests via the Terminal
 
 - `yarn test:pw:desktop`  
   Runs tests targeting desktop browsers to verify desktop-specific user experiences and functionality.

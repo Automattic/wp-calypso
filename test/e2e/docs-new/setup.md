@@ -1,3 +1,5 @@
+# Playwright Test Setup
+
 ## Quick start macOS
 
 1. Install [Homebrew](https://brew.sh/) if not already installed.

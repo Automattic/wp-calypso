@@ -1,5 +1,7 @@
 [← Style Guide](./style_guide.md) | [Top](./../README.md) | [Troubleshooting →](./troubleshooting.md)
 
+# Debugging
+
 <!-- TOC -->
 
 - [Debugging](#debugging)
