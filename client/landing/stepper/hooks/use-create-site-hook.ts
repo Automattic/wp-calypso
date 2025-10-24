@@ -78,6 +78,7 @@ export const createSite = async ( {
 	sourceSlug,
 	siteIntent,
 	planCartItems,
+	blueprint = null,
 }: Params ) => {
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
@@ -91,6 +92,7 @@ export const createSite = async ( {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} );
 
 	const locale = getLocaleSlug();
