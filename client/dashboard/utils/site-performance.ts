@@ -160,10 +160,6 @@ export function getFormattedSize( size: number ) {
 	);
 }
 
-/**
- * Checks if a metric should be displayed in tabs based on the report data.
- * This follows the same filtering logic used in CoreMetricsTabs.
- */
 export const shouldDisplayMetric = ( key: string, report: SitePerformanceReport ): boolean => {
 	// We don't want to display the overall score in the tabs.
 	if ( key === 'overall_score' ) {
@@ -185,10 +181,6 @@ export const shouldDisplayMetric = ( key: string, report: SitePerformanceReport 
 	return true;
 };
 
-/**
- * Gets all available metrics that should be displayed in tabs.
- * Returns an array of metric keys in the order they should appear.
- */
 export const getAvailableMetrics = ( report: SitePerformanceReport ): Metrics[] => {
 	return Object.keys( metricsNames )
 		.filter( ( key ) => shouldDisplayMetric( key, report ) )
