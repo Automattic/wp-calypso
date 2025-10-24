@@ -133,7 +133,8 @@ export default function () {
 	);
 
 	/**
-	 * Settings Multi-site Dashboard backport
+	 * Legacy URLs for Multi-site Dashboard settings backport.
+	 * Redirect to the new URLs.
 	 */
 	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
 	page(
