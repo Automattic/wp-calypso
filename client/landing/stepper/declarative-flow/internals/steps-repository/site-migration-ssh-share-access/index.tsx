@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -10,6 +10,7 @@ import { urlToDomain } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
+import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/use-ssh-migration-status';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
@@ -21,7 +22,11 @@ import './styles.scss';
 
 const SiteMigrationSshShareAccess: StepType< {
 	submits: {
-		destination?: 'migration-started' | 'no-ssh-access' | 'back-to-verification';
+		destination?:
+			| 'migration-started'
+			| 'migration-completed'
+			| 'no-ssh-access'
+			| 'back-to-verification';
 		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
 	};
 } > = function ( { navigation } ) {
@@ -32,6 +37,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const host = queryParams.get( 'host' ) ?? undefined;
 	const transferIdParam = queryParams.get( 'transferId' );
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
+	const [ migrationStarted, setMigrationStarted ] = useState( false );
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -46,12 +52,6 @@ const SiteMigrationSshShareAccess: StepType< {
 
 	const dispatch = useDispatch();
 
-	// Steps orchestration
-	const onCompleteSteps = () => {
-		dispatch( resetSite( siteId ) );
-		navigation.submit?.( { destination: 'migration-started' } );
-	};
-
 	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
 		fromUrl,
 		siteId,
@@ -61,6 +61,29 @@ const SiteMigrationSshShareAccess: StepType< {
 	} );
 
 	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
+
+	// Poll for migration status after starting migration
+	const { data: migrationStatus } = useSSHMigrationStatus( {
+		siteId,
+		enabled: migrationStarted && siteId > 0,
+	} );
+
+	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
+	useEffect( () => {
+		if ( ! migrationStarted || ! migrationStatus ) {
+			return;
+		}
+
+		if ( migrationStatus.status === 'migrating' ) {
+			dispatch( resetSite( siteId ) );
+			navigation.submit?.( { destination: 'migration-started' } );
+		} else if ( migrationStatus.status === 'failed' ) {
+			setMigrationError( new Error( 'Migration failed. Please try again.' ) );
+			setMigrationStarted( false );
+		} else if ( migrationStatus.status === 'completed' ) {
+			navigation.submit?.( { destination: 'migration-completed' } );
+		}
+	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
 
 	const handleContinue = () => {
 		setMigrationError( null );
@@ -75,7 +98,7 @@ const SiteMigrationSshShareAccess: StepType< {
 			{
 				onSuccess: () => {
 					onMigrationStarted();
-					onCompleteSteps();
+					setMigrationStarted( true );
 				},
 				onError: ( error ) => {
 					setMigrationError( error );
@@ -125,8 +148,8 @@ const SiteMigrationSshShareAccess: StepType< {
 						<Button
 							variant="primary"
 							onClick={ handleContinue }
-							disabled={ ! canStartMigration || isStartingMigration }
-							isBusy={ isStartingMigration }
+							disabled={ ! canStartMigration || isStartingMigration || migrationStarted }
+							isBusy={ isStartingMigration || migrationStarted }
 						>
 							{ translate( 'Continue' ) }
 						</Button>

@@ -590,7 +590,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
 					const { destination } = providedDependencies as {
-						destination?: 'migration-started' | 'no-ssh-access' | 'back-to-verification';
+						destination?:
+							| 'migration-started'
+							| 'migration-completed'
+							| 'no-ssh-access'
+							| 'back-to-verification';
 					};
 
 					// Missing transferId, redirect back to verification
@@ -601,6 +605,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 					// User doesn't have SSH access, redirect to credentials flow
 					if ( destination === 'no-ssh-access' ) {
 						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+					}
+
+					// Migration completed during polling, go to overview
+					if ( destination === 'migration-completed' ) {
+						return exitFlow(
+							paths.dashboardSiteSSHMigration( { 'ssh-migration': 'completed' }, { siteSlug } )
+						);
 					}
 
 					return navigate( paths.sshInProgressPath( { siteId, siteSlug } ) );
