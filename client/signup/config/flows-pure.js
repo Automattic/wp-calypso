@@ -73,8 +73,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon', 'storage' ],
-			optionalDependenciesInQuery: [ 'coupon', 'storage' ],
+			providesDependenciesInQuery: [ 'coupon', 'storage', 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'coupon', 'storage', 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -84,8 +84,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'coupon', 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -95,8 +95,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'coupon', 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -106,6 +106,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{

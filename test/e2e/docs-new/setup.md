@@ -1,3 +1,24 @@
+# Playwright Test Setup
+
+## Table of contents
+
+- [Quick start macOS](#quick-start-macos)
+  - [Install Homebrew](#install-homebrew)
+  - [Install nvm](#install-nvm)
+  - [Install the required nodeJS version](#install-the-required-nodejs-version)
+  - [Use the installed nodeJS version](#use-the-installed-nodejs-version)
+  - [Enable yarn package manager](#enable-yarn-package-manager)
+  - [Clone this repository](#clone-this-repository)
+  - [Navigate to the cloned directory](#navigate-to-the-cloned-directory)
+  - [Install project dependencies](#install-project-dependencies)
+  - [Obtain the secrets decryption key](#obtain-the-secrets-decryption-key)
+  - [Decrypt the secrets file](#decrypt-the-secrets-file)
+  - [Transpile the packages](#transpile-the-packages)
+  - [Run tests](#run-tests)
+  - [Playwright VSCode extension](#install-and-use-playwright-vscode-extension)
+- Related
+  - [Decrypt test environment](../docs/test_environment.md)
+
 ## Quick start macOS
 
 1. Install [Homebrew](https://brew.sh/) if not already installed.

@@ -90,7 +90,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Backups' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ ( hasAppSupport( supports, 'domains' ) || supports.sitesCIAB ) && (
+			{ hasAppSupport( supports, 'domains' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
 				</ResponsiveMenu.Item>

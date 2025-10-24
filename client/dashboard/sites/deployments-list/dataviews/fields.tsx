@@ -1,4 +1,5 @@
 import { Badge } from '@automattic/ui';
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -9,6 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
+import { siteRoute, siteSettingsRepositoriesManageRoute } from '../../../app/router/sites';
 import TimeSince from '../../../components/time-since';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentStatusBadge, DeploymentStatusValue } from '../deployment-status-badge';
@@ -26,6 +28,7 @@ export function useDeploymentFields( {
 	userNameOptions = [],
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
 	const locale = useLocale();
+	const { siteSlug } = siteRoute.useParams();
 	return useMemo(
 		() => [
 			{
@@ -40,7 +43,16 @@ export function useDeploymentFields( {
 				getValue: ( { item } ) => item.repository_name,
 				render: ( { item } ) => {
 					const [ , repo ] = item.repository_name.split( '/' );
-					return <Text>{ repo }</Text>;
+
+					return (
+						<Link
+							to={ siteSettingsRepositoriesManageRoute.fullPath }
+							params={ { siteSlug, deploymentId: item.code_deployment_id } }
+							search={ { from: 'deployments' } }
+						>
+							{ repo }
+						</Link>
+					);
 				},
 			},
 			{
@@ -176,6 +188,6 @@ export function useDeploymentFields( {
 				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[ repositoryOptions, userNameOptions, locale ]
+		[ repositoryOptions, userNameOptions, locale, siteSlug ]
 	);
 }

@@ -2,6 +2,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
+import { SiteLink } from '../site-fields';
 import { DEFAULT_LAYOUTS, DEFAULT_PER_PAGE_SIZES } from './views';
 import type { Site, SitesView } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
@@ -41,6 +42,7 @@ export const SitesDataViews = ( {
 					paginationInfo={ paginationInfo }
 					config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
 					empty={ empty }
+					renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
 				/>
 			</DataViewsCard>
 			<GuidedTourContextProvider

@@ -1,6 +1,5 @@
 import { normalizePurchase } from '../purchase';
 import { wpcom } from '../wpcom-fetcher';
-import type { StoredPaymentMethod } from '../me-payment-methods';
 import type { Purchase } from '../purchase';
 
 export interface UpdateCreditCardParams {
@@ -33,17 +32,17 @@ export async function setPurchaseAutoRenew(
 		apiVersion: '1.1',
 	} );
 	return {
-		...data,
+		success: data.success,
 		upgrade: normalizePurchase( data.upgrade ),
 	};
 }
 
 export async function updateCreditCard(
 	params: UpdateCreditCardParams
-): Promise< StoredPaymentMethod > {
-	return await wpcom.req.post( {
+): Promise< { success: boolean; upgrade: Purchase } > {
+	const data = await wpcom.req.post( {
 		path: `/upgrades/${ params.purchaseId }/update-credit-card`,
-		apiVersion: '1.1',
+		apiVersion: '1.2',
 		body: {
 			payment_partner: params.paymentPartner,
 			paygate_token: params.paygateToken,
@@ -58,14 +57,24 @@ export async function updateCreditCard(
 			setup_key: params.setupKey,
 		},
 	} );
+	return {
+		success: data.success,
+		upgrade: normalizePurchase( data.upgrade ),
+	};
 }
 
-export async function assignPaymentMethod( params: AssignPaymentMethodParams ): Promise< unknown > {
-	return await wpcom.req.post( {
+export async function assignPaymentMethod(
+	params: AssignPaymentMethodParams
+): Promise< { success: boolean; upgrade: Purchase } > {
+	const data = await wpcom.req.post( {
 		path: `/upgrades/${ params.subscriptionId }/assign-payment-method`,
-		apiVersion: '1',
+		apiVersion: '1.2',
 		body: {
 			stored_details_id: params.storedDetailsId,
 		},
 	} );
+	return {
+		success: data.payment_method_changed,
+		upgrade: normalizePurchase( data.upgrade ),
+	};
 }

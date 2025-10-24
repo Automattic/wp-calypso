@@ -1,13 +1,3 @@
-.purchase-settings-card__link {
-	text-decoration: none;
-	flex-grow: 1;
-	max-width: 318px;
-}
-.purchase-settings-card {
-	flex-grow: 1;
-	max-width: 318px;
-}
-
 // ConfirmDialog sets the z-index so high that the Popover used by DataViews
 // actions does not show up so we have to set this lower.
 // @see https://github.com/wordpress/gutenberg/issues/71463

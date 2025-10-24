@@ -5,8 +5,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
-import { check, globe } from '@wordpress/icons';
+import { check } from '@wordpress/icons';
+import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
@@ -25,56 +25,6 @@ interface PreferencesLoginSiteDropdownProps {
 	label?: string;
 	hideLabelFromVision?: boolean;
 	isLoading?: boolean;
-}
-
-// Simple site icon component following dashboard pattern
-function SiteIcon( { site, size = 24 }: { site: Site; size?: number } ) {
-	const dims = { width: size, height: size };
-	const ico = site.icon?.img || site.icon?.ico;
-	const src = useMemo( () => {
-		if ( ! ico ) {
-			return;
-		}
-		const url = new URL( ico );
-		url.searchParams.set( 'w', '48' );
-		url.searchParams.set( 's', '48' );
-		return url.toString();
-	}, [ ico ] );
-
-	if ( ico && src ) {
-		return (
-			<img
-				src={ src }
-				alt={ site.name }
-				{ ...dims }
-				loading="lazy"
-				style={ {
-					width: size,
-					height: size,
-					minWidth: size,
-					borderRadius: '4px',
-					objectFit: 'cover',
-				} }
-			/>
-		);
-	}
-
-	// Fallback to WordPress globe icon
-	return (
-		<div
-			style={ {
-				...dims,
-				backgroundColor: '#ddd',
-				borderRadius: '4px',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				color: '#666',
-			} }
-		>
-			<Icon icon={ globe } size={ size * 0.7 } />
-		</div>
-	);
 }
 
 export default function PreferencesLoginSiteDropdown( {

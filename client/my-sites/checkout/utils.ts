@@ -35,6 +35,11 @@ export function getProductSlugFromContext( context: Context ): string | undefine
 	const selectedSite = getSelectedSite( state );
 	const isGiftPurchase = pathname.includes( '/gift/' );
 
+	// Note that you can also end up with a renewal automatically if you try to
+	// purchase a product you already own, so this flag only identifies an
+	// intentional renewal request.
+	const isRenewalRequest = pathname.includes( '/renew/' );
+
 	// Jetpack siteless checkout routes always use `:productSlug` in the path.
 	if ( isContextJetpackSitelessCheckout( context ) ) {
 		return productSlug;
@@ -58,9 +63,13 @@ export function getProductSlugFromContext( context: Context ): string | undefine
 		return domainOrProduct || '';
 	}
 
-	// If there is no selected site, there will never be a `product`, and the
-	// `domainOrProduct` must be a product slug because a domain would have
-	// selected a site.
+	// If there is no selected site, there will probably never be a `product`,
+	// and the `domainOrProduct` must be a product slug because a domain would
+	// have selected a site. The only exception is if the domain in the URL is
+	// invalid for a renewal URL and we instead need to ignore it.
+	if ( ! selectedSite?.slug && isRenewalRequest && ! domainOrProduct && product ) {
+		return product;
+	}
 	if ( ! selectedSite?.slug ) {
 		return domainOrProduct || '';
 	}

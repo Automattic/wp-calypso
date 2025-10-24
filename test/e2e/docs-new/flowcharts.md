@@ -1,8 +1,17 @@
-## Flowcharts
+# Flowcharts
+
+## Table of contents
+
+- [Overview](#overview)
+- [Example](#example)
+
+## Overview
 
 Flowcharts are a good way of representing what an e2e test covers in the system.
 
 MermaidJS is a good resource for generating flowcharts using plain text source formatting, which is viewable on GitHub and in VSCode using an extension.
+
+## Example
 
 An example is:
 
@@ -58,7 +67,7 @@ flowchart TB
 
 You can easily annotate a Playwright Test test with a link to the MermaidJS flow chart URL like:
 
-```ts
+```typescript
 annotation: {
 			type: 'flowchart',
 			description:

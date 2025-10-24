@@ -7,6 +7,8 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ActiveDomainsCard from './active-domains-card';
 import MigrationOverview from './migration-overview';
+import { MigrationSSHComplete } from './migration-overview/components/migration-ssh-complete';
+import { MigrationSSHFailed } from './migration-overview/components/migration-ssh-failed';
 import PlanCard from './plan-card';
 import PlanCreditNotice from './plan-credit-notice';
 import QuickActionsCard from './quick-actions-card';
@@ -20,6 +22,15 @@ const HostingOverview: FC = () => {
 	const translate = useTranslate();
 
 	if ( site ) {
+		const queryParams = new URLSearchParams( window.location.search );
+		const sshMigration = queryParams.get( 'ssh-migration' );
+		if ( sshMigration === 'complete' ) {
+			return <MigrationSSHComplete site={ site } />;
+		}
+		if ( sshMigration === 'failed' ) {
+			return <MigrationSSHFailed />;
+		}
+
 		if ( isMigrationInProgress( site ) ) {
 			return <MigrationOverview site={ site } />;
 		}

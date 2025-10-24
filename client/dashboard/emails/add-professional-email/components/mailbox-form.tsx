@@ -52,6 +52,16 @@ export const MailboxForm = ( {
 		mailboxEntity.validateField( FIELD_MAILBOX );
 	};
 
+	const onBlur = ( { field }: { field: MailboxFormFieldBase< string > } ) => {
+		if ( ! field.isTouched ) {
+			field.isTouched = field.value?.length > 0;
+		}
+		if ( field.isTouched ) {
+			onRequestFieldValidation( field );
+		}
+		field.dispatchState();
+	};
+
 	const onChange = ( {
 		value,
 		field,
@@ -89,6 +99,7 @@ export const MailboxForm = ( {
 						<Text variant="muted">{ `@${ domainName }` }</Text>
 					</InputControlSuffixWrapper>
 				}
+				onBlur={ onBlur }
 				onChange={ onChange }
 			/>
 
@@ -111,6 +122,7 @@ export const MailboxForm = ( {
 					}
 					// Hint to LastPass not to attempt autofill
 					data-lpignore="true"
+					onBlur={ onBlur }
 					onChange={ onChange }
 				/>
 
@@ -148,6 +160,7 @@ export const MailboxForm = ( {
 					mailboxEntity={ mailboxEntity }
 					label={ __( 'Password reset email address' ) }
 					disabled={ disabled }
+					onBlur={ onBlur }
 					onChange={ onChange }
 				/>
 			) }

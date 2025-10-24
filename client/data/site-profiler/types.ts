@@ -189,12 +189,14 @@ export interface UrlPerformanceMetricsQueryResponse {
 	};
 }
 
+export type PageSpeedReport = {
+	status: string;
+	mobile: PerformanceReport | string;
+	desktop: PerformanceReport | string;
+};
+
 export interface UrlPerformanceInsightsQueryResponse {
-	pagespeed: {
-		status: string;
-		mobile: PerformanceReport | string;
-		desktop: PerformanceReport | string;
-	};
+	pagespeed: PageSpeedReport;
 	wpscan: {
 		status: string;
 		errors?: Record< string, Array< string > >;

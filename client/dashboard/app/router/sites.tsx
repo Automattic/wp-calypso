@@ -81,13 +81,7 @@ export const sitesRoute = createRoute( {
 		}
 		return search;
 	},
-} ).lazy( () =>
-	import( '../../sites' ).then( ( d ) =>
-		createLazyRoute( 'sites' )( {
-			component: d.default,
-		} )
-	)
-);
+} );
 
 export const siteRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
@@ -1007,6 +1001,11 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
+	validateSearch: ( search ): { from?: 'deployments' } => {
+		return {
+			from: search.from === 'deployments' ? 'deployments' : undefined,
+		};
+	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
@@ -1135,6 +1134,42 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
+export const siteSSHMigrationFailedRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'We hit a snag, but we’re on it' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'ssh-migration-failed',
+} ).lazy( () =>
+	import( '../../sites/ssh-migration-failed' ).then( ( d ) =>
+		createLazyRoute( 'ssh-migration-failed' )( {
+			component: () => <d.default />,
+		} )
+	)
+);
+
+export const siteSSHMigrationCompleteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Welcome to your new home' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'ssh-migration-complete',
+} ).lazy( () =>
+	import( '../../sites/ssh-migration-complete' ).then( ( d ) =>
+		createLazyRoute( 'ssh-migration-complete' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.sites ) {
 		return [];
@@ -1169,6 +1204,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteSSHMigrationCompleteRoute,
+		siteSSHMigrationFailedRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {
@@ -1221,7 +1258,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteRoutes.push( siteDomainsRoute );
 	}
 
-	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
+	return [
+		sitesRoute.lazy( () =>
+			config.components.sites().then( ( d ) =>
+				createLazyRoute( 'sites' )( {
+					component: d.default,
+				} )
+			)
+		),
+		siteRoute.addChildren( siteRoutes ),
+	];
 };
 
 // Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
