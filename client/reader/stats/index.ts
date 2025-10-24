@@ -1,6 +1,7 @@
+import { Railcar } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { get, pick } from 'lodash';
+import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -196,10 +197,16 @@ export function recordTrack(
 
 const allowedTracksRailcarEventNames = new Set();
 allowedTracksRailcarEventNames
+	.add( 'calypso_reader_share_to_site' )
+	.add( 'calypso_reader_share_to_site_comment' )
 	.add( 'calypso_reader_related_post_from_same_site_clicked' )
 	.add( 'calypso_reader_related_post_from_other_site_clicked' )
 	.add( 'calypso_reader_related_post_site_clicked' )
 	.add( 'calypso_reader_article_liked' )
+	.add( 'calypso_reader_conversations_post_followed' )
+	.add( 'calypso_reader_conversations_post_muted' )
+	.add( 'calypso_reader_article_unliked' )
+	.add( 'calypso_reader_share_action_picked' )
 	.add( 'calypso_reader_article_commented_on' )
 	.add( 'calypso_reader_article_opened' )
 	.add( 'calypso_reader_searchcard_clicked' )
@@ -212,7 +219,7 @@ allowedTracksRailcarEventNames
 
 export function recordTracksRailcar(
 	action: string,
-	eventName?: string | null,
+	eventName: string,
 	railcar?: Record< string, unknown > | null,
 	overrides = {}
 ) {
@@ -226,6 +233,22 @@ export function recordTracksRailcar(
 		)
 	);
 }
+
+export const isRailcarEligibleForEvent = ( eventName: string ) => {
+	return allowedTracksRailcarEventNames.has( eventName );
+};
+
+export const buildRailcarEventProps = (
+	eventName: string,
+	railcar: Railcar,
+	overrides: Record< string, unknown > = {}
+) => {
+	return {
+		...railcar,
+		action: eventName.replace( 'calypso_reader_', '' ),
+		...overrides,
+	};
+};
 
 export function recordTracksRailcarRender(
 	eventName: string,

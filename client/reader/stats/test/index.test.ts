@@ -359,21 +359,24 @@ describe( 'reader stats', () => {
 			} );
 		} );
 
-		it( 'should return properties for external post', () => {
+		it( 'should return railcard properties for post with railcar', () => {
 			const post = {
 				ID: 123,
 				site_ID: 456,
-				is_external: true,
+				railcar: {
+					railcar: 'test_railcar',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				},
 			} as unknown as TrackPostData;
 
-			const result = getTracksPropertiesForPost( post );
-
-			expect( result ).toEqual( {
-				blog_id: undefined,
-				post_id: undefined,
-				feed_id: undefined,
-				feed_item_id: undefined,
-				is_jetpack: undefined,
+			expect( getTracksPropertiesForPost( post ) ).toMatchObject( {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
 			} );
 		} );
 
