@@ -7,8 +7,8 @@ import {
 	domainConnectionSetupRoute,
 	domainTransferSetupRoute,
 } from '../../app/router/domains';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
-import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import type { DomainSummary } from '@automattic/api-core';
 
 const getCtaLink = ( domain: DomainSummary ) => {
@@ -24,7 +24,10 @@ const getCtaLink = ( domain: DomainSummary ) => {
 				return null;
 			}
 			return (
-				<Link to={ getPurchaseUrlForId( domain.subscription_id ) }>
+				<Link
+					to={ purchaseSettingsRoute.fullPath }
+					params={ { purchaseId: domain.subscription_id } }
+				>
 					{ __( 'Needs attention' ) }
 				</Link>
 			);

@@ -8,31 +8,34 @@ import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
 	isLoadingStatus,
 	isUserEligibleForPaidSupport,
-	userFieldFlowName,
 }: {
 	isLoadingStatus: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	userFieldFlowName?: string;
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
-	const { currentUser, site } = useHelpCenterContext();
+	const { currentUser, site, isCommerceGarden } = useHelpCenterContext();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
 	const { search } = useLocation();
+	const { data } = useSupportStatus( ! isCommerceGarden );
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 
-	const { forceEmailSupport } = useChatStatus();
+	const commerceGardenFlowName = isCommerceGarden ? 'messaging_flow_commerce_in_a_box' : null;
+	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
+
+	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -55,6 +58,7 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
+			isChatRestricted={ Boolean( isChatRestricted ) }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

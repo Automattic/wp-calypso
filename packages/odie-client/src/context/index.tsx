@@ -50,6 +50,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setMessageLikedStatus: noop,
 	trackEvent: noop,
 	forceEmailSupport: false,
+	isChatRestricted: false,
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -73,6 +74,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	version = null,
 	currentUser,
 	forceEmailSupport = false,
+	isChatRestricted = false,
 	children,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
@@ -204,6 +206,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				version: overriddenVersion,
 				forceEmailSupport,
+				isChatRestricted,
 			} }
 		>
 			{ children }

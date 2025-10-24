@@ -50,3 +50,12 @@
 	flex-shrink: 0;
 	margin-top: 2px;
 }
+
+.site-migration-ssh-in-progress__progress-container{
+	width: 100% !important;
+	background: var(--color-neutral-5);
+
+	> div {
+		background: var(--color-accent);
+	}
+}

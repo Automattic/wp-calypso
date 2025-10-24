@@ -1,22 +1,25 @@
 import { siteMediaStorageQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	ExternalLink,
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import filesize from 'filesize';
+import { useState } from 'react';
 import { Stat } from '../../components/stat';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { getStorageAlertLevel } from '../../utils/site-storage';
 import { isStagingSite } from '../../utils/site-types';
+import { AddStorageModal } from '../storage/add-storage-modal';
 import type { Site } from '@automattic/api-core';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
 export default function SiteStorageStat( { site }: { site: Site } ) {
 	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const storageUsagePercent = Math.round(
 		( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
@@ -60,7 +63,16 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 				</Text>
 			) }
 			{ alertLevel !== 'none' && (
-				<ExternalLink href={ `/add-ons/${ site.slug }` }>{ __( 'Add more storage' ) }</ExternalLink>
+				<>
+					<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
+						{ __( 'Add more storage' ) }
+					</Button>
+					<AddStorageModal
+						site={ site }
+						isOpen={ isModalOpen }
+						onClose={ () => setIsModalOpen( false ) }
+					/>
+				</>
 			) }
 		</VStack>
 	);

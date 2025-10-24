@@ -1,8 +1,10 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString, isWithinNext } from '../../../utils/datetime';
 import {
@@ -16,7 +18,6 @@ import {
 	creditCardHasAlreadyExpired,
 	getRenewUrlForPurchases,
 } from '../../../utils/purchase';
-import { getPurchaseUrl, getAddPaymentMethodUrlFor } from '../urls';
 import { ExpiringLaterText } from './purchase-expiring-notice';
 import { shouldShowCardExpiringWarning } from './purchase-notice';
 import { UpcomingRenewalsDialog } from './upcoming-renewals-dialog';
@@ -147,6 +148,7 @@ export function OtherRenewablePurchasesNotice( {
 	purchaseAttachedTo: Purchase | undefined;
 	renewableSitePurchases: Purchase[];
 } ) {
+	const router = useRouter();
 	const [ isUpcomingRenewalsDialogVisible, setUpcomingRenewalsDialogVisible ] =
 		useState< boolean >( false );
 
@@ -213,7 +215,9 @@ export function OtherRenewablePurchasesNotice( {
 		: '';
 	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
-	const managePurchase = <a href={ getPurchaseUrl( currentPurchase ) } />;
+	const managePurchase = (
+		<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+	);
 
 	// Scenario 1: current-expires-soon-others-expire-soon
 	if ( currentPurchaseNeedsToRenewSoon && currentPurchaseIsExpiring && anotherPurchaseIsExpiring ) {
@@ -678,7 +682,12 @@ export function OtherRenewablePurchasesNotice( {
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus={ shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info' }
 					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
-					noticeActionHref={ getAddPaymentMethodUrlFor( purchase ) }
+					noticeActionHref={
+						router.buildLocation( {
+							to: changePaymentMethodRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+						} ).href
+					}
 					noticeActionText={ __( 'Update all' ) }
 				/>
 			);
@@ -866,7 +875,12 @@ export function OtherRenewablePurchasesNotice( {
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus="info"
 					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
-					noticeActionHref={ getAddPaymentMethodUrlFor( purchase ) }
+					noticeActionHref={
+						router.buildLocation( {
+							to: changePaymentMethodRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+						} ).href
+					}
 					noticeActionText={ __( 'Update all' ) }
 				/>
 			);

@@ -1,9 +1,9 @@
 import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { changePaymentMethodRoute } from '../../app/router/me';
 import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
-import { getChangePaymentMethodUrlFor, getAddPaymentMethodUrlFor } from './urls';
 import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
@@ -40,7 +40,9 @@ export function PurchasePaymentMethod( {
 	) {
 		return (
 			<div>
-				<Link to={ getAddPaymentMethodUrlFor( purchase ) }>{ __( 'Add payment method' ) }</Link>
+				<Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } }>
+					{ __( 'Add payment method' ) }
+				</Link>
 			</div>
 		);
 	}
@@ -76,7 +78,10 @@ export function PurchasePaymentMethod( {
 							variant="secondary"
 							size="compact"
 							onClick={ () => {
-								navigate( { to: getChangePaymentMethodUrlFor( purchase ) } );
+								navigate( {
+									to: changePaymentMethodRoute.fullPath,
+									params: { purchaseId: purchase.ID },
+								} );
 							} }
 						>
 							{ __( 'Update' ) }
@@ -100,7 +105,10 @@ export function PurchasePaymentMethod( {
 							variant="secondary"
 							size="compact"
 							onClick={ () => {
-								navigate( { to: getChangePaymentMethodUrlFor( purchase ) } );
+								navigate( {
+									to: changePaymentMethodRoute.fullPath,
+									params: { purchaseId: purchase.ID },
+								} );
 							} }
 						>
 							{ __( 'Update' ) }

@@ -192,11 +192,22 @@ export const supportInstructionsPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 >( STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug );
 
+export const sshVerificationPath = buildPathHelper<
+	{
+		queryParams: {
+			siteId?: number | string;
+			siteSlug: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug
+>( STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug );
+
 export const sshShareAccessPath = buildPathHelper<
 	{
 		queryParams: {
 			siteId?: number | string;
 			siteSlug: string;
+			transferId?: number | string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug
@@ -254,3 +265,12 @@ export const siteSetupGoalsPath = buildPathHelper< {
 		siteSlug: string;
 	};
 } >( '/setup/site-setup/goals' );
+
+export const dashboardSiteSSHMigration = buildPathHelper< {
+	queryParams: {
+		'ssh-migration': 'completed' | 'failed';
+	};
+	params: {
+		siteSlug: string;
+	};
+} >( '/sites/:siteSlug' );

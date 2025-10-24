@@ -6,9 +6,11 @@ import {
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
 import filesize from 'filesize';
+import { useState } from 'react';
 import Notice from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getStorageAlertLevel } from '../../utils/site-storage';
+import { AddStorageModal } from '../storage/add-storage-modal';
 import type { Site } from '@automattic/api-core';
 
 export function StorageWarningBanner( { site }: { site: Site } ) {
@@ -19,6 +21,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
 		userPreferenceMutation( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	// Optimistically hide the banner assuming the preference will get saved.
 	const isDismissed = isDismissedPersisted || isDismissing;
@@ -49,29 +52,36 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 			: 'site-overview-storage-warning-exceeded';
 
 	return (
-		<Notice
-			{ ...noticeProps }
-			actions={
-				<UpsellCTAButton
-					variant="primary"
-					upsellId={ upsellId }
-					upsellFeatureId="site-storage"
-					href={ `/add-ons/${ site.slug }` }
-				>
-					{ __( 'Add more storage' ) }
-				</UpsellCTAButton>
-			}
-		>
-			{ sprintf(
-				// translators: "used" and "available" amounts data including a unit, e.g. "2.03 MB" or "1.5 GB".
-				__(
-					'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
-				),
-				{
-					used: filesize( mediaStorage.storage_used_bytes, { round: 0 } ),
-					available: filesize( mediaStorage.max_storage_bytes, { round: 0 } ),
+		<>
+			<Notice
+				{ ...noticeProps }
+				actions={
+					<UpsellCTAButton
+						variant="primary"
+						upsellId={ upsellId }
+						upsellFeatureId="site-storage"
+						onClick={ () => setIsModalOpen( true ) }
+					>
+						{ __( 'Add more storage' ) }
+					</UpsellCTAButton>
 				}
-			) }
-		</Notice>
+			>
+				{ sprintf(
+					// translators: "used" and "available" amounts data including a unit, e.g. "2.03 MB" or "1.5 GB".
+					__(
+						'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
+					),
+					{
+						used: filesize( mediaStorage.storage_used_bytes, { round: 0 } ),
+						available: filesize( mediaStorage.max_storage_bytes, { round: 0 } ),
+					}
+				) }
+			</Notice>
+			<AddStorageModal
+				site={ site }
+				isOpen={ isModalOpen }
+				onClose={ () => setIsModalOpen( false ) }
+			/>
+		</>
 	);
 }

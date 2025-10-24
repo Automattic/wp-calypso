@@ -308,6 +308,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
 	},
 
+	SITE_MIGRATION_SSH_VERIFICATION: {
+		slug: 'site-migration-ssh-verification',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-verification' ),
+	},
+
 	SITE_MIGRATION_SSH_SHARE_ACCESS: {
 		slug: 'site-migration-ssh-share-access',
 		asyncComponent: () => import( './steps-repository/site-migration-ssh-share-access' ),
