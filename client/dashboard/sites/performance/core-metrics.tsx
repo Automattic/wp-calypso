@@ -2,7 +2,8 @@ import { Metrics } from '@automattic/api-core';
 import { __experimentalHStack as HStack, privateApis, Card, CardBody } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { getAvailableMetrics } from '../../utils/site-performance';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
 import type { SitePerformanceReport } from '@automattic/api-core';
@@ -14,6 +15,15 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
+/**
+ * Gets the first available tab based on the report data.
+ * This uses the shared utility function for consistency.
+ */
+const getFirstAvailableTab = ( report: SitePerformanceReport ): Metrics | null => {
+	const availableMetrics = getAvailableMetrics( report );
+	return availableMetrics.length > 0 ? availableMetrics[ 0 ] : null;
+};
+
 export default function CoreMetrics( {
 	report,
 	onRecommendationsFilterChange,
@@ -21,8 +31,14 @@ export default function CoreMetrics( {
 	report: SitePerformanceReport;
 	onRecommendationsFilterChange: ( filter: Metrics ) => void;
 } ) {
-	const [ activeTab, setActiveTab ] = useState< Metrics >( 'fcp' );
+	const firstAvailableTab = useMemo( () => getFirstAvailableTab( report ), [ report ] );
+	const [ activeTab, setActiveTab ] = useState< Metrics | null >( firstAvailableTab );
 	const isDesktop = useViewportMatch( 'medium' );
+
+	// If no tabs are available, don't render the component
+	if ( ! firstAvailableTab ) {
+		return null;
+	}
 
 	return (
 		<Tabs
@@ -39,7 +55,7 @@ export default function CoreMetrics( {
 						<Tabs.TabPanel tabId={ activeTab }>
 							<CoreMetricsContent
 								report={ report }
-								activeTab={ activeTab }
+								activeTab={ activeTab! }
 								onRecommendationsFilterChange={ onRecommendationsFilterChange }
 							/>
 						</Tabs.TabPanel>

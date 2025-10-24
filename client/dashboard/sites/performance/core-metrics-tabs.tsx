@@ -1,9 +1,12 @@
-import { Metrics } from '@automattic/api-core';
 import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Text } from '../../components/text';
-import { metricsNames, mapThresholdsToStatus } from '../../utils/site-performance';
+import {
+	metricsNames,
+	mapThresholdsToStatus,
+	getAvailableMetrics,
+} from '../../utils/site-performance';
 import { MetricScore } from './core-metrics-score';
 import type { SitePerformanceReport } from '@automattic/api-core';
 
@@ -35,46 +38,29 @@ const CoreMetricsTabs = ( {
 } ) => {
 	const isSmall = useViewportMatch( 'small' );
 
+	const availableMetrics = getAvailableMetrics( report );
+
 	return (
 		<Tabs.TabList style={ { maxWidth: '100%' } }>
-			{ Object.entries( metricsNames ).map(
-				( [ key, { name: displayName, shortName: shortDisplayName } ] ) => {
-					// We don't want to display the overall score in the tabs.
-					if ( key === 'overall_score' ) {
-						return null;
-					}
+			{ availableMetrics.map( ( metricKey ) => {
+				const { name: displayName, shortName: shortDisplayName } = metricsNames[ metricKey ];
+				const status = mapThresholdsToStatus( metricKey, report[ metricKey ] );
 
-					if (
-						report[ key as keyof SitePerformanceReport ] === undefined ||
-						report[ key as keyof SitePerformanceReport ] === null
-					) {
-						return null;
-					}
-
-					// Only display TBT if INP is not available
-					if ( key === 'tbt' && report[ 'inp' ] !== undefined && report[ 'inp' ] !== null ) {
-						return null;
-					}
-
-					const status = mapThresholdsToStatus( key as Metrics, report[ key as Metrics ] );
-					const metricKey = key as Metrics;
-
-					return (
-						<Tab key={ key } tabId={ metricKey }>
-							<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
-								{ compact ? shortDisplayName : displayName }
-							</Text>
-							<MetricScore
-								lineHeight="32px"
-								metric={ metricKey }
-								status={ status }
-								size={ isSmall ? 20 : 16 }
-								value={ report[ metricKey ] }
-							/>
-						</Tab>
-					);
-				}
-			) }
+				return (
+					<Tab key={ metricKey } tabId={ metricKey }>
+						<Text size={ 11 } lineHeight="24px" upperCase variant="muted">
+							{ compact ? shortDisplayName : displayName }
+						</Text>
+						<MetricScore
+							lineHeight="32px"
+							metric={ metricKey }
+							status={ status }
+							size={ isSmall ? 20 : 16 }
+							value={ report[ metricKey ] }
+						/>
+					</Tab>
+				);
+			} ) }
 		</Tabs.TabList>
 	);
 };
