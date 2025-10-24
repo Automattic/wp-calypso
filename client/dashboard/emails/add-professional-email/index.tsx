@@ -1,13 +1,12 @@
 import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -16,9 +15,7 @@ import { getEmailCheckoutPath } from '../../utils/email-paths';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import {
-	FIELD_FIRSTNAME,
 	FIELD_IS_ADMIN,
-	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
@@ -26,7 +23,8 @@ import {
 } from '../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
-import { FormFieldNames, MutableFormFieldNames, SupportedEmailProvider } from '../entities/types';
+import { SupportedEmailProvider } from '../entities/types';
+import { useCreateNewMailbox } from '../hooks/use-create-new-mailbox';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import { IntervalLength } from '../types';
@@ -37,21 +35,7 @@ import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
-type HiddenFieldNames = Exclude<
-	MutableFormFieldNames,
-	typeof FIELD_MAILBOX | typeof FIELD_PASSWORD
->;
-
-const possibleHiddenFieldNames: HiddenFieldNames[] = [
-	FIELD_NAME,
-	FIELD_FIRSTNAME,
-	FIELD_LASTNAME,
-	FIELD_IS_ADMIN,
-	FIELD_PASSWORD_RESET_EMAIL,
-];
-
 const AddProfessionalEmail = () => {
-	const { user } = useAuth();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 
@@ -63,7 +47,7 @@ const AddProfessionalEmail = () => {
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { product } = useEmailProduct( 'titan', interval );
-	const { data: existingMailboxes, isFetched } = useQuery(
+	const { data: existingMailboxes } = useSuspenseQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -89,37 +73,19 @@ const AddProfessionalEmail = () => {
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
 
-	const createNewMailbox = useCallback( () => {
-		const mailbox = new MailboxFormEntity< SupportedEmailProvider >(
-			'titan',
-			domainName,
-			( existingMailboxes ?? [] )
-				.flatMap( ( emailAccount ) => emailAccount.emails )
-				.map( ( emailBox ) => emailBox.mailbox )
-		);
-
-		possibleHiddenFieldNames.forEach( ( fieldName ) => {
-			mailbox.setFieldIsVisible( fieldName, false );
-			mailbox.setFieldIsRequired( fieldName, false );
-		} );
-
-		// Set initial values
-		Object.entries( {
-			[ FIELD_PASSWORD_RESET_EMAIL ]: user.email,
-		} ).forEach( ( [ fieldName, value ] ) => {
-			mailbox.setFieldValue( fieldName as FormFieldNames, value );
-		} );
-
-		return mailbox;
-	}, [ domainName, existingMailboxes, user.email ] );
+	const createNewMailbox = useCreateNewMailbox( {
+		domainName,
+		existingMailboxes,
+	} );
 
 	const persistMailboxesToState = useCallback( () => {
 		setMailboxEntities( [ ...mailboxEntities ] );
 	}, [ mailboxEntities ] );
 
 	useEffect( () => {
-		isFetched && setMailboxEntities( [ createNewMailbox() ] );
-	}, [ createNewMailbox, isFetched ] );
+		setMailboxEntities( [ createNewMailbox() ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only want to run this on mount
+	}, [] );
 
 	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
