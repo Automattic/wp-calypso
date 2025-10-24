@@ -46,7 +46,6 @@ export default function SwitcherContent< T >( {
 			...searchableFields.map( ( searchableField ) => ( {
 				...searchableField,
 				enableGlobalSearch: true,
-				isVisible: () => false,
 			} ) ),
 		];
 	}, [ searchableFields, getItemName ] );
