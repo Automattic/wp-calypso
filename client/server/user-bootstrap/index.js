@@ -88,7 +88,7 @@ export default async function getBootstrappedUser( request ) {
 		const res = await req;
 		debug( '%o -> %o status code', url, res.status );
 		return {
-			...filterUserObject( res.body ),
+			...( request.originalUrl.startsWith( '/v2' ) ? res.body : filterUserObject( res.body ) ),
 			bootstrapped: true,
 		};
 	} catch ( err ) {

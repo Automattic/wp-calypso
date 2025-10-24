@@ -15,6 +15,7 @@ const mockRequest = ( { cookies = {}, headers = {} } = {} ) => {
 		cookies,
 		query: {},
 		params: {},
+		originalUrl: '/',
 		get: jest.fn().mockImplementation( ( key ) => headers[ key ] ),
 	} );
 };
