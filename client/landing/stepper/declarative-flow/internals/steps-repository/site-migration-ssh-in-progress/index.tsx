@@ -66,6 +66,10 @@ const SiteMigrationSshInProgress: StepType< {
 				navigation.submit?.( { action: 'migration-completed' } );
 				break;
 			case 'failed':
+				// We should only consider a migration failed when the step
+				// is related to the migration. This is because we can get the failed
+				// status when the preflight check fails. Which should not be
+				// responsibility of this step.
 				if ( ! [ 'migration-starting', 'migration-running' ].includes( migrationStatus.step ) ) {
 					navigation.submit?.( { action: 'unexpected-status' } );
 					break;
@@ -73,8 +77,10 @@ const SiteMigrationSshInProgress: StepType< {
 				navigation.submit?.( { action: 'migration-failed' } );
 				break;
 			case 'migrating':
+				// This means that the migration is still in progress.
 				break;
 			default:
+				// Any other statuses should be considered as unexpected.
 				navigation.submit?.( { action: 'unexpected-status' } );
 				break;
 		}
