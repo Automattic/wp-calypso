@@ -66,6 +66,20 @@ const AddProfessionalEmail = () => {
 	const { data: existingMailboxes, isFetched } = useQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const hasUnusedMailbox = existingMailboxes?.some(
+		( mailbox ) =>
+			mailbox.product_slug === product.product_slug &&
+			( mailbox.warnings ?? [] ).some(
+				( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
+			)
+	);
+
+	// console.debug( 'product', product );
+	// console.debug( 'existingMailboxes', existingMailboxes );
+	// console.debug( 'hasUnusedMailbox', hasUnusedMailbox );
+
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
 		MailboxFormEntity< SupportedEmailProvider >[]
