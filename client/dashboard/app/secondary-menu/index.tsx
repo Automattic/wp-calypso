@@ -41,6 +41,7 @@ function Help() {
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
+	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
 
 	const handleToggleHelpCenter = () => {
 		setShowHelpCenter( ! isShown );
@@ -61,17 +62,31 @@ function Help() {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
-			location: 'help-center',
-			section: 'dashboard',
-			destination,
-		} );
-
-		if ( ! isShown ) {
+		if ( isShown ) {
+			if ( destination !== helpCenterPage ) {
+				setNavigateToRoute( destination );
+				setHelpCenterPage( destination );
+			} else {
+				setShowHelpCenter( false );
+				setHelpCenterPage( '' );
+				recordTracksEvent( 'calypso_inlinehelp_close', {
+					force_site_id: true,
+					location: 'help-center',
+					section: 'dashboard',
+				} );
+			}
+		} else {
 			setNavigateToRoute( destination );
+			setHelpCenterPage( destination );
+			setShowHelpCenter( true );
+
+			recordTracksEvent( 'calypso_inlinehelp_show', {
+				force_site_id: true,
+				location: 'help-center',
+				section: 'dashboard',
+				destination,
+			} );
 		}
-		setShowHelpCenter( ! isShown );
 	};
 
 	if ( isMenuPanelEnabled ) {
