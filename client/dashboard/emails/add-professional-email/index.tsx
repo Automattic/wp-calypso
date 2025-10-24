@@ -1,6 +1,6 @@
-import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -66,8 +66,10 @@ const AddProfessionalEmail = () => {
 	const { data: existingMailboxes, isFetched } = useQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { mutateAsync: createTitanMailbox, isPending } = useMutation(
+		createTitanMailboxMutation()
+	);
 	const hasUnusedMailbox = existingMailboxes?.some(
 		( mailbox ) =>
 			mailbox.product_slug === product.product_slug &&
@@ -146,6 +148,69 @@ const AddProfessionalEmail = () => {
 					: __( 'You cannot add emails to this domain.' );
 				createErrorNotice( message, { type: 'snackbar' } );
 			}
+
+			setIsSubmitting( false );
+
+			return;
+		}
+
+		if ( hasUnusedMailbox ) {
+			// console.debug( 'mailboxEntities', mailboxEntities );
+			// console.debug( 'mailboxOperations.mailboxes', mailboxOperations.mailboxes );
+
+			// TODO: There's a maximum_mailboxes on existingMailboxes that needs to be taken into account
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const results = await Promise.allSettled(
+				mailboxOperations.mailboxes.map( ( mailbox ) =>
+					createTitanMailbox( {
+						domainName: domainName,
+						name: mailbox.getFieldValue( FIELD_NAME ) || '',
+						mailbox: mailbox.getFieldValue< string >( FIELD_MAILBOX )?.toLowerCase() || '',
+						password: mailbox.getFieldValue( FIELD_PASSWORD ) || '',
+						passwordResetEmail: mailbox.getFieldValue( FIELD_PASSWORD_RESET_EMAIL ) || '',
+						isAdmin: mailbox.getFieldValue( FIELD_IS_ADMIN ) || false,
+					} )
+				)
+			);
+
+			// TODO: Handle accepted results properly
+			// {
+			//     "status": "fulfilled",
+			//     "value": {
+			//         "message": "Accepted",
+			//         "status": 202
+			//     }
+			// }
+			// TODO: Handle rejected results properly
+			// [
+			//     {
+			//         "status": "rejected",
+			//         "reason": {
+			//             "path": "/emails/titan/xavilcbusiness20251010bis.com/mailbox/create",
+			//             "apiNamespace": "wpcom/v2",
+			//             "body": {
+			//                 "name": "",
+			//                 "mailbox": "test@xavilcbusiness20251010bis.com",
+			//                 "password": "2132123123132123123",
+			//                 "alternate_email_address": "xavier.lozano.carreras@gmail.com",
+			//                 "is_admin": false
+			//             },
+			//             "method": "POST",
+			//             "apiVersion": "1.1",
+			//             "query": "",
+			//             "callback": "c3f5a419-f820-45c9-aed3-e51e28092ad1",
+			//             "supports_args": true,
+			//             "supports_error_obj": true,
+			//             "supports_progress": true,
+			//             "name": "BadRequestError",
+			//             "statusCode": 400,
+			//             "status": 400,
+			//             "message": "Email Address: Please enter a valid email address."
+			//         }
+			//     },
+			// ]
+
+			// console.debug( 'results', results );
 
 			setIsSubmitting( false );
 
