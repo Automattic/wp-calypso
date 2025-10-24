@@ -32,6 +32,10 @@ export const statusField: Field< Email > = {
 			return <Text intent="error">{ __( 'No subscription' ) }</Text>;
 		}
 
+		if ( item.status === 'pending_deletion' ) {
+			return <Text intent="warning">{ __( 'Pending deletion' ) }</Text>;
+		}
+
 		return <Text>{ item.status }</Text>;
 	},
 	getValue: ( { item }: { item: Email } ) => item.status,

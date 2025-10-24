@@ -607,7 +607,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug: {
-					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
+					const { action } = providedDependencies as {
+						action: 'migration-completed' | 'migration-failed' | 'preflight' | 'unexpected-status';
+					};
+
+					switch ( action ) {
+						case 'migration-completed':
+							return exitFlow(
+								paths.dashboardSiteSSHMigration( { 'ssh-migration': 'completed' }, { siteSlug } )
+							);
+						case 'migration-failed':
+							return exitFlow(
+								paths.dashboardSiteSSHMigration( { 'ssh-migration': 'failed' }, { siteSlug } )
+							);
+						default:
+							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
+					}
 				}
 			}
 		};

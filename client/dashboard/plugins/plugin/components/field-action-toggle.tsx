@@ -16,8 +16,6 @@ export type FieldActionToggleProps = {
 	errorOn: string;
 	successOff: string;
 	errorOff: string;
-	// Prevent default click (to avoid row selection etc.). Defaults to true.
-	preventDefaultClick?: boolean;
 	// Action identifier used for analytics: e.g. "activate" or "autoupdate".
 	actionId: 'activate' | 'autoupdate';
 };
@@ -31,36 +29,37 @@ export default function FieldActionToggle( {
 	errorOn,
 	successOff,
 	errorOff,
-	preventDefaultClick = true,
 	actionId,
 }: FieldActionToggleProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
-		<ToggleControl
-			__nextHasNoMarginBottom
-			label={ label }
-			checked={ checked }
-			onClick={ ( e ) => {
-				if ( preventDefaultClick ) {
-					e.preventDefault();
-				}
-			} }
-			onChange={ ( next ) => {
-				recordTracksEvent( 'calypso_dashboard_plugins_toggle_click', {
-					action_id: actionId,
-					next_state: next ? 'enable' : 'disable',
-				} );
-				onToggle( next )
-					.then( () => {
-						createSuccessNotice( next ? successOn : successOff, { type: 'snackbar' } );
-					} )
-					.catch( () => {
-						createErrorNotice( next ? errorOn : errorOff, { type: 'snackbar' } );
+		<div
+			role="presentation"
+			onClick={ ( e ) => e.stopPropagation() }
+			onMouseDown={ ( e ) => e.stopPropagation() }
+			onKeyDown={ ( e ) => e.stopPropagation() }
+		>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ label }
+				checked={ checked }
+				onChange={ ( next ) => {
+					recordTracksEvent( 'calypso_dashboard_plugins_toggle_click', {
+						action_id: actionId,
+						next_state: next ? 'enable' : 'disable',
 					} );
-			} }
-			disabled={ disabled }
-		/>
+					onToggle( next )
+						.then( () => {
+							createSuccessNotice( next ? successOn : successOff, { type: 'snackbar' } );
+						} )
+						.catch( () => {
+							createErrorNotice( next ? errorOn : errorOff, { type: 'snackbar' } );
+						} );
+				} }
+				disabled={ disabled }
+			/>
+		</div>
 	);
 }

@@ -265,3 +265,12 @@ export const siteSetupGoalsPath = buildPathHelper< {
 		siteSlug: string;
 	};
 } >( '/setup/site-setup/goals' );
+
+export const dashboardSiteSSHMigration = buildPathHelper< {
+	queryParams: {
+		'ssh-migration': 'completed' | 'failed';
+	};
+	params: {
+		siteSlug: string;
+	};
+} >( '/sites/:siteSlug' );

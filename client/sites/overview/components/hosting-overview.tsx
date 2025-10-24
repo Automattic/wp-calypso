@@ -24,7 +24,7 @@ const HostingOverview: FC = () => {
 	if ( site ) {
 		const queryParams = new URLSearchParams( window.location.search );
 		const sshMigration = queryParams.get( 'ssh-migration' );
-		if ( sshMigration === 'complete' ) {
+		if ( sshMigration === 'completed' ) {
 			return <MigrationSSHComplete site={ site } />;
 		}
 		if ( sshMigration === 'failed' ) {

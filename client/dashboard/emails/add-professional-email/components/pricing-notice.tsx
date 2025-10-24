@@ -7,19 +7,11 @@ import { add } from 'date-fns';
 import { useLocale } from '../../../app/locale';
 import { Text } from '../../../components/text';
 import { formatDate } from '../../../utils/datetime';
+import { doesAdditionalPriceMatchStandardPrice } from '../../utils/does-additional-price-match-standard-price';
 import { getTitanExpiryDate } from '../../utils/get-titan-expiry-date';
 import { isDomainEligibleForTitanIntroductoryOffer } from '../../utils/is-domain-eligible-for-titan-introductory-offer';
 import { isMonthlyEmailProduct } from '../../utils/is-monthly-email-product';
 import { isUserOnTitanFreeTrial } from '../../utils/is-user-on-titan-free-trial';
-
-const doesAdditionalPriceMatchStandardPrice = (
-	mailProduct: Product,
-	purchaseCost: EmailCost
-): boolean => {
-	return (
-		purchaseCost.amount === mailProduct.cost && purchaseCost.currency === mailProduct.currency_code
-	);
-};
 
 function getPriceMessage( domain?: Domain ) {
 	if ( ! domain?.titan_mail_subscription?.purchase_cost_per_mailbox ) {

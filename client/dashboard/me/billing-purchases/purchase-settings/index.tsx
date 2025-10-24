@@ -76,6 +76,7 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
+	isTemporarySitePurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
@@ -1015,7 +1016,7 @@ export default function PurchaseSettings() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
-		enabled: Boolean( purchase.site_slug ),
+		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
