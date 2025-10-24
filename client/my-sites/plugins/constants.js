@@ -5,7 +5,6 @@ import {
 	WPCOM_FEATURES_INSTANT_SEARCH,
 } from '@automattic/calypso-products';
 
-// Legacy constant for Jetpack Cloud hooks that work with plugin slugs
 export const PREINSTALLED_PLUGINS = [
 	'jetpack',
 	'akismet',
@@ -15,7 +14,6 @@ export const PREINSTALLED_PLUGINS = [
 	'layout-grid',
 	'page-optimize',
 	'paypal-payment-buttons',
-	'gravatar-enhanced',
 ]; // These plugins auto update but shouldn't be deactivated.
 
 export const PREINSTALLED_PREMIUM_PLUGINS = {

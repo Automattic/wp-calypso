@@ -6,6 +6,7 @@ import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import {
 	AUTOMOMANAGED_PLUGINS,
 	ECOMMERCE_BUNDLED_PLUGINS,
+	PREINSTALLED_PLUGINS,
 } from 'calypso/my-sites/plugins/constants';
 import {
 	getSitePurchases,
@@ -16,7 +17,8 @@ import { isSiteOnEcommerce } from 'calypso/state/sites/plans/selectors';
 const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const isFullPluginAndPurchasesFetched = hasLoadedSitePurchases && plugin?.fetched;
-	const isWpcomPreinstalled = plugin.is_managed || AUTOMOMANAGED_PLUGINS.includes( plugin.slug );
+	const isWpcomPreinstalled =
+		PREINSTALLED_PLUGINS.includes( plugin.slug ) || AUTOMOMANAGED_PLUGINS.includes( plugin.slug );
 	const isEcommercePlan = useSelector( ( state ) => isSiteOnEcommerce( state, selectedSite?.ID ) );
 	const isBundledPlugin = isEcommercePlan
 		? ECOMMERCE_BUNDLED_PLUGINS.includes( plugin.software_slug )

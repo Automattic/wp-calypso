@@ -34,6 +34,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import PreinstalledPremiumPluginBrowserItemPricing from './preinstalled-premium-plugin-browser-item-pricing';
 import { PluginsBrowserElementVariant } from './types';
@@ -130,7 +131,7 @@ const PluginsBrowserListElement = ( props ) => {
 			return false;
 		}
 
-		return ! isJetpack && plugin.is_managed;
+		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
 	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So

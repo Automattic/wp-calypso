@@ -45,6 +45,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginPrice } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
@@ -201,7 +202,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	};
 
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
-	if ( ! isJetpack && plugin.is_managed ) {
+	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
 		return (
 			<div className="plugin-details-cta__container">
 				{ selectedSite ? (

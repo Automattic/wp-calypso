@@ -20,6 +20,7 @@ import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 
 const StyledUl = styled.ul`
 	margin-left: 0;
@@ -80,7 +81,6 @@ interface Props {
 	isFreePlan: boolean;
 	isMarketplaceProduct: boolean;
 	billingPeriod: IntervalLength;
-	isManaged?: boolean;
 }
 
 export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod } ) => {
@@ -117,15 +117,15 @@ export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod }
 };
 
 export const PlanUSPS: React.FC< Props > = ( {
+	pluginSlug,
 	shouldUpgrade,
 	isFreePlan,
 	billingPeriod,
-	isManaged,
 } ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const isPreInstalledPlugin = ! isJetpack && isManaged;
+	const isPreInstalledPlugin = ! isJetpack && PREINSTALLED_PLUGINS.includes( pluginSlug );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();

@@ -30,7 +30,6 @@ const PluginDetailsSidebar = ( {
 		documentation_url = null,
 		requirements = {},
 		premium_slug,
-		is_managed,
 	},
 } ) => {
 	const translate = useTranslate();
@@ -132,7 +131,6 @@ const PluginDetailsSidebar = ( {
 					isFreePlan={ isFreePlan }
 					isMarketplaceProduct={ isMarketplaceProduct }
 					billingPeriod={ billingPeriod }
-					isManaged={ is_managed }
 				/>
 			) }
 			{ demo_url && (
