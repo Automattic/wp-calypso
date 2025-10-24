@@ -36,7 +36,7 @@ export default function CoreMetrics( {
 	const isDesktop = useViewportMatch( 'medium' );
 
 	// If no tabs are available, don't render the component
-	if ( ! firstAvailableTab ) {
+	if ( ! firstAvailableTab || ! activeTab ) {
 		return null;
 	}
 
@@ -55,7 +55,7 @@ export default function CoreMetrics( {
 						<Tabs.TabPanel tabId={ activeTab }>
 							<CoreMetricsContent
 								report={ report }
-								activeTab={ activeTab! }
+								activeTab={ activeTab }
 								onRecommendationsFilterChange={ onRecommendationsFilterChange }
 							/>
 						</Tabs.TabPanel>
