@@ -534,6 +534,11 @@ export const siteSettingsRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+
+		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
+			// This impacts layout so we must wait for this to load
+			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
+		}
 	},
 } );
 
@@ -747,6 +752,23 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'primary-data-center',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
+			const primaryDataCenter = await queryClient.ensureQueryData(
+				sitePrimaryDataCenterQuery( site.ID )
+			);
+			if ( primaryDataCenter ) {
+				return;
+			}
+		}
+
+		throw redirect( { to: `/sites/${ siteSlug }/settings` } );
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {

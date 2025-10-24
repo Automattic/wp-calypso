@@ -21,14 +21,14 @@ export default function SettingsPrimaryDataCenterSummary( {
 		enabled: hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ),
 	} );
 
-	if ( ! hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
-		return;
-	}
-
 	const dataCenterOptions = getDataCenterOptions();
 	const primaryDataCenterName = primaryDataCenter
 		? dataCenterOptions[ primaryDataCenter as DataCenterOption ]
 		: null;
+
+	if ( ! primaryDataCenterName ) {
+		return null;
+	}
 
 	return (
 		<RouterLinkSummaryButton
@@ -36,7 +36,7 @@ export default function SettingsPrimaryDataCenterSummary( {
 			title={ __( 'Primary data center' ) }
 			density={ density }
 			decoration={ <Icon icon={ cloud } /> }
-			badges={ primaryDataCenterName ? [ { text: primaryDataCenterName } ] : undefined }
+			badges={ [ { text: primaryDataCenterName } ] }
 		/>
 	);
 }
