@@ -15,7 +15,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 		annotation: {
 			type: 'flowchart',
-			description: 'TBA',
+			description:
+				'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=toggle#pako:eNqNk1Fr2zAQx7_KzYOywQo1SRMngz0kcTfG2Abpy2j2oEhX20yWjKXQhrHv3pNkOyFNhuQ33-__v9Od7m_CtcBknjxK_cRL1lq4X2wU0JG6bB42yTddFCjgx87CF10j_GQFbpLfcH39CZ4bS0T-3EjdItyXWKOhWNBT0ENS2xOfAPZOfTbbeNw4yzVK5B04IGbwE-cMYYWWVfK1rwjGhSHRZ7SwtnRNFANSGB_ne0bAskVmEfZ61wLjXO-UHUAiPInoyFxZbAOINSUGJkSL5tAAwjpjl3kpWVUH3DSMI2gFtkR4wi28W2lyUOa91wa1uvXiLWtJ_MvJtlIXV6zR5qMBJmtN_aBixf7NkJFgL1JT0nxndXcPJ3QjuwKV3rhSSq0NAgPh0_ah0XGokWwITFy32U7xEup979ZVOQ0Js6EhLgy2spJclACBhrdVYyutDqL0JqjSdJCFUrzE-OEf0aOOHp8psGcmHTM9162TNhHV0a7spVbKPTarwWheMXnEZR03I-4rWprbH1h7CJrjV6ayfli9Mj39MT786J_znnrktgweKynnb_N0kefTD1zTNs23knIdg26dAnfnzyXOL1KMoYn2E3GGtEcxhm6LArdYrPK7xWXORHFuzWLyqnGHLbN8spxdxG6j3NyqxVRHCxJVHK1EHDeK5CZxXBZ3C3rPcdw4kptGclnkdWf_Ga77kn8vznwxIw',
 		},
 	},
 	() => {
