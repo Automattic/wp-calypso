@@ -176,6 +176,62 @@ export const addProfessionalEmailRoute = createRoute( {
 	)
 );
 
+export const setUpMailboxRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Set Up Mailbox' ),
+			},
+		],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'emails/set-up-mailbox/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		await redirectIfInvalidDomain( domainName );
+
+		const existingMailboxes = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		const unusedMailboxesCount = existingMailboxes?.some(
+			( mailbox ) =>
+				mailbox.warnings.some(
+					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
+				) && mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
+		);
+
+		const hasUnusedMailbox = !! unusedMailboxesCount;
+
+		if ( ! hasUnusedMailbox ) {
+			throw redirect( {
+				to: emailsRoute.fullPath,
+				search: {
+					domainName,
+				},
+			} );
+		}
+	},
+	loader: async ( { params: { domain: domainName } } ) => {
+		const products = queryClient.ensureQueryData( productsQuery() );
+
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
+		const mailboxAccounts = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		await Promise.all( [ products, site, domain, mailboxAccounts ] );
+	},
+} ).lazy( () =>
+	import( '../../emails/add-professional-email' ).then( ( d ) =>
+		createLazyRoute( 'add-professional-email' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const addGoogleMailboxRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -218,6 +274,7 @@ export const createEmailsRoutes = () => {
 		chooseDomainRoute,
 		chooseEmailSolutionRoute,
 		addProfessionalEmailRoute,
+		setUpMailboxRoute,
 		addGoogleMailboxRoute,
 		addEmailForwarderRoute,
 	];
