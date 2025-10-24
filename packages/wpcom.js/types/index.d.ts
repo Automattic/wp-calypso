@@ -14,18 +14,18 @@ export class Request {
 	get< TResponse = unknown >( params: object | string, query?: object ): Promise< TResponse >;
 	get< TResponse = unknown >(
 		params: object | string,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		callback: RequestCallback< TResponse >
+	): void;
 	get< TResponse = unknown >(
 		params: object | string,
-		query?: object,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		query: object,
+		callback: RequestCallback< TResponse >
+	): void;
 
 	post< TResponse = unknown >(
 		params: object | string,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		callback: RequestCallback< TResponse >
+	): void;
 	post< TResponse = unknown >(
 		params: object | string,
 		query?: object,
@@ -33,16 +33,15 @@ export class Request {
 	): Promise< TResponse >;
 	post< TResponse = unknown >(
 		params: object | string,
-		query?: object,
-		body?: object,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		query: object,
+		body: object,
+		callback: RequestCallback< TResponse >
+	): void;
 
-	// post and put are aliased in the runtime
 	put< TResponse = unknown >(
 		params: object | string,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		callback: RequestCallback< TResponse >
+	): void;
 	put< TResponse = unknown >(
 		params: object | string,
 		query?: object,
@@ -50,17 +49,17 @@ export class Request {
 	): Promise< TResponse >;
 	put< TResponse = unknown >(
 		params: object | string,
-		query?: object,
-		body?: object,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		query: object,
+		body: object,
+		callback: RequestCallback< TResponse >
+	): void;
 
 	del< TResponse = unknown >( params: object | string, query?: object ): Promise< TResponse >;
 	del< TResponse = unknown >(
 		params: object | string,
-		query?: object,
-		callback?: RequestCallback< TResponse >
-	): unknown;
+		query: object,
+		callback: RequestCallback< TResponse >
+	): void;
 	/* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
