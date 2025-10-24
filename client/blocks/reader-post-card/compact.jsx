@@ -75,6 +75,7 @@ const CompactPost = ( props ) => {
 							openSuggestedFollows();
 						}
 					} }
+					railcar={ post.railcar }
 				/>
 			) }
 			<ReaderPostEllipsisMenu

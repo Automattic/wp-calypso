@@ -254,7 +254,7 @@ export function recordTrackForPost(
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
-			get( post, 'railcar' ),
+			post.railcar,
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
@@ -270,6 +270,7 @@ export function getTracksPropertiesForPost( post: TrackPostData ) {
 		feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
 		feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
 		is_jetpack: post.is_jetpack,
+		...( post.railcar && { ...post.railcar } ),
 	};
 }
 
