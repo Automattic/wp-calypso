@@ -39,7 +39,7 @@ const CoreMetricsTabs = ( {
 		<Tabs.TabList style={ { maxWidth: '100%' } }>
 			{ Object.entries( metricsNames ).map(
 				( [ key, { name: displayName, shortName: shortDisplayName } ] ) => {
-					// Overall score is displayed in the first card
+					// We don't want to display the overall score in the tabs.
 					if ( key === 'overall_score' ) {
 						return null;
 					}

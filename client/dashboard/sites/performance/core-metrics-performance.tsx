@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Notice } from '../../components/notice';
 import { getPerformanceStatus } from '../../utils/site-performance';
 
-export default function CoreMetricsExplanation( {
+export default function CoreMetricsPerformance( {
 	value,
 	onRecommendationsFilterChange,
 }: {

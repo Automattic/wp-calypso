@@ -34,7 +34,7 @@ export default function Report( {
 	return (
 		<VStack spacing={ 8 }>
 			<CoreMetricsPerformance
-				value={ report.crux_score ? report.crux_score : report.overall_score }
+				value={ report.crux_score ?? report.overall_score }
 				onRecommendationsFilterChange={ handleFilterChange }
 			/>
 			<CoreMetrics report={ report } onRecommendationsFilterChange={ handleFilterChange } />
