@@ -19,9 +19,11 @@ import {
 } from './dataviews';
 import type { Receipt } from '@automattic/api-core';
 
+const emptyReceipts: Receipt[] = [];
+
 export default function BillingHistory() {
 	const { data } = useSuspenseQuery( userReceiptsQuery() );
-	const receipts = data ?? [];
+	const receipts = data ?? emptyReceipts;
 
 	const [ currentView, setView ] = useState( defaultBillingHistoryView );
 
