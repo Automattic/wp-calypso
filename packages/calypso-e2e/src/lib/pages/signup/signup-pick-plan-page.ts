@@ -1,6 +1,6 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { PlansPage, Plans } from '../plans-page';
-import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-client.types';
+import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 
 /**
  * The plans page URL regex.
@@ -16,6 +16,7 @@ export const plansPageUrl =
 export class SignupPickPlanPage {
 	private page: Page;
 	private plansPage: PlansPage;
+	readonly theresAPlanForYouHeading: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -25,13 +26,41 @@ export class SignupPickPlanPage {
 	constructor( page: Page ) {
 		this.page = page;
 		this.plansPage = new PlansPage( page );
+		this.theresAPlanForYouHeading = this.page.getByRole( 'heading', {
+			name: 'There’s a plan for you',
+		} );
+	}
+
+	/**
+	 * Captures the response from the site creation API endpoint.
+	 * @returns {Promise<NewSiteResponse>}
+	 */
+	private captureNewSiteResponse(): Promise< NewSiteResponse > {
+		return new Promise< NewSiteResponse >( ( resolve, reject ) => {
+			this.page.route(
+				/.*\/sites\/new\?.*/,
+				async ( route ) => {
+					try {
+						const response = await route.fetch();
+						const body = await response.body();
+						// Fulfill the original request
+						await route.fulfill( { response } );
+						// Resolve the promise with the parsed body
+						resolve( JSON.parse( body.toString() ) as NewSiteResponse );
+					} catch ( error ) {
+						reject( error );
+					}
+				},
+				{ times: 1 }
+			);
+		} );
 	}
 
 	/**
 	 * Selects a WordPress.com plan matching the name, triggering site creation.
 	 *
 	 * @param {Plans} name Name of the plan.
-	 * @returns {Promise<SiteDetails>} Details of the newly created site.
+	 * @returns {Promise<NewSiteResponse>} Details of the newly created site.
 	 */
 	async selectPlan( name: Plans, redirectUrl?: RegExp ): Promise< NewSiteResponse > {
 		await this.page.waitForURL( plansPageUrl );
@@ -43,28 +72,11 @@ export class SignupPickPlanPage {
 			redirectUrl ??= new RegExp( '.*setup/site-setup.*' );
 		}
 
-		const actions = [
-			this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } ),
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
-			this.plansPage.selectPlan( name ),
-		];
+		const responsePromise = this.captureNewSiteResponse();
 
-		const [ response ] = await Promise.all( actions );
+		this.plansPage.selectPlan( name );
+		await this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } );
 
-		if ( ! response ) {
-			throw new Error( 'Failed to intercept response for new site creation.' );
-		}
-
-		const responseJSON = await response.json();
-		const body: NewSiteResponse = responseJSON.body;
-
-		if ( ! body.blog_details.blogid ) {
-			console.error( body );
-			throw new Error( 'Failed to locate blog ID for the created site.' );
-		}
-
-		// Cast the blogID value to a number, in case it comes in as a string.
-		body.blog_details.blogid = Number( body.blog_details.blogid );
-		return body;
+		return responsePromise;
 	}
 }

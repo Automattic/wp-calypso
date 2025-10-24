@@ -122,4 +122,30 @@ export class ThemesDetailPage {
 		] );
 		return popup;
 	}
+
+	/**
+	 * Gets the "Get started" link URL.
+	 *
+	 * @returns Promise<string> The full URL of the "Get started" link.
+	 */
+	async calypsoGetStartedLink(): Promise< string > {
+		const route = await this.page
+			.getByRole( 'link', { name: 'Get started' } )
+			.getAttribute( 'href' );
+		return getCalypsoURL( route ?? '' );
+	}
+
+	/**
+	 * Gets the theme slug from the "Get started" link.
+	 *
+	 * @param {string} calypsoGetStartedLink The full URL of the "Get started" link.
+	 * @returns {string} The theme slug extracted from the URL.
+	 */
+	getThemeSlugFromCalypsoGetStartedLink( calypsoGetStartedLink: string ): string {
+		const themeSlug = new URL( calypsoGetStartedLink ).searchParams.get( 'theme' );
+		if ( ! themeSlug ) {
+			throw new Error( 'Theme slug not found' );
+		}
+		return themeSlug;
+	}
 }
