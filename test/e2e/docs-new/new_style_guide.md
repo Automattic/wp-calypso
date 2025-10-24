@@ -1,5 +1,13 @@
 # (New) Style Guide
 
+## Table of contents
+
+- [Principles](#principles)
+- [Specifications Structure](#specifications-structure)
+  - [Test Describe Block](#test-describe-block)
+  - [Test Block](#test-block)
+  - [Test Step Block](#test-step-block)
+
 ## Principles
 
 - YAGNI: You Ain’t Gunna Need It

@@ -1,5 +1,10 @@
 # Flowcharts
 
+## Table of contents
+
+- [Overview](#overview)
+- [Example](#example)
+
 ## Overview
 
 Flowcharts are a good way of representing what an e2e test covers in the system.
