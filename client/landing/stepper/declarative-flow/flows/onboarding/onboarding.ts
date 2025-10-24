@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { FREE_PLAN_PRODUCT_ID } from '@automattic/data-stores/src/plans';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -70,9 +71,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
-		const { signupDomainOrigin } = useSelect(
+		const { signupDomainOrigin, planProductId } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+				planProductId: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanProductId(),
 			} ),
 			[]
 		);
@@ -92,7 +94,11 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId && providedDependencies.siteSlug ) {
+			if (
+				playgroundId &&
+				providedDependencies.siteSlug &&
+				planProductId !== FREE_PLAN_PRODUCT_ID
+			) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 						siteSlug: providedDependencies.siteSlug,
@@ -230,18 +236,19 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const redirectTo: string = playgroundId
-								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-										siteSlug,
-										siteId: providedDependencies.siteId,
-										playground: playgroundId,
-								  } )
-								: addQueryArgs(
-										withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-										{
+							const redirectTo: string =
+								playgroundId && planProductId !== FREE_PLAN_PRODUCT_ID
+									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 											siteSlug,
-										}
-								  );
+											siteId: providedDependencies.siteId,
+											playground: playgroundId,
+									  } )
+									: addQueryArgs(
+											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+											{
+												siteSlug,
+											}
+									  );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
