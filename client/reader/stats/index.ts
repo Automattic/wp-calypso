@@ -219,7 +219,7 @@ allowedTracksRailcarEventNames
 
 export function recordTracksRailcar(
 	action: string,
-	eventName: string,
+	eventName?: string | null,
 	railcar?: Record< string, unknown > | null,
 	overrides = {}
 ) {
