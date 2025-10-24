@@ -53,7 +53,7 @@ A well-implemented page object will abstract complex interactions on the page to
 - **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
 - **readability**: named variables and functions are much easier to decipher than series of strings.
 
-```ts
+```typescript
 /**
  * Represents the generic Import Content page.
  */
@@ -88,7 +88,7 @@ export class ImportContentPage {
 
 Then in a test spec (using a custom fixture)
 
-```ts
+```typescript
 test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
 	sitePublic,
 	pageImportContent,
@@ -103,7 +103,7 @@ test( 'Three: As a New WordPress.com free plan user with a simple site, I can us
 
 Flows capture a process that spans across multiple pages or components. Its purpose is to abstract a multi-step flow into one call which clearly articulates its intention. Creating a single flow that has ten "steps" can be more efficient that creating ten different page objects to represent every step.
 
-```ts
+```typescript
 /**
  * Class encapsulating the flow when starting a new writing blog (`/setup/start-writing`)
  */
