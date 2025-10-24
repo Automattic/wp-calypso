@@ -209,15 +209,20 @@ export class LoginForm extends Component {
 	}, 500 );
 
 	onChangeUsernameOrEmailField = ( event ) => {
+		const { socialAccountIsLinking } = this.props;
+
 		this.setState( {
 			emailSuggestionError: false,
 			emailSuggestion: '',
 		} );
 		this.onChangeField( event );
 		this.debouncedEmailSuggestion( event.target.value );
-		this.resetLastUsedAuthenticationMethod();
-		this.props.cancelSocialAccountConnectLinking();
-		this.props.resetAuthAccountType();
+
+		if ( socialAccountIsLinking ) {
+			this.resetLastUsedAuthenticationMethod();
+			this.props.cancelSocialAccountConnectLinking();
+			this.props.resetAuthAccountType();
+		}
 	};
 
 	onChangeField = ( event ) => {
