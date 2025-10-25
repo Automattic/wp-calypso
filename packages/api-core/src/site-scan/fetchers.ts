@@ -26,6 +26,12 @@ export async function fetchSiteScan( siteId: number ): Promise< SiteScan > {
 export async function fetchSiteScanHistory( siteId: number ): Promise< SiteScanHistory > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/scan/history`,
+	} );
+}
+
+export async function fetchSiteScanCounts( siteId: number ): Promise< SiteScan > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/scan/counts`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
