@@ -46,7 +46,7 @@ export class SignupPickPlanPage {
 						// Fulfill the original request
 						await route.fulfill( { response } );
 						// Resolve the promise with the parsed body
-						resolve( JSON.parse( body.toString() ) as NewSiteResponse );
+						resolve( JSON.parse( body.toString() ).body as NewSiteResponse );
 					} catch ( error ) {
 						reject( error );
 					}

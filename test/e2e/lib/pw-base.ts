@@ -26,7 +26,6 @@ import {
 	AppleLoginPage,
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
-	BrowserManager,
 	DashboardPage,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
@@ -48,9 +47,8 @@ import {
 	ImportPlansPage,
 	IncognitoPage,
 	JetpackTrafficPage,
-	LoggedOutHomePage,
-	LoggedOutThemesPage,
 	LoginPage,
+	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
 	NewSiteResponse,
@@ -124,13 +122,13 @@ export const test = base.extend< {
 	 */
 	environment: typeof envVariables;
 	/**
+	 * Flow encapsulating the LOHP theme signup process.
+	 */
+	flowLOHPThemeSignup: LOHPThemeSignupFlow;
+	/**
 	 * Flow encapsulating the Start Writing onboarding process.
 	 */
 	flowStartWriting: StartWritingFlow;
-	/**
-	 * Browser Helper (BrowserManager) for tests.
-	 */
-	helperBrowser: typeof BrowserManager;
 	/**
 	 * Helper data and utilities for tests.
 	 */
@@ -215,14 +213,6 @@ export const test = base.extend< {
 	 * Page object representing the Jetpack Traffic Page
 	 */
 	pageJetpackTraffic: JetpackTrafficPage;
-	/**
-	 * Page object representing the logged out home page (lohp).
-	 */
-	pageLoggedOutHomePage: LoggedOutHomePage;
-	/**
-	 * Page object representing the logged out themes page.
-	 */
-	pageLoggedOutThemesPage: LoggedOutThemesPage;
 	/**
 	 * Page object representing the WordPress.com login page.
 	 */
@@ -313,12 +303,13 @@ export const test = base.extend< {
 	environment: async ( {}, use ) => {
 		await use( envVariables );
 	},
+	flowLOHPThemeSignup: async ( { page }, use ) => {
+		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
+		await use( lohpThemeSignupFlow );
+	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
 		await use( startWritingFlow );
-	},
-	helperBrowser: async ( {}, use ) => {
-		await use( BrowserManager );
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
@@ -404,14 +395,6 @@ export const test = base.extend< {
 	pageJetpackTraffic: async ( { page }, use ) => {
 		const jetpackTrafficPage = new JetpackTrafficPage( page );
 		await use( jetpackTrafficPage );
-	},
-	pageLoggedOutHomePage: async ( { page }, use ) => {
-		const loggedOutHomePage = new LoggedOutHomePage( page );
-		await use( loggedOutHomePage );
-	},
-	pageLoggedOutThemesPage: async ( { page }, use ) => {
-		const loggedOutThemesPage = new LoggedOutThemesPage( page );
-		await use( loggedOutThemesPage );
 	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );

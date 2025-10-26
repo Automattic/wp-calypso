@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { PreviewComponent } from '../components';
 
@@ -19,6 +19,7 @@ const selectors = {
  */
 export class ThemesDetailPage {
 	private page: Page;
+	readonly continueButton: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -27,6 +28,7 @@ export class ThemesDetailPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.continueButton = this.page.getByRole( 'button', { name: 'Continue' } );
 	}
 
 	/**
