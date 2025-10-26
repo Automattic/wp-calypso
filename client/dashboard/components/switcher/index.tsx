@@ -1,6 +1,7 @@
 import { Dropdown, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import SwitcherContent, { type RenderItemIcon } from './switcher-content';
+import type { Field } from '@wordpress/dataviews';
 import type { ComponentProps } from 'react';
 
 interface RenderCallbackProps {
@@ -10,6 +11,7 @@ interface RenderCallbackProps {
 type SwitcherProps< T > = {
 	items?: T[];
 	value: T;
+	searchableFields?: Field< T >[];
 	children?: ( props: RenderCallbackProps ) => React.ReactNode;
 	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
@@ -19,6 +21,7 @@ type SwitcherProps< T > = {
 export default function Switcher< T >( {
 	items,
 	value,
+	searchableFields,
 	children,
 	getItemName,
 	getItemUrl,
@@ -56,6 +59,7 @@ export default function Switcher< T >( {
 			renderContent={ ( { onClose } ) => (
 				<SwitcherContent
 					items={ items }
+					searchableFields={ searchableFields }
 					getItemName={ getItemName }
 					getItemUrl={ getItemUrl }
 					renderItemIcon={ renderItemIcon }

@@ -65,6 +65,7 @@ class RemovePurchase extends Component {
 		linkIcon: PropTypes.string,
 		primaryDomain: PropTypes.object,
 		skipRemovePlanSurvey: PropTypes.bool,
+		showDialog: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -100,12 +101,7 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	openDialog = ( event ) => {
-		event.preventDefault();
-
-		if ( this.props.onClickTracks ) {
-			this.props.onClickTracks( event );
-		}
+	actuallyOpenDialog = () => {
 		if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
@@ -143,6 +139,20 @@ class RemovePurchase extends Component {
 				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: true,
 			} );
+		}
+	};
+
+	openDialog = ( event ) => {
+		event.preventDefault();
+		if ( this.props.onClickTracks ) {
+			this.props.onClickTracks( event );
+		}
+		this.actuallyOpenDialog();
+	};
+
+	componentDidMount = () => {
+		if ( this.props.showDialog ) {
+			this.actuallyOpenDialog();
 		}
 	};
 
@@ -414,6 +424,15 @@ class RemovePurchase extends Component {
 
 			return null;
 		};
+
+		if ( this.props.showDialog ) {
+			return (
+				<>
+					{ getWarningDialog() }
+					{ this.renderDialog() }
+				</>
+			);
+		}
 
 		return (
 			<>

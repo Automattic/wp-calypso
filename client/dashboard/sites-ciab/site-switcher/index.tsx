@@ -11,6 +11,15 @@ import { siteRoute } from '../../app/router/sites';
 import SiteIcon from '../../components/site-icon';
 import Switcher from '../../components/switcher';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { getSiteDisplayUrl } from '../../utils/site-url';
+import type { Site } from '@automattic/api-core';
+
+const searchableFields = [
+	{
+		id: 'URL',
+		getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
+	},
+];
 
 const CIABSiteSwitcher = () => {
 	const { recordTracksEvent } = useAnalytics();
@@ -44,6 +53,7 @@ const CIABSiteSwitcher = () => {
 		<Switcher
 			items={ sites }
 			value={ site }
+			searchableFields={ searchableFields }
 			getItemName={ getSiteDisplayName }
 			getItemUrl={ ( site ) => buildCurrentRouteLink( { params: { siteSlug: site.slug } } ) }
 			renderItemIcon={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
