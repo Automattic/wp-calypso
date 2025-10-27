@@ -13,12 +13,18 @@ export const useGetOdieConversations = (
 	enabled = true
 ) => {
 	const { version } = useOdieAssistantContext();
-	const slugs = encodeURIComponent(
-		supportInteractions?.map( ( interaction ) => interaction.bot_slug ).join( ',' )
+	const botSlugs = encodeURIComponent(
+		supportInteractions
+			?.map( ( interaction ) => {
+				// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
+				// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
+				return interaction.bot_slug || 'wpcom-support-chat';
+			} )
+			.join( ',' )
 	);
 
 	return useQuery< OdieConversation[], Error >( {
-		queryKey: [ 'odie-interactions', slugs, version ],
+		queryKey: [ 'odie-interactions', botSlugs, version ],
 		queryFn: async (): Promise< OdieConversation[] > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -29,11 +35,11 @@ export const useGetOdieConversations = (
 			const response: any[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
-						path: `/odie/conversations/${ slugs }?${ queryParams }`,
+						path: `/odie/conversations/${ botSlugs }?${ queryParams }`,
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/conversations/${ slugs }?${ queryParams }`,
+						path: `/help-center/odie/conversations/${ botSlugs }?${ queryParams }`,
 						method: 'GET',
 				  } );
 
