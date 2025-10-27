@@ -5,7 +5,6 @@ import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { canViewSiteVisibilitySettings } from '../features';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -118,10 +117,6 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 }
 
 export default function VisibilityCard( { site }: { site: Site } ) {
-	if ( ! canViewSiteVisibilitySettings( site ) ) {
-		return null;
-	}
-
 	if ( site.launch_status === 'unlaunched' ) {
 		return <VisibilityCardUnlaunched site={ site } />;
 	}
