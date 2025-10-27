@@ -10,7 +10,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
@@ -18,6 +20,7 @@ import { SectionHeader } from '../../../components/section-header';
 
 export const WebSettings = () => {
 	const { recordTracksEvent } = useAnalytics();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data } = useSuspenseQuery( {
 		...userNotificationsSettingsQuery(),
@@ -27,15 +30,7 @@ export const WebSettings = () => {
 	} );
 
 	const settings = data?.other.timeline;
-	const { mutate: updateSettings } = useMutation( {
-		...userNotificationsSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved successfully.' ),
-				error: __( 'There was a problem saving your changes. Please, try again.' ),
-			},
-		},
-	} );
+	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
 
 	const isMutating =
 		useIsMutating( {
@@ -54,7 +49,28 @@ export const WebSettings = () => {
 			setting_value: updated.value,
 		} );
 
-		updateSettings( { data: updatedSettings } );
+		updateSettings(
+			{ data: updatedSettings },
+			{
+				onSuccess: () => {
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s is the name of the setting */
+							__( '"%s" settings saved.' ),
+							updated.label
+						),
+						{
+							type: 'snackbar',
+						}
+					);
+				},
+				onError: () => {
+					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+						type: 'snackbar',
+					} );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(

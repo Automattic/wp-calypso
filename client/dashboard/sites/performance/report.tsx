@@ -2,6 +2,7 @@ import { Metrics } from '@automattic/api-core';
 import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
 import { useState, useRef } from 'react';
 import CoreMetrics from './core-metrics';
+import CoreMetricsPerformance from './core-metrics-performance';
 import PerformanceInsights from './performance-insights';
 import ReportFooter from './report-footer';
 import ScreenshotTimeline from './screenshot-timeline';
@@ -32,6 +33,10 @@ export default function Report( {
 
 	return (
 		<VStack spacing={ 8 }>
+			<CoreMetricsPerformance
+				value={ report.crux_score ?? report.overall_score }
+				onRecommendationsFilterChange={ handleFilterChange }
+			/>
 			<CoreMetrics report={ report } onRecommendationsFilterChange={ handleFilterChange } />
 			<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 			{ audits && (

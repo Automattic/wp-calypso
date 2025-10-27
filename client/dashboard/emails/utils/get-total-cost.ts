@@ -1,7 +1,8 @@
 import { Domain, Product } from '@automattic/api-core';
 import { doesAdditionalPriceMatchStandardPrice } from './does-additional-price-match-standard-price';
-import { isDomainEligibleForTitanIntroductoryOffer } from './is-domain-eligible-for-titan-introductory-offer';
-import { isUserOnTitanFreeTrial } from './is-user-on-titan-free-trial';
+import { getEmailSubscription } from './get-email-subscription';
+import { isEligibleForIntroductoryOffer } from './is-eligible-for-introductory-offer';
+import { isUserOnFreeTrial } from './is-user-on-free-trial';
 
 export const getTotalCost = ( {
 	amount,
@@ -12,15 +13,17 @@ export const getTotalCost = ( {
 	domain: Domain;
 	product: Product;
 } ) => {
-	const purchaseCost = domain.titan_mail_subscription?.purchase_cost_per_mailbox;
+	const emailSubscription = getEmailSubscription( { domain, product } );
+
+	const purchaseCost = emailSubscription?.purchase_cost_per_mailbox;
 
 	if ( purchaseCost && doesAdditionalPriceMatchStandardPrice( product, purchaseCost ) ) {
 		return amount * purchaseCost.amount;
 	}
 
 	if (
-		isUserOnTitanFreeTrial( domain ) ||
-		isDomainEligibleForTitanIntroductoryOffer( { domain, product } )
+		isUserOnFreeTrial( emailSubscription ) ||
+		isEligibleForIntroductoryOffer( { emailSubscription, product } )
 	) {
 		return 0;
 	}

@@ -26,4 +26,12 @@ export interface Email {
 		| 'other_provider';
 }
 
-export type IntervalLength = 'monthly' | 'annually';
+export enum IntervalLength {
+	Monthly = 'monthly',
+	Annually = 'annually',
+}
+
+export enum MailboxProvider {
+	Google = EmailProvider.Google,
+	Titan = EmailProvider.Titan,
+}

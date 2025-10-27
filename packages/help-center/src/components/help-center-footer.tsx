@@ -47,6 +47,7 @@ const HelpCenterFooter: React.FC = () => {
 				<Route path="/" element={ <HelpCenterContactButton /> } />
 				<Route path="/post" element={ <HelpCenterContactButton /> } />
 				<Route path="/chat-history" element={ <HelpCenterContactButton /> } />
+				<Route path="/support-guides" element={ <HelpCenterContactButton /> } />
 				<Route path="*" element={ null } />
 			</Routes>
 		</>

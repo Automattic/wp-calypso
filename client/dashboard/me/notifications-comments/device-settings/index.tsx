@@ -13,8 +13,10 @@ import {
 	Card,
 	ExternalLink,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
@@ -23,15 +25,9 @@ import { SectionHeader } from '../../../components/section-header';
 export const DevicesSettings = () => {
 	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
-	const { mutate: updateSettings } = useMutation( {
-		...userNotificationsSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved successfully.' ),
-				error: __( 'There was a problem saving your changes. Please, try again.' ),
-			},
-		},
-	} );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
+
 	//Currently, the update settings endpoint is taking a very long time to update the settings,
 	//so we are using the useIsMutating hook to check if the mutation is in progress on by any component and block the UI to prevent
 	//race conditions.
@@ -67,13 +63,34 @@ export const DevicesSettings = () => {
 			setting_value: updated.value,
 		} );
 
-		updateSettings( {
-			data: {
-				other: {
-					devices: updatedDevices,
+		updateSettings(
+			{
+				data: {
+					other: {
+						devices: updatedDevices,
+					},
 				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s is the name of the setting */
+							__( '"%s" settings saved.' ),
+							updated.label
+						),
+						{
+							type: 'snackbar',
+						}
+					);
+				},
+				onError: () => {
+					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+						type: 'snackbar',
+					} );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(

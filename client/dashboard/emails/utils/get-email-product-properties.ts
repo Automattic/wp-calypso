@@ -4,7 +4,8 @@ import {
 	getGSuiteMailboxCount,
 	hasGSuiteWithUs,
 } from '../../utils/domain';
-import type { Domain, EmailProvider, Product } from '@automattic/api-core';
+import { MailboxProvider } from '../types';
+import type { Domain, Product } from '@automattic/api-core';
 
 type EmailProperties = {
 	existingItemsCount: number;
@@ -15,12 +16,12 @@ type EmailProperties = {
 };
 
 const getEmailProductProperties = (
-	provider: EmailProvider,
+	provider: MailboxProvider,
 	domain: Domain,
 	emailProduct: Product,
 	newMailboxesCount = 1
 ): EmailProperties => {
-	const isTitanProvider = provider === 'titan';
+	const isTitanProvider = provider === MailboxProvider.Titan;
 	const isAdditionalMailboxesPurchase = isTitanProvider
 		? hasTitanMailWithUs( domain )
 		: hasGSuiteWithUs( domain );

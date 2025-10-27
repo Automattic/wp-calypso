@@ -6,12 +6,8 @@ import { Icon, info } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { Text } from '../../../components/text';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
-import {
-	MailboxFormFieldBase,
-	SupportedEmailProvider,
-	TitanMailboxFormFields,
-	TextMailboxFormField,
-} from '../../entities/types';
+import { MailboxFormFieldBase, TextMailboxFormField } from '../../entities/types';
+import { MailboxProvider } from '../../types';
 import type { InputControlProps } from '@wordpress/components/build-types/input-control/types';
 
 export const MailboxInput = ( {
@@ -22,8 +18,8 @@ export const MailboxInput = ( {
 	lowerCaseChangeValue = false,
 	...inputControlProps
 }: {
-	fieldName: 'mailbox' | 'password' | 'passwordResetEmail';
-	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
+	fieldName: 'mailbox' | 'password' | 'passwordResetEmail' | 'firstName' | 'lastName';
+	mailboxEntity: MailboxFormEntity< MailboxProvider >;
 	lowerCaseChangeValue?: boolean;
 	onBlur: ( args: { field: MailboxFormFieldBase< string > } ) => void;
 	onChange: ( args: {
@@ -32,9 +28,8 @@ export const MailboxInput = ( {
 		lowerCaseChangeValue?: boolean;
 	} ) => void;
 } & Omit< InputControlProps, 'onBlur' | 'onChange' > ) => {
-	const originalField = ( mailboxEntity.formFields as TitanMailboxFormFields )[
-		fieldName
-	] as TextMailboxFormField;
+	// @ts-expect-error -- mailboxEntity.formFields will never include firstName or lastName for Titan.
+	const originalField = mailboxEntity.formFields[ fieldName ] as TextMailboxFormField;
 
 	const [ { field }, setFieldState ] = useState( { field: originalField } );
 
@@ -46,7 +41,7 @@ export const MailboxInput = ( {
 	}, [] );
 
 	return (
-		<VStack>
+		<VStack className="mailbox-input">
 			<InputControl
 				__next40pxDefaultSize
 				value={ mailboxEntity.getFieldValue( fieldName ) }

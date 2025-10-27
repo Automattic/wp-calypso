@@ -1,13 +1,13 @@
 import { __ } from '@wordpress/i18n';
+import { MailboxProvider } from '../types';
 import { FIELD_MAILBOX, FIELD_UUID } from './constants';
 import { MailboxForm } from './mailbox-form';
-import { SupportedEmailProvider } from './types';
 
 export class MailboxOperations {
-	public mailboxes: MailboxForm< SupportedEmailProvider >[];
+	public mailboxes: MailboxForm< MailboxProvider >[];
 	private readonly setMailboxesState: () => void;
 
-	constructor( mailboxes: MailboxForm< SupportedEmailProvider >[], setMailboxesState: () => void ) {
+	constructor( mailboxes: MailboxForm< MailboxProvider >[], setMailboxesState: () => void ) {
 		this.mailboxes = mailboxes;
 		this.setMailboxesState = setMailboxesState;
 	}
@@ -21,10 +21,7 @@ export class MailboxOperations {
 				)
 				.map( ( mailbox ) => mailbox.getFieldValue< string >( FIELD_MAILBOX ) ?? '' );
 
-			mailbox.validate(
-				true,
-				mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames )
-			);
+			mailbox.validate( mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames ) );
 		} );
 	}
 

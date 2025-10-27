@@ -1,5 +1,6 @@
 import { Metrics } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import type { SitePerformanceReport } from '@automattic/api-core';
 
 export type Valuation = 'good' | 'needsImprovement' | 'bad';
 
@@ -158,3 +159,30 @@ export function getFormattedSize( size: number ) {
 		[ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ]
 	);
 }
+
+export const shouldDisplayMetric = ( key: string, report: SitePerformanceReport ): boolean => {
+	// We don't want to display the overall score in the tabs.
+	if ( key === 'overall_score' ) {
+		return false;
+	}
+
+	if (
+		report[ key as keyof SitePerformanceReport ] === undefined ||
+		report[ key as keyof SitePerformanceReport ] === null
+	) {
+		return false;
+	}
+
+	// Only display TBT if INP is not available
+	if ( key === 'tbt' && report[ 'inp' ] !== undefined && report[ 'inp' ] !== null ) {
+		return false;
+	}
+
+	return true;
+};
+
+export const getAvailableMetrics = ( report: SitePerformanceReport ): Metrics[] => {
+	return ( Object.keys( metricsNames ) as Metrics[] ).filter( ( key ) =>
+		shouldDisplayMetric( key, report )
+	);
+};

@@ -56,6 +56,7 @@ export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
 		<Card size="small">
 			<CardBody>
 				<SelectControl
+					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 					label={ __( 'Pick your primary data center' ) }
 					help={ createInterpolateElement(

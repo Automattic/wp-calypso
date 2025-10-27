@@ -42,7 +42,7 @@ export function ActiveThreatsDataViews( {
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
 	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
-	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
+	const threats = scan?.threats?.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields( timezoneString, gmtOffset );
 	const actions = useMemo( () => getActions( site, selection.length ), [ site, selection.length ] );

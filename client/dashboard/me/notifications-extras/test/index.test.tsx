@@ -9,6 +9,12 @@ import { render as dashboardRender } from '../../../test-utils';
 import NotificationsExtras from '../index';
 import type { UserNotificationSettings, WpcomNotificationSettings } from '@automattic/api-core';
 
+jest.mock( '../../../app/analytics', () => ( {
+	useAnalytics: jest.fn().mockReturnValue( {
+		recordTracksEvent: jest.fn(),
+	} ),
+} ) );
+
 const defaultWpcomSettings: WpcomNotificationSettings = {
 	marketing: false,
 	research: false,
@@ -224,7 +230,7 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getAllByLabelText( 'Reports' )[ 1 ] ).not.toBeChecked();
 	} );
 
-	it( 'shows snackbar notification on change', async () => {
+	it( 'shows snackbar notification on single setting change', async () => {
 		mockGetNotificationSettingsApi();
 		mockSaveNotificationSettingsApi( { marketing: true } );
 
@@ -247,7 +253,41 @@ describe( 'NotificationsExtras', () => {
 		await waitFor( () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
+			expect( snackbar ).toHaveTextContent( '"Suggestions" settings saved.' );
+		} );
+	} );
+
+	it( 'shows snackbar notification when all settings are saved', async () => {
+		mockGetNotificationSettingsApi();
+		mockSaveNotificationSettingsApi( {
+			marketing: true,
+			research: true,
+			community: true,
+			promotion: true,
+			news: true,
+			digest: true,
+			reports: true,
+			news_developer: true,
+			scheduled_updates: true,
+		} );
+
+		dashboardRender(
+			<>
+				<Snackbars />
+				<NotificationsExtras />
+			</>
+		);
+
+		const subscribeAllToggle = await screen.findAllByRole( 'checkbox', {
+			name: 'Subscribe to all',
+		} );
+
+		await userEvent.click( subscribeAllToggle[ 0 ] );
+
+		await waitFor( () => {
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( 'Subscriptions settings saved.' );
 		} );
 	} );
 

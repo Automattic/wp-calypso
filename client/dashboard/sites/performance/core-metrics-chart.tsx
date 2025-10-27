@@ -151,44 +151,36 @@ export default function CoreMetricsChart( {
 	metric: Metrics;
 	metricsThresholds: Record< Metrics, { good: number; needsImprovement: number; bad: number } >;
 } ) {
-	const { good, needsImprovement, bad } = metricsThresholds[ metric ];
+	const { good, needsImprovement } = metricsThresholds[ metric ];
 	const isDesktop = useViewportMatch( 'medium' );
 	const lineChartData = useLineChartData( metric, report.history );
 
-	const formatThresholdValue = ( isOverall: boolean, valuation: Valuation ) => {
+	const formatThresholdValue = ( valuation: Valuation ) => {
 		const unit = getDisplayUnit( metric );
 		if ( valuation === 'good' ) {
-			return isOverall
-				? sprintf( '(90–%(to)s)', { to: getFormattedValue( metric, good ) } )
-				: sprintf( '(0–%(to)s%(unit)s)', {
-						to: getFormattedValue( metric, good ),
-						unit,
-				  } );
+			return sprintf( '(0–%(to)s%(unit)s)', {
+				to: getFormattedValue( metric, good ),
+				unit,
+			} );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
-			return isOverall
-				? sprintf( '(50–%(to)s)', { to: getFormattedValue( metric, needsImprovement ) } )
-				: sprintf( '(%(from)s–%(to)s%(unit)s)', {
-						from: getFormattedValue( metric, good ),
-						to: getFormattedValue( metric, needsImprovement ),
-						unit,
-				  } );
+			return sprintf( '(%(from)s–%(to)s%(unit)s)', {
+				from: getFormattedValue( metric, good ),
+				to: getFormattedValue( metric, needsImprovement ),
+				unit,
+			} );
 		}
 
 		if ( valuation === 'bad' ) {
-			return isOverall
-				? sprintf( '(0-%(to)s)', { to: getFormattedValue( metric, bad ) } )
-				: sprintf( '(Over %(from)s%(unit)s)', {
-						from: getFormattedValue( metric, needsImprovement ),
-						unit,
-				  } );
+			return sprintf( '(Over %(from)s%(unit)s)', {
+				from: getFormattedValue( metric, needsImprovement ),
+				unit,
+			} );
 		}
 
 		return '';
 	};
-
-	const isOverall = metric === 'overall_score';
 
 	return (
 		<>
@@ -196,17 +188,17 @@ export default function CoreMetricsChart( {
 				<MetricLabel
 					indicator="good"
 					label={ __( 'Excellent' ) }
-					value={ formatThresholdValue( isOverall, 'good' ) }
+					value={ formatThresholdValue( 'good' ) }
 				/>
 				<MetricLabel
 					indicator="needsImprovement"
 					label={ __( 'Needs Improvement' ) }
-					value={ formatThresholdValue( isOverall, 'needsImprovement' ) }
+					value={ formatThresholdValue( 'needsImprovement' ) }
 				/>
 				<MetricLabel
 					indicator="bad"
 					label={ __( 'Poor' ) }
-					value={ formatThresholdValue( isOverall, 'bad' ) }
+					value={ formatThresholdValue( 'bad' ) }
 				/>
 			</HStack>
 			{ lineChartData ? (

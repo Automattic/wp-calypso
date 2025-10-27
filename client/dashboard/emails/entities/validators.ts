@@ -1,9 +1,9 @@
-import { EmailProvider } from '@automattic/api-core';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
 import { createElement } from 'react';
 import wp from 'calypso/lib/wp';
+import { MailboxProvider } from '../types';
 import type { FieldError, MailboxFormFieldBase } from './types';
 
 interface Validator< T > {
@@ -328,9 +328,9 @@ class PreviouslySpecifiedMailboxNamesValidator extends ExistingMailboxNamesValid
 
 class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 	private readonly domainName: string;
-	private readonly provider: EmailProvider;
+	private readonly provider: MailboxProvider;
 
-	constructor( domainName: string, provider: EmailProvider ) {
+	constructor( domainName: string, provider: MailboxProvider ) {
 		super();
 		this.domainName = domainName;
 		this.provider = provider;

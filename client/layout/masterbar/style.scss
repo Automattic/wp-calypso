@@ -167,8 +167,12 @@ body.is-mobile-app-view {
 
 		.masterbar__item-subitems {
 			right: 0;
+		}
+
+		a.masterbar__item-howdy + .masterbar__item-subitems {
 			padding-bottom: 0 !important;
 		}
+
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-grow: 0;
 		}

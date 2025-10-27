@@ -5,8 +5,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { addProfessionalEmailRoute } from '../../app/router/emails';
+import { addMailboxRoute } from '../../app/router/emails';
 import { Notice } from '../../components/notice';
+import { MailboxProvider, IntervalLength } from '../types';
 
 interface UnusedMailboxNoticeProps {
 	domains: string[];
@@ -37,7 +38,14 @@ const UnusedMailboxNotice = ( { domains }: UnusedMailboxNoticeProps ) => {
 				<VStack spacing={ 2 }>
 					{ domains.map( ( domain ) => (
 						<HStack key={ domain }>
-							<Link to={ addProfessionalEmailRoute.to } params={ { domain } }>
+							<Link
+								to={ addMailboxRoute.to }
+								params={ {
+									domain,
+									provider: MailboxProvider.Titan,
+									interval: IntervalLength.Annually,
+								} }
+							>
 								{ sprintf(
 									// translators: %s is a domain name
 									__( 'Set up mailbox for %s' ),
