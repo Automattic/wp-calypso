@@ -3,11 +3,7 @@ import { Card, CardBody, CardDivider, CardHeader, CardFooter } from '@wordpress/
 import { useViewportMatch } from '@wordpress/compose';
 import { forwardRef, PropsWithChildren, HTMLAttributes } from 'react';
 
-type CardProps = PropsWithChildren<
-	{
-		size?: 'xSmall' | 'small' | 'medium' | 'large';
-	} & HTMLAttributes< HTMLDivElement >
->;
+type CardProps = PropsWithChildren< HTMLAttributes< HTMLDivElement > > & Record< string, any >;
 
 const DashboardCard = forwardRef< HTMLDivElement, CardProps >(
 	( { size, children, ...rest }, ref ) => {
