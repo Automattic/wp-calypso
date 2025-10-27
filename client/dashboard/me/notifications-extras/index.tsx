@@ -4,7 +4,9 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
@@ -17,6 +19,7 @@ import {
 	JETPACK_OPTION_KEYS,
 	JETPACK_TITLES,
 	JETPACK_DESCRIPTIONS,
+	getSettingsTitle,
 } from './extras-config';
 import { ExtrasToggleCard } from './extras-toggle-card';
 import type { WpcomNotificationSettings } from '@automattic/api-core';
@@ -24,19 +27,13 @@ import type { WpcomNotificationSettings } from '@automattic/api-core';
 export default function NotificationsExtras() {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { recordTracksEvent } = useAnalytics();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const mutation = useMutation( {
-		...userNotificationsSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Subscription settings saved.' ),
-				error: __( 'Failed to save subscription settings.' ),
-			},
-		},
-	} );
+	const { mutate: updateSettings, isPending: isSaving } = useMutation(
+		userNotificationsSettingsMutation()
+	);
 
 	const extraSettings: WpcomNotificationSettings = data.wpcom;
-	const isSaving = mutation.isPending;
 	const onMutate =
 		( group: 'wpcom' | 'jetpack' ) =>
 		(
@@ -64,7 +61,33 @@ export default function NotificationsExtras() {
 				} );
 			} );
 
-			mutation.mutate( { data: { wpcom: payload } } );
+			updateSettings(
+				{ data: { wpcom: payload } },
+				{
+					onSuccess: () => {
+						if ( origin === 'single' ) {
+							createSuccessNotice(
+								sprintf(
+									/* translators: %s is the name of the settings */ __( '"%s" settings saved.' ),
+									getSettingsTitle( Object.keys( payload )[ 0 ] )
+								),
+								{ type: 'snackbar' }
+							);
+						}
+
+						if ( origin === 'subscribe-all' || origin === 'unsubscribe-all' ) {
+							createSuccessNotice( __( 'Subscriptions settings saved.' ), {
+								type: 'snackbar',
+							} );
+						}
+					},
+					onError: () => {
+						createErrorNotice( __( 'Failed to save subscription settings.' ), {
+							type: 'snackbar',
+						} );
+					},
+				}
+			);
 		};
 
 	return (

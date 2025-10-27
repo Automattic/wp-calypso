@@ -153,3 +153,21 @@
 		width: 100%;
 	}
 }
+
+.site-migration-ssh__step-share-ssh {
+	&-description {
+		margin-bottom: 1rem;
+	}
+
+	&-form {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	&-label {
+		display: block;
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+	}
+}
