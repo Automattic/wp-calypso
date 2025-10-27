@@ -84,6 +84,7 @@ export function TransferAuthCode( { domainName, siteId }: TransferStepComponentP
 						</Text>
 
 						<InputControl
+							__next40pxDefaultSize
 							label={ __( 'Authorization code' ) }
 							placeholder={ __( 'Enter authorization code' ) }
 							value={ authCode }
