@@ -1,14 +1,8 @@
 @import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
 
 .dashboard-page-layout {
-	--page-layout-block-padding: #{$grid-unit-20};
-	--page-layout-inline-padding: #{$grid-unit-20};
-
-	@include break-medium {
-		--page-layout-block-padding: #{$grid-unit-40};
-		--page-layout-inline-padding: #{$grid-unit-30};
-	}
+	--page-layout-block-padding: #{$grid-unit-40};
+	--page-layout-inline-padding: #{$grid-unit-30};
 
 	margin: auto;
 	padding: var( --page-layout-block-padding ) var( --page-layout-inline-padding );

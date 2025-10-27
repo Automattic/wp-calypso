@@ -16,23 +16,14 @@
 
 	.dashboard-callout {
 		.dashboard-callout__h-container {
-			padding: #{$grid-unit-20};
-
-			@include break-medium {
-				padding: #{$grid-unit-30};
-			}
+			padding: 24px;
 		}
 	}
 }
 
 .dashboard-overview-card__content {
 	border-radius: $radius-large;
-	padding: #{$grid-unit-20};
-
-	@include break-medium {
-		padding: #{$grid-unit-30};
-	}
-
+	padding: 24px;
 	// HStacks are width 100% and will try to grow as wide as the card body.
 	// We need to ensure this new padding is included as part of that 100%.
 	box-sizing: border-box;
