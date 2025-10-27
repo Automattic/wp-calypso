@@ -263,6 +263,24 @@ export const addEmailForwarderRoute = createRoute( {
 	)
 );
 
+export const mailboxesReadyRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Your mailboxes are ready' ),
+			},
+		],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'emails/mailboxes-ready/$domain',
+} ).lazy( () =>
+	import( '../../emails/mailboxes-ready' ).then( ( d ) =>
+		createLazyRoute( 'mailboxes-ready' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createEmailsRoutes = () => {
 	return [
 		emailsRoute,
@@ -271,5 +289,6 @@ export const createEmailsRoutes = () => {
 		addMailboxRoute,
 		setUpMailboxRoute,
 		addEmailForwarderRoute,
+		mailboxesReadyRoute,
 	];
 };

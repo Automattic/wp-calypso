@@ -1,44 +1,29 @@
-import { Domain, Site } from '@automattic/api-core';
+import { Domain } from '@automattic/api-core';
 import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import {
-	buildQueryString,
-	getEmailManagementPath,
-	getPurchaseNewEmailAccountPath,
-} from '../../utils/email-paths';
+import { addQueryArgs } from '@wordpress/url';
 
 const CALYPSO_CONTACT = '/help/contact';
 
 type EmailNonDomainOwnerMessageProps = {
 	domain?: Domain;
-	selectedSite?: Site | null;
-	source: 'email-comparison' | 'email-management';
 };
 
 export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProps ) => {
-	const { domain, selectedSite, source } = props;
+	const { domain } = props;
 
 	const ownerUserName = domain?.owner;
 
 	const isPrivacyAvailable = domain?.privacy_available;
-	const buildLoginUrl = () => {
-		const redirectUrlParameter =
-			source === 'email-comparison'
-				? getPurchaseNewEmailAccountPath( selectedSite?.slug, domain?.domain, '', 'login-redirect' )
-				: getEmailManagementPath( selectedSite?.slug, domain?.domain );
 
-		return `/log-in/${ buildQueryString( {
-			email_address: ownerUserName,
-			redirect_to: redirectUrlParameter,
-		} ) }`;
-	};
-
-	const contactOwnerUrl = `https://privatewho.is/${ buildQueryString( {
+	const contactOwnerUrl = addQueryArgs( 'https://privatewho.is/', {
 		s: domain?.domain || '',
-	} ) }`;
+	} );
 
-	const loginUrl = buildLoginUrl();
+	const loginUrl = addQueryArgs( '/log-in/', {
+		redirect_to: window.location.pathname,
+	} );
 
 	const placeholders = {
 		ownerUserName,

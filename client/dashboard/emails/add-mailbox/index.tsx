@@ -48,7 +48,7 @@ const AddProfessionalEmail = () => {
 
 	const { provider, interval } = useParams( { shouldThrow: false, strict: false } );
 
-	const { domain, domainName, site } = useDomainFromUrlParam();
+	const { domain, domainName } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { product } = useEmailProduct( provider, interval );
 	const { data: existingMailboxes } = useSuspenseQuery(
@@ -186,13 +186,7 @@ const AddProfessionalEmail = () => {
 			}
 			size="small"
 			notices={
-				showEmailPurchaseDisabledMessage && (
-					<EmailNonDomainOwnerNotice
-						selectedSite={ site }
-						domain={ domain }
-						source="email-comparison"
-					/>
-				)
+				showEmailPurchaseDisabledMessage && <EmailNonDomainOwnerNotice domain={ domain } />
 			}
 		>
 			{ isAddMailboxRoute && mailboxCost && (
