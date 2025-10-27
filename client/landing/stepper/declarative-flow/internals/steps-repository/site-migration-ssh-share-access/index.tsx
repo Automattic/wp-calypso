@@ -52,21 +52,22 @@ const SiteMigrationSshShareAccess: StepType< {
 
 	const dispatch = useDispatch();
 
+	// Poll for migration status after starting migration
+	const { data: migrationStatus } = useSSHMigrationStatus( {
+		siteId,
+		enabled: migrationStarted && siteId > 0,
+	} );
+
 	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
 		fromUrl,
 		siteId,
 		siteName: site?.name ?? '',
 		host,
 		onNoSSHAccess: handleNoSSHAccess,
+		migrationStatus: migrationStatus?.status,
 	} );
 
 	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
-
-	// Poll for migration status after starting migration
-	const { data: migrationStatus } = useSSHMigrationStatus( {
-		siteId,
-		enabled: migrationStarted && siteId > 0,
-	} );
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
