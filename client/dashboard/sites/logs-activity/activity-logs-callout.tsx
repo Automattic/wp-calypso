@@ -9,6 +9,7 @@ import type { Site } from '@automattic/api-core';
 export function getActivityLogsCalloutProps() {
 	return {
 		feature: HostingFeatures.ACTIVITY_LOG,
+		// note: we're not passing a "feature" field here because the activity logs are available in all paid plans. Selecting the feature field would limit the plan list only to Business/Commerce.
 		upsellId: 'site-logs-activity',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Track every action with Jetpack Activity' ),
