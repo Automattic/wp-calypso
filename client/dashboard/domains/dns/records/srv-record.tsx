@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import RequiredSelect from '../../../components/required-select';
+import { removeSelectItemOption } from '../../../components/required-select';
 import { getFieldWithDot, getNormalizedName } from '../utils';
 import {
 	domainValidator,
@@ -36,19 +36,16 @@ export const SRVRecordConfig: DnsRecordConfig = {
 				custom: serviceValidator(),
 			},
 		},
-		{
+		removeSelectItemOption( {
 			id: 'protocol',
 			label: __( 'Protocol' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: [
 				{ label: '_tcp', value: '_tcp' },
 				{ label: '_udp', value: '_udp' },
 				{ label: '_tls', value: '_tls' },
 			],
-			isValid: {
-				required: true,
-			},
-		},
+		} ),
 		{
 			id: 'aux',
 			type: 'integer',

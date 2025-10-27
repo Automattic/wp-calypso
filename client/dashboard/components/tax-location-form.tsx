@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import RequiredSelect from './required-select';
+import { removeSelectItemOption } from './required-select';
 import type { CountryListItem, StoredPaymentMethodTaxLocation } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -13,17 +13,17 @@ function getFields( {
 	countryList: CountryListItem[];
 } ): Field< StoredPaymentMethodTaxLocation >[] {
 	return [
-		{
+		removeSelectItemOption( {
 			id: 'country_code',
 			label: __( 'Country' ),
-			Edit: RequiredSelect,
+			Edit: 'select',
 			elements: countryList
 				.filter( ( countryItem ) => countryItem.name )
 				.map( ( countryItem ) => ( {
 					label: countryItem.name,
 					value: countryItem.code,
 				} ) ),
-		},
+		} ),
 		{
 			id: 'postal_code',
 			label: __( 'Postal code' ),

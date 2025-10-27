@@ -3,7 +3,7 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
-import RequiredSelect from '../../components/required-select';
+import { removeSelectItemOption } from '../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
 import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
@@ -78,10 +78,10 @@ export default function DNSRecordForm( {
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 
 	const typeFields: Field< DnsRecordTypeFormData >[] = [
-		{
+		removeSelectItemOption( {
 			id: 'type',
 			label: __( 'Type' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: [
 				{ label: 'A', value: 'A' },
 				{ label: 'AAAA', value: 'AAAA' },
@@ -94,7 +94,7 @@ export default function DNSRecordForm( {
 				{ label: 'TXT', value: 'TXT' },
 			],
 			description: config.description,
-		},
+		} ),
 	];
 
 	const handleCancel = ( e: React.MouseEvent< HTMLButtonElement > ) => {

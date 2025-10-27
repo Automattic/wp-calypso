@@ -21,7 +21,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RequiredSelect from '../../components/required-select';
+import { removeSelectItemOption } from '../../components/required-select';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
 import type { Field } from '@wordpress/dataviews';
@@ -49,15 +49,15 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	} );
 
 	const fields: Field< { version: string } >[] = [
-		{
+		removeSelectItemOption( {
 			id: 'version',
 			label: __( 'WordPress version' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: [
 				{ value: 'latest', label: getFormattedWordPressVersion( site, 'latest' ) },
 				{ value: 'beta', label: getFormattedWordPressVersion( site, 'beta' ) },
 			],
-		},
+		} ),
 	];
 
 	const form = {
