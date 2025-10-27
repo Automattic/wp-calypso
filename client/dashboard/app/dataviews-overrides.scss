@@ -1,4 +1,5 @@
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/breakpoints';
 
 // We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
 .components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
@@ -20,5 +21,35 @@ a.dataviews-url-field {
 
 	span {
 		text-decoration: none;
+	}
+}
+
+// Temporary overrides for the dataviews wrapper to match the new design system.
+.components-card__body:has(> .dataviews-wrapper) .dataviews-filters__container,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-footer,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-view-grid,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-loading,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-no-results,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews__view-actions,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-filters__container,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-footer,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-view-grid,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-loading,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-no-results,
+.components-card__body:has(> .dataviews-wrapper) .dataviews__view-actions,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-view-table tr td:first-child,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-view-table tr th:first-child,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-view-table tr td:first-child,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-view-table tr th:first-child,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-view-table tr td:last-child,
+.components-card__body:has(> .dataviews-wrapper) .dataviews-view-table tr th:last-child,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-view-table tr td:last-child,
+.components-card__body:has(> .dataviews-picker-wrapper) .dataviews-view-table tr th:last-child,
+.dataviews-view-list div[role="row"] .dataviews-view-list__item-wrapper,
+.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
+	padding-inline: #{$grid-unit-20};
+
+	@include break-medium {
+		padding-inline: #{$grid-unit-30};
 	}
 }
