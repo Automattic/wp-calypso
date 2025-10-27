@@ -5,8 +5,8 @@ import {
 } from '@automattic/api-queries';
 import { QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import {
-	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 	Button,
 	CheckboxControl,
