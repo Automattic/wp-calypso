@@ -1,7 +1,8 @@
 import { DnsTemplates } from '@automattic/api-core';
-import { Card, CardBody, __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
+import { __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import EmailSetupForm from './email-setup-form';
 

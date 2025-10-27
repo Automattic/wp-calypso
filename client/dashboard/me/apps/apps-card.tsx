@@ -1,4 +1,5 @@
-import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 import type { CSSProperties } from 'react';
 

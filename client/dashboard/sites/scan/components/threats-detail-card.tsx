@@ -1,12 +1,11 @@
 import {
-	Card,
-	CardBody,
 	CardDivider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Icon,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { Card, CardBody } from '../../../components/card';
 import { SeverityBadge } from '../severity-badge';
 import { getThreatIcon } from '../utils';
 import type { Threat } from '@automattic/api-core';

@@ -1,13 +1,14 @@
 import { JetpackModule, JetpackModules, Site } from '@automattic/api-core';
 import { siteJetpackModulesMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 

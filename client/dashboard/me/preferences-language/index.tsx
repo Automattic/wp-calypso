@@ -5,8 +5,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Notice,
 	Button,
-	Card,
-	CardBody,
 	__experimentalVStack as VStack,
 	ExternalLink,
 	ComboboxControl,
@@ -17,6 +15,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
 import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';

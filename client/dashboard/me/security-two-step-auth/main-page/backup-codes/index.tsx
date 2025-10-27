@@ -1,9 +1,10 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Card, CardBody } from '../../../../components/card';
 import Notice from '../../../../components/notice';
 import { SectionHeader } from '../../../../components/section-header';
 import VerifyCodeForm from '../../common/verify-code-form';

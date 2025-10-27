@@ -1,7 +1,8 @@
-import { Card, CardBody, __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { Card, CardBody } from '../../../components/card';
 import './index.scss';
 
 interface CollapsibleCardProps {

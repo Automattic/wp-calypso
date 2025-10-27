@@ -6,8 +6,6 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	ExternalLink,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -21,6 +19,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';

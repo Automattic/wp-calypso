@@ -3,13 +3,14 @@ import {
 	deleteTwoStepAuthSecurityKeyMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { Card, CardHeader, CardBody } from '../../../../components/card';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';

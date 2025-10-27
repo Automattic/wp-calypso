@@ -1,17 +1,13 @@
 import { updateSiteRedirectMutation, userPurchasesQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { purchaseSettingsRoute } from '../../app/router/me';
+import { Card, CardBody } from '../../components/card';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 interface ManageSiteRedirectProps {

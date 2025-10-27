@@ -29,8 +29,6 @@ import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
-	Card,
-	CardBody,
 	Button,
 	ToggleControl,
 	Notice,
@@ -48,6 +46,7 @@ import { useLocale } from '../../../app/locale';
 import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
+import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
 import OverviewCard from '../../../components/overview-card';

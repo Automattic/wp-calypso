@@ -6,8 +6,6 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useBlocker } from '@tanstack/react-router';
 import {
-	Card,
-	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	Button,
@@ -15,6 +13,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { Card, CardBody } from '../../../components/card';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
 const isDirty = ( dataState: SettingsData, originalSettings: SettingsData ) => {

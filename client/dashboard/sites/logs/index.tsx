@@ -2,19 +2,14 @@ import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	CardHeader,
-	__experimentalVStack as VStack,
-	TabPanel,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { isLast7Days } from '../../components/date-range-picker/utils';
 import InlineSupportLink from '../../components/inline-support-link';

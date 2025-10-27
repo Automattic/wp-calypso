@@ -6,8 +6,6 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -22,6 +20,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';

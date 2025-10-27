@@ -1,16 +1,11 @@
 import { type UserSettings } from '@automattic/api-core';
 import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	CheckboxControl,
-	Button,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { CheckboxControl, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { Card, CardBody } from '../../../components/card';
 import { ConfirmationModal } from './confirmation-modal';
 
 const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {

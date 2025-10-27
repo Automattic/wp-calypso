@@ -5,7 +5,6 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
@@ -13,6 +12,7 @@ import {
 	siteSettingsRepositoriesRoute,
 	siteSettingsRepositoriesManageRoute,
 } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { BackToDeploymentsButton } from './back-to-deployments-button';

@@ -5,20 +5,18 @@ import {
 } from '@automattic/api-queries';
 import { QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	Button,
 	CheckboxControl,
-	Card,
-	CardBody,
-	CardDivider,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { Fragment, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Card, CardBody, CardDivider } from '../../components/card';
 import { Text } from '../../components/text';
 import type { UserPreferences } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';

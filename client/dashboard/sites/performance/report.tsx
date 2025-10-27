@@ -1,6 +1,7 @@
 import { Metrics } from '@automattic/api-core';
-import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState, useRef } from 'react';
+import { Card, CardBody } from '../../components/card';
 import CoreMetrics from './core-metrics';
 import CoreMetricsPerformance from './core-metrics-performance';
 import PerformanceInsights from './performance-insights';
