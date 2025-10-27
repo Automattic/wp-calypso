@@ -8,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -32,6 +33,7 @@ import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
 const AddProfessionalEmail = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
@@ -94,6 +96,13 @@ const AddProfessionalEmail = () => {
 		const validated = await mailboxOperations.validateAndCheck( false );
 
 		if ( ! userCanAddEmail || ! validated ) {
+			recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_validation_failure', {
+				domainName,
+				mailboxCount: mailboxEntities.length,
+				provider,
+				reason: validated ? 'user_cannot_add_email' : 'validation_failed',
+			} );
+
 			if ( ! userCanAddEmail ) {
 				const errors = domain?.current_user_cannot_add_email_reason?.errors;
 				const message = errors
@@ -134,10 +143,23 @@ const AddProfessionalEmail = () => {
 			.forCartKey( site?.ID )
 			.actions.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
 			.then( () => {
+				recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_add_to_cart_success', {
+					domainName,
+					mailboxCount: mailboxEntities.length,
+					provider,
+				} );
+
 				window.location.href = checkoutPath;
 			} )
 			.finally( () => setIsSubmitting( false ) )
 			.catch( ( error: CartActionError ) => {
+				recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_add_to_cart_failure', {
+					domainName,
+					mailboxCount: mailboxEntities.length,
+					provider,
+					error: error.message,
+				} );
+
 				const actions = [];
 
 				if ( error.code === 'already-contains-an-email-product' ) {
@@ -149,6 +171,12 @@ const AddProfessionalEmail = () => {
 	};
 
 	const removeForm = ( index: number ) => {
+		recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_remove_mailbox_click', {
+			domainName,
+			mailboxCount: mailboxEntities.length,
+			provider,
+		} );
+
 		setMailboxEntities( ( prevMailboxEntities ) => {
 			const newMailboxEntities = [ ...prevMailboxEntities ];
 			newMailboxEntities.splice( index, 1 );
@@ -172,7 +200,21 @@ const AddProfessionalEmail = () => {
 
 	return (
 		<PageLayout
-			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
+			header={
+				<PageHeader
+					prefix={
+						<BackToEmailsPrefix
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_back_to_emails_click', {
+									domainName,
+									mailboxCount: mailboxEntities.length,
+									provider,
+								} );
+							} }
+						/>
+					}
+				/>
+			}
 			size="small"
 			notices={
 				showEmailPurchaseDisabledMessage && (
@@ -211,6 +253,15 @@ const AddProfessionalEmail = () => {
 							variant="secondary"
 							disabled={ disabled }
 							onClick={ () => {
+								recordTracksEvent(
+									'calypso_dashboard_emails_add_mailbox_add_another_mailbox_click',
+									{
+										domainName,
+										mailboxCount: mailboxEntities.length,
+										provider,
+									}
+								);
+
 								setMailboxEntities( ( prevMailboxEntities ) => [
 									...prevMailboxEntities,
 									createNewMailbox(),
