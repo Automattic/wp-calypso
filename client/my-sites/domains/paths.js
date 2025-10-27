@@ -101,6 +101,10 @@ export function domainManagementOverviewRoot() {
 	return domainManagementAllRoot() + '/overview';
 }
 
+export function domainManagementV2Root() {
+	return domainManagementOverviewRoot() + '/v2';
+}
+
 export function domainSiteContextRoot() {
 	return '/overview/site-domain';
 }

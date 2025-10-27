@@ -424,6 +424,16 @@ export default function () {
 	);
 
 	page(
+		paths.domainManagementV2Root() + '/*',
+		noSite,
+		siteSelection,
+		navigation,
+		domainManagementController.dashboardBackportDomains,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		paths.domainManagementAllEmailRoot() + '/:domain/:site',
 		siteSelection,
 		navigation,

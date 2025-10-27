@@ -32,6 +32,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getQueryParams } from './dataviews/query-params';
 import { getSubpageParams } from './subpage-wrapper/subpages';
 import DomainManagement from '.';
+import DashboardBackportDomains from 'calypso/sites/v2/domains';
 
 const sitesDashboardGlobalStyles = css`
 	body.is-bulk-all-domains-page {
@@ -378,6 +379,11 @@ export default {
 				needsDomains
 			/>
 		);
+		next();
+	},
+
+	dashboardBackportDomains( pageContext, next ) {
+		pageContext.primary = <DashboardBackportDomains />;
 		next();
 	},
 
