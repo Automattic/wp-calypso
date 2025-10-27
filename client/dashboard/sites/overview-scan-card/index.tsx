@@ -75,7 +75,7 @@ function ScanCardContent( { site }: { site: Site } ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( ! scan ) {
+	if ( ! scan || ! scan.threats ) {
 		return null;
 	}
 
