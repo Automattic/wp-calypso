@@ -6,6 +6,7 @@ import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpre
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -100,9 +101,10 @@ const SetUpMailbox = () => {
 			} );
 
 			router.navigate( {
-				to: `${ emailsRoute.fullPath }?domain_to_poll=${ encodeURIComponent(
-					domainName
-				) }&mailbox_to_poll=${ encodeURIComponent( localPart ) }`,
+				to: addQueryArgs( emailsRoute.fullPath, {
+					domain_to_poll: domainName,
+					mailbox_to_poll: localPart,
+				} ),
 			} );
 		} catch ( error: unknown ) {
 			createErrorNotice(
