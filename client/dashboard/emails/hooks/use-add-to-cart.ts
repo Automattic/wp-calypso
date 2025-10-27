@@ -1,5 +1,6 @@
 import { useParams, useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { CartActionError } from '../../shopping-cart/errors';
