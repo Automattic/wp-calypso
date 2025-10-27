@@ -6,8 +6,6 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Card,
-	CardBody,
 	CheckboxControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,6 +14,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
+import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
 import EmailSection from './email-section';
