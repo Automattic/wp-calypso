@@ -559,8 +559,9 @@ function getFields( {
 }
 
 const form = {
-	type: 'regular' as const,
-	labelPosition: 'top' as const,
+	layout: {
+		type: 'regular' as const,
+	},
 	fields: [
 		{
 			id: 'autoRenew',
