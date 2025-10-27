@@ -70,3 +70,10 @@ export const JETPACK_DESCRIPTIONS: Record< JetpackOptionKey, string > = {
 	jetpack_news: __( 'Jetpack news, announcements, and product spotlights.' ),
 	jetpack_reports: __( 'Jetpack security and performance reports.' ),
 };
+
+export const getSettingsTitle = ( settingsName: string ) => {
+	return (
+		WPCOM_TITLES[ settingsName as WpcomOptionKey ] ??
+		JETPACK_TITLES[ settingsName as JetpackOptionKey ]
+	);
+};
