@@ -13,10 +13,10 @@ import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { Text } from '../../components/text';
-import { TextSkeleton } from '../../components/text-skeleton';
 import { isRelativeUrl } from '../../utils/url';
+import ComponentViewTracker from '../component-view-tracker';
+import { Text } from '../text';
+import { TextSkeleton } from '../text-skeleton';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
