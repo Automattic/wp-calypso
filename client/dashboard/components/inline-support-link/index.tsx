@@ -1,8 +1,8 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
-import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data'; // eslint-disable-line no-restricted-imports
-import type { SupportDocData } from 'calypso/components/inline-support-link/types'; // eslint-disable-line no-restricted-imports
+import useSupportDocData from './use-support-doc-data';
+import type { SupportDocData } from './types';
 
 const InlineSupportLink = ( {
 	className,
