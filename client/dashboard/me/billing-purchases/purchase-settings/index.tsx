@@ -1021,6 +1021,9 @@ export default function PurchaseSettings() {
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
 		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
+		onError: () => {
+			// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
+		},
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
