@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports
 import { Card, CardBody, CardDivider, CardHeader, CardFooter } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { forwardRef, PropsWithChildren, HTMLAttributes } from 'react';
