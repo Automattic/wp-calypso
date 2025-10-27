@@ -1,37 +1,32 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { CartActionError } from '../../shopping-cart/errors';
-import { getEmailCheckoutPath } from '../../utils/email-paths';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
+import { useAddToCart } from '../hooks/use-add-to-cart';
 import { useCreateNewMailbox } from '../hooks/use-create-new-mailbox';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import { MailboxProvider } from '../types';
-import { getCartItems } from '../utils/get-cart-items';
-import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getTotalCost } from '../utils/get-total-cost';
 import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 import { PricingNotice } from './components/pricing-notice';
 
 const AddProfessionalEmail = () => {
+	const addToCart = useAddToCart();
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const router = useRouter();
 
 	const { provider, interval } = addMailboxRoute.useParams();
 
@@ -67,10 +62,6 @@ const AddProfessionalEmail = () => {
 	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 
-		const { shoppingCartManagerClient } = await import(
-			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
-		);
-
 		mailboxEntities.forEach( ( mailbox ) => mailbox.validate() );
 		persistMailboxesToState();
 		const mailboxOperations = new MailboxOperations( mailboxEntities, persistMailboxesToState );
@@ -97,41 +88,7 @@ const AddProfessionalEmail = () => {
 			return;
 		}
 
-		const numberOfMailboxes = mailboxOperations.mailboxes.length;
-
-		const emailProperties = getEmailProductProperties(
-			provider,
-			domain,
-			product,
-			numberOfMailboxes
-		);
-
-		const checkoutBasePath = getEmailCheckoutPath(
-			site?.slug || '',
-			domain.domain,
-			router.state.location.pathname,
-			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
-		);
-
-		const backUrl = window.location.origin + '/v2/emails';
-		const checkoutPath = addQueryArgs( checkoutBasePath, { checkoutBackUrl: backUrl } );
-
-		await shoppingCartManagerClient
-			.forCartKey( site?.ID )
-			.actions.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
-			.then( () => {
-				window.location.href = checkoutPath;
-			} )
-			.finally( () => setIsSubmitting( false ) )
-			.catch( ( error: CartActionError ) => {
-				const actions = [];
-
-				if ( error.code === 'already-contains-an-email-product' ) {
-					actions.push( { label: __( 'Shopping cart' ), url: checkoutPath } );
-				}
-
-				createErrorNotice( error.message, { actions, type: 'snackbar' } );
-			} );
+		addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } );
 	};
 
 	const removeForm = ( index: number ) => {
