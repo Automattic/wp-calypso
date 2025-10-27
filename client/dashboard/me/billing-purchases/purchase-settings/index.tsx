@@ -78,7 +78,7 @@ import {
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
-	isWpcomFlexProduct,
+	isWpcomFlexSubscription,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -1151,7 +1151,9 @@ export default function PurchaseSettings() {
 					/>
 				</Grid>
 				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
-				{ isWpcomFlexProduct( purchase ) && <BillingFlexUsageCard purchaseId={ purchase.ID } /> }
+				{ isWpcomFlexSubscription( purchase ) && (
+					<BillingFlexUsageCard purchaseId={ purchase.ID } />
+				) }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

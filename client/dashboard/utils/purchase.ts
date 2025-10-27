@@ -363,7 +363,7 @@ export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === 'offsite_redirect';
 }
 
-export function isWpcomFlexProduct( purchase: Purchase ): boolean {
+export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
 	return purchase.product_slug === 'flex-hosting-plan-monthly';
 }
 
