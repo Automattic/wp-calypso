@@ -85,10 +85,11 @@ const SetUpMailbox = () => {
 		const [ mailbox ] = mailboxOperations.mailboxes;
 
 		try {
+			const localPart = mailbox.getFieldValue< string >( FIELD_MAILBOX )?.toLowerCase() || '';
 			await createTitanMailbox( {
 				domainName: domainName,
 				name: '',
-				mailbox: mailbox.getFieldValue< string >( FIELD_MAILBOX )?.toLowerCase() || '',
+				mailbox: localPart,
 				password: mailbox.getFieldValue( FIELD_PASSWORD ) || '',
 				passwordResetEmail: mailbox.getFieldValue( FIELD_PASSWORD_RESET_EMAIL ) || '',
 				isAdmin: false,
@@ -99,7 +100,9 @@ const SetUpMailbox = () => {
 			} );
 
 			router.navigate( {
-				to: emailsRoute.fullPath,
+				to: `${ emailsRoute.fullPath }?domain_to_poll=${ encodeURIComponent(
+					domainName
+				) }&mailbox_to_poll=${ encodeURIComponent( localPart ) }`,
 			} );
 		} catch ( error: unknown ) {
 			createErrorNotice(
