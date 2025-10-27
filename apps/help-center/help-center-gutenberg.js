@@ -65,6 +65,10 @@ function HelpCenterContent() {
 		</>
 	);
 
+	const botProps = helpCenterData.isCommerceGarden
+		? { botNameSlug: 'ciab-workflow-support_chat' }
+		: {};
+
 	return (
 		<>
 			{ showHelpIcon &&
@@ -81,7 +85,7 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				isCommerceGarden={ helpCenterData.isCommerceGarden }
-				botNameSlug={ helpCenterData.isCommerceGarden ? 'ciab-workflow-support_chat' : undefined }
+				{ ...botProps }
 			/>
 		</>
 	);
