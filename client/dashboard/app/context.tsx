@@ -1,15 +1,5 @@
 import { createContext, useContext } from 'react';
 
-export type SiteSettingsGeneralSupports = {
-	redirect: boolean;
-};
-
-export type SiteSettingsSupports = {
-	general: SiteSettingsGeneralSupports;
-	server: boolean;
-	security: boolean;
-};
-
 export type SiteFeatureSupports = {
 	deployments: boolean;
 	performance: boolean;
@@ -19,7 +9,6 @@ export type SiteFeatureSupports = {
 	scan: boolean;
 	domains: boolean;
 	emails: boolean;
-	settings: SiteSettingsSupports | false;
 };
 
 export type MeSupports = {
@@ -50,7 +39,7 @@ export type AppConfig = {
 	components: Record< string, () => Promise< { default: React.FC } > >;
 };
 
-export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
+const AppContext = createContext< AppConfig >( {
 	name: '',
 	basePath: '',
 	mainRoute: '',
@@ -71,9 +60,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	},
 	optIn: false,
 	components: {},
-};
-
-const AppContext = createContext< AppConfig >( APP_CONTEXT_DEFAULT_CONFIG );
+} );
 
 interface AppProviderProps {
 	children: React.ReactNode;

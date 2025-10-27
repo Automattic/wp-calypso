@@ -18,13 +18,6 @@ boot( {
 			scan: true,
 			domains: true,
 			emails: true,
-			settings: {
-				general: {
-					redirect: true,
-				},
-				server: true,
-				security: true,
-			},
 		},
 		domains: true,
 		emails: true,

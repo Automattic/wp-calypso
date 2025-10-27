@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-type ChildType = ReactElement< { density?: string } > | null;
+type ChildType = ReactElement< { density?: string } >;
 export interface SummaryButtonListProps {
 	/**
 	 * The main label that identifies the section.
