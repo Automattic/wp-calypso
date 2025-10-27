@@ -9,8 +9,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	SelectControl,
-	CardBody,
-	Card,
 	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -20,6 +18,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
+import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 
 export const DevicesSettings = () => {

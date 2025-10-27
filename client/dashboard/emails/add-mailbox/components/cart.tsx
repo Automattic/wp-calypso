@@ -5,10 +5,10 @@ import {
 	Button,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__unstableMotion as motion,
-	Card,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
+import { Card } from '../../../components/card';
 import { Text } from '../../../components/text';
 import { useDomainFromUrlParam } from '../../hooks/use-domain-from-url-param';
 
