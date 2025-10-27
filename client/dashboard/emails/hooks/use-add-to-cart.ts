@@ -1,8 +1,7 @@
-import { useRouter } from '@tanstack/react-router';
+import { useParams, useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { addMailboxRoute } from '../../app/router/emails';
 import { CartActionError } from '../../shopping-cart/errors';
 import { getEmailCheckoutPath } from '../../utils/email-paths';
 import { MailboxOperations } from '../entities/mailbox-operations';
@@ -14,9 +13,10 @@ import { useEmailProduct } from './use-email-product';
 export const useAddToCart = () => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
-	const { provider, interval } = addMailboxRoute.useParams();
+	const { provider, interval } = useParams( { strict: false } );
 	const { domain, site } = useDomainFromUrlParam();
-	const { product } = useEmailProduct( provider, interval );
+
+	const emailProduct = useEmailProduct( provider, interval );
 
 	const addToCart = async ( {
 		mailboxOperations,
@@ -34,7 +34,7 @@ export const useAddToCart = () => {
 		const emailProperties = getEmailProductProperties(
 			provider,
 			domain,
-			product,
+			emailProduct.product,
 			numberOfMailboxes
 		);
 

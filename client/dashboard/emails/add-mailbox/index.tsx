@@ -1,6 +1,7 @@
-import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useMatch, useParams } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
@@ -18,6 +19,7 @@ import { useAddToCart } from '../hooks/use-add-to-cart';
 import { useCreateNewMailbox } from '../hooks/use-create-new-mailbox';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
+import { useSetUpMailbox } from '../hooks/use-set-up-mailbox';
 import { MailboxProvider } from '../types';
 import { getTotalCost } from '../utils/get-total-cost';
 import { Cart } from './components/cart';
@@ -26,9 +28,15 @@ import { PricingNotice } from './components/pricing-notice';
 
 const AddProfessionalEmail = () => {
 	const addToCart = useAddToCart();
+	const setUpMailbox = useSetUpMailbox();
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const match = useMatch( { strict: false } );
+	const { isPending } = useMutation( createTitanMailboxMutation() );
 
-	const { provider, interval } = addMailboxRoute.useParams();
+	// @ts-expect-error -- 'path' does ineed exist on route options
+	const isAddMailboxRoute = match.fullPath === `/${ addMailboxRoute.options.path }`;
+
+	const { provider, interval } = useParams( { shouldThrow: false, strict: false } );
 
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
@@ -47,7 +55,7 @@ const AddProfessionalEmail = () => {
 	const createNewMailbox = useCreateNewMailbox( {
 		domainName,
 		existingMailboxes,
-		provider,
+		provider: isAddMailboxRoute ? provider : MailboxProvider.Titan,
 	} );
 
 	const persistMailboxesToState = useCallback( () => {
@@ -88,7 +96,12 @@ const AddProfessionalEmail = () => {
 			return;
 		}
 
-		addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } );
+		isAddMailboxRoute
+			? addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } )
+			: setUpMailbox( {
+					mailboxOperations,
+					onFinally: () => setIsSubmitting( false ),
+			  } );
 	};
 
 	const removeForm = ( index: number ) => {
@@ -100,18 +113,23 @@ const AddProfessionalEmail = () => {
 	};
 
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
-	const disabled = isSubmitting || showEmailPurchaseDisabledMessage;
+	const disabled = isAddMailboxRoute
+		? isSubmitting || showEmailPurchaseDisabledMessage
+		: isSubmitting || isPending;
 
 	const filledMailboxes = mailboxEntities.filter( ( mailbox ) => mailbox.isValid() );
 	const totalItems = filledMailboxes.length;
-	const totalCost = getTotalCost( {
-		amount: totalItems,
-		domain: domain,
-		product: product,
-	} );
-	const totalPrice = formatCurrency( totalCost, product.currency_code, {
-		stripZeros: true,
-	} );
+	let totalPrice = '0';
+	if ( isAddMailboxRoute ) {
+		const totalCost = getTotalCost( {
+			amount: totalItems,
+			domain: domain,
+			product: product,
+		} );
+		totalPrice = formatCurrency( totalCost, product.currency_code, {
+			stripZeros: true,
+		} );
+	}
 
 	return (
 		<PageLayout
@@ -127,11 +145,13 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			<PricingNotice
-				domain={ domain }
-				product={ product }
-				showEmailPurchaseDisabledMessage={ showEmailPurchaseDisabledMessage }
-			/>
+			{ isAddMailboxRoute && (
+				<PricingNotice
+					domain={ domain }
+					product={ product }
+					showEmailPurchaseDisabledMessage={ showEmailPurchaseDisabledMessage }
+				/>
+			) }
 
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
@@ -149,22 +169,30 @@ const AddProfessionalEmail = () => {
 					) ) }
 
 					<ButtonStack justify="flex-start">
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							disabled={ disabled }
-							onClick={ () => {
-								setMailboxEntities( ( prevMailboxEntities ) => [
-									...prevMailboxEntities,
-									createNewMailbox(),
-								] );
-							} }
-						>
-							{ __( 'Add another mailbox' ) }
-						</Button>
+						{ isAddMailboxRoute ? (
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								disabled={ disabled }
+								onClick={ () => {
+									setMailboxEntities( ( prevMailboxEntities ) => [
+										...prevMailboxEntities,
+										createNewMailbox(),
+									] );
+								} }
+							>
+								{ __( 'Add another mailbox' ) }
+							</Button>
+						) : (
+							<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
+								{ __( 'Complete setup' ) }
+							</Button>
+						) }
 					</ButtonStack>
 
-					<Cart totalItems={ totalItems } totalPrice={ totalPrice } isCartBusy={ isSubmitting } />
+					{ isAddMailboxRoute && (
+						<Cart totalItems={ totalItems } totalPrice={ totalPrice } isCartBusy={ isSubmitting } />
+					) }
 				</VStack>
 			</form>
 		</PageLayout>
