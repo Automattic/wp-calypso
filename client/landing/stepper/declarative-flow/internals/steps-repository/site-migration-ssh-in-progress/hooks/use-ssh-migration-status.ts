@@ -14,8 +14,9 @@ interface SSHMigrationStatusParams {
  */
 interface SSHMigrationStatusResponse {
 	success: boolean;
-	status: 'in-progress' | 'migrating' | 'completed' | 'failed';
+	status: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
 	step:
+		| 'requested-migration'
 		| 'starting-migration'
 		| 'quickforget-read'
 		| 'quickforget-decode'

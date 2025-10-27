@@ -9,7 +9,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
@@ -18,15 +20,8 @@ import { SectionHeader } from '../../../components/section-header';
 export const EmailSettings = () => {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { recordTracksEvent } = useAnalytics();
-	const { mutate: updateSettings } = useMutation( {
-		...userNotificationsSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved successfully.' ),
-				error: __( 'There was a problem saving your changes. Please, try again.' ),
-			},
-		},
-	} );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
 
 	const settings = data.other.email;
 	const isMutating =
@@ -40,13 +35,34 @@ export const EmailSettings = () => {
 			setting_value: updated.value,
 		} );
 
-		updateSettings( {
-			data: {
-				other: {
-					email: { ...settings, [ updated.id ]: updated.value },
+		updateSettings(
+			{
+				data: {
+					other: {
+						email: { ...settings, [ updated.id ]: updated.value },
+					},
 				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s is the name of the setting */
+							__( '"%s" settings saved.' ),
+							updated.label
+						),
+						{
+							type: 'snackbar',
+						}
+					);
+				},
+				onError: () => {
+					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+						type: 'snackbar',
+					} );
+				},
+			}
+		);
 	};
 
 	const options = useMemo(

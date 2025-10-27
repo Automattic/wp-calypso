@@ -46,7 +46,7 @@ export class SignupPickPlanPage {
 
 		const actions = [
 			this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } ),
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];
 

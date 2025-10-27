@@ -1,7 +1,10 @@
 import { DeviceNotificationSettings } from '@automattic/api-core';
-import { userNotificationsDevicesQuery } from '@automattic/api-queries';
+import {
+	userNotificationsDevicesQuery,
+	userNotificationsSettingsMutation,
+} from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	Button,
@@ -10,22 +13,26 @@ import {
 	__experimentalText as Text,
 	ExternalLink,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
 import { useAnalytics } from '../../../../app/analytics';
 import { getFieldLabel } from '../../helpers/translations';
-import { useSiteSettings, useSettingsMutation } from '../../hooks';
+import { useSiteSettings } from '../../hooks';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
 
 export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { data: devices } = useSuspenseQuery( userNotificationsDevicesQuery() );
-	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
+	const { mutate: updateSettings, isPending: isUpdating } = useMutation(
+		userNotificationsSettingsMutation()
+	);
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
-
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ selectedDeviceId, setSelectedDeviceId ] = useState< string | undefined >(
 		devices?.[ 0 ]?.device_id
 	);
@@ -57,6 +64,21 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						setting_name: item.id,
 						setting_value: item.value,
 						site_id: siteId,
+					} );
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s is the name of the setting */
+							__( '"%s" settings saved.' ),
+							item.label
+						),
+						{
+							type: 'snackbar',
+						}
+					);
+				},
+				onError: () => {
+					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+						type: 'snackbar',
 					} );
 				},
 			}
@@ -132,6 +154,7 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						device_to_be_used_as_template: siteId,
 						site_to_be_used_as_template: siteId,
 					} );
+					createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
 					setIsConfirmDialogOpen( false );
 				},
 			}
