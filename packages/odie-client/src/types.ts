@@ -297,6 +297,7 @@ export type SupportInteractionEvent = {
 };
 
 export type SupportInteraction = {
+	bot_slug: string;
 	uuid: string;
 	status: InteractionStatus;
 	start_date: string;

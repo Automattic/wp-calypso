@@ -3,16 +3,18 @@ import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
 import { generateUUID } from '../utils';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { OdieChat, ReturnedChat } from '../types';
 
 /**
  * Get the ODIE chat and manage the cache to save on API calls.
  */
 export const useOdieChat = ( chatId: number | null ) => {
-	const { botNameSlug, version } = useOdieAssistantContext();
+	const { version } = useOdieAssistantContext();
+	const { data: supportInteraction } = useCurrentSupportInteraction();
 
 	return useQuery< OdieChat, Error >( {
-		queryKey: [ 'odie-chat', botNameSlug, chatId, version ],
+		queryKey: [ 'odie-chat', supportInteraction?.bot_slug, chatId, version ],
 		queryFn: async (): Promise< OdieChat > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -25,11 +27,11 @@ export const useOdieChat = ( chatId: number | null ) => {
 				canAccessWpcomApis()
 					? await wpcomRequest( {
 							method: 'GET',
-							path: `/odie/chat/${ botNameSlug }/${ chatId }?${ queryParams }`,
+							path: `/odie/chat/${ supportInteraction?.bot_slug }/${ chatId }?${ queryParams }`,
 							apiNamespace: 'wpcom/v2',
 					  } )
 					: await apiFetch( {
-							path: `/help-center/odie/chat/${ botNameSlug }/${ chatId }?${ queryParams }`,
+							path: `/help-center/odie/chat/${ supportInteraction?.bot_slug }/${ chatId }?${ queryParams }`,
 							method: 'GET',
 					  } )
 			) as ReturnedChat;
@@ -45,7 +47,7 @@ export const useOdieChat = ( chatId: number | null ) => {
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled: !! chatId,
+		enabled: !! chatId && !! supportInteraction?.bot_slug,
 		staleTime: 3600, // 1 hour
 	} );
 };

@@ -3,16 +3,22 @@ import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
 import { getTimestamp } from '../utils';
-import type { OdieConversation } from '../types';
+import type { OdieConversation, SupportInteraction } from '../types';
 
 /**
  * Retrieves the list of conversations handled by AI.
  */
-export const useGetOdieConversations = ( enabled = true ) => {
-	const { botNameSlug, version } = useOdieAssistantContext();
+export const useGetOdieConversations = (
+	supportInteractions: SupportInteraction[] = [],
+	enabled = true
+) => {
+	const { version } = useOdieAssistantContext();
+	const slugs = encodeURIComponent(
+		supportInteractions?.map( ( interaction ) => interaction.bot_slug ).join( ',' )
+	);
 
 	return useQuery< OdieConversation[], Error >( {
-		queryKey: [ 'odie-interactions', botNameSlug, version ],
+		queryKey: [ 'odie-interactions', slugs, version ],
 		queryFn: async (): Promise< OdieConversation[] > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -23,11 +29,11 @@ export const useGetOdieConversations = ( enabled = true ) => {
 			const response: any[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
-						path: `/odie/conversations/${ botNameSlug }?${ queryParams }`,
+						path: `/odie/conversations/${ slugs }?${ queryParams }`,
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/conversations/${ botNameSlug }?${ queryParams }`,
+						path: `/help-center/odie/conversations/${ slugs }?${ queryParams }`,
 						method: 'GET',
 				  } );
 
@@ -50,7 +56,7 @@ export const useGetOdieConversations = ( enabled = true ) => {
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled,
+		enabled: enabled && supportInteractions?.length > 0,
 		staleTime: 1000 * 30, // 30 seconds
 	} );
 };
