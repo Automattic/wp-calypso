@@ -3,6 +3,7 @@ import { Card, CardBody, CardDivider, CardHeader, CardFooter } from '@wordpress/
 import { useViewportMatch } from '@wordpress/compose';
 import { forwardRef, PropsWithChildren, HTMLAttributes } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CardProps = PropsWithChildren< HTMLAttributes< HTMLDivElement > > & Record< string, any >;
 
 const DashboardCard = forwardRef< HTMLDivElement, CardProps >(
