@@ -1,8 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./tests_local.md"><-- Running tests on your machine</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./writing_tests.md">Writing Tests --></a> </div>
-
-<br><br>
+[<-- Running tests on your machine](./tests_local.md) | [Top](./../README.md) | [Writing Tests -->](./writing_tests.md)
 
 # Running tests on CI
 
@@ -22,7 +18,7 @@
 
 ## Feature/Test groups
 
-Each test file (referred to as `spec`) are assigned at least one group.
+Each test file (referred to as `spec`) is assigned at least one group.
 This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) is able to locate and run the appropriate set of test specs for the build configuration. **Failure to add a group will result in the spec not running as part of CI.**
 
 The following groups are available as of this time:
@@ -38,7 +34,7 @@ The following groups are available as of this time:
 | `quarantined`               | Specs that need additional work.                                                                                                  |
 | `legal`                     | Specs for the marketing and legal team.                                                                                           |
 | `jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                                                                                  |
-| `jetpack-remote-site`       | Specs for testing a remote, connected site through Calyspo. ENV var `JETPACK_TARGET` should be set to `remote-site` for this run. |
+| `jetpack-remote-site`       | Specs for testing a remote, connected site through Calypso. ENV var `JETPACK_TARGET` should be set to `remote-site` for this run. |
 
 ## Feature branch
 
@@ -64,7 +60,7 @@ The Pre-Release E2E tests are connected directly to the Calypso Deploy page and 
 
 ## Scheduled build configurations
 
-In addition to build configurations that are automatically triggered based on branch workflow, there exists build configurations that run on a regular schedule though **only on `trunk`**!
+In addition to build configurations that are automatically triggered based on branch workflow, there exists build configurations that run on a regular schedule, but **only on `trunk`**.
 
 | Build configuration name            | Frequency          |
 | ----------------------------------- | ------------------ |
