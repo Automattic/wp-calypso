@@ -14,13 +14,15 @@ export const useGetOdieConversations = (
 ) => {
 	const { version } = useOdieAssistantContext();
 	const botSlugs = encodeURIComponent(
-		supportInteractions
-			?.map( ( interaction ) => {
-				// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
-				// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
-				return interaction.bot_slug || 'wpcom-support-chat';
-			} )
-			.join( ',' )
+		Array.from(
+			new Set(
+				supportInteractions?.map( ( interaction ) => {
+					// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
+					// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
+					return interaction.bot_slug || 'wpcom-support-chat';
+				} )
+			)
+		).join( ',' )
 	);
 
 	return useQuery< OdieConversation[], Error >( {
