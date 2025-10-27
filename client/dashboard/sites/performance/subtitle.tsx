@@ -33,9 +33,7 @@ export default function Subtitle( {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: %s: relative time since last test run */
-				__(
-					'Last test ran <b>%s</b>. Test again if your site has changed. <button>Test again</button>'
-				),
+				__( 'Last test ran <b>%s</b>. If your site has changed, <button>test again</button>.' ),
 				timeSince
 			),
 			{
