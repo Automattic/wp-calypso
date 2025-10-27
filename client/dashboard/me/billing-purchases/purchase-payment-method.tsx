@@ -72,7 +72,7 @@ export function PurchasePaymentMethod( {
 			);
 
 			return (
-				<HStack>
+				<HStack className="purchase-payment-method__wrapper">
 					<HStack justify="flex-start">
 						<PaymentMethodImage paymentMethodType={ paymentMethodType } />
 						<span>{ maskedCardNumber }</span>
