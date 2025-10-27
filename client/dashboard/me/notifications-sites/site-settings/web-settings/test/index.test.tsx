@@ -164,7 +164,7 @@ describe( 'WebSettings', () => {
 
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect( snackbar ).toHaveTextContent( '"Likes on my comments" settings saved.' );
 		} );
 	} );
 
