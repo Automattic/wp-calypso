@@ -11,7 +11,7 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$show_search = isset( $args['show-search'] ) && ( true === $args['show-search'] );
+$is_frontpage = isset( $args['is-frontpage'] ) && ( true === $args['is-frontpage'] );
 $active_page = isset( $args['active_page'] ) ? $args['active_page'] : '';
 
 
@@ -30,7 +30,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 }
 
 ?>
-<div class="happy-blocks-search-card<?php echo $show_search ? '' : ' navigation-only'; ?>">
+<div class="happy-blocks-search-card<?php echo $is_frontpage ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
 		<!-- Desktop navigation -->
 		<div class="desktop-nav-container">
@@ -44,6 +44,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</ul>
 			
 			<!-- Search button -->
+			<?php if ( ! $is_frontpage ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -52,6 +53,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 					<?php echo esc_html( __( 'Search', 'happy-blocks' ) ); ?>
 				</a>
 			</div>
+			<?php endif; ?>
 		</div>
 		
 		<div class="mobile-nav-container">
@@ -96,6 +98,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</div>
 
 			<!-- Search button -->
+			<?php if ( ! $is_frontpage ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -103,9 +106,10 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 					</svg>
 				</a>
 			</div>
+			<?php endif; ?>
 		</div>
 	</nav>
-	<?php if ( $show_search ) : ?>
+	<?php if ( $is_frontpage ) : ?>
 	<div class="support-search-content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form id="support-search-form" class="" role="search" method="get" action="">
