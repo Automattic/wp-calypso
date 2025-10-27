@@ -1,12 +1,14 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -16,11 +18,10 @@ import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
-import { SupportedEmailProvider } from '../entities/types';
 import { useCreateNewMailbox } from '../hooks/use-create-new-mailbox';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
-import { IntervalLength } from '../types';
+import { MailboxProvider } from '../types';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
 import { getTotalCost } from '../utils/get-total-cost';
@@ -32,21 +33,18 @@ const AddProfessionalEmail = () => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 
-	let interval: IntervalLength = router.state.location.search.interval;
-	if ( interval !== 'monthly' && interval !== 'annually' ) {
-		interval = 'annually';
-	}
+	const { provider, interval } = addMailboxRoute.useParams();
 
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { product } = useEmailProduct( 'titan', interval );
-	const { data: existingMailboxes } = useSuspenseQuery(
+	const { product } = useEmailProduct( provider, interval );
+	const { data: existingMailboxes } = useQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
-		MailboxFormEntity< SupportedEmailProvider >[]
+		MailboxFormEntity< MailboxProvider >[]
 	>( [] );
 
 	const isDomainInCart = false; // TODO: This can be set as a prop if we implement `EmailProvidersUpsell`
@@ -54,6 +52,7 @@ const AddProfessionalEmail = () => {
 	const createNewMailbox = useCreateNewMailbox( {
 		domainName,
 		existingMailboxes,
+		provider,
 	} );
 
 	const persistMailboxesToState = useCallback( () => {
@@ -72,7 +71,7 @@ const AddProfessionalEmail = () => {
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);
 
-		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
+		mailboxEntities.forEach( ( mailbox ) => mailbox.validate() );
 		persistMailboxesToState();
 		const mailboxOperations = new MailboxOperations( mailboxEntities, persistMailboxesToState );
 
@@ -101,22 +100,24 @@ const AddProfessionalEmail = () => {
 		const numberOfMailboxes = mailboxOperations.mailboxes.length;
 
 		const emailProperties = getEmailProductProperties(
-			'titan',
+			provider,
 			domain,
 			product,
 			numberOfMailboxes
 		);
 
-		const checkoutPath = getEmailCheckoutPath(
+		const checkoutBasePath = getEmailCheckoutPath(
 			site?.slug || '',
 			domain.domain,
 			router.state.location.pathname,
 			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
 		);
 
+		const backUrl = window.location.origin + '/v2/emails';
+		const checkoutPath = addQueryArgs( checkoutBasePath, { checkoutBackUrl: backUrl } );
+
 		await shoppingCartManagerClient
 			.forCartKey( site?.ID )
-			// @ts-expect-error -- getCartItems response won't be void since the provider here is always 'titan'
 			.actions.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
 			.then( () => {
 				window.location.href = checkoutPath;

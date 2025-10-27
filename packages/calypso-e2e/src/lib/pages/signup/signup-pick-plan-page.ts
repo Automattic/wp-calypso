@@ -6,7 +6,7 @@ import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-clien
  * The plans page URL regex.
  */
 export const plansPageUrl =
-	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-theme\/plans-theme-preselected.*/;
+	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -31,6 +31,7 @@ export class SignupPickPlanPage {
 	 * Selects a WordPress.com plan matching the name, triggering site creation.
 	 *
 	 * @param {Plans} name Name of the plan.
+	 * @param {RegExp} redirectUrl Optional redirect URL to wait for.
 	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
 	async selectPlan( name: Plans, redirectUrl?: RegExp ): Promise< NewSiteResponse > {
@@ -66,5 +67,33 @@ export class SignupPickPlanPage {
 		// Cast the blogID value to a number, in case it comes in as a string.
 		body.blog_details.blogid = Number( body.blog_details.blogid );
 		return body;
+	}
+
+	/**
+	 * Selects a WordPress.com plan matching the name but does not wait for site creation
+	 *
+	 * The `selectPlan` method assumes that, after plan selection, a site will be created.
+	 * That's not true for the domain-only flow, where a logged out user is redirected to
+	 * the login step after plan selection.
+	 *
+	 * @param name Name of the plan.
+	 * @returns {Promise<void>}
+	 */
+	async selectPlanWithoutSiteCreation( name: Plans, redirectUrl?: RegExp ): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+
+		if ( name !== 'Free' ) {
+			// Non-free plans should redirect to the Checkout cart.
+			redirectUrl ??= new RegExp( '.*checkout.*' );
+		} else {
+			redirectUrl ??= new RegExp( '.*setup/site-setup.*' );
+		}
+
+		const actions = [
+			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.plansPage.selectPlan( name ),
+		];
+
+		await Promise.all( actions );
 	}
 }

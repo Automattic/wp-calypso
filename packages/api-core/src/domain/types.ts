@@ -10,9 +10,13 @@ export const EmailSubscriptionStatus = {
 export type EmailSubscriptionStatus =
 	( typeof EmailSubscriptionStatus )[ keyof typeof EmailSubscriptionStatus ];
 
-interface EmailSubscription {
+export interface EmailSubscription {
 	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
 	product_slug: string;
+	expiry_date: string;
+	purchase_cost_per_mailbox?: EmailCost;
+	renewal_cost_per_mailbox?: EmailCost;
+	is_eligible_for_introductory_offer?: boolean;
 }
 
 export interface EmailCost {
@@ -26,12 +30,8 @@ export interface GoogleEmailSubscription extends EmailSubscription {
 }
 
 export interface TitanEmailSubscription extends EmailSubscription {
-	expiry_date: string;
 	order_id: number;
 	maximum_mailbox_count: number;
-	is_eligible_for_introductory_offer?: boolean;
-	purchase_cost_per_mailbox?: EmailCost;
-	renewal_cost_per_mailbox?: EmailCost;
 }
 
 export interface Domain extends DomainSummary {

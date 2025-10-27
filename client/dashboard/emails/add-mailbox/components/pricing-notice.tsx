@@ -1,4 +1,4 @@
-import { Domain, EmailCost, Product } from '@automattic/api-core';
+import { Domain, EmailCost, Product, EmailSubscription } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -7,18 +7,21 @@ import { add } from 'date-fns';
 import { useLocale } from '../../../app/locale';
 import { Text } from '../../../components/text';
 import { formatDate } from '../../../utils/datetime';
+import { MailboxProvider } from '../../types';
 import { doesAdditionalPriceMatchStandardPrice } from '../../utils/does-additional-price-match-standard-price';
-import { getTitanExpiryDate } from '../../utils/get-titan-expiry-date';
-import { isDomainEligibleForTitanIntroductoryOffer } from '../../utils/is-domain-eligible-for-titan-introductory-offer';
+import { getEmailSubscription } from '../../utils/get-email-subscription';
+import { getExpiryDate } from '../../utils/get-expiry-date';
+import { getProductProvider } from '../../utils/get-product-provider';
+import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
 import { isMonthlyEmailProduct } from '../../utils/is-monthly-email-product';
-import { isUserOnTitanFreeTrial } from '../../utils/is-user-on-titan-free-trial';
+import { isUserOnFreeTrial } from '../../utils/is-user-on-free-trial';
 
-function getPriceMessage( domain?: Domain ) {
-	if ( ! domain?.titan_mail_subscription?.purchase_cost_per_mailbox ) {
+function getPriceMessage( emailSubscription?: EmailSubscription ) {
+	if ( ! emailSubscription?.purchase_cost_per_mailbox ) {
 		return '';
 	}
 
-	return isUserOnTitanFreeTrial( domain )
+	return isUserOnFreeTrial( emailSubscription )
 		? __( 'You can add new mailboxes for free until the end of your trial period.' )
 		: createInterpolateElement(
 				sprintf(
@@ -26,7 +29,7 @@ function getPriceMessage( domain?: Domain ) {
 					__(
 						'You can purchase new mailboxes at the prorated price of <strong>%(proratedPrice)s</strong> per mailbox.'
 					),
-					{ proratedPrice: domain.titan_mail_subscription.purchase_cost_per_mailbox.text }
+					{ proratedPrice: emailSubscription.purchase_cost_per_mailbox.text }
 				),
 
 				{
@@ -36,13 +39,13 @@ function getPriceMessage( domain?: Domain ) {
 }
 
 function getPriceMessageExplanation( {
-	domain,
+	emailSubscription,
 	hasGoogleWorkspaceOffer = false,
 	isMonthlyBilling,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 }: {
-	domain?: Domain;
+	emailSubscription?: EmailSubscription;
 	hasGoogleWorkspaceOffer?: boolean;
 	isMonthlyBilling: boolean;
 	mailboxPurchaseCost?: EmailCost;
@@ -53,7 +56,7 @@ function getPriceMessageExplanation( {
 	}
 
 	// We don't need any explanation of the price at this point, because we have already handled it previously.
-	if ( domain && isUserOnTitanFreeTrial( domain ) ) {
+	if ( isUserOnFreeTrial( emailSubscription ) ) {
 		return '';
 	}
 
@@ -125,8 +128,12 @@ export const PricingNotice = ( {
 } ) => {
 	const locale = useLocale();
 
-	const purchaseCost = domain.titan_mail_subscription?.purchase_cost_per_mailbox;
-	const renewalCost = domain.titan_mail_subscription?.renewal_cost_per_mailbox;
+	const provider = getProductProvider( product );
+
+	const emailSubscription = getEmailSubscription( { domain, product } );
+
+	const purchaseCost = emailSubscription?.purchase_cost_per_mailbox;
+	const renewalCost = emailSubscription?.renewal_cost_per_mailbox;
 
 	if ( purchaseCost && doesAdditionalPriceMatchStandardPrice( product, purchaseCost ) ) {
 		const placeholders = { price: purchaseCost.text };
@@ -157,30 +164,28 @@ export const PricingNotice = ( {
 		);
 	}
 
-	const priceMessage = getPriceMessage( domain );
+	const hasOffer = isEligibleForIntroductoryOffer( { emailSubscription, product } );
+
+	const priceMessage = getPriceMessage( emailSubscription );
 	const priceMessageExplanation = getPriceMessageExplanation( {
-		domain,
+		emailSubscription,
+		hasGoogleWorkspaceOffer: provider === MailboxProvider.Google && hasOffer,
 		isMonthlyBilling: isMonthlyEmailProduct( product ),
 		mailboxPurchaseCost: purchaseCost,
 		mailboxRenewalCost: renewalCost,
 	} );
-	const nextExpiryDate = formatDate(
-		new Date( ( domain && getTitanExpiryDate( domain ) ) || '' ),
-		locale,
-		{
-			dateStyle: 'long',
-		}
-	);
+	const nextExpiryDate = formatDate( new Date( getExpiryDate( emailSubscription ) || '' ), locale, {
+		dateStyle: 'long',
+	} );
 	const priceMessageRenewal = getPriceMessageRenewal( {
 		expiryDate: nextExpiryDate,
 		mailboxRenewalCost: renewalCost,
 	} );
 
 	let endDate = new Date();
-	const hasOffer = isDomainEligibleForTitanIntroductoryOffer( { domain, product } );
 	if ( hasOffer ) {
-		const count = product?.introductory_offer?.interval_count;
-		const unit = product?.introductory_offer?.interval_unit;
+		const count = product.introductory_offer?.interval_count;
+		const unit = product.introductory_offer?.interval_unit;
 		switch ( unit ) {
 			case 'year':
 				endDate = add( new Date(), { years: count } );

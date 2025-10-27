@@ -88,7 +88,8 @@ function isValidData( data, type ) {
 		case 'CNAME':
 		case 'MX':
 		case 'NS':
-			return isValidDomain( data );
+			// NS records can't point to *.wordpress.com
+			return ! data.match( /.wordpress\.com$/i ) && isValidDomain( data );
 		case 'CAA':
 		case 'TXT':
 			return data.length > 0 && data.length <= 2048;
