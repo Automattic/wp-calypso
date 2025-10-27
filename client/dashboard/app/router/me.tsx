@@ -307,6 +307,22 @@ export const addPaymentMethodRoute = createRoute( {
 	)
 );
 
+export const cancelPurchaseRoute = createRoute( {
+	// 	getParentRoute: () => purchaseSettingsRoute, //TODO: use custom route that includes siteSlug or keep.
+	getParentRoute: () => meRoute,
+	loader: ( { params: { purchaseId } } ) => {
+		queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+	},
+	// 	path: 'cancel',
+	path: 'billing/purchases/$purchaseId/cancel',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
+		createLazyRoute( 'cancel-purchase' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const monetizeSubscriptionsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -774,6 +790,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
+			changePaymentMethodRoute,
+			cancelPurchaseRoute,
+			paymentMethodsRoute,
 			taxDetailsRoute,
 		] )
 	);

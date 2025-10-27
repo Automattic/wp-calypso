@@ -1,0 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.retention-option-on-cancel-purchase {
+
+	&__card {
+		h2 {
+			color: var(--studio-gray-70);
+			font-size: 1.25rem;
+			font-weight: 400;
+			margin-bottom: 20px;
+		}
+	}
+
+	&__summary {
+		color: var(--studio-gray-40);
+		font-size: 0.875rem;
+		margin-bottom: 20px;
+
+		a {
+			font-weight: 500;
+			text-decoration: underline;
+
+			.gridicon {
+				position: relative;
+				top: 4px;
+				height: 16px;
+				margin-left: 1px;
+			}
+		}
+	}
+
+	&__footer {
+		display: flex;
+		justify-content: space-between;
+
+		button {
+			margin-left: auto;
+		}
+	}
+}
