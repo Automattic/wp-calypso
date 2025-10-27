@@ -35,8 +35,7 @@ export default function CoreMetrics( {
 	const [ activeTab, setActiveTab ] = useState< Metrics | null >( firstAvailableTab );
 	const isDesktop = useViewportMatch( 'medium' );
 
-	// If no tabs are available, don't render the component
-	if ( ! firstAvailableTab || ! activeTab ) {
+	if ( ! activeTab ) {
 		return null;
 	}
 
