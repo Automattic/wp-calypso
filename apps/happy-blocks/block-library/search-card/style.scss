@@ -11,6 +11,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 	&.navigation-only {
 		background: #fff;
+		margin-bottom: 32px;
 		position: sticky;
 		top: 0;
 		z-index: 1;
@@ -25,6 +26,24 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 	.navigation-header {
 		padding: 0 24px;
+		display: flex;
+		align-items: center;
+
+		.happy-blocks_navigation_search {
+			padding: 16px 0;
+			margin-bottom: 0;
+			
+			.jetpack-search-filter__link {
+				color: #1e1e1e;
+				font-size: 13px;
+				display: flex;
+				align-items: center;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
+		}
 
 		@media ( max-width: $breakpoint-mobile ) {
 			padding: 0;
