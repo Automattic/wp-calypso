@@ -6,7 +6,7 @@ import { forwardRef, PropsWithChildren, HTMLAttributes } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CardProps = PropsWithChildren< HTMLAttributes< HTMLDivElement > > & Record< string, any >;
 
-const DashboardCard = forwardRef< HTMLDivElement, CardProps >(
+const DashboardCard = forwardRef< HTMLElement, CardProps >(
 	( { size, children, ...rest }, ref ) => {
 		const isDesktop = useViewportMatch( 'medium' );
 		const computedSize = isDesktop ? size || 'medium' : 'small';
