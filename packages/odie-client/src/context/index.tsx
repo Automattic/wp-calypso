@@ -108,7 +108,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
 		isUserEligibleForPaidSupport && canConnectToZendesk,
-		isLoadingCanConnectToZendesk
+		isLoadingCanConnectToZendesk,
+		botNameSlug
 	);
 
 	/**

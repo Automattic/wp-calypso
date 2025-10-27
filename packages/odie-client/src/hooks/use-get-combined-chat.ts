@@ -40,11 +40,15 @@ export function deduplicateZDMessages( messages: Message[] ) {
 
 /**
  * This combines the ODIE chat with the ZENDESK conversation.
+ * @param canConnectToZendesk - Whether the user can connect to Zendesk
+ * @param isLoadingCanConnectToZendesk - Whether the connection status is loading
+ * @param botNameSlug - The bot name slug to use for fetching the chat
  * @returns The combined chat.
  */
 export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
-	isLoadingCanConnectToZendesk: boolean
+	isLoadingCanConnectToZendesk: boolean,
+	botNameSlug: string
 ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
@@ -63,7 +67,10 @@ export const useGetCombinedChat = (
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
-	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat(
+		Number( odieId ),
+		botNameSlug
+	);
 	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
