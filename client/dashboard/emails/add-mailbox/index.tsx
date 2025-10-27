@@ -68,7 +68,7 @@ const AddProfessionalEmail = () => {
 		} );
 
 		return mailbox;
-	}, [ domainName, existingMailboxes, user.email ] );
+	}, [ domainName, existingMailboxes, provider, user.email ] );
 
 	const persistMailboxesToState = useCallback( () => {
 		setMailboxEntities( [ ...mailboxEntities ] );
