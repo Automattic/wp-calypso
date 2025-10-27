@@ -1,7 +1,7 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useTimeSince } from '../../components/time-since';
+import { getRelativeTimeString } from '../../utils/datetime';
 
 const REPORT_REFRESH_THRESHOLD_HOURS = 48;
 
@@ -23,12 +23,11 @@ export default function Subtitle( {
 	timestamp: string | undefined;
 	onClick: () => void;
 } ) {
-	const timeSince = useTimeSince( timestamp ?? '' );
-
 	if ( ! timestamp ) {
 		return <Text variant="muted">{ __( 'Testing your site may take around 30 seconds.' ) }</Text>;
 	}
 
+	const timeSince = getRelativeTimeString( new Date( timestamp ?? '' ) );
 	if ( isReportOlderThan( timestamp, REPORT_REFRESH_THRESHOLD_HOURS ) ) {
 		return createInterpolateElement(
 			sprintf(
