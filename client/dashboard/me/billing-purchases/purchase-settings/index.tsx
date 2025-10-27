@@ -76,6 +76,7 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
+	isTemporarySitePurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
@@ -269,9 +270,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 					<Button
 						variant="secondary"
 						size="compact"
-						onClick={ () => ( {
+						onClick={ () =>
 							// FIXME: add refund, cancel, and downgrade action
-						} ) }
+							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
+							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/cancel` )
+						}
 					>
 						{ __( 'Downgrade or cancel' ) }
 					</Button>
@@ -288,9 +291,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 					<Button
 						variant="secondary"
 						size="compact"
-						onClick={ () => ( {
+						onClick={ () =>
 							// FIXME: add remove action
-						} ) }
+							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
+							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/remove` )
+						}
 					>
 						{ __( 'Remove subscription' ) }
 					</Button>
@@ -1015,7 +1020,7 @@ export default function PurchaseSettings() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
-		enabled: Boolean( purchase.site_slug ),
+		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );

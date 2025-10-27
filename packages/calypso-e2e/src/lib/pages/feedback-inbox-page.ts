@@ -51,7 +51,7 @@ export class FeedbackInboxPage {
 				.filter( { hasText: text } )
 				.waitFor();
 		} else {
-			await responseRowLocator.getByRole( 'button', { name: 'View' } ).click();
+			await responseRowLocator.getByRole( 'button', { name: 'View response' } ).click();
 			await this.page
 				.getByRole( 'dialog' )
 				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
@@ -227,7 +227,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMoveToTrashAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
-		await this.page.getByRole( 'button', { name: 'Trash' } ).last().click();
+		await this.page.getByRole( 'button', { name: 'Move to trash' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, the modal closes after the action
 			await this.page.waitForTimeout( 1000 );

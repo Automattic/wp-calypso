@@ -150,6 +150,7 @@ export default function NameServersForm( {
 					return (
 						<VStack spacing={ 4 }>
 							<ToggleControl
+								__nextHasNoMarginBottom
 								label={ __( 'Use WordPress.com name servers' ) }
 								checked={ data.useWpcomNameServers }
 								disabled={ isBusy }

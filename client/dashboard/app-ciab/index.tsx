@@ -19,6 +19,13 @@ boot( {
 			scan: false,
 			domains: true,
 			emails: false,
+			settings: {
+				general: {
+					redirect: false,
+				},
+				server: false,
+				security: false,
+			},
 		},
 		domains: true,
 		emails: true,
