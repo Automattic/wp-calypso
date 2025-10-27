@@ -244,19 +244,6 @@ export default function useOnboardingTourSections() {
 							'We offer 5 free development licenses on WordPress.com (only pay when you launch) and a free Pressable demo. See the difference for yourself.'
 						),
 					],
-					hint: translate(
-						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to %(commission)s',
-						{
-							components: {
-								b: <b />,
-							},
-							args: {
-								commission: formatCurrency( 10000, 'USD', {
-									stripZeros: true,
-								} ),
-							},
-						}
-					),
 				},
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
