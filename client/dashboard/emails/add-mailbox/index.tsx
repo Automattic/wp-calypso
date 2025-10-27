@@ -1,6 +1,6 @@
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -38,7 +38,7 @@ const AddProfessionalEmail = () => {
 	const { domain, domainName, site } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { product } = useEmailProduct( provider, interval );
-	const { data: existingMailboxes } = useQuery(
+	const { data: existingMailboxes } = useSuspenseQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
 

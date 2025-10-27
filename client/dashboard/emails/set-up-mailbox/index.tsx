@@ -11,30 +11,18 @@ import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { MailboxForm } from '../add-professional-email/components/mailbox-form';
+import { MailboxForm } from '../add-mailbox/components/mailbox-form';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
-import {
-	FIELD_IS_ADMIN,
-	FIELD_MAILBOX,
-	FIELD_NAME,
-	FIELD_PASSWORD,
-	FIELD_PASSWORD_RESET_EMAIL,
-} from '../entities/constants';
+import { FIELD_MAILBOX, FIELD_PASSWORD, FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
-import { SupportedEmailProvider } from '../entities/types';
 import { useCreateNewMailbox } from '../hooks/use-create-new-mailbox';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
-import { IntervalLength } from '../types';
+import { MailboxProvider } from '../types';
 
 const SetUpMailbox = () => {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const router = useRouter();
-
-	let interval: IntervalLength = router.state.location.search.interval;
-	if ( interval !== 'monthly' && interval !== 'annually' ) {
-		interval = 'annually';
-	}
 
 	const { domain, domainName } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
@@ -47,12 +35,13 @@ const SetUpMailbox = () => {
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
-		MailboxFormEntity< SupportedEmailProvider >[]
+		MailboxFormEntity< MailboxProvider >[]
 	>( [] );
 
 	const createNewMailbox = useCreateNewMailbox( {
 		domainName,
 		existingMailboxes,
+		provider: MailboxProvider.Titan,
 	} );
 
 	const persistMailboxesToState = useCallback( () => {
@@ -67,7 +56,7 @@ const SetUpMailbox = () => {
 	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 
-		mailboxEntities.forEach( ( mailbox ) => mailbox.validate( true ) );
+		mailboxEntities.forEach( ( mailbox ) => mailbox.validate() );
 		persistMailboxesToState();
 		const mailboxOperations = new MailboxOperations( mailboxEntities, persistMailboxesToState );
 
@@ -98,11 +87,11 @@ const SetUpMailbox = () => {
 		try {
 			await createTitanMailbox( {
 				domainName: domainName,
-				name: mailbox.getFieldValue( FIELD_NAME ) || '',
+				name: '',
 				mailbox: mailbox.getFieldValue< string >( FIELD_MAILBOX )?.toLowerCase() || '',
 				password: mailbox.getFieldValue( FIELD_PASSWORD ) || '',
 				passwordResetEmail: mailbox.getFieldValue( FIELD_PASSWORD_RESET_EMAIL ) || '',
-				isAdmin: mailbox.getFieldValue( FIELD_IS_ADMIN ) || false,
+				isAdmin: false,
 			} );
 
 			createSuccessNotice( __( 'The mailbox has been successfully set up.' ), {
