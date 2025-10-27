@@ -78,9 +78,9 @@ import {
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
+	isWpcomFlexProduct,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
-import useHasFlexSubscription from '../../billing-flex-usage/use-has-flex-subscription';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
@@ -1043,7 +1043,6 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const hasFlex = useHasFlexSubscription( purchase );
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
 	const expiryDateTitle = ( () => {
@@ -1152,7 +1151,7 @@ export default function PurchaseSettings() {
 					/>
 				</Grid>
 				{ site && <WPComResourceMeters purchase={ purchase } site={ site } /> }
-				{ hasFlex && <BillingFlexUsageCard purchaseId={ purchase.ID } /> }
+				{ isWpcomFlexProduct( purchase ) && <BillingFlexUsageCard purchaseId={ purchase.ID } /> }
 				<ManageSubscriptionCard purchase={ purchase } />
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
