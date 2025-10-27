@@ -31,10 +31,10 @@ export type OdieAssistantContextInterface = {
 };
 
 export type OdieAssistantProviderProps = {
+	defaultBotNameSlug: OdieAllowedBots;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
-	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;

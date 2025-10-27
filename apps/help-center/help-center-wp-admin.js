@@ -112,6 +112,9 @@ function AdminHelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				isCommerceGarden={ helpCenterData.isCommerceGarden }
+				botNameSlug={
+					helpCenterData.isCommerceGarden ? 'ciab-workflow-support_chat' : 'wpcom-support-chat'
+				}
 			/>
 		</QueryClientProvider>
 	);

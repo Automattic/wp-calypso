@@ -81,6 +81,9 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				isCommerceGarden={ helpCenterData.isCommerceGarden }
+				botNameSlug={
+					helpCenterData.isCommerceGarden ? 'ciab-workflow-support_chat' : 'wpcom-support-chat'
+				}
 			/>
 		</>
 	);
@@ -112,6 +115,9 @@ if ( helpCenterData.isNextAdmin ) {
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 					isCommerceGarden={ helpCenterData.isCommerceGarden }
+					botNameSlug={
+						helpCenterData.isCommerceGarden ? 'ciab-workflow-support_chat' : 'wpcom-support-chat'
+					}
 				/>
 			</QueryClientProvider>,
 			document.getElementById( 'jetpack-help-center' )
