@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { urlToDomain } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 
 interface StartSSHMigrationParams {
@@ -37,7 +38,7 @@ const startSSHMigration = async (
 		const body = {
 			remote_host: params.remoteHost,
 			remote_user: params.remoteUser,
-			remote_domain: params.remoteDomain,
+			remote_domain: urlToDomain( params.remoteDomain ),
 			...optionalFields,
 		};
 
