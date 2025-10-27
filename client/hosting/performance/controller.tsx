@@ -1,3 +1,4 @@
+import { DotcomFeatures } from '@automattic/api-core';
 import { PerformanceCallout } from 'calypso/dashboard/sites/performance/performance-callout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
@@ -15,4 +16,7 @@ export function sitePerformance( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export const sitePerformanceCallout = hostingFeaturesCallout( PerformanceCallout );
+export const sitePerformanceCallout = hostingFeaturesCallout(
+	PerformanceCallout,
+	DotcomFeatures.PERFORMANCE
+);
