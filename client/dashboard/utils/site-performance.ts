@@ -182,7 +182,7 @@ export const shouldDisplayMetric = ( key: string, report: SitePerformanceReport 
 };
 
 export const getAvailableMetrics = ( report: SitePerformanceReport ): Metrics[] => {
-	return Object.keys( metricsNames )
-		.filter( ( key ) => shouldDisplayMetric( key, report ) )
-		.map( ( key ) => key as Metrics );
+	return ( Object.keys( metricsNames ) as Metrics[] ).filter( ( key ) =>
+		shouldDisplayMetric( key, report )
+	);
 };
