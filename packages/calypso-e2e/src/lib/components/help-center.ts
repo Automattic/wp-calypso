@@ -201,7 +201,7 @@ export class HelpCenterComponent {
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/odie/chat/' + botSlug ) && response.status() === 200
+					response.url().includes( `/odie/chat/${ botSlug }` ) && response.status() === 200
 			),
 			sendMessageForm
 				.locator( 'textarea' )
