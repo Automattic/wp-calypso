@@ -6,12 +6,14 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
+import { useAnalytics } from '../../app/analytics';
 import { emailsRoute } from '../../app/router/emails';
 import { FIELD_MAILBOX, FIELD_PASSWORD, FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { useDomainFromUrlParam } from './use-domain-from-url-param';
 
 export const useSetUpMailbox = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 	const { domainName } = useDomainFromUrlParam();
@@ -37,6 +39,10 @@ export const useSetUpMailbox = () => {
 				isAdmin: false,
 			} );
 
+			recordTracksEvent( 'calypso_dashboard_emails_setup_mailbox_success', {
+				domainName,
+			} );
+
 			createSuccessNotice( __( 'The mailbox has been successfully set up.' ), {
 				type: 'snackbar',
 			} );
@@ -48,6 +54,11 @@ export const useSetUpMailbox = () => {
 				} ),
 			} );
 		} catch ( error: unknown ) {
+			recordTracksEvent( 'calypso_dashboard_emails_setup_mailbox_failure', {
+				domainName,
+				error: isWpError( error ) ? error.message : String( error ),
+			} );
+
 			createErrorNotice(
 				isWpError( error )
 					? sprintf(

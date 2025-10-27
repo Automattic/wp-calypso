@@ -37,6 +37,9 @@ const AddProfessionalEmail = () => {
 
 	// @ts-expect-error -- 'path' does ineed exist on route options
 	const isAddMailboxRoute = match.fullPath === `/${ addMailboxRoute.options.path }`;
+	const trackEventPrefix = isAddMailboxRoute
+		? 'calypso_dashboard_emails_add_mailbox'
+		: 'calypso_dashboard_emails_setup_mailbox';
 
 	const { provider, interval } = useParams( { shouldThrow: false, strict: false } );
 
@@ -81,7 +84,7 @@ const AddProfessionalEmail = () => {
 		const validated = await mailboxOperations.validateAndCheck( false );
 
 		if ( ! userCanAddEmail || ! validated ) {
-			recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_validation_failure', {
+			recordTracksEvent( `${ trackEventPrefix }_validation_failure`, {
 				domainName,
 				mailboxCount: mailboxEntities.length,
 				provider,
@@ -114,7 +117,7 @@ const AddProfessionalEmail = () => {
 	};
 
 	const removeForm = ( index: number ) => {
-		recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_remove_mailbox_click', {
+		recordTracksEvent( `${ trackEventPrefix }_remove_mailbox_click`, {
 			domainName,
 			mailboxCount: mailboxEntities.length,
 			provider,
@@ -153,7 +156,7 @@ const AddProfessionalEmail = () => {
 					prefix={
 						<BackToEmailsPrefix
 							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_back_to_emails_click', {
+								recordTracksEvent( `${ trackEventPrefix }_back_to_emails_click`, {
 									domainName,
 									mailboxCount: mailboxEntities.length,
 									provider,
@@ -204,14 +207,11 @@ const AddProfessionalEmail = () => {
 								variant="secondary"
 								disabled={ disabled }
 								onClick={ () => {
-									recordTracksEvent(
-										'calypso_dashboard_emails_add_mailbox_add_another_mailbox_click',
-										{
-											domainName,
-											mailboxCount: mailboxEntities.length,
-											provider,
-										}
-									);
+									recordTracksEvent( `${ trackEventPrefix }_add_another_mailbox_click`, {
+										domainName,
+										mailboxCount: mailboxEntities.length,
+										provider,
+									} );
 
 									setMailboxEntities( ( prevMailboxEntities ) => [
 										...prevMailboxEntities,
@@ -222,7 +222,17 @@ const AddProfessionalEmail = () => {
 								{ __( 'Add another mailbox' ) }
 							</Button>
 						) : (
-							<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								disabled={ disabled }
+								type="submit"
+								onClick={ () => {
+									recordTracksEvent( `${ trackEventPrefix }_complete_setup_click`, {
+										domainName,
+									} );
+								} }
+							>
 								{ __( 'Complete setup' ) }
 							</Button>
 						) }
