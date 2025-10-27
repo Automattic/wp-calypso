@@ -13,8 +13,12 @@ export const useOdieChat = ( chatId: number | null ) => {
 	const { version } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
+	// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
+	// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
+	const botSlug = supportInteraction?.bot_slug || 'wpcom-support-chat';
+
 	return useQuery< OdieChat, Error >( {
-		queryKey: [ 'odie-chat', supportInteraction?.bot_slug, chatId, version ],
+		queryKey: [ 'odie-chat', botSlug, chatId, version ],
 		queryFn: async (): Promise< OdieChat > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -27,11 +31,11 @@ export const useOdieChat = ( chatId: number | null ) => {
 				canAccessWpcomApis()
 					? await wpcomRequest( {
 							method: 'GET',
-							path: `/odie/chat/${ supportInteraction?.bot_slug }/${ chatId }?${ queryParams }`,
+							path: `/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
 							apiNamespace: 'wpcom/v2',
 					  } )
 					: await apiFetch( {
-							path: `/help-center/odie/chat/${ supportInteraction?.bot_slug }/${ chatId }?${ queryParams }`,
+							path: `/help-center/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
 							method: 'GET',
 					  } )
 			) as ReturnedChat;
@@ -47,7 +51,7 @@ export const useOdieChat = ( chatId: number | null ) => {
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled: !! chatId && !! supportInteraction?.bot_slug,
+		enabled: !! chatId && !! supportInteraction,
 		staleTime: 3600, // 1 hour
 	} );
 };
