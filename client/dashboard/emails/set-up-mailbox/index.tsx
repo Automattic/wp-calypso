@@ -1,38 +1,31 @@
-import { isWpError } from '@automattic/api-core';
 import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { MailboxForm } from '../add-mailbox/components/mailbox-form';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
-import { FIELD_MAILBOX, FIELD_PASSWORD, FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { useCreateNewMailbox } from '../hooks/use-create-new-mailbox';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
+import { useSetUpMailbox } from '../hooks/use-set-up-mailbox';
 import { MailboxProvider } from '../types';
 
 const SetUpMailbox = () => {
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const router = useRouter();
-
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { domain, domainName } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { data: existingMailboxes } = useSuspenseQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
-	const { mutateAsync: createTitanMailbox, isPending } = useMutation(
-		createTitanMailboxMutation()
-	);
+	const { isPending } = useMutation( createTitanMailboxMutation() );
+	const setUpMailbox = useSetUpMailbox();
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ mailboxEntities, setMailboxEntities ] = useState<
@@ -83,43 +76,10 @@ const SetUpMailbox = () => {
 			return;
 		}
 
-		const [ mailbox ] = mailboxOperations.mailboxes;
-
-		try {
-			const localPart = mailbox.getFieldValue< string >( FIELD_MAILBOX )?.toLowerCase() || '';
-			await createTitanMailbox( {
-				domainName: domainName,
-				name: '',
-				mailbox: localPart,
-				password: mailbox.getFieldValue( FIELD_PASSWORD ) || '',
-				passwordResetEmail: mailbox.getFieldValue( FIELD_PASSWORD_RESET_EMAIL ) || '',
-				isAdmin: false,
-			} );
-
-			createSuccessNotice( __( 'The mailbox has been successfully set up.' ), {
-				type: 'snackbar',
-			} );
-
-			router.navigate( {
-				to: addQueryArgs( emailsRoute.fullPath, {
-					domain_to_poll: domainName,
-					mailbox_to_poll: localPart,
-				} ),
-			} );
-		} catch ( error: unknown ) {
-			createErrorNotice(
-				isWpError( error )
-					? sprintf(
-							// Translators: %(error)s is the error message.
-							__( 'The mailbox setup failed: %(error)s' ),
-							{ error: error.message }
-					  )
-					: __( 'The mailbox setup failed.' ),
-				{ type: 'snackbar' }
-			);
-		}
-
-		setIsSubmitting( false );
+		setUpMailbox( {
+			mailboxOperations,
+			onFinally: () => setIsSubmitting( false ),
+		} );
 	};
 
 	const disabled = isSubmitting || isPending;
