@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { useLoginContext } from 'calypso/login/login-context';
 import { useDispatch, useSelector } from 'calypso/state';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -35,7 +36,7 @@ const OneLoginLayout = ( {
 	noThanksRedirectUrl,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
-	const locale = useSelector( getCurrentUserLocale );
+	const locale = useLocale();
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
