@@ -1,5 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { siteCurrentPlanQuery, siteByIdQuery, sitePurchaseQuery } from '@automattic/api-queries';
+import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -228,7 +228,7 @@ function CommerceGardenPlanCard( {
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...sitePurchaseQuery( site.ID, parseInt( plan?.id ?? '' ) ),
+		...purchaseQuery( parseInt( plan?.id ?? '' ) ),
 		enabled: !! plan?.id,
 	} );
 

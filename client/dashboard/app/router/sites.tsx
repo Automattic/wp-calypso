@@ -23,7 +23,7 @@ import {
 	siteByIdQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
-	sitePurchaseQuery,
+	purchaseQuery,
 	sitePurchasesQuery,
 	siteRedirectQuery,
 	siteScanQuery,
@@ -161,7 +161,7 @@ export const siteOverviewRoute = createRoute( {
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] ).then( ( [ currentPlan ] ) => {
 				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, parseInt( currentPlan.id ) ) );
+					queryClient.ensureQueryData( purchaseQuery( parseInt( currentPlan.id ) ) );
 				}
 			} );
 		}
