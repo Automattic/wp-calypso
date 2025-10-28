@@ -44,27 +44,13 @@ export function validateEmail( email: string ): EmailValidationResult {
 		return { isValid: false, error: 'invalid_format' };
 	}
 
-	const atIndex = trimmedEmail.lastIndexOf( '@' );
-	if ( atIndex === -1 ) {
-		return { isValid: false, error: 'invalid_format' };
-	}
-
-	const domain = trimmedEmail.substring( atIndex + 1 );
-	if ( ! domain ) {
-		return { isValid: false, error: 'invalid_format' };
-	}
-
-	if ( ! /^[a-z0-9.-]+$/i.test( domain ) ) {
-		return { isValid: false, error: 'invalid_format' };
-	}
-
+	const domain = trimmedEmail.substring( trimmedEmail.lastIndexOf( '@' ) + 1 );
 	const tld = getTld( domain );
 	if ( ! tld ) {
 		return { isValid: false, error: 'invalid_tld' };
 	}
 
 	const tldLower = tld.toLowerCase();
-
 	const tldToCheck = tldLower.includes( '.' )
 		? tldLower.substring( tldLower.lastIndexOf( '.' ) + 1 )
 		: tldLower;
