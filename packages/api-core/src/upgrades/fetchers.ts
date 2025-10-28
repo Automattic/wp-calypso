@@ -31,6 +31,14 @@ export async function fetchUserPurchases(): Promise< Purchase[] > {
 	return data.map( normalizePurchase );
 }
 
+export async function fetchUserTransferredPurchases(): Promise< Purchase[] > {
+	const data = await wpcom.req.get( {
+		path: '/upgrades?type=transferred',
+		apiVersion: '1.2',
+	} );
+	return data.map( normalizePurchase );
+}
+
 export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
 	const data = await wpcom.req.get( {
 		path: `/upgrades/${ purchaseId }`,
