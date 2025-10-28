@@ -117,6 +117,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const actionQueryParam = urlQueryParams.get( 'action' );
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
+		const hostQueryParam = urlQueryParams.get( 'host' ) ?? undefined;
 		const { get, sessionId } = useFlowState();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
@@ -244,10 +245,23 @@ const siteMigration: FlowV2< typeof initialize > = {
 							// Check if this is an SSH migration flow
 							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
 								if ( selectedSiteCanInstallPlugins ) {
-									return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+									return navigate(
+										paths.sshVerificationPath( {
+											siteId,
+											siteSlug,
+											from: fromQueryParam,
+											host: hostQueryParam,
+										} )
+									);
 								}
 								return navigate(
-									paths.upgradePlanPath( { siteId, siteSlug, from: fromQueryParam, ssh: 'true' } )
+									paths.upgradePlanPath( {
+										siteId,
+										siteSlug,
+										from: fromQueryParam,
+										ssh: 'true',
+										host: hostQueryParam,
+									} )
 								);
 							}
 
@@ -444,6 +458,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteSlug,
 								from: fromQueryParam,
 								siteId,
+								host: hostQueryParam,
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
@@ -465,7 +480,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-						return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+						return navigate(
+							paths.sshVerificationPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								host: hostQueryParam,
+							} )
+						);
 					}
 
 					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
@@ -488,7 +510,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					// Otherwise proceed to SSH share access
-					return navigate( paths.sshShareAccessPath( { siteId, siteSlug, transferId } ) );
+					return navigate(
+						paths.sshShareAccessPath( {
+							siteId,
+							siteSlug,
+							transferId,
+							from: fromQueryParam,
+							host: hostQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
@@ -618,7 +648,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					// Missing transferId, redirect back to verification
 					if ( destination === 'back-to-verification' ) {
-						return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+						return navigate(
+							paths.sshVerificationPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								host: hostQueryParam,
+							} )
+						);
 					}
 
 					// User doesn't have SSH access, redirect to credentials flow
