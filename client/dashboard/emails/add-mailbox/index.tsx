@@ -2,16 +2,24 @@ import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/ap
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useMatch, useParams } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	Notice,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useLocale } from '../../app/locale';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
@@ -22,10 +30,9 @@ import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import { useSetUpMailbox } from '../hooks/use-set-up-mailbox';
 import { MailboxProvider } from '../types';
-import { getTotalCost } from '../utils/get-total-cost';
+import { getMailboxCost } from '../utils/get-mailbox-cost';
 import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
-import { PricingNotice } from './components/pricing-notice';
 
 const AddProfessionalEmail = () => {
 	const { recordTracksEvent } = useAnalytics();
@@ -34,6 +41,7 @@ const AddProfessionalEmail = () => {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const match = useMatch( { strict: false } );
 	const { isPending } = useMutation( createTitanMailboxMutation() );
+	const locale = useLocale();
 
 	// @ts-expect-error -- 'path' does ineed exist on route options
 	const isAddMailboxRoute = match.fullPath === `/${ addMailboxRoute.options.path }`;
@@ -137,15 +145,18 @@ const AddProfessionalEmail = () => {
 		? isSubmitting || showEmailPurchaseDisabledMessage
 		: isSubmitting || isPending;
 
-	const filledMailboxes = mailboxEntities.filter( ( mailbox ) => mailbox.isValid() );
-	const totalItems = filledMailboxes.length;
+	let mailboxCost;
+	const totalItems = mailboxEntities.length;
 	let totalPrice = '0';
 	if ( isAddMailboxRoute ) {
-		const totalCost = getTotalCost( {
-			amount: totalItems,
-			domain: domain,
-			product: product,
+		mailboxCost = getMailboxCost( {
+			domain,
+			product,
+			showEmailPurchaseDisabledMessage,
+			locale,
 		} );
+
+		const totalCost = mailboxEntities.length * mailboxCost.amount;
 		totalPrice = formatCurrency( totalCost, product.currency_code, {
 			stripZeros: true,
 		} );
@@ -184,12 +195,18 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			{ isAddMailboxRoute && (
-				<PricingNotice
-					domain={ domain }
-					product={ product }
-					showEmailPurchaseDisabledMessage={ showEmailPurchaseDisabledMessage }
-				/>
+			{ isAddMailboxRoute && mailboxCost && (
+				<>
+					{ mailboxCost.notice ? (
+						<Notice status="info" isDismissible={ false }>
+							{ /* eslint-disable-next-line react/no-danger */ }
+							<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+						</Notice>
+					) : (
+						// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+						<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+					) }
+				</>
 			) }
 
 			<form onSubmit={ handleSubmit }>

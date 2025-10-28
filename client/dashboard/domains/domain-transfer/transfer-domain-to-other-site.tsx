@@ -13,6 +13,7 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
@@ -57,6 +58,7 @@ export default function DomainTransferToOtherSite() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Attach to another site' ) }
 					description={ sprintf(
 						// translators: %s is the domain name

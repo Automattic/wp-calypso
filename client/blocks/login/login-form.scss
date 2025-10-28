@@ -91,3 +91,11 @@ form {
 		}
 	}
 }
+
+.login__form .dashboard-notice {
+	margin-bottom: 24px;
+
+	@media (min-width: $breakpoint-mobile) {
+		margin-top: 12px;
+	}
+}

@@ -18,6 +18,7 @@ import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
@@ -309,7 +310,15 @@ export default function TransferDomainToAnyUser() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer to another user' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					title={ __( 'Transfer to another user' ) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 3 }>

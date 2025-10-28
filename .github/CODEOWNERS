@@ -50,6 +50,18 @@
 /packages/composite-checkout/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
 /packages/wpcom-checkout/ @Automattic/shilling
+/client/dashboard/me/billing/ @Automattic/shilling
+/client/dashboard/me/billing-history/ @Automattic/shilling
+/client/dashboard/me/billing-monetize-subscriptions/ @Automattic/shilling
+/client/dashboard/me/billing-payment-methods/ @Automattic/shilling
+/client/dashboard/me/billing-purchases/ @Automattic/shilling
+/client/dashboard/me/billing-tax-details/ @Automattic/shilling
+/client/dashboard/shopping-cart/ @Automattic/shilling
+/client/dashboard/sites/overview-plan-card/ @Automattic/shilling
+/client/dashboard/sites/plans.ts @Automattic/shilling
+/client/dashboard/utils/payment-method.ts @Automattic/shilling
+/client/dashboard/utils/purchase.ts @Automattic/shilling
+/client/dashboard/utils/site-plan.ts @Automattic/shilling
 
 # Reader
 /client/reader @Automattic/loop
