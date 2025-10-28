@@ -32,6 +32,12 @@
 				border-bottom: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
 			}
 		}
+
+		&.has-density-high {
+			&:not(:focus-visible, :last-child) {
+				border-bottom: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			}
+		}
 	}
 
 	&[aria-disabled="true"] {
@@ -72,6 +78,17 @@
 
 	&.has-density-medium {
 		padding: $grid-unit-20 $grid-unit-30;
+		border-bottom: 1px solid $gray-100;
+		border-radius: 0;
+
+		.summary-button-title {
+			@include body-medium;
+			line-height: $font-line-height-medium;
+		}
+	}
+
+	&.has-density-high {
+		padding: $grid-unit-10 $grid-unit-20;
 		border-bottom: 1px solid $gray-100;
 		border-radius: 0;
 

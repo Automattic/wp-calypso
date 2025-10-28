@@ -44,6 +44,7 @@ function UnforwardedSummaryButton(
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
+	const hasHighDensity = density === 'high';
 	return (
 		<Button
 			// Forward additional props to support standard attributes like mouse events.
@@ -55,7 +56,12 @@ function UnforwardedSummaryButton(
 			disabled={ disabled }
 			accessibleWhenDisabled
 		>
-			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start" as="span">
+			<HStack
+				spacing={ hasHighDensity ? 2 : 4 }
+				justify="flex-start"
+				alignment="flex-start"
+				as="span"
+			>
 				{ !! decoration && <span className="summary-button-decoration">{ decoration }</span> }
 				<HStack justify="space-between" spacing={ 4 } as="span" wrap>
 					<VStack alignment="flex-start" as="span" spacing={ 3 } justify="flex-start">

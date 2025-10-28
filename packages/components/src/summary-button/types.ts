@@ -1,6 +1,6 @@
 import type { Badge } from '@automattic/ui';
 
-export type Density = 'low' | 'medium';
+export type Density = 'low' | 'medium' | 'high';
 
 /**
  * `badges` property of `SummaryButton` component is used to display `Badge`
