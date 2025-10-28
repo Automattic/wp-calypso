@@ -297,7 +297,9 @@ export const mailboxesReadyRoute = createRoute( {
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
-		const mailboxAccount = mailboxAccounts[ 0 ];
+		const mailboxAccount = mailboxAccounts.find(
+			( mailboxAccount ) => mailboxAccount.account_type !== 'email_forwarding'
+		);
 		const emails =
 			mailboxAccount?.emails.filter( ( { mailbox } ) => mailboxes.includes( mailbox ) ) ?? [];
 
