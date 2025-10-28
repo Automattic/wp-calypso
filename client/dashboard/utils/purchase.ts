@@ -30,12 +30,6 @@ import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase, Site } from '@automattic/api-core';
 
 //used
-export const getManagePurchaseUrlFor = (
-	targetSiteSlug: string,
-	targetPurchaseId: string | number
-): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
-
-//used
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
 	CANCEL_WITH_REFUND: 'cancel_with_refund',

@@ -32,6 +32,7 @@ import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQueryClient, useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
@@ -48,7 +49,7 @@ import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
-import { cancelPurchaseRoute } from '../../../app/router/me';
+import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { ButtonStack } from '../../../components/button-stack';
 import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
@@ -68,7 +69,6 @@ import {
 import {
 	CANCEL_FLOW_TYPE,
 	getIncludedDomainPurchase,
-	getManagePurchaseUrlFor,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
@@ -227,20 +227,19 @@ export default function CancelPurchase() {
 		}
 	}, [ productSlug, recordTracksEvent ] );
 
+	const navigate = useNavigate();
 	const redirect = useCallback( () => {
-		let redirectPath = purchasesRoot;
-
 		if (
-			site?.slug &&
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
 				( purchase.product_slug = DomainProductSlugs.TRANSFER_IN ) )
 		) {
-			redirectPath = ( getManagePurchaseUrlFor ?? managePurchase )( site?.slug, purchase.ID );
+			navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
+			return;
 		}
 
-		window.location.href = redirectPath;
-	}, [ purchase, site?.slug ] );
+		navigate( { to: purchasesRoute.to } );
+	}, [ purchase, navigate ] );
 
 	// CancelPurchaseButton related
 	const closeMarketplaceSubscriptionsDialog = () => {
@@ -353,9 +352,12 @@ export default function CancelPurchase() {
 			steps = [];
 		} else if ( isJetpack ) {
 			steps = availableJetpackSurveySteps();
-		} else if ( isDomainRegistration( purchase ) ) {
+		} else if ( purchase.is_domain_registration ) {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
-		} else if ( ! isGSuiteOrGoogleWorkspace( purchase ) && ! purchase.is_plan ) {
+		} else if (
+			! isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) &&
+			! purchase.is_plan
+		) {
 			steps = [ NEXT_ADVENTURE_STEP ];
 		} else if ( state.upsell ) {
 			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
@@ -392,6 +394,8 @@ export default function CancelPurchase() {
 
 		const allSteps = getAllSurveySteps();
 		const [ firstStep ] = allSteps;
+
+		const linkedPurchases: Purchase[] = []; // FIXME: what is this for?
 
 		const newState: CancelPurchaseState = {
 			...initialSurveyState(),
@@ -562,7 +566,7 @@ export default function CancelPurchase() {
 						refreshSitePlans( purchase.blog_id );
 						clearPurchases();
 						createSuccessNotice( response.message, { type: 'snackbar' } );
-						window.location.href = purchasesRoot;
+						navigate( { to: purchasesRoute.to } );
 					},
 					onError: ( error ) => {
 						createErrorNotice( error.message, { type: 'snackbar' } );
@@ -583,7 +587,7 @@ export default function CancelPurchase() {
 		} );
 		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
 		const refundAmount =
-			isRefundable( purchase ) && refundOptions?.[ 0 ]?.refund_amount
+			purchase.is_refundable && refundOptions?.[ 0 ]?.refund_amount
 				? refundOptions[ 0 ].refund_amount
 				: 0;
 
@@ -600,7 +604,7 @@ export default function CancelPurchase() {
 						refreshSitePlans( purchase.blog_id );
 						clearPurchases();
 						createSuccessNotice( response.message, { type: 'snackbar' } );
-						window.location.href = purchasesRoot;
+						navigate( { to: purchasesRoute.to } );
 					}
 					setState( ( state ) => ( { ...state, isLoading: false } ) );
 				},
@@ -636,7 +640,7 @@ export default function CancelPurchase() {
 					canRefund: !! parseFloat( getRefundAmount() ),
 					canDowngrade: !! downgradeClick,
 					canOfferFreeMonth:
-						!! freeMonthOfferClick && ! hasBeenExtended && ! isRefundable( purchase ),
+						!! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
 				} ) || '',
 		} ) );
 	};
@@ -762,7 +766,7 @@ export default function CancelPurchase() {
 		}
 		setPurchaseAutoRenewMutation.mutate( false, {
 			onSuccess: () => {
-				const purchaseName = getName( purchase );
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
 				const subscriptionEndDate = intlFormat(
 					purchase.expiry_date,
 					{ dateStyle: 'medium' },
@@ -788,13 +792,14 @@ export default function CancelPurchase() {
 				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
 			},
 			onError: () => {
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
 				createErrorNotice(
 					sprintf(
 						/* translators: %(purchaseName)s is the name of the product that was purchased. */
 						__(
 							'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
 						),
-						{ purchaseName: getName( purchase ) }
+						{ purchaseName }
 					),
 					{ type: 'snackbar' }
 				);
@@ -872,8 +877,7 @@ export default function CancelPurchase() {
 			return false;
 		}
 
-		const isDomainTransferCancelable =
-			purchase.is_refundable || ! ( purchase.product_id === DomainProductSlugs.TRANSFER_IN );
+		const isDomainTransferCancelable = purchase.is_cancelable;
 		const isValidForCancellation = purchase.can_disable_auto_renew && isDomainTransferCancelable;
 
 		if ( ! isValidForCancellation && state.surveyShown ) {
@@ -942,10 +946,10 @@ export default function CancelPurchase() {
 
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const isAkismet = isAkismetProduct( purchase );
-	const isDomainRegistrationPurchase = purchase && isDomainRegistration( purchase );
+	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
 	const isHundredYearDomain = selectedDomain?.is_hundred_year_domain ?? false;
-	const atomicTransfer = getAtomicTransfer( state, purchase.blog_id ); //TODO: update
+	const atomicTransfer = undefined; // FIXME: how do we get this?
 
 	const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		setState( ( state ) => ( {
@@ -1092,7 +1096,7 @@ export default function CancelPurchase() {
 
 	const renderCancelButton = () => {
 		// Check if we need atomic revert confirmation
-		const needsAtomicRevertConfirmation = atomicTransfer?.created_at && ! isRefundable( purchase );
+		const needsAtomicRevertConfirmation = atomicTransfer?.created_at && ! purchase.is_refundable;
 
 		const isDisabled =
 			( state.cancelBundledDomain && ! state.confirmCancelBundledDomain ) ||
@@ -1142,7 +1146,6 @@ export default function CancelPurchase() {
 				plans={ plans }
 				purchase={ purchase }
 				purchases={ purchases }
-				purchaseListUrl={ purchasesRoot }
 				questionOneRadio={ state.questionOneRadio }
 				questionOneText={ state.questionOneText }
 				questionTwoOrder={ state.questionTwoOrder }
@@ -1154,7 +1157,6 @@ export default function CancelPurchase() {
 				site={ site }
 				sitePlans={ sitePlans }
 				sitePurchases={ sitePurchases }
-				siteSlug={ site?.slug }
 				solution={ state.solution }
 				surveyStep={ state.surveyStep }
 				upsell={ state.upsell }
@@ -1166,11 +1168,10 @@ export default function CancelPurchase() {
 		return (
 			<Button
 				variant="secondary"
-				href={ ( props.getManagePurchaseUrlFor ?? managePurchase )(
-					site?.slug ?? '',
-					purchase.ID ?? ''
-				) }
-				onClick={ onKeepSubscriptionClick }
+				onClick={ () => {
+					navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
+					onKeepSubscriptionClick();
+				} }
 			>
 				{ __( 'Keep plan' ) }
 			</Button>
@@ -1211,7 +1212,7 @@ export default function CancelPurchase() {
 					purchase={ purchase }
 					onConfirmationChange={ onAtomicRevertConfirmationChange }
 					needsAtomicRevertConfirmation={ Boolean(
-						atomicTransfer?.created_at && ! isRefundable( purchase )
+						atomicTransfer?.created_at && ! purchase.is_refundable
 					) }
 					isLoading={ state.isLoading }
 				/>
@@ -1416,7 +1417,7 @@ export default function CancelPurchase() {
 					/>
 				) }
 
-				{ includedDomainPurchase && atomicTransfer?.created_at && ! isRefundable( purchase ) && (
+				{ includedDomainPurchase && atomicTransfer?.created_at && ! purchase.is_refundable && (
 					<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
 						{ __( 'What happens when you cancel' ) }
 					</h2>
@@ -1516,7 +1517,6 @@ export default function CancelPurchase() {
 						plans={ plans }
 						purchase={ purchase }
 						purchases={ purchases }
-						purchaseListUrl={ purchasesRoot }
 						questionOneRadio={ state.questionOneRadio }
 						questionOneText={ state.questionOneText }
 						questionTwoOrder={ state.questionTwoOrder }
@@ -1620,11 +1620,7 @@ export default function CancelPurchase() {
 		return null;
 	}
 
-	if ( ! purchase ) {
-		return null;
-	}
-
-	const purchaseName = getName( purchase );
+	const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
 
 	let heading;
 

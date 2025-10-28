@@ -26,7 +26,13 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
-import type { Site, Purchase, PricedAPISitePlan, Product } from '@automattic/api-core';
+import type {
+	Site,
+	Purchase,
+	PricedAPISitePlan,
+	Product,
+	SiteSpecificPlanProduct,
+} from '@automattic/api-core';
 
 import './style.scss';
 
@@ -93,8 +99,8 @@ export interface CancelPurchaseFormProps {
 	questionTwoRadio?: string;
 	questionTwoText?: string;
 	refundAmount?: string;
-	site: Site;
-	sitePlans?: Record< string, unknown >;
+	site?: Site;
+	sitePlans?: SiteSpecificPlanProduct[];
 	sitePurchases: Purchase[];
 	solution?: string;
 	surveyStep?: string;
@@ -107,31 +113,21 @@ function getSiteImportEngine( site: Site ) {
 }
 
 export default function CancelPurchaseForm( providedProps: CancelPurchaseFormProps ) {
-	const { purchase, site, products, sitePurchases } = providedProps;
+	const { purchase, site } = providedProps;
 	const { data: siteFeatures } = useSuspenseQuery( siteFeaturesQuery( purchase.blog_id ) );
 	const { data: atomicTransfer } = useQuery( siteLatestAtomicTransferQuery( purchase.blog_id ) );
-	const linkedPurchases = useMemo( () => [], [] ); //TODO: fix
 	const props = useMemo(
 		() => ( {
+			...providedProps,
 			isAtomicSite: providedProps.isAtomicSite ?? isSiteAutomatedTransfer( site ),
-			isImport: providedProps.isImport ?? !! getSiteImportEngine( site ),
+			isImport: providedProps.isImport ?? Boolean( site && getSiteImportEngine( site ) ),
 			site: providedProps.site,
 			atomicTransfer: providedProps.atomicTransfer ?? atomicTransfer,
 			hasBackupsFeature:
 				providedProps.hasBackupsFeature ??
 				siteFeatures?.active?.indexOf( WPCOM_FEATURES_BACKUPS ) >= 0,
-			...providedProps,
 		} ),
-		[
-			atomicTransfer,
-			linkedPurchases,
-			products,
-			providedProps,
-			purchase,
-			site,
-			siteFeatures?.active,
-			sitePurchases,
-		]
+		[ atomicTransfer, providedProps, site, siteFeatures?.active ]
 	);
 	/**
 	 * Get possible steps for the survey

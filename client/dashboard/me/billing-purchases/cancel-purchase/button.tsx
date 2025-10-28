@@ -4,12 +4,9 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cancelPurchaseRoute } from '../../../app/router/me';
 import {
-	getName,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
-	isDomainRegistration,
 	isOneTimePurchase,
-	isSubscription,
 } from '../../../utils/purchase';
 import CancelPurchaseForm from './cancel-purchase-form';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
@@ -28,7 +25,6 @@ interface CancelPurchaseButtonProps extends CancelPurchaseFormProps {
 	onCancellationStart?: ( () => void ) | undefined;
 	onDialogClose: () => void;
 	onSetLoading: ( isLoading: boolean ) => void;
-	purchaseListUrl?: string;
 	showMarketplaceDialog?: ( () => void ) | undefined;
 	shouldShowMarketplaceDialog?: boolean; // Control marketplace dialog visibility
 	siteSlug: string;
