@@ -21,7 +21,6 @@ export interface CancelPurchaseState {
 	questionTwoOrder?: string[];
 	questionTwoRadio?: string;
 	questionTwoText?: string;
-	showDialog?: boolean;
 	showDomainOptionsStep?: boolean;
 	siteId?: number;
 	skipRemovePlanSurvey?: boolean;

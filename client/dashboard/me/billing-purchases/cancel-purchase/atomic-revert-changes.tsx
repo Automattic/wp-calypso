@@ -3,12 +3,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { useState } from 'react';
-import { isRefundable } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 import './style.scss';
 
 type AtomicRevertChangesProps = {
-	atomicTransfer: {
+	atomicTransfer?: {
 		created_at?: string;
 	};
 	purchase: Purchase;
@@ -39,7 +38,7 @@ const AtomicRevertChanges = ( {
 		changes.push( __( 'Set your site to private.' ) );
 
 		// Plugins and themes will be removed
-		if ( ! isRefundable( purchase ) ) {
+		if ( ! purchase.is_refundable ) {
 			changes.push(
 				sprintf(
 					/* translators: %(expiryDate)s is the date the themes and plugins will expire and will be removed */
@@ -62,8 +61,7 @@ const AtomicRevertChanges = ( {
 
 	const changes = getChangesList();
 
-	const handleCheckboxChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		const checked = event.target.checked;
+	const handleCheckboxChange = ( checked: boolean ) => {
 		setIsConfirmed( checked );
 		onConfirmationChange( checked );
 	};

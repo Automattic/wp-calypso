@@ -5,6 +5,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { cancelPurchaseRoute } from '../../../app/router/me';
 import {
 	getPurchaseCancellationFlowType,
+	isNonDomainSubscription,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
@@ -27,7 +28,6 @@ interface CancelPurchaseButtonProps extends CancelPurchaseFormProps {
 	onSetLoading: ( isLoading: boolean ) => void;
 	showMarketplaceDialog?: ( () => void ) | undefined;
 	shouldShowMarketplaceDialog?: boolean; // Control marketplace dialog visibility
-	siteSlug: string;
 }
 
 export default function CancelPurchaseButton( props: CancelPurchaseButtonProps ) {
@@ -82,7 +82,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		return activeSubscriptions?.length > 0 && ( shouldShowMarketplaceDialog ?? true );
 	};
 
-	const planName = getName( purchase );
+	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
 	const {
 		atomicRevertCheckOne,
 		atomicRevertCheckTwo,
@@ -126,10 +126,10 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		}
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( isDomainRegistration( purchase ) ) {
+			if ( purchase.is_domain_registration ) {
 				return __( 'Cancel domain and refund' );
 			}
-			if ( isSubscription( purchase ) ) {
+			if ( isNonDomainSubscription( purchase ) ) {
 				return __( 'Cancel plan' );
 			}
 			if ( isOneTimePurchase( purchase ) ) {
@@ -137,11 +137,11 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 			}
 		}
 
-		if ( isDomainRegistration( purchase ) ) {
+		if ( purchase.is_domain_registration ) {
 			return __( 'Cancel domain' );
 		}
 
-		if ( isSubscription( purchase ) ) {
+		if ( isNonDomainSubscription( purchase ) ) {
 			return __( 'Cancel plan' );
 		}
 	} )();

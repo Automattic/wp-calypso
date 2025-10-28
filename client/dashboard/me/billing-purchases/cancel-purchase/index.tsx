@@ -42,9 +42,9 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { intervalToDuration, intlFormat } from 'date-fns';
+import { formatDistanceToNow, intervalToDuration, intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -121,7 +121,7 @@ import initialSurveyState from './initial-survey-state';
 import nextStep from './next-step';
 import CancelPurchaseRefundInformation from './refund-information';
 import type { CancelPurchaseState } from './types';
-import type { Purchase, Product, MarketingSurveyDetails } from '@automattic/api-core';
+import type { Purchase, MarketingSurveyDetails } from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
 
 import './style.scss';
@@ -211,7 +211,6 @@ export default function CancelPurchase() {
 	const onDialogClose = () => {
 		setState( ( state ) => ( {
 			...state,
-			showDialog: false,
 			isLoading: false,
 		} ) );
 	};
@@ -418,7 +417,6 @@ export default function CancelPurchase() {
 			questionTwoOrder,
 			questionTwoRadio: '',
 			questionTwoText: '',
-			showDialog: false,
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
@@ -949,7 +947,7 @@ export default function CancelPurchase() {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
 	const isHundredYearDomain = selectedDomain?.is_hundred_year_domain ?? false;
-	const atomicTransfer = undefined; // FIXME: how do we get this?
+	const atomicTransfer: undefined | { created_at?: string } = {}; // FIXME: how do we get this?
 
 	const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		setState( ( state ) => ( {
@@ -981,10 +979,6 @@ export default function CancelPurchase() {
 			// For direct cancellations (no domain options step), show survey directly
 			setState( ( state ) => ( { ...state, siteId: purchase.blog_id, surveyShown: true } ) );
 		}
-	};
-
-	const getProductBySlug = ( productSlug: string ): Product | undefined => {
-		return productsList?.[ productSlug ];
 	};
 
 	const onSetLoading = ( isLoading: boolean ) => {
@@ -1126,7 +1120,6 @@ export default function CancelPurchase() {
 				isJetpack={ isJetpack }
 				isLoading={ state.isLoading ?? false }
 				isNextAdventureValid={ state.isNextAdventureValid }
-				isShowingMarketplaceSubscriptionsDialog={ state.isShowingMarketplaceSubscriptionsDialog }
 				isSubmitting={ state.isSubmitting }
 				offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 				onCancellationComplete={ onCancellationComplete }
@@ -1152,7 +1145,6 @@ export default function CancelPurchase() {
 				questionTwoRadio={ state.questionTwoRadio }
 				questionTwoText={ state.questionTwoText }
 				refundAmount={ getRefundAmount() }
-				showDialog={ state.showDialog }
 				showMarketplaceDialog={ showMarketplaceDialog }
 				site={ site }
 				sitePlans={ sitePlans }
@@ -1348,12 +1340,12 @@ export default function CancelPurchase() {
 		} );
 
 		const defaultWPComCancellationFeatures = getDynamicFeaturesList( {
-			domainName: site?.slug,
-			themeName: activeThemes?.[ 0 ]?.name?.rendered,
+			domainName: site?.slug ?? purchase.meta ?? '',
+			themeName: activeThemes?.[ 0 ]?.name?.rendered ?? '',
 			pluginCount,
 			monthlyVisitorCount,
 		} );
-		const siteHasBackups = 'unavailable' !== rewindState?.state;
+		const siteHasBackups = true; // FIXME: this code was 'unavailable' !== rewindState?.state but the rewindState does not have a `state` property or anything that might be 'unavailable' so I'm not sure what to do
 		const siteHasScan = 'unavailable' !== siteScanState?.state;
 		const defaultJetpackCancellationFeatures = getJetpackDynamicFeaturesList( {
 			site,
@@ -1493,15 +1485,11 @@ export default function CancelPurchase() {
 						includedDomainPurchase={ includedDomainPurchase }
 						isAkismet={ isAkismet }
 						isJetpack={ isJetpack }
-						isLoading={ state.isLoading }
+						isLoading={ state.isLoading ?? false }
 						isNextAdventureValid={ state.isNextAdventureValid }
-						isShowingMarketplaceSubscriptionsDialog={
-							state.isShowingMarketplaceSubscriptionsDialog
-						}
 						isSubmitting={ state.isSubmitting }
 						offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 						onCancellationComplete={ onCancellationComplete }
-						onCancellationStart={ null }
 						onClickAccept={ onClickAccept }
 						onDialogClose={ onDialogClose }
 						onImportRadioChange={ onImportRadioChange }
@@ -1524,12 +1512,10 @@ export default function CancelPurchase() {
 						questionTwoText={ state.questionTwoText }
 						refundAmount={ getRefundAmount() }
 						shouldShowMarketplaceDialog={ false } // Disable marketplace dialog in domain options step to prevent double display
-						showDialog={ state.showDialog }
 						showMarketplaceDialog={ showMarketplaceDialog }
 						site={ site }
 						sitePlans={ sitePlans }
 						sitePurchases={ sitePurchases }
-						siteSlug={ site?.slug }
 						solution={ state.solution }
 						surveyStep={ state.surveyStep }
 						upsell={ state.upsell }
@@ -1542,37 +1528,14 @@ export default function CancelPurchase() {
 
 	const getTimeRemainingForSubscription = ( purchase: Purchase ) => {
 		const purchaseExpiryDate = new Date( purchase.expiry_date );
-
 		return intervalToDuration( { start: new Date(), end: purchaseExpiryDate } );
 	};
 
-	const getTimeRemainingTranslatedPeriod = ( purchase: Purchase ) => {
-		const timeRemaining = getTimeRemainingForSubscription( purchase );
-
-		if ( timeRemaining.months >= 1 ) {
-			const timeRemainingNumber = timeRemaining.months;
-			const unitOfTime = _n( 'month', 'months', timeRemainingNumber );
-
-			return { timeRemainingNumber, unitOfTime };
-		} else if ( timeRemaining.weeks > 1 ) {
-			const timeRemainingNumber = timeRemaining.weeks;
-			const unitOfTime = _n( 'week', 'weeks', timeRemainingNumber );
-
-			return { timeRemainingNumber, unitOfTime };
-		}
-
-		const timeRemainingNumber = timeRemaining.days;
-		const unitOfTime = _n( 'day', 'days', timeRemainingNumber );
-
-		return { timeRemainingNumber, unitOfTime };
-	};
-
 	const renderTimeRemainingString = ( purchase: Purchase ) => {
-		const product = getProductBySlug( purchase.product_slug );
 		// returns early if there's no product or accounting for the edge case that the plan expires today (or somehow already expired)
 		// in this case, do not show the time remaining for the plan
 		const timeRemaining = getTimeRemainingForSubscription( purchase );
-		if ( null === product || timeRemaining.days <= 1 ) {
+		if ( timeRemaining && timeRemaining.days <= 1 ) {
 			return null;
 		}
 
@@ -1584,7 +1547,7 @@ export default function CancelPurchase() {
 						sprintf(
 							/* translators: %(productName)s is the name of the product */
 							__( 'Your <strong> %(productName)s </strong> subscription is still active. <br/>' ),
-							{ productName: product?.product_name }
+							{ productName: purchase.product_name }
 						),
 						{
 							strong: <strong />,
@@ -1595,20 +1558,15 @@ export default function CancelPurchase() {
 			);
 		}
 
-		const translatedPeriod = getTimeRemainingTranslatedPeriod( purchase );
-
 		// show how much time is left on the plan
 		return (
 			<Notice>
 				{ sprintf(
-					/* translators: 'unitOfTime' is either one of 'day', 'week', 'month', or their plural form. 'timeRemaining' is a number representing the time left that will be used with the 'unitOfTime'. */
-					__(
-						'Your plan features will be available for another %(timeRemaining)d %(unitOfTime)s.'
-					),
+					/* translators: 'timeRemaining' is localized string like "2 months" or "1 year". */
+					__( 'Your plan features will be available for another %(timeRemaining)s.' ),
 					{
-						timeRemaining: translatedPeriod.timeRemainingNumber,
-						unitOfTime: translatedPeriod.unitOfTime,
-						productName: product?.product_name,
+						timeRemaining: formatDistanceToNow( new Date( purchase.expiry_date ) ),
+						productName: purchase.product_name,
 					}
 				) }
 			</Notice>
@@ -1667,6 +1625,7 @@ export default function CancelPurchase() {
 					{ ! state.surveyShown && renderTimeRemainingString( purchase ) }
 					<Card className="cancel-purchase__wrapper-card">
 						<CancelPurchaseForm
+							purchases={ purchases }
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
 							atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
