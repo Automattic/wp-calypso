@@ -7,6 +7,7 @@ import {
 	extendPurchaseWithFreeMonth,
 	removePurchase,
 	hasExtendedPurchase,
+	fetchUserTransferredPurchases,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -22,6 +23,12 @@ export const userPurchasesQuery = () =>
 		queryFn: () => fetchUserPurchases(),
 	} );
 
+export function userTransferredPurchasesQuery() {
+	return queryOptions( {
+		queryKey: [ 'upgrades', 'transferred' ],
+		queryFn: () => fetchUserTransferredPurchases(),
+	} );
+}
 export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'upgrades', purchaseId ],
