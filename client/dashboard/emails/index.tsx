@@ -1,6 +1,6 @@
 import { EmailAccount, EmailBox, Domain, DomainSubtype } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';
-import { useQueries, Query } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
 import { emailsRoute } from '../app/router/emails';
@@ -20,12 +20,7 @@ import type { View } from '@wordpress/dataviews';
 import './style.scss';
 
 function Emails() {
-	const {
-		domainName,
-		domain_to_poll,
-		mailbox_to_poll,
-	}: { domainName?: string; domain_to_poll?: string; mailbox_to_poll?: string } =
-		emailsRoute.useSearch();
+	const { domainName }: { domainName?: string } = emailsRoute.useSearch();
 	const { domains, isLoading: isLoadingDomains } = useDomains();
 
 	// Aggregate all domains into a single array
@@ -48,27 +43,9 @@ function Emails() {
 	}, [ domains, isLoadingDomains ] );
 
 	const mailboxQueries = useQueries( {
-		queries: domainsWithEmails.map( ( domain: Domain ) => ( {
-			...mailboxAccountsQuery( domain.blog_id, domain.domain ),
-			refetchInterval: (
-				query: Query< EmailAccount[], Error, EmailAccount[], ( string | number )[] >
-			) => {
-				if ( domain_to_poll && domain.domain === decodeURIComponent( domain_to_poll ) ) {
-					const mailboxes = ( query.state.data || [] )
-						.flatMap( ( account ) => account.emails )
-						.map( ( email ) => email.mailbox );
-
-					const hasMailboxToPoll = mailboxes.includes(
-						decodeURIComponent( mailbox_to_poll || '' )
-					);
-					if ( ! hasMailboxToPoll ) {
-						return 1000;
-					}
-				}
-
-				return false;
-			},
-		} ) ),
+		queries: domainsWithEmails.map( ( domain: Domain ) =>
+			mailboxAccountsQuery( domain.blog_id, domain.domain )
+		),
 	} );
 
 	const isLoadingMailboxes = mailboxQueries.some( ( q ) => q.isLoading );

@@ -11,7 +11,7 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$is_frontpage = isset( $args['is-frontpage'] ) && ( true === $args['is-frontpage'] );
+$is_front_page = isset( $args['is_front_page'] ) && ( true === $args['is_front_page'] );
 $active_page = isset( $args['active_page'] ) ? $args['active_page'] : '';
 
 
@@ -30,7 +30,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 }
 
 ?>
-<div class="happy-blocks-search-card<?php echo $is_frontpage ? '' : ' navigation-only'; ?>">
+<div class="happy-blocks-search-card<?php echo $is_front_page && 'forums' !== $active_page ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
 		<!-- Desktop navigation -->
 		<div class="desktop-nav-container">
@@ -44,7 +44,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</ul>
 			
 			<!-- Search button -->
-			<?php if ( ! $is_frontpage ) : ?>
+			<?php if ( ! $is_front_page ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -98,7 +98,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</div>
 
 			<!-- Search button -->
-			<?php if ( ! $is_frontpage ) : ?>
+			<?php if ( ! $is_front_page ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -109,7 +109,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<?php endif; ?>
 		</div>
 	</nav>
-	<?php if ( $is_frontpage ) : ?>
+	<?php if ( $is_front_page && 'forums' !== $active_page ) : ?>
 	<div class="support-search-content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form id="support-search-form" class="" role="search" method="get" action="">

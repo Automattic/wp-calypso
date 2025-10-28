@@ -36,6 +36,10 @@
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 	text-align: left;
+
+	&:disabled {
+		cursor: default;
+	}
 }
 
 .migration-site-ssh__accordion-title {

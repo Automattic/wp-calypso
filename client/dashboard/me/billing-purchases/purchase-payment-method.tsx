@@ -1,6 +1,6 @@
 import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf, _x } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../app/router/me';
 import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
@@ -65,11 +65,17 @@ export function PurchasePaymentMethod( {
 				? purchase.payment_card_display_brand
 				: purchase.payment_card_type || purchase.payment_card_processor || '';
 
+			const maskedCardNumber = sprintf(
+				/** Translators: %s is last four digits of card number */
+				_x( '**** **** **** %s', 'Long-form masked credit card number.' ),
+				purchase.payment_details
+			);
+
 			return (
-				<HStack>
+				<HStack className="purchase-payment-method__wrapper">
 					<HStack justify="flex-start">
 						<PaymentMethodImage paymentMethodType={ paymentMethodType } />
-						<span>{ purchase.payment_details }</span>
+						<span>{ maskedCardNumber }</span>
 					</HStack>
 					{ showUpdateButton && (
 						<Button

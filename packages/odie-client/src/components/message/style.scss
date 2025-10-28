@@ -222,7 +222,12 @@ $blueberry-color: #3858e9;
 			&:not( .is-expanded ) {
 				.foldable-card__content {
 					border: none;
-					margin-top: 0;
+				}
+			}
+
+			&.is-expanded {
+				.foldable-card__content {
+					max-height: 100vh;
 				}
 			}
 

@@ -54,7 +54,7 @@ export function ActiveThreatsDataViews( {
 		let title = __( 'Don’t worry about a thing' );
 		let description = sprintf(
 			/** translators: %s: relative time string like "2 hours ago" */
-			__( 'The last scan ran %s and everything looked great.' ),
+			__( 'The last scan ran %s and found no security issues.' ),
 			recentScanRelativeTime
 		);
 
