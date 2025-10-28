@@ -1,6 +1,6 @@
 # History
 
-## 7.0.2 / 2025-10-27
+## 7.1.0 / 2025-10-28
 
 - Added type declarations for APIs provided in the library.
 
