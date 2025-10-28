@@ -1,4 +1,4 @@
-import { GoogleEmailSubscription, TitanEmailSubscription } from '@automattic/api-core';
+import { EmailSubscription } from '@automattic/api-core';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -12,7 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { addGoogleMailboxRoute, addProfessionalEmailRoute } from '../../app/router/emails';
+import { addMailboxRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PriceDisplay } from '../../components/price-display';
@@ -30,29 +30,39 @@ import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
-import { IntervalLength } from '../types';
-import { isDomainEligibleForTitanIntroductoryOffer } from '../utils/is-domain-eligible-for-titan-introductory-offer';
+import { IntervalLength, MailboxProvider } from '../types';
+import { isEligibleForIntroductoryOffer } from '../utils/is-eligible-for-introductory-offer';
 import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
 
 export default function ChooseEmailSolution() {
-	const { domain, site } = useDomainFromUrlParam();
+	const { domain, domainName, site } = useDomainFromUrlParam();
 
-	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >( 'annually' );
+	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >(
+		IntervalLength.Annually
+	);
 
 	const { bestAnnualSavings } = useAnnualSavings();
 
-	const { product: googleProduct } = useEmailProduct( 'google', billingInterval );
-	const { product: titanProduct } = useEmailProduct( 'titan', billingInterval );
+	const { product: googleProduct } = useEmailProduct( MailboxProvider.Google, billingInterval );
+	const { product: titanProduct } = useEmailProduct( MailboxProvider.Titan, billingInterval );
 
 	const canAddEmail = domain.current_user_can_add_email;
 
-	const hasTitanFreeTrial = isDomainEligibleForTitanIntroductoryOffer( {
-		domain,
+	const googleEmailSubscription = domain.google_apps_subscription as EmailSubscription;
+	const titanEmailSubscription = domain.titan_mail_subscription as EmailSubscription;
+
+	const hasGoogleFreeTrial = isEligibleForIntroductoryOffer( {
+		emailSubscription: googleEmailSubscription,
+		product: googleProduct,
+	} );
+	const hasTitanFreeTrial = isEligibleForIntroductoryOffer( {
+		emailSubscription: titanEmailSubscription,
 		product: titanProduct,
 	} );
+	const hasFreeTrial = hasGoogleFreeTrial || hasTitanFreeTrial;
 
 	const isTitanAvailable = canAddEmail && ! hasGSuiteWithUs( domain );
 
@@ -67,21 +77,25 @@ export default function ChooseEmailSolution() {
 	let redirectTo = null;
 	if ( hasTitanMailWithUs( domain ) && isTitanAvailable ) {
 		redirectTo = {
-			to: addProfessionalEmailRoute.fullPath,
-			...( isMonthlyEmailProduct( domain.titan_mail_subscription as TitanEmailSubscription ) && {
-				search: {
-					interval: 'monthly',
-				},
-			} ),
+			to: addMailboxRoute.to,
+			params: {
+				domain: domainName,
+				provider: MailboxProvider.Titan,
+				interval: isMonthlyEmailProduct( titanEmailSubscription )
+					? IntervalLength.Monthly
+					: IntervalLength.Annually,
+			},
 		};
 	} else if ( hasGSuiteWithUs( domain ) && isGoogleAvailable ) {
 		redirectTo = {
-			to: addGoogleMailboxRoute.fullPath,
-			...( isMonthlyEmailProduct( domain.google_apps_subscription as GoogleEmailSubscription ) && {
-				search: {
-					interval: 'monthly',
-				},
-			} ),
+			to: addMailboxRoute.to,
+			params: {
+				domainName: domainName,
+				provider: MailboxProvider.Google,
+				interval: isMonthlyEmailProduct( googleEmailSubscription )
+					? IntervalLength.Monthly
+					: IntervalLength.Annually,
+			},
 		};
 	}
 
@@ -95,8 +109,8 @@ export default function ChooseEmailSolution() {
 		return null;
 	}
 
-	const providers = [
-		{
+	const providers = {
+		[ MailboxProvider.Titan ]: {
 			logo: wordpress,
 			name: __( 'Professional Email' ),
 			description: __(
@@ -116,9 +130,8 @@ export default function ChooseEmailSolution() {
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
 			available: isTitanAvailable,
-			route: addProfessionalEmailRoute.fullPath,
 		},
-		{
+		[ MailboxProvider.Google ]: {
 			logo: <img src={ GoogleLogo } alt="" />,
 			name: __( 'Google Workspace' ),
 			action: __( 'Get Google Workspace' ),
@@ -134,11 +147,15 @@ export default function ChooseEmailSolution() {
 				__( 'Store and share files in the cloud' ),
 				__( '24/7 support via email' ),
 			],
+			poweredBy: null,
 			product: googleProduct,
+			hasFreeTrial: isEligibleForIntroductoryOffer( {
+				emailSubscription: googleEmailSubscription,
+				product: googleProduct,
+			} ),
 			available: isGoogleAvailable,
-			route: addGoogleMailboxRoute.fullPath,
 		},
-	];
+	};
 
 	return (
 		<PageLayout
@@ -169,18 +186,18 @@ export default function ChooseEmailSolution() {
 					setBillingInterval( newBillingInterval as IntervalLength )
 				}
 			>
-				<ToggleGroupControlOption label={ __( 'Monthly' ) } value="monthly" />
+				<ToggleGroupControlOption label={ __( 'Monthly' ) } value={ IntervalLength.Monthly } />
 				<ToggleGroupControlOption
 					/* translators: %d is the annual savings percentage. */
 					label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
-					value="annually"
+					value={ IntervalLength.Annually }
 				/>
 			</ToggleGroupControl>
 
 			{ /* Split card for providers */ }
 			<div className="email-providers">
-				{ providers.map( ( provider, providerIndex ) => (
-					<VStack className="email-provider" key={ `provider-${ providerIndex }` } spacing={ 4 }>
+				{ Object.entries( providers ).map( ( [ providerId, provider ] ) => (
+					<VStack className="email-provider" key={ `provider-${ providerId }` } spacing={ 4 }>
 						<Icon icon={ provider.logo } size={ 30 } className="email-provider-logo" />
 						<Text as="h2" size={ 28 } lineHeight="40px" className="email-provider-name">
 							{ provider.name }
@@ -189,7 +206,7 @@ export default function ChooseEmailSolution() {
 						<VStack
 							spacing={ 2 }
 							justify="flex-start"
-							style={ { minHeight: hasTitanFreeTrial ? '96px' : '76px' } }
+							style={ { minHeight: hasFreeTrial ? '96px' : '76px' } }
 						>
 							{ provider.available ? (
 								<>
@@ -226,14 +243,21 @@ export default function ChooseEmailSolution() {
 							variant="primary"
 							disabled={ ! provider.available }
 							onClick={ () =>
-								navigate( { to: provider.route, search: { interval: billingInterval } } )
+								navigate( {
+									to: addMailboxRoute.to,
+									params: {
+										domainName: domainName,
+										provider: providerId,
+										interval: billingInterval,
+									},
+								} )
 							}
 						>
 							{ provider.action }
 						</Button>
 						<ul className="email-provider-features">
 							{ provider.features.map( ( feature, featureIndex ) => (
-								<li key={ `feature-${ providerIndex }-${ featureIndex }` }>{ feature }</li>
+								<li key={ `feature-${ providerId }-${ featureIndex }` }>{ feature }</li>
 							) ) }
 						</ul>
 						{ provider.poweredBy && (

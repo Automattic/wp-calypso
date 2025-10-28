@@ -1,5 +1,6 @@
 import {
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	Button,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 } from '@wordpress/components';
@@ -11,14 +12,15 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
 import {
 	FIELD_FIRSTNAME,
+	FIELD_LASTNAME,
 	FIELD_MAILBOX,
-	FIELD_NAME,
 	FIELD_PASSWORD,
 	FIELD_PASSWORD_RESET_EMAIL,
 } from '../../entities/constants';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
-import { MailboxFormFieldBase, SupportedEmailProvider } from '../../entities/types';
+import { MailboxFormFieldBase } from '../../entities/types';
 import { useDomainFromUrlParam } from '../../hooks/use-domain-from-url-param';
+import { MailboxProvider } from '../../types';
 import { sanitizeMailboxValue } from '../../utils/sanitize-mailbox-value';
 import { MailboxInput } from './mailbox-input';
 
@@ -27,10 +29,12 @@ import './style.scss';
 export const MailboxForm = ( {
 	mailboxEntity,
 	disabled = false,
+	onChange,
 	removeForm = undefined,
 }: {
-	mailboxEntity: MailboxFormEntity< SupportedEmailProvider >;
+	mailboxEntity: MailboxFormEntity< MailboxProvider >;
 	disabled: boolean;
+	onChange: () => void;
 	removeForm?: () => void;
 } ) => {
 	const { domainName } = useDomainFromUrlParam();
@@ -41,7 +45,7 @@ export const MailboxForm = ( {
 	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
 		mailboxEntity.validateField( field.fieldName );
 	const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
-		if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
+		if ( ! [ FIELD_FIRSTNAME ].includes( field.fieldName ) ) {
 			return;
 		}
 		if ( mailboxEntity.getIsFieldTouched( FIELD_MAILBOX ) ) {
@@ -62,7 +66,7 @@ export const MailboxForm = ( {
 		field.dispatchState();
 	};
 
-	const onChange = ( {
+	const changeHandler = ( {
 		value,
 		field,
 		lowerCaseChangeValue = false,
@@ -84,10 +88,32 @@ export const MailboxForm = ( {
 		field.dispatchState();
 
 		onFieldValueChanged( field );
+
+		onChange();
 	};
 
 	return (
 		<VStack spacing={ 4 }>
+			{ mailboxEntity.provider === MailboxProvider.Google && (
+				<HStack>
+					<MailboxInput
+						fieldName={ FIELD_FIRSTNAME }
+						mailboxEntity={ mailboxEntity }
+						label={ __( 'First name' ) }
+						disabled={ disabled }
+						onBlur={ onBlur }
+						onChange={ changeHandler }
+					/>
+					<MailboxInput
+						fieldName={ FIELD_LASTNAME }
+						mailboxEntity={ mailboxEntity }
+						label={ __( 'Last name' ) }
+						disabled={ disabled }
+						onBlur={ onBlur }
+						onChange={ changeHandler }
+					/>
+				</HStack>
+			) }
 			<MailboxInput
 				fieldName={ FIELD_MAILBOX }
 				mailboxEntity={ mailboxEntity }
@@ -100,7 +126,7 @@ export const MailboxForm = ( {
 					</InputControlSuffixWrapper>
 				}
 				onBlur={ onBlur }
-				onChange={ onChange }
+				onChange={ changeHandler }
 			/>
 
 			<VStack>
@@ -123,7 +149,7 @@ export const MailboxForm = ( {
 					// Hint to LastPass not to attempt autofill
 					data-lpignore="true"
 					onBlur={ onBlur }
-					onChange={ onChange }
+					onChange={ changeHandler }
 				/>
 
 				{ ! isPasswordResetEmailVisible && (
@@ -161,7 +187,7 @@ export const MailboxForm = ( {
 					label={ __( 'Password reset email address' ) }
 					disabled={ disabled }
 					onBlur={ onBlur }
-					onChange={ onChange }
+					onChange={ changeHandler }
 				/>
 			) }
 

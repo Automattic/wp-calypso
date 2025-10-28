@@ -53,7 +53,7 @@ If you are not using a page object function to return the visibility, you can us
     await expect( page.getByRole( 'heading', { name: '404 Not Found' } ) ).toBeVisible();
 ```
 
-### Capturing a browser API response
+## Capturing a browser API response
 
 There are some use-cases where we want to capture the API response in the browser, for example when creating a new user account on WordPress.com, the browser calls `https://public-api.wordpress.com/rest/v1.1/users/new?http_envelope=1` and we want to capture the response which includes `username` and `user_id`.
 
@@ -110,8 +110,6 @@ async signupWithEmail( email: string ): Promise< NewUserResponse > {
 ```
 
 This approach ensures the response is captured consistently.
-
-### Repeatable tests using new WordPress.com sites
 
 ## Repeatable tests using new WordPress.com sites
 

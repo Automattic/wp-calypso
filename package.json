@@ -252,7 +252,7 @@
 		"@signal-noise/stylelint-scales": "^2.0.3",
 		"@storybook/react": "^8.6.14",
 		"@tanstack/eslint-plugin-query": "^5.14.6",
-		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/jest-dom": "^6.9.1",
 		"@types/chroma-js": "^2.4.5",
 		"@types/eslint": "^9.6.1",
 		"@types/ga-gtag": "^1.2.0",

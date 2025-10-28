@@ -5,6 +5,11 @@ import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
+import {
+	AppProvider,
+	APP_CONTEXT_DEFAULT_CONFIG,
+	type AppConfig,
+} from 'calypso/dashboard/app/context';
 import router, {
 	routerConfig,
 	syncBrowserHistoryToRouter,
@@ -47,16 +52,33 @@ function Layout( {
 	siteSlug?: string;
 	feature?: string;
 } ) {
+	const APP_CONFIG = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		supports: {
+			sites: {
+				settings: {
+					general: {
+						redirect: true,
+					},
+					server: true,
+					security: true,
+				},
+			},
+		},
+	};
+
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<AuthProvider>
-				<AnalyticsProvider client={ analyticsClient }>
-					<ReduxProvider store={ store }>
-						<RouterProviderWithAuth siteSlug={ siteSlug } feature={ feature } />
-					</ReduxProvider>
-				</AnalyticsProvider>
-			</AuthProvider>
-		</QueryClientProvider>
+		<AppProvider config={ APP_CONFIG as AppConfig }>
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<AnalyticsProvider client={ analyticsClient }>
+						<ReduxProvider store={ store }>
+							<RouterProviderWithAuth siteSlug={ siteSlug } feature={ feature } />
+						</ReduxProvider>
+					</AnalyticsProvider>
+				</AuthProvider>
+			</QueryClientProvider>
+		</AppProvider>
 	);
 }
 

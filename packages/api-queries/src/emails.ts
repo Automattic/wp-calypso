@@ -1,4 +1,5 @@
 import {
+	createTitanMailbox,
 	deleteTitanMailbox,
 	fetchDomainMailboxAccounts,
 	fetchMailboxes,
@@ -18,6 +19,30 @@ export const mailboxAccountsQuery = ( siteId: number, domain: string ) =>
 		queryFn: () => fetchDomainMailboxAccounts( siteId, domain ),
 		enabled: Boolean( siteId ),
 	} );
+
+export const createTitanMailboxMutation = () => {
+	return mutationOptions( {
+		mutationFn: ( vars: {
+			domainName: string;
+			isAdmin: boolean;
+			mailbox: string;
+			name: string;
+			password: string;
+			passwordResetEmail: string;
+		} ) =>
+			createTitanMailbox( {
+				domainName: vars.domainName,
+				isAdmin: vars.isAdmin,
+				mailbox: vars.mailbox,
+				name: vars.name,
+				password: vars.password,
+				passwordResetEmail: vars.passwordResetEmail,
+			} ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
+		},
+	} );
+};
 
 export const deleteTitanMailboxMutation = () => {
 	return mutationOptions( {

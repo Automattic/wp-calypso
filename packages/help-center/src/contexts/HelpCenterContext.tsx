@@ -11,6 +11,7 @@ export type HelpCenterRequiredInformation = {
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
+	isCommerceGarden: boolean;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -32,6 +33,7 @@ const defaultContext: HelpCenterRequiredInformation = {
 	primarySiteId: 0,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
+	isCommerceGarden: false,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );

@@ -7,13 +7,14 @@ import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataview
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { useMonetizeFieldDefinitions } from './dataviews';
-import { getMonetizeSubscriptionsPageTitle, getMonetizeSubscriptionUrl } from './urls';
+import { getMonetizeSubscriptionsPageTitle } from './title';
 
 const defaultPerPage = 10;
 
@@ -73,7 +74,8 @@ function MonetizeSubscriptions() {
 						return;
 					}
 					navigate( {
-						to: getMonetizeSubscriptionUrl( subscriptionId ),
+						to: monetizeSubscriptionRoute.fullPath,
+						params: { subscriptionId: subscriptionId },
 					} );
 				},
 			},

@@ -5,6 +5,7 @@ import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
+	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
 import {
 	FREE_THEME,
@@ -55,6 +56,13 @@ export function canUseTheme( state, siteId, themeId ) {
 	if ( type === BUNDLED_THEME ) {
 		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
 		const themeSoftware = themeSoftwareSet[ 0 ];
+
+		// Add a special case for Sensei themes to ensure they are limited to the Business plan.
+		// @todo refactor this whole file using theme tiers.
+		if ( themeSoftware === 'sensei' ) {
+			const featureChecks = [ WPCOM_FEATURES_SENSEI_THEMES, WPCOM_FEATURES_ATOMIC ];
+			return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
+		}
 
 		const featureChecks = [
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,

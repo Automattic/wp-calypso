@@ -3,7 +3,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
-import type { View } from '@wordpress/dataviews';
+import type { View, Field } from '@wordpress/dataviews';
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -20,6 +20,7 @@ export type RenderItemIcon< T > = ( props: {
 
 export default function SwitcherContent< T >( {
 	items,
+	searchableFields = [],
 	getItemName,
 	getItemUrl,
 	renderItemIcon,
@@ -27,6 +28,7 @@ export default function SwitcherContent< T >( {
 	onClose,
 }: PropsWithChildren< {
 	items?: T[];
+	searchableFields?: Field< T >[];
 	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
 	renderItemIcon: RenderItemIcon< T >;
@@ -41,8 +43,12 @@ export default function SwitcherContent< T >( {
 				getValue: ( { item }: { item: T } ) => getItemName( item ),
 				enableGlobalSearch: true,
 			},
+			...searchableFields.map( ( searchableField ) => ( {
+				...searchableField,
+				enableGlobalSearch: true,
+			} ) ),
 		];
-	}, [ getItemName ] );
+	}, [ searchableFields, getItemName ] );
 
 	if ( ! items ) {
 		return __( 'Loading…' );

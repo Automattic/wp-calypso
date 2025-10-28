@@ -534,6 +534,11 @@ export const siteSettingsRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+
+		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
+			// This impacts layout so we must wait for this to load
+			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
+		}
 	},
 } );
 
@@ -747,6 +752,23 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'primary-data-center',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
+			const primaryDataCenter = await queryClient.ensureQueryData(
+				sitePrimaryDataCenterQuery( site.ID )
+			);
+			if ( primaryDataCenter ) {
+				return;
+			}
+		}
+
+		throw redirect( { to: `/sites/${ siteSlug }/settings` } );
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
@@ -1177,30 +1199,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	const siteRoutes: AnyRoute[] = [
 		siteOverviewRoute,
-		siteSettingsRoute.addChildren( [
-			siteSettingsIndexRoute,
-			siteSettingsSiteVisibilityRoute,
-			siteSettingsSubscriptionGiftingRoute,
-			siteSettingsDatabaseRoute,
-			siteSettingsWordPressRoute,
-			siteSettingsPHPRoute,
-			siteSettingsAgencyRoute,
-			siteSettingsRepositoriesRoute.addChildren( [
-				siteSettingsRepositoriesIndexRoute,
-				siteSettingsRepositoriesConnectRoute,
-				siteSettingsRepositoriesManageRoute,
-			] ),
-			siteSettingsHundredYearPlanRoute,
-			siteSettingsPrimaryDataCenterRoute,
-			siteSettingsStaticFile404Route,
-			siteSettingsCachingRoute,
-			siteSettingsDefensiveModeRoute,
-			siteSettingsTransferSiteRoute,
-			siteSettingsSftpSshRoute,
-			siteSettingsWebApplicationFirewallRoute,
-			siteSettingsWpcomLoginRoute,
-			siteSettingsRedirectRoute,
-		] ),
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
@@ -1256,6 +1254,56 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.sites.domains ) {
 		siteRoutes.push( siteDomainsRoute );
+	}
+
+	if ( config.supports.sites.settings ) {
+		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute ];
+
+		if ( config.supports.sites.settings.general ) {
+			const settingsGeneralRoutes: AnyRoute[] = [
+				siteSettingsSiteVisibilityRoute,
+				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsAgencyRoute,
+				siteSettingsHundredYearPlanRoute,
+			];
+
+			if ( config.supports.sites.settings.general.redirect ) {
+				settingsGeneralRoutes.push( siteSettingsRedirectRoute );
+			}
+
+			settingsRoutes.push( ...settingsGeneralRoutes );
+		}
+
+		if ( config.supports.sites.settings.server ) {
+			settingsRoutes.push(
+				...[
+					siteSettingsWordPressRoute,
+					siteSettingsPHPRoute,
+					siteSettingsSftpSshRoute,
+					siteSettingsRepositoriesRoute.addChildren( [
+						siteSettingsRepositoriesIndexRoute,
+						siteSettingsRepositoriesConnectRoute,
+						siteSettingsRepositoriesManageRoute,
+					] ),
+					siteSettingsDatabaseRoute,
+					siteSettingsPrimaryDataCenterRoute,
+					siteSettingsStaticFile404Route,
+					siteSettingsCachingRoute,
+				]
+			);
+		}
+
+		if ( config.supports.sites.settings.security ) {
+			settingsRoutes.push(
+				...[
+					siteSettingsWebApplicationFirewallRoute,
+					siteSettingsWpcomLoginRoute,
+					siteSettingsDefensiveModeRoute,
+				]
+			);
+		}
+
+		siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
 	}
 
 	return [

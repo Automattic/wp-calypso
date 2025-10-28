@@ -1,8 +1,9 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { changePaymentMethodRoute } from '../../../app/router/me';
 import { isCloseToExpiration } from '../../../utils/purchase';
-import { getAddPaymentMethodUrlFor, getChangePaymentMethodUrlFor } from '../urls';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -49,9 +50,7 @@ export function RenewNoticeAction( {
 	purchase: Purchase;
 	onClick: () => void;
 } ) {
-	const changePaymentMethodPath = purchase.payment_card_id
-		? getChangePaymentMethodUrlFor( purchase )
-		: getAddPaymentMethodUrlFor( purchase );
+	const navigate = useNavigate();
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;
@@ -60,7 +59,15 @@ export function RenewNoticeAction( {
 		( ! purchase.can_explicit_renew || shouldAddPaymentSourceInsteadOfRenewingNow )
 	) {
 		return (
-			<Button variant="primary" href={ changePaymentMethodPath }>
+			<Button
+				variant="primary"
+				onClick={ () => {
+					navigate( {
+						to: changePaymentMethodRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
+				} }
+			>
 				{ __( 'Add payment method' ) }
 			</Button>
 		);
@@ -73,7 +80,15 @@ export function RenewNoticeAction( {
 	// Now" in that case.
 	if ( purchase.payment_type === 'credits' && purchase.expiry_status === 'manual-renew' ) {
 		return (
-			<Button variant="primary" href={ changePaymentMethodPath }>
+			<Button
+				variant="primary"
+				onClick={ () => {
+					navigate( {
+						to: changePaymentMethodRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
+				} }
+			>
 				{ __( 'Add payment method' ) }
 			</Button>
 		);

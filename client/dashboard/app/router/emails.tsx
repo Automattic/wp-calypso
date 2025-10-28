@@ -11,6 +11,7 @@ import {
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { MailboxProvider, IntervalLength } from '../../emails/types';
 import { domainHasEmail } from '../../utils/domain';
 import { rootRoute } from './root';
 
@@ -144,18 +145,33 @@ export const chooseEmailSolutionRoute = createRoute( {
 	)
 );
 
-export const addProfessionalEmailRoute = createRoute( {
-	head: () => ( {
+export const addMailboxRoute = createRoute( {
+	head: ( { params } ) => ( {
 		meta: [
 			{
-				title: __( 'Add Professional Email' ),
+				title:
+					params.provider === MailboxProvider.Titan
+						? __( 'Add Professional Email' )
+						: __( 'Add Google Workspace' ),
 			},
 		],
 	} ),
 	getParentRoute: () => rootRoute,
-	path: 'emails/add-professional-email/$domain',
-	beforeLoad: async ( { params: { domain: domainName } } ) => {
+	path: 'emails/add-mailbox/$domain/$provider/$interval',
+	beforeLoad: async ( { params: { domain: domainName, provider, interval } } ) => {
 		await redirectIfInvalidDomain( domainName );
+
+		if (
+			// @ts-expect-error The provider param can be anything.
+			! Object.values( MailboxProvider ).includes( provider ) ||
+			// @ts-expect-error The interval param can be anything.
+			! Object.values( IntervalLength ).includes( interval )
+		) {
+			throw redirect( {
+				to: chooseEmailSolutionRoute.to,
+				params: { domain: domainName },
+			} );
+		}
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
 		const products = queryClient.ensureQueryData( productsQuery() );
@@ -169,26 +185,61 @@ export const addProfessionalEmailRoute = createRoute( {
 		await Promise.all( [ products, site, domain, mailboxAccounts ] );
 	},
 } ).lazy( () =>
-	import( '../../emails/add-professional-email' ).then( ( d ) =>
-		createLazyRoute( 'add-professional-email' )( {
+	import( '../../emails/add-mailbox' ).then( ( d ) =>
+		createLazyRoute( 'add-mailbox' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const addGoogleMailboxRoute = createRoute( {
+export const setUpMailboxRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add Google mailbox' ),
+				title: __( 'Set Up Mailbox' ),
 			},
 		],
 	} ),
 	getParentRoute: () => rootRoute,
-	path: 'emails/add-google-mailbox/$domain',
+	path: 'emails/set-up-mailbox/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		await redirectIfInvalidDomain( domainName );
+
+		const existingMailboxes = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		const unusedMailboxesCount = existingMailboxes?.some(
+			( mailbox ) =>
+				mailbox.warnings.some(
+					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
+				) && mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
+		);
+
+		const hasUnusedMailbox = !! unusedMailboxesCount;
+
+		if ( ! hasUnusedMailbox ) {
+			throw redirect( {
+				to: emailsRoute.fullPath,
+				search: {
+					domainName,
+				},
+			} );
+		}
+	},
+	loader: async ( { params: { domain: domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const mailboxAccounts = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		await Promise.all( [ domain, mailboxAccounts ] );
+	},
 } ).lazy( () =>
-	import( '../../emails/add-google-mailbox' ).then( ( d ) =>
-		createLazyRoute( 'add-google-mailbox' )( {
+	import( '../../emails/add-mailbox' ).then( ( d ) =>
+		createLazyRoute( 'add-mailbox' )( {
 			component: d.default,
 		} )
 	)
@@ -217,8 +268,8 @@ export const createEmailsRoutes = () => {
 		emailsRoute,
 		chooseDomainRoute,
 		chooseEmailSolutionRoute,
-		addProfessionalEmailRoute,
-		addGoogleMailboxRoute,
+		addMailboxRoute,
+		setUpMailboxRoute,
 		addEmailForwarderRoute,
 	];
 };

@@ -62,12 +62,42 @@ export const groupDomainProducts = ( originalItems: ReceiptItem[] ) => {
 	return [ ...otherProducts, ...groupedDomainProducts ];
 };
 
+interface SummarizedReceiptItems {
+	groupedItems: ReceiptItem[];
+	label: string;
+}
+
+export function summarizeReceiptItems( originalItems: ReceiptItem[] ): SummarizedReceiptItems {
+	const groupedItems = groupDomainProducts( originalItems );
+
+	let label = '';
+	if ( groupedItems.length > 0 ) {
+		label = groupedItems.length > 1 ? __( 'Multiple items' ) : groupedItems[ 0 ].variation;
+	}
+
+	return { groupedItems, label };
+}
+
 export function transactionIncludesTax( transaction: Receipt ) {
 	if ( ! transaction || ! transaction.tax_integer ) {
 		return false;
 	}
 
 	return transaction.items.some( ( item ) => item.tax_integer > 0 );
+}
+
+export function formatReceiptAmount( receipt: Receipt ): string {
+	return formatCurrency( receipt.amount_integer, receipt.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+}
+
+export function formatReceiptTaxAmount( receipt: Receipt ): string {
+	return formatCurrency( receipt.tax_integer, receipt.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 }
 
 function renderTransactionQuantitySummaryForMailboxes(

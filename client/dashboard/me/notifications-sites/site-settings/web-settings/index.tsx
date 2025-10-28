@@ -1,19 +1,25 @@
+import { userNotificationsSettingsMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { type SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
 import { useAnalytics } from '../../../../app/analytics';
 import { getFieldLabel } from '../../helpers/translations';
-import { useSiteSettings, useSettingsMutation } from '../../hooks';
+import { useSiteSettings } from '../../hooks';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
 
 export const WebSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
-	const { mutate: updateSettings, isPending: isUpdating } = useSettingsMutation();
+	const { mutate: updateSettings, isPending: isUpdating } = useMutation(
+		userNotificationsSettingsMutation()
+	);
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
-
 	const timelineSettings = useMemo( () => blogSettings?.timeline ?? null, [ blogSettings ] );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleChange = ( updated: SettingsOption ) => {
 		updateSettings(
@@ -29,10 +35,25 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 			},
 			{
 				onSuccess: () => {
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s is the name of the setting */
+							__( '"%s" settings saved.' ),
+							updated.label
+						),
+						{
+							type: 'snackbar',
+						}
+					);
 					recordTracksEvent( 'calypso_dashboard_notifications_timeline_settings_updated', {
 						setting_name: updated.id,
 						setting_value: updated.value,
 						site_id: siteId,
+					} );
+				},
+				onError: () => {
+					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+						type: 'snackbar',
 					} );
 				},
 			}
@@ -62,6 +83,7 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 						stream: 'timeline',
 						site_to_be_used_as_template: siteId,
 					} );
+					createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
 
 					setIsConfirmDialogOpen( false );
 				},
