@@ -65,6 +65,7 @@ interface UseStepsOptions {
 	siteName: string;
 	host?: string;
 	onNoSSHAccess: () => void;
+	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
 }
 
 interface SSHFormState {
@@ -140,8 +141,9 @@ export const useSteps = ( {
 	siteName,
 	onNoSSHAccess,
 	host,
+	migrationStatus,
 }: UseStepsOptions ): StepsObject => {
-	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ currentStep, setCurrentStep ] = useState( -1 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
 	const [ migrationError, setMigrationError ] = useState< Error | null >( null );
 
@@ -159,11 +161,29 @@ export const useSteps = ( {
 
 	// State update handlers
 	const handleServerAddressChange = ( address: string ) => {
-		setFormState( ( prev ) => ( { ...prev, serverAddress: address, isServerVerified: false } ) );
+		setFormState( ( prev ) => ( {
+			...prev,
+			serverAddress: address,
+			isServerVerified: false,
+			migrationStarted: false,
+		} ) );
+		// If server verification was completed, reset progress since it needs to be verified again
+		if ( lastCompleteStep >= 1 ) {
+			setLastCompleteStep( 0 );
+		}
 	};
 
 	const handlePortChange = ( port: number ) => {
-		setFormState( ( prev ) => ( { ...prev, port, isServerVerified: false } ) );
+		setFormState( ( prev ) => ( {
+			...prev,
+			port,
+			isServerVerified: false,
+			migrationStarted: false,
+		} ) );
+		// If server verification was completed, reset progress since it needs to be verified again
+		if ( lastCompleteStep >= 1 ) {
+			setLastCompleteStep( 0 );
+		}
 	};
 
 	const handleServerVerify = () => {
@@ -227,20 +247,23 @@ export const useSteps = ( {
 			case ADD_SERVER_ADDRESS:
 				return formState.isServerVerified;
 			case SHARE_SSH_ACCESS:
-				return formState.migrationStarted;
+				return migrationStatus === 'migrating' || migrationStatus === 'completed';
 			default:
 				return false;
 		}
 	};
 
 	const steps: Steps = stepsData.map( ( step, index ) => {
-		// Allow clicking on visited steps only, so users can see the previous steps again.
-		const onItemClick =
-			lastCompleteStep < index
-				? undefined
-				: () => {
-						setCurrentStep( index );
-				  };
+		// Allow clicking on:
+		// 1. The first step (always accessible)
+		// 2. Previously completed steps (can review)
+		// 3. The next step after last completed (can progress forward)
+		const canClick = index === 0 || index <= lastCompleteStep + 1;
+		const onItemClick = canClick
+			? () => {
+					setCurrentStep( index );
+			  }
+			: undefined;
 
 		// Render the content with the step-specific elements
 		const contentNode = <>{ step.content }</>;

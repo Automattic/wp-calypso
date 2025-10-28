@@ -57,6 +57,7 @@ import {
 	SecretsManager,
 	SidebarComponent,
 	SiteSelectComponent,
+	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -119,6 +120,10 @@ export const test = base.extend< {
 	 * Environment variables for the tests.
 	 */
 	environment: typeof envVariables;
+	/**
+	 * Flow encapsulating the Start Writing onboarding process.
+	 */
+	flowStartWriting: StartWritingFlow;
 	/**
 	 * Helper data and utilities for tests.
 	 */
@@ -219,6 +224,7 @@ export const test = base.extend< {
 	 * Page object representing the WordPress.com themes listing page.
 	 */
 	pageThemes: ThemesPage;
+	pageUserSignUp: UserSignupPage;
 	/**
 	 * Secrets needed for end-to-end tests.
 	 */
@@ -291,6 +297,10 @@ export const test = base.extend< {
 	},
 	environment: async ( {}, use ) => {
 		await use( envVariables );
+	},
+	flowStartWriting: async ( { page }, use ) => {
+		const startWritingFlow = new StartWritingFlow( page );
+		await use( startWritingFlow );
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
@@ -393,18 +403,20 @@ export const test = base.extend< {
 		const themesPage = new ThemesPage( page );
 		await use( themesPage );
 	},
+	pageUserSignUp: async ( { page }, use ) => {
+		const userSignupPage = new UserSignupPage( page );
+		await use( userSignupPage );
+	},
 	secrets: async ( {}, use ) => {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, clientEmail, helperData }, use ) => {
+	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
 		const testUser = helperData.getNewTestUser();
 		const siteName = helperData.getBlogName();
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.clickCreateNewAccount();
-		const userSignupPage = new UserSignupPage( page );
-		const newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		await pageLogin.visit();
+		await pageLogin.clickCreateNewAccount();
+		const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 		const restAPIClient = new RestAPIClient(
 			{ username: testUser.username, password: testUser.password },
 			newUserDetails.body.bearer_token

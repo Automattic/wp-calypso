@@ -54,7 +54,7 @@ export const purchasesDataView: View = {
 function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	return (
-		<span>
+		<span className="purchase-payment-method__backup-icon">
 			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
 			{ isTooltipVisible && (
 				<Popover className="billing-purchase-info-popover">{ children }</Popover>
@@ -422,10 +422,10 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<div>
+					<>
 						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
-					</div>
+					</>
 				);
 			},
 		},

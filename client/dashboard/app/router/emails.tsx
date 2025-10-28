@@ -1,4 +1,4 @@
-import { Domain, DomainSubtype, isWpError } from '@automattic/api-core';
+import { Domain, DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
 	mailboxAccountsQuery,
@@ -10,9 +10,10 @@ import {
 	sitesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { MailboxProvider, IntervalLength } from '../../emails/types';
 import { domainHasEmail } from '../../utils/domain';
+import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {
@@ -263,6 +264,74 @@ export const addEmailForwarderRoute = createRoute( {
 	)
 );
 
+export const mailboxesReadyRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { emails: EmailBox[]; status: string } } ) => {
+		let title;
+		if ( loaderData?.status === 'ready' ) {
+			title = _n(
+				'Your mailbox is ready!',
+				'Your mailboxes are ready!',
+				loaderData?.emails.length ?? 0
+			);
+		} else {
+			title = _n(
+				'Your mailbox is almost ready!',
+				'Your mailboxes are almost ready!',
+				loaderData?.emails.length ?? 0
+			);
+		}
+		return { meta: [ { title } ] };
+	},
+	getParentRoute: () => rootRoute,
+	path: 'emails/mailboxes-ready/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		await redirectIfInvalidDomain( domainName );
+	},
+	loader: async ( { location, params: { domain: domainName } } ) => {
+		const search: Record< string, string > = location.search;
+		const mailboxes = search.mailboxes?.split( ',' ) ?? [];
+
+		// Intentional call to `fetchQuery` instead of `ensureQueryData` to bypass cache and always fetch fresh data.
+		const domain = await queryClient.fetchQuery( domainQuery( domainName ) );
+		const mailboxAccounts = await queryClient.fetchQuery(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		const mailboxAccount = mailboxAccounts.find(
+			( mailboxAccount ) => mailboxAccount.account_type !== 'email_forwarding'
+		);
+		const emails =
+			mailboxAccount?.emails.filter( ( { mailbox } ) => mailboxes.includes( mailbox ) ) ?? [];
+
+		let status;
+		if (
+			mailboxAccount?.account_type === 'google_workspace' &&
+			accountHasWarningWithSlug( 'google_pending_tos_acceptance', mailboxAccount )
+		) {
+			status = 'google_pending_tos_acceptance';
+		} else if (
+			mailboxAccount?.account_type === 'google_workspace' &&
+			domain.google_apps_subscription?.status === 'unknown'
+		) {
+			status = 'google_configuring';
+		} else {
+			status = 'ready';
+		}
+
+		return {
+			mailboxAccount,
+			emails,
+			status,
+		};
+	},
+} ).lazy( () =>
+	import( '../../emails/mailboxes-ready' ).then( ( d ) =>
+		createLazyRoute( 'mailboxes-ready' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createEmailsRoutes = () => {
 	return [
 		emailsRoute,
@@ -271,5 +340,6 @@ export const createEmailsRoutes = () => {
 		addMailboxRoute,
 		setUpMailboxRoute,
 		addEmailForwarderRoute,
+		mailboxesReadyRoute,
 	];
 };

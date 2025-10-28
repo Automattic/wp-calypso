@@ -38,7 +38,7 @@ import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 import './style.scss';
 
 export default function ChooseEmailSolution() {
-	const { domain, domainName, site } = useDomainFromUrlParam();
+	const { domain, domainName } = useDomainFromUrlParam();
 
 	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >(
 		IntervalLength.Annually
@@ -163,13 +163,7 @@ export default function ChooseEmailSolution() {
 			size="small"
 			notices={
 				<>
-					{ ! canAddEmail && (
-						<EmailNonDomainOwnerNotice
-							selectedSite={ site }
-							domain={ domain }
-							source="email-comparison"
-						/>
-					) }
+					{ ! canAddEmail && <EmailNonDomainOwnerNotice domain={ domain } /> }
 					{ hasEmailForwards( domain ) && <ExistingForwardsNotice /> }
 				</>
 			}

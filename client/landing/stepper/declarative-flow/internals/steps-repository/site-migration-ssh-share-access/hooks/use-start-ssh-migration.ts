@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { urlToDomain } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 
 interface StartSSHMigrationParams {
@@ -34,10 +35,16 @@ const startSSHMigration = async (
 			...( params.sshIdPass && { ssh_id_pass: params.sshIdPass } ),
 		};
 
+		const remoteDomain = urlToDomain( params.remoteDomain );
+
+		if ( ! remoteDomain ) {
+			throw new Error( 'Invalid remote domain' );
+		}
+
 		const body = {
 			remote_host: params.remoteHost,
 			remote_user: params.remoteUser,
-			remote_domain: params.remoteDomain,
+			remote_domain: remoteDomain,
 			...optionalFields,
 		};
 

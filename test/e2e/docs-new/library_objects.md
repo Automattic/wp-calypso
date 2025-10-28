@@ -1,8 +1,6 @@
-[← Writing tests](./writing_tests.md) | [Top](../README.md) | [Style Guide →](./style_guide.md)
-
 # Library Objects
 
-The `@automattic/calypso-e2e` package offers a robust set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible. Doing so will reduce code duplication and make test development faster.
+The `@automattic/calypso-e2e` package offers a set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible. Doing so will reduce code duplication and make test development faster.
 
 For a brief introduction to Page Object Models, please refer to [this page](https://playwright.dev/docs/test-pom).
 
@@ -42,35 +40,7 @@ Components represent a sub-portion of the page, and are typically shared across 
 
 The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
 
-```typescript
-/**
- * Represents a reusable component for interacting with the sidebar.
- */
-export class SomeComponent {
-	/**
-	 * JSDoc is expected for constructor if present.
-	 *
-	 * @param {Page} page Page object.
-	 */
-	constructor( page: Page ) {}
-
-	/**
-	 * JSDoc is expected for functions.
-	 *
-	 * @param {string} menu Menu to be clicked.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async clickOnMenu( menu: string ): Promise< void > {
-		await this.page.click( selectors.myHome );
-		await this.page.waitForNavigation();
-	}
-}
-
-// Then, in a test file, page, or flow...
-
-const someComponent = new SomeComponent( page );
-await someComponent.clickOnMenu( 'My Home' );
-```
+TODO: include example of component using new framework
 
 ---
 
@@ -85,48 +55,78 @@ A well-implemented page object will abstract complex interactions on the page to
 
 ```typescript
 /**
- * JSDoc is expected for Class definitions.
+ * Represents the generic Import Content page.
  */
-export class FormPage {
+export class ImportContentPage {
 	private page: Page;
 
+	readonly heading: Locator;
+	readonly importFileContentPage: ImportFileContentPage;
+
 	/**
-	 * JSDoc is expected for constructor.
+	 * Constructs an instance of the page.
 	 *
-	 * @param {Page} page Page object.
+	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+
+		this.heading = this.page.getByRole( 'heading', { name: 'Import Content' } );
+		this.importFileContentPage = new ImportFileContentPage( page );
 	}
 
 	/**
-	 * JSDoc is expected for functions.
+	 * Navigates to the import content from Medium page.
 	 *
-	 * @param {string} text Text to be entered into the field.
-	 * @returns {Promise<void>} No return value.
+	 * @param siteSlug Site slug.
 	 */
-	async enterText( text: string ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
-
-		// Some tricky section of code
-		await this.page.fill( selectors.staticSelector );
+	async visit( siteSlug: string ): Promise< void > {
+		await this.page.goto( DataHelper.getCalypsoURL( `import/${ siteSlug }` ) );
 	}
 }
+```
 
-// Then, in a test file...
+Then in a test spec (using a custom fixture)
 
-it( 'Test case', async function () {
-	const somePage = new FormPage( this.page );
-	await somePage.enterText( 'blah' );
+```typescript
+test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
+	sitePublic,
+	pageImportContent,
+} ) => {
+	await test.step( 'When I visit the "Import Content" page for my new site', async function () {
+		await pageImportContent.visit( sitePublic.blog_details.site_slug );
+	} );
 } );
 ```
 
----
-
 ## Flows
 
-Flows capture a process that spans across multiple pages or components. Its purpose is to abstract a multi-step flow into one call which clearly articulates its intention.
+Flows capture a process that spans across multiple pages or components. Its purpose is to abstract a multi-step flow into one call which clearly articulates its intention. Creating a single flow that has ten "steps" can be more efficient that creating ten different page objects to represent every step.
 
 ```typescript
+/**
+ * Class encapsulating the flow when starting a new writing blog (`/setup/start-writing`)
+ */
+export class StartWritingFlow {
+	private page: Page;
+	readonly yourBlogsReadyHeading: Locator;
 
+	/**
+	 * Constructs an instance of the flow.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+		this.yourBlogsReadyHeading = this.page.getByRole( 'heading', { name: 'Your blog’s ready!' } );
+	}
+
+	/**
+	 * Navigates to the /setup/start-writing endpoint.
+	 * @returns {Promise<void>}
+	 */
+	async visit(): Promise< void > {
+		await this.page.goto( DataHelper.getCalypsoURL( '/setup/start-writing' ) );
+	}
+}
 ```
