@@ -89,7 +89,7 @@ export async function removePurchase( purchaseId: number ): Promise< void > {
 export async function cancelAndRefundPurchase(
 	purchaseId: number,
 	options: PurchaseCancelOptions | PurchaseDowngradeOptions
-): Promise< void > {
+): Promise< { status: string; message: string } > {
 	return wpcom.req.post( {
 		path: `/upgrades/${ purchaseId }/cancel`,
 		body: options,
