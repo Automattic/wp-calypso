@@ -149,12 +149,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
+			const botSlug = currentSupportInteraction?.bot_slug || 'wpcom-support-chat';
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const path = window.location.pathname + window.location.search;
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
-						path: `/odie/chat/${ currentSupportInteraction?.bot_slug }${ chatIdSegment }`,
+						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
 						signal,
 						body: {
@@ -164,7 +165,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
-						path: `/help-center/odie/chat/${ currentSupportInteraction?.bot_slug }${ chatIdSegment }`,
+						path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
 						method: 'POST',
 						signal,
 						data: {

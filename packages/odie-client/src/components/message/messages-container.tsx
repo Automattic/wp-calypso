@@ -141,11 +141,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		setSearchParams,
 	] );
 
-	// This case never happens. This is just a type guard.
-	if ( ! supportInteraction ) {
-		return null;
-	}
-
 	return (
 		<div
 			className={ clx( 'chatbox-messages', {
@@ -176,7 +171,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ ( chat.odieId || chat.provider === 'odie' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
-							supportInteraction.bot_slug,
+							supportInteraction?.bot_slug ?? 'wpcom-support-chat',
 							currentUser?.display_name
 						) }
 						key={ 0 }
