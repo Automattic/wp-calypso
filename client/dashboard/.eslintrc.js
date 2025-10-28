@@ -103,7 +103,14 @@ module.exports = {
 					},
 					{
 						name: '@wordpress/components',
-						importNames: [ 'Card', 'CardBody', 'CardDivider', 'CardHeader', 'CardFooter' ],
+						importNames: [
+							'Card',
+							'CardBody',
+							'CardDivider',
+							'CardHeader',
+							'CardFooter',
+							'CardMedia',
+						],
 						message: 'Use local components exported from client/dashboard/components/card instead.',
 					},
 				],

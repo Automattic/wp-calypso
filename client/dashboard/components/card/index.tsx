@@ -1,5 +1,13 @@
-// eslint-disable-next-line no-restricted-imports
-import { Card, CardBody, CardDivider, CardHeader, CardFooter } from '@wordpress/components';
+/* eslint-disable no-restricted-imports */
+import {
+	Card,
+	CardBody,
+	CardDivider,
+	CardHeader,
+	CardFooter,
+	CardMedia,
+} from '@wordpress/components';
+/* eslint-enable no-restricted-imports */
 import { useViewportMatch } from '@wordpress/compose';
 import { forwardRef, PropsWithChildren, HTMLAttributes } from 'react';
 
@@ -21,4 +29,4 @@ const DashboardCard = forwardRef< HTMLElement, CardProps >(
 
 DashboardCard.displayName = 'DashboardCard';
 
-export { DashboardCard as Card, CardBody, CardDivider, CardHeader, CardFooter };
+export { DashboardCard as Card, CardBody, CardDivider, CardHeader, CardFooter, CardMedia };

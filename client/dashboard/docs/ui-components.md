@@ -22,6 +22,12 @@ These components are part of the design system, if changes are required to imple
 
 Relying on CSS overrides and hacks should be avoided as much as possible.
 
+## Card, CardBody, CardHeader, CardFooter, CardDivider, CardMedia
+
+Use the provided `Card` component (`client/dashboard/components/card`) instead of importing directly from `@wordpress/components`. 
+
+Our custom `Card` component serves as a wrapper around the WordPress Card to reduce padding on small screen and ensure consistent spacing.
+
 ## Additional Layout Components
 
 In addition to the core components, the dashboard includes several reusable layout components that help structure the UI. They are found in the `/client/dashboard/components` directory:
