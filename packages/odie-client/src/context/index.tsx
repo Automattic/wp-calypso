@@ -32,7 +32,7 @@ export const emptyChat: Chat = {
 export const OdieAssistantContext = createContext< OdieAssistantContextInterface >( {
 	addMessage: noop,
 	botName: 'Wapuu',
-	botNameSlug: '',
+	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
@@ -64,7 +64,6 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
  */
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
-	defaultBotNameSlug,
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
@@ -78,22 +77,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	isChatRestricted = false,
 	children,
 } ) => {
-	const { botNameSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? store.getOdieBotNameSlug()
-				: defaultBotNameSlug;
+		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+			? store.getOdieBotNameSlug()
+			: 'wpcom-support-chat';
 
-			return {
-				botNameSlug: odieBotNameSlug as OdieAllowedBots,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[ defaultBotNameSlug ]
-	);
+		return {
+			botNameSlug: odieBotNameSlug as OdieAllowedBots,
+			isMinimized: store.getIsMinimized(),
+			isChatLoaded: store.getIsChatLoaded(),
+		};
+	}, [] );
 
 	const navigate = useNavigate();
 

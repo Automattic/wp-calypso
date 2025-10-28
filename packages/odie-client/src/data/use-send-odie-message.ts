@@ -68,6 +68,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	}, [ newConversation, shouldCreateConversation ] );
 
 	const {
+		botNameSlug,
 		selectedSiteId,
 		version,
 		setChat,
@@ -154,7 +155,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
-						path: `/odie/chat/${ currentSupportInteraction?.bot_slug }${ chatIdSegment }`,
+						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
 						signal,
 						body: {
@@ -164,7 +165,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
-						path: `/help-center/odie/chat/${ currentSupportInteraction?.bot_slug }${ chatIdSegment }`,
+						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
 						signal,
 						data: {
@@ -231,9 +232,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		},
 		onSettled: () => {
 			setChatStatus( 'loaded' );
-			queryClient.invalidateQueries( {
-				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
-			} );
+			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
 		},
 		onError: ( error ) => {
 			if ( error instanceof Event && error.type === 'abort' ) {

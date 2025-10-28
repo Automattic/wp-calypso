@@ -3,22 +3,16 @@ import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
 import { generateUUID } from '../utils';
-import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { OdieChat, ReturnedChat } from '../types';
 
 /**
  * Get the ODIE chat and manage the cache to save on API calls.
  */
 export const useOdieChat = ( chatId: number | null ) => {
-	const { version } = useOdieAssistantContext();
-	const { data: supportInteraction } = useCurrentSupportInteraction();
-
-	// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
-	// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
-	const botSlug = supportInteraction?.bot_slug || 'wpcom-support-chat';
+	const { botNameSlug, version } = useOdieAssistantContext();
 
 	return useQuery< OdieChat, Error >( {
-		queryKey: [ 'odie-chat', botSlug, chatId, version ],
+		queryKey: [ 'odie-chat', botNameSlug, chatId, version ],
 		queryFn: async (): Promise< OdieChat > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
@@ -31,11 +25,11 @@ export const useOdieChat = ( chatId: number | null ) => {
 				canAccessWpcomApis()
 					? await wpcomRequest( {
 							method: 'GET',
-							path: `/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
+							path: `/odie/chat/${ botNameSlug }/${ chatId }?${ queryParams }`,
 							apiNamespace: 'wpcom/v2',
 					  } )
 					: await apiFetch( {
-							path: `/help-center/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
+							path: `/help-center/odie/chat/${ botNameSlug }/${ chatId }?${ queryParams }`,
 							method: 'GET',
 					  } )
 			) as ReturnedChat;
@@ -51,7 +45,7 @@ export const useOdieChat = ( chatId: number | null ) => {
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
-		enabled: !! chatId && !! supportInteraction,
+		enabled: !! chatId,
 		staleTime: 3600, // 1 hour
 	} );
 };

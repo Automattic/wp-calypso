@@ -142,7 +142,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
 		useGetSupportInteractions( 'odie' );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
-		useGetOdieConversations( odieSupportInteractions );
+		useGetOdieConversations();
 
 	const isLoadingInteractions =
 		isLoadingOtherSupportInteractions ||

@@ -101,10 +101,6 @@ function AdminHelpCenterContent() {
 		};
 	}, [] );
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { botNameSlug: 'ciab-workflow-support_chat' }
-		: {};
-
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<HelpCenter
@@ -116,7 +112,6 @@ function AdminHelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				isCommerceGarden={ helpCenterData.isCommerceGarden }
-				{ ...botProps }
 			/>
 		</QueryClientProvider>
 	);

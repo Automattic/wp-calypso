@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 import { getOdieInitialMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
 	useAutoScroll,
 	useCreateZendeskConversation,
@@ -29,7 +28,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const { resetSupportInteraction } = useResetSupportInteraction();
@@ -40,7 +39,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
-	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const navType: NavigationType = useNavigationType();
 	const typingStatus = useSelect(
 		( select ) =>
@@ -141,11 +139,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		setSearchParams,
 	] );
 
-	// This case never happens. This is just a type guard.
-	if ( ! supportInteraction ) {
-		return null;
-	}
-
 	return (
 		<div
 			className={ clx( 'chatbox-messages', {
@@ -175,10 +168,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				</div>
 				{ ( chat.odieId || chat.provider === 'odie' ) && (
 					<ChatMessage
-						message={ getOdieInitialMessage(
-							supportInteraction.bot_slug,
-							currentUser?.display_name
-						) }
+						message={ getOdieInitialMessage( botNameSlug, currentUser?.display_name ) }
 						key={ 0 }
 						currentUser={ currentUser }
 						displayChatWithSupportLabel={ false }

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
-import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { Chat } from '../types';
 
 /**
@@ -9,21 +8,20 @@ import type { Chat } from '../types';
  * @returns useMutation return object.
  */
 export const useSendOdieFeedback = () => {
-	const { chat, version } = useOdieAssistantContext();
-	const { data: supportInteraction } = useCurrentSupportInteraction();
+	const { botNameSlug, chat, version } = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 
 	return useMutation( {
 		mutationFn: ( { messageId, ratingValue }: { messageId: number; ratingValue: number } ) => {
 			return wpcomRequest( {
 				method: 'POST',
-				path: `/odie/chat/${ supportInteraction?.bot_slug }/${ chat.odieId }/${ messageId }/feedback`,
+				path: `/odie/chat/${ botNameSlug }/${ chat.odieId }/${ messageId }/feedback`,
 				apiNamespace: 'wpcom/v2',
 				body: { rating_value: ratingValue, ...( version && { version } ) },
 			} );
 		},
 		onSuccess: ( data, { messageId, ratingValue } ) => {
-			const queryKey = [ 'chat', supportInteraction?.bot_slug, chat.odieId, 1, 30, true ];
+			const queryKey = [ 'chat', botNameSlug, chat.odieId, 1, 30, true ];
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return;
