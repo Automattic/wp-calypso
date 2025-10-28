@@ -67,6 +67,17 @@ export interface SiteScan {
 	reason?: string;
 }
 
+export interface SiteScanCounts {
+	ok: boolean;
+	fixed: number;
+	counts: {
+		new: number;
+		notified: number;
+		ignored: number;
+		fixed: number;
+	};
+}
+
 export interface SiteScanHistory {
 	threats: Threat[];
 	lifetime_stats: {
