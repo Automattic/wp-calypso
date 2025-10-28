@@ -1,8 +1,6 @@
 import { getTld } from '@automattic/domain-search';
 import tlds from 'tlds';
-import * as emailValidatorModule from '../../../node_modules/email-validator/index.js';
-
-const emailValidator = emailValidatorModule.default || emailValidatorModule;
+import { validate as baseEmailValidate } from '../../../node_modules/email-validator/index.js';
 
 export interface EmailValidationResult {
 	isValid: boolean;
@@ -42,7 +40,7 @@ export function validateEmail( email: string ): EmailValidationResult {
 
 	const trimmedEmail = email.trim();
 
-	if ( ! emailValidator.validate( trimmedEmail ) ) {
+	if ( ! baseEmailValidate( trimmedEmail ) ) {
 		return { isValid: false, error: 'invalid_format' };
 	}
 
@@ -83,5 +81,3 @@ export const validate = isValidEmail;
 export default {
 	validate: isValidEmail,
 };
-
-export { emailValidator as legacyEmailValidator };
