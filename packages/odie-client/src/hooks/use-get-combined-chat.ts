@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessage } from '../constants';
-import { emptyChat } from '../context';
+import { emptyChat, useOdieAssistantContext } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
@@ -60,6 +60,7 @@ export const useGetCombinedChat = (
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
+	const { botNameSlug } = useOdieAssistantContext();
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
@@ -129,7 +130,7 @@ export const useGetCombinedChat = (
 					if ( conversation ) {
 						// We need to load the conversation to get typing events. Load simply means "focus on".
 						Smooch.loadConversation( conversation.id );
-						setMainChatState( {
+						setMainChatState( ( mainChatState ) => ( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,
 							conversationId: conversation.id,
@@ -144,7 +145,7 @@ export const useGetCombinedChat = (
 							],
 							provider: 'zendesk',
 							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
-						} );
+						} ) );
 					}
 				} );
 			} catch ( error ) {
@@ -157,6 +158,7 @@ export const useGetCombinedChat = (
 				startNewInteraction( {
 					event_source: 'help-center',
 					event_external_id: crypto.randomUUID(),
+					bot_slug: botNameSlug,
 				} );
 			} finally {
 				setRefreshingAfterReconnect( false );
@@ -164,6 +166,7 @@ export const useGetCombinedChat = (
 		}
 	}, [
 		isOdieChatLoading,
+		botNameSlug,
 		chatStatus,
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
