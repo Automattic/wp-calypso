@@ -112,3 +112,44 @@ export interface SiteSpecificPlanProduct {
 	// Trial availability (conditional - when !is_current_plan && !is_free)
 	can_start_trial?: boolean;
 }
+
+export interface PlansDetailsResponse {
+	groups: PlansDetailsGroup[];
+	plans: PlansDetailsPlan[];
+	features_by_type: FeatureCategory[];
+	features: PlansDetailsFeature[];
+}
+
+export interface PlansDetailsGroup {
+	slug: string;
+	name: string;
+}
+
+export interface PlansDetailsPlan {
+	support_priority: number;
+	support_name: string;
+	groups: string[];
+	products: Array< { plan_id: number } >;
+	name: string; // e.g., "WordPress.com Personal"
+	short_name: string; // e.g., "Personal"
+	nonlocalized_short_name: string;
+	tagline: string; // Marketing string: "Best for personal use"
+	description: string; // Marketing string: "Boost your website with a custom domain name..."
+	features: string[]; // Array of feature IDs
+	highlighted_features: string[]; // Marketing strings: ["Remove WordPress.com ads", "Email support", ...]
+	storage: string; // e.g., "6 GB"
+	icon: string;
+}
+
+export interface PlansDetailsFeature {
+	id: string;
+	name: string; // Marketing string: "Free domain for One Year"
+	description: string; // Marketing string: "Get a free domain for one year..."
+	type?: string;
+}
+
+export interface FeatureCategory {
+	id: string;
+	name: string | null;
+	features: string[]; // Array of feature IDs
+}

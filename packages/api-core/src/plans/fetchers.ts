@@ -1,6 +1,6 @@
 import { toNumber } from '../normalize-utils';
 import { wpcom } from '../wpcom-fetcher';
-import type { PlanProduct, SiteSpecificPlanProduct } from './types';
+import type { PlanProduct, PlansDetailsResponse, SiteSpecificPlanProduct } from './types';
 
 /**
  * Normalizes a PlanProduct object to ensure all number fields are actual numbers.
@@ -92,4 +92,11 @@ export async function fetchPricedSitePlans(
 		query: params.toString(),
 	} );
 	return Object.values( plansByProductId ).map( normalizeSiteSpecificPlanProduct );
+}
+
+export async function fetchPlansDetails(): Promise< PlansDetailsResponse > {
+	return await wpcom.req.get( {
+		path: '/plans/details',
+		apiNamespace: 'wpcom/v2',
+	} );
 }
