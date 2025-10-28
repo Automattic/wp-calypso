@@ -5,9 +5,8 @@ import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
-import { emailsRoute } from '../../app/router/emails';
+import { mailboxesReadyRoute } from '../../app/router/emails';
 import { FIELD_MAILBOX, FIELD_PASSWORD, FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { useDomainFromUrlParam } from './use-domain-from-url-param';
@@ -48,10 +47,13 @@ export const useSetUpMailbox = () => {
 			} );
 
 			router.navigate( {
-				to: addQueryArgs( emailsRoute.fullPath, {
-					domain_to_poll: domainName,
-					mailbox_to_poll: localPart,
-				} ),
+				to: mailboxesReadyRoute.to,
+				params: {
+					domain: domainName,
+				},
+				search: {
+					mailboxes: localPart,
+				},
 			} );
 		} catch ( error: unknown ) {
 			recordTracksEvent( 'calypso_dashboard_emails_setup_mailbox_failure', {

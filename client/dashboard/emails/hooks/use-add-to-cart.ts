@@ -44,6 +44,11 @@ export const useAddToCart = () => {
 		const redirectPath = router.buildLocation( {
 			to: mailboxesReadyRoute.to,
 			params: { domain: domain.domain },
+			search: {
+				mailboxes: mailboxOperations.mailboxes
+					.map( ( mailbox ) => mailbox.getFieldValue( 'mailbox' ) )
+					.join( ',' ),
+			},
 		} ).href;
 
 		const checkoutPath = addQueryArgs( '/checkout/' + site?.slug || '', {

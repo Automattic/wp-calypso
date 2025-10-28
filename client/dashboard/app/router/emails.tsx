@@ -1,4 +1,4 @@
-import { Domain, DomainSubtype, isWpError } from '@automattic/api-core';
+import { Domain, DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
 	mailboxAccountsQuery,
@@ -10,7 +10,7 @@ import {
 	sitesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { MailboxProvider, IntervalLength } from '../../emails/types';
 import { domainHasEmail } from '../../utils/domain';
 import { rootRoute } from './root';
@@ -264,15 +264,38 @@ export const addEmailForwarderRoute = createRoute( {
 );
 
 export const mailboxesReadyRoute = createRoute( {
-	head: () => ( {
+	head: ( { loaderData }: { loaderData?: { emails: EmailBox[] } } ) => ( {
 		meta: [
 			{
-				title: __( 'Your mailboxes are ready' ),
+				title:
+					loaderData &&
+					_n( 'Your mailbox is ready!', 'Your mailboxes are ready!', loaderData.emails.length ),
 			},
 		],
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/mailboxes-ready/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		await redirectIfInvalidDomain( domainName );
+	},
+	loader: async ( { location, params: { domain: domainName } } ) => {
+		const search: Record< string, string > = location.search;
+		const mailboxes = search.mailboxes?.split( ',' ) ?? [];
+
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		// Intentional call to `fetchQuery` instead of `ensureQueryData` to bypass cache and always fetch fresh data.
+		const mailboxAccounts = await queryClient.fetchQuery(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		const mailboxAccount = mailboxAccounts[ 0 ];
+		const emails = mailboxAccount.emails.filter( ( { mailbox } ) => mailboxes.includes( mailbox ) );
+
+		return {
+			mailboxAccount,
+			emails,
+		};
+	},
 } ).lazy( () =>
 	import( '../../emails/mailboxes-ready' ).then( ( d ) =>
 		createLazyRoute( 'mailboxes-ready' )( {
