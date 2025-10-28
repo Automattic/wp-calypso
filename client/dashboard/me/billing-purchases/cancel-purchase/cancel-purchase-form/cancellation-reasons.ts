@@ -2,6 +2,7 @@ import { JETPACK_PRODUCTS_LIST } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import * as React from 'react';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from '../../../../utils/jetpack-plans';
+import { isValueTruthy } from '../../payment-methods';
 import type { PlanProduct } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
@@ -577,7 +578,7 @@ function getExtraJetpackReasons(
 		...( downgradablePlans || [] ),
 		...JETPACK_PRODUCTS_LIST,
 	];
-	const slugToPlanProduct = ( slug: string ): Partial< PlanProduct > | undefined => {
+	const slugToPlanProduct = ( slug: string ): PlanProduct | undefined => {
 		const item = plans.find( ( plan ) => plan.product_slug === slug );
 		if ( ! item ) {
 			return;
@@ -587,7 +588,7 @@ function getExtraJetpackReasons(
 	};
 	const downgradableSelectorProduct = downgradablePlansAndProductsSlug
 		.map( slugToPlanProduct )
-		.filter( Boolean ) as PlanProduct[];
+		.filter( isValueTruthy );
 
 	const selectOptions = downgradableSelectorProduct.map( ( product ) => {
 		return {

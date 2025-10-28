@@ -276,7 +276,7 @@ export interface Purchase {
 	blog_id: number;
 
 	blogname: string;
-	site_slug?: string;
+	site_slug: string;
 	subscribed_date: string;
 	subscription_status: 'active' | 'inactive';
 	renewal_price_tier_usage_quantity: number | undefined | null;

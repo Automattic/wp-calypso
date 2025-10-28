@@ -100,7 +100,7 @@ type StepProps = {
 	site?: Site;
 	purchase: Purchase;
 	currencyCode: string;
-	plans?: PlanProduct[];
+	plans: PlanProduct[];
 	refundAmount?: string;
 	downgradePlanPrice?: number | null;
 	closeDialog?: () => void;

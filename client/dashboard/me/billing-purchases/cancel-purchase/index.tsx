@@ -142,6 +142,7 @@ const willShowDomainOptionsRadioButtons = (
 export default function CancelPurchase() {
 	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
+		questionOneOrder: [],
 		initialized: false,
 	} );
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -210,9 +211,7 @@ export default function CancelPurchase() {
 	const { data: sitePlans, isPending: sitePlansQueryIsPending } = useQuery( {
 		...sitePricedPlansQuery( '', purchase.blog_id ),
 	} );
-	const { data: plans, isPending: plansQueryIsPending } = useQuery( {
-		...plansQuery( '', locale ),
-	} );
+	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
 	const onDialogClose = () => {
 		setState( ( state ) => ( {
 			...state,
@@ -448,7 +447,7 @@ export default function CancelPurchase() {
 		setState( ( state ) => ( { ...state, atomicRevertCheckTwo: isChecked } ) );
 
 	const setStateBasedOnExtendedStatus = useCallback( async () => {
-		const newState: CancelPurchaseState = {};
+		const newState: Partial< CancelPurchaseState > = {};
 		if ( hasBeenExtended && newState.upsell === 'free-month-offer' ) {
 			newState.upsell = '';
 		}
@@ -860,7 +859,6 @@ export default function CancelPurchase() {
 
 	const isDataLoading =
 		sitePlansQueryIsPending ||
-		plansQueryIsPending ||
 		siteBackupsQueryIsPending ||
 		siteScanQueryIsPending ||
 		siteEngagementMonthlyAverageStatsQueryIsPending ||
@@ -1140,6 +1138,7 @@ export default function CancelPurchase() {
 				plans={ plans }
 				purchase={ purchase }
 				purchases={ purchases }
+				questionOneOrder={ state.questionOneOrder }
 				questionOneRadio={ state.questionOneRadio }
 				questionOneText={ state.questionOneText }
 				questionTwoOrder={ state.questionTwoOrder }
@@ -1504,6 +1503,7 @@ export default function CancelPurchase() {
 						plans={ plans }
 						purchase={ purchase }
 						purchases={ purchases }
+						questionOneOrder={ state.questionOneOrder }
 						questionOneRadio={ state.questionOneRadio }
 						questionOneText={ state.questionOneText }
 						questionTwoOrder={ state.questionTwoOrder }

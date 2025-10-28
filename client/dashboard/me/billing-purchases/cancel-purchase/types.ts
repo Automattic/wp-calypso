@@ -12,7 +12,7 @@ export interface CancelPurchaseState {
 	isNextAdventureValid?: boolean;
 	isShowingMarketplaceSubscriptionsDialog?: boolean;
 	isSubmitting?: boolean;
-	questionOneOrder?: string[];
+	questionOneOrder: string[];
 	questionOneRadio?: string;
 	questionOneText?: string;
 	questionOneDetails?: string;

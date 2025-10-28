@@ -188,7 +188,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 				return (
 					<EducationContentStep
 						type={ upsell }
-						site={ site }
+						siteSlug={ purchase.site_slug }
 						onDecline={ isLastStep ? onSubmit : clickNext }
 						cancellationReason={ questionOneText }
 					/>
@@ -445,7 +445,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 						disabled={ isApplyingOffer ?? ( false || Boolean( offerApplyError ) ) ?? false }
 						isBusy={ isApplyingOffer ?? false }
 					>
-						{ isApplyingOffer ?? false ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+						{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
 					</Button>
 				</ButtonStack>
 			);

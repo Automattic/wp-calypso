@@ -220,8 +220,6 @@ import { ExternalLink, ProgressBar } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf, hasTranslation } from '@wordpress/i18n';
 import { formatRelative } from 'date-fns';
-import MaterialIcon from '../components/material-icon';
-import Theme2Image from './assets/images/theme-2.jpg';
 import { isJetpackPlanSlug, getPlanFeaturesAndAvailability } from './plans';
 import {
 	isJetpackAntiSpamSlug,
@@ -233,16 +231,33 @@ import {
 import type {
 	BackupEntry,
 	DotcomFeatureSlug,
-	FeatureList,
-	FeatureObject,
 	HostingFeatureSlug,
 	JetpackFeatureSlug,
 	JetpackModuleSlug,
 	Site,
 	SiteScan,
 	SiteScanCounts,
+	PlanProduct,
 } from '@automattic/api-core';
 
+// This type represents things that React can render, but which also exist. (E.g.
+// not nullable, not undefined, etc.)
+type ExistingReactNode = React.ReactElement | string | number;
+
+// Translate hooks, like component interpolation or highlighting untranslated strings,
+// force us to declare the return type as a generic React node, not as just string.
+type TranslateResult = ExistingReactNode;
+
+type FeatureObject = {
+	getSlug: () => string;
+	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
+	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
+	getFeatureGroup?: () => string;
+	getStoreSlug?: () => string;
+	isPlan?: boolean;
+};
+
+type FeatureList = Record< string, FeatureObject >;
 /**
  * Get all features for a plan
  *
@@ -250,7 +265,7 @@ import type {
  *
  * Returns an array of all the plan features (may have duplicates)
  */
-function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] {
+function getAllFeaturesForPlan( plan: PlanProduct | string ): TranslateResult[] {
 	const planObj = getPlanFeaturesAndAvailability( plan );
 	if ( ! planObj ) {
 		return [];
@@ -287,7 +302,7 @@ function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] {
  * Collects features for a plan by calling all possible feature methods for the plan.
  */
 //used
-export function planHasFeature( plan: string | Plan, feature: string ): boolean {
+export function planHasFeature( plan: string | PlanProduct, feature: string ): boolean {
 	const allFeatures = getAllFeaturesForPlan( plan );
 	return allFeatures.includes( feature );
 }
@@ -296,7 +311,10 @@ export function planHasFeature( plan: string | Plan, feature: string ): boolean 
  * Determine if a plan has at least one of several features.
  */
 //used
-export function planHasAtLeastOneFeature( plan: string | Plan, features: string[] ): boolean {
+export function planHasAtLeastOneFeature(
+	plan: string | PlanProduct,
+	features: string[]
+): boolean {
 	const allFeatures = getAllFeaturesForPlan( plan );
 	return features.some( ( feature ) => allFeatures.includes( feature ) );
 }
@@ -593,7 +611,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
 		getTitle: () => __( 'Premium themes' ),
-		getIcon: () => <img src={ Theme2Image } alt={ __( 'Premium themes' ) } />,
 		getDescription: () => __( 'Switch between a collection of premium design themes.' ),
 	},
 
@@ -730,7 +747,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 
 			return __( 'Free domain for one year' );
 		},
-		getAlternativeTitle: () => __( 'Free custom domain' ),
 		getDescription: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return sprintf(
@@ -761,7 +777,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_JETPACK_ADVANCED ]: {
 		getSlug: () => FEATURE_JETPACK_ADVANCED,
 		getTitle: () => __( 'Jetpack advanced features' ),
-		getHeader: () => __( 'Jetpack advanced' ),
 		getDescription: () =>
 			__(
 				'Speed up your site’s performance and protect it from spammers. ' +
@@ -897,7 +912,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_1GB_STORAGE ]: {
 		getSlug: () => FEATURE_1GB_STORAGE,
 		getTitle: () => __( '1GB' ),
-		getCompareTitle: () => __( '1 GB' ),
 		getDescription: () => __( 'Storage space for adding images and documents to your website.' ),
 	},
 
@@ -909,7 +923,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 
 	[ FEATURE_6GB_STORAGE ]: {
 		getSlug: () => FEATURE_6GB_STORAGE,
-		getCompareTitle: () => __( '6 GB' ),
 		getTitle: () => __( '6 GB' ),
 		getDescription: () => __( 'Upload more images, audio, and documents to your website.' ),
 	},
@@ -917,14 +930,12 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_13GB_STORAGE ]: {
 		getSlug: () => FEATURE_13GB_STORAGE,
 		getTitle: () => __( '13 GB' ),
-		getCompareTitle: () => __( '13 GB' ),
 		getDescription: () => __( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
 		getTitle: () => __( '50 GB' ),
-		getCompareTitle: () => __( '50 GB' ),
 		getDescription: () => __( 'Storage space for adding images and documents to your website.' ),
 	},
 
@@ -932,7 +943,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_200GB_STORAGE ]: {
 		getSlug: () => FEATURE_200GB_STORAGE,
 		getTitle: () => __( '200 GB' ),
-		getCompareTitle: () => __( '200 GB' ),
 		getDescription: () => __( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
@@ -1092,7 +1102,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 			__(
 				'Ship physical products in a snap and show live rates from shipping carriers like UPS and other shipping options.'
 			),
-		getCompareSubtitle: () => __( 'Seamlessly integrated with your plan' ),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
@@ -1148,7 +1157,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 
 	[ FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => FEATURE_PLAN_SECURITY_DAILY,
-		getIcon: () => 'lock',
 		getTitle: () => __( 'All Security Daily features' ),
 		isPlan: true,
 	},
@@ -1163,7 +1171,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	},
 	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_DAILY_V2,
-		getIcon: () => 'cloud-upload',
 		getTitle: () => __( 'All VaultPress Backup Daily features' ),
 		getDescription: () =>
 			createInterpolateElement(
@@ -1178,7 +1185,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 
 	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-		getIcon: () => 'cloud-upload',
 		getTitle: () => __( 'VaultPress Backup Real-time (off-site)' ),
 		getDescription: () =>
 			createInterpolateElement(
@@ -1202,10 +1208,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	// in the near future.
 	[ FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SCAN_DAILY_V2,
-		getIcon: () => ( {
-			icon: 'security',
-			component: MaterialIcon,
-		} ),
 		getTitle: () => __( 'Scan (daily, automated)' ),
 		getDescription: () =>
 			createInterpolateElement(
@@ -1224,10 +1226,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	// in the near future.
 	[ FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		getIcon: () => ( {
-			icon: 'security',
-			component: MaterialIcon,
-		} ),
 		getTitle: () => __( 'Scan (real-time, automated)' ),
 		getDescription: () =>
 			createInterpolateElement(
@@ -1254,7 +1252,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
 		getSlug: () => FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-		getIcon: () => 'clipboard',
 		getTitle: () => __( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			createInterpolateElement(
@@ -1537,13 +1534,11 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		getTitle: () => getTransactionFeeCopy( 8 ),
-		getAlternativeTitle: () => getTransactionFeeCopy( 8 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		getTitle: () => getTransactionFeeCopy( 4 ),
-		getAlternativeTitle: () => getTransactionFeeCopy( 4 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
@@ -1556,7 +1551,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 					commission: 2,
 				}
 			),
-		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
@@ -1569,7 +1563,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 					commission: 0,
 				}
 			),
-		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
@@ -1608,8 +1601,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_STYLE_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: () => __( 'Customize fonts and colors sitewide' ),
-		getCompareTitle: () =>
-			__( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
 			__( 'Take control of every font, color, and detail of your site’s design.' ),
 	},
@@ -1649,7 +1640,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
 		getTitle: () => __( 'Global CDN with 28+ locations' ),
-		getCompareTitle: () => __( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: () => __( 'Rely on ultra-fast site speeds, just about anywhere on earth.' ),
 	},
 	[ FEATURE_REAL_TIME_SECURITY_SCANS ]: {
@@ -1700,7 +1690,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 		getSlug: () => FEATURE_SELL_SHIP,
 		getTitle: () => __( 'Sell and ship products' ),
 		getDescription: () => __( 'Sell and ship out physical goods from your site.' ),
-		getCompareSubtitle: () => __( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN ]: {
 		getSlug: () => FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
@@ -1726,20 +1715,17 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 		getTitle: () => __( 'Min/Max Quantities' ),
 		getDescription: () =>
 			__( 'Specify the minimum and maximum allowed product quantities for orders.' ),
-		getCompareSubtitle: () => __( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS_V2,
 		getTitle: () => __( 'Payments in 60+ countries' ),
 		getDescription: () => __( 'Accept payments for goods and services, just about anywhere.' ),
-		getCompareSubtitle: () => __( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SALES_REPORTS ]: {
 		getSlug: () => FEATURE_SALES_REPORTS,
 		getTitle: () => __( 'Sales reports' ),
 		getDescription: () =>
 			__( 'Stay up to date on sales and identify trends with intuitive sales reports.' ),
-		getCompareSubtitle: () => __( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
 		getSlug: () => FEATURE_PRODUCT_ADD_ONS,
@@ -1748,7 +1734,6 @@ export const FEATURES_LIST: FeatureList = /*( () =>*/ {
 			__(
 				'Offer extra products and services, such as gift wrapping, a special message, extended warranty, insurance, customizations, and more.'
 			),
-		getCompareSubtitle: () => __( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -2193,7 +2178,10 @@ export const getJetpackDynamicFeaturesList: JetpackDynamicFeatureList = ( {
 	if ( hasScan ) {
 		const siteScanProgress =
 			siteScanState?.state === 'scanning' ? siteScanState?.current?.progress ?? 0 : 0;
-		const { threats, most_recent: mostRecent } = siteScanState ?? { threats: 0, most_recent: 0 };
+		const { threats, most_recent: mostRecent } = siteScanState ?? {
+			threats: 0,
+			most_recent: undefined,
+		};
 		const mostRecentScanAgo = mostRecent
 			? formatRelative( new Date( mostRecent.timestamp ), new Date() )
 			: '';

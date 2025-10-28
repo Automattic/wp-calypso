@@ -11,7 +11,6 @@ import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import { useHelpCenter } from '../../../../../app/help-center';
 import MaterialIcon from '../../../../../components/material-icon';
 import { PageHeader } from '../../../../../components/page-header';
-import type { SiteDetails } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -68,12 +67,12 @@ function Content( { image, ...props }: ContentProps ) {
 
 type StepProps = {
 	type: string;
-	site: SiteDetails;
+	siteSlug: string;
 	onDecline?: () => void;
 	cancellationReason?: string;
 };
 
-export default function EducationalContentStep( { type, site, ...props }: StepProps ) {
+export default function EducationalContentStep( { type, siteSlug, ...props }: StepProps ) {
 	const { setShowHelpCenter, setSubject } = useHelpCenter();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -172,7 +171,7 @@ export default function EducationalContentStep( { type, site, ...props }: StepPr
 									'Go to Upgrades → Domains and click <link>Add a Domain</link> to register your plan’s free domain'
 								),
 								{
-									link: <Button href={ `/domains/add/${ site.slug }` } variant="link" />,
+									link: <Button href={ `/domains/add/${ siteSlug }` } variant="link" />,
 								}
 							) }
 						</li>
