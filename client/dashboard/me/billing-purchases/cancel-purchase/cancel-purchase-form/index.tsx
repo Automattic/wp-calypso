@@ -7,7 +7,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { useMemo } from 'react';
 import { ButtonStack } from '../../../../components/button-stack';
-import { isPlan } from '../../../../utils/plans';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { isSiteAutomatedTransfer } from '../../../../utils/site-types';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
@@ -29,30 +28,28 @@ import {
 import type {
 	Site,
 	Purchase,
-	PricedAPISitePlan,
+	PlanProduct,
 	Product,
 	SiteSpecificPlanProduct,
+	CancellationOffer,
 } from '@automattic/api-core';
 
 import './style.scss';
 
-interface CancellationOffer {
-	original_price: number;
-	raw_price: number;
-}
-
 export interface CancelPurchaseFormProps {
 	atomicRevertCheckOne?: boolean;
 	atomicRevertCheckTwo?: boolean;
-	atomicRevertOnClickCheckOne?: ( isChecked: boolean ) => void;
-	atomicRevertOnClickCheckTwo?: ( isChecked: boolean ) => void;
+	atomicRevertOnClickCheckOne: ( isChecked: boolean ) => void;
+	atomicRevertOnClickCheckTwo: ( isChecked: boolean ) => void;
 	atomicTransfer?: { created_at: string }; //TODO: maybe delete
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
-	cancellationOffer?: CancellationOffer | null;
+	cancellationOffer?: Pick<
+		CancellationOffer,
+		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
+	>;
 	clickNext?: () => void;
 	closeDialog?: () => void;
-	currentPlan?: Plan;
 	disableButtons?: boolean;
 	downgradeClick?: ( upsell: string ) => void;
 	downgradePlanToPersonalPrice?: number; //TODO: maybe delete
@@ -72,27 +69,27 @@ export interface CancelPurchaseFormProps {
 	isSubmitting?: boolean;
 	isVisible?: boolean;
 	offerApplyError?: Error | null;
-	offerDiscountBasedFromPurchasePrice?: number; //TODO: maybe delete
+	offerDiscountBasedFromPurchasePrice: number; //TODO: maybe delete
 	onClose?: () => void; //TODO: maybe delete
 	onClickAccept?: () => void; //TODO: maybe delete
-	onGetCancellationOffer?: () => void; //TODO: maybe delete
-	onImportRadioChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void; //TODO: maybe delete
+	onGetDiscount: () => void; //TODO: maybe delete
+	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void; //TODO: maybe delete
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
-	onRadioOneChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
+	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
 	onSurveyComplete?: () => void;
-	onTextOneChange?: (
+	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
 	) => void;
 	onTextThreeChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onTextTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
-	plans?: Record< string, PricedAPISitePlan >;
+	plans: PlanProduct[];
 	products?: Product[];
 	purchase: Purchase;
 	purchases: Purchase[];
-	questionOneOrder?: string[];
+	questionOneOrder: string[];
 	questionOneRadio?: string;
 	questionOneText?: string;
 	questionTwoOrder?: string[];
@@ -147,6 +144,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 			atomicRevertCheckTwo,
 			surveyStep,
 			upsell,
+			plans,
 			questionOneOrder,
 			questionOneText,
 			questionTwoOrder,
@@ -154,13 +152,14 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 			closeDialog,
 			onSubmit,
 			clickNext,
+			cancellationOffer,
 			onRadioOneChange,
 			onTextOneChange,
 			onRadioTwoChange,
 			onTextTwoChange,
 			onImportRadioChange,
 			freeMonthOfferClick,
-			onGetCancellationOffer,
+			onGetDiscount,
 			getAllSurveySteps,
 			offerDiscountBasedFromPurchasePrice,
 			onTextThreeChange,
@@ -170,6 +169,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
 				<FeedbackStep
+					plans={ plans }
 					purchase={ purchase }
 					isImport={ isImport }
 					cancellationReasonCodes={ questionOneOrder }
@@ -181,10 +181,10 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 		}
 
 		if ( surveyStep === UPSELL_STEP ) {
-			const allSteps = getAllSurveySteps();
-			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+			const allSteps = getAllSurveySteps && getAllSurveySteps();
+			const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-			if ( upsell.startsWith( 'education:' ) ) {
+			if ( upsell?.startsWith( 'education:' ) ) {
 				return (
 					<EducationContentStep
 						type={ upsell }
@@ -197,7 +197,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 
 			return (
 				<UpsellStep
-					upsell={ upsell }
+					upsell={ upsell ?? '' }
 					cancellationReason={ questionOneText }
 					purchase={ purchase }
 					currencyCode={ purchase.currency_code }
@@ -209,6 +209,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 							: props.downgradePlanToMonthlyPrice
 					}
 					closeDialog={ closeDialog }
+					plans={ plans }
 					cancelBundledDomain={ props.cancelBundledDomain }
 					includedDomainPurchase={ props.includedDomainPurchase }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
@@ -221,8 +222,8 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
 			return (
 				<NextAdventureStep
-					isPlan={ isPlan( purchase ) }
-					adventureOptions={ questionTwoOrder }
+					isPlan={ purchase.is_plan }
+					adventureOptions={ questionTwoOrder ?? [] }
 					onSelectNextAdventure={ onRadioTwoChange }
 					onChangeNextAdventureDetails={ onTextTwoChange }
 					onChangeText={ onTextThreeChange }
@@ -237,12 +238,13 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					atomicTransfer={ atomicTransfer }
 					purchase={ purchase }
 					site={ site }
-					atomicRevertCheckOne={ atomicRevertCheckOne }
+					action="cancel-purchase"
+					atomicRevertCheckOne={ atomicRevertCheckOne ?? false }
 					onClickCheckOne={ atomicRevertOnClickCheckOne }
-					atomicRevertCheckTwo={ atomicRevertCheckTwo }
+					atomicRevertCheckTwo={ atomicRevertCheckTwo ?? false }
 					onClickCheckTwo={ atomicRevertOnClickCheckTwo }
 					hasBackupsFeature={ hasBackupsFeature }
-					isRemovePlan={ flowType === CANCEL_FLOW_TYPE.REMOVE && isPlan( purchase ) }
+					isRemovePlan={ flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_plan }
 				/>
 			);
 		}
@@ -285,7 +287,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 		}
 		// Step 3: Offer
 		// This step is only made available after offers are checked for/ loaded.
-		if ( surveyStep === CANCELLATION_OFFER_STEP ) {
+		if ( surveyStep === CANCELLATION_OFFER_STEP && cancellationOffer ) {
 			// Show an offer, the user can accept it or go ahead with the cancellation.
 			return (
 				<JetpackCancellationOfferStep
@@ -293,7 +295,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					purchase={ purchase }
 					offer={ cancellationOffer }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
-					onGetDiscount={ onGetCancellationOffer }
+					onGetDiscount={ onGetDiscount }
 					isAkismet={ !! props?.isAkismet }
 				/>
 			);
@@ -338,7 +340,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 				return false;
 			}
 
-			return Boolean( questionOneRadio && ( ! isPlan( purchase ) || questionOneText ) );
+			return Boolean( questionOneRadio && ( ! purchase.is_plan || questionOneText ) );
 		}
 
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
@@ -372,11 +374,13 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 			solution,
 			disableButtons,
 			getAllSurveySteps,
+			isApplyingOffer,
+			offerApplyError,
 		} = props;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
-		const allSteps = getAllSurveySteps();
-		const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+		const allSteps = getAllSurveySteps && getAllSurveySteps();
+		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
 		if ( surveyStep === UPSELL_STEP ) {
 			return null;
@@ -436,12 +440,12 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 						className="jetpack-cancellation-offer__accept-cta"
 						variant="primary"
 						onClick={ () => {
-							onClickAccept();
+							onClickAccept && onClickAccept();
 						} }
-						disabled={ isApplyingOffer ?? ( false || offerApplyError ) ?? false }
-						isBusy={ isApplyingOffer }
+						disabled={ isApplyingOffer ?? ( false || Boolean( offerApplyError ) ) ?? false }
+						isBusy={ isApplyingOffer ?? false }
 					>
-						{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+						{ isApplyingOffer ?? false ? __( 'Getting Discount' ) : __( 'Get discount' ) }
 					</Button>
 				</ButtonStack>
 			);

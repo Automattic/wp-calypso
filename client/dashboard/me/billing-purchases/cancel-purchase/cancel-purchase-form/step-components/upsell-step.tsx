@@ -18,8 +18,7 @@ import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payme
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
-import type { UpsellType } from '../get-upsell-type';
-import type { SiteDetails, Purchase } from '@automattic/api-core';
+import type { PlanProduct, Site, Purchase } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -36,7 +35,7 @@ type UpsellProps = {
 	acceptButtonUrl?: string;
 	declineButtonText?: TranslateResult;
 	onAccept?: () => void;
-	onDecline: () => void;
+	onDecline?: () => void;
 };
 
 function Upsell( { image, ...props }: UpsellProps ) {
@@ -81,35 +80,36 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	);
 }
 
-function getLiveChatUrl( type: UpsellType, site: SiteDetails, purchase: Purchase ) {
+function getLiveChatUrl( type: string, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
-			return `/purchases/subscriptions/${ site.slug }/${ purchase.ID }`;
+			return `/purchases/subscriptions/${ purchase.site_slug }/${ purchase.ID }`;
 		case 'live-chat:plugins':
-			return `/plugins/${ site.slug }`;
+			return `/plugins/${ purchase.site_slug }`;
 		case 'live-chat:themes':
-			return `/themes/${ site.slug }`;
+			return `/themes/${ purchase.site_slug }`;
 		case 'live-chat:domains':
-			return `/domains/manage/${ site.slug }`;
+			return `/domains/manage/${ purchase.site_slug }`;
 	}
 
 	return '';
 }
 
 type StepProps = {
-	upsell: UpsellType;
-	site: SiteDetails;
+	upsell: string;
+	site?: Site;
 	purchase: Purchase;
 	currencyCode: string;
-	refundAmount: string;
-	downgradePlanPrice: number | null;
-	closeDialog: () => void;
-	cancelBundledDomain: boolean;
-	includedDomainPurchase: object;
-	onDeclineUpsell: () => void;
+	plans?: PlanProduct[];
+	refundAmount?: string;
+	downgradePlanPrice?: number | null;
+	closeDialog?: () => void;
+	cancelBundledDomain?: boolean;
+	includedDomainPurchase?: object;
+	onDeclineUpsell?: () => void;
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
-	cancellationReason: string;
+	cancellationReason?: string;
 };
 
 export default function UpsellStep( {
@@ -127,11 +127,11 @@ export default function UpsellStep( {
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { setSubject, setShowHelpCenter } = useHelpCenter();
-	const businessPlan = plans?.[ PLAN_BUSINESS ] ?? undefined;
+	const businessPlan = plans?.find( ( plan ) => PLAN_BUSINESS === plan.product_slug );
 	const businessPlanName = businessPlan?.product_name;
-	const personalPlan = plans?.[ PLAN_PERSONAL ] ?? undefined;
+	const personalPlan = plans?.find( ( plan ) => PLAN_PERSONAL === plan.product_slug );
 	const personalPlanName = personalPlan?.product_name ?? '';
-	const thePlan = plans?.[ purchase.product_slug ] ?? undefined;
+	const thePlan = plans?.find( ( plan ) => purchase.product_slug === plan.product_slug );
 	const planName = thePlan?.product_name ?? '';
 
 	const { recordTracksEvent } = useAnalytics();
@@ -157,14 +157,14 @@ export default function UpsellStep( {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_live_chat_click', {
 							type: upsell,
 						} );
-						window.location.href = getLiveChatUrl( upsell, site, purchase );
+						window.location.href = getLiveChatUrl( upsell, purchase );
 						const initialMessage =
 							"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 							props.cancellationReason;
 						setSubject( initialMessage );
 						setShowHelpCenter( true );
 
-						props.closeDialog();
+						props.closeDialog && props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
@@ -223,7 +223,7 @@ export default function UpsellStep( {
 					acceptButtonText={ sprintf( __( 'I want the %(businessPlanName)s plan' ), {
 						businessPlanName,
 					} ) }
-					acceptButtonUrl={ `/checkout/${ site.slug }/business?coupon=${ couponCode }` }
+					acceptButtonUrl={ `/checkout/${ purchase.site_slug }/business?coupon=${ couponCode }` }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
@@ -283,7 +283,7 @@ export default function UpsellStep( {
 										'You can downgrade immediately and get a partial refund of %(refundAmount)s.'
 									),
 									{
-										refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
+										refundAmount: formatCurrency( parseFloat( refundAmount ?? '0' ), currencyCode ),
 									}
 							  )
 							: null }

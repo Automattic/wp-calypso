@@ -14,7 +14,10 @@ import type { FC } from 'react';
 interface Props {
 	purchase: Purchase;
 	siteId: number;
-	offer: CancellationOffer;
+	offer: Pick<
+		CancellationOffer,
+		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
+	>;
 	percentDiscount: number;
 	onGetDiscount: () => void;
 	isAkismet?: boolean;
@@ -206,20 +209,8 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 									rel="noopener noreferrer"
 								/>
 							),
-							autoRenewalSupportPage: (
-								<InlineSupportLink
-									supportContext="autorenewal"
-									showIcon={ false }
-									showSupportModal={ false }
-								/>
-							),
-							faqCancellingSupportPage: (
-								<InlineSupportLink
-									supportContext="cancel_purchase"
-									showIcon={ false }
-									showSupportModal={ false }
-								/>
-							),
+							autoRenewalSupportPage: <InlineSupportLink supportContext="autorenewal" />,
+							faqCancellingSupportPage: <InlineSupportLink supportContext="cancel_purchase" />,
 						}
 					) }
 				</p>

@@ -21,7 +21,6 @@ interface CancelPurchaseButtonProps extends CancelPurchaseFormProps {
 	isAkismet: boolean;
 	isJetpack: boolean;
 	isLoading: boolean;
-	offerDiscountBasedFromPurchasePrice?: number | undefined;
 	onCancellationComplete: () => void;
 	onCancellationStart?: ( () => void ) | undefined;
 	onDialogClose: () => void;
@@ -90,7 +89,6 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		atomicRevertOnClickCheckTwo,
 		clickNext,
 		closeDialog,
-		currentPlan,
 		getAllSurveySteps,
 		importQuestionRadio,
 		isNextAdventureValid,
@@ -106,7 +104,9 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		onTextThreeChange,
 		onTextTwoChange,
 		plans,
+		onGetDiscount,
 		purchases,
+		questionOneOrder,
 		questionOneRadio,
 		questionOneText,
 		questionTwoOrder,
@@ -165,11 +165,11 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					atomicRevertCheckTwo={ atomicRevertCheckTwo }
 					atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
 					atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
+					onGetDiscount={ onGetDiscount }
 					cancelBundledDomain={ cancelBundledDomain }
 					cancellationInProgress={ isLoading }
 					clickNext={ clickNext }
 					closeDialog={ closeDialog }
-					currentPlan={ currentPlan }
 					disableButtons={ disableButtons }
 					downgradeClick={ props.downgradeClick }
 					flowType={ getPurchaseCancellationFlowType( purchase ) }
@@ -195,6 +195,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					plans={ plans }
 					purchase={ purchase }
 					purchases={ purchases }
+					questionOneOrder={ questionOneOrder }
 					questionOneRadio={ questionOneRadio }
 					questionOneText={ questionOneText }
 					questionTwoOrder={ questionTwoOrder }
@@ -213,7 +214,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 						isDialogVisible={ shouldShowMarketplaceDialog ?? false }
 						closeDialog={ closeMarketplaceSubscriptionsDialog }
 						removePlan={ handleMarketplaceDialogContinue }
-						planName={ planName }
+						planName={ planName ?? '' }
 						activeSubscriptions={ activeSubscriptions }
 						// Translators: %(plan)s is the name of the plan being cancelled
 						sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {

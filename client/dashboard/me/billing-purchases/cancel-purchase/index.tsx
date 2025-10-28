@@ -2,8 +2,8 @@ import {
 	DomainProductSlugs,
 	FEATURE_PREMIUM_SUPPORT,
 	FEATURE_SIMPLE_PAYMENTS,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_WORDADS_INSTANT,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 } from '@automattic/api-core';
 import {
 	applyCancellationOfferMutation,
@@ -27,6 +27,7 @@ import {
 	siteScanQuery,
 	userPreferencesMutation,
 	hasPurchaseBeenExtendedQuery,
+	siteLatestAtomicTransferQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -176,6 +177,10 @@ export default function CancelPurchase() {
 		sitePluginsQuery( purchase.blog_id )
 	);
 	const pluginCount = ( activePlugins?.plugins ?? [] ).length;
+
+	const { data: atomicTransfer, isPending: siteLatestAtomicTransferQueryIsPending } = useQuery(
+		siteLatestAtomicTransferQuery( purchase.blog_id )
+	);
 
 	const { data: monthlyStats, isPending: siteEngagementMonthlyAverageStatsQueryIsPending } =
 		useQuery( siteEngagementMonthlyAverageStatsQuery( purchase.blog_id ) );
@@ -864,6 +869,7 @@ export default function CancelPurchase() {
 		purchaseQueryIsPending ||
 		themesQueryIsPending ||
 		domainQueryIsPending ||
+		siteLatestAtomicTransferQueryIsPending ||
 		productsQueryIsPending;
 
 	const isDataValid = useCallback( () => {
@@ -938,16 +944,11 @@ export default function CancelPurchase() {
 		return <PageLayout size="small" />;
 	}
 
-	const currentPlan = sitePlans
-		? Object.values( sitePlans ).find( ( plan ) => plan.current_plan )
-		: undefined;
-
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const isAkismet = isAkismetProduct( purchase );
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
 	const isHundredYearDomain = selectedDomain?.is_hundred_year_domain ?? false;
-	const atomicTransfer: undefined | { created_at?: string } = {}; // FIXME: how do we get this?
 
 	const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		setState( ( state ) => ( {
@@ -1106,10 +1107,10 @@ export default function CancelPurchase() {
 				atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
 				atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
 				cancelBundledDomain={ state.cancelBundledDomain ?? false }
+				onGetDiscount={ onGetCancellationOffer }
 				clickNext={ clickNext }
 				closeDialog={ closeDialog }
 				closeMarketplaceSubscriptionsDialog={ closeMarketplaceSubscriptionsDialog }
-				currentPlan={ currentPlan }
 				disabled={ isDisabled }
 				downgradeClick={ downgradeClick }
 				freeMonthOfferClick={ freeMonthOfferClick }
@@ -1348,7 +1349,7 @@ export default function CancelPurchase() {
 		const siteHasBackups = true; // FIXME: this code was 'unavailable' !== rewindState?.state but the rewindState does not have a `state` property or anything that might be 'unavailable' so I'm not sure what to do
 		const siteHasScan = 'unavailable' !== siteScanState?.state;
 		const defaultJetpackCancellationFeatures = getJetpackDynamicFeaturesList( {
-			site,
+			siteSlug: purchase.site_slug ?? site?.slug,
 			hasPremiumSupport: planHasFeature( purchase.product_slug, FEATURE_PREMIUM_SUPPORT ),
 			hasSimplePayments: planHasFeature( purchase.product_slug, FEATURE_SIMPLE_PAYMENTS ),
 			hasWordAdsInstant: planHasFeature( purchase.product_slug, FEATURE_WORDADS_INSTANT ),
@@ -1380,8 +1381,6 @@ export default function CancelPurchase() {
 			defaultCancellationFeatures.push( ...defaultJetpackCancellationFeatures );
 		} else if ( isGSuite ) {
 			defaultCancellationFeatures.push( ...defaultGSuiteCancellationFeatures );
-		} else if ( isDomainRegistrationPurchase ) {
-			// defaultCancellationFeatures.push( ...de)
 		} else {
 			defaultCancellationFeatures.push( ...defaultWPComCancellationFeatures );
 			showDefaultChanges = true;
@@ -1471,12 +1470,12 @@ export default function CancelPurchase() {
 						atomicRevertCheckOne={ state.atomicRevertCheckOne }
 						atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
 						atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
+						onGetDiscount={ onGetCancellationOffer }
 						atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
 						cancelBundledDomain={ cancelBundledDomain }
 						clickNext={ clickNext }
 						closeDialog={ closeDialog }
 						closeMarketplaceSubscriptionsDialog={ closeMarketplaceSubscriptionsDialog }
-						currentPlan={ currentPlan }
 						disabled={ ! canContinue() }
 						downgradeClick={ downgradeClick }
 						freeMonthOfferClick={ freeMonthOfferClick }
@@ -1535,7 +1534,7 @@ export default function CancelPurchase() {
 		// returns early if there's no product or accounting for the edge case that the plan expires today (or somehow already expired)
 		// in this case, do not show the time remaining for the plan
 		const timeRemaining = getTimeRemainingForSubscription( purchase );
-		if ( timeRemaining && timeRemaining.days <= 1 ) {
+		if ( timeRemaining && ( timeRemaining?.days ?? 0 ) <= 1 ) {
 			return null;
 		}
 
@@ -1634,9 +1633,9 @@ export default function CancelPurchase() {
 							cancellationInProgress={ state.isLoading }
 							clickNext={ clickNext }
 							closeDialog={ closeDialog }
-							currentPlan={ currentPlan }
 							disableButtons={ state.isLoading }
 							downgradeClick={ downgradeClick }
+							onGetDiscount={ onGetCancellationOffer }
 							flowType={ flowType }
 							freeMonthOfferClick={ freeMonthOfferClick }
 							getAllSurveySteps={ getAllSurveySteps }

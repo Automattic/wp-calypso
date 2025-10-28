@@ -8,24 +8,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { intlFormat } from 'date-fns';
-import { isPlan } from '../../../../../utils/plans';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
-import type { Purchase, Site } from '@automattic/api-core';
+import type { AtomicTransfer, Purchase, Site } from '@automattic/api-core';
 
 import './atomic-revert-step.style.scss';
 
-interface AtomicTransfer {
-	atomic_transfer_id: number;
-	blog_id: number;
-	status: string;
-	created_at: string;
-	is_stuck: boolean;
-	is_stuck_reset: boolean;
-	in_lossless_revert: boolean;
-}
-
 type Props = {
-	atomicTransfer: AtomicTransfer | undefined;
+	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	purchase: Purchase | undefined;
 	site: Site | undefined;
 	atomicRevertCheckOne: boolean;
@@ -54,7 +43,7 @@ export function AtomicRevertStep( props: Props ) {
 		onClickCheckTwo,
 		isRemovePlan,
 		isDowngradePlan,
-		action = 'cancel-purchase',
+		action,
 	} = props;
 
 	if ( ! site || ! atomicTransfer || ! purchase || ! atomicTransfer.created_at ) {
@@ -62,9 +51,9 @@ export function AtomicRevertStep( props: Props ) {
 	}
 
 	const atomicTransferDate = intlFormat( atomicTransfer.created_at, { dateStyle: 'medium' } );
-	const isPlanPurchase = isPlan( purchase );
+	const isPlanPurchase = purchase.is_plan;
 	const createInfoPopover = (
-		<BillingPurchaseInfoPopover className={ `${ action }-form__atomic-revert-more-info` }>
+		<BillingPurchaseInfoPopover>
 			{ sprintf(
 				/* translators: %(atomicTransferDate)s is a date */
 				__(

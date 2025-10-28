@@ -1,11 +1,9 @@
 import { RadioControl, TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { isPlan } from '../../../../../utils/plans';
-import { isDomainRegistration, isGSuiteOrGoogleWorkspace } from '../../../../../utils/purchase';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
-import type { Purchase } from '@automattic/api-core';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type ChangeCallback = ( value: string ) => void;
 type DetailsChangeCallback = ( value: string, details?: string ) => void;
@@ -14,6 +12,7 @@ type CancellationReasonProps = {
 	purchase: Purchase;
 	reasonCodes: string[];
 	onChange: ChangeCallback;
+	plans: PlanProduct[];
 	onDetailsChange: DetailsChangeCallback;
 };
 
@@ -21,6 +20,7 @@ function CancellationReason( {
 	purchase,
 	reasonCodes,
 	onChange,
+	plans,
 	...props
 }: CancellationReasonProps ) {
 	const [ value, setValue ] = useState( '' );
@@ -136,32 +136,35 @@ function ImportQuestion( { onChange }: { onChange?: ChangeCallback } ) {
 
 type FeedbackStepProps = {
 	purchase: Purchase;
+	plans: PlanProduct[];
 	isImport: boolean;
 	cancellationReasonCodes: string[];
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
-	onChangeImportFeedback?: ChangeCallback;
+	onChangeImportFeedback: ChangeCallback;
 };
 
 export default function FeedbackStep( {
 	purchase,
+	plans,
 	isImport,
 	cancellationReasonCodes,
 	onChangeCancellationReason,
 	onChangeCancellationReasonDetails,
 	onChangeImportFeedback,
 }: FeedbackStepProps ) {
-	const isPlanPurchase = isPlan( purchase );
-	const isGSuite = isGSuiteOrGoogleWorkspace( purchase );
-	const isDomain = isDomainRegistration( purchase );
+	const isPlanPurchase = purchase.is_plan;
+	const isGSuite = purchase.is_google_workspace_product;
+	const isDomain = purchase.is_domain_registration;
 	const showCancellationReason = isPlanPurchase || isGSuite || isDomain;
 
 	return (
 		<>
 			{ showCancellationReason && (
 				<CancellationReason
+					plans={ plans }
 					purchase={ purchase }
-					reasonCodes={ cancellationReasonCodes }
+					reasonCodes={ cancellationReasonCodes ?? [] }
 					onChange={ onChangeCancellationReason }
 					onDetailsChange={ onChangeCancellationReasonDetails }
 				/>

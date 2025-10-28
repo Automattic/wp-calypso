@@ -240,6 +240,7 @@ import type {
 	JetpackModuleSlug,
 	Site,
 	SiteScan,
+	SiteScanCounts,
 } from '@automattic/api-core';
 
 /**
@@ -1933,7 +1934,7 @@ type DynamicFeatureProps = {
 };
 type DynamicFeatureList = ( props: DynamicFeatureProps ) => FeatureObject[];
 type JetpackDynamicFeatureProps = {
-	site: Site;
+	siteSlug: string | undefined;
 	hasPremiumSupport: boolean | false;
 	hasSimplePayments: boolean | false;
 	hasWordAdsInstant: boolean | false;
@@ -1945,7 +1946,7 @@ type JetpackDynamicFeatureProps = {
 	hasAntiSpam: boolean | false;
 	hasScan: boolean | false;
 	siteScanState: SiteScan | undefined;
-	siteThreatCounts: { fixed: number } | undefined;
+	siteThreatCounts: SiteScanCounts | undefined;
 	requestingSiteThreatCounts: boolean | false;
 	siteScanIsStandalone: boolean | false;
 	hasYearActivityLog: boolean | false;
@@ -2016,7 +2017,7 @@ export const getGSuiteDynamicFeaturesList: GSuiteDynamicFeatureList = ( {
 };
 
 export const getJetpackDynamicFeaturesList: JetpackDynamicFeatureList = ( {
-	site,
+	siteSlug,
 	hasPremiumSupport,
 	hasSimplePayments,
 	hasWordAdsInstant,
@@ -2039,7 +2040,6 @@ export const getJetpackDynamicFeaturesList: JetpackDynamicFeatureList = ( {
 }: JetpackDynamicFeatureProps ) => {
 	const features = [];
 
-	const siteSlug = site?.slug;
 	const backupCurrentlyInProgress = backups?.find?.( ( b ) => b.status === 'started' );
 
 	// now that backups are loaded and any in progress are complete, get the most recent one

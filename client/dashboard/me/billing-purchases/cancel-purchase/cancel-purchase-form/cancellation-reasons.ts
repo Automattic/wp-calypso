@@ -2,7 +2,7 @@ import { JETPACK_PRODUCTS_LIST } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import * as React from 'react';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from '../../../../utils/jetpack-plans';
-import type { Product, SitePlan } from '@automattic/api-core';
+import type { PlanProduct } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -564,7 +564,7 @@ interface CancellationReasonsOptions {
 }
 
 function getExtraJetpackReasons(
-	plans: SitePlan[],
+	plans: PlanProduct[],
 	options: CancellationReasonsOptions = {}
 ): CancellationReason[] {
 	if ( ! options.productSlug ) {
@@ -577,17 +577,17 @@ function getExtraJetpackReasons(
 		...( downgradablePlans || [] ),
 		...JETPACK_PRODUCTS_LIST,
 	];
-	const slugToPlan = ( slug: string ): Partial< SelectorProduct > | null => {
-		const item = plans[ slug ];
+	const slugToPlanProduct = ( slug: string ): Partial< PlanProduct > | undefined => {
+		const item = plans.find( ( plan ) => plan.product_slug === slug );
 		if ( ! item ) {
-			return null;
+			return;
 		}
 
 		return item;
 	};
 	const downgradableSelectorProduct = downgradablePlansAndProductsSlug
-		.map( slugToPlan )
-		.filter( Boolean ) as Product[];
+		.map( slugToPlanProduct )
+		.filter( Boolean ) as PlanProduct[];
 
 	const selectOptions = downgradableSelectorProduct.map( ( product ) => {
 		return {
@@ -596,7 +596,7 @@ function getExtraJetpackReasons(
 				/* translators: %(planName)s is the name of the plan */
 				__( 'Jetpack %(planName)s' ),
 				{
-					planName: product.product_name_short as string,
+					planName: product.product_name,
 				}
 			),
 		};
@@ -615,7 +615,7 @@ function getExtraJetpackReasons(
 export function getCancellationReasons(
 	reasonValues: string[],
 	options: CancellationReasonsOptions = {},
-	plans: SitePlan[]
+	plans: PlanProduct[]
 ): CancellationReason[] {
 	const opts: CancellationReasonsOptions = {
 		...options,

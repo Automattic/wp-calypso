@@ -11,7 +11,6 @@ import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import { useHelpCenter } from '../../../../../app/help-center';
 import MaterialIcon from '../../../../../components/material-icon';
 import { PageHeader } from '../../../../../components/page-header';
-import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
@@ -27,7 +26,7 @@ type ContentProps = {
 	title: TranslateResult;
 	declineButtonText?: TranslateResult;
 	onAccept?: () => void;
-	onDecline: () => void;
+	onDecline?: () => void;
 };
 
 function Content( { image, ...props }: ContentProps ) {
@@ -68,10 +67,10 @@ function Content( { image, ...props }: ContentProps ) {
 }
 
 type StepProps = {
-	type: UpsellType;
+	type: string;
 	site: SiteDetails;
-	onDecline: () => void;
-	cancellationReason: string;
+	onDecline?: () => void;
+	cancellationReason?: string;
 };
 
 export default function EducationalContentStep( { type, site, ...props }: StepProps ) {

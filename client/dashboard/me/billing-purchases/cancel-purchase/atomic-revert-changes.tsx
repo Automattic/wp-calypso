@@ -3,13 +3,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { useState } from 'react';
-import type { Purchase } from '@automattic/api-core';
+import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 import './style.scss';
 
 type AtomicRevertChangesProps = {
-	atomicTransfer?: {
-		created_at?: string;
-	};
+	atomicTransfer?: AtomicTransfer;
 	purchase: Purchase;
 	onConfirmationChange: ( isChecked: boolean ) => void;
 	needsAtomicRevertConfirmation: boolean;
