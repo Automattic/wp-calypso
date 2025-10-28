@@ -29,7 +29,6 @@ interface CancelPurchaseButtonProps extends CancelPurchaseFormProps {
 	onDialogClose: () => void;
 	onSetLoading: ( isLoading: boolean ) => void;
 	purchaseListUrl?: string;
-	setButtonDisabled?: ( () => void ) | undefined;
 	showMarketplaceDialog?: ( () => void ) | undefined;
 	shouldShowMarketplaceDialog?: boolean; // Control marketplace dialog visibility
 	siteSlug: string;

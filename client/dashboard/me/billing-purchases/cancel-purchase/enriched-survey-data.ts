@@ -1,13 +1,12 @@
-import type { Purchase } from '@automattic/api-core';
+import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-//used
 export default function enrichedSurveyData(
-	surveyData: object,
+	surveyData: Omit< MarketingSurveyResponses, 'purchaseId' | 'purchase' >,
 	purchase: Purchase,
 	timestamp = new Date()
-) {
+): MarketingSurveyResponses {
 	const purchaseStartDate = purchase?.subscribed_date ?? null;
 	const siteStartDate = purchase?.blog_created_date ?? null;
 	const purchaseId = purchase?.ID ?? null;
@@ -17,10 +16,12 @@ export default function enrichedSurveyData(
 		purchase: productSlug,
 		purchaseId,
 		...( purchaseStartDate && {
-			daysSincePurchase: ( new Date( timestamp ) - new Date( purchaseStartDate ) ) / DAY_IN_MS,
+			daysSincePurchase:
+				( new Date( timestamp ).getTime() - new Date( purchaseStartDate ).getTime() ) / DAY_IN_MS,
 		} ),
 		...( siteStartDate && {
-			daysSinceSiteCreation: ( new Date( timestamp ) - new Date( siteStartDate ) ) / DAY_IN_MS,
+			daysSinceSiteCreation:
+				( new Date( timestamp ).getTime() - new Date( siteStartDate ).getTime() ) / DAY_IN_MS,
 		} ),
 		...surveyData,
 	};

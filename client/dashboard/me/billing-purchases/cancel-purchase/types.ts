@@ -2,7 +2,6 @@ export interface CancelPurchaseState {
 	atomicRevertCheckOne?: boolean;
 	atomicRevertCheckTwo?: boolean;
 	atomicRevertConfirmed?: boolean;
-	buttonDisabled?: boolean;
 	cancelBundledDomain?: boolean;
 	confirmCancelBundledDomain?: boolean;
 	customerConfirmedUnderstanding?: boolean;
@@ -13,7 +12,6 @@ export interface CancelPurchaseState {
 	isNextAdventureValid?: boolean;
 	isShowingMarketplaceSubscriptionsDialog?: boolean;
 	isSubmitting?: boolean;
-	purchaseIsAlreadyExtended?: boolean;
 	questionOneOrder?: string[];
 	questionOneRadio?: string;
 	questionOneText?: string;

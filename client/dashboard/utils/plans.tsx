@@ -1,7 +1,5 @@
 import {
 	JetpackPlans,
-	PLAN_HOST_BUNDLE,
-	PLAN_WPCOM_ENTERPRISE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	PREMIUM_DESIGN_FOR_STORES,
@@ -256,9 +254,7 @@ import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
-import { camelOrSnakeSlug } from './purchase';
 import type {
-	BillingTerm,
 	Plan,
 	JetpackPlan,
 	WPComPlan,
@@ -294,15 +290,15 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 	return elements.filter( isValueTruthy );
 }
 
-const getBiAnnualTimeframe = (): BillingTerm => ( {
+const getBiAnnualTimeframe = (): string => ( {
 	term: 'TERM_BIENNIALLY',
 } );
 
-const getAnnualTimeframe = (): BillingTerm => ( {
+const getAnnualTimeframe = (): string => ( {
 	term: 'TERM_ANNUALLY',
 } );
 
-const getMonthlyTimeframe = (): BillingTerm => ( {
+const getMonthlyTimeframe = (): string => ( {
 	term: 'TERM_MONTHLY',
 } );
 const getJetpackCommonPlanDetails = () => ( {} );
@@ -2085,26 +2081,6 @@ function findPlansKeys( query: PlanMatchesQuery = {} ): string[] {
 	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
 }
 
-//used
-export function isPlan( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	const slug = camelOrSnakeSlug( product );
-	if ( isFreePlan( slug ) ) {
-		return false;
-	}
-	switch ( slug ) {
-		case PLAN_HOST_BUNDLE:
-		case PLAN_WPCOM_ENTERPRISE:
-			return true;
-		default:
-			return getPlansSlugs().includes( slug );
-	}
-}
-
-//used
-export function isJetpackPlan( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return isJetpackPlanSlug( camelOrSnakeSlug( product ) );
-}
-
 export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: 'TYPE_FREE' } );
 }
@@ -2116,10 +2092,6 @@ export function isJetpackPlanSlug( productSlug: string ): boolean {
 
 function getPlans(): Record< string, Plan > {
 	return PLAN_FEATURES_AND_AVAILABILITY_LIST;
-}
-
-function getPlansSlugs(): string[] {
-	return Object.keys( getPlans() );
 }
 
 //used

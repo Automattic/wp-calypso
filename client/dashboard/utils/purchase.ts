@@ -1,7 +1,6 @@
 import {
 	AkismetPlans,
 	JetpackPlans,
-	DomainProductSlugs,
 	GoogleWorkspaceSlugs,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
@@ -22,8 +21,8 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
-import { getLocaleData, __, sprintf } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
+import { __, sprintf } from '@wordpress/i18n';
+import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { planHasFeature } from './site-features';
 import { isSiteAutomatedTransfer } from './site-types';
@@ -49,21 +48,7 @@ export const CANCEL_FLOW_TYPE = {
 	CANCEL_AUTORENEW: 'cancel_autorenew',
 };
 
-//used
-export const purchasesRoot = '/me/purchases';
-// const addNewPaymentMethod = purchasesRoot + '/add-payment-method';
-
-//used
-export function managePurchase( siteName: string, purchaseId: number ) {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
-			throw new Error( 'siteName and purchaseId must be provided' );
-		}
-	}
-	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
-}
-
-function isJetpackProductSlug( productSlug: string ): boolean {
+export function isJetpackProductSlug( productSlug: string ): boolean {
 	return ( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug );
 }
 
@@ -574,250 +559,54 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 	return isCloseToExpiration( purchase );
 }
 
-//used
-export function getName( purchase: Purchase ): string {
-	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
-		return purchase.meta ?? '';
-	}
-	return purchase.product_name;
-}
-
-// String matching
-//used
-export type WithSnakeCaseSlug = { product_slug: string };
-//used
-export type WithCamelCaseSlug = { productSlug: string };
-
-//used
-export function camelOrSnakeSlug( product: WithCamelCaseSlug | WithSnakeCaseSlug ): string {
-	return 'product_slug' in product ? product.product_slug : product.productSlug ?? '';
-}
-// End string matching
-
-//used
-export function isDomainMapping( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return camelOrSnakeSlug( product ) === 'domain_map';
-}
-
-//used
-export function isDomainRegistration( product ): boolean {
-	return !! ( product?.is_domain_registration || product?.isDomainRegistration );
-}
-
-//used
-export function isDomainTransfer( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return camelOrSnakeSlug( product ) === DomainProductSlugs.TRANSFER_IN;
-}
-
-// Plan matches
-// end Plan matches
-
-// plan / product / business determination
-//used
-//used
-export function isJetpackProduct( product: WithCamelCaseSlug | WithSnakeCaseSlug ): boolean {
-	return isJetpackProductSlug( camelOrSnakeSlug( product ) );
-}
-
-/**
- * Checks if a purchase can be canceled and refunded via the WordPress.com API.
- * Purchases usually can be refunded up to 14 days after purchase.
- * Domains and domain mappings can be refunded up to 96 hours.
- * Purchases included with plan can't be refunded.
- *
- * If this function returns false but you want to see if the subscription may
- * still be within its refund period (and therefore refundable if the user
- * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
- */
-//used
-export function isRefundable( purchase: Purchase ): boolean {
-	if ( ! purchase ) {
-		return false;
-	}
-	return purchase.is_refundable && purchase.product_type !== 'saas_plugin';
-}
-
-/**
- * Checks if a purchase is refundable, and that the amount available to
- * refund is greater than zero.
- * @param {Object} purchase - the purchase with which we are concerned
- * @returns {boolean} if the purchase is refundable with an amount greater than zero
- * @see isRefundable
- */
-//used
-export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
-	return isRefundable( purchase ) && purchase.refund_amount > 0;
-}
-
-//used
-export function isSubscription( purchase: Purchase ): boolean {
-	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
-
-	return ! nonSubscriptionFunctions.some( ( fn ) => fn( purchase ) );
-}
-
-//used
 export function isPartnerPurchase(
 	purchase: Purchase
 ): purchase is Purchase & { partnerType: string } {
 	return !! purchase?.partner_name;
 }
 
-//used
 export function isAgencyPartnerType( partnerType: string ) {
 	if ( ! partnerType ) {
 		return false;
 	}
-
 	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
-// TODO: refactor to avoid returning a localized string.
-//used
-export function getSubscriptionEndDate( purchase: Purchase ): string {
-	const localeSlug = getLocaleData()?.lang;
-	return intlFormat( new Date( purchase.expiry_date ), {
-		locale: localeSlug ?? 'en',
-	} );
-}
-
-function isConciergeSession( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return 'concierge-session' === camelOrSnakeSlug( product );
-}
-
-//used
-export function isThemePurchase( purchase: { productType: string } ): boolean {
+export function isThemePurchase( purchase: Purchase ): boolean {
 	return 'theme' === purchase.product_type;
 }
 
 /**
  * Determines whether the specified product slug refers to either G Suite or Google Workspace.
- * @param {string} productSlug - slug of the product
- * @returns {boolean} true if the slug refers to G Suite or Google Workspace, false otherwise
  */
 export function isGSuiteOrGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 	return isGSuiteProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 }
 
-//used
-export function isGSuiteOrGoogleWorkspace(
-	product: WithCamelCaseSlug | WithSnakeCaseSlug
-): boolean {
-	return isGSuiteOrGoogleWorkspaceProductSlug( camelOrSnakeSlug( product ) );
-}
-
 /**
  * Determines whether the specified product slug is for Google Workspace Business Starter.
- * @param {string} productSlug - slug of the product
- * @returns {boolean} true if the slug refers to Google Workspace Business Starter, false otherwise
  */
 function isGoogleWorkspaceProductSlug( productSlug: string ): boolean {
-	return [
-		GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
-		GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	].includes( productSlug );
+	return (
+		[
+			GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+			GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+		] as readonly string[]
+	 ).includes( productSlug );
 }
 
-//used
-export function purchaseType( purchase: Purchase ): string | null {
-	if ( isThemePurchase( purchase ) ) {
-		return __( 'Premium Theme' );
-	}
-
-	if ( isConciergeSession( purchase ) ) {
-		return __( 'One-on-one Support' );
-	}
-
-	if ( isPartnerPurchase( purchase ) ) {
-		if ( isAgencyPartnerType( purchase.partner_type ) ) {
-			return __( 'Agency Managed Plan' );
-		}
-
-		return __( 'Host Managed Plan' );
-	}
-
-	if ( isPlan( purchase ) ) {
-		return __( 'Site Plan' );
-	}
-
-	if ( isDomainRegistration( purchase ) ) {
-		return purchase.product_name;
-	}
-
-	if ( isDomainMapping( purchase ) ) {
-		return purchase.product_name;
-	}
-
-	if ( isAkismetProduct( purchase ) ) {
-		return null;
-	}
-
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		return null;
-	}
-
-	if ( isA4ATemporarySitePurchase( purchase ) ) {
-		return null;
-	}
-
-	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
-		return sprintf(
-			/* translators: %(domain)s is the domain name */
-			__( 'Mailboxes and Productivity Tools at %(domain)s' ),
-			{
-				domain: purchase.meta as string,
-			}
-		);
-	}
-
-	if ( isTitanMail( purchase ) ) {
-		return sprintf(
-			/* translators: %(domain)s is the domain name */
-			__( 'Mailboxes at %(domain)s' ),
-			{
-				domain: purchase.meta as string,
-			}
-		);
-	}
-
-	if ( purchase.product_type === 'marketplace_plugin' || purchase.product_type === 'saas_plugin' ) {
-		return __( 'Plugin' );
-	}
-
-	if ( purchase.meta ) {
-		return purchase.meta;
-	}
-
-	return null;
-}
-
-/**
- * Similar to isCancelable, but doesn't rely on the purchase's cancelability
- * Checks if auto-renew is enabled for purchase, returns true if auto-renew is ON
- * Returns false if purchase is included in plan, purchases included with a plan can't be cancelled
- * Returns false if purchase is expired
- */
-
-//used
-export function canAutoRenewBeTurnedOff( purchase: Purchase ) {
-	if ( isIncludedWithPlan( purchase ) ) {
-		return false;
-	}
-
-	if ( isExpired( purchase ) ) {
-		return false;
-	}
-
-	if ( hasAmountAvailableToRefund( purchase ) ) {
-		return true;
-	}
-
-	return purchase.is_auto_renew_enabled;
-}
-
-//used
 export function hasIncludedDomain( purchase: Purchase ) {
 	return Boolean( purchase.included_domain );
+}
+
+export function isNonDomainSubscription( purchase: Purchase ): boolean {
+	if ( purchase.is_domain_registration ) {
+		return false;
+	}
+	if ( isOneTimePurchase( purchase ) ) {
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -833,14 +622,13 @@ export function hasIncludedDomain( purchase: Purchase ) {
  * @param   {Purchase | undefined} subscriptionPurchase  subscription purchase object
  * @returns {Purchase | undefined} domain purchase if there is one, null if none found or not a subscription object passed
  */
-//used
 export const getIncludedDomainPurchase = (
 	sitePurchases: Purchase[],
 	subscriptionPurchase: Purchase | undefined
 ): Purchase | undefined => {
 	if (
 		! subscriptionPurchase ||
-		! isSubscription( subscriptionPurchase ) ||
+		! isNonDomainSubscription( subscriptionPurchase ) ||
 		subscriptionPurchase.included_domain_purchase_amount
 	) {
 		return;
@@ -848,39 +636,21 @@ export const getIncludedDomainPurchase = (
 
 	const { included_domain: includedDomain } = subscriptionPurchase;
 	const found = sitePurchases.find(
-		( purchase ) =>
-			( isDomainMapping( purchase ) ||
-				isDomainRegistration( purchase ) ||
-				isDomainTransfer( purchase ) ) &&
-			includedDomain === purchase.meta
+		( purchase ) => purchase.is_domain && includedDomain === purchase.meta
 	);
 	return found;
 };
 
-function isDomainMoveInternal( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return camelOrSnakeSlug( product ) === DomainProductSlugs.DOMAIN_MOVE_INTERNAL;
-}
-
-//used
-export function isDomainProduct(
-	product: ( WithSnakeCaseSlug | WithCamelCaseSlug ) & {
-		is_domain_registration?: boolean;
-		isDomainRegistration?: boolean;
-	}
-): boolean {
-	return (
-		isDomainMapping( product ) || isDomainRegistration( product ) || isDomainMoveInternal( product )
-	);
+export function hasAmountAvailableToRefund( purchase: Purchase ) {
+	return purchase.refund_amount > 0;
 }
 
 /**
  * Returns the purchase cancellation flow.
- * @param {Purchase} purchase The purchase object
  */
-//used
 export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
-	const isPlanRefundable = isRefundable( purchase );
-	const isPlanAutoRenewing = purchase?.is_auto_renew_enabled ?? false;
+	const isPlanRefundable = purchase.is_refundable;
+	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
 	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
 		// If the subscription is refundable the subscription should be removed immediately.
@@ -896,15 +666,8 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
 
 /**
  * Returns true if a list of products includes a product with a matching product or store product slug.
- * @param {Object} productsList - List of products
- * @param {string} searchSlug - Either a product slug e.g. woocommerce-product-csv-import-suite or store product slug, e.g wc_product_csv_import_suite_yearly
- * @returns {boolean}
  */
-//used
-export const hasMarketplaceProduct = (
-	productsList: Record< string, { product_type: string; billing_product_slug: string } >,
-	searchSlug: string
-): boolean =>
+export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: string ): boolean =>
 	// storeProductSlug is from the legacy store_products system, billing_product_slug is from
 	// the non-legacy billing system and for marketplace plugins will match the slug of the plugin
 	// by convention.
@@ -917,32 +680,20 @@ export const hasMarketplaceProduct = (
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
 
-const isMarketplaceProduct = ( productsList, productSlug ) => {
-	return productsList ? hasMarketplaceProduct( productsList, productSlug ) : false;
-};
-
 /**
  * Whether a purchase will trigger an Atomic revert when it is canceled or removed.
  * The backend has the final say on if this actually happens, see:
  * revert_atomic_site_on_subscription_removal() and deactivate_product().
  * This is a helper for UI elements only, it does not control actual revert decisions.
- * @param   {Purchase} purchase        the purchase
- * @param   {Purchase[]} sitePurchases        all purchases for the site
- * @param   {Site}     site            the site
- * @param   {Product[]} productsList   List of products
- * @param   {Array}    linkedPurchases List of purchases that will be also deactivated because they are
- *                                   linked to the given purchase
- * @returns {boolean} True if the Atomic revert will happen, false otherwise.
  */
-//used
 export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 	purchase: Purchase,
 	sitePurchases: Purchase[],
-	site: Site,
+	site: Site | undefined,
 	productsList: Product[],
 	linkedPurchases: Purchase[]
 ) => {
-	if ( ! purchase ) {
+	if ( ! purchase || ! site ) {
 		return false;
 	}
 
@@ -951,8 +702,8 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 		return false;
 	}
 
-	const isAtomicSupportedProduct = ( productSlug ) => {
-		if ( isMarketplaceProduct( productsList, productSlug ) ) {
+	const isAtomicSupportedProduct = ( productSlug: string ) => {
+		if ( hasMarketplaceProduct( productsList ?? [], productSlug ) ) {
 			return true;
 		}
 
