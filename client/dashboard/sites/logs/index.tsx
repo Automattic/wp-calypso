@@ -31,7 +31,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const router = useRouter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	const settingsUrl = site.options.admin_url + 'options-general.php';
+	const settingsUrl = site.options?.admin_url
+		? `${ site.options.admin_url }options-general.php`
+		: '';
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 	const [ autoRefreshDisabledReason, setAutoRefreshDisabledReason ] = useState< string | null >(
 		null

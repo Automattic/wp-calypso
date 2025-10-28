@@ -8,8 +8,8 @@ import Notice from '../notice';
 
 interface TimeMismatchNoticeProps {
 	settingsUrl?: string | null;
-	siteTime: string | integer;
-	siteId: integer;
+	siteTime: string | number;
+	siteId: number;
 }
 
 export const TimeMismatchNotice = ( {
@@ -31,8 +31,10 @@ export const TimeMismatchNotice = ( {
 
 	if ( isDismissing || dismissedPref ) {
 		try {
-			const parsed = JSON.parse( dismissedPref );
-			savedOffset = parsed.offsetHours;
+			if ( typeof dismissedPref === 'string' ) {
+				const parsed = JSON.parse( dismissedPref );
+				savedOffset = parsed.offsetHours;
+			}
 		} catch {
 			savedOffset = null;
 		}
