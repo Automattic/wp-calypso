@@ -137,7 +137,11 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 
-		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
+		if (
+			! prevProps.accountType &&
+			! this.props.requestError?.code &&
+			isPasswordlessAccount( this.props.accountType )
+		) {
 			this.props.sendEmailLogin();
 		}
 

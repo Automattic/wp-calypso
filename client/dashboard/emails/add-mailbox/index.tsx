@@ -2,15 +2,24 @@ import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/ap
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useMatch, useParams } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	Notice,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import { useLocale } from '../../app/locale';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-notice';
 import { MailboxForm as MailboxFormEntity } from '../entities/mailbox-form';
@@ -21,17 +30,18 @@ import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import { useSetUpMailbox } from '../hooks/use-set-up-mailbox';
 import { MailboxProvider } from '../types';
-import { getTotalCost } from '../utils/get-total-cost';
+import { getMailboxCost } from '../utils/get-mailbox-cost';
 import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
-import { PricingNotice } from './components/pricing-notice';
 
 const AddProfessionalEmail = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const addToCart = useAddToCart();
 	const setUpMailbox = useSetUpMailbox();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const match = useMatch( { strict: false } );
 	const { isPending } = useMutation( createTitanMailboxMutation() );
+	const locale = useLocale();
 
 	// @ts-expect-error -- 'path' does ineed exist on route options
 	const isAddMailboxRoute = match.fullPath === `/${ addMailboxRoute.options.path }`;
@@ -79,6 +89,18 @@ const AddProfessionalEmail = () => {
 		const validated = await mailboxOperations.validateAndCheck( false );
 
 		if ( ! userCanAddEmail || ! validated ) {
+			recordTracksEvent(
+				isAddMailboxRoute
+					? 'calypso_dashboard_emails_add_mailbox_validation_failure'
+					: 'calypso_dashboard_emails_setup_mailbox_validation_failure',
+				{
+					domainName,
+					mailboxCount: mailboxEntities.length,
+					provider,
+					reason: validated ? 'user_cannot_add_email' : 'validation_failed',
+				}
+			);
+
 			if ( ! userCanAddEmail ) {
 				const errors = domain?.current_user_cannot_add_email_reason?.errors;
 				const message = errors
@@ -105,6 +127,12 @@ const AddProfessionalEmail = () => {
 	};
 
 	const removeForm = ( index: number ) => {
+		recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_remove_mailbox_click', {
+			domainName,
+			mailboxCount: mailboxEntities.length,
+			provider,
+		} );
+
 		setMailboxEntities( ( prevMailboxEntities ) => {
 			const newMailboxEntities = [ ...prevMailboxEntities ];
 			newMailboxEntities.splice( index, 1 );
@@ -117,15 +145,18 @@ const AddProfessionalEmail = () => {
 		? isSubmitting || showEmailPurchaseDisabledMessage
 		: isSubmitting || isPending;
 
-	const filledMailboxes = mailboxEntities.filter( ( mailbox ) => mailbox.isValid() );
-	const totalItems = filledMailboxes.length;
+	let mailboxCost;
+	const totalItems = mailboxEntities.length;
 	let totalPrice = '0';
 	if ( isAddMailboxRoute ) {
-		const totalCost = getTotalCost( {
-			amount: totalItems,
-			domain: domain,
-			product: product,
+		mailboxCost = getMailboxCost( {
+			domain,
+			product,
+			showEmailPurchaseDisabledMessage,
+			locale,
 		} );
+
+		const totalCost = mailboxEntities.length * mailboxCost.amount;
 		totalPrice = formatCurrency( totalCost, product.currency_code, {
 			stripZeros: true,
 		} );
@@ -133,7 +164,26 @@ const AddProfessionalEmail = () => {
 
 	return (
 		<PageLayout
-			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
+			header={
+				<PageHeader
+					prefix={
+						<BackToEmailsPrefix
+							onClick={ () => {
+								recordTracksEvent(
+									isAddMailboxRoute
+										? 'calypso_dashboard_emails_add_mailbox_back_to_emails_click'
+										: 'calypso_dashboard_emails_setup_mailbox_back_to_emails_click',
+									{
+										domainName,
+										mailboxCount: mailboxEntities.length,
+										provider,
+									}
+								);
+							} }
+						/>
+					}
+				/>
+			}
 			size="small"
 			notices={
 				showEmailPurchaseDisabledMessage && (
@@ -145,12 +195,18 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			{ isAddMailboxRoute && (
-				<PricingNotice
-					domain={ domain }
-					product={ product }
-					showEmailPurchaseDisabledMessage={ showEmailPurchaseDisabledMessage }
-				/>
+			{ isAddMailboxRoute && mailboxCost && (
+				<>
+					{ mailboxCost.notice ? (
+						<Notice status="info" isDismissible={ false }>
+							{ /* eslint-disable-next-line react/no-danger */ }
+							<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+						</Notice>
+					) : (
+						// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+						<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+					) }
+				</>
 			) }
 
 			<form onSubmit={ handleSubmit }>
@@ -175,6 +231,15 @@ const AddProfessionalEmail = () => {
 								variant="secondary"
 								disabled={ disabled }
 								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_emails_add_mailbox_add_another_mailbox_click',
+										{
+											domainName,
+											mailboxCount: mailboxEntities.length,
+											provider,
+										}
+									);
+
 									setMailboxEntities( ( prevMailboxEntities ) => [
 										...prevMailboxEntities,
 										createNewMailbox(),
@@ -184,7 +249,20 @@ const AddProfessionalEmail = () => {
 								{ __( 'Add another mailbox' ) }
 							</Button>
 						) : (
-							<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								disabled={ disabled }
+								type="submit"
+								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_emails_setup_mailbox_complete_setup_click',
+										{
+											domainName,
+										}
+									);
+								} }
+							>
 								{ __( 'Complete setup' ) }
 							</Button>
 						) }
