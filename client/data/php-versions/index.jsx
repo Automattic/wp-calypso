@@ -9,22 +9,6 @@ export const getPHPVersions = ( siteId ) => {
 
 	const phpVersions = [
 		{
-			label: '7.3',
-			value: '7.3',
-			disabled: true, // EOL 6th December, 2021
-		},
-		{
-			// translators: PHP Version for a version switcher
-			label: sprintf( __( '%s (Deprecated)' ), '7.4' ),
-			value: '7.4',
-			disabled: true, // EOL 1st July, 2024
-		},
-		{
-			label: '8.0',
-			value: '8.0',
-			disabled: true, // EOL 26th November, 2023
-		},
-		{
 			// translators: PHP Version for a version switcher
 			label: sprintf( __( '%s (Deprecated)' ), '8.1' ),
 			value: '8.1',
