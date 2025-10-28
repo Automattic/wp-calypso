@@ -94,6 +94,7 @@ import {
 	isSubscription,
 	managePurchase,
 	purchasesRoot,
+	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from '../../../utils/purchase';
 import {
 	getDynamicFeaturesList,
@@ -167,6 +168,8 @@ export default function CancelPurchase() {
 	const { data: purchase, isPending: purchaseQueryIsPending } = useSuspenseQuery(
 		purchaseQuery( parseInt( purchaseId ) )
 	);
+	const { data: sitePurchases } = useSuspenseQuery( sitePurchasesQuery( purchase.blog_id ) );
+	const { data: products } = useSuspenseQuery( productsQuery() );
 	const { data: site, isPending: siteQueryIsPending } = useQuery(
 		siteByIdQuery( purchase.blog_id )
 	);
@@ -209,9 +212,6 @@ export default function CancelPurchase() {
 	if ( monthlyStats && monthlyStats.visitors > 0 ) {
 		monthlyVisitorCount = monthlyStats.visitors;
 	}
-	const { isPending: sitePurchasesQueryIsPending, data: sitePurchases } = useQuery(
-		sitePurchasesQuery( purchase.blog_id )
-	);
 
 	const purchases = purchase && sitePurchases;
 	const { data: productsList, isPending: productsQueryIsPending } = useQuery( productsQuery() );
@@ -372,13 +372,15 @@ export default function CancelPurchase() {
 	let questionTwoOrder = [];
 
 	const getAllSurveySteps = useCallback( () => {
+		const { skipRemovePlanSurvey, willAtomicSiteRevert } = props;
 		let steps = [ FEEDBACK_STEP ];
 		const isJetpack = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 
 		if (
-			isPartnerPurchase( purchase ) &&
-			purchase.partner_type &&
-			isAgencyPartnerType( purchase.partner_type )
+			skipRemovePlanSurvey ||
+			( isPartnerPurchase( purchase ) &&
+				purchase.partner_type &&
+				isAgencyPartnerType( purchase.partner_type ) )
 		) {
 			steps = [];
 		} else if ( isJetpack ) {
@@ -393,24 +395,16 @@ export default function CancelPurchase() {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
 
-		if ( state.willAtomicSiteRevert && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if ( willAtomicSiteRevert && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 
-		if ( state.skipRemovePlanSurvey && steps.length === 0 ) {
+		if ( skipRemovePlanSurvey && steps.length === 0 ) {
 			steps.push( REMOVE_PLAN_STEP );
 		}
 
 		return steps;
-	}, [
-		purchase,
-		availableJetpackSurveySteps,
-		flowType,
-		questionTwoOrder?.length,
-		state.skipRemovePlanSurvey,
-		state.upsell,
-		state.willAtomicSiteRevert,
-	] );
+	}, [ purchase, availableJetpackSurveySteps, flowType, questionTwoOrder?.length, state.upsell ] );
 
 	const initSurveyState = () => {
 		if ( state.initialized ) {
@@ -457,6 +451,13 @@ export default function CancelPurchase() {
 			surveyShown: false,
 			surveyStep: firstStep,
 			upsell: '',
+			willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
+				purchase,
+				sitePurchases,
+				site,
+				products,
+				linkedPurchases
+			),
 		};
 		if ( JSON.stringify( state ) !== JSON.stringify( newState ) ) {
 			//TODO: fix
@@ -772,7 +773,7 @@ export default function CancelPurchase() {
 		);
 	};
 
-	const getActiveMarketplaceSubscriptions = () => {
+	const getActiveMarketplaceSubscriptions = (): Purchase[] => {
 		if ( ! isPlan( purchase ) || ! productsList ) {
 			return [];
 		}
@@ -922,7 +923,6 @@ export default function CancelPurchase() {
 		siteBackupsQueryIsPending ||
 		siteScanQueryIsPending ||
 		siteEngagementMonthlyAverageStatsQueryIsPending ||
-		sitePurchasesQueryIsPending ||
 		siteQueryIsPending ||
 		sitePluginsQueryIsPending ||
 		purchaseQueryIsPending ||
@@ -1179,7 +1179,7 @@ export default function CancelPurchase() {
 				atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
 				atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
 				atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
-				cancelBundledDomain={ state.cancelBundledDomain }
+				cancelBundledDomain={ state.cancelBundledDomain ?? false }
 				clickNext={ clickNext }
 				closeDialog={ closeDialog }
 				closeMarketplaceSubscriptionsDialog={ closeMarketplaceSubscriptionsDialog }
@@ -1213,6 +1213,7 @@ export default function CancelPurchase() {
 				onTextTwoChange={ onTextTwoChange }
 				plans={ plans }
 				purchase={ purchase }
+				purchases={ purchases }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				questionOneRadio={ state.questionOneRadio }
 				questionOneText={ state.questionOneText }
@@ -1223,7 +1224,9 @@ export default function CancelPurchase() {
 				setButtonDisabled={ setButtonDisabled }
 				showDialog={ state.showDialog }
 				showMarketplaceDialog={ showMarketplaceDialog }
+				site={ site }
 				sitePlans={ sitePlans }
+				sitePurchases={ sitePurchases }
 				siteSlug={ site?.slug }
 				solution={ state.solution }
 				surveyStep={ state.surveyStep }
@@ -1588,6 +1591,7 @@ export default function CancelPurchase() {
 						onTextTwoChange={ onTextTwoChange }
 						plans={ plans }
 						purchase={ purchase }
+						purchases={ purchases }
 						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						questionOneRadio={ state.questionOneRadio }
 						questionOneText={ state.questionOneText }
@@ -1599,7 +1603,9 @@ export default function CancelPurchase() {
 						shouldShowMarketplaceDialog={ false } // Disable marketplace dialog in domain options step to prevent double display
 						showDialog={ state.showDialog }
 						showMarketplaceDialog={ showMarketplaceDialog }
+						site={ site }
 						sitePlans={ sitePlans }
+						sitePurchases={ sitePurchases }
 						siteSlug={ site?.slug }
 						solution={ state.solution }
 						surveyStep={ state.surveyStep }
@@ -1776,6 +1782,7 @@ export default function CancelPurchase() {
 							onTextTwoChange={ onTextTwoChange }
 							plans={ plans }
 							purchase={ purchase }
+							products={ products }
 							questionOneOrder={ state.questionOneOrder }
 							questionOneRadio={ state.questionOneRadio }
 							questionOneText={ state.questionOneText }
@@ -1785,6 +1792,7 @@ export default function CancelPurchase() {
 							refundAmount={ getRefundAmount() }
 							site={ site }
 							sitePlans={ sitePlans }
+							sitePurchases={ sitePurchases }
 							solution={ state.solution }
 							surveyStep={ state.surveyStep }
 							upsell={ state.upsell }

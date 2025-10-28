@@ -1,4 +1,5 @@
 import {
+	JetpackPlans,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
 	FEATURE_13GB_STORAGE,
@@ -215,32 +216,6 @@ import {
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
-	PLAN_JETPACK_GROWTH_BI_YEARLY,
-	PLAN_JETPACK_GROWTH_YEARLY,
-	PLAN_JETPACK_GROWTH_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	PLAN_JETPACK_SECURITY_REALTIME,
-	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_COMPLETE_BI_YEARLY,
-	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
-	PLAN_JETPACK_SECURITY_T1_MONTHLY,
-	PLAN_JETPACK_SECURITY_T1_YEARLY,
-	PLAN_JETPACK_SECURITY_T2_MONTHLY,
-	PLAN_JETPACK_SECURITY_T2_YEARLY,
-	PLAN_JETPACK_STARTER_MONTHLY,
-	PLAN_JETPACK_STARTER_YEARLY,
-	PLAN_JETPACK_GOLDEN_TOKEN,
-	GROUP_JETPACK,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_SECURITY_PLANS,
 	PLAN_BLOGGER,
@@ -279,36 +254,6 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
-	GROUP_P2,
-	GROUP_WPCOM,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-	TERM_TRIENNIALLY,
-	TERM_MONTHLY,
-	TERM_CENTENNIALLY,
-	TYPE_ALL,
-	TYPE_BLOGGER,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-	TYPE_ENTERPRISE_GRID_WPCOM,
-	TYPE_FREE,
-	TYPE_P2_PLUS,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
-	TYPE_SECURITY_DAILY,
-	TYPE_SECURITY_REALTIME,
-	TYPE_SECURITY_T1,
-	TYPE_SECURITY_T2,
-	TYPE_JETPACK_GROWTH,
-	TYPE_JETPACK_STARTER,
-	TYPE_FLEXIBLE,
-	TYPE_100_YEAR,
-	TYPE_PRO,
-	TYPE_STARTER,
-	TYPE_GOLDEN_TOKEN,
-	TYPE_WOO_EXPRESS_PLUS,
-	TYPE_WOOEXPRESS_SMALL,
-	TYPE_WOOEXPRESS_MEDIUM,
 } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
 import { camelOrSnakeSlug } from './purchase';
@@ -350,15 +295,15 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 }
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
-	term: TERM_BIENNIALLY,
+	term: 'TERM_BIENNIALLY',
 } );
 
 const getAnnualTimeframe = (): BillingTerm => ( {
-	term: TERM_ANNUALLY,
+	term: 'TERM_ANNUALLY',
 } );
 
 const getMonthlyTimeframe = (): BillingTerm => ( {
-	term: TERM_MONTHLY,
+	term: 'TERM_MONTHLY',
 } );
 const getJetpackCommonPlanDetails = () => ( {} );
 const getDotcomPlanDetails = () => ( {
@@ -373,8 +318,8 @@ const getDotcomPlanDetails = () => ( {
 
 const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_FREE,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_FREE',
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_WP_SUBDOMAIN,
@@ -403,8 +348,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_BLOGGER,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_BLOGGER',
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_BLOG_DOMAIN,
@@ -443,8 +388,8 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 
 const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_PERSONAL,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_PERSONAL',
 	getPlanCompareFeatures: () =>
 		compact(
 			[
@@ -507,8 +452,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_ECOMMERCE,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_ECOMMERCE',
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
@@ -720,8 +665,8 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 
 const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_PREMIUM,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_PREMIUM',
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
@@ -797,8 +742,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_BUSINESS,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_BUSINESS',
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
@@ -903,8 +848,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 } );
 const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_PRO,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_PRO',
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -962,8 +907,8 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 // Woo Express Plus gets its own column in the plans grid.
 const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_WOO_EXPRESS_PLUS,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_WOO_EXPRESS_PLUS',
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -971,14 +916,14 @@ const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
 // Check pdgrnI-1Qp-p2 for more details.
 const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_ENTERPRISE_GRID_WPCOM,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_ENTERPRISE_GRID_WPCOM',
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
-	group: GROUP_JETPACK,
-	type: TYPE_PERSONAL,
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE ].includes( plan ),
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_PERSONAL',
+	availableFor: ( plan ) => [ JetpackPlans.PLAN_JETPACK_FREE ].includes( plan ),
 	getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () => [
 		FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -1006,10 +951,14 @@ const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getJetpackPremiumDetails = (): IncompleteJetpackPlan => ( {
-	group: GROUP_JETPACK,
-	type: TYPE_PREMIUM,
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_PREMIUM',
 	availableFor: ( plan ) =>
-		[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].includes( plan ),
+		[
+			JetpackPlans.PLAN_JETPACK_FREE,
+			JetpackPlans.PLAN_JETPACK_PERSONAL,
+			JetpackPlans.PLAN_JETPACK_PERSONAL_MONTHLY,
+		].includes( plan ),
 	getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_SCAN_V2, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () =>
 		compact( [
@@ -1054,15 +1003,15 @@ const getJetpackPremiumDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
-	group: GROUP_JETPACK,
-	type: TYPE_BUSINESS,
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_BUSINESS',
 	availableFor: ( plan ) =>
 		[
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
+			JetpackPlans.PLAN_JETPACK_FREE,
+			JetpackPlans.PLAN_JETPACK_PREMIUM,
+			JetpackPlans.PLAN_JETPACK_PREMIUM_MONTHLY,
+			JetpackPlans.PLAN_JETPACK_PERSONAL,
+			JetpackPlans.PLAN_JETPACK_PERSONAL_MONTHLY,
 		].includes( plan ),
 	getPlanCardFeatures: () => [
 		FEATURE_BACKUP_REALTIME_V2,
@@ -1109,9 +1058,10 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
-	group: GROUP_JETPACK,
-	type: TYPE_SECURITY_DAILY,
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_SECURITY_DAILY',
+	availableFor: ( plan ) =>
+		[ JetpackPlans.PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getPlanCardFeatures: () => [
 		FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -1141,13 +1091,13 @@ const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackSecurityRealtimeDetails = (): IncompleteJetpackPlan => ( {
-	group: GROUP_JETPACK,
-	type: TYPE_SECURITY_REALTIME,
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_SECURITY_REALTIME',
 	availableFor: ( plan ) =>
 		[
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_SECURITY_DAILY,
-			PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+			JetpackPlans.PLAN_JETPACK_FREE,
+			JetpackPlans.PLAN_JETPACK_SECURITY_DAILY,
+			JetpackPlans.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 			...JETPACK_LEGACY_PLANS,
 		].includes( plan ),
 	getPlanCardFeatures: () => [
@@ -1181,9 +1131,10 @@ const getPlanJetpackSecurityRealtimeDetails = (): IncompleteJetpackPlan => ( {
 
 const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
-	group: GROUP_JETPACK,
-	type: TYPE_SECURITY_T1,
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_SECURITY_T1',
+	availableFor: ( plan ) =>
+		[ JetpackPlans.PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
 		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
@@ -1217,7 +1168,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 
 const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 	...getPlanJetpackSecurityT1Details(),
-	type: TYPE_SECURITY_T2,
+	type: 'TYPE_SECURITY_T2',
 	getPlanCardFeatures: () => [
 		FEATURE_PLAN_SECURITY_DAILY,
 		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
@@ -1250,10 +1201,12 @@ const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 
 const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
-	group: GROUP_JETPACK,
-	type: TYPE_ALL,
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_ALL',
 	availableFor: ( plan ) =>
-		[ PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+		[ JetpackPlans.PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes(
+			plan
+		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
 		FEATURE_JETPACK_1TB_BACKUP_STORAGE,
@@ -1305,9 +1258,10 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 
 const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
-	group: GROUP_JETPACK,
-	type: TYPE_JETPACK_STARTER,
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_JETPACK_STARTER',
+	availableFor: ( plan ) =>
+		[ JetpackPlans.PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T0_YEARLY,
@@ -1331,9 +1285,10 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 
 const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
-	group: GROUP_JETPACK,
-	type: TYPE_JETPACK_GROWTH,
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_JETPACK_GROWTH',
+	availableFor: ( plan ) =>
+		[ JetpackPlans.PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
 		isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
@@ -1346,9 +1301,10 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
-	group: GROUP_JETPACK,
-	type: TYPE_GOLDEN_TOKEN,
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	group: 'GROUP_JETPACK',
+	type: 'TYPE_GOLDEN_TOKEN',
+	availableFor: ( plan ) =>
+		[ JetpackPlans.PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getPlanCardFeatures: () => [
 		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
@@ -1377,18 +1333,18 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_FREE ]: {
 		...getPlanFreeDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 	},
 
 	[ PLAN_BLOGGER ]: {
 		...getPlanBloggerDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
 	},
 
 	[ PLAN_BLOGGER_2_YEARS ]: {
 		...getPlanBloggerDetails(),
-		term: TERM_BIENNIALLY,
+		term: 'TERM_BIENNIALLY',
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_BLOGGER ].includes( plan ),
 	},
 
@@ -1400,14 +1356,14 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_PERSONAL ]: {
 		...getPlanPersonalDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_MONTHLY ].includes( plan ),
 	},
 
 	[ PLAN_PERSONAL_2_YEARS ]: {
 		...getPlanPersonalDetails(),
-		term: TERM_BIENNIALLY,
+		term: 'TERM_BIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1420,7 +1376,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_PERSONAL_3_YEARS ]: {
 		...getPlanPersonalDetails(),
-		term: TERM_TRIENNIALLY,
+		term: 'TERM_TRIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1448,7 +1404,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_PREMIUM ]: {
 		...getPlanPremiumDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1464,7 +1420,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_PREMIUM_2_YEARS ]: {
 		...getPlanPremiumDetails(),
-		term: TERM_BIENNIALLY,
+		term: 'TERM_BIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1480,7 +1436,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_PREMIUM_3_YEARS ]: {
 		...getPlanPremiumDetails(),
-		term: TERM_TRIENNIALLY,
+		term: 'TERM_TRIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1519,7 +1475,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_BUSINESS ]: {
 		...getPlanBusinessDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1542,7 +1498,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_BUSINESS_2_YEARS ]: {
 		...getPlanBusinessDetails(),
-		term: TERM_BIENNIALLY,
+		term: 'TERM_BIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1567,7 +1523,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_BUSINESS_3_YEARS ]: {
 		...getPlanBusinessDetails(),
-		term: TERM_TRIENNIALLY,
+		term: 'TERM_TRIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1595,9 +1551,9 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_100_YEARS ]: {
 		...getPlanBusinessDetails(),
-		term: TERM_CENTENNIALLY,
-		group: GROUP_WPCOM,
-		type: TYPE_100_YEAR,
+		term: 'TERM_CENTENNIALLY',
+		group: 'GROUP_WPCOM',
+		type: 'TYPE_100_YEAR',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1644,7 +1600,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_ECOMMERCE ]: {
 		...getPlanEcommerceDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1671,7 +1627,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 	[ PLAN_ECOMMERCE_2_YEARS ]: {
 		...getPlanEcommerceDetails(),
-		term: TERM_BIENNIALLY,
+		term: 'TERM_BIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1701,15 +1657,15 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
-		type: TYPE_WOOEXPRESS_MEDIUM,
+		type: 'TYPE_WOOEXPRESS_MEDIUM',
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 	},
 
 	[ PLAN_WOOEXPRESS_MEDIUM ]: {
 		...getPlanWooExpressMediumDetails(),
-		term: TERM_ANNUALLY,
-		type: TYPE_WOOEXPRESS_MEDIUM,
+		term: 'TERM_ANNUALLY',
+		type: 'TYPE_WOOEXPRESS_MEDIUM',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1723,14 +1679,14 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
 		...getPlanWooExpressSmallDetails(),
 		...getMonthlyTimeframe(),
-		type: TYPE_WOOEXPRESS_SMALL,
+		type: 'TYPE_WOOEXPRESS_SMALL',
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 	},
 
 	[ PLAN_WOOEXPRESS_SMALL ]: {
 		...getPlanWooExpressSmallDetails(),
-		type: TYPE_WOOEXPRESS_SMALL,
-		term: TERM_ANNUALLY,
+		type: 'TYPE_WOOEXPRESS_SMALL',
+		term: 'TERM_ANNUALLY',
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_WOOEXPRESS_SMALL_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 	},
@@ -1738,18 +1694,18 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 	// Not a real plan. This is used to show the Plus offering in the Woo Express plans grid
 	[ PLAN_WOOEXPRESS_PLUS ]: {
 		...getPlanWooExpressPlusDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in
 	// the main plans grid as part of pdgrnI-1Qp-p2.
 	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
 		...get2023EnterprisGrideDetails(),
-		term: TERM_ANNUALLY,
+		term: 'TERM_ANNUALLY',
 	},
 	[ PLAN_ECOMMERCE_3_YEARS ]: {
 		...getPlanEcommerceDetails(),
-		term: TERM_TRIENNIALLY,
+		term: 'TERM_TRIENNIALLY',
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -1780,10 +1736,10 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 			].includes( plan ),
 	},
 
-	[ PLAN_JETPACK_FREE ]: {
-		term: TERM_ANNUALLY,
-		group: GROUP_JETPACK,
-		type: TYPE_FREE,
+	[ JetpackPlans.PLAN_JETPACK_FREE ]: {
+		term: 'TERM_ANNUALLY',
+		group: 'GROUP_JETPACK',
+		type: 'TYPE_FREE',
 		getIncludedFeatures: () => [
 			//used
 			FEATURE_STANDARD_SECURITY_TOOLS,
@@ -1800,138 +1756,138 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 		],
 	},
 
-	[ PLAN_JETPACK_PREMIUM ]: {
+	[ JetpackPlans.PLAN_JETPACK_PREMIUM ]: {
 		...getJetpackPremiumDetails(),
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
 		...getJetpackPremiumDetails(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_PERSONAL ]: {
+	[ JetpackPlans.PLAN_JETPACK_PERSONAL ]: {
 		...getJetpackPersonalDetails(),
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
 		...getJetpackPersonalDetails(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_BUSINESS ]: {
+	[ JetpackPlans.PLAN_JETPACK_BUSINESS ]: {
 		...getJetpackBusinessDetails(),
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		...getJetpackBusinessDetails(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_DAILY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_DAILY ]: {
 		...getPlanJetpackSecurityDailyDetails(),
 		...getAnnualTimeframe(),
-		getMonthlySlug: () => PLAN_JETPACK_SECURITY_DAILY_MONTHLY, //used
+		getMonthlySlug: () => JetpackPlans.PLAN_JETPACK_SECURITY_DAILY_MONTHLY, //used
 	},
 
-	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: {
 		...getPlanJetpackSecurityDailyDetails(),
 		...getMonthlyTimeframe(),
-		getAnnualSlug: () => PLAN_JETPACK_SECURITY_DAILY,
+		getAnnualSlug: () => JetpackPlans.PLAN_JETPACK_SECURITY_DAILY,
 	},
 
-	[ PLAN_JETPACK_SECURITY_REALTIME ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_REALTIME ]: {
 		...getPlanJetpackSecurityRealtimeDetails(),
 		...getAnnualTimeframe(),
-		getMonthlySlug: () => PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+		getMonthlySlug: () => JetpackPlans.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 	},
 
-	[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
 		...getPlanJetpackSecurityRealtimeDetails(),
 		...getMonthlyTimeframe(),
-		getAnnualSlug: () => PLAN_JETPACK_SECURITY_REALTIME,
+		getAnnualSlug: () => JetpackPlans.PLAN_JETPACK_SECURITY_REALTIME,
 	},
 
-	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
 		...getPlanJetpackCompleteDetails(),
 		...getBiAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_COMPLETE ]: {
+	[ JetpackPlans.PLAN_JETPACK_COMPLETE ]: {
 		...getPlanJetpackCompleteDetails(),
 		...getAnnualTimeframe(),
-		getMonthlySlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
+		getMonthlySlug: () => JetpackPlans.PLAN_JETPACK_COMPLETE_MONTHLY,
 	},
 
-	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_COMPLETE_MONTHLY ]: {
 		...getPlanJetpackCompleteDetails(),
 		...getMonthlyTimeframe(),
-		getAnnualSlug: () => PLAN_JETPACK_COMPLETE,
+		getAnnualSlug: () => JetpackPlans.PLAN_JETPACK_COMPLETE,
 	},
 
-	[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
 		...getPlanJetpackSecurityT1Details(),
 		...getBiAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
 		...getPlanJetpackSecurityT1Details(),
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
 		...getPlanJetpackSecurityT1Details(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
 		...getPlanJetpackSecurityT2Details(),
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
 		...getPlanJetpackSecurityT2Details(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_STARTER_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_STARTER_YEARLY ]: {
 		...getPlanJetpackStarterDetails(),
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_STARTER_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_STARTER_MONTHLY ]: {
 		...getPlanJetpackStarterDetails(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_GROWTH_MONTHLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_GROWTH_MONTHLY ]: {
 		...getPlanJetpackGrowthDetails(),
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_GROWTH_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_GROWTH_YEARLY ]: {
 		...getPlanJetpackGrowthDetails(),
 		...getAnnualTimeframe(),
-		getMonthlySlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
+		getMonthlySlug: () => JetpackPlans.PLAN_JETPACK_GROWTH_MONTHLY,
 	},
 
-	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
+	[ JetpackPlans.PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
 		...getPlanJetpackGrowthDetails(),
 		...getBiAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_GOLDEN_TOKEN ]: {
+	[ JetpackPlans.PLAN_JETPACK_GOLDEN_TOKEN ]: {
 		...getPlanJetpackGoldenTokenDetails(),
 		...getAnnualTimeframe(),
-		getMonthlySlug: () => PLAN_JETPACK_GOLDEN_TOKEN,
+		getMonthlySlug: () => JetpackPlans.PLAN_JETPACK_GOLDEN_TOKEN,
 	},
 
 	[ PLAN_P2_PLUS ]: {
 		...getDotcomPlanDetails(),
-		group: GROUP_P2,
-		type: TYPE_P2_PLUS,
+		group: 'GROUP_P2',
+		type: 'TYPE_P2_PLUS',
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_P2_13GB_STORAGE,
@@ -1961,7 +1917,7 @@ const PLAN_FEATURES_AND_AVAILABILITY_LIST: Record< string, Plan | JetpackPlan | 
 
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_P2_FREE ] = {
 	...PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_FREE ],
-	group: GROUP_P2,
+	group: 'GROUP_P2',
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_P2_3GB_STORAGE,
@@ -1975,9 +1931,9 @@ PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_P2_FREE ] = {
 // Brand new WPCOM plans
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_STARTER ] = {
 	...getDotcomPlanDetails(),
-	group: GROUP_WPCOM,
-	type: TYPE_STARTER,
-	term: TERM_ANNUALLY,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_STARTER',
+	term: 'TERM_ANNUALLY',
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -1995,14 +1951,14 @@ PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_STARTER ] = {
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	// Inherits the free plan
 	...PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_FREE ],
-	group: GROUP_WPCOM,
-	type: TYPE_FLEXIBLE,
+	group: 'GROUP_WPCOM',
+	type: 'TYPE_FLEXIBLE',
 	getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
 };
 
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_PRO ] = {
 	...getPlanProDetails(),
-	term: TERM_ANNUALLY,
+	term: 'TERM_ANNUALLY',
 };
 
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
@@ -2013,32 +1969,32 @@ PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
 
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_WPCOM_PRO_2_YEARS ] = {
 	...getPlanProDetails(),
-	term: TERM_BIENNIALLY,
+	term: 'TERM_BIENNIALLY',
 	availableFor: ( plan ) =>
 		[ PLAN_FREE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( plan ),
 };
 
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	...getDotcomPlanDetails(),
-	type: TYPE_ECOMMERCE,
-	group: GROUP_WPCOM,
-	term: TERM_MONTHLY,
+	type: 'TYPE_ECOMMERCE',
+	group: 'GROUP_WPCOM',
+	term: 'TERM_MONTHLY',
 };
 
 if ( isEnabled( 'plans/migration-trial' ) ) {
 	PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_MIGRATION_TRIAL_MONTHLY ] = {
 		...getPlanBusinessDetails(),
-		type: TYPE_BUSINESS,
-		group: GROUP_WPCOM,
-		term: TERM_MONTHLY,
+		type: 'TYPE_BUSINESS',
+		group: 'GROUP_WPCOM',
+		term: 'TERM_MONTHLY',
 	};
 }
 
 PLAN_FEATURES_AND_AVAILABILITY_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
-	type: TYPE_BUSINESS,
-	group: GROUP_WPCOM,
-	term: TERM_MONTHLY,
+	type: 'TYPE_BUSINESS',
+	group: 'GROUP_WPCOM',
+	term: 'TERM_MONTHLY',
 };
 
 interface PlanMatchesQuery {
@@ -2053,10 +2009,10 @@ interface PlanMatchesQuery {
  *
  * For example:
  *
- * > planMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+ * > planMatches( 'TYPE_BUSINESS', { term: 'TERM_ANNUALLY', group: 'GROUP_WPCOM', type: 'TYPE_BUSINESS' } );
  * true
  *
- * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * > planMatches( 'TYPE_BUSINESS', { term: 'TERM_BIENNIALLY' } );
  * false
  */
 function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {} ): boolean {
@@ -2097,7 +2053,7 @@ function findFirstSimilarPlanKey(
  *
  * For example:
  *
- * > findSimilarPlansKeys( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * > findSimilarPlansKeys( 'TYPE_BUSINESS', { term: 'TERM_BIENNIALLY' } );
  * [PLAN_BUSINESS_2_YEARS]
  * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
  * [TYPE_JETPACK_BUSINESS]
@@ -2121,7 +2077,7 @@ function findSimilarPlansKeys( planKey: string | Plan, diff: PlanMatchesQuery = 
  *
  * For example:
  *
- * > findPlansKeys( { term: TERM_BIENNIALLY } );
+ * > findPlansKeys( { term: 'TERM_BIENNIALLY' } );
  * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
  */
 function findPlansKeys( query: PlanMatchesQuery = {} ): string[] {
@@ -2150,12 +2106,12 @@ export function isJetpackPlan( product: WithSnakeCaseSlug | WithCamelCaseSlug ):
 }
 
 export function isFreePlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_FREE } );
+	return planMatches( planSlug, { type: 'TYPE_FREE' } );
 }
 
 //used
 export function isJetpackPlanSlug( productSlug: string ): boolean {
-	return planMatches( productSlug, { group: GROUP_JETPACK } );
+	return planMatches( productSlug, { group: 'GROUP_JETPACK' } );
 }
 
 function getPlans(): Record< string, Plan > {
@@ -2196,7 +2152,7 @@ export function getMonthlyPlanByYearly( plans, planSlug: string ): string {
 	if ( plan && 'getMonthlySlug' in plan && plan.getMonthlySlug ) {
 		return plan.getMonthlySlug();
 	}
-	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
+	return findFirstSimilarPlanKey( planSlug, { term: 'TERM_MONTHLY' } ) || '';
 }
 
 //used
@@ -2208,7 +2164,7 @@ export const getDowngradePlanFromPurchase = ( plans, purchase ) => {
 
 	const newPlanKeys = findPlansKeys( {
 		group: plan.group,
-		type: TYPE_PERSONAL,
+		type: 'TYPE_PERSONAL',
 		term: plan.term,
 	} );
 
@@ -2217,50 +2173,50 @@ export const getDowngradePlanFromPurchase = ( plans, purchase ) => {
 
 //used
 export function isSecurityDailyPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
+	return planMatches( planSlug, { type: 'TYPE_SECURITY_DAILY' } );
 }
 
 //used
 export function isSecurityRealTimePlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+	return planMatches( planSlug, { type: 'TYPE_SECURITY_REALTIME' } );
 }
 
 //used
 export function isCompletePlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_ALL } );
+	return planMatches( planSlug, { type: 'TYPE_ALL' } );
 }
 
 //used
 export function isWpComBusinessPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { type: 'TYPE_BUSINESS', group: 'GROUP_WPCOM' } );
 }
 
 //used
 export function isWpComEcommercePlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_ECOMMERCE, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { type: 'TYPE_ECOMMERCE', group: 'GROUP_WPCOM' } );
 }
 
 //used
 export function isWpComPremiumPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { type: 'TYPE_PREMIUM', group: 'GROUP_WPCOM' } );
 }
 
 //used
 export function isWpComAnnualPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { term: 'TERM_ANNUALLY', group: 'GROUP_WPCOM' } );
 }
 
 //used
 export function isWpComBiennialPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { term: 'TERM_BIENNIALLY', group: 'GROUP_WPCOM' } );
 }
 
 //used
 export function isWpComTriennialPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { term: TERM_TRIENNIALLY, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { term: 'TERM_TRIENNIALLY', group: 'GROUP_WPCOM' } );
 }
 
 //used
 export function isWpComMonthlyPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { term: 'TERM_MONTHLY', group: 'GROUP_WPCOM' } );
 }

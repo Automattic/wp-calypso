@@ -1,10 +1,5 @@
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/api-core';
-import {
-	productsQuery,
-	siteFeaturesQuery,
-	siteLatestAtomicTransferQuery,
-	sitePurchasesQuery,
-} from '@automattic/api-queries';
+import { siteFeaturesQuery, siteLatestAtomicTransferQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,10 +8,7 @@ import { intlFormat } from 'date-fns';
 import { useMemo } from 'react';
 import { ButtonStack } from '../../../../components/button-stack';
 import { isPlan } from '../../../../utils/plans';
-import {
-	CANCEL_FLOW_TYPE,
-	willAtomicSiteRevertAfterPurchaseDeactivation,
-} from '../../../../utils/purchase';
+import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { isSiteAutomatedTransfer } from '../../../../utils/site-types';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
@@ -34,7 +26,7 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
-import type { Site, Purchase, PricedAPISitePlan } from '@automattic/api-core';
+import type { Site, Purchase, PricedAPISitePlan, Product } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -43,47 +35,42 @@ interface CancellationOffer {
 	raw_price: number;
 }
 
-interface CancelPurchaseFormProps {
+export interface CancelPurchaseFormProps {
 	atomicRevertCheckOne?: boolean;
 	atomicRevertCheckTwo?: boolean;
 	atomicRevertOnClickCheckOne?: ( isChecked: boolean ) => void;
 	atomicRevertOnClickCheckTwo?: ( isChecked: boolean ) => void;
-	atomicTransfer?: { created_at: string };
+	atomicTransfer?: { created_at: string }; //TODO: maybe delete
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
 	cancellationOffer?: CancellationOffer | null;
 	clickNext?: () => void;
 	closeDialog?: () => void;
-	currentPlan?: {
-		current_plan: boolean;
-		plan_slug?: string;
-		product_slug?: string;
-		product_id?: number;
-	};
+	currentPlan?: Plan;
 	disableButtons?: boolean;
 	downgradeClick?: ( upsell: string ) => void;
-	downgradePlanToPersonalPrice?: number;
-	downgradePlanToMonthlyPrice?: number;
+	downgradePlanToPersonalPrice?: number; //TODO: maybe delete
+	downgradePlanToMonthlyPrice?: number; //TODO: maybe delete
 	flowType?: string;
 	freeMonthOfferClick?: () => void;
 	getAllSurveySteps?: () => string[];
 	hasBackupsFeature?: boolean;
 	importQuestionRadio?: string;
 	includedDomainPurchase?: Purchase;
-	isAkismet?: boolean;
-	isApplyingOffer?: boolean;
-	isAtomicSite?: boolean;
-	isImport?: boolean;
+	isAkismet?: boolean; //TODO: maybe delete
+	isApplyingOffer?: boolean; //TODO: maybe delete
+	isAtomicSite?: boolean; //TODO: maybe delete
+	isImport?: boolean; //TODO: maybe delete
 	isNextAdventureValid?: boolean;
 	isShowing?: boolean;
 	isSubmitting?: boolean;
 	isVisible?: boolean;
 	offerApplyError?: Error | null;
-	offerDiscountBasedFromPurchasePrice?: number;
-	onClose?: () => void;
-	onClickAccept?: () => void;
-	onGetCancellationOffer?: () => void;
-	onImportRadioChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
+	offerDiscountBasedFromPurchasePrice?: number; //TODO: maybe delete
+	onClose?: () => void; //TODO: maybe delete
+	onClickAccept?: () => void; //TODO: maybe delete
+	onGetCancellationOffer?: () => void; //TODO: maybe delete
+	onImportRadioChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void; //TODO: maybe delete
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
@@ -96,7 +83,9 @@ interface CancelPurchaseFormProps {
 	onTextThreeChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onTextTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	plans?: Record< string, PricedAPISitePlan >;
+	products?: Product[];
 	purchase: Purchase;
+	purchases: Purchase[];
 	questionOneOrder?: string[];
 	questionOneRadio?: string;
 	questionOneText?: string;
@@ -106,6 +95,7 @@ interface CancelPurchaseFormProps {
 	refundAmount?: string;
 	site: Site;
 	sitePlans?: Record< string, unknown >;
+	sitePurchases: Purchase[];
 	solution?: string;
 	surveyStep?: string;
 	upsell?: string;
@@ -117,9 +107,7 @@ function getSiteImportEngine( site: Site ) {
 }
 
 export default function CancelPurchaseForm( providedProps: CancelPurchaseFormProps ) {
-	const { purchase, site } = providedProps;
-	const { data: sitePurchases } = useSuspenseQuery( sitePurchasesQuery( purchase.blog_id ) );
-	const { data: products } = useSuspenseQuery( productsQuery() );
+	const { purchase, site, products, sitePurchases } = providedProps;
 	const { data: siteFeatures } = useSuspenseQuery( siteFeaturesQuery( purchase.blog_id ) );
 	const { data: atomicTransfer } = useQuery( siteLatestAtomicTransferQuery( purchase.blog_id ) );
 	const linkedPurchases = useMemo( () => [], [] ); //TODO: fix
@@ -128,15 +116,6 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 			isAtomicSite: providedProps.isAtomicSite ?? isSiteAutomatedTransfer( site ),
 			isImport: providedProps.isImport ?? !! getSiteImportEngine( site ),
 			site: providedProps.site,
-			willAtomicSiteRevert:
-				providedProps.willAtomicSiteRevert ??
-				willAtomicSiteRevertAfterPurchaseDeactivation(
-					purchase,
-					sitePurchases,
-					site,
-					products,
-					linkedPurchases
-				),
 			atomicTransfer: providedProps.atomicTransfer ?? atomicTransfer,
 			hasBackupsFeature:
 				providedProps.hasBackupsFeature ??

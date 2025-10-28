@@ -20,8 +20,8 @@ type CancellationReasonProps = {
 function CancellationReason( {
 	purchase,
 	reasonCodes,
-	onDetailsChange,
 	onChange,
+	...props
 }: CancellationReasonProps ) {
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
@@ -39,12 +39,12 @@ function CancellationReason( {
 	const onDetailsChange = ( val: string ) => {
 		setDetails( val );
 		setFeedbackValue( '' );
-		onDetailsChange( val );
+		props.onDetailsChange( val );
 	};
 
 	const onTextAreaChange = ( val: string ) => {
 		setFeedbackValue( val );
-		onDetailsChange( val, details );
+		props.onDetailsChange( val, details );
 	};
 
 	return (

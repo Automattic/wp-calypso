@@ -16,7 +16,7 @@ interface MarketPlaceSubscriptionsDialogProps {
 	removePlan: () => void;
 	isDialogVisible: boolean;
 	isRemoving?: boolean;
-	activeSubscriptions: Array< { id: number; productName: string } >;
+	activeSubscriptions: Purchase[];
 	sectionHeadingText?: TranslateResult;
 	primaryButtonText?: TranslateResult;
 	bodyParagraphText?: TranslateResult;

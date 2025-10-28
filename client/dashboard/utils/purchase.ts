@@ -1,9 +1,7 @@
 import {
 	AkismetPlans,
 	JetpackPlans,
-	domainProductSlugs,
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	DomainProductSlugs,
 	GoogleWorkspaceSlugs,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
@@ -608,7 +606,7 @@ export function isDomainRegistration( product ): boolean {
 
 //used
 export function isDomainTransfer( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return camelOrSnakeSlug( product ) === domainProductSlugs.TRANSFER_IN;
+	return camelOrSnakeSlug( product ) === DomainProductSlugs.TRANSFER_IN;
 }
 
 // Plan matches
@@ -715,8 +713,8 @@ export function isGSuiteOrGoogleWorkspace(
  */
 function isGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 	return [
-		GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
-		GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+		GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+		GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	].includes( productSlug );
 }
 
@@ -832,20 +830,20 @@ export function hasIncludedDomain( purchase: Purchase ) {
  * Even if a domain is included with the plan, it will not be returned here if
  * the domain was paid for separately (e.g., if it was renewed on its own).
  * @param   {Purchase[]} sitePurchases  array of purchase objects
- * @param   {Purchase | null | undefined} subscriptionPurchase  subscription purchase object
- * @returns {Purchase | null | undefined} domain purchase if there is one, null if none found or not a subscription object passed
+ * @param   {Purchase | undefined} subscriptionPurchase  subscription purchase object
+ * @returns {Purchase | undefined} domain purchase if there is one, null if none found or not a subscription object passed
  */
 //used
 export const getIncludedDomainPurchase = (
 	sitePurchases: Purchase[],
-	subscriptionPurchase: Purchase | null | undefined
-): Purchase | null | undefined => {
+	subscriptionPurchase: Purchase | undefined
+): Purchase | undefined => {
 	if (
 		! subscriptionPurchase ||
 		! isSubscription( subscriptionPurchase ) ||
 		subscriptionPurchase.included_domain_purchase_amount
 	) {
-		return null;
+		return;
 	}
 
 	const { included_domain: includedDomain } = subscriptionPurchase;
@@ -860,7 +858,7 @@ export const getIncludedDomainPurchase = (
 };
 
 function isDomainMoveInternal( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return camelOrSnakeSlug( product ) === domainProductSlugs.DOMAIN_MOVE_INTERNAL;
+	return camelOrSnakeSlug( product ) === DomainProductSlugs.DOMAIN_MOVE_INTERNAL;
 }
 
 //used

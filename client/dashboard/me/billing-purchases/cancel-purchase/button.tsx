@@ -13,49 +13,52 @@ import {
 } from '../../../utils/purchase';
 import CancelPurchaseForm from './cancel-purchase-form';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
+import type { CancelPurchaseFormProps } from './cancel-purchase-form';
 import type { Purchase } from '@automattic/api-core';
 
-interface CancelPurchaseButtonProps {
-	isJetpack: boolean;
-	isAkismet: boolean;
-	purchase: Purchase;
-	purchaseListUrl?: string;
-	siteSlug: string;
-	cancelBundledDomain: boolean;
-	includedDomainPurchase: Purchase;
+interface CancelPurchaseButtonProps extends CancelPurchaseFormProps {
+	activeSubscriptions: Purchase[];
+	closeMarketplaceSubscriptionsDialog: () => void;
 	disabled?: boolean;
-	activeSubscriptions: Array< { id: number; productName: string } >;
-	onCancellationStart: null | ( () => void );
-	onCancellationComplete: () => void;
-	onSurveyComplete: () => void;
-	// Props from parent component
-	showDialog: boolean;
+	isAkismet: boolean;
+	isJetpack: boolean;
 	isLoading: boolean;
+	offerDiscountBasedFromPurchasePrice?: number | undefined;
+	onCancellationComplete: () => void;
+	onCancellationStart?: ( () => void ) | undefined;
 	onDialogClose: () => void;
 	onSetLoading: ( isLoading: boolean ) => void;
-	// Methods from parent component
-	downgradeClick: ( upsell: string ) => void;
-	freeMonthOfferClick: () => void;
-	// Control marketplace dialog visibility
-	showMarketplaceDialog?: boolean;
+	purchaseListUrl?: string;
+	setButtonDisabled?: ( () => void ) | undefined;
+	showMarketplaceDialog?: ( () => void ) | undefined;
+	shouldShowMarketplaceDialog?: boolean; // Control marketplace dialog visibility
+	siteSlug: string;
 }
 
 export default function CancelPurchaseButton( props: CancelPurchaseButtonProps ) {
 	const { purchaseId } = cancelPurchaseRoute.useParams();
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useSuspenseQuery( siteByIdQuery( purchase.blog_id ) );
-	const { closeMarketplaceSubscriptionsDialog, showMarketplaceDialog } = props;
+	const {
+		activeSubscriptions,
+		closeMarketplaceSubscriptionsDialog,
+		isLoading,
+		onCancellationComplete,
+		onCancellationStart,
+		shouldShowMarketplaceDialog,
+		showMarketplaceDialog,
+	} = props;
 	const handleCancelPurchaseClick = async () => {
 		// For all purchases, including domain registrations, show the survey first
 		// The API call will happen at the end of the survey flow
 
 		// For other purchases, determine if we need domain options step
 		// If onCancellationStart is null, we're already in the domain options step
-		if ( props.onCancellationStart === null ) {
+		if ( ! onCancellationStart ) {
 			// We're in the domain options step, show survey directly
-			props.onCancellationComplete();
+			onCancellationComplete();
 		} else {
-			props.onCancellationStart();
+			onCancellationStart();
 		}
 	};
 	const handleMarketplaceDialogContinue = () => {
@@ -78,8 +81,6 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 	const onClick = handleCancelPurchaseClick;
 
 	const disableButtons = props?.disabled ?? false;
-	const { /*isJetpack, isAkismet, purchaseListUrl, */ activeSubscriptions, isLoading, showDialog } =
-		props;
 
 	const shouldHandleMarketplaceSubscriptions = () => {
 		const { activeSubscriptions, shouldShowMarketplaceDialog } = props;
@@ -110,6 +111,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		onTextThreeChange,
 		onTextTwoChange,
 		plans,
+		purchases,
 		questionOneRadio,
 		questionOneText,
 		questionTwoOrder,
@@ -117,6 +119,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		questionTwoText,
 		refundAmount,
 		sitePlans,
+		sitePurchases,
 		solution,
 		surveyStep,
 		upsell,
@@ -151,11 +154,11 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 	return (
 		<>
 			<div className="cancel-purchase__button-wrapper">
-				{ ! showDialog && (
+				{ ! shouldShowMarketplaceDialog && (
 					<Button
 						className="cancel-purchase__button"
 						disabled={ disableButtons }
-						busy={ isLoading?.toString() ?? false }
+						isBusy={ isLoading ?? false }
 						onClick={ shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onClick }
 						variant="primary"
 					>
@@ -181,7 +184,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					includedDomainPurchase={ includedDomainPurchase }
 					isNextAdventureValid={ isNextAdventureValid }
 					isSubmitting={ isSubmitting }
-					isVisible={ showDialog }
+					isVisible={ shouldShowMarketplaceDialog }
 					offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 					onClose={ closeDialog }
 					onClickAccept={ onClickAccept }
@@ -196,6 +199,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					onTextTwoChange={ onTextTwoChange }
 					plans={ plans }
 					purchase={ purchase }
+					purchases={ purchases }
 					questionOneRadio={ questionOneRadio }
 					questionOneText={ questionOneText }
 					questionTwoOrder={ questionTwoOrder }
@@ -204,13 +208,14 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					refundAmount={ refundAmount }
 					site={ site }
 					sitePlans={ sitePlans }
+					sitePurchases={ sitePurchases }
 					solution={ solution }
 					surveyStep={ surveyStep }
 					upsell={ upsell }
 				/>
 				{ shouldHandleMarketplaceSubscriptions() && (
 					<MarketPlaceSubscriptionsDialog
-						isDialogVisible={ props.isShowingMarketplaceSubscriptionsDialog ?? false }
+						isDialogVisible={ shouldShowMarketplaceDialog ?? false }
 						closeDialog={ closeMarketplaceSubscriptionsDialog }
 						removePlan={ handleMarketplaceDialogContinue }
 						planName={ planName }
