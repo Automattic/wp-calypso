@@ -13,8 +13,8 @@ import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/use-ssh-migration-status';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
+import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
-import { useVerifySSHMigrationAtomicTransfer } from './hooks/use-verify-ssh-migration-atomic-transfer';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
@@ -71,18 +71,15 @@ const SiteMigrationSshShareAccess: StepType< {
 
 	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
-	// Verify SSH migration atomic transfer capability
-	const { data: verificationData } = useVerifySSHMigrationAtomicTransfer( siteId, {
-		enabled: !! transferId && siteId > 0,
-	} );
-
-	const transferStatus = verificationData?.transfer_status;
-
-	// Poll for migration status after starting migration
-	const { data: migrationStatus } = useSSHMigrationStatus( {
+	// Poll SSH migration atomic transfer status
+	const { transferStatus, isTransferring } = usePollSSHMigrationAtomicTransfer(
 		siteId,
-		enabled: migrationStarted && siteId > 0,
-	} );
+		transferId,
+		{
+			enabled: !! transferId && siteId > 0,
+			refetchInterval: 2000, // Poll every 2 seconds
+		}
+	);
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
@@ -125,7 +122,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const handleContinue = () => {
 		setMigrationError( null );
 
-		if ( transferStatus !== 'completed' ) {
+		if ( isTransferring ) {
 			setShouldStartMigration( true );
 			return;
 		}
@@ -182,7 +179,12 @@ const SiteMigrationSshShareAccess: StepType< {
 						<Button
 							variant="primary"
 							onClick={ handleContinue }
-							disabled={ ! canStartMigration || isStartingMigration || migrationStarted }
+							disabled={
+								! canStartMigration ||
+								isStartingMigration ||
+								migrationStarted ||
+								shouldStartMigration
+							}
 							isBusy={ isStartingMigration || migrationStarted || shouldStartMigration }
 						>
 							{ translate( 'Continue' ) }
