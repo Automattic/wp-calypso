@@ -1,6 +1,6 @@
 import { Domain, DomainSubtype } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { layout } from '@wordpress/icons';
@@ -12,10 +12,10 @@ interface Props {
 }
 
 export default function FeaturedCardSite( { domain }: Props ) {
-	const { data: site } = useSuspenseQuery( siteByIdQuery( domain.blog_id ) );
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	if ( ! site ) {
-		return null;
+		return <OverviewCard icon={ <Icon icon={ layout } /> } title={ __( 'Site' ) } isLoading />;
 	}
 
 	const shouldShowAddAttachSite =
