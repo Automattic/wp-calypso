@@ -125,18 +125,22 @@ const AddProfessionalEmail = () => {
 		? isSubmitting || showEmailPurchaseDisabledMessage
 		: isSubmitting || isPending;
 
-	const mailboxCost = getMailboxCost( {
-		domain,
-		product,
-		showEmailPurchaseDisabledMessage,
-		locale,
-	} );
-
+	let mailboxCost;
 	const totalItems = mailboxEntities.length;
-	const totalCost = mailboxEntities.length * mailboxCost.amount;
-	const totalPrice = formatCurrency( totalCost, product.currency_code, {
-		stripZeros: true,
-	} );
+	let totalPrice = '0';
+	if ( isAddMailboxRoute ) {
+		mailboxCost = getMailboxCost( {
+			domain,
+			product,
+			showEmailPurchaseDisabledMessage,
+			locale,
+		} );
+
+		const totalCost = mailboxEntities.length * mailboxCost.amount;
+		totalPrice = formatCurrency( totalCost, product.currency_code, {
+			stripZeros: true,
+		} );
+	}
 
 	return (
 		<PageLayout
@@ -152,16 +156,18 @@ const AddProfessionalEmail = () => {
 				)
 			}
 		>
-			{ isAddMailboxRoute && (
-				{ mailboxCost.notice ? (
-					<Notice status="info" isDismissible={ false }>
-						{ /* eslint-disable-next-line react/no-danger */ }
-						<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
-					</Notice>
-				) : (
-					// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-					<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
-				) }
+			{ isAddMailboxRoute && mailboxCost && (
+				<>
+					{ mailboxCost.notice ? (
+						<Notice status="info" isDismissible={ false }>
+							{ /* eslint-disable-next-line react/no-danger */ }
+							<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+						</Notice>
+					) : (
+						// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+						<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+					) }
+				</>
 			) }
 
 			<form onSubmit={ handleSubmit }>
