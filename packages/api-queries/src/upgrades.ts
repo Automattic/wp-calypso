@@ -45,20 +45,20 @@ export const removePurchaseMutation = () =>
 		mutationFn: removePurchase,
 	} );
 
-export const cancelAndRefundPurchaseMutation = (
-	purchaseId: number,
-	options: PurchaseCancelOptions | PurchaseDowngradeOptions
-) =>
+export const cancelAndRefundPurchaseMutation = () =>
 	mutationOptions( {
-		mutationFn: () => cancelAndRefundPurchase( purchaseId, options ),
+		mutationFn: ( params: {
+			purchaseId: number;
+			options: PurchaseCancelOptions | PurchaseDowngradeOptions;
+		} ) => cancelAndRefundPurchase( params.purchaseId, params.options ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
 		},
 	} );
 
-export const extendPurchaseWithFreeMonthMutation = ( purchaseId: number ) =>
+export const extendPurchaseWithFreeMonthMutation = () =>
 	mutationOptions( {
-		mutationFn: () => extendPurchaseWithFreeMonth( purchaseId ),
+		mutationFn: ( purchaseId: number ) => extendPurchaseWithFreeMonth( purchaseId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
 		},
