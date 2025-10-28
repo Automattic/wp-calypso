@@ -30,7 +30,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 }
 
 ?>
-<div class="happy-blocks-search-card<?php echo $is_front_page ? '' : ' navigation-only'; ?>">
+<div class="happy-blocks-search-card<?php echo $is_front_page && 'forums' !== $active_page ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
 		<!-- Desktop navigation -->
 		<div class="desktop-nav-container">
@@ -109,7 +109,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<?php endif; ?>
 		</div>
 	</nav>
-	<?php if ( $is_front_page ) : ?>
+	<?php if ( $is_front_page && 'forums' !== $active_page ) : ?>
 	<div class="support-search-content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form id="support-search-form" class="" role="search" method="get" action="">
