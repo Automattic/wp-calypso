@@ -1,11 +1,7 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type {
-	SupportInteraction,
-	SupportInteractionDraft,
-	SupportInteractionEvent,
-} from '../types';
+import type { SupportInteraction, SupportInteractionEvent } from '../types';
 
 /**
  * Manage support interaction events.
@@ -18,7 +14,7 @@ export const useManageSupportInteraction = () => {
 	 */
 	const startNewInteraction = useMutation( {
 		mutationKey: [ 'support-interaction', 'new-conversation', isTestMode ],
-		mutationFn: ( eventData: SupportInteractionDraft ) =>
+		mutationFn: ( eventData: SupportInteractionEvent ) =>
 			handleSupportInteractionsFetch(
 				'POST',
 				null,
