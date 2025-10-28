@@ -75,9 +75,9 @@
 		border: 1px solid $gray-200;
 		background-color: #fff;
 	}
-
-	&.has-density-medium {
-		padding: $grid-unit-20 $grid-unit-30;
+	
+	&.has-density-medium,
+	&.has-density-high {
 		border-bottom: 1px solid $gray-100;
 		border-radius: 0;
 
@@ -87,15 +87,12 @@
 		}
 	}
 
+	&.has-density-medium {
+		padding: $grid-unit-20 $grid-unit-30;
+	}
+
 	&.has-density-high {
 		padding: $grid-unit-10 $grid-unit-20;
-		border-bottom: 1px solid $gray-100;
-		border-radius: 0;
-
-		.summary-button-title {
-			@include body-medium;
-			line-height: $font-line-height-medium;
-		}
 	}
 
 	&:focus-visible {
