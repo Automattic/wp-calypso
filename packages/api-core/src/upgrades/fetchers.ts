@@ -38,3 +38,10 @@ export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
 	} );
 	return normalizePurchase( data );
 }
+
+export async function hasExtendedPurchase( purchaseId: number ): Promise< boolean > {
+	return await wpcom.req.get( {
+		path: `/purchases/${ purchaseId }/has-extended`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}

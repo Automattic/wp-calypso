@@ -97,7 +97,9 @@ export async function cancelAndRefundPurchase(
 	} );
 }
 
-export async function extendPurchaseWithFreeMonth( purchaseId: number ): Promise< void > {
+export async function extendPurchaseWithFreeMonth(
+	purchaseId: number
+): Promise< { status: string; message: string } > {
 	return wpcom.req.post( {
 		path: `/upgrades/${ purchaseId }/extend`,
 		apiNamespace: 'wpcom/v2',

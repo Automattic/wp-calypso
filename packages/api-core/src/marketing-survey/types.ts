@@ -1,7 +1,12 @@
+export interface MarketingSurveyResponse {
+	text?: string;
+	response?: string | boolean | number;
+}
+
 export interface MarketingSurveyResponses {
 	purchaseId: number;
 	purchase: string;
-	[ key: string ]: string | number | boolean;
+	[ key: string ]: string | number | MarketingSurveyResponse;
 }
 
 export interface MarketingSurveyDetails {
