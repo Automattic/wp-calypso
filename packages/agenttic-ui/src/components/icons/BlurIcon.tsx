@@ -1,6 +1,6 @@
 import type { BaseIconProps } from './types';
 
-export function OptimizeIcon( { className, size = 24 }: BaseIconProps ) {
+export function BlurIcon( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			width={ size }

@@ -15,8 +15,10 @@ export { CompactView } from './views/CompactView';
 export { ConversationView } from './views/ConversationView';
 
 // Icons
+export { AltIcon } from './icons/AltIcon';
 export { ArrowUpIcon } from './icons/ArrowUpIcon';
 export { BigSkyIcon } from './icons/BigSkyIcon';
+export { BlurIcon } from './icons/BlurIcon';
 export { CopyIcon } from './icons/CopyIcon';
 export { StopIcon } from './icons/StopIcon';
 export { StylesIcon } from './icons/StylesIcon';
@@ -24,8 +26,6 @@ export { ThumbsDownIcon } from './icons/ThumbsDownIcon';
 export { ThumbsUpIcon } from './icons/ThumbsUpIcon';
 export { XIcon } from './icons/XIcon';
 export { RegenerateIcon } from './icons/RegenerateIcon';
-export { OptimizeIcon } from './icons/OptimizeIcon';
-export { AltIcon } from './icons/AltIcon';
 
 // Animations
 export * from './animations';
