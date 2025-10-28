@@ -11,7 +11,7 @@ export type EmailSubscriptionStatus =
 	( typeof EmailSubscriptionStatus )[ keyof typeof EmailSubscriptionStatus ];
 
 export interface EmailSubscription {
-	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider' | 'unknown';
 	product_slug: string;
 	expiry_date: string;
 	purchase_cost_per_mailbox?: EmailCost;

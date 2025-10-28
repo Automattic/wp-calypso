@@ -282,14 +282,15 @@ export const mailboxesReadyRoute = createRoute( {
 		const search: Record< string, string > = location.search;
 		const mailboxes = search.mailboxes?.split( ',' ) ?? [];
 
-		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		// Intentional call to `fetchQuery` instead of `ensureQueryData` to bypass cache and always fetch fresh data.
+		const domain = await queryClient.fetchQuery( domainQuery( domainName ) );
 		const mailboxAccounts = await queryClient.fetchQuery(
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
 		const mailboxAccount = mailboxAccounts[ 0 ];
-		const emails = mailboxAccount.emails.filter( ( { mailbox } ) => mailboxes.includes( mailbox ) );
+		const emails =
+			mailboxAccount?.emails.filter( ( { mailbox } ) => mailboxes.includes( mailbox ) ) ?? [];
 
 		return {
 			mailboxAccount,
