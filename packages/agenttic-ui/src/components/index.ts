@@ -4,7 +4,6 @@ export * from './chat';
 // UI components
 export { Button } from './ui/button';
 export { Textarea } from './ui/textarea';
-export { Canvas } from './ui/canvas';
 
 // Feature components
 export { Suggestions } from './chat/Suggestions';

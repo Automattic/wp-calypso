@@ -60,9 +60,6 @@ export { RegenerateIcon } from './components/icons/RegenerateIcon';
 export { AltIcon } from './components/icons/AltIcon';
 export { BlurIcon } from './components/icons/BlurIcon';
 
-// UI Primitives
-export { Canvas } from './components/ui/canvas';
-
 // Types
 export type * from './types';
 
