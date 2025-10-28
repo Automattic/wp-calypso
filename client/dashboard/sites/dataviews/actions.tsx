@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { backup, wordpress } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { siteDomainsRoute } from '../../app/router/sites';
 import { isP2, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canManageSite } from '../features';
 import type { Site } from '@automattic/api-core';
@@ -48,7 +49,7 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Domains' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				router.navigate( { to: '/sites/$siteSlug/domains', params: { siteSlug: site.slug } } );
+				router.navigate( { to: siteDomainsRoute.fullPath, params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) => canManageSite( item ),
 		},
