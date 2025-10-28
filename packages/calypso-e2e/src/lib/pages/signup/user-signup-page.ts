@@ -168,11 +168,15 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
-		await this.page
-			.getByRole( 'button', {
-				name: 'Continue with email',
-			} )
-			.click();
+		const continueWithEmailButton = this.page.getByRole( 'button', {
+			name: 'Continue with email',
+		} );
+
+		// The "Continue with email" button is only shown on certain flows
+		await this.page.addLocatorHandler( continueWithEmailButton, async () => {
+			await continueWithEmailButton.click();
+		} );
+
 		return this.signupWithEmail( email );
 	}
 
