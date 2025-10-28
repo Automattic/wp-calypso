@@ -292,7 +292,6 @@ export type SupportInteractionUser = {
 export type SupportInteractionEvent = {
 	event_external_id: string;
 	event_source: SupportProvider;
-	bot_slug: OdieAllowedBots;
 	metadata?: object;
 	event_order?: number;
 };
