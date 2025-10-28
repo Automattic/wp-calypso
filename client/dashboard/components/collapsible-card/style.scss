@@ -1,0 +1,12 @@
+.collapsible-card {
+	max-height: 100%;
+
+	&__header {
+		cursor: pointer;
+	}
+
+	// Position button on the right when there's no header
+	.collapsible-card__toggle {
+		margin-inline-start: auto;
+	}
+}
