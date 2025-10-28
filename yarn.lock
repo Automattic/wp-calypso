@@ -15843,6 +15843,7 @@ __metadata:
     superagent: "npm:^3.8.3"
     supertest: "npm:^7.1.4"
     textarea-caret: "npm:^3.1.0"
+    tlds: "npm:^1.261.0"
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
     twemoji: "npm:^12.1.6"
@@ -37290,6 +37291,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.3"
   checksum: face56f686060f777b43a180d371407124d201eb4238c19d9e97030fd54859696ca4e2ca499cc232f8700f24f2414cc08aab9fdf6d39acff055dd825a4d86d6a
+  languageName: node
+  linkType: hard
+
+"tlds@npm:^1.261.0":
+  version: 1.261.0
+  resolution: "tlds@npm:1.261.0"
+  bin:
+    tlds: bin.js
+  checksum: ce05d266618312dd52efe0c958ebd668da70b9b752b7ec1f1b8c4b8fabc6e0f044159f80fec6c3a78df02572afbeb343208df7ef8e83a43e9f8e6c26134c76ee
   languageName: node
   linkType: hard
 

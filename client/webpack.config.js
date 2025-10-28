@@ -292,6 +292,8 @@ const webpackConfig = {
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
+			// Override email-validator with enhanced validator that includes TLD validation
+			'email-validator': path.join( __dirname, 'lib', 'email-validation' ),
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),
