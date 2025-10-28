@@ -364,7 +364,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 body.mobile-nav-open {
 	@media ( max-width: 782px ) {
 		// Blur everything except the mobile dropdown and global nav
-		> *:not(.x-wpcom-global-nav):not(.happy-blocks-search-card):not(.site-header) {
+		> *:not(.x-wpcom-global-nav):not(.happy-blocks-search-card) {
 			filter: blur(4px);
 			pointer-events: none;
 			transition: filter 0.2s ease;
