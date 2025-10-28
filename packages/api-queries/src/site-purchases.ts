@@ -20,16 +20,3 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 			return cancelables.length > 0;
 		},
 	} );
-
-export const sitePurchaseQuery = ( siteId: number, purchaseId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'purchases', purchaseId ],
-		queryFn: () => fetchSitePurchases( siteId ),
-		select: ( purchases ) => purchases.find( ( p ) => p.ID === purchaseId ),
-	} );
-
-export const sitePurchasesQuery = ( siteId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'purchases' ],
-		queryFn: () => fetchSitePurchases( siteId ),
-	} );

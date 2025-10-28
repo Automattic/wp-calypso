@@ -8,6 +8,7 @@ import {
 	removePurchase,
 	hasExtendedPurchase,
 	fetchUserTransferredPurchases,
+	fetchSitePurchases,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -29,6 +30,13 @@ export function userTransferredPurchasesQuery() {
 		queryFn: () => fetchUserTransferredPurchases(),
 	} );
 }
+
+export const sitePurchasesQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'upgrades', 'site', siteId ],
+		queryFn: () => fetchSitePurchases( siteId ),
+	} );
+
 export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'upgrades', purchaseId ],
@@ -44,19 +52,25 @@ export const hasPurchaseBeenExtendedQuery = ( purchaseId: number ) =>
 export const userPurchaseSetAutoRenewQuery = ( purchaseId: number ) =>
 	mutationOptions( {
 		mutationFn: ( autoRenew: boolean ) => setPurchaseAutoRenew( purchaseId, autoRenew ),
-		onSuccess: ( data ) => {
-			queryClient.setQueryData( purchaseQuery( purchaseId ).queryKey, data.upgrade );
+		onSuccess: () => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
 		},
 	} );
 
 export const assignPaymentMethodMutation = () =>
 	mutationOptions( {
 		mutationFn: ( params: AssignPaymentMethodParams ) => assignPaymentMethod( params ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
+		},
 	} );
 
 export const removePurchaseMutation = () =>
 	mutationOptions( {
 		mutationFn: removePurchase,
+		onSuccess: () => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
+		},
 	} );
 
 export const cancelAndRefundPurchaseMutation = () =>
