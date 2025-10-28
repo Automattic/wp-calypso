@@ -4,7 +4,7 @@
  * Matches existing credit card field styling exactly
  */
 
-import { loadVGSCollect } from '@vgs/collect-js';
+import { loadVGSCollect, VGS } from '@vgs/collect-js';
 import { VGSCollectForm, type VGSCollectVaultEnvironment } from '@vgs/collect-js-react';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -14,7 +14,7 @@ const { CardholderField, CardNumberField, CardExpirationDateField, CardSecurityC
 	VGSCollectForm;
 
 // Match existing credit card field styling exactly with proper height and spacing
-const VGSCollectFieldStyles: Record< string, any > = {
+const VGSCollectFieldStyles: VGS.Css = {
 	width: '100%',
 	height: '40px',
 	padding: '0.5rem 1rem',
