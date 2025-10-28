@@ -1,41 +1,21 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
-import { siteDeploymentsListRoute, siteRoute } from '../../app/router/sites';
+import { useRouter } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
+import { siteDeploymentsListRoute } from '../../app/router/sites';
+import SnackbarBackButton from '../../components/snackbar-back-button';
+import type { Site } from '@automattic/api-core';
 
-export function BackToDeploymentsButton() {
-	const { siteSlug } = siteRoute.useParams();
-	const navigate = useNavigate();
-
+export function BackToDeploymentsButton( { site }: { site: Site } ) {
+	const router = useRouter();
 	return (
-		<div
-			className="back-to-deployments-button"
-			style={ {
-				position: 'fixed',
-				bottom: '16px',
-				insetInlineStart: '16px',
-			} }
+		<SnackbarBackButton
+			backUrl={
+				router.buildLocation( {
+					to: siteDeploymentsListRoute.fullPath,
+					params: { siteSlug: site.slug },
+				} ).href
+			}
 		>
-			<Button
-				variant="secondary"
-				icon={ isRTL() ? chevronRight : chevronLeft }
-				iconPosition="left"
-				onClick={ () => {
-					navigate( {
-						to: siteDeploymentsListRoute.fullPath,
-						params: { siteSlug },
-					} );
-				} }
-				style={ {
-					backgroundColor: '#1e1e1e',
-					color: '#ffffff',
-					borderColor: '#1e1e1e',
-					boxShadow: 'none',
-				} }
-			>
-				{ __( 'Back to Deployments' ) }
-			</Button>
-		</div>
+			{ __( 'Back to Deployments' ) }
+		</SnackbarBackButton>
 	);
 }

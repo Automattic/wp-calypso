@@ -1,4 +1,8 @@
+import { useRouter, useRouterState } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
+import { siteOverviewRoute } from '../../app/router/sites';
 import { CalloutOverlay } from '../../components/callout-overlay';
+import SnackbarBackButton from '../../components/snackbar-back-button';
 import HostingFeatureGate from '../hosting-feature-gate';
 import ActivationCallout from './activation';
 import UpsellCallout, { UpsellCalloutProps } from './upsell';
@@ -26,13 +30,31 @@ export default function HostingFeatureGatedWithCallout( {
 	upsellDescription,
 	...props
 }: HostingFeatureGatedWithCalloutProps ) {
+	const router = useRouter();
+	const {
+		location: { search },
+	} = useRouterState();
+
 	const { site, upsellId, upsellFeatureId, feature } = props;
+
+	const backButton = search.back_to === 'overview' && (
+		<SnackbarBackButton
+			backUrl={
+				router.buildLocation( {
+					to: siteOverviewRoute.fullPath,
+					params: { siteSlug: site.slug },
+				} ).href
+			}
+		>
+			{ __( 'Back to Overview' ) }
+		</SnackbarBackButton>
+	);
 
 	return (
 		<HostingFeatureGate
 			{ ...props }
 			renderUpsellComponent={ () => {
-				const callout = (
+				let callout = (
 					<UpsellCallout
 						site={ site }
 						upsellId={ upsellId }
@@ -46,13 +68,21 @@ export default function HostingFeatureGatedWithCallout( {
 				);
 
 				if ( asOverlay || overlay ) {
-					return <CalloutOverlay callout={ callout } main={ overlay } />;
+					callout = <CalloutOverlay callout={ callout } main={ overlay } />;
 				}
 
-				return callout;
+				return (
+					<>
+						{ callout }
+						{ backButton }
+					</>
+				);
 			} }
 			renderActivationComponent={ ( { onClick } ) => (
-				<ActivationCallout main={ overlay } onClick={ onClick } />
+				<>
+					<ActivationCallout main={ overlay } onClick={ onClick } />
+					{ backButton }
+				</>
 			) }
 		/>
 	);
