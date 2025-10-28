@@ -31,7 +31,7 @@ export const useVerifySSHMigrationAtomicTransfer = (
 	siteId: number,
 	{ enabled = true }: UseVerifySSHMigrationAtomicTransferOptions = {}
 ) => {
-	const query = useQuery( {
+	return useQuery( {
 		queryKey: useVerifySSHMigrationAtomicTransferQueryKey( siteId ),
 		queryFn: () => verifySSHMigrationAtomicTransfer( siteId ),
 		enabled: enabled && !! siteId,
@@ -48,6 +48,4 @@ export const useVerifySSHMigrationAtomicTransfer = (
 			return 2000; // Poll every 2 seconds
 		},
 	} );
-
-	return query;
 };
