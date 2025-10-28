@@ -13,6 +13,7 @@ import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { MailboxProvider, IntervalLength } from '../../emails/types';
 import { domainHasEmail } from '../../utils/domain';
+import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {
@@ -264,15 +265,23 @@ export const addEmailForwarderRoute = createRoute( {
 );
 
 export const mailboxesReadyRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { emails: EmailBox[] } } ) => ( {
-		meta: [
-			{
-				title:
-					loaderData &&
-					_n( 'Your mailbox is ready!', 'Your mailboxes are ready!', loaderData.emails.length ),
-			},
-		],
-	} ),
+	head: ( { loaderData }: { loaderData?: { emails: EmailBox[]; status: string } } ) => {
+		let title;
+		if ( loaderData?.status === 'ready' ) {
+			title = _n(
+				'Your mailbox is ready!',
+				'Your mailboxes are ready!',
+				loaderData?.emails.length ?? 0
+			);
+		} else {
+			title = _n(
+				'Your mailbox is almost ready!',
+				'Your mailboxes are almost ready!',
+				loaderData?.emails.length ?? 0
+			);
+		}
+		return { meta: [ { title } ] };
+	},
 	getParentRoute: () => rootRoute,
 	path: 'emails/mailboxes-ready/$domain',
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
@@ -292,9 +301,25 @@ export const mailboxesReadyRoute = createRoute( {
 		const emails =
 			mailboxAccount?.emails.filter( ( { mailbox } ) => mailboxes.includes( mailbox ) ) ?? [];
 
+		let status;
+		if (
+			mailboxAccount?.account_type === 'google_workspace' &&
+			accountHasWarningWithSlug( 'google_pending_tos_acceptance', mailboxAccount )
+		) {
+			status = 'google_pending_tos_acceptance';
+		} else if (
+			mailboxAccount?.account_type === 'google_workspace' &&
+			domain.google_apps_subscription?.status === 'unknown'
+		) {
+			status = 'google_configuring';
+		} else {
+			status = 'ready';
+		}
+
 		return {
 			mailboxAccount,
 			emails,
+			status,
 		};
 	},
 } ).lazy( () =>
