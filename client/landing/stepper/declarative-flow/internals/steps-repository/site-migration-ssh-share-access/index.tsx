@@ -101,16 +101,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
 
-	const handleContinue = useCallback( () => {
-		setMigrationError( null );
-
-		if ( transferStatus !== 'completed' ) {
-			setShouldStartMigration( true );
-			return;
-		}
-
-		setShouldStartMigration( false );
-
+	const triggerSSHMigration = () => {
 		startMigration(
 			{
 				siteId,
@@ -129,23 +120,26 @@ const SiteMigrationSshShareAccess: StepType< {
 				},
 			}
 		);
-	}, [
-		transferStatus,
-		setMigrationError,
-		startMigration,
-		siteId,
-		formState.serverAddress,
-		formState.username,
-		formState.password,
-		fromUrl,
-		onMigrationStarted,
-	] );
+	};
 
+	const handleContinue = () => {
+		setMigrationError( null );
+
+		if ( transferStatus !== 'completed' ) {
+			setShouldStartMigration( true );
+			return;
+		}
+
+		triggerSSHMigration();
+	};
+
+	// Auto-start migration when verification completes
 	useEffect( () => {
 		if ( transferStatus === 'completed' && shouldStartMigration ) {
-			handleContinue();
+			setShouldStartMigration( false );
+			triggerSSHMigration();
 		}
-	}, [ transferStatus, shouldStartMigration, handleContinue ] );
+	}, [ transferStatus, shouldStartMigration ] );
 
 	const navigateToDoItForMe = useCallback( () => {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
