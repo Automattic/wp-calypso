@@ -19,6 +19,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainsRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -264,7 +265,15 @@ export default function TransferDomainToOtherUser() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer to another user' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					title={ __( 'Transfer to another user' ) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 3 }>
