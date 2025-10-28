@@ -192,6 +192,59 @@ export const addMailboxRoute = createRoute( {
 	)
 );
 
+export const setUpMailboxRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Set Up Mailbox' ),
+			},
+		],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'emails/set-up-mailbox/$domain',
+	beforeLoad: async ( { params: { domain: domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		await redirectIfInvalidDomain( domainName );
+
+		const existingMailboxes = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		const unusedMailboxesCount = existingMailboxes?.some(
+			( mailbox ) =>
+				mailbox.warnings.some(
+					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
+				) && mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
+		);
+
+		const hasUnusedMailbox = !! unusedMailboxesCount;
+
+		if ( ! hasUnusedMailbox ) {
+			throw redirect( {
+				to: emailsRoute.fullPath,
+				search: {
+					domainName,
+				},
+			} );
+		}
+	},
+	loader: async ( { params: { domain: domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const mailboxAccounts = await queryClient.ensureQueryData(
+			mailboxAccountsQuery( domain.blog_id, domainName )
+		);
+
+		await Promise.all( [ domain, mailboxAccounts ] );
+	},
+} ).lazy( () =>
+	import( '../../emails/add-mailbox' ).then( ( d ) =>
+		createLazyRoute( 'add-mailbox' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const addEmailForwarderRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -216,6 +269,7 @@ export const createEmailsRoutes = () => {
 		chooseDomainRoute,
 		chooseEmailSolutionRoute,
 		addMailboxRoute,
+		setUpMailboxRoute,
 		addEmailForwarderRoute,
 	];
 };

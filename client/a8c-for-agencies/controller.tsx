@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -89,7 +88,7 @@ export const requireTierAccessContext: Callback = ( context, next ) => {
 	const agency = getActiveAgency( state );
 	const pathname = context.pathname;
 
-	if ( isEnabled( 'a8c-for-agencies-agency-tier' ) && ! isPathAllowedForTier( pathname, agency ) ) {
+	if ( ! isPathAllowedForTier( pathname, agency ) ) {
 		context.primary = <TierPermissionError section={ context.section.name } />;
 		next();
 		return;

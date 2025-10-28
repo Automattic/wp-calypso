@@ -18,6 +18,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
@@ -210,7 +211,10 @@ export default function DomainTransfer() {
 	// TO DO: render notices if the domain is not transferable
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer' ) } /> }>
+		<PageLayout
+			size="small"
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Transfer' ) } /> }
+		>
 			{ renderTransferInfo() }
 			{ isDomainTransferable && <InternalTransferOptions domain={ domain } /> }
 			{ isDomainTransferable && domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (

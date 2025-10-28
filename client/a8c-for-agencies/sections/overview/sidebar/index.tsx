@@ -31,7 +31,7 @@ const OverviewSidebar = () => {
 					<OverviewSidebarGrowthAccelerator />
 				</>
 			) }
-			{ isEnabled( 'a8c-for-agencies-agency-tier' ) && <OverviewSidebarAgencyTier /> }
+			<OverviewSidebarAgencyTier />
 			{ ! isNewArrangement && <OverviewSidebarQuickLinks /> }
 			<OverviewSidebarFeaturedWooPayments />
 			<PressablePremiumPlanMigrationCard />

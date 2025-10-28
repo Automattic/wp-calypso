@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
@@ -35,11 +36,14 @@ const OneLoginLayout = ( {
 	noThanksRedirectUrl,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
-	const locale = useSelector( getCurrentUserLocale );
+	const urlLocale = useLocale();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const userLocale = useSelector( getCurrentUserLocale );
+	// For logged-in users, use their user locale setting. For logged-out users, use URL locale.
+	const locale = isLoggedIn && userLocale ? userLocale : urlLocale;
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
-	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 

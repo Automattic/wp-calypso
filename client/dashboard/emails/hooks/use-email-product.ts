@@ -17,7 +17,7 @@ const EMAIL_PRODUCTS = {
 export const useEmailProduct = ( provider: MailboxProvider, interval: IntervalLength ) => {
 	const { data: products } = useQuery( productsQuery() );
 
-	const productSlug = EMAIL_PRODUCTS[ provider ][ interval ];
+	const productSlug = EMAIL_PRODUCTS[ provider ]?.[ interval ];
 	const product = products?.[ productSlug ] as Product;
 
 	return {

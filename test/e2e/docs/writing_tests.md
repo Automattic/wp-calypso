@@ -1,8 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./tests_ci.md"><-- Running tests on CI</a> </div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./library_objects.md">Library Objects --></a> </div>
-
-<br><br>
+[← Running tests on CI](./tests_ci.md) | [Top](./../README.md) | [Library Objects →](./library_objects.md)
 
 # Writing Tests
 
@@ -78,6 +74,8 @@ describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
 			await someComponent.clickMyPages();
 			const resultValue = await someComponent.getTitle();
 
+			const expectedValue = 'Expected Page Title'; // Define expected value for clarity
+
 			// Use Jest's built-in `expect` when asserting in a test spec.
 			expect( resultValue ).toStrictEqual( expectedValue );
 		} );
@@ -92,11 +90,10 @@ describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
 	describe( 'Change preview value', function () {
 		// Use of Jest's built-in parametrization method to test slightly different
 		// variations of the input value.
-		it.each`
-			value         | expected
-			${ 'small' }  | ${ 's' }
-			${ 'medium' } | ${ 'm' }
-		`( 'Click on preview: $value', function ( { value, expected } ) {
+		it.each( [
+			{ value: 'small', expected: 's' },
+			{ value: 'medium', expected: 'm' },
+		] )( 'Click on preview: $value', async function ( { value, expected } ) {
 			const anotherComponent = new AnotherComponent( page );
 
 			const resultValue = await anotherComponent.click( value );
@@ -311,10 +308,12 @@ export class ExampleBlockFlow implements BlockFlow {
 	blockEditorSelector = '[aria-label="Block: Example"]';
 
 	async configure( context: EditorContext ): Promise< void > {
-		// use the editor context (things like the editor Locator and Playwright Page) and the configuration data to configure the block in the editor.
-	}
-
+	async configure( context: EditorContext ): Promise< void > {
+		// Use the editor context, which provides access to the Playwright Page (context.page)
+		// and the editor Locator (context.editorLocator), along with the configuration data,
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		// use the published post context and the configuration data to do a quick validation of the block content in a published post.
+	}
 		// use the publsihed post context and the configuration data to do a quick validation of the block content in a published post.
 	}
 }
@@ -324,6 +323,8 @@ export class ExampleBlockFlow implements BlockFlow {
 
 <details>
 <summary>Spec test file:</summary>
+
+> **Note:** The `ExampleABlockFlow` and `ExampleBBlockFlow` classes are example implementations of the `BlockFlow` interface. For real usage, see their definitions in the appropriate subdirectory of [calypso-e2e/src/lib/blocks](../../../packages/calypso-e2e/src/lib/blocks).
 
 ```typescript
 /**
