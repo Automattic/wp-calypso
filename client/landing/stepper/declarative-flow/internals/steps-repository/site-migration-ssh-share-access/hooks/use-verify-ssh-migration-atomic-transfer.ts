@@ -28,11 +28,19 @@ export const useVerifySSHMigrationAtomicTransfer = (
 	siteId: number,
 	{ enabled = true }: UseVerifySSHMigrationAtomicTransferOptions = {}
 ) => {
-	return useQuery( {
+	const query = useQuery( {
 		queryKey: useVerifySSHMigrationAtomicTransferQueryKey( siteId ),
 		queryFn: () => verifySSHMigrationAtomicTransfer( siteId ),
 		enabled: enabled && !! siteId,
 		retry: false,
-		staleTime: Infinity, // Only fetch once
+		refetchInterval: ( query ) => {
+			// Keep polling until transfer_status is 'completed'
+			if ( query.state.data?.transfer_status === 'completed' ) {
+				return false;
+			}
+			return 2000; // Poll every 2 seconds
+		},
 	} );
+
+	return query;
 };

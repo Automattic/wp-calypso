@@ -14,6 +14,7 @@ import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/u
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
+import { useVerifySSHMigrationAtomicTransfer } from './hooks/use-verify-ssh-migration-atomic-transfer';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
@@ -38,6 +39,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const transferIdParam = queryParams.get( 'transferId' );
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
+	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -69,6 +71,19 @@ const SiteMigrationSshShareAccess: StepType< {
 
 	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
+	// Verify SSH migration atomic transfer capability
+	const { data: verificationData } = useVerifySSHMigrationAtomicTransfer( siteId, {
+		enabled: !! transferId && siteId > 0,
+	} );
+
+	const transferStatus = verificationData?.transfer_status;
+
+	// Poll for migration status after starting migration
+	const { data: migrationStatus } = useSSHMigrationStatus( {
+		siteId,
+		enabled: migrationStarted && siteId > 0,
+	} );
+
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
 		if ( ! migrationStarted || ! migrationStatus ) {
@@ -86,8 +101,16 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
 
-	const handleContinue = () => {
+	const handleContinue = useCallback( () => {
 		setMigrationError( null );
+
+		if ( transferStatus !== 'completed' ) {
+			setShouldStartMigration( true );
+			return;
+		}
+
+		setShouldStartMigration( false );
+
 		startMigration(
 			{
 				siteId,
@@ -106,7 +129,23 @@ const SiteMigrationSshShareAccess: StepType< {
 				},
 			}
 		);
-	};
+	}, [
+		transferStatus,
+		setMigrationError,
+		startMigration,
+		siteId,
+		formState.serverAddress,
+		formState.username,
+		formState.password,
+		fromUrl,
+		onMigrationStarted,
+	] );
+
+	useEffect( () => {
+		if ( transferStatus === 'completed' && shouldStartMigration ) {
+			handleContinue();
+		}
+	}, [ transferStatus, shouldStartMigration, handleContinue ] );
 
 	const navigateToDoItForMe = useCallback( () => {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
@@ -150,7 +189,7 @@ const SiteMigrationSshShareAccess: StepType< {
 							variant="primary"
 							onClick={ handleContinue }
 							disabled={ ! canStartMigration || isStartingMigration || migrationStarted }
-							isBusy={ isStartingMigration || migrationStarted }
+							isBusy={ isStartingMigration || migrationStarted || shouldStartMigration }
 						>
 							{ translate( 'Continue' ) }
 						</Button>
