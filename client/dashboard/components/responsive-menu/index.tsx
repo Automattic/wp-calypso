@@ -6,6 +6,8 @@ import React, { useEffect, useRef, useState, ComponentProps, CSSProperties } fro
 import Menu from '../menu';
 import RouterLinkMenuItem from '../router-link-menu-item';
 
+import './style.scss';
+
 type ResponsiveMenuProps = {
 	prefix?: React.ReactNode;
 	children: React.ReactNode;
@@ -184,13 +186,7 @@ function ResponsiveMenu( {
 
 					<div
 						ref={ containerRef }
-						style={ {
-							overflowX: 'scroll',
-							scrollbarWidth: 'none',
-							msOverflowStyle: 'none',
-							padding: '2px',
-							margin: '-2px',
-						} }
+						className="dashboard-responsive-menu__scrollable-container"
 						onScroll={ handleScroll }
 					>
 						{ inlineMenu }
