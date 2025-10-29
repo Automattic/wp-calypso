@@ -19,7 +19,7 @@ export default function VerificationInProgressNextSteps() {
 		{
 			id: 'automatic-verification',
 			title: __( 'Automatic verification' ),
-			description: __( 'We’ll check your DNS records and verify your domain connection.' ),
+			description: __( 'We’ll continue checking your name servers until they’re all verified.' ),
 			icon: rotateRight,
 		},
 		{
@@ -39,7 +39,10 @@ export default function VerificationInProgressNextSteps() {
 	];
 
 	return (
-		<CollapsibleCard header={ <SectionHeader level={ 3 } title={ __( 'What happens next' ) } /> }>
+		<CollapsibleCard
+			header={ <SectionHeader level={ 3 } title={ __( 'What happens next' ) } /> }
+			className="verification-in-progress-next-steps"
+		>
 			{ data.map( ( item ) => (
 				<ActionList.ActionItem
 					key={ item.id }

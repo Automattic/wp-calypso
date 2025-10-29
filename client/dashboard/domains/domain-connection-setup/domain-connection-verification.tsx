@@ -1,7 +1,6 @@
 import { Badge } from '@automattic/ui';
 import {
 	Button,
-	ExternalLink,
 	Icon,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -92,7 +91,8 @@ export default function DomainConnectionVerification( {
 						<InlineSupportLink supportContext="map-domain-setup-instructions">
 							{ __( 'Domain connection guide' ) }
 						</InlineSupportLink>
-						<ExternalLink href="https://godaddy.com" children={ __( 'Registrar instructions' ) } />
+						{ /* TODO: Add additional help resources or links here in the future */ }
+						{ /* <ExternalLink href="#" children={ __( 'Registrar instructions' ) } /> */ }
 						<Button
 							variant="link"
 							onClick={ () => setShowHelpCenter( true ) }
