@@ -5,8 +5,8 @@ describe( 'enrichedSurveyData', () => {
 	test( 'should duplicate survey data if no site or purchase are provided', () => {
 		expect( enrichedSurveyData( { key: 'value' } ) ).toEqual( {
 			key: 'value',
-			purchase: null,
-			purchaseId: null,
+			purchase: '',
+			purchaseId: 0,
 		} );
 	} );
 
