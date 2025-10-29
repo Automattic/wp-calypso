@@ -1,5 +1,5 @@
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
-import { defaultAppConfig } from 'calypso/dashboard/app/context';
+import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
@@ -225,7 +225,7 @@ export const getRouter = ( config: AppConfig ) => {
 };
 
 export const routerConfig = {
-	...defaultAppConfig,
+	...APP_CONTEXT_DEFAULT_CONFIG,
 	basePath: '/',
 };
 
