@@ -215,7 +215,10 @@ allowedTracksRailcarEventNames
 	.add( 'calypso_reader_recommended_post_clicked' )
 	.add( 'calypso_reader_recommended_site_clicked' )
 	.add( 'calypso_reader_recommended_post_dismissed' )
-	.add( 'calypso_reader_article_engaged_time' );
+	.add( 'calypso_reader_article_engaged_time' )
+	.add( 'calypso_reader_unliked_comment' )
+	.add( 'calypso_reader_share_comment_to_site' )
+	.add( 'calypso_reader_liked_comment' );
 
 export function recordTracksRailcar(
 	action: string,

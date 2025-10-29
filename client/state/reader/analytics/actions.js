@@ -8,12 +8,13 @@ import { dispatchReaderTracksEvent } from './analytics.utils';
  * @returns The action object to dispatch.
  */
 export const recordReaderTracksEvent =
-	( name, properties, { pathnameOverride, post } = {} ) =>
+	( name, properties, { pathnameOverride, post, railcar: railcarOverride } = {} ) =>
 	( dispatch, getState ) => {
 		const followsCount = getReaderFollowsCount( getState() );
+		const railcar = railcarOverride || post?.railcar;
 
-		if ( isRailcarEligibleForEvent( name ) && post?.railcar ) {
-			const railcarEventProps = buildRailcarEventProps( name, post.railcar, properties );
+		if ( isRailcarEligibleForEvent( name ) && railcar ) {
+			const railcarEventProps = buildRailcarEventProps( name, railcar, properties );
 			dispatchReaderTracksEvent( dispatch, 'calypso_traintracks_interact', railcarEventProps, {
 				pathnameOverride,
 				post,
