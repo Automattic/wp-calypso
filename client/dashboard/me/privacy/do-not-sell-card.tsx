@@ -1,18 +1,13 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	ExternalLink,
-	ToggleControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useIsRegionInCcpaZone } from '../../app/analytics/country-code-cookie-gdpr';
 import { getTrackingPrefs, setTrackingPrefs } from '../../app/analytics/tracking-preferences';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 

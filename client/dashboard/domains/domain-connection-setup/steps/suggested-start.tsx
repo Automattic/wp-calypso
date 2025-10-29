@@ -2,8 +2,6 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Card,
-	CardBody,
 	Button,
 	Panel,
 	PanelBody,
@@ -13,6 +11,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
+import { Card, CardBody } from '../../../components/card';
 import Notice from '../../../components/notice';
 import { isSubdomain } from '../../../utils/domain';
 import { StepName, type StepComponentProps } from '../types';

@@ -23,7 +23,10 @@ const PLACEHOLDER_PHRASES = [
 ];
 
 export const SearchForm = () => {
-	const { setQuery } = useDomainSearch();
+	const {
+		setQuery,
+		events: { onSubmitButtonClick },
+	} = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( '' );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
@@ -51,7 +54,9 @@ export const SearchForm = () => {
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
 					/>
-					{ activeQuery === 'large' && <DomainSearchControls.Submit /> }
+					{ activeQuery === 'large' && (
+						<DomainSearchControls.Submit onClick={ onSubmitButtonClick } />
+					) }
 				</HStack>
 				{ showSearchHint && (
 					<Text variant="muted">

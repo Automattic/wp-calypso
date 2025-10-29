@@ -1,8 +1,6 @@
 import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	TextareaControl,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -13,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import type { JetpackSettings, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';

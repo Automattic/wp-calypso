@@ -1,14 +1,13 @@
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Card,
-	CardBody,
 	Button,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import { useCallback } from 'react';
+import { Card, CardBody } from '../../../components/card';
 import Notice from '../../../components/notice';
 import type { StepComponentProps } from '../types';
 

@@ -1,10 +1,11 @@
-import { __experimentalHStack as HStack, Card, CardBody } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import AIIcon from 'calypso/assets/images/performance-profiler/ai-icon.svg';
 import AILoadingIcon from 'calypso/assets/images/performance-profiler/ai-loading-icon.svg';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 

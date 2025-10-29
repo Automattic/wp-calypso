@@ -1,5 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainQuery, sitePurchaseQuery } from '@automattic/api-queries';
+import { domainQuery, purchaseQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -23,7 +23,7 @@ export default function DomainOverview() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: purchase } = useSuspenseQuery(
-		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id ?? '0', 10 ) )
+		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 
 	const wrappableDomainName = useMemo( () => {

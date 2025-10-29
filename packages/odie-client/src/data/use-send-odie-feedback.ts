@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { ODIE_DEFAULT_BOT_SLUG } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { Chat } from '../types';
@@ -13,17 +14,19 @@ export const useSendOdieFeedback = () => {
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const queryClient = useQueryClient();
 
+	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG;
+
 	return useMutation( {
 		mutationFn: ( { messageId, ratingValue }: { messageId: number; ratingValue: number } ) => {
 			return wpcomRequest( {
 				method: 'POST',
-				path: `/odie/chat/${ supportInteraction?.bot_slug }/${ chat.odieId }/${ messageId }/feedback`,
+				path: `/odie/chat/${ botSlug }/${ chat.odieId }/${ messageId }/feedback`,
 				apiNamespace: 'wpcom/v2',
 				body: { rating_value: ratingValue, ...( version && { version } ) },
 			} );
 		},
 		onSuccess: ( data, { messageId, ratingValue } ) => {
-			const queryKey = [ 'chat', supportInteraction?.bot_slug, chat.odieId, 1, 30, true ];
+			const queryKey = [ 'chat', botSlug, chat.odieId, 1, 30, true ];
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return;

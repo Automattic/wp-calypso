@@ -7,7 +7,7 @@ export type OdieAssistantContextInterface = {
 	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
-	botNameSlug: OdieAllowedBots;
+	botNameSlug: string;
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;

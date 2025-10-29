@@ -416,7 +416,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-							redirectAfterCheckout = STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug;
+							// Redirect to verification first to obtain transferId before share-access
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug;
 						} else if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}

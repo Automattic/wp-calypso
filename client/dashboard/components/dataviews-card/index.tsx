@@ -1,5 +1,5 @@
-import { Card, CardBody } from '@wordpress/components';
 import { forwardRef } from 'react';
+import { Card, CardBody } from '../../components/card';
 
 function UnforwardedDataViewsCard(
 	{ className, children }: { className?: string; children: React.ReactNode },

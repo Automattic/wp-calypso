@@ -5,8 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
-	Card,
-	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -16,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { ReactElement } from 'react';
 import { domainSecurityRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { Domain, SslDetails } from '@automattic/api-core';

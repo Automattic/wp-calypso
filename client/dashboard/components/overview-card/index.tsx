@@ -2,8 +2,6 @@ import CircularProgressBar from '@automattic/components/src/circular-progress-ba
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
-	Card,
-	CardBody,
 	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -14,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody } from '../../components/card';
 import { isRelativeUrl } from '../../utils/url';
 import ComponentViewTracker from '../component-view-tracker';
 import { Text } from '../text';

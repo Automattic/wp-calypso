@@ -1,18 +1,13 @@
 import { isWpError } from '@automattic/api-core';
 import { requestDpaMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	Button,
-	Card,
-	CardBody,
-	Icon,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 

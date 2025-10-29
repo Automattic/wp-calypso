@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { ODIE_DEFAULT_BOT_SLUG } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { getTimestamp } from '../utils';
 import type { OdieConversation, SupportInteraction } from '../types';
@@ -19,7 +20,7 @@ export const useGetOdieConversations = (
 				supportInteractions?.map( ( interaction ) => {
 					// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
 					// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
-					return interaction.bot_slug || 'wpcom-support-chat';
+					return interaction.bot_slug || ODIE_DEFAULT_BOT_SLUG;
 				} )
 			)
 		).join( ',' )

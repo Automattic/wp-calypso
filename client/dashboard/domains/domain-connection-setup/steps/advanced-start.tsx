@@ -1,13 +1,12 @@
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Card,
-	CardBody,
 	Button,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '../../../components/card';
 import Notice from '../../../components/notice';
 import { isSubdomain } from '../../../utils/domain';
 import { StepName, type StepComponentProps } from '../types';

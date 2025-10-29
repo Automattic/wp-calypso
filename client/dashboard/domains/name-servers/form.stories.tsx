@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions';
-import { Card, CardBody } from '@wordpress/components';
+import { Card, CardBody } from '../../components/card';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';
 import type { Meta, StoryObj } from '@storybook/react';

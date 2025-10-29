@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
-import { getOdieInitialMessage } from '../../constants';
+import { getOdieInitialMessage, ODIE_DEFAULT_BOT_SLUG } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
@@ -141,11 +141,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		setSearchParams,
 	] );
 
-	// This case never happens. This is just a type guard.
-	if ( ! supportInteraction ) {
-		return null;
-	}
-
 	return (
 		<div
 			className={ clx( 'chatbox-messages', {
@@ -176,7 +171,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ ( chat.odieId || chat.provider === 'odie' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
-							supportInteraction.bot_slug,
+							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG,
 							currentUser?.display_name
 						) }
 						key={ 0 }

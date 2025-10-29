@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight, Icon } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
@@ -26,6 +26,11 @@ export default function ChooseDomain() {
 	const router = useRouter();
 	const { domains, isLoading } = useDomains();
 	const { recordTracksEvent } = useAnalytics();
+	const searchRef = useRef< HTMLInputElement >( null );
+
+	useEffect( () => {
+		searchRef.current?.focus();
+	}, [] );
 
 	// Aggregate eligible domains (exclude wpcom domains)
 	const eligibleDomains = useMemo( () => {
@@ -72,6 +77,7 @@ export default function ChooseDomain() {
 										value={ search }
 										onChange={ setSearch }
 										placeholder={ __( 'Search' ) }
+										ref={ searchRef }
 									/>
 								</Item>
 							) }

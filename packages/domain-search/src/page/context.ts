@@ -20,6 +20,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onRegisterDomainClick: noop,
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
+		onSubmitButtonClick: noop,
 		onQueryChange: noop,
 		onQueryClear: noop,
 		onAddDomainToCart: noop,

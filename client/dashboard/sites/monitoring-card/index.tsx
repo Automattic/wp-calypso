@@ -1,5 +1,6 @@
-import { Card, CardBody, __experimentalVStack as VStack, Spinner } from '@wordpress/components';
+import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
+import { Card, CardBody } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { SectionHeader } from '../../components/section-header';
 import type { ReactNode } from 'react';

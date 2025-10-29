@@ -1,8 +1,9 @@
 import { Metrics } from '@automattic/api-core';
-import { __experimentalHStack as HStack, privateApis, Card, CardBody } from '@wordpress/components';
+import { __experimentalHStack as HStack, privateApis } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useState } from 'react';
+import { Card, CardBody } from '../../components/card';
 import { getAvailableMetrics } from '../../utils/site-performance';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';

@@ -4,8 +4,6 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	Modal,
 	Button,
-	Card,
-	CardBody,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -16,6 +14,7 @@ import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SelectSite } from './select-site';
