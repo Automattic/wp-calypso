@@ -1,12 +1,11 @@
 import {
-	Card,
-	CardBody,
 	RadioControl,
 	SelectControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '../../../components/card';
 import type { Frequency, Weekday } from '../types';
 
 type Props = {

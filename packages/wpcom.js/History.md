@@ -1,5 +1,9 @@
 # History
 
+## 7.1.0 / 2025-10-28
+
+- Added type declarations for APIs provided in the library.
+
 ## 7.0.1 / 2025-10-09
 
 - Fixed package versions in `devDependencies`.

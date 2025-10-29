@@ -1,8 +1,6 @@
 import { githubWorkflowChecksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
+import { Card, CardBody } from '../../components/card';
 import { CodeHighlighter } from '../../components/code-highlighter';
 import { SectionHeader } from '../../components/section-header';
 import {

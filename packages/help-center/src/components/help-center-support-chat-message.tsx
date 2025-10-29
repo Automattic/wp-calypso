@@ -83,7 +83,7 @@ export const HelpCenterSupportChatMessage = ( {
 
 	const hasUnreadMessages = numberOfUnreadMessages > 0;
 
-	const receivedDateISO = new Date( received * 1000 ).toISOString();
+	const receivedDateISO = ( ! received ? new Date() : new Date( received * 1000 ) ).toISOString();
 
 	function renderMessage() {
 		return (

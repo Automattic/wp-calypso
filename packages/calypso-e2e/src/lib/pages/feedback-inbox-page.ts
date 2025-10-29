@@ -299,4 +299,30 @@ export class FeedbackInboxPage {
 			.last()
 			.waitFor();
 	}
+
+	/**
+	 * Opens the actions menu (three dot menu) and verifies the specified action exists.
+	 *
+	 * @param {string} text The text to match in the row. Using the name field is a good choice.
+	 * @param {string} actionName The name of the action to verify in the dropdown menu.
+	 */
+	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
+		const responseRowLocator = this.page
+			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.filter( { hasText: text } )
+			.first();
+
+		// Click the Actions button (three dot menu)
+		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
+
+		// Wait for the dropdown menu to appear and assign it to a variable
+		const menu = this.page.getByRole( 'menu' ).last();
+		await menu.waitFor();
+
+		// Verify the specified action exists in the dropdown menu
+		await this.page.getByRole( 'menuitem', { name: actionName } ).waitFor();
+
+		// Close the menu by pressing Escape key (trying to click the "Dismiss popup" button didn't work)
+		await this.page.keyboard.press( 'Escape' );
+	}
 }

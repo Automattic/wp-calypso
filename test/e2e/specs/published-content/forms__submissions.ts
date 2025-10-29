@@ -375,8 +375,12 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 	describe( 'Test response actions', function () {
 		let feedbackInboxPage: FeedbackInboxPage;
 
-		it( 'Ensure first response is selected', async function () {
+		it( 'Verify Trash action exists in actions menu', async function () {
 			feedbackInboxPage = new FeedbackInboxPage( page );
+			await feedbackInboxPage.verifyActionExistsInMenu( formData1.name, 'Trash' );
+		} );
+
+		it( 'Ensure first response is selected', async function () {
 			await feedbackInboxPage.clickResponseRowByText( formData1.name );
 		} );
 

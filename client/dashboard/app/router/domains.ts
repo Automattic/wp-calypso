@@ -458,6 +458,11 @@ export const domainTransferRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
+} );
+
+export const domainTransferIndexRoute = createRoute( {
+	getParentRoute: () => domainTransferRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../domains/domain-transfer' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer' )( {
@@ -474,8 +479,8 @@ export const domainTransferToAnyUserRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'transfer/any-user',
+	getParentRoute: () => domainTransferRoute,
+	path: 'any-user',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
@@ -496,8 +501,8 @@ export const domainTransferToOtherUserRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'transfer/other-user',
+	getParentRoute: () => domainTransferRoute,
+	path: 'other-user',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
@@ -518,8 +523,8 @@ export const domainTransferToOtherSiteRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => domainRoute,
-	path: 'transfer/other-site',
+	getParentRoute: () => domainTransferRoute,
+	path: 'other-site',
 	loader: async ( { params: { domainName } } ) => {
 		return queryClient.ensureQueryData( domainQuery( domainName ) );
 	},
@@ -604,10 +609,12 @@ export const createDomainsRoutes = () => {
 				domainGlueRecordsAddRoute,
 				domainGlueRecordsEditRoute,
 			] ),
-			domainTransferRoute,
-			domainTransferToAnyUserRoute,
-			domainTransferToOtherUserRoute,
-			domainTransferToOtherSiteRoute,
+			domainTransferRoute.addChildren( [
+				domainTransferIndexRoute,
+				domainTransferToAnyUserRoute,
+				domainTransferToOtherUserRoute,
+				domainTransferToOtherSiteRoute,
+			] ),
 			domainSecurityRoute,
 		] ),
 	];

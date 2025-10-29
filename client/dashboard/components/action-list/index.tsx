@@ -1,10 +1,6 @@
-import {
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Card,
-	CardBody,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { forwardRef } from 'react';
+import { Card, CardBody } from '../card';
 import ActionItem from './action-item';
 import type { ActionListProps } from './types';
 import './style.scss';

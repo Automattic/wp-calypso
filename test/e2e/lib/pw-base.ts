@@ -122,10 +122,6 @@ export const test = base.extend< {
 	 */
 	environment: typeof envVariables;
 	/**
-	 * Flow encapsulating the LOHP theme signup process.
-	 */
-	flowLOHPThemeSignup: LOHPThemeSignupFlow;
-	/**
 	 * Flow encapsulating the Start Writing onboarding process.
 	 */
 	flowStartWriting: StartWritingFlow;

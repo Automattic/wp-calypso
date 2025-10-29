@@ -8,6 +8,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import {
 	isExpired,
@@ -19,7 +20,6 @@ import {
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
-import { getPurchaseUrl, getAddPaymentMethodUrlFor, getChangePaymentMethodUrlFor } from '../urls';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
@@ -192,7 +192,9 @@ function ExpiredRenewNotice( {
 					}
 				),
 				{
-					managePurchase: <Link to={ getPurchaseUrl( purchase ) } />,
+					managePurchase: (
+						<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+					),
 				}
 			) }
 		</Notice>
@@ -337,10 +339,6 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 }
 
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
-	const changePaymentMethodPath = purchase.payment_card_id
-		? getChangePaymentMethodUrlFor( purchase )
-		: getAddPaymentMethodUrlFor( purchase );
-
 	const cardDetails = {
 		cardType: purchase.payment_card_type,
 		cardNumber: purchase.payment_card_id,
@@ -348,7 +346,7 @@ function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	};
 
 	const linkComponent = {
-		link: <Link to={ changePaymentMethodPath } />,
+		link: <Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } } />,
 	};
 
 	const translatedMessage = creditCardHasAlreadyExpired( purchase )

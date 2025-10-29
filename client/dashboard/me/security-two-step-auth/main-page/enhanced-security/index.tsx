@@ -1,15 +1,11 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	ToggleControl,
-	Card,
-	CardBody,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../../app/analytics';
+import { Card, CardBody } from '../../../../components/card';
 import { SectionHeader } from '../../../../components/section-header';
 
 export default function EnhancedSecurity() {

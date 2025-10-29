@@ -36,6 +36,10 @@
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 	text-align: left;
+
+	&:disabled {
+		cursor: default;
+	}
 }
 
 .migration-site-ssh__accordion-title {
@@ -151,5 +155,23 @@
 	margin-left: 2.5rem;
 	button {
 		width: 100%;
+	}
+}
+
+.site-migration-ssh__step-share-ssh {
+	&-description {
+		margin-bottom: 1rem;
+	}
+
+	&-form {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	&-label {
+		display: block;
+		font-weight: 600;
+		margin-bottom: 0.5rem;
 	}
 }

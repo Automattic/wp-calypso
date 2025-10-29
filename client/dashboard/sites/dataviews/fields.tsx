@@ -66,7 +66,7 @@ export const DEFAULT_FIELDS: Field< Site >[] = [
 		getValue: ( { item } ) => getSiteStatus( item ),
 		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
 		filterBy: {
-			operators: [ 'is' ],
+			operators: [ 'isAny' as Operator ],
 		},
 		render: ( { item } ) => <Status site={ item } />,
 	},

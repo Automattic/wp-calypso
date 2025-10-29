@@ -9,8 +9,6 @@ import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
-	Card,
-	CardBody,
 	CheckboxControl,
 	ExternalLink,
 } from '@wordpress/components';
@@ -20,6 +18,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

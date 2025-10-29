@@ -400,7 +400,7 @@ describe( 'DevicesSettings', () => {
 			expect( updatedSettingsApi.isDone() ).toBe( true );
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect( snackbar ).toHaveTextContent( '"Likes on my comments" settings saved.' );
 		} );
 	} );
 } );

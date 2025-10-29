@@ -1,4 +1,8 @@
-export type EmailProvider = 'titan' | 'google_workspace' | 'email_forwarding';
+export enum EmailProvider {
+	Forwarding = 'email_forwarding',
+	Google = 'google_workspace',
+	Titan = 'titan',
+}
 
 export interface Mailbox {
 	account_type: EmailProvider;
@@ -33,12 +37,9 @@ export interface EmailBox {
 	warnings: Warning[]; // often empty
 }
 
-// Account type discriminator
-export type AccountType = 'titan' | 'email_forwarding' | 'google_workspace';
-
 // Base account fields (shared)
 export interface EmailAccount {
-	account_type: AccountType;
+	account_type: EmailProvider;
 	account_id: number | null;
 	product_slug: string | null;
 	maximum_mailboxes: number;

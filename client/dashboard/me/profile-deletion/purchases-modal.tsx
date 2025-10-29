@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
 
@@ -24,7 +25,7 @@ export default function PurchasesModal( { onClose }: PurchasesModalProps ) {
 							'To delete your account, you‘ll need to <a>cancel any active purchases</a> before proceeding.'
 						),
 						{
-							a: <RouterLinkButton variant="link" to="/me/billing/purchases" />,
+							a: <RouterLinkButton variant="link" to={ purchasesRoute.fullPath } />,
 						}
 					) }
 				</Text>
@@ -32,7 +33,7 @@ export default function PurchasesModal( { onClose }: PurchasesModalProps ) {
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Back' ) }
 					</Button>
-					<RouterLinkButton variant="primary" to="/me/billing/purchases">
+					<RouterLinkButton variant="primary" to={ purchasesRoute.fullPath }>
 						{ __( 'Manage purchases' ) }
 					</RouterLinkButton>
 				</ButtonStack>

@@ -1,16 +1,12 @@
 import { twoStepAuthAppSetupQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Card,
-	CardBody,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { SectionHeader } from '../../components/section-header';
 import VerifyCodeForm from '../security-two-step-auth/common/verify-code-form';

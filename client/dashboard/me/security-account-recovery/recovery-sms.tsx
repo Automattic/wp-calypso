@@ -7,7 +7,7 @@ import {
 	smsCountryCodesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button, Card, CardBody } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
@@ -15,6 +15,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
 import PhoneNumberInput from '../../components/phone-number-input';

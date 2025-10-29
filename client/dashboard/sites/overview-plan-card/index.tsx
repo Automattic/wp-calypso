@@ -2,6 +2,7 @@ import { DotcomPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
@@ -11,10 +12,10 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
-import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
@@ -107,6 +108,7 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const router = useRouter();
 	const isFreePlan = site.plan?.is_free;
 
 	const getBillingLinkProps = () => {
@@ -115,7 +117,14 @@ function WpcomPlanCard( {
 		}
 
 		if ( ! isDashboardBackport() ) {
-			return { link: purchase ? getPurchaseUrlForId( purchase.ID ) : '/me/billing/purchases' };
+			return {
+				link: purchase
+					? router.buildLocation( {
+							to: purchaseSettingsRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+					  } ).href
+					: purchasesRoute.fullPath,
+			};
 		}
 
 		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };
@@ -183,13 +192,21 @@ function CommerceGardenPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const router = useRouter();
 	const getBillingLinkProps = () => {
 		if ( site.plan?.is_free ) {
 			return { externalLink: `/plans/${ site.slug }` };
 		}
 
 		if ( ! isDashboardBackport() ) {
-			return { link: purchase ? getPurchaseUrlForId( purchase.ID ) : '/me/billing/purchases' };
+			return {
+				link: purchase
+					? router.buildLocation( {
+							to: purchaseSettingsRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+					  } ).href
+					: purchasesRoute.fullPath,
+			};
 		}
 
 		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };

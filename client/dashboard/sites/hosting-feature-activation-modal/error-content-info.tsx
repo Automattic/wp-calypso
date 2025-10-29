@@ -1,14 +1,8 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
-import {
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	CardDivider,
-	CardHeader,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Fragment } from 'react';
+import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';

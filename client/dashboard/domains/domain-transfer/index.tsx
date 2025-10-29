@@ -6,8 +6,6 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -18,9 +16,11 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -210,7 +210,10 @@ export default function DomainTransfer() {
 	// TO DO: render notices if the domain is not transferable
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer' ) } /> }>
+		<PageLayout
+			size="small"
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Transfer' ) } /> }
+		>
 			{ renderTransferInfo() }
 			{ isDomainTransferable && <InternalTransferOptions domain={ domain } /> }
 			{ isDomainTransferable && domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (

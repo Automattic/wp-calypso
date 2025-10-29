@@ -42,7 +42,7 @@ export function ActiveThreatsDataViews( {
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
 	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
-	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
+	const threats = scan?.threats?.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields( timezoneString, gmtOffset );
 	const actions = useMemo( () => getActions( site, selection.length ), [ site, selection.length ] );
@@ -54,7 +54,7 @@ export function ActiveThreatsDataViews( {
 		let title = __( 'Don’t worry about a thing' );
 		let description = sprintf(
 			/** translators: %s: relative time string like "2 hours ago" */
-			__( 'The last scan ran %s and everything looked great.' ),
+			__( 'The last scan ran %s and found no security issues.' ),
 			recentScanRelativeTime
 		);
 

@@ -1,11 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
@@ -20,8 +18,8 @@ import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
+import Notice from 'calypso/dashboard/components/notice';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -211,12 +209,20 @@ export class LoginForm extends Component {
 	}, 500 );
 
 	onChangeUsernameOrEmailField = ( event ) => {
+		const { socialAccountIsLinking } = this.props;
+
 		this.setState( {
 			emailSuggestionError: false,
 			emailSuggestion: '',
 		} );
 		this.onChangeField( event );
 		this.debouncedEmailSuggestion( event.target.value );
+
+		if ( socialAccountIsLinking ) {
+			this.resetLastUsedAuthenticationMethod();
+			this.props.cancelSocialAccountConnectLinking();
+			this.props.resetAuthAccountType();
+		}
 	};
 
 	onChangeField = ( event ) => {
@@ -240,8 +246,14 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
-		return isSendingEmail || ( ! socialAccountIsLinking && ! hasAccountTypeLoaded );
+		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail, accountType } =
+			this.props;
+
+		return (
+			isSendingEmail ||
+			( ! socialAccountIsLinking && ! hasAccountTypeLoaded ) ||
+			isPasswordlessAccount( accountType )
+		);
 	}
 
 	resetView = ( event ) => {
@@ -573,6 +585,7 @@ export class LoginForm extends Component {
 			},
 			( error ) => {
 				if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
+					this.resetLastUsedAuthenticationMethod();
 					this.props.createSocialUserFailed( result, error, 'login' );
 					return;
 				}
@@ -647,7 +660,8 @@ export class LoginForm extends Component {
 			lastUsedAuthenticationMethod &&
 			lastUsedAuthenticationMethod !== 'password' &&
 			lastUsedAuthenticationMethod !== 'magic-login' &&
-			isSocialFirst;
+			isSocialFirst &&
+			! linkingSocialUser;
 
 		const signUpUrlWithEmail = addQueryArgs(
 			{
@@ -683,6 +697,24 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const renderSocialLinkingNotice = () => {
+			return (
+				<Notice variant="error">
+					{ this.props.translate(
+						'We found a WordPress.com account with the email address "%(email)s". ' +
+							'Log in to this account to connect it to your %(service)s profile, ' +
+							'or choose a different %(service)s profile.',
+						{
+							args: {
+								email: this.props.socialAccountLinkEmail,
+								service: capitalize( this.props.socialAccountLinkService ),
+							},
+						}
+					) }
+				</Notice>
+			);
+		};
+
 		return (
 			<Card className="login__form">
 				{ showLastUsedAuthenticationMethod ? (
@@ -701,22 +733,9 @@ export class LoginForm extends Component {
 				) : (
 					<>
 						{ isWoo && <ErrorNotice /> }
+
 						<div className="login__form-userdata">
-							{ ! isWoo && linkingSocialUser && (
-								<p>
-									{ this.props.translate(
-										'We found a WordPress.com account with the email address "%(email)s". ' +
-											'Log in to this account to connect it to your %(service)s profile, ' +
-											'or choose a different %(service)s profile.',
-										{
-											args: {
-												email: this.props.socialAccountLinkEmail,
-												service: capitalize( this.props.socialAccountLinkService ),
-											},
-										}
-									) }
-								</p>
-							) }
+							{ linkingSocialUser && renderSocialLinkingNotice() }
 
 							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
 								{ this.renderUsernameorEmailLabel() }
@@ -795,24 +814,6 @@ export class LoginForm extends Component {
 														{ this.state.emailSuggestion }
 													</span>
 												),
-											},
-										}
-									) }
-								/>
-							) }
-
-							{ isWoo && linkingSocialUser && (
-								<Notice
-									className="login__form-user-exists-notice"
-									status="is-warning"
-									icon={ <Icon icon={ alert } size={ 20 } fill="#d67709" /> }
-									showDismiss
-									onDismissClick={ this.props.cancelSocialAccountConnectLinking }
-									text={ this.props.translate(
-										'You already have a WordPress.com account with this email address. Add your password to log in or {{signupLink}}create a new account{{/signupLink}}.',
-										{
-											components: {
-												signupLink: <a href={ signupUrl } />,
 											},
 										}
 									) }

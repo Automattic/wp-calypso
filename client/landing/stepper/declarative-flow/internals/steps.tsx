@@ -63,6 +63,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	FLEX_SITE_CREATION: {
+		slug: 'flex-site-creation',
+		asyncComponent: () => import( './steps-repository/flex-site-creation' ),
+	},
+
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
 		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
@@ -306,6 +311,11 @@ export const STEPS = {
 	SITE_MIGRATION_SUPPORT_INSTRUCTIONS: {
 		slug: 'migration-support-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
+	},
+
+	SITE_MIGRATION_SSH_VERIFICATION: {
+		slug: 'site-migration-ssh-verification',
+		asyncComponent: () => import( './steps-repository/site-migration-ssh-verification' ),
 	},
 
 	SITE_MIGRATION_SSH_SHARE_ACCESS: {

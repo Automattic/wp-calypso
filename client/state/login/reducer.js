@@ -151,8 +151,6 @@ export const requestError = ( state = null, action ) => {
 			const { error } = action;
 			return error;
 		}
-		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
-			return null;
 		case LOGIN_AUTH_ACCOUNT_TYPE_RESET:
 			return null;
 		case LOGIN_REQUEST:

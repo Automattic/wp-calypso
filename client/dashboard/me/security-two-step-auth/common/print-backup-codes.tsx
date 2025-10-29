@@ -7,9 +7,6 @@ import {
 	__experimentalText as Text,
 	CheckboxControl,
 	Button,
-	Card,
-	CardBody,
-	CardFooter,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -18,6 +15,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
+import { Card, CardBody, CardFooter } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import VerifyCodeForm from './verify-code-form';

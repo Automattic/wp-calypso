@@ -5,19 +5,14 @@ import {
 	siteJetpackSettingsMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	Button,
-	CheckboxControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Field } from '@wordpress/dataviews';
 

@@ -25,7 +25,7 @@ export const StepFindSSHDetails: FC< StepFindSSHDetailsProps > = ( {
 				}
 		  )
 		: translate(
-				"Go to your hosting provider's control panel, enable SSH access for your WordPress site, and take note of your SSH details (hostname, port, username, and authentication method)."
+				"Go to your hosting provider's dashboard, enable SSH access for your WordPress site, and take note of your SSH details."
 		  );
 
 	return (

@@ -11,7 +11,7 @@ import {
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { getMonetizeSubscriptionsPageTitle } from '../billing-monetize-subscriptions/urls';
+import { getMonetizeSubscriptionsPageTitle } from '../billing-monetize-subscriptions/title';
 
 function Billing() {
 	return (

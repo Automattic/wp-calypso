@@ -2,8 +2,6 @@ import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-que
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Card,
-	CardBody,
 	CheckboxControl,
 	__experimentalVStack as VStack,
 	ExternalLink,
@@ -14,6 +12,7 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';

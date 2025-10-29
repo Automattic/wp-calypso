@@ -14,12 +14,15 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useCallback } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { changePaymentMethodRoute } from '../../app/router/me';
+import {
+	changePaymentMethodRoute,
+	purchaseSettingsRoute,
+	purchasesRoute,
+} from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { PaymentMethodSelector } from './payment-method-selector';
 import { useCreateAssignablePaymentMethods } from './payment-method-selector/use-create-assignable-payment-methods';
-import { getPurchaseUrl } from './urls';
 
 import './style.scss';
 
@@ -45,7 +48,7 @@ function ChangePaymentMethod() {
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {
 			// Redirect if the purchase does not exist
-			navigate( { to: '/me/billing/purchases' } );
+			navigate( { to: purchasesRoute.fullPath } );
 		}
 	}, [ isDataLoading, purchase, navigate ] );
 
@@ -54,7 +57,7 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
-		navigate( { to: getPurchaseUrl( purchase ) } );
+		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};
 
 	return (

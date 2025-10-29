@@ -2,15 +2,11 @@ import { Site } from '@automattic/api-core';
 import { sitesQuery } from '@automattic/api-queries';
 import { useFuzzySearch } from '@automattic/search';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	SearchControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, SearchControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDeferredValue, useState } from 'react';
+import { Card, CardBody } from '../../../components/card';
 import { CollapsibleCard } from '../collapsible-card';
 import { SitePreview } from '../site-preview';
 import { SiteSettings } from '../site-settings';
@@ -55,7 +51,7 @@ export const SiteListSettings = () => {
 							{ createInterpolateElement(
 								sprintf(
 									// translators: %s is the search query
-									__( 'No sites found with the search query <strong>%(search)s</strong>' ),
+									__( 'No sites found with the search query <strong>%(search)s</strong>.' ),
 									{
 										search: search,
 									}

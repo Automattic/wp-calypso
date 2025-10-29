@@ -2,19 +2,14 @@ import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	CardHeader,
-	__experimentalVStack as VStack,
-	TabPanel,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { isLast7Days } from '../../components/date-range-picker/utils';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -128,7 +123,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
 	// hide the datepicker if the user doesn't have access to activity logs or doesn't have logging feature at all
-	const shouldShowDateRangePicker = hasHostingFeature( site, HostingFeatures.LOGS );
+	const shouldShowDateRangePicker =
+		hasHostingFeature( site, HostingFeatures.LOGS ) ||
+		( hasActivityLogAccess && logType === LogType.ACTIVITY ); // simple sites might have access to activity logs only
 	return (
 		<PageLayout
 			header={
