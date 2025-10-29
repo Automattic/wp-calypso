@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_DOWNLOAD_HOST: https://cdn.npmmirror.com/binaries/playwright
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
