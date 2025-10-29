@@ -935,6 +935,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
 		FEATURE_AUDIO_UPLOADS,
+		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
 	],
 	getInferiorFeatures: () => [],
@@ -1573,6 +1574,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
 	],
 	getInferiorFeatures: () => [],
