@@ -12,9 +12,9 @@
   --color-muted-foreground: color-mix(in srgb, var(--color-background) 40%, var(--color-foreground));
   --color-success-background: rgba(74, 184, 102, 0.04);
   --color-success: var(--color-foreground);
-  --color-warning-background: rgba(253, 184, 24, 0.15);
+  --color-warning-background: #F8F3E7;
   --color-warning: var(--color-foreground);
-  --color-error-background: rgba(231, 0, 11, 0.15);
+  --color-error-background: #FCF1F1;
   --color-error: #E7000B;
 ;
 

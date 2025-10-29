@@ -2,10 +2,11 @@
 	position: relative;
 	display: flex;
 	align-items: center;
-	margin: calc(var(--spacing-2) * -1) calc(var(--spacing-2) * -1) 0;
+	margin: calc((var(--spacing-2) + 1px) * -1) calc((var(--spacing-2) + 1px) * -1) 0;
 	padding: var(--spacing) var(--spacing-2) var(--spacing) var(--spacing-4);
 	gap: var(--spacing-3);
 	background-color: var(--color-muted);
+    border-radius: calc(var(--radius-lg) + 1px) calc(var(--radius-lg) + 1px) 0 0;
 	color: var(--color-muted-foreground);
 	font-size: var(--text-xs);
 	font-weight: var(--font-weight-medium);

@@ -335,7 +335,7 @@ const FloatingCompactDemo: React.FC = () => {
 					},
 					dismissible: true,
 					onDismiss: () => {},
-					status: 'success',
+					status: 'error',
 				} }
 				emptyView={ <EmptyView suggestions={ suggestions } /> }
 			/>
