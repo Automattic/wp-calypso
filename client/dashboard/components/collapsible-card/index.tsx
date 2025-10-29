@@ -10,9 +10,12 @@ import './style.scss';
 interface CollapsibleCardProps {
 	header: React.ReactNode;
 	children: React.ReactNode;
-	initialExpanded?: boolean;
 	isBorderless?: boolean;
 	toggleLabel?: string;
+	initialExpanded?: boolean;
+	// Controlled mode props
+	expanded?: boolean;
+	onToggle?: ( expanded: boolean ) => void;
 }
 
 export const CollapsibleCard = ( {
@@ -21,17 +24,33 @@ export const CollapsibleCard = ( {
 	toggleLabel,
 	isBorderless = false,
 	initialExpanded = false,
+	expanded: controlledExpanded,
+	onToggle,
 }: CollapsibleCardProps ) => {
-	const [ isCollapsed, setIsCollapsed ] = useState< boolean >( ! initialExpanded );
+	// Internal state for uncontrolled mode
+	const [ internalExpanded, setInternalExpanded ] = useState< boolean >( initialExpanded );
+
+	// Determine if controlled
+	const isControlled = controlledExpanded !== undefined;
+	const isExpanded = isControlled ? controlledExpanded : internalExpanded;
+
 	const id = useInstanceId( CollapsibleCard, 'collapsible-card' );
 	const label = toggleLabel ?? __( 'Toggle content' );
 
 	const handleCollapsedChange = () => {
-		setIsCollapsed( ! isCollapsed );
+		const newExpandedState = ! isExpanded;
+
+		if ( ! isControlled ) {
+			// Uncontrolled: update internal state
+			setInternalExpanded( newExpandedState );
+		}
+
+		// Always call onToggle if provided (for both modes)
+		onToggle?.( newExpandedState );
 	};
 	return (
 		<Card
-			className={ clsx( 'collapsible-card', { collapsed: isCollapsed } ) }
+			className={ clsx( 'collapsible-card', { collapsed: ! isExpanded } ) }
 			isBorderless={ isBorderless }
 		>
 			<CardBody>
@@ -39,14 +58,14 @@ export const CollapsibleCard = ( {
 					{ header }
 					<Button
 						icon={ chevronUp }
-						className={ clsx( 'collapsible-card__toggle', { collapsed: isCollapsed } ) }
+						className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
 						onClick={ handleCollapsedChange }
-						aria-expanded={ ! isCollapsed }
+						aria-expanded={ isExpanded }
 						aria-controls={ id }
 						aria-label={ label }
 					/>
 				</HStack>
-				{ ! isCollapsed && (
+				{ isExpanded && (
 					<div className="collapsible-card__content" id={ id }>
 						{ children }
 					</div>
