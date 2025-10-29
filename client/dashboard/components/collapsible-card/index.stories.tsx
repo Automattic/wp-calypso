@@ -25,21 +25,8 @@ type Story = StoryObj< typeof CollapsibleCard >;
 
 export const Default: Story = {
 	args: {
-		header: 'Card Title',
-		toggleLabel: 'Toggle card content visibility',
-		children: (
-			<Text>
-				Here are your site settings. You can toggle this section to keep it out of the way when not
-				needed.
-			</Text>
-		),
-	},
-};
-
-export const WithStyledHeader: Story = {
-	args: {
 		header: <SectionHeader level={ 3 } title="Site settings" />,
-		toggleLabel: 'Toggle site settings',
+		toggleLabel: 'Toggle card content visibility',
 		children: (
 			<Text>
 				Here are your site settings. You can toggle this section to keep it out of the way when not
