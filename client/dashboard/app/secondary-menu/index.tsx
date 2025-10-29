@@ -43,7 +43,16 @@ function Help() {
 	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
 
+	const trackIconInteraction = () => {
+		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
+			is_help_center_visible: isShown,
+			section: 'dashboard',
+			is_menu_panel_enabled: isMenuPanelEnabled,
+		} );
+	};
+
 	const handleToggleHelpCenter = () => {
+		trackIconInteraction();
 		setShowHelpCenter( ! isShown );
 	};
 
@@ -103,6 +112,7 @@ function Help() {
 						className: 'dashboard-secondary-menu__item',
 						variant: 'tertiary',
 					} }
+					onToggle={ trackIconInteraction }
 				>
 					{ ( { onClose } ) => (
 						<>
