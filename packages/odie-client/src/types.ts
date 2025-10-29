@@ -281,7 +281,7 @@ export type SupportInteractionEvent = {
 };
 
 export type SupportInteraction = {
-	bot_slug: string;
+	bot_slug: OdieAllowedBots;
 	uuid: string;
 	status: InteractionStatus;
 	start_date: string;

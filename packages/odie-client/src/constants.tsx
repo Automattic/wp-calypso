@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
@@ -163,9 +164,12 @@ export const getOdieInitialMessage = (
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
-export const ODIE_DEFAULT_BOT_SLUG = 'wpcom-support-chat';
 export const ODIE_ALLOWED_BOTS = [
-	ODIE_DEFAULT_BOT_SLUG,
+	'wpcom-support-chat',
 	'wpcom-plan-support',
 	'wpcom-workflow-support_chat',
-];
+] as const;
+
+export const ODIE_DEFAULT_BOT_SLUG = config.isEnabled( 'help-center/workflow' )
+	? ODIE_ALLOWED_BOTS[ 2 ]
+	: ODIE_ALLOWED_BOTS[ 0 ];
