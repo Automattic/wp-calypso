@@ -4,6 +4,8 @@ import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { ReactNode } from 'react';
 
+import './style.scss';
+
 export default function SnackbarBackButton( {
 	backUrl,
 	children,
@@ -24,15 +26,9 @@ export default function SnackbarBackButton( {
 			} }
 		>
 			<Button
-				variant="secondary"
+				variant="primary"
 				icon={ isRTL() ? chevronRight : chevronLeft }
 				iconPosition="left"
-				style={ {
-					backgroundColor: '#1e1e1e',
-					color: '#ffffff',
-					borderColor: '#1e1e1e',
-					boxShadow: 'none',
-				} }
 				onClick={ () => {
 					navigate( { to: backUrl } );
 				} }
