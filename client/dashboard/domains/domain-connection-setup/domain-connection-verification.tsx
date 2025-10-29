@@ -10,7 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
 import './domain-connection-verification.scss';
 import { useHelpCenter } from '../../app/help-center';
-import { siteOverviewRoute } from '../../app/router/sites';
+import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -64,13 +64,11 @@ export default function DomainConnectionVerification( {
 					) }
 					{ status === 'connected' && (
 						<RouterLinkSummaryButton
-							to={ siteOverviewRoute.fullPath }
+							to={ siteDomainsRoute.fullPath }
 							params={ { siteSlug } }
 							/* Translators: %s is the domain name. */
 							title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
-							description={ __(
-								'It’s the URL visitors see in their browser’s address bar. Learn more'
-							) }
+							description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
 							decoration={ <Icon icon={ atSymbol } /> }
 						/>
 					) }

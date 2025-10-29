@@ -11,7 +11,7 @@ interface DomainConnectionNextStep {
 	id: string;
 	title: string;
 	description: string;
-	icon: React.ReactElement;
+	icon: JSX.Element;
 }
 
 export default function VerificationInProgressNextSteps() {

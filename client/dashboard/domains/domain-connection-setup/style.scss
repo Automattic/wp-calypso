@@ -1,29 +1,15 @@
-@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
 
 .dashboard-domain-connection-verification {
-	// Hacks to make DataViews look non-interactive
-	.dataviews-view-list {
-			button.dataviews-view-list__item {
-					display: none;
-			}
-
-			div[role="row"] {
-				border-top: none;
-				.dataviews-view-list__item-wrapper {
-					padding: 8px 0;
-				}
-			}
-			div[role="row"]:hover {
-					.dataviews-view-list__fields {
-							color: $gray-700;
-					}
-			}
-	}
 	&--connected {
 		.domain-connection-verification-icon {
 			color: var(--dashboard__background-color-success);
 			fill: var(--dashboard__background-color-success);
 		}
+	}
+	.summary-button.components-button .summary-button-title {
+		font-weight: 500;
 	}
 }
 
@@ -33,19 +19,9 @@
 		border-bottom: none;
 	}
 	.collapsible-card__toggle svg {
-		fill: #757575;
+		fill: $gray-700;
 	}
 	.action-item__decoration + span > span > span:last-child{
 		font-size: $font-size-small;
 	}
 }
-
-.verification-in-progress-next-steps__icon {
-	display: block;
-	position: relative;
-	top: 50%;
-	inset-inline-start: 50%;
-	transform: translate(-50%, -50%);
-	fill: $gray-700;
-}
-
