@@ -372,8 +372,11 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&:hover,
+	// Show submenu on hover (except when click-to-open is enabled)
+	&:not(.open-submenu-on-click):hover,
+	// Always show when explicitly opened (click or touch)
 	&.is-open,
+	// Keep submenu visible when hovering over it
 	&:has(+ .masterbar__item-subitems:hover) {
 		& + .masterbar__item-subitems {
 			display: block;

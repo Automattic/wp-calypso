@@ -34,6 +34,7 @@ interface MasterbarItemProps {
 	as?: React.ComponentType;
 	variant?: string;
 	ariaLabel?: string;
+	openSubMenuOnClick?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -53,6 +54,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		as: PropTypes.elementType,
 		variant: PropTypes.string,
 		ariaLabel: PropTypes.string,
+		openSubMenuOnClick: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -160,6 +162,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		this.setState( { isOpenForNonMouseFlow: ! this.state.isOpenForNonMouseFlow } );
 	};
 
+	toggleMenuByClick = ( event: React.MouseEvent ) => {
+		if ( ! this.props.subItems ) {
+			return;
+		}
+		// Prevent default click behavior and toggle the menu.
+		event.preventDefault();
+		this.props.onClick?.();
+		this.setState( { isOpenForNonMouseFlow: ! this.state.isOpenForNonMouseFlow } );
+	};
+
 	toggleMenuByKey = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			this.toggleMenuByTouch( event );
@@ -220,11 +232,12 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'has-subitems': this.props.subItems,
 			'is-open': this.state.isOpenForNonMouseFlow,
 			'has-global-border': this.props.hasGlobalBorderStyle,
+			'open-submenu-on-click': this.props.openSubMenuOnClick,
 		} );
 
 		const attributes = {
 			'data-tip-target': this.props.tipTarget,
-			onClick: this.props.onClick,
+			onClick: this.props.openSubMenuOnClick ? this.toggleMenuByClick : this.props.onClick,
 			title: this.props.tooltip,
 			className: itemClasses,
 			onTouchStart: this.preload,

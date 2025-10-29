@@ -11,11 +11,14 @@
 		}
 	}
 
-	&:hover .masterbar__item-subitems,
 	.masterbar__item-help.is-open + .masterbar__item-subitems {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+	}
+
+	.masterbar__item-help.open-submenu-on-click:not(.is-open) + .masterbar__item-subitems {
+		display: none;
 	}
 
 	.masterbar__help-menu-divider {

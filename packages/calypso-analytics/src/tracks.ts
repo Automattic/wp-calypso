@@ -36,6 +36,8 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wpcom_launchbar_button_click',
 	// Request for free migration
 	'wpcom_support_free_migration_request_click',
+	// Help Center
+	'wpcom_help_center_icon_interaction',
 ];
 
 let _superProps: any; // Added to all Tracks events.
