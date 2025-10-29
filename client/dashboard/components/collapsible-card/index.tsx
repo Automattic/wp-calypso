@@ -8,13 +8,19 @@ import { Card, CardBody } from '../card';
 import './style.scss';
 
 interface CollapsibleCardProps {
-	header?: React.ReactNode;
+	header: React.ReactNode;
 	children: React.ReactNode;
+	initialExpanded?: boolean;
 	toggleLabel?: string;
 }
 
-export const CollapsibleCard = ( { header, children, toggleLabel }: CollapsibleCardProps ) => {
-	const [ isCollapsed, setIsCollapsed ] = useState< boolean >( true );
+export const CollapsibleCard = ( {
+	header,
+	children,
+	toggleLabel,
+	initialExpanded = false,
+}: CollapsibleCardProps ) => {
+	const [ isCollapsed, setIsCollapsed ] = useState< boolean >( ! initialExpanded );
 	const id = useInstanceId( CollapsibleCard, 'collapsible-card' );
 	const label = toggleLabel ?? __( 'Toggle content' );
 
@@ -29,7 +35,6 @@ export const CollapsibleCard = ( { header, children, toggleLabel }: CollapsibleC
 					<Button
 						icon={ isCollapsed ? chevronDown : chevronUp }
 						className={ clsx( 'collapsible-card__toggle', { collapsed: isCollapsed } ) }
-						variant="tertiary"
 						onClick={ handleCollapsedChange }
 						aria-expanded={ ! isCollapsed }
 						aria-controls={ id }
