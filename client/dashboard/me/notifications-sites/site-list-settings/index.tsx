@@ -7,7 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDeferredValue, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
-import { CollapsibleCard } from '../collapsible-card';
+import { CollapsibleCard } from '../../../components/collapsible-card';
 import { SitePreview } from '../site-preview';
 import { SiteSettings } from '../site-settings';
 
