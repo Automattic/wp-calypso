@@ -1,6 +1,13 @@
 import { restoreSitePlanSoftware, fetchSitePlans } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 
+export function sitePlansQuery( siteId: number, coupon?: string ) {
+	return queryOptions( {
+		queryKey: [ 'site', siteId, 'plans', { coupon } ],
+		queryFn: () => fetchSitePlans( siteId, coupon ),
+	} );
+}
+
 export const siteCurrentPlanQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'plans', 'current' ],
