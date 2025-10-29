@@ -14,7 +14,7 @@ export const useSendOdieFeedback = () => {
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const queryClient = useQueryClient();
 
-	const botSlug = supportInteraction?.bot_slug ?? ODIE_DEFAULT_BOT_SLUG;
+	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG;
 
 	return useMutation( {
 		mutationFn: ( { messageId, ratingValue }: { messageId: number; ratingValue: number } ) => {
