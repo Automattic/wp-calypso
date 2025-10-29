@@ -39,6 +39,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { useDomainsEscapeHatchExperiment } from './use-domains-escape-hatch-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -90,6 +91,8 @@ const DomainSearchStep: StepType< {
 		initialQuery,
 		currentSiteUrl,
 	} );
+
+	const [ isLoadingExperiment, experimentAssignment ] = useDomainsEscapeHatchExperiment( flow );
 
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
@@ -359,14 +362,26 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query || ! config.allowsUsingOwnDomain ) {
+			if ( ! query ) {
 				return;
 			}
 
 			return (
-				<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-					{ __( 'Use a domain I already own' ) }
-				</Step.LinkButton>
+				<>
+					{ config.allowsUsingOwnDomain && (
+						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+							{ __( 'Use a domain I already own' ) }
+						</Step.LinkButton>
+					) }
+
+					{ ! isLoadingExperiment &&
+						experimentAssignment?.variationName ===
+							'treatment_paid_domain_area_free_emphasis_extra_cta' && (
+							<Step.LinkButton onClick={ () => events.onSkip() }>
+								{ __( 'Skip this step' ) }
+							</Step.LinkButton>
+						) }
+				</>
 			);
 		};
 
