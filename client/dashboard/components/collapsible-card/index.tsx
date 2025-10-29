@@ -1,7 +1,7 @@
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
+import { chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Card, CardBody } from '../card';
@@ -33,7 +33,7 @@ export const CollapsibleCard = ( {
 				<HStack justify="space-between" className="collapsible-card__header">
 					{ header }
 					<Button
-						icon={ isCollapsed ? chevronDown : chevronUp }
+						icon={ chevronUp }
 						className={ clsx( 'collapsible-card__toggle', { collapsed: isCollapsed } ) }
 						onClick={ handleCollapsedChange }
 						aria-expanded={ ! isCollapsed }
