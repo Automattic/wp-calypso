@@ -2,8 +2,8 @@ import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
-import { getPurchaseUrlForId } from '../../me/billing-purchases/urls';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainExpiryField = ( {
@@ -38,7 +38,10 @@ export const DomainExpiryField = ( {
 				{ domain.auto_renewing ? (
 					__( 'Auto-renew is on' )
 				) : (
-					<Link to={ getPurchaseUrlForId( domain.subscription_id ?? 0 ) }>
+					<Link
+						to={ purchaseSettingsRoute.fullPath }
+						params={ { purchaseId: domain.subscription_id } }
+					>
 						{ __( 'Turn on auto-renew' ) }
 					</Link>
 				) }
