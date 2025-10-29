@@ -4,13 +4,13 @@ const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 export default function enrichedSurveyData(
 	surveyData: Omit< MarketingSurveyResponses, 'purchaseId' | 'purchase' >,
-	purchase: Purchase,
+	purchase?: Pick< Purchase, 'subscribed_date' | 'blog_created_date' | 'ID' | 'product_slug' >,
 	timestamp = new Date()
 ): MarketingSurveyResponses {
-	const purchaseStartDate = purchase?.subscribed_date ?? null;
-	const siteStartDate = purchase?.blog_created_date ?? null;
-	const purchaseId = purchase?.ID ?? null;
-	const productSlug = purchase?.product_slug ?? null;
+	const purchaseStartDate = purchase?.subscribed_date;
+	const siteStartDate = purchase?.blog_created_date;
+	const purchaseId = purchase?.ID ?? 0;
+	const productSlug = purchase?.product_slug ?? '';
 
 	return {
 		purchase: productSlug,
