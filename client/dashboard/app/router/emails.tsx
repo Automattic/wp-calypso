@@ -7,8 +7,6 @@ import {
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
-	siteDomainsQuery,
-	sitesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
