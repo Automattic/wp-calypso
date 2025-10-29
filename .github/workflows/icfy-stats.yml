@@ -9,9 +9,6 @@ jobs:
     env:
       NODE_OPTIONS: --max-old-space-size=6144
     steps:
-      - name: Add hosts to /etc/hosts to fix azureedge DNS issues
-        run: |
-          echo "104.212.67.97 playwright.azureedge.net" | sudo tee -a /etc/hosts
       - name: Checkout code
         uses: actions/checkout@v2
       - uses: actions/setup-node@v3
