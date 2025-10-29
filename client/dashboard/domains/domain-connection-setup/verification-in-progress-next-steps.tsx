@@ -1,4 +1,4 @@
-import { Icon } from '@wordpress/components';
+import { Icon, type IconType } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { rotateRight, globe, published } from '@wordpress/icons';
 import { ActionList } from '../../components/action-list';
@@ -11,7 +11,7 @@ interface DomainConnectionNextStep {
 	id: string;
 	title: string;
 	description: string;
-	icon: JSX.Element;
+	icon: IconType;
 }
 
 export default function VerificationInProgressNextSteps() {

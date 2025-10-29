@@ -3,15 +3,19 @@
 
 .dashboard-domain-connection-verification {
 	&--connected {
-		.domain-connection-verification-icon {
+		&__icon {
 			color: var(--dashboard__background-color-success);
 			fill: var(--dashboard__background-color-success);
 		}
+	}
+	&__title {
+		@include body-large;
 	}
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
 }
+
 
 .verification-in-progress-next-steps {
 	.action-item {

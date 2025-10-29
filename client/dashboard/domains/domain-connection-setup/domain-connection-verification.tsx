@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
-import './domain-connection-verification.scss';
 import { useHelpCenter } from '../../app/help-center';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
@@ -16,8 +15,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
-
-import './style.scss';
 
 interface DomainConnectionVerificationProps {
 	domainName: string;
@@ -40,10 +37,10 @@ export default function DomainConnectionVerification( {
 				<VStack spacing={ 4 }>
 					<HStack justify="flex-start">
 						<Icon
-							className="domain-connection-verification-icon"
+							className="dashboard-domain-connection-verification__icon"
 							icon={ status === 'verifying' ? swatch : published }
 						/>
-						<Text className="domain-connection-verification-title" size={ 10 }>
+						<Text className="dashboard-domain-connection-verification__title" size={ 10 }>
 							{ domainName }
 						</Text>
 						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>

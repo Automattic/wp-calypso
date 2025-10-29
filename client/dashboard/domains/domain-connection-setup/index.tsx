@@ -32,6 +32,8 @@ import {
 import { DomainConnectionStepsMap, StepName, type StepNameValue, StepType } from './types';
 import { getProgressStepList, isMappingVerificationSuccess, resolveStepName } from './utils';
 
+import './style.scss';
+
 export default function DomainConnectionSetup() {
 	const { domainName } = domainRoute.useParams();
 
@@ -46,6 +48,7 @@ export default function DomainConnectionSetup() {
 	// Load domain data
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const siteSlug = domain.site_slug;
+
 	const redesign = config.isEnabled( 'domain-connection-redesign/verification' );
 
 	// Load domain connection setup info
