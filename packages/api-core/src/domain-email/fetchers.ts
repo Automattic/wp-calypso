@@ -11,9 +11,9 @@ type EmailForwarder = {
 
 type EmailForwardersResult = {
 	type: 'forward';
-	forwards: EmailForwarder[];
+	forwards: null | EmailForwarder[];
 	mx_servers: null | string[];
-	max_forwards: number;
+	max_forwards: null | number;
 };
 
 export async function fetchEmailForwarders( domain: string ): Promise< EmailForwardersResult > {
