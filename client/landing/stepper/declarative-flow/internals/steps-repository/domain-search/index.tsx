@@ -1,3 +1,4 @@
+import { useDomainSearchEscapeHatch } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
@@ -39,7 +40,6 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
-import { useDomainsEscapeHatchExperiment } from './use-domains-escape-hatch-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -92,7 +92,7 @@ const DomainSearchStep: StepType< {
 		currentSiteUrl,
 	} );
 
-	const [ isLoadingExperiment, experimentAssignment ] = useDomainsEscapeHatchExperiment( flow );
+	const [ isLoadingExperiment, experimentAssignment ] = useDomainSearchEscapeHatch( flow );
 
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
