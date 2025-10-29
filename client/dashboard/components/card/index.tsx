@@ -16,7 +16,13 @@ type CardProps = React.ComponentProps< typeof Card >;
 const DashboardCard = forwardRef< HTMLElement, CardProps >(
 	( { size, children, ...rest }, ref ) => {
 		const isDesktop = useViewportMatch( 'medium' );
-		const computedSize = isDesktop ? size || 'medium' : 'small';
+
+		let computedSize = size || 'medium';
+
+		// Default to small on mobile, unless the size is explicitly set to xSmall
+		if ( ! isDesktop && size !== 'xSmall' ) {
+			computedSize = 'small';
+		}
 
 		return (
 			<Card ref={ ref } { ...rest } size={ computedSize }>
