@@ -28,7 +28,7 @@ const VGSCollectFieldStyles: VGS.Css = {
 	alignItems: 'center',
 	'&::placeholder': {
 		color: '#686868',
-		opacity: 1,
+		opacity: '1',
 	},
 	'&:focus': {
 		borderColor: '#0675C4',
@@ -131,7 +131,7 @@ export const VgsCreditCardFields = ( {
 							display: 'block',
 							marginBottom: '0.5rem',
 							fontSize: '14px',
-							fontWeight: '500',
+							fontWeight: 500,
 							color: '#1e1e1e',
 						} }
 					>
@@ -152,7 +152,7 @@ export const VgsCreditCardFields = ( {
 							display: 'block',
 							marginBottom: '0.5rem',
 							fontSize: '14px',
-							fontWeight: '500',
+							fontWeight: 500,
 							color: '#1e1e1e',
 						} }
 					>
@@ -177,7 +177,7 @@ export const VgsCreditCardFields = ( {
 								display: 'block',
 								marginBottom: '0.5rem',
 								fontSize: '14px',
-								fontWeight: '500',
+								fontWeight: 500,
 								color: '#1e1e1e',
 							} }
 						>
@@ -199,7 +199,7 @@ export const VgsCreditCardFields = ( {
 								display: 'block',
 								marginBottom: '0.5rem',
 								fontSize: '14px',
-								fontWeight: '500',
+								fontWeight: 500,
 								color: '#1e1e1e',
 							} }
 						>
