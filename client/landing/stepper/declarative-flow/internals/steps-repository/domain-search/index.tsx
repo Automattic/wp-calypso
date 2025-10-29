@@ -32,6 +32,7 @@ import {
 	domainMapping,
 } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -69,6 +70,7 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
+	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -295,7 +297,7 @@ const DomainSearchStep: StepType< {
 	const [ sitesBackLabelText, defaultBackUrl ] =
 		userSiteCount === 1
 			? [ __( 'Back to My Home' ), '/home' ]
-			: [ __( 'Back to sites' ), '/sites' ];
+			: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/v2/sites' : '/sites' ];
 
 	if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
 		return (
