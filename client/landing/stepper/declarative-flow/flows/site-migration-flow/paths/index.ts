@@ -199,8 +199,8 @@ export const sshVerificationPath = buildPathHelper<
 		queryParams: {
 			siteId?: number | string;
 			siteSlug: string;
-			from?: string;
-			host?: string;
+			from?: string | null;
+			host?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug
@@ -212,8 +212,8 @@ export const sshShareAccessPath = buildPathHelper<
 			siteId?: number | string;
 			siteSlug: string;
 			transferId?: number | string;
-			from?: string;
-			host?: string;
+			from?: string | null;
+			host?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug
