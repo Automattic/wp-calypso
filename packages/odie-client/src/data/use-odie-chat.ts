@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { ODIE_DEFAULT_BOT_SLUG } from '../constants';
+import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { generateUUID } from '../utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
@@ -15,9 +15,8 @@ export const useOdieChat = ( chatId: number | null ) => {
 	const { version } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 
-	// Fallback to `wpcom-support-chat` in case this is an old interaction without bot_slug property.
-	// In the Help Center, up to October 2025, all interactions were created with `wpcom-support-chat` bot.
-	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG;
+	// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
+	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 
 	return useQuery< OdieChat, Error >( {
 		queryKey: [ 'odie-chat', botSlug, chatId, version ],
