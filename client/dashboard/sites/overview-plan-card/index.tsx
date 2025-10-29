@@ -2,7 +2,6 @@ import { DotcomPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
@@ -12,14 +11,13 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
+	useSitePlanManageURL,
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
@@ -62,6 +60,7 @@ function JetpackPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const url = useSitePlanManageURL( site );
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
@@ -71,7 +70,7 @@ function JetpackPlanCard( {
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			externalLink={ `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }` }
+			link={ url }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
@@ -108,35 +107,14 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const router = useRouter();
-	const isFreePlan = site.plan?.is_free;
-
-	const getBillingLinkProps = () => {
-		if ( isFreePlan ) {
-			return { externalLink: `/setup/plan-upgrade?siteSlug=${ site.slug }` };
-		}
-
-		if ( ! isDashboardBackport() ) {
-			return {
-				link: purchase
-					? router.buildLocation( {
-							to: purchaseSettingsRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-					  } ).href
-					: purchasesRoute.fullPath,
-			};
-		}
-
-		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };
-	};
-
+	const url = useSitePlanManageURL( site, purchase );
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			{ ...getBillingLinkProps() }
+			link={ url }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
@@ -169,13 +147,14 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 }
 
 function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
+	const url = useSitePlanManageURL( site );
 	return (
 		<OverviewCard
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
-			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
+			link={ url }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
@@ -192,33 +171,14 @@ function CommerceGardenPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const router = useRouter();
-	const getBillingLinkProps = () => {
-		if ( site.plan?.is_free ) {
-			return { externalLink: `/plans/${ site.slug }` };
-		}
-
-		if ( ! isDashboardBackport() ) {
-			return {
-				link: purchase
-					? router.buildLocation( {
-							to: purchaseSettingsRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-					  } ).href
-					: purchasesRoute.fullPath,
-			};
-		}
-
-		return { externalLink: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }` };
-	};
-
+	const url = useSitePlanManageURL( site, purchase );
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ commerceGardenPlan }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			{ ...getBillingLinkProps() }
+			link={ url }
 			tracksId="plan"
 			isLoading={ isLoading }
 		/>

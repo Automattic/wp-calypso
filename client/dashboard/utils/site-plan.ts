@@ -2,8 +2,10 @@ import {
 	DotcomPlans,
 	JetpackFeatures,
 	type JetpackFeatureSlug,
+	type Purchase,
 	type Site,
 } from '@automattic/api-core';
+import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -15,7 +17,10 @@ import {
 	shield,
 	video,
 } from '@wordpress/icons';
+import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
 import { hasPlanFeature } from '../utils/site-features';
+import { isDashboardBackport } from './is-dashboard-backport';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -105,4 +110,43 @@ export function getSitePlanDisplayName( site: Site ) {
 	}
 
 	return plan.product_name || plan.product_name_short;
+}
+
+export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
+	const router = useRouter();
+	const host = typeof window !== 'undefined' ? window.location.host : 'wordpress.com';
+	const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
+
+	if ( site.is_wpcom_staging_site ) {
+		return undefined;
+	}
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }`;
+	}
+
+	if ( site.is_a4a_dev_site ) {
+		return `https://agencies.automattic.com/sites/overview/${ site.slug }`;
+	}
+
+	if ( site.plan?.is_free ) {
+		return isCommerceGarden( site )
+			? `${ protocol }//${ host }/plans/${ site.slug }`
+			: `${ protocol }//${ host }/setup/plan-upgrade?siteSlug=${ site.slug }`;
+	}
+
+	if ( isDashboardBackport() ) {
+		return `${ protocol }//${ host }/purchases/subscriptions/${ site.slug }/${ purchase?.ID }`;
+	}
+
+	// Use the purchase settings page if the purchase is provided.
+	if ( purchase ) {
+		return router.buildLocation( {
+			to: purchaseSettingsRoute.fullPath,
+			params: { purchaseId: purchase.ID },
+		} ).href;
+	}
+
+	// Default to the account purchases page.
+	return purchasesRoute.fullPath;
 }
