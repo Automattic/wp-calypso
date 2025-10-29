@@ -21,7 +21,7 @@ import {
 	siteByIdQuery,
 	siteEngagementMonthlyAverageStatsQuery,
 	sitePluginsQuery,
-	sitePlansQuery,
+	// sitePlansQuery,
 	sitePurchasesQuery,
 	siteScanCountsQuery,
 	siteScanQuery,
@@ -150,6 +150,9 @@ export default function CancelPurchase() {
 	const { recordTracksEvent } = useAnalytics();
 	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
 
+	// const refreshSitePlans = ( siteId: number ) =>
+	//	 queryClient.invalidateQueries( sitePlansQuery( siteId ) );
+
 	const { purchaseId } = cancelPurchaseRoute.useParams();
 	const { data: purchase, isPending: purchaseQueryIsPending } = useSuspenseQuery(
 		purchaseQuery( parseInt( purchaseId ) )
@@ -202,9 +205,9 @@ export default function CancelPurchase() {
 		...siteScanCountsQuery( purchase.blog_id ?? 0 ),
 		enabled: Boolean( purchase.blog_id ),
 	} );
-	const { data: sitePlans, isPending: sitePlansQueryIsPending } = useQuery( {
-		...sitePlansQuery( purchase.blog_id ),
-	} );
+	// const { data: sitePlans, isPending: sitePlansQueryIsPending } = useQuery( {
+	// ...sitePlansQuery( purchase.blog_id ),
+	// } );
 	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
 	const onDialogClose = () => {
 		setState( ( state ) => ( {
@@ -559,6 +562,8 @@ export default function CancelPurchase() {
 				{
 					onSuccess: ( response ) => {
 						setState( ( state ) => ( { ...state, isLoading: false } ) );
+						// refreshSitePlans( purchase.blog_id );
+						// clearPurchases();
 						createSuccessNotice( response.message, { type: 'snackbar' } );
 						navigate( { to: purchasesRoute.to } );
 					},
@@ -595,6 +600,8 @@ export default function CancelPurchase() {
 			extendWithFreeMonthMutation.mutate( purchase.ID, {
 				onSuccess: ( response ) => {
 					if ( response.status === 'completed' ) {
+						// refreshSitePlans( purchase.blog_id );
+						// clearPurchases();
 						createSuccessNotice( response.message, { type: 'snackbar' } );
 						navigate( { to: purchasesRoute.to } );
 					}
@@ -791,44 +798,51 @@ export default function CancelPurchase() {
 			return;
 		}
 
-		setPurchaseAutoRenewMutation.mutate( false, {
-			onSuccess: () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				const subscriptionEndDate = intlFormat(
-					purchase.expiry_date,
-					{ dateStyle: 'medium' },
-					{ locale: 'en-US' }
-				);
-				createSuccessNotice(
-					sprintf(
-						/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
-						__(
-							'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+		setPurchaseAutoRenewMutation.mutate(
+			{ purchaseId: purchase.ID, autoRenew: false },
+			{
+				onSuccess: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const subscriptionEndDate = intlFormat(
+						purchase.expiry_date,
+						{ dateStyle: 'medium' },
+						{ locale: 'en-US' }
+					);
+					// const refundable = hasAmountAvailableToRefund( purchase );
+					// handleMarketplaceSubscriptions( refundable );
+					// refreshSitePlans( purchase.blog_id );
+					// clearPurchases();
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
+							__(
+								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+							),
+							{
+								purchaseName,
+								subscriptionEndDate,
+							}
 						),
-						{
-							purchaseName,
-							subscriptionEndDate,
-						}
-					),
-					{ type: 'snackbar' }
-				);
-				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
-			},
-			onError: () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				createErrorNotice(
-					sprintf(
-						/* translators: %(purchaseName)s is the name of the product that was purchased. */
-						__(
-							'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+						{ type: 'snackbar' }
+					);
+					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+				},
+				onError: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					createErrorNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased. */
+							__(
+								'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+							),
+							{ purchaseName }
 						),
-						{ purchaseName }
-					),
-					{ type: 'snackbar' }
-				);
-				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
-			},
-		} );
+						{ type: 'snackbar' }
+					);
+					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+				},
+			}
+		);
 	};
 
 	const onSurveyComplete = () => {
@@ -879,7 +893,7 @@ export default function CancelPurchase() {
 	};
 
 	const isDataLoading =
-		sitePlansQueryIsPending ||
+		// sitePlansQueryIsPending ||
 		siteBackupsQueryIsPending ||
 		siteScanQueryIsPending ||
 		siteEngagementMonthlyAverageStatsQueryIsPending ||
@@ -1158,7 +1172,7 @@ export default function CancelPurchase() {
 				onTextTwoChange={ onTextTwoChange }
 				plans={ plans }
 				purchase={ purchase }
-				purchases={ purchases }
+				// purchases={ purchases }
 				questionOneOrder={ state.questionOneOrder }
 				questionOneRadio={ state.questionOneRadio }
 				questionOneText={ state.questionOneText }
@@ -1168,8 +1182,8 @@ export default function CancelPurchase() {
 				refundAmount={ getRefundAmount() }
 				showMarketplaceDialog={ showMarketplaceDialog }
 				site={ site }
-				sitePlans={ sitePlans }
-				sitePurchases={ sitePurchases }
+				// sitePlans={ sitePlans }
+				// sitePurchases={ sitePurchases }
 				solution={ state.solution }
 				surveyStep={ state.surveyStep }
 				upsell={ state.upsell }
@@ -1523,7 +1537,7 @@ export default function CancelPurchase() {
 						onTextTwoChange={ onTextTwoChange }
 						plans={ plans }
 						purchase={ purchase }
-						purchases={ purchases }
+						// purchases={ purchases }
 						questionOneOrder={ state.questionOneOrder }
 						questionOneRadio={ state.questionOneRadio }
 						questionOneText={ state.questionOneText }
@@ -1534,8 +1548,8 @@ export default function CancelPurchase() {
 						shouldShowMarketplaceDialog={ false } // Disable marketplace dialog in domain options step to prevent double display
 						showMarketplaceDialog={ showMarketplaceDialog }
 						site={ site }
-						sitePlans={ sitePlans }
-						sitePurchases={ sitePurchases }
+						// sitePlans={ sitePlans }
+						// sitePurchases={ sitePurchases }
 						solution={ state.solution }
 						surveyStep={ state.surveyStep }
 						upsell={ state.upsell }
@@ -1645,7 +1659,7 @@ export default function CancelPurchase() {
 					{ ! state.surveyShown && renderTimeRemainingString( purchase ) }
 					<Card className="cancel-purchase__wrapper-card">
 						<CancelPurchaseForm
-							purchases={ purchases }
+							// purchases={ purchases }
 							atomicRevertCheckOne={ state.atomicRevertCheckOne }
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
 							atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
@@ -1680,7 +1694,7 @@ export default function CancelPurchase() {
 							onTextTwoChange={ onTextTwoChange }
 							plans={ plans }
 							purchase={ purchase }
-							products={ Object.values( products ) }
+							// products={ Object.values( products ) }
 							questionOneOrder={ state.questionOneOrder }
 							questionOneRadio={ state.questionOneRadio }
 							questionOneText={ state.questionOneText }
@@ -1689,8 +1703,8 @@ export default function CancelPurchase() {
 							questionTwoText={ state.questionTwoText }
 							refundAmount={ getRefundAmount() }
 							site={ site }
-							sitePlans={ sitePlans }
-							sitePurchases={ sitePurchases }
+							// sitePlans={ sitePlans }
+							// sitePurchases={ sitePurchases }
 							solution={ state.solution }
 							surveyStep={ state.surveyStep }
 							upsell={ state.upsell }

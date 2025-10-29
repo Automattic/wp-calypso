@@ -18,7 +18,6 @@ interface CancelPurchaseButtonProps extends CancelPurchaseFormProps {
 	activeSubscriptions: Purchase[];
 	closeMarketplaceSubscriptionsDialog: () => void;
 	disabled?: boolean;
-	isAkismet: boolean;
 	isJetpack: boolean;
 	isLoading: boolean;
 	onCancellationComplete: () => void;
@@ -105,7 +104,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		onTextTwoChange,
 		plans,
 		onGetDiscount,
-		purchases,
+		// purchases,
 		questionOneOrder,
 		questionOneRadio,
 		questionOneText,
@@ -113,8 +112,8 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 		questionTwoRadio,
 		questionTwoText,
 		refundAmount,
-		sitePlans,
-		sitePurchases,
+		// sitePlans,
+		// sitePurchases,
 		solution,
 		surveyStep,
 		upsell,
@@ -194,7 +193,7 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					onTextTwoChange={ onTextTwoChange }
 					plans={ plans }
 					purchase={ purchase }
-					purchases={ purchases }
+					// purchases={ purchases }
 					questionOneOrder={ questionOneOrder }
 					questionOneRadio={ questionOneRadio }
 					questionOneText={ questionOneText }
@@ -203,8 +202,8 @@ export default function CancelPurchaseButton( props: CancelPurchaseButtonProps )
 					questionTwoText={ questionTwoText }
 					refundAmount={ refundAmount }
 					site={ site }
-					sitePlans={ sitePlans }
-					sitePurchases={ sitePurchases }
+					// sitePlans={ sitePlans }
+					// sitePurchases={ sitePurchases }
 					solution={ solution }
 					surveyStep={ surveyStep }
 					upsell={ upsell }
