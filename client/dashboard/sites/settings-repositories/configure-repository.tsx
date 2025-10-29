@@ -29,7 +29,7 @@ export default function ConfigureRepository() {
 		from: navigateFrom,
 	} );
 	const search = siteSettingsRepositoriesManageRoute.useSearch();
-	const showBackToDeployments = search?.from === 'deployments';
+	const showBackToDeployments = search?.back_to === 'deployments';
 
 	const handleCancel = () => {
 		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );

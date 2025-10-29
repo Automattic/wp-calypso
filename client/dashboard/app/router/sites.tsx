@@ -966,9 +966,9 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
-	validateSearch: ( search ): { from?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'deployments' } => {
 		return {
-			from: search.from === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
 		};
 	},
 } );
@@ -1023,9 +1023,9 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	validateSearch: ( search ): { from?: 'deployments' } => {
+	validateSearch: ( search ): { back_to?: 'deployments' } => {
 		return {
-			from: search.from === 'deployments' ? 'deployments' : undefined,
+			back_to: search.back_to === 'deployments' ? 'deployments' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {
