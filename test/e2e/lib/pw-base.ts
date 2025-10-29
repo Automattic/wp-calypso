@@ -122,6 +122,10 @@ export const test = base.extend< {
 	 */
 	environment: typeof envVariables;
 	/**
+	 * Flow encapsulating the LOHP Theme Signup onboarding process.
+	 */
+	flowLOHPThemeSignup: LOHPThemeSignupFlow;
+	/**
 	 * Flow encapsulating the Start Writing onboarding process.
 	 */
 	flowStartWriting: StartWritingFlow;
@@ -225,6 +229,9 @@ export const test = base.extend< {
 	 * Page object representing the WordPress.com themes listing page.
 	 */
 	pageThemes: ThemesPage;
+	/**
+	 * Page object representing the WordPress.com user signup page.
+	 */
 	pageUserSignUp: UserSignupPage;
 	/**
 	 * Secrets needed for end-to-end tests.
