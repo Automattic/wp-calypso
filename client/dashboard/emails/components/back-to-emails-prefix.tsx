@@ -11,13 +11,14 @@ import './back-to-emails-prefix.scss';
  * Common prefix for Emails pages' PageHeader: a back link to the Emails root.
  * Keeps styling consistent across pages.
  */
-export const BackToEmailsPrefix = () => {
+export const BackToEmailsPrefix = ( { onClick }: { onClick?: () => void } ) => {
 	return (
 		<RouterLinkButton
 			className="add-forwarder__back-button"
 			icon={ arrowLeft }
 			iconSize={ 12 }
 			to={ emailsRoute.to }
+			onClick={ onClick }
 		>
 			<Text variant="muted">{ __( 'Emails' ) }</Text>
 		</RouterLinkButton>

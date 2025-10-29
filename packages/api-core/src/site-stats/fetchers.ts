@@ -10,3 +10,13 @@ export async function fetchSiteEngagementStats(
 		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
 	} );
 }
+
+export async function fetchSiteEngagementMonthlyStats(
+	siteId: number
+): Promise< SiteEngagementStatsResponse > {
+	return wpcom.req.get( `/sites/${ siteId }/stats/visits`, {
+		unit: 'month',
+		quantity: 24,
+		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
+	} );
+}

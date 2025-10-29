@@ -4,7 +4,7 @@ import {
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -14,6 +14,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';
+import { Card, CardHeader, CardBody } from '../../../../components/card';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';

@@ -1,17 +1,12 @@
 import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	ExternalLink,
-	ToggleControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 

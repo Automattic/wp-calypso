@@ -1,4 +1,12 @@
-# Style Guide
+# (New) Style Guide
+
+## Table of contents
+
+- [Principles](#principles)
+- [Specifications Structure](#specifications-structure)
+  - [Test Describe Block](#test-describe-block)
+  - [Test Block](#test-block)
+  - [Test Step Block](#test-step-block)
 
 ## Principles
 
@@ -44,3 +52,7 @@ Examples:
 These typically start with the terms [Given/When/Then](https://en.wikipedia.org/wiki/Given-When-Then) to provide structure and readability, although this isn’t strictly enforced like other tools that parse plain text specifications. The term And can be used to join two steps of the same type.
 
 `Given <some precondition> When <some action> Then <some outcome>`
+
+### Page Objects and Flows
+
+TBD

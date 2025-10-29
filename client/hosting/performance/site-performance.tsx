@@ -20,6 +20,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getRequest from 'calypso/state/selectors/get-request';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isWpcomFlexSite } from 'calypso/state/sites/selectors';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -54,6 +55,7 @@ const SitePerformanceContent = () => {
 	const blog_public = getSiteSetting( 'blog_public' );
 	const isSitePublic = site && blog_public === 1;
 	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isSiteFlex = useSelector( ( state ) => isWpcomFlexSite( state, siteId ) );
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
@@ -279,7 +281,7 @@ const SitePerformanceContent = () => {
 					}
 			  );
 
-	if ( ! isSiteAtomic ) {
+	if ( ! isSiteAtomic && ! isSiteFlex ) {
 		return null;
 	}
 

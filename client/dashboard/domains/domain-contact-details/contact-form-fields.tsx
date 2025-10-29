@@ -136,6 +136,7 @@ export const getContactFormFields = (
 				return (
 					<HStack spacing={ 0 } alignment="start" justify="flex-start">
 						<CheckboxControl
+							__nextHasNoMarginBottom
 							label=""
 							checked={ getValue( { item: data } ) }
 							onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }

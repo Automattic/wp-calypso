@@ -23,7 +23,7 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 		current_user_is_owner: true,
 		domain_status: { status: 'active' },
 		expired: false,
-		expiry: false,
+		expiry: null,
 		is_dnssec_enabled: false,
 		is_dnssec_supported: true,
 		is_eligible_for_inbound_transfer: false,

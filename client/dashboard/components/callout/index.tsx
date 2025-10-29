@@ -1,11 +1,11 @@
 import {
-	Card,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	Icon,
 } from '@wordpress/components';
 import { forwardRef } from 'react';
+import { Card } from '../card';
 import type { CalloutProps } from './types';
 import './styles.scss';
 

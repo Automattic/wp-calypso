@@ -1,12 +1,11 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Card,
-	CardBody,
 	Icon,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { copy, globe, scheduled } from '@wordpress/icons';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';

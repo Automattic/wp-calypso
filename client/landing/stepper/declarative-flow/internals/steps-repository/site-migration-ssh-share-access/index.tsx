@@ -1,15 +1,21 @@
 import { Step } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import { SupportNudge } from '../site-migration-instructions/support-nudge';
+import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/use-ssh-migration-status';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
+import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
+import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
@@ -18,7 +24,11 @@ import './styles.scss';
 
 const SiteMigrationSshShareAccess: StepType< {
 	submits: {
-		destination?: 'migration-started' | 'no-ssh-access' | 'back-to-verification';
+		destination?:
+			| 'migration-started'
+			| 'migration-completed'
+			| 'no-ssh-access'
+			| 'back-to-verification';
 		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
 	};
 } > = function ( { navigation } ) {
@@ -29,6 +39,8 @@ const SiteMigrationSshShareAccess: StepType< {
 	const host = queryParams.get( 'host' ) ?? undefined;
 	const transferIdParam = queryParams.get( 'transferId' );
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
+	const [ migrationStarted, setMigrationStarted ] = useState( false );
+	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -41,23 +53,96 @@ const SiteMigrationSshShareAccess: StepType< {
 		navigation.submit?.( { destination: 'no-ssh-access' } );
 	}, [ navigation ] );
 
-	// Steps orchestration
-	const onCompleteSteps = () => {
-		navigation.submit?.( { destination: 'migration-started' } );
-	};
+	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
-	const { steps } = useSteps( {
+	// Poll for migration status after starting migration
+	const { data: migrationStatus } = useSSHMigrationStatus( {
+		siteId,
+		enabled: migrationStarted && siteId > 0,
+	} );
+
+	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
 		fromUrl,
 		siteId,
 		siteName: site?.name ?? '',
-		onComplete: onCompleteSteps,
 		host,
 		onNoSSHAccess: handleNoSSHAccess,
+		migrationStatus: migrationStatus?.status,
 	} );
 
-	const handleContinue = () => {
-		navigation.submit?.( { destination: 'migration-started' } );
+	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
+
+	// Poll SSH migration atomic transfer status
+	const { transferStatus, isTransferring } = usePollSSHMigrationAtomicTransfer(
+		siteId,
+		transferId,
+		{
+			enabled: !! transferId && siteId > 0,
+			refetchInterval: 2000, // Poll every 2 seconds
+		}
+	);
+
+	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
+	useEffect( () => {
+		if ( ! migrationStarted || ! migrationStatus ) {
+			return;
+		}
+
+		if ( migrationStatus.status === 'migrating' ) {
+			dispatch( resetSite( siteId ) );
+			navigation.submit?.( { destination: 'migration-started' } );
+		} else if ( migrationStatus.status === 'failed' ) {
+			setMigrationError( new Error( 'Migration failed. Please try again.' ) );
+			setMigrationStarted( false );
+		} else if ( migrationStatus.status === 'completed' ) {
+			navigation.submit?.( { destination: 'migration-completed' } );
+		}
+	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
+
+	const triggerSSHMigration = () => {
+		// Reset the migration status query to clear any stale data from previous attempts
+		queryClient.resetQueries( { queryKey: [ 'ssh-migration-status', siteId ] } );
+
+		startMigration(
+			{
+				siteId,
+				remoteHost: formState.serverAddress,
+				remoteUser: formState.username,
+				remoteDomain: fromUrl,
+				remotePass: formState.password,
+			},
+			{
+				onSuccess: () => {
+					onMigrationStarted();
+					setMigrationStarted( true );
+				},
+				onError: ( error ) => {
+					setMigrationError( error );
+					setMigrationStarted( false );
+				},
+			}
+		);
 	};
+
+	const handleContinue = () => {
+		setMigrationError( null );
+
+		if ( isTransferring ) {
+			setShouldStartMigration( true );
+			return;
+		}
+
+		triggerSSHMigration();
+	};
+
+	// Auto-start migration when verification completes
+	useEffect( () => {
+		if ( transferStatus === 'completed' && shouldStartMigration ) {
+			setShouldStartMigration( false );
+			triggerSSHMigration();
+		}
+	}, [ transferStatus, shouldStartMigration ] );
 
 	const navigateToDoItForMe = useCallback( () => {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
@@ -100,8 +185,13 @@ const SiteMigrationSshShareAccess: StepType< {
 						<Button
 							variant="primary"
 							onClick={ handleContinue }
-							disabled={ false }
-							isBusy={ false }
+							disabled={
+								! canStartMigration ||
+								isStartingMigration ||
+								migrationStarted ||
+								shouldStartMigration
+							}
+							isBusy={ isStartingMigration || migrationStarted || shouldStartMigration }
 						>
 							{ translate( 'Continue' ) }
 						</Button>

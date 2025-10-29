@@ -1,7 +1,7 @@
 import { TitanMailSlugs } from '@automattic/api-core';
 import { MinimalRequestCartProduct, RequestCartProductExtra } from '../../shopping-cart/types';
-import { MailboxForm } from '../entities/mailbox-form';
-import { SupportedEmailProvider } from '../entities/types';
+import { MailboxForm, GSuiteProductUser } from '../entities/mailbox-form';
+import { MailboxProvider } from '../types';
 import { EmailProperties } from './get-email-product-properties';
 import { isMonthlyEmailProduct } from './is-monthly-email-product';
 
@@ -71,7 +71,7 @@ export function titanMailMonthly( properties: TitanProductProps ): MinimalReques
 }
 
 const getTitanCartItems = (
-	mailboxes: MailboxForm< SupportedEmailProvider >[],
+	mailboxes: MailboxForm< MailboxProvider >[],
 	mailProperties: EmailProperties
 ) => {
 	const { emailProduct, newQuantity, quantity } = mailProperties;
@@ -89,15 +89,33 @@ const getTitanCartItems = (
 	} );
 };
 
-const getGSuiteCartItems = () => {};
+const getGSuiteCartItems = (
+	mailboxes: MailboxForm< MailboxProvider >[],
+	mailProperties: EmailProperties
+): MinimalRequestCartProduct => {
+	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
+
+	const users = mailboxes.map( ( mailbox ) => < GSuiteProductUser >mailbox.getAsCartItem() );
+
+	const domain = mailboxes[ 0 ].formFields.domain.value;
+
+	return {
+		...domainItem( emailProduct.product_slug, domain ),
+		...( quantity ? { quantity } : {} ),
+		extra: {
+			google_apps_users: users,
+			...( isAdditionalMailboxesPurchase && newQuantity ? { new_quantity: newQuantity } : {} ),
+		},
+	};
+};
 
 export const getCartItems = (
-	mailboxes: MailboxForm< SupportedEmailProvider >[],
+	mailboxes: MailboxForm< MailboxProvider >[],
 	mailProperties: EmailProperties
 ) => {
 	const provider = mailboxes[ 0 ].provider;
 
-	return provider === 'titan'
+	return provider === MailboxProvider.Titan
 		? getTitanCartItems( mailboxes, mailProperties )
-		: getGSuiteCartItems();
+		: getGSuiteCartItems( mailboxes, mailProperties );
 };

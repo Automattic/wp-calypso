@@ -4,18 +4,12 @@ import { HelpLink } from './help-link';
 import { getSSHHostDisplayName, getSSHSupportUrl } from './ssh-host-support-urls';
 import { StepAddServerAddress } from './step-add-server-address';
 import { StepFindSSHDetails } from './step-find-ssh-details';
+import { StepShareSSHAccess } from './step-share-ssh-access';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const FIND_SSH_DETAILS = 'find-ssh-details';
 const ADD_SERVER_ADDRESS = 'add-server-address';
 const SHARE_SSH_ACCESS = 'share-ssh-access';
-
-interface SSHFormState {
-	foundSSHDetails: boolean;
-	serverAddress: string;
-	port: number;
-	isServerVerified: boolean;
-}
 
 interface StepsDataOptions {
 	fromUrl: string;
@@ -24,9 +18,16 @@ interface StepsDataOptions {
 	serverAddress: string;
 	port: number;
 	isServerVerified: boolean;
+	authMethod: 'password' | 'key';
+	username: string;
+	password: string;
+	migrationError?: Error | null;
 	onServerAddressChange: ( address: string ) => void;
 	onPortChange: ( port: number ) => void;
 	onServerVerify: () => void;
+	onAuthMethodChange: ( method: 'password' | 'key' ) => void;
+	onUsernameChange: ( username: string ) => void;
+	onPasswordChange: ( password: string ) => void;
 	onFindSSHDetailsSuccess: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
@@ -53,15 +54,29 @@ interface StepsObject {
 	completedSteps: number;
 	formState: SSHFormState;
 	allStepsCompleted: boolean;
+	canStartMigration: boolean;
+	onMigrationStarted: () => void;
+	setMigrationError: ( error: Error | null ) => void;
 }
 
 interface UseStepsOptions {
 	fromUrl: string;
 	siteId: number;
 	siteName: string;
-	onComplete: () => void;
 	host?: string;
 	onNoSSHAccess: () => void;
+	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
+}
+
+interface SSHFormState {
+	foundSSHDetails: boolean;
+	serverAddress: string;
+	port: number;
+	isServerVerified: boolean;
+	authMethod: 'password' | 'key';
+	username: string;
+	password: string;
+	migrationStarted: boolean;
 }
 
 const useStepsData = ( options: StepsDataOptions ): StepsData => {
@@ -102,7 +117,18 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 		{
 			key: SHARE_SSH_ACCESS,
 			title: translate( 'Share SSH access' ),
-			content: <div>Share SSH access</div>,
+			content: (
+				<StepShareSSHAccess
+					authMethod={ options.authMethod }
+					username={ options.username }
+					password={ options.password }
+					error={ options.migrationError }
+					onAuthMethodChange={ options.onAuthMethodChange }
+					onUsernameChange={ options.onUsernameChange }
+					onPasswordChange={ options.onPasswordChange }
+					helpLink={ helpLink }
+				/>
+			),
 		},
 	];
 
@@ -115,9 +141,11 @@ export const useSteps = ( {
 	siteName,
 	onNoSSHAccess,
 	host,
+	migrationStatus,
 }: UseStepsOptions ): StepsObject => {
-	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ currentStep, setCurrentStep ] = useState( -1 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
+	const [ migrationError, setMigrationError ] = useState< Error | null >( null );
 
 	// SSH Form State
 	const [ formState, setFormState ] = useState< SSHFormState >( {
@@ -125,15 +153,37 @@ export const useSteps = ( {
 		serverAddress: '',
 		port: 22,
 		isServerVerified: false,
+		authMethod: 'password',
+		username: '',
+		password: '',
+		migrationStarted: false,
 	} );
 
 	// State update handlers
 	const handleServerAddressChange = ( address: string ) => {
-		setFormState( ( prev ) => ( { ...prev, serverAddress: address, isServerVerified: false } ) );
+		setFormState( ( prev ) => ( {
+			...prev,
+			serverAddress: address,
+			isServerVerified: false,
+			migrationStarted: false,
+		} ) );
+		// If server verification was completed, reset progress since it needs to be verified again
+		if ( lastCompleteStep >= 1 ) {
+			setLastCompleteStep( 0 );
+		}
 	};
 
 	const handlePortChange = ( port: number ) => {
-		setFormState( ( prev ) => ( { ...prev, port, isServerVerified: false } ) );
+		setFormState( ( prev ) => ( {
+			...prev,
+			port,
+			isServerVerified: false,
+			migrationStarted: false,
+		} ) );
+		// If server verification was completed, reset progress since it needs to be verified again
+		if ( lastCompleteStep >= 1 ) {
+			setLastCompleteStep( 0 );
+		}
 	};
 
 	const handleServerVerify = () => {
@@ -144,12 +194,28 @@ export const useSteps = ( {
 		}
 	};
 
+	const handleAuthMethodChange = ( method: 'password' | 'key' ) => {
+		setFormState( ( prev ) => ( { ...prev, authMethod: method } ) );
+	};
+
+	const handleUsernameChange = ( username: string ) => {
+		setFormState( ( prev ) => ( { ...prev, username } ) );
+	};
+
+	const handlePasswordChange = ( password: string ) => {
+		setFormState( ( prev ) => ( { ...prev, password } ) );
+	};
+
 	const handleFindSSHDetailsSuccess = () => {
 		setFormState( ( prev ) => ( { ...prev, foundSSHDetails: true } ) );
 		setCurrentStep( 1 );
 		if ( lastCompleteStep < 0 ) {
 			setLastCompleteStep( 0 );
 		}
+	};
+
+	const handleMigrationStarted = () => {
+		setFormState( ( prev ) => ( { ...prev, migrationStarted: true } ) );
 	};
 
 	const stepsData = useStepsData( {
@@ -159,9 +225,16 @@ export const useSteps = ( {
 		serverAddress: formState.serverAddress,
 		port: formState.port,
 		isServerVerified: formState.isServerVerified,
+		authMethod: formState.authMethod,
+		username: formState.username,
+		password: formState.password,
+		migrationError,
 		onServerAddressChange: handleServerAddressChange,
 		onPortChange: handlePortChange,
 		onServerVerify: handleServerVerify,
+		onAuthMethodChange: handleAuthMethodChange,
+		onUsernameChange: handleUsernameChange,
+		onPasswordChange: handlePasswordChange,
 		onFindSSHDetailsSuccess: handleFindSSHDetailsSuccess,
 		onNoSSHAccess,
 		host,
@@ -174,20 +247,23 @@ export const useSteps = ( {
 			case ADD_SERVER_ADDRESS:
 				return formState.isServerVerified;
 			case SHARE_SSH_ACCESS:
-				return false;
+				return migrationStatus === 'migrating' || migrationStatus === 'completed';
 			default:
 				return false;
 		}
 	};
 
 	const steps: Steps = stepsData.map( ( step, index ) => {
-		// Allow clicking on visited steps only, so users can see the previous steps again.
-		const onItemClick =
-			lastCompleteStep < index
-				? undefined
-				: () => {
-						setCurrentStep( index );
-				  };
+		// Allow clicking on:
+		// 1. The first step (always accessible)
+		// 2. Previously completed steps (can review)
+		// 3. The next step after last completed (can progress forward)
+		const canClick = index === 0 || index <= lastCompleteStep + 1;
+		const onItemClick = canClick
+			? () => {
+					setCurrentStep( index );
+			  }
+			: undefined;
 
 		// Render the content with the step-specific elements
 		const contentNode = <>{ step.content }</>;
@@ -209,10 +285,20 @@ export const useSteps = ( {
 
 	const allStepsCompleted = steps.every( ( step ) => step.task.completed );
 
+	const canStartMigration =
+		formState.foundSSHDetails &&
+		formState.isServerVerified &&
+		formState.username.length > 0 &&
+		( ( formState.authMethod === 'password' && formState.password.length > 0 ) ||
+			( formState.authMethod === 'key' && false ) );
+
 	return {
 		steps,
 		completedSteps: lastCompleteStep + 1,
 		formState,
 		allStepsCompleted,
+		canStartMigration,
+		onMigrationStarted: handleMigrationStarted,
+		setMigrationError,
 	};
 };

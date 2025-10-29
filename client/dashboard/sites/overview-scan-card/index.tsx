@@ -23,11 +23,11 @@ function getScanURL( site: Site ) {
 
 	return isDashboardBackport()
 		? `https://wordpress.com/scan/${ site.slug }`
-		: `/sites/${ site.slug }/scan`;
+		: `/sites/${ site.slug }/scan/active`;
 }
 
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
-	const threatCount = scan.threats.length;
+	const threatCount = scan.threats?.length ?? 0;
 	const description = sprintf(
 		/* translators: %d: number of risks */
 		_n( '%d risk found', '%d risks found', threatCount ),
@@ -75,7 +75,7 @@ function ScanCardContent( { site }: { site: Site } ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
-	if ( ! scan ) {
+	if ( ! scan || ! scan.threats ) {
 		return null;
 	}
 

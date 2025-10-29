@@ -1,14 +1,13 @@
 import { domainDnssecMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '../../components/card';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
 

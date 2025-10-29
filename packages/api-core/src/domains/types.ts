@@ -67,7 +67,7 @@ export interface DomainSummary {
 	auto_renewing: boolean;
 	current_user_is_owner: boolean | null;
 	is_domain_only_site: boolean;
-	expiry: string | false;
+	expiry: string | null;
 	expired: boolean;
 	primary_domain: boolean;
 	can_set_as_primary: boolean;

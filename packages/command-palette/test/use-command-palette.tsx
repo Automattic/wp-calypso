@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { CommandPaletteContext, CommandPaletteContextProvider } from '../src/context';
@@ -113,8 +112,6 @@ jest.mock( 'cmdk', () => ( {
 } ) );
 
 describe( 'useCommandPalette', () => {
-	const queryClient = new QueryClient();
-
 	const renderUseCommandPalette = ( {
 		currentRoute = null,
 		commands,
@@ -124,28 +121,26 @@ describe( 'useCommandPalette', () => {
 	} ) =>
 		renderHook( () => useCommandPalette(), {
 			wrapper: ( { children } ) => (
-				<QueryClientProvider client={ queryClient }>
-					<CommandPaletteContextProvider
-						currentRoute={ currentRoute }
-						currentSiteId={ 1 }
-						navigate={ () => {} }
-						useCommands={ () => commands }
-						userCapabilities={ {} }
-						useSites={ () => [] }
-						emptyListNotice=""
-						placeHolderOverride=""
-						search=""
-						selectedCommandName=""
-						setEmptyListNotice={ () => {} }
-						setFooterMessage={ () => {} }
-						setSelectedCommandName={ () => {} }
-						close={ () => {} }
-						setSearch={ () => {} }
-						setPlaceholderOverride={ () => {} }
-					>
-						{ children }
-					</CommandPaletteContextProvider>
-				</QueryClientProvider>
+				<CommandPaletteContextProvider
+					currentRoute={ currentRoute }
+					currentSiteId={ 1 }
+					navigate={ () => {} }
+					useCommands={ () => commands }
+					userCapabilities={ {} }
+					useSites={ () => [] }
+					emptyListNotice=""
+					placeHolderOverride=""
+					search=""
+					selectedCommandName=""
+					setEmptyListNotice={ () => {} }
+					setFooterMessage={ () => {} }
+					setSelectedCommandName={ () => {} }
+					close={ () => {} }
+					setSearch={ () => {} }
+					setPlaceholderOverride={ () => {} }
+				>
+					{ children }
+				</CommandPaletteContextProvider>
 			),
 		} );
 	it( 'should return the commands in the order that they are added to the commands array with no change', () => {

@@ -11,7 +11,11 @@ test.describe(
 	'Site Import: Calypso: WordPress',
 	{
 		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
-		annotation: { type: 'flowchart', description: 'https://flowchart.fun/p/mute-color-normalize' },
+		annotation: {
+			type: 'flowchart',
+			description:
+				'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=toggle#pako:eNqFU21r2zAQ_itHRrcWnFE57_mwQZJmFFpWtpQNln1QbaU2tSUjyZgw9nU_YD9xv2QnS4nlJG0N4izdc3ePnjv96kQiZp1pZ5OJKkqo1LCarTngd3YG3W4XbmnKoaA6UWZrXZz8WHeu80Ig_LwqujTOEWQPmFRwkyp9se78dOgQ0d-EjO8kUwr-_fkLX8oGvselUd6kjQTXjGvYSJHDPrjJ2UfofZEJGsP32xvYpBlrnAN0zgXfpDIHWupESC9yuC-yP3Oekc_zfYSFn-XKx4i9YfqdwtI8hq0oJahUeyQmiLjCS8iGfhtRxdtKx6ZmQjXEwiSBiuKltcDtxyYVIcfCCJ5tPUQPEbfpo6SaHfAgfUsVSgW5Q5ygS4xonxCmNE4Bi2vPzmc0u-dPXFQcsLjcQiFSrr3oUcNwbhl6TiPW9f5q6XGHp6daTCavahxeviYyD8303aXRk42PSilN1SKjeiNk7gF7z0wf5UInWGEXAkIezFvY9yfHU869oSU-rtbzwX9YMaXhM2f4_wFT1AafgN32rRlYMzyKW1XCukbWjK2Z1MYOlj9kuzhVB76FVSKZK0zIrvKpAFga0Syw56zjRgbefLgjx4Y4OmSyb2XDvCkdXh7R9ZFN6TB01lEI-63AltZf9TZjCs4fpSgLFgN2DKKMylRvL5oW4IlSC7aBKsFpMe3Mpm-W9RdEIhNy-pDR6OkA_JCVO-xstrhazl7APuI1uQPPx1fD-eQFsDREHYf5YhG2oR7YzECduXUWBrwf8GHARwGfBNhSXD1cA1zjAHXGhRiUrb6uH4t9DzjixoFVEyMwFcFEBDOh4ObObQJDQ3fNO7__AzQO7R4',
+		},
 	},
 	() => {
 		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "WordPress Run Importer" link on the wp-admin Importers List page to import my content from my WordPress site', async ( {

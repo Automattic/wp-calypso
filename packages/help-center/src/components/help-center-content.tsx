@@ -19,6 +19,7 @@ import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterSearch } from './help-center-search';
+import { HelpCenterSupportGuides } from './help-center-support-guides';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -122,6 +123,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />
+					<Route
+						path="/support-guides"
+						element={ <HelpCenterSupportGuides currentRoute={ currentRoute } /> }
+					/>
 					<Route
 						path="/odie"
 						element={

@@ -69,7 +69,9 @@ export function BackupNotices( {
 			>
 				{ sprintf(
 					/* translators: %s is a date, like "today at 10:00". */
-					__( 'We’re making a backup of your site from %s' ),
+					__(
+						'We’re making a backup of your site from %s. Sit back and relax—we’ll take care of this in the background.'
+					),
 					backupDate
 				) }
 			</Notice>

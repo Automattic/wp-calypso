@@ -2,6 +2,10 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
 
+Tests were originally written using Playwright + Jest, and are now being migrated to Playwright Test.
+
+To understand the new Playwright Test framework see the [new documentation](docs-new/overview.md).
+
 ## Resources
 
 - [Overview](docs/overview.md)
@@ -80,7 +84,7 @@ yarn install
 9. obtain the secrets decryption key.
 
 ```bash
-export E2E_SECRETS_KEY='Calypso E2E Config decode key from the Automattic secret store>'
+export E2E_SECRETS_KEY='<Calypso E2E Config decode key from the Automattic secret store>'
 ```
 
 10. [decrypt](docs/test_environment.md) the secrets file.
@@ -95,21 +99,17 @@ yarn workspace wp-e2e-tests decrypt-secrets
 yarn workspace wp-e2e-tests build --watch
 ```
 
-12. run test.
+12. run tests.
 
 ```bash
 yarn workspace wp-e2e-tests test -- <test_path>
 ```
 
-By default this should run on <http://calypso.localhost:3000>, if you wish to run on another environment such as <https://wpcalypso.wordpress.com> you can set an environment variable:
+By default this should run on `http://calypso.localhost:3000`, if you wish to run on another environment such as `https://wpcalypso.wordpress.com` you can set an environment variable:
 
 ```bash
 CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test -- <test_path>
 ```
-
-## Advanced setup
-
-Please refer to the [Advanced Setup](docs/setup.md) page.
 
 ## Contribute to E2E tests
 

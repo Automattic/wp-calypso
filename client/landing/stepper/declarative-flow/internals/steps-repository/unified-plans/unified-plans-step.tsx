@@ -40,6 +40,7 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
@@ -239,9 +240,14 @@ function UnifiedPlansStep( {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
-	const initializedSitesBackUrl = useSelector( ( state ) =>
-		getCurrentUserSiteCount( state ) ? '/sites/' : null
-	);
+	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
+	const initializedSitesBackUrl = useSelector( ( state ) => {
+		if ( getCurrentUserSiteCount( state ) ) {
+			return null;
+		}
+
+		return hostingDashboardOptIn ? '/v2/sites' : '/sites/';
+	} );
 
 	useSiteGlobalStylesOnPersonal();
 

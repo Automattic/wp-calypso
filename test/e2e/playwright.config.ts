@@ -29,9 +29,9 @@ export default defineConfig( {
 	/* Workers should use what is available locally, and half on CI*/
 	workers: process.env.CI ? '50%' : '100%',
 	/* Global timeout for each test */
-	timeout: 60 * 1000,
+	timeout: 120000, // 2 minutes
 	expect: {
-		timeout: 10 * 1000,
+		timeout: 10000, // 10 seconds
 	},
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
@@ -41,7 +41,7 @@ export default defineConfig( {
 		/* Base URL to use in actions like `await page.goto('/')`. */
 		// baseURL: 'http://localhost:3000',
 		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-		actionTimeout: 10 * 1000,
+		actionTimeout: 10000, // 10 seconds
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',

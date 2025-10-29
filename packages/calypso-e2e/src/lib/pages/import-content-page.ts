@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import { DataHelper, ImportFileContentPage } from '../..';
 
 /**
@@ -6,7 +6,16 @@ import { DataHelper, ImportFileContentPage } from '../..';
  */
 export class ImportContentPage {
 	private page: Page;
-	importFileContentPage: ImportFileContentPage;
+
+	readonly heading: Locator;
+	readonly importFileContentPage: ImportFileContentPage;
+	readonly mediumHeading: Locator;
+	readonly mediumImportButton: Locator;
+	readonly squarespaceHeading: Locator;
+	readonly squarespaceImportButton: Locator;
+	readonly substackImportButton: Locator;
+	readonly wordPressHeading: Locator;
+	readonly wordPressImportButton: Locator;
 
 	/**
 	 * Constructs an instance of the page.
@@ -15,7 +24,16 @@ export class ImportContentPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+
+		this.heading = this.page.getByRole( 'heading', { name: 'Import Content' } );
 		this.importFileContentPage = new ImportFileContentPage( page );
+		this.mediumHeading = this.page.getByRole( 'heading', { name: 'Medium' } );
+		this.mediumImportButton = this.page.getByRole( 'button', { name: 'Medium' } );
+		this.squarespaceHeading = this.page.getByRole( 'heading', { name: 'Squarespace' } );
+		this.squarespaceImportButton = this.page.getByRole( 'button', { name: 'Squarespace' } );
+		this.substackImportButton = this.page.getByRole( 'link', { name: 'Substack' } ); // It's a link, not a button.
+		this.wordPressHeading = this.page.getByRole( 'heading', { name: 'WordPress' } );
+		this.wordPressImportButton = this.page.getByRole( 'link', { name: 'WordPress' } ); // It's a link, not a button.
 	}
 
 	/**
@@ -25,69 +43,5 @@ export class ImportContentPage {
 	 */
 	async visit( siteSlug: string ): Promise< void > {
 		await this.page.goto( DataHelper.getCalypsoURL( `import/${ siteSlug }` ) );
-	}
-
-	/**
-	 * Get the heading for the Import Content page.
-	 * @returns The heading element for the Import Content page.
-	 */
-	get heading() {
-		return this.page.getByRole( 'heading', { name: 'Import Content' } );
-	}
-
-	/**
-	 * Get the Medium import button element.
-	 * @returns The Medium import button element.
-	 */
-	get mediumImportButton() {
-		return this.page.getByRole( 'button', { name: 'Medium' } );
-	}
-
-	/**
-	 * Get the Substack import button element.
-	 * @returns The Substack import button element.
-	 */
-	get substackImportButton() {
-		return this.page.getByRole( 'link', { name: 'Substack' } ); // It's a link, not a button.
-	}
-
-	/**
-	 * Get the WordPress import button element.
-	 * @returns The WordPress import button element.
-	 */
-	get wordPressImportButton() {
-		return this.page.getByRole( 'link', { name: 'WordPress' } ); // It's a link, not a button.
-	}
-
-	/**
-	 * Get the Squarespace import button element.
-	 * @returns The Squarespace import button element.
-	 */
-	get squarespaceImportButton() {
-		return this.page.getByRole( 'button', { name: 'Squarespace' } );
-	}
-
-	/**
-	 * Get the heading for the Medium import page.
-	 * @returns The heading element for the Medium import page.
-	 */
-	get mediumHeading() {
-		return this.page.getByRole( 'heading', { name: 'Medium' } );
-	}
-
-	/**
-	 * Get the heading for the WordPress import page.
-	 * @returns The heading element for the WordPress import page.
-	 */
-	get wordPressHeading() {
-		return this.page.getByRole( 'heading', { name: 'WordPress' } );
-	}
-
-	/**
-	 * Get the heading for the Squarespace import page.
-	 * @returns The heading element for the Squarespace import page.
-	 */
-	get squarespaceHeading() {
-		return this.page.getByRole( 'heading', { name: 'Squarespace' } );
 	}
 }

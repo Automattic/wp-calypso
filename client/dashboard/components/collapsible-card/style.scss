@@ -1,0 +1,16 @@
+.collapsible-card {
+	max-height: 100%;
+
+	.collapsible-card__toggle svg {
+		transition: transform 0.2s ease-in-out;
+	}
+
+	&.collapsed .collapsible-card__toggle svg {
+		transform: rotate(180deg);
+	}
+
+	// Position button on the right when there's no header
+	.collapsible-card__toggle {
+		margin-inline-start: auto;
+	}
+}

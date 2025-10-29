@@ -10,8 +10,6 @@ import {
 	__experimentalInputControl as InputControl,
 	__experimentalVStack as VStack,
 	Button,
-	Card,
-	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -20,6 +18,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';

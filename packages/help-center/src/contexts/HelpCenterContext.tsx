@@ -1,7 +1,9 @@
+import { ODIE_DEFAULT_BOT_SLUG } from '@automattic/odie-client/src/constants';
 import { useContext, createContext } from '@wordpress/element';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
+	botNameSlug: string;
 	locale: string;
 	sectionName: string;
 	currentUser: CurrentUser;
@@ -15,6 +17,7 @@ export type HelpCenterRequiredInformation = {
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
+	botNameSlug: ODIE_DEFAULT_BOT_SLUG,
 	locale: '',
 	sectionName: '',
 	currentUser: {

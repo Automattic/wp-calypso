@@ -164,57 +164,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.login__form-user-exists-notice.calypso-notice {
-		border-radius: 8px;
-		overflow: auto;
-		padding: 16px 20px;
-		background-color: #f6f7f7;
-
-		.calypso-notice__icon-wrapper {
-			background-color: #f6f7f7;
-			color: #2c3338;
-			width: auto;
-			padding: 0;
-			align-items: flex-start;
-		}
-
-		.calypso-notice__dismiss {
-			padding: 0;
-			background-color: #f6f7f7;
-			color: #a7aaad;
-		}
-
-		.calypso-notice__content {
-			padding: 0 16px;
-			background-color: #f6f7f7;
-			color: #2c3338;
-		}
-
-		.calypso-notice__text {
-			color: #2c3338;
-			font-size: rem( 14px );
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px; /* 142.857% */
-			letter-spacing: -0.24px;
-
-			a,
-			a:visited {
-				color: var( --woo-purple-60 );
-				font-size: rem( 14px );
-				font-style: normal;
-				font-weight: 500;
-				line-height: 20px;
-				letter-spacing: -0.24px;
-				text-decoration: none;
-			}
-
-			a:hover {
-				color: var( --woo-purple-40 );
-			}
-		}
-	}
-
 	.masterbar__progress-bar {
 		background-color: transparent;
 		height: 8px;

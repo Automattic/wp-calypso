@@ -198,6 +198,7 @@ export interface ManagePurchaseProps {
 	purchaseId: number;
 	redirectTo?: string;
 	siteSlug: string;
+	showRemovePurchaseDialog?: boolean | undefined;
 
 	/**
 	 * Note: this defaults to true.
@@ -745,6 +746,7 @@ class ManagePurchase extends Component<
 
 		return (
 			<RemovePurchase
+				showDialog={ this.props.showRemovePurchaseDialog }
 				hasLoadedSites={ hasLoadedSites }
 				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }

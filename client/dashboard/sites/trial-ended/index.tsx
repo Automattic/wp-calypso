@@ -3,8 +3,6 @@ import { sitePlanBySlugQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Card,
-	CardBody,
 	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -14,6 +12,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';

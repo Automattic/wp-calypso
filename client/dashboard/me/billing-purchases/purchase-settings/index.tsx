@@ -29,8 +29,6 @@ import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
-	Card,
-	CardBody,
 	Button,
 	ToggleControl,
 	Notice,
@@ -48,6 +46,7 @@ import { useLocale } from '../../../app/locale';
 import { emailsRoute } from '../../../app/router/emails';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
+import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
 import OverviewCard from '../../../components/overview-card';
@@ -76,6 +75,7 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
+	isTemporarySitePurchase,
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
@@ -269,9 +269,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 					<Button
 						variant="secondary"
 						size="compact"
-						onClick={ () => ( {
+						onClick={ () =>
 							// FIXME: add refund, cancel, and downgrade action
-						} ) }
+							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
+							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/cancel` )
+						}
 					>
 						{ __( 'Downgrade or cancel' ) }
 					</Button>
@@ -288,9 +290,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 					<Button
 						variant="secondary"
 						size="compact"
-						onClick={ () => ( {
+						onClick={ () =>
 							// FIXME: add remove action
-						} ) }
+							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
+							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/remove` )
+						}
 					>
 						{ __( 'Remove subscription' ) }
 					</Button>
@@ -537,6 +541,7 @@ function getFields( {
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
+						className="purchase-settings__toggle-control"
 						label={
 							shouldAllowExpiredAutoRenewToggle( purchase )
 								? __( 'Re-activate subscription' )
@@ -550,17 +555,24 @@ function getFields( {
 				);
 			},
 		},
+		{
+			id: 'purchase_payment_method',
+			Edit: ( { data: purchase } ) => {
+				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
+			},
+		},
 	];
 }
 
 const form = {
-	type: 'regular' as const,
-	labelPosition: 'top' as const,
+	layout: {
+		type: 'regular' as const,
+	},
 	fields: [
 		{
 			id: 'autoRenew',
 			label: __( 'Manage subscription' ),
-			children: [ 'is_auto_renew_enabled' ],
+			children: [ 'is_auto_renew_enabled', 'purchase_payment_method' ],
 		},
 	],
 };
@@ -575,26 +587,22 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 4 } alignment="left">
-					<DataForm< Purchase >
-						data={ purchase }
-						fields={ getFields( { isMutationPending, user } ) }
-						form={ form }
-						onChange={ ( newData ) => {
-							if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
-								setAutoRenew( newData.is_auto_renew_enabled );
-							}
-						} }
-					/>
+				<DataForm< Purchase >
+					data={ purchase }
+					fields={ getFields( { isMutationPending, user } ) }
+					form={ form }
+					onChange={ ( newData ) => {
+						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
+							setAutoRenew( newData.is_auto_renew_enabled );
+						}
+					} }
+				/>
 
-					{ error && (
-						<Notice status="error" isDismissible={ false }>
-							{ error.message }
-						</Notice>
-					) }
-
-					<PurchasePaymentMethod purchase={ purchase } showUpdateButton />
-				</VStack>
+				{ error && (
+					<Notice status="error" isDismissible={ false }>
+						{ error.message }
+					</Notice>
+				) }
 			</CardBody>
 		</Card>
 	);
@@ -1015,7 +1023,7 @@ export default function PurchaseSettings() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
-		enabled: Boolean( purchase.site_slug ),
+		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );

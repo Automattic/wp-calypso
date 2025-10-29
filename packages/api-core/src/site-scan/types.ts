@@ -50,7 +50,7 @@ export interface Threat {
 
 export interface SiteScan {
 	state: 'unavailable' | 'idle' | 'scanning' | 'provisioning';
-	threats: Threat[];
+	threats: Threat[] | null;
 	has_cloud: boolean;
 	current: {
 		is_initial: boolean;
@@ -65,6 +65,17 @@ export interface SiteScan {
 		error: boolean;
 	};
 	reason?: string;
+}
+
+export interface SiteScanCounts {
+	ok: boolean;
+	fixed: number;
+	counts: {
+		new: number;
+		notified: number;
+		ignored: number;
+		fixed: number;
+	};
 }
 
 export interface SiteScanHistory {

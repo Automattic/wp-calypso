@@ -2,6 +2,7 @@ import { fetchTwoStep } from '@automattic/api-core';
 import {
 	userSettingsQuery,
 	userPurchasesQuery,
+	userReceiptsQuery,
 	purchaseQuery,
 	receiptQuery,
 	sitesQuery,
@@ -20,7 +21,7 @@ import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { userNotificationsDevicesQuery } from '../../../../packages/api-queries/src/me-notifications-devices';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
-import { getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
+import { isTemporarySitePurchase, getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -129,6 +130,9 @@ export const billingHistoryRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
+	loader: async () => {
+		await queryClient.ensureQueryData( userReceiptsQuery() );
+	},
 	path: '/billing-history',
 } );
 
@@ -226,9 +230,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
 
 		// Preload site and storage data for wpcom plans
-		if ( purchase.site_slug && purchase.blog_id ) {
+		if ( purchase.site_slug && purchase.blog_id && ! isTemporarySitePurchase( purchase ) ) {
 			await Promise.all( [
-				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ),
+				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ).catch( () => {
+					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
+				} ),
 				isDotcomPlan( purchase )
 					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
 					: undefined,

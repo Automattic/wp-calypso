@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import CommandPalette from '../src/index';
@@ -38,7 +37,6 @@ const commands = [
 		},
 	},
 ];
-const queryClient = new QueryClient();
 
 jest.mock( '../src/use-command-palette' );
 
@@ -58,15 +56,13 @@ describe( 'CommandPalette', () => {
 		} );
 
 		render(
-			<QueryClientProvider client={ queryClient }>
-				<CommandPalette
-					currentRoute="/sites"
-					currentSiteId={ null }
-					navigate={ () => {} }
-					useCommands={ () => commands }
-					useSites={ () => [] }
-				/>
-			</QueryClientProvider>
+			<CommandPalette
+				currentRoute="/sites"
+				currentSiteId={ null }
+				navigate={ () => {} }
+				useCommands={ () => commands }
+				useSites={ () => [] }
+			/>
 		);
 
 		act( () => {

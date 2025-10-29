@@ -4,8 +4,6 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	Modal,
 	Button,
-	Card,
-	CardBody,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -13,8 +11,10 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SelectSite } from './select-site';
@@ -57,6 +57,7 @@ export default function DomainTransferToOtherSite() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Attach to another site' ) }
 					description={ sprintf(
 						// translators: %s is the domain name

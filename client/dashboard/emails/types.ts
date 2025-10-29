@@ -23,7 +23,16 @@ export interface Email {
 		| 'no_subscription'
 		| 'unused_mailboxes'
 		| 'pending_deletion'
-		| 'other_provider';
+		| 'other_provider'
+		| 'unknown';
 }
 
-export type IntervalLength = 'monthly' | 'annually';
+export enum IntervalLength {
+	Monthly = 'monthly',
+	Annually = 'annually',
+}
+
+export enum MailboxProvider {
+	Google = EmailProvider.Google,
+	Titan = EmailProvider.Titan,
+}
