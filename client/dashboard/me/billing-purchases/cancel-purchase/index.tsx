@@ -32,7 +32,7 @@ import {
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQueryClient, useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHeading as Heading,
@@ -147,12 +147,8 @@ export default function CancelPurchase() {
 	} );
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
-
-	const refreshSitePlans = ( siteId: number ) =>
-		queryClient.invalidateQueries( sitePlansQuery( siteId ) );
 
 	const { purchaseId } = cancelPurchaseRoute.useParams();
 	const { data: purchase, isPending: purchaseQueryIsPending } = useSuspenseQuery(
@@ -167,10 +163,8 @@ export default function CancelPurchase() {
 	const { data: activeThemes, isPending: themesQueryIsPending } = useQuery(
 		siteActiveThemesQuery( purchase.blog_id )
 	);
-	const clearPurchases = () => () =>
-		queryClient.invalidateQueries( sitePurchasesQuery( purchase.blog_id ) ); //TODO: test and confirm this works correctly
 
-	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery( purchase.ID ) );
+	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery() );
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
 
@@ -565,8 +559,6 @@ export default function CancelPurchase() {
 				{
 					onSuccess: ( response ) => {
 						setState( ( state ) => ( { ...state, isLoading: false } ) );
-						refreshSitePlans( purchase.blog_id );
-						clearPurchases();
 						createSuccessNotice( response.message, { type: 'snackbar' } );
 						navigate( { to: purchasesRoute.to } );
 					},
@@ -603,8 +595,6 @@ export default function CancelPurchase() {
 			extendWithFreeMonthMutation.mutate( purchase.ID, {
 				onSuccess: ( response ) => {
 					if ( response.status === 'completed' ) {
-						refreshSitePlans( purchase.blog_id );
-						clearPurchases();
 						createSuccessNotice( response.message, { type: 'snackbar' } );
 						navigate( { to: purchasesRoute.to } );
 					}
@@ -716,28 +706,58 @@ export default function CancelPurchase() {
 		}
 
 		const subs =
-			purchases?.filter( ( _purchase ) =>
+			purchases.filter( ( _purchase ) =>
 				hasMarketplaceProduct( Object.values( productsList ), _purchase.product_slug )
 			) ?? [];
 		return subs;
 	};
 
-	const handleMarketplaceSubscriptions = ( isPlanRefundable: boolean ) => {
+	const cancelAllMarketplaceSubscriptions = () => {
 		const cancelAndRefundActiveSubscriptions: Purchase[] = [];
 		const cancelActiveSubscriptions: Purchase[] = [];
 		const marketplaceSubscriptions = getActiveMarketplaceSubscriptions();
-		marketplaceSubscriptions?.forEach( ( subscription ) =>
-			isPlanRefundable && hasAmountAvailableToRefund( subscription )
+		marketplaceSubscriptions.forEach( ( subscription ) => {
+			hasAmountAvailableToRefund( subscription )
 				? cancelAndRefundActiveSubscriptions.push( subscription )
-				: cancelActiveSubscriptions.push( subscription )
-		);
-		if ( cancelAndRefundActiveSubscriptions?.length > 0 ) {
-			// FIXME: refund multiple subscriptions
-		}
-
-		if ( cancelActiveSubscriptions?.length > 0 ) {
-			// FIXME: disable auto-renew for multiple subscriptions
-		}
+				: cancelActiveSubscriptions.push( subscription );
+		} );
+		cancelAndRefundActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
+			cancelAndRefundMutation.mutate(
+				{
+					purchaseId: marketplaceSubscription.ID,
+					options: {
+						product_id: marketplaceSubscription.product_id,
+						cancel_bundled_domain: false,
+					},
+				},
+				{
+					onError: ( error: Error ) => {
+						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+					},
+				}
+			);
+		} );
+		cancelActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
+			setPurchaseAutoRenewMutation.mutate(
+				{ purchaseId: marketplaceSubscription.ID, autoRenew: false },
+				{
+					onError: () => {
+						const purchaseName = marketplaceSubscription.product_name;
+						createErrorNotice(
+							sprintf(
+								/* translators: %(purchaseName)s is the name of the product that was purchased. */
+								__(
+									'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+								),
+								{ purchaseName }
+							),
+							{ type: 'snackbar' }
+						);
+						setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+					},
+				}
+			);
+		} );
 	};
 
 	const submitCancelAndRefundPurchase = ( purchase: Purchase ) => {
@@ -753,6 +773,9 @@ export default function CancelPurchase() {
 				},
 				{
 					onSuccess: () => {
+						if ( purchase.is_plan ) {
+							cancelAllMarketplaceSubscriptions();
+						}
 						createSuccessNotice(
 							__( 'Your refund has been processed and your purchase removed.' ),
 							{
@@ -765,7 +788,9 @@ export default function CancelPurchase() {
 					},
 				}
 			);
+			return;
 		}
+
 		setPurchaseAutoRenewMutation.mutate( false, {
 			onSuccess: () => {
 				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
@@ -774,10 +799,6 @@ export default function CancelPurchase() {
 					{ dateStyle: 'medium' },
 					{ locale: 'en-US' }
 				);
-				const refundable = hasAmountAvailableToRefund( purchase );
-				handleMarketplaceSubscriptions( refundable );
-				refreshSitePlans( purchase.blog_id );
-				clearPurchases();
 				createSuccessNotice(
 					sprintf(
 						/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
