@@ -318,7 +318,7 @@ const DomainSearchStep: StepType< {
 	const [ sitesBackLabelText, defaultBackUrl ] =
 		userSiteCount === 1
 			? [ __( 'Back to My Home' ), '/home' ]
-			: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/v2/sites' : '/sites' ];
+			: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/manage/sites' : '/sites' ];
 
 	if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
 		return (
