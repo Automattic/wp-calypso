@@ -8,6 +8,7 @@ import {
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
+	ODIE_DEFAULT_BOT_SLUG,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -68,7 +69,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	}, [ newConversation, shouldCreateConversation ] );
 
 	const {
-		botNameSlug,
 		selectedSiteId,
 		version,
 		setChat,
@@ -150,12 +150,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
+			const botSlug = currentSupportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG;
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const path = window.location.pathname + window.location.search;
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
-						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
 						signal,
 						body: {
@@ -165,7 +166,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
-						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+						path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
 						method: 'POST',
 						signal,
 						data: {
@@ -232,7 +233,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		},
 		onSettled: () => {
 			setChatStatus( 'loaded' );
-			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
+			} );
 		},
 		onError: ( error ) => {
 			if ( error instanceof Event && error.type === 'abort' ) {
