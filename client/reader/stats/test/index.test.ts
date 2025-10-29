@@ -359,7 +359,7 @@ describe( 'reader stats', () => {
 			} );
 		} );
 
-		it( 'should return railcard properties for post with railcar', () => {
+		it( 'should return railcar properties for post with railcar', () => {
 			const post = {
 				ID: 123,
 				site_ID: 456,
