@@ -247,7 +247,7 @@ type ExistingReactNode = React.ReactElement | string | number;
 // force us to declare the return type as a generic React node, not as just string.
 type TranslateResult = ExistingReactNode;
 
-type FeatureObject = {
+export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
 	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;

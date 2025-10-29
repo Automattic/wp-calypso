@@ -2,6 +2,7 @@ import { Modal, __experimentalVStack as VStack, Button } from '@wordpress/compon
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import * as React from 'react';
 import { ButtonStack } from '../../../components/button-stack';
+import type { Purchase } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -35,14 +36,14 @@ const MarketPlaceSubscriptionsWarning = ( {
 	return (
 		isDialogVisible && (
 			<Modal
-				title={
+				title={ String(
 					sectionHeadingText ??
-					sprintf(
-						/* translators: %(plan)s is the name of the plan */
-						__( 'Remove %(plan)s' ),
-						{ plan: planName }
-					)
-				}
+						sprintf(
+							/* translators: %(plan)s is the name of the plan */
+							__( 'Remove %(plan)s' ),
+							{ plan: planName }
+						)
+				) }
 				onRequestClose={ closeDialog }
 			>
 				<VStack>

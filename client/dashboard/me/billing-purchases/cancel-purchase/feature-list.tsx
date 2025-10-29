@@ -3,7 +3,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { getFeatureByKey } from '../../../utils/site-features';
-import type { Purchase, FeatureObject } from '@automattic/api-core';
+import type { FeatureObject } from '../../../utils/site-features';
+import type { Purchase } from '@automattic/api-core';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,

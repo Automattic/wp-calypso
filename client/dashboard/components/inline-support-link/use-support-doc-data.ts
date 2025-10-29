@@ -2,14 +2,13 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { dispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import type { ContextLinks, SupportDocData } from './types';
-// import type { HelpCenterDispatch } from '@automattic/data-stores';
 
 /**
  * Obtain the type finally returned by the generator when it's done iterating.
  */
-export type GeneratorReturnType< T extends ( ...args: any[] ) => Generator > = T extends (
-	...args: any
-) => Generator< any, infer R, any >
+export type GeneratorReturnType< T extends ( ...args: unknown[] ) => Generator > = T extends (
+	...args: unknown[]
+) => Generator< unknown, infer R, unknown >
 	? R
 	: never;
 
@@ -17,20 +16,21 @@ export type GeneratorReturnType< T extends ( ...args: any[] ) => Generator > = T
  * Maps a "raw" actionCreators object to the actions available when registered on the @wordpress/data store.
  * @template A Selector map, usually from `import * as actions from './my-store/actions';`
  */
-export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any > > = {
+export type DispatchFromMap< A extends Record< string, ( ...args: unknown[] ) => unknown > > = {
 	[ actionCreator in keyof A ]: (
 		...args: Parameters< A[ actionCreator ] >
-	) => A[ actionCreator ] extends ( ...args: any[] ) => Generator
+	) => A[ actionCreator ] extends ( ...args: unknown[] ) => Generator
 		? Promise< GeneratorReturnType< A[ actionCreator ] > >
 		: Promise< void >;
 };
 
-export interface Dispatch {
-	dispatch: DispatchFromMap< object >;
+export interface HelpCenterDispatch {
+	dispatch: DispatchFromMap< Record< string, ( ...args: unknown[] ) => unknown > >;
 }
 
 declare global {
 	interface Window {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		wp: undefined | Record< string, any >;
 	}
 }

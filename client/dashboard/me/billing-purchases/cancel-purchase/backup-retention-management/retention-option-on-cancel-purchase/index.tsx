@@ -17,10 +17,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../../../app/analytics';
 import { ButtonStack } from '../../../../../components/button-stack';
 import { settingsPath } from '../../../../../utils/jetpack';
-import { camelOrSnakeSlug } from '../../../../../utils/purchase';
 import { productHasBackups } from '../../../../../utils/site-features';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
-import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '../../../../../utils/purchase';
+import type { SiteRewindPoliciesResponse, Purchase } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -32,12 +31,14 @@ const BACKUP_RETENTION_UPDATE_REQUEST = {
 } as const;
 
 interface BackupRetentionOptionOnCancelPurchaseProps {
-	purchase: WithCamelCaseSlug | WithSnakeCaseSlug;
+	purchase: Purchase;
 	siteId: number;
 }
 
-const getActivityLogVisibleDays = ( siteBackupPolicies ): number | undefined => {
-	return siteBackupPolicies?.activity_log_limit_days ?? undefined;
+const getActivityLogVisibleDays = (
+	siteBackupPolicies: SiteRewindPoliciesResponse
+): number | undefined => {
+	return siteBackupPolicies?.policies?.activity_log_limit_days ?? undefined;
 };
 
 const BackupRetentionOptionOnCancelPurchase: React.FC<
@@ -50,10 +51,10 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	const [ retentionOfferCardVisible, setRetentionOfferCardVisible ] = useState( false );
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
 	const { data: site } = useQuery( siteByIdQuery( siteId ) );
-	const siteSlug = site?.slug;
+	const siteSlug = site?.slug ?? purchase.site_slug;
 
 	const updateBackupRetentionDaysMutation = useMutation(
-		siteUpdateRetentionDaysMutation( site?.ID, MINIMUM_RETENTION_TO_OFFER )
+		siteUpdateRetentionDaysMutation( purchase.blog_id, MINIMUM_RETENTION_TO_OFFER )
 	);
 	let updateRetentionRequestStatus: string = BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED;
 	if ( updateBackupRetentionDaysMutation.isPending ) {
@@ -64,7 +65,7 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 		updateRetentionRequestStatus = BACKUP_RETENTION_UPDATE_REQUEST.FAILED;
 	}
 
-	const currentPlanHasBackup = productHasBackups( camelOrSnakeSlug( purchase ) );
+	const currentPlanHasBackup = productHasBackups( purchase.product_slug );
 
 	const updateRetentionPeriod = () => {
 		recordTracksEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
@@ -91,10 +92,10 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	const isFetching = fetchingSize || fetchingPolicies;
 	const policiesStatus = isFetching ? '' : 'success'; //TODO: replace with real logic or remove
 	const hasLoaded = policiesStatus === 'success';
-	const storageLimitBytes = siteBackupPolicies?.policies?.storage_limit_bytes ?? undefined;
+	const storageLimitBytes = siteBackupPolicies?.policies?.storage_limit_bytes ?? 0;
 
 	// Retention period included in customer plan
-	const planRetentionPeriod = getActivityLogVisibleDays( siteBackupPolicies );
+	const planRetentionPeriod = siteBackupPolicies && getActivityLogVisibleDays( siteBackupPolicies );
 
 	// Retention period set by customer (if any)
 	const customerRetentionPeriod = siteBackupSize?.retention_days ?? undefined;
@@ -156,9 +157,8 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 							{
 								ExternalLink: (
 									<ExternalLink
+										children={ null }
 										href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/"
-										target="_blank"
-										icon
 									/>
 								),
 							}

@@ -1,7 +1,7 @@
 const randomInt = ( lower: number, upper: number ): number =>
 	Math.floor( Math.random() * ( upper - lower + 1 ) );
 
-export function shuffleArray( collection: Array ) {
+export function shuffleArray( collection: string[] ) {
 	const newArray = collection;
 	let pointer = -1;
 	collection.forEach( () => {

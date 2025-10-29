@@ -1,9 +1,4 @@
-import { isJetpackPlan } from '../../../../utils/plans';
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-} from '../../../../utils/purchase';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from '../../../../utils/purchase';
 import {
 	CANCELLATION_REASONS,
 	DOMAIN_TRANSFER_CANCELLATION_REASONS,
@@ -11,11 +6,10 @@ import {
 	JETPACK_CANCELLATION_REASONS,
 	GSUITE_CANCELLATION_REASONS,
 } from './cancellation-reasons';
-
-type WithProductSlug = Parameters< typeof isJetpackPlan >[ 0 ];
+import type { Purchase } from '@automattic/api-core';
 
 //used
-export const cancellationOptionsForPurchase = ( purchase: WithProductSlug ) => {
+export const cancellationOptionsForPurchase = ( purchase: Purchase ) => {
 	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase?.product_slug ) ) {
 		return [
 			...GSUITE_CANCELLATION_REASONS.map( ( { value } ) => value ),
@@ -23,17 +17,17 @@ export const cancellationOptionsForPurchase = ( purchase: WithProductSlug ) => {
 		];
 	}
 
-	if ( isJetpackPlan( purchase ) ) {
+	if ( purchase.is_jetpack_plan_or_product ) {
 		return [
 			...JETPACK_CANCELLATION_REASONS.map( ( { value } ) => value ),
 			'downgradeToAnotherPlan',
 		];
 	}
 
-	if ( isDomainTransfer( purchase ) ) {
+	if ( 'domain_transfer' === purchase.product_slug ) {
 		return DOMAIN_TRANSFER_CANCELLATION_REASONS.map( ( { value } ) => value );
 	}
-	if ( isDomainRegistration( purchase ) ) {
+	if ( purchase.is_domain_registration ) {
 		return DOMAIN_REGISTRATION_CANCELLATION_REASONS.map( ( { value } ) => value );
 	}
 
@@ -41,12 +35,12 @@ export const cancellationOptionsForPurchase = ( purchase: WithProductSlug ) => {
 };
 
 //used
-export const nextAdventureOptionsForPurchase = ( purchase: WithProductSlug ) => {
-	if ( isJetpackPlan( purchase ) ) {
+export const nextAdventureOptionsForPurchase = ( purchase: Purchase ) => {
+	if ( purchase.is_jetpack_plan_or_product ) {
 		return [ 'stayingHere', 'otherPlugin', 'leavingWP', 'noNeed' ];
 	}
 
-	if ( isDomainTransfer( purchase ) ) {
+	if ( 'domain_transfer' === purchase.product_slug ) {
 		return [];
 	}
 

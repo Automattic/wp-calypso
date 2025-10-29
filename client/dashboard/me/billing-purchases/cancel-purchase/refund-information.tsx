@@ -3,14 +3,7 @@ import config from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { getSelectedDomain } from '../../../utils/domain';
-import {
-	isDomainRegistration,
-	isSubscription,
-	hasAmountAvailableToRefund,
-	isRefundable,
-	isOneTimePurchase,
-	getName,
-} from '../../../utils/purchase';
+import { hasAmountAvailableToRefund, isOneTimePurchase } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelPurchaseRefundInformationConnectedProps {
@@ -28,16 +21,16 @@ const CancelPurchaseRefundInformation = ( {
 	isJetpackPurchase,
 }: CancelPurchaseRefundInformationProps & CancelPurchaseRefundInformationConnectedProps ) => {
 	const { data: domains } = useSuspenseQuery( siteDomainsQuery( purchase.blog_id ) );
-	const selectedDomainName = getName( purchase );
+	const selectedDomainName = purchase.product_name;
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 
 	isGravatarRestrictedDomain =
-		isGravatarRestrictedDomain ?? selectedDomain?.isGravatarRestrictedDomain;
+		isGravatarRestrictedDomain ?? selectedDomain?.is_gravatar_restricted_domain;
 	const { refund_period_in_days: refundPeriodInDays } = purchase;
 	let text;
 
-	if ( isRefundable( purchase ) ) {
-		if ( isDomainRegistration( purchase ) ) {
+	if ( purchase.is_refundable ) {
+		if ( purchase.is_domain_registration ) {
 			// Domain bought with domain credits, so there's no refund
 			if ( ! hasAmountAvailableToRefund( purchase ) ) {
 				text = sprintf(
@@ -60,7 +53,7 @@ const CancelPurchaseRefundInformation = ( {
 			}
 		}
 
-		if ( isSubscription( purchase ) ) {
+		if ( ! isOneTimePurchase( purchase ) && ! purchase.is_domain_registration ) {
 			text = [
 				sprintf(
 					/* Translators: %(productName)s is the name of the plan that the customer is cancelling. */
@@ -68,7 +61,7 @@ const CancelPurchaseRefundInformation = ( {
 						"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try."
 					),
 					{
-						productName: getName( purchase ),
+						productName: purchase.product_name,
 					}
 				),
 			];
@@ -110,7 +103,7 @@ const CancelPurchaseRefundInformation = ( {
 				{ refundPeriodInDays }
 			);
 		}
-	} else if ( isDomainRegistration( purchase ) ) {
+	} else if ( purchase.is_domain_registration ) {
 		text = [
 			__(
 				'When you cancel your domain, it will remain registered and active until the registration expires, ' +
@@ -133,7 +126,7 @@ const CancelPurchaseRefundInformation = ( {
 					'Once it expires, it will be automatically removed from your site.'
 			),
 			{
-				productName: getName( purchase ),
+				productName: purchase.product_name,
 			}
 		);
 	}

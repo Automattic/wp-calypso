@@ -170,10 +170,6 @@ export const JetpackPlans = {
 	PLAN_JETPACK_GROWTH_MONTHLY: 'jetpack_growth_monthly',
 	PLAN_JETPACK_GROWTH_YEARLY: 'jetpack_growth_yearly',
 	PLAN_JETPACK_GROWTH_BI_YEARLY: 'jetpack_growth_bi_yearly',
-	PRODUCT_JETPACK_SEARCH_BI_YEARLY: 'jetpack_search_bi_yearly',
-	PRODUCT_JETPACK_SEARCH: 'jetpack_search',
-	PRODUCT_JETPACK_SEARCH_MONTHLY: 'jetpack_search_monthly',
-	PRODUCT_JETPACK_SEARCH_FREE: 'jetpack_search_free',
 	PLAN_JETPACK_SECURITY_DAILY: 'jetpack_security_daily',
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY: 'jetpack_security_daily_monthly',
 	PLAN_JETPACK_SECURITY_REALTIME: 'jetpack_security_realtime',
@@ -305,15 +301,6 @@ export const PaymentPartners = {
 	RAZORPAY: 'razorpay',
 } as const;
 
-export const JETPACK_SEARCH_PRODUCTS = [
-	JetpackPlans.PRODUCT_JETPACK_SEARCH_BI_YEARLY,
-	JetpackPlans.PRODUCT_JETPACK_SEARCH,
-	JetpackPlans.PRODUCT_JETPACK_SEARCH_MONTHLY,
-	JetpackPlans.PRODUCT_JETPACK_SEARCH_FREE,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-];
-
 export const PRODUCT_JETPACK_AI_BI_YEARLY = 'jetpack_ai_bi_yearly';
 export const PRODUCT_JETPACK_AI_MONTHLY = 'jetpack_ai_monthly';
 export const PRODUCT_JETPACK_AI_YEARLY = 'jetpack_ai_yearly';
@@ -383,9 +370,19 @@ export const PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY = 'jetpack_videopress_bi_yearl
 export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm';
+export const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
 export const PRODUCT_JETPACK_SEARCH_BI_YEARLY = 'jetpack_search_bi_yearly';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
+
+export const JETPACK_SEARCH_PRODUCTS = [
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SEARCH_FREE,
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+];
 
 // WPCom features constants
 export const FEATURE_13GB_STORAGE = '13gb-storage';
@@ -1058,4 +1055,11 @@ export const JETPACK_SECURITY_PLANS = < const >[
 	JetpackPlans.PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	JetpackPlans.PLAN_JETPACK_SECURITY_T2_YEARLY,
 	JetpackPlans.PLAN_JETPACK_SECURITY_T2_MONTHLY,
+];
+
+// Jetpack Complete plans
+export const JETPACK_COMPLETE_PLANS = < const >[
+	JetpackPlans.PLAN_JETPACK_COMPLETE_BI_YEARLY,
+	JetpackPlans.PLAN_JETPACK_COMPLETE,
+	JetpackPlans.PLAN_JETPACK_COMPLETE_MONTHLY,
 ];

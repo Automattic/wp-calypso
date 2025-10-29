@@ -188,7 +188,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 				return (
 					<EducationContentStep
 						type={ upsell }
-						siteSlug={ purchase.site_slug }
+						siteSlug={ site?.slug ?? purchase.site_slug ?? '' }
 						onDecline={ isLastStep ? onSubmit : clickNext }
 						cancellationReason={ questionOneText }
 					/>

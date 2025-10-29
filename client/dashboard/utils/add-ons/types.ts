@@ -1,12 +1,6 @@
-import {
-	ProductSlug,
-	WPComSpaceUpgradeProductSlug,
-	WPComOtherProductSlug,
-} from '@automattic/api-core';
 import * as React from 'react';
-import { STORAGE_ADD_ONS, ADD_ONS } from './constants';
 
-type StoreProductSlug = ProductSlug | WPComSpaceUpgradeProductSlug | WPComOtherProductSlug;
+type StoreProductSlug = string;
 
 // This type represents things that React can render, but which also exist. (E.g.
 // not nullable, not undefined, etc.)
@@ -16,9 +10,9 @@ type ExistingReactNode = React.ReactElement | string | number;
 type TranslateResult = ExistingReactNode;
 
 //used
-export type AddOnSlug = ( typeof ADD_ONS )[ number ];
+export type AddOnSlug = string[][ number ];
 //used
-export type StorageAddOnSlug = ( typeof STORAGE_ADD_ONS )[ number ];
+export type StorageAddOnSlug = string[][ number ];
 
 //used
 export interface AddOnMeta {
