@@ -63,7 +63,7 @@ function UnforwardedSummaryButton(
 				as="span"
 			>
 				{ !! decoration && <span className="summary-button-decoration">{ decoration }</span> }
-				<HStack justify="space-between" spacing={ 4 } as="span" wrap>
+				<HStack justify="space-between" spacing={ hasHighDensity ? 2 : 4 } as="span" wrap>
 					<VStack alignment="flex-start" as="span" spacing={ 3 } justify="flex-start">
 						<VStack alignment="flex-start" as="span" spacing={ 2 } justify="flex-start">
 							{ strapline && hasLowDensity && (

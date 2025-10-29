@@ -86,7 +86,8 @@
 
 		.summary-button-title {
 			@include body-small;
-			line-height: $font-line-height-small;
+			/* Ensures the title is aligned with the decoration when content wraps. */
+			line-height: $font-line-height-medium;
 		}
 	}
 
