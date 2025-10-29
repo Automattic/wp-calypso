@@ -27,8 +27,7 @@
 			}
 		}
 
-		&.has-density-medium,
-		&.has-density-high {
+		&.has-density-medium {
 			&:not(:focus-visible, :last-child) {
 				border-bottom: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
 			}
@@ -71,8 +70,8 @@
 		background-color: #fff;
 	}
 
-	&.has-density-medium,
-	&.has-density-high {
+	&.has-density-medium {
+		padding: $grid-unit-20 $grid-unit-30;
 		border-bottom: 1px solid $gray-100;
 		border-radius: 0;
 
@@ -80,10 +79,6 @@
 			@include body-medium;
 			line-height: $font-line-height-medium;
 		}
-	}
-
-	&.has-density-medium {
-		padding: $grid-unit-20 $grid-unit-30;
 	}
 
 	&.has-density-high {
