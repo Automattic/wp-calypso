@@ -63,6 +63,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	FLEX_SITE_CREATION: {
+		slug: 'flex-site-creation',
+		asyncComponent: () => import( './steps-repository/flex-site-creation' ),
+	},
+
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
 		asyncComponent: () => import( './steps-repository/newsletter-setup' ),

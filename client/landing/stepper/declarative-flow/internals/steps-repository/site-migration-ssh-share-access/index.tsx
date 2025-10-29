@@ -13,6 +13,7 @@ import { SupportNudge } from '../site-migration-instructions/support-nudge';
 import { useSSHMigrationStatus } from '../site-migration-ssh-in-progress/hooks/use-ssh-migration-status';
 import { Accordion } from './components/accordion';
 import { SshMigrationContainer } from './components/ssh-migration-container';
+import { usePollSSHMigrationAtomicTransfer } from './hooks/use-poll-ssh-migration-atomic-transfer';
 import { useStartSSHMigration } from './hooks/use-start-ssh-migration';
 import { getSSHHostDisplayName } from './steps/ssh-host-support-urls';
 import { useSteps } from './steps/use-steps';
@@ -38,6 +39,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	const transferIdParam = queryParams.get( 'transferId' );
 	const transferId = transferIdParam ? parseInt( transferIdParam, 10 ) : null;
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
+	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 
 	// Redirect back to verification step if transferId is missing
 	useEffect( () => {
@@ -52,21 +54,32 @@ const SiteMigrationSshShareAccess: StepType< {
 
 	const dispatch = useDispatch();
 
+	// Poll for migration status after starting migration
+	const { data: migrationStatus } = useSSHMigrationStatus( {
+		siteId,
+		enabled: migrationStarted && siteId > 0,
+	} );
+
 	const { steps, formState, canStartMigration, onMigrationStarted, setMigrationError } = useSteps( {
 		fromUrl,
 		siteId,
 		siteName: site?.name ?? '',
 		host,
 		onNoSSHAccess: handleNoSSHAccess,
+		migrationStatus: migrationStatus?.status,
 	} );
 
 	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
-	// Poll for migration status after starting migration
-	const { data: migrationStatus } = useSSHMigrationStatus( {
+	// Poll SSH migration atomic transfer status
+	const { transferStatus, isTransferring } = usePollSSHMigrationAtomicTransfer(
 		siteId,
-		enabled: migrationStarted && siteId > 0,
-	} );
+		transferId,
+		{
+			enabled: !! transferId && siteId > 0,
+			refetchInterval: 2000, // Poll every 2 seconds
+		}
+	);
 
 	// Redirect to in-progress step when status becomes 'migrating', or show error if failed
 	useEffect( () => {
@@ -85,8 +98,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		}
 	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
 
-	const handleContinue = () => {
-		setMigrationError( null );
+	const triggerSSHMigration = () => {
 		startMigration(
 			{
 				siteId,
@@ -106,6 +118,25 @@ const SiteMigrationSshShareAccess: StepType< {
 			}
 		);
 	};
+
+	const handleContinue = () => {
+		setMigrationError( null );
+
+		if ( isTransferring ) {
+			setShouldStartMigration( true );
+			return;
+		}
+
+		triggerSSHMigration();
+	};
+
+	// Auto-start migration when verification completes
+	useEffect( () => {
+		if ( transferStatus === 'completed' && shouldStartMigration ) {
+			setShouldStartMigration( false );
+			triggerSSHMigration();
+		}
+	}, [ transferStatus, shouldStartMigration ] );
 
 	const navigateToDoItForMe = useCallback( () => {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
@@ -148,8 +179,13 @@ const SiteMigrationSshShareAccess: StepType< {
 						<Button
 							variant="primary"
 							onClick={ handleContinue }
-							disabled={ ! canStartMigration || isStartingMigration || migrationStarted }
-							isBusy={ isStartingMigration || migrationStarted }
+							disabled={
+								! canStartMigration ||
+								isStartingMigration ||
+								migrationStarted ||
+								shouldStartMigration
+							}
+							isBusy={ isStartingMigration || migrationStarted || shouldStartMigration }
 						>
 							{ translate( 'Continue' ) }
 						</Button>

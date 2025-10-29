@@ -1,4 +1,5 @@
-import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 import type { CSSProperties } from 'react';
 
@@ -13,7 +14,7 @@ type AppsCardProps = {
 export default function AppsCard( { logo, logoAlt, title, description, children }: AppsCardProps ) {
 	return (
 		<Card>
-			<CardBody style={ { padding: '24px' } }>
+			<CardBody>
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 4 }>
 						<img src={ logo } alt={ logoAlt } width={ 64 } height={ 64 } />

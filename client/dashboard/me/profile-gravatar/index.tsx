@@ -2,8 +2,6 @@ import { userSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
-	Card,
-	CardBody,
 	ExternalLink,
 	TextareaControl,
 	BaseControl,
@@ -18,6 +16,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { isValidUrl } from '../../../lib/importer/url-validation';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
 import GravatarLogo from './gravatar-logo';

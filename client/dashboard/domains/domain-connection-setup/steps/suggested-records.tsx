@@ -2,12 +2,11 @@ import { DomainConnectionSetupMode } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Card,
-	CardBody,
 	Button,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '../../../components/card';
 import Notice from '../../../components/notice';
 import { isSubdomain } from '../../../utils/domain';
 import RecordsList from '../components/records-list';

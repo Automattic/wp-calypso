@@ -81,7 +81,6 @@ Pages are to be used to represent a page in Calypso. It can hold attributes, cla
 A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand. Code reuse is promoted via the following principles:
 
 - **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
-- **Readability**: named variables and functions are much easier to decipher than series of strings.
 - **readability**: named variables and functions are much easier to decipher than series of strings.
 
 ```typescript

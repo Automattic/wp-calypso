@@ -7,8 +7,6 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
-	Card,
-	CardBody,
 	__experimentalVStack as VStack,
 	Button,
 	__experimentalText as Text,
@@ -20,6 +18,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack/';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import PreferencesLoginSiteDropdown from './site-dropdown';
 

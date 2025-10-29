@@ -3,12 +3,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
-	Card,
-	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import type { DNSRecord } from '../types';
 

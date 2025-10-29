@@ -1,11 +1,7 @@
-import {
-	__experimentalGrid as Grid,
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-} from '@wordpress/components';
+import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 
 const GRID_CARDS = [

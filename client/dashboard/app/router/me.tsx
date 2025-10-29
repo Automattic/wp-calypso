@@ -232,7 +232,9 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		// Preload site and storage data for wpcom plans
 		if ( purchase.site_slug && purchase.blog_id && ! isTemporarySitePurchase( purchase ) ) {
 			await Promise.all( [
-				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ),
+				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ).catch( () => {
+					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
+				} ),
 				isDotcomPlan( purchase )
 					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
 					: undefined,

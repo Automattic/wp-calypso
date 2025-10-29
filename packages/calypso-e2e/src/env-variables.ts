@@ -26,7 +26,7 @@ class EnvVariables implements SupportedEnvVariables {
 		SLOW_MO: 0,
 		TEST_LOCALES: [ ...getMag16Locales() ],
 		TEST_ON_ATOMIC: false,
-		TIMEOUT: 10000,
+		TIMEOUT: 15000,
 		VIEWPORT_NAME: 'desktop',
 		WOO_BASE_URL: 'https://woocommerce.com',
 		WPCOM_BASE_URL: 'https://wordpress.com',

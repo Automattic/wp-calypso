@@ -5,16 +5,12 @@ import {
 	sitePreviewLinkDeleteMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	ToggleControl,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import SitePreviewLink from '../../components/site-preview-link';
 import { hasPlanFeature } from '../../utils/site-features';

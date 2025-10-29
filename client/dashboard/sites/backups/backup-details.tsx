@@ -6,9 +6,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	Card,
-	CardBody,
-	CardHeader,
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -20,6 +17,7 @@ import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';

@@ -32,6 +32,7 @@ const AccordionStatusIcon: FC< { completed: boolean } > = ( { completed } ) => {
 };
 
 export const AccordionStep: FC< AccordionStepProps > = ( { step, index } ) => {
+	const isClickable = !! step.onClick;
 	const onClick = step.onClick ?? function () {};
 	return (
 		<div
@@ -40,12 +41,13 @@ export const AccordionStep: FC< AccordionStepProps > = ( { step, index } ) => {
 				'is-completed': step.task.completed,
 				'is-disabled': step.task.disabled,
 				'is-open': step.expandable?.isOpen ?? false,
+				'is-clickable': isClickable,
 			} ) }
 		>
 			<button
 				className="migration-site-ssh__accordion-header"
 				onClick={ onClick }
-				disabled={ step.task.disabled }
+				disabled={ step.task.disabled || ! isClickable }
 				aria-expanded={ step.expandable?.isOpen ?? false }
 			>
 				<div className="migration-site-ssh__accordion-title">
@@ -54,9 +56,11 @@ export const AccordionStep: FC< AccordionStepProps > = ( { step, index } ) => {
 						{ index + 1 }. { step.task.title }
 					</span>
 				</div>
-				<div className="migration-site-ssh__accordion-chevron">
-					<Icon icon={ step.expandable?.isOpen ?? false ? chevronUp : chevronDown } size={ 24 } />
-				</div>
+				{ isClickable && (
+					<div className="migration-site-ssh__accordion-chevron">
+						<Icon icon={ step.expandable?.isOpen ?? false ? chevronUp : chevronDown } size={ 24 } />
+					</div>
+				) }
 			</button>
 			{ step.expandable?.isOpen && (
 				<div className="migration-site-ssh__accordion-content">{ step.expandable?.content }</div>

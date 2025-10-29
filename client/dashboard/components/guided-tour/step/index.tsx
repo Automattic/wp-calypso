@@ -3,12 +3,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	Button,
-	CardBody,
 	Popover,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useState, useContext, useEffect } from 'react';
+import { CardBody } from '../../card';
 import { SectionHeader } from '../../section-header';
 import { GuidedTourContext } from '../context';
 import type { ComponentProps, CSSProperties } from 'react';

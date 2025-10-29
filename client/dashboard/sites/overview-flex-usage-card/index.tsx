@@ -1,7 +1,8 @@
-import { Card, CardBody, CardHeader, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
 import { useFlexUsage } from './use-flex-usage';

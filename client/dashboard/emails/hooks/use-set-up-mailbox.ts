@@ -5,13 +5,14 @@ import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
-import { emailsRoute } from '../../app/router/emails';
+import { useAnalytics } from '../../app/analytics';
+import { mailboxesReadyRoute } from '../../app/router/emails';
 import { FIELD_MAILBOX, FIELD_PASSWORD, FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { useDomainFromUrlParam } from './use-domain-from-url-param';
 
 export const useSetUpMailbox = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 	const { domainName } = useDomainFromUrlParam();
@@ -37,17 +38,29 @@ export const useSetUpMailbox = () => {
 				isAdmin: false,
 			} );
 
+			recordTracksEvent( 'calypso_dashboard_emails_setup_mailbox_success', {
+				domainName,
+			} );
+
 			createSuccessNotice( __( 'The mailbox has been successfully set up.' ), {
 				type: 'snackbar',
 			} );
 
 			router.navigate( {
-				to: addQueryArgs( emailsRoute.fullPath, {
-					domain_to_poll: domainName,
-					mailbox_to_poll: localPart,
-				} ),
+				to: mailboxesReadyRoute.to,
+				params: {
+					domain: domainName,
+				},
+				search: {
+					mailboxes: localPart,
+				},
 			} );
 		} catch ( error: unknown ) {
+			recordTracksEvent( 'calypso_dashboard_emails_setup_mailbox_failure', {
+				domainName,
+				error: isWpError( error ) ? error.message : String( error ),
+			} );
+
 			createErrorNotice(
 				isWpError( error )
 					? sprintf(

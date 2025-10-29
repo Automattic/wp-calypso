@@ -2,8 +2,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	Button,
-	Card,
-	CardBody,
 	Icon,
 	type IconType,
 } from '@wordpress/components';
@@ -12,6 +10,7 @@ import { info, published, error, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 import { ButtonStack } from '../button-stack';
+import { Card, CardBody } from '../card';
 import { caution } from './icons';
 import type { NoticeVariant, NoticeProps } from './types';
 import './style.scss';

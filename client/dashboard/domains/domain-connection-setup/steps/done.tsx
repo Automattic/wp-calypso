@@ -1,14 +1,13 @@
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	Card,
-	CardBody,
 	Icon,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, update } from '@wordpress/icons';
+import { Card, CardBody } from '../../../components/card';
 import { StepType, type StepComponentProps } from '../types';
 
 export function Done( {

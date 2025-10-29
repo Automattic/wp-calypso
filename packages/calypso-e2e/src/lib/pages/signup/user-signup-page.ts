@@ -26,6 +26,7 @@ const selectors = {
  */
 export class UserSignupPage {
 	private page: Page;
+	readonly createYourAccountHeading: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -34,6 +35,9 @@ export class UserSignupPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.createYourAccountHeading = this.page.getByRole( 'heading', {
+			name: 'Create your account',
+		} );
 	}
 
 	/**
@@ -44,6 +48,30 @@ export class UserSignupPage {
 	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';
 		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+	}
+	/**
+	 * Captures the response from the user creation API endpoint.
+	 * @returns {Promise<NewUserResponse>}
+	 */
+	private captureNewUserResponse(): Promise< NewUserResponse > {
+		return new Promise< NewUserResponse >( ( resolve, reject ) => {
+			this.page.route(
+				/.*\/users\/new\?.*/,
+				async ( route ) => {
+					try {
+						const response = await route.fetch();
+						const body = await response.body();
+						// Fulfill the original request
+						await route.fulfill( { response } );
+						// Resolve the promise with the parsed body
+						resolve( JSON.parse( body.toString() ) as NewUserResponse );
+					} catch ( error ) {
+						reject( error );
+					}
+				},
+				{ times: 1 }
+			);
+		} );
 	}
 
 	/**
@@ -59,24 +87,11 @@ export class UserSignupPage {
 		await this.page.fill( selectors.usernameInput, username );
 		await this.page.fill( selectors.passwordInput, password );
 
-		// Use CSS selector instead of text.
-		// Text displayed on button changes depending on the link directing
-		// user to this page.
-		// Example: invite => Signup & Follow
-		//          signup from login => Create your account
-		const [ , response ] = await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.click( selectors.submitButton ),
-		] );
+		const responsePromise = this.captureNewUserResponse();
 
-		if ( ! response ) {
-			throw new Error( 'Failed to create new user at signup.' );
-		}
-
-		const responseBody: NewUserResponse = await response.json();
-
-		return responseBody;
+		// Trigger the signup and wait for the captured response.
+		await this.page.click( selectors.submitButton );
+		return responsePromise;
 	}
 
 	/**
@@ -91,16 +106,13 @@ export class UserSignupPage {
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		// Click the button first, then wait for the response
+		const responsePromise = this.captureNewUserResponse();
+
+		// Trigger the signup.
 		await this.page.click( selectors.submitButton );
 
-		const response = await this.page.waitForResponse( /.*new\?.*/, { timeout: 20000 } );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to sign up as new user: no or unexpected API response.' );
-		}
-
-		return await response.json();
+		// Wait for the promise to be resolved by the route handler.
+		return responsePromise;
 	}
 
 	/**
@@ -156,18 +168,16 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
-		try {
-			const continueWithEmailButton = this.page.getByRole( 'button', {
-				name: 'Continue with email',
-			} );
+		const continueWithEmailButton = this.page.getByRole( 'button', {
+			name: 'Continue with email',
+		} );
 
+		// The "Continue with email" button is only shown on certain flows
+		await this.page.addLocatorHandler( continueWithEmailButton, async () => {
 			await continueWithEmailButton.click();
+		} );
 
-			return this.signupWithEmail( email );
-		} catch ( error ) {
-			console.error( 'Failed to sign up as new user:', error );
-			return this.signupWithEmail( email );
-		}
+		return this.signupWithEmail( email );
 	}
 
 	/**

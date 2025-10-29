@@ -65,6 +65,10 @@ function HelpCenterContent() {
 		</>
 	);
 
+	const botProps = helpCenterData.isCommerceGarden
+		? { botNameSlug: 'ciab-workflow-support_chat' }
+		: {};
+
 	return (
 		<>
 			{ showHelpIcon &&
@@ -81,6 +85,7 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				isCommerceGarden={ helpCenterData.isCommerceGarden }
+				{ ...botProps }
 			/>
 		</>
 	);
@@ -101,6 +106,10 @@ if ( helpCenterData.isNextAdmin ) {
 		const container = document.createElement( 'div' );
 		container.id = 'jetpack-help-center';
 		document.body.appendChild( container );
+		const botProps = helpCenterData.isCommerceGarden
+			? { botNameSlug: 'ciab-workflow-support_chat' }
+			: {};
+
 		createRoot( container ).render(
 			<QueryClientProvider client={ queryClient }>
 				<HelpCenter
@@ -112,6 +121,7 @@ if ( helpCenterData.isNextAdmin ) {
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 					isCommerceGarden={ helpCenterData.isCommerceGarden }
+					{ ...botProps }
 				/>
 			</QueryClientProvider>,
 			document.getElementById( 'jetpack-help-center' )

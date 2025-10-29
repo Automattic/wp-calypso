@@ -9,12 +9,8 @@
 		transform: rotate(180deg);
 	}
 
-	.collapsed &__content {
-		display: none;
+	// Position button on the right when there's no header
+	.collapsible-card__toggle {
+		margin-inline-start: auto;
 	}
-
-	&.collapsed {
-		overflow: hidden;
-	}
-
 }

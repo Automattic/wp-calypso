@@ -13,6 +13,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { addMailboxRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -34,6 +35,7 @@ import { Cart } from './components/cart';
 import { MailboxForm } from './components/mailbox-form';
 
 const AddProfessionalEmail = () => {
+	const { recordTracksEvent } = useAnalytics();
 	const addToCart = useAddToCart();
 	const setUpMailbox = useSetUpMailbox();
 	const { createErrorNotice } = useDispatch( noticesStore );
@@ -46,7 +48,7 @@ const AddProfessionalEmail = () => {
 
 	const { provider, interval } = useParams( { shouldThrow: false, strict: false } );
 
-	const { domain, domainName, site } = useDomainFromUrlParam();
+	const { domain, domainName } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
 	const { product } = useEmailProduct( provider, interval );
 	const { data: existingMailboxes } = useSuspenseQuery(
@@ -87,6 +89,18 @@ const AddProfessionalEmail = () => {
 		const validated = await mailboxOperations.validateAndCheck( false );
 
 		if ( ! userCanAddEmail || ! validated ) {
+			recordTracksEvent(
+				isAddMailboxRoute
+					? 'calypso_dashboard_emails_add_mailbox_validation_failure'
+					: 'calypso_dashboard_emails_setup_mailbox_validation_failure',
+				{
+					domainName,
+					mailboxCount: mailboxEntities.length,
+					provider,
+					reason: validated ? 'user_cannot_add_email' : 'validation_failed',
+				}
+			);
+
 			if ( ! userCanAddEmail ) {
 				const errors = domain?.current_user_cannot_add_email_reason?.errors;
 				const message = errors
@@ -113,6 +127,12 @@ const AddProfessionalEmail = () => {
 	};
 
 	const removeForm = ( index: number ) => {
+		recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_remove_mailbox_click', {
+			domainName,
+			mailboxCount: mailboxEntities.length,
+			provider,
+		} );
+
 		setMailboxEntities( ( prevMailboxEntities ) => {
 			const newMailboxEntities = [ ...prevMailboxEntities ];
 			newMailboxEntities.splice( index, 1 );
@@ -144,16 +164,29 @@ const AddProfessionalEmail = () => {
 
 	return (
 		<PageLayout
-			header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> }
+			header={
+				<PageHeader
+					prefix={
+						<BackToEmailsPrefix
+							onClick={ () => {
+								recordTracksEvent(
+									isAddMailboxRoute
+										? 'calypso_dashboard_emails_add_mailbox_back_to_emails_click'
+										: 'calypso_dashboard_emails_setup_mailbox_back_to_emails_click',
+									{
+										domainName,
+										mailboxCount: mailboxEntities.length,
+										provider,
+									}
+								);
+							} }
+						/>
+					}
+				/>
+			}
 			size="small"
 			notices={
-				showEmailPurchaseDisabledMessage && (
-					<EmailNonDomainOwnerNotice
-						selectedSite={ site }
-						domain={ domain }
-						source="email-comparison"
-					/>
-				)
+				showEmailPurchaseDisabledMessage && <EmailNonDomainOwnerNotice domain={ domain } />
 			}
 		>
 			{ isAddMailboxRoute && mailboxCost && (
@@ -192,6 +225,15 @@ const AddProfessionalEmail = () => {
 								variant="secondary"
 								disabled={ disabled }
 								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_emails_add_mailbox_add_another_mailbox_click',
+										{
+											domainName,
+											mailboxCount: mailboxEntities.length,
+											provider,
+										}
+									);
+
 									setMailboxEntities( ( prevMailboxEntities ) => [
 										...prevMailboxEntities,
 										createNewMailbox(),
@@ -201,7 +243,20 @@ const AddProfessionalEmail = () => {
 								{ __( 'Add another mailbox' ) }
 							</Button>
 						) : (
-							<Button __next40pxDefaultSize variant="primary" disabled={ disabled } type="submit">
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								disabled={ disabled }
+								type="submit"
+								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_emails_setup_mailbox_complete_setup_click',
+										{
+											domainName,
+										}
+									);
+								} }
+							>
 								{ __( 'Complete setup' ) }
 							</Button>
 						) }

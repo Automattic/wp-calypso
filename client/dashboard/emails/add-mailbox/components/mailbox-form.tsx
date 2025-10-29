@@ -95,7 +95,7 @@ export const MailboxForm = ( {
 	return (
 		<VStack spacing={ 4 }>
 			{ mailboxEntity.provider === MailboxProvider.Google && (
-				<HStack>
+				<HStack alignment="flex-start">
 					<MailboxInput
 						fieldName={ FIELD_FIRSTNAME }
 						mailboxEntity={ mailboxEntity }

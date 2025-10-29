@@ -3,12 +3,11 @@ import {
 	__experimentalScrollable as Scrollable,
 	__experimentalVStack as VStack,
 	Button,
-	Card,
-	CardBody,
 	Modal,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 
 export type ScreenShotsTimeLine = {
