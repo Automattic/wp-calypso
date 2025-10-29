@@ -14,16 +14,14 @@ export const useGetOdieConversations = (
 	enabled = true
 ) => {
 	const { version } = useOdieAssistantContext();
-	const botSlugs = encodeURIComponent(
-		Array.from(
-			new Set(
-				supportInteractions?.map( ( interaction ) => {
-					// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
-					return interaction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
-				} )
-			)
-		).join( ',' )
-	);
+	const botSlugs = Array.from(
+		new Set(
+			supportInteractions?.map( ( interaction ) => {
+				// Hover `ODIE_DEFAULT_BOT_SLUG_LEGACY` for more information.
+				return interaction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
+			} )
+		)
+	).join( ',' );
 
 	return useQuery< OdieConversation[], Error >( {
 		queryKey: [ 'odie-interactions', botSlugs, version ],
