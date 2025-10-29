@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
@@ -178,9 +177,7 @@ export const ODIE_DEFAULT_BOT_SLUG_LEGACY = 'wpcom-support-chat';
 /**
  * New interactions will target this bot slug and store it in the interaction object. All future events of those interactions will use this bot slug.
  */
-export const ODIE_NEW_INTERACTIONS_BOT_SLUG = config.isEnabled( 'help-center/workflow' )
-	? 'wpcom-workflow-support_chat'
-	: 'wpcom-support-chat';
+export const ODIE_NEW_INTERACTIONS_BOT_SLUG = 'wpcom-support-chat';
 
 export const ODIE_ALLOWED_BOTS = [
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,

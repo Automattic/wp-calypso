@@ -56,6 +56,21 @@ export type CurrentUser = {
 	id?: number;
 };
 
+type Feature =
+	| 'login'
+	| 'logout'
+	| 'theme'
+	| 'plugin'
+	| 'admin'
+	| 'site-editing'
+	| 'domain'
+	| 'email'
+	| 'subscription'
+	| 'notification'
+	| 'podcast'
+	| 'facebook'
+	| 'unrelated-to-wordpress';
+
 export type Source = {
 	title: string;
 	url: string;
@@ -88,10 +103,6 @@ type InquiryType =
 
 type InteractionStatus = 'open' | 'closed' | 'resolved' | 'solved';
 
-type ClassificationResults = {
-	inquiry_type?: InquiryType;
-};
-
 export type OdieUserTracking = {
 	path: string;
 	time_spent: number;
@@ -105,8 +116,13 @@ export type Context = {
 	site_id: number | null;
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
-	classification_results?: ClassificationResults;
-	question_tags?: ClassificationResults;
+	question_tags?: {
+		feature?: Feature;
+		inquiry_type?: InquiryType;
+		language?: string;
+		product?: string;
+		category?: string;
+	};
 	flags?: {
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
@@ -265,6 +281,12 @@ export type ZendeskConversation = {
 	metadata: Metadata;
 };
 
+export type SupportInteractionDraft = {
+	bot_slug: OdieAllowedBots;
+	event_external_id: string;
+	event_source: SupportProvider;
+};
+
 export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {
@@ -278,12 +300,6 @@ export type SupportInteractionEvent = {
 	event_source: SupportProvider;
 	metadata?: object;
 	event_order?: number;
-};
-
-export type SupportInteractionDraft = {
-	bot_slug: OdieAllowedBots;
-	event_external_id: string;
-	event_source: SupportProvider;
 };
 
 export type SupportInteraction = {
