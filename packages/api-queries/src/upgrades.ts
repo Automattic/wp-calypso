@@ -49,9 +49,10 @@ export const hasPurchaseBeenExtendedQuery = ( purchaseId: number ) =>
 		queryFn: () => hasExtendedPurchase( purchaseId ),
 	} );
 
-export const userPurchaseSetAutoRenewQuery = ( purchaseId: number ) =>
+export const userPurchaseSetAutoRenewQuery = () =>
 	mutationOptions( {
-		mutationFn: ( autoRenew: boolean ) => setPurchaseAutoRenew( purchaseId, autoRenew ),
+		mutationFn: ( { purchaseId, autoRenew }: { purchaseId: number; autoRenew: boolean } ) =>
+			setPurchaseAutoRenew( purchaseId, autoRenew ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
 		},
