@@ -1,6 +1,5 @@
 import { Badge } from '@automattic/ui';
 import {
-	Button,
 	Icon,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -8,7 +7,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
-import { useHelpCenter } from '../../app/help-center';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -27,8 +25,6 @@ export default function DomainConnectionVerification( {
 	siteSlug,
 	status,
 }: DomainConnectionVerificationProps ) {
-	const { setShowHelpCenter } = useHelpCenter();
-
 	return (
 		<Card
 			className={ `dashboard-domain-connection-verification dashboard-domain-connection-verification--${ status }` }
@@ -86,13 +82,11 @@ export default function DomainConnectionVerification( {
 						<InlineSupportLink supportContext="map-domain-setup-instructions">
 							{ __( 'Domain connection guide' ) }
 						</InlineSupportLink>
+						<InlineSupportLink supportContext="general-support-options">
+							{ __( 'Contact support' ) }
+						</InlineSupportLink>
 						{ /* TODO: Add additional help resources or links here in the future */ }
 						{ /* <ExternalLink href="#" children={ __( 'Registrar instructions' ) } /> */ }
-						<Button
-							variant="link"
-							onClick={ () => setShowHelpCenter( true ) }
-							children={ __( 'Contact support' ) }
-						/>
 					</VStack>
 				</VStack>
 			</CardBody>
