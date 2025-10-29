@@ -19,7 +19,7 @@ const DashboardCard = forwardRef< HTMLElement, CardProps >(
 
 		let computedSize = size || 'medium';
 
-		// Default to small on mobile, unless the size is explicitly set to xSmall
+		// Default to small on mobile, unless the size is explicitly set to xSmall.
 		if ( ! isDesktop && size !== 'xSmall' ) {
 			computedSize = 'small';
 		}
