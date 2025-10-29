@@ -2,6 +2,17 @@ import { useHasEnTranslation, localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import {
+	Icon,
+	plugins,
+	brush,
+	gallery,
+	pages,
+	keyboard,
+	share,
+	published,
+	video,
+} from '@wordpress/icons';
 import { useState } from 'react';
 import * as React from 'react';
 import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
@@ -9,7 +20,6 @@ import imgFreeDomain from 'calypso/assets/images/cancellation/free-domain.png';
 import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png';
 import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import { useHelpCenter } from '../../../../../app/help-center';
-import MaterialIcon from '../../../../../components/material-icon';
 import { PageHeader } from '../../../../../components/page-header';
 
 // This type represents things that React can render, but which also exist. (E.g.
@@ -101,7 +111,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 					<ul className="cancel-purchase-form__edu-icon-list">
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="power" size={ 24 } />
+								<Icon icon={ plugins } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -111,7 +121,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="palette" size={ 24 } />
+								<Icon icon={ brush } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -121,7 +131,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="photo_library" size={ 24 } />
+								<Icon icon={ gallery } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -131,7 +141,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="library_books" size={ 24 } />
+								<Icon icon={ pages } size={ 24 } />
 							</div>
 							<div>
 								{ createInterpolateElement(
@@ -292,7 +302,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 					<ul className="cancel-purchase-form__edu-icon-list">
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="keyboard" size={ 24 } />
+								<Icon icon={ keyboard } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -302,7 +312,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="library_books" size={ 24 } />
+								<Icon icon={ pages } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -312,7 +322,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="share" size={ 24 } />
+								<Icon icon={ share } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -322,7 +332,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="check_circle" size={ 24 } />
+								<Icon icon={ published } size={ 24 } />
 							</div>
 							<div>
 								{ __(
@@ -332,7 +342,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 						</li>
 						<li>
 							<div className="cancel-purchase-form__edu-icon">
-								<MaterialIcon icon="play_circle_outline" size={ 24 } />
+								<Icon icon={ video } size={ 24 } />
 							</div>
 							<div>
 								{ createInterpolateElement(
