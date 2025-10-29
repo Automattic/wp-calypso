@@ -9,6 +9,10 @@
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
+# V2 Dashboard
+# Adding to the top as a fallback for all dashboard PRs
+/client/dashboard @Automattic/lego
+
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
@@ -26,12 +30,12 @@
 /packages/api-queries/src/site-staging-sync.ts @Automattic/yolo
 /packages/api-queries/src/site-staging-sites.ts @Automattic/yolo
 /packages/api-core/src/site-staging-site @Automattic/yolo
-/client/dashboard/utils/site-staging-site.ts @Automattic/yolo
-/client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo
-/client/dashboard/sites/staging-site-sync-modal @Automattic/yolo
-/client/dashboard/sites/staging-site-delete-modal @Automattic/yolo
-/client/dashboard/sites/site/environment-switcher.tsx @Automattic/yolo
-/client/dashboard/app/staging-site-sync-monitor @Automattic/yolo
+/client/dashboard/utils/site-staging-site.ts @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site-sync-modal @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site-delete-modal @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/site/environment-switcher.tsx @Automattic/yolo @Automattic/lego
+/client/dashboard/app/staging-site-sync-monitor @Automattic/yolo @Automattic/lego
 
 # Staging sites - interim dashboard
 /client/sites/staging-site @Automattic/yolo
@@ -50,18 +54,18 @@
 /packages/composite-checkout/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
 /packages/wpcom-checkout/ @Automattic/shilling
-/client/dashboard/me/billing/ @Automattic/shilling
-/client/dashboard/me/billing-history/ @Automattic/shilling
-/client/dashboard/me/billing-monetize-subscriptions/ @Automattic/shilling
-/client/dashboard/me/billing-payment-methods/ @Automattic/shilling
-/client/dashboard/me/billing-purchases/ @Automattic/shilling
-/client/dashboard/me/billing-tax-details/ @Automattic/shilling
-/client/dashboard/shopping-cart/ @Automattic/shilling
-/client/dashboard/sites/overview-plan-card/ @Automattic/shilling
-/client/dashboard/sites/plans.ts @Automattic/shilling
-/client/dashboard/utils/payment-method.ts @Automattic/shilling
-/client/dashboard/utils/purchase.ts @Automattic/shilling
-/client/dashboard/utils/site-plan.ts @Automattic/shilling
+/client/dashboard/me/billing/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-history/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-monetize-subscriptions/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-payment-methods/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-purchases/ @Automattic/shilling @Automattic/lego
+/client/dashboard/me/billing-tax-details/ @Automattic/shilling @Automattic/lego
+/client/dashboard/shopping-cart/ @Automattic/shilling @Automattic/lego
+/client/dashboard/sites/overview-plan-card/ @Automattic/shilling @Automattic/lego
+/client/dashboard/sites/plans.ts @Automattic/shilling @Automattic/lego
+/client/dashboard/utils/payment-method.ts @Automattic/shilling @Automattic/lego
+/client/dashboard/utils/purchase.ts @Automattic/shilling @Automattic/lego
+/client/dashboard/utils/site-plan.ts @Automattic/shilling @Automattic/lego
 
 # Reader
 /client/reader @Automattic/loop
@@ -143,6 +147,3 @@
 
 # Grid package
 /packages/grid @youknowriad
-
-# V2 Dashboard
-/client/dashboard @Automattic/lego
