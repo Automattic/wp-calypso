@@ -1,4 +1,9 @@
-import { __experimentalHStack as HStack, Button, DropdownMenu, Icon } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Button,
+	DropdownMenu,
+	IconType,
+} from '@wordpress/components';
 import { throttle, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, menu } from '@wordpress/icons';
@@ -17,13 +22,13 @@ type ResponsiveMenuProps = {
 };
 
 function ScrollButton( {
+	icon,
 	style,
 	onClick,
-	children,
 }: {
+	icon: IconType;
 	style: CSSProperties;
 	onClick: () => void;
-	children: React.ReactNode;
 } ) {
 	return (
 		<div
@@ -38,6 +43,7 @@ function ScrollButton( {
 			aria-hidden
 		>
 			<Button
+				icon={ icon }
 				style={ {
 					padding: '6px',
 					pointerEvents: 'auto',
@@ -50,9 +56,7 @@ function ScrollButton( {
 				} }
 				tabIndex={ -1 }
 				onClick={ onClick }
-			>
-				{ children }
-			</Button>
+			/>
 		</div>
 	);
 }
@@ -172,6 +176,7 @@ function ResponsiveMenu( {
 					} }
 				>
 					<ScrollButton
+						icon={ chevronLeft }
 						style={ {
 							left: '-2px',
 							paddingRight: '30px',
@@ -180,9 +185,7 @@ function ResponsiveMenu( {
 							display: showLeftButton ? 'flex' : 'none',
 						} }
 						onClick={ () => bumpScrollX( true ) }
-					>
-						<Icon icon={ chevronLeft } />
-					</ScrollButton>
+					/>
 
 					<div
 						ref={ containerRef }
@@ -193,6 +196,7 @@ function ResponsiveMenu( {
 					</div>
 
 					<ScrollButton
+						icon={ chevronRight }
 						style={ {
 							right: '-2px',
 							paddingLeft: '30px',
@@ -201,9 +205,7 @@ function ResponsiveMenu( {
 							display: showRightButton ? 'flex' : 'none',
 						} }
 						onClick={ () => bumpScrollX() }
-					>
-						<Icon icon={ chevronRight } />
-					</ScrollButton>
+					/>
 				</div>
 			</HStack>
 		);
