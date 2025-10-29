@@ -56,7 +56,6 @@ export function SummaryButtonList( {
 			</Card>
 		);
 	}
-
 	return (
 		<VStack className={ className } spacing={ 6 }>
 			{ header }

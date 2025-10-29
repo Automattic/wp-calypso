@@ -63,6 +63,13 @@ export const LowDensity: Story = {
 	},
 };
 
+export const HighDensity: Story = {
+	args: {
+		...Default.args,
+		density: 'high',
+	},
+};
+
 export const WithDescriptionsInButtons: Story = {
 	args: {
 		title: 'General Settings',
