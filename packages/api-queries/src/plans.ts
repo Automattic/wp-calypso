@@ -1,4 +1,4 @@
-import { fetchPlans, fetchPlansDetails, fetchPricedSitePlans } from '@automattic/api-core';
+import { fetchPlans, fetchPlansDetails, fetchSitePlans } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export const plansQuery = ( coupon: string, locale: string ) => {
@@ -12,10 +12,10 @@ export const plansQuery = ( coupon: string, locale: string ) => {
 	} );
 };
 
-export function sitePricedPlansQuery( coupon: string | undefined, siteId: number ) {
+export function sitePricedPlansQuery( siteId: number, coupon?: string ) {
 	return queryOptions( {
 		queryKey: [ 'site-plans', siteId, coupon ],
-		queryFn: () => fetchPricedSitePlans( coupon, siteId ),
+		queryFn: () => fetchSitePlans( siteId, coupon ),
 	} );
 }
 
