@@ -333,3 +333,22 @@ export type RawPurchase = Purchase & {
 	is_domain: boolean | 'true' | undefined;
 	is_domain_registration: boolean | 'true' | undefined;
 };
+
+export interface PurchaseDowngradeOptions {
+	type: 'downgrade';
+	to_product_id: number;
+}
+
+export interface PurchaseCancelOptions {
+	/**
+	 * If this is a legacy premium theme the product_id is necessary to find
+	 * the subscription.
+	 */
+	product_id: number;
+
+	/**
+	 * If true, when cancelling a plan that has a bundled domain, the domain
+	 * will also be cancelled.
+	 */
+	cancel_bundled_domain: boolean;
+}

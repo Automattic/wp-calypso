@@ -33,6 +33,8 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
 
+import './style.scss';
+
 function AutoRenewButton( {
 	disableAutoRenew,
 	enableAutoRenew,
@@ -92,6 +94,7 @@ function AutoRenewButton( {
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
+						className="purchase-settings__toggle-control"
 						label={ title }
 						checked={ isAutoRenewing }
 						disabled={ isUpdating }
@@ -122,18 +125,16 @@ function AutoRenewButton( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 4 } alignment="left">
-					<DataForm
-						fields={ fields }
-						data={ subscription }
-						form={ form }
-						onChange={ () => {
-							isAutoRenewing
-								? disableAutoRenew( null, { onError: onError } )
-								: enableAutoRenew( null, { onError: onError } );
-						} }
-					/>
-				</VStack>
+				<DataForm
+					fields={ fields }
+					data={ subscription }
+					form={ form }
+					onChange={ () => {
+						isAutoRenewing
+							? disableAutoRenew( null, { onError: onError } )
+							: enableAutoRenew( null, { onError: onError } );
+					} }
+				/>
 			</CardBody>
 		</Card>
 	);

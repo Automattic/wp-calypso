@@ -7,6 +7,7 @@ import {
 	ignoreThreat,
 	unignoreThreat,
 	fixThreat,
+	fetchSiteScanCounts,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -67,4 +68,10 @@ export const fixThreatMutation = ( siteId: number ) =>
 export const fixThreatsMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( threatIds: number[] ) => fixThreats( siteId, threatIds ),
+	} );
+
+export const siteScanCountsQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'scan', 'counts' ],
+		queryFn: () => fetchSiteScanCounts( siteId ),
 	} );

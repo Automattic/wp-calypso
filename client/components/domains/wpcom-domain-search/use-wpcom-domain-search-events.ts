@@ -17,6 +17,7 @@ import {
 	recordSearchResultsReceive,
 	recordDomainAvailabilityReceive,
 	recordSearchFormSubmit,
+	recordSearchFormSubmitButtonClick,
 	recordDomainAddAvailabilityPreCheck,
 	recordDomainClickMissing,
 	recordFiltersReset,
@@ -115,6 +116,9 @@ export const useWPCOMDomainSearchEvents = ( {
 			},
 			onExternalDomainClick: () => {
 				dispatch( recordUseYourDomainButtonClick( analyticsSection, null, flowName ) );
+			},
+			onSubmitButtonClick: () => {
+				dispatch( recordSearchFormSubmitButtonClick( analyticsSection, flowName ) );
 			},
 			onQueryAvailabilityCheck: ( status, domainName, responseTime ) => {
 				dispatch(

@@ -60,3 +60,55 @@ export interface BackupPathInfoResponse {
 export interface BackupItemUrl {
 	url: string;
 }
+
+export interface BackupPolicy {
+	/** Number of days activity logs are retained */
+	activity_log_limit_days: number;
+
+	/** Storage limit in bytes */
+	storage_limit_bytes: number;
+}
+
+/**
+ * Response from GET /sites/%s/rewind/policies
+ * Returns the rewind policies for a site based on its products
+ */
+export interface SiteRewindPoliciesResponse {
+	/**
+	 * Rewind policy for the site, or null if no policy applies
+	 * (e.g., agency sites or sites without backup products)
+	 */
+	policies: BackupPolicy | null;
+}
+
+export interface SiteRewindSizeResponse {
+	/** Indicates successful response */
+	ok: true;
+
+	/** Empty string on success */
+	error: '';
+
+	/** Total estimated site size in bytes */
+	size: number;
+
+	/** Number of days of backups currently saved */
+	days_of_backups_saved: number;
+
+	/** Number of days of backups allowed by the plan */
+	days_of_backups_allowed: number;
+
+	/** Minimum number of days of backups allowed */
+	min_days_of_backups_allowed: number;
+
+	/** Size of the last backup in bytes */
+	last_backup_size: number;
+
+	/** Timestamp when last backup failed, or false if no recent failure */
+	last_backup_failed: string | false;
+
+	/** Number of days backups are retained */
+	retention_days: number;
+
+	/** Whether backups have been stopped */
+	backups_stopped: boolean;
+}

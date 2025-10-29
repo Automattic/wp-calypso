@@ -541,6 +541,7 @@ function getFields( {
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
+						className="purchase-settings__toggle-control"
 						label={
 							shouldAllowExpiredAutoRenewToggle( purchase )
 								? __( 'Re-activate subscription' )
@@ -554,6 +555,12 @@ function getFields( {
 				);
 			},
 		},
+		{
+			id: 'purchase_payment_method',
+			Edit: ( { data: purchase } ) => {
+				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
+			},
+		},
 	];
 }
 
@@ -565,7 +572,7 @@ const form = {
 		{
 			id: 'autoRenew',
 			label: __( 'Manage subscription' ),
-			children: [ 'is_auto_renew_enabled' ],
+			children: [ 'is_auto_renew_enabled', 'purchase_payment_method' ],
 		},
 	],
 };
@@ -580,26 +587,22 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 4 } alignment="left">
-					<DataForm< Purchase >
-						data={ purchase }
-						fields={ getFields( { isMutationPending, user } ) }
-						form={ form }
-						onChange={ ( newData ) => {
-							if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
-								setAutoRenew( newData.is_auto_renew_enabled );
-							}
-						} }
-					/>
+				<DataForm< Purchase >
+					data={ purchase }
+					fields={ getFields( { isMutationPending, user } ) }
+					form={ form }
+					onChange={ ( newData ) => {
+						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
+							setAutoRenew( newData.is_auto_renew_enabled );
+						}
+					} }
+				/>
 
-					{ error && (
-						<Notice status="error" isDismissible={ false }>
-							{ error.message }
-						</Notice>
-					) }
-
-					<PurchasePaymentMethod purchase={ purchase } showUpdateButton />
-				</VStack>
+				{ error && (
+					<Notice status="error" isDismissible={ false }>
+						{ error.message }
+					</Notice>
+				) }
 			</CardBody>
 		</Card>
 	);
