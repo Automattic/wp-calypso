@@ -228,7 +228,7 @@ function CommerceGardenPlanCard( {
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...purchaseQuery( parseInt( plan?.id ?? '' ) ),
+		...purchaseQuery( plan?.id ?? 0 ),
 		enabled: !! plan?.id,
 	} );
 
