@@ -355,13 +355,13 @@ const DomainSearchUI = (
 	};
 
 	// For /start flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context or in the free or monthly plan flows
+	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if ( siteSlug || siteId || isMonthlyOrFreeFlow( flowName ) ) {
+		if ( siteSlug || siteId || isMonthlyOrFreeFlow( flowName ) || isDomainOnlyFlow ) {
 			return false;
 		}
 		return true;
-	}, [ flowName, siteSlug, siteId ] );
+	}, [ flowName, siteSlug, siteId, isDomainOnlyFlow ] );
 
 	return (
 		<StepWrapper
