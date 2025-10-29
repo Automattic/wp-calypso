@@ -38,6 +38,7 @@ function ScrollButton( {
 				height: '100%',
 				alignItems: 'center',
 				transition: 'opacity 0.2s ease-in-out',
+				pointerEvents: 'none',
 				...style,
 			} }
 			aria-hidden
