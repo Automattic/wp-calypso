@@ -545,7 +545,7 @@ export default function CancelPurchase() {
 		if ( ! state.isSubmitting ) {
 			let downgradePlan = getDowngradePlanFromPurchase( plans, purchase );
 			if ( 'downgrade-monthly' === upsell ) {
-				const monthlyProductSlug = getMonthlyPlanByYearly( plans, purchase.product_slug );
+				const monthlyProductSlug = getMonthlyPlanByYearly( purchase.product_slug );
 				downgradePlan = getPlanFromPlans( plans, monthlyProductSlug );
 			}
 

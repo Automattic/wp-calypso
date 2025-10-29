@@ -237,7 +237,6 @@ import type {
 	Site,
 	SiteScan,
 	SiteScanCounts,
-	PlanProduct,
 } from '@automattic/api-core';
 
 // This type represents things that React can render, but which also exist. (E.g.
@@ -265,7 +264,7 @@ type FeatureList = Record< string, FeatureObject >;
  *
  * Returns an array of all the plan features (may have duplicates)
  */
-function getAllFeaturesForPlan( plan: PlanProduct | string ): TranslateResult[] {
+function getAllFeaturesForPlan( plan: string ): TranslateResult[] {
 	const planObj = getPlanFeaturesAndAvailability( plan );
 	if ( ! planObj ) {
 		return [];
@@ -302,7 +301,7 @@ function getAllFeaturesForPlan( plan: PlanProduct | string ): TranslateResult[] 
  * Collects features for a plan by calling all possible feature methods for the plan.
  */
 //used
-export function planHasFeature( plan: string | PlanProduct, feature: string ): boolean {
+export function planHasFeature( plan: string, feature: string ): boolean {
 	const allFeatures = getAllFeaturesForPlan( plan );
 	return allFeatures.includes( feature );
 }
@@ -311,10 +310,7 @@ export function planHasFeature( plan: string | PlanProduct, feature: string ): b
  * Determine if a plan has at least one of several features.
  */
 //used
-export function planHasAtLeastOneFeature(
-	plan: string | PlanProduct,
-	features: string[]
-): boolean {
+export function planHasAtLeastOneFeature( plan: string, features: string[] ): boolean {
 	const allFeatures = getAllFeaturesForPlan( plan );
 	return features.some( ( feature ) => allFeatures.includes( feature ) );
 }

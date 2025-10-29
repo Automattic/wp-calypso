@@ -5,14 +5,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import {
-	isRefundable,
-	isSubscription,
-	isDomainRegistration,
-	isDomainMapping,
-	isDomainTransfer,
-	getName,
-} from '../../../utils/purchase';
 import type { CancelPurchaseState } from './types';
 import type { Purchase } from '@automattic/api-core';
 
@@ -107,7 +99,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 	return (
 		<div>
 			<p>
-				{ isDomainTransfer( includedDomainPurchase )
+				{ 'domain_transfer' === includedDomainPurchase.product_slug
 					? sprintf(
 							/* translators: %(domain)s is the domain name */
 							__(
@@ -127,7 +119,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							}
 					  ) }
 			</p>
-			{ isRefundable( planPurchase ) && (
+			{ planPurchase.is_refundable && (
 				<p>
 					{ sprintf(
 						/* translators: %(refundAmount)s, %(planCost)s and %(domainCost)s are all monetary amounts */
@@ -175,7 +167,7 @@ const CancelPurchaseDomainOptions = ( {
 	);
 
 	const onConfirmCancelBundledDomainChange = useCallback(
-		( checked ) => {
+		( checked: boolean ) => {
 			setConfirmCancel( checked );
 			onCancelConfirmationStateChange( {
 				cancelBundledDomain,
@@ -199,22 +191,25 @@ const CancelPurchaseDomainOptions = ( {
 		]
 	);
 
-	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+	if (
+		! includedDomainPurchase ||
+		( 'one-time-purchase' !== purchase.expiry_status && ! purchase.is_domain_registration )
+	) {
 		return null;
 	}
 
 	if (
-		! isDomainMapping( includedDomainPurchase ) &&
-		! isDomainRegistration( includedDomainPurchase ) &&
-		! isDomainTransfer( includedDomainPurchase )
+		'domain_map' !== includedDomainPurchase.product_slug &&
+		! includedDomainPurchase.is_domain_registration &&
+		'domain_transfer' !== includedDomainPurchase.product_slug
 	) {
 		return null;
 	}
 
 	// Domain mappings get treated separately for now. (It is also rare for a
 	// plan's domain credit to be used on a domain mapping in the first place.)
-	if ( isDomainMapping( includedDomainPurchase ) ) {
-		if ( ! isRefundable( purchase ) ) {
+	if ( 'domain_map' === includedDomainPurchase.product_slug ) {
+		if ( ! purchase.is_refundable ) {
 			return (
 				<NonRefundableDomainMappingMessage includedDomainPurchase={ includedDomainPurchase } />
 			);
@@ -238,9 +233,9 @@ const CancelPurchaseDomainOptions = ( {
 	// inherently in a state of flux and also potentially harder for customers
 	// to understand exactly what they're cancelling).
 	if (
-		isDomainTransfer( includedDomainPurchase ) ||
-		! isRefundable( purchase ) ||
-		! isRefundable( includedDomainPurchase )
+		'domain_transfer' === includedDomainPurchase.product_slug ||
+		! purchase.is_refundable ||
+		! includedDomainPurchase.is_refundable
 	) {
 		return (
 			<CancelPlanWithoutCancellingDomainMessage
@@ -293,23 +288,18 @@ const CancelPurchaseDomainOptions = ( {
 									"registration, and you're free to use it on WordPress.com or transfer it elsewhere."
 							),
 							{
-								productName: getName( purchase ),
-								domainCost: includedDomainPurchase.cost_to_unbundle_text,
+								productName: purchase.product_name,
+								domainCost: includedDomainPurchase.cost_to_unbundle_display,
 								refundAmount: purchase.refund_text,
 							}
 						),
 					},
 					{
-						label: createInterpolateElement(
-							sprintf(
-								/* translators: %(domain)s is the domain name */
-								__( 'Cancel the plan <strong>and</strong> the domain "%(domain)s"' ),
-								{
-									domain: includedDomainPurchase.meta,
-								}
-							),
+						label: sprintf(
+							/* translators: %(domain)s is the domain name */
+							__( 'Cancel the plan and the domain "%(domain)s"' ),
 							{
-								strong: <strong />,
+								domain: includedDomainPurchase.meta,
 							}
 						),
 						value: 'cancel',
