@@ -117,7 +117,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const actionQueryParam = urlQueryParams.get( 'action' );
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
-		const hostQueryParam = urlQueryParams.get( 'host' ) ?? undefined;
+		const hostQueryParam = urlQueryParams.get( 'host' ) || undefined;
 		const { get, sessionId } = useFlowState();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
