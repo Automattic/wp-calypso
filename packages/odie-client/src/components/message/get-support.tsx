@@ -52,7 +52,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const mostRecentSupportInteractionId = getMostRecentOpenLiveInteraction();
 
 	const { data: supportInteraction } = useGetSupportInteractionById(
-		mostRecentSupportInteractionId || null
+		chat?.supportInteractionId || mostRecentSupportInteractionId || null
 	);
 
 	// Early return if user is already talking to a human
