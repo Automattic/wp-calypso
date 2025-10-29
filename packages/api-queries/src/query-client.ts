@@ -4,9 +4,7 @@ import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 
 // Key used to store the query cache in local storage.
-// This is the default key used by React Query, but making it explicit in case
-// of breaking changes to the default key in the future.
-const reactQueryCacheKey = 'REACT_QUERY_OFFLINE_CACHE';
+const reactQueryCacheKey = 'A8C_API_QUERIES_OFFLINE_CACHE';
 
 const queryClient = new QueryClient( {
 	defaultOptions: {
