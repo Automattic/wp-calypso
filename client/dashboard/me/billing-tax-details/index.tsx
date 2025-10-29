@@ -1,7 +1,6 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UserTaxForm from './user-tax-form';

@@ -1,7 +1,13 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	CardHeader,
+	ExternalLink,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,7 +17,6 @@ import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
-import { Card, CardBody, CardHeader } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';

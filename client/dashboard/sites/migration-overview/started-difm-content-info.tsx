@@ -5,6 +5,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	Card,
+	CardBody,
+	CardDivider,
 	Icon,
 	Modal,
 } from '@wordpress/components';
@@ -15,7 +18,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Fragment, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
 import type { Site } from '@automattic/api-core';

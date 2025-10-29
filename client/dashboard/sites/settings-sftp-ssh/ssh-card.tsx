@@ -15,6 +15,8 @@ import {
 	__experimentalText as Text,
 	BaseControl,
 	Button,
+	Card,
+	CardBody,
 	ExternalLink,
 	SelectControl,
 	ToggleControl,
@@ -28,7 +30,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';

@@ -13,8 +13,10 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
+	Card,
 	Button,
 	Notice,
+	CardBody,
 	ToggleControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -25,7 +27,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import ActionList from '../../components/action-list';
-import { Card, CardBody } from '../../components/card';
 import { addFlashMessage } from '../../components/flash-message';
 import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';

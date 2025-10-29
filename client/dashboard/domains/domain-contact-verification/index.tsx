@@ -4,6 +4,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	Card,
+	CardBody,
 	FormFileUpload,
 	Button,
 } from '@wordpress/components';
@@ -13,7 +15,6 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainContactInfoRoute, domainRoute } from '../../app/router/domains';
-import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

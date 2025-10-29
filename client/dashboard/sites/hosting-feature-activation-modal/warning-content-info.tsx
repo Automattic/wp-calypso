@@ -2,10 +2,12 @@ import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	Card,
+	CardBody,
+	CardDivider,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
-import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 import type {

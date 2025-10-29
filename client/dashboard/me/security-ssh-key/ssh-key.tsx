@@ -4,6 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	Icon,
+	Card,
+	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -14,7 +16,6 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import type { UserSshKey } from '@automattic/api-core';
 

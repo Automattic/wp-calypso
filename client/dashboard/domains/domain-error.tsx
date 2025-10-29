@@ -1,4 +1,4 @@
-import { Card, CardBody } from '../components/card';
+import { Card, CardBody } from '@wordpress/components';
 import Notice from '../components/notice';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';

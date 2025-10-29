@@ -1,9 +1,8 @@
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '@automattic/api-core';

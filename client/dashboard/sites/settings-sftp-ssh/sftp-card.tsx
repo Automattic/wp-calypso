@@ -5,6 +5,8 @@ import {
 	__experimentalVStack as VStack,
 	BaseControl,
 	Button,
+	Card,
+	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -13,7 +15,6 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';

@@ -1,10 +1,9 @@
 import { siteLastFiveActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Icon } from '@wordpress/components';
+import { Card, CardHeader, CardBody, Icon } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { Card, CardHeader, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonCardFooter } from '../../components/summary-button-card-footer';
 import { TextSkeleton } from '../../components/text-skeleton';

@@ -5,6 +5,8 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
+	Card,
+	CardBody,
 	TextareaControl,
 	BaseControl,
 } from '@wordpress/components';
@@ -16,7 +18,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import { isSshKeyValid } from '../../utils/ssh';

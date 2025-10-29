@@ -4,6 +4,8 @@ import {
 } from '@automattic/api-queries';
 import { useIsMutating, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
+	CardBody,
+	Card,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
@@ -13,7 +15,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
-import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 
 export const EmailSettings = () => {

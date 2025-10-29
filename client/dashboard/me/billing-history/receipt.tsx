@@ -9,6 +9,8 @@ import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
+	Card,
+	CardBody,
 	Flex,
 	TextControl,
 	__experimentalDivider as Divider,
@@ -21,7 +23,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
-import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {

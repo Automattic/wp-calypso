@@ -14,13 +14,17 @@ import {
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import clsx from 'clsx';
 import { useCallback } from 'react';
-import { Card, CardBody } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { creditCardHasAlreadyExpired, isAkismetProduct } from '../../../utils/purchase';
 import {

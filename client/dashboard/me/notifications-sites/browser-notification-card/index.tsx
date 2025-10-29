@@ -6,6 +6,8 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
+	Card,
+	CardBody,
 	Spinner,
 	ToggleControl,
 	__experimentalVStack as VStack,
@@ -13,7 +15,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
-import { Card, CardBody } from '../../../components/card';
 
 const shouldRemove = ( status: string | undefined ) => {
 	if ( ! status ) {

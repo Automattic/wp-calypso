@@ -1,4 +1,6 @@
 import {
+	Card,
+	CardBody,
 	__experimentalVStack as VStack,
 	Button,
 	Panel,
@@ -10,7 +12,6 @@ import { DataForm } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import { isTargetUrlValid, isSubdomainValid } from './utils';
 import type { DomainForwarding } from '@automattic/api-core';

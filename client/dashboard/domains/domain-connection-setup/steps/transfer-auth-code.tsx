@@ -3,6 +3,8 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	Card,
+	CardBody,
 	Button,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -10,7 +12,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { Card, CardBody } from '../../../components/card';
 import Notice from '../../../components/notice';
 import { TransferStepComponentProps } from '../types';
 

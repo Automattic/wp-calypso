@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	Card,
+	CardBody,
 	Button,
 	ExternalLink,
 	__experimentalText as Text,
@@ -11,7 +13,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
-import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice from '../../../components/notice';
 import type { StepComponentProps } from '../types';

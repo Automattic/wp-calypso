@@ -101,18 +101,6 @@ module.exports = {
 						name: 'moment',
 						message: 'Please use date-fns instead of moment.',
 					},
-					{
-						name: '@wordpress/components',
-						importNames: [
-							'Card',
-							'CardBody',
-							'CardDivider',
-							'CardHeader',
-							'CardFooter',
-							'CardMedia',
-						],
-						message: 'Use local components exported from client/dashboard/components/card instead.',
-					},
 				],
 			},
 		],

@@ -1,10 +1,9 @@
 import { getDataCenterOptions } from '@automattic/api-core';
-import { Button, SelectControl } from '@wordpress/components';
+import { Button, Card, CardBody, SelectControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 

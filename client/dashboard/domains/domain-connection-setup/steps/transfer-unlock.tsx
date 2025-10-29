@@ -2,6 +2,8 @@ import { fetchDomainInboundTransferStatus } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	Card,
+	CardBody,
 	Button,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
@@ -10,7 +12,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { lock } from '@wordpress/icons';
 import { useState } from 'react';
-import { Card, CardBody } from '../../../components/card';
 import Notice from '../../../components/notice';
 import { TransferStepComponentProps } from '../types';
 
