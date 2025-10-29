@@ -1,5 +1,4 @@
 @import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
 
 .dashboard-summary-button-list {
 	.dashboard-summary-button-list__children-list {
@@ -15,9 +14,16 @@
 
 		.summary-button {
 			@media (max-width: #{$break-medium - 1px}) {
-			  padding-inline: $grid-unit-20;
+				padding-inline: $grid-unit-20;
 			}
-		  }
+		}
+	}
+
+	&.has-density-low {
+		// Do not add a bottom margin to the last (non-empty) child.
+		.dashboard-summary-button-list__children-list-item:not(:nth-last-child(1 of :not(:empty))) {
+			margin-bottom: $grid-unit-30;
+		}
 	}
 
 	&.has-density-medium {
