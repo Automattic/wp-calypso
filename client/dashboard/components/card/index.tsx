@@ -9,10 +9,9 @@ import {
 } from '@wordpress/components';
 /* eslint-enable no-restricted-imports */
 import { useViewportMatch } from '@wordpress/compose';
-import { forwardRef, PropsWithChildren, HTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type CardProps = PropsWithChildren< HTMLAttributes< HTMLDivElement > > & Record< string, any >;
+type CardProps = React.ComponentProps< typeof Card >;
 
 const DashboardCard = forwardRef< HTMLElement, CardProps >(
 	( { size, children, ...rest }, ref ) => {
