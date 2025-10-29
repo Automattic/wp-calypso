@@ -201,7 +201,7 @@ function SiteRepositories() {
 					<RepositoriesList />
 				</HostingFeatureGatedWithCallout>
 			</PageLayout>
-			{ showBackToDeployments && <BackToDeploymentsButton site={ site } /> }
+			{ showBackToDeployments && <BackToDeploymentsButton /> }
 		</>
 	);
 }

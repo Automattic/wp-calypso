@@ -84,7 +84,7 @@ export default function ConfigureRepository() {
 					</CardBody>
 				</Card>
 			</PageLayout>
-			{ showBackToDeployments && <BackToDeploymentsButton site={ site } /> }
+			{ showBackToDeployments && <BackToDeploymentsButton /> }
 		</>
 	);
 }

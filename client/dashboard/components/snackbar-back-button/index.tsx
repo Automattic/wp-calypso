@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useRouter, useCanGoBack } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
@@ -6,14 +6,13 @@ import { ReactNode } from 'react';
 
 import './style.scss';
 
-export default function SnackbarBackButton( {
-	backUrl,
-	children,
-}: {
-	backUrl: string;
-	children: ReactNode;
-} ) {
-	const navigate = useNavigate();
+export default function SnackbarBackButton( { children }: { children: ReactNode } ) {
+	const router = useRouter();
+	const canGoBack = useCanGoBack();
+
+	if ( ! canGoBack ) {
+		return null;
+	}
 
 	return (
 		<div
@@ -29,9 +28,7 @@ export default function SnackbarBackButton( {
 				variant="primary"
 				icon={ isRTL() ? chevronRight : chevronLeft }
 				iconPosition="left"
-				onClick={ () => {
-					navigate( { to: backUrl } );
-				} }
+				onClick={ () => router.history.back() }
 			>
 				{ children }
 			</Button>

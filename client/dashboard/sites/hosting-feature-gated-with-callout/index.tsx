@@ -1,6 +1,5 @@
-import { useRouter, useRouterState } from '@tanstack/react-router';
+import { useRouterState } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { siteOverviewRoute } from '../../app/router/sites';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import SnackbarBackButton from '../../components/snackbar-back-button';
 import HostingFeatureGate from '../hosting-feature-gate';
@@ -30,7 +29,6 @@ export default function HostingFeatureGatedWithCallout( {
 	upsellDescription,
 	...props
 }: HostingFeatureGatedWithCalloutProps ) {
-	const router = useRouter();
 	const {
 		location: { search },
 	} = useRouterState();
@@ -38,16 +36,7 @@ export default function HostingFeatureGatedWithCallout( {
 	const { site, upsellId, upsellFeatureId, feature } = props;
 
 	const backButton = search.back_to === 'overview' && (
-		<SnackbarBackButton
-			backUrl={
-				router.buildLocation( {
-					to: siteOverviewRoute.fullPath,
-					params: { siteSlug: site.slug },
-				} ).href
-			}
-		>
-			{ __( 'Back to Overview' ) }
-		</SnackbarBackButton>
+		<SnackbarBackButton>{ __( 'Back to Overview' ) }</SnackbarBackButton>
 	);
 
 	return (
