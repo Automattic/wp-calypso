@@ -1,11 +1,8 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useOdieAssistantContext } from '../context';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type {
-	SupportInteraction,
-	SupportInteractionDraft,
-	SupportInteractionEvent,
-} from '../types';
+import type { SupportInteraction, SupportInteractionEvent } from '../types';
 
 /**
  * Manage support interaction events.
@@ -13,18 +10,17 @@ import type {
 export const useManageSupportInteraction = () => {
 	const isTestMode = isTestModeEnvironment();
 	const queryClient = useQueryClient();
+	const { newInteractionsBotSlug } = useOdieAssistantContext();
 	/**
 	 * Start a new support interaction.
 	 */
 	const startNewInteraction = useMutation( {
-		mutationKey: [ 'support-interaction', 'new-conversation', isTestMode ],
-		mutationFn: ( eventData: SupportInteractionDraft ) =>
-			handleSupportInteractionsFetch(
-				'POST',
-				null,
-				isTestMode,
-				eventData
-			) as unknown as Promise< SupportInteraction >,
+		mutationKey: [ 'support-interaction', 'new-conversation', isTestMode, newInteractionsBotSlug ],
+		mutationFn: ( eventData: SupportInteractionEvent ) =>
+			handleSupportInteractionsFetch( 'POST', null, isTestMode, {
+				...eventData,
+				bot_slug: newInteractionsBotSlug,
+			} ) as unknown as Promise< SupportInteraction >,
 		onSuccess: ( interaction ) => {
 			const isTestMode = isTestModeEnvironment();
 			const queryKey = [

@@ -60,7 +60,7 @@ export const useGetCombinedChat = (
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
-	const { botNameSlug } = useOdieAssistantContext();
+	const { newInteractionsBotSlug } = useOdieAssistantContext();
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
@@ -158,7 +158,6 @@ export const useGetCombinedChat = (
 				startNewInteraction( {
 					event_source: 'help-center',
 					event_external_id: crypto.randomUUID(),
-					bot_slug: botNameSlug,
 				} );
 			} finally {
 				setRefreshingAfterReconnect( false );
@@ -166,7 +165,7 @@ export const useGetCombinedChat = (
 		}
 	}, [
 		isOdieChatLoading,
-		botNameSlug,
+		newInteractionsBotSlug,
 		chatStatus,
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,

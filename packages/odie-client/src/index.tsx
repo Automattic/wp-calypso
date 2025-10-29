@@ -12,7 +12,7 @@ import { hasCSATMessage, interactionHasEnded } from './utils';
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { trackEvent, currentUser, chat, botNameSlug } = useOdieAssistantContext();
+	const { trackEvent, currentUser, chat } = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -30,7 +30,6 @@ export const OdieAssistant: React.FC = () => {
 			startNewInteraction( {
 				event_source: 'help-center',
 				event_external_id: newID,
-				bot_slug: botNameSlug,
 			} ).then( ( interaction ) => {
 				const params = new URLSearchParams( search );
 				params.set( 'id', interaction.uuid );
@@ -40,7 +39,6 @@ export const OdieAssistant: React.FC = () => {
 	}, [
 		interactionId,
 		startNewInteraction,
-		botNameSlug,
 		navigate,
 		search,
 		queryClient,
