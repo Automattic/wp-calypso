@@ -302,6 +302,30 @@ const FloatingCompactDemo: React.FC = () => {
 				messageRenderer={ messageRenderer }
 				expandOnClick={ false }
 				notice={ {
+					// icon: (
+					// 	<svg
+					// 		xmlns="http://www.w3.org/2000/svg"
+					// 		width="18"
+					// 		height="18"
+					// 		viewBox="0 0 18 18"
+					// 		fill="none"
+					// 	>
+					// 		<path
+					// 			d="M8.4375 12V10.875H9.5625V12H8.4375Z"
+					// 			fill="#1F1F1F"
+					// 		/>
+					// 		<path
+					// 			d="M8.4375 6L8.4375 9.75H9.5625V6L8.4375 6Z"
+					// 			fill="#1F1F1F"
+					// 		/>
+					// 		<path
+					// 			fill-rule="evenodd"
+					// 			clip-rule="evenodd"
+					// 			d="M9 3C5.68629 3 3 5.68629 3 9C3 12.3137 5.68629 15 9 15C12.3137 15 15 12.3137 15 9C15 5.68629 12.3137 3 9 3ZM4.125 9C4.125 11.6924 6.30761 13.875 9 13.875C11.6924 13.875 13.875 11.6924 13.875 9C13.875 6.30761 11.6924 4.125 9 4.125C6.30761 4.125 4.125 6.30761 4.125 9Z"
+					// 			fill="#1F1F1F"
+					// 		/>
+					// 	</svg>
+					// ),
 					message: 'Upgrade now to launch.',
 					action: {
 						label: 'Subscribe',
@@ -309,6 +333,9 @@ const FloatingCompactDemo: React.FC = () => {
 							console.log( 'Subscribe' );
 						},
 					},
+					dismissible: true,
+					onDismiss: () => {},
+					status: 'success',
 				} }
 				emptyView={ <EmptyView suggestions={ suggestions } /> }
 			/>

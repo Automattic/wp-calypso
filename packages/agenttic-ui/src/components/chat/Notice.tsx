@@ -66,7 +66,11 @@ export function Notice( {
 			</div>
 			<div className={ styles.actions }>
 				{ action && (
-					<Button onClick={ action.onClick } variant="link">
+					<Button
+						className={ styles.action }
+						onClick={ action.onClick }
+						variant="link"
+					>
 						{ action.label }
 					</Button>
 				) }
