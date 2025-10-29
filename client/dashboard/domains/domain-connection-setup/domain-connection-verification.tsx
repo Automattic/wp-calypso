@@ -1,8 +1,6 @@
 import { Badge } from '@automattic/ui';
 import {
 	Button,
-	Card,
-	CardBody,
 	ExternalLink,
 	Icon,
 	__experimentalText as Text,
@@ -14,6 +12,7 @@ import { layout, swatch, atSymbol, published } from '@wordpress/icons';
 import './domain-connection-verification.scss';
 import { useHelpCenter } from '../../app/help-center';
 import { siteOverviewRoute } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
