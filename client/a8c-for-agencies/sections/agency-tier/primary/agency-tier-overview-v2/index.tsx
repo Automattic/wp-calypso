@@ -11,6 +11,8 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AgencyTierOverviewContent from '../../overview-content';
 
+import './style.scss';
+
 export default function AgencyTierOverviewV2() {
 	const translate = useTranslate();
 
@@ -21,6 +23,8 @@ export default function AgencyTierOverviewV2() {
 
 	// FIXME: Replace with actual influenced revenue
 	const totalInfluencedRevenue = 2000;
+	// FIXME: Replace with actual early access logic
+	const isEarlyAccess = true;
 
 	return (
 		<Layout title={ title } wide>
@@ -37,6 +41,7 @@ export default function AgencyTierOverviewV2() {
 				<AgencyTierOverviewContent
 					currentAgencyTierId={ currentAgencyTierId }
 					totalInfluencedRevenue={ totalInfluencedRevenue }
+					isEarlyAccess={ isEarlyAccess }
 				/>
 			</LayoutBody>
 		</Layout>

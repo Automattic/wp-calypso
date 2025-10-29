@@ -3,3 +3,25 @@ export type AgencyTierType =
 	| 'agency-partner'
 	| 'pro-agency-partner'
 	| 'premier-partner';
+
+export interface Benefit {
+	icon: IconType;
+	title: string;
+	description: string;
+	actions?: {
+		id: string;
+		label: string;
+		href?: string;
+	}[];
+	status?: string;
+}
+export interface TIER_ITEM {
+	id: string;
+	level: number;
+	name: string;
+	description: string;
+	heading: string;
+	subheading: string;
+	influencedRevenue: number;
+	benefits: Benefit[];
+}
