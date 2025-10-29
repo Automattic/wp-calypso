@@ -427,7 +427,7 @@ const contextLinks = {
 		post_id: 404034,
 	},
 	'stats-top-posts-and-pages-analyze-content-performance-jetpack': {
-		link: `https://jetpack.com/support/jetpack-stats/traffic-dashboard/#analyzing-popular-posts-and-pages`,
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#analyzing-popular-posts-and-pages',
 	},
 	'stats-posts-amp-pages': {
 		link: 'https://wordpress.com/support/stats/understand-your-sites-traffic/',
