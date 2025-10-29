@@ -66,7 +66,7 @@ function HelpCenterContent() {
 	);
 
 	const botProps = helpCenterData.isCommerceGarden
-		? { botNameSlug: 'ciab-workflow-support_chat' }
+		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 		: {};
 
 	return (
@@ -107,7 +107,7 @@ if ( helpCenterData.isNextAdmin ) {
 		container.id = 'jetpack-help-center';
 		document.body.appendChild( container );
 		const botProps = helpCenterData.isCommerceGarden
-			? { botNameSlug: 'ciab-workflow-support_chat' }
+			? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 			: {};
 
 		createRoot( container ).render(

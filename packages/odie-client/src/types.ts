@@ -7,7 +7,7 @@ export type OdieAssistantContextInterface = {
 	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
-	botNameSlug: string;
+	newInteractionsBotSlug: string;
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
@@ -31,7 +31,7 @@ export type OdieAssistantContextInterface = {
 };
 
 export type OdieAssistantProviderProps = {
-	defaultBotNameSlug: OdieAllowedBots;
+	newInteractionsBotSlug: OdieAllowedBots;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
@@ -55,21 +55,6 @@ export type CurrentUser = {
 	email?: string;
 	id?: number;
 };
-
-type Feature =
-	| 'login'
-	| 'logout'
-	| 'theme'
-	| 'plugin'
-	| 'admin'
-	| 'site-editing'
-	| 'domain'
-	| 'email'
-	| 'subscription'
-	| 'notification'
-	| 'podcast'
-	| 'facebook'
-	| 'unrelated-to-wordpress';
 
 export type Source = {
 	title: string;
@@ -103,6 +88,10 @@ type InquiryType =
 
 type InteractionStatus = 'open' | 'closed' | 'resolved' | 'solved';
 
+type ClassificationResults = {
+	inquiry_type?: InquiryType;
+};
+
 export type OdieUserTracking = {
 	path: string;
 	time_spent: number;
@@ -116,13 +105,8 @@ export type Context = {
 	site_id: number | null;
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
-	question_tags?: {
-		feature?: Feature;
-		inquiry_type?: InquiryType;
-		language?: string;
-		product?: string;
-		category?: string;
-	};
+	classification_results?: ClassificationResults;
+	question_tags?: ClassificationResults;
 	flags?: {
 		forward_to_human_support?: boolean;
 		hide_disclaimer_content?: boolean;
@@ -303,7 +287,7 @@ export type SupportInteractionDraft = {
 };
 
 export type SupportInteraction = {
-	bot_slug: string;
+	bot_slug: OdieAllowedBots;
 	uuid: string;
 	status: InteractionStatus;
 	start_date: string;

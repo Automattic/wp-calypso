@@ -102,7 +102,7 @@ function AdminHelpCenterContent() {
 	}, [] );
 
 	const botProps = helpCenterData.isCommerceGarden
-		? { botNameSlug: 'ciab-workflow-support_chat' }
+		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
 		: {};
 
 	return (

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { ODIE_DEFAULT_BOT_SLUG } from '../constants';
+import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { Chat } from '../types';
@@ -14,7 +14,7 @@ export const useSendOdieFeedback = () => {
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const queryClient = useQueryClient();
 
-	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG;
+	const botSlug = supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
 
 	return useMutation( {
 		mutationFn: ( { messageId, ratingValue }: { messageId: number; ratingValue: number } ) => {
