@@ -22,6 +22,7 @@ export default function limitTotalSnackbars() {
 
 		const idsToRemove = select( noticesStore )
 			.getNotices()
+			.filter( ( { type } ) => type === 'snackbar' )
 			.slice( 0, -MAX_NOTICES )
 			.map( ( n ) => n.id );
 
