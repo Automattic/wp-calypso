@@ -172,11 +172,25 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
-					const plan =
-						urlQueryParams.get( 'plan' ) ??
-						getPlanPath( sourceSite?.plan?.product_slug ?? 'business' );
+					// For Flex sites (wpcom-flexible), default to business-bundle plan since Flex is not a purchasable plan
+					const sourcePlanSlug =
+						sourceSite?.plan?.product_slug === 'wpcom-flexible'
+							? 'business-bundle'
+							: sourceSite?.plan?.product_slug ?? 'business-bundle';
+					const plan = urlQueryParams.get( 'plan' ) ?? getPlanPath( sourcePlanSlug );
+
+					// eslint-disable-next-line no-console
+					console.log( 'Copy-site checkout redirect:', {
+						sourceSiteProductSlug: sourceSite?.plan?.product_slug,
+						sourcePlanSlug,
+						plan,
+						siteSlug,
+					} );
+
+					// If plan is undefined/null/empty, fall back to 'business'
+					const planPath = plan || 'business';
 					return window.location.assign(
-						`/checkout/${ plan }/${ encodeURIComponent(
+						`/checkout/${ planPath }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''
 						) }?redirect_to=${ returnUrl }&signup=1`
 					);

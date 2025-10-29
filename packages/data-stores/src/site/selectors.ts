@@ -63,6 +63,10 @@ export const isSiteAtomic: ( _: State, siteId: number | string ) => boolean = ( 
 	return ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.is_wpcom_atomic === true;
 };
 
+export const isSiteFlex: ( _: State, siteId: number | string ) => boolean = ( state, siteId ) => {
+	return ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.is_wpcom_flex === true;
+};
+
 export const isSiteWPForTeams: ( _: State, siteId: number | string ) => boolean = (
 	state,
 	siteId

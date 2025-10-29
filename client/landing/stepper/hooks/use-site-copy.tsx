@@ -52,7 +52,11 @@ function getMarketplaceProducts( purchases: Purchase[] | null, siteId: number ) 
 }
 
 function getPlanProduct( plan: SiteExcerptData[ 'plan' ] ) {
-	return { product_slug: plan?.product_slug as string };
+	// Flex sites use 'wpcom-flexible' which is not a purchasable plan.
+	// Default to 'business-bundle' for Flex sites since they have Business-level features.
+	const productSlug =
+		plan?.product_slug === 'wpcom-flexible' ? 'business-bundle' : plan?.product_slug;
+	return { product_slug: productSlug as string };
 }
 
 export const useSiteCopy = (
@@ -73,6 +77,11 @@ export const useSiteCopy = (
 			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
 		[ site, options.enabled ]
 	);
+	const isFlex = useSelect(
+		( select ) =>
+			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteFlex( site?.ID ),
+		[ site, options.enabled ]
+	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
@@ -86,8 +95,10 @@ export const useSiteCopy = (
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
+		return (
+			hasCopySiteFeature && isSiteOwner && plan && ( isAtomic || isFlex ) && ! isLoadingPurchases
+		);
+	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic, isFlex ] );
 
 	const startSiteCopy = useCallback( () => {
 		if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
@@ -139,8 +150,13 @@ export const useSiteCopy = (
 	);
 };
 
-export const withSiteCopy = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
+export const withSiteCopy = createHigherOrderComponent( ( Wrapped ) => {
+	const WithSiteCopy = (
+		props: { site?: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > } & Record<
+			string,
+			unknown
+		>
+	) => {
 		const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( props.site );
 		return (
 			<Wrapped
@@ -149,6 +165,6 @@ export const withSiteCopy = createHigherOrderComponent(
 				startSiteCopy={ startSiteCopy }
 			/>
 		);
-	},
-	'withSiteCopy'
-);
+	};
+	return WithSiteCopy;
+}, 'withSiteCopy' );
