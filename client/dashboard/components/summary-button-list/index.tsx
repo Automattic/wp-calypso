@@ -57,6 +57,17 @@ export function SummaryButtonList( {
 			</Card>
 		);
 	}
+
+	if ( density === 'high' ) {
+		return (
+			<Card className={ className } size="xSmall">
+				{ header && <CardHeader>{ header }</CardHeader> }
+				<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+					{ childrenList }
+				</CardBody>
+			</Card>
+		);
+	}
 	return (
 		<VStack className={ className } spacing={ 6 }>
 			{ header }
