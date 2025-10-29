@@ -21,7 +21,7 @@ import {
 	siteByIdQuery,
 	siteEngagementMonthlyAverageStatsQuery,
 	sitePluginsQuery,
-	sitePricedPlansQuery,
+	sitePlansQuery,
 	sitePurchasesQuery,
 	siteScanCountsQuery,
 	siteScanQuery,
@@ -38,7 +38,6 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 	Button,
-	Card,
 	CheckboxControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -52,6 +51,7 @@ import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { ButtonStack } from '../../../components/button-stack';
+import { Card } from '../../../components/card';
 import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -152,7 +152,7 @@ export default function CancelPurchase() {
 	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
 
 	const refreshSitePlans = ( siteId: number ) =>
-		queryClient.invalidateQueries( sitePricedPlansQuery( undefined, siteId ) );
+		queryClient.invalidateQueries( sitePlansQuery( siteId ) );
 
 	const { purchaseId } = cancelPurchaseRoute.useParams();
 	const { data: purchase, isPending: purchaseQueryIsPending } = useSuspenseQuery(
@@ -209,7 +209,7 @@ export default function CancelPurchase() {
 		enabled: Boolean( purchase.blog_id ),
 	} );
 	const { data: sitePlans, isPending: sitePlansQueryIsPending } = useQuery( {
-		...sitePricedPlansQuery( '', purchase.blog_id ),
+		...sitePlansQuery( purchase.blog_id ),
 	} );
 	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
 	const onDialogClose = () => {

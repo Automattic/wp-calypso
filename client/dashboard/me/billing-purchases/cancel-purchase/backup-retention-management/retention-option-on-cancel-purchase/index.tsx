@@ -5,17 +5,12 @@ import {
 	siteUpdateRetentionDaysMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	__experimentalHeading as Heading,
-	Button,
-	Card,
-	CardBody,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalHeading as Heading, Button, ExternalLink } from '@wordpress/components';
 import { useEffect, useState, useCallback, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../../../app/analytics';
 import { ButtonStack } from '../../../../../components/button-stack';
+import { Card, CardBody } from '../../../../../components/card';
 import { settingsPath } from '../../../../../utils/jetpack';
 import { productHasBackups } from '../../../../../utils/site-features';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
