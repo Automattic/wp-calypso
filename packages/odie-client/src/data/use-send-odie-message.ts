@@ -8,6 +8,7 @@ import {
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
+	ODIE_DEFAULT_BOT_SLUG,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -149,7 +150,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const botSlug = currentSupportInteraction?.bot_slug || 'wpcom-support-chat';
+			const botSlug = currentSupportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG;
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const path = window.location.pathname + window.location.search;
 			return canAccessWpcomApis()
