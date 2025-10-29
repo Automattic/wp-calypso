@@ -3,6 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ODIE_DEFAULT_BOT_SLUG } from '../constants';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
@@ -32,7 +33,7 @@ export const emptyChat: Chat = {
 export const OdieAssistantContext = createContext< OdieAssistantContextInterface >( {
 	addMessage: noop,
 	botName: 'Wapuu',
-	botNameSlug: '',
+	botNameSlug: ODIE_DEFAULT_BOT_SLUG,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
