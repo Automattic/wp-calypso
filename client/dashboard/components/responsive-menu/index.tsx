@@ -30,7 +30,6 @@ function ScrollButton( {
 				zIndex: 1,
 				pointerEvents: 'none',
 				height: '100%',
-				display: 'flex',
 				alignItems: 'center',
 				transition: 'opacity 0.2s ease-in-out',
 				...style,
@@ -177,7 +176,7 @@ function ResponsiveMenu( {
 							paddingRight: '30px',
 							background:
 								'linear-gradient(90deg, var(--dashboard__background-color) 30%, transparent 100%)',
-							opacity: showLeftButton ? 1 : 0,
+							display: showLeftButton ? 'flex' : 'none',
 							pointerEvents: showLeftButton ? 'auto' : 'none',
 						} }
 						onClick={ () => bumpScrollX( true ) }
@@ -205,7 +204,7 @@ function ResponsiveMenu( {
 							paddingLeft: '30px',
 							background:
 								'linear-gradient(270deg, var(--dashboard__background-color) 30%, transparent 100%)',
-							opacity: showRightButton ? 1 : 0,
+							display: showRightButton ? 'flex' : 'none',
 							pointerEvents: showRightButton ? 'auto' : 'none',
 						} }
 						onClick={ () => bumpScrollX() }
