@@ -26,6 +26,13 @@ export const useZendeskMessageListener = () => {
 			const zendeskMessage = message as ZendeskMessage;
 
 			if ( data.conversation.id === chat.conversationId ) {
+				// Skip form messages with fields (like CSAT forms)
+				if ( zendeskMessage.type === 'form' && 'fields' in zendeskMessage ) {
+					// We don't want to mark the conversation as read if it's a form message with fields.
+					Smooch.markAllAsRead( data.conversation.id );
+					return;
+				}
+
 				const convertedMessage = zendeskMessageConverter( zendeskMessage );
 				setChat( ( prevChat ) => ( {
 					...prevChat,
