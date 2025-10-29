@@ -1,17 +1,26 @@
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	Modal,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
+import {
+	isAgencyNameExists,
+	isAgencyUrlExists,
+} from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useContactFormValidation from './hooks/use-contact-form-validation';
-
 import './style.scss';
 
 type Props = {
@@ -22,8 +31,11 @@ type Props = {
 
 const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
-	const { validate, validationError, updateValidationError, isValidating } =
-		useContactFormValidation( { withEmail } );
+	const { validate, validationError, updateValidationError } = useContactFormValidation( {
+		withEmail,
+	} );
+
+	const [ isProcessing, setIsProceeding ] = useState( false );
 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
@@ -35,6 +47,14 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		agencyName: initialFormData.agencyName || '',
 		agencyUrl: initialFormData.agencyUrl || '',
 		phoneNumber: initialFormData.phoneNumber || '',
+	} );
+
+	const [ duplicateAgencyFields, setDuplicateAgencyFields ] = useState< {
+		agencyName: boolean;
+		agencyUrl: boolean;
+	} >( {
+		agencyName: false,
+		agencyUrl: false,
 	} );
 
 	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
@@ -57,13 +77,30 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	const handleSubmit = useCallback(
 		async ( e: React.FormEvent ) => {
 			e.preventDefault();
+			setIsProceeding( true );
 			const error = await validate( formData );
 			if ( error ) {
+				setIsProceeding( false );
 				return;
 			}
-			onContinue( formData );
+
+			const [ duplicateAgencyName, duplicateURL ] = await Promise.all( [
+				isAgencyNameExists( formData.agencyName ?? '' ),
+				isAgencyUrlExists( formData.agencyUrl ?? '' ),
+			] );
+
+			setDuplicateAgencyFields( {
+				agencyName: duplicateAgencyName,
+				agencyUrl: duplicateURL,
+			} );
+
+			if ( ! duplicateAgencyName && ! duplicateURL ) {
+				onContinue( formData );
+			}
+
+			setIsProceeding( false );
 		},
-		[ formData, onContinue, validate ]
+		[ formData, onContinue, validate, setDuplicateAgencyFields ]
 	);
 
 	return (
@@ -207,13 +244,75 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			<FormFooter>
 				<Button
 					__next40pxDefaultSize
-					disabled={ isValidating }
+					disabled={ isProcessing }
 					variant="primary"
 					onClick={ handleSubmit }
 				>
 					{ translate( 'Continue for free' ) }
 				</Button>
 			</FormFooter>
+
+			{ ( duplicateAgencyFields.agencyName || duplicateAgencyFields.agencyUrl ) && (
+				<Modal
+					isDismissible
+					size="medium"
+					onRequestClose={ () =>
+						setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } )
+					}
+					title={ translate( 'Duplicate Agency' ) }
+				>
+					<VStack spacing={ 8 }>
+						{ duplicateAgencyFields.agencyName ? (
+							<Text>
+								{ translate(
+									'An agency with the name {{b}}%(agencyName)s{{/b}} already exists. Do you want to proceed with creating a new agency account? Alternatively, ask your team for an invite.',
+									{
+										args: {
+											agencyName: formData.agencyName ?? '',
+										},
+										components: {
+											b: <b />,
+										},
+									}
+								) }
+							</Text>
+						) : (
+							<Text>
+								{ translate(
+									'An agency with the domain {{b}}%(agencyUrl)s{{/b}} already exists. Do you want to proceed with creating a new agency account? Alternatively, ask your team for an invite.',
+									{
+										args: {
+											agencyUrl: formData.agencyUrl ?? '',
+										},
+										components: {
+											b: <b />,
+										},
+									}
+								) }
+							</Text>
+						) }
+						<ButtonStack justify="flex-end">
+							<Button
+								variant="primary"
+								onClick={ () => {
+									onContinue( formData );
+									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
+								} }
+							>
+								{ translate( 'Continue for free' ) }
+							</Button>
+							<Button
+								variant="secondary"
+								onClick={ () => {
+									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
+								} }
+							>
+								{ translate( 'Cancel' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</Modal>
+			) }
 		</Form>
 	);
 };

@@ -52,9 +52,9 @@ export async function isAgencyNameExists( agencyName: string ) {
 	return false;
 }
 
-export async function isDomainExists( domain: string ) {
+export async function isAgencyUrlExists( url: string ) {
 	const response = await wpcom.req.get( {
-		path: `/agency/exists/domain?value=${ encodeURIComponent( domain ) }`,
+		path: `/agency/exists/url?value=${ encodeURIComponent( url ) }`,
 		apiNamespace: 'wpcom/v2',
 	} );
 
