@@ -1,4 +1,8 @@
-import { setSiteUpdateScheduleActive, type UpdateSchedule } from '@automattic/api-core';
+import {
+	setSiteUpdateScheduleActive,
+	type HostingUpdateSchedulesResponse,
+	type UpdateSchedule,
+} from '@automattic/api-core';
 import {
 	hostingUpdateSchedulesQuery,
 	queryClient,
@@ -19,7 +23,9 @@ export function useToggleScheduleActive() {
 			const siteQuery = siteUpdateSchedulesQuery( siteId );
 			const prevSite = queryClient.getQueryData< UpdateSchedule[] >( siteQuery.queryKey );
 			const hostingQuery = hostingUpdateSchedulesQuery();
-			const prevHosting = queryClient.getQueryData( hostingQuery.queryKey );
+			const prevHosting = queryClient.getQueryData< HostingUpdateSchedulesResponse >(
+				hostingQuery.queryKey
+			);
 
 			// Optimistically update site list
 			if ( prevSite ) {
@@ -30,9 +36,9 @@ export function useToggleScheduleActive() {
 			}
 
 			// Optimistically update hosting list
-			if ( prevHosting && typeof prevHosting === 'object' && 'sites' in prevHosting ) {
+			if ( prevHosting?.sites ) {
 				const key = String( siteId );
-				if ( prevHosting.sites?.[ key ]?.[ scheduleId ] ) {
+				if ( prevHosting.sites[ key ]?.[ scheduleId ] ) {
 					const cloned = JSON.parse( JSON.stringify( prevHosting ) );
 					cloned.sites[ key ][ scheduleId ].active = active;
 					queryClient.setQueryData( hostingQuery.queryKey, cloned );
