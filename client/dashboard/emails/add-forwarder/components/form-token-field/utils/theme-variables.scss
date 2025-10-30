@@ -1,0 +1,34 @@
+@use "@wordpress/base-styles/colors" as *;
+
+// Accent color
+//
+// If the `--wp-components-color-accent` variable is not defined, fallback to
+// `--wp-admin-theme-color`. If the `--wp-admin-theme-color` variable is not
+// defined, fallback to the default theme color (WP blueberry).
+$components-color-accent: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+$components-color-accent-darker-10: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
+$components-color-accent-darker-20: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+
+// Used when placing text on the accent color.
+$components-color-accent-inverted: var(--wp-components-color-accent-inverted, $white);
+
+$components-color-background: var(--wp-components-color-background, $white);
+$components-color-foreground: var(--wp-components-color-foreground, $gray-900);
+
+// Used when placing text on the foreground color.
+$components-color-foreground-inverted: var(--wp-components-color-foreground-inverted, $white);
+
+$components-color-gray-100: var(--wp-components-color-gray-100, $gray-100);
+$components-color-gray-200: var(--wp-components-color-gray-200, $gray-200);
+$components-color-gray-300: var(--wp-components-color-gray-300, $gray-300);
+$components-color-gray-400: var(--wp-components-color-gray-400, $gray-400);
+$components-color-gray-600: var(--wp-components-color-gray-600, $gray-600);
+$components-color-gray-700: var(--wp-components-color-gray-700, $gray-700);
+$components-color-gray-800: var(--wp-components-color-gray-800, $gray-800);
+
+$components-color-dark-gray-placeholder: color-mix(in srgb, $components-color-foreground, transparent 38%);
+$components-color-light-gray-placeholder: color-mix(in srgb, $components-color-background, transparent 35%);
+
+// Semantic aliases (prefer these over raw gray values when applicable).
+$components-color-border: #{ $components-color-gray-600 };
+$components-color-disabled: #{ $components-color-gray-600 };

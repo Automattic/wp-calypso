@@ -1,0 +1,202 @@
+@use "@wordpress/base-styles/breakpoints" as *;
+@use "@wordpress/base-styles/colors" as *;
+@use "@wordpress/base-styles/mixins" as *;
+@use "@wordpress/base-styles/variables" as *;
+@use "./utils/theme-variables" as *;
+
+.components-form-token-field__input-container {
+	@include input-control($components-color-accent);
+	width: 100%;
+	padding: 0;
+	cursor: text;
+
+	&.is-disabled {
+		background: $gray-300;
+		border-color: $gray-300;
+	}
+
+	&.is-active {
+		@include input-style__focus($components-color-accent);
+	}
+
+	// Token input
+	input[type="text"].components-form-token-field__input {
+		display: inline-block;
+		flex: 1;
+		font-family: inherit;
+		font-size: 16px;
+		width: 100%;
+		max-width: 100%;
+		margin-left: 4px;
+		padding: 0;
+		min-height: 24px;
+		min-width: 50px;
+		background: inherit;
+		border: 0;
+		color: $components-color-foreground;
+		box-shadow: none;
+
+		// Resolves Zooming on iOS devices
+		// https://github.com/WordPress/gutenberg/issues/27405
+		@include break-small() {
+			font-size: 13px;
+		}
+
+		&:focus,
+		.components-form-token-field.is-active & {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+	.components-form-token-field__token + input[type="text"].components-form-token-field__input {
+		width: auto;
+	}
+}
+
+// Tokens
+.components-form-token-field__token {
+	font-size: $default-font-size;
+	display: flex;
+	color: $gray-900;
+	max-width: 100%;
+
+	&.is-success {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token {
+			background: $alert-green;
+		}
+	}
+
+	&.is-error {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token {
+			background: $alert-red;
+		}
+	}
+
+	&.is-validating {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token {
+			color: $gray-700;
+		}
+	}
+
+	&.is-borderless {
+		position: relative;
+		padding: 0 24px 0 0;
+
+		.components-form-token-field__token-text {
+			background: transparent;
+		}
+
+		&:not(.is-disabled) {
+			.components-form-token-field__token-text {
+				color: $components-color-accent;
+			}
+		}
+
+		.components-form-token-field__remove-token {
+			background: transparent;
+			color: $gray-700;
+			position: absolute;
+			top: 1px;
+			right: 0;
+		}
+
+		&.is-success {
+			.components-form-token-field__token-text {
+				color: $alert-green;
+			}
+		}
+
+		&.is-error {
+			.components-form-token-field__token-text {
+				color: $alert-red;
+				padding: 0 4px 0 6px;
+			}
+		}
+
+		&.is-validating {
+			.components-form-token-field__token-text {
+				color: $gray-900;
+			}
+		}
+	}
+}
+
+.components-form-token-field__token-text,
+.components-form-token-field__remove-token.components-button {
+	display: inline-block;
+	height: auto;
+	background: $gray-300;
+	min-width: unset;
+
+	@media not (prefers-reduced-motion) {
+		transition: all 0.2s cubic-bezier(0.4, 1, 0.4, 1);
+	}
+}
+
+.components-form-token-field__token-text {
+	border-radius: $radius-x-small 0 0 $radius-x-small;
+	padding: 0 0 0 8px;
+	line-height: 24px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.components-form-token-field__remove-token.components-button {
+	border-radius: 0 $radius-x-small $radius-x-small 0;
+	color: $gray-900;
+	line-height: 10px;
+	overflow: initial;
+
+	&:hover:not(:disabled) {
+		color: $gray-900;
+	}
+}
+
+// Suggestion list
+.components-form-token-field__suggestions-list {
+	flex: 1 0 100%;
+	min-width: 100%;
+	max-height: $grid-unit-80 * 2;
+	overflow-y: auto;
+
+	@media not (prefers-reduced-motion) {
+		transition: all 0.15s ease-in-out;
+	}
+
+	list-style: none;
+	box-shadow: inset 0 $border-width 0 0 $gray-600; // Matches the border color of the input.
+	margin: 0;
+	padding: 0;
+}
+
+.components-form-token-field__suggestion {
+	color: $components-color-foreground;
+	display: block;
+	font-size: $default-font-size;
+	padding: $grid-unit-10 $grid-unit-15;
+	min-height: $button-size-compact;
+	margin: 0;
+	box-sizing: border-box;
+
+	&.is-selected {
+		background: $components-color-accent;
+		color: $components-color-foreground-inverted;
+	}
+
+	&[aria-disabled="true"] {
+		pointer-events: none;
+		color: $gray-600;
+
+		&.is-selected {
+			background: color-mix(in srgb, $components-color-accent 4%, transparent);
+		}
+	}
+
+	&:not(.is-empty) {
+		cursor: pointer;
+	}
+}
