@@ -7,7 +7,7 @@ export function getViewDetailsAction( site: Site ): Action< Threat > {
 	return {
 		id: 'view_details',
 		label: __( 'View details' ),
-		modalHeader: __( 'View threat details' ),
+		modalHeader: __( 'Threat details' ),
 		supportsBulk: false,
 		RenderModal: ( props ) => <ViewDetailsModal { ...props } site={ site } />,
 	};
