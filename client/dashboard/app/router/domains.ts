@@ -554,7 +554,7 @@ export const domainConnectionSetupRoute = createRoute( {
 		);
 	},
 } ).lazy( () =>
-	config.isEnabled( 'domain-connection-redesign/verification' )
+	config.isEnabled( 'domain-connection-redesign' )
 		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
 				createLazyRoute( 'domain-connection-verification' )( {
 					component: d.default,

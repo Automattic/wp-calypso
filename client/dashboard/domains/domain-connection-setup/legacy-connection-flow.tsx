@@ -4,7 +4,6 @@ import {
 	domainQuery,
 	updateConnectionModeMutation,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -46,8 +45,6 @@ export default function LegacyConnectionFlow() {
 
 	// Load domain data
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-
-	const redesign = config.isEnabled( 'domain-connection-redesign/verification' );
 
 	// Load domain connection setup info
 	const router = useRouter();
@@ -117,9 +114,6 @@ export default function LegacyConnectionFlow() {
 		updateConnectionMode( currentStep.mode, {
 			onSuccess: ( data: DomainMappingStatus ) => {
 				setVerificationStatus( data );
-				if ( redesign ) {
-					return;
-				}
 				if ( setStepAfterVerify ) {
 					if ( isMappingVerificationSuccess( currentStep.mode, data ) ) {
 						setCurrentStepName( connectedSlug );
