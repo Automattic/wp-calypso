@@ -569,7 +569,7 @@ function canAccessWpcomApis() {
 /**
  * Returns whether the iframe has ever sent the "cookie-auth-missing" event, signalling
  * that something is wrong with the user's cookie.
- * @returns boolean
+ * @returns {boolean}
  */
 function isCookieAuthMissing() {
 	return _isCookieAuthMissing;
