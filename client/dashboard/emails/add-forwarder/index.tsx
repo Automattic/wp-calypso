@@ -254,6 +254,15 @@ function AddEmailForwarder() {
 										} }
 										value={ formData.forwardingAddresses }
 										onChange={ ( newTokens ) => {
+											// Clear the untokenized input if a new token was added (the value added is what was in the untokenized input)
+											// A token is removed by clicking on Token component's X, so in that case we keep the untokenized input as-is
+											const shouldClearUntokenizedInput =
+												newTokens.length > formData.forwardingAddresses.length;
+
+											if ( shouldClearUntokenizedInput ) {
+												setUntokenizedInput( '' );
+											}
+
 											setFormData( ( data ) => ( {
 												...data,
 												forwardingAddresses: newTokens as string[],
