@@ -22,13 +22,13 @@ interface DomainConnectionVerificationProps {
 	domainName: string;
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
+	queryError: string | null;
+	queryErrorDescription: string | null;
 }
 
 export default function DomainConnectionVerification( {
 	domainName,
 	siteSlug,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	domainConnectionSetupInfo,
 }: DomainConnectionVerificationProps ) {
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
