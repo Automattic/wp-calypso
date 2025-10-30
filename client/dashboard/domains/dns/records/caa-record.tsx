@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import RequiredSelect from '../../../components/required-select';
 import { getNormalizedName } from '../utils';
 import {
 	hostnameValidator,
@@ -37,7 +36,7 @@ export const CAARecordConfig: DnsRecordConfig = {
 		{
 			id: 'tag',
 			label: __( 'Tag' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: [
 				{ label: 'issue', value: 'issue' },
 				{ label: 'issuewild', value: 'issuewild' },
