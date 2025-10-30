@@ -81,3 +81,20 @@ interface SaleCoupon {
 	code: string;
 	tld_rank: number | null;
 }
+
+export interface ProductFeature {
+	feature_id: string;
+	title: string;
+	description: string;
+}
+
+export interface ProductWithFeatures {
+	product_id: number;
+	product_slug: string;
+	feature_ids: string[];
+}
+
+export interface ProductsFeaturesResponse {
+	products: ProductWithFeatures[];
+	features: ProductFeature[];
+}

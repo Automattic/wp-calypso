@@ -1,6 +1,6 @@
 import { toNumber } from '../normalize-utils';
 import { wpcom } from '../wpcom-fetcher';
-import type { Product } from './types';
+import type { Product, ProductsFeaturesResponse } from './types';
 import type { PriceTierEntry } from '../upgrades';
 
 /**
@@ -64,4 +64,11 @@ export async function fetchProducts(): Promise< Record< string, Product > > {
 	return Object.fromEntries(
 		Object.entries( products ).map( ( [ key, product ] ) => [ key, normalizeProduct( product ) ] )
 	);
+}
+
+export async function fetchProductsFeatures(): Promise< ProductsFeaturesResponse > {
+	return await wpcom.req.get( {
+		path: '/products/features',
+		apiNamespace: 'wpcom/v2',
+	} );
 }
