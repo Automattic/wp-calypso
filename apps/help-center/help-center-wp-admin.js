@@ -78,13 +78,13 @@ function AdminHelpCenterContent() {
 		[ setShowHelpCenter ]
 	);
 
-	const trackIconInteraction = useCallback(() => {
+	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: hasHelpCenterMenuPanel,
 		} );
-	}, [isShown, hasHelpCenterMenuPanel]);
+	}, [ isShown, hasHelpCenterMenuPanel ] );
 
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
@@ -136,14 +136,7 @@ function AdminHelpCenterContent() {
 				} );
 			}
 		},
-		[
-			isShown,
-			setNavigateToRoute,
-			setHelpCenterPage,
-			setShowHelpCenter,
-			helpCenterData.sectionName,
-			helpCenterPage,
-		]
+		[ isShown, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter, helpCenterPage ]
 	);
 	if ( chatSupportButton ) {
 		chatSupportButton.onclick = () => {

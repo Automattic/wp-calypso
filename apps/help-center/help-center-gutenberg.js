@@ -9,7 +9,7 @@ import { Button, DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -107,42 +107,45 @@ function HelpCenterContent() {
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
 	// Menu items for the dropdown
-	const menuControls = [
-		[
-			{
-				title: __( 'Chat support', __i18n_text_domain__ ),
-				icon: comment,
-				onClick: () => handleMenuClick( '/odie' ),
-			},
-			{
-				title: __( 'Chat history', __i18n_text_domain__ ),
-				icon: backup,
-				onClick: () => handleMenuClick( '/chat-history' ),
-			},
+	const menuControls = useMemo(
+		() => [
+			[
+				{
+					title: __( 'Chat support', __i18n_text_domain__ ),
+					icon: comment,
+					onClick: () => handleMenuClick( '/odie' ),
+				},
+				{
+					title: __( 'Chat history', __i18n_text_domain__ ),
+					icon: backup,
+					onClick: () => handleMenuClick( '/chat-history' ),
+				},
+			],
+			[
+				{
+					title: __( 'Support guides', __i18n_text_domain__ ),
+					icon: page,
+					onClick: () => handleMenuClick( '/support-guides' ),
+				},
+				{
+					title: __( 'Courses', __i18n_text_domain__ ),
+					icon: video,
+					onClick: () =>
+						handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true ),
+				},
+				{
+					title: __( 'Product updates', __i18n_text_domain__ ),
+					icon: rss,
+					onClick: () =>
+						handleMenuClick(
+							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+							true
+						),
+				},
+			],
 		],
-		[
-			{
-				title: __( 'Support guides', __i18n_text_domain__ ),
-				icon: page,
-				onClick: () => handleMenuClick( '/support-guides' ),
-			},
-			{
-				title: __( 'Courses', __i18n_text_domain__ ),
-				icon: video,
-				onClick: () =>
-					handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true ),
-			},
-			{
-				title: __( 'Product updates', __i18n_text_domain__ ),
-				icon: rss,
-				onClick: () =>
-					handleMenuClick(
-						localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
-						true
-					),
-			},
-		],
-	];
+		[ handleMenuClick ]
+	);
 
 	const content = isMenuPanelEnabled ? (
 		<DropdownMenu
