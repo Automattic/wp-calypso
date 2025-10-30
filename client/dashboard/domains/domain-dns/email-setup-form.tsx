@@ -2,7 +2,7 @@ import { type DnsTemplateVariables } from '@automattic/api-core';
 import { domainDnsApplyTemplateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainRoute } from '../../app/router/domains';
@@ -101,8 +101,9 @@ export default function EmailSetupForm( {
 			},
 		},
 	];
+	const { isValid } = useFormValidity( formData, fields, form );
 
-	const canSubmit = formData.record && isItemValid( formData, fields, form );
+	const canSubmit = formData.record && isValid;
 
 	return (
 		<div style={ { marginTop: '28px' } }>

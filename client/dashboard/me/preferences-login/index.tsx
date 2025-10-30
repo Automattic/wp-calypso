@@ -3,7 +3,6 @@ import {
 	userPreferencesMutation,
 	userSettingsQuery,
 	rawUserPreferencesQuery,
-	sitesQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -17,6 +16,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -33,6 +33,7 @@ export default function PreferencesLogin() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { user } = useAuth();
+	const { queries } = useAppContext();
 	const { data: primarySiteId } = useSuspenseQuery( {
 		...userSettingsQuery(),
 		select: ( data ) => data.primary_site_ID,
@@ -51,7 +52,7 @@ export default function PreferencesLogin() {
 	} );
 
 	const { data: sites, isLoading: isSiteListLoading } = useQuery(
-		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
 	const { mutateAsync: saveUserSettings, isPending: isSavingUserSettings } = useMutation(

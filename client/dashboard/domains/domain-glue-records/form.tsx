@@ -1,5 +1,5 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
@@ -108,7 +108,8 @@ export default function DomainGlueRecordsForm( {
 		fields: [ 'nameServer', 'ipAddress' ],
 	};
 
-	const canSubmit = ! isSubmitting && isItemValid( formData, fields, form );
+	const { validity, isValid } = useFormValidity( formData, fields, form );
+	const canSubmit = ! isSubmitting && isValid;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -129,6 +130,7 @@ export default function DomainGlueRecordsForm( {
 						<DataForm< FormData >
 							data={ formData }
 							fields={ fields }
+							validity={ validity }
 							form={ form }
 							onChange={ ( edits: Partial< FormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );

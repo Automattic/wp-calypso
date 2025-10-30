@@ -10,7 +10,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -108,7 +108,7 @@ export default function GravatarProfileSection( {
 	const isDirty = controlledKeys.some(
 		( key ) => data[ key as keyof UserSettings ] !== serverProfile[ key as keyof UserSettings ]
 	);
-	const isValid = isItemValid( data, fields, form );
+	const { validity, isValid } = useFormValidity( data, fields, form );
 
 	const onChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
@@ -168,6 +168,7 @@ export default function GravatarProfileSection( {
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }
+							validity={ validity }
 							form={ form }
 							onChange={ onChange }
 						/>

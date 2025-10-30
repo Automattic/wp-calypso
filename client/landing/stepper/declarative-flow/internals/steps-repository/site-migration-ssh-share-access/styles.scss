@@ -121,9 +121,20 @@
 	align-items: center;
 }
 
+.migration-site-ssh__no-ssh-link {
+	text-decoration: none !important;
+}
+
 .migration-site-ssh__help-link {
 	margin: 1rem 0;
 	font-size: 0.875rem;
+
+	.inline-support-link,
+	a,
+	a:visited {
+		color: var(--color-neutral-70, #1d2327) !important;
+		text-decoration: underline !important;
+	}
 }
 
 .migration-site-ssh__step-add-server-address-form {
@@ -155,6 +166,8 @@
 	margin-left: 2.5rem;
 	button {
 		width: 100%;
+		height: 48px;
+		font-size: 16px;
 	}
 }
 

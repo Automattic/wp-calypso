@@ -10,7 +10,7 @@ export default function SubscribersCard( { site }: { site: Site } ) {
 			title={ __( 'Subscribers' ) }
 			heading={ site.subscribers_count }
 			description={ __( 'Total subscribers.' ) }
-			externalLink={ `https://cloud.jetpack.com/subscribers/${ site.slug }` }
+			link={ `https://cloud.jetpack.com/subscribers/${ site.slug }` }
 			intent="success"
 			tracksId="site-overview-subscribers"
 		/>

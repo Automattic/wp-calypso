@@ -1,6 +1,7 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
+import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -17,7 +18,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 					{ __( 'Overview' ) }
 				</ResponsiveMenu.Item>
@@ -27,7 +28,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
 					{ __( 'Trial ended' ) }
 				</ResponsiveMenu.Item>
@@ -37,7 +38,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 
 	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
 		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
 				</ResponsiveMenu.Item>
@@ -56,7 +57,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	}
 
 	return (
-		<ResponsiveMenu label={ __( 'Site Menu' ) }>
+		<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 				{ __( 'Overview' ) }
 			</ResponsiveMenu.Item>

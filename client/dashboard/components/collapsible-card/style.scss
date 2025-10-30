@@ -1,8 +1,11 @@
+@import "@wordpress/base-styles/colors";
+
 .collapsible-card {
 	max-height: 100%;
 
 	.collapsible-card__toggle svg {
 		transition: transform 0.2s ease-in-out;
+		fill: $gray-700;
 	}
 
 	&.collapsed .collapsible-card__toggle svg {

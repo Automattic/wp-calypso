@@ -163,5 +163,24 @@ export const getOdieInitialMessage = (
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
-export const ODIE_DEFAULT_BOT_SLUG = 'wpcom-support-chat';
-export const ODIE_ALLOWED_BOTS = [ ODIE_DEFAULT_BOT_SLUG, 'wpcom-plan-support' ];
+
+/**
+ * NOTE: NEVER CHANGE THIS VALUE.
+ * This value should never be changed. Otherwise the old interactions will be broken and users will not be able to continue their conversations.
+ * Before October 2025, the botSlug was an attribute of the Help Center > Odie Client. So interactions did not have a botSlug property.
+ * But since #106790, interactions have their own botSlug property. The value below is used as a fallback for legacy interactions that don't have it.
+ * If you change it, legacy interactions will target a new bot (not their original one) and users will not be able to continue their conversations.
+ * The reason we use 'wpcom-support-chat' as fallback, because it was the only bot available in the Help Center up to October 2025.
+ */
+export const ODIE_DEFAULT_BOT_SLUG_LEGACY = 'wpcom-support-chat';
+
+/**
+ * New interactions will target this bot slug and store it in the interaction object. All future events of those interactions will use this bot slug.
+ */
+export const ODIE_NEW_INTERACTIONS_BOT_SLUG = 'wpcom-support-chat';
+
+export const ODIE_ALLOWED_BOTS = [
+	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+	'wpcom-plan-support',
+	'wpcom-workflow-support_chat',
+];

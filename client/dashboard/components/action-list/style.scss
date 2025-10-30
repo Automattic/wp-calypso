@@ -14,4 +14,8 @@
 	.action-list__actions {
 		margin: -$grid-unit-20 0;
 	}
+
+	&:has(.action-list__actions:empty) {
+		display: none;
+	}
 }

@@ -18,7 +18,6 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 	return {
 		id: 'delete-email-forward',
 		label: __( 'Delete forwarder' ),
-		isDestructive: true,
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
 			const { mutateAsync: deleteEmailForward, isPending } = useMutation(

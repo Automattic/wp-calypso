@@ -1,4 +1,6 @@
-import { Domain } from '@automattic/api-core';
+import { Domain, DomainSubtype, DomainSummary } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -18,24 +20,23 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
-import { useDomains } from '../hooks/use-domains';
 
 import './styles.css';
 
 export default function ChooseDomain() {
 	const router = useRouter();
-	const { domains, isLoading } = useDomains();
+
+	const { data: allDomains, isLoading: isLoading } = useQuery( domainsQuery() );
+	const eligibleDomains = ( allDomains ?? [] ).filter(
+		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
+
 	const { recordTracksEvent } = useAnalytics();
 	const searchRef = useRef< HTMLInputElement >( null );
 
 	useEffect( () => {
 		searchRef.current?.focus();
 	}, [] );
-
-	// Aggregate eligible domains (exclude wpcom domains)
-	const eligibleDomains = useMemo( () => {
-		return ( domains ?? [] ).filter( ( domain ) => ! domain.wpcom_domain );
-	}, [ domains ] );
 
 	// Prepare domain lists and search state
 	const firstTen = eligibleDomains.slice( 0, 10 );
@@ -49,7 +50,7 @@ export default function ChooseDomain() {
 		return eligibleDomains.filter( ( d ) => d.domain.toLowerCase().includes( q ) );
 	}, [ eligibleDomains, search ] );
 
-	const handleDomainClick = ( d: Domain ) => {
+	const handleDomainClick = ( d: DomainSummary ) => {
 		recordTracksEvent( 'calypso_dashboard_emails_choose_domain_domain_click', {
 			domain: d.domain,
 		} );
@@ -92,7 +93,7 @@ export default function ChooseDomain() {
 								) ) }
 							{ remaining.length > 0 &&
 								search.trim() &&
-								filteredRemaining.map( ( d: Domain ) => (
+								filteredRemaining.map( ( d: DomainSummary ) => (
 									<Item key={ d.blog_id + '-' + d.domain } onClick={ () => handleDomainClick( d ) }>
 										<HStack justify="flex-start">
 											<FlexBlock>{ d.domain }</FlexBlock>

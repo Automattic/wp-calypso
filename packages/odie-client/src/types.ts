@@ -7,7 +7,7 @@ export type OdieAssistantContextInterface = {
 	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
-	botNameSlug: string;
+	newInteractionsBotSlug: string;
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
@@ -31,7 +31,7 @@ export type OdieAssistantContextInterface = {
 };
 
 export type OdieAssistantProviderProps = {
-	defaultBotNameSlug: OdieAllowedBots;
+	newInteractionsBotSlug: OdieAllowedBots;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
@@ -281,6 +281,12 @@ export type ZendeskConversation = {
 	metadata: Metadata;
 };
 
+export type SupportInteractionDraft = {
+	bot_slug: OdieAllowedBots;
+	event_external_id: string;
+	event_source: SupportProvider;
+};
+
 export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {
@@ -297,7 +303,7 @@ export type SupportInteractionEvent = {
 };
 
 export type SupportInteraction = {
-	bot_slug: string;
+	bot_slug: OdieAllowedBots;
 	uuid: string;
 	status: InteractionStatus;
 	start_date: string;

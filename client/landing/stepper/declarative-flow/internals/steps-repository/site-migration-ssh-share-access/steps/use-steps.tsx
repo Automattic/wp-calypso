@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { HelpLink } from './help-link';
-import { getSSHHostDisplayName, getSSHSupportUrl } from './ssh-host-support-urls';
+import { getSSHHostDisplayName, getSSHSupportDoc } from './ssh-host-support-urls';
 import { StepAddServerAddress } from './step-add-server-address';
 import { StepFindSSHDetails } from './step-find-ssh-details';
 import { StepShareSSHAccess } from './step-share-ssh-access';
@@ -82,8 +82,8 @@ interface SSHFormState {
 const useStepsData = ( options: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 	const hostDisplayName = getSSHHostDisplayName( options.host );
-	const supportUrl = getSSHSupportUrl( options.host );
-	const helpLink = <HelpLink href={ supportUrl } />;
+	const supportDoc = getSSHSupportDoc( options.host );
+	const helpLink = <HelpLink supportLink={ supportDoc.url } supportPostId={ supportDoc.postId } />;
 
 	const stepsData: StepsData = [
 		{

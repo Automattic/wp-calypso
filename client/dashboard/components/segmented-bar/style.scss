@@ -1,0 +1,88 @@
+.dashboard-segmented-bar-wrapper {
+	// Define shared palette so both the labels and the bar can use the same colors
+	--segmented-bar-bg: var(--color-surface-backdrop, #f0f0f0);
+	--segmented-bar-color-1: var(--studio-blue-50);
+	--segmented-bar-color-2: var(--studio-green-50);
+	--segmented-bar-color-3: var(--studio-orange-40);
+	--segmented-bar-color-4: var(--studio-purple-50);
+	--segmented-bar-color-5: var(--studio-teal-50);
+
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.dashboard-segmented-bar__labels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 32px;
+}
+
+.dashboard-segmented-bar__labels--vertical {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.dashboard-segmented-bar__label-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.dashboard-segmented-bar__label-dot {
+	display: inline-block;
+	inline-size: 8px;
+	block-size: 8px;
+	width: 8px; // fallback for environments without logical props
+	height: 8px; // fallback
+	border-radius: 8px;
+	background: var(--segmented-bar-color-1);
+}
+
+// Fallback colors for label dots when segment.color is not provided
+.dashboard-segmented-bar__label-item--index-1 .dashboard-segmented-bar__label-dot {
+	background: var(--segmented-bar-color-1);
+}
+.dashboard-segmented-bar__label-item--index-2 .dashboard-segmented-bar__label-dot {
+	background: var(--segmented-bar-color-2);
+}
+.dashboard-segmented-bar__label-item--index-3 .dashboard-segmented-bar__label-dot {
+	background: var(--segmented-bar-color-3);
+}
+.dashboard-segmented-bar__label-item--index-4 .dashboard-segmented-bar__label-dot {
+	background: var(--segmented-bar-color-4);
+}
+.dashboard-segmented-bar__label-item--index-5 .dashboard-segmented-bar__label-dot {
+	background: var(--segmented-bar-color-5);
+}
+
+.dashboard-segmented-bar {
+	display: flex;
+	width: 100%;
+	background: var(--segmented-bar-bg);
+	overflow: hidden;
+}
+
+
+.dashboard-segmented-bar__segment {
+	height: 100%;
+	background: var(--segmented-bar-color-1);
+	border-radius: 0; // segments have square ends per design
+
+	&:nth-child(2) {
+		background: var(--segmented-bar-color-2);
+	}
+
+	&:nth-child(3) {
+		background: var(--segmented-bar-color-3);
+	}
+
+	&:nth-child(4) {
+		background: var(--segmented-bar-color-4);
+	}
+
+	&:nth-child(5) {
+		background: var(--segmented-bar-color-5);
+	}
+}

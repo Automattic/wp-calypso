@@ -1,7 +1,9 @@
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
+import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
+import type { AppConfig } from 'calypso/dashboard/app/context';
 
 const settingsRoute = createRoute( {
 	...appRouterSites.siteSettingsRoute.options,
@@ -212,18 +214,18 @@ const createRouteTree = () =>
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync();
 
-export const getRouter = ( { basePath }: { basePath: string } ) => {
+export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree();
 	const router = new Router( {
-		...getRouterOptions(),
+		...getRouterOptions( config ),
 		routeTree,
-		basepath: basePath,
 	} );
 
 	return router;
 };
 
 export const routerConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
 	basePath: '/',
 };
 

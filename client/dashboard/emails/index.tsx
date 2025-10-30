@@ -1,17 +1,16 @@
-import { EmailAccount, EmailBox, Domain, DomainSubtype } from '@automattic/api-core';
-import { mailboxAccountsQuery } from '@automattic/api-queries';
-import { useQueries } from '@tanstack/react-query';
+import { DomainSubtype, EmailBox } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState } from 'react';
+import { userMailboxesQuery } from '../../../packages/api-queries/src/me-mailboxes';
 import { emailsRoute } from '../app/router/emails';
 import { DataViewsCard } from '../components/dataviews-card';
-import { domainHasEmail } from '../utils/domain';
 import { persistViewToUrl, useSetInitialViewFromUrl } from '../utils/persist-view-to-url';
 import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
 import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_EMAILS_VIEW, getEmailFields, useEmailActions } from './dataviews';
-import { useDomains } from './hooks/use-domains';
 import { Layout } from './layout';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
@@ -21,72 +20,60 @@ import './style.scss';
 
 function Emails() {
 	const { domainName }: { domainName?: string } = emailsRoute.useSearch();
-	const { domains, isLoading: isLoadingDomains } = useDomains();
+	const { data: allDomains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
+	const domains = ( allDomains ?? [] ).filter(
+		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
+
+	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
+		userMailboxesQuery()
+	);
 
 	// Aggregate all domains into a single array
 	const { domainsWithEmails, domainsWithoutEmails } = useMemo( () => {
-		if ( isLoadingDomains ) {
+		if ( isLoadingDomains || isLoadingEmailAccounts ) {
 			return { domainsWithEmails: [], domainsWithoutEmails: [] };
 		}
 
-		// We filter the same way v1 does.
-		const nonWpcomDomains = domains.filter(
-			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
-		);
+		const domainsWithEmails =
+			allEmailAccounts?.map( ( mailbox ) => mailbox.domains[ 0 ].domain ) ?? [];
+		return {
+			domainsWithEmails: domains.filter( ( d ) => domainsWithEmails.includes( d.domain ) ),
+			domainsWithoutEmails: domains.filter( ( d ) => ! domainsWithEmails.includes( d.domain ) ),
+		};
+	}, [ allEmailAccounts, domains, isLoadingDomains, isLoadingEmailAccounts ] );
 
-		const domainsWithEmails = nonWpcomDomains.filter( domainHasEmail ) as Domain[];
-		const domainsWithoutEmails = nonWpcomDomains.filter(
-			( domain ) => ! domainHasEmail( domain )
-		) as Domain[];
-
-		return { domainsWithEmails, domainsWithoutEmails };
-	}, [ domains, isLoadingDomains ] );
-
-	const mailboxQueries = useQueries( {
-		queries: domainsWithEmails.map( ( domain: Domain ) =>
-			mailboxAccountsQuery( domain.blog_id, domain.domain )
-		),
-	} );
-
-	const isLoadingMailboxes = mailboxQueries.some( ( q ) => q.isLoading );
-
-	// Build emails by pairing each domain with its corresponding mailboxes query
 	const emails: Email[] = useMemo( () => {
-		if ( ! domainsWithEmails.length ) {
+		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		return domainsWithEmails.flatMap( ( domain, index ) => {
-			const emailAccounts = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
-
-			const skipFilterForwards = emailAccounts.length === 1;
-
-			return emailAccounts
-				.filter( ( account ) => skipFilterForwards || account.account_type !== 'email_forwarding' )
-				.flatMap( ( account ) =>
-					account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account, domain ) )
-				)
-				.filter( ( email ) => email.canUserManage ) as Email[];
-		} );
-	}, [ domainsWithEmails, mailboxQueries ] );
+		return allEmailAccounts
+			.flatMap( ( account ) =>
+				account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account ) )
+			)
+			.filter( ( email ) => email.canUserManage ) as Email[];
+	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings
 	const domainsWithUnusedMailbox: string[] = useMemo( () => {
-		if ( ! domainsWithEmails.length ) {
+		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		return domainsWithEmails.reduce< string[] >( ( acc, domain, index ) => {
-			const emailAccounts = ( mailboxQueries[ index ]?.data as EmailAccount[] ) ?? [];
-			const hasUnusedWarning = emailAccounts.some( ( account ) =>
-				( account.warnings ?? [] ).some(
-					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
-				)
+		const warnedDomains = new Set< string >();
+		for ( const account of allEmailAccounts ) {
+			const hasUnusedWarning = ( account.warnings ?? [] ).some(
+				( w ) => w.warning_slug === 'unused_mailboxes'
 			);
 			if ( hasUnusedWarning ) {
-				acc.push( domain.domain );
+				warnedDomains.add( account.domains[ 0 ].domain );
 			}
-			return acc;
-		}, [] );
-	}, [ domainsWithEmails, mailboxQueries ] );
+		}
+
+		// Return only domains we show in the table (i.e., that actually have emails)
+		return domainsWithEmails
+			.filter( ( d ) => warnedDomains.has( d.domain ) )
+			.map( ( d ) => d.domain );
+	}, [ domainsWithEmails, allEmailAccounts ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 	const [ view, setView ] = useState< View >( DEFAULT_EMAILS_VIEW );
@@ -120,13 +107,13 @@ function Emails() {
 
 	return (
 		<Layout>
-			{ ! isLoadingDomains && ! isLoadingMailboxes && (
+			{ ! isLoadingDomains && ! isLoadingEmailAccounts && (
 				<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
 			) }
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
-					isLoading={ isLoadingDomains || isLoadingMailboxes }
+					isLoading={ isLoadingDomains || isLoadingEmailAccounts }
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ onChangeView }

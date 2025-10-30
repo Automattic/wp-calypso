@@ -334,7 +334,7 @@ export function useActions( {
 				: [] ),
 			{
 				id: 'open-site',
-				isPrimary: true,
+				isPrimary: viewType !== 'list',
 				label: __( 'Open site' ),
 				icon: external,
 				callback: ( sites ) => {
@@ -349,7 +349,7 @@ export function useActions( {
 			},
 			{
 				id: 'admin',
-				isPrimary: true,
+				isPrimary: viewType !== 'list',
 				label: __( 'WP Admin' ),
 				icon: wordpress,
 				callback: ( sites ) => {
