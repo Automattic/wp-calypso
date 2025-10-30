@@ -1,11 +1,15 @@
+import { type DomainConnectionSetupModeValue } from '@automattic/api-core';
 import {
 	domainConnectionSetupInfoQuery,
 	domainMappingStatusQuery,
 	domainQuery,
+	updateConnectionModeMutation,
 } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -15,6 +19,7 @@ import DomainConnectionVerification from './domain-connection-verification';
 import './style.scss';
 
 export default function DomainConnection() {
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
 	const { error: queryError, error_description: queryErrorDescription } = domainRoute.useSearch();
 
@@ -34,6 +39,23 @@ export default function DomainConnection() {
 	);
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
+	// Update connection mode mutation
+	const { mutate: updateConnectionMode, isPending: isUpdatingConnectionMode } = useMutation(
+		updateConnectionModeMutation( domainName, domain.blog_id )
+	);
+
+	const onVerifyConnection = ( mode: DomainConnectionSetupModeValue ) => {
+		updateConnectionMode( mode, {
+			onError: () => {
+				createErrorNotice(
+					__( 'We couldn’t verify the connection for your domain, please try again.' ),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
+	};
 	// If the connection mode is not null, it means we are on the verification step
 	const isVerificationStep = !! domainConnectionSetupInfo.connection_mode;
 
@@ -64,6 +86,8 @@ export default function DomainConnection() {
 					domainName={ domainName }
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					onVerifyConnection={ onVerifyConnection }
+					isUpdatingConnectionMode={ isUpdatingConnectionMode }
 				/>
 			) }
 		</PageLayout>
