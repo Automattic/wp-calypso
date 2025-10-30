@@ -43,6 +43,8 @@ export default function VerificationInProgressNextSteps() {
 			header={ <SectionHeader level={ 3 } title={ __( 'What happens next' ) } /> }
 			className="verification-in-progress-next-steps"
 		>
+			{ /* TODO: We should replace with ItemList component once it's available.
+			See https://github.com/Automattic/wp-calypso/pull/106628#discussion_r2475530089 */ }
 			{ data.map( ( item ) => (
 				<ActionList.ActionItem
 					key={ item.id }
