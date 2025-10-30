@@ -27,7 +27,7 @@ function HelpCenterContent() {
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
 
-	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown() );
+	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
 
