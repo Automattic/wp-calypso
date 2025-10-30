@@ -1146,7 +1146,12 @@ export default function CancelPurchase() {
 		handleCancelPurchaseClick();
 	};
 
-	const renderCancelButton = ( propOverrides = {} ) => {
+	type RenderCancelButtonPropOverrides = {
+		disabled?: boolean;
+		isBusy?: boolean;
+		onClick?: () => void;
+	};
+	const renderCancelButton = ( propOverrides: RenderCancelButtonPropOverrides = {} ) => {
 		// Check if we need atomic revert confirmation
 		const needsAtomicRevertConfirmation = atomicTransfer?.created_at;
 
@@ -1187,7 +1192,7 @@ export default function CancelPurchase() {
 			<Button
 				className="cancel-purchase__button"
 				disabled={ isDisabled }
-				isBusy={ propOverrides?.isLoading ?? false }
+				isBusy={ propOverrides?.isBusy ?? state.isLoading ?? false }
 				onClick={
 					propOverrides?.onClick ?? shouldHandleMarketplaceSubscriptions()
 						? showMarketplaceDialog
@@ -1690,7 +1695,7 @@ export default function CancelPurchase() {
 								isDialogVisible
 								closeDialog={ closeMarketplaceSubscriptionsDialog }
 								removePlan={ handleMarketplaceDialogContinue }
-								planName={ planName }
+								planName={ planName ?? '' }
 								activeSubscriptions={ activeSubscriptions }
 								// Translators: %(plan)s is the name of the plan being cancelled
 								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {
