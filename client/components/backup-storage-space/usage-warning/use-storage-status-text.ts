@@ -41,8 +41,8 @@ const useStorageStatusText = (
 				return sprintf(
 					// translators: %(minDaysOfBackupsAllowed)d is a number of days.
 					_n(
-						'We removed your oldest backup to make space for new ones. We will continue to remove old backups as needed, keeping the last %(minDaysOfBackupsAllowed)d day.',
-						'We removed your oldest backups to make space for new ones. We will continue to remove old backups as needed, keeping the last %(minDaysOfBackupsAllowed)d days.',
+						'We removed your oldest backup to make space for new ones. We will continue to remove old backups as needed, up to the last %(minDaysOfBackupsAllowed)d day.',
+						'We removed your oldest backups to make space for new ones. We will continue to remove old backups as needed, up to the last %(minDaysOfBackupsAllowed)d days.',
 						minDaysOfBackupsAllowed
 					),
 					{ minDaysOfBackupsAllowed }
