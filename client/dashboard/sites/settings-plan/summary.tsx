@@ -24,7 +24,7 @@ export default function SettingsPlanSummary( {
 	} );
 
 	const url = useSitePlanManageURL( site, purchase );
-	if ( ! url || ( url && ! isRelativeUrl( url ) ) ) {
+	if ( ! url || ! isRelativeUrl( url ) ) {
 		return null;
 	}
 
