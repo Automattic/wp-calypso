@@ -29,7 +29,7 @@ import {
 	connectADomainDomainConnectionStepsMap,
 	connectASubdomainDomainConnectionStepsMap,
 } from './steps-map';
-import { DomainConnectionStepsMap, StepName, type StepNameValue, StepType } from './types';
+import { DomainConnectionStepsMap, StepName, type StepNameValue } from './types';
 import { getProgressStepList, isMappingVerificationSuccess, resolveStepName } from './utils';
 
 import './style.scss';
@@ -119,6 +119,9 @@ export default function DomainConnectionSetup() {
 		updateConnectionMode( currentStep.mode, {
 			onSuccess: ( data: DomainMappingStatus ) => {
 				setVerificationStatus( data );
+				if ( redesign ) {
+					return;
+				}
 				if ( setStepAfterVerify ) {
 					if ( isMappingVerificationSuccess( currentStep.mode, data ) ) {
 						setCurrentStepName( connectedSlug );
@@ -218,13 +221,13 @@ export default function DomainConnectionSetup() {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain connection setup' ) } /> }>
-			{ ( currentStep.stepType === StepType.VERIFYING ||
-				currentStep.stepType === StepType.CONNECTED ) &&
-			redesign ? (
+			{ ( domainConnectionSetupInfo.connection_mode || verificationStatus?.mode ) && redesign ? (
 				<DomainConnectionVerification
 					domainName={ domainName }
 					siteSlug={ siteSlug }
-					status={ currentStep.stepType }
+					domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					queryError={ queryError }
+					queryErrorDescription={ queryErrorDescription }
 				/>
 			) : (
 				renderLegacyLayout()

@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DomainMappingSetupInfo } from './types';
+import type { DomainMappingSetupInfo, DomainMappingStatus } from './types';
 
 export function fetchDomainMappingSetupInfo(
 	domainName: string,
@@ -9,4 +9,8 @@ export function fetchDomainMappingSetupInfo(
 	return wpcom.req.get( `/domains/${ domainName }/mapping-setup-info/${ siteId }`, {
 		redirect_uri: redirectURL,
 	} );
+}
+
+export function fetchDomainMappingStatus( domainName: string ): Promise< DomainMappingStatus > {
+	return wpcom.req.get( `/domains/${ domainName }/mapping-status` );
 }
