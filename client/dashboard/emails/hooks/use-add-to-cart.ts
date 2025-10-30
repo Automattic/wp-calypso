@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
-import { mailboxesReadyRoute } from '../../app/router/emails';
+import { emailsRoute, mailboxesReadyRoute } from '../../app/router/emails';
 import { CartActionError } from '../../shopping-cart/errors';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { getCartItems } from '../utils/get-cart-items';
@@ -51,8 +51,15 @@ export const useAddToCart = () => {
 			},
 		} ).href;
 
+		const backUrl =
+			window.location.origin +
+			router.buildLocation( {
+				to: emailsRoute.to,
+			} ).href;
+
 		const checkoutPath = addQueryArgs( '/checkout/' + site?.slug || '', {
 			redirect_to: redirectPath,
+			checkoutBackUrl: backUrl,
 		} );
 
 		await shoppingCartManagerClient

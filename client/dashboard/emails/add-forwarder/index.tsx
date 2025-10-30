@@ -20,7 +20,7 @@ import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
 import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 import { useDomains } from '../hooks/use-domains';
-import { useDomainMaxForwards } from './hooks/use-domain-max-forwards';
+import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
@@ -129,9 +129,13 @@ function AddEmailForwarder() {
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
 	const allFieldsSet = formData.localPart && formData.domain && formData.forwardingAddresses.length;
-	const isDomainMaxForwardsReached = ( forwards?.length ?? 0 ) >= maxForwards;
+
+	const isDomainMaxForwardsReached =
+		( forwards?.length ?? 0 ) >= ( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 	const willDomainMaxForwardsBeReached =
-		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length > maxForwards;
+		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length >
+		( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
+
 	const duplicateForwardAddress = formData.forwardingAddresses.find(
 		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
 	);

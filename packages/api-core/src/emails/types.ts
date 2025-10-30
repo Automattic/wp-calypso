@@ -47,4 +47,6 @@ export interface EmailAccount {
 	domains: DomainBinding[];
 	warnings: Warning[];
 	emails: EmailBox[];
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
+	can_user_add_email: boolean;
 }

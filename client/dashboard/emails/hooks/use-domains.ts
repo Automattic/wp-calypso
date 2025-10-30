@@ -1,10 +1,12 @@
 import { Domain } from '@automattic/api-core';
-import { siteDomainsQuery, sitesQuery } from '@automattic/api-queries';
+import { siteDomainsQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
+import { useAppContext } from '../../app/context';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 
 export const useDomains = (): { domains: Domain[]; isLoading: boolean } => {
-	const { data: allSites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const { queries } = useAppContext();
+	const { data: allSites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 	const sites = ( allSites ?? [] )
 		.filter( ( site ) => {
 			const product = site?.plan?.product_slug ?? null;

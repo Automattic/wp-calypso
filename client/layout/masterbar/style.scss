@@ -372,7 +372,8 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&:hover,
+	// Show submenu on hover (except when click-to-open is enabled)
+	&:not(.open-submenu-on-click):hover,
 	&.is-open,
 	&:has(+ .masterbar__item-subitems:hover) {
 		& + .masterbar__item-subitems {

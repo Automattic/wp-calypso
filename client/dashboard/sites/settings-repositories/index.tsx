@@ -161,7 +161,7 @@ function SiteRepositories() {
 	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 	const search = siteSettingsRepositoriesRoute.useSearch();
-	const showBackToDeployments = search?.from === 'deployments';
+	const showBackToDeployments = search?.back_to === 'deployments';
 
 	const handleConnectRepository = () => {
 		navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } );

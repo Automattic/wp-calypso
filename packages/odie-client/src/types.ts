@@ -265,6 +265,12 @@ export type ZendeskConversation = {
 	metadata: Metadata;
 };
 
+export type SupportInteractionDraft = {
+	bot_slug: OdieAllowedBots;
+	event_external_id: string;
+	event_source: SupportProvider;
+};
+
 export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {

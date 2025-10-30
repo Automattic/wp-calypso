@@ -6,9 +6,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import './style.scss';
 
-// Last three notices. Slices from the tail end of the list.
-const MAX_VISIBLE_NOTICES = -3;
-
 const statusIcon: Record< string, React.JSX.Element > = {
 	success: published,
 	error,
@@ -58,8 +55,7 @@ export default function Snackbars() {
 				<Icon icon={ statusIcon[ status ] } style={ { fill: 'currentcolor' } } />
 			),
 			...notice,
-		} ) )
-		.slice( MAX_VISIBLE_NOTICES );
+		} ) );
 
 	return (
 		<SnackbarList

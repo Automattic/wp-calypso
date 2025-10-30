@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
+.dashboard-domain-connection-verification {
+	&--connected {
+		&__icon {
+			color: var(--dashboard__background-color-success);
+			fill: var(--dashboard__background-color-success);
+		}
+	}
+	&__title {
+		@include body-large;
+	}
+	.summary-button.components-button .summary-button-title {
+		font-weight: 500;
+	}
+}
+
+.verification-in-progress-next-steps {
+	.action-item {
+		padding: $grid-unit-10;
+		border-bottom: none;
+	}
+	.action-item__decoration + span > span > span:last-child{
+		font-size: $font-size-small;
+	}
+}

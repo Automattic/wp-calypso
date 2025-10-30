@@ -10,7 +10,11 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
-import { recordDomainSearchStepSubmit, recordUseYourDomainButtonClick } from '../analytics';
+import {
+	recordDomainSearchStepSubmit,
+	recordUseYourDomainButtonClick,
+	recordSearchFormSubmitButtonClick,
+} from '../analytics';
 import { getCartKey, useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
 
 jest.mock( '@automattic/shopping-cart', () => ( {
@@ -24,6 +28,9 @@ jest.mock( '../analytics', () => ( {
 		type: 'test',
 	} ),
 	recordUseYourDomainButtonClick: jest.fn().mockReturnValue( {
+		type: 'test',
+	} ),
+	recordSearchFormSubmitButtonClick: jest.fn().mockReturnValue( {
 		type: 'test',
 	} ),
 } ) );
@@ -667,6 +674,29 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( recordUseYourDomainButtonClick ).toHaveBeenCalledWith(
 			'analytics-section',
 			null,
+			'flow-name'
+		);
+	} );
+
+	it( 'calls the submit button tracking when onSubmitButtonClick is invoked', () => {
+		const onSubmitButtonClick = jest.fn();
+
+		const { result } = renderHookWithProvider( () =>
+			useWPCOMDomainSearchProps( {
+				...defaultProps,
+				events: {
+					...defaultProps.events,
+					onSubmitButtonClick,
+				},
+			} )
+		);
+
+		result.current.events.onSubmitButtonClick( 'my-domain.com' );
+
+		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'my-domain.com' );
+
+		expect( recordSearchFormSubmitButtonClick ).toHaveBeenCalledWith(
+			'analytics-section',
 			'flow-name'
 		);
 	} );

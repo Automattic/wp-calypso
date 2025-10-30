@@ -8,7 +8,6 @@ import {
 	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
-	sitesQuery,
 	queryClient,
 	domainTransferRequestQuery,
 	domainWhoisQuery,
@@ -46,9 +45,9 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		queryClient.ensureQueryData( domainsQuery() );
-		queryClient.ensureQueryData( sitesQuery() );
+		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } ).lazy( () =>
@@ -115,12 +114,9 @@ export const domainOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		const [ site, mailboxes ] = await Promise.all( [
-			queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) ),
-			queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) ),
-		] );
 
-		return { domain, site, mailboxes };
+		queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
+		queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>

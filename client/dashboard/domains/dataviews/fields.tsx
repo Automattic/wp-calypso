@@ -134,57 +134,54 @@ export const useFields = ( {
 			},
 			{
 				id: 'expiry',
-				label: __( 'Expires/Renews on' ),
+				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
+				sort: ( a, b, direction ) => {
+					if ( a.expiry === null && b.expiry === null ) {
+						return 0;
+					}
+					if ( a.expiry === null ) {
+						return 1;
+					}
+
+					if ( b.expiry === null ) {
+						return -1;
+					}
+
+					const factor = direction === 'asc' ? 1 : -1;
+					return a.expiry.localeCompare( b.expiry ) * factor;
+				},
 				elements: [
-					{ value: 'next-7-days', label: __( 'Next 7 days' ) },
-					{ value: 'next-30-days', label: __( 'Next 30 days' ) },
-					{ value: 'next-90-days', label: __( 'Next 90 days' ) },
-					{ value: 'expired', label: __( 'Expired' ) },
+					{ value: '2-next-90-days', label: __( '90 days' ) },
+					{ value: '1-expired', label: __( 'Expired' ) },
 				],
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
 				getValue: ( { item }: { item: DomainSummary } ) => {
 					if ( ! item.expiry ) {
-						return '';
+						return null;
 					}
 
 					const expiryDate = new Date( item.expiry );
 					const now = new Date();
-					const diffInDays = Math.ceil(
-						( expiryDate.getTime() - now.getTime() ) / ( 1000 * 60 * 60 * 24 )
-					);
+					const diffInMs = expiryDate.getTime() - now.getTime();
+					const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
 
-					if ( diffInDays < 0 ) {
-						return 'expired';
-					} else if ( diffInDays <= 7 ) {
-						return 'next-7-days';
-					} else if ( diffInDays <= 30 ) {
-						return 'next-30-days';
+					if ( item.expired ) {
+						return '1-expired';
 					} else if ( diffInDays <= 90 ) {
-						return 'next-90-days';
+						return '2-next-90-days';
 					}
-
-					return 'later';
+					return '3-more-than-90-days';
 				},
 				render: ( { item } ) => {
-					// Site Overview does not show the Status column, so we use this column for error messages.
-					// TODO: move this inside the DomainExpiryField component?
-					if (
-						inOverview &&
-						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
-						item.domain_status.id === 'connection_error'
-					) {
-						return <Text intent={ item.domain_status.type }>{ item.domain_status.label }</Text>;
-					}
-
 					return (
 						<DomainExpiryField
+							inOverview={ inOverview ?? false }
 							domain={ item }
 							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
-							isCompact={ !! site }
 						/>
 					);
 				},

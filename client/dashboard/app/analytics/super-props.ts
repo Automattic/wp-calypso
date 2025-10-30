@@ -1,4 +1,4 @@
-import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, sitesQueryKey } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import type { User, Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
@@ -53,6 +53,12 @@ function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | 
 		return site;
 	}
 
-	const sites = queryClient.getQueryData< Site[] >( sitesQuery().queryKey );
-	return sites?.find( ( s ) => s.slug === siteSlug );
+	const sitesQueries = queryClient.getQueriesData< Site[] >( { queryKey: sitesQueryKey } );
+	const sitesBySlug = new Map(
+		sitesQueries
+			.map( ( [ , sites ] ) => ( sites || [] ).map( ( site ) => [ site.slug, site ] ) )
+			.flat() as [ string, Site ][]
+	);
+
+	return sitesBySlug.get( siteSlug );
 }

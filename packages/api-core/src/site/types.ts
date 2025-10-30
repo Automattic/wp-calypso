@@ -36,6 +36,7 @@ export interface SiteOptions {
 	woocommerce_is_active?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
+	import_engine?: string | null;
 }
 
 export interface Site {

@@ -61,6 +61,9 @@ export const getRouter = ( config: AppConfig ) => {
 	return new Router( {
 		routeTree,
 		basepath: config.basePath,
+		context: {
+			config,
+		},
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
 		defaultPreload: 'intent',

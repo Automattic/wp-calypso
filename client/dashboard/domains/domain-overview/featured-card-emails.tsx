@@ -1,6 +1,6 @@
 import { Domain } from '@automattic/api-core';
 import { mailboxesQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -48,14 +48,17 @@ interface Props {
 }
 
 export default function FeaturedCardEmails( { domain }: Props ) {
-	const { data: mailboxes } = useSuspenseQuery( mailboxesQuery( domain.blog_id ) );
+	const router = useRouter();
+
+	const { data: mailboxes } = useQuery( mailboxesQuery( domain.blog_id ) );
+	if ( mailboxes === undefined ) {
+		return <OverviewCard icon={ <Icon icon={ envelope } /> } title={ __( 'Emails' ) } isLoading />;
+	}
 
 	const email = mailboxes.length
 		? `${ mailboxes[ 0 ].mailbox }@${ domain.domain }`
 		: // translators: %s is the mailbox name: youremail@example.com
 		  sprintf( __( 'youremail@%s' ), domain.domain );
-
-	const router = useRouter();
 
 	return (
 		<OverviewCard
