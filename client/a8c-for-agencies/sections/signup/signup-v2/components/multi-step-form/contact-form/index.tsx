@@ -84,21 +84,26 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				return;
 			}
 
-			const [ duplicateAgencyName, duplicateURL ] = await Promise.all( [
-				isAgencyNameExists( formData.agencyName ?? '' ),
-				isAgencyUrlExists( formData.agencyUrl ?? '' ),
-			] );
+			try {
+				const [ duplicateAgencyName, duplicateURL ] = await Promise.all( [
+					isAgencyNameExists( formData.agencyName ?? '' ),
+					isAgencyUrlExists( formData.agencyUrl ?? '' ),
+				] );
 
-			setDuplicateAgencyFields( {
-				agencyName: duplicateAgencyName,
-				agencyUrl: duplicateURL,
-			} );
+				setDuplicateAgencyFields( {
+					agencyName: duplicateAgencyName,
+					agencyUrl: duplicateURL,
+				} );
 
-			if ( ! duplicateAgencyName && ! duplicateURL ) {
+				if ( ! duplicateAgencyName && ! duplicateURL ) {
+					onContinue( formData );
+				}
+			} catch ( error ) {
+				// In case the verification fails, we just let the user continue with the form submission.
 				onContinue( formData );
+			} finally {
+				setIsProceeding( false );
 			}
-
-			setIsProceeding( false );
 		},
 		[ formData, onContinue, validate, setDuplicateAgencyFields ]
 	);
@@ -299,7 +304,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
 								} }
 							>
-								{ translate( 'Continue for free' ) }
+								{ translate( 'Create new agency account' ) }
 							</Button>
 							<Button
 								variant="secondary"
