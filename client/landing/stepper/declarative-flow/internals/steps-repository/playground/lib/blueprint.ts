@@ -1,5 +1,11 @@
-import { type Blueprint } from '@wp-playground/client';
-import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
+import { StreamedFile } from '@php-wasm/stream-compression';
+import {
+	BlueprintBundle,
+	type Blueprint,
+	resolveRemoteBlueprint,
+	getBlueprintDeclaration,
+	isBlueprintBundle,
+} from '@wp-playground/client';
 
 const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';
 const FALLBACK_PHP_VERSION = '8.3';
@@ -134,29 +140,19 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 
 	return 'unknown';
 }
-
-async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
-	const url = new URL( window.location.href );
-	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
-
-	// If a predefined blueprint is specified and exists, use it
-	if ( predefinedBlueprintName ) {
-		const blueprint = PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
-		return {
-			...blueprint,
-			preferredVersions: {
-				...blueprint.preferredVersions,
-				php: getPHPVersion( recommendedPhpVersion ),
-			},
-		};
-	}
-
-	const blueprint = await resolveBlueprintFromURL( url );
-
-	// Create a deeply merged blueprint where custom properties override defaults
-	// but nested objects are merged properly
-	// Some properties are always set to an ensured value, like login: true and networking: true
-	// in the end, to ensure any new properties that might be added in the future are handled nicely
+/**
+ * Create a deeply merged blueprint where custom properties override defaults
+ * but nested objects are merged properly.
+ * Some properties are always set to an ensured value, like login: true and networking: true
+ * in the end, to ensure any new properties that might be added in the future are handled nicely.
+ * @param blueprint - The blueprint to merge with defaults
+ * @param recommendedPhpVersion - The recommended PHP version
+ * @returns The merged blueprint
+ */
+function deeplyMergeBlueprintWithDefaults(
+	blueprint: Blueprint,
+	recommendedPhpVersion: string
+): Blueprint {
 	return {
 		...DEFAULT_BLUEPRINT,
 		...blueprint,
@@ -177,6 +173,64 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 		},
 		login: true, // ensure its always true, even though PG code already enforces this
 	};
+}
+
+async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint | BlueprintBundle {
+	const url = new URL( window.location.href );
+	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
+
+	// If a predefined blueprint is specified and exists, use it
+	if ( predefinedBlueprintName ) {
+		const blueprint = PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
+		return {
+			...blueprint,
+			preferredVersions: {
+				...blueprint.preferredVersions,
+				php: getPHPVersion( recommendedPhpVersion ),
+			},
+		};
+	}
+
+	let blueprint: Blueprint | BlueprintBundle = {};
+	if ( url.searchParams.has( 'blueprint-url' ) ) {
+		blueprint = await resolveRemoteBlueprint( url.searchParams.get( 'blueprint-url' )! );
+	}
+
+	if ( isBlueprintBundle( blueprint ) ) {
+		const blueprintDeclaration = await getBlueprintDeclaration( blueprint );
+		const mergedBlueprint = deeplyMergeBlueprintWithDefaults(
+			blueprintDeclaration,
+			recommendedPhpVersion
+		);
+		/**
+		 * Blueprint Bundles don't support writing to the filesystem, so we need to modify the read method
+		 * to return a modified blueprint.json file that includes the merged blueprint.
+		 *
+		 * This is a workaround and should be removed once Playground starts allowing
+		 * Blueprint Bundles to be modify the blueprint.json file.
+		 */
+		const originalRead = blueprint.read.bind( blueprint );
+		blueprint.read = async ( path: string ) => {
+			const normalizedPath = path.startsWith( '/' ) ? path.slice( 1 ) : path;
+			if ( normalizedPath === 'blueprint.json' ) {
+				const jsonString = JSON.stringify( mergedBlueprint, null, 2 );
+				const bytes = new TextEncoder().encode( jsonString );
+				const stream = new ReadableStream< Uint8Array >( {
+					start( controller ) {
+						controller.enqueue( bytes );
+						controller.close();
+					},
+				} );
+				return new StreamedFile( stream, 'blueprint.json', {
+					type: 'application/json',
+					filesize: bytes.length,
+				} );
+			}
+			return originalRead( path );
+		};
+		return blueprint;
+	}
+	return deeplyMergeBlueprintWithDefaults( blueprint, recommendedPhpVersion );
 }
 
 export async function getBlueprint(

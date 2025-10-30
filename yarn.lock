@@ -7373,6 +7373,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@php-wasm/node-polyfills@npm:1.2.3":
+  version: 1.2.3
+  resolution: "@php-wasm/node-polyfills@npm:1.2.3"
+  checksum: 54a5a2ac04066c2fac03bff443cdef597617d9cb777556d519ea98c54108b742ecb49e174981d2fc6c56eb1a73dc6d65acc7206779e3ad336d85d61cd7da181b
+  languageName: node
+  linkType: hard
+
 "@php-wasm/node@npm:1.1.0":
   version: 1.1.0
   resolution: "@php-wasm/node@npm:1.1.0"
@@ -7420,6 +7427,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@php-wasm/stream-compression@npm:^1.1.0":
+  version: 1.2.3
+  resolution: "@php-wasm/stream-compression@npm:1.2.3"
+  dependencies:
+    "@php-wasm/node-polyfills": "npm:1.2.3"
+    "@php-wasm/util": "npm:1.2.3"
+  checksum: 233d9353142c35ee284a83e1651920f13a7025ab0a2f4c0730d7824b1212fc0588b880993935f15f48a1788bd8471710e40878e10d5d44f445c033f49a893b35
+  languageName: node
+  linkType: hard
+
 "@php-wasm/universal@npm:1.1.0":
   version: 1.1.0
   resolution: "@php-wasm/universal@npm:1.1.0"
@@ -7439,6 +7456,13 @@ __metadata:
   version: 1.1.0
   resolution: "@php-wasm/util@npm:1.1.0"
   checksum: b0419f97d9660dd2c5bb56b0d4a51d6cc8730c0dd165bcaca019ddb7f5ff8e1d774c9d3568bb4537135ec5e6443bea4f233f003b3495e2bac60e39033a1b67b0
+  languageName: node
+  linkType: hard
+
+"@php-wasm/util@npm:1.2.3":
+  version: 1.2.3
+  resolution: "@php-wasm/util@npm:1.2.3"
+  checksum: f3e4ce1fee56b9957dda6d2ac48185ac895036d95ba3552b6b6c51f4b114e23065649327ed5de24428cbc4eb1ce53e875f0e3306ce27d89b6866ebeec754962c
   languageName: node
   linkType: hard
 
@@ -39677,6 +39701,7 @@ __metadata:
     "@babel/runtime": "npm:^7.27.1"
     "@gravatar-com/quick-editor": "npm:^0.8.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
+    "@php-wasm/stream-compression": "npm:^1.1.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/react": "npm:^8.6.14"
