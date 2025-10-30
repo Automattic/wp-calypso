@@ -101,7 +101,7 @@ export function Messages( {
 		previousMessagesRef.current = visibleMessages;
 	}, [ visibleMessages ] );
 
-	if ( visibleMessages.length === 0 ) {
+	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
 			return (
 				<div
