@@ -3771,14 +3771,20 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 };
 
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
-	// Inherits the free plan
+	// Base flexible plan on the free experience but with its own catalog entry
 	...PLANS_LIST[ PLAN_FREE ],
-	group: GROUP_WPCOM,
 	type: TYPE_FLEXIBLE,
-	getTitle: () => i18n.translate( 'WordPress Free' ),
-	getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
+	...getMonthlyTimeframe(),
+	getTitle: () => i18n.translate( 'WordPress.com Flex' ),
+	getProductId: () => 1200,
+	getStoreSlug: () => PLAN_WPCOM_FLEXIBLE,
+	getPathSlug: () => 'flex-hosting-plan-monthly',
+	getPlanTagline: () =>
+		i18n.translate( 'Only pay for the hosting tools you need, when you need them.' ),
 	getDescription: () =>
-		i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
+		i18n.translate(
+			'Start with flexible WordPress.com hosting and add extras whenever you are ready.'
+		),
 	getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
 };
 
