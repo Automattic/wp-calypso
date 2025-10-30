@@ -10,7 +10,7 @@
   --color-destructive: oklch(0.492 0.2095 28.09);
   --color-muted: color-mix(in srgb, var(--color-foreground) 10%, var(--color-background));
   --color-muted-foreground: color-mix(in srgb, var(--color-background) 40%, var(--color-foreground));
-  --color-success-background: rgba(74, 184, 102, 0.04);
+  --color-success-background: #F1F7F1;
   --color-success: var(--color-foreground);
   --color-warning-background: #F8F3E7;
   --color-warning: var(--color-foreground);
