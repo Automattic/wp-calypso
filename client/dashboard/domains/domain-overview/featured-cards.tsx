@@ -2,18 +2,28 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { domainRoute } from '../../app/router/domains';
 import FeaturedCardEmails from './featured-card-emails';
 import FeaturedCardPrivacy from './featured-card-privacy';
 import FeaturedCardRenew from './featured-card-renew';
 import FeaturedCardSite from './featured-card-site';
 
+const SPACING = {
+	DEFAULT: 6,
+	SMALL: 4,
+};
+
 export default function FeaturedCards() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const columns = isSmallViewport ? 1 : 2;
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+
 	return (
-		<Grid columns={ 2 }>
+		<Grid columns={ columns } gap={ spacing }>
 			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
 				<FeaturedCardRenew domain={ domain } />
 			) }
