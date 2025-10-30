@@ -1,5 +1,11 @@
 import SummaryButton from '@automattic/components/src/summary-button';
 import { createLink } from '@tanstack/react-router';
+import { useViewportMatch } from '@wordpress/compose';
+import { forwardRef } from '@wordpress/element';
+import clsx from 'clsx';
+import type { SummaryButtonProps } from '@automattic/components/src/summary-button/types';
+
+import './style.scss';
 
 /**
  * This component is a wrapper of `SummaryButton` component and acts as a
@@ -8,4 +14,21 @@ import { createLink } from '@tanstack/react-router';
  * It's separate from `SummaryButton` to allow for better separation of concerns, as
  * `SummaryButton` is a pure UI component.
  */
-export default createLink( SummaryButton );
+export const RouterLinkSummaryButton = forwardRef<
+	HTMLAnchorElement | HTMLButtonElement,
+	SummaryButtonProps
+>( function RouterLinkSummaryButton( props, ref ) {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+
+	return (
+		<SummaryButton
+			{ ...props }
+			ref={ ref }
+			className={ clsx( 'router-link-summary-button', {
+				'is-small-viewport': isSmallViewport,
+			} ) }
+		/>
+	);
+} );
+
+export default createLink( RouterLinkSummaryButton );
