@@ -99,43 +99,52 @@ function AdminHelpCenterContent() {
 
 	button.onclick = hasHelpCenterMenuPanel ? trackIconInteraction : handleToggleHelpCenter;
 
-	const handleMenuClick = ( destination, isExternal = false ) => {
-		recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
-			section: helpCenterData.sectionName || 'wp-admin',
-			destination,
-		} );
-
-		if ( isExternal ) {
-			return window.open( destination, '_blank', 'noopener,noreferrer' );
-		}
-
-		if ( isShown ) {
-			if ( destination !== helpCenterPage ) {
-				setNavigateToRoute( destination );
-				setHelpCenterPage( destination );
-			} else {
-				recordTracksEvent( `calypso_inlinehelp_close`, {
-					force_site_id: true,
-					location: 'help-center',
-					section: helpCenterData.sectionName || 'wp-admin',
-				} );
-				setShowHelpCenter( false );
-				setHelpCenterPage( null );
-			}
-		} else {
-			setNavigateToRoute( destination );
-			setHelpCenterPage( destination );
-			setShowHelpCenter( true );
-
-			recordTracksEvent( `calypso_inlinehelp_show`, {
-				force_site_id: true,
-				location: 'help-center',
+	const handleMenuClick = useCallback(
+		( destination, isExternal = false ) => {
+			recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
 				section: helpCenterData.sectionName || 'wp-admin',
 				destination,
 			} );
-		}
-	};
 
+			if ( isExternal ) {
+				return window.open( destination, '_blank', 'noopener,noreferrer' );
+			}
+
+			if ( isShown ) {
+				if ( destination !== helpCenterPage ) {
+					setNavigateToRoute( destination );
+					setHelpCenterPage( destination );
+				} else {
+					recordTracksEvent( `calypso_inlinehelp_close`, {
+						force_site_id: true,
+						location: 'help-center',
+						section: helpCenterData.sectionName || 'wp-admin',
+					} );
+					setShowHelpCenter( false );
+					setHelpCenterPage( null );
+				}
+			} else {
+				setNavigateToRoute( destination );
+				setHelpCenterPage( destination );
+				setShowHelpCenter( true );
+
+				recordTracksEvent( `calypso_inlinehelp_show`, {
+					force_site_id: true,
+					location: 'help-center',
+					section: helpCenterData.sectionName || 'wp-admin',
+					destination,
+				} );
+			}
+		},
+		[
+			isShown,
+			setNavigateToRoute,
+			setHelpCenterPage,
+			setShowHelpCenter,
+			helpCenterData.sectionName,
+			helpCenterPage,
+		]
+	);
 	if ( chatSupportButton ) {
 		chatSupportButton.onclick = () => {
 			handleMenuClick( '/odie' );
