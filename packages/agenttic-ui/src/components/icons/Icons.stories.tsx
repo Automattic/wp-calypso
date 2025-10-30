@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { AltIcon } from './AltIcon';
 import { ArrowUpIcon } from './ArrowUpIcon';
 import { BigSkyIcon } from './BigSkyIcon';
+import { BlurIcon } from './BlurIcon';
 import { CheckIcon } from './CheckIcon';
 import { ChevronDownIcon } from './ChevronDownIcon';
 import { ChevronUpIcon } from './ChevronUpIcon';
@@ -8,6 +10,7 @@ import { CopyIcon } from './CopyIcon';
 import { ImageIcon } from './ImageIcon';
 import { LayoutIcon } from './LayoutIcon';
 import { PageIcon } from './PageIcon';
+import { RegenerateIcon } from './RegenerateIcon';
 import { StopIcon } from './StopIcon';
 import { StylesIcon } from './StylesIcon';
 import { ThumbsDownIcon } from './ThumbsDownIcon';
@@ -44,6 +47,15 @@ const meta = {
 export default meta;
 type Story = StoryObj< typeof meta >;
 
+export const Alt: Story = {
+	render: ( args ) => (
+		<AltIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
 export const ArrowUp: Story = {
 	render: ( args ) => (
 		<ArrowUpIcon size={ args.size } className={ args.className } />
@@ -56,6 +68,15 @@ export const ArrowUp: Story = {
 export const BigSky: Story = {
 	render: ( args ) => (
 		<BigSkyIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Blur: Story = {
+	render: ( args ) => (
+		<BlurIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,
@@ -119,6 +140,15 @@ export const Layout: Story = {
 export const Page: Story = {
 	render: ( args ) => (
 		<PageIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Regenerate: Story = {
+	render: ( args ) => (
+		<RegenerateIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,

@@ -31,6 +31,16 @@ const FloatingDemo: React.FC = () => {
 
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
+	const toolProvider = useMemo(
+		() =>
+			getClientTools( ( message ) => {
+				if ( addMessageRef.current ) {
+					addMessageRef.current( message );
+				}
+			} ),
+		[]
+	);
+
 	const {
 		messages,
 		isProcessing,
@@ -47,11 +57,7 @@ const FloatingDemo: React.FC = () => {
 		agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 		sessionId: 'dev-session-floating',
 		contextProvider,
-		toolProvider: getClientTools( ( message ) => {
-			if ( addMessageRef.current ) {
-				addMessageRef.current( message );
-			}
-		} ),
+		toolProvider,
 	} );
 
 	useEffect( () => {

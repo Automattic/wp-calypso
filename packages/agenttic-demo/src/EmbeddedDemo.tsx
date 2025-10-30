@@ -30,6 +30,16 @@ const EmbeddedDemo: React.FC = () => {
 
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
+	const toolProvider = useMemo(
+		() =>
+			getClientTools( ( message ) => {
+				if ( addMessageRef.current ) {
+					addMessageRef.current( message );
+				}
+			} ),
+		[]
+	);
+
 	const {
 		messages,
 		isProcessing,
@@ -46,11 +56,7 @@ const EmbeddedDemo: React.FC = () => {
 		agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 		sessionId: 'dev-session-embedded',
 		contextProvider,
-		toolProvider: getClientTools( ( message ) => {
-			if ( addMessageRef.current ) {
-				addMessageRef.current( message );
-			}
-		} ),
+		toolProvider,
 		enableStreaming: true,
 	} );
 

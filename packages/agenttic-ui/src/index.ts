@@ -56,6 +56,9 @@ export { ArrowUpIcon } from './components/icons/ArrowUpIcon';
 export { ChevronUpIcon } from './components/icons/ChevronUpIcon';
 export { ZoomIcon } from './components/icons/ZoomIcon';
 export { ZoomIconFilled } from './components/icons/ZoomIconFilled';
+export { RegenerateIcon } from './components/icons/RegenerateIcon';
+export { AltIcon } from './components/icons/AltIcon';
+export { BlurIcon } from './components/icons/BlurIcon';
 
 // Types
 export type * from './types';
@@ -67,7 +70,10 @@ export { loadAgentticTranslations } from './utils/translation-loader';
 
 // Message actions utilities
 export { createFeedbackActions } from './message-actions/utils';
-export type { FeedbackActionsConfig, FeedbackActionsManager } from './message-actions/utils';
+export type {
+	FeedbackActionsConfig,
+	FeedbackActionsManager,
+} from './message-actions/utils';
 
 // Markdown extensions - Chart components
 export { BarChart, LineChart, ChartBlock } from './markdown-extensions/charts';
