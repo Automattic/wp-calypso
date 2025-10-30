@@ -1,5 +1,5 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
@@ -64,7 +64,7 @@ export default function SiteRedirectForm( {
 		fields: [ 'redirect' ],
 	};
 
-	const isFormValid = isItemValid( formData, fields, form );
+	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
 	const isUnchanged = disableWhenUnchanged && formData.redirect === initialValue;
 	const isDisabled = isSubmitting || ! isFormValid || isUnchanged;
 

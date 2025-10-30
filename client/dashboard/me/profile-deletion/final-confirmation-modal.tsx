@@ -4,7 +4,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
+import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { ButtonStack } from '../../components/button-stack';
@@ -55,7 +55,8 @@ export default function FinalConfirmationModal( {
 		fields: [ 'confirmText' ],
 	};
 
-	const isConfirmDisabled = ! isItemValid( formData, fields, form ) || isDeleting;
+	const { isValid } = useFormValidity( formData, fields, form );
+	const isConfirmDisabled = ! isValid || isDeleting;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();

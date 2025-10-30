@@ -3,7 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ODIE_DEFAULT_BOT_SLUG } from '../constants';
+import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '../constants';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
@@ -33,7 +33,7 @@ export const emptyChat: Chat = {
 export const OdieAssistantContext = createContext< OdieAssistantContextInterface >( {
 	addMessage: noop,
 	botName: 'Wapuu',
-	botNameSlug: ODIE_DEFAULT_BOT_SLUG,
+	newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
@@ -65,7 +65,7 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
  */
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
-	defaultBotNameSlug,
+	newInteractionsBotSlug,
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
@@ -79,21 +79,21 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	isChatRestricted = false,
 	children,
 } ) => {
-	const { botNameSlug, isMinimized, isChatLoaded } = useSelect(
+	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
 		( select ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
 			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? store.getOdieBotNameSlug()
-				: defaultBotNameSlug;
+				? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+				: newInteractionsBotSlug;
 
 			return {
-				botNameSlug: odieBotNameSlug as OdieAllowedBots,
+				dynamicNewInteractionsBotSlug: odieBotNameSlug,
 				isMinimized: store.getIsMinimized(),
 				isChatLoaded: store.getIsChatLoaded(),
 			};
 		},
-		[ defaultBotNameSlug ]
+		[ newInteractionsBotSlug ]
 	);
 
 	const navigate = useNavigate();
@@ -127,10 +127,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 			recordTracksEvent( `calypso_odie_${ eventName }`, {
 				...properties,
 				chat_id: mainChatState?.odieId,
-				bot_name_slug: botNameSlug,
+				bot_name_slug: newInteractionsBotSlug,
 			} );
 		},
-		[ botNameSlug, mainChatState ]
+		[ newInteractionsBotSlug, mainChatState ]
 	);
 
 	const clearChat = useCallback( () => {
@@ -188,7 +188,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 			value={ {
 				addMessage,
 				botName,
-				botNameSlug,
+				newInteractionsBotSlug: dynamicNewInteractionsBotSlug,
 				chat: mainChatState,
 				setChat: setMainChatState,
 				clearChat,

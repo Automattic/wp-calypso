@@ -7,6 +7,31 @@ import { useCreateZendeskConversation } from './use-create-zendesk-conversation'
 import type { Message } from '../types';
 
 /**
+ * Send a message to the Zendesk conversation once.
+ */
+export const useSendZendeskMessageOnce = () => {
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
+
+	const { chat } = useOdieAssistantContext();
+	const conversationId = currentConversationId || chat.conversationId;
+
+	return ( message: Message ) => {
+		if ( ! conversationId ) {
+			return;
+		}
+
+		const messageToSend = {
+			type: 'text',
+			text: message.content as string,
+			...( message.payload && { payload: message.payload } ),
+			...( message.metadata && { metadata: message.metadata } ),
+		};
+
+		Smooch.sendMessage( messageToSend, conversationId );
+	};
+};
+/**
  * Send a message to the Zendesk conversation.
  */
 export const useSendZendeskMessage = ( signal: AbortSignal ) => {

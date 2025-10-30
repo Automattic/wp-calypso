@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
+import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import type { AppConfig, MeSupports } from '../../app/context';
 
@@ -11,7 +12,7 @@ const MeMenu = () => {
 	const { supports } = useAppContext();
 
 	return (
-		<ResponsiveMenu>
+		<ResponsiveMenu prefix={ <MenuDivider /> }>
 			<ResponsiveMenu.Item to="/me/profile">{ __( 'Profile' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/preferences">{ __( 'Preferences' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/billing">{ __( 'Billing' ) }</ResponsiveMenu.Item>

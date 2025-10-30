@@ -9,7 +9,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
@@ -147,8 +147,9 @@ function AddEmailForwarder() {
 		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
 	);
 
+	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
 	const isValid =
-		isItemValid( formData, fields, form ) &&
+		isFormValid &&
 		( isUntokenizedInputValidEmail || untokenizedInput.trim() === '' ) &&
 		! isDomainMaxForwardsReached &&
 		! willDomainMaxForwardsBeReached &&

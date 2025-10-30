@@ -49,10 +49,15 @@ export const recordUseYourDomainButtonClick = (
 		} )
 	);
 
-export const recordSearchFormSubmitButtonClick = ( section: string, flowName: string ) =>
+export const recordSearchFormSubmitButtonClick = (
+	query: string,
+	section: string,
+	flowName: string
+) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Search domains" Button' ),
 		recordTracksEvent( 'calypso_domain_search_submit_button_click', {
+			search_query: query,
 			section,
 			flow_name: flowName,
 		} )
