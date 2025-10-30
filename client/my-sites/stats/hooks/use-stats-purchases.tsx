@@ -10,6 +10,8 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
+	PRODUCT_A4A_JETPACK_STATS_YEARLY,
+	PRODUCT_A4A_JETPACK_STATS_MONTHLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import moment from 'moment';
@@ -80,6 +82,8 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 		PRODUCT_JETPACK_STATS_MONTHLY,
 		PRODUCT_JETPACK_STATS_YEARLY,
 		PRODUCT_JETPACK_STATS_BI_YEARLY,
+		PRODUCT_A4A_JETPACK_STATS_YEARLY,
+		PRODUCT_A4A_JETPACK_STATS_MONTHLY,
 	] );
 };
 
