@@ -72,7 +72,7 @@ export default function LicenseDetails( {
 		return '';
 	} )();
 	const subscriptionIntervalLabel = ( () => {
-		if ( ! shouldShowSubscription ) {
+		if ( ! shouldShowSubscription || ! subscription.isAutoRenewEnabled ) {
 			return '';
 		}
 
