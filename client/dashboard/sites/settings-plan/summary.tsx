@@ -1,4 +1,4 @@
-import { siteCurrentPlanQuery, sitePurchaseQuery } from '@automattic/api-queries';
+import { siteCurrentPlanQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -18,7 +18,8 @@ export default function SettingsPlanSummary( {
 } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...sitePurchaseQuery( site.ID, parseInt( plan?.id ?? '' ) ),
+		...sitePurchasesQuery( site.ID ),
+		select: ( data ) => data.find( ( purchase ) => purchase.ID === plan?.id ),
 		enabled: !! plan?.id,
 	} );
 
