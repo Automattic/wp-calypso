@@ -223,7 +223,7 @@ export const useSteps = ( {
 	};
 
 	const handleUsernameChange = ( username: string ) => {
-		setFormState( ( prev ) => ( { ...prev, username } ) );
+		setFormState( ( prev ) => ( { ...prev, username, sshPublicKey: '' } ) );
 	};
 
 	const handlePasswordChange = ( password: string ) => {
