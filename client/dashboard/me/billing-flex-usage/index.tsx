@@ -1,5 +1,6 @@
-import { Card, CardBody, CardHeader, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import SegmentedBar, { type SegmentedBarSegment } from '../../components/segmented-bar';
 import { useFlexUsageCosts } from './use-flex-usage-costs';
