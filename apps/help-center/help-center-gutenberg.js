@@ -57,7 +57,7 @@ function HelpCenterContent() {
 
 	const handleMenuClick = ( destination, isExternal = false ) => {
 		recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
-			section: helpCenterData.sectionName || 'wp-admin',
+			section: helpCenterData.sectionName || 'gutenberg',
 			destination,
 		} );
 
