@@ -1,4 +1,4 @@
-import { Domain, DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
+import { EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
 	domainsQuery,
