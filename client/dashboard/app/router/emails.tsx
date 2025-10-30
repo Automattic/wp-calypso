@@ -184,9 +184,8 @@ export const setUpMailboxRoute = createRoute( {
 
 		const unusedMailboxesCount = existingMailboxes?.some(
 			( mailbox ) =>
-				mailbox.warnings.some(
-					( w ) => w.warning_slug === 'unused_mailboxes' && w.warning_type === 'notice'
-				) && mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
+				mailbox.warnings.some( ( w ) => w.warning_slug === 'unused_mailboxes' ) &&
+				mailbox.maximum_mailboxes - ( mailbox.emails.length || 0 )
 		);
 
 		const hasUnusedMailbox = !! unusedMailboxesCount;
