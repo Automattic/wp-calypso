@@ -2,7 +2,12 @@ import { addEmailForwarderMutation } from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, FormTokenField } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	FormTokenField,
+	Spinner,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -219,6 +224,22 @@ function AddEmailForwarder() {
 			}
 		);
 	};
+
+	if ( isLoadingDomains ) {
+		return (
+			<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+				<Spinner
+					style={ {
+						alignSelf: 'center',
+						width: 24,
+						height: 24,
+						padding: '44px 4px 4px',
+						margin: 0,
+					} }
+				/>
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
