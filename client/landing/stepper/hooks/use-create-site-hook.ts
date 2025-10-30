@@ -30,6 +30,7 @@ type Params = {
 	siteIntent?: string;
 	siteGoals?: SiteGoal[];
 	planCartItems?: MinimalRequestCartProduct[] | null;
+	blueprint?: string | null;
 };
 
 async function fillCart(
