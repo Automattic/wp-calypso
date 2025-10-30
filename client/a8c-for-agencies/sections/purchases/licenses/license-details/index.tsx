@@ -57,7 +57,7 @@ export default function LicenseDetails( {
 		if ( subscription?.status === 'active' ) {
 			return subscription.isAutoRenewEnabled
 				? translate( 'Renews on:' )
-				: translate( 'Expires on:' );
+				: translate( 'Cancellation requested | Expires on:' );
 		}
 
 		return translate( 'Expired on:' );
