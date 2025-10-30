@@ -158,16 +158,16 @@
 
 .migration-site-ssh__step-add-server-address-note {
 	margin: 0.5rem 0 1rem 0;
-	color: var(--studio-gray-40);
-	font-size: 0.875rem;
+	color: var(--studio-gray-50);
+	font-size: 0.75rem;
 }
 
 .migration-site-ssh__continue-button {
 	margin-left: 2.5rem;
 	button {
 		width: 100%;
-		height: 48px;
-		font-size: 16px;
+		font-size: 1rem;
+		padding: 1.5rem;
 	}
 }
 
@@ -187,4 +187,77 @@
 		font-weight: 600;
 		margin-bottom: 0.5rem;
 	}
+
+	&-key-container {
+		position: relative;
+	}
+
+	&-textarea {
+		width: 100%;
+		padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+		font-size: 0.75rem;
+		line-height: 1.5;
+		color: var(--color-neutral-70, #1d2327);
+		background-color: var(--studio-gray-0, #f0f0f0);
+		border: 1px solid var(--color-neutral-5, #dcdcde);
+		border-radius: 4px;
+		resize: none;
+		outline: none;
+		box-sizing: border-box;
+		word-break: break-all;
+	}
+
+	&-username-container {
+		position: relative;
+	}
+
+	&-username-field {
+		input.is-disabled {
+			padding-right: 2.5rem;
+			background-color: var(--studio-gray-0, #f0f0f0);
+			border: 1px solid var(--color-neutral-5, #dcdcde) !important;
+			border-color: var(--color-neutral-5, #dcdcde) !important;
+			color: var(--color-neutral-70, #1d2327);
+			cursor: default;
+		}
+	}
+
+	&-edit-button,
+	&-copy-button {
+		position: absolute;
+		right: 0.5rem;
+		padding: 0.25rem;
+		background: transparent;
+		border: none;
+		box-shadow: none;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background: transparent;
+			border: none;
+			box-shadow: none;
+		}
+	}
+
+	&-edit-button {
+		bottom: 0.1875rem;
+		right: 0.375rem;
+		min-width: auto;
+	}
+
+	&-copy-button {
+		top: 0.5rem;
+	}
+
+	&-help-text {
+		margin-top: 0.25rem;
+		font-size: 0.75rem;
+		color: var(--color-neutral-50, #646970);
+		line-height: 1.5;
+	}
+}
+
+.site-migration-ssh__step-share-ssh-auth-method {
+	margin-bottom: 1rem;
 }
