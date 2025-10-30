@@ -55,43 +55,45 @@ function HelpCenterContent() {
 		setShowHelpCenter( ! isShown );
 	}, [ setShowHelpCenter, isShown, canvasMode, trackIconInteraction ] );
 
-	const handleMenuClick = ( destination, isExternal = false ) => {
-		recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
-			section: helpCenterData.sectionName || 'gutenberg',
-			destination,
-		} );
+	const handleMenuClick = useCallback(
+		( destination, isExternal = false ) => {
+			recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
+				section: helpCenterData.sectionName || 'gutenberg',
+				destination,
+			} );
 
-		if ( isExternal ) {
-			return window.open( destination, '_blank', 'noopener,noreferrer' );
-		}
+			if ( isExternal ) {
+				return window.open( destination, '_blank', 'noopener,noreferrer' );
+			}
 
-		if ( isShown ) {
-			if ( destination !== helpCenterPage ) {
+			if ( isShown ) {
+				if ( destination !== helpCenterPage ) {
+					setNavigateToRoute( destination );
+					setHelpCenterPage( destination );
+				} else {
+					recordTracksEvent( `calypso_inlinehelp_close`, {
+						force_site_id: true,
+						location: 'help-center',
+						section: helpCenterData.sectionName || 'wp-admin',
+					} );
+					setShowHelpCenter( false );
+					setHelpCenterPage( null );
+				}
+			} else {
 				setNavigateToRoute( destination );
 				setHelpCenterPage( destination );
-			} else {
-				recordTracksEvent( `calypso_inlinehelp_close`, {
+				setShowHelpCenter( true );
+
+				recordTracksEvent( `calypso_inlinehelp_show`, {
 					force_site_id: true,
 					location: 'help-center',
 					section: helpCenterData.sectionName || 'wp-admin',
+					destination,
 				} );
-				setShowHelpCenter( false );
-				setHelpCenterPage( null );
 			}
-		} else {
-			setNavigateToRoute( destination );
-			setHelpCenterPage( destination );
-			setShowHelpCenter( true );
-
-			recordTracksEvent( `calypso_inlinehelp_show`, {
-				force_site_id: true,
-				location: 'help-center',
-				section: helpCenterData.sectionName || 'wp-admin',
-				destination,
-			} );
-		}
-	};
-
+		},
+		[ isShown, helpCenterPage, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter ]
+	);
 	useEffect( () => {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );
 		return () => clearTimeout( timeout );
