@@ -41,7 +41,7 @@ export default function DomainConnection() {
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
 	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue | null >(
-		domainConnectionSetupInfo.connection_mode
+		domainMappingStatus.mode
 	);
 
 	// Update connection mode mutation
@@ -64,6 +64,7 @@ export default function DomainConnection() {
 			},
 		} );
 	};
+
 	// If the connection mode is not null, it means we are on the verification step
 	const isVerificationStep = !! connectionMode;
 
