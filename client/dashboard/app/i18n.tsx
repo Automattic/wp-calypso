@@ -134,7 +134,9 @@ async function switchWebpackCSS( isRTL: boolean ) {
 // slug in the route path.
 function useLocaleSlug() {
 	const { user } = useAuth();
-	return user.locale_variant || user.language || 'en';
+	type BootstrappedLocaleFields = { localeSlug?: string; localeVariant?: string };
+	const u = user as typeof user & BootstrappedLocaleFields;
+	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
 }
 
 export function I18nProvider( { children }: PropsWithChildren ) {
