@@ -40,8 +40,8 @@ export default function DomainConnection() {
 	);
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
-	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue >(
-		domainMappingStatus.mode
+	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue | null >(
+		domainConnectionSetupInfo.connection_mode
 	);
 
 	// Update connection mode mutation
