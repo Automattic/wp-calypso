@@ -28,10 +28,13 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
-	const { helpCenterVisible, unreadCount } = useDateStoreSelect( ( select ) => ( {
-		helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
-	} ) );
+	const { helpCenterVisible, unreadCount } = useDateStoreSelect(
+		( select ) => ( {
+			helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+			unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
+		} ),
+		[]
+	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)

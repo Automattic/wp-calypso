@@ -1,14 +1,17 @@
 /* global helpCenterData, __i18n_text_domain__ */
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Button, Fill } from '@wordpress/components';
+import { Button, DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { comment, backup, page, video, rss } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -21,14 +24,27 @@ const queryClient = new QueryClient();
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
-	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
+	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
 
-	const show = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown() );
+	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
 
+	// Check if the new menu panel feature is enabled
+	const isMenuPanelEnabled = config.isEnabled( 'help-center-menu-panel' );
+
+	const trackIconInteraction = useCallback( () => {
+		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
+			is_help_center_visible: isShown,
+			section: helpCenterData.sectionName || 'wp-admin',
+			is_menu_panel_enabled: isMenuPanelEnabled,
+		} );
+	}, [ isShown, isMenuPanelEnabled ] );
+
 	const handleToggleHelpCenter = useCallback( () => {
-		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
+		trackIconInteraction();
+		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
 			section: helpCenterData.sectionName || 'gutenberg-editor',
@@ -36,9 +52,48 @@ function HelpCenterContent() {
 			canvas_mode: canvasMode,
 		} );
 
-		setShowHelpCenter( ! show );
-	}, [ setShowHelpCenter, show, canvasMode ] );
+		setShowHelpCenter( ! isShown );
+	}, [ setShowHelpCenter, isShown, canvasMode, trackIconInteraction ] );
 
+	const handleMenuClick = useCallback(
+		( destination, isExternal = false ) => {
+			recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
+				section: helpCenterData.sectionName || 'gutenberg',
+				destination,
+			} );
+
+			if ( isExternal ) {
+				return window.open( destination, '_blank', 'noopener,noreferrer' );
+			}
+
+			if ( isShown ) {
+				if ( destination !== helpCenterPage ) {
+					setNavigateToRoute( destination );
+					setHelpCenterPage( destination );
+				} else {
+					recordTracksEvent( `calypso_inlinehelp_close`, {
+						force_site_id: true,
+						location: 'help-center',
+						section: helpCenterData.sectionName || 'wp-admin',
+					} );
+					setShowHelpCenter( false );
+					setHelpCenterPage( null );
+				}
+			} else {
+				setNavigateToRoute( destination );
+				setHelpCenterPage( destination );
+				setShowHelpCenter( true );
+
+				recordTracksEvent( `calypso_inlinehelp_show`, {
+					force_site_id: true,
+					location: 'help-center',
+					section: helpCenterData.sectionName || 'wp-admin',
+					destination,
+				} );
+			}
+		},
+		[ isShown, helpCenterPage, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter ]
+	);
 	useEffect( () => {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );
 		return () => clearTimeout( timeout );
@@ -51,18 +106,68 @@ function HelpCenterContent() {
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
-	const content = (
-		<>
-			<Button
-				className={ [ 'entry-point-button', 'help-center', show ? 'is-active' : '' ].join( ' ' ) }
-				onClick={ handleToggleHelpCenter }
-				icon={ <HelpIcon /> }
-				label="Help"
-				aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && show ? true : false }
-				aria-expanded={ show ? true : false }
-				size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
-			/>
-		</>
+	// Menu items for the dropdown
+	const menuControls = useMemo(
+		() => [
+			[
+				{
+					title: __( 'Chat support', __i18n_text_domain__ ),
+					icon: comment,
+					onClick: () => handleMenuClick( '/odie' ),
+				},
+				{
+					title: __( 'Chat history', __i18n_text_domain__ ),
+					icon: backup,
+					onClick: () => handleMenuClick( '/chat-history' ),
+				},
+			],
+			[
+				{
+					title: __( 'Support guides', __i18n_text_domain__ ),
+					icon: page,
+					onClick: () => handleMenuClick( '/support-guides' ),
+				},
+				{
+					title: __( 'Courses', __i18n_text_domain__ ),
+					icon: video,
+					onClick: () =>
+						handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true ),
+				},
+				{
+					title: __( 'Product updates', __i18n_text_domain__ ),
+					icon: rss,
+					onClick: () =>
+						handleMenuClick(
+							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+							true
+						),
+				},
+			],
+		],
+		[ handleMenuClick ]
+	);
+
+	const content = isMenuPanelEnabled ? (
+		<DropdownMenu
+			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
+			icon={ <HelpIcon /> }
+			label="Help"
+			controls={ menuControls }
+			popoverProps={ {
+				position: 'bottom left',
+			} }
+			onToggle={ trackIconInteraction }
+		/>
+	) : (
+		<Button
+			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
+			onClick={ handleToggleHelpCenter }
+			icon={ <HelpIcon /> }
+			label="Help"
+			aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && isShown ? true : false }
+			aria-expanded={ isShown ? true : false }
+			size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
+		/>
 	);
 
 	const botProps = helpCenterData.isCommerceGarden
