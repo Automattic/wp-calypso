@@ -41,7 +41,6 @@ function ScrollButton( {
 				pointerEvents: 'none',
 				...style,
 			} }
-			aria-hidden
 		>
 			<Button
 				icon={ icon }
@@ -55,7 +54,6 @@ function ScrollButton( {
 					justifyContent: 'center',
 					background: 'var(--dashboard__background-color)',
 				} }
-				tabIndex={ -1 }
 				onClick={ onClick }
 			/>
 		</div>
