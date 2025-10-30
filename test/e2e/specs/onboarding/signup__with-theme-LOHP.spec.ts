@@ -103,7 +103,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I enter billing and payment details and complete purchase', async function () {
-				await flowLOHPThemeSignup.enterBillingPaymentDetailsandPurchasePlan();
+				await flowLOHPThemeSignup.enterBillingPaymentDetailsAndPurchasePlan();
 			} );
 
 			await test.step( 'Then I see the theme details page for my new site', async function () {

@@ -51,7 +51,7 @@ export class LOHPThemeSignupFlow {
 
 	/**
 	 * Navigates to the Calypso Get Started link for the selected theme.
-	 * returns {Promise<string>} The theme slug of the selected theme.
+	 * @returns {Promise<string>} The theme slug of the selected theme.
 	 */
 	async visitCalypsoGetStartedLinkForTheme(): Promise< string > {
 		const pageThemeDetails = new ThemesDetailPage( this.page );
@@ -77,7 +77,7 @@ export class LOHPThemeSignupFlow {
 	 * Enters billing and payment details and purchases the selected plan.
 	 * @returns {Promise<void>}
 	 */
-	async enterBillingPaymentDetailsandPurchasePlan(): Promise< void > {
+	async enterBillingPaymentDetailsAndPurchasePlan(): Promise< void > {
 		const paymentDetails = DataHelper.getTestPaymentDetails();
 		await this.cartCheckoutPage.enterBillingDetails( paymentDetails );
 		await this.cartCheckoutPage.enterPaymentDetails( paymentDetails );
