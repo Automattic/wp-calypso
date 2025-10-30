@@ -8,7 +8,7 @@ import styles from './Notice.module.css';
 import Markdown from 'react-markdown';
 
 interface NoticeProps {
-	icon?: React.ReactElement | null | false;
+	icon?: React.ReactNode | null | false;
 	message: string;
 	action?: {
 		label: string;
