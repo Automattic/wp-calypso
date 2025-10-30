@@ -191,7 +191,7 @@ export function PurchaseSettingLink( {
 		<Link
 			{ ...props }
 			to={ purchaseSettingsRoute.fullPath }
-			params={ { purchaseId: purchase.ID } }
+			params={ Object.assign( {}, props.params, { purchaseId: purchase.ID } ) }
 			title={ __( 'Manage purchase' ) }
 			disabled={ disabled }
 			style={ {
