@@ -63,7 +63,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domain-search-rewrite": true,
-		"domain-connection-redesign/verification": true,
+		"domain-connection-redesign": true,
 		"email-accounts/enabled": true,
 		"global-styles/on-personal-plan": false,
 		"google-drive": true,
