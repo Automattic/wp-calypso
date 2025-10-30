@@ -1,4 +1,4 @@
-import { sitesQuery } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import { createContext, useContext } from 'react';
 import type { FetchSitesOptions } from '@automattic/api-core';
 

@@ -1,4 +1,4 @@
-import { sitesQuery } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import boot from '../app/boot';
 import Logo from './logo';
 import type { FetchSitesOptions } from '@automattic/api-core';
