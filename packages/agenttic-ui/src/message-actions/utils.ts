@@ -48,9 +48,7 @@ export const createFeedbackActions = (
 	};
 
 	return {
-		getActionsForMessage: (
-			message: Message
-		): MessageAction[] => {
+		getActionsForMessage: ( message: Message ): MessageAction[] => {
 			if ( ! baseCondition( message ) ) {
 				return [];
 			}

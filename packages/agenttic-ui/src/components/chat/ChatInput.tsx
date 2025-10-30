@@ -62,7 +62,7 @@ export function ChatInput( {
 	customActions = [],
 	actionOrder = 'before-submit',
 	onStop,
-	disabled = false,
+	disabled,
 	className,
 	onMouseEnter,
 	onMouseLeave,
@@ -72,7 +72,10 @@ export function ChatInput( {
 	const { variant, floatingChatState, isInputOverLimit } =
 		useAgentUIContext();
 	const canSubmit =
-		( value.trim() || isProcessing ) && ! disabled && ! isInputOverLimit;
+		// If the consumer actively sets `disabled` to `false` (vs undefined), that takes precedence.
+		disabled !== undefined
+			? ! disabled
+			: ( value.trim() || isProcessing ) && ! isInputOverLimit;
 
 	const handleTextareaKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
