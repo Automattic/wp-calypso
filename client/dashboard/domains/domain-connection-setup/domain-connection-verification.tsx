@@ -1,6 +1,4 @@
-import { domainMappingStatusQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Icon,
 	__experimentalText as Text,
@@ -16,12 +14,13 @@ import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
-import type { DomainMappingSetupInfo } from '@automattic/api-core';
+import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
 interface DomainConnectionVerificationProps {
 	domainName: string;
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
+	domainMappingStatus: DomainMappingStatus;
 	queryError: string | null;
 	queryErrorDescription: string | null;
 }
@@ -29,8 +28,8 @@ interface DomainConnectionVerificationProps {
 export default function DomainConnectionVerification( {
 	domainName,
 	siteSlug,
+	domainMappingStatus,
 }: DomainConnectionVerificationProps ) {
-	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 	const status = isMappingVerificationSuccess( domainMappingStatus.mode, domainMappingStatus )
 		? 'connected'
 		: 'verifying';
