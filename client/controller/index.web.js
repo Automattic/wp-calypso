@@ -25,6 +25,7 @@ import {
 	getProductSlugFromContext,
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
@@ -177,6 +178,18 @@ export function redirectLoggedOut( context, next ) {
 	) {
 		loginParameters.isJetpack = true;
 		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
+	}
+
+	// If there is an issue with the auth cookie then we need to do more than
+	// just redirect to the login page. Otherwise that page may just detect that
+	// the user has already logged in. We fully log out to get fresh cookies.
+	if (
+		config.isEnabled( 'cookie-missing-redirect' ) &&
+		state.currentUser &&
+		isCookieAuthMissing()
+	) {
+		context.store.dispatch( redirectToLogout( login( loginParameters ) ) );
+		return;
 	}
 
 	// force full page reload to avoid SSR hydration issues.
