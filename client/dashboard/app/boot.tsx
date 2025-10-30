@@ -11,6 +11,7 @@ import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
+import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
 
 import './style.scss';
@@ -23,6 +24,7 @@ function boot( config: AppConfig ) {
 	maybeInitializeSupportSession( wpcom );
 	loadDevHelpers();
 	loadPreferencesHelper();
+	limitTotalSnackbars();
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {

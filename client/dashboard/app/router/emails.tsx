@@ -7,7 +7,6 @@ import {
 	rawUserPreferencesQuery,
 	siteByIdQuery,
 	siteDomainsQuery,
-	sitesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, redirect } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
@@ -26,12 +25,12 @@ export const emailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		// Preload user prefs used broadly
 		const prefsPromise = queryClient.ensureQueryData( rawUserPreferencesQuery() );
 
 		// 1) Preload sites
-		const sites = await queryClient.ensureQueryData( sitesQuery() );
+		const sites = await queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 		const managedSites = ( sites ?? [] ).filter( ( site ) => site.capabilities?.manage_options );
 
 		// 2) Preload domains for each managed site
@@ -99,9 +98,9 @@ export const chooseDomainRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'emails/choose-domain',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		// 1) Preload sites
-		const sites = await queryClient.ensureQueryData( sitesQuery() );
+		const sites = await queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 		const managedSites = ( sites ?? [] ).filter( ( site ) => site.capabilities?.manage_options );
 
 		// 2) Preload domains for each managed site

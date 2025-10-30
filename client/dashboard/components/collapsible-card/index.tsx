@@ -13,6 +13,7 @@ interface CollapsibleCardProps {
 	isBorderless?: boolean;
 	toggleLabel?: string;
 	initialExpanded?: boolean;
+	className?: string;
 	// Controlled mode props
 	expanded?: boolean;
 	onToggle?: ( expanded: boolean ) => void;
@@ -25,6 +26,7 @@ export const CollapsibleCard = ( {
 	isBorderless = false,
 	initialExpanded = false,
 	expanded: controlledExpanded,
+	className,
 	onToggle,
 }: CollapsibleCardProps ) => {
 	// Internal state for uncontrolled mode
@@ -50,7 +52,7 @@ export const CollapsibleCard = ( {
 	};
 	return (
 		<Card
-			className={ clsx( 'collapsible-card', { collapsed: ! isExpanded } ) }
+			className={ clsx( 'collapsible-card', { collapsed: ! isExpanded }, className ) }
 			isBorderless={ isBorderless }
 		>
 			<CardBody>
