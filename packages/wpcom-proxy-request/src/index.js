@@ -398,7 +398,8 @@ function onmessage( e ) {
 		return;
 	}
 
-	// Alert listeners that there is
+	// Allows packages consumers to check whether the iframe had a cookie
+	// error. See the isCookieAuthMissing() function.
 	if ( data === 'cookie-auth-missing' ) {
 		_isCookieAuthMissing = true;
 		return;
