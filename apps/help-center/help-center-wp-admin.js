@@ -12,10 +12,13 @@ import './help-center.scss';
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
-	const { isShown, unreadCount } = useSelect( ( select ) => ( {
-		isShown: select( 'automattic/help-center' ).isHelpCenterShown(),
-		unreadCount: select( 'automattic/help-center' ).getUnreadCount(),
-	} ) );
+	const { isShown, unreadCount } = useSelect(
+		( select ) => ( {
+			isShown: select( 'automattic/help-center' ).isHelpCenterShown(),
+			unreadCount: select( 'automattic/help-center' ).getUnreadCount(),
+		} ),
+		[]
+	);
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
