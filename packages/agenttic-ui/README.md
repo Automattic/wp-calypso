@@ -405,7 +405,7 @@ interface Suggestion {
 }
 
 interface NoticeConfig {
-	icon?: React.ReactNode;
+	icon?: React.ReactNode | null | false;
 	message: string;
 	action?: {
 		label: string;
