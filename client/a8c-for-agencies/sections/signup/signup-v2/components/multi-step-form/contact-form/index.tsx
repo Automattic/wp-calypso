@@ -298,6 +298,14 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 						) }
 						<ButtonStack justify="flex-end">
 							<Button
+								variant="secondary"
+								onClick={ () => {
+									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
+								} }
+							>
+								{ translate( 'Cancel' ) }
+							</Button>
+							<Button
 								variant="primary"
 								onClick={ () => {
 									onContinue( formData );
@@ -305,14 +313,6 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 								} }
 							>
 								{ translate( 'Continue creating new agency account' ) }
-							</Button>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
-								} }
-							>
-								{ translate( 'Cancel' ) }
 							</Button>
 						</ButtonStack>
 					</VStack>
