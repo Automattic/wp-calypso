@@ -18,7 +18,6 @@ interface AuthContextType {
 	user: User;
 	logout: () => Promise< void >;
 }
-
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
 async function initializeCurrentUser(): Promise< User > {
