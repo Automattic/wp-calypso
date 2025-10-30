@@ -92,7 +92,7 @@ const DomainSearchStep: StepType< {
 		currentSiteUrl,
 	} );
 
-	const [ isLoadingExperiment, experimentAssignment ] = useDomainSearchEscapeHatch( flow );
+	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
 
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
@@ -375,8 +375,7 @@ const DomainSearchStep: StepType< {
 					) }
 
 					{ ! isLoadingExperiment &&
-						experimentAssignment?.variationName ===
-							'treatment_paid_domain_area_free_emphasis_extra_cta' && (
+						experimentVariation === 'treatment_paid_domain_area_free_emphasis_extra_cta' && (
 							<Step.LinkButton onClick={ () => events.onSkip() }>
 								{ __( 'Skip this step' ) }
 							</Step.LinkButton>
