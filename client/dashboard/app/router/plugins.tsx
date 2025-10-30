@@ -1,6 +1,5 @@
 import {
 	pluginsQuery,
-	sitesQuery,
 	queryClient,
 	rawUserPreferencesQuery,
 	marketplacePluginsQuery,
@@ -126,8 +125,8 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/new',
-	loader: () => {
-		queryClient.ensureQueryData( sitesQuery() );
+	loader: async ( { context } ) => {
+		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
@@ -147,8 +146,8 @@ export const pluginsScheduledUpdatesEditRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/edit/$scheduleId',
-	loader: () => {
-		queryClient.ensureQueryData( sitesQuery() );
+	loader: async ( { context } ) => {
+		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/edit' ).then( ( d ) =>

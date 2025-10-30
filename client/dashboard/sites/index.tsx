@@ -2,7 +2,6 @@ import {
 	isAutomatticianQuery,
 	userPreferenceQuery,
 	userPreferenceMutation,
-	sitesQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
@@ -22,6 +21,7 @@ import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
+import { useAppContext } from '../app/context';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
@@ -65,6 +65,7 @@ export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
+	const { queries } = useAppContext();
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
@@ -87,7 +88,7 @@ export default function Sites() {
 		isLoading: isLoadingSites,
 		isPlaceholderData,
 	} = useQuery( {
-		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		...queries.sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
 		placeholderData: keepPreviousData,
 	} );
 

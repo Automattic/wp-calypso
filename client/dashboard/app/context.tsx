@@ -1,4 +1,6 @@
+import { sitesQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
 import { createContext, useContext } from 'react';
+import type { FetchSitesOptions } from '@automattic/api-core';
 
 export type SiteSettingsGeneralSupports = {
 	redirect: boolean;
@@ -48,6 +50,9 @@ export type AppConfig = {
 	};
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
+	queries: {
+		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
+	};
 };
 
 export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
@@ -71,6 +76,9 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	},
 	optIn: false,
 	components: {},
+	queries: {
+		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+	},
 };
 
 const AppContext = createContext< AppConfig >( APP_CONTEXT_DEFAULT_CONFIG );

@@ -34,6 +34,7 @@ import {
 	Notice,
 	ExternalLink,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -83,6 +84,11 @@ import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
+
+const SPACING = {
+	DEFAULT: 6,
+	SMALL: 4,
+};
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
@@ -1039,6 +1045,10 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const columns = isSmallViewport ? 1 : 2;
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+
 	return (
 		<PageLayout
 			size="small"
@@ -1074,7 +1084,7 @@ export default function PurchaseSettings() {
 		>
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
-				<Grid columns={ 2 } rows={ 2 } gap={ 6 }>
+				<Grid columns={ columns } gap={ spacing }>
 					<OverviewCard
 						icon={ calendar }
 						title={ expiryDateTitle }
