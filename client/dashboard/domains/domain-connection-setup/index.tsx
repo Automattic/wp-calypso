@@ -1,4 +1,4 @@
-import { type DomainConnectionSetupModeValue } from '@automattic/api-core';
+import { DomainMappingStatus, type DomainConnectionSetupModeValue } from '@automattic/api-core';
 import {
 	domainConnectionSetupInfoQuery,
 	domainMappingStatusQuery,
@@ -10,6 +10,7 @@ import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -39,6 +40,10 @@ export default function DomainConnection() {
 	);
 	const { data: domainMappingStatus } = useSuspenseQuery( domainMappingStatusQuery( domainName ) );
 
+	const [ connectionMode, setConnectionMode ] = useState< DomainConnectionSetupModeValue >(
+		domainMappingStatus.mode
+	);
+
 	// Update connection mode mutation
 	const { mutate: updateConnectionMode, isPending: isUpdatingConnectionMode } = useMutation(
 		updateConnectionModeMutation( domainName, domain.blog_id )
@@ -46,6 +51,9 @@ export default function DomainConnection() {
 
 	const onVerifyConnection = ( mode: DomainConnectionSetupModeValue ) => {
 		updateConnectionMode( mode, {
+			onSuccess: ( data: DomainMappingStatus ) => {
+				setConnectionMode( data.mode );
+			},
 			onError: () => {
 				createErrorNotice(
 					__( 'We couldn’t verify the connection for your domain, please try again.' ),
@@ -57,7 +65,7 @@ export default function DomainConnection() {
 		} );
 	};
 	// If the connection mode is not null, it means we are on the verification step
-	const isVerificationStep = !! domainConnectionSetupInfo.connection_mode;
+	const isVerificationStep = !! connectionMode;
 
 	return (
 		<PageLayout
