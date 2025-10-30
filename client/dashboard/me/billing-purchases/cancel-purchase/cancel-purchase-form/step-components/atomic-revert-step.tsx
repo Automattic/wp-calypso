@@ -9,14 +9,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { intlFormat } from 'date-fns';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
-import type { AtomicTransfer, Purchase, Site } from '@automattic/api-core';
+import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
 import './atomic-revert-step.style.scss';
 
 type Props = {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	purchase: Purchase | undefined;
-	site: Site | undefined;
+	siteSlug: string;
 	atomicRevertCheckOne: boolean;
 	onClickCheckOne: ( isChecked: boolean ) => void;
 	atomicRevertCheckTwo: boolean;
@@ -33,7 +33,7 @@ export function AtomicRevertStep( props: Props ) {
 	const {
 		atomicTransfer,
 		purchase,
-		site,
+		siteSlug,
 		atomicRevertCheckOne,
 		atomicRevertCheckTwo,
 		enableLosslessRevert,
@@ -46,7 +46,7 @@ export function AtomicRevertStep( props: Props ) {
 		action,
 	} = props;
 
-	if ( ! site || ! atomicTransfer || ! purchase || ! atomicTransfer.created_at ) {
+	if ( ! siteSlug || ! atomicTransfer || ! purchase || ! atomicTransfer.created_at ) {
 		return null;
 	}
 
@@ -201,7 +201,7 @@ export function AtomicRevertStep( props: Props ) {
 							) }
 						</p>
 					</div>
-					<Button variant="primary" href={ `/backup/${ site.slug }` }>
+					<Button variant="primary" href={ `/backup/${ siteSlug }` }>
 						{ __( 'Go to your backups' ) }
 					</Button>
 				</div>

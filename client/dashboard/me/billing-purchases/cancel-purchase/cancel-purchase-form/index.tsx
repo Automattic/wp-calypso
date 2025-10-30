@@ -8,7 +8,6 @@ import { intlFormat } from 'date-fns';
 import { useMemo } from 'react';
 import { ButtonStack } from '../../../../components/button-stack';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
-import { isSiteAutomatedTransfer } from '../../../../utils/site-types';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
@@ -98,10 +97,6 @@ export interface CancelPurchaseFormProps {
 	willAtomicSiteRevert?: boolean;
 }
 
-function getSiteImportEngine( site: Site ) {
-	return site?.options?.import_engine ?? null;
-}
-
 export default function CancelPurchaseForm( providedProps: CancelPurchaseFormProps ) {
 	const { purchase, site } = providedProps;
 	const { data: siteFeatures } = useSuspenseQuery( siteFeaturesQuery( purchase.blog_id ) );
@@ -109,8 +104,9 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 	const props = useMemo(
 		() => ( {
 			...providedProps,
-			isAtomicSite: providedProps.isAtomicSite ?? isSiteAutomatedTransfer( site ),
-			isImport: providedProps.isImport ?? Boolean( site && getSiteImportEngine( site ) ),
+			isAtomicSite: providedProps.isAtomicSite ?? site?.is_wpcom_atomic,
+			isImport:
+				providedProps.isImport ?? Boolean( site && ( site?.options?.import_engine ?? false ) ),
 			site: providedProps.site,
 			atomicTransfer: providedProps.atomicTransfer ?? atomicTransfer,
 			hasBackupsFeature:
@@ -237,7 +233,7 @@ export default function CancelPurchaseForm( providedProps: CancelPurchaseFormPro
 					onClickCheckOne={ atomicRevertOnClickCheckOne }
 					onClickCheckTwo={ atomicRevertOnClickCheckTwo }
 					purchase={ purchase }
-					site={ site }
+					siteSlug={ purchase.site_slug ?? site?.slug ?? '' }
 				/>
 			);
 		}

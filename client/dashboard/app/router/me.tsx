@@ -790,9 +790,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
-			changePaymentMethodRoute,
+			// changePaymentMethodRoute,
 			cancelPurchaseRoute,
-			paymentMethodsRoute,
+			// paymentMethodsRoute,
 			taxDetailsRoute,
 		] )
 	);
