@@ -696,6 +696,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'my-domain.com' );
 
 		expect( recordSearchFormSubmitButtonClick ).toHaveBeenCalledWith(
+			'my-domain.com',
 			'analytics-section',
 			'flow-name'
 		);
