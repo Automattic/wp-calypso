@@ -254,7 +254,6 @@ import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
-import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 declare global {
 	interface Window {
@@ -2061,59 +2060,9 @@ function planMatches( planKey: string, query: PlanMatchesQuery = {} ): boolean {
 	return false;
 }
 
-function findFirstSimilarPlanKey( planKey: string, diff: PlanMatchesQuery ): string | undefined {
-	return findSimilarPlansKeys( planKey, diff )[ 0 ];
-}
-
-/**
- * A similar plan is one that has the same `type`, `group`, and `term` as first
- * argument, except for differences specified in the second argument.
- *
- * For example:
- *
- * > findSimilarPlansKeys( 'TYPE_BUSINESS', { term: 'TERM_BIENNIALLY' } );
- * [PLAN_BUSINESS_2_YEARS]
- * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
- * [TYPE_JETPACK_BUSINESS]
- */
-function findSimilarPlansKeys( planKey: string, diff: PlanMatchesQuery = {} ): string[] {
-	const plan = getPlanFeaturesAndAvailability( planKey );
-	// @TODO: make getPlanFeaturesAndAvailability() throw an error on failure. This is going to be a larger change with a separate PR.
-	if ( ! plan ) {
-		return [];
-	}
-	return findPlansKeys( {
-		type: plan.type,
-		group: plan.group,
-		term: plan.term,
-		...diff,
-	} );
-}
-
-/**
- * Finds all keys of plans matching a query
- *
- * For example:
- *
- * > findPlansKeys( { term: 'TERM_BIENNIALLY' } );
- * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
- */
-function findPlansKeys( query: PlanMatchesQuery = {} ): string[] {
-	const plans = getPlans();
-	return Object.keys( plans ).filter( ( k ) => planMatches( k, query ) );
-}
-
-export function isFreePlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: 'TYPE_FREE' } );
-}
-
 //used
 export function isJetpackPlanSlug( productSlug: string ): boolean {
 	return planMatches( productSlug, { group: 'GROUP_JETPACK' } );
-}
-
-function getPlans(): Record< string, TemporaryPlanProductFeaturesAndGrouping > {
-	return PLAN_FEATURES_AND_AVAILABILITY_LIST;
 }
 
 //used
@@ -2128,42 +2077,6 @@ export function getPlanFeaturesAndAvailability(
 	}
 	return PLAN_FEATURES_AND_AVAILABILITY_LIST[ planKey ];
 }
-//replace with
-export function getPlanFromPlans(
-	plans: PlanProduct[],
-	planSlug: string
-): PlanProduct | undefined {
-	return plans ? plans.find( ( plan ) => planSlug === plan.product_slug ) : undefined;
-}
-
-/**
- * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
- * not a recognized or cannot be converted.
- */
-//used
-export function getMonthlyPlanByYearly( planSlug: string ): string {
-	const plan = getPlanFeaturesAndAvailability( planSlug );
-	if ( plan && 'getMonthlySlug' in plan && plan.getMonthlySlug ) {
-		return plan.getMonthlySlug();
-	}
-	return findFirstSimilarPlanKey( planSlug, { term: 'TERM_MONTHLY' } ) || '';
-}
-
-//used
-export const getDowngradePlanFromPurchase = ( plans: PlanProduct[], purchase: Purchase ) => {
-	const plan = getPlanFeaturesAndAvailability( purchase.product_slug );
-	if ( ! plan ) {
-		return null;
-	}
-
-	const newPlanKeys = findPlansKeys( {
-		group: plan.group,
-		type: 'TYPE_PERSONAL',
-		term: plan.term,
-	} );
-
-	return getPlanFromPlans( plans, newPlanKeys[ 0 ] );
-};
 
 //used
 export function isSecurityDailyPlan( planSlug: string ): boolean {

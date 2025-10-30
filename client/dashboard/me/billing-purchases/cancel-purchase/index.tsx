@@ -58,10 +58,7 @@ import PageLayout from '../../../components/page-layout';
 import { shuffleArray } from '../../../utils/collection';
 import { getGSuiteSubscriptionStatus, getGoogleMailServiceFamily } from '../../../utils/gsuite';
 import {
-	getDowngradePlanFromPurchase,
-	getMonthlyPlanByYearly,
 	getPlanFeaturesAndAvailability,
-	getPlanFromPlans,
 	isCompletePlan,
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
@@ -120,7 +117,12 @@ import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
 import CancelPurchaseRefundInformation from './refund-information';
 import type { CancelPurchaseState } from './types';
-import type { Purchase, MarketingSurveyDetails } from '@automattic/api-core';
+import type {
+	Purchase,
+	MarketingSurveyDetails,
+	PlanProduct,
+	PlanProductDowngrade,
+} from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
 
 import './style.scss';
@@ -536,12 +538,51 @@ export default function CancelPurchase() {
 		} ) );
 	};
 
+	enum PurchaseDowngradeType {
+		TermDowngrade = 'downgrade-term', // downgrade-monthly
+		PlanDowngrade = 'downgrade-plan', // downgrade-personal
+	}
+
+	const getDowngradePlanForPurchase = (
+		plans: PlanProduct[],
+		purchase: Purchase,
+		downgradeType: PurchaseDowngradeType
+	): PlanProductDowngrade | undefined => {
+		if ( ! plans ) {
+			return;
+		}
+		const plan = plans.find( ( plan ) => plan.product_id === purchase.product_id );
+		if ( ! plan ) {
+			return;
+		}
+
+		switch ( downgradeType ) {
+			case PurchaseDowngradeType.TermDowngrade:
+				return plan.downgrade_paths.find( ( path ) => {
+					path.bill_period !== plan.bill_period;
+				} );
+			case PurchaseDowngradeType.PlanDowngrade:
+				return plan.downgrade_paths.find( ( path ) => {
+					path.bill_period === plan.bill_period;
+				} );
+		}
+	};
+
 	const downgradeClick = ( upsell: string ) => {
 		if ( ! state.isSubmitting ) {
-			let downgradePlan = getDowngradePlanFromPurchase( plans, purchase );
+			let downgradePlan = undefined;
 			if ( 'downgrade-monthly' === upsell ) {
-				const monthlyProductSlug = getMonthlyPlanByYearly( purchase.product_slug );
-				downgradePlan = getPlanFromPlans( plans, monthlyProductSlug );
+				downgradePlan = getDowngradePlanForPurchase(
+					plans,
+					purchase,
+					PurchaseDowngradeType.TermDowngrade
+				);
+			} else if ( 'downgrade-personal' === upsell ) {
+				downgradePlan = getDowngradePlanForPurchase(
+					plans,
+					purchase,
+					PurchaseDowngradeType.PlanDowngrade
+				);
 			}
 
 			setState( ( state ) => ( { ...state, isLoading: true } ) );
