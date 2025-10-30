@@ -86,7 +86,7 @@ export interface AgentUIProps {
 }
 
 export interface NoticeConfig {
-	icon?: React.ReactNode;
+	icon?: React.ReactElement | null | false;
 	message: string;
 	action?: {
 		label: string;

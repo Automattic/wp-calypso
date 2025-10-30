@@ -13,10 +13,6 @@
 	line-height: var(--text-xs--line-height);
 }
 
-.containerWithIcon {
-	padding-left: var(--spacing-3);
-}
-
 .isSuccess {
 	background-color: var(--color-success-background);
 	color: var(--color-success);
