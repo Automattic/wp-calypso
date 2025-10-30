@@ -304,7 +304,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 									setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
 								} }
 							>
-								{ translate( 'Continue' ) }
+								{ translate( 'Continue creating new agency account' ) }
 							</Button>
 							<Button
 								variant="secondary"
