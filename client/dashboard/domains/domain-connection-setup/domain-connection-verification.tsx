@@ -12,6 +12,7 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import DnsRecordsTable from './components/dns-records-table';
 import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
@@ -52,18 +53,27 @@ export default function DomainConnectionVerification( {
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>
+
 					{ status === 'verifying' && (
-						<>
-							<Notice variant="info">
-								{ __(
-									'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-								) }
-							</Notice>
-							<Text size="medium" weight={ 500 }>
-								{ __( 'While you wait' ) }
-							</Text>
-						</>
+						<Notice variant="info">
+							{ __(
+								'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+							) }
+						</Notice>
 					) }
+
+					<Text size="medium" weight={ 500 }>
+						{ __( 'DNS record verification' ) }
+					</Text>
+
+					<DnsRecordsTable />
+
+					{ status === 'verifying' && (
+						<Text size="medium" weight={ 500 }>
+							{ __( 'While you wait' ) }
+						</Text>
+					) }
+
 					{ status === 'connected' && (
 						<RouterLinkSummaryButton
 							to={ siteDomainsRoute.fullPath }
