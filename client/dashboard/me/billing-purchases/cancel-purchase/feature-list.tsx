@@ -2,26 +2,19 @@ import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
-import { getFeatureByKey } from '../../../utils/site-features';
 import type { FeatureObject } from '../../../utils/site-features';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, ProductFeature } from '@automattic/api-core';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
-	defaultCancellationFeatures,
 	cancellationFeatures,
 	cancellationChanges,
 }: {
 	purchase: Purchase;
-	defaultCancellationFeatures: FeatureObject[];
-	cancellationFeatures: string[];
+	cancellationFeatures: ProductFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	if (
-		! cancellationFeatures.length &&
-		! defaultCancellationFeatures.length &&
-		! cancellationChanges.length
-	) {
+	if ( ! cancellationFeatures.length && ! cancellationChanges.length ) {
 		return;
 	}
 
@@ -40,33 +33,21 @@ const CancelPurchaseFeatureList = ( {
 					) }
 				</p>
 				<ul className="cancel-purchase__features-list">
-					{ defaultCancellationFeatures.map( ( feature ) => {
+					{ cancellationFeatures.map( ( feature ) => {
 						if ( ! feature ) {
 							return null;
 						}
 						return (
-							<li key={ feature.getSlug() }>
+							<li key={ feature.feature_id }>
 								<Icon
 									className="cancel-purchase__refund-information--item-cross-small"
 									size={ 24 }
 									icon={ close }
 								/>
 								<span>
-									{ feature.getTitle() }
-									{ feature.getDescription && ' - ' + feature.getDescription() }
+									{ feature.title }
+									{ feature.description && ' - ' + feature.description }
 								</span>
-							</li>
-						);
-					} ) }
-					{ cancellationFeatures.map( ( feature ) => {
-						return (
-							<li key={ feature }>
-								<Icon
-									className="cancel-purchase__refund-information--item-cross-small"
-									size={ 24 }
-									icon={ close }
-								/>
-								<span>{ getFeatureByKey( feature ).getTitle() }</span>
 							</li>
 						);
 					} ) }

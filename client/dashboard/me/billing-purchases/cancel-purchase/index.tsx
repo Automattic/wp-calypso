@@ -1,10 +1,4 @@
-import {
-	DomainProductSlugs,
-	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_SIMPLE_PAYMENTS,
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-} from '@automattic/api-core';
+import { DomainProductSlugs } from '@automattic/api-core';
 import {
 	applyCancellationOfferMutation,
 	cancelAndRefundPurchaseMutation,
@@ -15,15 +9,10 @@ import {
 	marketingSurveyMutation,
 	plansQuery,
 	productsQuery,
+	productsFeaturesQuery,
 	purchaseQuery,
-	siteActiveThemesQuery,
-	siteBackupsQuery,
 	siteByIdQuery,
-	siteEngagementMonthlyAverageStatsQuery,
-	sitePluginsQuery,
 	sitePurchasesQuery,
-	siteScanCountsQuery,
-	siteScanQuery,
 	userPreferencesMutation,
 	hasPurchaseBeenExtendedQuery,
 	siteLatestAtomicTransferQuery,
@@ -57,13 +46,7 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { shuffleArray } from '../../../utils/collection';
 import { getGSuiteSubscriptionStatus, getGoogleMailServiceFamily } from '../../../utils/gsuite';
-import {
-	getPlanFeaturesAndAvailability,
-	isCompletePlan,
-	isSecurityDailyPlan,
-	isSecurityRealTimePlan,
-	isWpComMonthlyPlan,
-} from '../../../utils/plans';
+import { isWpComMonthlyPlan } from '../../../utils/plans';
 import {
 	CANCEL_FLOW_TYPE,
 	getIncludedDomainPurchase,
@@ -75,25 +58,13 @@ import {
 	isAkismetProduct,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	isJetpackBackupSlug,
-	isJetpackScanSlug,
 	isJetpackTemporarySitePurchase,
 	isNonDomainSubscription,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from '../../../utils/purchase';
-import {
-	getDynamicFeaturesList,
-	getGSuiteDynamicFeaturesList,
-	getJetpackDynamicFeaturesList,
-	planHasFeature,
-	productHasAntiSpam,
-	productHasBoost,
-	productHasScan,
-	productHasSearch,
-	productHasVideoPress,
-} from '../../../utils/site-features';
+import { isValueTruthy } from '../payment-methods';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
@@ -120,7 +91,6 @@ import CancelPurchaseRefundInformation from './refund-information';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, MarketingSurveyDetails, PlanProduct } from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
-
 import './style.scss';
 
 // Helper function to determine if radio buttons will be shown
@@ -155,38 +125,19 @@ export default function CancelPurchase() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
+	const { data: productsFeatures } = useSuspenseQuery( productsFeaturesQuery() );
 
 	const { data: hasBeenExtended } = useQuery( hasPurchaseBeenExtendedQuery( purchase.blog_id ) );
 	const { data: site, isPending: siteQueryIsPending } = useQuery(
 		siteByIdQuery( purchase.blog_id )
 	);
-	const { data: activeThemes, isPending: themesQueryIsPending } = useQuery(
-		siteActiveThemesQuery( purchase.blog_id )
-	);
-	const { data: activePlugins, isPending: sitePluginsQueryIsPending } = useQuery(
-		sitePluginsQuery( purchase.blog_id )
-	);
 	const { data: atomicTransfer, isPending: siteLatestAtomicTransferQueryIsPending } = useQuery(
 		siteLatestAtomicTransferQuery( purchase.blog_id )
 	);
-	const { data: monthlyStats, isPending: siteEngagementMonthlyAverageStatsQueryIsPending } =
-		useQuery( siteEngagementMonthlyAverageStatsQuery( purchase.blog_id ) );
 	const { data: productsList, isPending: productsQueryIsPending } = useQuery( productsQuery() );
 	const { data: selectedDomain, isPending: domainQueryIsPending } = useQuery( {
 		...domainQuery( purchase.meta ?? '' ),
 		enabled: Boolean( purchase.meta ),
-	} );
-	const { data: rewindState, isPending: siteBackupsQueryIsPending } = useQuery( {
-		...siteBackupsQuery( purchase.blog_id ?? 0 ),
-		enabled: Boolean( purchase.blog_id ),
-	} );
-	const { data: siteScanState, isPending: siteScanQueryIsPending } = useQuery( {
-		...siteScanQuery( purchase.blog_id ?? 0 ),
-		enabled: Boolean( purchase.blog_id ),
-	} );
-	const { data: siteThreatCounts, isPending: requestingSiteThreatCounts } = useQuery( {
-		...siteScanCountsQuery( purchase.blog_id ?? 0 ),
-		enabled: Boolean( purchase.blog_id ),
 	} );
 	const { data: cancellationOffers } = useQuery(
 		cancellationOffersQuery( purchase.blog_id, purchase.ID )
@@ -207,13 +158,6 @@ export default function CancelPurchase() {
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 
 	// Handler helpers
-	const pluginCount = ( activePlugins?.plugins ?? [] ).length;
-
-	let monthlyVisitorCount = 0;
-	if ( monthlyStats && monthlyStats.visitors > 0 ) {
-		monthlyVisitorCount = monthlyStats.visitors;
-	}
-
 	const purchases = purchase && sitePurchases;
 	const includedDomainPurchase = getIncludedDomainPurchase( purchases ?? [], purchase );
 
@@ -998,14 +942,9 @@ export default function CancelPurchase() {
 	};
 
 	const isDataLoading =
-		siteBackupsQueryIsPending ||
 		siteFeaturesQueryIsPending ||
-		siteScanQueryIsPending ||
-		siteEngagementMonthlyAverageStatsQueryIsPending ||
 		siteQueryIsPending ||
-		sitePluginsQueryIsPending ||
 		purchaseQueryIsPending ||
-		themesQueryIsPending ||
 		( Boolean( purchase.meta ) && domainQueryIsPending ) ||
 		siteLatestAtomicTransferQueryIsPending ||
 		productsQueryIsPending;
@@ -1308,7 +1247,6 @@ export default function CancelPurchase() {
 	// );
 	// const { data: mediaStorageInfo } = useSuspenseQuery( siteMediaStorageQuery( props.siteId ) );
 	//TODO: use the correct query
-	const siteMediaCount = 0;
 
 	const renderGSuiteAccessMessage = () => {
 		const { meta: domainName, product_slug: productSlug } = purchase;
@@ -1365,8 +1303,37 @@ export default function CancelPurchase() {
 			</p>
 		);
 	};
+
+	const getFeaturesFromApiForProduct = ( productId: number ) => {
+		if ( ! productsFeatures ) {
+			return [];
+		}
+
+		// Find the product in the productsFeatures data
+		const product = productsFeatures.products.find(
+			( p: { product_id: number } ) => p.product_id === productId
+		);
+
+		if ( ! product || ! product.feature_group ) {
+			return [];
+		}
+
+		// Get the feature IDs from the feature group
+		const featureIds = productsFeatures.feature_groups[ product.feature_group ];
+
+		if ( ! featureIds || featureIds.length === 0 ) {
+			return [];
+		}
+
+		// Map the feature_ids to the actual features with their titles and descriptions
+		return featureIds
+			.map( ( featureId: string ) => {
+				return productsFeatures.features.find( ( f ) => f.feature_id === featureId );
+			} )
+			.filter( isValueTruthy );
+	};
+
 	const renderMainContent = () => {
-		const plan = getPlanFeaturesAndAvailability( purchase.product_slug );
 		const atomicRevertChanges = [
 			{
 				getSlug: () => 'primarySite',
@@ -1400,59 +1367,13 @@ export default function CancelPurchase() {
 			defaultChanges.push( ...atomicRevertChanges );
 		}
 
-		const defaultGSuiteCancellationFeatures = getGSuiteDynamicFeaturesList( {
-			domainName: site?.slug ?? '',
-			productSlug: purchase.product_slug,
-		} );
+		// Get features from the API endpoint for this product
+		const cancellationFeatures = getFeaturesFromApiForProduct( purchase.product_id );
 
-		const defaultWPComCancellationFeatures = getDynamicFeaturesList( {
-			domainName: site?.slug ?? purchase.meta ?? '',
-			themeName: activeThemes?.[ 0 ]?.name?.rendered ?? '',
-			pluginCount,
-			monthlyVisitorCount,
-		} );
-		const siteHasBackups = true; // FIXME: this code was 'unavailable' !== rewindState?.state but the rewindState does not have a `state` property or anything that might be 'unavailable' so I'm not sure what to do
-		const siteHasScan = 'unavailable' !== siteScanState?.state;
-		const defaultJetpackCancellationFeatures = getJetpackDynamicFeaturesList( {
-			siteSlug,
-			hasPremiumSupport: planHasFeature( purchase.product_slug, FEATURE_PREMIUM_SUPPORT ),
-			hasSimplePayments: planHasFeature( purchase.product_slug, FEATURE_SIMPLE_PAYMENTS ),
-			hasWordAdsInstant: planHasFeature( purchase.product_slug, FEATURE_WORDADS_INSTANT ),
-			hasBackups: siteHasBackups,
-			backupsIsStandalone: isJetpackBackupSlug( purchase.product_slug ),
-			backups: rewindState,
-			hasSearch: productHasSearch( purchase.product_slug ),
-			hasBoost: productHasBoost( purchase.product_slug ),
-			hasAntiSpam: productHasAntiSpam( purchase.product_slug ),
-			hasScan: siteHasScan && productHasScan( purchase.product_slug ),
-			siteScanState,
-			siteThreatCounts,
-			requestingSiteThreatCounts,
-			siteScanIsStandalone: isJetpackScanSlug( purchase.product_slug ),
-			hasYearActivityLog:
-				isCompletePlan( purchase.product_slug ) || isSecurityRealTimePlan( purchase.product_slug ),
-			hasMonthActivityLog: isSecurityDailyPlan( purchase.product_slug ),
-			hasVideoPress: productHasVideoPress( purchase.product_slug ),
-			hasVideoUploadsJetpackPro: planHasFeature(
-				purchase.product_slug,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO
-			),
-			siteMediaCount,
-		} );
-
-		const defaultCancellationFeatures = [];
 		let showDefaultChanges = false;
-		if ( isJetpack || isAkismet ) {
-			defaultCancellationFeatures.push( ...defaultJetpackCancellationFeatures );
-		} else if ( isGSuite ) {
-			defaultCancellationFeatures.push( ...defaultGSuiteCancellationFeatures );
-		} else {
-			defaultCancellationFeatures.push( ...defaultWPComCancellationFeatures );
+		if ( ! isJetpack && ! isAkismet && ! isGSuite && ! isDomainRegistrationPurchase ) {
 			showDefaultChanges = true;
 		}
-
-		const cancellationFeatures =
-			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
 
 		const cancellationChanges = showDefaultChanges ? defaultChanges : [];
 
@@ -1485,16 +1406,13 @@ export default function CancelPurchase() {
 
 				<CancelPurchaseFeatureList
 					purchase={ purchase }
-					defaultCancellationFeatures={ defaultCancellationFeatures }
 					cancellationFeatures={ cancellationFeatures }
 					cancellationChanges={ cancellationChanges }
 				/>
 
 				<CancelPurchaseRefundInformation purchase={ purchase } isJetpackPurchase={ isJetpack } />
 
-				{ ! cancellationFeatures.length && ! defaultCancellationFeatures.length
-					? renderProductRevertContent()
-					: renderPlanRevertContent() }
+				{ ! cancellationFeatures.length ? renderProductRevertContent() : renderPlanRevertContent() }
 			</>
 		);
 	};
