@@ -86,6 +86,15 @@ function AdminHelpCenterContent() {
 		} );
 	}, [ isShown, hasHelpCenterMenuPanel ] );
 
+	const handleMenuPanelClick = () => {
+		trackIconInteraction();
+		if ( button.classList.contains( 'open-click' ) ) {
+			button.classList.remove( 'open-click' );
+		} else {
+			button.classList.add( 'open-click' );
+		}
+	};
+
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
 		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
@@ -97,7 +106,7 @@ function AdminHelpCenterContent() {
 		setShowHelpCenter( ! isShown );
 	};
 
-	button.onclick = hasHelpCenterMenuPanel ? trackIconInteraction : handleToggleHelpCenter;
+	button.onclick = hasHelpCenterMenuPanel ? handleMenuPanelClick : handleToggleHelpCenter;
 
 	const handleMenuClick = useCallback(
 		( destination, isExternal = false ) => {
