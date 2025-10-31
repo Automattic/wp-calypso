@@ -78,6 +78,11 @@ export default function DomainConnection() {
 							? __( 'Domain connection verification' )
 							: __( 'Connect your domain name' )
 					}
+					description={
+						isVerificationStep
+							? null
+							: __( 'We’ll tailor the next steps based on how your domain name is currently used.' )
+					}
 				/>
 			}
 		>

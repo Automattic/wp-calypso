@@ -3,6 +3,7 @@ import {
 	Icon,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { published, swatch } from '@wordpress/icons';
 import { CollapsibleCard } from '../../components/collapsible-card';
@@ -48,8 +49,10 @@ export default function SetupStep( {
 			initialExpanded={ initiallyExpanded }
 			isBorderless
 		>
-			{ children }
-			<CheckboxControl checked={ completed } onChange={ onCheckboxChange } label={ label } />
+			<VStack spacing={ 4 }>
+				{ children }
+				<CheckboxControl checked={ completed } onChange={ onCheckboxChange } label={ label } />
+			</VStack>
 		</CollapsibleCard>
 	);
 }

@@ -39,17 +39,23 @@ export default function DomainConnectionSetup( {
 		{
 			title: __( '1. Login to your domain name provider' ),
 			label: __( 'I have opened the DNS settings' ),
-			content: __( 'Content placeholder' ),
+			content: sprintf(
+				// translators: %s is the domain name
+				__( 'Log in to your domain name provider and open DNS management for %s.' ),
+				domainName
+			),
 		},
 		{
 			title: __( '2. Back up DNS records' ),
 			label: __( 'I have downloaded the DNS records' ),
-			content: __( 'Content placeholder' ),
+			content: __(
+				'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+			),
 		},
 		{
 			title: __( '3. Update DNS records' ),
 			label: __( 'I have updated the DNS settings' ),
-			content: __( 'Content placeholder' ),
+			content: __( 'Replace all name server records with the values below.' ),
 		},
 	];
 
@@ -57,12 +63,18 @@ export default function DomainConnectionSetup( {
 		{
 			title: __( '1. Login to your domain name provider' ),
 			label: __( 'I have opened the DNS settings' ),
-			content: __( 'Content placeholder' ),
+			content: sprintf(
+				// translators: %s is the domain name
+				__( 'Log in to your domain name provider and open DNS management for %s.' ),
+				domainName
+			),
 		},
 		{
 			title: __( '2. Back up DNS records' ),
 			label: __( 'I have downloaded the DNS records' ),
-			content: __( 'Content placeholder' ),
+			content: __(
+				'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+			),
 		},
 		{
 			title: __( '3. Update name servers' ),
