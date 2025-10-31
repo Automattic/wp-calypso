@@ -62,6 +62,9 @@ export default function Actions() {
 						}
 					),
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+				onSettled: () => {
+					setIsDisconnectDialogOpen( false );
+				},
 			} ),
 		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
 	);
@@ -77,6 +80,9 @@ export default function Actions() {
 					router.navigate( { to: domainsRoute.fullPath } );
 				},
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+				onSettled: () => {
+					setIsDeleteDialogOpen( false );
+				},
 			} ),
 		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice, router ]
 	);
