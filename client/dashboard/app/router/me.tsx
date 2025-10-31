@@ -308,13 +308,8 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
-	// 	getParentRoute: () => purchaseSettingsRoute, //TODO: use custom route that includes siteSlug or keep.
-	getParentRoute: () => meRoute,
-	loader: ( { params: { purchaseId } } ) => {
-		queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
-	},
-	// 	path: 'cancel',
-	path: 'billing/purchases/$purchaseId/cancel',
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'cancel',
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
 		createLazyRoute( 'cancel-purchase' )( {
@@ -787,12 +782,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				purchaseSettingsRoute.addChildren( [
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
+					cancelPurchaseRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
-			// changePaymentMethodRoute,
-			cancelPurchaseRoute,
-			// paymentMethodsRoute,
 			taxDetailsRoute,
 		] )
 	);

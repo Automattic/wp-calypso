@@ -1568,6 +1568,7 @@ export default function CancelPurchase() {
 							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
 							atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
 							atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
+							atomicTransfer={ atomicTransfer }
 							cancelBundledDomain={ state.cancelBundledDomain }
 							cancellationInProgress={ state.isLoading }
 							clickNext={ clickNext }

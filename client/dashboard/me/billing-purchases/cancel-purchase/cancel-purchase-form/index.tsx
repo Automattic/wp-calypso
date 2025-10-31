@@ -20,7 +20,12 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
-import type { CancellationOffer, PlanProduct, Purchase } from '@automattic/api-core';
+import type {
+	AtomicTransfer,
+	CancellationOffer,
+	PlanProduct,
+	Purchase,
+} from '@automattic/api-core';
 
 import './style.scss';
 
@@ -29,7 +34,7 @@ export interface CancelPurchaseFormProps {
 	atomicRevertCheckTwo?: boolean;
 	atomicRevertOnClickCheckOne: ( isChecked: boolean ) => void;
 	atomicRevertOnClickCheckTwo: ( isChecked: boolean ) => void;
-	atomicTransfer?: { created_at: string }; //TODO: maybe delete
+	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
 	cancellationOffer?: Pick<
@@ -48,7 +53,7 @@ export interface CancelPurchaseFormProps {
 	hasBackupsFeature?: boolean;
 	importQuestionRadio?: string;
 	includedDomainPurchase?: Purchase;
-	isAkismet?: boolean; //TODO: maybe delete
+	isAkismet?: boolean;
 	isApplyingOffer?: boolean; //TODO: maybe delete
 	isAtomicSite?: boolean; //TODO: maybe delete
 	isImport?: boolean; //TODO: maybe delete
@@ -254,7 +259,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			// Show an offer, the user can accept it or go ahead with the cancellation.
 			return (
 				<JetpackCancellationOfferStep
-					isAkismet={ !! props?.isAkismet }
+					isAkismet={ props?.isAkismet }
 					offer={ cancellationOffer }
 					onGetDiscount={ onGetDiscount }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
@@ -268,7 +273,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 			// Show after an offer discount has been accepted
 			return (
 				<JetpackCancellationOfferAcceptedStep
-					isAkismet={ !! props?.isAkismet }
+					isAkismet={ props?.isAkismet }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					productName={ productName }
 				/>
