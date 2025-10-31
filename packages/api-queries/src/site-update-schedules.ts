@@ -5,9 +5,11 @@ import {
 	createSiteUpdateSchedule,
 	editSiteUpdateSchedule,
 	deleteSiteUpdateSchedule,
+	setSiteUpdateScheduleActive,
 	fetchSiteUpdateSchedules,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { hostingUpdateSchedulesQuery } from './hosting-update-schedules';
 import { queryClient } from './query-client';
 
 // Query: single-site schedules
@@ -56,6 +58,17 @@ export const siteUpdateScheduleDeleteMutation = ( siteId: number ) =>
 		mutationFn: ( scheduleId: string ) => deleteSiteUpdateSchedule( siteId, scheduleId ),
 		onSuccess: () => {
 			invalidateSiteUpdateSchedules( siteId );
+		},
+	} );
+
+// Mutation: toggle active for any site (siteId provided in variables)
+export const siteUpdateScheduleSetActiveMutation = () =>
+	mutationOptions( {
+		mutationFn: ( variables: { siteId: number; scheduleId: string; active: boolean } ) =>
+			setSiteUpdateScheduleActive( variables.siteId, variables.scheduleId, variables.active ),
+		onSuccess: ( _data, variables ) => {
+			invalidateSiteUpdateSchedules( variables.siteId );
+			queryClient.invalidateQueries( hostingUpdateSchedulesQuery() );
 		},
 	} );
 

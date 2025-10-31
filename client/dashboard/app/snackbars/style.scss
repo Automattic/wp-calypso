@@ -10,6 +10,6 @@
 	margin: $grid-unit-20;
 }
 
-body:has( .back-to-deployments-button ) .dashboard-snackbars {
+body:has( .dashboard-snackbar-back-button ) .dashboard-snackbars {
 	margin-bottom: calc( $grid-unit-20 + 52px );
 }

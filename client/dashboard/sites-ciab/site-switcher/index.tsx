@@ -1,4 +1,4 @@
-import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, MenuGroup, MenuItem, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -6,6 +6,7 @@ import { plus } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { siteRoute } from '../../app/router/sites';
 import SiteIcon from '../../components/site-icon';
@@ -23,10 +24,10 @@ const searchableFields = [
 
 const CIABSiteSwitcher = () => {
 	const { recordTracksEvent } = useAnalytics();
+	const { queries } = useAppContext();
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( {
-		...sitesQuery( {
-			site_filters: [ 'commerce-garden' ],
+		...queries.sitesQuery( {
 			site_visibility: 'visible',
 			include_a8c_owned: false,
 		} ),

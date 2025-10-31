@@ -14,7 +14,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field, isItemValid, FormField } from '@wordpress/dataviews';
+import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -125,7 +125,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 		],
 	};
 
-	const canSave = isItemValid( normalizedFormData, fields, form );
+	const { isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>

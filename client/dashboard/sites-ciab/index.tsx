@@ -2,7 +2,6 @@ import {
 	isAutomatticianQuery,
 	userPreferenceQuery,
 	userPreferenceMutation,
-	sitesQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
@@ -21,6 +20,7 @@ import deepmerge from 'deepmerge';
 import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
+import { useAppContext } from '../app/context';
 import { useHelpCenter } from '../app/help-center';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
@@ -48,7 +48,6 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 	}
 
 	return {
-		site_filters: [ 'commerce-garden' ],
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || isRestoringAccount ? 'all' : 'visible',
@@ -65,6 +64,7 @@ export default function CIABSites() {
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
+	const { queries } = useAppContext();
 	const { setShowHelpCenter } = useHelpCenter();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'ciab-sites-view' ) );
@@ -85,7 +85,7 @@ export default function CIABSites() {
 		isLoading: isLoadingSites,
 		isPlaceholderData,
 	} = useQuery( {
-		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		...queries.sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
 		placeholderData: keepPreviousData,
 	} );
 

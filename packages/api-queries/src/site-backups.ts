@@ -5,6 +5,9 @@ import {
 	fetchBackupContents,
 	fetchBackupPathInfo,
 	fetchBackupFileUrl,
+	fetchBackupPolicies,
+	fetchBackupSize,
+	updateRetentionDays,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -58,4 +61,22 @@ export const siteBackupFileUrlQuery = (
 		queryKey: [ 'site', siteId, 'backup', rewindId, 'file', encodedManifestPath ],
 		queryFn: () => fetchBackupFileUrl( siteId, rewindId, encodedManifestPath ),
 		meta: { persist: false },
+	} );
+
+export const siteBackupPoliciesQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'backup-policies' ],
+		queryFn: () => fetchBackupPolicies( siteId ),
+		staleTime: Infinity,
+	} );
+
+export const siteBackupSizeQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'backup-size' ],
+		queryFn: () => fetchBackupSize( siteId ),
+	} );
+
+export const siteUpdateRetentionDaysMutation = ( siteId: number, retentionDays: number ) =>
+	mutationOptions( {
+		mutationFn: () => updateRetentionDays( siteId, retentionDays ),
 	} );

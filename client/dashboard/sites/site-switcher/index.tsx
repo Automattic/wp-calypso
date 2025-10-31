@@ -1,4 +1,4 @@
-import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -10,6 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import { siteRoute } from '../../app/router/sites';
 import SiteIcon from '../../components/site-icon';
@@ -27,8 +28,9 @@ const searchableFields = [
 ];
 
 const SiteSwitcher = () => {
+	const { queries } = useAppContext();
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
-	const { data: sites } = useQuery( { ...sitesQuery(), enabled: isSwitcherOpen } );
+	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isSwitcherOpen } );
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );

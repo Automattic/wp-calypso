@@ -8,7 +8,6 @@ import {
 	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
-	sitesQuery,
 	queryClient,
 	domainTransferRequestQuery,
 	domainWhoisQuery,
@@ -17,6 +16,7 @@ import {
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import {
 	createRoute,
 	createLazyRoute,
@@ -46,9 +46,9 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		queryClient.ensureQueryData( domainsQuery() );
-		queryClient.ensureQueryData( sitesQuery() );
+		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } ).lazy( () =>
@@ -115,12 +115,9 @@ export const domainOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		const [ site, mailboxes ] = await Promise.all( [
-			queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) ),
-			queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) ),
-		] );
 
-		return { domain, site, mailboxes };
+		queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
+		queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
@@ -557,11 +554,17 @@ export const domainConnectionSetupRoute = createRoute( {
 		);
 	},
 } ).lazy( () =>
-	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
-		createLazyRoute( 'domain-connection-setup' )( {
-			component: d.default,
-		} )
-	)
+	config.isEnabled( 'domain-connection-redesign' )
+		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-connection-setup' )( {
+					component: d.default,
+				} )
+		  )
+		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
+				createLazyRoute( 'domain-connection-setup' )( {
+					component: d.default,
+				} )
+		  )
 );
 
 export const domainTransferSetupRoute = createRoute( {

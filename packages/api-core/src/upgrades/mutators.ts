@@ -1,6 +1,6 @@
-import { normalizePurchase } from '../purchase';
 import { wpcom } from '../wpcom-fetcher';
-import type { Purchase } from '../purchase';
+import { normalizePurchase } from './fetchers';
+import type { Purchase, PurchaseCancelOptions, PurchaseDowngradeOptions } from './types';
 
 export interface UpdateCreditCardParams {
 	purchaseId: number;
@@ -77,4 +77,31 @@ export async function assignPaymentMethod(
 		success: data.payment_method_changed,
 		upgrade: normalizePurchase( data.upgrade ),
 	};
+}
+
+export async function removePurchase( purchaseId: number ): Promise< void > {
+	return wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/delete`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function cancelAndRefundPurchase(
+	purchaseId: number,
+	options: PurchaseCancelOptions | PurchaseDowngradeOptions
+): Promise< { status: string; message: string } > {
+	return wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/cancel`,
+		body: options,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function extendPurchaseWithFreeMonth(
+	purchaseId: number
+): Promise< { status: string; message: string } > {
+	return wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/extend`,
+		apiNamespace: 'wpcom/v2',
+	} );
 }

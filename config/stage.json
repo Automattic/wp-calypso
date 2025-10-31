@@ -40,7 +40,7 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"domain-search-rewrite": true,
-		"domain-connection-redesign/verification": false,
+		"domain-connection-redesign": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,

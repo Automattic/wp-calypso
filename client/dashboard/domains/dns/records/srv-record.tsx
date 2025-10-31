@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import RequiredSelect from '../../../components/required-select';
 import { getFieldWithDot, getNormalizedName } from '../utils';
 import {
 	domainValidator,
@@ -39,7 +38,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 		{
 			id: 'protocol',
 			label: __( 'Protocol' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: [
 				{ label: '_tcp', value: '_tcp' },
 				{ label: '_udp', value: '_udp' },

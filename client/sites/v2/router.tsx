@@ -1,16 +1,17 @@
 import { siteBySlugQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Outlet, createRootRoute, createRoute } from '@tanstack/react-router';
+import { Outlet, createRootRouteWithContext, createRoute } from '@tanstack/react-router';
 import { canManageSite } from 'calypso/dashboard/sites/features';
 import { getSiteDisplayName } from 'calypso/dashboard/utils/site-name';
 import { hasSiteTrialEnded } from 'calypso/dashboard/utils/site-trial';
 import Root from './components/root';
 import type { Site } from '@automattic/api-core';
+import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
 
 /**
  * Define general routes
  */
-export const rootRoute = createRootRoute( { component: Root } );
+export const rootRoute = createRootRouteWithContext< RootRouterContext >()( { component: Root } );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,

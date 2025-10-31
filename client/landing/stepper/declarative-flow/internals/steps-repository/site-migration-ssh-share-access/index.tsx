@@ -1,4 +1,5 @@
 import { Step } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -53,6 +54,7 @@ const SiteMigrationSshShareAccess: StepType< {
 	}, [ navigation ] );
 
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	// Poll for migration status after starting migration
 	const { data: migrationStatus } = useSSHMigrationStatus( {
@@ -99,13 +101,16 @@ const SiteMigrationSshShareAccess: StepType< {
 	}, [ migrationStarted, migrationStatus, dispatch, siteId, navigation, setMigrationError ] );
 
 	const triggerSSHMigration = () => {
+		// Reset the migration status query to clear any stale data from previous attempts
+		queryClient.resetQueries( { queryKey: [ 'ssh-migration-status', siteId ] } );
+
 		startMigration(
 			{
 				siteId,
 				remoteHost: formState.serverAddress,
 				remoteUser: formState.username,
 				remoteDomain: fromUrl,
-				remotePass: formState.password,
+				remotePass: formState.authMethod === 'key' ? '' : formState.password,
 			},
 			{
 				onSuccess: () => {
@@ -114,6 +119,7 @@ const SiteMigrationSshShareAccess: StepType< {
 				},
 				onError: ( error ) => {
 					setMigrationError( error );
+					setMigrationStarted( false );
 				},
 			}
 		);

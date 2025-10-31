@@ -303,6 +303,7 @@ class ReaderPostEllipsisMenu extends Component {
 						iconSize={ 24 }
 						followingLabel={ translate( 'Subscribed' ) }
 						onFollowToggle={ this.openSuggestedFollowsModal }
+						railcar={ post.railcar }
 					/>
 				) }
 

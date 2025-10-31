@@ -1,5 +1,6 @@
 import {
 	Icon,
+	Tooltip,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
@@ -75,12 +76,16 @@ export function getFields( timezoneString?: string, gmtOffset?: number ): Field<
 			getValue: ( { item } ) => ( item.fixable ? 'available' : 'unavailable' ),
 			render: ( { item } ) =>
 				item.fixable ? (
-					<Icon
-						icon={ check }
-						size={ 24 }
-						style={ { fill: 'var(--dashboard__background-color-success)' } }
-						aria-label={ __( 'Auto-fix available' ) }
-					/>
+					<Tooltip text={ __( 'Can be automatically fixed' ) }>
+						<span>
+							<Icon
+								icon={ check }
+								size={ 24 }
+								style={ { fill: 'var(--dashboard__background-color-success)' } }
+								aria-label={ __( 'Auto-fix available' ) }
+							/>
+						</span>
+					</Tooltip>
 				) : null,
 		},
 	];

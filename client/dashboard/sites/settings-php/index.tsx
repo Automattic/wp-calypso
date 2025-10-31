@@ -15,7 +15,6 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RequiredSelect from '../../components/required-select';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
@@ -47,7 +46,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		{
 			id: 'version',
 			label: __( 'PHP version' ),
-			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
+			Edit: 'select',
 			elements: phpVersions.filter( ( option ) => {
 				// Show disabled PHP version only if the site is still using it.
 				if ( option.disabled && option.value !== currentVersion ) {
