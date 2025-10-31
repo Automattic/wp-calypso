@@ -183,10 +183,9 @@ function OwnerInfo( {
 
 export function PurchaseSettingLink( {
 	purchase,
-	isTransferred,
+	disabled,
 	...props
-}: ComponentProps< typeof Link > & { purchase: Purchase; isTransferred: boolean } ) {
-	const disabled = isTransferred;
+}: ComponentProps< typeof Link > & { purchase: Purchase; disabled: boolean } ) {
 	return (
 		<Link
 			{ ...props }
@@ -247,11 +246,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
-					<PurchaseSettingLink
-						purchase={ item }
-						isTransferred={ isTransferred }
-						style={ { zIndex: 1 } }
-					>
+					<PurchaseSettingLink purchase={ item } disabled={ isTransferred } style={ { zIndex: 1 } }>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
 					</PurchaseSettingLink>
 				);
@@ -282,7 +277,7 @@ export function getFields( {
 				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchaseSettingLink purchase={ item } isTransferred={ isTransferred }>
+						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
 							{ getTitleForDisplay( item ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
