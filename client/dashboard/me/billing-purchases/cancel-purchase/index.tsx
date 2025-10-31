@@ -125,10 +125,19 @@ export default function CancelPurchase() {
 	const { data: plans } = useSuspenseQuery( plansQuery( '', locale ) );
 	const { data: productsFeatures } = useSuspenseQuery( productsFeaturesQuery() );
 
+	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( hasPurchaseBeenExtendedQuery( purchase.blog_id ) );
-	const { data: site, isPending: siteQueryIsPending } = useQuery(
-		siteByIdQuery( purchase.blog_id )
-	);
+	const {
+		data: site,
+		isPending: siteQueryIsPending,
+		isError: siteQueryIsError,
+	} = useQuery( {
+		...siteByIdQuery( purchase.blog_id ),
+		enabled: ! lastSiteQueryIsError.current,
+	} );
+	if ( siteQueryIsError ) {
+		lastSiteQueryIsError.current = siteQueryIsError;
+	}
 	const { data: atomicTransfer, isPending: siteLatestAtomicTransferQueryIsPending } = useQuery(
 		siteLatestAtomicTransferQuery( purchase.blog_id )
 	);
@@ -166,7 +175,7 @@ export default function CancelPurchase() {
 		if (
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
-				( purchase.product_slug = DomainProductSlugs.TRANSFER_IN ) )
+				purchase.product_slug === DomainProductSlugs.TRANSFER_IN )
 		) {
 			navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 			return;
@@ -290,6 +299,35 @@ export default function CancelPurchase() {
 		state.upsell,
 		state.willAtomicSiteRevert,
 	] );
+
+	const getFeaturesFromApiForProduct = ( productId: number ) => {
+		if ( ! productsFeatures ) {
+			return [];
+		}
+
+		// Find the product in the productsFeatures data
+		const product = productsFeatures.products.find(
+			( p: { product_id: number } ) => p.product_id === productId
+		);
+
+		if ( ! product || ! product.feature_group ) {
+			return [];
+		}
+
+		// Get the feature IDs from the feature group
+		const featureIds = productsFeatures.feature_groups[ product.feature_group ];
+
+		if ( ! featureIds || featureIds.length === 0 ) {
+			return [];
+		}
+
+		// Map the feature_ids to the actual features with their titles and descriptions
+		return featureIds
+			.map( ( featureId: string ) => {
+				return productsFeatures.features.find( ( f ) => f.feature_id === featureId );
+			} )
+			.filter( isValueTruthy );
+	};
 
 	const initSurveyState = () => {
 		if ( state.initialized ) {
@@ -939,7 +977,7 @@ export default function CancelPurchase() {
 
 	const isDataLoading =
 		siteFeaturesQueryIsPending ||
-		siteQueryIsPending ||
+		( ! lastSiteQueryIsError.current && siteQueryIsPending ) ||
 		purchaseQueryIsPending ||
 		( Boolean( purchase.meta ) && domainQueryIsPending ) ||
 		siteLatestAtomicTransferQueryIsPending ||
@@ -955,12 +993,13 @@ export default function CancelPurchase() {
 		}
 
 		const isValidForCancellation = purchase.can_disable_auto_renew && purchase.is_cancelable;
+		const isValidForRemoval = ! purchase.is_cancelable && purchase.is_removable;
 
 		if ( ! isValidForCancellation && state.surveyShown ) {
 			return true;
 		}
 
-		return isValidForCancellation;
+		return isValidForCancellation || isValidForRemoval;
 	}, [ isDataLoading, purchase, state.surveyShown ] );
 
 	const didRunEffect = useRef< boolean >( false );
@@ -975,6 +1014,7 @@ export default function CancelPurchase() {
 		}
 		if ( ! isDataValid() ) {
 			redirect();
+			//createErrorNotice( __( 'Invalid data!' ), { type: 'snackbar' } );
 			return;
 		}
 		track();
@@ -987,6 +1027,7 @@ export default function CancelPurchase() {
 		purchase.product_slug,
 		redirect,
 		track,
+		createErrorNotice,
 	] );
 
 	// componentDidUpdate
@@ -1301,35 +1342,6 @@ export default function CancelPurchase() {
 		);
 	};
 
-	const getFeaturesFromApiForProduct = ( productId: number ) => {
-		if ( ! productsFeatures ) {
-			return [];
-		}
-
-		// Find the product in the productsFeatures data
-		const product = productsFeatures.products.find(
-			( p: { product_id: number } ) => p.product_id === productId
-		);
-
-		if ( ! product || ! product.feature_group ) {
-			return [];
-		}
-
-		// Get the feature IDs from the feature group
-		const featureIds = productsFeatures.feature_groups[ product.feature_group ];
-
-		if ( ! featureIds || featureIds.length === 0 ) {
-			return [];
-		}
-
-		// Map the feature_ids to the actual features with their titles and descriptions
-		return featureIds
-			.map( ( featureId: string ) => {
-				return productsFeatures.features.find( ( f ) => f.feature_id === featureId );
-			} )
-			.filter( isValueTruthy );
-	};
-
 	const renderMainContent = () => {
 		const atomicRevertChanges = [
 			{
@@ -1397,7 +1409,11 @@ export default function CancelPurchase() {
 					</h2>
 				) }
 
-				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
+				<BackupRetentionOptionOnCancelPurchase
+					productFeatures={ getFeaturesFromApiForProduct( purchase.product_id ) }
+					siteId={ purchase.blog_id }
+					purchase={ purchase }
+				/>
 
 				{ isGSuite && renderGSuiteAccessMessage() }
 

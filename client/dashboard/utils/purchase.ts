@@ -18,13 +18,11 @@ import {
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
-	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
-import { planHasFeature } from './site-features';
 import { isSiteAutomatedTransfer } from './site-types';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase, Site } from '@automattic/api-core';
@@ -215,6 +213,10 @@ export function isJetpackAntiSpamSlug( productSlug: string ): boolean {
 	return ( JETPACK_ANTI_SPAM_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
 }
 
+//used
+export function isJetpackPlanSlug( productSlug: string ): boolean {
+	return ( Object.keys( JetpackPlans ) as ReadonlyArray< string > ).includes( productSlug );
+}
 //used
 export function isJetpackBackupSlug( productSlug: string ): boolean {
 	return ( JETPACK_BACKUP_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
@@ -702,7 +704,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 			return true;
 		}
 
-		return planHasFeature( productSlug, WPCOM_FEATURES_ATOMIC );
+		return site?.is_wpcom_atomic;
 	};
 
 	if ( ! Array.isArray( linkedPurchases ) ) {

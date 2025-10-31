@@ -14,7 +14,7 @@ import { Card, CardBody } from '../../../../../components/card';
 import { settingsPath } from '../../../../../utils/jetpack';
 import { productHasBackups } from '../../../../../utils/site-features';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
-import type { SiteRewindPoliciesResponse, Purchase } from '@automattic/api-core';
+import type { SiteRewindPoliciesResponse, Purchase, ProductFeature } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -26,6 +26,7 @@ const BACKUP_RETENTION_UPDATE_REQUEST = {
 } as const;
 
 interface BackupRetentionOptionOnCancelPurchaseProps {
+	productFeatures: ProductFeature[];
 	purchase: Purchase;
 	siteId: number;
 }
@@ -38,7 +39,7 @@ const getActivityLogVisibleDays = (
 
 const BackupRetentionOptionOnCancelPurchase: React.FC<
 	BackupRetentionOptionOnCancelPurchaseProps
-> = ( { purchase, siteId } ) => {
+> = ( { productFeatures, purchase, siteId } ) => {
 	// show only if the purchase being cancelled includes backups.
 	const { recordTracksEvent } = useAnalytics();
 	const MINIMUM_RETENTION_TO_OFFER = 2;
@@ -60,7 +61,7 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 		updateRetentionRequestStatus = BACKUP_RETENTION_UPDATE_REQUEST.FAILED;
 	}
 
-	const currentPlanHasBackup = productHasBackups( purchase.product_slug );
+	const currentPlanHasBackup = productHasBackups( productFeatures, purchase.product_slug );
 
 	const updateRetentionPeriod = () => {
 		recordTracksEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
