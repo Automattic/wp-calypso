@@ -17,6 +17,7 @@ declare module '@tanstack/react-query' {
 			snackbar?: {
 				success?: string;
 				error?: string;
+				errorSource?: 'client' | 'server';
 			};
 		};
 	}
@@ -39,9 +40,12 @@ export default function Snackbars() {
 						createSuccessNotice( message, { type: 'snackbar' } );
 					}
 				} else if ( event.action.type === 'error' ) {
-					const message = mutation.meta?.snackbar?.error;
-					if ( message ) {
-						createErrorNotice( message, { type: 'snackbar' } );
+					const errorSource = mutation.meta?.snackbar?.errorSource ?? 'client';
+					const errorMessage =
+						errorSource === 'server' ? event.action.error.message : mutation.meta?.snackbar?.error;
+
+					if ( errorMessage ) {
+						createErrorNotice( errorMessage, { type: 'snackbar' } );
 					}
 				}
 			}
