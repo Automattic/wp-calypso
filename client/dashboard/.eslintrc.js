@@ -41,6 +41,7 @@ module.exports = {
 							'!@automattic/api-queries',
 							'!@automattic/calypso-analytics',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-sentry',
 							'!@automattic/calypso-support-session',
 							'!@automattic/charts',
 							'!@automattic/components',

@@ -6,9 +6,11 @@ import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
 import { bumpStat } from '../analytics';
+import { useAuth } from '../auth';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { setupErrorLogging } from '../logging';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -25,7 +27,9 @@ const VERY_SLOW_THRESHOLD_MS = 6000;
 function Root() {
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
+	const { user } = useAuth();
 	const router = useRouter();
+	useEffect( () => setupErrorLogging( user, router ), [ user, router ] );
 	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
