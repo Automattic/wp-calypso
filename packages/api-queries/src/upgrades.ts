@@ -9,6 +9,7 @@ import {
 	hasExtendedPurchase,
 	fetchUserTransferredPurchases,
 	fetchSitePurchases,
+	fetchCancellationFeatures,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -41,6 +42,12 @@ export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'upgrades', purchaseId ],
 		queryFn: () => fetchPurchase( purchaseId ),
+	} );
+
+export const purchaseCancelFeaturesQuery = ( purchaseId: number ) =>
+	queryOptions( {
+		queryKey: [ 'upgrades', purchaseId, 'cancel-features' ],
+		queryFn: () => fetchCancellationFeatures( purchaseId ),
 	} );
 
 export const hasPurchaseBeenExtendedQuery = ( purchaseId: number ) =>

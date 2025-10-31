@@ -352,3 +352,50 @@ export interface PurchaseCancelOptions {
 	 */
 	cancel_bundled_domain: boolean;
 }
+
+/**
+ * A feature that would be lost if the subscription is cancelled
+ */
+export interface CancellationFeature {
+	/**
+	 * Unique identifier for the feature (e.g., "feature-ad-free-experience")
+	 */
+	feature_id: string;
+
+	/**
+	 * Display title for the feature
+	 */
+	title: string;
+
+	/**
+	 * Description of what the feature provides
+	 * May be empty string for some features
+	 */
+	description: string;
+}
+
+/**
+ * Response from the upgrades cancel features endpoint
+ * GET /wpcom/v2/upgrades/{subscription_id}/cancel-features
+ */
+export interface UpgradesCancelFeaturesResponse {
+	/**
+	 * The subscription ID that was requested
+	 */
+	subscription_id: number;
+
+	/**
+	 * The product ID associated with this subscription
+	 */
+	product_id: number;
+
+	/**
+	 * The product slug (e.g., "personal-bundle", "business-bundle")
+	 */
+	product_slug: string;
+
+	/**
+	 * Array of features that would be lost if this subscription is cancelled
+	 */
+	features: CancellationFeature[];
+}
