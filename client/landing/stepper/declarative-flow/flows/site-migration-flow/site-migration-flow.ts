@@ -122,6 +122,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const canInstallPlugins = site?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
+		const isFlexDestination = site?.is_wpcom_flex === true;
 		const exitFlow = ( to: string, replace = false ) => {
 			if ( replace ) {
 				return window.location.replace(
@@ -349,9 +350,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
-					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
+					// NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {
 						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+							if ( isFlexDestination ) {
+								return replace(
+									paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } )
+								);
+							}
 							return replace(
 								paths.upgradePlanPath( {
 									siteId,
@@ -426,6 +432,19 @@ const siteMigration: FlowV2< typeof initialize > = {
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
+						if ( isFlexDestination ) {
+							if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+								return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+							}
+							if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+								return navigate(
+									paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } )
+								);
+							}
+							return navigate(
+								paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } )
+							);
+						}
 						return replace(
 							paths.upgradePlanPath( {
 								siteId,
@@ -445,6 +464,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( isFlexDestination ) {
+						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+							return navigate( paths.sshVerificationPath( { siteId, siteSlug } ) );
+						}
+						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+							return navigate(
+								paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } )
+							);
+						}
+						return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
+					}
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
@@ -462,13 +492,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
+						const requestedPlan = providedDependencies.plan as string;
+						const planToUse =
+							requestedPlan === 'wpcom-flexible' ? 'business-bundle' : requestedPlan;
+
 						goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
 							from: fromQueryParam ?? undefined,
-							plan: providedDependencies.plan as string,
+							plan: planToUse,
 							historyBack: true,
 							extraQueryParams:
 								providedDependencies?.sendIntentWhenCreatingTrial &&

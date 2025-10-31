@@ -9,7 +9,8 @@ export const WRITE_INTENT_DEFAULT_DESIGN: Design = {
 	design_tier: null,
 };
 
-export const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
+// Request both classic wp.com and WP Cloud (Atomic + Flex) via 'wpcloud'
+export const SITE_PICKER_FILTER_CONFIG: string[] = [ 'wpcom', 'wpcloud' ];
 export const HOW_TO_MIGRATE_OPTIONS = {
 	DO_IT_FOR_ME: 'difm',
 	DO_IT_MYSELF: 'myself',

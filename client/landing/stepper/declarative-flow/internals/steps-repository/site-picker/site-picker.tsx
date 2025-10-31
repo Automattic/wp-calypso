@@ -42,7 +42,17 @@ const SitePicker = function SitePicker( props: Props ) {
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		SITE_PICKER_FILTER_CONFIG,
-		( site ) => ! site.is_wpcom_staging_site && ! site.is_deleted
+		( site ) => {
+			if ( site.is_deleted ) {
+				return false;
+			}
+			// Always allow Flex sites (destination), even if staging-flagged
+			if ( site.is_wpcom_flex || site?.plan?.product_slug === 'wpcom-flexible' ) {
+				return true;
+			}
+			// For all other sites, exclude staging variants
+			return ! site.is_wpcom_staging_site;
+		}
 	);
 
 	return (
