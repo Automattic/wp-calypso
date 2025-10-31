@@ -35,25 +35,21 @@ export class SignupPickPlanPage {
 	 * Captures the response from the site creation API endpoint.
 	 * @returns {Promise<NewSiteResponse>}
 	 */
-	private captureNewSiteResponse(): Promise< NewSiteResponse > {
-		return new Promise< NewSiteResponse >( ( resolve, reject ) => {
-			this.page.route(
-				/.*\/sites\/new\?.*/,
-				async ( route ) => {
-					try {
-						const response = await route.fetch();
-						const body = await response.body();
-						// Fulfill the original request
-						await route.fulfill( { response } );
-						// Resolve the promise with the parsed body
-						resolve( JSON.parse( body.toString() ).body as NewSiteResponse );
-					} catch ( error ) {
-						reject( error );
-					}
-				},
-				{ times: 1 }
-			);
+	private async captureNewSiteResponse(): Promise< NewSiteResponse > {
+		const response = await this.page.waitForResponse( /.*\/sites\/new\?.*/, {
+			timeout: 30 * 1000,
 		} );
+
+		const responseJSON = await response.json();
+		const body: NewSiteResponse = responseJSON.body;
+
+		if ( ! body.blog_details.blogid ) {
+			console.error( body );
+			throw new Error( 'Failed to locate blog ID for the created site.' );
+		}
+
+		body.blog_details.blogid = Number( body.blog_details.blogid );
+		return body;
 	}
 
 	/**
@@ -72,12 +68,13 @@ export class SignupPickPlanPage {
 			redirectUrl ??= new RegExp( '.*setup/site-setup.*' );
 		}
 
-		const responsePromise = this.captureNewSiteResponse();
+		const [ , , response ] = await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.plansPage.selectPlan( name ),
+			this.captureNewSiteResponse(),
+		] );
 
-		this.plansPage.selectPlan( name );
-		await this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } );
-
-		return responsePromise;
+		return response;
 	}
 
 	/**
