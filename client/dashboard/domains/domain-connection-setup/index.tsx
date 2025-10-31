@@ -76,7 +76,7 @@ export default function DomainConnection() {
 					title={
 						isVerificationStep
 							? __( 'Domain connection verification' )
-							: __( 'Domain connection setup' )
+							: __( 'Connect your domain name' )
 					}
 				/>
 			}
