@@ -29,6 +29,7 @@ interface ConnectionModeCardProps {
 	onStepChange: ( index: number, checked: boolean ) => void;
 	onVerifyConnection: () => void;
 	isUpdatingConnectionMode: boolean;
+	verificationDisabled: boolean;
 }
 
 export default function ConnectionModeCard( {
@@ -43,6 +44,7 @@ export default function ConnectionModeCard( {
 	onStepChange,
 	onVerifyConnection,
 	isUpdatingConnectionMode,
+	verificationDisabled,
 }: ConnectionModeCardProps ) {
 	const isSelected = selectedMode === mode;
 
@@ -89,6 +91,7 @@ export default function ConnectionModeCard( {
 							variant="primary"
 							onClick={ onVerifyConnection }
 							isBusy={ isUpdatingConnectionMode }
+							disabled={ verificationDisabled }
 						>
 							{ __( 'Verify Connection' ) }
 						</Button>

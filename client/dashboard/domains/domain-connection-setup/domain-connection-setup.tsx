@@ -108,6 +108,7 @@ export default function DomainConnectionSetup( {
 					onStepChange={ handleSuggestedStepChange }
 					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.SUGGESTED ) }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
+					verificationDisabled={ ! suggestedStepsCompleted.every( ( completed ) => completed ) }
 				/>
 
 				<ConnectionModeCard
@@ -128,6 +129,7 @@ export default function DomainConnectionSetup( {
 					onStepChange={ handleAdvancedStepChange }
 					onVerifyConnection={ () => onVerifyConnection( DomainConnectionSetupMode.ADVANCED ) }
 					isUpdatingConnectionMode={ isUpdatingConnectionMode }
+					verificationDisabled={ ! advancedStepsCompleted.every( ( completed ) => completed ) }
 				/>
 			</VStack>
 		</div>
